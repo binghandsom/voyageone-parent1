@@ -541,7 +541,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
 
         //3.CmsBtPromotionSkusModel
         for (SkuImportBean skuImport : listSkuImport) {
-            CmsBtPromotionSkusModel skusModel = getCmsBtPromotionSkusModel(modelPromotion.getId(), modelPromotion.getChannelId(), skuImport.getProductCode(), skuImport.getSkuCode());
+            CmsBtPromotionSkusModel skusModel = getCmsBtPromotionSkusModel(modelPromotion.getId(), skuImport.getProductCode(), skuImport.getSkuCode());
 
 
             if (skusModel == null) {
@@ -581,11 +581,11 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             }
         }
     }
-    CmsBtPromotionSkusModel getCmsBtPromotionSkusModel(int promotionId,String channelId,String productCode,String skuCode)
+    CmsBtPromotionSkusModel getCmsBtPromotionSkusModel(int promotionId,String productCode,String skuCode)
     {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", promotionId);
-        map.put("orgChannelId", channelId);
+//        map.put("orgChannelId", channelId);
         map.put("productCode", productCode);
         map.put("productSku", skuCode);
         return daoCmsBtPromotionSkus.selectOne(map);
