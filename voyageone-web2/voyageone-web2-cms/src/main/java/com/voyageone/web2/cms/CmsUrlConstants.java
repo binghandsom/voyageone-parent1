@@ -851,7 +851,12 @@ public interface CmsUrlConstants {
         interface FEED_CONFIG {
             String ROOT = "/cms/channel/feedConfig";
             String SEARCH = "search";
-            String SAVE="save";
+            String SAVE ="save";
+            String EXPORT ="export";
+            String IMPORT ="import";
+            String DELETE = "delete";
+            String SAVE_FEED ="saveFeed";
+            String CREATE_FEED ="createFeed";
         }
     }
 

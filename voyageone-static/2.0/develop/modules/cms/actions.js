@@ -636,7 +636,12 @@ define(function () {
                     "cmsFeedConfigService": {
                         "root": "/cms/channel/feedConfig",
                         "search": "search",
-                        "save":"save"
+                        "save":"save",
+                        "export":"export",
+                        "import":"import",
+                        "delete":"delete",
+                        "saveFeed":"saveFeed",
+                        "createFeed":"createFeed",
                     }
                 }
             },

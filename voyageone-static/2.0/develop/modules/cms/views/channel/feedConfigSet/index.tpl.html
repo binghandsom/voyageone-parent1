@@ -7,91 +7,141 @@
                 </div>
             </div>
         </div>
-
-        <div style="position: relative">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="box">
-                        <div class="box-body">
-                            <table class="table table-hover-new text-center">
-                                <thead>
-                                <tr>
-                                    <th class="text-center">CMS字段</th>
-                                    <th class="text-center">Feed字段 *</th>
-                                    <th class="text-center">备注</th>
-                                    <th class="text-center">备注</th>
-                                </tr>
-                                <tr>
-                                    <th colspan="4" style="background: #fff;color: #000;" class="text-center">
-                                        CODE级别feed必要共通属性匹配情况
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="element in ctrl.dataList">
-
-                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left">{{element.cmsCfgName}}
-                                    </th>
-                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
-                                            class="form-control" ng-model="element.cfgVal1"
-                                            ng-disabled=element.cmsIsCfgVal1Display></textarea></th>
-                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
-                                            class="form-control" ng-model="element.cfgVal2"
-                                            ng-disabled=element.cmsIsCfgVal2Display></textarea></th>
-                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea type="text"
-                                                                                                       class="form-control"
-                                                                                                       ng-disabled="element.cmsIsCfgVal3Display"
-                                                                                                       ng-model="element.comment"></textarea>
-                                    </th>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <table class="table table-hover-new text-center">
-                                <thead>
-                                <tr>
-                                    <th colspan="4" style="background: #fff;color: #000;" class="text-center">
-                                        SKU级别feed必要共通属性匹配情况
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="element in ctrl.dataList">
-
-                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left">{{element.cmsCfgName}}
-                                    </th>
-                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
-                                            class="form-control" ng-model="element.cfgVal1"
-                                            ng-disabled="element.cmsIsCfgVal1Display"></textarea></th>
-                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
-                                            class="form-control" ng-model="element.cfgVal2"
-                                            ng-disabled="element.cmsIsCfgVal1Display"></textarea></th>
-                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
-                                            class="form-control" ng-model="element.comment"
-                                            ng-disabled="element.cmsIsCfgVal1Display"></textarea></th>
-                                </tr>
-                                </tbody>
-                            </table>
+        <uib-tabset class="tab-container vo_nav-tabs" style="background-color: #EEEDED;">
+            <uib-tab>
+                <tab-heading><i class="fa fa-search-plus text-default"></i>Feed属性一览</tab-heading>
+                <div  style="position: relative">
+                    <table class="table table-hover-new text-center">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label"><strong>表名:</strong></label>
+                                    <div class="col-sm-2">
+                                        <input class="form-control" placeholder="cms_zz_feed_xxx_product_temp" ng-model="ctrl.tableName">
+                                    </div>
+                                </div>
+                                <div class="col-sm-3 pull-right">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default" ng-click="ctrl.export(ctrl.feedList)">
+                                            <i class="fa fa-refresh"></i>按模板导出&nbsp;
+                                        </button>
+                                    </div>
+                                    <div class="btn-group" ng-controller="popupCtrl">
+                                        <button type="button" class="btn btn-default" ng-click="ctrl.import()">
+                                            <i class="fa fa-refresh"></i>导入&nbsp;
+                                        </button>
+                                    </div>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default" ng-click="ctrl.add()">
+                                            <i class="fa fa-refresh"></i>新增feed属性&nbsp;
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        <thead>
+                        <tr>
+                            <th class="text-center">Feed属性名称</th>
+                            <th class="text-center">Feed表结构名称</th>
+                            <th class="text-center">是否作为第三方属性导入</th>
+                            <th class="text-center">操作</th>
+                        </tr>
+                        <tbody>
+                            <tr ng-repeat="feedList in ctrl.feedList">
+                                <th class="text-left"><textarea ng-model="feedList.cfgName"></textarea></th>
+                                <th  class="text-left" ><textarea ng-model="feedList.cfgTableName"></textarea></th>
+                                <th class="text-center">
+                                    <select ng-model="feedList.cfgIsAttribute">
+                                        <option value="Y">Y</option>
+                                        <option value="N">N</option>
+                                    </select>
+                                </th>
+                                <th class="text-center">
+                                    <button type="button" class="btn btn-default" ng-click="ctrl.delete(feedList.id)">
+                                        <i class="fa fa-remove">删除</i>&nbsp;
+                                    </button>
+                                </th>
+                            </tr>
+                        </tbody>
+                        </thead>
+                    </table>
+                    <sticky top-fix="90px" style="position: absolute; top: 180px; right: 10px;" drag>
+                        <nav class="sidebar" style="width: 130px;">
+                            <h3>导航栏</h3>
+                            <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.refresh()">
+                                <i class="fa fa-refresh"></i>刷新
+                            </button>
+                            <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.saveFeed(ctrl.feedList)">
+                                <i class="glyphicon glyphicon-floppy-disk"></i>feed属性保存
+                            </button>
+                            <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.createFeed({feedList:ctrl.feedList,tableName:ctrl.tableName})">
+                                <i class="glyphicon glyphicon-floppy-disk"></i>feed表保存
+                            </button>
+                            <br>
+                        </nav>
+                    </sticky>
                 </div>
+            </uib-tab>
+            <uib-tab>
+                <tab-heading><i class="fa fa-search-plus text-default"></i>Feed-Master属性一览</tab-heading>
+                <div style="position: relative">
+                    <table class="table table-hover-new text-center">
+                        <thead>
+                        <tr>
+                            <th class="text-center">CMS字段</th>
+                            <th class="text-center">备注</th>
+                            <th class="text-center">Feed字段(cfg_vag1)</th>
+                            <th class="text-center">Feed字段(cfg_vag2)</th>
+                            <th class="text-center">Feed字段(cfg_vag3)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th colspan="5" style="background: #fff;color: #000;" class="text-center">
+                                    CODE级别feed必要共通属性匹配情况
+                                    <button type="button" class="btn-empty" ng-click="ctrl.displayCode = true" ng-if="!ctrl.displayCode"><i class="glyphicon glyphicon-menu-down"></i></button>
+                                    <button type="button" class="btn-empty" ng-click="ctrl.displayCode = false" ng-if="ctrl.displayCode"><i class="glyphicon glyphicon-menu-up"></i></button>
+                                </th>
+                            </tr>
+                            <tr ng-repeat="element in ctrl.dataList" ng-if="ctrl.displayCode">
+                                <th ng-if="element.cmsCfgNameLev=='1'" class="text-left">{{element.cmsCfgName}}</th>
+                                <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea class="form-control" ng-model="element.comment" ng-disabled=element.cmsIsCfgVal1Display></textarea></th>
+                                <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea class="form-control" ng-model="element.cfgVal1" ng-disabled=element.cmsIsCfgVal1Display></textarea></th>
+                                <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea class="form-control" ng-model="element.cfgVal2" ng-disabled=element.cmsIsCfgVal2Display></textarea></th>
+                                <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea type="text"class="form-control" ng-disabled="element.cmsIsCfgVal3Display" ng-model="element.cfgVal3"></textarea>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th colspan="5" style="background: #fff;color: #000;" class="text-center">
+                                    SKU级别feed必要共通属性匹配情况
+                                    <button type="button" class="btn-empty" ng-click="ctrl.displaySku = true" ng-if="!ctrl.displaySku"><i class="glyphicon glyphicon-menu-down"></i></button>
+                                    <button type="button" class="btn-empty" ng-click="ctrl.displaySku = false" ng-if="ctrl.displaySku"><i class="glyphicon glyphicon-menu-up"></i></button>
+                                </th>
+                            </tr>
+                            <tr ng-repeat="element in ctrl.dataList" ng-if="ctrl.displaySku">
+                                <th ng-if="element.cmsCfgNameLev=='2'" class="text-left">{{element.cmsCfgName}}</th>
+                                <th ng-if="element.cmsCfgNameLev=='2'" class="text-left"><textarea class="form-control" ng-model="element.comment" ng-disabled=element.cmsIsCfgVal1Display></textarea></th>
+                                <th ng-if="element.cmsCfgNameLev=='2'" class="text-left"><textarea class="form-control" ng-model="element.cfgVal1" ng-disabled="element.cmsIsCfgVal1Display"></textarea></th>
+                                <th ng-if="element.cmsCfgNameLev=='2'" class="text-left"><textarea class="form-control" ng-model="element.cfgVal2" ng-disabled="element.cmsIsCfgVal2Display"></textarea></th>
+                                <th ng-if="element.cmsCfgNameLev=='2'" class="text-left"><textarea class="form-control" ng-model="element.cfgVal3" ng-disabled="element.cmsIsCfgVal3Display"></textarea></th>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <sticky top-fix="90px" style="position: absolute; top: 100px; right: 10px;" drag>
+                        <nav class="sidebar">
+                            <h3>导航栏</h3>
+                            <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.refresh()">
+                                <i class="fa fa-refresh"></i>刷新
+                            </button>
+                            <br>
+                            <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.save(ctrl.dataList)">
+                                <i class="glyphicon glyphicon-floppy-disk"></i>保存
+                            </button>
+                        </nav>
+                    </sticky>
+                </div>
+            </uib-tab>
 
-            </div>
-
-
-            <sticky top-fix="90px" style="position: absolute; top: 100px; right: 10px;" drag>
-
-                <nav class="sidebar">
-                    <h3>导航栏</h3>
-                    <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.refresh()">
-                        <i class="fa fa-refresh"></i>&nbsp;&nbsp;刷新
-                    </button>
-                    <br>
-                    <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.save(ctrl.dataList)">
-                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;保存
-                    </button>
-                </nav>
-
-            </sticky>
-        </div>
+        </uib-tabset>
     </div>
 </div>
