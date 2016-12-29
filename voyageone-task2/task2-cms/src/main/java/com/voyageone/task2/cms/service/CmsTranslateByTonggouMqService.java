@@ -268,7 +268,7 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
 
         // 循环取得的产品code列表，把要翻译的中文信息批量更新到mongoDB产品表中
 //        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
-        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(10, cmsBtProductDao, channelId);
+        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1, cmsBtProductDao, channelId);
         BulkWriteResult rs;
         for (String code : codeList) {
             // 单个code
