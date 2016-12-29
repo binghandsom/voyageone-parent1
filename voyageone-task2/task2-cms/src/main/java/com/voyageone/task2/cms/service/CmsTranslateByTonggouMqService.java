@@ -434,7 +434,7 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
                 // 遍历结果map逐个添加回写更新用字段
                 StringBuilder sbUpdate = new StringBuilder("{$set:{");
                 String sbUpdateParam = "";
-                sbUpdate.append("'common.fields." + entry.getKey() + "':\"" + "#" + "\"");
+                sbUpdate.append("'common.fields." + entry.getKey() + "':#");
                 sbUpdateParam = entry.getValue().replace("'", "\\'").replace("\"", "\\\"");
 //            // 更新翻译状态，翻译者，翻译时间等项目
 //            sbUpdate.append(", 'common.fields.translateStatus':'1', 'common.fields.translator':'" + getTaskName()
