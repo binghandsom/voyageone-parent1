@@ -34,6 +34,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -121,15 +123,26 @@ public class CmsBtJmPromotionService extends BaseService {
         Map<String, Object> selMap = new HashMap<>();
         selMap.put("channelId", channelId);
         selMap.put("cartId", CartEnums.Cart.JM.getValue());
+        List<CmsMtBrandsMappingBean> mBrandList = brandsMappingDaoExt.selectList(selMap);
+        Map<String, String> brandMap = mBrandList.stream().reduce(new HashMap<String, String>(), (map1, model)->{
+            map1.put(model.getCmsBrand(), model.getBrandId());
+            return map1;
+        }, (a,b) -> a);
+        if(brandMap == null) brandMap = new HashMap<>();
         for (TypeChannelBean brandObj : brandList) {
-            selMap.put("cmsBrand", brandObj.getValue());
-            List<CmsMtBrandsMappingBean> mBrandList = brandsMappingDaoExt.selectList(selMap);
-            if (mBrandList != null && mBrandList.size() > 0) {
-                brandObj.setName(mBrandList.get(0).getBrandId());
-            } else {
-                brandObj.setName("");
-            }
+            String brandId = brandMap.get(brandObj.getValue());
+            brandObj.setName(brandId==null?"":brandId);
         }
+//        for (TypeChannelBean brandObj : brandList) {
+//            selMap.put("cmsBrand", brandObj.getValue());
+//            List<CmsMtBrandsMappingBean> mBrandList = brandsMappingDaoExt.selectList(selMap);
+//            if (mBrandList != null && mBrandList.size() > 0) {
+//                brandObj.setName(mBrandList.get(0).getBrandId());
+//            } else {
+//                brandObj.setName("");
+//            }
+//        }
+
         map.put("jmMasterBrandList", brandList);
 
         // 活动场景
