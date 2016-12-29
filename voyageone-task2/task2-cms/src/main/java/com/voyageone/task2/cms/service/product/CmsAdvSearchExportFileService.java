@@ -1303,8 +1303,12 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getSize()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getProductNameEn())); // 英文标题
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getOriginalTitleCn())); // 中文标题
-                // TODO
-                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getImages1().get(0).getName())); // 图片
+                // 图片路径
+                String imgPath = "";
+                if (CollectionUtils.isNotEmpty(fields.getImages1()) && fields.getImages1().get(0) != null) {
+                    imgPath = "http://image.sneakerhead.com/is/image/sneakerhead/" + fields.getImages1().get(0).getName();
+                }
+                FileUtils.cell(row, index++, unlock).setCellValue(imgPath); // 图片
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getSizeType())); // 使用人群
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getMaterialEn() + " | " + fields.getMaterialCn())); // 材质
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getOrigin()));
