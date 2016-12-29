@@ -8,7 +8,7 @@ import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 public  interface IMQMessageBody {
 
      int getConsumerRetryTimes();
-     int getId();
+     int getMqId();
      String getSender();
 
      void check() throws MQMessageRuleException;
