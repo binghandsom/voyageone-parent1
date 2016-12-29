@@ -12,7 +12,7 @@ import com.voyageone.service.impl.cms.jumei.*;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionSku3Service;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
@@ -118,7 +118,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         if (result.isResult()) {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("id", parameter.getPromotionId());
-            sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
         }
         return success(result);
     }
@@ -139,7 +139,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         serviceCmsBtJmPromotionProduct.jmNewUpdateAll(promotionId);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", promotionId);
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+        sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
         CallResult result = new CallResult();
         return success(result);
     }
@@ -150,7 +150,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         serviceCmsBtJmPromotionProduct.jmNewByProductIdListInfo(parameter);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", parameter.getPromotionId());
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+        sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
         CallResult result = new CallResult();
         return success(result);
     }
@@ -202,7 +202,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         service3.batchSynchPrice(parameter);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", parameter.getPromotionId());
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+        sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
         CallResult result = new CallResult();
         return success(result);
     }
@@ -213,7 +213,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         if (result.isResult()) {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("id", promotionId);
-            sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
         }
         return success(result);
     }
@@ -224,7 +224,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         service3.batchCopyDeal(parameter);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", parameter.getPromotionId());
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+        sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
         CallResult result = new CallResult();
         return success(result);
     }
@@ -237,7 +237,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         if (result.isResult()) {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("id", promotionId);
-            sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
         }
         return success(result);
     }
@@ -309,7 +309,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     public  AjaxResponse refreshPrice(@RequestBody int jmPromotionId) {
         Map<String,Object> param=new HashedMap();
         param.put("jmPromotionId",jmPromotionId);
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_JmSynPromotionDealPrice, param);
+        sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_JmSynPromotionDealPrice, param);
         return success(null);
     }
     //jm2 end

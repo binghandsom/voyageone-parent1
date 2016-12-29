@@ -17,7 +17,7 @@ define([
         authorityController.prototype = {
             init: function () {
                 var self = this;
-                self.adminUserService.getAllApp().then(function (res) {
+                self.adminUserService.getAppsByUser(self.sourceData[0].id).then(function (res) {
                     self.appList = res.data;
                 });
                 self.adminOrgService.getAllOrg().then(function (res) {

@@ -1,14 +1,14 @@
 package com.voyageone.task2.base;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.mq.config.VOMQRunnable;
-import com.voyageone.common.mq.config.VOMQStart;
-import com.voyageone.common.mq.config.VOMQStop;
-import com.voyageone.common.mq.exception.MQException;
-import com.voyageone.common.mq.exception.MQIgnoreException;
+import com.voyageone.components.rabbitmq.annotation.VOMQRunnable;
+import com.voyageone.components.rabbitmq.annotation.VOMQStart;
+import com.voyageone.components.rabbitmq.annotation.VOMQStop;
+import com.voyageone.components.rabbitmq.exception.MQException;
+import com.voyageone.components.rabbitmq.exception.MQIgnoreException;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.impl.com.mq.MQControlHelper;
-import com.voyageone.service.impl.com.mq.handler.VOExceptionStrategy;
+import com.voyageone.components.rabbitmq.utils.MQControlHelper;
+import com.voyageone.components.rabbitmq.handler.VOExceptionStrategy;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;

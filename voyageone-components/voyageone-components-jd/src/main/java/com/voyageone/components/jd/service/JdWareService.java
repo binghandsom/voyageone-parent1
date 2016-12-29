@@ -1,5 +1,7 @@
 package com.voyageone.components.jd.service;
 
+import com.jd.open.api.sdk.domain.Prop;
+import com.jd.open.api.sdk.domain.Sku;
 import com.jd.open.api.sdk.domain.ware.ImageReadService.Image;
 import com.jd.open.api.sdk.domain.ware.Ware;
 import com.jd.open.api.sdk.request.ware.*;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 京东商品类API调用服务
@@ -994,7 +997,7 @@ public class JdWareService extends JdBase {
      * @param shop 店铺信息
      * @param wareId 京东商品编号
      * @param fields 需返回的字段列表。可选值：ware结构体中的所有字段；字段之间用,分隔
-     * @return
+     * @return Ware  商品详细信息
      */
     public Ware getWareInfo(ShopBean shop, String wareId, String fields) {
 
@@ -1025,4 +1028,88 @@ public class JdWareService extends JdBase {
         }
     }
 
+    /**
+     * 全量保存SKU信息
+     * 包含每个SKU对应的颜色别名，尺码别名，库存，京东价格，商家编码skuCode等信息
+     *
+     * @param shop    店铺信息
+     * @param wareId  京东商品id
+     * @param skuList 商品全量SKU信息列表
+     * @param failCause 返回错误用
+     */
+    public List<com.jd.open.api.sdk.domain.ware.Sku> saveWareSkus(ShopBean shop, Long wareId, List<Sku> skuList, StringBuilder failCause) {
+
+        SkuWriteSaveWareSkusRequest request = new SkuWriteSaveWareSkusRequest();
+        // 京东商品Id(必须)
+        request.setWareId(wareId);
+        // 商品全量SKU信息列表(必须)
+        request.setSkus(skuList);
+
+        try {
+            // 调用京东全量保存SKU信息API(jingdong.sku.write.saveWareSkus)
+            SkuWriteSaveWareSkusResponse response = reqApi(shop, request);
+            if (response != null) {
+                // 京东返回正常的场合
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    return response.getSkuList();
+                } else {
+                    // 京东返回失败的场合
+                    throw new BusinessException(response.getZhDesc());
+                }
+            } else {
+                // response = null（https://api.jd.com/routerjson）不能访问的可能原因是服务器禁掉了https端口
+                // 或app_url,app_key等不正确
+                throw new BusinessException("京东全量保存SKU信息API返回应答为空(response = null)");
+            }
+        } catch (Exception e) {
+            String errMsg = String.format(shop.getShop_name() + "京东全量保存SKU信息API失败! [channelId:%s] [cartId:%s] [jdSkuId:%s] " +
+                    "[errMsg:%s]", shop.getOrder_channel_id(), shop.getCart_id(), StringUtils.toString(wareId), e.getMessage());
+            logger.error(errMsg);
+            failCause.append(errMsg);
+        }
+
+        return null;
+    }
+
+    /**
+     * 更新商品维度的销售属性值别名
+     * 主要用于更新每个SKU对应的颜色和尺码别名信息
+     *
+     * @param shop    店铺信息
+     * @param wareId  京东商品id
+     * @param saleProps 商品维度的销售属性值别名列表(颜色和尺码别名)
+     * @param failCause 返回错误用
+     */
+    public boolean updateWareSaleAttrvalueAlias(ShopBean shop, Long wareId, Set<Prop> saleProps, StringBuilder failCause) {
+
+        WareWriteUpdateWareSaleAttrvalueAliasRequest request = new WareWriteUpdateWareSaleAttrvalueAliasRequest();
+        // 京东商品Id(必须)
+        request.setWareId(wareId);
+        // 商品维度的销售属性值别名列表(必须)
+        request.setProps(saleProps);
+
+        try {
+            // 调用京东更新商品维度的销售属性值别名API(jingdong.ware.write.updateWareSaleAttrvalueAlias)
+            WareWriteUpdateWareSaleAttrvalueAliasResponse response = reqApi(shop, request);
+            if (response != null) {
+                // 京东返回正常的场合
+                if (!JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    // 京东返回失败的场合
+                    throw new BusinessException(response.getZhDesc());
+                }
+            } else {
+                // response = null（https://api.jd.com/routerjson）不能访问的可能原因是服务器禁掉了https端口
+                // 或app_url,app_key等不正确
+                throw new BusinessException("京东更新商品维度的销售属性值别名API返回应答为空(response = null)");
+            }
+        } catch (Exception e) {
+            String errMsg = String.format(shop.getShop_name() + "调用京东更新商品维度的销售属性值别名API失败! [channelId:%s] [cartId:%s] [jdSkuId:%s] " +
+                    "[errMsg:%s]", shop.getOrder_channel_id(), shop.getCart_id(), StringUtils.toString(wareId), e.getMessage());
+            logger.error(errMsg);
+            failCause.append(errMsg);
+            return false;
+        }
+
+        return true;
+    }
 }

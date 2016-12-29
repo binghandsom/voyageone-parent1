@@ -7,7 +7,7 @@ import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.bean.cms.CmsMtCategoryTreeAllBean;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategoryTreeAllDao;
-import com.voyageone.service.enums.SkuSplit;
+import com.voyageone.service.enums.cms.SkuSplit;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtChannelCategoryConfigModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;

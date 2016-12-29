@@ -28,7 +28,7 @@ public class ComMtMqMessageBackDao extends BaseDao {
      * @param routingKey rk
      * @param messageMap mm
      */
-    public void insertBackMessage(String routingKey, Map<String, Object> messageMap) {
+    public void insertBackMessage(String routingKey, Object messageMap) {
         Map<String, Object> param = new HashMap<>();
         param.put("routingKey", routingKey);
         param.put("messageMap", JacksonUtil.bean2Json(messageMap));

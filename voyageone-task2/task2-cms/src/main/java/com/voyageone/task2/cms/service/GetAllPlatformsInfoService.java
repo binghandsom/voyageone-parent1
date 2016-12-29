@@ -10,7 +10,7 @@ import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsMtPlatformCategoryExtendInfoModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.task2.base.BaseCronTaskService;
@@ -110,7 +110,7 @@ public class GetAllPlatformsInfoService extends BaseCronTaskService {
                     messageMap.put("channelId", channelId);
                     messageMap.put("cartId", cartId);
                     // 向Mq发送消息
-                    sender.sendMessage(MqRoutingKey.CMS_TASK_CatelogySaleAttrJdJob, messageMap);
+                    sender.sendMessage(CmsMqRoutingKey.CMS_TASK_CatelogySaleAttrJdJob, messageMap);
                 }
             }
         }

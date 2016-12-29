@@ -50,7 +50,7 @@ public class CmsBtJmPromotionImagesDao extends BaseMongoDao<CmsBtJmPromotionImag
      * @return
      */
     public List<CmsBtJmPromotionImagesModel> selectJmImageForSuit(String brand){
-        Criteria criteria = new Criteria("brand").is(brand);
+        Criteria criteria = new Criteria("brand").regex(brand);
 
         return select(new JongoQuery(criteria)
                 .setSort("{\"modified\":-1}").setLimit(10));

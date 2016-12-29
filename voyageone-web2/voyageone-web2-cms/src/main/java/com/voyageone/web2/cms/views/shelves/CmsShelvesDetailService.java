@@ -15,7 +15,7 @@ import com.voyageone.service.impl.cms.CmsBtShelvesTemplateService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import com.voyageone.service.model.cms.CmsBtShelvesTemplateModel;
@@ -81,7 +81,7 @@ class CmsShelvesDetailService extends BaseViewService {
                 Map<String, Object> messageMap = new HashMap<>();
                 messageMap.put("shelvesId", shelvesId);
                 CacheHelper.getValueOperation().set("ShelvesMonitor_" + shelvesId, shelvesId);
-                sender.sendMessage(MqRoutingKey.CMS_BATCH_ShelvesMonitorJob, messageMap);
+                sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_ShelvesMonitorJob, messageMap);
             }
             redisTemplate.expire("ShelvesMonitor_" + shelvesId, 1, TimeUnit.MINUTES);
 

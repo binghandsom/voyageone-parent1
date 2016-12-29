@@ -21,7 +21,7 @@ import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbSimpleItemService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.apache.commons.collections.MapUtils;
@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
  * @version 2.10.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_TASK_TranslateByTonggouJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_TranslateByTonggouJob)
 public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
 
     // 项目ID_标题
@@ -268,7 +268,7 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
 
         // 循环取得的产品code列表，把要翻译的中文信息批量更新到mongoDB产品表中
 //        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
-        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(10, cmsBtProductDao, channelId);
+        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(100, cmsBtProductDao, channelId);
         BulkWriteResult rs;
         for (String code : codeList) {
             // 单个code
@@ -444,7 +444,8 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
 //					+ "', 'common.fields.priorTranslateDate':''");
             sbUpdate.append("}}");
 
-            updObj.setUpdate(sbUpdate.toString());
+            updObj.setUpdate("#");
+            updObj.setUpdateParameters(sbUpdate.toString());
             return updObj;
         }
 

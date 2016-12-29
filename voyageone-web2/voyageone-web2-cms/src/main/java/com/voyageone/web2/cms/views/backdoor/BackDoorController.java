@@ -33,7 +33,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -1861,7 +1861,7 @@ public class BackDoorController extends CmsController {
             newLog.put("cartId",cartId);
             newLog.put("productId",id.intValue());
             newLog.put("channelId",channelId);
-            sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob,newLog);
+            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob,newLog);
 
         });
         return "finish";
