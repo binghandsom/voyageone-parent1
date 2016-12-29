@@ -490,7 +490,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         CmsBtProductGroupModel groupModel = productGroupService.getProductGroupByQuery(modelPromotion.getChannelId(), query);
         if (productInfo == null) return;
         //1.CmsBtPromotionCodesModel
-        CmsBtPromotionCodesModel modelCodes = getByCmsBtPromotionCodesModel(product.getProductCode(), modelPromotion.getId(), modelPromotion.getChannelId());
+        CmsBtPromotionCodesModel modelCodes = getByCmsBtPromotionCodesModel(product.getProductCode(), modelPromotion.getId());
         if (modelCodes == null) {
             modelCodes = new CmsBtPromotionCodesModel();
             modelCodes.setId(0);
@@ -602,11 +602,10 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         map.put("orgChannelId", channelId);
         return daoCmsBtPromotionGroups.selectOne(map);
     }
-    CmsBtPromotionCodesModel getByCmsBtPromotionCodesModel(String productCode,int promotionId,String channelId) {
+    CmsBtPromotionCodesModel getByCmsBtPromotionCodesModel(String productCode,int promotionId) {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", promotionId);
         map.put("productCode", productCode);
-        map.put("orgChannelId", channelId);
         return daoCmsBtPromotionCodes.selectOne(map);
     }
     private void loadSaveSku(ProductSaveInfo saveInfo, List<SkuImportBean> listImport,String userName) {
