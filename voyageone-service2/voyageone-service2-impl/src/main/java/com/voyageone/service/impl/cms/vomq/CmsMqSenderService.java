@@ -7,11 +7,13 @@ import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsBtOperationLogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * CmsMqSenderService
  * Created by dell on 2016/12/28.
  */
+@Service
 public class CmsMqSenderService extends BaseService {
 
     @Autowired
