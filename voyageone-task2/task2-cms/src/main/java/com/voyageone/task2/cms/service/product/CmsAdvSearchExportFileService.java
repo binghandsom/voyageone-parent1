@@ -280,7 +280,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         } else if (searchValue.getFileType() == 4) {
             searchItemStr += "common.skus.clientNetPrice;common.fields.color;common.fields.originalCode;";
         } else if (searchValue.getFileType() == 5) {
-            searchItemStr += "common.fields.isFiled;";
+            searchItemStr += "common.skus;common.fields.model;common.fields.isFiled;common.fields.hsCodeCross;common.fields.origin;common.fields.color;common.fields.weightKG;common.fields.shortDesEn;common.fields.shortDesCn;";
         }
 
         queryObject.setProjectionExt(searchItemStr.split(";"));
@@ -1274,8 +1274,9 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             Map<String, CmsBtProductModel_Platform_Cart> platforms = item.getPlatforms();
             if (platforms != null && platforms.size() > 0) {
                 for (CmsBtProductModel_Platform_Cart platform : platforms.values()) {
-                    if (CmsConstants.ProductStatus.Approved.name().equals(platform.getpStatus())) {
+                    if (CmsConstants.PlatformStatus.Approved.equals(platform.getpStatus())) {
                         skip = false;
+                        break;
                     }
                 }
             }
@@ -1322,7 +1323,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 double priceSale = 0d;
                 Map<String, CmsBtProductModel_Platform_Cart> platforms = item.getPlatforms();
                 for (CmsBtProductModel_Platform_Cart platform : platforms.values()) {
-                    if (CmsConstants.ProductStatus.Approved.name().equals(platform.getpStatus())) {
+                    if (CmsConstants.PlatformStatus.Approved.equals(platform.getpStatus())) {
                         priceSale = platform.getSkus().get(0).getDoubleAttribute("priceSale");
                         break;
                     }
@@ -1335,7 +1336,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         if (codes.size() > 0) {
             JongoUpdate updObj = new JongoUpdate();
             updObj.setQuery("{'common.fields.code':{$in:#}}");
-            updObj.setUpdate("{$set:{'common.fields.isFiled:#,'modified':#,'modifier':#}}");
+            updObj.setUpdate("{$set:{'common.fields.isFiled':#,'modified':#,'modifier':#}}");
             updObj.setQueryParameters(codes);
             updObj.setUpdateParameters(1, DateTimeUtil.getNowTimeStamp(), userName);
             WriteResult rs = cmsBtProductDao.updateMulti(updObj, products.get(0).getChannelId());
