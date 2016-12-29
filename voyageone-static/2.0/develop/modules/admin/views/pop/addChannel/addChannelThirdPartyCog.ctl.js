@@ -29,7 +29,7 @@ define([
                         self.sourceData = self.sourceData;
                     }
                 }
-                self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "0" : "1" : '';
+                self.sourceData.active = self.sourceData.active!=null ? self.sourceData.active ? "1" : "0" : '';
                 if (self.sourceData.isReadOnly == true) {
                     self.channelAllList = [self.sourceData.sourceData];
                 } else {
@@ -46,16 +46,16 @@ define([
                 var self = this;
                 var result = {};
                 if (self.readOnly == true) {
-                    self.sourceData.active = self.sourceData.active == '0' ? true : false;
+                    self.sourceData.active = self.sourceData.active == '1' ? true : false;
                     self.$uibModalInstance.close(self.sourceData);
                     return;
                 }
-                self.sourceData.active = self.sourceData.active == '0' ? true : false;
+                self.sourceData.active = self.sourceData.active == '1' ? true : false;
                 _.extend(self.context, self.sourceData);
                 if (self.append == true) {
                     self.thirdPartyConfigService.addThirdPartyConfig(self.sourceData).then(function (res) {
                         if (res.data == false) {
-                            self.confirm(res.data.message);
+                            self.confirm(res.message);
                             return;
                         }
                         _.extend(result, {'res': 'success', 'sourceData': self.context});
@@ -64,7 +64,7 @@ define([
                 } else {
                     self.thirdPartyConfigService.updateThirdPartyConfig(self.sourceData).then(function (res) {
                         if (res.data == false) {
-                            self.confirm(res.data.message);
+                            self.confirm(res.message);
                             return;
                         }
                         _.extend(result, {'res': 'success', 'sourceData': self.context});

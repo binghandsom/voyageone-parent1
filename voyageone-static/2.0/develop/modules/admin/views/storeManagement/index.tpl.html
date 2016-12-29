@@ -139,7 +139,7 @@
                         <td class="text-left v-middle">{{list.modifier}}</td>
                         <td class="text-center mfb-xt">
                             <button class="btn btn-success btn-xs" ng-click="ctrl.edit(list)" title="编辑"><i class="fa fa-pencil"></i></button>
-                            <button class="btn btn-danger btn-xs" ng-click="ctrl.delete({'orderChannelId': list.orderChannelId, 'storeId': list.storeId})" title="{{'BTN_INACTIVE'|translate}}"><i class="fa fa-ban"></i></button>
+                            <button class="btn btn-danger btn-xs" ng-click="ctrl.delete({'orderChannelId': list.orderChannelId, 'storeId': list.storeId})" title="{{'BTN_INACTIVE'|translate}}" ng-disabled="list.active==false"><i class="fa fa-ban"></i></button>
                         </td>
                     </tr>
                 </tbody>
