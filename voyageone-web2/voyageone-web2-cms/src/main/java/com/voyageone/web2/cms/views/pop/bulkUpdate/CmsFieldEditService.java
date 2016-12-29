@@ -27,6 +27,8 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.SizeChartService;
+import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
+import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -862,6 +864,7 @@ public class CmsFieldEditService extends BaseViewService {
         List<CmsBtProductModel> prodObjList = productService.getList(userInfo.getSelChannelId(), qryObj);
         $debug("批量修改商品价格 开始批量处理");
         for (CmsBtProductModel prodObj : prodObjList) {
+            prodObj.setChannelId(userInfo.getSelChannelId()); // 为后面调用priceService.setPrice使用
             List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
             String prodCode = prodObj.getCommonNotNull().getFieldsNotNull().getCode();
 
@@ -1037,9 +1040,14 @@ public class CmsFieldEditService extends BaseViewService {
                 priceLogList.add(cmsBtPriceLogModel);
             }
 
-            // 是天猫平台时直接调用API更新sku价格(要求已上新)
             try {
                 priceService.setPrice(prodObj, cartId, false);
+            }catch (IllegalPriceConfigException | PriceCalculateException e) {
+                $error(String.format("批量修改商品价格　调用PriceService.setPrice失败 channelId=%s, cartId=%s msg=%s", userInfo.getSelChannelId(), cartId.toString(), e.getMessage()), e);
+                throw new BusinessException(e.getMessage());
+            }
+            // 是天猫平台时直接调用API更新sku价格(要求已上新)
+            try {
                 priceService.updateSkuPrice(userInfo.getSelChannelId(), cartId, prodObj);
             } catch (Exception e) {
                 $error(String.format("批量修改商品价格　调用天猫API失败 channelId=%s, cartId=%s msg=%s", userInfo.getSelChannelId(), cartId.toString(), e.getMessage()), e);
