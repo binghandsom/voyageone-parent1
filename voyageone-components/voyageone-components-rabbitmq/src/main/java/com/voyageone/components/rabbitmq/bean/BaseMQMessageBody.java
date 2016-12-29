@@ -9,7 +9,15 @@ public abstract class BaseMQMessageBody implements IMQMessageBody {
     //消费者重试次数
     protected int consumerRetryTimes = 0;
     //消息体id
-    int id;
+    int mqId;
+
+    public int getMqId() {
+        return mqId;
+    }
+
+    public void setMqId(int mqId) {
+        this.mqId = mqId;
+    }
     //发送者
     
     String sender;
@@ -23,14 +31,6 @@ public abstract class BaseMQMessageBody implements IMQMessageBody {
         this.sender = sender;
     }
 
-    @Override
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public int getConsumerRetryTimes() {
         return consumerRetryTimes;
