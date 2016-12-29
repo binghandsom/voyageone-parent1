@@ -5006,11 +5006,11 @@ public class SxProductService extends BaseService {
                 String val = sxProduct.getCommon().getFields().getStringAttribute(aliasPropName);
                 if (!StringUtils.isEmpty(val)) {
                     alias = val;
-                } else {
-                    if ("color".equals(aliasPropName)) {
-                        // 配置了 颜色 的时候
-                        throw new BusinessException("颜色别名(颜色/口味/香型)必须填写,且长度不能超过" + maxLength);
-                    }
+//                } else {
+//                    if ("color".equals(aliasPropName)) {
+//                        // 配置了 颜色 的时候
+//                        throw new BusinessException("颜色别名(颜色/口味/香型)必须填写,且长度不能超过" + maxLength);
+//                    }
                 }
             }
         }
