@@ -595,7 +595,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", promotionId);
         map.put("productModel", productModel);
-        map.put("orgChannelId", channelId);
+//        map.put("orgChannelId", channelId);
         return daoCmsBtPromotionGroups.selectOne(map);
     }
     CmsBtPromotionCodesModel getByCmsBtPromotionCodesModel(String productCode,int promotionId) {
