@@ -490,7 +490,14 @@ public class TmallGjSkuFieldBuilderImpl8 extends AbstractSkuFieldBuilder {
 
             if (colorExtend_aliasnameField != null) {
                 // 别名,用产品color
-                complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), sxProduct.getCommon().getFields().getColor());
+                // modified by morse.lu 2016/12/29 start
+//                complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), sxProduct.getCommon().getFields().getColor());
+                String alias = sxProduct.getCommon().getFields().getColor();
+                if (StringUtils.isEmpty(alias) || alias.length() > 60) {
+                    throw new BusinessException("颜色别名(颜色/口味/香型)必须填写,且长度不能超过60");
+                }
+                complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), alias);
+                // modified by morse.lu 2016/12/29 end
             }
             if (colorExtend_basecolorField != null) {
                 // 这一版不让选，直接用第一个颜色
