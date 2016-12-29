@@ -27,6 +27,8 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.SizeChartService;
+import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
+import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -1038,6 +1040,12 @@ public class CmsFieldEditService extends BaseViewService {
                 priceLogList.add(cmsBtPriceLogModel);
             }
 
+            try {
+                priceService.setPrice(prodObj, cartId, false);
+            }catch (IllegalPriceConfigException | PriceCalculateException e) {
+                $error(String.format("批量修改商品价格　调用PriceService.setPrice失败 channelId=%s, cartId=%s msg=%s", userInfo.getSelChannelId(), cartId.toString(), e.getMessage()), e);
+                throw new BusinessException(e.getMessage());
+            }
             // 是天猫平台时直接调用API更新sku价格(要求已上新)
             try {
                 priceService.updateSkuPrice(userInfo.getSelChannelId(), cartId, prodObj);
@@ -1054,11 +1062,6 @@ public class CmsFieldEditService extends BaseViewService {
             BulkWriteResult rs = bulkList.addBulkJongo(updObj);
             if (rs != null) {
                 $debug(String.format("批量修改商品价格 channelId=%s 执行结果=%s", userInfo.getSelChannelId(), rs.toString()));
-            }
-            try {
-                priceService.setPrice(prodObj, cartId, false);
-            }catch (Exception e) {
-                $error(String.format("批量修改商品价格　调用PriceService.setPrice失败 channelId=%s, cartId=%s msg=%s", userInfo.getSelChannelId(), cartId.toString(), e.getMessage()), e);
             }
         }
         BulkWriteResult rs = bulkList.execute();
