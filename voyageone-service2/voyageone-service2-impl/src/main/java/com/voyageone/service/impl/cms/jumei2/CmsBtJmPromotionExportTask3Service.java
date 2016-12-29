@@ -13,6 +13,7 @@ import com.voyageone.service.daoext.cms.CmsBtJmProductImagesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionExportTaskDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionExportMQMessageBody;
 import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel;
@@ -41,7 +42,7 @@ public class CmsBtJmPromotionExportTask3Service {
     @Autowired
     CmsBtJmProductImagesDaoExt daoExtCmsBtJmProductImages;
     @Autowired
-    MqSenderService mqSenderService;
+    CmsMqSenderService cmsMqSenderService;
 
     public CmsBtJmPromotionExportTaskModel get(int id) {
         return dao.select(id);
@@ -183,12 +184,13 @@ public class CmsBtJmPromotionExportTask3Service {
         dao.insert(model);
     }
 
-    /*
-     1.基类异常处理
-     2.
-    * */
+    /**
+     *
+     * @param jmPromotionExportMQMessageBody
+     * @throws MQMessageRuleException
+     */
     public void sendMessage(JmPromotionExportMQMessageBody jmPromotionExportMQMessageBody) throws MQMessageRuleException {
-        mqSenderService.sendMessage(jmPromotionExportMQMessageBody);
+        cmsMqSenderService.sendMessage(jmPromotionExportMQMessageBody);
     }
 
 }

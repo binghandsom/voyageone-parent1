@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.bean.cms.jumei.ProductSaveInfo;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
@@ -8,6 +9,9 @@ import com.voyageone.service.daoext.cms.CmsBtJmPromotionImportTaskDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtPromotionGroupsDaoExtCamel;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionExportMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionImportMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtJmPromotionImportTaskModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionTagProductModel;
@@ -38,6 +42,7 @@ public class CmsBtJmPromotionImportSave3Service {
     CmsBtJmPromotionProductDaoExt daoExtCmsBtJmPromotionProduct;
     @Autowired
     private ProductService productService;
+
     @VOTransactional
     public void saveProductSaveInfo(ProductSaveInfo info) {
         //CmsBtJmPromotionProduct
@@ -78,4 +83,5 @@ public class CmsBtJmPromotionImportSave3Service {
 
         daoExtCmsBtJmPromotionProduct.updateAvgPriceByPromotionProductId(info.jmProductModel.getId());//求价格 折扣 平均值
     }
+
 }

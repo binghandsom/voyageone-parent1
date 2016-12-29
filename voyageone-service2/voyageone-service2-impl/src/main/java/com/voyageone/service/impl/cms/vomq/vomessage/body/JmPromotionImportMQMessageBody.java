@@ -13,7 +13,7 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
  * @since 2.0.0
  */
 @VOMQQueue(value = CmsMqRoutingKey.CMS_BATCH_JmBtPromotionImportTask)
-public class JmImportMQMessageBody extends BaseMQMessageBody {
+public class JmPromotionImportMQMessageBody extends BaseMQMessageBody {
 
     // 是cms_bt_jm_promotion_import_task的id
     private int jmBtPromotionImportTaskId;

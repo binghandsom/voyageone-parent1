@@ -6,6 +6,7 @@ import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionImportMQMessageBody;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtJmPromotionImportTaskModel;
@@ -62,12 +63,12 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
         String path = Properties.readValue(CmsProperty.Props.CMS_JM_IMPORT_PATH);
         FileUtils.mkdirPath(path);
         String timerstr = DateTimeUtil.format(new Date(), "yyyyMMddHHmmssSSS");
-        List<String> listFileName = FileUtils.uploadFile(request, path,timerstr);//上传文件
+        List<String> listFileName = FileUtils.uploadFile(request, path, timerstr);//上传文件
         List<CmsBtJmPromotionImportTaskModel> listModel = new ArrayList<>();
         CmsBtJmPromotionImportTaskModel model = null;
         for (String fileName : listFileName) {
             model = new CmsBtJmPromotionImportTaskModel();
-            model.setFileName(timerstr+fileName);
+            model.setFileName(timerstr + fileName);
             model.setCmsBtJmPromotionId(promotionId);
             model.setCreater(userName);
             model.setCreated(new Date());
@@ -87,9 +88,10 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
         }
         service.saveList(listModel);
         for (CmsBtJmPromotionImportTaskModel taskModel : listModel) {
-            Map<String, Object> message = new HashMap<String, Object>();
-            message.put("id", taskModel.getId());
-            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_JmBtPromotionImportTask, message);
+            JmPromotionImportMQMessageBody mqMessageBody = new JmPromotionImportMQMessageBody();
+            mqMessageBody.setJmBtPromotionImportTaskId(taskModel.getId());
+            mqMessageBody.setSender(this.getUser().getUserName());
+            service.sendMessage(mqMessageBody);
         }
         Map<String, Object> reponse = new HashMap<>();// = cmsPromotionDetailService.uploadPromotion(input, promotionId, getUser().getUserName());
         reponse.put("result", true);

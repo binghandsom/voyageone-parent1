@@ -10,6 +10,7 @@ import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.excel.ExcelColumn;
 import com.voyageone.common.util.excel.ExcelImportUtil;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.jumei.ProductImportBean;
 import com.voyageone.service.bean.cms.jumei.ProductSaveInfo;
@@ -21,6 +22,8 @@ import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionImportMQMessageBody;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -93,7 +96,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     private  CmsBtPromotionGroupsDao daoCmsBtPromotionGroups;
     @Autowired
     private  CmsBtPromotionSkusDao daoCmsBtPromotionSkus;
-
+    @Autowired
+    CmsMqSenderService cmsMqSenderService;
     public void importFile(int JmBtPromotionImportTaskId, String importPath) throws Exception {
         String errorMsg = "";
         boolean isError = false;
@@ -778,5 +782,13 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     }
     public List<CmsBtJmPromotionImportTaskModel> getByPromotionId(int promotionId) {
         return     cmsBtJmPromotionImportTaskDaoExt.selectByPromotionId(promotionId);
+    }
+    /**
+     * 发送 聚美导入文件消息
+     * @param mqMessageBody 聚美导入文件 消息
+     * @throws MQMessageRuleException
+     */
+    public void sendMessage(JmPromotionImportMQMessageBody mqMessageBody) throws MQMessageRuleException {
+        cmsMqSenderService.sendMessage(mqMessageBody);
     }
 }
