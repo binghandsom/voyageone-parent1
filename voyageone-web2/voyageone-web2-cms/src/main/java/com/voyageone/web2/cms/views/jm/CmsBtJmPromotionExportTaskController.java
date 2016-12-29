@@ -1,13 +1,13 @@
 package com.voyageone.web2.cms.views.jm;
 
 import com.voyageone.common.configs.Properties;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionExportTask3Service;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionExportMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -33,8 +33,8 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
 
     @Autowired
     private CmsBtJmPromotionExportTask3Service service3;
-    @Autowired
-    private MqSender sender;
+//    @Autowired
+//    private MqSender sender;
 
     @Autowired
     private CmsJmPromotionExportService cmsJmPromotionExportService;
@@ -60,16 +60,22 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
         com.voyageone.common.util.FileUtils.downloadFile(response, fileName, filePath);
     }
 
+
     @RequestMapping(CmsUrlConstants.CmsBtJmPromotionExportTask.LIST.INDEX.ADDEXPORT)
     @ResponseBody
-    public AjaxResponse addExport(@RequestBody CmsBtJmPromotionExportTaskModel model) {
+    public AjaxResponse addExport(@RequestBody CmsBtJmPromotionExportTaskModel model) throws MQMessageRuleException {
         CallResult result = new CallResult();
         model.setCreater(getUser().getUserName());
         model.setCreated(new java.util.Date());
         service3.insert(model);
         Map<String, Object> message = new HashMap<>();
         message.put("id", model.getId());
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_JmBtPromotionExportTask, message);
+        //sender.sendMessage(MqRoutingKey.CMS_BATCH_JmBtPromotionExportTask, message);
+
+        JmPromotionExportMQMessageBody jmPromotionExportMQMessageBody = new JmPromotionExportMQMessageBody();
+        jmPromotionExportMQMessageBody.setJmBtPromotionExportTaskId(model.getId());
+        jmPromotionExportMQMessageBody.setSender(this.getUser().getUserName());
+        service3.sendMessage(jmPromotionExportMQMessageBody);
         return success(result);
     }
     @RequestMapping(CmsUrlConstants.CmsBtJmPromotionExportTask.LIST.INDEX.EXPORT_JM_PROMOTION_INFO)

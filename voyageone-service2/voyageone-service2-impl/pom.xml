@@ -106,6 +106,11 @@
             <artifactId>voyageone-components-solr</artifactId>
             <version>${voyageone.components.solr.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-rabbitmq</artifactId>
+            <version>${voyageone.components.rabbitmq.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.voyageone</groupId>

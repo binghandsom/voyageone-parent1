@@ -1091,14 +1091,22 @@ public class SxProductService extends BaseService {
         if (!StringUtils.isEmpty(sxData.getMainProduct().getCommon().getStringAttribute("sizeChart"))) {
             sizeChartId = Integer.parseInt(sxData.getMainProduct().getCommon().getStringAttribute("sizeChart"));
         }
-        Map<String, String> sizeMap = getSizeMap(
-                channelId,
+        Map<String, String> sizeMap;
+        try {
+            sizeMap = getSizeMap(
+                    channelId,
 //                sxData.getMainProduct().getOrgChannelId(),
-                sxData.getMainProduct().getCommon().getFields().getBrand(),
-                sxData.getMainProduct().getCommon().getFields().getProductType(),
-                sxData.getMainProduct().getCommon().getFields().getSizeType(),
-                sizeChartId
-        );
+                    sxData.getMainProduct().getCommon().getFields().getBrand(),
+                    sxData.getMainProduct().getCommon().getFields().getProductType(),
+                    sxData.getMainProduct().getCommon().getFields().getSizeType(),
+                    sizeChartId
+            );
+        } catch (Exception e) {
+            String errorMsg = String.format("取得上新数据(SxData)失败! [groupId:%s] [mainCode:%s] [errMsg:%s]", groupId, mainProductCode, e.getMessage());
+            $error(errorMsg);
+            sxData.setErrorMessage(errorMsg);
+            return sxData;
+        }
 
         // 20160805 这段有问题, 不要了 tom START
 //        // 将skuList转成map用于sizeNick的方便检索， 将来sizeNike放到common里的话， 这段就不要了 START

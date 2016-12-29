@@ -10,6 +10,7 @@ import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.excel.ExcelColumn;
 import com.voyageone.common.util.excel.ExcelImportUtil;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.jumei.ProductImportBean;
 import com.voyageone.service.bean.cms.jumei.ProductSaveInfo;
@@ -21,6 +22,8 @@ import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionImportMQMessageBody;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -93,7 +96,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     private  CmsBtPromotionGroupsDao daoCmsBtPromotionGroups;
     @Autowired
     private  CmsBtPromotionSkusDao daoCmsBtPromotionSkus;
-
+    @Autowired
+    CmsMqSenderService cmsMqSenderService;
     public void importFile(int JmBtPromotionImportTaskId, String importPath) throws Exception {
         String errorMsg = "";
         boolean isError = false;
@@ -486,7 +490,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         CmsBtProductGroupModel groupModel = productGroupService.getProductGroupByQuery(modelPromotion.getChannelId(), query);
         if (productInfo == null) return;
         //1.CmsBtPromotionCodesModel
-        CmsBtPromotionCodesModel modelCodes = getByCmsBtPromotionCodesModel(product.getProductCode(), modelPromotion.getId(), modelPromotion.getChannelId());
+        CmsBtPromotionCodesModel modelCodes = getByCmsBtPromotionCodesModel(product.getProductCode(), modelPromotion.getId());
         if (modelCodes == null) {
             modelCodes = new CmsBtPromotionCodesModel();
             modelCodes.setId(0);
@@ -541,7 +545,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
 
         //3.CmsBtPromotionSkusModel
         for (SkuImportBean skuImport : listSkuImport) {
-            CmsBtPromotionSkusModel skusModel = getCmsBtPromotionSkusModel(modelPromotion.getId(), modelPromotion.getChannelId(), skuImport.getProductCode(), skuImport.getSkuCode());
+            CmsBtPromotionSkusModel skusModel = getCmsBtPromotionSkusModel(modelPromotion.getId(), skuImport.getProductCode(), skuImport.getSkuCode());
 
 
             if (skusModel == null) {
@@ -581,11 +585,11 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             }
         }
     }
-    CmsBtPromotionSkusModel getCmsBtPromotionSkusModel(int promotionId,String channelId,String productCode,String skuCode)
+    CmsBtPromotionSkusModel getCmsBtPromotionSkusModel(int promotionId,String productCode,String skuCode)
     {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", promotionId);
-        map.put("orgChannelId", channelId);
+//        map.put("orgChannelId", channelId);
         map.put("productCode", productCode);
         map.put("productSku", skuCode);
         return daoCmsBtPromotionSkus.selectOne(map);
@@ -595,14 +599,13 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", promotionId);
         map.put("productModel", productModel);
-        map.put("orgChannelId", channelId);
+//        map.put("orgChannelId", channelId);
         return daoCmsBtPromotionGroups.selectOne(map);
     }
-    CmsBtPromotionCodesModel getByCmsBtPromotionCodesModel(String productCode,int promotionId,String channelId) {
+    CmsBtPromotionCodesModel getByCmsBtPromotionCodesModel(String productCode,int promotionId) {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", promotionId);
         map.put("productCode", productCode);
-        map.put("orgChannelId", channelId);
         return daoCmsBtPromotionCodes.selectOne(map);
     }
     private void loadSaveSku(ProductSaveInfo saveInfo, List<SkuImportBean> listImport,String userName) {
@@ -778,5 +781,13 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     }
     public List<CmsBtJmPromotionImportTaskModel> getByPromotionId(int promotionId) {
         return     cmsBtJmPromotionImportTaskDaoExt.selectByPromotionId(promotionId);
+    }
+    /**
+     * 发送 聚美导入文件消息
+     * @param mqMessageBody 聚美导入文件 消息
+     * @throws MQMessageRuleException
+     */
+    public void sendMessage(JmPromotionImportMQMessageBody mqMessageBody) throws MQMessageRuleException {
+        cmsMqSenderService.sendMessage(mqMessageBody);
     }
 }

@@ -4,7 +4,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtBrandBlockDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtBrandBlockModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,7 +79,7 @@ public class CmsBtBrandBlockService extends BaseService {
         // 通知任务进行其他部分的处理
         // 如 feed 部分的屏蔽
         // MQ 不负责的部分，应该只包含上新部分
-        sender.sendMessage(MqRoutingKey.CMS_TASK_BRANDBLOCKJOB, new HashMap<String, Object>() {{
+        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_BRANDBLOCKJOB, new HashMap<String, Object>() {{
             put("blocking", true);
             put("data", brandBlockModel);
         }});
@@ -121,7 +121,7 @@ public class CmsBtBrandBlockService extends BaseService {
         Map<String, Object> mqParams = new HashMap<>();
         mqParams.put("blocking", false);
         mqParams.put("data", brandBlockModel);
-        sender.sendMessage(MqRoutingKey.CMS_TASK_BRANDBLOCKJOB, mqParams);
+        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_BRANDBLOCKJOB, mqParams);
     }
 
     /**

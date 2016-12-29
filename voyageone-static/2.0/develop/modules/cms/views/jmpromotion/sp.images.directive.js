@@ -63,7 +63,7 @@ define([
         var self = this,
             promotionInfo = self.promotionInfo,
             spDataService = self.spDataService,
-            brand = promotionInfo.brand ? promotionInfo.brand : '',
+            brand = promotionInfo.masterBrandName ? promotionInfo.masterBrandName : '',
             popups = self.popups;
 
         popups.openImageSuit({brand: brand}).then(function (context) {

@@ -64,6 +64,8 @@ public class CmsBtJmPromotionExportTaskModel extends BaseModel {
      */
     protected Integer templateType;
 
+    protected String parameter;
+
     public Integer getCmsBtJmPromotionId() {
         return cmsBtJmPromotionId;
     }
@@ -142,5 +144,13 @@ public class CmsBtJmPromotionExportTaskModel extends BaseModel {
 
     public void setTemplateType(Integer templateType) {
         this.templateType = templateType;
+    }
+
+    public String getParameter() {
+        return parameter;
+    }
+
+    public void setParameter(String parameter) {
+        this.parameter = parameter == null ? null : parameter.trim();
     }
 }
