@@ -65,10 +65,13 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             return;
         }
 
-        // 参数: 需要翻译的产品code列表（不设置的场合就是该渠道下所有code都翻译）
+        // 参数: 产品code列表
         List<String> codeList = null;
         if (messageMap.containsKey("codeList")) {
             codeList = (List<String>) messageMap.get("codeList");
+        } else {
+            $error("批量重刷主类目(MQ): 输入参数不存在: codeList");
+            return;
         }
 
         // 参数: 更新者
