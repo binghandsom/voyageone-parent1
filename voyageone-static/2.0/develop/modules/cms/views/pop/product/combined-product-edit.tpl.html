@@ -15,26 +15,24 @@
                 </div>
             </div>
             <div class="row form-group">
-                <label class="col-sm-3 control-label" ng-class="{vo_reqfield:vm.config.startSupplyChain}"><strong translate="TXT_WULIUBAO_PRODUCT_CODE"></strong></label>
-                <div class="col-sm-4">
-                    <input type="text" class="form-control" ng-model="vm.product.wuliubaoCode" ng-required="vm.config.startSupplyChain"/>
-                    <div class="text-warnings" style="padding-left:0px">
-                        <i class="icon fa fa-bell-o"></i>&nbsp;启用供应链管理的店铺必填！
-                    </div>
-                </div>
-                <div class="col-sm-2">
-                    <a href="javascript:void(0)"
-                       ng-click="popExamplePage()"
-                       class="v-top" style="font-size: 17px;"><i class="fa fa-question-circle text-warnings"></i></a>
-                </div>
-            </div>
-            <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_COMBINED_NUM_ID"></strong></label>
                 <div class="col-sm-4">
                     <input type="text" class="form-control" disabled required ng-model="vm.product.numID" />
                 </div>
                 <div class="col-sm-3">
                     <button class="btn btn-info btn-pop" ng-click="getCombinedProductInfo()">获取组合套装信息</button>
+                    <a href="javascript:void(0)"
+                       ng-click="popExamplePage()"
+                       class="v-top" style="font-size: 17px;"><i class="fa fa-question-circle text-warnings"></i></a>
+                </div>
+            </div>
+            <div class="row form-group">
+                <label class="col-sm-3 control-label" ng-class="{vo_reqfield:vm.config.startSupplyChain}"><strong translate="TXT_WULIUBAO_PRODUCT_CODE"></strong></label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" ng-model="vm.product.wuliubaoCode" ng-required="vm.config.startSupplyChain"/>
+                    <div class="text-warnings" style="padding-left:0px">
+                        <i class="icon fa fa-bell-o"></i>&nbsp;启用供应链管理的店铺必填！
+                    </div>
                 </div>
             </div>
             <div class="row form-group">
