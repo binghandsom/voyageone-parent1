@@ -1,10 +1,11 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.base.dao.mongodb.JongoUpdate;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.category.match.MtCategoryKeysModel;
 import com.voyageone.category.match.SearchResult;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -15,9 +16,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +35,8 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
 
     @Autowired
     private ProductService productService;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private UploadToUSJoiService uploadToUSJoiService;
 
@@ -150,54 +151,54 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             MtCategoryKeysModel mtCategoryKeysModel = searchResult.getMtCategoryKeysModel();
 
             // 构造更新SQL
-            JongoUpdate updObj = new JongoUpdate();
-            updObj.setQuery("{'common.fields.code':#}");
-            updObj.setQueryParameters(code);
+            List<BulkUpdateModel> bulkList = new ArrayList<>();
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("common.fields.code", code);
             // 更新字段
-            StringBuilder sbUpdate = new StringBuilder("{$set:{");
+            HashMap<String, Object> updateMap = new HashMap<>();
             // 先备份原来的productType和sizeType
             // feed原始产品分类
-            sbUpdate.append("'common.fields.origProductType':'" + prodCommonField.getProductType() + "'");
+            updateMap.put("common.fields.origProductType", prodCommonField.getProductType());
             // feed原始适合人群
-            sbUpdate.append(", 'common.fields.origSizeType':'" + prodCommonField.getSizeType() + "'");
+            updateMap.put("common.fields.origSizeType", prodCommonField.getSizeType());
 
             // 主类目path(中文)
-            sbUpdate.append(", 'common.catPath':'" + replaceStr(mtCategoryKeysModel.getCnName()) + "'");
+            updateMap.put("common.catPath", mtCategoryKeysModel.getCnName());
             // 主类目path(英文)
-            sbUpdate.append(", 'common.catPathEn':'" + replaceStr(mtCategoryKeysModel.getEnName()) + "'");
+            updateMap.put("common.catPathEn", mtCategoryKeysModel.getEnName());
             // 主类目id(就是主类目path中文的MD5码)
-            sbUpdate.append(", 'common.catId':'" + MD5.getMD5(mtCategoryKeysModel.getCnName()) + "'");
+            updateMap.put("common.catId", MD5.getMD5(mtCategoryKeysModel.getCnName()));
             // 更新主类目设置状态
             if (!StringUtil.isEmpty(mtCategoryKeysModel.getCnName())) {
-                sbUpdate.append(", 'common.fields.categoryStatus':'1'");
-                sbUpdate.append(", 'common.fields.categorySetTime':'" + DateTimeUtil.getNow() + "'");
-                sbUpdate.append(", 'common.fields.categorySetter':'" + userName + "'");
+                updateMap.put("common.fields.categoryStatus", "1");
+                updateMap.put("common.fields.categorySetTime", DateTimeUtil.getNow());
+                updateMap.put("common.fields.categorySetter", userName);
             } else {
-                sbUpdate.append(", 'common.fields.categoryStatus':'0'");
+                updateMap.put("common.fields.categoryStatus", "0");
             }
             // 产品分类(英文)
-            sbUpdate.append(", 'common.fields.productType':'" + replaceStr(mtCategoryKeysModel.getProductTypeEn()) + "'");
+            updateMap.put("common.fields.productType", mtCategoryKeysModel.getProductTypeEn());
             // 产品分类(中文)
-            sbUpdate.append(", 'common.fields.productTypeCn':'" + replaceStr(mtCategoryKeysModel.getProductTypeCn()) + "'");
+            updateMap.put("common.fields.productTypeCn", mtCategoryKeysModel.getProductTypeCn());
             // 适合人群(英文)
-            sbUpdate.append(", 'common.fields.sizeType':'" + replaceStr(mtCategoryKeysModel.getSizeTypeEn()) + "'");
+            updateMap.put("common.fields.sizeType", mtCategoryKeysModel.getSizeTypeEn());
             // 适合人群(中文)
-            sbUpdate.append(", 'common.fields.sizeTypeCn':'" + replaceStr(mtCategoryKeysModel.getSizeTypeCn()) + "'");
+            updateMap.put("common.fields.sizeTypeCn", mtCategoryKeysModel.getSizeTypeCn());
             // TODO 2016/12/30暂时这样更新，以后要改
             if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter())) {
                 // 税号个人
-                sbUpdate.append(", 'common.fields.hsCodePrivate':'" + mtCategoryKeysModel.getTaxPersonal() + "'");
+                updateMap.put("common.fields.hsCodePrivate", mtCategoryKeysModel.getTaxPersonal());
                 // 更新税号设置状态
                 if (StringUtil.isEmpty(mtCategoryKeysModel.getTaxPersonal())) {
-                    sbUpdate.append(", 'common.fields.hsCodeStatus':'1'");
-                    sbUpdate.append(", 'common.fields.hsCodeSetTime':'" + DateTimeUtil.getNow() + "'");
-                    sbUpdate.append(", 'common.fields.hsCodeSetter':'" + userName + "'");
+                    updateMap.put("common.fields.hsCodeStatus", "1");
+                    updateMap.put("common.fields.hsCodeSetTime", DateTimeUtil.getNow());
+                    updateMap.put("common.fields.hsCodeSetter", userName);
                 } else {
-                    sbUpdate.append(", 'common.fields.hsCodeStatus':'0'");
+                    updateMap.put("common.fields.hsCodeStatus", "0");
                 }
             }
             // 税号跨境申报（10位）
-            sbUpdate.append(", 'common.fields.hsCodeCross':'" + mtCategoryKeysModel.getTaxDeclare() + "'");
+            updateMap.put("common.fields.hsCodeCross", mtCategoryKeysModel.getTaxDeclare());
 
             // 商品中文名称(如果已翻译，则不设置)
             if ("0".equals(prodCommonField.getTranslateStatus())) {
@@ -207,29 +208,19 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
                 // 设置商品中文名称（品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称）
                 String titleCn = uploadToUSJoiService.getOriginalTitleCnByCategory(prodCommonField.getBrand(), prodCommonField.getSizeTypeCn(), leafCategoryCnName);
                 if (!StringUtils.isEmpty(titleCn)) {
-                    sbUpdate.append(", 'common.fields.originalTitleCn':'" + replaceStr(titleCn) + "'");
+                    updateMap.put("common.fields.originalTitleCn", titleCn);
                 }
             }
-            sbUpdate.append("}}");
-            updObj.setUpdate(sbUpdate.toString());
-
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setQueryMap(queryMap);
+            model.setUpdateMap(updateMap);
+            bulkList.add(model);
             // 更新主类目信息
-            productService.updateFirstProduct(updObj, channelId);
+            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
         } catch (Exception exception) {
             String warnMsg = String.format("主类目设置处理异常！[channleId:%s] [code:%s] [userName:%s] [errMsg:%s]",
                     channelId, code, userName, Arrays.toString(exception.getStackTrace()));
             $warn(warnMsg);
         }
-    }
-
-    /**
-     * 替换到字符串里面字符(单双引号)
-     *
-     * @param str 对象字符串
-     */
-    protected String replaceStr(String str) {
-        if (StringUtils.isEmpty(str)) return "";
-
-        return str.replace("'", "\\'").replace("\"", "\\\"");
     }
 }
