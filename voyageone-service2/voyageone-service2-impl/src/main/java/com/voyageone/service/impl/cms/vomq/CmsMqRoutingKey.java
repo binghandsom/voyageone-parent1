@@ -11,11 +11,14 @@ public class CmsMqRoutingKey {
     // 聚美活动文件生成导出
     public static final String CMS_JM_PROMOTION_EXPORT = "VOCmsJmPromotionExportQueue";
 
+    // 聚美活动文件 导入
+    public static final String CMS_JM_PROMOTION_IMPORT = "VOCmsJmPromotionImportQueue";
+
 
     /**
      * jumei mq task
      */
-    public static final String CMS_BATCH_JmBtPromotionImportTask = "voyageone_cms_batchjob_JmBtPromotionImportTask_queue";
+//    public static final String CMS_JM_PromotionImportTask = "voyageone_cms_batchjob_JmBtPromotionImportTask_queue";
 
 
     public static final String CMS_BATCH_JmPromotionRecovery = "voyageone_cms_batchjob_JmPromotionRecovery_queue";

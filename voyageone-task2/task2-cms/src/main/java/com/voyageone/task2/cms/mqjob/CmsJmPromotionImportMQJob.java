@@ -23,7 +23,7 @@ import java.util.Map;
  * @since 2.0.0
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_JmBtPromotionImportTask)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_JM_PROMOTION_IMPORT)
 public class CmsJmPromotionImportMQJob extends TBaseMQCmsService<JmPromotionImportMQMessageBody> {
     @Autowired
     CmsBtJmPromotionImportTask3Service service;
