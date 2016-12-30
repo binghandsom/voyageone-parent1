@@ -101,6 +101,7 @@ define(function () {
                     "updateProductSkuInfo": "updateProductSkuInfo",
                     "updateProductAllInfo": "updateProductAllInfo",
                     "changeCategory": "changeCategory",
+                    "refreshProductCategory":"refreshProductCategory",
                     "revertCategory": "revertCategory",
                     "getProductPlatform": "getProductPlatform",
                     "changePlatformCategory": "changePlatformCategory",
