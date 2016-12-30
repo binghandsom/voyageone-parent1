@@ -134,7 +134,8 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             SearchResult searchResult = uploadToUSJoiService.getMainCatInfo(prodObj.getFeed().getCatPath(),
                     prodCommonField.getProductType(),
                     prodCommonField.getSizeType(),
-                    prodCommonField.getProductNameEn());
+                    prodCommonField.getProductNameEn(),
+                    prodCommonField.getBrand());
             if (searchResult == null || searchResult.getMtCategoryKeysModel() == null) {
                 String warnMsg = String.format("调用Feed到主数据的匹配接口未能取得匹配度最高的主类目！[channelId:%s] [code:%s] [catConf:%s]" +
                                 "[feedCategoryPath:%s] [productType:%s] [sizeType:%s] [productNameEn:%s]",

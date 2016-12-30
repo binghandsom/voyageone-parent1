@@ -1774,7 +1774,8 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         SearchResult searchResult = getMainCatInfo(feedCategoryPath,
                 prodCommonField.getProductType(),
                 prodCommonField.getSizeType(),
-                prodCommonField.getProductNameEn());
+                prodCommonField.getProductNameEn(),
+                prodCommonField.getBrand());
         if (searchResult != null && searchResult.getMtCategoryKeysModel() != null) {
             // 先备份原来的productType和sizeType
             // feed原始产品分类
@@ -1855,9 +1856,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      * @param productType 产品分类
      * @param sizeType 适合人群(英文)
      * @param productNameEn 产品名称（英文）
+     * @param brand 产品品牌
      * @return SearchResult 匹配度最高的第一个查询结果
      */
-    public SearchResult getMainCatInfo(String feedCategoryPath, String productType, String sizeType, String productNameEn) {
+    public SearchResult getMainCatInfo(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
         // 调用Feed到主数据的匹配程序匹配主类目
         StopWordCleaner cleaner = new StopWordCleaner();
         // 子店feed类目path分隔符(由于导入feedInfo表时全部替换成用"-"来分隔了，所以这里写固定值就可以了)
@@ -1868,7 +1870,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         FeedQuery query = new FeedQuery(feedCategoryPath, cleaner, tokenizer);
         query.setProductType(productType);
         query.setSizeType(sizeType);
-        query.setProductName(productNameEn);
+        query.setProductName(productNameEn, brand);
 
         // 调用主类目匹配接口，取得匹配度最高的一个主类目
         List<SearchResult> searchResults = searcher.search(query, 1);
