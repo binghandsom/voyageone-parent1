@@ -76,7 +76,7 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
         setStringAttribute("modified", modified);
     }
 
-    // 更新时间
+    // 主类目人工设置FLG
     public String getCatConf() {
         return getStringAttribute("catConf") == null?"0":getStringAttribute("catConf");
     }
