@@ -581,22 +581,43 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 //            valCategory = feedInfo.getCategory().replaceAll("-", "&gt;");
 //            valCategory = "居家布艺";
 
-            String tmallCatKey = getValueFromPageOrCondition("tmall_category_key", "", mainProductPlatformCart, sxData, shopProp);
-            if (!StringUtils.isEmpty(tmallCatKey)) {
-                if (conditionMappingMap != null && conditionMappingMap.containsKey(tmallCatKey)) {
-                    valCategory = conditionMappingMap.get(tmallCatKey);
+
+            if ("017".equals(sxData.getChannelId())) {
+                // LuckyVitamin特有设置
+
+                if (valTitle.contains("孕妇")
+                        || valTitle.contains("婴幼儿")
+                        || valTitle.contains("儿童")
+                        ) {
+                    Map<String, Object> paramCategory = new HashMap<>();
+                    paramCategory.put("cat_id", "50026470"); // 孕妇装/孕产妇用品/营养>孕产妇营养品>其它
+                    valCategory = JacksonUtil.bean2Json(paramCategory);
                 } else {
-                    String errMsg = String.format("从cms_mt_channel_condition_mapping_config表中没有取到客户类目对应的天猫" +
-                            "平台一级类目信息，中止上新！[Mapkey:%s]", tmallCatKey);
+                    Map<String, Object> paramCategory = new HashMap<>();
+                    paramCategory.put("cat_id", "50050237"); // 保健食品/膳食营养补充食品>海外膳食营养补充食品>其他膳食营养补充食品>其他膳食营养补充剂
+                    valCategory = JacksonUtil.bean2Json(paramCategory);
+                }
+
+            } else {
+                // 普通的获取类目的方式
+                String tmallCatKey = getValueFromPageOrCondition("tmall_category_key", "", mainProductPlatformCart, sxData, shopProp);
+                if (!StringUtils.isEmpty(tmallCatKey)) {
+                    if (conditionMappingMap != null && conditionMappingMap.containsKey(tmallCatKey)) {
+                        valCategory = conditionMappingMap.get(tmallCatKey);
+                    } else {
+                        String errMsg = String.format("从cms_mt_channel_condition_mapping_config表中没有取到客户类目对应的天猫" +
+                                "平台一级类目信息，中止上新！[Mapkey:%s]", tmallCatKey);
+                        $error(errMsg);
+                        throw new BusinessException(errMsg);
+                    }
+                } else {
+                    String errMsg = String.format("从cms_mt_channel_condition_config表中没有取到客户类目key配置信息,导致不能取得对应的天猫" +
+                            "平台一级类目信息，中止上新！");
                     $error(errMsg);
                     throw new BusinessException(errMsg);
                 }
-            } else {
-                String errMsg = String.format("从cms_mt_channel_condition_config表中没有取到客户类目key配置信息,导致不能取得对应的天猫" +
-                        "平台一级类目信息，中止上新！");
-                $error(errMsg);
-                throw new BusinessException(errMsg);
             }
+
         }
         productInfoMap.put("category", valCategory);
 
