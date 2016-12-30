@@ -513,7 +513,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         }
 
         if (!orderID.equals(request.getOrderId())) {
-            throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "OrderID is inconsistent.");
+            throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "OrderID in the request endpoint and the request body are not the same. Please double check the OrderID.");
         }
 
         if (CollectionUtils.isEmpty(request.getItems())) {
@@ -754,7 +754,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         }
 
         if (!orderID.equals(request.getOrderId())) {
-            throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "OrderID is inconsistent.");
+            throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "OrderID in the request endpoint and the request body are not the same. Please double check the OrderID.");
         }
 
         if (CollectionUtils.isEmpty(request.getItems())) {
