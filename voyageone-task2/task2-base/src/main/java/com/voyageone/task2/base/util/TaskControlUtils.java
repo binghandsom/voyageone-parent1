@@ -87,6 +87,23 @@ public class TaskControlUtils {
     }
 
     /**
+     * 取得配置属性对应的值1(单个)，没有配置时采用默认值
+     *
+     * @param taskControlList 当前JOB对应的TaskControl配置信息列表
+     * @param name TaskControl的cfg_name值
+     * @param defVal 没有配置的默认值
+     * @return 对应值1
+
+     */
+    public static String getVal1WithDefVal(List<TaskControlBean> taskControlList, TaskControlEnums.Name name, String defVal) {
+        return taskControlList.stream()
+                .filter(taskControlBean -> taskControlBean.getCfg_name().equals(name.toString()))
+                .findFirst()
+                .map(taskControl-> StringUtils.isEmpty(taskControl.getCfg_val1()) ? defVal : taskControl.getCfg_val1())
+                .orElse(defVal);
+    }
+
+    /**
      * 取得配置属性对应的值1(单个)
      *
      * @param taskControlList List
@@ -129,6 +146,22 @@ public class TaskControlUtils {
         return taskControlList.stream()
                 .filter(taskControlBean -> taskControlBean.getCfg_name().equals(name.toString()))
                 .collect(toList());
+    }
+
+    /**
+     * 取得配置属性对应的值2(单个)，没有配置时采用默认值
+     *
+     * @param taskControlList 当前JOB对应的TaskControl配置信息列表
+     * @param name TaskControl的cfg_name值
+     * @param defVal 没有配置的默认值
+     * @return 对应值2
+     */
+    public static String getVal2WithDefVal(List<TaskControlBean> taskControlList, TaskControlEnums.Name name, String defVal) {
+        return taskControlList.stream()
+                .filter(taskControlBean -> taskControlBean.getCfg_name().equals(name.toString()))
+                .findFirst()
+                .map(taskControl-> StringUtils.isEmpty(taskControl.getCfg_val2()) ? defVal : taskControl.getCfg_val2())
+                .orElse(defVal);
     }
 
     /**
