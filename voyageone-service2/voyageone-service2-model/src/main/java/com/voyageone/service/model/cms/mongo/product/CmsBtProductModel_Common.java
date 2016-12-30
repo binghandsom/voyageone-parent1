@@ -76,6 +76,14 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
         setStringAttribute("modified", modified);
     }
 
+    // 更新时间
+    public String getCatConf() {
+        return getStringAttribute("catConf") == null?"0":getStringAttribute("catConf");
+    }
+    public void setCatConf(String catConf) {
+        setStringAttribute("catConf", catConf);
+    }
+
     // fields
     public CmsBtProductModel_Field getFields()  {
         return getAttribute(FIELDS);
