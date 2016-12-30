@@ -14,6 +14,8 @@ public class CmsMqRoutingKey {
     // 聚美活动文件 导入
     public static final String CMS_JM_PROMOTION_IMPORT = "VOCmsJmPromotionImportQueue";
 
+    //    -- 3.聚美平台上传更新
+    public static final String CMS_JM_PRODUCT_UPDATE = "VOCmsJmProductUpdateQueue";
 
     /**
      * jumei mq task
