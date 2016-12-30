@@ -214,9 +214,9 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
 
             // 更新主类目信息
             productService.updateFirstProduct(updObj, channelId);
-        } catch (Exception ignored) {
+        } catch (Exception exception) {
             String warnMsg = String.format("主类目设置处理异常！[channleId:%s] [code:%s] [userName:%s] [errMsg:%s]",
-                    channelId, code, userName, ignored.getMessage());
+                    channelId, code, userName, CommonUtil.getMessages(exception));
             $warn(warnMsg);
             return;
         }
