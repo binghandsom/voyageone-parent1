@@ -211,6 +211,7 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             bulkList.add(model);
             // 更新主类目信息
             cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
+            $info("产品(%s)主类目设置成功!", code);
         } catch (Exception exception) {
             String warnMsg = String.format("主类目设置处理异常！[channleId:%s] [code:%s] [userName:%s] [errMsg:%s]",
                     channelId, code, userName, Arrays.toString(exception.getStackTrace()));
