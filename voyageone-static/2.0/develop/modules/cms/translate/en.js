@@ -559,6 +559,7 @@ define(function () {
         "BTN_BATCH_UPDATE_ATTRIBUTE": "批量更新",
         "BTN_UPDATE_COMMON_ATTRIBUTE": "更新共通属性",
         "BTN_CHANGE_MASTER_CATEGORY": "切换主类目",
+        "BTN_REFRESH_MASTER_CATEGORY": "重新计算主类目",
         "BTN_OK": "确定",
         "BTN_CLEAR": "清空",
         "BTN_EXPORT": "导出",
