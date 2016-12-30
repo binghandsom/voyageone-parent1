@@ -1778,11 +1778,15 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 prodCommonField.getProductNameEn(),
                 prodCommonField.getBrand());
         if (searchResult != null && searchResult.getMtCategoryKeysModel() != null) {
-            if (blnAddFlg) {
-                // 新增商品时，先备份原来的productType和sizeType
-                // feed原始产品分类
+            // 先备份原来的productType和sizeType
+            // feed原始产品分类
+            if (StringUtils.isEmpty(prodCommonField.getOrigProductType())
+                    && !StringUtils.isEmpty(prodCommonField.getProductType())) {
                 prodCommonField.setOrigProductType(prodCommonField.getProductType());
-                // feed原始适合人群
+             }
+            // feed原始适合人群
+            if (StringUtils.isEmpty(prodCommonField.getOrigSizeType())
+                    && !StringUtils.isEmpty(prodCommonField.getSizeType())) {
                 prodCommonField.setOrigSizeType(prodCommonField.getSizeType());
             }
 
@@ -1879,7 +1883,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         List<SearchResult> searchResults = searcher.search(query, 1);
         if (ListUtils.isNull(searchResults)) {
             String errMsg = String.format("调用Feed到主数据的匹配程序匹配主类目失败！[feedCategoryPath:%s] [productType:%s] " +
-                    "[sizeType:%s] [productNameEn:%s]", feedCategoryPath, productType, sizeType, productNameEn);
+                    "[sizeType:%s] [productNameEn:%s] [brand:%s]", feedCategoryPath, productType, sizeType, productNameEn, brand);
             $error(errMsg);
             return null;
         }
