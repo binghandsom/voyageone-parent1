@@ -140,9 +140,9 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
                     prodCommonField.getBrand());
             if (searchResult == null || searchResult.getMtCategoryKeysModel() == null) {
                 String warnMsg = String.format("调用Feed到主数据的匹配接口未能取得匹配度最高的主类目！[channelId:%s] [code:%s] [catConf:%s]" +
-                                "[feedCategoryPath:%s] [productType:%s] [sizeType:%s] [productNameEn:%s]",
+                                "[feedCategoryPath:%s] [productType:%s] [sizeType:%s] [productNameEn:%s] [brand:%s]",
                         channelId, code, prodObj.getCommonNotNull().getCatConf(), prodObj.getFeed().getCatPath(),
-                        prodCommonField.getProductType(), prodCommonField.getSizeType(), prodCommonField.getProductNameEn());
+                        prodCommonField.getProductType(), prodCommonField.getSizeType(), prodCommonField.getProductNameEn(), prodCommonField.getBrand());
                 $warn(warnMsg);
                 return;
             }
