@@ -2,6 +2,7 @@ package com.voyageone.service.model.cms.mongo.product;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.common.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +79,7 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
 
     // 主类目人工设置FLG
     public String getCatConf() {
-        return getStringAttribute("catConf") == null?"0":getStringAttribute("catConf");
+        return StringUtils.isEmpty(getStringAttribute("catConf")) ? "0" : getStringAttribute("catConf");
     }
     public void setCatConf(String catConf) {
         setStringAttribute("catConf", catConf);
