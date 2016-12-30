@@ -4,10 +4,7 @@ import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.category.match.MtCategoryKeysModel;
 import com.voyageone.category.match.SearchResult;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.MD5;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -65,10 +62,14 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             return;
         }
 
-        // 参数: 需要翻译的产品code列表（不设置的场合就是该渠道下所有code都翻译）
+        // 参数: 产品code列表
         List<String> codeList = null;
         if (messageMap.containsKey("codeList")) {
             codeList = (List<String>) messageMap.get("codeList");
+        }
+        if (ListUtils.isNull(codeList)) {
+            $error("批量重刷主类目(MQ): 输入参数不存在: codeList");
+            return;
         }
 
         // 参数: 更新者
@@ -86,7 +87,7 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
 
         // 创建线程池
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
-        // 根据上新任务列表中的groupid循环上新处理
+        // 根据MQ消息传过来的对象code列表循环
         for(String code : codeList) {
             // 启动多线程
             executor.execute(() -> doMain(channelId, code, userName));
