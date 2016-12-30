@@ -1121,7 +1121,8 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
             // 上新失败时回写错误状态到子店的productGroup和product
             CmsBtProductGroupModel groupModel = productGroupService.getProductGroupByGroupId(sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId());
-            productGroupService.updateUploadErrorStatus(groupModel, errMsg);
+            // 上新对象code
+            productGroupService.updateUploadErrorStatus(groupModel, groupModel.getProductCodes(), errMsg);
             // 出错的时候将错误信息回写到cms_bt_business_log表
             insertBusinessLog(sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getCartId(),
                     StringUtils.toString(sxWorkLoadBean.getGroupId()), "", "", errMsg, getTaskName());
