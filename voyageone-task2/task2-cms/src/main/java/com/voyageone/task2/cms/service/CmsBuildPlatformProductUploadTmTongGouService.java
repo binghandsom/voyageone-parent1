@@ -583,20 +583,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
 
             if ("017".equals(sxData.getChannelId())) {
-                // LuckyVitamin特有设置
-
-                if (valTitle.contains("孕妇")
-                        || valTitle.contains("婴幼儿")
-                        || valTitle.contains("儿童")
-                        ) {
-                    Map<String, Object> paramCategory = new HashMap<>();
-                    paramCategory.put("cat_id", "50026470"); // 孕妇装/孕产妇用品/营养>孕产妇营养品>其它
-                    valCategory = JacksonUtil.bean2Json(paramCategory);
-                } else {
-                    Map<String, Object> paramCategory = new HashMap<>();
-                    paramCategory.put("cat_id", "50050237"); // 保健食品/膳食营养补充食品>海外膳食营养补充食品>其他膳食营养补充食品>其他膳食营养补充剂
-                    valCategory = JacksonUtil.bean2Json(paramCategory);
-                }
+                // LuckyVitamin默认固定
+                Map<String, Object> paramCategory = new HashMap<>();
+                paramCategory.put("cat_id", "50050237"); // 保健食品/膳食营养补充食品>海外膳食营养补充食品>其他膳食营养补充食品>其他膳食营养补充剂
+                valCategory = JacksonUtil.bean2Json(paramCategory);
 
             } else {
                 // 普通的获取类目的方式
@@ -619,6 +609,18 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             }
 
         }
+
+        // 防止母婴类目 START
+        if (valTitle.contains("孕妇")
+                || valTitle.contains("婴幼儿")
+                || valTitle.contains("儿童")
+                ) {
+            Map<String, Object> paramCategory = new HashMap<>();
+            paramCategory.put("cat_id", "50026470"); // 孕妇装/孕产妇用品/营养>孕产妇营养品>其它
+            valCategory = JacksonUtil.bean2Json(paramCategory);
+        }
+        // 防止母婴类目 END
+
         productInfoMap.put("category", valCategory);
 
         // 商品属性(非必填)
