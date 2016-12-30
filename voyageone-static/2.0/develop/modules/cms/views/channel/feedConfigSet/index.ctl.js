@@ -82,16 +82,20 @@ define([
         /**
          * Feed属性一览*删除按钮
          */
-        feedConfigSet.prototype.delete = function (item) {
+        feedConfigSet.prototype.delete = function (id,index) {
             var self = this,
+                confirm = self.confirm,
                 cmsFeedConfigService = self.cmsFeedConfigService;
-            if(item== undefined){
-                self.search();
-            }else {
-                cmsFeedConfigService.delete(item).then(function (res) {
+
+            confirm("您是否要删除当前数据？").then(function(){
+                if(id== undefined) {
+                    self.feedList.splice(index,1);
+                    return;
+                }
+                cmsFeedConfigService.delete(id).then(function (res) {
                     self.search();
                 });
-            }
+            });
         };
 
         /**
