@@ -15,6 +15,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -216,9 +217,8 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             productService.updateFirstProduct(updObj, channelId);
         } catch (Exception exception) {
             String warnMsg = String.format("主类目设置处理异常！[channleId:%s] [code:%s] [userName:%s] [errMsg:%s]",
-                    channelId, code, userName, CommonUtil.getMessages(exception));
+                    channelId, code, userName, Arrays.toString(exception.getStackTrace()));
             $warn(warnMsg);
-            return;
         }
     }
 
