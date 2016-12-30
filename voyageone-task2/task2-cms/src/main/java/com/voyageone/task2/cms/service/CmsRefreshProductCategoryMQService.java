@@ -27,7 +27,10 @@ import java.util.concurrent.TimeUnit;
 /**
  * 批量重刷主类目MQ服务
  *
+ * @author desmond
  * Created by james on 2016/12/30.
+ * @version 2.10.0
+ * @version 2.10.0
  */
 @Service
 @RabbitListener(queues = MqRoutingKey.CMS_BATCH_CmsBatchRefreshMainCategoryJob)
@@ -162,14 +165,12 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             // 主类目id(就是主类目path中文的MD5码)
             sbUpdate.append(", 'common.catId':'" + MD5.getMD5(mtCategoryKeysModel.getCnName()) + "'");
             // 更新主类目设置状态
-            String oldCategoryStatus = prodCommonField.getCategoryStatus();
-            prodCommonField.setCategoryStatus(StringUtil.isEmpty(MD5.getMD5(mtCategoryKeysModel.getCnName())) ? "0" : "1");
-            if (!prodCommonField.getCategoryStatus().equalsIgnoreCase(oldCategoryStatus)) {
-                // 如果状态有变更且变成1时，记录更新时间
-                if ("1".equals(prodCommonField.getCategoryStatus())) {
-                    sbUpdate.append(", 'common.fields.categorySetTime':'" + DateTimeUtil.getNow() + "'");
-                    sbUpdate.append(", 'common.fields.categorySetter':'" + userName + "'");
-                }
+            if (!StringUtil.isEmpty(mtCategoryKeysModel.getCnName())) {
+                sbUpdate.append(", 'common.fields.categoryStatus':'1'");
+                sbUpdate.append(", 'common.fields.categorySetTime':'" + DateTimeUtil.getNow() + "'");
+                sbUpdate.append(", 'common.fields.categorySetter':'" + userName + "'");
+            } else {
+                sbUpdate.append(", 'common.fields.categoryStatus':'0'");
             }
             // 产品分类(英文)
             sbUpdate.append(", 'common.fields.productType':'" + replaceStr(mtCategoryKeysModel.getProductTypeEn()) + "'");
@@ -184,14 +185,12 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
                 // 税号个人
                 sbUpdate.append(", 'common.fields.hsCodePrivate':'" + mtCategoryKeysModel.getTaxPersonal() + "'");
                 // 更新税号设置状态
-                String oldHsCodeStatus = prodCommonField.getHsCodeStatus();
-                prodCommonField.setHsCodeStatus(StringUtil.isEmpty(mtCategoryKeysModel.getTaxPersonal()) ? "0" : "1");
-                if (!prodCommonField.getHsCodeStatus().equalsIgnoreCase(oldHsCodeStatus)) {
-                    // 如果状态有变更且变成1时，记录更新时间
-                    if ("1".equals(prodCommonField.getHsCodeStatus())) {
-                        sbUpdate.append(", 'common.fields.hsCodeSetTime':'" + DateTimeUtil.getNow() + "'");
-                        sbUpdate.append(", 'common.fields.hsCodeSetter':'" + userName + "'");
-                    }
+                if (StringUtil.isEmpty(mtCategoryKeysModel.getTaxPersonal())) {
+                    sbUpdate.append(", 'common.fields.hsCodeStatus':'1'");
+                    sbUpdate.append(", 'common.fields.hsCodeSetTime':'" + DateTimeUtil.getNow() + "'");
+                    sbUpdate.append(", 'common.fields.hsCodeSetter':'" + userName + "'");
+                } else {
+                    sbUpdate.append(", 'common.fields.hsCodeStatus':'0'");
                 }
             }
             // 税号跨境申报（10位）

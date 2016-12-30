@@ -1793,14 +1793,12 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             prodCommon.setCatId(MD5.getMD5(mtCategoryKeysModel.getCnName()));
 
             // 更新主类目设置状态
-            String oldCategoryStatus = prodCommonField.getCategoryStatus();
-            prodCommonField.setCategoryStatus(StringUtil.isEmpty(prodCommon.getCatId()) ? "0" : "1");
-            if(!prodCommonField.getCategoryStatus().equalsIgnoreCase(oldCategoryStatus)){
-                // 如果状态有变更且变成1时，记录更新时间
-                if("1".equals(prodCommonField.getCategoryStatus())){
-                    prodCommonField.setCategorySetTime(DateTimeUtil.getNow());
-                    prodCommonField.setCategorySetter(getTaskName());
-                }
+            if (!StringUtil.isEmpty(prodCommon.getCatId())) {
+                prodCommonField.setCategoryStatus("1");
+                prodCommonField.setCategorySetTime(DateTimeUtil.getNow());
+                prodCommonField.setCategorySetter(getTaskName());
+            } else {
+                prodCommonField.setCategoryStatus("0");
             }
             // 产品分类(英文)
             prodCommonField.setProductType(mtCategoryKeysModel.getProductTypeEn());
@@ -1815,14 +1813,12 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 // 税号个人
                 prodCommonField.setHsCodePrivate(mtCategoryKeysModel.getTaxPersonal());
                 // 更新税号设置状态
-                String oldHsCodeStatus = prodCommonField.getHsCodeStatus();
-                prodCommonField.setHsCodeStatus(StringUtil.isEmpty(prodCommonField.getHsCodePrivate()) ? "0" : "1");
-                if(!prodCommonField.getHsCodeStatus().equalsIgnoreCase(oldHsCodeStatus)){
-                    // 如果状态有变更且变成1时，记录更新时间
-                    if("1".equals(prodCommonField.getHsCodeStatus())){
-                        prodCommonField.setHsCodeSetTime(DateTimeUtil.getNow());
-                        prodCommonField.setHsCodeSetter(getTaskName());
-                    }
+                if (!StringUtil.isEmpty(prodCommonField.getHsCodePrivate())) {
+                    prodCommonField.setHsCodeStatus("1");
+                    prodCommonField.setHsCodeSetTime(DateTimeUtil.getNow());
+                    prodCommonField.setHsCodeSetter(getTaskName());
+                } else {
+                    prodCommonField.setHsCodeStatus("0");
                 }
             }
             // 税号跨境申报（10位）
