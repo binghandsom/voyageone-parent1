@@ -45,11 +45,11 @@ public class CmsRefreshProductCategoryMQServiceTest {
 
     @Test
     public void testDoMain() throws Exception {
-        // 多个产品code的同购翻译,并批量回写数据库
+        // 单个产品code的主类目设置
 
         String channelId = "928";
-        String code = "022-EA3060538852";
-        String userName = "testUser002";
+        String code = "1101820727";
+        String userName = "testUser003";
 
         // 调用批量设置主类目
         cmsRefreshProductCategoryMQService.doMain(channelId, code, userName);
