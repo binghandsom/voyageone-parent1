@@ -614,6 +614,12 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         if (valTitle.contains("孕妇")
                 || valTitle.contains("婴幼儿")
                 || valTitle.contains("儿童")
+                || valTitle.contains("产前")
+                || valTitle.contains("婴儿")
+                || valTitle.contains("幼儿")
+                || valTitle.contains("孩子")
+                || valTitle.contains("宝宝")
+                || valTitle.contains("母婴")
                 ) {
             Map<String, Object> paramCategory = new HashMap<>();
             paramCategory.put("cat_id", "50026470"); // 孕妇装/孕产妇用品/营养>孕产妇营养品>其它
