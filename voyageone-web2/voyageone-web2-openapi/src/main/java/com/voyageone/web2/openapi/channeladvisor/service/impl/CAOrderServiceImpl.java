@@ -354,7 +354,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                         "OrderID=" + orderID + " status is " + vmsBtClientOrdersModel.getOrderStatus() + " which is invalid.");
             }
         } else {
-            throw new CAApiException(ErrorIDEnum.OrderNotFound, "OrderID=" + orderID + " is not provided.");
+            throw new CAApiException(ErrorIDEnum.OrderNotFound, "OrderID=" + orderID + " cannot found.");
         }
 
         // 检索【品牌方订单明细】vms_bt_client_order_details
