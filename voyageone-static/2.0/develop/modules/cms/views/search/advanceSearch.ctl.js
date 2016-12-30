@@ -323,6 +323,8 @@ define([
                 msg = '即将导出SKU级的搜索结果，请确认。' + msg;
             } else if (fileType == 4) {
                 msg = '即将导出聚美上新SKU级的搜索结果，请确认。' + msg;
+            } else if (fileType == 5) {
+                msg = "即将根据搜索结果导出报备文件，请确认。" + msg;
             }
             confirm(msg).then(function () {
                 $scope.vm.searchInfo.fileType = fileType;
