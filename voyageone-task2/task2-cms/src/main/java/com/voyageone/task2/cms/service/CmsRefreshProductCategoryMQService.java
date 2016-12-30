@@ -160,9 +160,9 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             sbUpdate.append(", 'common.fields.origSizeType':'" + prodCommonField.getSizeType() + "'");
 
             // 主类目path(中文)
-            sbUpdate.append(", 'common.catPath':'" + mtCategoryKeysModel.getCnName().replace("'", "\\'").replace("\"", "\\\"") + "'");
+            sbUpdate.append(", 'common.catPath':'" + replaceStr(mtCategoryKeysModel.getCnName()) + "'");
             // 主类目path(英文)
-            sbUpdate.append(", 'common.catPathEn':'" + mtCategoryKeysModel.getEnName().replace("'", "\\'").replace("\"", "\\\"") + "'");
+            sbUpdate.append(", 'common.catPathEn':'" + replaceStr(mtCategoryKeysModel.getEnName()) + "'");
             // 主类目id(就是主类目path中文的MD5码)
             sbUpdate.append(", 'common.catId':'" + MD5.getMD5(mtCategoryKeysModel.getCnName()) + "'");
             // 更新主类目设置状态
