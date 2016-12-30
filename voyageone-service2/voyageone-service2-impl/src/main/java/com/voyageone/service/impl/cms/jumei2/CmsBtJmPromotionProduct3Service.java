@@ -8,6 +8,7 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.JMPromotionProduct.UpdateRemarkParameter;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.*;
@@ -22,6 +23,8 @@ import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JMProductUpdateMQMessageBody;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.util.MapModel;
@@ -77,6 +80,8 @@ public class CmsBtJmPromotionProduct3Service {
     private CmsMtChannelValuesService cmsMtChannelValuesService;
     @Autowired
     private CmsBtPromotionDao daoCmsBtPromotion;
+    @Autowired
+    CmsMqSenderService cmsMqSenderService;
 
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
@@ -175,13 +180,13 @@ public class CmsBtJmPromotionProduct3Service {
 
     //批量修改价格
     @VOTransactional
-    public CallResult batchUpdateSkuDealPrice(BatchUpdateSkuPriceParameterBean parameter,String userName) {
+    public CallResult batchUpdateSkuDealPrice(BatchUpdateSkuPriceParameterBean parameter, String userName) {
         CallResult result = new CallResult();
         if (parameter.getListPromotionProductId().isEmpty())
             return result;
 
         parameter.getListPromotionProductId().forEach(id -> {
-            cmsBtJmPromotionSku3Service.UpdateSkuDealPrice(parameter, id,userName);
+            cmsBtJmPromotionSku3Service.UpdateSkuDealPrice(parameter, id, userName);
         });
         daoExt.updateAvgPriceByListPromotionProductId(parameter.getListPromotionProductId());//更新平均值 最大值 最小值    已上新的更新为已经变更
         daoExtCamelCmsBtPromotionCodes.updateJmPromotionPrice(parameter.getJmPromotionId(), parameter.getListPromotionProductId());
@@ -243,7 +248,7 @@ public class CmsBtJmPromotionProduct3Service {
 
     //批量删除  product  已经再售的不删
     @VOTransactional
-    public void batchDeleteProduct(BatchDeleteProductParameter parameter,String channelId) {
+    public void batchDeleteProduct(BatchDeleteProductParameter parameter, String channelId) {
         CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(parameter.getPromotionId());
         //Map<String,Object> map=new HashedMap();
 
@@ -255,7 +260,7 @@ public class CmsBtJmPromotionProduct3Service {
         List<CmsBtJmPromotionProductModel> listNotSych = daoExt.selectNotSynchListByPromotionProductIds(parameter.getListPromotionProductId());
         List<String> listNotSychCode = getListNotSychCode(listNotSych);//获取未上传的code
 
-        if(listNotSychCode.size()>0) {
+        if (listNotSychCode.size() > 0) {
             productService.removeTagByCodes(channelId, listNotSychCode, model.getRefTagId());
         }
         //2.7.2.1 只删除未上传的商品  先删除sku  tag  再删除product
@@ -301,8 +306,8 @@ public class CmsBtJmPromotionProduct3Service {
             result.setResult(false);
             result.setMsg("该专场内存在商品已完成上传，禁止删除!");
         }
-        List<String> codes=daoExt.selectCodesByJmPromotionId(jmPromotionId);
-        productService.removeTagByCodes(model.getChannelId(),codes,model.getRefTagId());
+        List<String> codes = daoExt.selectCodesByJmPromotionId(jmPromotionId);
+        productService.removeTagByCodes(model.getChannelId(), codes, model.getRefTagId());
         //先删除sku 再删除product
         daoExtCmsBtJmPromotionSku.deleteAllSku(jmPromotionId);
         daoExt.deleteAllProduct(jmPromotionId);
@@ -345,7 +350,7 @@ public class CmsBtJmPromotionProduct3Service {
         CmsBtJmProductModel modelProduct = daoExtCmsBtJmProductDaoExt.selectByProductCodeChannelId(modelPromotionProduct.getProductCode(), modelPromotionProduct.getChannelId());
         productViewBean.setModelJmPromotionProduct(modelPromotionProduct);
         productViewBean.setModelJmProduct(modelProduct);
-        List<MapModel> mapModelList = daoExtCmsBtJmPromotionSku.selectViewListByPromotionProductId(promotionProductId,modelPromotionProduct.getCmsBtJmPromotionId());
+        List<MapModel> mapModelList = daoExtCmsBtJmPromotionSku.selectViewListByPromotionProductId(promotionProductId, modelPromotionProduct.getCmsBtJmPromotionId());
         productViewBean.setSkuList(mapModelList);
         return productViewBean;
     }
@@ -364,25 +369,26 @@ public class CmsBtJmPromotionProduct3Service {
 
     //修改单个商品tag
     @VOTransactional
-    public int updatePromotionProductTag(UpdatePromotionProductTagParameter parameter,String channelId, String userName) {
-        cmsBtJmPromotionTagProductService.updatePromotionProductTag(parameter,channelId,userName);
-        return  1;
+    public int updatePromotionProductTag(UpdatePromotionProductTagParameter parameter, String channelId, String userName) {
+        cmsBtJmPromotionTagProductService.updatePromotionProductTag(parameter, channelId, userName);
+        return 1;
     }
+
     //批量修改商品tag
     @VOTransactional
-    public int updatePromotionListProductTag(UpdateListPromotionProductTagParameter parameter,String channelId, String userName) {
+    public int updatePromotionListProductTag(UpdateListPromotionProductTagParameter parameter, String channelId, String userName) {
 
-        if(parameter.getListPromotionProductId()==null||parameter.getListPromotionProductId().size()==0) return 0;
+        if (parameter.getListPromotionProductId() == null || parameter.getListPromotionProductId().size() == 0)
+            return 0;
         UpdatePromotionProductTagParameter parameterProductTag = new UpdatePromotionProductTagParameter();
         parameterProductTag.setTagList(parameter.getTagList());
 
         parameter.getListPromotionProductId().forEach(id -> {
             parameterProductTag.setId(id);
-            updatePromotionProductTag(parameterProductTag,channelId, userName);
+            updatePromotionProductTag(parameterProductTag, channelId, userName);
         });
         return 1;
     }
-
 
 
     public int selectChangeCountByPromotionId(long JmPromotionId) {
@@ -451,6 +457,20 @@ public class CmsBtJmPromotionProduct3Service {
                 .stream()
                 .map(jmPromotionTagProductModel -> dao.select(jmPromotionTagProductModel.getCmsBtJmPromotionProductId()))
                 .collect(toList());
+    }
+
+    /**
+     * 上传更新聚美平台发送消息
+     *
+     * @param cmsBtJmPromotionId
+     * @param sender
+     * @throws MQMessageRuleException
+     */
+    public void sendMessage(int cmsBtJmPromotionId, String sender) throws MQMessageRuleException {
+        JMProductUpdateMQMessageBody mqMessageBody = new JMProductUpdateMQMessageBody();
+        mqMessageBody.setCmsBtJmPromotionId(cmsBtJmPromotionId);
+        mqMessageBody.setSender(sender);
+        cmsMqSenderService.sendMessage(mqMessageBody);
     }
 }
 

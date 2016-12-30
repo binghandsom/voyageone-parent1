@@ -1,8 +1,7 @@
 package com.voyageone.task2.cms.service.jumei;
 
 import com.voyageone.common.configs.MQConfigInitTestUtil;
-import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
-import com.voyageone.task2.cms.mqjob.CmsJMProductUpdateMQJob;
+import com.voyageone.task2.cms.mqjob.CmsJmPromotionImportMQJob;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,21 +13,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
-public class JmBtPromotionImportJobServiceTest {
-
+public class CmsJmPromotionImportMQJobTest {
     @Autowired
-    CmsBtJmPromotionImportTask3Service service;
-    @Autowired
-    CmsJMProductUpdateMQJob serviceJob;
+    CmsJmPromotionImportMQJob serviceJob;
 
+    //service.importFile(25, "/usr/web/contents/cms/jumei_sx/import");
     @Test
-    public void testOnStartup() throws Exception {
-        service.importFile(25, "/usr/web/contents/cms/jumei_sx/import");
-    }
-
-    @Test
-    public void testJuMeiProductUpdateJobServiceStart() throws InterruptedException {
+    public void testOnStartup() throws InterruptedException {
         MQConfigInitTestUtil.startMQ(serviceJob);
-
     }
 }
