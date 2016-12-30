@@ -81,7 +81,7 @@ public class CmsAdvSearchQueryService extends BaseService {
                 StringBuilder extQuery = new StringBuilder("{$or:[");
                 int count = 0;
                 for (TypeChannelBean tcb:cartList) {
-                    extQuery.append(String.format("{'platforms.P%s.pStatus':'%s'}", tcb.getValue(), CmsConstants.ProductStatus.Approved.name()));
+                    extQuery.append(String.format("{'platforms.P%s.status':'%s'}", tcb.getValue(), CmsConstants.ProductStatus.Approved.name()));
                     if (++count != cartList.size()) {
                         extQuery.append(",");
                     }

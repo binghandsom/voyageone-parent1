@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.service.product;
 
-import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
@@ -1274,7 +1273,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             Map<String, CmsBtProductModel_Platform_Cart> platforms = item.getPlatforms();
             if (platforms != null && platforms.size() > 0) {
                 for (CmsBtProductModel_Platform_Cart platform : platforms.values()) {
-                    if (CmsConstants.PlatformStatus.Approved.equals(platform.getpStatus())) {
+                    if (CmsConstants.ProductStatus.Approved.equals(platform.getStatus())) {
                         skip = false;
                         break;
                     }
@@ -1327,7 +1326,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 double priceSale = 0d;
                 Map<String, CmsBtProductModel_Platform_Cart> platforms = item.getPlatforms();
                 for (CmsBtProductModel_Platform_Cart platform : platforms.values()) {
-                    if (CmsConstants.PlatformStatus.Approved.equals(platform.getpStatus())) {
+                    if (CmsConstants.ProductStatus.Approved.equals(platform.getStatus())) {
                         priceSale = platform.getSkus().get(0).getDoubleAttribute("priceSale");
                         break;
                     }
