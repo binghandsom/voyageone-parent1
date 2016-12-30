@@ -4992,6 +4992,45 @@ public class SxProductService extends BaseService {
     }
 
     /**
+     * 上新颜色别名取得
+     */
+    public String getSxColorAlias(String channelId, int cartId, CmsBtProductModel sxProduct, int maxLength) {
+        String alias = sxProduct.getCommon().getFields().getCode();
+        // 通过配置表(cms_mt_channel_config)来决定用code，还是color，默认用code
+        CmsChannelConfigBean aliasConfig = CmsChannelConfigs.getConfigBean(channelId,
+                CmsConstants.ChannelConfig.ALIAS,
+                String.valueOf(cartId) + CmsConstants.ChannelConfig.COLOR_ALIAS);
+        if (aliasConfig != null) {
+            String aliasPropName = aliasConfig.getConfigValue1(); // 目前配置的是code或者color或者codeDiff
+            if (!StringUtils.isEmpty(aliasPropName)) {
+                String val = sxProduct.getCommon().getFields().getStringAttribute(aliasPropName);
+                if (!StringUtils.isEmpty(val)) {
+                    alias = val;
+//                } else {
+//                    if ("color".equals(aliasPropName)) {
+//                        // 配置了 颜色 的时候
+//                        throw new BusinessException("颜色别名(颜色/口味/香型)必须填写,且长度不能超过" + maxLength);
+//                    }
+                }
+            }
+        }
+        if (alias.length() > maxLength) {
+            // 过长默认用color
+            alias = sxProduct.getCommon().getFields().getColor();
+            if (StringUtils.isEmpty(alias)) {
+                // 颜色没有填
+                throw new BusinessException("颜色别名(颜色/口味/香型)必须填写,且长度不能超过" + maxLength);
+            }
+            if (alias.length() > maxLength) {
+                // 填的颜色过长
+                throw new BusinessException("填写的颜色别名(颜色/口味/香型)的长度不能超过" + maxLength);
+            }
+        }
+
+        return alias;
+    }
+
+    /**
      * 上传透明图片到天猫图片空间
      *
      * @param channelId   渠道id
