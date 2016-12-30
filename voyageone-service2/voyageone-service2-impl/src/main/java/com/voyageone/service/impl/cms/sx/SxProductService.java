@@ -4300,7 +4300,7 @@ public class SxProductService extends BaseService {
             // 上新对象产品Code列表
             List<String> listSxCode = null;
             if (ListUtils.notNull(sxData.getProductList())) {
-                sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
+                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
             }
             // 上新失败后回写product表pPublishError的值("Error")
             productGroupService.updateUploadErrorStatus(sxData.getPlatform(), listSxCode, sxData.getErrorMessage());

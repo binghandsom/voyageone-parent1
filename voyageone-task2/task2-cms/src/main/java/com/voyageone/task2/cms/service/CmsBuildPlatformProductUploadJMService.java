@@ -986,7 +986,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             // 上新对象code
             List<String> listSxCode = null;
             if (ListUtils.notNull(sxData.getProductList())) {
-                sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
+                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
             }
             // 上新失败后回写product表pPublishError的值("Error")和pPublishMessage(上新错误信息)
             productGroupService.updateUploadErrorStatus(sxData.getPlatform(), listSxCode, sxData.getErrorMessage());
