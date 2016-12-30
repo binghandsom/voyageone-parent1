@@ -408,7 +408,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     // CMSDOC-365,CMCDOC-414 如果common.catConf="0"(非人工匹配主类目)时，自动匹配商品主类目
                     // TODO 2016/12/30暂时这样更新，以后要改
 //                    if ("0".equals(productModel.getCommonNotNull().getCatConf())) {
-                        doSetMainCategory(productModel.getCommon(), productModel.getFeed().getCatPath());
+                        doSetMainCategory(productModel.getCommon(), productModel.getFeed().getCatPath(), true);
 //                    }
 
                     // platform对应 从子店的platform.p928 929 中的数据生成usjoi的platform
@@ -747,7 +747,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                         // TODO 2016/12/30暂时这样更新，以后要改
 //                        if ("0".equals(pr.getCommonNotNull().getCatConf())) {
                             // 自动匹配商品主类目
-                            doSetMainCategory(pr.getCommon(), pr.getFeed().getCatPath());
+                            doSetMainCategory(pr.getCommon(), pr.getFeed().getCatPath(), false);
 //                        }
 
                         // ****************common.skus的更新(有的sku可能在拆分后的product中)****************
@@ -1763,8 +1763,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      *
      * @param prodCommon 产品共通属性
      * @param feedCategoryPath feed类目Path
+     * @param blnAddFlg 是否新增商品(true:新增 false:更新)
      */
-    protected void doSetMainCategory(CmsBtProductModel_Common prodCommon, String feedCategoryPath) {
+    protected void doSetMainCategory(CmsBtProductModel_Common prodCommon, String feedCategoryPath, boolean blnAddFlg) {
         if (prodCommon == null || StringUtils.isEmpty(feedCategoryPath)) return;
 
         // 共通Field
@@ -1777,11 +1778,13 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 prodCommonField.getProductNameEn(),
                 prodCommonField.getBrand());
         if (searchResult != null && searchResult.getMtCategoryKeysModel() != null) {
-            // 先备份原来的productType和sizeType
-            // feed原始产品分类
-            prodCommonField.setOrigProductType(prodCommonField.getProductType());
-            // feed原始适合人群
-            prodCommonField.setOrigSizeType(prodCommonField.getSizeType());
+            if (blnAddFlg) {
+                // 新增商品时，先备份原来的productType和sizeType
+                // feed原始产品分类
+                prodCommonField.setOrigProductType(prodCommonField.getProductType());
+                // feed原始适合人群
+                prodCommonField.setOrigSizeType(prodCommonField.getSizeType());
+            }
 
             // 主类目匹配结果model
             MtCategoryKeysModel mtCategoryKeysModel = searchResult.getMtCategoryKeysModel();
