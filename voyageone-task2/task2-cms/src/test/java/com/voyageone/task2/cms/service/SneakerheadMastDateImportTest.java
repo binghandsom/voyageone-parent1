@@ -28,6 +28,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by james on 2016/12/2.
@@ -36,8 +37,8 @@ import java.util.*;
 @ContextConfiguration(locations = "classpath:context-cms-test.xml")
 public class SneakerheadMastDateImportTest {
 
-    public final static String cms_mt_sizechartrelation = "H:\\sneaker\\尺码表整理12.21.-1.xlsx";
-    public final static String cms_mt_sizechart = "H:\\sneaker\\尺码图整理.xlsx";
+    public final static String cms_mt_sizechartrelation = "H:\\DOC\\14.共通素材整理\\14.6素材图程序导入版\\尺码表程序导入版12.28.xlsx";
+    public final static String cms_mt_sizechart = "H:\\DOC\\14.共通素材整理\\14.6素材图程序导入版\\尺码图程序导入版12.28.xlsx";
     public final static String sellerCat = "H:\\sneaker\\店铺内分类\\sellerCat.xlsx";
 
     @Autowired
@@ -78,7 +79,7 @@ public class SneakerheadMastDateImportTest {
     private List<CmsBtImageGroupModel> resolveImageGroupModelModel(InputStream xls) throws Exception {
         Map<String, CmsBtImageGroupModel> models = new HashMap<>();
         Workbook wb = new XSSFWorkbook(xls);
-        Sheet sheet1 = wb.getSheetAt(2);
+        Sheet sheet1 = wb.getSheetAt(0);
         int rowNum = 0;
         for (Row row : sheet1) {
             try {
@@ -118,8 +119,8 @@ public class SneakerheadMastDateImportTest {
                     cmsBtImageGroupModel.setCartId(Integer.parseInt(cartId));
                     cmsBtImageGroupModel.setImageGroupName(imageGroupName);
                     cmsBtImageGroupModel.setBrandName(Arrays.asList(brandName.split(",")));
-                    cmsBtImageGroupModel.setSizeType(Arrays.asList(sizeType.split(",")));
-                    cmsBtImageGroupModel.setProductType(Arrays.asList(productType.split(",")));
+                    cmsBtImageGroupModel.setSizeType(Arrays.asList(sizeType.split(",")).stream().map(str->str.equalsIgnoreCase("All")?"All":str.toLowerCase()).collect(Collectors.toList()));
+                    cmsBtImageGroupModel.setProductType(Arrays.asList(productType.split(",")).stream().map(str->str.equalsIgnoreCase("All")?"All":str.toLowerCase()).collect(Collectors.toList()));
                     cmsBtImageGroupModel.setImageType(Integer.parseInt(imageType));
                     //1:PC端 2:APP端
                     cmsBtImageGroupModel.setViewType(Integer.parseInt(viewType));
@@ -139,7 +140,7 @@ public class SneakerheadMastDateImportTest {
     private List<CmsBtSizeChartModel> resolveSizeChartModel(InputStream xls) throws Exception {
         Map<String, CmsBtSizeChartModel> models = new HashMap<>();
         Workbook wb = new XSSFWorkbook(xls);
-        Sheet sheet1 = wb.getSheetAt(1);
+        Sheet sheet1 = wb.getSheetAt(0);
         int rowNum = 0;
         for (Row row : sheet1) {
             try {
@@ -169,8 +170,8 @@ public class SneakerheadMastDateImportTest {
                     cmsBtSizeChartModel.setActive(1);
                     cmsBtSizeChartModel.setSizeChartName(sizeChartName);
                     cmsBtSizeChartModel.setBrandName(Arrays.asList(brandName.split(",")));
-                    cmsBtSizeChartModel.setSizeType(Arrays.asList(sizeType.split(",")));
-                    cmsBtSizeChartModel.setProductType(Arrays.asList(productType.split(",")));
+                    cmsBtSizeChartModel.setSizeType(Arrays.asList(sizeType.split(",")).stream().map(str->str.equalsIgnoreCase("All")?"All":str.toLowerCase()).collect(Collectors.toList()));
+                    cmsBtSizeChartModel.setProductType(Arrays.asList(productType.split(",")).stream().map(str->str.equalsIgnoreCase("All")?"All":str.toLowerCase()).collect(Collectors.toList()));
                     cmsBtSizeChartModel.setSizeMap(new ArrayList<>());
                     models.put(sizeChartName+brandName, cmsBtSizeChartModel);
                 }
