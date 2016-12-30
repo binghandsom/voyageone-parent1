@@ -37,7 +37,7 @@ public class CmsAdvSearchQueryService extends BaseService {
             "common.skus.skuCode;common.skus.size;common.fields.originalTitleCn;common.catPath;common.fields.productNameEn;common.fields.brand;common.fields.code;" +
             "common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.images5;common.fields.images6;common.fields.images7;common.fields.images8;common.fields.images9;" +
             "common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
-            "common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;usPlatforms";
+            "common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;usPlatforms;";
 
     /**
      * 获取当前查询的product列表（查询条件从画面而来）<br>
