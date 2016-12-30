@@ -123,70 +123,65 @@ define([
                             categories: res.data,
                             from: scope.vm.productComm == null ? "" : scope.vm.productComm.catPath
                         }).then(function (context) {
+                            var isOverlap = false;
+
                             //判断类目是否改变
                             scope.vm.categoryMark = scope.vm.productComm.catPath == context.selected.catPath;
 
                             scope.vm.productComm.catId = context.selected.catId;
                             scope.vm.productComm.catPath = context.selected.catPath;
                             scope.vm.productComm.catPathEn = context.selected.catPathEn;
+                            scope.vm.productComm.catConf = "1";
                             if(context.selected.catPath){
+                                var translateStatus = searchField("商品翻译状态",scope.vm.productComm.schemaFields);
                                 var temp = searchField("产品名称中文",scope.vm.productComm.schemaFields);
                                 if(temp){
-                                    if(!temp.value) {
+                                    if(!temp.value || translateStatus.value.value != "1") {
                                         var cat = context.selected.catPath.split(">");
                                         var titleCn = scope.vm.productComm.fields.brand + ' ' +context.selected.sizeTypeCn + ' ' + cat[cat.length-1];
                                         temp.value = titleCn;
                                     }
                                 }
                             }
-                            if(context.selected.productTypeEn){
-                                var productType = searchField("产品分类",scope.vm.productComm.schemaFields);
-                                if(productType){
-                                    if(!productType.value.value) {
+                            confirm("主类目切换是否自动覆盖产品分类，使用人群，税号个人，税号跨境申报？").then(function () {
+                                if(context.selected.productTypeEn){
+                                    var productType = searchField("产品分类",scope.vm.productComm.schemaFields);
+                                    if(productType){
                                         productType.value.value = context.selected.productTypeEn;
                                     }
                                 }
-                            }
-                            if(context.selected.productTypeEn){
-                                var productType = searchField("产品分类中文",scope.vm.productComm.schemaFields);
-                                if(productType) {
-                                    if (!productType.value.value) {
+                                if(context.selected.productTypeEn){
+                                    var productType = searchField("产品分类中文",scope.vm.productComm.schemaFields);
+                                    if(productType) {
                                         productType.value.value = context.selected.productTypeCn;
                                     }
                                 }
-                            }
-                            if(context.selected.sizeTypeEn){
-                                var sizeType = searchField("适用人群",scope.vm.productComm.schemaFields);
-                                if(sizeType) {
-                                    if (!sizeType.value.value) {
+                                if(context.selected.sizeTypeEn){
+                                    var sizeType = searchField("适用人群",scope.vm.productComm.schemaFields);
+                                    if(sizeType) {
                                         sizeType.value.value = context.selected.sizeTypeEn;
                                     }
                                 }
-                            }
-                            if(context.selected.sizeTypeEn){
-                                var sizeType = searchField("适用人群中文",scope.vm.productComm.schemaFields);
-                                if(sizeType) {
-                                    if (!sizeType.value.value) {
+                                if(context.selected.sizeTypeEn){
+                                    var sizeType = searchField("适用人群中文",scope.vm.productComm.schemaFields);
+                                    if(sizeType) {
                                         sizeType.value.value = context.selected.sizeTypeCn;
                                     }
                                 }
-                            }
-                            if(context.selected.hscodeName8){
-                                var sizeType = searchField("税号个人（8位）",scope.vm.productComm.schemaFields);
-                                if(sizeType) {
-                                    if (!sizeType.value.value) {
+                                if(context.selected.hscodeName8){
+                                    var sizeType = searchField("税号个人（8位）",scope.vm.productComm.schemaFields);
+                                    if(sizeType) {
                                         sizeType.value.value = context.selected.hscodeName8;
                                     }
                                 }
-                            }
-                            if(context.selected.hscodeName10){
-                                var sizeType = searchField("税号跨境申报（10位）",scope.vm.productComm.schemaFields);
-                                if(sizeType) {
-                                    if (!sizeType.value.value) {
+                                if(context.selected.hscodeName10){
+                                    var sizeType = searchField("税号跨境申报（10位）",scope.vm.productComm.schemaFields);
+                                    if(sizeType) {
                                         sizeType.value.value = context.selected.hscodeName10;
                                     }
                                 }
-                            }
+                            })
+
                         });
                     });
                 }
