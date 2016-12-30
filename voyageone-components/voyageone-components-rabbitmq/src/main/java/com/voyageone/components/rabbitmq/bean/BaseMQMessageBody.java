@@ -41,4 +41,6 @@ public abstract class BaseMQMessageBody implements IMQMessageBody {
     }
 
     public abstract void check() throws MQMessageRuleException;
+
+
 }

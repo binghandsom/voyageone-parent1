@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.vomq.vomessage.body;
 
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
@@ -30,6 +31,9 @@ public class JmPromotionImportMQMessageBody extends BaseMQMessageBody {
     public void check() throws MQMessageRuleException {
         if (jmBtPromotionImportTaskId == 0) {
             throw new MQMessageRuleException("jmBtPromotionImportTaskId");
+        }
+        if (StringUtils.isEmpty(getSender())) {
+            throw new MQMessageRuleException("sender(发送者)不能为空");
         }
     }
 }

@@ -7,7 +7,7 @@ import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 
 /**
- * JmExportMQMessageBody   聚美活动文件导出Job 消息体类
+ * JMProductUpdateMQMessageBody   聚美平台上传更新
  *
  * @author peitao 2016/12/26.
  * @version 2.0.0
@@ -30,7 +30,7 @@ public class JMProductUpdateMQMessageBody extends BaseMQMessageBody {
     @Override
     public void check() throws MQMessageRuleException {
         if (cmsBtJmPromotionId == 0) {
-            throw new MQMessageRuleException("jmBtPromotionExportTaskId不能等于0");
+            throw new MQMessageRuleException("cmsBtJmPromotionId不能等于0");
         }
         if (StringUtils.isEmpty(getSender())) {
             throw new MQMessageRuleException("sender(发送者)不能为空");
