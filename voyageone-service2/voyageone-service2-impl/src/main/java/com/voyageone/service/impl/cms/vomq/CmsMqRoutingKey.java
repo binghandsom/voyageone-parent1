@@ -17,6 +17,11 @@ public class CmsMqRoutingKey {
     //    -- 3.聚美平台上传更新
     public static final String CMS_JM_PRODUCT_UPDATE = "VOCmsJmProductUpdateQueue";
 
+    // 聚美刷新参考价
+    public static final String CMS_JM_REFRESH_PRICE = "VOCmsJMRefreshPriceQueue";
+
+
+
     /**
      * jumei mq task
      */

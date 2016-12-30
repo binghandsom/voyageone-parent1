@@ -9,7 +9,7 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 /**
  * JMProductUpdateMQMessageBody   聚美平台上传更新
  *
- * @author peitao 2016/12/26.
+ * @author peitao 2016/12/30.
  * @version 2.0.0
  * @since 2.0.0
  */

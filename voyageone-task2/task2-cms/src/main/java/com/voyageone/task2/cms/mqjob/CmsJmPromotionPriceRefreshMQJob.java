@@ -1,10 +1,11 @@
-package com.voyageone.task2.cms.service;
+package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionSkuService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JMRefreshPriceMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -23,7 +24,7 @@ import java.util.Map;
  */
 @Service
 @RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_JmSynPromotionDealPrice)
-public class CmsSynJmPromotionDealPriceMQService extends BaseMQCmsService {
+public class CmsJmPromotionPriceRefreshMQJob extends TBaseMQCmsService<JMRefreshPriceMQMessageBody> {
 
     @Autowired
     private CmsBtJmPromotionSkuService cmsBtJmPromotionSkuService;
@@ -32,8 +33,8 @@ public class CmsSynJmPromotionDealPriceMQService extends BaseMQCmsService {
     private ProductService productService;
 
     @Override
-    public void onStartup(Map<String, Object> messageMap) throws Exception {
-        Integer jmPromotionId = (Integer) messageMap.get("jmPromotionId");
+    public void onStartup(JMRefreshPriceMQMessageBody messageMap) throws Exception {
+        Integer jmPromotionId = messageMap.getCmsBtJmPromotionId();
 
         Map<String, Object> param = new HashedMap();
         param.put("cmsBtJmPromotionId", jmPromotionId);

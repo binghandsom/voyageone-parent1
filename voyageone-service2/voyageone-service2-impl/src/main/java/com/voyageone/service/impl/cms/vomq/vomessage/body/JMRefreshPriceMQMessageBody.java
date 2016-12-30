@@ -6,31 +6,32 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 
+
 /**
- * JmExportMQMessageBody   聚美导入Job 消息体类
+ * JMRefreshPriceMQMessageBody   聚美平台上传更新
  *
  * @author peitao 2016/12/30.
  * @version 2.0.0
  * @since 2.0.0
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_JM_PROMOTION_IMPORT)
-public class JmPromotionImportMQMessageBody extends BaseMQMessageBody {
+@VOMQQueue(value = CmsMqRoutingKey.CMS_JM_PRODUCT_UPDATE)
+public class JMRefreshPriceMQMessageBody extends BaseMQMessageBody {
 
-    // 是cms_bt_jm_promotion_import_task的id
-    private int jmBtPromotionImportTaskId;
+    // 表cms_bt_jm_promotion的id
+    private int cmsBtJmPromotionId;
 
-    public int getJmBtPromotionImportTaskId() {
-        return jmBtPromotionImportTaskId;
+    public int getCmsBtJmPromotionId() {
+        return cmsBtJmPromotionId;
     }
 
-    public void setJmBtPromotionImportTaskId(int jmBtPromotionImportTaskId) {
-        this.jmBtPromotionImportTaskId = jmBtPromotionImportTaskId;
+    public void setCmsBtJmPromotionId(int cmsBtJmPromotionId) {
+        this.cmsBtJmPromotionId = cmsBtJmPromotionId;
     }
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (jmBtPromotionImportTaskId == 0) {
-            throw new MQMessageRuleException("jmBtPromotionImportTaskId");
+        if (cmsBtJmPromotionId == 0) {
+            throw new MQMessageRuleException("cmsBtJmPromotionId不能等于0");
         }
         if (StringUtils.isEmpty(getSender())) {
             throw new MQMessageRuleException("sender(发送者)不能为空");

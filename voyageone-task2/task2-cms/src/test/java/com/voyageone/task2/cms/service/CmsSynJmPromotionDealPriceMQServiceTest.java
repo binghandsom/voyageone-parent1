@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.task2.cms.mqjob.CmsJmPromotionPriceRefreshMQJob;
 import org.apache.commons.collections.map.HashedMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +18,7 @@ import java.util.Map;
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class CmsSynJmPromotionDealPriceMQServiceTest {
     @Autowired
-    CmsSynJmPromotionDealPriceMQService cmsSynJmPromotionDealPriceMQService;
+    CmsJmPromotionPriceRefreshMQJob cmsSynJmPromotionDealPriceMQService;
     @Autowired
     CmsSynJmPromotionDealPriceService cmsSynJmPromotionDealPriceService;
     @Test
@@ -25,7 +26,7 @@ public class CmsSynJmPromotionDealPriceMQServiceTest {
         cmsSynJmPromotionDealPriceService.onStartup(new ArrayList<>());
         Map<String,Object> param = new HashedMap();
         param.put("jmPromotionId",111);
-        cmsSynJmPromotionDealPriceMQService.onStartup(param);
+       // cmsSynJmPromotionDealPriceMQService.onStartup(param);
     }
 
 }
