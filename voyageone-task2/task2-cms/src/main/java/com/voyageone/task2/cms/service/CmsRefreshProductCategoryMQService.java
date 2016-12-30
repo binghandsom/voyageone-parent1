@@ -161,9 +161,9 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             sbUpdate.append(", 'common.fields.origSizeType':'" + prodCommonField.getSizeType() + "'");
 
             // 主类目path(中文)
-            sbUpdate.append(", 'common.catPath':'" + mtCategoryKeysModel.getCnName().replace("'", "\\'").replace("\"", "\\\"") + "'");
+            sbUpdate.append(", 'common.catPath':'" + replaceStr(mtCategoryKeysModel.getCnName()) + "'");
             // 主类目path(英文)
-            sbUpdate.append(", 'common.catPathEn':'" + mtCategoryKeysModel.getEnName().replace("'", "\\'").replace("\"", "\\\"") + "'");
+            sbUpdate.append(", 'common.catPathEn':'" + replaceStr(mtCategoryKeysModel.getEnName()) + "'");
             // 主类目id(就是主类目path中文的MD5码)
             sbUpdate.append(", 'common.catId':'" + MD5.getMD5(mtCategoryKeysModel.getCnName()) + "'");
             // 更新主类目设置状态
@@ -214,9 +214,9 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
 
             // 更新主类目信息
             productService.updateFirstProduct(updObj, channelId);
-        } catch (Exception ignored) {
+        } catch (Exception exception) {
             String warnMsg = String.format("主类目设置处理异常！[channleId:%s] [code:%s] [userName:%s] [errMsg:%s]",
-                    channelId, code, userName, ignored.getMessage());
+                    channelId, code, userName, CommonUtil.getMessages(exception));
             $warn(warnMsg);
             return;
         }
