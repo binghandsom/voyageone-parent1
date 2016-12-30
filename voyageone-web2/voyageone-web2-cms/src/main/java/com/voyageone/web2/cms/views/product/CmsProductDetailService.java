@@ -594,7 +594,7 @@ public class CmsProductDetailService extends BaseViewService {
         requestMap.put("channelId",userInfo.getSelChannelId());
         List<List<String>> splitCodes = CommonUtil.splitList(prodCodes,100);
         splitCodes.forEach(codes -> {
-            requestMap.put("prodIds",codes);
+            requestMap.put("codeList",codes);
             sender.sendMessage( MqRoutingKey.CMS_BATCH_CmsBatchRefreshMainCategoryJob, requestMap);
         });
 
