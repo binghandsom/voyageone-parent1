@@ -156,12 +156,6 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             queryMap.put("common.fields.code", code);
             // 更新字段
             HashMap<String, Object> updateMap = new HashMap<>();
-            // 先备份原来的productType和sizeType
-            // feed原始产品分类
-            updateMap.put("common.fields.origProductType", prodCommonField.getProductType());
-            // feed原始适合人群
-            updateMap.put("common.fields.origSizeType", prodCommonField.getSizeType());
-
             // 主类目path(中文)
             updateMap.put("common.catPath", mtCategoryKeysModel.getCnName());
             // 主类目path(英文)
