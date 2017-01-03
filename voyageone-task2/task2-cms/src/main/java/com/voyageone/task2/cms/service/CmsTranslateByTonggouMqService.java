@@ -273,13 +273,15 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
         for (String code : codeList) {
             // 单个code
             try {
-                JongoUpdate updObj = doTranslateByTonggouSingle(transShop, channelId, code, blnNeedTransTitle,
+                List<JongoUpdate> updObjList = doTranslateByTonggouSingle(transShop, channelId, code, blnNeedTransTitle,
                         transSrcDesMap, blnRunType, numIIdForTransOnly, otherItemMap, productInfoMap);
-                if (updObj != null) {
+                if (updObjList != null && updObjList.size() > 0) {
                     // 如果没有一个需要翻译的字段时，返回null,也没有必要回写了
-                    rs = bulkList.addBulkJongo(updObj);
-                    if (rs != null) {
-                        $debug("CmsTranslateByTonggouMqService channelId=%s, code=%s, product更新结果=%s", channelId, code, rs.toString());
+                    for (JongoUpdate updObj : updObjList) {
+                        rs = bulkList.addBulkJongo(updObj);
+                        if (rs != null) {
+                            $debug("CmsTranslateByTonggouMqService channelId=%s, code=%s, product更新结果=%s", channelId, code, rs.toString());
+                        }
                     }
                 }
             } catch (Exception ex) {
@@ -309,7 +311,7 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
      * @param productInfoMap     商品更新共通属性
      * @return JongoUpdate 翻译成功之后回写JongoUpdateSql，更新失败时返回null
      */
-    public JongoUpdate doTranslateByTonggouSingle(ShopBean transShop, String channelId, String code, boolean blnNeedTransTitle,
+    public List<JongoUpdate> doTranslateByTonggouSingle(ShopBean transShop, String channelId, String code, boolean blnNeedTransTitle,
 												  Map<String, String> transSrcDesMap, boolean blnRunType, String numIIdForTransOnly,
                                                   Map<String, Object> otherItemMap, BaseMongoMap<String, String> productInfoMap) throws Exception {
         if (transShop == null || StringUtils.isEmpty(channelId) || StringUtils.isEmpty(code) ||
@@ -425,28 +427,27 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
 
         // 生成更新SQL
         if (!MapUtils.isEmpty(transResultMap)) {
-            JongoUpdate updObj = new JongoUpdate();
-            updObj.setQuery("{'common.fields.code':'" + code + "'}");
-            // 遍历结果map逐个添加回写更新用字段
-            StringBuilder sbUpdate = new StringBuilder("{$set:{");
-            int index = 0;
+            List<JongoUpdate> updObjList = new ArrayList<>();
             for (Map.Entry<String, String> entry : transResultMap.entrySet()) {
-                if (index == 0) {
-                    sbUpdate.append("'common.fields." + entry.getKey() + "':\"" + entry.getValue().replace("'", "\\'").replace("\"", "\\\"") + "\"");
-                } else {
-                    sbUpdate.append(", 'common.fields." + entry.getKey() + "':\"" + entry.getValue().replace("'", "\\'").replace("\"", "\\\"") + "\"");
-                }
-                index++;
-            }
+                JongoUpdate updObj = new JongoUpdate();
+                updObj.setQuery("{'common.fields.code':'" + code + "'}");
+                // 遍历结果map逐个添加回写更新用字段
+                StringBuilder sbUpdate = new StringBuilder("{$set:{");
+                String sbUpdateParam = "";
+                sbUpdate.append("'common.fields." + entry.getKey() + "':#");
+                sbUpdateParam = entry.getValue().replace("'", "\\'").replace("\"", "\\\"");
 //            // 更新翻译状态，翻译者，翻译时间等项目
 //            sbUpdate.append(", 'common.fields.translateStatus':'1', 'common.fields.translator':'" + getTaskName()
 //					+ "', 'common.fields.translateTime':'" + DateTimeUtil.getNow()
 //					+ "', 'common.fields.priorTranslateDate':''");
-            sbUpdate.append("}}");
+                sbUpdate.append("}}");
+                updObj.setUpdate(sbUpdate.toString());
+                updObj.setUpdateParameters(sbUpdateParam);
 
-            updObj.setUpdate("#");
-            updObj.setUpdateParameters(sbUpdate.toString());
-            return updObj;
+                updObjList.add(updObj);
+            }
+
+            return updObjList;
         }
 
         // 如果没有一个需要更新的中文项目值返回null

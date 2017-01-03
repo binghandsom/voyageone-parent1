@@ -101,6 +101,7 @@ define(function () {
                     "updateProductSkuInfo": "updateProductSkuInfo",
                     "updateProductAllInfo": "updateProductAllInfo",
                     "changeCategory": "changeCategory",
+                    "refreshProductCategory":"refreshProductCategory",
                     "revertCategory": "revertCategory",
                     "getProductPlatform": "getProductPlatform",
                     "changePlatformCategory": "changePlatformCategory",
@@ -158,7 +159,8 @@ define(function () {
                     "getCombinedProductDetail" : "getCombinedProductDetail",
                     "edit" : "edit",
                     "onOffShelves" : "onOffShelves",
-                    "getOperateLogs" : "getOperateLogs"
+                    "getOperateLogs" : "getOperateLogs",
+                    "batchGetSkuDetail" : "batchGetSkuDetail"
                 },
                 productTopService: {
                     "root": "/cms/producttop",

@@ -47,6 +47,8 @@ public class CmsMqRoutingKey {
     public static final String CMS_BATCH_PlatformFieldsTaskJob = "voyageone_cms_batchjob_PlatformFieldsTaskJob_queue";
 
     public static final String CMS_BATCH_CmsBatchSetMainCategoryJob = "voyageone_cms_batchjob_SetMainCategoryJob_queue";
+
+    public static final String CMS_BATCH_CmsBatchRefreshMainCategoryJob = "voyageone_cms_batchjob_RefreshMainCategoryJob_queue";
     /**
      * jd mq task
      */

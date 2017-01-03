@@ -202,19 +202,20 @@
                                     <table class="table table-hover-new table-hover vo_table">
                                         <thead>
                                         <tr>
-                                            <th class="mfb-xxt text-center">平台</th>
-                                            <th class="mfb-xt text-center">商品数</th>
-                                            <th class="mfb-xxt text-center">等待设置平台类目数</th>
-                                            <th class="mfb-xt text-center">等待设置属性数</th>
-                                            <th class="mfb-xxt text-center">等待Approved数</th>
-                                            <th class="mfb-xt text-center">等待上新数</th>
-                                            <th class="mfb-xt text-center">上新成功数</th>
-                                            <th class="mfb-xt text-center">上新失败数</th>
-                                            <th class="mfb-xt text-center">品牌未匹配数</th>
-                                            <th class="mfb-xxt text-center">商品平台状态与实际相异数</th>
-                                            <th class="mfb-xxt text-center">黑名单品牌数</th>
-                                            <th class="mfb-xxt text-center">已上新但有新SKU商品数</th>
-                                            <th class="mfb-xxt text-center">被迫下架有库存商品数</th>
+                                            <th class="text-center">平台</th>
+                                            <th class="text-center">商品数</th>
+                                            <th class="text-center">等待设置平台类目数</th>
+                                            <th class="text-center">等待设置属性数</th>
+                                            <th class="text-center">等待Approved数</th>
+                                            <th class="text-center">等待上新数</th>
+                                            <th class="text-center">上新成功数</th>
+                                            <th class="text-center">上新失败数</th>
+                                            <th class="text-center">品牌未匹配数</th>
+                                            <th class="text-center">商品平台状态与实际相异数</th>
+                                            <th class="text-center">黑名单品牌数</th>
+                                            <th class="text-center">已上新但有新SKU商品数</th>
+                                            <th class="text-center">被迫下架有库存商品数</th>
+                                            <th class="text-center">违规下架商品数</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -227,12 +228,12 @@
                                             <td class=" text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_WAITING_PUBLISH.cartId,productStatus:{'Approved':true},platformStatus:{'WaitingPublish':true}})">{{m.CMS_PLATFORM_WAITING_PUBLISH.amountVal}}</a></td>
                                             <td class=" text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_PUBLISH_SUCCESS.cartId,hasErrorFlg:'1',productStatus:{'Approved':true},platformStatus:{'InStock':true,'OnSale':true}})">{{m.CMS_PLATFORM_PUBLISH_SUCCESS.amountVal}}</a></td>
                                             <td class=" text-center"><a ng-click="goSearchPage(150,{cartId:m.CMS_PLATFORM_PUBLISH_FAILD.cartId,hasErrorFlg:'2'})"><span class="label label-danger">{{m.CMS_PLATFORM_PUBLISH_FAILD.amountVal}}</span></a></td>
-                                            <td class=" text-center"><a href="#/channel/brand_mapping_list/{{m.CMS_BrandNoMatchCount.cartId}}"><span class="label label-danger">{{m.CMS_BrandNoMatchCount.amountVal}}</span></a></td>
-                                            <td class=" text-center"><a ng-click="goSearchPage(170,{cartId:m.CMS_PLATFORM_pStatus_pReallyStatus_notEqual.cartId,hasErrorFlg:'3'})"><span class="label label-danger">{{m.CMS_PLATFORM_pStatus_pReallyStatus_notEqual.amountVal}}</span></a></td>
-                                            <td class=" text-center"><a ng-click="jumpBlackBrandNew(2,1,m.CMS_PLATFORM_Brand_block.cartId)"><span class="label label-danger">{{m.CMS_PLATFORM_Brand_block.amountVal}}</span></a></td>
+                                            <td class=" text-center"><a href="#/channel/brand_mapping_list/{{m.CMS_BRAND_NO_MATCH_COUNT.cartId}}"><span class="label label-danger">{{m.CMS_BRAND_NO_MATCH_COUNT.amountVal}}</span></a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(170,{cartId:m.CMS_PLATFORM_PSTATUS_REALLYSTATUS_NOT_EQUAL.cartId,hasErrorFlg:'3'})"><span class="label label-danger">{{m.CMS_PLATFORM_PSTATUS_REALLYSTATUS_NOT_EQUAL.amountVal}}</span></a></td>
+                                            <td class=" text-center"><a ng-click="jumpBlackBrandNew(2,1,m.CMS_PLATFORM_BRAND_BLOCK.cartId)"><span class="label label-danger">{{m.CMS_PLATFORM_BRAND_BLOCK.amountVal}}</span></a></td>
                                             <td class=" text-center"><a ng-click="goSearchPage(180,{cartId:m.CMS_PLATFORM_NEW_SKU.cartId,productStatus:{'Approved':true},isNewSku:true})"><span class="label label-danger">{{m.CMS_PLATFORM_NEW_SKU.amountVal}}</span></a></td>
-                                            <td class=" text-center"><a ng-click="goSearchPage(190,{cartId:m.CMS_PLATFORM_NEW_SKU.cartId,lockFlg:'0',compareType:'$gt',inventory:0,platformStatus:{'OnSale':true},pRealStatus:{'InStock':true}})"><span class="label label-danger">{{m["CMS_PLATFORM_pStatus.OnSale_pReallyStatus.InStock"].amountVal}}</span></a></td>
-
+                                            <td class=" text-center"><a ng-click="goSearchPage(190,{cartId:m.CMS_PLATFORM_PSTATUS_ONSALE_PREALLYSTATUS_INSTOCK.cartId,lockFlg:'0',compareType:'$gt',inventory:0,platformStatus:{'OnSale':true},pRealStatus:{'InStock':true}})"><span class="label label-danger">{{m.CMS_PLATFORM_PSTATUS_ONSALE_PREALLYSTATUS_INSTOCK.amountVal}}</span></a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(200,{cartId:m.CMS_PLATFORM_PSTATUS_ONSALE_PREALLYSTATUS_VIOLATION.cartId,lockFlg:'0',pRealStatus:{'Violation':true}})"><span class="label label-danger">{{m.CMS_PLATFORM_PSTATUS_ONSALE_PREALLYSTATUS_VIOLATION.amountVal}}</span></a></td>
                                         </tr>
                                         </tbody>
                                     </table>

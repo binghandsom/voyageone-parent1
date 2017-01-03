@@ -1,35 +1,31 @@
 package com.voyageone.task2.cms.service;
 
-import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JongoUpdate;
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.common.CmsConstants;
-import com.voyageone.common.Constants;
-import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 /**
+ * if 主类目人工设置FLG（common.catConf = 1 ）
+    -》只修改主类目
+    else if 主类目人工设置FLG（common.catConf 不存在 或 = 0）
+    -》更新 主类目，产品分类，使用人群，税号个人，税号跨境申报
+    -》设置 主类目人工设置FLG（common.catConf = 1 ）
  * Created by james on 2016/12/19.
  */
 @Service
@@ -45,25 +41,32 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
     private final
     ProductStatusHistoryService productStatusHistoryService;
 
+    private final
+    PriceService priceService;
+
 
     @Autowired
-    public CmsBatchSetMainCategoryMqService(ProductService productService, CmsBtProductDao cmsBtProductDao, ProductStatusHistoryService productStatusHistoryService) {
+    public CmsBatchSetMainCategoryMqService(ProductService productService, CmsBtProductDao cmsBtProductDao, ProductStatusHistoryService productStatusHistoryService, PriceService priceService) {
         this.productService = productService;
         this.cmsBtProductDao = cmsBtProductDao;
         this.productStatusHistoryService = productStatusHistoryService;
+        this.priceService = priceService;
     }
 
+//    if 主类目人工设置FLG（common.catConf = 1 ）
+//            -》只修改主类目
+//else if 主类目人工设置FLG（common.catConf 不存在 或 = 0）
+//            -》更新 主类目，产品分类，使用人群，税号个人，税号跨境申报
+//-》设置 主类目人工设置FLG（common.catConf = 1 ）
     @Override
     protected void onStartup(Map<String, Object> requestMap) throws Exception {
         // 获取参数
         String mCatId = StringUtils.trimToNull((String) requestMap.get("catId"));
         String mCatPathCn = StringUtils.trimToNull((String) requestMap.get("catPath"));
         String mCatPathEn = StringUtils.trimToNull((String) requestMap.get("catPathEn"));
-//        List<Map> pCatList = (List<Map>) requestMap.get("pCatList");
         List<String> productCodes = (List<String>) requestMap.get("prodIds");
         String userName = (String) requestMap.get("userName");
         String channelId = (String) requestMap.get("channelId");
-//        Integer cartIdObj = (Integer) requestMap.get("cartId");
         String productTypeEn = (String) requestMap.get("productType");
         String sizeTypeEn = (String) requestMap.get("sizeType");
         String productTypeCn = (String) requestMap.get("productTypeCn");
@@ -88,42 +91,70 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
                         updateMap.put("common.catId", mCatId);
                         updateMap.put("common.catPath", mCatPathCn);
                         updateMap.put("common.catPathEn", mCatPathEn);
+                        updateMap.put("common.catConf", "1");
                         updateMap.put("common.fields.categoryStatus", "1");
                         updateMap.put("common.fields.categorySetter", userName);
                         updateMap.put("common.fields.categorySetTime", DateTimeUtil.getNow());
-                        if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getOriginalTitleCn())) {
+                        if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getOriginalTitleCn()) || !"1".equalsIgnoreCase(cmsBtProductModel.getCommon().getFields().getTranslateStatus())) {
                             // 设置商品中文名称（品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称）
                             String[] temp = mCatPathCn.split(">");
                             String titleCn = String.format("%s %s %s",getString(cmsBtProductModel.getCommon().getFields().getBrand()), getString(sizeTypeCn), temp[temp.length-1]);
                             updateMap.put("common.fields.originalTitleCn", titleCn);
                         }
-                        if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getProductType())) {
-                            updateMap.put("common.fields.productType", productTypeEn);
-                        }
-                        if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getProductTypeCn())) {
-                            updateMap.put("common.fields.productTypeCn", productTypeCn);
-                        }
-                        if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getSizeType())) {
-                            updateMap.put("common.fields.sizeType", sizeTypeEn);
-                        }
-                        if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getSizeTypeCn())) {
-                            updateMap.put("common.fields.sizeTypeCn", sizeTypeCn);
-                        }
-                        if (!StringUtil.isEmpty(hscodeName8) && StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getHsCodePrivate())) {
-                            updateMap.put("common.fields.hsCodePrivate", hscodeName8);
-                        }
-                        if (!StringUtil.isEmpty(hscodeName10) && StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getHsCodeCross())) {
-                            updateMap.put("common.fields.hsCodeCross", hscodeName10);
+//                        if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getProductType())) {
+//                            updateMap.put("common.fields.productType", productTypeEn);
+//                        }
+//                        if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getProductTypeCn())) {
+//                            updateMap.put("common.fields.productTypeCn", productTypeCn);
+//                        }
+//                        if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getSizeType())) {
+//                            updateMap.put("common.fields.sizeType", sizeTypeEn);
+//                        }
+//                        if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getSizeTypeCn())) {
+//                            updateMap.put("common.fields.sizeTypeCn", sizeTypeCn);
+//                        }
+//                        if (!StringUtil.isEmpty(hscodeName8) && StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getHsCodePrivate())) {
+//                            updateMap.put("common.fields.hsCodePrivate", hscodeName8);
+//                        }
+//                        if (!StringUtil.isEmpty(hscodeName10) && StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getHsCodeCross())) {
+//                            updateMap.put("common.fields.hsCodeCross", hscodeName10);
+//                        }
+                        if("0".equalsIgnoreCase(cmsBtProductModel.getCommon().getCatConf())){
+                            updateMap.put("common.fields.productType", getString(productTypeEn));
+                            updateMap.put("common.fields.productTypeCn", getString(productTypeCn));
+                            updateMap.put("common.fields.sizeType", getString(sizeTypeEn));
+                            updateMap.put("common.fields.sizeTypeCn", getString(sizeTypeCn));
+                            updateMap.put("common.fields.hsCodePrivate", getString(hscodeName8));
+                            updateMap.put("common.fields.hsCodeCross", getString(hscodeName10));
                         }
                         BulkUpdateModel model = new BulkUpdateModel();
                         model.setUpdateMap(updateMap);
                         model.setQueryMap(queryMap);
                         bulkList.add(model);
                         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
+                        if(!compareHsCode(hscodeName8, cmsBtProductModel.getCommon().getFields().getHsCodePrivate())) {
+                            try{
+                                CmsBtProductModel newProduct = productService.getProductByCode(channelId, code);
+                                // 税号从无到有的场后同步最终售价
+                                if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getHsCodePrivate())) {
+                                    priceService.setPrice(newProduct, true);
+                                } else {
+                                    priceService.setPrice(newProduct, false);
+                                }
+                                newProduct.getPlatforms().forEach((s, platform) -> {
+                                    if (platform.getCartId() != 0) {
+                                        productService.updateProductPlatform(channelId, newProduct.getProdId(), platform, userName, false, EnumProductOperationType.changeMainCategory, "批量修改主类目税号变更", true);
+                                    }
+                                });
+                            }catch (Exception e){
+                                $error(e);
+                            }
+                        }
                         productStatusHistoryService.insert(channelId, code, "", 0, EnumProductOperationType.changeMainCategory, "修改主类目为" + mCatPathCn, userName);
                     }
                 }
         );
+
 //        List<Integer> cartList = null;
 //        if (cartIdObj == null || cartIdObj == 0) {
 //            // 表示全平台更新
@@ -163,6 +194,21 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
 //            }
 //
 //        }
+    }
+
+    private Boolean compareHsCode(String hsCode1, String hsCode2) {
+        String hs1 = "";
+        String hs2 = "";
+        if (hsCode1 != null) {
+            String[] temp = hsCode1.split(",");
+            if (temp.length > 1) hs1 = temp[0];
+        }
+
+        if (hsCode2 != null) {
+            String[] temp = hsCode2.split(",");
+            if (temp.length > 1) hs2 = temp[0];
+        }
+        return hs1.equalsIgnoreCase(hs2);
     }
 
     private String getString(String str){

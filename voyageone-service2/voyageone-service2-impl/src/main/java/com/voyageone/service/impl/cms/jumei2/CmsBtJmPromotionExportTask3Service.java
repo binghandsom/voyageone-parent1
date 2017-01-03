@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.jumei2;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
@@ -76,21 +77,31 @@ public class CmsBtJmPromotionExportTask3Service {
             if(parameter != null){
                 codes = getSelCodes(parameter);
             }
-
+            if(ListUtils.isNull(codes)){
+                throw new BusinessException("没有商品要导出");
+            }
             List<Map<String, Object>> listProduct = daoExtCmsBtJmPromotionProduct.selectExportListByPromotionId(model.getCmsBtJmPromotionId(), codes);
             List<Map<String, Object>> listSku = daoExtCmsBtJmPromotionSku.selectExportListByPromotionId(model.getCmsBtJmPromotionId(), codes);
+
             export(filePath, listProduct, listSku, false);
             model.setSuccessRows(listProduct.size());
             if (listProduct.isEmpty()) {
                 model.setErrorMsg("未查到商品");
             }
+            model.setIsExport(true);
             model.setFileName(fileName);
-        } catch (Exception ex) {
+        }catch (BusinessException ex){
+            model.setErrorMsg(ex.getMessage());
+            model.setErrorCode(1);
+            model.setIsExport(false);
+            ex.printStackTrace();
+        }
+        catch (Exception ex) {
             model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
             model.setErrorCode(1);
             ex.printStackTrace();
+            model.setIsExport(false);
         }
-        model.setIsExport(true);
         model.setEndTime(DateTimeUtilBeijing.getCurrentBeiJingDate());
         dao.update(model);
     }

@@ -26,8 +26,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by rex.wu on 2016/11/25.
@@ -81,6 +83,11 @@ public class CombinedProductController extends CmsController {
         return success(resultMap);
     }
 
+    /**
+     * 根据单个skuCode获取SKU详情
+     * @param params
+     * @return
+     */
     @RequestMapping(CmsUrlConstants.PRODUCT.CombinedProduct.GET_SKU_DETAIL)
     public AjaxResponse getSkuDetail(@RequestBody Map<String, String> params) {
         String cartId = params.get("cartId");
@@ -92,12 +99,22 @@ public class CombinedProductController extends CmsController {
         return success(resultMap);
     }
 
+    /**
+     * 新增组合商品
+     * @param modelBean
+     * @return
+     */
     @RequestMapping(CmsUrlConstants.PRODUCT.CombinedProduct.ADD)
     public AjaxResponse add(@RequestBody CmsBtCombinedProductModel modelBean) {
         cmsBtCombinedProductService.addCombinedProduct(modelBean, getUser().getSelChannelId(), getUser().getUserName());
         return success("");
     }
 
+    /**
+     * 逻辑删除组合商品
+     * @param modelBean
+     * @return
+     */
     @RequestMapping(CmsUrlConstants.PRODUCT.CombinedProduct.DELETE)
     public AjaxResponse delete(@RequestBody CmsBtCombinedProductBean modelBean) {
         cmsBtCombinedProductService.deleteCombinedProduct(modelBean, getUser().getUserName(), getUser().getSelChannelId());
@@ -127,5 +144,19 @@ public class CombinedProductController extends CmsController {
     public AjaxResponse getOperateLogs(@RequestBody CmsBtCombinedProductBean searchBean) {
         Map<String, Object> resultMap = cmsBtCombinedProductService.getOperateLogs(searchBean.getCurr(), searchBean.getSize(), searchBean);
         return success(resultMap);
+    }
+
+    /**
+     * 批量获取SKU详情
+     * @param params
+     * @return
+     */
+    @RequestMapping(CmsUrlConstants.PRODUCT.CombinedProduct.BATCH_GET_SKU_DETAIL)
+    public AjaxResponse batchGetSkuDetail(@RequestBody Map<String, Object> params){
+        String channelId = getUser().getSelChannelId();
+        Integer cartId = Integer.valueOf((String) params.get("cartId"));
+        List<String> skuCodes = (List<String>)params.get("skuCodes");
+        Set<String> skuCodeList = new HashSet<String>(skuCodes);
+        return success(cmsBtCombinedProductService.batchGetSkuDetail(skuCodeList, channelId, cartId));
     }
 }

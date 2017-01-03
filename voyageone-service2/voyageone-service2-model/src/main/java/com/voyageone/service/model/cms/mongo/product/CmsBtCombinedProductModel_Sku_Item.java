@@ -3,12 +3,21 @@ package com.voyageone.service.model.cms.mongo.product;
 /**
  * Created by rex.wu on 2016/11/29.
  */
-public class CmsBtCombinedProductModel_Sku_Item {
+public class CmsBtCombinedProductModel_Sku_Item implements Cloneable {
 
-    private String skuCode;
+    private String code; // 记录商品code
+    private String skuCode; // 真实SKU code
     private Double sellingPriceCn; // 单品中国最终售价
     private Double preferentialPrice;  // 单品优惠售价
     private String productName; // 商品名称
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public String getSkuCode() {
         return skuCode;
@@ -40,6 +49,12 @@ public class CmsBtCombinedProductModel_Sku_Item {
 
     public void setSellingPriceCn(Double sellingPriceCn) {
         this.sellingPriceCn = sellingPriceCn;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException
+    {
+        return super.clone();
     }
 
 }
