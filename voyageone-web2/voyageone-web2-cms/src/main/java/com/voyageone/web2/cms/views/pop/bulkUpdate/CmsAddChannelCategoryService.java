@@ -6,8 +6,11 @@ import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.SaveChannelCategoryMQMessageBody;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
@@ -36,8 +39,10 @@ public class CmsAddChannelCategoryService extends BaseViewService {
     private SellerCatService sellerCatService;
     @Autowired
     private CmsAdvanceSearchService advanceSearchService;
+    /*@Autowired
+    private MqSender sender;*/
     @Autowired
-    private MqSender sender;
+    private MqSenderService mqSenderService;
 
     private static final String DEFAULT_SELLER_CAT_CNT = "10";
 
@@ -208,10 +213,19 @@ public class CmsAddChannelCategoryService extends BaseViewService {
         checkChannelCategory(sellerCats, cartId);
 
         // 开始批处理
-        params.put("_taskName", "saveChannelCategory");
-        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+        // params.put("_taskName", "saveChannelCategory");
+        // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
 
-       $info(JacksonUtil.bean2Json(params));
+        SaveChannelCategoryMQMessageBody mqMessageBody = new SaveChannelCategoryMQMessageBody();
+        mqMessageBody.setParams(params);
+        try {
+            mqSenderService.sendMessage(mqMessageBody);
+        } catch (MQMessageRuleException e) {
+            $error(String.format("saveChannelCategory时MQ发送异常,cartId=%s", cartId), e);
+            throw new BusinessException(e.getMessage());
+        }
+
+        $info(JacksonUtil.bean2Json(params));
 
     }
 

@@ -16,6 +16,7 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.ImagesService;
@@ -25,6 +26,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseMQCmsService;
@@ -52,8 +54,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0, 2016/08/18
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_AdvSearch_FileDldJob)
-public class CmsAdvSearchExportFileService extends BaseMQCmsService {
+public class CmsAdvSearchExportFileService extends BaseService{
 
     @Autowired
     private ProductService productService;
@@ -122,10 +123,9 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
     /*showmetro 聚美上新SKU导出列*/
     private final static String[] _shoemetroColJMSKU = {"Child SKU", "Brand", "Parent SKU", "Color", "Size", "VO Price", "Final RMB Price", "URL Link", "Inventory"};
 
-    @Override
-    public void onStartup(Map<String, Object> messageMap) throws Exception {
-        $debug("高级检索 文件下载任务 param=" + messageMap.toString());
-        Integer taskId = (Integer) messageMap.get("_taskId");
+    public void export(AdvSearchExportMQMessageBody messageBody) throws Exception {
+        $debug("高级检索 文件下载任务 param=" + JacksonUtil.bean2Json(messageBody));
+        Integer taskId = messageBody.getAdvSearchExportTaskId();
         if (taskId == null) {
             $error("高级检索 文件下载任务 查询参数不正确 缺少ID");
             return;
@@ -135,6 +135,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             $error("高级检索 文件下载任务 查询参数不正确 该任务不存在");
             return;
         }
+        Map<String, Object> messageMap = messageBody.getSearchValue();
         CmsSearchInfoBean2 searchValue = null;
         try {
             searchValue = JacksonUtil.json2Bean(JacksonUtil.bean2Json(messageMap), CmsSearchInfoBean2.class);

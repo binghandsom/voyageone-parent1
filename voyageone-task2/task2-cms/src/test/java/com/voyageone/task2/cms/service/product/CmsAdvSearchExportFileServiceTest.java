@@ -33,7 +33,7 @@ public class CmsAdvSearchExportFileServiceTest {
         String msg = "{\"compareType\":null,\"brand\":null,\"tags\":[],\"priceChgFlg\":\"\",\"priceDiffFlg\":\"\",\"tagTypeSelectValue\":\"0\",\"promotionList\":[],\"catgoryList\":[],\"cidValue\":[],\"promotionTagType\":1,\"freeTagType\":1,\"supplierType\":1,\"brandSelType\":1,\"productSelType\":\"1\",\"sizeSelType\":\"1\",\"salesType\":\"All\",\"custGroupType\":\"1\",\"custAttrMap\":[{\"inputVal\":\"\",\"inputOpts\":\"\",\"inputOptsKey\":\"\"}],\"_selCodeList\":[],\"fileType\":4,\"productStatus\":[],\"platformStatus\":[],\"pRealStatus\":[],\"shopCatStatus\":0,\"pCatStatus\":0,\"_channleId\":\"028\",\"_userName\":\"admin\",\"_language\":\"cn\",\"_taskId\":217,\"_sessionBean\":{\"_adv_search_customProps\":[],\"_adv_search_commonProps\":[],\"_adv_search_props_searchItems\":\"\",\"_adv_search_selSalesType\":[],\"_adv_search_selBiDataList\":null}}";
         Map<String, Object> map = JacksonUtil.jsonToMap(msg);
 
-        cmsAdvSearchExportFileService.onStartup(map);
+//        cmsAdvSearchExportFileService.onStartup(map);
 
         /*Map<SkuInventoryForCmsBean, Integer> map = new HashMap<>();
         SkuInventoryForCmsBean sku1 = new SkuInventoryForCmsBean("abc", "a", "1");

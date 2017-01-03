@@ -9,6 +9,7 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -38,8 +39,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob)
-public class CmsProductVoRateUpdateService extends BaseMQCmsService {
+public class CmsProductVoRateUpdateService extends BaseService {
 
     @Autowired
     private ProductService productService;
@@ -52,7 +52,6 @@ public class CmsProductVoRateUpdateService extends BaseMQCmsService {
     @Autowired
     private SxProductService sxProductService;
 
-    @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
         $info("CmsProductVoRateUpdateService start");
         $info("参数" + JacksonUtil.bean2Json(messageMap));

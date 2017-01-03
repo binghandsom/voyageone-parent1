@@ -16,6 +16,8 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
@@ -28,6 +30,7 @@ import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
@@ -75,8 +78,10 @@ public class CmsAdvanceSearchService extends BaseViewService {
     private ProductTagService productTagService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    //@Autowired
+    //private MqSender sender;
     @Autowired
-    private MqSender sender;
+    private MqSenderService mqSenderService;
     @Autowired
     private CmsBtExportTaskService cmsBtExportTaskService;
 
@@ -482,9 +487,23 @@ public class CmsAdvanceSearchService extends BaseViewService {
             sessionBean.put("_adv_search_selSalesType", cmsSessionBean.getAttribute("_adv_search_selSalesType"));
             sessionBean.put("_adv_search_selBiDataList", cmsSessionBean.getAttribute("_adv_search_selBiDataList"));
             searchValue.put("_sessionBean", sessionBean);
-            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_FileDldJob, searchValue);
+            //sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_FileDldJob, searchValue);
+            AdvSearchExportMQMessageBody advSearchExportMQMessageBody = new AdvSearchExportMQMessageBody();
+            advSearchExportMQMessageBody.setAdvSearchExportTaskId(taskModel.getId());
+            advSearchExportMQMessageBody.setSearchValue(searchValue);
+            try {
+                mqSenderService.sendMessage(advSearchExportMQMessageBody);
+            } catch (MQMessageRuleException e) {
+                $error(String.format("高级检索文件导出消息发送异常, channelId=%s, userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()));
+                CmsBtExportTaskModel target = new CmsBtExportTaskModel();
+                target.setId(taskModel.getId());
+                target.setModified(new Date());
+                target.setModifier(userInfo.getUserName());
+                target.setStatus(2);
+                target.setComment(e.getMessage());
+                cmsBtExportTaskService.update(target);
+            }
             return true;
-
         } else {
             return false;
         }

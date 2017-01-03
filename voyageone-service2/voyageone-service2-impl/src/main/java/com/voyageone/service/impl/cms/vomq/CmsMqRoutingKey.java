@@ -11,6 +11,12 @@ public class CmsMqRoutingKey {
     // 聚美活动文件生成导出
     public static final String CMS_JM_PROMOTION_EXPORT = "VOCmsJmPromotionExportQueue";
 
+    /*批量更新商品*/
+    public static final String CMS_BATCH_UPDATE_PRODUCT = "VOCmsBatchUpdateProductQueue";
+
+    /*保存店铺分类*/
+    public static final String CMS_SAVE_CHANNEL_CATEGORY = "VOCmsSaveChannelCategoryQueue";
+
 
     /**
      * jumei mq task
@@ -48,7 +54,9 @@ public class CmsMqRoutingKey {
 
     public static final String CMS_BATCH_PlatformCategorySchemaJMJob = "voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaJMJob_queue";
 
-    public static final String CMS_BATCH_FeedExportJob = "voyageone_cms_batchjob_FeedExportJob_queue";
+    // Feed文件导出
+    public static final String CMS_FEED_EXPORT = "VOCmsFeedExportQueue";
+    //public static final String CMS_BATCH_FeedExportJob = "voyageone_cms_batchjob_FeedExportJob_queue";
 
     public static final String CMS_BATCH_TMFieldsImportCms2Job = "voyageone_cms_batchjob_TMFieldsImportCms2Job_queue";
     public static final String CMS_BATCH_TMGroupImportCms2Job = "voyageone_cms_batchjob_TMGroupImportCms2Job_queue";
@@ -104,17 +112,22 @@ public class CmsMqRoutingKey {
     /**
      * 更新商品vo扣点相关
      */
-    public static final String CMS_TASK_ProdcutVoRateUpdateJob = "voyageone_cms_task_ProdcutVoRateUpdateJob_queue";
+    //public static final String CMS_TASK_ProdcutVoRateUpdateJob = "voyageone_cms_task_ProdcutVoRateUpdateJob_queue";
+    public static final String CMS_PRODUCT_VORATE_UPDATE = "VOCmsProductVoRateUpdateQueue";
+
     /**
      * 高级检索-异步生成文件
      */
-    public static final String CMS_TASK_AdvSearch_FileDldJob = "voyageone_cms_task_AdvSearch_FileDldJob_queue";
-    /**
-     * 高级检索-批处理
-     */
-    public static final String CMS_TASK_AdvSearch_AsynProcessJob = "voyageone_cms_task_AdvSearch_AsynProcessJob_queue";
+    //public static final String CMS_TASK_AdvSearch_FileDldJob = "voyageone_cms_task_AdvSearch_FileDldJob_queue";
+    public static final String CMS_ADV_SEARCH_EXPORT = "VOCmsAdvSearchExportQueue";
 
-    public static final String CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob = "voyageone_cms_task_AdvSearch_RefreshRetailPriceService_queue";
+    /*高级检索-指导价变更确认*/
+    //public static final String CMS_TASK_AdvSearch_AsynProcessJob = "voyageone_cms_task_AdvSearch_AsynProcessJob_queue";
+    public static final String CMS_ADV_SEARCH_CONFIRM_RETAIL_PRICE = "VOCmsAdvSearchConfirmRetailPrice";
+
+    /*高级检索-重新计算指导价*/
+    //public static final String CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob = "voyageone_cms_task_AdvSearch_RefreshRetailPriceService_queue";
+    public static final String CMS_ADV_SEARCH_REFRESH_RETAIL_PRICE = "VOCmsAdvSearchRefreshRetailPrice";
     /**
      * 高级检索-取得产品的bi信息
      */

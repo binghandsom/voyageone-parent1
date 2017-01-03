@@ -14,6 +14,7 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -38,7 +39,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class CmsRefreshRetailPriceTask extends VOAbsLoggable {
+public class CmsRefreshRetailPriceTask extends BaseService {
 
     @Autowired
     private ProductService productService;

@@ -15,7 +15,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob)
+//@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob)
 public class CmsAdvSearchAsynProcessService extends BaseMQCmsService {
 
     @Autowired
@@ -34,9 +34,9 @@ public class CmsAdvSearchAsynProcessService extends BaseMQCmsService {
     public void onStartup(Map<String, Object> messageMap) throws Exception {
         String serviceName = (String) messageMap.get("_taskName");
         if ("batchupdate".equals(serviceName)) {
-            bacthUpdateService.onStartup(messageMap);
+//            bacthUpdateService.onStartup(messageMap);
         } else if ("saveChannelCategory".equals(serviceName)) {
-            saveChannelCategoryService.onStartup(messageMap);
+//            saveChannelCategoryService.onStartup(messageMap);
         } else if ("retailprice".equals(serviceName)) {
             confirmRetailPriceService.onStartup(messageMap);
         } else if ("refreshRetailPrice".equals(serviceName)) {
