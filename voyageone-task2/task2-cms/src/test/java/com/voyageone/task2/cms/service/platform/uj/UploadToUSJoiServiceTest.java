@@ -224,7 +224,7 @@ public class UploadToUSJoiServiceTest {
             System.out.println(String.format("在product表中没有查到该产品code(%s)!", code));
         }
 
-        uploadToUSJoiService.doSetMainCategory(prodObj.getCommon(), feedCategoryPath);
+//        uploadToUSJoiService.doSetMainCategory(prodObj.getCommon(), feedCategoryPath);
         System.out.println("ok");
     }
 }
