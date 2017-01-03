@@ -22,15 +22,15 @@ public class DtWareServiceTest {
     private DtWareService dtWareService;
 
     @Test
-    public void testAddProduct() throws Exception {
-        // 分销平台新增/更新商品测试
+    public void testOnShelfProduct() throws Exception {
+        // 分销平台上架(新增/更新)商品测试
 
         String channelId = "928";
         String cartId = CartEnums.Cart.DT.getId();   // 33
         String code = "022-EA3060501754";
 
         ShopBean shop = new ShopBean();
-        shop.setApp_url("http://10.0.1.39:8082/dist");
+        shop.setApp_url("http://10.0.1.35:8082/dist");
         shop.setAppKey("");
         shop.setAppSecret("");
         shop.setSessionKey("");     // 分销测试店(SessionKey)
@@ -39,8 +39,30 @@ public class DtWareServiceTest {
         shop.setShop_name("分销测试店");
         shop.setPlatform_id(PlatFormEnums.PlatForm.DT.getId());
 
-        String result = dtWareService.addProduct(shop, code);
-        System.out.println("result = " + (result == null ? "分销商品上新返回值为空" : result));
+        String result = dtWareService.onShelfProduct(shop, code);
+        System.out.println("分销平台上架(新增/更新)商品测试 result = " + (result == null ? "分销商品上新返回值为空" : result));
+    }
+
+    @Test
+    public void testOffShelfProduct() throws Exception {
+        // 分销平台下架(删除)商品测试
+
+        String channelId = "928";
+        String cartId = CartEnums.Cart.DT.getId();   // 33
+        String code = "022-EA3060501754";
+
+        ShopBean shop = new ShopBean();
+        shop.setApp_url("http://10.0.1.35:8082/dist");
+        shop.setAppKey("");
+        shop.setAppSecret("");
+        shop.setSessionKey("");     // 分销测试店(SessionKey)
+        shop.setOrder_channel_id(channelId);
+        shop.setCart_id(cartId);
+        shop.setShop_name("分销测试店");
+        shop.setPlatform_id(PlatFormEnums.PlatForm.DT.getId());
+
+        String result = dtWareService.offShelfProduct(shop, code);
+        System.out.println("分销平台下架(删除)商品测试 result = " + (result == null ? "分销商品上新返回值为空" : result));
     }
 
 }

@@ -188,7 +188,7 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
             List<String> codes = grpModel.getProductCodes();
             for(String code : codes) {
                 // 分销上新
-                String result = dtWareService.addProduct(shop, code);
+                String result = dtWareService.onShelfProduct(shop, code);
                 $info("产品(%s)分销上新成功! [result:%s]", code, result);
             }
 

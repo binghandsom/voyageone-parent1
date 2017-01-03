@@ -14,18 +14,8 @@ import java.util.Map;
  */
 public abstract class DtBase extends ComponentBase {
 
-    private static final String DEFAULT_API_ACTION = "/onShelfProduct";
-
-    protected String reqApi(ShopBean shop, Map<String, Object> jsonMap) throws Exception {
-        return reqApi(shop, JacksonUtil.bean2Json(jsonMap));
-    }
-
     protected String reqApi(ShopBean shop, String apiAction, Map<String, Object> jsonMap) throws Exception {
         return reqApi(shop, apiAction, JacksonUtil.bean2Json(jsonMap));
-    }
-
-    protected String reqApi(ShopBean shop, String jsonBody) throws Exception {
-        return reqApi(shop, DEFAULT_API_ACTION, jsonBody);
     }
 
     protected String reqApi(ShopBean shop, String apiAction, String jsonBody) throws Exception {
