@@ -11,9 +11,8 @@ import com.voyageone.service.daoext.cms.CmsBtDataAmountDaoExt;
 import com.voyageone.service.model.cms.CmsBtDataAmountModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class CmsBtDataAmountService {
@@ -115,12 +114,12 @@ public class CmsBtDataAmountService {
         }
         //master platform品牌黑名单统计
         int count = cmsBtBrandBlockService.getBrandCount(channelId, String.valueOf(cartId), 2);
-        saveCmsBtDataAmount(channelId, cartId, EnumPlatformInfoSum.CMS_PLATFORM_Brand_block, count);
+        saveCmsBtDataAmount(channelId, cartId, EnumPlatformInfoSum.CMS_PLATFORM_BRAND_BLOCK, count);
     }
     //获取品牌未匹配数量
     private  void sumBrandNoMatch(String channelId, int cartId) {
         int count = daoExt.selectBrandNoMatchCount(channelId, cartId);
-        saveCmsBtDataAmount(channelId, cartId, EnumPlatformInfoSum_BrandNoMatch.CMS_BrandNoMatchCount, count);
+        saveCmsBtDataAmount(channelId, cartId, EnumPlatformInfoSum_BrandNoMatch.CMS_BRAND_NO_MATCH_COUNT, count);
     }
 
     //保存

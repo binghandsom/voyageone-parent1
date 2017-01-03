@@ -461,25 +461,29 @@ public class TmallGjSkuFieldBuilderImpl7 extends AbstractSkuFieldBuilder {
 
             if (colorExtend_aliasnameField != null) {
                 // 别名,用产品code
-                String alias = sxProduct.getCommon().getFields().getCode();
-                // added by morse.lu 2016/08/29 start
-                // 通过配置表(cms_mt_channel_config)来决定用code，还是color，默认用code
-                CmsChannelConfigBean aliasConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId()
-                        , CmsConstants.ChannelConfig.ALIAS
-                        , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.COLOR_ALIAS);
-                if (aliasConfig != null) {
-                    String aliasPropName = aliasConfig.getConfigValue1(); // 目前配置的是code或者color
-                    if (!StringUtils.isEmpty(aliasPropName)) {
-                        String val = sxProduct.getCommon().getFields().getStringAttribute(aliasPropName);
-                        if (!StringUtils.isEmpty(val)) {
-                            alias = val;
-                        }
-                    }
-                }
-                // added by morse.lu 2016/08/29 end
-                if (alias.length() > 60) {
-                    alias = sxProduct.getCommon().getFields().getColor();
-                }
+                // modified by morse.lu 2016/12/29 start
+                // 放到共通去了
+//                String alias = sxProduct.getCommon().getFields().getCode();
+//                // added by morse.lu 2016/08/29 start
+//                // 通过配置表(cms_mt_channel_config)来决定用code，还是color，默认用code
+//                CmsChannelConfigBean aliasConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId()
+//                        , CmsConstants.ChannelConfig.ALIAS
+//                        , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.COLOR_ALIAS);
+//                if (aliasConfig != null) {
+//                    String aliasPropName = aliasConfig.getConfigValue1(); // 目前配置的是code或者color
+//                    if (!StringUtils.isEmpty(aliasPropName)) {
+//                        String val = sxProduct.getCommon().getFields().getStringAttribute(aliasPropName);
+//                        if (!StringUtils.isEmpty(val)) {
+//                            alias = val;
+//                        }
+//                    }
+//                }
+//                // added by morse.lu 2016/08/29 end
+//                if (alias.length() > 60) {
+//                    alias = sxProduct.getCommon().getFields().getColor();
+//                }
+                String alias = expressionParser.getSxProductService().getSxColorAlias(sxData.getChannelId(), sxData.getCartId(), sxProduct, 60);
+                // modified by morse.lu 2016/12/29 end
                 complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), alias);
             }
             if (colorExtend_basecolorField != null) {

@@ -157,9 +157,9 @@ public class CmsTranslateByTonggouMqServiceTest {
         // 设置商品更新共通属性
         BaseMongoMap<String, String> productInfoMap = cmsTranslateByTonggouMqService.getProductCommonInfo();
 
-        JongoUpdate updateSql = cmsTranslateByTonggouMqService.doTranslateByTonggouSingle(transShop, channelId, code,
+        List<JongoUpdate> updateSql = cmsTranslateByTonggouMqService.doTranslateByTonggouSingle(transShop, channelId, code,
                 blnNeedTransTitle, transSrcDesMap, blnRunType, numIIdForTransOnly, otherItemMap, productInfoMap);
 
-        System.out.println("testDoTranslateByTonggouSingle 测试正常结束！updateSql = " + updateSql);
+//        System.out.println("testDoTranslateByTonggouSingle 测试正常结束！updateSql = " + updateSql);
     }
 }

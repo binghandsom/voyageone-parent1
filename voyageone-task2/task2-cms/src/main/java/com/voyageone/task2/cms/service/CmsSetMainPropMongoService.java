@@ -560,7 +560,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                                 .collect(Collectors.toList());
                         if (ListUtils.isNull(skus)) {
                             // feed里面的品牌已被加入黑名单,导入失败
-                            String errMsg = String.format(strProcName + ":feed里面的sku的价格成本价为0" +
+                            String errMsg = String.format(strProcName + ":feed里面的sku的价格成本价为0或UPC为空" +
                                     "[ChannelId:%s] [FeedCode:%s]", feed.getChannelId(), feed.getCode());
                             $error(errMsg);
                             throw new BusinessException(errMsg);

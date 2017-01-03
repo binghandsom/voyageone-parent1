@@ -314,6 +314,9 @@
                                                 <label class="checkbox-inline c-checkbox">
                                                     <input type="checkbox" value="InStock" style="margin: 0" ng-model="vm.searchInfo.pRealStatus['InStock']"><span class="fa fa-check"></span> 未上架
                                                 </label>
+                                                <label class="checkbox-inline c-checkbox">
+                                                    <input type="checkbox" value="Violation" style="margin: 0" ng-model="vm.searchInfo.pRealStatus['Violation']"><span class="fa fa-check"></span> 违规下架
+                                                </label>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display">
@@ -679,6 +682,9 @@
                                 <li>
                                     <a href="javascript:void(0)" ng-click="exportFile(3)">SKU级导出</a>
                                 </li>
+                                <li>
+                                    <a href="javascript:void(0)" ng-click="exportFile(5)">报备文件导出</a>
+                                </li>
                             </ul>
                         </div>
                         &nbsp;
@@ -696,6 +702,9 @@
                             <ul uib-dropdown-menu>
                                 <li ng-if="vm.masterData.isminimall == 1">
                                     <a href="javascript:void(0)" ng-click="$parent.openCategoryMapping(popupCategoryNew)"> {{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</a>
+                                </li>
+                                <li ng-if="vm.masterData.isminimall == 1">
+                                    <a href="javascript:void(0)" ng-click="$parent.refreshProductCategory()"> {{'BTN_REFRESH_MASTER_CATEGORY' | translate}}</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" ng-click="$parent.openBulkUpdate(openFieldEdit)"> {{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}</a>

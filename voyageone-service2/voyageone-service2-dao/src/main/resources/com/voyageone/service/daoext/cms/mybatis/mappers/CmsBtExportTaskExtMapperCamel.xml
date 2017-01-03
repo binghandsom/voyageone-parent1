@@ -274,7 +274,7 @@
     
     <select id="queryFileDeleting" parameterType="java.util.Map" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List" /> FROM cms_bt_export_task
-        WHERE status =1
+        WHERE status =1 AND parameter NOT LIKE CONCAT('%', '"fileType":5', '%')
         <if test="taskTypes != null and taskTypes.size() > 0">
             and `task_type` in
             <foreach item="taskType" index="index" collection="taskTypes" open="(" separator="," close=")">

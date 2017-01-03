@@ -8,7 +8,7 @@ import java.util.function.Function;
  * Created by dell on 2016/7/5.
  */
 public enum EnumPlatformInfoSum_BrandNoMatch implements IEnumDataAmountSum{
-    CMS_BrandNoMatchCount("CMS_BrandNoMatchCount", "", "", "", "品牌未匹配数量");
+    CMS_BRAND_NO_MATCH_COUNT("CMS_BRAND_NO_MATCH_COUNT", "", "", "", "品牌未匹配数量");
     EnumPlatformInfoSum_BrandNoMatch(String amountName, String strQuery, String linkUrl, String linkParameter, String comment) {
         this.amountName = amountName;
         this.strQuery = strQuery;

@@ -60,6 +60,7 @@ define([
         $scope.getGroupList = getGroupList;
         $scope.getProductList = getProductList;
         $scope.openCategoryMapping = openCategoryMapping;
+        $scope.refreshProductCategory = refreshProductCategory;
         $scope.openMasterCategoryMapping = openMasterCategoryMapping;
         $scope.openFeedCategoryMapping = openFeedCategoryMapping;
         $scope.openChannelInnerCategory = openChannelInnerCategory;
@@ -323,6 +324,8 @@ define([
                 msg = '即将导出SKU级的搜索结果，请确认。' + msg;
             } else if (fileType == 4) {
                 msg = '即将导出聚美上新SKU级的搜索结果，请确认。' + msg;
+            } else if (fileType == 5) {
+                msg = "即将根据搜索结果导出报备文件，请确认。" + msg;
             }
             confirm(msg).then(function () {
                 $scope.vm.searchInfo.fileType = fileType;
@@ -461,6 +464,28 @@ define([
                 openFieldEdit(selList, context).then(function (res) {
                     $scope.search();
                 })
+            }
+        }
+
+
+        function refreshProductCategory() {
+            _chkProductSel(null, _refreshProductCategory);
+
+            function _refreshProductCategory(cartId, selList) {
+                var productIds = [];
+                if (selList) {
+                    _.forEach(selList, function (object) {
+                        productIds.push(object.code);
+                    });
+                }
+                var data = {
+                    prodIds: productIds,
+                    isSelAll: $scope.vm._selall ? 1 : 0
+                };
+                productDetailService.refreshProductCategory(data).then(function (res) {
+                    notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    $scope.search();
+                });
             }
         }
 
