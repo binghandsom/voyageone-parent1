@@ -21,6 +21,7 @@ import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
@@ -563,6 +564,39 @@ public class CmsProductDetailService extends BaseViewService {
 //        String feeUpdStr = "{'code':{$in:['" + StringUtils.join(prodCodes, "','") + "']}}";
 //        WriteResult wrs = feedInfoService.updateAllUpdFlg(userInfo.getSelChannelId(), feeUpdStr, 1, userInfo.getUserName());
 //        $debug("切换类目 feed更新结果 " + wrs.toString());
+
+        // 获取更新结果
+        resultMap.put("isChangeCategory", true);
+        return resultMap;
+    }
+
+    public Map<String, Object> refreshProductCategory(Map requestMap, UserSessionBean userInfo, CmsSessionBean cmsSession) {
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Integer isSelAll = (Integer) requestMap.get("isSelAll");
+        if (isSelAll == null) {
+            isSelAll = 0;
+        }
+        List<String> prodCodes = null;
+        if (isSelAll == 1) {
+            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
+            prodCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+        } else {
+            prodCodes = (List<String>) requestMap.get("prodIds");
+        }
+        if (prodCodes == null || prodCodes.isEmpty()) {
+            $error("切换类目 没有prod id条件 params=" + requestMap.toString());
+            resultMap.put("isChangeCategory", false);
+            return resultMap;
+        }
+        requestMap.put("userName",userInfo.getUserName());
+        requestMap.put("channelId",userInfo.getSelChannelId());
+        List<List<String>> splitCodes = CommonUtil.splitList(prodCodes,100);
+        splitCodes.forEach(codes -> {
+            requestMap.put("codeList",codes);
+            sender.sendMessage( MqRoutingKey.CMS_BATCH_CmsBatchRefreshMainCategoryJob, requestMap);
+        });
 
         // 获取更新结果
         resultMap.put("isChangeCategory", true);

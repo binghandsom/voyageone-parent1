@@ -229,7 +229,6 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(result);
     }
 
-    //全量删除
     //全量再售
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.CopyDealAll)
     public AjaxResponse copyDealAll(@RequestBody int promotionId) {

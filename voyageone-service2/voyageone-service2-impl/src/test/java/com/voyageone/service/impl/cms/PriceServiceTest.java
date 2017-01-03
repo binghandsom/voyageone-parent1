@@ -39,9 +39,9 @@ public class PriceServiceTest {
     @Test
     public void testSystemPriceSetter() throws Exception {
 
-        CmsBtProductModel product = productService.getProductById("017", 47955);
+        CmsBtProductModel product = productService.getProductById("928", 3181331);
 
-        List<BaseMongoMap<String, Object>> skus = product.getPlatform(27).getSkus();
+        List<BaseMongoMap<String, Object>> skus = product.getPlatform(31).getSkus();
 
         Map<String, CmsBtProductModel_Sku> commonSkuMap = product.getCommon().getSkus().stream().collect(toMap(CmsBtProductModel_Sku::getSkuCode, sku -> sku));
 
@@ -62,7 +62,7 @@ public class PriceServiceTest {
 
         // 测试计算
 
-        priceService.setPrice(product, 27, false);
+        priceService.setPrice(product, 31, false);
 
         // 输出结果
 
