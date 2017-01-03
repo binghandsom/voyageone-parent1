@@ -175,23 +175,15 @@ public class Jingdong_928_Jiangxinjie_DictTest {
                     // 微软雅黑， 中号字， 默认左对齐
                     ruleRoot.addRuleWord(new TextWord("<div style=\"text-align: left; width:790px; margin:0 auto;\"><span style=\"font-family:Microsoft YaHei;font-size:medium;\">"));
 
-                    // 短描述 - 英文
-                    ruleRoot.addRuleWord(new MasterWord("shortDesEn"));
-                    // 回车
-                    ruleRoot.addRuleWord(new TextWord(C_TEXT_BR));
-                    // 短描述 - 中文
-                    ruleRoot.addRuleWord(new MasterWord("shortDesCn"));
-                    // 回车
-                    ruleRoot.addRuleWord(new TextWord(C_TEXT_BR + C_TEXT_BR));
-
-                    // 长描述 - 英文
-                    ruleRoot.addRuleWord(new MasterWord("longDesEn"));
-                    // 回车
-                    ruleRoot.addRuleWord(new TextWord(C_TEXT_BR));
                     // 长描述 - 中文
                     ruleRoot.addRuleWord(new MasterWord("longDesCn"));
                     // 回车
                     ruleRoot.addRuleWord(new TextWord(C_TEXT_BR));
+
+                    // 短描述 - 中文
+                    ruleRoot.addRuleWord(new MasterWord("shortDesCn"));
+                    // 回车
+                    ruleRoot.addRuleWord(new TextWord(C_TEXT_BR + C_TEXT_BR));
 
                     ruleRoot.addRuleWord(new TextWord("</span></div>"));
                 }
