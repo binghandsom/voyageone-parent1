@@ -20,7 +20,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by james on 2016/10/19.
+ * JmBtPromotion PriceRefresh Service  聚美活动 参考价刷新
+ *
+ * @author peitao 2017/01/03.
+ * @version 2.0.0
+ * @since 2.0.0
  */
 @Service
 @RabbitListener()//queues = CmsMqRoutingKey.CMS_BATCH_JmSynPromotionDealPrice
