@@ -149,19 +149,6 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
 //        Long cnt = productGroupService.countByQuery(queryObject.getQuery(), channelId);
         List<CmsBtProductGroupModel> cmsBtProductGroupModels = productGroupService.getList(channelId, queryObject);
         ShopBean shopBean = Shops.getShop(channelId, cartId);
-//        ShopBean shopBean = new ShopBean();
-//        shopBean.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
-//        shopBean.setPlatform("TB");
-//        shopBean.setAppKey("21008948");
-//        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-//        shopBean.setSessionKey("620272892e6145ee7c3ed73c555b4309f748ZZ9427ff3412641101981");
-//        shopBean.setShop_name("Jewelry海外旗舰店");
-//        shopBean.setOrder_channel_id(channelId);
-//        shopBean.setCart_id(cartId);
-//        shopBean.setCart_type("3");
-//        shopBean.setCart_name("TG");
-//        shopBean.setComment("天猫国际");
-//        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
 
         List<CmsBtSellerCatModel> sellerCat = new ArrayList<>();
 
