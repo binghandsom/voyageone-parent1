@@ -178,12 +178,12 @@ public class Jingdong_928_Jiangxinjie_DictTest {
                     // 长描述 - 中文
                     ruleRoot.addRuleWord(new MasterWord("longDesCn"));
                     // 回车
-                    ruleRoot.addRuleWord(new TextWord(C_TEXT_BR));
+                    ruleRoot.addRuleWord(new TextWord(C_TEXT_BR + C_TEXT_BR));
 
                     // 短描述 - 中文
                     ruleRoot.addRuleWord(new MasterWord("shortDesCn"));
                     // 回车
-                    ruleRoot.addRuleWord(new TextWord(C_TEXT_BR + C_TEXT_BR));
+                    ruleRoot.addRuleWord(new TextWord(C_TEXT_BR));
 
                     ruleRoot.addRuleWord(new TextWord("</span></div>"));
                 }
