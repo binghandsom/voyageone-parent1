@@ -162,6 +162,10 @@ public class CmsConstants {
         // 上新方式
         String SX_SMART = "SX_SMART";
 
+        // hscode
+        String HSCODE = "HSCODE";
+        String SX_HSCODE = ".sx_hscode";
+
         // 发货方式
         String SHIPPING_TYPE = "SHIPPING_TYPE";
 
