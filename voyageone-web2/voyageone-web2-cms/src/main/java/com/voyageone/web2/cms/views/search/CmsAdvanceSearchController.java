@@ -1,11 +1,14 @@
 package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.impl.CmsProperty;
@@ -107,6 +110,27 @@ public class CmsAdvanceSearchController extends CmsController {
 
         List<String> currCodeList = advSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), true);
         List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
+
+        List<TypeChannelBean> productTypes = TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), "cn");
+        List<TypeChannelBean> sizeTypes = TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), "cn");
+        prodInfoList.forEach(cmsBtProductBean -> {
+            String productType =cmsBtProductBean.getCommon().getFields().getProductType();
+            if(!StringUtil.isEmpty(productType)){
+                TypeChannelBean temp = productTypes.stream().filter(typeChannelBean -> typeChannelBean.getValue().equalsIgnoreCase(productType)).findFirst().orElse(null);
+                if(temp != null){
+                    cmsBtProductBean.getCommon().getFields().setProductType(temp.getName());
+                }
+            }
+
+            String sizeType =cmsBtProductBean.getCommon().getFields().getSizeType();
+            if(!StringUtil.isEmpty(sizeType)){
+                TypeChannelBean temp = sizeTypes.stream().filter(typeChannelBean -> typeChannelBean.getValue().equalsIgnoreCase(sizeType)).findFirst().orElse(null);
+                if(temp != null){
+                    cmsBtProductBean.getCommon().getFields().setSizeType(temp.getName());
+                }
+            }
+        });
+
         searchIndexService.checkProcStatus(prodInfoList, getLang());
         resultBean.put("productList", prodInfoList);
         resultBean.put("productListTotal", productListTotal);
@@ -189,6 +213,9 @@ public class CmsAdvanceSearchController extends CmsController {
         // 获取product列表
         List<String> currCodeList = advSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), true);
         List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
+        prodInfoList.forEach(cmsBtProductBean -> {
+
+        });
         searchIndexService.checkProcStatus(prodInfoList, getLang());
         resultBean.put("productList", prodInfoList);
         resultBean.put("productListTotal", productListTotal);
