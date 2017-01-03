@@ -123,11 +123,11 @@ public class CmsMqRoutingKey {
 
     /*高级检索-指导价变更确认*/
     //public static final String CMS_TASK_AdvSearch_AsynProcessJob = "voyageone_cms_task_AdvSearch_AsynProcessJob_queue";
-    public static final String CMS_ADV_SEARCH_CONFIRM_RETAIL_PRICE = "VOCmsAdvSearchConfirmRetailPrice";
+    public static final String CMS_ADV_SEARCH_CONFIRM_RETAIL_PRICE = "VOCmsAdvSearchConfirmRetailPriceQueue";
 
     /*高级检索-重新计算指导价*/
     //public static final String CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob = "voyageone_cms_task_AdvSearch_RefreshRetailPriceService_queue";
-    public static final String CMS_ADV_SEARCH_REFRESH_RETAIL_PRICE = "VOCmsAdvSearchRefreshRetailPrice";
+    public static final String CMS_ADV_SEARCH_REFRESH_RETAIL_PRICE = "VOCmsAdvSearchRefreshRetailPriceQueue";
     /**
      * 高级检索-取得产品的bi信息
      */
