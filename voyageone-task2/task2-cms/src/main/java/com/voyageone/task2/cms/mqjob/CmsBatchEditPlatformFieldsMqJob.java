@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service;
+package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
@@ -9,46 +9,50 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsBatchPlatformFieldsMQMessageBody;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
-import com.voyageone.task2.base.BaseMQCmsService;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by james on 2016/11/4.
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_PlatformFieldsTaskJob)
-public class CmsBatchEditPlatformFieldsMqService extends BaseMQCmsService {
+@RabbitListener()
+public class CmsBatchEditPlatformFieldsMqJob extends TBaseMQCmsService<CmsBatchPlatformFieldsMQMessageBody> {
+
+    private final ProductService productService;
+
+    private final CmsBtProductDao cmsBtProductDao;
+
+    private final SxProductService sxProductService;
+
+    private final ProductStatusHistoryService productStatusHistoryService;
 
     @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
-
-    @Autowired
-    private SxProductService sxProductService;
-
-    @Autowired
-    private ProductStatusHistoryService productStatusHistoryService;
+    public CmsBatchEditPlatformFieldsMqJob(ProductService productService, CmsBtProductDao cmsBtProductDao, SxProductService sxProductService, ProductStatusHistoryService productStatusHistoryService) {
+        this.productService = productService;
+        this.cmsBtProductDao = cmsBtProductDao;
+        this.sxProductService = sxProductService;
+        this.productStatusHistoryService = productStatusHistoryService;
+    }
 
     @Override
-    protected void onStartup(Map<String, Object> messageMap) throws Exception {
-        Map<String, Object> mqMessage = new HashedMap();
+    public void onStartup(CmsBatchPlatformFieldsMQMessageBody messageBody) throws Exception {
 
-        List<String> productCodes = (List<String>) messageMap.get("productCodes");
-        String channelId = (String) messageMap.get("channelId");
-        Integer cartId = (Integer) messageMap.get("cartId");
-        String fieldsId = ((String) messageMap.get("fieldsId")).replace(".","->");
-        Object fieldsValue = messageMap.get("fieldsValue");
-        String userName = (String) messageMap.get("userName");
+        List<String> productCodes = messageBody.getProductCodes();
+        String channelId = messageBody.getChannelId();
+        Integer cartId = messageBody.getCartId();
+        String fieldsId = messageBody.getFieldsId().replace(".","->");
+        Object fieldsValue = messageBody.getFieldsValue();
+        String userName = messageBody.getUserName();
         productCodes.forEach(code -> {
             CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, code);
             if(cmsBtProductModel != null && cmsBtProductModel.getPlatform(cartId) != null){
@@ -78,4 +82,5 @@ public class CmsBatchEditPlatformFieldsMqService extends BaseMQCmsService {
             }
         });
     }
+
 }
