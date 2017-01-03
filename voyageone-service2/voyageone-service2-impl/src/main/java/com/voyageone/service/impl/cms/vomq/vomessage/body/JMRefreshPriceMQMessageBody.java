@@ -8,13 +8,13 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 
 
 /**
- * JMRefreshPriceMQMessageBody   聚美平台上传更新
+ * JMRefreshPriceMQMessageBody   聚美刷新参考价
  *
  * @author peitao 2016/12/30.
  * @version 2.0.0
  * @since 2.0.0
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_JM_PRODUCT_UPDATE)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_JM_REFRESH_PRICE)
 public class JMRefreshPriceMQMessageBody extends BaseMQMessageBody {
 
     // 表cms_bt_jm_promotion的id

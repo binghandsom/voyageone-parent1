@@ -294,10 +294,8 @@ public class CmsJmPromotionDetailController extends CmsController {
 
     //刷新参考价格
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.RefreshPrice)
-    public  AjaxResponse refreshPrice(@RequestBody int jmPromotionId) {
-        Map<String,Object> param=new HashedMap();
-        param.put("jmPromotionId",jmPromotionId);
-        sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_JmSynPromotionDealPrice, param);
+    public  AjaxResponse refreshPrice(@RequestBody int jmPromotionId) throws MQMessageRuleException {
+        cmsBtJmPromotionSkuService.senderJMRefreshPriceMQMessage(jmPromotionId, getUser().getUserName());
         return success(null);
     }
     //jm2 end
