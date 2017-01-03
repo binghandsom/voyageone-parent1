@@ -87,12 +87,13 @@ public class CmsBtJmPromotionExportTask3Service {
             model.setSuccessRows(listProduct.size());
             if (listProduct.isEmpty()) {
                 model.setErrorMsg("未查到商品");
-                model.setIsExport(false);
             }
+            model.setIsExport(true);
             model.setFileName(fileName);
         }catch (BusinessException ex){
             model.setErrorMsg(ex.getMessage());
             model.setErrorCode(1);
+            model.setIsExport(false);
             ex.printStackTrace();
         }
         catch (Exception ex) {
@@ -100,7 +101,6 @@ public class CmsBtJmPromotionExportTask3Service {
             model.setErrorCode(1);
             ex.printStackTrace();
         }
-        model.setIsExport(true);
         model.setEndTime(DateTimeUtilBeijing.getCurrentBeiJingDate());
         dao.update(model);
     }
