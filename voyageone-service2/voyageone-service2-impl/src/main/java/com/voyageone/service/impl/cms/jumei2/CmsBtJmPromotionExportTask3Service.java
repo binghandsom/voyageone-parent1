@@ -89,7 +89,12 @@ public class CmsBtJmPromotionExportTask3Service {
                 model.setErrorMsg("未查到商品");
             }
             model.setFileName(fileName);
-        } catch (Exception ex) {
+        }catch (BusinessException ex){
+            model.setErrorMsg(ex.getMessage());
+            model.setErrorCode(1);
+            ex.printStackTrace();
+        }
+        catch (Exception ex) {
             model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
             model.setErrorCode(1);
             ex.printStackTrace();
