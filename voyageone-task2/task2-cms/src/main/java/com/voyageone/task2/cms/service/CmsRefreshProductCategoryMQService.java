@@ -125,65 +125,63 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
                 return;
             }
 
+            // TODO 2016/12/30暂时这样更新，以后要改
             // 如果common.catConf="0"(非人工匹配主类目)时，不用自动匹配主类目
-            if ("0".equals(prodObj.getCommonNotNull().getCatConf())
-                    || "0".equals(prodObj.getCommonNotNull().getFields().getTranslateStatus())) {
+//            if (!"0".equals(prodObj.getCommonNotNull().getCatConf())) return;
 
-                // 如果common.catConf="0"(非人工匹配主类目)时，自动匹配商品主类目
-                // 共通Field
-                CmsBtProductModel_Field prodCommonField = prodObj.getCommonNotNull().getFieldsNotNull();
-                // 调用Feed到主数据的匹配接口取得匹配度最高的主类目
-                SearchResult searchResult = uploadToUSJoiService.getMainCatInfo(prodObj.getFeed().getCatPath(),
-                        prodCommonField.getProductType(),
-                        prodCommonField.getSizeType(),
-                        prodCommonField.getProductNameEn(),
-                        prodCommonField.getBrand());
-                if (searchResult == null || searchResult.getMtCategoryKeysModel() == null) {
-                    String warnMsg = String.format("调用Feed到主数据的匹配接口未能取得匹配度最高的主类目！[channelId:%s] [code:%s] [catConf:%s]" +
-                                    "[feedCategoryPath:%s] [productType:%s] [sizeType:%s] [productNameEn:%s] [brand:%s]",
-                            channelId, code, prodObj.getCommonNotNull().getCatConf(), prodObj.getFeed().getCatPath(),
-                            prodCommonField.getProductType(), prodCommonField.getSizeType(), prodCommonField.getProductNameEn(), prodCommonField.getBrand());
-                    $warn(warnMsg);
-                    return;
-                }
+            // 如果common.catConf="0"(非人工匹配主类目)时，自动匹配商品主类目
+            // 共通Field
+            CmsBtProductModel_Field prodCommonField = prodObj.getCommonNotNull().getFieldsNotNull();
+            // 调用Feed到主数据的匹配接口取得匹配度最高的主类目
+            SearchResult searchResult = uploadToUSJoiService.getMainCatInfo(prodObj.getFeed().getCatPath(),
+                    prodCommonField.getProductType(),
+                    prodCommonField.getSizeType(),
+                    prodCommonField.getProductNameEn(),
+                    prodCommonField.getBrand());
+            if (searchResult == null || searchResult.getMtCategoryKeysModel() == null) {
+                String warnMsg = String.format("调用Feed到主数据的匹配接口未能取得匹配度最高的主类目！[channelId:%s] [code:%s] [catConf:%s]" +
+                                "[feedCategoryPath:%s] [productType:%s] [sizeType:%s] [productNameEn:%s] [brand:%s]",
+                        channelId, code, prodObj.getCommonNotNull().getCatConf(), prodObj.getFeed().getCatPath(),
+                        prodCommonField.getProductType(), prodCommonField.getSizeType(), prodCommonField.getProductNameEn(), prodCommonField.getBrand());
+                $warn(warnMsg);
+                return;
+            }
 
-                // 主类目匹配结果model
-                MtCategoryKeysModel mtCategoryKeysModel = searchResult.getMtCategoryKeysModel();
+            // 主类目匹配结果model
+            MtCategoryKeysModel mtCategoryKeysModel = searchResult.getMtCategoryKeysModel();
 
-                // 构造更新SQL
-                List<BulkUpdateModel> bulkList = new ArrayList<>();
-                HashMap<String, Object> queryMap = new HashMap<>();
-                queryMap.put("common.fields.code", code);
-                // 更新字段
-                HashMap<String, Object> updateMap = new HashMap<>();
-                // 主类目path(中文)
-                updateMap.put("common.catPath", mtCategoryKeysModel.getCnName());
-                // 主类目path(英文)
-                updateMap.put("common.catPathEn", mtCategoryKeysModel.getEnName());
-                // 主类目id(就是主类目path中文的MD5码)
-                updateMap.put("common.catId", MD5.getMD5(mtCategoryKeysModel.getCnName()));
-                // 更新主类目设置状态
-                if (!StringUtil.isEmpty(mtCategoryKeysModel.getCnName())) {
-                    updateMap.put("common.fields.categoryStatus", "1");
-                    updateMap.put("common.fields.categorySetTime", DateTimeUtil.getNow());
-                    updateMap.put("common.fields.categorySetter", userName);
-                } else {
-                    updateMap.put("common.fields.categoryStatus", "0");
-                    updateMap.put("common.fields.categorySetTime", "");
-                    updateMap.put("common.fields.categorySetter", "");
-                }
-                // 产品分类(英文)
-                updateMap.put("common.fields.productType", mtCategoryKeysModel.getProductTypeEn());
-                // 产品分类(中文)
-                updateMap.put("common.fields.productTypeCn", mtCategoryKeysModel.getProductTypeCn());
-                // 适合人群(英文)
-                updateMap.put("common.fields.sizeType", mtCategoryKeysModel.getSizeTypeEn());
-                // 适合人群(中文)
-                updateMap.put("common.fields.sizeTypeCn", mtCategoryKeysModel.getSizeTypeCn());
+            // 构造更新SQL
+            List<BulkUpdateModel> bulkList = new ArrayList<>();
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("common.fields.code", code);
+            // 更新字段
+            HashMap<String, Object> updateMap = new HashMap<>();
+            // 主类目path(中文)
+            updateMap.put("common.catPath", mtCategoryKeysModel.getCnName());
+            // 主类目path(英文)
+            updateMap.put("common.catPathEn", mtCategoryKeysModel.getEnName());
+            // 主类目id(就是主类目path中文的MD5码)
+            updateMap.put("common.catId", MD5.getMD5(mtCategoryKeysModel.getCnName()));
+            // 更新主类目设置状态
+            if (!StringUtil.isEmpty(mtCategoryKeysModel.getCnName())) {
+                updateMap.put("common.fields.categoryStatus", "1");
+                updateMap.put("common.fields.categorySetTime", DateTimeUtil.getNow());
+                updateMap.put("common.fields.categorySetter", userName);
+            } else {
+                updateMap.put("common.fields.categoryStatus", "0");
+            }
+            // 产品分类(英文)
+            updateMap.put("common.fields.productType", mtCategoryKeysModel.getProductTypeEn());
+            // 产品分类(中文)
+            updateMap.put("common.fields.productTypeCn", mtCategoryKeysModel.getProductTypeCn());
+            // 适合人群(英文)
+            updateMap.put("common.fields.sizeType", mtCategoryKeysModel.getSizeTypeEn());
+            // 适合人群(中文)
+            updateMap.put("common.fields.sizeTypeCn", mtCategoryKeysModel.getSizeTypeCn());
+            // TODO 2016/12/30暂时这样更新，以后要改
+            if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter())) {
                 // 税号个人
                 updateMap.put("common.fields.hsCodePrivate", mtCategoryKeysModel.getTaxPersonal());
-                // 税号跨境申报（10位）
-                updateMap.put("common.fields.hsCodeCross", mtCategoryKeysModel.getTaxDeclare());
                 // 更新税号设置状态
                 if (!StringUtil.isEmpty(mtCategoryKeysModel.getTaxPersonal())) {
                     updateMap.put("common.fields.hsCodeStatus", "1");
@@ -191,32 +189,29 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
                     updateMap.put("common.fields.hsCodeSetter", userName);
                 } else {
                     updateMap.put("common.fields.hsCodeStatus", "0");
-                    updateMap.put("common.fields.hsCodeSetTime", "");
-                    updateMap.put("common.fields.hsCodeSetter", "");
                 }
-
-                // 商品中文名称(如果已翻译，则不设置)
-                if ("0".equals(prodCommonField.getTranslateStatus())) {
-                    // 主类目叶子级中文名称（"服饰>服饰配件>钱包卡包钥匙包>护照夹" -> "护照夹"）
-                    String leafCategoryCnName = mtCategoryKeysModel.getCnName().substring(mtCategoryKeysModel.getCnName().lastIndexOf(">") + 1,
-                            mtCategoryKeysModel.getCnName().length());
-                    // 设置商品中文名称（品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称）
-                    String titleCn = uploadToUSJoiService.getOriginalTitleCnByCategory(prodCommonField.getBrand(), prodCommonField.getSizeTypeCn(), leafCategoryCnName);
-                    if (!StringUtils.isEmpty(titleCn)) {
-                        updateMap.put("common.fields.originalTitleCn", titleCn);
-                    }
-                }
-                BulkUpdateModel model = new BulkUpdateModel();
-                model.setQueryMap(queryMap);
-                model.setUpdateMap(updateMap);
-                bulkList.add(model);
-                // 更新主类目信息
-                cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
-                $info("产品(%s)主类目设置成功!", code);
-
-            } else {
-                $info("产品(%s)主类目及名称不满足条件无需设置!", code);
             }
+            // 税号跨境申报（10位）
+            updateMap.put("common.fields.hsCodeCross", mtCategoryKeysModel.getTaxDeclare());
+
+            // 商品中文名称(如果已翻译，则不设置)
+            if ("0".equals(prodCommonField.getTranslateStatus())) {
+                // 主类目叶子级中文名称（"服饰>服饰配件>钱包卡包钥匙包>护照夹" -> "护照夹"）
+                String leafCategoryCnName = mtCategoryKeysModel.getCnName().substring(mtCategoryKeysModel.getCnName().lastIndexOf(">") + 1,
+                        mtCategoryKeysModel.getCnName().length());
+                // 设置商品中文名称（品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称）
+                String titleCn = uploadToUSJoiService.getOriginalTitleCnByCategory(prodCommonField.getBrand(), prodCommonField.getSizeTypeCn(), leafCategoryCnName);
+                if (!StringUtils.isEmpty(titleCn)) {
+                    updateMap.put("common.fields.originalTitleCn", titleCn);
+                }
+            }
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setQueryMap(queryMap);
+            model.setUpdateMap(updateMap);
+            bulkList.add(model);
+            // 更新主类目信息
+            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
+            $info("产品(%s)主类目设置成功!", code);
         } catch (Exception exception) {
             String warnMsg = String.format("主类目设置处理异常！[channleId:%s] [code:%s] [userName:%s] [errMsg:%s]",
                     channelId, code, userName, Arrays.toString(exception.getStackTrace()));
