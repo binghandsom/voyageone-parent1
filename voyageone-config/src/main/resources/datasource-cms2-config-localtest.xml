@@ -123,5 +123,4 @@
         <constructor-arg name="dataSource" ref="dataSourceSlave"/>
         <constructor-arg name="schema" value="voyageone_cms2"/>
     </bean>
-
 </beans>
