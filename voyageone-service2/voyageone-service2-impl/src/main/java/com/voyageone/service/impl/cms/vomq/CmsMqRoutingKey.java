@@ -1,5 +1,7 @@
 package com.voyageone.service.impl.cms.vomq;
 
+import com.voyageone.service.impl.cms.vomq.vomessage.body.SaveChannelCategoryMQMessageBody;
+
 /**
  * @author aooer 2016/4/18.
  * @version 2.10.0
@@ -104,7 +106,9 @@ public class CmsMqRoutingKey {
     /**
      * 同步产品sku的价格至code的group价格范围
      */
-    public static final String CMS_TASK_ProdcutPriceUpdateJob = "voyageone_cms_task_ProdcutPriceUpdateJob_queue";
+    //public static final String CMS_TASK_ProdcutPriceUpdateJob = "voyageone_cms_task_ProdcutPriceUpdateJob_queue";
+    public static final String CMS_PRODUCT_PRICE_UPDATE = "VOCmsProductPriceUpdateQueue";
+
     /**
      * 记录上下架操作历史
      */

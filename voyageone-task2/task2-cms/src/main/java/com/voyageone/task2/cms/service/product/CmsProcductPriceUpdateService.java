@@ -5,6 +5,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
@@ -29,15 +30,13 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob)
-public class CmsProcductPriceUpdateService extends BaseMQCmsService {
+public class CmsProcductPriceUpdateService extends BaseService {
 
     @Autowired
     ProductService productService;
     @Autowired
     ProductGroupService productGroupService;
 
-    @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
 
         //$info("参数" + JacksonUtil.bean2Json(messageMap));
