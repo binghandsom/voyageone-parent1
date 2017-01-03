@@ -5,7 +5,7 @@ package com.voyageone.task2.cms.service.jumei;
  */
 
 import com.voyageone.common.configs.MQConfigInitTestUtil;
-import com.voyageone.task2.cms.mqjob.CmsJMProductUpdateMQJob;
+import com.voyageone.task2.cms.mqjob.jm.CmsJMProductUpdateMQJob;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

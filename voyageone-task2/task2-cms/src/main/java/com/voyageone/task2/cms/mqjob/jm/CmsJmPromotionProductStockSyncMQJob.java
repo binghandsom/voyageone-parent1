@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service.promotion;
+package com.voyageone.task2.cms.mqjob.jm;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.Constants;
@@ -12,21 +12,18 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtPromotionCodesDaoExtCamel;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JmPromotionProductStockSyncMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.CmsBtPromotionCodesModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.task2.base.BaseMQCmsService;
+import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-
 /**
  * 从mongo:cms_bt_product_cxxx表取得当前有效活动中的产品的库存数，保存到cms_bt_jm_promotion_product.quantity / cms_bt_promotion_codes.quantity
  * 并计算该活动中的有库存的商品数，保存到cms_bt_jm_promotion.prod_sum （此项只针对聚美平台）
@@ -38,8 +35,8 @@ import java.util.stream.Collectors;
  * @since 2.0.0
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_JmPromotionProductStockSyncServiceJob)
-public class PromotionProductStockSyncService extends BaseMQCmsService {
+@RabbitListener()//queues = CmsMqRoutingKey.CMS_BATCH_JmPromotionProductStockSyncServiceJob
+public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPromotionProductStockSyncMQMessageBody> {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
@@ -51,7 +48,7 @@ public class PromotionProductStockSyncService extends BaseMQCmsService {
     private CmsBtPromotionCodesDaoExtCamel promotionCodesDaoExtCamel;
 
      @Override
-    public void onStartup(Map<String, Object> messageMap) throws Exception {
+    public void onStartup(JmPromotionProductStockSyncMQMessageBody messageMap) throws Exception {
         $debug("PromotionProductStockSyncService： start");
          // 取得所有店铺
          List<ShopBean> shopList = Shops.getShopList();
