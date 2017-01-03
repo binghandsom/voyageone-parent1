@@ -7,7 +7,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.task2.base.BaseMQCmsService;
@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
  * @version 2.10.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_CmsBatchRefreshMainCategoryJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_CmsBatchRefreshMainCategoryJob)
 public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
 
     @Autowired
