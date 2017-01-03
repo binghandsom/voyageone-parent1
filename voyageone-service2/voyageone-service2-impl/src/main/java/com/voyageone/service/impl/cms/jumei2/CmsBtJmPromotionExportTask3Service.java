@@ -100,6 +100,7 @@ public class CmsBtJmPromotionExportTask3Service {
             model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
             model.setErrorCode(1);
             ex.printStackTrace();
+            model.setIsExport(false);
         }
         model.setEndTime(DateTimeUtilBeijing.getCurrentBeiJingDate());
         dao.update(model);
