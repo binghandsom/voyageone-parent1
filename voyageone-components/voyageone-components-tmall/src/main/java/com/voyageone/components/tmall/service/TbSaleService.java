@@ -112,8 +112,20 @@ public class TbSaleService extends TbBase {
      * (包含所有库存分类状态：for_shelved(regular_shelved、never_on_shelf、off_shelf)、sold_out、violation_off_shelf)
      * 只返回 num_iid
      */
-    public List<Item> getInventoryProduct(String strOrderChannelId, String strCardId, Long lPageIndex, Long pageSize) throws ApiException {
-       return getInventoryProduct(strOrderChannelId,strCardId,"for_shelved,sold_out,violation_off_shelf",lPageIndex,pageSize);
+//    public List<Item> getInventoryProduct(String strOrderChannelId, String strCardId, Long lPageIndex, Long pageSize) throws ApiException {
+//        return getInventoryProduct(strOrderChannelId,strCardId,"for_shelved,sold_out,violation_off_shelf",lPageIndex,pageSize);
+//    }
+
+    public List<Item> getInventoryProductForShelved(String strOrderChannelId, String strCardId, Long lPageIndex, Long pageSize) throws ApiException {
+        return getInventoryProduct(strOrderChannelId,strCardId,"for_shelved",lPageIndex,pageSize);
+    }
+
+    public List<Item> getInventoryProductSoldOut(String strOrderChannelId, String strCardId, Long lPageIndex, Long pageSize) throws ApiException {
+        return getInventoryProduct(strOrderChannelId,strCardId,"sold_out",lPageIndex,pageSize);
+    }
+
+    public List<Item> getInventoryProductViolationOffShelf(String strOrderChannelId, String strCardId, Long lPageIndex, Long pageSize) throws ApiException {
+        return getInventoryProduct(strOrderChannelId,strCardId,"violation_off_shelf",lPageIndex,pageSize);
     }
 
     public List<Item> getInventoryProduct(String strOrderChannelId, String strCardId, String banner, Long lPageIndex, Long pageSize) throws ApiException {
@@ -148,7 +160,45 @@ public class TbSaleService extends TbBase {
             List<Item> rsList;
             try {
                 // 查询下架
-                rsList = getInventoryProduct(channelId, cartId, pageNo++, Long.valueOf(PAGE_SIZE));
+                rsList = getInventoryProductForShelved(channelId, cartId, pageNo++, Long.valueOf(PAGE_SIZE));
+            } catch (ApiException apiExp) {
+                throw new BusinessException(String.format("调用淘宝API获取下架商品时API出错 channelId=%s, cartId=%s", channelId, cartId), apiExp);
+            } catch (Exception exp) {
+                throw new BusinessException(String.format("调用淘宝API获取下架商品时出错 channelId=%s, cartId=%s", channelId, cartId), exp);
+            }
+            if (rsList != null && rsList.size() > 0) {
+                inStockNumIIdList.addAll(rsList.stream().map(tmItem -> tmItem.getNumIid().toString()).collect(Collectors.toList()));
+            }
+            if (rsList == null || rsList.size() < PAGE_SIZE) {
+                break;
+            }
+        }
+
+        pageNo = 1;
+        while(true) {
+            List<Item> rsList;
+            try {
+                // 查询卖完
+                rsList = getInventoryProductSoldOut(channelId, cartId, pageNo++, Long.valueOf(PAGE_SIZE));
+            } catch (ApiException apiExp) {
+                throw new BusinessException(String.format("调用淘宝API获取下架商品时API出错 channelId=%s, cartId=%s", channelId, cartId), apiExp);
+            } catch (Exception exp) {
+                throw new BusinessException(String.format("调用淘宝API获取下架商品时出错 channelId=%s, cartId=%s", channelId, cartId), exp);
+            }
+            if (rsList != null && rsList.size() > 0) {
+                inStockNumIIdList.addAll(rsList.stream().map(tmItem -> tmItem.getNumIid().toString()).collect(Collectors.toList()));
+            }
+            if (rsList == null || rsList.size() < PAGE_SIZE) {
+                break;
+            }
+        }
+
+        pageNo = 1;
+        while(true) {
+            List<Item> rsList;
+            try {
+                // 查询违规下架
+                rsList = getInventoryProductViolationOffShelf(channelId, cartId, pageNo++, Long.valueOf(PAGE_SIZE));
             } catch (ApiException apiExp) {
                 throw new BusinessException(String.format("调用淘宝API获取下架商品时API出错 channelId=%s, cartId=%s", channelId, cartId), apiExp);
             } catch (Exception exp) {
