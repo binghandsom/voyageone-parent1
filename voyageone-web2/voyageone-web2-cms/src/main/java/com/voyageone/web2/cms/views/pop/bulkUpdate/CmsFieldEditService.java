@@ -22,6 +22,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -33,6 +34,9 @@ import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsBatchPlatformFieldsMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JMProductUpdateMQMessageBody;
 import com.voyageone.service.impl.com.cache.CommCacheService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
@@ -97,6 +101,8 @@ public class CmsFieldEditService extends BaseViewService {
     private PriceService priceService;
     @Autowired
     private CmsMtPlatformCommonSchemaService cmsMtPlatformCommonSchemaService;
+    @Autowired
+    private CmsMqSenderService cmsMqSenderService;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -1339,14 +1345,27 @@ public class CmsFieldEditService extends BaseViewService {
         Map<String, Object> result = new LinkedHashMap<>();
         fields.getFieldValueToMap(result);
 
-        Map<String, Object> mqMessage = new HashedMap();
-        mqMessage.put("cartId", cartId);
-        mqMessage.put("channelId", userInfo.getSelChannelId());
-        mqMessage.put("productCodes", productCodes);
-        mqMessage.put("userName", userInfo.getUserName());
-        mqMessage.put("fieldsId", prop_id);
-        mqMessage.put("fieldsValue", result.get(prop_id));
-        sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_PlatformFieldsTaskJob, mqMessage);
+//        Map<String, Object> mqMessage = new HashedMap();
+//        mqMessage.put("cartId", cartId);
+//        mqMessage.put("channelId", userInfo.getSelChannelId());
+//        mqMessage.put("productCodes", productCodes);
+//        mqMessage.put("userName", userInfo.getUserName());
+//        mqMessage.put("fieldsId", prop_id);
+//        mqMessage.put("fieldsValue", result.get(prop_id));
+
+        CmsBatchPlatformFieldsMQMessageBody mqMessageBody = new CmsBatchPlatformFieldsMQMessageBody();
+        mqMessageBody.setCartId(cartId);
+        mqMessageBody.setChannelId(userInfo.getSelChannelId());
+        mqMessageBody.setProductCodes(productCodes);
+        mqMessageBody.setUserName(userInfo.getUserName());
+        mqMessageBody.setFieldsId(prop_id);
+        mqMessageBody.setFieldsValue(result.get(prop_id));
+        try {
+            cmsMqSenderService.sendMessage(mqMessageBody);
+        } catch (MQMessageRuleException e) {
+            $error(e);
+            e.printStackTrace();
+        }
     }
 
     /**
