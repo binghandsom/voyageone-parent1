@@ -97,7 +97,8 @@ public class CmsFeedConfigController extends CmsController {
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.FEED_CONFIG.CREATE_FEED)
     public AjaxResponse createFeed(@RequestBody HashMap map) {
-        cmsFeedConfigService.createFeed(map);
+        UserSessionBean user = getUser();
+        cmsFeedConfigService.createFeed(map, user.getSelChannelId(), user.getUserName());
         return success(null);
     }
 

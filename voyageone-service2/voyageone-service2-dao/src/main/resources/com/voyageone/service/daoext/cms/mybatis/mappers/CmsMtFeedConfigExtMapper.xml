@@ -52,7 +52,10 @@
         a.order_channel_id orderChannelId,
         a.cfg_name cfgName,
         a.cfg_table_name cfgTableName,
-        a.cfg_is_attribute cfgIsAttribute
+        a.cfg_is_attribute cfgIsAttribute,
+        a.created created,
+        a.modified modified,
+        a.modifier modifier
         FROM
         voyageone_cms2.cms_mt_feed_config_info a
         WHERE
@@ -85,7 +88,7 @@
         ,`md5` varchar(32) DEFAULT '',
         `updateFlag` int(1) NOT NULL DEFAULT '0',
         PRIMARY KEY (`SKU`),
-        KEY `zzwork_idx01` (`md5`) USING BTREE)
-        KEY `zzwork_idx02` (`category`) USING BTREE
+        KEY `zzwork_idx01` (`md5`) USING BTREE,
+        KEY `zzwork_idx02` (`category`) USING BTREE)
     </insert>
 </mapper>

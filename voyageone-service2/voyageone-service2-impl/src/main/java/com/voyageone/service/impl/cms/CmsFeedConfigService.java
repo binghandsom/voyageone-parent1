@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsMtFeedConfigBean;
@@ -9,6 +10,7 @@ import com.voyageone.service.dao.cms.CmsMtFeedConfigInfoDao;
 import com.voyageone.service.daoext.cms.CmsMtFeedConfigDaoExt;
 import com.voyageone.service.daoext.cms.CmsMtFeedConfigInfoDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.com.cache.CommCacheControlService;
 import com.voyageone.service.model.cms.CmsMtFeedConfigInfoModel;
 import com.voyageone.service.model.cms.CmsMtFeedConfigModel;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -36,6 +38,8 @@ public class CmsFeedConfigService extends BaseService {
     private CmsMtFeedConfigDao cmsMtFeedConfigDao;
     @Autowired
     private CmsMtFeedConfigInfoDao cmsMtFeedConfigInfoDao;
+    @Autowired
+    private CommCacheControlService cacheControlService;
 
     /**
      * Feed配置项目管理*数据初始化
@@ -90,6 +94,7 @@ public class CmsFeedConfigService extends BaseService {
             cmsMtFeedConfigModel.setCfgVal1(cmsMtFeedConfigBean.getCfgVal1());
             cmsMtFeedConfigDao.insert(cmsMtFeedConfigModel);
         }
+        cacheControlService.deleteCache(CacheKeyEnums.KeyEnum.ConfigData_FeedConfigs);
     }
 
     /**
@@ -103,25 +108,25 @@ public class CmsFeedConfigService extends BaseService {
      * Feed属性一览*feed属性保存按钮
      */
     public void saveFeed(List<CmsMtFeedConfigInfoModel> cmsMtFeedConfigInfoModelList, String channelId, String userName) {
-        //循环数据到数据库里面检索根据channelId删除
-        cmsMtFeedConfigDaoExt.deleteFeedConFigInfoByChannelId(channelId);
         //循环取得页面数据插入到数据库里
         for (CmsMtFeedConfigInfoModel model : cmsMtFeedConfigInfoModelList) {
             CmsMtFeedConfigInfoModel cmsMtFeedConfigInfoModel = new CmsMtFeedConfigInfoModel();
+            cmsMtFeedConfigInfoModel.setId(model.getId());
             cmsMtFeedConfigInfoModel.setOrderChannelId(channelId);
             cmsMtFeedConfigInfoModel.setCfgTableName(model.getCfgTableName());
             cmsMtFeedConfigInfoModel.setCfgName(model.getCfgName());
             cmsMtFeedConfigInfoModel.setCfgIsAttribute(model.getCfgIsAttribute());
+            cmsMtFeedConfigInfoModel.setCreated(model.getCreated());
             cmsMtFeedConfigInfoModel.setModifier(userName);
             cmsMtFeedConfigInfoModel.setModified(new Date());
-            cmsMtFeedConfigInfoDao.insert(cmsMtFeedConfigInfoModel);
+            isUpdateAndInsert(cmsMtFeedConfigInfoModel,userName);
         }
     }
 
     /**
      * Feed属性一览*feed表保存按钮
      */
-    public void createFeed(HashMap<String, Object> map) {
+    public void createFeed(HashMap<String, Object> map, String channelId, String userName) {
         //取得表名称
         String tableName = (String) map.get("tableName");
 
@@ -130,11 +135,61 @@ public class CmsFeedConfigService extends BaseService {
         }
         //取得表结
         List<HashMap> cmsMtFeedConfigInfoModelList = (List<HashMap>) map.get("feedList");
-
         List<String> cfgTableNameColumn = new ArrayList<>();
-        cmsMtFeedConfigInfoModelList.stream()
-                .filter(modelHashMap -> !StringUtils.isEmpty((String) modelHashMap.get("cfgTableName")))
-                .forEach(modelHashMap -> cfgTableNameColumn.add((String) modelHashMap.get("cfgTableName")));
+        Boolean isSku = true;
+        Boolean isCategory = true;
+        for (HashMap modelHashMap : cmsMtFeedConfigInfoModelList) {
+
+            if (!StringUtils.isEmpty((String) modelHashMap.get("cfgTableName"))) {
+                String name =(String) modelHashMap.get("cfgTableName");
+                cfgTableNameColumn.add(name);
+                if("sku".equals(modelHashMap.get("cfgTableName"))){
+                    isSku = false;
+                }
+                if("category".equals(modelHashMap.get("cfgTableName"))){
+                    isCategory = false;
+                }
+                //更新
+                CmsMtFeedConfigInfoModel model = new CmsMtFeedConfigInfoModel();
+                model.setId((Integer) modelHashMap.get("id"));
+                model.setOrderChannelId(channelId);
+                model.setCfgTableName(name);
+                model.setCfgName((String) modelHashMap.get("cfgName"));
+                model.setCfgIsAttribute((String) modelHashMap.get("cfgIsAttribute"));
+                model.setModifier(userName);
+                model.setModified(new Date());
+                if (model.getId()==null) {
+                    isUpdateAndInsert(model,userName);
+                }else{
+                    cmsMtFeedConfigInfoDao.updateByPrimaryKeySelective(model);
+                }
+            }else{
+                throw new BusinessException("Feed表结构名称必须填写");
+            }
+            if (!StringUtils.isEmpty((String) modelHashMap.get("cfgIsAttribute"))) {
+                String cfgIsAttribute =(String) modelHashMap.get("cfgIsAttribute");
+                if("Y".equals(cfgIsAttribute)){
+                    CmsMtFeedConfigModel cmsMtFeedConfigModel = new CmsMtFeedConfigModel();
+                    cmsMtFeedConfigModel.setOrderChannelId(channelId);
+                    cmsMtFeedConfigModel.setCfgName("attribute");
+                    cmsMtFeedConfigModel.setCfgVal1((String) modelHashMap.get("cfgTableName"));
+                    cmsMtFeedConfigModel.setModifier(userName);
+                    cmsMtFeedConfigModel.setModified(new Date());
+                    cmsMtFeedConfigModel.setDisplaySort(-1);
+                    cmsMtFeedConfigModel.setStatus(1);
+                    cmsMtFeedConfigModel.setIsAttribute(0);
+                    cmsMtFeedConfigModel.setAttributeType(0);
+                    cmsMtFeedConfigDao.insert(cmsMtFeedConfigModel);
+                }
+            }
+        }
+        if(isSku){
+            throw new BusinessException("Feed表结构名称无sku");
+        }
+        if(isCategory){
+            throw new BusinessException("Feed表结构名称无category");
+        }
+
         //取得表结构的列称
         String[] columns = new String[cfgTableNameColumn.size()];
         int i = 0;
@@ -144,8 +199,10 @@ public class CmsFeedConfigService extends BaseService {
         //生成表
         if (columns.length > 0) {
             Map<Object, Object> params = new HashMap<>();
-            params.put("tableName", "voyageone_cms2." + tableName);
             params.put("keys", columns);
+            params.put("tableName", "voyageone_cms2." + "cms_zz_feed_"+tableName+"_product_temp");
+            cmsMtFeedConfigInfoDaoExt.createdTable(params);
+            params.put("tableName", "voyageone_cms2." +"cms_zz_feed_" +tableName+"_product_full");
             cmsMtFeedConfigInfoDaoExt.createdTable(params);
         }
     }
@@ -205,8 +262,8 @@ public class CmsFeedConfigService extends BaseService {
             Sheet sheet = wb.getSheetAt(0);
             boolean isHeader = true;
             for (Row row : sheet) {
-                colIndex = 0;
                 if (isHeader) {
+                    colIndex = 0;
                     //Title行*文件Title判断
                     isHeader = false;
                     String id= row.getCell(colIndex++).getStringCellValue();
@@ -226,8 +283,14 @@ public class CmsFeedConfigService extends BaseService {
                         throw new BusinessException("表格Tittle错误");
                     }
                 } else {
+                    colIndex = 0;
                     CmsMtFeedConfigInfoModel model = new CmsMtFeedConfigInfoModel();
-                    model.setId((int) row.getCell(colIndex).getNumericCellValue());
+                    row.getCell(colIndex).setCellType(Cell.CELL_TYPE_STRING);
+                    if(row.getCell(colIndex)==null){
+                        model.setCfgName("");
+                    }else{
+                        model.setId(Integer.parseInt(row.getCell(colIndex).getStringCellValue()));
+                    }
                     model.setOrderChannelId(channelId);
                     row.getCell(colIndex++).setCellType(Cell.CELL_TYPE_STRING);
                     if(row.getCell(colIndex)==null){
@@ -251,19 +314,30 @@ public class CmsFeedConfigService extends BaseService {
                     model.setModifier(userName);
                     model.setModified(new Date());
                     //判断excel的数据是插入还是更新
-                    int cnt = cmsMtFeedConfigInfoDaoExt.selectFeedConFigInfoCnt(model.getId());
-                    if (cnt == 0) {
-                        //插入
-                        model.setId(null);
-                        cmsMtFeedConfigInfoDao.insert(model);
-                    } else {
-                        //更新
-                        cmsMtFeedConfigInfoDao.updateByPrimaryKey(model);
-                    }
+                    isUpdateAndInsert(model,userName);
                 }
             }
         } catch (Exception e) {
             throw new BusinessException("读取excel异常");
+        }
+    }
+
+    public void isUpdateAndInsert(CmsMtFeedConfigInfoModel model,String userName){
+        int cnt;
+        if (model.getId()==null) {
+            cnt =0;
+        }else{
+            cnt = cmsMtFeedConfigInfoDaoExt.selectFeedConFigInfoCnt(model.getId());
+        }
+        if (cnt == 0) {
+            //插入
+            model.setId(null);
+            model.setCreated(new Date());
+            model.setCreater(userName);
+            cmsMtFeedConfigInfoDao.insert(model);
+        } else {
+            //更新
+            cmsMtFeedConfigInfoDao.updateByPrimaryKey(model);
         }
     }
 }
