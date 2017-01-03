@@ -87,6 +87,7 @@ public class CmsBtJmPromotionExportTask3Service {
             model.setSuccessRows(listProduct.size());
             if (listProduct.isEmpty()) {
                 model.setErrorMsg("未查到商品");
+                model.setIsExport(false);
             }
             model.setFileName(fileName);
         }catch (BusinessException ex){
