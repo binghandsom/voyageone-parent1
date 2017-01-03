@@ -703,6 +703,9 @@
                                 <li ng-if="vm.masterData.isminimall == 1">
                                     <a href="javascript:void(0)" ng-click="$parent.openCategoryMapping(popupCategoryNew)"> {{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</a>
                                 </li>
+                                <li ng-if="vm.masterData.isminimall == 1">
+                                    <a href="javascript:void(0)" ng-click="$parent.refreshProductCategory()"> {{'BTN_REFRESH_MASTER_CATEGORY' | translate}}</a>
+                                </li>
                                 <li>
                                     <a href="javascript:void(0)" ng-click="$parent.openBulkUpdate(openFieldEdit)"> {{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}</a>
                                 </li>

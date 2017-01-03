@@ -203,7 +203,7 @@ public class UploadToUSJoiServiceTest {
         Tokenizer tokenizer = new Tokenizer(new ArrayList(){{add("-");}});
         FeedQuery query = new FeedQuery(feedCategoryPath, cleaner, tokenizer);
         query.setSizeType("feedSizeType1");
-        query.setProductName("productNameEn");
+        query.setProductName("productNameEn", "brand");
         query.setProductType("feedProductType");
 
         List<SearchResult> result = searcher.search(query, 1);
@@ -224,7 +224,7 @@ public class UploadToUSJoiServiceTest {
             System.out.println(String.format("在product表中没有查到该产品code(%s)!", code));
         }
 
-        uploadToUSJoiService.doSetMainCategory(prodObj.getCommon(), feedCategoryPath);
+//        uploadToUSJoiService.doSetMainCategory(prodObj.getCommon(), feedCategoryPath);
         System.out.println("ok");
     }
 }
