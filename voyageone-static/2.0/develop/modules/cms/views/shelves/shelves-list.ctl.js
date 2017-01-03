@@ -222,7 +222,7 @@ define([
                     }
 
                     if (t !== null) {
-                        p.$hide = ((p.status || 0) !== t);
+                        p.$hide = ((p.status || 0) == t);
                     }
 
                     if (c) {
