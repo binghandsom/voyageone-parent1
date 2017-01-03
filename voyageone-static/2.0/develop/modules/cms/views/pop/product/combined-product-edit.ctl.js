@@ -32,6 +32,7 @@ define([
                             _.each($scope.vm.product.skus, function (skuBean) {
                                 skuBean.tempSuitSellingPriceCn = skuBean.suitSellingPriceCn;
                                 skuBean.tempSuitPreferentialPrice = skuBean.suitPreferentialPrice;
+                                dynamicSkuPrice(skuBean);
                             });
                         }
                     });
