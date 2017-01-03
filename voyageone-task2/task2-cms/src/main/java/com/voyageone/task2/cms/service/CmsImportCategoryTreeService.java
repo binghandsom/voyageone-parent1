@@ -348,6 +348,9 @@ public class CmsImportCategoryTreeService extends BaseCronTaskService {
                 $info("中英类目不正確");
                 continue;
             }
+            for(int i=0;i<categorys.length;i++){
+                categorys[i] = categorys[i].trim();
+            }
             categoryPath += categorys[0];
             categoryPathEn += categorysEn[0];
             // 取得一级主类目对象

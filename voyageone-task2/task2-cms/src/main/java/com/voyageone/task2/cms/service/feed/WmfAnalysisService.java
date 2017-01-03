@@ -1,6 +1,9 @@
 package com.voyageone.task2.cms.service.feed;
 
 import com.csvreader.CsvReader;
+import com.mongodb.WriteResult;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
@@ -10,6 +13,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CamelUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
@@ -36,6 +40,8 @@ import java.util.stream.Collectors;
 public class WmfAnalysisService extends BaseAnalysisService {
     @Autowired
     WmfFeedDao wmfFeedDao;
+    @Autowired
+    FeedInfoService feedInfoService;
 
     private static String urlKey = "http://www.wmf.com/en/";
     private static String mediaImage = "https://www.wmf.com/media/catalog/product";
@@ -79,6 +85,11 @@ public class WmfAnalysisService extends BaseAnalysisService {
 
     @Override
     protected int superFeedImport() {
+
+        $info("WMF产品价格文件读入开始");
+        Map<String, String> retail = getRetailPriceList();
+        if(retail == null || retail.size() == 0) return 0;
+
         $info("WMF产品文件读入开始");
         List<SuperFeedWmfBean> superFeed = new ArrayList<>();
         int cnt = 0;
@@ -97,6 +108,7 @@ public class WmfAnalysisService extends BaseAnalysisService {
                 int i = 0;
                 wmfBean.setEntityId(reader.get(i++));
                 wmfBean.setSku(reader.get(i++));
+                if(!retail.containsKey(wmfBean.getSku())) continue;
                 wmfBean.setStore(reader.get(i++));
                 wmfBean.setType(reader.get(i++));
                 wmfBean.setAttributeSet(reader.get(i++));
@@ -120,7 +132,8 @@ public class WmfAnalysisService extends BaseAnalysisService {
                 wmfBean.setMediaIsDisabled(reader.get(i++));
                 wmfBean.setName(reader.get(i++));
                 wmfBean.setMarke(reader.get(i++));
-                wmfBean.setPrice(reader.get(i++));
+                wmfBean.setPrice(retail.get(wmfBean.getSku()));
+                reader.get(i++);
                 wmfBean.setSapStatus(reader.get(i++));
                 wmfBean.setMetaTitle(reader.get(i++));
                 wmfBean.setDescription(reader.get(i++));
@@ -347,6 +360,44 @@ public class WmfAnalysisService extends BaseAnalysisService {
         $info("取得 [ %s ] 的 Product 数 %s", categorPath, modelBeans.size());
 
         return modelBeans;
+    }
+    public Map<String, String> getRetailPriceList() {
+        Map<String, String> retailPriceList = new HashMap<>();
+        CsvReader reader;
+        String fileName = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.file_id_import_sku);
+        String filePath = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.feed_ftp_localpath);
+        String fileFullName = String.format("%s/%s", filePath, fileName);
+
+        String encode = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.feed_ftp_file_coding);
+
+        try {
+            reader = new CsvReader(new FileInputStream(fileFullName), '\t', Charset.forName(encode));
+            // Body读入
+            while (reader.readRecord()) {
+                int i = 0;
+                String sku = reader.get(i++);
+                String price = reader.get(i++);
+
+                WriteResult writeResult = feedInfoService.updateFeedInfoSkuPrice("014", sku, Double.parseDouble(price));
+                if(!writeResult.isUpdateOfExisting()){
+                    retailPriceList.put(sku,price);
+                }else{
+                    CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductBySku("018",sku);
+                    if(cmsBtFeedInfoModel.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Succeed || cmsBtFeedInfoModel.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Fail){
+                        feedInfoService.updateAllUpdFlg("014","{\"code\":\""+ cmsBtFeedInfoModel.getCode()+"\"}",CmsConstants.FeedUpdFlgStatus.Pending,getTaskName());
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            $info("Target价格列表不存在");
+            return null;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+            return null;
+        }
+        return retailPriceList;
     }
 
     @Override
