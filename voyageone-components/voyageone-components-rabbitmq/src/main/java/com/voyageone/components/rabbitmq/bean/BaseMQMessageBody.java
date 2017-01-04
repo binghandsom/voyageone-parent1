@@ -11,6 +11,18 @@ public abstract class BaseMQMessageBody implements IMQMessageBody {
     //消息体id
     int mqId;
 
+    int delaySecond;
+
+    @Override
+    public int getDelaySecond() {
+        return delaySecond;
+    }
+
+    @Override
+    public void setDelaySecond(int delaySecond) {
+        this.delaySecond = delaySecond;
+    }
+
     public int getMqId() {
         return mqId;
     }

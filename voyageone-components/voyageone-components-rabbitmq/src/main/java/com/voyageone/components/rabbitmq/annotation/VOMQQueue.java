@@ -28,8 +28,5 @@ public @interface VOMQQueue {
      */
     boolean isDeclareQueue() default true;
 
-    /**
-     * 延迟发送时间(秒)
-     */
-    long delaySecond() default 0;
+
 }

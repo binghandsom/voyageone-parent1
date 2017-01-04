@@ -35,4 +35,8 @@ public class CmsMqSenderService extends BaseService {
             throw ex;
         }
     }
+    public void sendMessage(IMQMessageBody message,int delaySecond) throws MQMessageRuleException {
+            message.setDelaySecond(delaySecond);
+            sendMessage(message);
+    }
 }

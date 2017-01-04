@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service;
+package com.voyageone.task2.cms.mqjob;
 
 import com.jd.open.api.sdk.domain.ware.Sku;
 import com.jd.open.api.sdk.response.ware.WareListResponse;
@@ -15,11 +15,14 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.jd.service.JdWareService;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.fields.cms.CmsBtShelvesProductModelStatus;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsShelvesMonitorMQMessageBody;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
@@ -43,9 +46,8 @@ import java.util.concurrent.TimeUnit;
  * Created by james on 2016/11/11.
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_ShelvesMonitorJob)
-public class CmsShelvesMonitorMQService extends BaseMQCmsService {
-
+@RabbitListener()
+public class CmsShelvesMonitorMQService extends TBaseMQCmsService<CmsShelvesMonitorMQMessageBody> {
 
     private final CmsBtShelvesService cmsBtShelvesService;
 
@@ -55,23 +57,23 @@ public class CmsShelvesMonitorMQService extends BaseMQCmsService {
 
     private final ProductService productService;
 
-    private final MqSender sender;
-
     private final JdWareService jdWareService;
 
+    private final CmsMqSenderService cmsMqSenderService;
+
     @Autowired
-    public CmsShelvesMonitorMQService(CmsBtShelvesProductService cmsBtShelvesProductService, TbProductService tbProductService, ProductService productService, MqSender sender, CmsBtShelvesService cmsBtShelvesService, JdWareService jdWareService) {
+    public CmsShelvesMonitorMQService(CmsBtShelvesProductService cmsBtShelvesProductService, TbProductService tbProductService, ProductService productService, CmsBtShelvesService cmsBtShelvesService, JdWareService jdWareService, CmsMqSenderService cmsMqSenderService) {
         this.cmsBtShelvesProductService = cmsBtShelvesProductService;
         this.tbProductService = tbProductService;
         this.productService = productService;
-        this.sender = sender;
         this.cmsBtShelvesService = cmsBtShelvesService;
         this.jdWareService = jdWareService;
+        this.cmsMqSenderService = cmsMqSenderService;
     }
 
     @Override
-    protected void onStartup(Map<String, Object> messageMap) throws Exception {
-        Integer shelvesId = (Integer) messageMap.get("shelvesId");
+    public void onStartup(CmsShelvesMonitorMQMessageBody messageMap) throws Exception {
+        Integer shelvesId = messageMap.getShelvesId();
         if(shelvesId != null) {
             $info("shelvesId = "+shelvesId +" 商品状态取得开始");
             CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(shelvesId);
@@ -209,10 +211,15 @@ public class CmsShelvesMonitorMQService extends BaseMQCmsService {
         });
     }
 
-    private void sendMq(Map<String, Object> messageMap){
-        Integer shelvesId = (Integer) messageMap.get("shelvesId");
+    private void sendMq(CmsShelvesMonitorMQMessageBody messageMap){
+        Integer shelvesId = messageMap.getShelvesId();
         if(CacheHelper.getValueOperation().get("ShelvesMonitor_"+ shelvesId) != null){
-            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_ShelvesMonitorJob, messageMap, 30);
+            try {
+                cmsMqSenderService.sendMessage(messageMap, 30);
+            } catch (MQMessageRuleException e) {
+                e.printStackTrace();
+            }
+//            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_ShelvesMonitorJob, messageMap, 30);
         }
     }
 

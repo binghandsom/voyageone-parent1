@@ -8,12 +8,15 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.ListUtils;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.CmsBtShelvesTemplateService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsShelvesMonitorMQMessageBody;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
@@ -51,14 +54,14 @@ class CmsShelvesDetailService extends BaseViewService {
     private final CmsBtShelvesTemplateService cmsBtShelvesTemplateService;
     private final ProductService productService;
     private final ProductTagService productTagService;
-    private final MqSender sender;
+    private final CmsMqSenderService sender;
     private final RedisTemplate<Object, Object> redisTemplate;
 
     @Autowired
     public CmsShelvesDetailService(CmsBtShelvesProductService cmsBtShelvesProductService,
                                    CmsBtShelvesService cmsBtShelvesService,
                                    ProductService productService, RedisTemplate<Object, Object> redisTemplate,
-                                   MqSender sender, CmsBtShelvesTemplateService cmsBtShelvesTemplateService, ProductTagService productTagService) {
+                                   CmsMqSenderService sender, CmsBtShelvesTemplateService cmsBtShelvesTemplateService, ProductTagService productTagService) {
         this.cmsBtShelvesProductService = cmsBtShelvesProductService;
         this.cmsBtShelvesService = cmsBtShelvesService;
         this.productService = productService;
@@ -78,10 +81,15 @@ class CmsShelvesDetailService extends BaseViewService {
 
             //更新redis监控标志位的超时时间
             if (CacheHelper.getValueOperation().get("ShelvesMonitor_" + shelvesId) == null) {
-                Map<String, Object> messageMap = new HashMap<>();
-                messageMap.put("shelvesId", shelvesId);
+                CmsShelvesMonitorMQMessageBody messageMap = new CmsShelvesMonitorMQMessageBody();
+                messageMap.setShelvesId(shelvesId);
                 CacheHelper.getValueOperation().set("ShelvesMonitor_" + shelvesId, shelvesId);
-                sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_ShelvesMonitorJob, messageMap);
+                try {
+                    sender.sendMessage(messageMap);
+                } catch (MQMessageRuleException e) {
+                    $error(e);
+                    e.printStackTrace();
+                }
             }
             redisTemplate.expire("ShelvesMonitor_" + shelvesId, 1, TimeUnit.MINUTES);
 

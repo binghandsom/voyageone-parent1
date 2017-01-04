@@ -1,6 +1,8 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsShelvesMonitorMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
+import com.voyageone.task2.cms.mqjob.CmsShelvesMonitorMQService;
 import org.apache.commons.collections.map.HashedMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,8 +29,8 @@ public class CmsShelvesMonitorServiceTest {
     public void setInfo() throws Exception {
 //
 
-        Map<String,Object> map = new HashedMap();
-        map.put("shelvesId",6);
+        CmsShelvesMonitorMQMessageBody map = new CmsShelvesMonitorMQMessageBody();
+        map.setShelvesId(6);
         cmsShelvesMonitorMQService.onStartup(map);
     }
 
