@@ -15,7 +15,8 @@ define([
                         startSupplyChain:false
                     },
                     carts: {},
-                    product: {}
+                    product: {},
+                    copyOne: {}
                 };
                 $scope.vm.config.startSupplyChain = context.startSupplyChain == 1;
                 $scope.vm.carts = context.carts;
@@ -28,10 +29,12 @@ define([
                             alert("查询不到组合商品信息！");
                         } else {
                             $scope.vm.product = resp.data.product;
+                            $scope.vm.copyOne = angular.copy($scope.vm.product);
                             $scope.vm.product.cartId = $scope.vm.product.cartId + "";
                             _.each($scope.vm.product.skus, function (skuBean) {
                                 skuBean.tempSuitSellingPriceCn = skuBean.suitSellingPriceCn;
                                 skuBean.tempSuitPreferentialPrice = skuBean.suitPreferentialPrice;
+                                dynamicSkuPrice(skuBean);
                             });
                         }
                     });
@@ -51,10 +54,10 @@ define([
                             "cartId": cartId,
                             "numID": numID
                         }).then(function (resp) {
-                        $scope.vm.config.showFlag = true;
-                        $scope.vm.product = resp.data.product == null ? {} : resp.data.product;
-                        $scope.vm.product.cartId = $scope.vm.product.cartId == null ? "" : $scope.vm.product.cartId + "";
                         if(resp.data.product != null) {
+                            $scope.vm.product = resp.data.product;
+                            $scope.vm.product.cartId = $scope.vm.product.cartId + "";
+                            $scope.vm.product._id = $scope.vm.copyOne._id;
                             // 记录此套装中sku
                             var skuCodes = new Array();
                             _.each($scope.vm.product.skus, function (skuBean, index, list) {
@@ -83,8 +86,9 @@ define([
                                     dynamicSkuPrice(skuBean);
                                 });
                             });
+                        } else {
+                            alert("获取不到组合商品信息！");
                         }
-
                     });
                 };
 

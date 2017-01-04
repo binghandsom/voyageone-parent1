@@ -2775,6 +2775,16 @@ ul.vo_prodcrumbs#style1 .current::before {
     box-shadow: 0 1px 1px rgba(90, 90, 90, 0.1);
 }
 
+.btn-empty {
+    background: #fff;
+    border: none;
+    padding: 0px;
+}
+
+.btn-empty:hover {
+    color: #adcae2;
+}
+
 .btn-default:hover,
 .btn-default:focus,
 .btn-default:active,

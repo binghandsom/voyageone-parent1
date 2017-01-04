@@ -635,6 +635,18 @@ define(function () {
                         "search": "search",
                         "saveList":"saveList"
                     }
+                },
+                "FeedConfig":{
+                    "cmsFeedConfigService": {
+                        "root": "/cms/channel/feedConfig",
+                        "search": "search",
+                        "save":"save",
+                        "export":"export",
+                        "import":"import",
+                        "delete":"delete",
+                        "saveFeed":"saveFeed",
+                        "createFeed":"createFeed",
+                    }
                 }
             },
             "channelConfig": {

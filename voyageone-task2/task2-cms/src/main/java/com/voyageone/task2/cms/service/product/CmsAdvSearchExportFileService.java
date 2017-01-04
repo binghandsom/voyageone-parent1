@@ -17,6 +17,7 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -305,6 +306,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             } else if (searchValue.getFileType() == 5) {
                 writeFilingHead(book);
             }
+            Map<String,TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId, "cn");
+            Map<String,TypeChannelBean> sizeTypes  = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId, "cn");
 
             int offset = 0; // SKU导出时，startRowIndex可能行数会增加，因为一个code可有有多个sku
             for (int i = 0; i < pageCount; i++) {
@@ -314,7 +317,23 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 if (items.size() == 0) {
                     break;
                 }
+                items.forEach(cmsBtProductBean -> {
+                    String productType =cmsBtProductBean.getCommon().getFields().getProductType();
+                    if(!StringUtil.isEmpty(productType)){
+                        TypeChannelBean temp = productTypes.get(productType);
+                        if(temp != null){
+                            cmsBtProductBean.getCommon().getFields().setProductTypeCn(temp.getName());
+                        }
+                    }
 
+                    String sizeType =cmsBtProductBean.getCommon().getFields().getSizeType();
+                    if(!StringUtil.isEmpty(sizeType)){
+                        TypeChannelBean temp = sizeTypes.get(sizeType);
+                        if(temp != null){
+                            cmsBtProductBean.getCommon().getFields().setSizeTypeCn(temp.getName());
+                        }
+                    }
+                });
                 // 每页开始行
                 int startRowIndex = i * SELECT_PAGE_SIZE + ((searchValue.getFileType() == 4 || searchValue.getFileType() == 5) ? 1 : 2);
                 boolean isContinueOutput = false;
@@ -1273,7 +1292,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             Map<String, CmsBtProductModel_Platform_Cart> platforms = item.getPlatforms();
             if (platforms != null && platforms.size() > 0) {
                 for (CmsBtProductModel_Platform_Cart platform : platforms.values()) {
-                    if (CmsConstants.ProductStatus.Approved.equals(platform.getStatus())) {
+                    if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())) {
                         skip = false;
                         break;
                     }
@@ -1326,7 +1345,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 double priceSale = 0d;
                 Map<String, CmsBtProductModel_Platform_Cart> platforms = item.getPlatforms();
                 for (CmsBtProductModel_Platform_Cart platform : platforms.values()) {
-                    if (CmsConstants.ProductStatus.Approved.equals(platform.getStatus())) {
+                    if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())) {
                         priceSale = platform.getSkus().get(0).getDoubleAttribute("priceSale");
                         break;
                     }

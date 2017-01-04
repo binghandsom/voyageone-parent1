@@ -137,10 +137,13 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 循环所有销售渠道
         if (ListUtils.notNull(channelIdList)) {
             for (String channelId : channelIdList) {
-                // 商品上传(天猫国际官网同购)
-                doProductUpload(channelId, CartEnums.Cart.TT.getValue());
-//                // 商品上传(USJOI天猫国际官网同购)
-//                doProductUpload(channelId, CartEnums.Cart.USTT.getValue());
+                if (ChannelConfigEnums.Channel.USJGJ.getId().equals(channelId)) {
+                    // 商品上传(USJOI天猫国际官网同购)
+                    doProductUpload(channelId, CartEnums.Cart.USTT.getValue());
+                } else {
+                    // 商品上传(天猫国际官网同购)
+                    doProductUpload(channelId, CartEnums.Cart.TT.getValue());
+                }
             }
         }
 
