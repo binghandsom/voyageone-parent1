@@ -1772,12 +1772,12 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         CmsBtProductModel_Field prodCommonField = prodCommon.getFieldsNotNull();
 
         // 调用Feed到主数据的匹配接口取得匹配度最高的主类目
-        SearchResult searchResult = getMainCatInfo(feedCategoryPath,
+        SearchResult<MtCategoryKeysModel> searchResult = getMainCatInfo(feedCategoryPath,
                 prodCommonField.getProductType(),
                 prodCommonField.getSizeType(),
                 prodCommonField.getProductNameEn(),
                 prodCommonField.getBrand());
-        if (searchResult != null && searchResult.getMtCategoryKeysModel() != null) {
+        if (searchResult != null && searchResult.getDataModel() != null) {
             // 先备份原来的productType和sizeType
             // feed原始产品分类
             if (StringUtils.isEmpty(prodCommonField.getOrigProductType())
@@ -1791,7 +1791,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             }
 
             // 主类目匹配结果model
-            MtCategoryKeysModel mtCategoryKeysModel = searchResult.getMtCategoryKeysModel();
+            MtCategoryKeysModel mtCategoryKeysModel = searchResult.getDataModel();
 
             // 主类目path(中文)
             prodCommon.setCatPath(mtCategoryKeysModel.getCnName());
@@ -1866,7 +1866,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      * @param brand 产品品牌
      * @return SearchResult 匹配度最高的第一个查询结果
      */
-    public SearchResult getMainCatInfo(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
+    public SearchResult<MtCategoryKeysModel> getMainCatInfo(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
         // 调用Feed到主数据的匹配程序匹配主类目
         StopWordCleaner cleaner = new StopWordCleaner();
         // 子店feed类目path分隔符(由于导入feedInfo表时全部替换成用"-"来分隔了，所以这里写固定值就可以了)
@@ -1880,7 +1880,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         query.setProductName(productNameEn, brand);
 
         // 调用主类目匹配接口，取得匹配度最高的一个主类目
-        List<SearchResult> searchResults = searcher.search(query, 1);
+        List<SearchResult<MtCategoryKeysModel>> searchResults = searcher.search(query, 1);
         if (ListUtils.isNull(searchResults)) {
             String errMsg = String.format("调用Feed到主数据的匹配程序匹配主类目失败！[feedCategoryPath:%s] [productType:%s] " +
                     "[sizeType:%s] [productNameEn:%s] [brand:%s]", feedCategoryPath, productType, sizeType, productNameEn, brand);
