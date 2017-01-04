@@ -61,26 +61,6 @@ public class WmfAnalysisService extends BaseAnalysisService {
     }
 
     @Override
-    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-        init();
-        zzWorkClear();
-        int cnt;
-        if ("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
-            cnt = fullCopyTemp();
-        } else {
-            $info("产品信息插入开始");
-            cnt = superFeedImport();
-        }
-        $info("产品信息插入完成 共" + cnt + "条数据");
-        if (cnt > 0) {
-            if (!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
-                transformer.new Context(channel, this).transform();
-            }
-            postNewProduct();
-        }
-    }
-
-    @Override
     protected int superFeedImport() {
         $info("WMF产品文件读入开始");
         List<SuperFeedWmfBean> superFeed = new ArrayList<>();
