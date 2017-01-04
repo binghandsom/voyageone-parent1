@@ -38,7 +38,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 分销平台产品上新服务
- * Product表中产品不存在就向分销平台新增商品，否则就更新商品
  *
  * @author desmond on 2016/12/28.
  * @version 2.10.0
