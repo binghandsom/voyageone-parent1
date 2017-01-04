@@ -1,10 +1,10 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.dao.cms.CmsBtBrandBlockDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomqservice.CmsBrandBlockService;
 import com.voyageone.service.model.cms.CmsBtBrandBlockModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,12 +28,12 @@ public class CmsBtBrandBlockService extends BaseService {
 
     private final CmsBtBrandBlockDao brandBlockDao;
 
-    private final MqSender sender;
+    CmsBrandBlockService cmsBrandBlockService;
 
     @Autowired
-    public CmsBtBrandBlockService(CmsBtBrandBlockDao brandBlockDao, MqSender sender) {
+    public CmsBtBrandBlockService(CmsBtBrandBlockDao brandBlockDao, CmsBrandBlockService cmsBrandBlockService) {
         this.brandBlockDao = brandBlockDao;
-        this.sender = sender;
+        this.cmsBrandBlockService = cmsBrandBlockService;
     }
 
     /**
@@ -45,7 +45,7 @@ public class CmsBtBrandBlockService extends BaseService {
      * @param brand     品牌值
      * @param username  屏蔽人
      */
-    public void block(String channelId, int cartId, int brandType, String brand, String username) {
+    public void block(String channelId, int cartId, int brandType, String brand, String username) throws MQMessageRuleException {
         switch (brandType) {
             case BRAND_TYPE_FEED:
             case BRAND_TYPE_MASTER:
@@ -79,10 +79,11 @@ public class CmsBtBrandBlockService extends BaseService {
         // 通知任务进行其他部分的处理
         // 如 feed 部分的屏蔽
         // MQ 不负责的部分，应该只包含上新部分
-        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_BRANDBLOCKJOB, new HashMap<String, Object>() {{
-            put("blocking", true);
-            put("data", brandBlockModel);
-        }});
+//        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_BRANDBLOCKJOB, new HashMap<String, Object>() {{
+//            put("blocking", true);
+//            put("data", brandBlockModel);
+//        }});
+        cmsBrandBlockService.sendMessage(brandBlockModel, true, username);
     }
 
     /**
@@ -93,7 +94,7 @@ public class CmsBtBrandBlockService extends BaseService {
      * @param brandType 品牌类型，{@link CmsBtBrandBlockService#BRAND_TYPE_FEED} / {@link CmsBtBrandBlockService#BRAND_TYPE_MASTER} / {@link CmsBtBrandBlockService#BRAND_TYPE_PLATFORM}
      * @param brand     品牌值
      */
-    public void unblock(String channelId, int cartId, int brandType, String brand) {
+    public void unblock(String channelId, int cartId, int brandType, String brand, String userName) throws MQMessageRuleException {
         switch (brandType) {
             case BRAND_TYPE_FEED:
                 cartId = 1;
@@ -118,10 +119,11 @@ public class CmsBtBrandBlockService extends BaseService {
         brandBlockDao.delete(brandBlockModel.getId());
 
         // 同上，只是相反
-        Map<String, Object> mqParams = new HashMap<>();
-        mqParams.put("blocking", false);
-        mqParams.put("data", brandBlockModel);
-        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_BRANDBLOCKJOB, mqParams);
+//        Map<String, Object> mqParams = new HashMap<>();
+//        mqParams.put("blocking", false);
+//        mqParams.put("data", brandBlockModel);
+//        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_BRANDBLOCKJOB, mqParams);
+        cmsBrandBlockService.sendMessage(brandBlockModel, false, userName);
     }
 
     /**

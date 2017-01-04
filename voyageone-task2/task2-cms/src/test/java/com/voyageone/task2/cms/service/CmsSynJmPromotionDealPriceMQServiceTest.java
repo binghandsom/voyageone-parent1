@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.task2.cms.mqjob.CmsJmPromotionPriceRefreshMQJob;
+import com.voyageone.task2.cms.mqjob.jm.CmsJmPromotionPriceRefreshMQJob;
 import org.apache.commons.collections.map.HashedMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -6,7 +6,7 @@ import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionImportMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JmPromotionImportMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtJmPromotionImportTaskModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;

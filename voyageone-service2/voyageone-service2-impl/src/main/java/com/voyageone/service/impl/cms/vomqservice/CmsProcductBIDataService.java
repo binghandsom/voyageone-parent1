@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service.product;
+package com.voyageone.service.impl.cms.vomqservice;
 
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
@@ -10,14 +10,17 @@ import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.bi.BiVtSalesProductExt;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsProcductBIDataMQMessageBody;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.task2.base.BaseMQCmsService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,22 +36,23 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob)
-public class CmsProcductBIDataService extends BaseMQCmsService {
-
+public class CmsProcductBIDataService extends BaseService {
     @Autowired
     private BiVtSalesProductExt biDataDao;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
+    @Autowired
+    CmsMqSenderService cmsMqSenderService;
+
     // 每次查询取得的最大件数
     private final static int PAGE_LIMIT = 1000;
 
-    @Override
-    public void onStartup(Map<String, Object> messageMap) throws Exception {
+
+    public void onStartup(CmsProcductBIDataMQMessageBody messageMap) throws Exception {
         $info("CmsProcductBIDataService start... 参数" + JacksonUtil.bean2Json(messageMap));
-        String channelId = StringUtils.trimToNull((String) messageMap.get("channelId"));
-        Integer cartId = (Integer) messageMap.get("cartId");
+        String channelId = StringUtils.trimToNull(messageMap.getChannelId());
+        Integer cartId = messageMap.getCartId(); //(Integer) messageMap.get("cartId");
         if (channelId == null || cartId == null) {
             $error("CmsProcductBIDataService 缺少参数");
             return;
@@ -110,7 +114,7 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
         // 清空现有值
         JongoUpdate updObj = new JongoUpdate();
         updObj.setUpdate("{$set:{'bi.sum#.pv.cartId#':null,'bi.sum#.uv.cartId#':null, 'bi.sum#.gwc.cartId#':null,'bi.sum#.scs.cartId#':null, 'modified':#,'modifier':#}}");
-        updObj.setUpdateParameters(opeType, cartId, opeType, cartId, opeType, cartId, opeType, cartId, DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob);
+        updObj.setUpdateParameters(opeType, cartId, opeType, cartId, opeType, cartId, opeType, cartId, DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_PPRODUCT_BI_DATA);
         // 批量更新
         WriteResult rs = cmsBtProductDao.updateMulti(updObj, channelId);
         if (rs != null) {
@@ -135,7 +139,7 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
                 $warn("CmsProcductBIDataService 本店铺无BI数据 sqlParams=" + sqlParams.toString());
                 break;
             }
-            oIdx ++;
+            oIdx++;
 
             for (Map orderObj : biData) {
                 String numIid = (String) orderObj.get("num_iid");
@@ -144,7 +148,7 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
                 updObj.setQuery("{'platforms.P#.pNumIId':#,'platforms.P#.status':'Approved'}");
                 updObj.setQueryParameters(cartId, numIid, cartId);
                 updObj.setUpdate("{$set:{'bi.sum#.pv.cartId#':#,'bi.sum#.uv.cartId#':#, 'bi.sum#.gwc.cartId#':#,'bi.sum#.scs.cartId#':#, 'modified':#,'modifier':#}}");
-                updObj.setUpdateParameters(opeType, cartId, orderObj.get("pv"), opeType, cartId, orderObj.get("uv"), opeType, cartId, orderObj.get("cartNums"), opeType, cartId, orderObj.get("collNums"), DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob);
+                updObj.setUpdateParameters(opeType, cartId, orderObj.get("pv"), opeType, cartId, orderObj.get("uv"), opeType, cartId, orderObj.get("cartNums"), opeType, cartId, orderObj.get("collNums"), DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_PPRODUCT_BI_DATA);
                 // 批量更新
                 wrs = bulkUpdList.addBulkJongo(updObj);
                 if (wrs != null) {
@@ -167,7 +171,7 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
                     updObj2.setQuery("{'platforms.P#.pNumIId':#,'platforms.P#.status':'Approved'}");
                     updObj2.setQueryParameters(channelId, numIid, channelId);
                     updObj2.setUpdate("{$set:{'bi.sum#.pv.cartId#':#,'bi.sum#.uv.cartId#':#, 'bi.sum#.gwc.cartId#':#,'bi.sum#.scs.cartId#':#, 'modified':#,'modifier':#}}");
-                    updObj2.setUpdateParameters(opeType, channelId, orderObj.get("pv"), opeType, channelId, orderObj.get("uv"), opeType, channelId, orderObj.get("cartNums"), opeType, channelId, orderObj.get("collNums"), DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob);
+                    updObj2.setUpdateParameters(opeType, channelId, orderObj.get("pv"), opeType, channelId, orderObj.get("uv"), opeType, channelId, orderObj.get("cartNums"), opeType, channelId, orderObj.get("collNums"), DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_PPRODUCT_BI_DATA);
 
                     wrs = orgUpdList.addBulkJongo(updObj2);
                     if (wrs != null) {
@@ -244,12 +248,26 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
             // 清空现有值
             JongoUpdate updObj = new JongoUpdate();
             updObj.setUpdate("{$set:{'bi.sum#.pv.cartId#':null,'bi.sum#.uv.cartId#':null, 'bi.sum#.gwc.cartId#':null,'bi.sum#.scs.cartId#':null, 'modified':#,'modifier':#}}");
-            updObj.setUpdateParameters(opeType, cartId, opeType, cartId, opeType, cartId, opeType, cartId, DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob);
+            updObj.setUpdateParameters(opeType, cartId, opeType, cartId, opeType, cartId, opeType, cartId, DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_PPRODUCT_BI_DATA);
             // 批量更新
             WriteResult rs = cmsBtProductDao.updateMulti(updObj, orgChannelId);
             if (rs != null) {
                 $debug(String.format("更新product 清空现有bi数据 orgChannelId=%s, cartid=%d, 执行结果=%s", orgChannelId, cartId, rs.toString()));
             }
         }
+    }
+
+    /**
+     *
+     * @param channelId
+     * @param cartId
+     * @throws MQMessageRuleException
+     */
+    public void sendMessage(String channelId, int cartId,String sender) throws MQMessageRuleException {
+        CmsProcductBIDataMQMessageBody mqMessageBody = new CmsProcductBIDataMQMessageBody();
+        mqMessageBody.setChannelId(channelId);
+        mqMessageBody.setCartId(cartId);
+        mqMessageBody.setSender(sender);
+        cmsMqSenderService.sendMessage(mqMessageBody);
     }
 }

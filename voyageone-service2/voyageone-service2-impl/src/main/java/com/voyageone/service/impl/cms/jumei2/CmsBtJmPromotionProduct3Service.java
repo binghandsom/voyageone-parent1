@@ -3,7 +3,6 @@ package com.voyageone.service.impl.cms.jumei2;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
@@ -24,9 +23,9 @@ import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.JMProductUpdateMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JMProductUpdateMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JmPromotionProductStockSyncMQMessageBody;
 import com.voyageone.service.model.cms.*;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -469,6 +468,17 @@ public class CmsBtJmPromotionProduct3Service {
     public void sendMessage(int cmsBtJmPromotionId, String sender) throws MQMessageRuleException {
         JMProductUpdateMQMessageBody mqMessageBody = new JMProductUpdateMQMessageBody();
         mqMessageBody.setCmsBtJmPromotionId(cmsBtJmPromotionId);
+        mqMessageBody.setSender(sender);
+        cmsMqSenderService.sendMessage(mqMessageBody);
+    }
+
+
+    /** 库存同步
+     * @param sender
+     * @throws MQMessageRuleException
+     */
+    public void sendMessageJmPromotionProductStockSync(String sender) throws MQMessageRuleException {
+        JmPromotionProductStockSyncMQMessageBody mqMessageBody = new JmPromotionProductStockSyncMQMessageBody();
         mqMessageBody.setSender(sender);
         cmsMqSenderService.sendMessage(mqMessageBody);
     }

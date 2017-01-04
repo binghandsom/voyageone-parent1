@@ -1,15 +1,14 @@
-package com.voyageone.task2.cms.mqjob;
+package com.voyageone.task2.cms.mqjob.jm;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionSkuService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.JMRefreshPriceMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JMRefreshPriceMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.task2.base.BaseMQCmsService;
+import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
