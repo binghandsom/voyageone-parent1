@@ -7,10 +7,11 @@ import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
  */
 public abstract class BaseMQMessageBody implements IMQMessageBody {
     //消费者重试次数
-    protected int consumerRetryTimes = 0;
+    int consumerRetryTimes = 0;
     //消息体id
     int mqId;
 
+    //延迟发送时间
     int delaySecond;
 
     @Override
