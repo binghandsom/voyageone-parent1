@@ -1,4 +1,5 @@
 package com.voyageone.task2.cms.mqjob.jm;
+
 import com.voyageone.service.impl.cms.jumei2.JuMeiProductPlatform3Service;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JMProductUpdateMQMessageBody;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;

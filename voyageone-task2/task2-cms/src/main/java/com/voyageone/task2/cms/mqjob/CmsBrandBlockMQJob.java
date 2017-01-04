@@ -4,7 +4,6 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.CmsConstants.PlatformStatus;
-import com.voyageone.common.util.BeanUtils;
 import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -45,10 +44,11 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
         this.productService = productService;
         this.platformActiveLogService = platformActiveLogService;
     }
+
     @Override
     public void onStartup(CmsBrandBlockMQMessageBody messageMap) throws Exception {
 
-        Object blockingObject =messageMap.isBlocking();
+        Object blockingObject = messageMap.isBlocking();
         CmsBtBrandBlockModel dataObject = messageMap.getData();
 
         if (blockingObject == null || dataObject == null) {

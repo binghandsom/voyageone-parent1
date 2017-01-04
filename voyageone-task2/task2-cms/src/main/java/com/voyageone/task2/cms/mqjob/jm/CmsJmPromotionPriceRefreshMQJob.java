@@ -49,7 +49,7 @@ public class CmsJmPromotionPriceRefreshMQJob extends TBaseMQCmsService<JMRefresh
             if (cacheProduct == null || sku.getProductCode().compareToIgnoreCase(cacheProduct.getCommon().getFields().getCode()) != 0) {
                 cacheProduct = productService.getProductByCode(sku.getChannelId(), sku.getProductCode());
             }
-            if(cacheProduct == null || cacheProduct.getPlatform(CartEnums.Cart.JM) == null) continue;
+            if (cacheProduct == null || cacheProduct.getPlatform(CartEnums.Cart.JM) == null) continue;
 
             BaseMongoMap<String, Object> productSku = cacheProduct.getPlatform(CartEnums.Cart.JM).getSkus()
                     .stream().filter(pSku -> sku.getSkuCode().equalsIgnoreCase(pSku.getStringAttribute("skuCode")))
@@ -59,29 +59,29 @@ public class CmsJmPromotionPriceRefreshMQJob extends TBaseMQCmsService<JMRefresh
             CmsBtProductModel_Sku cmsBtProductModelSku = cacheProduct.getCommon().getSkus().stream().filter(cmsBtProductModel_sku -> sku.getSkuCode().equalsIgnoreCase(cmsBtProductModel_sku.getSkuCode()))
                     .findFirst().orElse(null);
             boolean editFlg = false;
-            if(productSku != null){
-                if (sku.getMsrpRmb().doubleValue() != productSku.getDoubleAttribute("priceMsrp")){
+            if (productSku != null) {
+                if (sku.getMsrpRmb().doubleValue() != productSku.getDoubleAttribute("priceMsrp")) {
                     sku.setMsrpRmb(new BigDecimal(productSku.getDoubleAttribute("priceMsrp")));
                     editFlg = true;
                 }
-                if (sku.getRetailPrice().doubleValue() != productSku.getDoubleAttribute("priceRetail")){
+                if (sku.getRetailPrice().doubleValue() != productSku.getDoubleAttribute("priceRetail")) {
                     sku.setRetailPrice(new BigDecimal(productSku.getDoubleAttribute("priceRetail")));
                     editFlg = true;
                 }
-                if (sku.getSalePrice().doubleValue() != productSku.getDoubleAttribute("priceSale")){
+                if (sku.getSalePrice().doubleValue() != productSku.getDoubleAttribute("priceSale")) {
                     sku.setSalePrice(new BigDecimal(productSku.getDoubleAttribute("priceSale")));
                     editFlg = true;
                 }
             }
-            if(cmsBtProductModelSku != null){
-                if (sku.getMsrpUsd().doubleValue() != cmsBtProductModelSku.getClientMsrpPrice()){
+            if (cmsBtProductModelSku != null) {
+                if (sku.getMsrpUsd().doubleValue() != cmsBtProductModelSku.getClientMsrpPrice()) {
                     sku.setMsrpUsd(new BigDecimal(cmsBtProductModelSku.getClientMsrpPrice()));
                     editFlg = true;
                 }
             }
-            if(editFlg){
-                $info(String.format("jmPromotionId:%d sku:%s 价格有变化 MsrpUsd:%s MsrpRmb:%s RetailPrice:%s SalePrice:%s",jmPromotionId, sku.getSkuCode(), sku.getMsrpUsd().doubleValue(), sku.getMsrpRmb().doubleValue(), sku.getRetailPrice().doubleValue(), sku.getSalePrice().doubleValue()));
-                cmsBtJmPromotionSkuService.updateWithDiscount(sku, sku.getChannelId(),getTaskName());
+            if (editFlg) {
+                $info(String.format("jmPromotionId:%d sku:%s 价格有变化 MsrpUsd:%s MsrpRmb:%s RetailPrice:%s SalePrice:%s", jmPromotionId, sku.getSkuCode(), sku.getMsrpUsd().doubleValue(), sku.getMsrpRmb().doubleValue(), sku.getRetailPrice().doubleValue(), sku.getSalePrice().doubleValue()));
+                cmsBtJmPromotionSkuService.updateWithDiscount(sku, sku.getChannelId(), getTaskName());
             }
 
         }
