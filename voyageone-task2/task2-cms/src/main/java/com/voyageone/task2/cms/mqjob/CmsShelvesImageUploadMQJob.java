@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service;
+package com.voyageone.task2.cms.mqjob;
 
 import com.jd.open.api.sdk.response.imgzone.ImgzonePictureUploadResponse;
 import com.taobao.api.ApiException;
@@ -21,6 +21,7 @@ import com.voyageone.service.fields.cms.CmsBtShelvesModelClientType;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.CmsBtShelvesTemplateService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsShelvesImageUploadMQMessageBody;
 import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
@@ -49,8 +50,8 @@ import java.util.stream.Collectors;
  * @since 2.10.0
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_ShelvesImageUploadJob)
-public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
+@RabbitListener()
+public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImageUploadMQMessageBody> {
     private final CmsBtShelvesProductService cmsBtShelvesProductService;
     private final TbPictureService tbPictureService;
     private final CmsBtShelvesTemplateService cmsBtShelvesTemplateService;
@@ -58,10 +59,10 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
     private final JdImgzoneService jdImgzoneService;
 
     @Autowired
-    public CmsShelvesImageUploadMQService(CmsBtShelvesProductService cmsBtShelvesProductService,
-                                          TbPictureService tbPictureService,
-                                          CmsBtShelvesTemplateService cmsBtShelvesTemplateService,
-                                          JdImgzoneService jdImgzoneService, CmsBtShelvesService cmsBtShelvesService) {
+    public CmsShelvesImageUploadMQJob(CmsBtShelvesProductService cmsBtShelvesProductService,
+                                      TbPictureService tbPictureService,
+                                      CmsBtShelvesTemplateService cmsBtShelvesTemplateService,
+                                      JdImgzoneService jdImgzoneService, CmsBtShelvesService cmsBtShelvesService) {
         this.cmsBtShelvesProductService = cmsBtShelvesProductService;
         this.tbPictureService = tbPictureService;
         this.cmsBtShelvesTemplateService = cmsBtShelvesTemplateService;
@@ -70,8 +71,8 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
     }
 
     @Override
-    protected void onStartup(Map<String, Object> messageMap) throws Exception {
-        Integer shelvesId = MapUtils.getInteger(messageMap, MqParameterKeys.key1);
+    public void onStartup(CmsShelvesImageUploadMQMessageBody messageMap) throws Exception {
+        Integer shelvesId = messageMap.getShelvesId();
 
         if (shelvesId != null) {
             CmsBtShelvesInfoBean cmsBtShelvesInfoBean = cmsBtShelvesProductService.getShelvesInfo(cmsBtShelvesService.getId(shelvesId), true);

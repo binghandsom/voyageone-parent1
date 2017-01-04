@@ -47,7 +47,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 @RabbitListener()
-public class CmsShelvesMonitorMQService extends TBaseMQCmsService<CmsShelvesMonitorMQMessageBody> {
+public class CmsShelvesMonitorMQJob extends TBaseMQCmsService<CmsShelvesMonitorMQMessageBody> {
 
     private final CmsBtShelvesService cmsBtShelvesService;
 
@@ -62,7 +62,7 @@ public class CmsShelvesMonitorMQService extends TBaseMQCmsService<CmsShelvesMoni
     private final CmsMqSenderService cmsMqSenderService;
 
     @Autowired
-    public CmsShelvesMonitorMQService(CmsBtShelvesProductService cmsBtShelvesProductService, TbProductService tbProductService, ProductService productService, CmsBtShelvesService cmsBtShelvesService, JdWareService jdWareService, CmsMqSenderService cmsMqSenderService) {
+    public CmsShelvesMonitorMQJob(CmsBtShelvesProductService cmsBtShelvesProductService, TbProductService tbProductService, ProductService productService, CmsBtShelvesService cmsBtShelvesService, JdWareService jdWareService, CmsMqSenderService cmsMqSenderService) {
         this.cmsBtShelvesProductService = cmsBtShelvesProductService;
         this.tbProductService = tbProductService;
         this.productService = productService;
