@@ -382,7 +382,7 @@ public class WmfAnalysisService extends BaseAnalysisService {
                 if(!writeResult.isUpdateOfExisting()){
                     retailPriceList.put(sku,price);
                 }else{
-                    CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductBySku("018",sku);
+                    CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductBySku("014",sku);
                     if(cmsBtFeedInfoModel.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Succeed || cmsBtFeedInfoModel.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Fail){
                         feedInfoService.updateAllUpdFlg("014","{\"code\":\""+ cmsBtFeedInfoModel.getCode()+"\"}",CmsConstants.FeedUpdFlgStatus.Pending,getTaskName());
                     }
