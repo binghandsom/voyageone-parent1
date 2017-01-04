@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.mqjob;
 
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsProcductBIDataMQMessageBody;
 import com.voyageone.service.impl.cms.vomqservice.CmsProcductBIDataService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

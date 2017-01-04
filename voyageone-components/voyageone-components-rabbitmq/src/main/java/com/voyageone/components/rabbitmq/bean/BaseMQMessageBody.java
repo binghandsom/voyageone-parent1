@@ -18,7 +18,7 @@ public abstract class BaseMQMessageBody implements IMQMessageBody {
         return delaySecond;
     }
 
-    @Override
+
     public void setDelaySecond(int delaySecond) {
         this.delaySecond = delaySecond;
     }

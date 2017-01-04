@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.vomq;
 
+import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.rabbitmq.service.MqSenderService;
@@ -35,7 +36,7 @@ public class CmsMqSenderService extends BaseService {
             throw ex;
         }
     }
-    public void sendMessage(IMQMessageBody message,int delaySecond) throws MQMessageRuleException {
+    public void sendMessage(BaseMQMessageBody message, int delaySecond) throws MQMessageRuleException {
             message.setDelaySecond(delaySecond);
             sendMessage(message);
     }

@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service.jumei;
+package com.voyageone.task2.cms.mqjob.jm;
 import com.voyageone.common.configs.MQConfigInitTestUtil;
 import com.voyageone.task2.cms.mqjob.jm.CmsJmPromotionExportMQJob;
 import org.junit.Test;
