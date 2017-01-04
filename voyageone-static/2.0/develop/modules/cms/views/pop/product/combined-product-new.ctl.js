@@ -34,7 +34,8 @@ define([
 
                     combinedProductService.getCombinedProductPlatformDetail({
                         "cartId": cartId,
-                        "numID": numID
+                        "numID": numID,
+                        "new" : "1"
                     }).then(function (resp) {
                         $scope.vm.config.showFlag = true;
                         $scope.vm.product = resp.data.product == null ? {} : resp.data.product;
