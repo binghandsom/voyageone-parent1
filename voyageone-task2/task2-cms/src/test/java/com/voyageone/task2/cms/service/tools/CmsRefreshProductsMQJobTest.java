@@ -1,15 +1,12 @@
 package com.voyageone.task2.cms.service.tools;
 
-import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
-import com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsRefreshProductsMQMessageBody;
+import com.voyageone.task2.cms.mqjob.CmsRefreshProductsMQJob;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * MQ 任务 CmsRefreshProductsJobService 的单元测试
@@ -20,15 +17,15 @@ import java.util.Map;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
-public class CmsRefreshProductsJobServiceTest {
+public class CmsRefreshProductsMQJobTest {
 
     @Autowired
-    private CmsRefreshProductsJobService cmsRefreshProductsJobService;
+    private CmsRefreshProductsMQJob cmsRefreshProductsMQJob;
 
     @Test
     public void onStartup() throws Exception {
-        Map<String, Object> map = new HashMap<>();
-        map.put(MqParameterKeys.key1, 1);
-        cmsRefreshProductsJobService.onStartup(map);
+        CmsRefreshProductsMQMessageBody map = new CmsRefreshProductsMQMessageBody();
+        map.setTaskId(1);
+        cmsRefreshProductsMQJob.onStartup(map);
     }
 }

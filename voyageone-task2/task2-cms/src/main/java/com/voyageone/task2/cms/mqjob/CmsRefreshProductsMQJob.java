@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service.tools;
+package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.service.fields.cms.CmsBtRefreshProductTaskModelStatus;
@@ -7,6 +7,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsRefreshProductsMQMessageBody;
 import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtRefreshProductTaskItemModel;
@@ -32,8 +33,8 @@ import java.util.Map;
  * @since 2.9.0
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_REFRESH_PRODUCTS)
-public class CmsRefreshProductsJobService extends BaseMQCmsService {
+@RabbitListener()
+public class CmsRefreshProductsMQJob extends TBaseMQCmsService<CmsRefreshProductsMQMessageBody> {
 
     private final PlatformMappingService platformMappingService;
     private final ProductService productService;
@@ -42,9 +43,9 @@ public class CmsRefreshProductsJobService extends BaseMQCmsService {
     private final SxProductService sxProductService;
 
     @Autowired
-    public CmsRefreshProductsJobService(PlatformMappingService platformMappingService, ProductService productService,
-                                        CmsBtRefreshProductTaskDao cmsBtRefreshProductTaskDao,
-                                        CmsBtProductDao cmsBtProductDao, SxProductService sxProductService) {
+    public CmsRefreshProductsMQJob(PlatformMappingService platformMappingService, ProductService productService,
+                                   CmsBtRefreshProductTaskDao cmsBtRefreshProductTaskDao,
+                                   CmsBtProductDao cmsBtProductDao, SxProductService sxProductService) {
         this.platformMappingService = platformMappingService;
         this.productService = productService;
         this.cmsBtRefreshProductTaskDao = cmsBtRefreshProductTaskDao;
@@ -53,9 +54,9 @@ public class CmsRefreshProductsJobService extends BaseMQCmsService {
     }
 
     @Override
-    protected void onStartup(Map<String, Object> messageMap) throws Exception {
+    public void onStartup(CmsRefreshProductsMQMessageBody messageMap) throws Exception {
         // 获取参数
-        Integer taskId = MapUtils.getInteger(messageMap, MqParameterKeys.key1);
+        Integer taskId = messageMap.getTaskId();
 
         if (taskId == null)
             return;
@@ -98,20 +99,20 @@ public class CmsRefreshProductsJobService extends BaseMQCmsService {
         sxProductService.insertSxWorkLoad(product, cartIdList, cmsBtRefreshProductTaskModel.getModifier());
     }
 
-    class ProductUpdater {
+    public class ProductUpdater {
         private CmsBtProductModel product;
         private Map<String, Object> valueMap;
         private Integer cartId;
         private String channelId;
 
-        ProductUpdater(CmsBtProductModel product, Map<String, Object> valueMap, Integer cartId, String channelId) {
+        public ProductUpdater(CmsBtProductModel product, Map<String, Object> valueMap, Integer cartId, String channelId) {
             this.product = product;
             this.valueMap = valueMap;
             this.cartId = cartId;
             this.channelId = channelId;
         }
 
-        void update() {
+        public void update() {
             cmsBtProductDao.bulkUpdateWithModel(channelId, getUpdateModelList());
         }
 
