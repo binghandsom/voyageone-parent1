@@ -47,6 +47,7 @@ public class CmsProductVoRateUpdateService extends BaseService {
     private SxProductService sxProductService;
 
     public void updateProductVoRate(Map<String, Object> messageMap) throws Exception {
+
         $info("CmsProductVoRateUpdateService start");
         $info("参数" + JacksonUtil.bean2Json(messageMap));
         String channelId = StringUtils.trimToNull((String) messageMap.get("channelId"));
