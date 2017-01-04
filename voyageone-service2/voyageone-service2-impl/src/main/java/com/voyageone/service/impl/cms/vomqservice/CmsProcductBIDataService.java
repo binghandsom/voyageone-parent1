@@ -10,10 +10,12 @@ import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.bi.BiVtSalesProductExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsProcductBIDataMQMessageBody;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +42,9 @@ public class CmsProcductBIDataService extends BaseService {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
+    @Autowired
+    CmsMqSenderService cmsMqSenderService;
+
     // 每次查询取得的最大件数
     private final static int PAGE_LIMIT = 1000;
 
@@ -47,7 +52,7 @@ public class CmsProcductBIDataService extends BaseService {
     public void onStartup(CmsProcductBIDataMQMessageBody messageMap) throws Exception {
         $info("CmsProcductBIDataService start... 参数" + JacksonUtil.bean2Json(messageMap));
         String channelId = StringUtils.trimToNull(messageMap.getChannelId());
-        Integer cartId =messageMap.getCartId(); //(Integer) messageMap.get("cartId");
+        Integer cartId = messageMap.getCartId(); //(Integer) messageMap.get("cartId");
         if (channelId == null || cartId == null) {
             $error("CmsProcductBIDataService 缺少参数");
             return;
@@ -134,7 +139,7 @@ public class CmsProcductBIDataService extends BaseService {
                 $warn("CmsProcductBIDataService 本店铺无BI数据 sqlParams=" + sqlParams.toString());
                 break;
             }
-            oIdx ++;
+            oIdx++;
 
             for (Map orderObj : biData) {
                 String numIid = (String) orderObj.get("num_iid");
@@ -250,5 +255,18 @@ public class CmsProcductBIDataService extends BaseService {
                 $debug(String.format("更新product 清空现有bi数据 orgChannelId=%s, cartid=%d, 执行结果=%s", orgChannelId, cartId, rs.toString()));
             }
         }
+    }
+
+    /**
+     *
+     * @param channelId
+     * @param cartId
+     * @throws MQMessageRuleException
+     */
+    public void sendMessage(String channelId, int cartId) throws MQMessageRuleException {
+        CmsProcductBIDataMQMessageBody mqMessageBody = new CmsProcductBIDataMQMessageBody();
+        mqMessageBody.setChannelId(channelId);
+        mqMessageBody.setCartId(cartId);
+        cmsMqSenderService.sendMessage(mqMessageBody);
     }
 }

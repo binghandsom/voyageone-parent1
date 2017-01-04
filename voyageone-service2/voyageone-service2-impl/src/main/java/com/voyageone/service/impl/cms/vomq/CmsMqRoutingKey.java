@@ -24,6 +24,11 @@ public class CmsMqRoutingKey {
     public static final String CMS_JM_PROMOTION_PRODUCT_STOCK_SYNC= "VOCmsJmPromotionProductStockSyncQueue";
 
 
+    /**
+     * 高级检索-取得产品的bi信息
+     */
+    public static final String CMS_PPRODUCT_BI_DATA = "VoCMSProductBIDataQueue";
+
 
     /**
      * jumei mq task

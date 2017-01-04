@@ -1,6 +1,8 @@
 package com.voyageone.web2.openapi.bi.control;
 
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.service.impl.cms.vomqservice.CmsProcductBIDataService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.web2.openapi.OpenApiBaseController;
@@ -29,7 +31,9 @@ public class BiSaveDataController extends OpenApiBaseController {
     private DataServiceTB dataServiceTB;
 
     @Autowired
-    private MqSender mqSender;
+    CmsProcductBIDataService cmsProcductBIDataService;
+    //@Autowired
+    //private MqSender mqSender;
 
     @RequestMapping(BiUrlConstants.URL.LIST.SAVE_SHOP_URL_DATA)
     public VoApiResponse saveShopData(@RequestBody Map<String, Object> params) {
@@ -58,7 +62,7 @@ public class BiSaveDataController extends OpenApiBaseController {
     }
 
     @RequestMapping(BiUrlConstants.URL.LIST.SAVE_SHOP_FINISH)
-    public VoApiResponse saveShopFinish(@RequestBody Map<String, Object> params) {
+    public VoApiResponse saveShopFinish(@RequestBody Map<String, Object> params) throws MQMessageRuleException {
         logger.info(BiUrlConstants.URL.LIST.SAVE_SHOP_FINISH);
 
         if (params.get("shop_info") == null) {
@@ -67,14 +71,8 @@ public class BiSaveDataController extends OpenApiBaseController {
         //获取数据
         @SuppressWarnings("unchecked")
         Map<String, Object> shopInfo = (Map<String, Object>) params.get("shop_info");
-
-        Map<String, Object> messageMap = new HashMap<>();
-        messageMap.put("channelId", shopInfo.get("channelCode"));
         String cartId = (String) shopInfo.get("ecommCode");
-        messageMap.put("cartId", Integer.parseInt(cartId));
-
-        // send mq
-        mqSender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob, messageMap);
+        cmsProcductBIDataService.sendMessage(shopInfo.get("channelCode").toString(),Integer.parseInt(cartId));
 
         return simpleResponse("OK");
     }
