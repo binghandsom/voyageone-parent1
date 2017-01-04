@@ -711,4 +711,21 @@ public class CmsBtCombinedProductService extends BaseService {
         }
         return resultMap;
     }
+
+    /**
+     * 条件查找组合商品
+     * @param numId
+     * @param channelId
+     * @param cartId
+     * @return
+     */
+    public CmsBtCombinedProductModel getByNumId(String numId, String channelId, Integer cartId) {
+        if (StringUtils.isNotBlank(numId) && StringUtils.isNotBlank(channelId) && cartId != null) {
+            JongoQuery queryObj = new JongoQuery();
+            queryObj.addQuery("{'active':1,'numID':#,'channelId':#,'cartId':#}");
+            queryObj.addParameters(numId, channelId, cartId);
+            return cmsBtCombinedProductDao.selectOneWithQuery(queryObj);
+        }
+        return null;
+    }
 }
