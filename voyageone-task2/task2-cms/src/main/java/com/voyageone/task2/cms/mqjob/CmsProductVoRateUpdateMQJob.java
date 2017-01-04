@@ -7,6 +7,9 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Product VoRate Update Job
  *
@@ -22,6 +25,11 @@ public class CmsProductVoRateUpdateMQJob extends TBaseMQCmsService<ProductVoRate
 
     @Override
     public void onStartup(ProductVoRateUpdateMQMessageBody messageBody) throws Exception {
-        cmsProductVoRateUpdateService.updateProductVoRate(messageBody.getParams());
+        Map<String, Object> params = new HashMap<>();
+        params.put("channelId", messageBody.getChannelId());
+        params.put("creater", messageBody.getCreater());
+        params.put("codeList", messageBody.getCodeList());
+        params.put("voRate", messageBody.getVoRate());
+        cmsProductVoRateUpdateService.updateProductVoRate(params);
     }
 }

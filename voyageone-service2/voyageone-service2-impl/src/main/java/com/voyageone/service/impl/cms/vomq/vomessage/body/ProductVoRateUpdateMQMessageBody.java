@@ -5,6 +5,10 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,20 +20,57 @@ import java.util.Map;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_PRODUCT_VO_RATE_UPDATE)
 public class ProductVoRateUpdateMQMessageBody extends BaseMQMessageBody {
 
-    private Map<String, Object> params;
-
-    public Map<String, Object> getParams() {
-        return params;
-    }
-
-    public void setParams(Map<String, Object> params) {
-        this.params = params;
-    }
+    private String channelId;
+    private String creater;
+    private List<String> codeList;
+    private String voRate;
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (params == null || params.size() <= 0) {
-            throw new MQMessageRuleException("产品vo扣点变更MQ参数为空");
+        if (StringUtils.isBlank(channelId)) {
+            throw new MQMessageRuleException("ProductVoRateUpdate参数channelId为空.");
+        }
+        if (CollectionUtils.isEmpty(codeList)) {
+            throw new MQMessageRuleException("ProductVoRateUpdate参数codeList为空.");
+        }
+        if (StringUtils.isBlank(voRate)) {
+            throw new MQMessageRuleException("ProductVoRateUpdate参数voRate为空.");
+        }
+        if (StringUtils.isBlank(creater)) {
+            throw new MQMessageRuleException("ProductVoRateUpdate参数vcreater为空.");
         }
     }
+
+    public String getVoRate() {
+        return voRate;
+    }
+
+    public void setVoRate(String voRate) {
+        this.voRate = voRate;
+    }
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
+
+    public String getCreater() {
+        return creater;
+    }
+
+    public void setCreater(String creater) {
+        this.creater = creater;
+    }
+
+    public List<String> getCodeList() {
+        return codeList;
+    }
+
+    public void setCodeList(List<String> codeList) {
+        this.codeList = codeList;
+    }
+
 }
