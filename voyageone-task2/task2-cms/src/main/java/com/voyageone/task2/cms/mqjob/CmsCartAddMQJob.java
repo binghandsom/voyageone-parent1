@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service;
+package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -10,6 +10,7 @@ import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsCartAddMQMessageBody;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -26,8 +27,8 @@ import java.util.Map;
  * Created by james on 2016/12/9.
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_CartAddJob)
-public class CmsCartAddMqService extends BaseMQCmsService {
+@RabbitListener()
+public class CmsCartAddMQJob extends TBaseMQCmsService<CmsCartAddMQMessageBody> {
 
     private final ProductService productService;
 
@@ -38,17 +39,17 @@ public class CmsCartAddMqService extends BaseMQCmsService {
     private final static int pageSize = 200;
 
     @Autowired
-    public CmsCartAddMqService(ProductService productService, ProductGroupService productGroupService, PriceService priceService) {
+    public CmsCartAddMQJob(ProductService productService, ProductGroupService productGroupService, PriceService priceService) {
         this.productService = productService;
         this.productGroupService = productGroupService;
         this.priceService = priceService;
     }
 
     @Override
-    protected void onStartup(Map<String, Object> messageMap) throws Exception {
-        String channelId = (String) messageMap.get("channelId");
-        Integer cartId = (Integer) messageMap.get("cartId");
-        Boolean isSingle = messageMap.get("isSingle") == null ? false : (Boolean) messageMap.get("isSingle");
+    public void onStartup(CmsCartAddMQMessageBody messageMap) throws Exception {
+        String channelId = messageMap.getChannelId();
+        Integer cartId =  messageMap.getCartId();
+        Boolean isSingle = messageMap.getSingle() == null ? false : messageMap.getSingle();
 
         Assert.isTrue(channelId != null && cartId != null, "参数错误!");
 
