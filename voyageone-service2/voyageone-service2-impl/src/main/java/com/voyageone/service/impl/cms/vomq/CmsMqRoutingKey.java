@@ -23,10 +23,7 @@ public class CmsMqRoutingKey {
     // 聚美活动中的产品的库存同步
     public static final String CMS_JM_PROMOTION_PRODUCT_STOCK_SYNC= "VOCmsJmPromotionProductStockSyncQueue";
 
-
-    /**
-     * 高级检索-取得产品的bi信息
-     */
+     //高级检索-取得产品的bi信息
     public static final String CMS_PPRODUCT_BI_DATA = "VoCMSProductBIDataQueue";
 
     //品牌黑名单，屏蔽任务
