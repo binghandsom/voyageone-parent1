@@ -263,10 +263,11 @@ public class CmsProcductBIDataService extends BaseService {
      * @param cartId
      * @throws MQMessageRuleException
      */
-    public void sendMessage(String channelId, int cartId) throws MQMessageRuleException {
+    public void sendMessage(String channelId, int cartId,String sender) throws MQMessageRuleException {
         CmsProcductBIDataMQMessageBody mqMessageBody = new CmsProcductBIDataMQMessageBody();
         mqMessageBody.setChannelId(channelId);
         mqMessageBody.setCartId(cartId);
+        mqMessageBody.setSender(sender);
         cmsMqSenderService.sendMessage(mqMessageBody);
     }
 }

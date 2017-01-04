@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service;
+package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
@@ -9,10 +9,10 @@ import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsBrandBlockMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtBrandBlockModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.task2.base.BaseMQCmsService;
 import com.voyageone.task2.cms.service.platform.CmsPlatformActiveLogService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +30,8 @@ import static com.voyageone.common.CmsConstants.PlatformActive.ToInStock;
  * @since 2.6.0
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_BRANDBLOCKJOB)
-public class CmsBrandBlockJobService extends BaseMQCmsService {
+@RabbitListener//(queues = CmsMqRoutingKey.CMS_TASK_BRANDBLOCKJOB)
+public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessageBody> {
 
     private final FeedInfoService feedInfoService;
 
@@ -40,17 +40,16 @@ public class CmsBrandBlockJobService extends BaseMQCmsService {
     private final CmsPlatformActiveLogService platformActiveLogService;
 
     @Autowired
-    public CmsBrandBlockJobService(FeedInfoService feedInfoService, ProductService productService, CmsPlatformActiveLogService platformActiveLogService) {
+    public CmsBrandBlockMQJob(FeedInfoService feedInfoService, ProductService productService, CmsPlatformActiveLogService platformActiveLogService) {
         this.feedInfoService = feedInfoService;
         this.productService = productService;
         this.platformActiveLogService = platformActiveLogService;
     }
-
     @Override
-    public void onStartup(Map<String, Object> messageMap) throws Exception {
+    public void onStartup(CmsBrandBlockMQMessageBody messageMap) throws Exception {
 
-        Object blockingObject = messageMap.get("blocking");
-        Object dataObject = messageMap.get("data");
+        Object blockingObject =messageMap.isBlocking();// messageMap.get("blocking");
+        Object dataObject = messageMap.getData();//.get("data");
 
         if (blockingObject == null || dataObject == null) {
             logIssue("调用品牌黑名单的 MQ Job 时，参数不完整。参考附加信息", messageMap);
@@ -272,7 +271,7 @@ public class CmsBrandBlockJobService extends BaseMQCmsService {
 
         OffShelfHelper(String channelId) {
             mqParams.put("channelId", channelId);
-            mqParams.put("creater", CmsMqRoutingKey.CMS_TASK_BRANDBLOCKJOB);
+            mqParams.put("creater", CmsMqRoutingKey.CMS_BRAND_BLOCK);
             mqParams.put("activeStatus", ToInStock.name());
             mqParams.put("cartIdList", cartIdList);
             mqParams.put("comment", "Feed 品牌黑名单下架");

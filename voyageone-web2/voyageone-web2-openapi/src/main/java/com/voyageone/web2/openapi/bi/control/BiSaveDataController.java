@@ -72,7 +72,7 @@ public class BiSaveDataController extends OpenApiBaseController {
         @SuppressWarnings("unchecked")
         Map<String, Object> shopInfo = (Map<String, Object>) params.get("shop_info");
         String cartId = (String) shopInfo.get("ecommCode");
-        cmsProcductBIDataService.sendMessage(shopInfo.get("channelCode").toString(),Integer.parseInt(cartId));
+        cmsProcductBIDataService.sendMessage(shopInfo.get("channelCode").toString(),Integer.parseInt(cartId),BiUrlConstants.URL.LIST.SAVE_SHOP_FINISH);
 
         return simpleResponse("OK");
     }

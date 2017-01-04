@@ -29,6 +29,9 @@ public class CmsMqRoutingKey {
      */
     public static final String CMS_PPRODUCT_BI_DATA = "VoCMSProductBIDataQueue";
 
+    //品牌黑名单，屏蔽任务
+    public static final String CMS_BRAND_BLOCK = "VoCmsBrandBlockQueue";
+
 
     /**
      * jumei mq task
