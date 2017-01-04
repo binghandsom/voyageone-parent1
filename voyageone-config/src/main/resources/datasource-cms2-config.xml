@@ -11,14 +11,16 @@
 
     <bean id="dataSourceMaster" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
-        <!--<property name="jdbcUrl"-->
-        <!--value="jdbc:mysql://10.0.0.83:3306/Synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round&amp;allowMultiQueries=true"/>-->
-        <!--<property name="user" value="app_my_dev"/>-->
-        <!--<property name="password" value="s28Bw_1IL1bz"/>-->
         <property name="jdbcUrl"
-                  value="jdbc:mysql://10.0.0.59:8989/synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round"/>
-        <property name="user" value="app_web_read"/>
-        <property name="password" value="ND-_123B-"/>
+        value="jdbc:mysql://10.0.0.83:3306/Synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round&amp;allowMultiQueries=true"/>
+        <property name="user" value="app_my_dev"/>
+        <property name="password" value="s28Bw_1IL1bz"/>
+
+        <!--不要提交  不要改这里  59的配置对应配置文件datasource-cms2-config-mast.xml-->
+        <!--<property name="jdbcUrl"-->
+                  <!--value="jdbc:mysql://10.0.0.59:8989/synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round"/>-->
+        <!--<property name="user" value="app_web_read"/>-->
+        <!--<property name="password" value="ND-_123B-"/>-->
         <!--<property name="jdbcUrl"
                   value="jdbc:mysql://10.0.0.82:3306/synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round"/>
         <property name="user" value="app"/>
@@ -79,14 +81,14 @@
 
     <bean id="dataSourceSlave" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
-        <!--<property name="jdbcUrl"-->
-        <!--value="jdbc:mysql://10.0.0.83:3306/Synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round&amp;allowMultiQueries=true"/>-->
-        <!--<property name="user" value="app_my_dev"/>-->
-        <!--<property name="password" value="s28Bw_1IL1bz"/>-->
         <property name="jdbcUrl"
-                  value="jdbc:mysql://10.0.0.59:8989/synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round"/>
-        <property name="user" value="app_web_read"/>
-        <property name="password" value="ND-_123B-"/>
+        value="jdbc:mysql://10.0.0.83:3306/Synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round&amp;allowMultiQueries=true"/>
+        <property name="user" value="app_my_dev"/>
+        <property name="password" value="s28Bw_1IL1bz"/>
+        <!--<property name="jdbcUrl"-->
+                  <!--value="jdbc:mysql://10.0.0.59:8989/synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round"/>-->
+        <!--<property name="user" value="app_web_read"/>-->
+        <!--<property name="password" value="ND-_123B-"/>-->
         <!--<property name="jdbcUrl"
                   value="jdbc:mysql://10.0.0.82:3306/synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round"/>
         <property name="user" value="app"/>
