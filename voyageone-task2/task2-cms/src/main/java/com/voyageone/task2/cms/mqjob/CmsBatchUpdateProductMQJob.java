@@ -1,8 +1,7 @@
 package com.voyageone.task2.cms.mqjob;
 
-import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.BatchUpdateProductMQMessageBody;
-import com.voyageone.task2.cms.service.product.batch.CmsBacthUpdateTask;
+import com.voyageone.service.impl.cms.vomqjobservice.CmsBacthUpdateService;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +18,13 @@ import org.springframework.stereotype.Service;
 public class CmsBatchUpdateProductMQJob extends TBaseMQCmsService<BatchUpdateProductMQMessageBody> {
 
     @Autowired
-    private CmsBacthUpdateTask bacthUpdateService;
+    private CmsBacthUpdateService bacthUpdateService;
 
     @Override
     public void onStartup(BatchUpdateProductMQMessageBody messageBody) throws Exception {
+        messageBody.getParams().put("productIds", messageBody.getProductCodes());
+        messageBody.getParams().put("_channleId", messageBody.getChannelId());
+        messageBody.getParams().put("_userName", messageBody.getUserNmme());
         bacthUpdateService.onStartup(messageBody.getParams());
     }
 }

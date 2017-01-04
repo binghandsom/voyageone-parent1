@@ -1,11 +1,8 @@
 package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.service.enums.cms.OperationLog_Type;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchConfirmRetailPriceMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
-import com.voyageone.task2.cms.service.product.batch.CmsAdvSearchAsynProcessService;
-import com.voyageone.task2.cms.service.product.batch.CmsConfirmRetailPriceTask;
+import com.voyageone.service.impl.cms.vomqjobservice.CmsConfirmRetailPriceService;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class CmsAdvSearchConfirmRetailPriceMQJob extends TBaseMQCmsService<AdvSearchConfirmRetailPriceMQMessageBody> {
 
     @Autowired
-    private CmsConfirmRetailPriceTask confirmRetailPriceService;
+    private CmsConfirmRetailPriceService confirmRetailPriceService;
 
     @Override
     public void onStartup(AdvSearchConfirmRetailPriceMQMessageBody messageBody) throws Exception {

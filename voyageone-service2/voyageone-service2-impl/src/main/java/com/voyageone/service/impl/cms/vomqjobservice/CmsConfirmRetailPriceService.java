@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service.product.batch;
+package com.voyageone.service.impl.cms.vomqjobservice;
 
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
@@ -28,7 +28,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class CmsConfirmRetailPriceTask extends VOAbsLoggable {
+public class CmsConfirmRetailPriceService extends VOAbsLoggable {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;

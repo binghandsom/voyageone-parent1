@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.service.impl.cms.vomq.vomessage.body.SaveChannelCategoryMQMessageBody;
-import com.voyageone.task2.cms.service.product.batch.CmsAddChannelCategoryTask;
+import com.voyageone.service.impl.cms.vomqjobservice.CmsAddChannelCategoryService;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class CmsSaveChannelCategoryMQJob extends TBaseMQCmsService<SaveChannelCategoryMQMessageBody> {
 
     @Autowired
-    private CmsAddChannelCategoryTask saveChannelCategoryService;
+    private CmsAddChannelCategoryService saveChannelCategoryService;
 
     @Override
     public void onStartup(SaveChannelCategoryMQMessageBody messageBody) throws Exception {

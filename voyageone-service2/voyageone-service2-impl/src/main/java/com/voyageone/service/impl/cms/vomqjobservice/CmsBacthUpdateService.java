@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service.product.batch;
+package com.voyageone.service.impl.cms.vomqjobservice;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-public class CmsBacthUpdateTask extends VOAbsLoggable {
+public class CmsBacthUpdateService extends VOAbsLoggable {
 
     @Autowired
     private ProductService productService;

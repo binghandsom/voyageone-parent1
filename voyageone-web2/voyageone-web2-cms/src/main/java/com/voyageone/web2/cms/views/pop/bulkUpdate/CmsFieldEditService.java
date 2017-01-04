@@ -358,13 +358,16 @@ public class CmsFieldEditService extends BaseViewService {
                 return rsMap;
             }
 
-            params.put("productIds", productCodes);
+            /*params.put("productIds", productCodes);
             params.put("_channleId", userInfo.getSelChannelId());
             params.put("_userName", userInfo.getUserName());
-            // params.put("_taskName", "batchupdate");
-            // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+            params.put("_taskName", "batchupdate");
+            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);*/
 
             BatchUpdateProductMQMessageBody mqMessageBody = new BatchUpdateProductMQMessageBody();
+            mqMessageBody.setChannelId(userInfo.getSelChannelId());
+            mqMessageBody.setUserNmme(userInfo.getUserName());
+            mqMessageBody.setProductCodes(productCodes);
             mqMessageBody.setParams(params);
             try {
                 mqSenderService.sendMessage(mqMessageBody);
