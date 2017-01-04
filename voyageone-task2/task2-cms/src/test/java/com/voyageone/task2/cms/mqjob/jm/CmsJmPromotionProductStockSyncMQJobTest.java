@@ -1,7 +1,6 @@
 package com.voyageone.task2.cms.mqjob.jm;
 
 import com.voyageone.common.configs.MQConfigInitTestUtil;
-import com.voyageone.task2.cms.mqjob.jm.CmsJmPromotionProductStockSyncMQJob;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
