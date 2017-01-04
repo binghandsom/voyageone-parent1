@@ -58,7 +58,7 @@ public class CmsFeedConfigService extends BaseService {
                 cmsMtFeedConfigBean.setCfgVal3(bean.getCfgVal3());
                 cmsMtFeedConfigBean.setComment(bean.getComment());
                 cmsMtFeedConfigBean.setCmsIsCfgVal1Display(bean.getCmsIsCfgVal1Display());
-                cmsMtFeedConfigBean.setCmsIsCfgVal2Display(bean.getCmsIsCfgVal3Display());
+                cmsMtFeedConfigBean.setCmsIsCfgVal2Display(bean.getCmsIsCfgVal2Display());
                 cmsMtFeedConfigBean.setCmsIsCfgVal3Display(bean.getCmsIsCfgVal3Display());
             });
         }

@@ -118,7 +118,6 @@
                             <th ng-if="element.cmsCfgNameLev=='1'" class="text-left">{{element.cmsCfgName}}</th>
                             <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea class="form-control"
                                                                                                ng-model="element.comment"
-                                                                                               ng-disabled=element.cmsIsCfgVal1Display
                                                                                                class="no-resize" style="width: 100%"></textarea>
                             </th>
                             <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea class="form-control"
@@ -150,8 +149,7 @@
                         <tr ng-repeat="element in ctrl.dataList" ng-if="ctrl.displaySku">
                             <th ng-if="element.cmsCfgNameLev=='2'" class="text-left">{{element.cmsCfgName}}</th>
                             <th ng-if="element.cmsCfgNameLev=='2'" class="text-left"><textarea class="form-control"
-                                                                                               ng-model="element.comment"
-                                                                                               ng-disabled=element.cmsIsCfgVal1Display></textarea>
+                                                                                               ng-model="element.comment"></textarea>
                             </th>
                             <th ng-if="element.cmsCfgNameLev=='2'" class="text-left"><textarea class="form-control"
                                                                                                ng-model="element.cfgVal1"
