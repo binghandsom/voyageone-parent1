@@ -423,7 +423,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
             issueSkuNotExistList.stream().forEach(key -> {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                        "SellerSku=" + key + " is not provided."));
+                        "SellerSku=" + key + " is not provided or status is not AcknowledgedBySeller."));
             });
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
@@ -678,7 +678,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                     "SellerSku=[" + issueSkuNotExistList.stream().reduce((a, b) -> a + "," + b).get() + "] is not provided.");*/
 
             issueSkuNotExistList.stream().forEach(key -> {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SellerSku=" + key + " is not provided."));
+                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SellerSku=" + key + " is not provided or status is not AcknowledgedBySeller."));
             });
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
@@ -916,7 +916,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             /*throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
                     "SellerSku=[" + issueSkuNotExistList.stream().reduce((a, b) -> a + "," + b).get() + "] is not provided.");*/
             issueSkuNotExistList.stream().forEach(key -> {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SellerSku=" + key + " is not provided."));
+                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SellerSku=" + key + " is not provided or status is not Shipped."));
             });
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
