@@ -23,6 +23,8 @@ import com.voyageone.web2.openapi.channeladvisor.exception.CAApiException;
 import com.voyageone.web2.openapi.channeladvisor.exception.CAApiExceptions;
 import com.voyageone.web2.openapi.channeladvisor.service.CAOrderService;
 import org.apache.commons.collections.MapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,8 @@ import java.util.stream.Collectors;
 @Profile("product")
 @VOTransactional
 public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderService {
+
+    private static final Logger log= LoggerFactory.getLogger(CAOrderService.class);
 
     private static final String AcknowledgedBySeller = "AcknowledgedBySeller";
 
@@ -300,6 +304,9 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
     @VOTransactional
     public ActionResponse shipOrder(String orderID, ShipRequest request) {
+
+        log.info("ship order start...");
+
         if (StringUtils.isEmpty(orderID)) {
             //If there is no order with that ID, return Error ID 6000 (OrderNotFound)
             throw new CAApiException(ErrorIDEnum.InvalidRequest, "OrderID in request is missing.");
