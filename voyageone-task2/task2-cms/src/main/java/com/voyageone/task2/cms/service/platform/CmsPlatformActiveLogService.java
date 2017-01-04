@@ -17,6 +17,7 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.JsonUtil;
 import com.voyageone.components.dt.service.DtWareService;
 import com.voyageone.components.jd.service.JdSaleService;
 import com.voyageone.components.jumei.reponse.HtMallStatusUpdateBatchResponse;
@@ -34,6 +35,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.json.JSONObject;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -366,30 +368,30 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                         // 上架
                         String result = dtWareService.onShelfProduct(shopProp, numIId);
                         if (org.apache.commons.lang.StringUtils.isNotBlank(result)) {
-                            JacksonUtil.
+                            DTWareUpdateResponse response = JacksonUtil.json2Bean(result, DTWareUpdateResponse.class);
                         }
-                        if (response == null) {
-                            errMsg = "调用聚美商品上架API失败";
-                        } else {
-                            if (response.isSuccess()) {
-                                updRsFlg = true;
-                            } else {
-                                errMsg = response.getErrorMsg();
-                            }
-                        }
+//                        if (response == null) {
+//                            errMsg = "调用聚美商品上架API失败";
+//                        } else {
+//                            if (response.isSuccess()) {
+//                                updRsFlg = true;
+//                            } else {
+//                                errMsg = response.getErrorMsg();
+//                            }
+//                        }
 
                     } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
                         // 下架
                         String result = dtWareService.offShelfProduct(shopProp, numIId);
-                        if (response == null) {
-                            errMsg = "调用聚美商品下架API失败";
-                        } else {
-                            if (response.isSuccess()) {
-                                updRsFlg = true;
-                            } else {
-                                errMsg = response.getErrorMsg();
-                            }
-                        }
+//                        if (response == null) {
+//                            errMsg = "调用聚美商品下架API失败";
+//                        } else {
+//                            if (response.isSuccess()) {
+//                                updRsFlg = true;
+//                            } else {
+//                                errMsg = response.getErrorMsg();
+//                            }
+//                        }
                     }
 
                 } else {
@@ -489,7 +491,17 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
         return null;
     }
 
-    private class DTWareUpdateResponse {
+    // 分销上下架API返回结果
+     class DTWareUpdateResponse {
 
+        private Map<String, String> data;
+
+        public Map<String, String> getData() {
+            return data;
+        }
+
+        public void setData(Map<String, String> data) {
+            this.data = data;
+        }
     }
 }
