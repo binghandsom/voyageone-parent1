@@ -165,7 +165,30 @@ public class TypeChannels {
 
         return res;
     }
+    /**
+     * @param type       type_code
+     * @param channel_id 渠道id
+     * @return List<Option>
+     */
+    public static Map<String, TypeChannelBean> getTypeMapWithLang(String type, String channel_id, String lang_id) {
 
+        List<TypeChannelBean> typeList = getTypeChannelBeans(type, channel_id);
+
+        Map<String, TypeChannelBean> res = new HashMap<>();
+
+        if (typeList != null) {
+            for (TypeChannelBean bean : typeList) {
+                if (!StringUtils.isEmpty(bean.getLang_id())
+                        && bean.getLang_id().equals(lang_id)) {
+                    res.put(bean.getValue(),bean);
+                }
+            }
+        } else {
+            logger.warn("channel id: " + channel_id + "property id: " + type + " 对应的options没有配置！！！");
+        }
+
+        return res;
+    }
     /**
      * getTypeChannelByCode
      */
