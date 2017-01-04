@@ -1292,7 +1292,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             Map<String, CmsBtProductModel_Platform_Cart> platforms = item.getPlatforms();
             if (platforms != null && platforms.size() > 0) {
                 for (CmsBtProductModel_Platform_Cart platform : platforms.values()) {
-                    if (CmsConstants.ProductStatus.Approved.equals(platform.getStatus())) {
+                    if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())) {
                         skip = false;
                         break;
                     }
@@ -1345,7 +1345,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 double priceSale = 0d;
                 Map<String, CmsBtProductModel_Platform_Cart> platforms = item.getPlatforms();
                 for (CmsBtProductModel_Platform_Cart platform : platforms.values()) {
-                    if (CmsConstants.ProductStatus.Approved.equals(platform.getStatus())) {
+                    if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())) {
                         priceSale = platform.getSkus().get(0).getDoubleAttribute("priceSale");
                         break;
                     }
