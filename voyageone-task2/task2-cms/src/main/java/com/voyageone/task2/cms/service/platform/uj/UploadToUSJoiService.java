@@ -408,7 +408,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     // CMSDOC-365,CMCDOC-414 如果common.catConf="0"(非人工匹配主类目)时，自动匹配商品主类目
                     // TODO 2016/12/30暂时这样更新，以后要改
 //                    if ("0".equals(productModel.getCommonNotNull().getCatConf())) {
-                        doSetMainCategory(productModel.getCommon(), productModel.getFeed().getCatPath(), true);
+                        doSetMainCategory(productModel.getCommon(), productModel.getFeed().getCatPath());
 //                    }
 
                     // platform对应 从子店的platform.p928 929 中的数据生成usjoi的platform
@@ -747,7 +747,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                         // TODO 2016/12/30暂时这样更新，以后要改
 //                        if ("0".equals(pr.getCommonNotNull().getCatConf())) {
                             // 自动匹配商品主类目
-                            doSetMainCategory(pr.getCommon(), pr.getFeed().getCatPath(), false);
+                            doSetMainCategory(pr.getCommon(), pr.getFeed().getCatPath());
 //                        }
 
                         // ****************common.skus的更新(有的sku可能在拆分后的product中)****************
@@ -1763,9 +1763,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      *
      * @param prodCommon 产品共通属性
      * @param feedCategoryPath feed类目Path
-     * @param blnAddFlg 是否新增商品(true:新增 false:更新)
+//     * @param blnAddFlg 是否新增商品(true:新增 false:更新)
      */
-    protected void doSetMainCategory(CmsBtProductModel_Common prodCommon, String feedCategoryPath, boolean blnAddFlg) {
+    protected void doSetMainCategory(CmsBtProductModel_Common prodCommon, String feedCategoryPath) {
         if (prodCommon == null || StringUtils.isEmpty(feedCategoryPath)) return;
 
         // 共通Field
@@ -1812,10 +1812,25 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             prodCommonField.setProductType(mtCategoryKeysModel.getProductTypeEn());
             // 产品分类(中文)
             prodCommonField.setProductTypeCn(mtCategoryKeysModel.getProductTypeCn());
-            // 适合人群(英文)
-            prodCommonField.setSizeType(mtCategoryKeysModel.getSizeTypeEn());
-            // 适合人群(中文)
-            prodCommonField.setSizeTypeCn(mtCategoryKeysModel.getSizeTypeCn());
+            // 再匹配适用人群(如果匹配到了就用匹配到的值，没有匹配到的话就用主类目匹配时得到的默认适用人群)
+            SearchResult<MtSizeTypeKeysModel> sizeTypeSearchResult = getSizeType(feedCategoryPath,
+                    prodCommonField.getProductType(),
+                    prodCommonField.getSizeType(),
+                    prodCommonField.getProductNameEn(),
+                    prodCommonField.getBrand());
+            if (sizeTypeSearchResult != null && sizeTypeSearchResult.getDataModel() != null) {
+                // 适用人群匹配结果model
+                MtSizeTypeKeysModel mtSizeTypeKeysModel = sizeTypeSearchResult.getDataModel();
+                // 适合人群(英文)
+                prodCommonField.setSizeType(mtSizeTypeKeysModel.getSizeTypeEn());
+                // 适合人群(中文)
+                prodCommonField.setSizeTypeCn(mtSizeTypeKeysModel.getSizeTypeCn());
+            } else {
+                // 适合人群(英文)
+                prodCommonField.setSizeType(mtCategoryKeysModel.getSizeTypeEn());
+                // 适合人群(中文)
+                prodCommonField.setSizeTypeCn(mtCategoryKeysModel.getSizeTypeCn());
+            }
             // TODO 2016/12/30暂时这样更新，以后要改
             if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter())) {
                 // 税号个人
@@ -1867,17 +1882,8 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      * @return SearchResult 匹配度最高的第一个查询结果
      */
     public SearchResult<MtCategoryKeysModel> getMainCatInfo(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
-        // 调用Feed到主数据的匹配程序匹配主类目
-        StopWordCleaner cleaner = new StopWordCleaner();
-        // 子店feed类目path分隔符(由于导入feedInfo表时全部替换成用"-"来分隔了，所以这里写固定值就可以了)
-        List<String> categoryPathSplit = new ArrayList<>();
-        categoryPathSplit.add("-");
-        Tokenizer tokenizer = new Tokenizer(categoryPathSplit);
-
-        FeedQuery query = new FeedQuery(feedCategoryPath, cleaner, tokenizer);
-        query.setProductType(productType);
-        query.setSizeType(sizeType);
-        query.setProductName(productNameEn, brand);
+        // 取得查询条件
+        FeedQuery query = getFeedQuery(feedCategoryPath, productType, sizeType, productNameEn, brand);
 
         // 调用主类目匹配接口，取得匹配度最高的一个主类目
         List<SearchResult<MtCategoryKeysModel>> searchResults = searcher.search(query, 1);
@@ -1890,5 +1896,58 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
         // 取得匹配度最高的主类目
         return searchResults.get(0);
+    }
+
+    /**
+     * 调用查询适合人群接口,返回匹配的一个查询结果;
+     * 如果调用本接口没有取得匹配到的适用人群，则使用调用getMainCatInfo()方法取得的主类目里面的默认适用人群
+     *
+     * @param feedCategoryPath feed类目Path
+     * @param productType 产品分类
+     * @param sizeType 适合人群(英文)
+     * @param productNameEn 产品名称（英文）
+     * @param brand 产品品牌
+     * @return SearchResult 匹配度最高的第一个查询结果
+     */
+    public SearchResult<MtSizeTypeKeysModel> getSizeType(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
+
+        try {
+            // 取得查询条件
+            FeedQuery query = getFeedQuery(feedCategoryPath, productType, sizeType, productNameEn, brand);
+            // 调用查询适合人群接口，取得匹配好的一个适合人群
+            SearchResult<MtSizeTypeKeysModel> sizeTypeResult = searcher.searchSizeType(query);
+            return sizeTypeResult;
+        } catch (Exception e) {
+            String errMsg = String.format("调用适用人群匹配接口失败，只能使用匹配主类目得到结果里面的默认适用人群咯！[feedCategoryPath:%s] [productType:%s] " +
+                    "[sizeType:%s] [productNameEn:%s] [brand:%s]", feedCategoryPath, productType, sizeType, productNameEn, brand);
+            $warn(errMsg);
+            return null;
+        }
+    }
+
+    /**
+     * 取得查询条件
+     *
+     * @param feedCategoryPath feed类目Path
+     * @param productType 产品分类
+     * @param sizeType 适合人群(英文)
+     * @param productNameEn 产品名称（英文）
+     * @param brand 产品品牌
+     * @return FeedQuer 查询条件
+     */
+    private FeedQuery getFeedQuery(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
+        // 调用Feed到主数据的匹配程序匹配主类目
+        StopWordCleaner cleaner = new StopWordCleaner();
+        // 子店feed类目path分隔符(由于导入feedInfo表时全部替换成用"-"来分隔了，所以这里写固定值就可以了)
+        List<String> categoryPathSplit = new ArrayList<>();
+        categoryPathSplit.add("-");
+        Tokenizer tokenizer = new Tokenizer(categoryPathSplit);
+
+        FeedQuery query = new FeedQuery(feedCategoryPath, cleaner, tokenizer);
+        query.setProductType(productType);
+        query.setSizeType(sizeType);
+        query.setProductName(productNameEn, brand);
+
+        return query;
     }
 }
