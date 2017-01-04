@@ -13,7 +13,7 @@ import java.util.Map;
  * @Author rex
  * @Create 2016-12-30 18:06
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_PRODUCT_VORATE_UPDATE)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_PRODUCT_VO_RATE_UPDATE)
 public class ProductVoRateUpdateMQMessageBody extends BaseMQMessageBody {
 
     private Map<String, Object> params;

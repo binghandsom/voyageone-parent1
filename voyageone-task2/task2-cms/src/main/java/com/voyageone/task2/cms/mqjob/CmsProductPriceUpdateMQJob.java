@@ -1,10 +1,7 @@
 package com.voyageone.task2.cms.mqjob;
 
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.product.CmsProductPriceUpdateService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductVoRateUpdateMQMessageBody;
-import com.voyageone.task2.cms.service.product.CmsProcductPriceUpdateService;
-
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,10 +17,10 @@ import org.springframework.stereotype.Service;
 public class CmsProductPriceUpdateMQJob extends TBaseMQCmsService<ProductPriceUpdateMQMessageBody> {
 
     @Autowired
-    private CmsProcductPriceUpdateService cmsProcductPriceUpdateService;
+    private CmsProductPriceUpdateService cmsProductPriceUpdateService;
 
     @Override
     public void onStartup(ProductPriceUpdateMQMessageBody messageBody) throws Exception {
-        cmsProcductPriceUpdateService.onStartup(messageBody.getParams());
+        cmsProductPriceUpdateService.updateProductAndGroupPrice(messageBody.getParams());
     }
 }

@@ -1,11 +1,8 @@
 package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.service.enums.cms.OperationLog_Type;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
+import com.voyageone.service.impl.cms.product.CmsProductPriceUpdateService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchRefreshRetailPriceMQMessageBody;
-import com.voyageone.task2.cms.service.product.batch.CmsRefreshRetailPriceTask;
-
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class CmsAdvSearchRefreshRetailPriceMQJob extends TBaseMQCmsService<AdvSearchRefreshRetailPriceMQMessageBody> {
 
     @Autowired
-    private CmsRefreshRetailPriceTask cmsRefreshRetailPriceTask;
+    private CmsProductPriceUpdateService cmsProductPriceUpdateService;
 
     @Override
     public void onStartup(AdvSearchRefreshRetailPriceMQMessageBody messageBody) throws Exception {
@@ -29,6 +26,6 @@ public class CmsAdvSearchRefreshRetailPriceMQJob extends TBaseMQCmsService<AdvSe
             this.cmsLog(messageBody, OperationLog_Type.parameterException, "批量重新计算指导价MQ参数为空");
             return;
         }
-        cmsRefreshRetailPriceTask.onStartup(messageBody.getParams());
+        cmsProductPriceUpdateService.updateProductRetailPrice(messageBody.getParams());
     }
 }

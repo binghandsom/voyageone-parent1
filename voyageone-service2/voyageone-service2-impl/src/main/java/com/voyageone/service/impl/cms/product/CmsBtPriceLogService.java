@@ -12,8 +12,6 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -83,7 +81,6 @@ public class CmsBtPriceLogService extends BaseService {
         }
         int rs = priceLogDaoExt.insertCmsBtPriceLogList(paramList);
 
-        ProductPriceUpdateMQMessageBody mqMessageBody = null;
         if(paramList.size()>0){
             Map<String,CmsBtPriceLogModel> paramMap = new HashMap<>();
             for(CmsBtPriceLogModel cmsBtPriceLogModel:paramList){
@@ -94,7 +91,7 @@ public class CmsBtPriceLogService extends BaseService {
             }
             if (paramMap.size() > 0) {
                 for (CmsBtPriceLogModel value:paramMap.values()) {
-                    mqMessageBody = new ProductPriceUpdateMQMessageBody();
+                    ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
                     mqMessageBody.setParams(JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(value)));
                     try {
                         mqSenderService.sendMessage(mqMessageBody);
@@ -104,13 +101,7 @@ public class CmsBtPriceLogService extends BaseService {
 
                 }
             }
-//            paramMap.forEach((s, cmsBtPriceLogModel) -> sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(cmsBtPriceLogModel))));
         }
-
-//        for (CmsBtPriceLogModel newLog : paramList)
-//            // 向Mq发送消息同步sku,code,group价格范围
-//            sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(newLog)));
-
         // 先做完所有价格范围同步的请求后，再开始处理是否记录未确认价格的操作
         for (CmsBtPriceLogModel newLog : paramList) {
             String channelId = newLog.getChannelId();
@@ -143,7 +134,6 @@ public class CmsBtPriceLogService extends BaseService {
         newLog.put("productId",productId);
         newLog.put("channelId",channelId);
         // 向Mq发送消息同步sku,code,group价格范围
-        // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
         ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
         mqMessageBody.setParams(newLog);
         try {

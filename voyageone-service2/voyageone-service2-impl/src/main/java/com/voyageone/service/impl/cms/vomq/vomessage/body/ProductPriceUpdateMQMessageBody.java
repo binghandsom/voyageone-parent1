@@ -8,7 +8,7 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import java.util.Map;
 
 /**
- * 更新商品价格Job
+ * 更新product和group的价格Job
  *
  * @Author rex
  * @Create 2017-01-03 16:03
@@ -29,7 +29,7 @@ public class ProductPriceUpdateMQMessageBody extends BaseMQMessageBody {
     @Override
     public void check() throws MQMessageRuleException {
         if (params == null || params.size() <= 0) {
-            throw new MQMessageRuleException("产品更新MQ参数为空");
+            throw new MQMessageRuleException("product和group的价格刷新(VOCmsProductPriceUpdateQueue)参数为空");
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.backdoor;
 
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -37,8 +36,6 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -1864,14 +1861,13 @@ public class BackDoorController extends CmsController {
         List<Long> prodId = productList.stream().map(CmsBtProductModel::getProdId).collect(toList());
 
         if (prodId != null && prodId.size() > 0) {
-            ProductPriceUpdateMQMessageBody mqMessageBody = null;
             Map<String,Object> newLog = new HashMap<>();
             for (Long id:prodId) {
                 newLog.clear();
                 newLog.put("cartId",cartId);
                 newLog.put("productId",id.intValue());
                 newLog.put("channelId",channelId);
-                mqMessageBody = new ProductPriceUpdateMQMessageBody();
+                ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
                 mqMessageBody.setParams(JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
                 try {
                     mqSenderService.sendMessage(mqMessageBody);

@@ -334,7 +334,6 @@ public class CmsFieldEditService extends BaseViewService {
             logParams.put("codeList", productCodes);
             logParams.put("voRate", voRateVal);
 
-            // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob, logParams);
             ProductVoRateUpdateMQMessageBody mqMessageBody = new ProductVoRateUpdateMQMessageBody();
             mqMessageBody.setParams(logParams);
             try {
