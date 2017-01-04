@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service.product;
+package com.voyageone.task2.cms.mqjob;
 
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
@@ -13,6 +13,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.bi.BiVtSalesProductExt;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsProcductBIDataMQMessageBody;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +35,7 @@ import java.util.Map;
  */
 @Service
 @RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob)
-public class CmsProcductBIDataService extends BaseMQCmsService {
+public class CmsProcductBIDataMQJob extends TBaseMQCmsService<CmsProcductBIDataMQMessageBody> {
 
     @Autowired
     private BiVtSalesProductExt biDataDao;
@@ -45,10 +46,10 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
     private final static int PAGE_LIMIT = 1000;
 
     @Override
-    public void onStartup(Map<String, Object> messageMap) throws Exception {
+    public void onStartup(CmsProcductBIDataMQMessageBody messageMap) throws Exception {
         $info("CmsProcductBIDataService start... 参数" + JacksonUtil.bean2Json(messageMap));
-        String channelId = StringUtils.trimToNull((String) messageMap.get("channelId"));
-        Integer cartId = (Integer) messageMap.get("cartId");
+        String channelId = StringUtils.trimToNull(messageMap.getChannelId());
+        Integer cartId =messageMap.getCartId(); //(Integer) messageMap.get("cartId");
         if (channelId == null || cartId == null) {
             $error("CmsProcductBIDataService 缺少参数");
             return;
