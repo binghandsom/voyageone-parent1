@@ -36,8 +36,8 @@
         WHERE
             b.order_channel_id = #{channelId, jdbcType=VARCHAR}
         ORDER BY
-            a.cms_cfg_name_order,
-            a.cms_cfg_name_lev DESC
+            a.cms_cfg_name_lev,
+            a.cms_cfg_name_order ASC
     </select>
 
     <delete id="cms_mt_feed_config_deleteByChannelId">
