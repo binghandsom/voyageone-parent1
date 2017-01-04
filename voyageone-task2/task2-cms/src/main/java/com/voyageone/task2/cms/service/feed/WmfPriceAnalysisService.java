@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.feed;
 
 import com.csvreader.CsvReader;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.FeedEnums;
@@ -93,6 +94,10 @@ public class WmfPriceAnalysisService extends BaseCronTaskService {
                     sku.setPriceCurrent(Double.parseDouble(cmsZzFeedWmfPriceModel.getFinalRmbPrice()));
                     if(!StringUtils.isEmpty(cmsZzFeedWmfPriceModel.getMsrpPrice())){
                         sku.setPriceMsrp(Double.parseDouble(cmsZzFeedWmfPriceModel.getMsrpPrice()));
+                    }
+                    if(CmsConstants.FeedUpdFlgStatus.Succeed == cmsBtFeedInfoModel.getUpdFlg()
+                            || CmsConstants.FeedUpdFlgStatus.Fail == cmsBtFeedInfoModel.getUpdFlg()){
+                        cmsBtFeedInfoModel.setUpdFlg(CmsConstants.FeedUpdFlgStatus.Pending);
                     }
                     cmsBtFeedInfoModel.setModifier(getTaskName());
                     cmsBtFeedInfoModel.setModified(DateTimeUtil.getNowTimeStamp());
