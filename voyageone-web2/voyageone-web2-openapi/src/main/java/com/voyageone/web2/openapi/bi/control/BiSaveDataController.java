@@ -3,8 +3,6 @@ package com.voyageone.web2.openapi.bi.control;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomqservice.CmsProcductBIDataService;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.web2.openapi.OpenApiBaseController;
 import com.voyageone.web2.openapi.bi.constants.BiUrlConstants;
 import com.voyageone.web2.openapi.bi.service.DataServiceTB;
@@ -16,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -32,8 +29,6 @@ public class BiSaveDataController extends OpenApiBaseController {
 
     @Autowired
     CmsProcductBIDataService cmsProcductBIDataService;
-    //@Autowired
-    //private MqSender mqSender;
 
     @RequestMapping(BiUrlConstants.URL.LIST.SAVE_SHOP_URL_DATA)
     public VoApiResponse saveShopData(@RequestBody Map<String, Object> params) {
