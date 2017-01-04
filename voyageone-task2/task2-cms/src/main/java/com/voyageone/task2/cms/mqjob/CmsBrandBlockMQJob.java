@@ -30,7 +30,7 @@ import static com.voyageone.common.CmsConstants.PlatformActive.ToInStock;
  * @since 2.6.0
  */
 @Service
-@RabbitListener//(queues = CmsMqRoutingKey.CMS_TASK_BRANDBLOCKJOB)
+@RabbitListener//有引用类CmsPlatformActiveLogService  暂不移动业务代码到service  (queues = CmsMqRoutingKey.CMS_TASK_BRANDBLOCKJOB)
 public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessageBody> {
 
     private final FeedInfoService feedInfoService;
