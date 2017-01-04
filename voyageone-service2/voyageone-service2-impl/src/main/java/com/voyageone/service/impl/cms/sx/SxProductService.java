@@ -1517,6 +1517,22 @@ public class SxProductService extends BaseService {
                     // HS海关代码
                     if (!sxData.isHasSku()) {
                         String propValue = sxData.getMainProduct().getCommon().getFields().getHsCodePrivate(); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
+                        // added by morse.lu 2017/01/03 start
+                        // 通过配置表(cms_mt_channel_config)来决定用hsCodeCross，还是hsCodePrivate，默认用hsCodePrivate
+                        CmsChannelConfigBean hscodeConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId(),
+                                CmsConstants.ChannelConfig.HSCODE,
+                                String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.SX_HSCODE);
+                        if (hscodeConfig != null) {
+                            String hscodePropName = hscodeConfig.getConfigValue1(); // 目前配置的是code或者color或者codeDiff
+                            if (!StringUtils.isEmpty(hscodePropName)) {
+                                String val = sxData.getMainProduct().getCommon().getFields().getStringAttribute(hscodePropName);
+                                if (!StringUtils.isEmpty(val)) {
+                                    propValue = val;
+                                }
+                            }
+                        }
+                        // added by morse.lu 2017/01/03 end
+
                         ((InputField) field).setValue(propValue.split(",")[0]);
                         retMap.put(field.getId(), field);
                     }

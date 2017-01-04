@@ -133,12 +133,12 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             // 共通Field
             CmsBtProductModel_Field prodCommonField = prodObj.getCommonNotNull().getFieldsNotNull();
             // 调用Feed到主数据的匹配接口取得匹配度最高的主类目
-            SearchResult searchResult = uploadToUSJoiService.getMainCatInfo(prodObj.getFeed().getCatPath(),
+            SearchResult<MtCategoryKeysModel> searchResult = uploadToUSJoiService.getMainCatInfo(prodObj.getFeed().getCatPath(),
                     prodCommonField.getProductType(),
                     prodCommonField.getSizeType(),
                     prodCommonField.getProductNameEn(),
                     prodCommonField.getBrand());
-            if (searchResult == null || searchResult.getMtCategoryKeysModel() == null) {
+            if (searchResult == null || searchResult.getDataModel() == null) {
                 String warnMsg = String.format("调用Feed到主数据的匹配接口未能取得匹配度最高的主类目！[channelId:%s] [code:%s] [catConf:%s]" +
                                 "[feedCategoryPath:%s] [productType:%s] [sizeType:%s] [productNameEn:%s] [brand:%s]",
                         channelId, code, prodObj.getCommonNotNull().getCatConf(), prodObj.getFeed().getCatPath(),
@@ -148,7 +148,7 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             }
 
             // 主类目匹配结果model
-            MtCategoryKeysModel mtCategoryKeysModel = searchResult.getMtCategoryKeysModel();
+            MtCategoryKeysModel mtCategoryKeysModel = searchResult.getDataModel();
 
             // 构造更新SQL
             List<BulkUpdateModel> bulkList = new ArrayList<>();
