@@ -1091,14 +1091,22 @@ public class SxProductService extends BaseService {
         if (!StringUtils.isEmpty(sxData.getMainProduct().getCommon().getStringAttribute("sizeChart"))) {
             sizeChartId = Integer.parseInt(sxData.getMainProduct().getCommon().getStringAttribute("sizeChart"));
         }
-        Map<String, String> sizeMap = getSizeMap(
-                channelId,
+        Map<String, String> sizeMap;
+        try {
+            sizeMap = getSizeMap(
+                    channelId,
 //                sxData.getMainProduct().getOrgChannelId(),
-                sxData.getMainProduct().getCommon().getFields().getBrand(),
-                sxData.getMainProduct().getCommon().getFields().getProductType(),
-                sxData.getMainProduct().getCommon().getFields().getSizeType(),
-                sizeChartId
-        );
+                    sxData.getMainProduct().getCommon().getFields().getBrand(),
+                    sxData.getMainProduct().getCommon().getFields().getProductType(),
+                    sxData.getMainProduct().getCommon().getFields().getSizeType(),
+                    sizeChartId
+            );
+        } catch (Exception e) {
+            String errorMsg = String.format("取得上新数据(SxData)失败! [groupId:%s] [mainCode:%s] [errMsg:%s]", groupId, mainProductCode, e.getMessage());
+            $error(errorMsg);
+            sxData.setErrorMessage(errorMsg);
+            return sxData;
+        }
 
         // 20160805 这段有问题, 不要了 tom START
 //        // 将skuList转成map用于sizeNick的方便检索， 将来sizeNike放到common里的话， 这段就不要了 START
@@ -1509,6 +1517,22 @@ public class SxProductService extends BaseService {
                     // HS海关代码
                     if (!sxData.isHasSku()) {
                         String propValue = sxData.getMainProduct().getCommon().getFields().getHsCodePrivate(); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
+                        // added by morse.lu 2017/01/03 start
+                        // 通过配置表(cms_mt_channel_config)来决定用hsCodeCross，还是hsCodePrivate，默认用hsCodePrivate
+                        CmsChannelConfigBean hscodeConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId(),
+                                CmsConstants.ChannelConfig.HSCODE,
+                                String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.SX_HSCODE);
+                        if (hscodeConfig != null) {
+                            String hscodePropName = hscodeConfig.getConfigValue1(); // 目前配置的是code或者color或者codeDiff
+                            if (!StringUtils.isEmpty(hscodePropName)) {
+                                String val = sxData.getMainProduct().getCommon().getFields().getStringAttribute(hscodePropName);
+                                if (!StringUtils.isEmpty(val)) {
+                                    propValue = val;
+                                }
+                            }
+                        }
+                        // added by morse.lu 2017/01/03 end
+
                         ((InputField) field).setValue(propValue.split(",")[0]);
                         retMap.put(field.getId(), field);
                     }
@@ -4289,8 +4313,13 @@ public class SxProductService extends BaseService {
                     StringUtils.isEmpty(workload.getModifier()) ? modifier : workload.getModifier());
 
         } else {
+            // 上新对象产品Code列表
+            List<String> listSxCode = null;
+            if (ListUtils.notNull(sxData.getProductList())) {
+                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
+            }
             // 上新失败后回写product表pPublishError的值("Error")
-            productGroupService.updateUploadErrorStatus(sxData.getPlatform(), sxData.getErrorMessage());
+            productGroupService.updateUploadErrorStatus(sxData.getPlatform(), listSxCode, sxData.getErrorMessage());
 
             // 出错的时候将错误信息回写到cms_bt_business_log表
             this.insertBusinessLog(sxData, modifier);
@@ -4981,6 +5010,45 @@ public class SxProductService extends BaseService {
             WriteResult rs = platformActiveLogDao.insert(model);
             $debug("SxProductService 记录商品上下架历史时成功! [channelId=%s] [cartId=%s] [groupId=%s], [platformActiveLog保存结果=%s]", channelId, cartId, pCode, rs.toString());
         }
+    }
+
+    /**
+     * 上新颜色别名取得
+     */
+    public String getSxColorAlias(String channelId, int cartId, CmsBtProductModel sxProduct, int maxLength) {
+        String alias = sxProduct.getCommon().getFields().getCode();
+        // 通过配置表(cms_mt_channel_config)来决定用code，还是color，默认用code
+        CmsChannelConfigBean aliasConfig = CmsChannelConfigs.getConfigBean(channelId,
+                CmsConstants.ChannelConfig.ALIAS,
+                String.valueOf(cartId) + CmsConstants.ChannelConfig.COLOR_ALIAS);
+        if (aliasConfig != null) {
+            String aliasPropName = aliasConfig.getConfigValue1(); // 目前配置的是code或者color或者codeDiff
+            if (!StringUtils.isEmpty(aliasPropName)) {
+                String val = sxProduct.getCommon().getFields().getStringAttribute(aliasPropName);
+                if (!StringUtils.isEmpty(val)) {
+                    alias = val;
+//                } else {
+//                    if ("color".equals(aliasPropName)) {
+//                        // 配置了 颜色 的时候
+//                        throw new BusinessException("颜色别名(颜色/口味/香型)必须填写,且长度不能超过" + maxLength);
+//                    }
+                }
+            }
+        }
+        if (alias.length() > maxLength) {
+            // 过长默认用color
+            alias = sxProduct.getCommon().getFields().getColor();
+            if (StringUtils.isEmpty(alias)) {
+                // 颜色没有填
+                throw new BusinessException("颜色别名(颜色/口味/香型)必须填写,且长度不能超过" + maxLength);
+            }
+            if (alias.length() > maxLength) {
+                // 填的颜色过长
+                throw new BusinessException("填写的颜色别名(颜色/口味/香型)的长度不能超过" + maxLength);
+            }
+        }
+
+        return alias;
     }
 
     /**

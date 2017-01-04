@@ -274,7 +274,7 @@ public class CmsFieldEditService extends BaseViewService {
             JongoUpdate updObj = new JongoUpdate();
             updObj.setQuery("{'common.fields.code':{$in:#}}");
             updObj.setQueryParameters(productCodes);
-            updObj.setUpdate("{$set:{'common.fields." + prop_id + "':#}}");
+            updObj.setUpdate("{$set:{'common.catConf':'1','common.fields." + prop_id + "':#}}");
             updObj.setUpdateParameters(stsCode);
 
             WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
@@ -658,7 +658,7 @@ public class CmsFieldEditService extends BaseViewService {
                     } else if (CmsConstants.ProductStatus.Approved.name().equals(prodStatus)) {
                         strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
                     } else if (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))) {
+                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId()))) {
                         strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
                     }
                 }
@@ -1039,6 +1039,7 @@ public class CmsFieldEditService extends BaseViewService {
 
             // 是天猫平台时直接调用API更新sku价格(要求已上新)
             try {
+                priceService.setPrice(prodObj, cartId, false);
                 priceService.updateSkuPrice(userInfo.getSelChannelId(), cartId, prodObj);
             } catch (Exception e) {
                 $error(String.format("批量修改商品价格　调用天猫API失败 channelId=%s, cartId=%s msg=%s", userInfo.getSelChannelId(), cartId.toString(), e.getMessage()), e);

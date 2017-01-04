@@ -137,10 +137,13 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 循环所有销售渠道
         if (ListUtils.notNull(channelIdList)) {
             for (String channelId : channelIdList) {
-                // 商品上传(天猫国际官网同购)
-                doProductUpload(channelId, CartEnums.Cart.TT.getValue());
-//                // 商品上传(USJOI天猫国际官网同购)
-//                doProductUpload(channelId, CartEnums.Cart.USTT.getValue());
+                if (ChannelConfigEnums.Channel.USJGJ.getId().equals(channelId)) {
+                    // 商品上传(USJOI天猫国际官网同购)
+                    doProductUpload(channelId, CartEnums.Cart.USTT.getValue());
+                } else {
+                    // 商品上传(天猫国际官网同购)
+                    doProductUpload(channelId, CartEnums.Cart.TT.getValue());
+                }
             }
         }
 
@@ -581,23 +584,52 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 //            valCategory = feedInfo.getCategory().replaceAll("-", "&gt;");
 //            valCategory = "居家布艺";
 
-            String tmallCatKey = getValueFromPageOrCondition("tmall_category_key", "", mainProductPlatformCart, sxData, shopProp);
-            if (!StringUtils.isEmpty(tmallCatKey)) {
-                if (conditionMappingMap != null && conditionMappingMap.containsKey(tmallCatKey)) {
-                    valCategory = conditionMappingMap.get(tmallCatKey);
+
+            if ("017".equals(sxData.getChannelId())) {
+                // LuckyVitamin默认固定
+                Map<String, Object> paramCategory = new HashMap<>();
+                paramCategory.put("cat_id", "50050237"); // 保健食品/膳食营养补充食品>海外膳食营养补充食品>其他膳食营养补充食品>其他膳食营养补充剂
+                valCategory = JacksonUtil.bean2Json(paramCategory);
+
+            } else {
+                // 普通的获取类目的方式
+                String tmallCatKey = getValueFromPageOrCondition("tmall_category_key", "", mainProductPlatformCart, sxData, shopProp);
+                if (!StringUtils.isEmpty(tmallCatKey)) {
+                    if (conditionMappingMap != null && conditionMappingMap.containsKey(tmallCatKey)) {
+                        valCategory = conditionMappingMap.get(tmallCatKey);
+                    } else {
+                        String errMsg = String.format("从cms_mt_channel_condition_mapping_config表中没有取到客户类目对应的天猫" +
+                                "平台一级类目信息，中止上新！[Mapkey:%s]", tmallCatKey);
+                        $error(errMsg);
+                        throw new BusinessException(errMsg);
+                    }
                 } else {
-                    String errMsg = String.format("从cms_mt_channel_condition_mapping_config表中没有取到客户类目对应的天猫" +
-                            "平台一级类目信息，中止上新！[Mapkey:%s]", tmallCatKey);
+                    String errMsg = String.format("从cms_mt_channel_condition_config表中没有取到客户类目key配置信息,导致不能取得对应的天猫" +
+                            "平台一级类目信息，中止上新！");
                     $error(errMsg);
                     throw new BusinessException(errMsg);
                 }
-            } else {
-                String errMsg = String.format("从cms_mt_channel_condition_config表中没有取到客户类目key配置信息,导致不能取得对应的天猫" +
-                        "平台一级类目信息，中止上新！");
-                $error(errMsg);
-                throw new BusinessException(errMsg);
             }
+
         }
+
+        // 防止母婴类目 START
+        if (valTitle.contains("孕妇")
+                || valTitle.contains("婴幼儿")
+                || valTitle.contains("儿童")
+                || valTitle.contains("产前")
+                || valTitle.contains("婴儿")
+                || valTitle.contains("幼儿")
+                || valTitle.contains("孩子")
+                || valTitle.contains("宝宝")
+                || valTitle.contains("母婴")
+                ) {
+            Map<String, Object> paramCategory = new HashMap<>();
+            paramCategory.put("cat_id", "50026470"); // 孕妇装/孕产妇用品/营养>孕产妇营养品>其它
+            valCategory = JacksonUtil.bean2Json(paramCategory);
+        }
+        // 防止母婴类目 END
+
         productInfoMap.put("category", valCategory);
 
         // 商品属性(非必填)
@@ -1132,11 +1164,15 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             // 根据cms_mt_channel_condition_config表中配置的取得对象项目，取得当前product对应的商品特质英文（code 或 颜色/口味/香型等）的设置项目 (根据配置决定是用code还是codeDiff，默认为code)
             SxData sxData = expressionParser.getSxData();
             // 由于字典解析方式只能取得mainProduct里面字段的值，但color需要取得每个product里面字段的值，所以另加一个新的方法取得color值
-            String color = getColorCondition(sxData.getChannelId(), sxData.getCartId(), product, "color_code_codediff", shopProp);
-            // 如果根据配置(code或者codeDiff)取出来的值大于30位，则采用color字段的值
-            if (!StringUtils.isEmpty(color) && color.length() > 30) {
-                color = product.getCommon().getFields().getColor();
-            }
+            // modified by morse.lu 2016/12/29 start
+            // 配置表和天猫统一
+//            String color = getColorCondition(sxData.getChannelId(), sxData.getCartId(), product, "color_code_codediff", shopProp);
+//            // 如果根据配置(code或者codeDiff)取出来的值大于30位，则采用color字段的值
+//            if (!StringUtils.isEmpty(color) && color.length() > 30) {
+//                color = product.getCommon().getFields().getColor();
+//            }
+            String color = sxProductService.getSxColorAlias(sxData.getChannelId(), sxData.getCartId(), product, 30);
+            // modified by morse.lu 2016/12/29 end
 
             // 在根据skuCode循环
             for (BaseMongoMap<String, Object> sku : product.getPlatform(cartId).getSkus()) {
@@ -1190,59 +1226,59 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         return targetSkuList;
     }
 
-    /**
-     * 从cms_mt_channel_condition_config表中取得商品特质英文(CodeDiff或Code)的值
-     * 由于通过字典解析取值，只能取得mainProduct里面的字段的值，而商品特质英文需要取得每个product中的字段的值，所以不能用原来的字典解析
-     *
-     * @param channelId String 渠道id
-     * @param cartId String 平台id
-     * @param prePropId String 条件表达式前缀(运费模板:transportid_ 关联版式:commonhtml_id_)
-     * @return String 指定类型(如：运费模板id或关联版式id等)对应的值
-     */
-    protected String getColorCondition(String channelId, Integer cartId, CmsBtProductModel product, String prePropId, ShopBean shop) {
-        if (product == null) return "";
-
-        // 返回值用(默认为code)
-        String resultStr = product.getCommon().getFields().getCode();
-
-        // 条件表达式前缀(商品特质英文(CodeDiff或Code):color_code_codediff)
-        // 条件表达式表platform_prop_id字段的检索条件为条件表达式前缀加cartId
-        String platformPropId = prePropId + "_" + StringUtils.toString(cartId);
-        // 根据channelid和platformPropId取得cms_mt_channel_condition_config表的条件表达式
-        List<ConditionPropValueModel> conditionPropValueModels = null;
-        if (channelConditionConfig.containsKey(channelId)) {
-            if (channelConditionConfig.get(channelId).containsKey(platformPropId)) {
-                conditionPropValueModels = channelConditionConfig.get(channelId).get(platformPropId);
-            }
-        }
-
-        // 使用运费模板或关联版式条件表达式
-        if (ListUtils.notNull(conditionPropValueModels)) {
-            for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModels) {
-                String conditionExpressionStr = conditionPropValueModel.getCondition_expression().trim();
-
-                String propValue = null;
-                // 带名字字典解析
-                if (conditionExpressionStr.contains("color")) {
-                    propValue = product.getCommon().getFields().getColor();
-                } else if (conditionExpressionStr.contains("codeDiff")) {
-                    propValue = product.getCommon().getFields().getCodeDiff();
-                } else if (conditionExpressionStr.contains("code")) {
-                    propValue = product.getCommon().getFields().getCode();
-                }
-
-                // 找到字典对应的值则跳出循环
-                if (!StringUtils.isEmpty(propValue)) {
-                    resultStr = propValue;
-                    break;
-                }
-            }
-        }
-
-        // 如果cms_mt_channel_condition_config表里有配置项，就返回配置的字段值；
-        // 如果没有配置加这个配置项目，直接反应该产品的code
-        return resultStr;
-    }
+//    /**
+//     * 从cms_mt_channel_condition_config表中取得商品特质英文(CodeDiff或Code)的值
+//     * 由于通过字典解析取值，只能取得mainProduct里面的字段的值，而商品特质英文需要取得每个product中的字段的值，所以不能用原来的字典解析
+//     *
+//     * @param channelId String 渠道id
+//     * @param cartId String 平台id
+//     * @param prePropId String 条件表达式前缀(运费模板:transportid_ 关联版式:commonhtml_id_)
+//     * @return String 指定类型(如：运费模板id或关联版式id等)对应的值
+//     */
+//    protected String getColorCondition(String channelId, Integer cartId, CmsBtProductModel product, String prePropId, ShopBean shop) {
+//        if (product == null) return "";
+//
+//        // 返回值用(默认为code)
+//        String resultStr = product.getCommon().getFields().getCode();
+//
+//        // 条件表达式前缀(商品特质英文(CodeDiff或Code):color_code_codediff)
+//        // 条件表达式表platform_prop_id字段的检索条件为条件表达式前缀加cartId
+//        String platformPropId = prePropId + "_" + StringUtils.toString(cartId);
+//        // 根据channelid和platformPropId取得cms_mt_channel_condition_config表的条件表达式
+//        List<ConditionPropValueModel> conditionPropValueModels = null;
+//        if (channelConditionConfig.containsKey(channelId)) {
+//            if (channelConditionConfig.get(channelId).containsKey(platformPropId)) {
+//                conditionPropValueModels = channelConditionConfig.get(channelId).get(platformPropId);
+//            }
+//        }
+//
+//        // 使用运费模板或关联版式条件表达式
+//        if (ListUtils.notNull(conditionPropValueModels)) {
+//            for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModels) {
+//                String conditionExpressionStr = conditionPropValueModel.getCondition_expression().trim();
+//
+//                String propValue = null;
+//                // 带名字字典解析
+//                if (conditionExpressionStr.contains("color")) {
+//                    propValue = product.getCommon().getFields().getColor();
+//                } else if (conditionExpressionStr.contains("codeDiff")) {
+//                    propValue = product.getCommon().getFields().getCodeDiff();
+//                } else if (conditionExpressionStr.contains("code")) {
+//                    propValue = product.getCommon().getFields().getCode();
+//                }
+//
+//                // 找到字典对应的值则跳出循环
+//                if (!StringUtils.isEmpty(propValue)) {
+//                    resultStr = propValue;
+//                    break;
+//                }
+//            }
+//        }
+//
+//        // 如果cms_mt_channel_condition_config表里有配置项，就返回配置的字段值；
+//        // 如果没有配置加这个配置项目，直接反应该产品的code
+//        return resultStr;
+//    }
 
     /**
      * 根据天猫官网同购返回的NumIId取得平台上的类目id和类目path

@@ -128,11 +128,11 @@ public class CmsMtCategoryTreeAllModel extends BaseMongoModel {
     }
 
     public String getProductTypeEn() {
-        return productTypeEn;
+        return productTypeEn == null?"":productTypeEn.toLowerCase();
     }
 
     public void setProductTypeEn(String productTypeEn) {
-        this.productTypeEn = productTypeEn;
+        this.productTypeEn = productTypeEn == null?"":productTypeEn.toLowerCase();
     }
 
     public String getProductTypeCn() {
@@ -144,11 +144,11 @@ public class CmsMtCategoryTreeAllModel extends BaseMongoModel {
     }
 
     public String getSizeTypeEn() {
-        return sizeTypeEn;
+        return sizeTypeEn == null?"":sizeTypeEn.toLowerCase();
     }
 
     public void setSizeTypeEn(String sizeTypeEn) {
-        this.sizeTypeEn = sizeTypeEn;
+        this.sizeTypeEn = sizeTypeEn == null?"":sizeTypeEn.toLowerCase();
     }
 
     public String getSizeTypeCn() {
@@ -164,7 +164,7 @@ public class CmsMtCategoryTreeAllModel extends BaseMongoModel {
     }
 
     public void setHscode8(String hscode8) {
-        this.hscode8 = hscode8;
+        this.hscode8 = hscode8 == null?"":hscode8.trim();
     }
 
     public String getHscode10() {
@@ -172,7 +172,7 @@ public class CmsMtCategoryTreeAllModel extends BaseMongoModel {
     }
 
     public void setHscode10(String hscode10) {
-        this.hscode10 = hscode10;
+        this.hscode10 = hscode10 == null?"":hscode10.trim();
     }
 
     public String getHscodeName8() {

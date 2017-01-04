@@ -348,6 +348,9 @@ public class CmsImportCategoryTreeService extends BaseCronTaskService {
                 $info("中英类目不正確");
                 continue;
             }
+            for(int i=0;i<categorys.length;i++){
+                categorys[i] = categorys[i].trim();
+            }
             categoryPath += categorys[0];
             categoryPathEn += categorysEn[0];
             // 取得一级主类目对象
@@ -367,10 +370,10 @@ public class CmsImportCategoryTreeService extends BaseCronTaskService {
                 categoryTree.setProductTypeCn(ExcelUtils.getString(row, 3));
                 categoryTree.setSizeTypeEn(ExcelUtils.getString(row, 4));
                 categoryTree.setSizeTypeCn(ExcelUtils.getString(row, 5));
-                categoryTree.setHscode8(ExcelUtils.getString(row, 7));
-                categoryTree.setHscode10(ExcelUtils.getString(row, 8));
-                categoryTree.setHscodeName8(ExcelUtils.getString(row, 9));
-                categoryTree.setHscodeName10(ExcelUtils.getString(row, 10));
+                categoryTree.setHscode8(ExcelUtils.getString(row, 8));
+                categoryTree.setHscode10(ExcelUtils.getString(row, 9));
+                categoryTree.setHscodeName8(ExcelUtils.getString(row, 10));
+                categoryTree.setHscodeName10(ExcelUtils.getString(row, 11));
 
                 if (categorys.length==1) {
                     categoryTree.setIsParent(0);
@@ -450,10 +453,10 @@ public class CmsImportCategoryTreeService extends BaseCronTaskService {
             findCategoryTree.setProductTypeCn(ExcelUtils.getString(row, 3));
             findCategoryTree.setSizeTypeEn(ExcelUtils.getString(row, 4));
             findCategoryTree.setSizeTypeCn(ExcelUtils.getString(row, 5));
-            findCategoryTree.setHscode8(ExcelUtils.getString(row, 7));
-            findCategoryTree.setHscode10(ExcelUtils.getString(row, 8));
-            findCategoryTree.setHscodeName8(ExcelUtils.getString(row, 9));
-            findCategoryTree.setHscodeName10(ExcelUtils.getString(row, 10));
+            findCategoryTree.setHscode8(ExcelUtils.getString(row, 8));
+            findCategoryTree.setHscode10(ExcelUtils.getString(row, 9));
+            findCategoryTree.setHscodeName8(ExcelUtils.getString(row, 10));
+            findCategoryTree.setHscodeName10(ExcelUtils.getString(row, 11));
             modelParent.getChildren().add(findCategoryTree);
         }
 
