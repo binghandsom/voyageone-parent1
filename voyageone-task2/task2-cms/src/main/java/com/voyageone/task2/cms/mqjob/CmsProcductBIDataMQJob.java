@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob)
+@RabbitListener//(queues = CmsMqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob)
 public class CmsProcductBIDataMQJob extends TBaseMQCmsService<CmsProcductBIDataMQMessageBody> {
 
     @Autowired
