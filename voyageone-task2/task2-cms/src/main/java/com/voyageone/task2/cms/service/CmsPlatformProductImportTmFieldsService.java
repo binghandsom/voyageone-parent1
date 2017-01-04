@@ -555,7 +555,7 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
     public Map<String, Object> getPlatformWareInfoItem(String numIid, ShopBean shopBean) throws Exception {
         fieldHashMap fieldMap = new fieldHashMap();
         String schema = tbProductService.doGetWareInfoItem(numIid, shopBean).getUpdateItemResult();
-        $info("取得天猫商品信息schema:" + schema);
+        $debug("取得天猫商品信息schema:" + schema);
         if (schema != null) {
             List<Field> fields = SchemaReader.readXmlForList(schema);
             fields.forEach(field -> {
