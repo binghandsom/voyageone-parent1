@@ -105,10 +105,6 @@ define(['underscore'], function (_) {
          */
         DT: new Cart('DT', 33, '分销', ''),
 
-        /**
-         * 分销
-         */
-        DT: new Cart('DT', 33, '分销', ''),
 
         /**
          * 京东匠心界
