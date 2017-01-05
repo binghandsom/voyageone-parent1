@@ -26,7 +26,6 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.OverStock;
 import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.WMF;
 @Service
 public class WmfPriceAnalysisService extends BaseCronTaskService {
@@ -124,9 +123,9 @@ public class WmfPriceAnalysisService extends BaseCronTaskService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         String date_ymd = sdf.format(date);
 
-        String filename = Feeds.getVal1(OverStock, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feeds.getVal1(OverStock, name));
-        String filename_backup = Feeds.getVal1(OverStock, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
-                + StringUtils.null2Space(Feeds.getVal1(OverStock, name));
+        String filename = Feeds.getVal1(WMF, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feeds.getVal1(WMF, name));
+        String filename_backup = Feeds.getVal1(WMF, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
+                + StringUtils.null2Space(Feeds.getVal1(WMF, name));
         File file = new File(filename);
         File file_backup = new File(filename_backup);
 
