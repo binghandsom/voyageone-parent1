@@ -25,6 +25,14 @@ public class CmsProductVoRateUpdateMQJob extends TBaseMQCmsService<ProductVoRate
 
     @Override
     public void onStartup(ProductVoRateUpdateMQMessageBody messageBody) throws Exception {
+        /*params.put("productIds", productCodes);
+        params.put("_channleId", userInfo.getSelChannelId());
+        params.put("_userName", userInfo.getUserName());
+        params.put("_taskName", "batchupdate");
+        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);*/
+
+
+
         Map<String, Object> params = new HashMap<>();
         params.put("channelId", messageBody.getChannelId());
         params.put("creater", messageBody.getCreater());

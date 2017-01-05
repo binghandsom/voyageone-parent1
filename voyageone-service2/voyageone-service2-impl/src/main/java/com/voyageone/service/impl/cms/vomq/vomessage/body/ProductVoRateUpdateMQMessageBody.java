@@ -39,6 +39,9 @@ public class ProductVoRateUpdateMQMessageBody extends BaseMQMessageBody {
         if (StringUtils.isBlank(creater)) {
             throw new MQMessageRuleException("ProductVoRateUpdate参数vcreater为空.");
         }
+        if (StringUtils.isBlank(getSender())) {
+            throw new MQMessageRuleException("sender(发送者)不能为空");
+        }
     }
 
     public String getVoRate() {

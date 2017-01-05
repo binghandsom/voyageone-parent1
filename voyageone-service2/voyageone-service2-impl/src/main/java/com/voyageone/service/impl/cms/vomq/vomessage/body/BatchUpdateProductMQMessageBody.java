@@ -72,5 +72,8 @@ public class BatchUpdateProductMQMessageBody extends BaseMQMessageBody {
         if (params == null || params.size() <= 0) {
             throw new MQMessageRuleException("BatchUpdateProduct更新参数为空.");
         }
+        if (StringUtils.isBlank(getSender())) {
+            throw new MQMessageRuleException("sender(发送者)不能为空");
+        }
     }
 }

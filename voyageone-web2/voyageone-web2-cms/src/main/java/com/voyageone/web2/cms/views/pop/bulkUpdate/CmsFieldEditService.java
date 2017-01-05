@@ -340,10 +340,11 @@ public class CmsFieldEditService extends BaseViewService {
             mqMessageBody.setCreater(userInfo.getUserName());
             mqMessageBody.setCodeList(productCodes);
             mqMessageBody.setVoRate(voRateVal);
+            mqMessageBody.setSender(userInfo.getUserName());
             try {
                 mqSenderService.sendMessage(mqMessageBody);
             } catch (MQMessageRuleException e) {
-                $error(String.format("VO扣点值批量更新MQ发送异常,channelId=%s,creater=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
+                $error(String.format("VO扣点值批量更新MQ发送异常,channelId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
             }
 
         } else if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id) || "translateStatus".equals(prop_id)) {
@@ -370,11 +371,11 @@ public class CmsFieldEditService extends BaseViewService {
             mqMessageBody.setUserNmme(userInfo.getUserName());
             mqMessageBody.setProductCodes(productCodes);
             mqMessageBody.setParams(params);
+            mqMessageBody.setSender(userInfo.getUserName());
             try {
                 mqSenderService.sendMessage(mqMessageBody);
             } catch (MQMessageRuleException e) {
                 $error(String.format("批量更新商品发送MQ异常,channleId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
-                throw new BusinessException(e.getMessage());
             }
 
             rsMap.put("ecd", 0);
