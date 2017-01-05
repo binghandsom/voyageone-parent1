@@ -74,7 +74,7 @@ class CmsShelvesDetailService extends BaseViewService {
     /**
      * 根据货架Id获取货架里的产品信息
      */
-    List<CmsBtShelvesInfoBean> getShelvesInfo(List<Integer> shelvesIds, Boolean isLoadPromotionPrice) {
+    List<CmsBtShelvesInfoBean> getShelvesInfo(List<Integer> shelvesIds, Boolean isLoadPromotionPrice, String userName) {
 
         List<CmsBtShelvesInfoBean> cmsBtShelvesInfoBanList = new ArrayList<>();
         shelvesIds.forEach(shelvesId -> {
@@ -83,6 +83,7 @@ class CmsShelvesDetailService extends BaseViewService {
             if (CacheHelper.getValueOperation().get("ShelvesMonitor_" + shelvesId) == null) {
                 CmsShelvesMonitorMQMessageBody messageMap = new CmsShelvesMonitorMQMessageBody();
                 messageMap.setShelvesId(shelvesId);
+                messageMap.setSender(userName);
                 CacheHelper.getValueOperation().set("ShelvesMonitor_" + shelvesId, shelvesId);
                 try {
                     sender.sendMessage(messageMap);

@@ -298,6 +298,7 @@ class PlatformMappingViewService extends BaseViewService {
 
         CmsRefreshProductsMQMessageBody map = new CmsRefreshProductsMQMessageBody();
         map.setTaskId(cmsBtRefreshProductTaskModel.getId());
+        map.setSender(userName);
         try {
             mqSender.sendMessage(map);
         } catch (MQMessageRuleException e) {

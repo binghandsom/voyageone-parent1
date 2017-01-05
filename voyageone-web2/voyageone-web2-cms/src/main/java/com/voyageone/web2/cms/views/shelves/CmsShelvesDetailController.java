@@ -101,7 +101,7 @@ public class CmsShelvesDetailController extends CmsController {
         Boolean isLoadPromotionPrice = params.isLoadPromotionPrice;
         if (isLoadPromotionPrice == null)
             isLoadPromotionPrice = false;
-        return success(cmsShelvesDetailService.getShelvesInfo(shelvesIds, isLoadPromotionPrice));
+        return success(cmsShelvesDetailService.getShelvesInfo(shelvesIds, isLoadPromotionPrice, getUser().getUserName()));
     }
 
     @RequestMapping(value = CmsUrlConstants.SHELVES.DETAIL.EXPORT_APP_IMAGE, method = RequestMethod.GET)
@@ -200,6 +200,7 @@ public class CmsShelvesDetailController extends CmsController {
     public AjaxResponse releaseImage(@RequestBody Integer shelvesId) {
         CmsShelvesImageUploadMQMessageBody param = new CmsShelvesImageUploadMQMessageBody();
         param.setShelvesId(shelvesId);
+        param.setSender(getUser().getUserName());
         try {
             mqSender.sendMessage(param);
             return success(true);

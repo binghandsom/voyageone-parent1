@@ -1359,6 +1359,7 @@ public class CmsFieldEditService extends BaseViewService {
         mqMessageBody.setUserName(userInfo.getUserName());
         mqMessageBody.setFieldsId(prop_id);
         mqMessageBody.setFieldsValue(result.get(prop_id));
+        mqMessageBody.setSender(userInfo.getUserName());
         try {
             cmsMqSenderService.sendMessage(mqMessageBody);
         } catch (MQMessageRuleException e) {
