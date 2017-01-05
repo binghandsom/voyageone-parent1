@@ -5,6 +5,8 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +33,9 @@ public class AdvSearchConfirmRetailPriceMQMessageBody extends BaseMQMessageBody 
     public void check() throws MQMessageRuleException {
         if (params == null || params.size() <= 0) {
             throw new MQMessageRuleException("高级检索-确认指定价变更MQ参数为空");
+        }
+        if (StringUtils.isBlank(getSender())) {
+            throw new MQMessageRuleException("sender(发送者)不能为空");
         }
     }
 }

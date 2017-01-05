@@ -1300,11 +1300,13 @@ public class CmsFieldEditService extends BaseViewService {
                 // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
                 AdvSearchRefreshRetailPriceMQMessageBody mqMessageBody = new AdvSearchRefreshRetailPriceMQMessageBody();
                 mqMessageBody.setParams(params);
+                mqMessageBody.setSender(userInfo.getUserName());
                 mqSenderService.sendMessage(mqMessageBody);
             } else {
                 // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
                 AdvSearchConfirmRetailPriceMQMessageBody mqMessageBody = new AdvSearchConfirmRetailPriceMQMessageBody();
                 mqMessageBody.setParams(params);
+                mqMessageBody.setSender(userInfo.getUserName());
                 mqSenderService.sendMessage(mqMessageBody);
             }
         } catch (MQMessageRuleException e) {
