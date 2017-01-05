@@ -13,24 +13,24 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
-import com.voyageone.task2.base.Enums.TaskControlEnums;
-import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.bean.SuperFeedWmfBean;
 import com.voyageone.task2.cms.dao.feed.WmfFeedDao;
 import com.voyageone.task2.cms.model.CmsBtFeedInfoWmfModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.WMF;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.WMF;
 
 /***/
 @Service
@@ -40,7 +40,7 @@ public class WmfAnalysisService extends BaseAnalysisService {
     @Autowired
     FeedInfoService feedInfoService;
 
-    private static String urlKey = "http://www.wmf.com/en/";
+    private static String urlKey = "http://www.wmf.com/en/%s.html";
     private static String mediaImage = "https://www.wmf.com/media/catalog/product";
 
     @Override
@@ -122,7 +122,7 @@ public class WmfAnalysisService extends BaseAnalysisService {
                 wmfBean.setEan(reader.get(i++));
                 wmfBean.setMaterial(reader.get(i++));
                 wmfBean.setUrlKey(reader.get(i++));
-                wmfBean.setUrlKey(urlKey + wmfBean.getUrlKey());
+                wmfBean.setUrlKey(String.format(urlKey, wmfBean.getUrlKey()));
                 wmfBean.setMaterialeigenschaft(reader.get(i++));
                 wmfBean.setNebenmaterial(reader.get(i++));
                 wmfBean.setProdukteigenschaft(reader.get(i++));
