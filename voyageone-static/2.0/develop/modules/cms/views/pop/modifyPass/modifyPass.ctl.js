@@ -25,8 +25,6 @@ define([
                 if (self.newPass == self.oldPass) {
                     self.alert('新旧密码不能重复,请重新输入');return;
                 }
-
-
                 if (self.newPass == self.newPassAgain) {
                     self.$modifyPassWordService.save({
                         'oldPassword': self.oldPass,
