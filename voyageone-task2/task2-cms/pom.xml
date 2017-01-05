@@ -37,6 +37,16 @@
             <artifactId>voyageone-components-onestop</artifactId>
             <version>${voyageone.components.onestop.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-dt</artifactId>
+            <version>${voyageone.components.dt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-jd</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
 
 
     </dependencies>
