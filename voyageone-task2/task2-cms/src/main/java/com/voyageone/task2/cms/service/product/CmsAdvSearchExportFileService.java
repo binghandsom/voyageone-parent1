@@ -19,6 +19,7 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.CmsProperty;
@@ -36,7 +37,7 @@ import com.voyageone.task2.base.BaseMQCmsService;
 import com.voyageone.task2.cms.bean.SkuInventoryForCmsBean;
 import com.voyageone.task2.cms.dao.InventoryDao;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.*;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
@@ -280,7 +281,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         } else if (searchValue.getFileType() == 4) {
             searchItemStr += "common.skus.clientNetPrice;common.fields.color;common.fields.originalCode;";
         } else if (searchValue.getFileType() == 5) {
-            searchItemStr += "common.skus;common.fields.model;common.fields.isFiled;common.fields.hsCodeCross;common.fields.origin;common.fields.color;common.fields.weightKG;common.fields.shortDesEn;common.fields.shortDesCn;";
+            searchItemStr += "common.skus;common.fields.model;common.fields.isFiled;common.fields.hsCodeCross;common.fields.origin;common.fields.color;" +
+                    "common.fields.weightKG;common.fields.shortDesEn;common.fields.shortDesCn;common.fields.materialCn;common.fields.materialEn";
         }
 
         queryObject.setProjectionExt(searchItemStr.split(";"));
@@ -1273,7 +1275,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
      * @param startRowIndex
      * @param userName
      */
-    private int writeFilingToFile(Workbook workbook, List<CmsBtProductBean> items, int startRowIndex, String userName) {
+    private int  writeFilingToFile(Workbook workbook, List<CmsBtProductBean> items, int startRowIndex, String userName) {
         int total = 0;
         List<CmsBtProductBean> products = new ArrayList<CmsBtProductBean>();
         List<String> codes = new ArrayList<>();
@@ -1292,7 +1294,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             Map<String, CmsBtProductModel_Platform_Cart> platforms = item.getPlatforms();
             if (platforms != null && platforms.size() > 0) {
                 for (CmsBtProductModel_Platform_Cart platform : platforms.values()) {
-                    if (CmsConstants.ProductStatus.Approved.equals(platform.getStatus())) {
+                    if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())) {
                         skip = false;
                         break;
                     }
@@ -1328,7 +1330,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 }
                 FileUtils.cell(row, index++, unlock).setCellValue(imgPath); // 图片
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getSizeType())); // 使用人群
-                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getMaterialEn() + " | " + fields.getMaterialCn())); // 材质
+                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getMaterialEn()) + " | " + org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getMaterialCn())); // 材质
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getOrigin()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getColor()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getBrand()));
@@ -1345,7 +1347,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 double priceSale = 0d;
                 Map<String, CmsBtProductModel_Platform_Cart> platforms = item.getPlatforms();
                 for (CmsBtProductModel_Platform_Cart platform : platforms.values()) {
-                    if (CmsConstants.ProductStatus.Approved.equals(platform.getStatus())) {
+                    if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())) {
                         priceSale = platform.getSkus().get(0).getDoubleAttribute("priceSale");
                         break;
                     }
@@ -1355,7 +1357,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             }
         }
         // 批量设置是否报备标志位
-        if (codes.size() > 0) {
+        /*if (codes.size() > 0) {
             JongoUpdate updObj = new JongoUpdate();
             updObj.setQuery("{'common.fields.code':{$in:#}}");
             updObj.setUpdate("{$set:{'common.fields.isFiled':#,'modified':#,'modifier':#}}");
@@ -1365,7 +1367,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             if (rs != null) {
                 $debug(String.format("高级检索报备导出，修改商品报备标识 channelId=%s 执行结果=%s", products.get(0).getChannelId(), rs.toString()));
             }
-        }
+        }*/
         return total - SELECT_PAGE_SIZE;
     }
 

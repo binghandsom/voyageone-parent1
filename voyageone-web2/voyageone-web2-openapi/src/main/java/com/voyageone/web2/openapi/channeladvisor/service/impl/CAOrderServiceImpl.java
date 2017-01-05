@@ -414,7 +414,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         if (tempSkuQtyMap.keySet().size() == issueSkuNotExistList.size()) {
             tempSkuQtyMap.keySet().stream().forEach(key -> {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                        "SellerSku=" + key + " is not provided."));
+                        "SellerSku=" + key + " is either not provided, not acknowledged by seller, or already cancelled."));
             });
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
@@ -430,7 +430,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
             issueSkuNotExistList.stream().forEach(key -> {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                        "SellerSku=" + key + " is not provided or status is not AcknowledgedBySeller."));
+                        "SellerSku=" + key + " is either not provided, not acknowledged by seller, or already cancelled."));
             });
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
