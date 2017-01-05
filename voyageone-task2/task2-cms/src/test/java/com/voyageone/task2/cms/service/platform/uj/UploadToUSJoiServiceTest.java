@@ -206,7 +206,7 @@ public class UploadToUSJoiServiceTest {
         query.setProductName("productNameEn", "brand");
         query.setProductType("feedProductType");
 
-        List<SearchResult<MtCategoryKeysModel>> result = searcher.search(query, 1);
+        MatchResult result = searcher.search(query, false);
         System.out.println("ok");
     }
 

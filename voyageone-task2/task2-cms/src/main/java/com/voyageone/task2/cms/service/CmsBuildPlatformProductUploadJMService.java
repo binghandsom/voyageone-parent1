@@ -966,6 +966,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 sxData.setChannelId(work.getChannelId());
                 sxData.setGroupId(work.getGroupId());
             }
+            $error("异常信息显示为1调查", e);
 
             if (e instanceof BusinessException && StringUtils.isEmpty(sxData.getErrorMessage())) {
                 sxData.setErrorMessage(e.getMessage());
@@ -1509,6 +1510,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         String hscode = fields.getHsCodePrivate();
         if (!StringUtils.isNullOrBlank2(hscode)) {
             String[] hscodeArray = hscode.split(",");
+            // 税号个人(8位)正确的值应该是"04020400,腰带,条"
+            if (hscodeArray == null || hscodeArray.length < 3) {
+                String errMsg = String.format("该产品(%s)税号个人(8位)值(%s)的格式不对，正确的格式应该是\"04020400,腰带,条\"，请修改好后再上新!", productCode, hscode);
+                $error(errMsg);
+                throw new BusinessException(errMsg);
+            }
             cmsBtJmProductModel.setHsCode(hscodeArray[0]);
             cmsBtJmProductModel.setHsName(hscodeArray[1]);
             cmsBtJmProductModel.setHsUnit(hscodeArray[2]);
