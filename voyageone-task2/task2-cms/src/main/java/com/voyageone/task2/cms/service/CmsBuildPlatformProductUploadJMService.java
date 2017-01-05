@@ -1511,7 +1511,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             String[] hscodeArray = hscode.split(",");
             // 税号个人(8位)正确的值应该是"04020400,腰带,条"
             if (hscodeArray == null || hscodeArray.length < 3) {
-                String errMsg = String.format("该产品(%s)税号个人(8位)值(%s)的格式不对，正确的格式应该是\"04020400,腰带,条\"，请修改好后再上新!", productCode, hscode);
+                String errMsg = String.format("该产品(%s)\"税号个人(8位)\"值(%s)的格式不对，正确的格式应该是\"04020400,腰带,条\"，请修改好后再上新!", productCode, hscode);
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
