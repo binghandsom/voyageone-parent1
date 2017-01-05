@@ -966,6 +966,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 sxData.setChannelId(work.getChannelId());
                 sxData.setGroupId(work.getGroupId());
             }
+            $error("异常信息显示为1调查", e);
 
             if (e instanceof BusinessException && StringUtils.isEmpty(sxData.getErrorMessage())) {
                 sxData.setErrorMessage(e.getMessage());
