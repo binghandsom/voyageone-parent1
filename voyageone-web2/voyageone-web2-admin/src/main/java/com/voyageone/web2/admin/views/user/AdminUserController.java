@@ -242,6 +242,12 @@ public class AdminUserController extends AdminController {
     }
 
 
+    @RequestMapping(AdminUrlConstants.User.Self.GET_APPS_BY_USER)
+    public AjaxResponse getAppsByUser(@RequestBody Integer userId)  {
+        return success(adminUserService.getAllApp(userId));
+    }
+
+
     /**
      * 批量添加角色
      *

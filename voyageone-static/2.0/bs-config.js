@@ -2,7 +2,7 @@ var morgan = require('morgan'),
     proxy = require('http-proxy-middleware');
 
 var proxyUrl = "http://localhost:8080";
-    //proxyMiddleware = proxy(proxyUrl);
+var proxyMiddleware = proxy(proxyUrl);
 
 var jsonPlaceholderProxy = proxy(['/cms','/core'], {
     target: proxyUrl,
@@ -23,10 +23,10 @@ module.exports = {
     port: 3000,
     middleware: [
         morgan('dev'),jsonPlaceholderProxy
-        // ,function (req, res, next) {
-        //     if (req.method !== 'POST')
-        //         return next();
-        //     return proxyMiddleware(req, res, next);
-        // },
+        ,function (req, res, next) {
+            if (req.method !== 'POST')
+                return next();
+            return proxyMiddleware(req, res, next);
+        },
     ]
 };

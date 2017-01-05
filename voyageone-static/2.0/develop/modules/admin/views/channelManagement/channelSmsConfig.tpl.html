@@ -139,9 +139,9 @@
                     <td class="text-center v-middle">{{list.active!=null?list.active==true ? '启用':'禁用':''}}</td>
                     <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
                     <td class="text-left v-middle">{{list.modifier}}</td>
-                    <td class="text-center mfb-xt">
+                    <td class="text-center mfb-xt v-middle">
                         <button class="btn btn-success btn-xs" ng-click="ctrl.edit(list)" title="修改"><i class="fa fa-pencil"></i></button>
-                        <button class="btn btn-danger btn-xs" ng-click="ctrl.delete(list.id)" title="{{'BTN_INACTIVE'|translate}}"><i class="fa fa-ban"></i></button>
+                        <button class="btn btn-danger btn-xs" ng-click="ctrl.delete(list.id)" title="{{'BTN_INACTIVE'|translate}}" ng-disabled="list.active==false"><i class="fa fa-ban"></i></button>
                     </td>
                 </tr>
                 </tbody>

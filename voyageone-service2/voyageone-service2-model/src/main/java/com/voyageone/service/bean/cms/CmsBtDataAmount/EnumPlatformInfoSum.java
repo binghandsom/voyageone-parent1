@@ -1,9 +1,7 @@
 package com.voyageone.service.bean.cms.CmsBtDataAmount;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -29,15 +27,18 @@ public enum EnumPlatformInfoSum implements IEnumDataAmountSum {
     }),//
     CMS_PLATFORM_PUBLISH_FAILD("CMS_PLATFORM_PUBLISH_FAILD", "{'platforms.P%s.pPublishError':{$nin:[null,'']}}", "/search/advanceSearch", "", "上新失败数"),
     //{platforms.P%s:{$exists:true},$where:'this.platforms.P%s.pStatus!=this.platforms.P%s.pReallyStatus'}
-    CMS_PLATFORM_pStatus_pReallyStatus_notEqual("CMS_PLATFORM_pStatus_pReallyStatus_notEqual", "{$or:[{'platforms.P%s.pReallyStatus':'OnSale','platforms.P%s.pStatus':{$ne:'OnSale'}},{'platforms.P%s.pReallyStatus':'InStock','platforms.P%s.pStatus':{$ne:'InStock'}}]}", "/search/advanceSearch", "", "商品平台状态与实际相异数", (m) -> {
+    CMS_PLATFORM_pStatus_pReallyStatus_notEqual("CMS_PLATFORM_PSTATUS_REALLYSTATUS_NOT_EQUAL", "{$or:[{'platforms.P%s.pReallyStatus':'OnSale','platforms.P%s.pStatus':{$ne:'OnSale'}},{'platforms.P%s.pReallyStatus':'InStock','platforms.P%s.pStatus':{$ne:'InStock'}}]}", "/search/advanceSearch", "", "商品平台状态与实际相异数", (m) -> {
         return String.format(m.getQueryStr(), m.getCartId(), m.getCartId(), m.getCartId(), m.getCartId());
     }),// priceSale
-    CMS_PLATFORM_Brand_block("CMS_PLATFORM_Brand_block", "", "", "", "黑名单数量", 1),
+    CMS_PLATFORM_BRAND_BLOCK("CMS_PLATFORM_BRAND_BLOCK", "", "", "", "黑名单数量", 1),
 
     CMS_PLATFORM_NEW_SKU("CMS_PLATFORM_NEW_SKU", "{'platforms.P%s.status':'Approved','platforms.P%s.isNewSku':'1'}", "/search/advanceSearch", "", "上新商品中有未上新SKU商品数", (m) -> {
         return String.format(m.getQueryStr(), m.getCartId(), m.getCartId());
     }),
-    CMS_PLATFORM_pStatus_OnSale_pReallyStatus_InStock("CMS_PLATFORM_pStatus.OnSale_pReallyStatus.InStock","{lock:'0',\"common.fields.quantity\":{ $gt:0},\"platforms.P%s.pStatus\":'OnSale',\"platforms.P%s.pReallyStatus\":'InStock'}","", "", "下架有库存商品数", (m) -> {
+    CMS_PLATFORM_pStatus_OnSale_pReallyStatus_InStock("CMS_PLATFORM_PSTATUS_ONSALE_PREALLYSTATUS_INSTOCK","{lock:'0',\"common.fields.quantity\":{ $gt:0},\"platforms.P%s.pStatus\":'OnSale',\"platforms.P%s.pReallyStatus\":'InStock'}","", "", "下架有库存商品数", (m) -> {
+        return String.format(m.getQueryStr(), m.getCartId(), m.getCartId());
+    }),
+    CMS_PLATFORM_pStatus_OnSale_pReallyStatus_Violation("CMS_PLATFORM_PSTATUS_ONSALE_PREALLYSTATUS_VIOLATION","{lock:'0',\"platforms.P%s.pReallyStatus\":'Violation'}","", "", "违规下架商品数", (m) -> {
         return String.format(m.getQueryStr(), m.getCartId(), m.getCartId());
     });
 

@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service.product.batch;
 
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob)
 public class CmsAdvSearchAsynProcessService extends BaseMQCmsService {
 
     @Autowired

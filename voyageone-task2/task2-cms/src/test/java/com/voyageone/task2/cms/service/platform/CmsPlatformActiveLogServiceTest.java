@@ -4,6 +4,10 @@ import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.redis.CacheHelper;
+import com.voyageone.common.util.JacksonUtil;
+
+import net.sf.json.JSON;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,6 +65,7 @@ public class CmsPlatformActiveLogServiceTest {
 //        shopBeanMap.put(buildKey(bean3.getCart_id(), bean3.getOrder_channel_id()), bean3);
 //
 //        CacheHelper.reFreshSSB(KEY, shopBeanMap);
+
     }
 
     // 测试tmall上架

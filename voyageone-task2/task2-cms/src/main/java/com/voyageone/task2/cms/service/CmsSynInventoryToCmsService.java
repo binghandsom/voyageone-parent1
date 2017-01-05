@@ -10,8 +10,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.InventoryForCmsBean;
@@ -102,7 +101,7 @@ public class CmsSynInventoryToCmsService extends BaseCronTaskService {
         }
 
         // 同步库存数据到聚美活动表 cms_bt_jm_promotion_product
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_JmPromotionProductStockSyncServiceJob, null);
+        sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_JmPromotionProductStockSyncServiceJob, null);
     }
 
     /**

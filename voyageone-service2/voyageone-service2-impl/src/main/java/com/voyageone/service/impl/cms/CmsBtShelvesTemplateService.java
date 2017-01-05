@@ -1,10 +1,6 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.Constants;
-import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.bean.cms.shelves.CmsBtShelvesTemplateBean;
 import com.voyageone.service.dao.cms.CmsBtShelvesTemplateDao;
 import com.voyageone.service.daoext.cms.CmsBtShelvesDaoExt;
@@ -15,7 +11,6 @@ import com.voyageone.service.fields.cms.CmsBtShelvesTemplateModelClientType;
 import com.voyageone.service.fields.cms.CmsBtShelvesTemplateModelTemplateType;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesTemplateModel;
 import org.apache.commons.collections.CollectionUtils;

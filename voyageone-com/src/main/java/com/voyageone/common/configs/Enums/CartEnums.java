@@ -77,7 +77,7 @@ public class CartEnums {
 		LIKING("32"),
 
 		/**
-		 * 分销喜庆
+		 * 分销
 		 */
 		DT("33"),
 

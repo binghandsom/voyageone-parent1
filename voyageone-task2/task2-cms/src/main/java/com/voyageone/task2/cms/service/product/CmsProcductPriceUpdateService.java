@@ -5,10 +5,9 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -30,7 +29,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob)
 public class CmsProcductPriceUpdateService extends BaseMQCmsService {
 
     @Autowired
@@ -116,7 +115,7 @@ public class CmsProcductPriceUpdateService extends BaseMQCmsService {
         updObj.setQuery("{'prodId':#,'platforms.P#.skus':{$exists:true}}");
         updObj.setQueryParameters(prodId, cartId);
         updObj.setUpdate("{$set:{'platforms.P#.pPriceMsrpSt':#,'platforms.P#.pPriceMsrpEd':#, 'platforms.P#.pPriceRetailSt':#,'platforms.P#.pPriceRetailEd':#, 'platforms.P#.pPriceSaleSt':#,'platforms.P#.pPriceSaleEd':#, 'modified':#,'modifier':#}}");
-        updObj.setUpdateParameters(cartId, newPriceMsrpSt, cartId, newPriceMsrpEd, cartId, newPriceRetailSt, cartId, newPriceRetailEd, cartId, newPriceSaleSt, cartId, newPriceSaleEd, DateTimeUtil.getNowTimeStamp(), MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob);
+        updObj.setUpdateParameters(cartId, newPriceMsrpSt, cartId, newPriceMsrpEd, cartId, newPriceRetailSt, cartId, newPriceRetailEd, cartId, newPriceSaleSt, cartId, newPriceSaleEd, DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob);
         WriteResult rs = productService.updateFirstProduct(updObj, channelId);
         $debug("CmsProcductPriceUpdateService 产品platforms价格范围更新结果 " + rs.toString());
 
@@ -174,7 +173,7 @@ public class CmsProcductPriceUpdateService extends BaseMQCmsService {
         updObj.setQuery("{'mainProductCode':#,'cartId':#}");
         updObj.setQueryParameters(mProdCode, cartId);
         updObj.setUpdate("{$set:{'priceMsrpSt':#,'priceMsrpEd':#, 'priceRetailSt':#,'priceRetailEd':#, 'priceSaleSt':#,'priceSaleEd':#, 'modified':#,'modifier':#}}");
-        updObj.setUpdateParameters(newPriceMsrpSt, newPriceMsrpEd, newPriceRetailSt, newPriceRetailEd, newPriceSaleSt, newPriceSaleEd, DateTimeUtil.getNowTimeStamp(), MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob);
+        updObj.setUpdateParameters(newPriceMsrpSt, newPriceMsrpEd, newPriceRetailSt, newPriceRetailEd, newPriceSaleSt, newPriceSaleEd, DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob);
 
         rs = productGroupService.updateFirst(updObj, (String) messageMap.get("channelId"));
         $debug("CmsProcductPriceUpdateService 产品group价格范围更新结果 " + rs.toString());

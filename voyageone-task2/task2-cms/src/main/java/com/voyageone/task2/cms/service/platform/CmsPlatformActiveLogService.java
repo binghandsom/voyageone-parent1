@@ -1,9 +1,11 @@
 package com.voyageone.task2.cms.service.platform;
 
+import com.jd.open.api.sdk.internal.JSON.JSON;
 import com.jd.open.api.sdk.response.ware.WareUpdateDelistingResponse;
 import com.jd.open.api.sdk.response.ware.WareUpdateListingResponse;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
+import com.taobao.api.internal.parser.json.ObjectJsonParser;
 import com.taobao.api.response.ItemUpdateDelistingResponse;
 import com.taobao.api.response.ItemUpdateListingResponse;
 import com.voyageone.base.dao.mongodb.JongoAggregate;
@@ -17,6 +19,9 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.JsonUtil;
+import com.voyageone.components.dt.enums.DtConstants;
+import com.voyageone.components.dt.service.DtWareService;
 import com.voyageone.components.jd.service.JdSaleService;
 import com.voyageone.components.jumei.reponse.HtMallStatusUpdateBatchResponse;
 import com.voyageone.components.jumei.service.JumeiSaleService;
@@ -26,13 +31,17 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtPlatformActiveLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseMQCmsService;
+
+import net.sf.json.util.JSONUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.json.JSONObject;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,7 +60,7 @@ import java.util.Map;
  * @since 2.0.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_TASK_PlatformActiveLogJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_PlatformActiveLogJob)
 public class CmsPlatformActiveLogService extends BaseMQCmsService {
 
     private final CmsBtPlatformActiveLogDao platformActiveLogDao;
@@ -62,12 +71,13 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
     private final JumeiSaleService jmSaleService;
     private final MongoSequenceService sequenceService;
     private final SxProductService sxProductService;
+    private final DtWareService dtWareService;
 
     @Autowired
     public CmsPlatformActiveLogService(CmsBtProductGroupDao cmsBtProductGroupDao, JumeiSaleService jmSaleService,
                                        TbSaleService tbSaleService, JdSaleService jdSaleService,
                                        MongoSequenceService sequenceService, CmsBtPlatformActiveLogDao platformActiveLogDao,
-                                       CmsBtProductDao cmsBtProductDao, SxProductService sxProductService) {
+                                       CmsBtProductDao cmsBtProductDao, SxProductService sxProductService, DtWareService dtWareService) {
         this.cmsBtProductGroupDao = cmsBtProductGroupDao;
         this.jmSaleService = jmSaleService;
         this.tbSaleService = tbSaleService;
@@ -76,6 +86,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
         this.platformActiveLogDao = platformActiveLogDao;
         this.cmsBtProductDao = cmsBtProductDao;
         this.sxProductService = sxProductService;
+        this.dtWareService = dtWareService;
     }
 
     @Override
@@ -133,7 +144,16 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                     model.setGroupId(grpObj.getGroupId());
                     model.setMainProdCode(grpObj.getMainProductCode());
                     model.setProdCode(pCode);
-                    model.setNumIId(CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? grpObj.getPlatformMallId() : grpObj.getNumIId());
+                    String numIId = null;
+                    if (CartEnums.Cart.JM.getId().equals(String.valueOf(cartId))) {
+                        numIId = grpObj.getPlatformMallId();
+                    } else if (CartEnums.Cart.DT.getId().equals(String.valueOf(cartId))) {
+                        numIId = pCode; // 如果是分销平台，numIId设置为商品code
+                    } else {
+                        numIId = grpObj.getNumIId();
+                    }
+                    // model.setNumIId(CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? grpObj.getPlatformMallId() : grpObj.getNumIId());
+                    model.setNumIId(numIId);
                     model.setResult("0");
                     model.setCreater(userName);
                     model.setCreated(DateTimeUtil.getNow());
@@ -357,6 +377,46 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                         }
                     }
 
+                } else if (PlatFormEnums.PlatForm.DT.getId().equals(shopProp.getPlatform_id())) { // 分销平台
+                    // 分销上下架
+                    if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
+                        // 上架
+                        String result = dtWareService.onShelfProduct(shopProp, numIId);
+                        $info(String.format("调用分销平台上架API,channelId=%s,cartId=%s,numIId=%s结果=%s", shopProp.getOrder_channel_id(), shopProp.getCart_id(), numIId, result));
+                        if (org.apache.commons.lang.StringUtils.isNotBlank(result)) {
+                            Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
+                            if (responseMap != null && responseMap.containsKey("data") && responseMap.get("data") != null) {
+                                Map<String, Object> resultMap = JacksonUtil.jsonToMap((String)responseMap.get("data"));
+                                if (DtConstants.C_DT_RETURN_SUCCESS_OK.equals((String) resultMap.get("result"))) {
+                                    updRsFlg = true;
+                                }else {
+                                    errMsg = (String) resultMap.get("reason");
+                                }
+                            }
+                        }
+                        if (!updRsFlg && org.apache.commons.lang.StringUtils.isBlank(errMsg)) {
+                            errMsg = "调用分销平台上架API失败";
+                        }
+                    } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
+                        // 下架
+                        String result = dtWareService.offShelfProduct(shopProp, numIId);
+                        $info(String.format("调用分销平台下架API,channelId=%s,cartId=%s,numIId=%s结果=%s", shopProp.getOrder_channel_id(), shopProp.getCart_id(), numIId, result));
+                        if (org.apache.commons.lang.StringUtils.isNotBlank(result)) {
+                            Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
+                            if (responseMap != null && responseMap.containsKey("data") && responseMap.get("data") != null) {
+                                Map<String, Object> resultMap = JacksonUtil.jsonToMap((String)responseMap.get("data"));
+                                if (DtConstants.C_DT_RETURN_SUCCESS_OK.equals((String) resultMap.get("result"))) {
+                                    updRsFlg = true;
+                                }else {
+                                    errMsg = (String) resultMap.get("reason");
+                                }
+                            }
+                        }
+                        if (!updRsFlg && org.apache.commons.lang.StringUtils.isBlank(errMsg)) {
+                            errMsg = "调用分销平台下架API失败";
+                        }
+                    }
+
                 } else {
                     $error("CmsPlatformActiceLogService 不正确的平台 cartId=%d", cartId);
                 }
@@ -453,4 +513,5 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
         }
         return null;
     }
+
 }

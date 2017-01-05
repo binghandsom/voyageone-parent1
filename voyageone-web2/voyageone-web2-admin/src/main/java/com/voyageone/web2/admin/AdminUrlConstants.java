@@ -354,6 +354,8 @@ public interface AdminUrlConstants {
 
 			//for dropdown list options
 			String GET_ALL_APP = "getAllApp";
+
+			String GET_APPS_BY_USER = "getAppsByUser";
 		}
 
 		/** 角色信息 */

@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_TMFieldsImportCms2Job)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_TMFieldsImportCms2Job)
 public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
 
     @Autowired
