@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.category.match.MtCategoryKeysModel;
+import com.voyageone.category.match.MtSizeTypeKeysModel;
 import com.voyageone.category.match.SearchResult;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
@@ -174,10 +175,25 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             updateMap.put("common.fields.productType", mtCategoryKeysModel.getProductTypeEn());
             // 产品分类(中文)
             updateMap.put("common.fields.productTypeCn", mtCategoryKeysModel.getProductTypeCn());
-            // 适合人群(英文)
-            updateMap.put("common.fields.sizeType", mtCategoryKeysModel.getSizeTypeEn());
-            // 适合人群(中文)
-            updateMap.put("common.fields.sizeTypeCn", mtCategoryKeysModel.getSizeTypeCn());
+            // 再匹配适用人群(如果匹配到了就用匹配到的值，没有匹配到的话就用主类目匹配时得到的默认适用人群)
+            SearchResult<MtSizeTypeKeysModel> sizeTypeSearchResult = uploadToUSJoiService.getSizeType(prodObj.getFeed().getCatPath(),
+                    prodCommonField.getProductType(),
+                    prodCommonField.getSizeType(),
+                    prodCommonField.getProductNameEn(),
+                    prodCommonField.getBrand());
+            if (sizeTypeSearchResult != null && sizeTypeSearchResult.getDataModel() != null) {
+                // 适用人群匹配结果model
+                MtSizeTypeKeysModel mtSizeTypeKeysModel = sizeTypeSearchResult.getDataModel();
+                // 适合人群(英文)
+                updateMap.put("common.fields.sizeType", mtSizeTypeKeysModel.getSizeTypeEn());
+                // 适合人群(中文)
+                updateMap.put("common.fields.sizeTypeCn", mtSizeTypeKeysModel.getSizeTypeCn());
+            } else {
+                // 适合人群(英文)
+                updateMap.put("common.fields.sizeType", mtCategoryKeysModel.getSizeTypeEn());
+                // 适合人群(中文)
+                updateMap.put("common.fields.sizeTypeCn", mtCategoryKeysModel.getSizeTypeCn());
+            }
             // TODO 2016/12/30暂时这样更新，以后要改
             if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter())) {
                 // 税号个人
