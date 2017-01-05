@@ -102,6 +102,11 @@ define(['underscore'], function (_) {
         LCN: new Cart('LCN', 32, 'Liking官网', ''),
 
         /**
+         * 分销
+         */
+        DT: new Cart('DT', 33, '分销', ''),
+
+        /**
          * 京东匠心界
          */
         USJGJ: new Cart('USJGJ', 928, 'USJOI匠心界', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
