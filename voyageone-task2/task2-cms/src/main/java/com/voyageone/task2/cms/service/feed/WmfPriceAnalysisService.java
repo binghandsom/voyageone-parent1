@@ -18,14 +18,15 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.OverStock;
 import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.WMF;
 @Service
 public class WmfPriceAnalysisService extends BaseCronTaskService {
@@ -43,6 +44,8 @@ public class WmfPriceAnalysisService extends BaseCronTaskService {
         Map<String, Object> map = new HashMap<>();
         wmfPrices = cmsZzFeedWmfPriceDaoExt.selectList(map);
         wmfPrices.forEach(this::updateMastPrice);
+
+        backupFeedFile(FeedEnums.Name.file_id_import_sku);
     }
 
     public List<CmsZzFeedWmfPriceModel> getRetailPriceList() {
@@ -114,6 +117,28 @@ public class WmfPriceAnalysisService extends BaseCronTaskService {
         cmsZzFeedWmfPriceDaoExt.deleteBySku(cmsZzFeedWmfPriceModel.getSkuCode());
         cmsZzFeedWmfPriceDaoExt.insert(cmsZzFeedWmfPriceModel);
     }
+
+    protected boolean backupFeedFile(FeedEnums.Name name) {
+        $info("备份处理文件开始");
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        String date_ymd = sdf.format(date);
+
+        String filename = Feeds.getVal1(OverStock, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feeds.getVal1(OverStock, name));
+        String filename_backup = Feeds.getVal1(OverStock, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
+                + StringUtils.null2Space(Feeds.getVal1(OverStock, name));
+        File file = new File(filename);
+        File file_backup = new File(filename_backup);
+
+        if (!file.renameTo(file_backup)) {
+//            $error("产品文件备份失败");
+            $info(file_backup+"备份失败");
+        }
+
+        $info("备份处理文件结束");
+        return true;
+    }
+
     @Override
     protected String getTaskName() {
         return "WmfPriceAnalysisJob";
