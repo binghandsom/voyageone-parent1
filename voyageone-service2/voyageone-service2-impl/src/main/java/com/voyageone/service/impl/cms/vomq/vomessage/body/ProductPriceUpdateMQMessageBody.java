@@ -5,6 +5,8 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Map;
 
 /**
@@ -30,6 +32,9 @@ public class ProductPriceUpdateMQMessageBody extends BaseMQMessageBody {
     public void check() throws MQMessageRuleException {
         if (params == null || params.size() <= 0) {
             throw new MQMessageRuleException("product和group的价格刷新(VOCmsProductPriceUpdateQueue)参数为空");
+        }
+        if (StringUtils.isBlank(getSender())) {
+            throw new MQMessageRuleException("sender(发送者)不能为空");
         }
     }
 }
