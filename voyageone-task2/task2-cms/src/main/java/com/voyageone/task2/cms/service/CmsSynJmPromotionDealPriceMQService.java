@@ -4,13 +4,12 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionSkuService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.apache.commons.collections.map.HashedMap;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,13 +17,12 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by james on 2016/10/19.
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_JmSynPromotionDealPrice)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_JmSynPromotionDealPrice)
 public class CmsSynJmPromotionDealPriceMQService extends BaseMQCmsService {
 
     @Autowired

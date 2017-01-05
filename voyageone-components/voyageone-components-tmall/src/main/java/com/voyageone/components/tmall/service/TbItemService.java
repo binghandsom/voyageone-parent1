@@ -1,7 +1,6 @@
 package com.voyageone.components.tmall.service;
 
 import com.taobao.api.ApiException;
-import com.taobao.api.domain.UpdateSkuPrice;
 import com.taobao.api.request.ItemSkusGetRequest;
 import com.taobao.api.request.TmallItemPriceUpdateRequest;
 import com.taobao.api.request.TmallItemSchemaUpdateRequest;
@@ -94,7 +93,7 @@ public class TbItemService extends TbBase {
      * numIid参数为必须，
      * prodPrice，skuPriceList为可选，且互斥，即这两个只有一个有值
      */
-    public TmallItemPriceUpdateResponse updateSkuPrice(ShopBean shopBean, String numIid, Double prodPrice, List<UpdateSkuPrice> skuPriceList) throws ApiException {
+    public TmallItemPriceUpdateResponse updateSkuPrice(ShopBean shopBean, String numIid, Double prodPrice, List<TmallItemPriceUpdateRequest.UpdateSkuPrice> skuPriceList) throws ApiException {
         logger.info("更新商品SKU的价格 " + numIid);
         TmallItemPriceUpdateRequest req = new TmallItemPriceUpdateRequest();
         req.setItemId(NumberUtils.toLong(numIid));

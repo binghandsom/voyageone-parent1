@@ -27,8 +27,8 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtPlatformNumiidDaoExt;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPlatformNumiidModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_TMFieldsImportCms2Job)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_TMFieldsImportCms2Job)
 public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
 
     @Autowired
@@ -542,7 +542,7 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
 
         // added by morse.lu 2017/01/05 start
         // 向Mq发送消息同步sku,code,group价格范围
-        listProducts.forEach(product -> sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, product));
+        listProducts.forEach(product -> sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, product));
         // added by morse.lu 2017/01/05 end
     }
 

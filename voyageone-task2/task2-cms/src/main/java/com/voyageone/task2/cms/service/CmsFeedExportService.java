@@ -1,11 +1,10 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_FeedExportJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_FeedExportJob)
 public class CmsFeedExportService extends BaseMQCmsService {
 
     @Autowired

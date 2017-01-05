@@ -15,101 +15,141 @@ define([
                         startSupplyChain:false
                     },
                     carts: {},
-                    product: {}
+                    product: {},
+                    copyOne: {}
                 };
                 $scope.vm.config.startSupplyChain = context.startSupplyChain == 1;
                 $scope.vm.carts = context.carts;
                 $scope.equalFlag = false;
 
+                // 初始化，加载组合商品详情
                 $scope.initialize = function () {
                     combinedProductService.getCombinedProductDetail(context.product).then(function (resp) {
-                        $scope.vm.product = resp.data.product == null ? {} : resp.data.product;
-                        if ($scope.vm.product != null) {
+                        if (resp.data.product == null) {
+                            alert("查询不到组合商品信息！");
+                        } else {
+                            $scope.vm.product = resp.data.product;
+                            $scope.vm.copyOne = angular.copy($scope.vm.product);
                             $scope.vm.product.cartId = $scope.vm.product.cartId + "";
+                            _.each($scope.vm.product.skus, function (skuBean) {
+                                skuBean.tempSuitSellingPriceCn = skuBean.suitSellingPriceCn;
+                                skuBean.tempSuitPreferentialPrice = skuBean.suitPreferentialPrice;
+                                dynamicSkuPrice(skuBean);
+                            });
                         }
-                        _.each($scope.vm.product.skus, function (element) {
-                            _.extend(element, {'tempSuitSellingPriceCn': element.suitSellingPriceCn}, {'tempSuitPreferentialPrice': element.suitPreferentialPrice})
-                        });
                     });
                 };
 
-
+                // 从平台获取组合商品详情
                 $scope.getCombinedProductInfo = function () {
-                    var cartId = $scope.vm.product.cartId,
-                        numID = $scope.vm.product.numID;
+                    var cartId = $scope.vm.product.cartId;
+                    var numID = $scope.vm.product.numID;
 
                     if (!cartId || !numID) {
+                        alert("请确认平台和商品编码是否填写完整！");
                         return;
                     }
+
                     combinedProductService.getCombinedProductPlatformDetail({
-                        "cartId": cartId,
-                        "numID": numID
-                    }).then(function (resp) {
-                        var product = angular.copy($scope.vm.product);
-                        $scope.vm.product = resp.data.product == null ? {} : resp.data.product;
-                        // carts集合中cart为string, product为int
-                        $scope.vm.product.cartId = $scope.vm.product.cartId == null ? "" : $scope.vm.product.cartId + "";
-                        $scope.vm.product._id=product._id;
-                        _.each($scope.vm.product.skus, function (element) {
-                            _.extend(element, {'tempSuitSellingPriceCn': element.suitSellingPriceCn}, {'tempSuitPreferentialPrice': element.suitPreferentialPrice})
-                        });
+                            "cartId": cartId,
+                            "numID": numID
+                        }).then(function (resp) {
+                        if(resp.data.product != null) {
+                            $scope.vm.product = resp.data.product;
+                            $scope.vm.product.cartId = $scope.vm.product.cartId + "";
+                            $scope.vm.product._id = $scope.vm.copyOne._id;
+                            // 记录此套装中sku
+                            var skuCodes = new Array();
+                            _.each($scope.vm.product.skus, function (skuBean, index, list) {
+                                _.each(skuBean.skuItems, function (skuItem, index, list) {
+                                    skuCodes.push(skuItem.skuCode);
+                                });
+                            });
+                            var parameter = {};
+                            parameter.skuCodes = skuCodes;
+                            parameter.cartId = $scope.vm.product.cartId;
+                            combinedProductService.batchGetSkuDetail(parameter).then(function (response) {
+                                var skuItems = response.data == null ? [] : response.data;
+                                _.each($scope.vm.product.skus, function (skuBean, index, list) {
+                                    _.each(skuBean.skuItems, function (skuItem, index, list) {
+                                        var targetSkuItem = _.find(skuItems, function (target) {
+                                            return target.skuCode == skuItem.skuCode;
+                                        });
+                                        if (!targetSkuItem) {
+                                            alert("SKU:" + skuItem.skuCode + "查询不到具体信息！");
+                                        }else {
+                                            skuItem.code = targetSkuItem.code;
+                                            skuItem.productName = targetSkuItem.productName;
+                                            skuItem.sellingPriceCn = targetSkuItem.sellingPriceCn;
+                                        }
+                                    });
+                                    dynamicSkuPrice(skuBean);
+                                });
+                            });
+                        } else {
+                            alert("获取不到组合商品信息！");
+                        }
                     });
                 };
 
+                function dynamicSkuPrice(sku) {
+                    // 动态统计套装组合SKU【组合套装优惠售价 合计】
+                    var tempSuitPreferentialPrice = 0,
+                        tempSuitSellingPriceCn = 0;
+                    /*if (!sku || !sku.skuItems || sku.skuItems.length == 0) {*/
+                    if (sku && sku.skuItems && sku.skuItems.length > 0) {
+                        _.each(sku.skuItems, function (skuItem) {
+                            tempSuitPreferentialPrice += skuItem.preferentialPrice;
+                            tempSuitSellingPriceCn += skuItem.sellingPriceCn;
+                        });
+                    }
+                    sku.warn = sku.suitPreferentialPrice != tempSuitPreferentialPrice;
+                    sku.tempSuitPreferentialPrice = tempSuitPreferentialPrice;
+                    sku.tempSuitSellingPriceCn = tempSuitSellingPriceCn;
+                    // 每次sku.warn改变后，判断所有SKU的warn值，来决定提交按钮是否disabled
+                    var flag = false;
+                    _.each($scope.vm.product.skus, function (skuBean) {
+                        flag = flag || sku.warn;
+                    });
+                    $scope.equalFlag = flag;
+                }
+
+                // 新增实际SKU
+                $scope.copySkuItem = function (skuItems) {
+                    if (!skuItems || skuItems.length == 0) {
+                        return;
+                    }
+                    skuItems.push({});
+                };
+                // 删减实际SKU
+                $scope.deleteSkuItem = function (sku, index) {
+                    if (!sku || !sku.skuItems || sku.skuItems.length <= 1) {
+                        return;
+                    }
+                    sku.skuItems.splice(index, 1);
+                    dynamicSkuPrice(sku);
+                };
+
+                // 根据skuCode获取SKU详情
                 $scope.getSkuDetail = function (sku, skuItem) {
                     if (!skuItem || !skuItem.skuCode) {
                         return;
                     }
                     combinedProductService.getSkuDetail({
-                        "skuCode": skuItem.skuCode,
-                        "cartId": $scope.vm.product.cartId
-                    }).then(function (resp) {
-                        _.extend(skuItem, resp.data.skuItem == null ? {} : resp.data.skuItem);
-                        // 统计组合套装中国最终售价
-                        dynamicSkuPrice(sku);
+                            "skuCode": skuItem.skuCode,
+                            "cartId": $scope.vm.product.cartId
+                        }).then(function (resp) {
+                        if(resp.data.skuItem == null) {
+                            alert("查询不到SKU信息！");
+                        }else {
+                            _.extend(skuItem, resp.data.skuItem);
+                            dynamicSkuPrice(sku);
+                        }
                     });
                 };
 
-                $scope.copySkuItem = function (skuItems) {
-                    if (!skuItems || skuItems.length == 0)
-                        return;
-
-                    skuItems.push({});
-                };
-
-                $scope.deleteSkuItem = function (sku, index) {
-                    if (!sku || !sku.skuItems || sku.skuItems.length <= 1) {
-                        return;
-                    }
-
-                    sku.skuItems.splice(index, 1);
-                    dynamicSkuPrice(sku);
-                };
-
-                function dynamicSkuPrice(sku) {
-                    // 动态统计套装组合SKU【组合套装优惠售价 合计】
-                    var tempSuitPreferentialPrice = 0;
-
-                    if (!sku || !sku.skuItems || sku.skuItems.length == 0) {
-                        tempSuitPreferentialPrice = 0;
-                    } else {
-                        _.each(sku.skuItems, function (element) {
-                            tempSuitPreferentialPrice += element.preferentialPrice;
-                        });
-                    }
-                    sku.warn = sku.suitPreferentialPrice != tempSuitPreferentialPrice;
-                    $scope.equalFlag = sku.warn;
-                    sku.tempSuitPreferentialPrice = tempSuitPreferentialPrice;
-                    // 动态统计套装组合SKU【组合套装中国最终售价 合计】
-                    var suitSellingPriceCn = 0;
-                    _.each(sku.skuItems, function (item) {
-                        suitSellingPriceCn += item.sellingPriceCn;
-                    });
-                    sku.tempSuitSkuCode = suitSellingPriceCn;
-
-                }
-
-                $scope.dynamicPrice = function (sku) {
+                // 改变实际SKU价格
+                $scope.changeSkuItemPrice = function (sku) {
                     dynamicSkuPrice(sku);
                 };
 

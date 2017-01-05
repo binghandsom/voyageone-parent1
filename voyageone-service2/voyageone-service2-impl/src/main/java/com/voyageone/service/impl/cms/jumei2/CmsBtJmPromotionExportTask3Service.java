@@ -1,8 +1,12 @@
 package com.voyageone.service.impl.cms.jumei2;
 
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.ExceptionUtil;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.*;
 import com.voyageone.common.util.excel.ExcelColumn;
 import com.voyageone.common.util.excel.ExcelException;
 import com.voyageone.common.util.excel.ExportExcelInfo;
@@ -12,7 +16,12 @@ import com.voyageone.service.daoext.cms.CmsBtJmProductImagesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionExportTaskDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionExportMQMessageBody;
+import com.voyageone.components.rabbitmq.service.MqSenderService;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionProductService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel;
+import com.voyageone.service.model.util.MapModel;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +30,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by dell on 2016/3/18.
@@ -37,6 +47,10 @@ public class CmsBtJmPromotionExportTask3Service {
     CmsBtJmPromotionProductDaoExt daoExtCmsBtJmPromotionProduct;
     @Autowired
     CmsBtJmProductImagesDaoExt daoExtCmsBtJmProductImages;
+    @Autowired
+    CmsBtJmPromotionProductService cmsBtJmPromotionProductService;
+    @Autowired
+    CmsMqSenderService cmsMqSenderService;
 
     public CmsBtJmPromotionExportTaskModel get(int id) {
         return dao.select(id);
@@ -45,8 +59,13 @@ public class CmsBtJmPromotionExportTask3Service {
     public List<CmsBtJmPromotionExportTaskModel> getByPromotionId(int promotionId) {
         return daoExt.selectByPromotionId(promotionId);
     }
+
     public void export(int JmBtPromotionExportTaskId, String exportPath) throws IOException, ExcelException {
         CmsBtJmPromotionExportTaskModel model = dao.select(JmBtPromotionExportTaskId);
+        Parameter parameter = null;
+        if(!StringUtil.isEmpty(model.getParameter())){
+            parameter = JacksonUtil.json2Bean(model.getParameter(),Parameter.class);
+        }
         String fileName = "Product" + DateTimeUtil.format(new Date(), "yyyyMMddHHmmssSSS") + ".xls";
         //"/usr/JMExport/"
         String filePath = exportPath + "/" + fileName;
@@ -54,20 +73,35 @@ public class CmsBtJmPromotionExportTask3Service {
         //int TemplateType = model.getTemplateType();
         try {
             dao.update(model);
-            List<Map<String, Object>> listProduct = daoExtCmsBtJmPromotionProduct.selectExportListByPromotionId(model.getCmsBtJmPromotionId());
-            List<Map<String, Object>> listSku = daoExtCmsBtJmPromotionSku.selectExportListByPromotionId(model.getCmsBtJmPromotionId());
+            List<String> codes = null;
+            if(parameter != null){
+                codes = getSelCodes(parameter);
+            }
+            if(ListUtils.isNull(codes)){
+                throw new BusinessException("没有商品要导出");
+            }
+            List<Map<String, Object>> listProduct = daoExtCmsBtJmPromotionProduct.selectExportListByPromotionId(model.getCmsBtJmPromotionId(), codes);
+            List<Map<String, Object>> listSku = daoExtCmsBtJmPromotionSku.selectExportListByPromotionId(model.getCmsBtJmPromotionId(), codes);
+
             export(filePath, listProduct, listSku, false);
             model.setSuccessRows(listProduct.size());
             if (listProduct.isEmpty()) {
                 model.setErrorMsg("未查到商品");
             }
+            model.setIsExport(true);
             model.setFileName(fileName);
-        } catch (Exception ex) {
+        }catch (BusinessException ex){
+            model.setErrorMsg(ex.getMessage());
+            model.setErrorCode(1);
+            model.setIsExport(false);
+            ex.printStackTrace();
+        }
+        catch (Exception ex) {
             model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
             model.setErrorCode(1);
             ex.printStackTrace();
+            model.setIsExport(false);
         }
-        model.setIsExport(true);
         model.setEndTime(DateTimeUtilBeijing.getCurrentBeiJingDate());
         dao.update(model);
     }
@@ -115,7 +149,7 @@ public class CmsBtJmPromotionExportTask3Service {
         info.addExcelColumn("尺码类别", "sizeType", "cms_bt_jm_product");
         info.addExcelColumn("使用方法_产品介绍", "productDesEn", "cms_bt_jm_product");
         info.addExcelColumn("使用方法_产品介绍", "productDesCn", "cms_bt_jm_product");
-        info.addExcelColumn("聚美MallId","jumeiMallId","cms_bt_jm_product");
+        info.addExcelColumn("聚美MallId", "jumeiMallId", "cms_bt_jm_product");
         info.addExcelColumn("聚美HID", "jmHashId", "cms_bt_jm_product");
         if (isErrorColumn) {
             info.addExcelColumn(info.getErrorColumn());
@@ -157,7 +191,7 @@ public class CmsBtJmPromotionExportTask3Service {
         info.addExcelColumn("团购价格", "dealPrice", "cms_bt_jm_promotion_sku");
         info.addExcelColumn("市场价格", "marketPrice", "cms_bt_jm_promotion_sku");
         info.addExcelColumn("聚美HID", "jmHashId", "cms_bt_jm_product");
-        info.addExcelColumn("聚美MallId","jumeiMallId","cms_bt_jm_product");
+        info.addExcelColumn("聚美MallId", "jumeiMallId", "cms_bt_jm_product");
         info.addExcelColumn("聚美SKU", "jmSkuNo", "cms_bt_jm_sku");
         if (isErrorColumn) {
             info.addExcelColumn(info.getErrorColumn());
@@ -175,6 +209,47 @@ public class CmsBtJmPromotionExportTask3Service {
         model.setFileName("");
         model.setFilePath("");
         dao.insert(model);
+    }
+
+    /**
+     *
+     * @param jmPromotionExportMQMessageBody
+     * @throws MQMessageRuleException
+     */
+    public void sendMessage(JmPromotionExportMQMessageBody jmPromotionExportMQMessageBody) throws MQMessageRuleException {
+        cmsMqSenderService.sendMessage(jmPromotionExportMQMessageBody);
+    }
+
+    private List<String> getSelCodes(Parameter parameter){
+        if(!ListUtils.isNull(parameter.getSelCodeList())){
+            return parameter.getSelCodeList();
+        }
+        if(parameter.getSearchInfo() != null){
+            List<MapModel> mapModels = cmsBtJmPromotionProductService.getByWhere(parameter.getSearchInfo());
+            return mapModels.stream().map(mapModel -> (String)mapModel.get("productCode")).collect(Collectors.toList());
+        }
+        return null;
+    }
+
+    public static class Parameter{
+        List<String> selCodeList;
+        Map<String, Object> searchInfo;
+
+        public List<String> getSelCodeList() {
+            return selCodeList;
+        }
+
+        public void setSelCodeList(List<String> selCodeList) {
+            this.selCodeList = selCodeList;
+        }
+
+        public Map<String, Object> getSearchInfo() {
+            return searchInfo;
+        }
+
+        public void setSearchInfo(Map<String, Object> searchInfo) {
+            this.searchInfo = searchInfo;
+        }
     }
 
 }

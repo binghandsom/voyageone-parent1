@@ -125,6 +125,10 @@
         <!-- Wmf 导入 cms2 -->
         <task:scheduled ref="CmsWmfAnalysisJob" method="run" cron="40 * 0/1 * * ?"/>
 
+        <!-- Wmf价格 导入 cms2 -->
+        <task:scheduled ref="WmfPriceAnalysisJob" method="run" cron="30 * 0/1 * * ?"/>
+
+
         <!-- 产品数据上新到USJoi -->
         <task:scheduled ref="CmsUploadProductToUSJoiJob" method="run" cron="20 0/1 * * * ?"/>
 

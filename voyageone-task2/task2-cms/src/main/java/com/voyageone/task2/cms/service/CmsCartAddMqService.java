@@ -9,7 +9,7 @@ import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -26,7 +26,7 @@ import java.util.Map;
  * Created by james on 2016/12/9.
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_CartAddJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_CartAddJob)
 public class CmsCartAddMqService extends BaseMQCmsService {
 
     private final ProductService productService;
