@@ -9,6 +9,9 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 记录上下架操作历史 Job
  *
@@ -24,6 +27,13 @@ public class CmsPlatformActiveLogMQJob extends TBaseMQCmsService<PlatformActiveL
 
     @Override
     public void onStartup(PlatformActiveLogMQMessageBody messageBody) throws Exception {
-        cmsPlatformActiveLogService.onStartup(messageBody.getParams());
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("channelId", messageBody.getChannelId());
+        params.put("cartIdList", messageBody.getChannelId());
+        params.put("activeStatus", messageBody.getActiveStatus());
+        params.put("creater", messageBody.getUserName());
+        params.put("comment", messageBody.getComment());
+        params.put("codeList", messageBody.getProductCodes());
+        cmsPlatformActiveLogService.onStartup(params);
     }
 }

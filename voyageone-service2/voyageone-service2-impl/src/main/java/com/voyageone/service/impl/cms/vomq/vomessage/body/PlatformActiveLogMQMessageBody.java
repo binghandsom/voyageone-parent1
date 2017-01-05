@@ -27,7 +27,6 @@ public class PlatformActiveLogMQMessageBody extends BaseMQMessageBody {
     private String activeStatus;
     private List<String> productCodes;
     private String comment;
-    private Map<String, Object> params;
 
     @Override
     public void check() throws MQMessageRuleException {
@@ -46,16 +45,9 @@ public class PlatformActiveLogMQMessageBody extends BaseMQMessageBody {
         if (StringUtils.isBlank(userName)) {
             throw new MQMessageRuleException("上下架PlatformActiveLogMQ参数userName为空.");
         }
-        if (params == null) {
-            params = new HashMap<String, Object>();
+        if (StringUtils.isBlank(getSender())) {
+            throw new MQMessageRuleException("sender(发送者)不能为空");
         }
-        params.clear();
-        params.put("channelId", channelId);
-        params.put("cartIdList", cartList);
-        params.put("activeStatus", activeStatus);
-        params.put("creater", userName);
-        params.put("comment", comment);
-        params.put("codeList", productCodes);
     }
 
     public String getChannelId() {
@@ -106,11 +98,4 @@ public class PlatformActiveLogMQMessageBody extends BaseMQMessageBody {
         this.comment = comment;
     }
 
-    public Map<String, Object> getParams() {
-        return params;
-    }
-
-    public void setParams(Map<String, Object> params) {
-        this.params = params;
-    }
 }

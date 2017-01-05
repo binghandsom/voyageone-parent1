@@ -490,6 +490,7 @@ public class CmsFieldEditService extends BaseViewService {
         mqMessageBody.setCartList(cartList);
         mqMessageBody.setActiveStatus(statusVal.name());
         mqMessageBody.setUserName(userInfo.getUserName());
+        mqMessageBody.setSender(userInfo.getUserName());
         if (cartId == null || cartId == 0) {
             mqMessageBody.setComment("高级检索 批量上下架(全店铺操作)");
         } else {
