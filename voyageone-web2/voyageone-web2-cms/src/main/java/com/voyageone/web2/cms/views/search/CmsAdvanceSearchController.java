@@ -285,6 +285,8 @@ public class CmsAdvanceSearchController extends CmsController {
             fileName = "skuList_";
         } else if (fileType == 4) {
             fileName = "publishJMSkuList_";
+        } else if (fileType == 5) {
+            fileName = "filingList_";
         }
         if (fileName == null) {
             resultBean.put("ecd", "4002");

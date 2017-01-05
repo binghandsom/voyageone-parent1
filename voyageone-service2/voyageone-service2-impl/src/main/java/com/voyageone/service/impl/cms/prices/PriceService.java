@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.cms.prices;
 
-import com.taobao.api.domain.UpdateSkuPrice;
+import com.taobao.api.request.TmallItemPriceUpdateRequest;
 import com.taobao.api.response.TmallItemPriceUpdateResponse;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
@@ -981,9 +981,9 @@ public class PriceService extends BaseService {
 
     private void   tmUpdatePriceBatch(ShopBean shopBean,List<BaseMongoMap<String, Object>> skuList,String priceConfigValue, String updType,String pNumIId) throws Exception {
         Double maxPrice = null;
-        List<UpdateSkuPrice> list2 = new ArrayList<>(skuList.size());
+        List<TmallItemPriceUpdateRequest.UpdateSkuPrice> list2 = new ArrayList<>(skuList.size());
         for (BaseMongoMap skuObj : skuList) {
-            UpdateSkuPrice obj3 = new UpdateSkuPrice();
+            TmallItemPriceUpdateRequest.UpdateSkuPrice obj3 = new TmallItemPriceUpdateRequest.UpdateSkuPrice();
             obj3.setOuterId((String) skuObj.get("skuCode"));
             Double priceSale = null;
             if (priceConfigValue == null) {
@@ -1094,11 +1094,11 @@ public class PriceService extends BaseService {
     }
     //京东更新商品价格
     private void   jdUpdatePriceBatch(ShopBean shopBean,List<BaseMongoMap<String, Object>> skuList,String priceConfigValue, String updType) throws Exception {
-        List<UpdateSkuPrice> list = new ArrayList<>(skuList.size());
-        UpdateSkuPrice updateData = null;
+        List<TmallItemPriceUpdateRequest.UpdateSkuPrice> list = new ArrayList<>(skuList.size());
+        TmallItemPriceUpdateRequest.UpdateSkuPrice updateData = null;
         Double maxPrice = null;
         for (BaseMongoMap skuObj : skuList) {
-            updateData = new UpdateSkuPrice();
+            updateData = new TmallItemPriceUpdateRequest.UpdateSkuPrice();
             updateData.setOuterId((String) skuObj.get("skuCode"));
             Double priceSale = null;
             if (priceConfigValue == null) {

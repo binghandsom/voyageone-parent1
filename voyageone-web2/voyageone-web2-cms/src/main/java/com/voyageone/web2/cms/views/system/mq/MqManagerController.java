@@ -1,11 +1,11 @@
 package com.voyageone.web2.cms.views.system.mq;
 
-import com.voyageone.common.mq.config.MQConfigUtils;
+import com.voyageone.components.rabbitmq.utils.MQConfigUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.AnnotationProcessorByIP;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.components.rabbitmq.config.AnnotationProcessorByIP;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * MqManagerController
@@ -44,9 +43,9 @@ public class MqManagerController extends CmsController {
     @RequestMapping(CmsUrlConstants.SYSTEM.MQ.INIT)
     public AjaxResponse init(HttpServletRequest request) throws Exception {
         List<String> result = new ArrayList<>();
-        Field[] fields = MqRoutingKey.class.getDeclaredFields();
+        Field[] fields = CmsMqRoutingKey.class.getDeclaredFields();
         for (Field field : fields) {
-            result.add((String) field.get(MqRoutingKey.class));
+            result.add((String) field.get(CmsMqRoutingKey.class));
         }
         return success(result);
     }

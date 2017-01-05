@@ -682,6 +682,7 @@ public interface CmsUrlConstants {
             String EDIT = "edit";
             String ON_OFF_SHELVES = "onOffShelves";
             String GET_OPERATE_LOGS = "getOperateLogs";
+            String BATCH_GET_SKU_DETAIL = "batchGetSkuDetail";
         }
     }
     interface ProductTop {
@@ -852,6 +853,16 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/mt/channel/config";
             String Search = "search";
             String saveList="saveList";
+        }
+        interface FEED_CONFIG {
+            String ROOT = "/cms/channel/feedConfig";
+            String SEARCH = "search";
+            String SAVE ="save";
+            String EXPORT ="export";
+            String IMPORT ="import";
+            String DELETE = "delete";
+            String SAVE_FEED ="saveFeed";
+            String CREATE_FEED ="createFeed";
         }
     }
 

@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.com.mq;
 
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,7 +58,7 @@ public class MqSenderTest extends TestCase {
             Map<String, Object> message = new HashMap<>();
             message.put("id", 123);
             message.put("no", i);
-            sender.sendMessage(MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob, message);
+            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob, message);
             Thread.sleep(1000);
         }
     }

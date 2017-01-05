@@ -439,6 +439,12 @@ define(function () {
             "templateUrl": "views/channel/channel-config-set/index.tpl.html",
             "controllerUrl": "modules/cms/views/channel/channel-config-set/index.ctl",
             "controller": "channelConfigSet as ctrl"
+        },
+        "feed_config_set":{
+            "hash": "/feed/feed_config_set",
+            "templateUrl": "views/channel/feedConfigSet/index.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/feedConfigSet/index.ctl",
+            "controller": "feedConfigSet as ctrl"
         }
     };
 });

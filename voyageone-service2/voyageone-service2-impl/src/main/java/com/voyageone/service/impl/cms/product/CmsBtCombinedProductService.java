@@ -7,8 +7,10 @@ import com.jd.open.api.sdk.response.ware.WareUpdateDelistingResponse;
 import com.jd.open.api.sdk.response.ware.WareUpdateListingResponse;
 import com.mongodb.WriteResult;
 import com.taobao.api.ApiException;
+import com.taobao.api.internal.parser.json.ObjectJsonParser;
 import com.taobao.api.response.ItemUpdateDelistingResponse;
 import com.taobao.api.response.ItemUpdateListingResponse;
+import com.taobao.api.response.TmallItemCombineGetResponse;
 import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
@@ -25,8 +27,10 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.utils.JsonUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.jd.service.JdSaleService;
 import com.voyageone.components.jd.service.JdWareService;
 import com.voyageone.components.jumei.reponse.HtMallStatusUpdateBatchResponse;
@@ -39,6 +43,7 @@ import com.voyageone.service.bean.cms.product.CmsBtCombinedProductStatus;
 import com.voyageone.service.bean.cms.product.CombinedSkuInfoBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtCombinedProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtCombinedProductLogDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.fields.cms.CmsBtShelvesProductModelStatus;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.enums.PlatformType;
@@ -49,6 +54,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtCombinedProductModel_S
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 
+import org.apache.avro.data.Json;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,8 +63,10 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by rex.wu on 2016/11/28.
@@ -85,6 +93,8 @@ public class CmsBtCombinedProductService extends BaseService {
     private JumeiSaleService jmSaleService;
     @Autowired
     private CmsBtCombinedProductLogDao cmsBtCombinedProductLogDao;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
 
     /**
      * 获取平台组合套装商品数据
@@ -109,18 +119,23 @@ public class CmsBtCombinedProductService extends BaseService {
             productBean.setChannelId(channelId);
             productBean.setNumID(numId);
             if (shopBean.getPlatform_id().equalsIgnoreCase(PlatformType.TMALL.getPlatformId().toString())) {
-                try{
+                try {
                     TmallItemUpdateSchemaGetResponse itemUpdateSchemaGetResponse = tbProductService.doGetWareInfoItem(numId, shopBean);
-                    if (null != itemUpdateSchemaGetResponse && itemUpdateSchemaGetResponse.isSuccess()) {
+                    if (itemUpdateSchemaGetResponse == null || !itemUpdateSchemaGetResponse.isSuccess()) {
+                        $info("threadNo:" + threadNo + " numiid:" + numId +" 取得异常 response:" + itemUpdateSchemaGetResponse == null ? "null" : itemUpdateSchemaGetResponse.getBody());
+                        throw new BusinessException("获取天猫商品数据出错了，请先确认商品在平台上是否存在或已删除，然后确认平台接口是否畅通！");
+                    } else {
                         Map<String, Field> fieldMap = SchemaReader.readXmlForMap(itemUpdateSchemaGetResponse.getUpdateItemResult());
                         InputField titleField = (InputField) fieldMap.get("title");
-                        productBean.setProductName(titleField.getDefaultValue()); // 组合商品名称
+                        productBean.setProductName(titleField.getDefaultValue()); // 组合套装商品名称
                         MultiComplexField skuField = (MultiComplexField) fieldMap.get("sku");
                         // 平台状态
                         SingleCheckField itemStatus = (SingleCheckField) fieldMap.get("item_status");
                         Integer platformStatus = "0".equalsIgnoreCase(itemStatus.getDefaultValue())? 1 : 0;
                         productBean.setPlatformStatus(platformStatus);
+                        boolean oneSku = false;
                         if (null == skuField || null == skuField.getDefaultComplexValues() || skuField.getDefaultComplexValues().size() == 0) {
+                            oneSku = true;
                             InputField outerIdField = (InputField) fieldMap.get("outer_id");
                             InputField priceField = (InputField) fieldMap.get("price");
                             String outerId = outerIdField.getDefaultValue();
@@ -128,25 +143,53 @@ public class CmsBtCombinedProductService extends BaseService {
                             CmsBtCombinedProductModel_Sku skuBean = new CmsBtCombinedProductModel_Sku();
                             skuBean.setSuitSkuCode(outerId);
                             skuBean.setSuitPreferentialPrice(Double.valueOf(price));
-                            skuBean.getSkuItems().add(new CmsBtCombinedProductModel_Sku_Item()); // 在页面初始化一个空的SKU ITEM
                             productBean.getSkus().add(skuBean);
                         } else {
+                            oneSku = false;
                             skuField.getDefaultComplexValues().forEach(skuValue -> {
                                 CmsBtCombinedProductModel_Sku skuBean = new CmsBtCombinedProductModel_Sku();
+                                skuBean.setSkuId(skuValue.getInputFieldValue("sku_id"));
                                 skuBean.setSuitSkuCode(skuValue.getInputFieldValue("sku_outerId"));
                                 skuBean.setSuitPreferentialPrice(Double.parseDouble(skuValue.getInputFieldValue("sku_price")));
                                 productBean.getSkus().add(skuBean);
                             });
                         }
-                        this.compareSuitSkuWithLocal(productBean, local);
-                        return productBean;
-                    }else{
-                        $info("threadNo:" + threadNo + " numiid:" + numId +" 取得异常");
-                        throw new BusinessException("获取天猫商品数据出错了！");
+
+                        // 再去调tmall.item.combine.get接口
+                        TmallItemCombineGetResponse resp = tbProductService.getTmallTtemCombine(numId, shopBean);
+                        if (resp == null || !resp.isSuccess()) {
+                            $info("threadNo:" + threadNo + " numiid:" + numId +" 取得异常 response:" + resp == null ? "null" : resp.getBody());
+                            throw new BusinessException("获取天猫组合商品数据出错了！");
+                        } else {
+                            if (CollectionUtils.isEmpty(resp.getResults()) || StringUtils.isBlank(resp.getResults().get(0))) {
+                                if (local) {
+                                    productBean.getSkus().forEach(skuBean -> {
+                                        if (skuBean.getSkuItems().size() < 1) {
+                                            // 初始化一个空的真实SKU对象，以便在页面显示一个真实SKU输入框组
+                                            skuBean.getSkuItems().add(new CmsBtCombinedProductModel_Sku_Item());
+                                        }
+                                    });
+                                }
+                            } else {
+                                String json = resp.getResults().get(0);
+                                if (json.startsWith("\"")) {
+                                    json = json.substring(1);
+                                }
+                                if (json.endsWith("\"")) {
+                                    json = json.substring(0, json.length() -1);
+                                }
+                                json = json.replaceAll("\\\\\"", "\"");
+                                TmallItemCombine tmallItemCombine = JsonUtil.jsonToBean(json, TmallItemCombine.class);
+                                this.combineTmallProductSku(productBean.getSkus(), tmallItemCombine, oneSku);
+                            }
+                            return productBean;
+                        }
                     }
-                }catch (ApiException | TopSchemaException e) {
+                }catch (Exception e) {
                     e.printStackTrace();
-                    throw new BusinessException("获取天猫商品数据出错了！");
+                    if (e instanceof BusinessException) {
+                        throw new BusinessException(e.getMessage());
+                    }
                 }
             } else if (shopBean.getPlatform_id().equalsIgnoreCase(PlatformType.JD.getPlatformId().toString())) {
                 try {
@@ -175,10 +218,114 @@ public class CmsBtCombinedProductService extends BaseService {
                     throw new BusinessException("获取京东商品数据出错了！");
                 }
             }
-
         }
         return null;
     }
+
+    /**
+     * 将天猫商品数据接口和天猫组合商品数据接口返回数据合起来
+     * @param skus
+     * @param tmallItemCombine
+     * @param oneSku 该组合商品数据是否只有一个虚拟SKU
+     */
+    private void combineTmallProductSku(List<CmsBtCombinedProductModel_Sku> skus, TmallItemCombine tmallItemCombine, boolean oneSku) throws CloneNotSupportedException {
+        if (CollectionUtils.isNotEmpty(skus) && tmallItemCombine != null && CollectionUtils.isNotEmpty(tmallItemCombine.getSkuList())) {
+            if (!oneSku) {
+                for (CmsBtCombinedProductModel_Sku skuBean:skus) {
+                    for (TmallItemCombineSku tmallItemCombineSku:tmallItemCombine.getSkuList()) {
+                        if (skuBean.getSkuId().equals(tmallItemCombineSku.getSkuId())) {
+                            for (TmallItemCombineSubSku subSku:tmallItemCombineSku.getSubSkuList()) {
+                                CmsBtCombinedProductModel_Sku_Item skuItem = new CmsBtCombinedProductModel_Sku_Item();
+                                skuItem.setSkuCode(subSku.getOuterId());
+                                skuItem.setPreferentialPrice(Double.valueOf(subSku.getPrice()));
+                                // 循环subItemList
+                                String ratioVal = "";
+                                for (TmallItemCombinedSubItem subItem:tmallItemCombine.getSubItemList()) {
+                                    if (subSku.getOuterId().equals(subItem.getOuterId()) && subSku.getSubItemId().equalsIgnoreCase(subItem.getSubItemId())) {
+                                        //skuItem.setProductName(subItem.getTitle()); // 真实SKU商品名称
+                                        ratioVal = subItem.getRatio();
+                                        break;
+                                    }
+                                }
+                                int ratio = 0;
+                                if (StringUtils.isNumeric(ratioVal)) {
+                                    ratio = Integer.parseInt(ratioVal);
+                                }
+                                for (int i = 0; i < ratio; i++) {
+                                    skuBean.getSkuItems().add((CmsBtCombinedProductModel_Sku_Item)skuItem.clone());
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            } else {
+                CmsBtCombinedProductModel_Sku skuBean = skus.get(0);
+                TmallItemCombineSku tmallItemCombineSku = tmallItemCombine.getSkuList().get(0);
+                for (TmallItemCombineSubSku subSku:tmallItemCombineSku.getSubSkuList()) {
+                    CmsBtCombinedProductModel_Sku_Item skuItem = new CmsBtCombinedProductModel_Sku_Item();
+                    skuItem.setSkuCode(subSku.getOuterId()); // 真实skuCode
+                    skuItem.setPreferentialPrice(Double.valueOf(subSku.getPrice()));
+                    // 循环subItemList
+                    String ratioVal = "";
+                    for (TmallItemCombinedSubItem subItem:tmallItemCombine.getSubItemList()) {
+                        if (subSku.getOuterId().equals(subItem.getOuterId()) && subSku.getSubItemId().equalsIgnoreCase(subItem.getSubItemId())) {
+                            //skuItem.setProductName(subItem.getTitle());
+                            ratioVal = subItem.getRatio();
+                            break;
+                        }
+                    }
+                    int ratio = 0;
+                    if (StringUtils.isNumeric(ratioVal)) {
+                        ratio = Integer.parseInt(ratioVal);
+                    }
+                    for (int i = 0; i < ratio; i++) {
+                        skuBean.getSkuItems().add((CmsBtCombinedProductModel_Sku_Item)skuItem.clone());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 组合套装商品->批量查询真实SKU详情
+     * @param skuCodes
+     * @param channelId
+     * @param cartId
+     * @return
+     */
+    public List<CmsBtCombinedProductModel_Sku_Item> batchGetSkuDetail(Set<String> skuCodes, String channelId, Integer cartId) {
+        List<CmsBtCombinedProductModel_Sku_Item> skuDetails = null;
+        if (CollectionUtils.isNotEmpty(skuCodes) && StringUtils.isNotBlank(channelId) && cartId != null) {
+            JongoQuery queryObj = new JongoQuery();
+            queryObj.addQuery("{'platforms.P#.skus.skuCode':{$in:#}}");
+            queryObj.setParameters(cartId, skuCodes.toArray());
+            List<CmsBtProductModel> products = cmsBtProductDao.select(queryObj, channelId);
+            if (CollectionUtils.isNotEmpty(products)) {
+                skuDetails = new ArrayList<>();
+                for (CmsBtProductModel product:products) {
+                    CmsBtProductModel_Platform_Cart platFormCart = product.getPlatform(cartId);
+                    List<BaseMongoMap<String, Object>> skus = null;
+                    if (platFormCart != null && CollectionUtils.isNotEmpty(skus = platFormCart.getSkus())) {
+                        for (BaseMongoMap<String, Object> skuMap:skus) {
+                            String skuCode = skuMap.getStringAttribute("skuCode");
+                            if (skuCodes.contains(skuCode)) {
+                                CmsBtCombinedProductModel_Sku_Item skuItem = new CmsBtCombinedProductModel_Sku_Item();
+                                skuItem.setCode(product.getCommonNotNull().getFieldsNotNull().getCode());
+                                skuItem.setSkuCode(skuCode);
+                                skuItem.setProductName(product.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn());
+                                skuItem.setSkuCode(skuCode);
+                                skuItem.setSellingPriceCn(skuMap.getDoubleAttribute("priceSale"));
+                                skuDetails.add(skuItem);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return skuDetails;
+    }
+
 
     private void compareSuitSkuWithLocal(CmsBtCombinedProductModel product, boolean local) {
         if (product != null && StringUtils.isNotBlank(product.getNumID()) && StringUtils.isNotBlank(product.getChannelId()) && product.getCartId() != null) {
@@ -208,29 +355,39 @@ public class CmsBtCombinedProductService extends BaseService {
 
     }
 
+    /**
+     * 根据单个skuCode获取SKU详情
+     * @param skuCode
+     * @param channelId
+     * @param cartId
+     * @return
+     */
     public CmsBtCombinedProductModel_Sku_Item getSkuDetail (String skuCode, String channelId, Integer cartId) {
         CmsBtCombinedProductModel_Sku_Item skuItem = null;
         CmsBtProductModel product = productService.getProductBySku(channelId, skuCode);
         CmsBtProductModel_Platform_Cart cart = null;
         List<BaseMongoMap<String, Object>> skus = null;
-        if (product != null && (cart = product.getPlatform(cartId)) != null &&
-                CollectionUtils.isNotEmpty(skus = cart.getSkus())) {
+        if (product != null && (cart = product.getPlatform(cartId)) != null && CollectionUtils.isNotEmpty(skus = cart.getSkus())) {
             for (BaseMongoMap<String, Object> sku:skus) {
                 if (skuCode.equals(sku.getStringAttribute("skuCode"))) {
                     skuItem = new CmsBtCombinedProductModel_Sku_Item();
                     skuItem.setProductName(product.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn());
+                    skuItem.setCode(product.getCommonNotNull().getFieldsNotNull().getCode());
                     skuItem.setSkuCode(skuCode);
                     skuItem.setSellingPriceCn(sku.getDoubleAttribute("priceSale"));
                     break;
                 }
             }
         }
-        if (skuItem == null) {
-            throw new BusinessException("查询不到SKU信息！");
-        }
         return skuItem;
     }
 
+    /**
+     * 新增组合商品
+     * @param product
+     * @param channelId
+     * @param user
+     */
     public void addCombinedProduct (CmsBtCombinedProductModel product, String channelId, String user) {
         // 校验输入值是否合法
         checkCombinedProducrtModel(product, channelId, ACTION_TYPE_ADD);
@@ -728,4 +885,195 @@ public class CmsBtCombinedProductService extends BaseService {
         }
         return null;
     }
+
+
+    /**
+     * 天猫组合商品信息
+     */
+    class TmallItemCombine {
+        private String categoryId;
+        private String itemId;
+        private Double price;
+        private Integer quantity;
+        private String title;
+        private List<TmallItemCombineSku> skuList = new ArrayList<>();
+        private List<TmallItemCombinedSubItem> subItemList = new ArrayList<>();
+
+        public TmallItemCombine() {
+        }
+
+        public String getCategoryId() {
+            return categoryId;
+        }
+
+        public void setCategoryId(String categoryId) {
+            this.categoryId = categoryId;
+        }
+
+        public String getItemId() {
+            return itemId;
+        }
+
+        public void setItemId(String itemId) {
+            this.itemId = itemId;
+        }
+
+        public Double getPrice() {
+            return price;
+        }
+
+        public void setPrice(Double price) {
+            this.price = price;
+        }
+
+        public Integer getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(Integer quantity) {
+            this.quantity = quantity;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public List<TmallItemCombineSku> getSkuList() {
+            return skuList;
+        }
+
+        public void setSkuList(List<TmallItemCombineSku> skuList) {
+            this.skuList = skuList;
+        }
+
+        public List<TmallItemCombinedSubItem> getSubItemList() {
+            return subItemList;
+        }
+
+        public void setSubItemList(List<TmallItemCombinedSubItem> subItemList) {
+            this.subItemList = subItemList;
+        }
+    }
+
+    class TmallItemCombineSku {
+        private String skuId;
+        private String skuTitle;
+        private String price;
+        private List<TmallItemCombineSubSku> subSkuList = new ArrayList<>();
+
+        public TmallItemCombineSku() {
+        }
+
+        public String getSkuId() {
+            return skuId;
+        }
+
+        public void setSkuId(String skuId) {
+            this.skuId = skuId;
+        }
+
+        public String getSkuTitle() {
+            return skuTitle;
+        }
+
+        public void setSkuTitle(String skuTitle) {
+            this.skuTitle = skuTitle;
+        }
+
+        public String getPrice() {
+            return price;
+        }
+
+        public void setPrice(String price) {
+            this.price = price;
+        }
+
+        public List<TmallItemCombineSubSku> getSubSkuList() {
+            return subSkuList;
+        }
+
+        public void setSubSkuList(List<TmallItemCombineSubSku> subSkuList) {
+            this.subSkuList = subSkuList;
+        }
+    }
+
+    class TmallItemCombineSubSku {
+        private String subItemId;
+        private String outerId;
+        private String price;
+
+        public TmallItemCombineSubSku() {
+        }
+
+        public String getPrice() {
+            return price;
+        }
+
+        public void setPrice(String price) {
+            this.price = price;
+        }
+
+        public String getSubItemId() {
+            return subItemId;
+        }
+
+        public void setSubItemId(String subItemId) {
+            this.subItemId = subItemId;
+        }
+
+        public String getOuterId() {
+            return outerId;
+        }
+
+        public void setOuterId(String outerId) {
+            this.outerId = outerId;
+        }
+    }
+
+    class TmallItemCombinedSubItem {
+        private String title;
+        private String subItemId;
+        private String outerId;
+        private String ratio;
+
+        public TmallItemCombinedSubItem() {
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getSubItemId() {
+            return subItemId;
+        }
+
+        public void setSubItemId(String subItemId) {
+            this.subItemId = subItemId;
+        }
+
+        public String getOuterId() {
+            return outerId;
+        }
+
+        public void setOuterId(String outerId) {
+            this.outerId = outerId;
+        }
+
+        public String getRatio() {
+            return ratio;
+        }
+
+        public void setRatio(String ratio) {
+            this.ratio = ratio;
+        }
+    }
+
 }

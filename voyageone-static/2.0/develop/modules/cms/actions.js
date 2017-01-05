@@ -159,7 +159,8 @@ define(function () {
                     "getCombinedProductDetail" : "getCombinedProductDetail",
                     "edit" : "edit",
                     "onOffShelves" : "onOffShelves",
-                    "getOperateLogs" : "getOperateLogs"
+                    "getOperateLogs" : "getOperateLogs",
+                    "batchGetSkuDetail" : "batchGetSkuDetail"
                 },
                 productTopService: {
                     "root": "/cms/producttop",
@@ -633,6 +634,18 @@ define(function () {
                         "root": "/cms/mt/channel/config",
                         "search": "search",
                         "saveList":"saveList"
+                    }
+                },
+                "FeedConfig":{
+                    "cmsFeedConfigService": {
+                        "root": "/cms/channel/feedConfig",
+                        "search": "search",
+                        "save":"save",
+                        "export":"export",
+                        "import":"import",
+                        "delete":"delete",
+                        "saveFeed":"saveFeed",
+                        "createFeed":"createFeed",
                     }
                 }
             },

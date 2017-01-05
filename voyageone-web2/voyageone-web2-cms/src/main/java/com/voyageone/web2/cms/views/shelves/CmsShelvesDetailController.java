@@ -12,7 +12,7 @@ import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
@@ -197,7 +197,7 @@ public class CmsShelvesDetailController extends CmsController {
     public AjaxResponse releaseImage(@RequestBody Integer shelvesId) {
         Map<String, Object> param = new HashMap<>();
         param.put(MqParameterKeys.key1, shelvesId);
-        mqSender.sendMessage(MqRoutingKey.CMS_BATCH_ShelvesImageUploadJob, param);
+        mqSender.sendMessage(CmsMqRoutingKey.CMS_BATCH_ShelvesImageUploadJob, param);
         return success(true);
     }
 

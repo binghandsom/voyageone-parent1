@@ -1,7 +1,5 @@
 package com.voyageone.web2.cms.views.product;
 
-import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
@@ -30,7 +28,10 @@ import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
-import com.voyageone.service.impl.cms.*;
+import com.voyageone.service.impl.cms.CategorySchemaService;
+import com.voyageone.service.impl.cms.CategoryTreeAllService;
+import com.voyageone.service.impl.cms.CommonSchemaService;
+import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
@@ -38,8 +39,8 @@ import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.impl.wms.InventoryCenterLogicService;
 import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
@@ -57,7 +58,6 @@ import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -515,7 +515,7 @@ public class CmsProductDetailService extends BaseViewService {
         requestMap.put("prodIds",prodCodes);
         requestMap.put("userName",userInfo.getUserName());
         requestMap.put("channelId",userInfo.getSelChannelId());
-        sender.sendMessage( MqRoutingKey.CMS_BATCH_CmsBatchSetMainCategoryJob, requestMap);
+        sender.sendMessage( CmsMqRoutingKey.CMS_BATCH_CmsBatchSetMainCategoryJob, requestMap);
 
 //        Integer cartIdObj = (Integer) requestMap.get("cartId");
 //        List<Integer> cartList = null;
@@ -595,7 +595,7 @@ public class CmsProductDetailService extends BaseViewService {
         List<List<String>> splitCodes = CommonUtil.splitList(prodCodes,100);
         splitCodes.forEach(codes -> {
             requestMap.put("codeList",codes);
-            sender.sendMessage( MqRoutingKey.CMS_BATCH_CmsBatchRefreshMainCategoryJob, requestMap);
+            sender.sendMessage( CmsMqRoutingKey.CMS_BATCH_CmsBatchRefreshMainCategoryJob, requestMap);
         });
 
         // 获取更新结果

@@ -9,7 +9,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +29,7 @@ import java.util.*;
  * Created by james on 2016/12/19.
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_CmsBatchSetMainCategoryJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_CmsBatchSetMainCategoryJob)
 public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
 
     final

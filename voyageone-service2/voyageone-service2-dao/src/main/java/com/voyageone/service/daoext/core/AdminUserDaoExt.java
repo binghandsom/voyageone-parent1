@@ -20,6 +20,8 @@ public interface AdminUserDaoExt {
 
     List<Map<String, Object>> selectAllApp();
 
+    List<Map<String, Object>> selectAppsByUser(Integer userId);
+
     int insert(ComUserModel record);
 
     List<String> selectUserByRoles(List<Integer> roleIds);

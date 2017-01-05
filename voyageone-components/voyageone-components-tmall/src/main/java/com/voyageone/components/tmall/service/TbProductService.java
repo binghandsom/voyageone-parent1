@@ -209,4 +209,17 @@ public class TbProductService extends TbBase {
 
         return reqTaobaoApi(config, request);
     }
+
+    /**
+     * tmall.item.combine.get (组合商品获取接口)
+     * @param numId
+     * @param config
+     * @return
+     */
+    public TmallItemCombineGetResponse getTmallTtemCombine(String numId, ShopBean config) throws ApiException {
+        TmallItemCombineGetRequest req = new TmallItemCombineGetRequest();
+        req.setItemId(Long.parseLong(numId));
+        TmallItemCombineGetResponse response = reqTaobaoApi(config, req);
+        return response;
+    }
 }
