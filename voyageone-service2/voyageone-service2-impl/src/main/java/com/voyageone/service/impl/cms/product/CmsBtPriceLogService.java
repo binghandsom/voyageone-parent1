@@ -11,6 +11,7 @@ import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -93,6 +94,7 @@ public class CmsBtPriceLogService extends BaseService {
                 for (CmsBtPriceLogModel value:paramMap.values()) {
                     ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
                     mqMessageBody.setParams(JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(value)));
+                    mqMessageBody.setSender(CmsMqRoutingKey.CMS_PRODUCT_PRICE_UPDATE);
                     try {
                         mqSenderService.sendMessage(mqMessageBody);
                     } catch (MQMessageRuleException e) {
@@ -136,6 +138,7 @@ public class CmsBtPriceLogService extends BaseService {
         // 向Mq发送消息同步sku,code,group价格范围
         ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
         mqMessageBody.setParams(newLog);
+        mqMessageBody.setSender(username);
         try {
             mqSenderService.sendMessage(mqMessageBody);
         } catch (MQMessageRuleException e) {
@@ -241,6 +244,7 @@ public class CmsBtPriceLogService extends BaseService {
                         // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
                         ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
                         mqMessageBody.setParams(JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
+                        mqMessageBody.setSender(username);
                         try {
                             mqSenderService.sendMessage(mqMessageBody);
                         } catch (MQMessageRuleException e) {

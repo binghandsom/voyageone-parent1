@@ -1869,11 +1869,11 @@ public class BackDoorController extends CmsController {
                 newLog.put("channelId",channelId);
                 ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
                 mqMessageBody.setParams(JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
+                mqMessageBody.setSender(getUser().getUserName());
                 try {
                     mqSenderService.sendMessage(mqMessageBody);
                 } catch (MQMessageRuleException e) {
                     $error(String.format("商品价格更新MQ发送异常，cartId=%s,productId=%s,channelId=%s", cartId, id, channelId), e);
-                    throw new BusinessException(e.getMessage());
                 }
             }
 
