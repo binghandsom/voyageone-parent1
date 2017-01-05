@@ -5,6 +5,8 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Map;
 
 /**
@@ -29,7 +31,10 @@ public class SaveChannelCategoryMQMessageBody extends BaseMQMessageBody {
     @Override
     public void check() throws MQMessageRuleException {
         if (params == null || params.size() <= 0) {
-            throw new MQMessageRuleException("保存店铺分类MQ参数为空");
+            throw new MQMessageRuleException("SaveChannelCategory MQ发送异常,参数为空");
+        }
+        if (StringUtils.isBlank(getSender())) {
+            throw new MQMessageRuleException("sender(发送者)不能为空");
         }
     }
 }

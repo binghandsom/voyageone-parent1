@@ -269,7 +269,7 @@ public class CmsFeedSearchService extends BaseViewService {
             cmsBtExportTaskService.add(cmsBtExportTaskModel);
 
             FeedExportMQMessageBody feedExportMQMessageBody = new FeedExportMQMessageBody();
-            feedExportMQMessageBody.setFeedExportTaskId(cmsBtExportTaskModel.getId());
+            feedExportMQMessageBody.setCmsBtExportTaskId(cmsBtExportTaskModel.getId());
             feedExportMQMessageBody.setSender(userName);
             try {
                 mqSenderService.sendMessage(feedExportMQMessageBody);

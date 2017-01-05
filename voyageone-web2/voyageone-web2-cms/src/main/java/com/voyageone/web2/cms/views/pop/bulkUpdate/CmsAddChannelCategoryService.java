@@ -218,11 +218,11 @@ public class CmsAddChannelCategoryService extends BaseViewService {
 
         SaveChannelCategoryMQMessageBody mqMessageBody = new SaveChannelCategoryMQMessageBody();
         mqMessageBody.setParams(params);
+        mqMessageBody.setSender((String) params.get("userName"));
         try {
             mqSenderService.sendMessage(mqMessageBody);
         } catch (MQMessageRuleException e) {
-            $error(String.format("saveChannelCategory时MQ发送异常,cartId=%s", cartId), e);
-            throw new BusinessException(e.getMessage());
+            $error(String.format("saveChannelCategory时MQ发送异常,userName=%s", (String) params.get("userName")), e);
         }
 
         $info(JacksonUtil.bean2Json(params));

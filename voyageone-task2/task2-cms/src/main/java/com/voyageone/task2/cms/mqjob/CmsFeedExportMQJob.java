@@ -2,10 +2,8 @@ package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.FeedExportMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
-import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.service.CmsFeedExportService;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -29,7 +27,7 @@ public class CmsFeedExportMQJob extends TBaseMQCmsService<FeedExportMQMessageBod
 
     @Override
     public void onStartup(FeedExportMQMessageBody messageBody) throws Exception {
-        CmsBtExportTaskModel exportTaskModel = cmsBtExportTaskService.getExportById(messageBody.getFeedExportTaskId());
+        CmsBtExportTaskModel exportTaskModel = cmsBtExportTaskService.getExportById(messageBody.getCmsBtExportTaskId());
         if (exportTaskModel == null) {
             this.cmsLog(messageBody, OperationLog_Type.parameterException, "cms.bt.export.task.id不存在");
             return;

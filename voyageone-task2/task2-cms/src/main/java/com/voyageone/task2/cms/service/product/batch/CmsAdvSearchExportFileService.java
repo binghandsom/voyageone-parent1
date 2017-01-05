@@ -119,7 +119,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
     public void export(AdvSearchExportMQMessageBody messageBody) throws Exception {
         $debug("高级检索 文件下载任务 param=" + JacksonUtil.bean2Json(messageBody));
-        Integer taskId = messageBody.getAdvSearchExportTaskId();
+        Integer taskId = messageBody.getCmsBtExportTaskId();
         if (taskId == null) {
             $error("高级检索 文件下载任务 查询参数不正确 缺少ID");
             return;

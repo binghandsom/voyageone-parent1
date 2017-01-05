@@ -6,6 +6,8 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import java.util.Map;
 
 /**
@@ -17,16 +19,15 @@ import java.util.Map;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_ADV_SEARCH_EXPORT)
 public class AdvSearchExportMQMessageBody extends BaseMQMessageBody {
 
-    // cms_bt_export_task ID
-    private int advSearchExportTaskId;
+    private int cmsBtExportTaskId;
     private Map<String, Object> searchValue;
 
-    public int getAdvSearchExportTaskId() {
-        return advSearchExportTaskId;
+    public int getCmsBtExportTaskId() {
+        return cmsBtExportTaskId;
     }
 
-    public void setAdvSearchExportTaskId(int advSearchExportTaskId) {
-        this.advSearchExportTaskId = advSearchExportTaskId;
+    public void setCmsBtExportTaskId(int cmsBtExportTaskId) {
+        this.cmsBtExportTaskId = cmsBtExportTaskId;
     }
 
     public Map<String, Object> getSearchValue() {
@@ -39,11 +40,11 @@ public class AdvSearchExportMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (advSearchExportTaskId == 0) {
-            throw new MQMessageRuleException("advSearchExportTaskId不能等于0");
+        if (cmsBtExportTaskId == 0) {
+            throw new MQMessageRuleException("高级检索导出MQ发送异常,参数cmsBtExportTaskId为空.");
         }
         if (searchValue == null || searchValue.size() < 1) {
-            throw new MQMessageRuleException("高级检索检索条件为空");
+            throw new MQMessageRuleException("高级检索导出MQ发送异常,缺少参数.");
         }
         if (StringUtils.isEmpty(getSender())) {
             throw new MQMessageRuleException("sender(发送者)不能为空");

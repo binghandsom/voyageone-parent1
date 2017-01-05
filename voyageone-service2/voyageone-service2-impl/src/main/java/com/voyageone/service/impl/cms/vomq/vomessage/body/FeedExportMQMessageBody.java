@@ -15,21 +15,20 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_FEED_EXPORT)
 public class FeedExportMQMessageBody extends BaseMQMessageBody {
 
-    // cms_bt_export_task ID
-    private int feedExportTaskId;
+    private int cmsBtExportTaskId;
 
-    public int getFeedExportTaskId() {
-        return feedExportTaskId;
+    public int getCmsBtExportTaskId() {
+        return cmsBtExportTaskId;
     }
 
-    public void setFeedExportTaskId(int feedExportTaskId) {
-        this.feedExportTaskId = feedExportTaskId;
+    public void setCmsBtExportTaskId(int cmsBtExportTaskId) {
+        this.cmsBtExportTaskId = cmsBtExportTaskId;
     }
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (feedExportTaskId == 0) {
-            throw new MQMessageRuleException("feedExportTaskId不能等于0");
+        if (cmsBtExportTaskId == 0) {
+            throw new MQMessageRuleException("Feed文件导出MQ发送异常,参数cmsBtExportTaskId为空.");
         }
         if (StringUtils.isEmpty(getSender())) {
             throw new MQMessageRuleException("sender(发送者)不能为空");
