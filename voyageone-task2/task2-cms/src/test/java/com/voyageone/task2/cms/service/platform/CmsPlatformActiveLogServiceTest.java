@@ -66,11 +66,6 @@ public class CmsPlatformActiveLogServiceTest {
 //
 //        CacheHelper.reFreshSSB(KEY, shopBeanMap);
 
-        String result = "{\"data\":{\"result\":\"OK\"}}";
-        CmsPlatformActiveLogService.DTWareUpdateResponse response = JacksonUtil.json2Bean(result, CmsPlatformActiveLogService.DTWareUpdateResponse.class);
-
-        System.out.println(response);
-
     }
 
     // 测试tmall上架
