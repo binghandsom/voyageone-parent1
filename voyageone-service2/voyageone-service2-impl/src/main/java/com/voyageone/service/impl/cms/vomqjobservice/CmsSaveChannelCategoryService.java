@@ -33,7 +33,7 @@ import java.util.*;
  * @version 2.0.0
  */
 @Service
-public class CmsAddChannelCategoryService extends VOAbsLoggable {
+public class CmsSaveChannelCategoryService extends VOAbsLoggable {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;

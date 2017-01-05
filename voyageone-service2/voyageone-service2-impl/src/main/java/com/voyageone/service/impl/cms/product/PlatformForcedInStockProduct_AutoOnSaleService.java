@@ -6,9 +6,12 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TypeChannelsService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.PlatformActiveLogMQMessageBody;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -29,8 +32,11 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
     @Autowired
     CmsBtProductDao cmsBtProductDao;
 
+    /*@Autowired
+    MqSender sender;*/
+
     @Autowired
-    MqSender sender;
+    private MqSenderService mqSenderService;
 
     @Autowired
     TypeChannelsService typeChannelsService;
@@ -77,7 +83,7 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
         });
 
         //批量上架发MQ
-        Map<String, Object> logParams = new HashMap<>(6);
+        /*Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", channelId);
         logParams.put("cartIdList", cartList);
         logParams.put("activeStatus", CmsConstants.PlatformActive.ToOnSale.name());
@@ -85,6 +91,20 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
         logParams.put("comment", "平台被迫下架的产品，自动上架");
 
         logParams.put("codeList", productCodes);
-        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);
+        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);*/
+
+        PlatformActiveLogMQMessageBody mqMessageBody = new PlatformActiveLogMQMessageBody();
+        mqMessageBody.setChannelId(channelId);
+        mqMessageBody.setCartList(cartList);
+        mqMessageBody.setActiveStatus(CmsConstants.PlatformActive.ToOnSale.name());
+        mqMessageBody.setUserName("autoOnSale");
+        mqMessageBody.setComment("平台被迫下架的产品，自动上架");
+        mqMessageBody.setProductCodes(productCodes);
+        try {
+            mqSenderService.sendMessage(mqMessageBody);
+        } catch (MQMessageRuleException e) {
+            $error(String.format("被下架商品自动上架MQ发送异常,channelId=%s", channelId), e);
+        }
+
     }
 }

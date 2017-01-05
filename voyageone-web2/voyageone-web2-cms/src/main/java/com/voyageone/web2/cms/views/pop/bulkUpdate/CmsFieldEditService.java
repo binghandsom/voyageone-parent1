@@ -39,6 +39,7 @@ import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchConfirmRetailPriceMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchRefreshRetailPriceMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.BatchUpdateProductMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.PlatformActiveLogMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductVoRateUpdateMQMessageBody;
 import com.voyageone.service.impl.com.cache.CommCacheService;
 import com.voyageone.service.impl.com.mq.MqSender;
@@ -469,7 +470,7 @@ public class CmsFieldEditService extends BaseViewService {
         $debug("批量修改属性.(商品上下架) 结果1=：" + rs.toString());
 
         // 发送请求到MQ,插入操作历史记录
-        Map<String, Object> logParams = new HashMap<>(6);
+        /*Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", userInfo.getSelChannelId());
         logParams.put("cartIdList", cartList);
         logParams.put("activeStatus", statusVal.name());
@@ -481,7 +482,24 @@ public class CmsFieldEditService extends BaseViewService {
         }
 
         logParams.put("codeList", productCodes);
-        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);
+        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);*/
+
+        PlatformActiveLogMQMessageBody mqMessageBody = new PlatformActiveLogMQMessageBody();
+        mqMessageBody.setChannelId(userInfo.getSelChannelId());
+        mqMessageBody.setCartList(cartList);
+        mqMessageBody.setActiveStatus(statusVal.name());
+        mqMessageBody.setUserName(userInfo.getUserName());
+        if (cartId == null || cartId == 0) {
+            mqMessageBody.setComment("高级检索 批量上下架(全店铺操作)");
+        } else {
+            mqMessageBody.setComment("高级检索 批量上下架");
+        }
+        mqMessageBody.setProductCodes(productCodes);
+        try {
+            mqSenderService.sendMessage(mqMessageBody);
+        } catch (MQMessageRuleException e) {
+            $error(String.format("商品上下架MQ发送异常,channelId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
+        }
 
         rsMap.put("ecd", 0);
         return rsMap;
