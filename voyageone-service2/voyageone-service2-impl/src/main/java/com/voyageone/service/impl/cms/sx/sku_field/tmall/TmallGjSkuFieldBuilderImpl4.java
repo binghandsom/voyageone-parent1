@@ -593,12 +593,16 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
                         String skuCode = cmsSkuProp.getSkuCode();
                         String scProductId = expressionParser.getSxProductService().updateTmScProductId(
                                 shopBean,
+                                expressionParser.getSxData().getMainProduct(),
                                 skuCode,
                                 expressionParser.getSxProductService().getProductValueByMasterMapping("title", shopBean, expressionParser, user),
                                 skuInventoryMap.get(skuCode) != null ? Integer.toString(skuInventoryMap.get(skuCode)) : "0"
                         );
                         skuFieldValue.setInputFieldValue(sku_productIdField.getId(), scProductId);
                         // modified by morse.lu 2016/10/18 end
+                        // added by morse.lu 2017/01/05 start
+                        expressionParser.getSxData().getSxSkuExInfo(skuCode, true).setScProductId(scProductId);
+                        // added by morse.lu 2017/01/05 end
                         continue;
                     }
                     // added by morse.lu 2016/08/17 end
