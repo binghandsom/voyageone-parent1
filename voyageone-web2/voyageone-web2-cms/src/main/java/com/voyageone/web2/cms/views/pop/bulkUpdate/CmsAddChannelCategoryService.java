@@ -223,6 +223,7 @@ public class CmsAddChannelCategoryService extends BaseViewService {
             mqSenderService.sendMessage(mqMessageBody);
         } catch (MQMessageRuleException e) {
             $error(String.format("saveChannelCategory时MQ发送异常,userName=%s", (String) params.get("userName")), e);
+            throw new BusinessException("MQ发送异常:" + e.getMessage());
         }
 
         $info(JacksonUtil.bean2Json(params));

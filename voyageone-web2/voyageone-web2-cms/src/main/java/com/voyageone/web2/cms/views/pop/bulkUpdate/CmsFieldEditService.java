@@ -345,6 +345,7 @@ public class CmsFieldEditService extends BaseViewService {
                 mqSenderService.sendMessage(mqMessageBody);
             } catch (MQMessageRuleException e) {
                 $error(String.format("VO扣点值批量更新MQ发送异常,channelId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
+                throw new BusinessException("MQ发送异常:" + e.getMessage());
             }
 
         } else if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id) || "translateStatus".equals(prop_id)) {
