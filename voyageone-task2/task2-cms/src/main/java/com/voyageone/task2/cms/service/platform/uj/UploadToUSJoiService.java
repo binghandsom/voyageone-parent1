@@ -1812,11 +1812,11 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 prodCommonField.setCategoryStatus("0");
             }
             // 产品分类(英文)
-            if (!StringUtils.isEmpty(searchResult.getProductTypeEn()))   prodCommonField.setProductType(searchResult.getProductTypeEn());
+            if (!StringUtils.isEmpty(searchResult.getProductTypeEn()))   prodCommonField.setProductType(searchResult.getProductTypeEn().toLowerCase());
             // 产品分类(中文)
             if (!StringUtils.isEmpty(searchResult.getProductTypeCn()))   prodCommonField.setProductTypeCn(searchResult.getProductTypeCn());
             // 适合人群(英文)
-            if (!StringUtils.isEmpty(searchResult.getSizeTypeEn()))      prodCommonField.setSizeType(searchResult.getSizeTypeEn());
+            if (!StringUtils.isEmpty(searchResult.getSizeTypeEn()))      prodCommonField.setSizeType(searchResult.getSizeTypeEn().toLowerCase());
             // 适合人群(中文)
             if (!StringUtils.isEmpty(searchResult.getSizeTypeCn()))      prodCommonField.setSizeTypeCn(searchResult.getSizeTypeCn());
             // TODO 2016/12/30暂时这样更新，以后要改

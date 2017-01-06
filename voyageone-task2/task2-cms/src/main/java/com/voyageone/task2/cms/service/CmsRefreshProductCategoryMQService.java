@@ -170,11 +170,11 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
                 updateMap.put("common.fields.categoryStatus", "0");
             }
             // 产品分类(英文)
-            if (!StringUtils.isEmpty(searchResult.getProductTypeEn()))   updateMap.put("common.fields.productType", searchResult.getProductTypeEn());
+            if (!StringUtils.isEmpty(searchResult.getProductTypeEn()))   updateMap.put("common.fields.productType", searchResult.getProductTypeEn().toLowerCase());
             // 产品分类(中文)
             if (!StringUtils.isEmpty(searchResult.getProductTypeCn()))   updateMap.put("common.fields.productTypeCn", searchResult.getProductTypeCn());
             // 适合人群(英文)
-            if (!StringUtils.isEmpty(searchResult.getSizeTypeEn()))      updateMap.put("common.fields.sizeType", searchResult.getSizeTypeEn());
+            if (!StringUtils.isEmpty(searchResult.getSizeTypeEn()))      updateMap.put("common.fields.sizeType", searchResult.getSizeTypeEn().toLowerCase());
             // 适合人群(中文)
             if (!StringUtils.isEmpty(searchResult.getSizeTypeCn()))      updateMap.put("common.fields.sizeTypeCn", searchResult.getSizeTypeCn());
             // TODO 2016/12/30暂时这样更新，以后要改
