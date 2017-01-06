@@ -1874,6 +1874,7 @@ public class BackDoorController extends CmsController {
                     mqSenderService.sendMessage(mqMessageBody);
                 } catch (MQMessageRuleException e) {
                     $error(String.format("商品价格更新MQ发送异常，cartId=%s,productId=%s,channelId=%s", cartId, id, channelId), e);
+                    throw new BusinessException(String.format("MQ发送异常,cartId=%s,productId=%s,channelId=%s,异常:%s", cartId, id, channelId, e.getMessage()));
                 }
             }
 

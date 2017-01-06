@@ -377,6 +377,7 @@ public class CmsFieldEditService extends BaseViewService {
                 mqSenderService.sendMessage(mqMessageBody);
             } catch (MQMessageRuleException e) {
                 $error(String.format("批量更新商品发送MQ异常,channleId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
+                throw new BusinessException("MQ发送异常:" + e.getMessage());
             }
 
             rsMap.put("ecd", 0);
@@ -1311,7 +1312,7 @@ public class CmsFieldEditService extends BaseViewService {
                 mqSenderService.sendMessage(mqMessageBody);
             }
         } catch (MQMessageRuleException e) {
-            throw new BusinessException(e.getMessage());
+            throw new BusinessException("MQ发送异常:" + e.getMessage());
         }
         rsMap.put("ecd", 0);
         return rsMap;
