@@ -197,8 +197,7 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             if (!StringUtils.isEmpty(searchResult.getTaxDeclare()))      updateMap.put("common.fields.hsCodeCross", searchResult.getTaxDeclare());
 
             // 商品中文名称(如果已翻译，则不设置)
-            if ("0".equals(prodCommonField.getTranslateStatus())
-                    && !"017".equals(prodObj.getOrgChannelId())) {
+            if ("0".equals(prodCommonField.getTranslateStatus())) {
                 if (!StringUtils.isEmpty(searchResult.getCnName())) {
                     // 主类目叶子级中文名称（"服饰>服饰配件>钱包卡包钥匙包>护照夹" -> "护照夹"）
                     String leafCategoryCnName = searchResult.getCnName().substring(searchResult.getCnName().lastIndexOf(">") + 1,
@@ -206,6 +205,8 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
                     // 设置商品中文名称（品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称）
                     String titleCn = uploadToUSJoiService.getOriginalTitleCnByCategory(prodCommonField.getBrand(), prodCommonField.getSizeTypeCn(), leafCategoryCnName);
                     if (!StringUtils.isEmpty(titleCn)) {
+                        if (!"017".equals(prodObj.getOrgChannelId())
+                                || ("017".equals(prodObj.getOrgChannelId()) && StringUtils.isEmpty(prodCommonField.getOriginalTitleCn())))
                         updateMap.put("common.fields.originalTitleCn", titleCn);
                     }
                 }
