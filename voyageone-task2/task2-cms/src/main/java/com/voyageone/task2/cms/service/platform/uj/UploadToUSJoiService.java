@@ -1840,15 +1840,16 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
             // 商品中文名称(如果已翻译，则不设置)
             // 临时特殊处理 017的名称不根据主类目自动翻译,如果后续有这个需求再改正
-            if ("0".equals(prodCommonField.getTranslateStatus())
-                    && !"017".equals(channelId)) {
+            if ("0".equals(prodCommonField.getTranslateStatus())) {
                 if (!StringUtils.isEmpty(searchResult.getCnName())) {
                     // 主类目叶子级中文名称（"服饰>服饰配件>钱包卡包钥匙包>护照夹" -> "护照夹"）
                     String leafCategoryCnName = searchResult.getCnName().substring(searchResult.getCnName().lastIndexOf(">") + 1,
                             searchResult.getCnName().length());
                     // 设置商品中文名称（品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称）
-                    prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(prodCommonField.getBrand()
-                            , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
+                    if (!"017".equals(channelId)
+                            || ("017".equals(channelId) && StringUtils.isEmpty(prodCommonField.getOriginalTitleCn())))
+                        prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(prodCommonField.getBrand()
+                                , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
                 }
             }
         }
