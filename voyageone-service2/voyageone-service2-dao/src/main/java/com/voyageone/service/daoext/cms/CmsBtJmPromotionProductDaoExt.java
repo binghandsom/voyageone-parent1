@@ -50,7 +50,7 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     CmsBtJmPromotionProductModel selectByProductCode(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
 
-    List<Map<String, Object>> selectExportListByPromotionId(int promotionId);
+    List<Map<String, Object>> selectExportListByPromotionId(@Param("promotionId") int promotionId, @Param("codes")List<String> codes);
 
     int batchUpdateDealPrice(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("dealPrice") String dealPrice);
 

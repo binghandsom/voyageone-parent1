@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.product;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -19,6 +20,7 @@ import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,8 +28,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by rex.wu on 2016/11/25.
@@ -75,12 +79,24 @@ public class CombinedProductController extends CmsController {
     public AjaxResponse getCombinedProductPlatformDetail (@RequestBody Map<String, String> params) {
         String numId = params.get("numID");
         String cartId = params.get("cartId");
+        String newFlag = params.get("new");
+        if ("1".equals(newFlag)) { // 新增页面获取，判断是否已经存在
+            CmsBtCombinedProductModel existOne = cmsBtCombinedProductService.getByNumId(numId, getUser().getSelChannelId(), StringUtils.isNumeric(cartId) ? Integer.valueOf(cartId) : null);
+            if (existOne != null) {
+                throw new BusinessException(String.format("组合商品numID=%s已存在,请直接编辑。", numId));
+            }
+        }
         Object productDetail = cmsBtCombinedProductService.getCombinedProductPlatformDetail(numId, getUser().getSelChannelId(), Integer.valueOf(cartId), true);
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("product", productDetail);
         return success(resultMap);
     }
 
+    /**
+     * 根据单个skuCode获取SKU详情
+     * @param params
+     * @return
+     */
     @RequestMapping(CmsUrlConstants.PRODUCT.CombinedProduct.GET_SKU_DETAIL)
     public AjaxResponse getSkuDetail(@RequestBody Map<String, String> params) {
         String cartId = params.get("cartId");
@@ -92,12 +108,22 @@ public class CombinedProductController extends CmsController {
         return success(resultMap);
     }
 
+    /**
+     * 新增组合商品
+     * @param modelBean
+     * @return
+     */
     @RequestMapping(CmsUrlConstants.PRODUCT.CombinedProduct.ADD)
     public AjaxResponse add(@RequestBody CmsBtCombinedProductModel modelBean) {
         cmsBtCombinedProductService.addCombinedProduct(modelBean, getUser().getSelChannelId(), getUser().getUserName());
         return success("");
     }
 
+    /**
+     * 逻辑删除组合商品
+     * @param modelBean
+     * @return
+     */
     @RequestMapping(CmsUrlConstants.PRODUCT.CombinedProduct.DELETE)
     public AjaxResponse delete(@RequestBody CmsBtCombinedProductBean modelBean) {
         cmsBtCombinedProductService.deleteCombinedProduct(modelBean, getUser().getUserName(), getUser().getSelChannelId());
@@ -127,5 +153,19 @@ public class CombinedProductController extends CmsController {
     public AjaxResponse getOperateLogs(@RequestBody CmsBtCombinedProductBean searchBean) {
         Map<String, Object> resultMap = cmsBtCombinedProductService.getOperateLogs(searchBean.getCurr(), searchBean.getSize(), searchBean);
         return success(resultMap);
+    }
+
+    /**
+     * 批量获取SKU详情
+     * @param params
+     * @return
+     */
+    @RequestMapping(CmsUrlConstants.PRODUCT.CombinedProduct.BATCH_GET_SKU_DETAIL)
+    public AjaxResponse batchGetSkuDetail(@RequestBody Map<String, Object> params){
+        String channelId = getUser().getSelChannelId();
+        Integer cartId = Integer.valueOf((String) params.get("cartId"));
+        List<String> skuCodes = (List<String>)params.get("skuCodes");
+        Set<String> skuCodeList = new HashSet<String>(skuCodes);
+        return success(cmsBtCombinedProductService.batchGetSkuDetail(skuCodeList, channelId, cartId));
     }
 }

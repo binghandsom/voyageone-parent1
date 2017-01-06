@@ -1,11 +1,10 @@
 package com.voyageone.service.impl.cms.promotion;
+import com.sun.tools.javac.util.ArrayUtils;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.util.BigDecimalUtil;
-import com.voyageone.common.util.ConvertUtil;
-import com.voyageone.common.util.DateTimeUtilBeijing;
+import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.AddProductSaveParameter;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.InitParameter;
@@ -28,6 +27,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.service.model.util.MapModel;
+import org.apache.avro.generic.GenericData;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -231,26 +231,40 @@ public class JMPromotionDetailService extends BaseService {
         }
         jmProductModel.setAppId(0L);
         jmProductModel.setPcId(0L);
-//        if (jmProductModel.getSynchStatus() == 2) {
-//            if (product.getLimit() !=jmProductModel.getLimit()) {
-//               jmProductModel.setUpdateStatus(1);//已经变更
-//            }
-//        }
-        //jmProductModel.setLimit(product.getLimit());
-        //jmProductModel.setPromotionTag(product.getPromotionTag());
         jmProductModel.setModifier(userName);
         jmProductModel.setModified(new Date());
+
+
+        //获取 旧的tag数组
+        String[] tagArray = jmProductModel.getPromotionTag().split("\\|");
+        //tag数组转List
+        ArrayList<String> tagList = new ArrayList<>(Arrays.asList(tagArray));
+        //tag 处理
+        bean.getTagList().forEach(f -> {
+            if (f.getChecked() == 0) {
+                //删除
+                tagList.remove(f.getName());
+            } else if (f.getChecked() == 2) {
+                //新增
+                tagList.add(f.getName());
+            }
+        });
+
+        //tag数组转为位以竖线(|)分隔的字符串
         StringBuilder sbPromotionTag = new StringBuilder();
-        bean.getTagList().forEach(f ->{
-                   if(f.getChecked()!=0) {
-                       sbPromotionTag.append("|").append(f.getName());
-                   }
-                   });
-
-
+        tagList.forEach(f ->
+                {
+                    if (!StringUtils.isEmpty(f)) {
+                        sbPromotionTag.append("|").append(f);
+                    }
+                }
+        );
         if (sbPromotionTag.length() > 0) {
             jmProductModel.setPromotionTag(sbPromotionTag.substring(1));
+        } else {
+            jmProductModel.setPromotionTag("");
         }
+
         return jmProductModel;
     }
 

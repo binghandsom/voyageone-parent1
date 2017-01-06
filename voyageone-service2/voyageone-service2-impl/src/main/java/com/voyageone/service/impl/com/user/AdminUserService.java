@@ -13,6 +13,7 @@ import com.voyageone.service.dao.com.*;
 import com.voyageone.service.dao.user.*;
 import com.voyageone.service.daoext.core.AdminResourceDaoExt;
 import com.voyageone.service.daoext.core.AdminUserDaoExt;
+import com.voyageone.service.daoext.user.ComUserDaoExt;
 import com.voyageone.service.impl.AdminProperty;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.*;
@@ -496,6 +497,12 @@ public class AdminUserService extends BaseService {
 
     public List<Map<String, Object>> getAllApp() {
         List<Map<String, Object>> list = adminUserDaoExt.selectAllApp();
+        return list;
+    }
+
+
+    public List<Map<String, Object>> getAllApp(Integer userId ) {
+        List<Map<String, Object>> list = adminUserDaoExt.selectAppsByUser(userId);
         return list;
     }
 

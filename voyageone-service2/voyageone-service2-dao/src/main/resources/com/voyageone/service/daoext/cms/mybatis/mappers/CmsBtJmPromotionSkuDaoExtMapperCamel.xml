@@ -43,10 +43,17 @@
        SELECT b.`channel_id`, b.`jm_spu_no`, b.`jm_sku_no`, b.`format`,
         b.`upc`, b.`cms_size`, b.`jm_size`,a.`product_code`,a.`sku_code`, a.`msrp_usd`, a.`msrp_rmb`, a.`retail_price`, a.`sale_price`,a.`deal_price`,a.`market_price`,b.jm_sku_no,c.jm_hash_id,d.jumei_mall_id
         FROM `cms_bt_jm_promotion_sku` AS a
-        left JOIN `cms_bt_jm_sku` AS b ON a.`sku_code`=b.`sku_code` AND a.`channel_id`=b.`channel_id`
+        left JOIN `cms_bt_jm_sku` AS b ON a.`sku_code`=b.`sku_code` AND a.`channel_id`=b.`channel_id` AND a.`product_code`=b.`product_code`
          join  cms_bt_jm_promotion_product as c on a.cms_bt_jm_promotion_product_id=c.id
                  Left JOIN `cms_bt_jm_product`  AS d  ON c.`channel_id`=d.`channel_id` AND  c.`product_code`=d.`product_code`
         WHERE a.`cms_bt_jm_promotion_id`=#{promotionId}
+        <if test="codes !=null and codes.size > 0">
+            and a.product_code IN
+            <foreach item="item" index="i" collection="codes"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
    ORDER by b.`product_code`,b.`jm_size`
     </select>
     <update id="batchUpdateDealPrice">

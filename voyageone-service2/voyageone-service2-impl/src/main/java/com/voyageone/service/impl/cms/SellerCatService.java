@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms;
 
-import com.alibaba.druid.sql.visitor.functions.If;
 import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
 import com.taobao.api.domain.SellerCat;
 import com.taobao.top.schema.field.Field;
@@ -35,7 +34,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -400,9 +402,6 @@ public class SellerCatService extends BaseService {
     public void deleteSellerCat(String channelId, int cartId, String parentCId, String cId, String modifier) {
 
         ShopBean shopBean = Shops.getShop(channelId, cartId);
-        if(cartId == Integer.parseInt(CartEnums.Cart.TT.getId())){
-            shopBean = Shops.getShop(channelId, 23);
-        }
         String shopCartId = shopBean.getCart_id();
 
         if (isJDPlatform(shopBean)) {

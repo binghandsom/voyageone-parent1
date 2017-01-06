@@ -30,7 +30,7 @@ public interface CmsBtJmPromotionSkuDaoExt {
     //jm2 begin                                                                                                                       cms_bt_jm_promotion_product_id
     CmsBtJmPromotionSkuModel selectBySkuCode(@Param("skuCode") String skuCode, @Param("cmsBtJmPromotionProductId") int cmsBtJmPromotionProductId,@Param("jmPromotionId") int jmPromotionId);
 
-    List<Map<String, Object>> selectExportListByPromotionId(int promotionId);
+    List<Map<String, Object>> selectExportListByPromotionId(@Param("promotionId") int promotionId, @Param("codes") List<String> codes);
    //更新的dealPrice大于market_price的记录
     CmsBtJmPromotionSkuModel  selectNotUpdateDealPrice(@Param("listPromotionProductId") List<Integer> listPromotionProductId, @Param("dealPrice") String dealPrice);
 

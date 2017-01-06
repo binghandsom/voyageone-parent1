@@ -127,6 +127,11 @@
 				/admin/user/self/forgetPass = anon
 				/admin/user/self/editPass = anon
 				/admin/user/self/getUserByToken = anon
+				/admin/user/self/getAllApp = authc
+				/admin/user/role/getAllRole = authc
+				/admin/user/role/getAllRoleType = authc
+				/admin/user/org/getAllOrg = authc
+				/admin/user/res/getAllMenu = authc
 				/core/access/user/login = anon
 				/core/access/user/vendorLogin = anon
 				/core/access/user/logout= anon

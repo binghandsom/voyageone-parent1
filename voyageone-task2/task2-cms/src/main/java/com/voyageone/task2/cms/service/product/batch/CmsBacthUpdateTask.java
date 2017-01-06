@@ -115,7 +115,7 @@ public class CmsBacthUpdateTask extends VOAbsLoggable {
 
                 updObj.setQuery("{'common.fields.code':#}");
                 updObj.setQueryParameters(prodCode);
-                updObj.setUpdate("{$set:{'common.fields." + propId + "':#,'common.fields.hsCodeStatus':'1','common.fields.hsCodeSetter':#,'common.fields.hsCodeSetTime':#}}");
+                updObj.setUpdate("{$set:{'common.catConf':'1','common.fields." + propId + "':#,'common.fields.hsCodeStatus':'1','common.fields.hsCodeSetter':#,'common.fields.hsCodeSetTime':#}}");
                 updObj.setUpdateParameters(propValue, userName, DateTimeUtil.getNow());
                 rs = productService.updateFirstProduct(updObj, channelId);
                 $debug("高级检索 批量更新 更新税号结果 " + rs.toString());

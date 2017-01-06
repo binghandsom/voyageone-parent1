@@ -32,7 +32,11 @@ public class PlatFormEnums {
         /**
          * 聚美
          */
-        JM("4");
+        JM("4"),
+        /**
+         * 分销
+         */
+        DT("6");
 
         private String id;
 
@@ -54,6 +58,8 @@ public class PlatFormEnums {
                     return CN;
                 case "4":
                     return JM;
+                case "6":
+                    return DT;
                 default:
                     return null;
             }

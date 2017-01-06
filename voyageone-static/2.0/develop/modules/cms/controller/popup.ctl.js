@@ -160,6 +160,11 @@ define([
                 "templateUrl": "views/pop/channel/channelConfigEdit.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/channel/channelConfigEdit.ctl",
                 "controller": "channelConfigEditController as ctrl"
+            },
+            "importFeedConfig": {
+                "templateUrl": "views/pop/channel/feedConfigSet.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/channel/feedConfigSet.ctl",
+                "controller": "feedConfigSetController"
             }
         },
         "custom": {
@@ -1285,6 +1290,10 @@ define([
                     fnInitial();
                 }
             });
+        };
+
+        $scope.openFeedConfigImport = function openFeedConfigImport(context) {
+            return openModal(popActions.channel.importFeedConfig, context);
         };
 
         $scope.openCategorySetting = function openCategorySetting(context) {

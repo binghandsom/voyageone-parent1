@@ -27,13 +27,15 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.SizeChartService;
+import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
+import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
 import com.voyageone.service.impl.com.cache.CommCacheService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCommonSchemaModel;
@@ -274,7 +276,7 @@ public class CmsFieldEditService extends BaseViewService {
             JongoUpdate updObj = new JongoUpdate();
             updObj.setQuery("{'common.fields.code':{$in:#}}");
             updObj.setQueryParameters(productCodes);
-            updObj.setUpdate("{$set:{'common.fields." + prop_id + "':#}}");
+            updObj.setUpdate("{$set:{'common.catConf':'1','common.fields." + prop_id + "':#}}");
             updObj.setUpdateParameters(stsCode);
 
             WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
@@ -322,7 +324,7 @@ public class CmsFieldEditService extends BaseViewService {
             logParams.put("creater", userInfo.getUserName());
             logParams.put("codeList", productCodes);
             logParams.put("voRate", voRateVal);
-            sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob, logParams);
+            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob, logParams);
 
         } else if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id) || "translateStatus".equals(prop_id)) {
             // 税号更新 /翻译状态更新
@@ -341,7 +343,7 @@ public class CmsFieldEditService extends BaseViewService {
             params.put("_taskName", "batchupdate");
             params.put("_channleId", userInfo.getSelChannelId());
             params.put("_userName", userInfo.getUserName());
-            sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
             rsMap.put("ecd", 0);
             return rsMap;
 
@@ -447,7 +449,7 @@ public class CmsFieldEditService extends BaseViewService {
         }
 
         logParams.put("codeList", productCodes);
-        sender.sendMessage(MqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);
+        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);
 
         rsMap.put("ecd", 0);
         return rsMap;
@@ -658,7 +660,7 @@ public class CmsFieldEditService extends BaseViewService {
                     } else if (CmsConstants.ProductStatus.Approved.name().equals(prodStatus)) {
                         strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
                     } else if (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))) {
+                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId()))) {
                         strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
                     }
                 }
@@ -850,7 +852,7 @@ public class CmsFieldEditService extends BaseViewService {
         JongoQuery qryObj = new JongoQuery();
         qryObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + ".skus.0':{$exists:true}}");
         qryObj.setParameters(productCodes);
-        qryObj.setProjection("{'common.fields.code':1,'prodId':1,'common.skus.skuCode':1,'common.skus.clientMsrpPrice':1,'common.skus.clientRetailPrice':1,'common.skus.clientNetPrice':1,'platforms.P" + cartId + ".pNumIId':1,'platforms.P" + cartId + ".status':1,'platforms.P" + cartId + ".skus':1,'_id':0}");
+//        qryObj.setProjection("{'common.fields.code':1,'prodId':1,'common.skus.skuCode':1,'common.skus.clientMsrpPrice':1,'common.skus.clientRetailPrice':1,'common.skus.clientNetPrice':1,'platforms.P" + cartId + ".pNumIId':1,'platforms.P" + cartId + ".status':1,'platforms.P" + cartId + ".skus':1,'_id':0}");
 
         List<CmsBtPriceLogModel> priceLogList = new ArrayList<CmsBtPriceLogModel>();
         String skuCode = null;
@@ -862,6 +864,7 @@ public class CmsFieldEditService extends BaseViewService {
         List<CmsBtProductModel> prodObjList = productService.getList(userInfo.getSelChannelId(), qryObj);
         $debug("批量修改商品价格 开始批量处理");
         for (CmsBtProductModel prodObj : prodObjList) {
+            prodObj.setChannelId(userInfo.getSelChannelId()); // 为后面调用priceService.setPrice使用
             List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
             String prodCode = prodObj.getCommonNotNull().getFieldsNotNull().getCode();
 
@@ -1037,9 +1040,14 @@ public class CmsFieldEditService extends BaseViewService {
                 priceLogList.add(cmsBtPriceLogModel);
             }
 
-            // 是天猫平台时直接调用API更新sku价格(要求已上新)
             try {
                 priceService.setPrice(prodObj, cartId, false);
+            }catch (IllegalPriceConfigException | PriceCalculateException e) {
+                $error(String.format("批量修改商品价格　调用PriceService.setPrice失败 channelId=%s, cartId=%s msg=%s", userInfo.getSelChannelId(), cartId.toString(), e.getMessage()), e);
+                throw new BusinessException(e.getMessage());
+            }
+            // 是天猫平台时直接调用API更新sku价格(要求已上新)
+            try {
                 priceService.updateSkuPrice(userInfo.getSelChannelId(), cartId, prodObj);
             } catch (Exception e) {
                 $error(String.format("批量修改商品价格　调用天猫API失败 channelId=%s, cartId=%s msg=%s", userInfo.getSelChannelId(), cartId.toString(), e.getMessage()), e);
@@ -1235,9 +1243,9 @@ public class CmsFieldEditService extends BaseViewService {
         params.put("_channleId", userInfo.getSelChannelId());
         params.put("_userName", userInfo.getUserName());
         if ("refreshRetailPrice".equalsIgnoreCase((String) params.get("_option"))) {
-            sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
+            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
         } else {
-            sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
         }
 
 
@@ -1338,7 +1346,7 @@ public class CmsFieldEditService extends BaseViewService {
         mqMessage.put("userName", userInfo.getUserName());
         mqMessage.put("fieldsId", prop_id);
         mqMessage.put("fieldsValue", result.get(prop_id));
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_PlatformFieldsTaskJob, mqMessage);
+        sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_PlatformFieldsTaskJob, mqMessage);
     }
 
     /**

@@ -47,6 +47,7 @@ define(function () {
                     "getUserByToken": "getUserByToken",
                     "modifyPass": "modifyPass",
                     "getAllApp": "getAllApp",
+                    "getAppsByUser": "getAppsByUser",
                     "addRoles": "addRoles"
                 },
                 "adminRoleService": {

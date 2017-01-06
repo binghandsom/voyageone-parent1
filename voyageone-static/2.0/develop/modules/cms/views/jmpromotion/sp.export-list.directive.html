@@ -28,16 +28,16 @@
                 <td class="text-center">{{model.successRows}}</td>
                 <td class="text-left">{{model.beginTime}}</td>
                 <td class="text-left">{{model.endTime}}</td>
-                <td class="text-center">
-                    <a ng-controller="showPopoverCtrl" popover-html="showInfo('{{model.errorMsg}}')"
-                       popover-placement="left" class="ng-scope">
-                        <div class="table_main">
-                            <ul>
-                                <li>{{getErrorMsg(model.errorMsg)}}</li>
-                            </ul>
-                        </div>
-                    </a>
-                </td>
+                <td class="text-center">{{model.errorMsg}}</td>
+                    <!--<a ng-controller="showPopoverCtrl" popover-html="showInfo('{{model.errorMsg}}')"-->
+                       <!--popover-placement="left" class="ng-scope">-->
+                        <!--<div class="table_main">-->
+                            <!--<ul>-->
+                                <!--<li>{{getErrorMsg(model.errorMsg)}}</li>-->
+                            <!--</ul>-->
+                        <!--</div>-->
+                    <!--</a>-->
+                <!--</td>-->
                 <td class="text-center">
                     <button title="下载" ng-disabled="!model.isExport" ng-click="downloadExportExcel(model.id);"
                             class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button>

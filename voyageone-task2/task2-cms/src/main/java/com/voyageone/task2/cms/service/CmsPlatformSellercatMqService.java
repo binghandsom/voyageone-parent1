@@ -2,7 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.SellerCatService;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -20,7 +20,7 @@ import java.util.Map;
  * @version 2.6.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformSellercatJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_PlatformSellercatJob)
 public class CmsPlatformSellercatMqService  extends BaseMQCmsService {
 
     @Autowired

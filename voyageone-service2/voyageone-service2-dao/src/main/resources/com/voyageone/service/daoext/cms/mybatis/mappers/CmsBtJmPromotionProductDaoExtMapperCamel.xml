@@ -68,6 +68,7 @@
         <if test="skuCount != null">
             AND sku_count = #{skuCount}
         </if>
+
     </where>
 </select>
 
@@ -241,7 +242,7 @@
                 )
             </if>
             <if test="listBrandName!=null and listBrandName.size()!=0">
-                and  b.brand_name in <foreach item="item" index="i" collection="listBrandName"
+                and  b.vo_brand_name in <foreach item="item" index="i" collection="listBrandName"
                                               open="(" separator="," close=")">
                 #{item}
             </foreach>
@@ -359,6 +360,14 @@
         FROM `cms_bt_jm_promotion_product`  AS a
         Left JOIN `cms_bt_jm_product`  AS b  ON a.`channel_id`=b.`channel_id` AND  a.`product_code`=b.`product_code`
         WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}
+        <if test="codes !=null and codes.size > 0">
+            and a.product_code IN
+            <foreach item="item" index="i" collection="codes"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+
     </select>
 
     <update id="batchUpdateDealPrice">

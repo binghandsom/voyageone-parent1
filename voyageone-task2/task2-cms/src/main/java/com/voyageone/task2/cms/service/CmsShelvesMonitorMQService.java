@@ -2,9 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.jd.open.api.sdk.domain.ware.Sku;
 import com.jd.open.api.sdk.response.ware.WareListResponse;
-import com.taobao.api.ApiException;
 import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
-import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.InputField;
@@ -23,8 +21,7 @@ import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
-import com.voyageone.service.model.cms.CmsBtImagesModel;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -46,7 +43,7 @@ import java.util.concurrent.TimeUnit;
  * Created by james on 2016/11/11.
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_ShelvesMonitorJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_ShelvesMonitorJob)
 public class CmsShelvesMonitorMQService extends BaseMQCmsService {
 
 
@@ -215,7 +212,7 @@ public class CmsShelvesMonitorMQService extends BaseMQCmsService {
     private void sendMq(Map<String, Object> messageMap){
         Integer shelvesId = (Integer) messageMap.get("shelvesId");
         if(CacheHelper.getValueOperation().get("ShelvesMonitor_"+ shelvesId) != null){
-            sender.sendMessage(MqRoutingKey.CMS_BATCH_ShelvesMonitorJob, messageMap, 30);
+            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_ShelvesMonitorJob, messageMap, 30);
         }
     }
 

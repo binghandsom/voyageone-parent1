@@ -22,7 +22,7 @@ import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.CmsBtShelvesTemplateService;
 import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import com.voyageone.service.model.cms.CmsBtShelvesTemplateModel;
@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
@@ -50,7 +49,7 @@ import java.util.stream.Collectors;
  * @since 2.10.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_ShelvesImageUploadJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_ShelvesImageUploadJob)
 public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
     private final CmsBtShelvesProductService cmsBtShelvesProductService;
     private final TbPictureService tbPictureService;

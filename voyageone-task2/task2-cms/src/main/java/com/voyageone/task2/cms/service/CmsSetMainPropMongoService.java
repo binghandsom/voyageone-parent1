@@ -43,7 +43,7 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
@@ -560,7 +560,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                                 .collect(Collectors.toList());
                         if (ListUtils.isNull(skus)) {
                             // feed里面的品牌已被加入黑名单,导入失败
-                            String errMsg = String.format(strProcName + ":feed里面的sku的价格成本价为0" +
+                            String errMsg = String.format(strProcName + ":feed里面的sku的价格成本价为0或UPC为空" +
                                     "[ChannelId:%s] [FeedCode:%s]", feed.getChannelId(), feed.getCode());
                             $error(errMsg);
                             throw new BusinessException(errMsg);
@@ -1185,7 +1185,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                             newLog.setChannelId(channelId);
 
                             // 向Mq发送消息同步sku,code,group价格范围
-                            sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob,
+                            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob,
                                     JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
                         }
 
