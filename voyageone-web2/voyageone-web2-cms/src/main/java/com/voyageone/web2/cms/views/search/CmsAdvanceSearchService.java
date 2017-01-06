@@ -493,13 +493,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
                 mqSenderService.sendMessage(advSearchExportMQMessageBody);
             } catch (MQMessageRuleException e) {
                 $error(String.format("高级检索文件导出消息发送异常, channelId=%s, userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()));
-                CmsBtExportTaskModel target = new CmsBtExportTaskModel();
-                target.setId(taskModel.getId());
-                target.setModified(new Date());
-                target.setModifier(userInfo.getUserName());
-                target.setStatus(2);
-                target.setComment(e.getMessage());
-                cmsBtExportTaskService.update(target);
+                throw new BusinessException("MQ发送异常:" + e.getMessage());
             }
             return true;
         } else {

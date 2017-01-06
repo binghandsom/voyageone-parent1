@@ -275,13 +275,7 @@ public class CmsFeedSearchService extends BaseViewService {
                 mqSenderService.sendMessage(feedExportMQMessageBody);
             } catch (MQMessageRuleException e) {
                 $error(String.format("feed文件导出异常, channelId=%s, userName=%s", channelId, userName));
-                CmsBtExportTaskModel target = new CmsBtExportTaskModel();
-                target.setId(cmsBtExportTaskModel.getId());
-                target.setModified(new Date());
-                target.setModifier(userName);
-                target.setStatus(2);
-                target.setComment(e.getMessage());
-                cmsBtExportTaskService.update(target);
+                throw new BusinessException("MQ发送异常:" + e.getMessage());
             }
             return cmsBtExportTaskModel;
         } else {
