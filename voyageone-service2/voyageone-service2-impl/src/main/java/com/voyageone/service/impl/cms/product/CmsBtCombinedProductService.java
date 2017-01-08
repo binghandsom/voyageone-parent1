@@ -247,6 +247,9 @@ public class CmsBtCombinedProductService extends BaseService {
                                         break;
                                     }
                                 }
+                                if(StringUtil.isEmpty(ratioVal)){
+                                    ratioVal = "1";
+                                }
                                 int ratio = 0;
                                 if (StringUtils.isNumeric(ratioVal)) {
                                     ratio = Integer.parseInt(ratioVal);
