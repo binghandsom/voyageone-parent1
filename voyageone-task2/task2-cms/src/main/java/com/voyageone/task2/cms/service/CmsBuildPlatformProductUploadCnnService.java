@@ -10,6 +10,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
@@ -18,11 +19,14 @@ import com.voyageone.components.cnn.service.CnnWareService;
 import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.dao.cms.CmsBtSxCnSkuDao;
+import com.voyageone.service.daoext.cms.CmsBtSxCnSkuDaoExt;
 import com.voyageone.service.impl.cms.DictService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
+import com.voyageone.service.model.cms.CmsBtSxCnSkuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -60,6 +64,8 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
     private int threadCount;
     // 抽出件数(synship.tm_task_control中设置的当前job的最大线程数"row_count", 默认为500)
     private int rowCount;
+    // 上新名称
+    private final static String UPLOAD_NAME = "新独立域名";
 
     @Autowired
     private PlatformProductUploadService platformProductUploadService;
@@ -71,6 +77,10 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
     private SxProductService sxProductService;
     @Autowired
     private DictService dictService;
+    @Autowired
+    private CmsBtSxCnSkuDao cmsBtSxCnSkuDao;
+    @Autowired
+    private CmsBtSxCnSkuDaoExt cmsBtSxCnSkuDaoExt;
 
     @Override
     public SubSystem getSubSystem() {
@@ -93,7 +103,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
     @Override
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         if (ListUtils.isNull(taskControlList)) {
-            String errMsg = String.format("新独立域名平台产品上新处理JOB没有启动! tm_task_control表中没有相应的配置信息");
+            String errMsg = String.format("%s处理JOB没有启动! tm_task_control表中没有相应的配置信息", UPLOAD_NAME);
             $warn(errMsg);
             return;
         }
@@ -131,7 +141,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             ie.printStackTrace();
         }
 
-        $info("=================新独立域名上新  最终结果=====================");
+        $info("=================" + UPLOAD_NAME + "  最终结果=====================");
         for(String channelId : channelIdList) {
             int totalCnt = 0;
             int addOkCnt = 0;
@@ -162,12 +172,12 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                 }
             }
             OrderChannelBean channel = Channels.getChannel(channelId);
-            String strResult = String.format("%s %s新独立域名上新结果: [总件数:%s 新增(成功:%s 失败:%s) 更新(成功:%s 失败:%s)]",
+            String strResult = String.format("%s %s%s结果: [总件数:%s 新增(成功:%s 失败:%s) 更新(成功:%s 失败:%s)]",
                     channelId, String.format("%1$-15s", channel != null ? channel.getFull_name() : "未知店铺名"),
-                    totalCnt, addOkCnt, addNgCnt, updOkCnt, updNgCnt);
+                    UPLOAD_NAME, totalCnt, addOkCnt, addNgCnt, updOkCnt, updNgCnt);
             $info(strResult);
         }
-        $info("=================新独立域名上新  主线程结束====================");
+        $info("=================" + UPLOAD_NAME + "  主线程结束====================");
     }
 
     /**
@@ -177,7 +187,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
      * @param cartId     平台ID
      */
     public void doUploadChannel(String channelId, int cartId)  {
-        $info("渠道(%s)的新独立域名平台(%s:CNN)上新任务开始！", channelId, CART_ID_CNN);
+        $info("当前渠道的%s任务开始！[channelId:%s] [cartId:%s]", UPLOAD_NAME, channelId, CART_ID_CNN);
 
         try{
             // 获取店铺信息
@@ -199,7 +209,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                 $info("上新任务表中没有该平台(cartId:%d)对应的任务列表信息！", cartId);
                 return;
             }
-            $info("从上新任务表中共读取共读取[%d]条新独立域名平台(cartId:%d)上新任务！", sxWorkloadModels.size(), CART_ID_CNN);
+            $info("从上新任务表中共读取共读取[%d]条%s任务！[channelId:%s] [cartId:%s]", sxWorkloadModels.size(), UPLOAD_NAME, channelId, cartId);
 
             // 创建线程池
             ExecutorService executor = Executors.newFixedThreadPool(threadCount);
@@ -218,10 +228,10 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                 ie.printStackTrace();
             }
 
-            $info("当前渠道的新独立域名平台上新任务执行完毕！[channelId:%s] [cartId:%s] [上新对象group件数:%s]", channelId, cartId, sxWorkloadModels.size());
+            $info("当前渠道的%s任务执行完毕！[channelId:%s] [cartId:%s] [上新对象group件数:%s]", UPLOAD_NAME, channelId, cartId, sxWorkloadModels.size());
 
         } catch (Exception e) {
-            $info("当前渠道的新独立域名平台上新任务执行失败！[channelId:%s] [cartId:%s] [errMsg:%s]", channelId, cartId, e.getMessage());
+            $info("当前渠道的%s任务执行失败！[channelId:%s] [cartId:%s] [errMsg:%s]", UPLOAD_NAME, channelId, cartId, e.getMessage());
             return;
         }
 
@@ -266,6 +276,9 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             CmsBtProductModel mainProduct = sxData.getMainProduct();
             List<CmsBtProductModel> cmsBtProductList = sxData.getProductList();
             List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
+
+            // 用于删除cms_bt_sx_cn_sku表中的库存同步的sku
+            List<String> listDelCodes = new ArrayList<>(); // 删除的code列表
 
             // 没有lock并且已Approved的产品列表为空的时候,中止该产品的上新流程
             if (ListUtils.isNull(cmsBtProductList)) {
@@ -344,11 +357,11 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                 // 更新商品到平台
                 result = cnnWareService.updateProduct(shop, cnnWareId, paramCommonFields, paramCustomFields, paramSkuList, paramOptionsList);
             }
-            $info(String.format("新独立域名调用%s接口API结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [结果:%s] ",
-                    updateType, channelId, cartId, groupId, result));
+            $info(String.format("%s调用%s接口API结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [结果:%s] ",
+                    UPLOAD_NAME, updateType, channelId, cartId, groupId, result));
 
             if (StringUtils.isEmpty(result)) {
-                throw new BusinessException(String.format("新独立域名%s失败！调用接口返回值为空! [groupId:%s]", updateType, groupId));
+                throw new BusinessException(String.format("%s%s失败！调用接口返回值为空! [groupId:%s]", UPLOAD_NAME, updateType, groupId));
             } else {
                 Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
                 if (responseMap != null && responseMap.containsKey("code") && responseMap.get("code") != null) {
@@ -360,7 +373,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                         }
                     } else {
                         // 新增/更新商品失败
-                        String errMsg = String.format("新独立域名调用接口API%s失败! [groupId:%s] [errMsg=%s]", updateType, groupId, responseMap.get("msg"));
+                        String errMsg = String.format("%s调用接口API%s失败! [groupId:%s] [errMsg=%s]", UPLOAD_NAME, updateType, groupId, responseMap.get("msg"));
                         throw new BusinessException(errMsg);
                     }
                 }
@@ -373,7 +386,11 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                 // 上新对象产品Code列表
                 List<String> sxCodeList = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
                 // 强制下架
-                doCnnForceWareListing(shop, cnnWareId, groupId, CmsConstants.PlatformActive.ToInStock, sxCodeList, "新独立域名上新SKU总库存为0时强制下架处理");
+                boolean blnListingResult = doCnnForceWareListing(shop, cnnWareId, groupId, CmsConstants.PlatformActive.ToInStock, sxCodeList, UPLOAD_NAME + "上新SKU总库存为0时强制下架处理");
+                // 下架之后删除cms_bt_sx_cn_sku表中库存同步用sku
+                if (blnListingResult) {
+                    listDelCodes.addAll(cmsBtProductList.stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList()));
+                }
             } else {
                 // 如果SKU总库存不为0时，根据group表里设置的Action设置上下架状态
                 boolean updateCnnWareListing = doCnnWareListing(shop, sxData, cnnWareId);
@@ -384,8 +401,12 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                     if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
                         // platformActive是(ToOnSale)时，把platformStatus更新成"OnSale"
                         platformStatus = CmsConstants.PlatformStatus.OnSale;
+                        // 上架成功之后，更新cms_bt_sx_cn_sku表，用于刷全量库存
+                        updateSxCnnSku(channelId, cartId, sxData);
                     } else {
                         platformStatus = CmsConstants.PlatformStatus.InStock;
+                        // 下架之后删除cms_bt_sx_cn_sku表中库存同步用sku
+                        listDelCodes.addAll(cmsBtProductList.stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList()));
                     }
                 } else {
                     // 商品上架/下架失败的时候，新增商品时一律回写成"InStock"(默认),更新商品时不回写状态
@@ -396,14 +417,19 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                 }
             }
 
+            // 如果有下架后需要删除的库存同步用sku
+            if (ListUtils.notNull(listDelCodes)) {
+                deleteSxCnSku(channelId, listDelCodes);
+            }
+
             // 上新成功时状态回写操作
             sxProductService.doUploadFinalProc(shop, true, sxData, cmsBtSxWorkloadModel, String.valueOf(cnnWareId), platformStatus, "", getTaskName());
 
             // 把上新成功状态放入结果map中
             add2ResultMap(channelId, cartId, groupId, isUpdate, true);
 
-            $info(String.format("新独立域名单个商品%s成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s] ",
-                    isUpdate ? "上新" : "更新", channelId, cartId, groupId, cnnWareId));
+            $info(String.format("%s单个商品%s成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s] ",
+                    UPLOAD_NAME, isUpdate ? "上新" : "更新", channelId, cartId, groupId, cnnWareId));
 
         } catch (Exception ex) {
 
@@ -445,8 +471,8 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             // 上新出错时状态回写操作
             sxProductService.doUploadFinalProc(shop, false, sxData, cmsBtSxWorkloadModel, "", null, "", getTaskName());
 
-            $error(String.format("新独立域名单个商品上新异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s] [errMsg:%s]",
-                    channelId, cartId, groupId, cnnWareId, Arrays.toString(ex.getStackTrace())));
+            $error(String.format("%s单个商品上新异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s] [errMsg:%s]",
+                        UPLOAD_NAME, channelId, cartId, groupId, cnnWareId, Arrays.toString(ex.getStackTrace())));
             return;
         }
     }
@@ -570,10 +596,11 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                     throw new BusinessException(String.format("详情页描述[%s]在dict表里未设定!", details));
                 }
             } else {
-                strNotes = sxProductService.resolveDict("新独立域名详情页描述", expressionParser, shop, getTaskName(), null);
+                // 解析cms_mt_platform_dict表中配置的"新独立域名详情页描述"
+                strNotes = sxProductService.resolveDict(UPLOAD_NAME + "详情页描述", expressionParser, shop, getTaskName(), null);
             }
         } catch (Exception ex) {
-            throw new BusinessException(String.format("新独立域名取得详情页描述信息失败！[errMsg:%s]", ex.getMessage()));
+            throw new BusinessException(String.format("%s取得详情页描述信息失败！[errMsg:%s]", UPLOAD_NAME, ex.getMessage()));
         }
         paramCommonFields.put("pageDetailPC", strNotes);
         // 移动端产品页详情内容（直接是html脚本）
@@ -753,8 +780,8 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
      * @param shop ShopBean 店铺对象
      * @param wareId long 商品id
      */
-    protected void doCnnForceWareListing(ShopBean shop, Long wareId, Long groupId, CmsConstants.PlatformActive platformActive, List<String> codeList, String modifier) {
-        if (shop == null || wareId == null || platformActive == null) return;
+    protected boolean doCnnForceWareListing(ShopBean shop, Long wareId, Long groupId, CmsConstants.PlatformActive platformActive, List<String> codeList, String modifier) {
+        if (shop == null || wareId == null || platformActive == null) return false;
 
         // 商品上架/下架结果
         boolean updateListingResult = false;
@@ -770,17 +797,17 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                 // platformActive是(ToInStock)时，执行商品下架操作
                 result = cnnWareService.doWareUpdateDelisting(shop, wareId);
             } else {
-                return;
+                return false;
             }
-            $info(String.format("调用新独立域名平台上下架API [channelId=%s] [cartId=%s] [numIId=%s] [platformActive:%s] [结果=%s]",
-                    shop.getOrder_channel_id(), shop.getCart_id(), wareId, platformActive.name(), result));
+            $info(String.format("调用%s平台上下架API [channelId=%s] [cartId=%s] [numIId=%s] [platformActive:%s] [结果=%s]",
+                    UPLOAD_NAME, shop.getOrder_channel_id(), shop.getCart_id(), wareId, platformActive.name(), result));
             if (!StringUtils.isEmpty(result)) {
                 Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
                 if (responseMap != null && responseMap.containsKey("code") && responseMap.get("code") != null) {
                     if (CnnConstants.C_CNN_RETURN_SUCCESS_0 == (int) responseMap.get("code")) {
                         updateListingResult = true;
                     } else {
-                        errMsg = String.format("调用新独立域名平台上下架失败! [platformActive:%s] [errMsg=%s]", platformActive.name(), responseMap.get("msg"));
+                        errMsg = String.format("调用%s平台上下架失败! [platformActive:%s] [errMsg=%s]", UPLOAD_NAME, platformActive.name(), responseMap.get("msg"));
                         $error(errMsg);
                     }
                 }
@@ -796,6 +823,8 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             // 回写上下架状态到product和productGroup表，并插入mongoDB上下架履历表cms_bt_platform_active_log_cXXX
             sxProductService.updateListingStatus(shop.getOrder_channel_id(), shop.getCart_id(), groupId, codeList, platformActive, updateListingResult, errMsg, modifier);
         }
+
+        return updateListingResult;
     }
 
     /**
@@ -821,16 +850,16 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                 // platformActive是(ToInStock)时，执行商品下架操作
                 result = cnnWareService.doWareUpdateDelisting(shop, wareId);
             }
-            $info(String.format("调用新独立域名平台上下架API [channelId=%s] [cartId=%s] [numIId=%s] [platformActive:%s] [结果=%s]",
-                    shop.getOrder_channel_id(), shop.getCart_id(), wareId, sxData.getPlatform().getPlatformActive().name(), result));
+            $info(String.format("调用%s平台上下架API [channelId=%s] [cartId=%s] [numIId=%s] [platformActive:%s] [结果=%s]",
+                    UPLOAD_NAME, shop.getOrder_channel_id(), shop.getCart_id(), wareId, sxData.getPlatform().getPlatformActive().name(), result));
             if (!StringUtils.isEmpty(result)) {
                 Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
                 if (responseMap != null && responseMap.containsKey("code") && responseMap.get("code") != null) {
                     if (CnnConstants.C_CNN_RETURN_SUCCESS_0 == (int)responseMap.get("code")) {
                         updateListingResult = true;
                     } else {
-                        errMsg = String.format("调用新独立域名平台上下架失败! [platformActive:%s] [errMsg=%s]",
-                                sxData.getPlatform().getPlatformActive().name(), responseMap.get("msg"));
+                        errMsg = String.format("调用%s平台上下架失败! [platformActive:%s] [errMsg=%s]",
+                                UPLOAD_NAME, sxData.getPlatform().getPlatformActive().name(), responseMap.get("msg"));
                         $error(errMsg);
                     }
                 }
@@ -872,6 +901,89 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
      */
     private String getPreMsg(String shopName, String sxType) {
         return shopName + "[" + sxType + "] ";
+    }
+
+    /**
+     * 回写Liking官网SKU信息表(cms_bt_sx_cn_sku)
+     *
+     * @param channelId 渠道id
+     * @param cartId 平台id
+     * @param channelId 渠道id
+     */
+    protected int updateSxCnnSku(String channelId, int cartId, SxData sxData) {
+        int cnt = 0;
+
+        // 主产品等列表取得
+        List<CmsBtProductModel> cmsBtProductList = sxData.getProductList();
+        List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
+
+        for (CmsBtProductModel prodObj : cmsBtProductList) {
+            CmsBtProductModel_Platform_Cart platform = prodObj.getPlatformNotNull(cartId);
+            if (MapUtils.isEmpty(platform)) continue;
+
+            // 产品code
+            String code = prodObj.getCommonNotNull().getFieldsNotNull().getCode();
+
+            List<BaseMongoMap<String, Object>> skus = platform.getSkus();
+            for (BaseMongoMap<String, Object> sku : skus) {
+                CmsBtSxCnSkuModel cnnSkuModel = new CmsBtSxCnSkuModel();
+                cnnSkuModel.setChannelId(channelId);
+                cnnSkuModel.setOrgChannelId(prodObj.getOrgChannelId());
+                cnnSkuModel.setCode(code);
+                cnnSkuModel.setSku(sku.getStringAttribute("skuCode"));
+                String size = "未知commonSize";
+                for (CmsBtProductModel_Sku commSkuObj : prodObj.getCommonNotNull().getSkus()) {
+                    if (sku.getStringAttribute("skuCode").equals(commSkuObj.getSkuCode())) {
+                        size = commSkuObj.getSize();
+                    }
+                }
+                cnnSkuModel.setSize(size);
+                String sizeSx = size;
+                for (BaseMongoMap<String, Object> skuObj : skuList) {
+                    if (sku.getStringAttribute("skuCode").equals(skuObj.getStringAttribute("skuCode"))) {
+                        sizeSx = skuObj.getStringAttribute("sizeSx");
+                    }
+                }
+                cnnSkuModel.setShowSize(sizeSx);
+                String categoryIds = "未知categoryIds";
+                if (!StringUtils.isEmpty(platform.getpCatId())) {
+                    categoryIds = platform.getpCatId();
+                }
+                cnnSkuModel.setCategoryIds(categoryIds);
+                cnnSkuModel.setCreater(getTaskName());
+                cnnSkuModel.setCreated(DateTimeUtil.getDate());
+                cnnSkuModel.setModifier(getTaskName());
+                cnnSkuModel.setModified(DateTimeUtil.getDate());
+
+                // 查询mySql表中的sku列表(一个产品查询一次，如果每个sku更新/新增的时候都去查的话，效率太低了)
+                Map<String, String> query = new HashMap<>();
+                query.put("channelId", channelId);
+                query.put("code", code);
+                query.put("sku", sku.getStringAttribute("skuCode"));
+                CmsBtSxCnSkuModel searchModel = cmsBtSxCnSkuDao.selectOne(query);
+
+                if (searchModel == null) {
+                    // 不存在，新增
+                    cnt += cmsBtSxCnSkuDao.insert(cnnSkuModel);
+                } else {
+                    // 存在，更新
+                    cnnSkuModel.setId(searchModel.getId());
+                    cnt += cmsBtSxCnSkuDao.update(cnnSkuModel);
+                }
+            }
+            $info("%s回写库存同步用cms_bt_sx_cn_sku表数据，新增或更新了%d件!", UPLOAD_NAME, cnt);
+        }
+
+        return cnt;
+    }
+
+    /**
+     * 删除库存同步用cms_bt_sx_cn_sku表
+     */
+    private int deleteSxCnSku(String channelId, List<String> listDelCodes) {
+        int delCnt = cmsBtSxCnSkuDaoExt.deleteByListCodes(channelId, listDelCodes);
+        $info("%s回写库存同步用cms_bt_sx_cn_sku表数据，删除了%d件,code列表:" + listDelCodes, UPLOAD_NAME, delCnt);
+        return delCnt;
     }
 
 }

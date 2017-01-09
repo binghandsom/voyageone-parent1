@@ -2441,6 +2441,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         } else {
             // 存在，更新
             $info("更新cms_bt_jm_sku开始 [ProductCode:%s] [SkuCode:%s]", productCode, jmsku.getSkuCode());
+            jmsku.setId(currentCmsBtJmSku.getId());
             cmsBtJmSkuDao.update(jmsku);
             $info("更新cms_bt_jm_sku成功 [ProductCode:%s] [SkuCode:%s]", productCode, jmsku.getSkuCode());
         }
