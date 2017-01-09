@@ -1136,7 +1136,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 } else {
                     // 生成productGroup数据
                     doSetGroup(feed);
-                    $info("doSetGroup:" + (System.currentTimeMillis() - startTime));
+                    $debug("doSetGroup:" + (System.currentTimeMillis() - startTime));
                     // 不存在的场合, 新建一个product
 //                    cmsProduct = doCreateCmsBtProductModel(feed, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
@@ -1151,7 +1151,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         cmsProduct.getCommon().getFields().setTranslateTime(DateTimeUtil.getGMTTime());
                     }
 
-                    $info("doCreateCmsBtProductModel:" + (System.currentTimeMillis() - startTime));
+                    $debug("doCreateCmsBtProductModel:" + (System.currentTimeMillis() - startTime));
                     if (cmsProduct == null) {
                         // 有出错, 跳过
                         String errMsg = "feed->master导入:新增:编辑商品的时候出错(cmsProduct = null):" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
@@ -1176,16 +1176,16 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //                        cmsBtFeedInfoDao.update(originalFeed);
 //                        return;
                     }
-                    $info("doSaveItemDetails:" + (System.currentTimeMillis() - startTime));
+                    $debug("doSaveItemDetails:" + (System.currentTimeMillis() - startTime));
                     // tom 20160510 追加 END
 
                     platFromAttributeCopyFromMainProduct(cmsProduct);
                     // 更新价格相关项目
                     cmsProduct = doSetPrice(channelId, feed, cmsProduct);
-                    $info("doSetPrice:" + (System.currentTimeMillis() - startTime));
+                    $debug("doSetPrice:" + (System.currentTimeMillis() - startTime));
                     // 设置店铺共通的店铺内分类信息
                     setSellerCats(feed, cmsProduct);
-                    $info("setSellerCats:" + (System.currentTimeMillis() - startTime));
+                    $debug("setSellerCats:" + (System.currentTimeMillis() - startTime));
 
                     //james g kg 计算
                     weightCalculate(cmsProduct);
@@ -1193,7 +1193,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     // 设置sku数
                     cmsProduct.getCommon().getFields().setSkuCnt(cmsProduct.getCommon().getSkus().size());
                     productService.createProduct(channelId, cmsProduct, getTaskName());
-                    $info("createProduct:" + (System.currentTimeMillis() - startTime));
+                    $debug("createProduct:" + (System.currentTimeMillis() - startTime));
 
                     Integer prodId = cmsProduct.getProdId().intValue();
                     cmsProduct.getPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> {
