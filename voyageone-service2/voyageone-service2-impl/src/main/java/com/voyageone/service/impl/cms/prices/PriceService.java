@@ -609,16 +609,23 @@ public class PriceService extends BaseService {
             // double originalPriceMsrp = skuInPlatform.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.originalPriceMsrp.name()); // 最新中国建议售价
             double priceSale = skuInPlatform.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()); // 最新中国最终售价
             double priceRetail = skuInPlatform.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceRetail.name()); // 最新中国指导售价
-            if (priceMsrp < originPriceMsrp.doubleValue()
-                    && originPriceMsrp.doubleValue() > priceSale && originPriceMsrp.doubleValue() > priceRetail
-                    && priceMsrp < priceSale && priceMsrp < priceRetail) {
-                skuInPlatform.put(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name(), originPriceMsrp);
-            }
-            if (originPriceMsrp.doubleValue() < priceSale && originPriceMsrp.doubleValue() > priceRetail) {
-                skuInPlatform.put(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name(), priceSale);
-            }
-            if (originPriceMsrp.doubleValue() > priceSale && originPriceMsrp.doubleValue() < priceRetail) {
-                skuInPlatform.put(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name(), priceRetail);
+//            if (priceMsrp < originPriceMsrp.doubleValue()
+//                    && originPriceMsrp.doubleValue() > priceSale && originPriceMsrp.doubleValue() > priceRetail
+//                    && priceMsrp < priceSale && priceMsrp < priceRetail) {
+//                skuInPlatform.put(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name(), originPriceMsrp);
+//            }
+//            if (originPriceMsrp.doubleValue() < priceSale && originPriceMsrp.doubleValue() > priceRetail) {
+//                skuInPlatform.put(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name(), priceSale);
+//            }
+//            if (originPriceMsrp.doubleValue() > priceSale && originPriceMsrp.doubleValue() < priceRetail) {
+//                skuInPlatform.put(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name(), priceRetail);
+//            }
+
+            if(priceMsrp < priceSale || priceMsrp < priceRetail){
+                double msrp = originPriceMsrp;
+                if(msrp < priceSale) msrp = priceSale;
+                if(msrp < priceRetail) msrp = priceRetail;
+                skuInPlatform.put(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name(), msrp);
             }
         }else {
             // 如果不强制同步的话, 要看看是否原本是合法价格
