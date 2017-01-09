@@ -5218,4 +5218,61 @@ public class SxProductService extends BaseService {
         }
     }
 
+    /**
+     * 取得指定SKU的价格
+     *
+     * @param sku BaseMongoMap<String, Object> SKU对象
+     * @param channelId String 渠道id
+     * @param cartId String 平台id
+     * @param priceCode String 价格类型 (".retail_price"(指导价)  ".sale_price"(最终销售价))
+     * @return double SKU价格
+     */
+    public double getSkuPrice(BaseMongoMap<String, Object> sku, String channelId, String cartId, String priceKey, String priceCode) {
+        // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
+        // priceCode:".retail_price"(指导价)  ".sale_price"(最终销售价)
+        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, priceKey, cartId + priceCode);
+
+        // 检查一下
+        String sxPricePropName;
+        if (sxPriceConfig == null) {
+            return 0.0d;
+        } else {
+            // 取得价格属性名
+            sxPricePropName = sxPriceConfig.getConfigValue1();
+            if (StringUtils.isEmpty(sxPricePropName)) {
+                return 0.0d;
+            }
+        }
+
+        // 取得该SKU相应字段的价格
+        return sku.getDoubleAttribute(sxPricePropName);
+    }
+
+    /**
+     * 取得Redis中缓存cms_mt_channel_config配置表中配置的值
+     *
+     * @param channelId String 渠道id
+     * @param configKey CmsConstants.ChannelConfig ConfigKey
+     * @param configCode String ConfigCode
+     * @return String cms_mt_channel_config配置表中配置的值
+     */
+    public String getRedisChannelConfigValue(String channelId, String configKey, String configCode) {
+        if (StringUtils.isEmpty(channelId) || StringUtils.isEmpty(configKey)) return "";
+
+        // 配置表(cms_mt_channel_config)表中ConfigCode的默认值为0
+        String strConfigCode = "0";
+        if (!StringUtils.isEmpty(configCode)) {
+            strConfigCode = configCode;
+        }
+
+        String strConfigValue = "";
+        // 通过配置表(cms_mt_channel_config)取得Configykey和ConfigCode对应的配置值(config_value1)
+        CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBean(channelId, configKey, strConfigCode);
+        if (channelConfig != null) {
+            strConfigValue = channelConfig.getConfigValue1();
+        }
+
+        return strConfigValue;
+    }
+
 }
