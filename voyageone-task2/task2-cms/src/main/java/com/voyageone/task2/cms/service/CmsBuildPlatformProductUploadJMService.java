@@ -872,7 +872,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         {
                             if (htDealUpdateResponse != null && !StringUtils.isEmpty(htDealUpdateResponse.getErrorMsg()) && htDealUpdateResponse.getErrorMsg().contains("没有可用的sku")) {
                                 String msg = String.format("聚美更新Deal失败,该Deal中没有可用的sku，请检查sku是否在该deal中存在，" +
-                                        "不存在请添加sku或将该sku变成有效后再试！[ProductId:%s] [HashId:] [Message:%s] [skuNo:%s]",
+                                        "不存在请添加sku或将该sku变成有效后再试！[ProductId:%s] [HashId:%s] [Message:%s] [skuNo:%s]",
                                         product.getProdId(), hashId, htDealUpdateResponse.getErrorMsg(), htDealUpdateRequest.getUpdate_data().getJumei_sku_no());
                                 $info(msg);
                             } else {
