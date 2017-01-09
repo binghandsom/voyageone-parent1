@@ -1459,6 +1459,7 @@
     </if>
     from
     ${tableName}
+    LEFT JOIN voyageone_cms2.cms_zz_feed_wmf_price ON voyageone_cms2.cms_zz_feed_wmf_product_temp.sku = voyageone_cms2.cms_zz_feed_wmf_price.sku_code
     ${keyword}
   </select>
   <update id="updateFlagBySku"  parameterType="java.util.List">

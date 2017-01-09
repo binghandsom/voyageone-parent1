@@ -408,7 +408,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     // CMSDOC-365,CMCDOC-414 如果common.catConf="0"(非人工匹配主类目)时，自动匹配商品主类目
                     // TODO 2016/12/30暂时这样更新，以后要改
 //                    if ("0".equals(productModel.getCommonNotNull().getCatConf())) {
-                        doSetMainCategory(productModel.getCommon(), productModel.getFeed().getCatPath(), true);
+                        doSetMainCategory(productModel.getCommon(), productModel.getFeed().getCatPath());
 //                    }
 
                     // platform对应 从子店的platform.p928 929 中的数据生成usjoi的platform
@@ -747,7 +747,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                         // TODO 2016/12/30暂时这样更新，以后要改
 //                        if ("0".equals(pr.getCommonNotNull().getCatConf())) {
                             // 自动匹配商品主类目
-                            doSetMainCategory(pr.getCommon(), pr.getFeed().getCatPath(), false);
+                            doSetMainCategory(pr.getCommon(), pr.getFeed().getCatPath());
 //                        }
 
                         // ****************common.skus的更新(有的sku可能在拆分后的product中)****************
@@ -1763,21 +1763,26 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      *
      * @param prodCommon 产品共通属性
      * @param feedCategoryPath feed类目Path
-     * @param blnAddFlg 是否新增商品(true:新增 false:更新)
+//     * @param blnAddFlg 是否新增商品(true:新增 false:更新)
      */
-    protected void doSetMainCategory(CmsBtProductModel_Common prodCommon, String feedCategoryPath, boolean blnAddFlg) {
+    protected void doSetMainCategory(CmsBtProductModel_Common prodCommon, String feedCategoryPath) {
         if (prodCommon == null || StringUtils.isEmpty(feedCategoryPath)) return;
 
         // 共通Field
         CmsBtProductModel_Field prodCommonField = prodCommon.getFieldsNotNull();
 
         // 调用Feed到主数据的匹配接口取得匹配度最高的主类目
-        SearchResult<MtCategoryKeysModel> searchResult = getMainCatInfo(feedCategoryPath,
+        long beginTime = System.currentTimeMillis();
+        MatchResult searchResult = getMainCatInfo(feedCategoryPath,
                 prodCommonField.getProductType(),
                 prodCommonField.getSizeType(),
                 prodCommonField.getProductNameEn(),
                 prodCommonField.getBrand());
-        if (searchResult != null && searchResult.getDataModel() != null) {
+        if (searchResult != null) {
+            $info(String.format("调用主类目匹配接口取得主类目和适用人群正常结束！[耗时:%s] [feedCategoryPath:%s] [productType:%s] " +
+                    "[sizeType:%s] [productNameEn:%s] [brand:%s]", (System.currentTimeMillis() - beginTime), feedCategoryPath,
+                    prodCommonField.getProductType(), prodCommonField.getSizeType(), prodCommonField.getProductNameEn(), prodCommonField.getBrand()));
+
             // 先备份原来的productType和sizeType
             // feed原始产品分类
             if (StringUtils.isEmpty(prodCommonField.getOrigProductType())
@@ -1790,56 +1795,58 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 prodCommonField.setOrigSizeType(prodCommonField.getSizeType());
             }
 
-            // 主类目匹配结果model
-            MtCategoryKeysModel mtCategoryKeysModel = searchResult.getDataModel();
-
             // 主类目path(中文)
-            prodCommon.setCatPath(mtCategoryKeysModel.getCnName());
+            if (!StringUtils.isEmpty(searchResult.getCnName()))   prodCommon.setCatPath(searchResult.getCnName());
             // 主类目path(英文)
-            prodCommon.setCatPathEn(mtCategoryKeysModel.getEnName());
+            if (!StringUtils.isEmpty(searchResult.getEnName()))   prodCommon.setCatPathEn(searchResult.getEnName());
             // 主类目id(就是主类目path中文的MD5码)
-            prodCommon.setCatId(MD5.getMD5(mtCategoryKeysModel.getCnName()));
-
-            // 更新主类目设置状态
-            if (!StringUtil.isEmpty(prodCommon.getCatId())) {
-                prodCommonField.setCategoryStatus("1");
+            if (!StringUtils.isEmpty(searchResult.getCnName())) {
+                prodCommon.setCatId(MD5.getMD5(searchResult.getCnName()));
                 prodCommonField.setCategorySetTime(DateTimeUtil.getNow());
                 prodCommonField.setCategorySetter(getTaskName());
+            }
+            // 更新主类目设置状态
+            if (!StringUtils.isEmpty(prodCommon.getCatId())) {
+                prodCommonField.setCategoryStatus("1");
             } else {
                 prodCommonField.setCategoryStatus("0");
             }
             // 产品分类(英文)
-            prodCommonField.setProductType(mtCategoryKeysModel.getProductTypeEn());
+            if (!StringUtils.isEmpty(searchResult.getProductTypeEn()))   prodCommonField.setProductType(searchResult.getProductTypeEn());
             // 产品分类(中文)
-            prodCommonField.setProductTypeCn(mtCategoryKeysModel.getProductTypeCn());
+            if (!StringUtils.isEmpty(searchResult.getProductTypeCn()))   prodCommonField.setProductTypeCn(searchResult.getProductTypeCn());
             // 适合人群(英文)
-            prodCommonField.setSizeType(mtCategoryKeysModel.getSizeTypeEn());
+            if (!StringUtils.isEmpty(searchResult.getSizeTypeEn()))      prodCommonField.setSizeType(searchResult.getSizeTypeEn());
             // 适合人群(中文)
-            prodCommonField.setSizeTypeCn(mtCategoryKeysModel.getSizeTypeCn());
+            if (!StringUtils.isEmpty(searchResult.getSizeTypeCn()))      prodCommonField.setSizeTypeCn(searchResult.getSizeTypeCn());
             // TODO 2016/12/30暂时这样更新，以后要改
             if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter())) {
                 // 税号个人
-                prodCommonField.setHsCodePrivate(mtCategoryKeysModel.getTaxPersonal());
-                // 更新税号设置状态
-                if (!StringUtil.isEmpty(prodCommonField.getHsCodePrivate())) {
-                    prodCommonField.setHsCodeStatus("1");
+                if (!StringUtils.isEmpty(searchResult.getTaxPersonal())) {
+                    prodCommonField.setHsCodePrivate(searchResult.getTaxPersonal());
                     prodCommonField.setHsCodeSetTime(DateTimeUtil.getNow());
                     prodCommonField.setHsCodeSetter(getTaskName());
+                }
+                // 更新税号设置状态
+                if (!StringUtils.isEmpty(prodCommonField.getHsCodePrivate())) {
+                    prodCommonField.setHsCodeStatus("1");
                 } else {
                     prodCommonField.setHsCodeStatus("0");
                 }
             }
             // 税号跨境申报（10位）
-            prodCommonField.setHsCodeCross(mtCategoryKeysModel.getTaxDeclare());
+            if (!StringUtils.isEmpty(searchResult.getTaxDeclare()))      prodCommonField.setHsCodeCross(searchResult.getTaxDeclare());
 
             // 商品中文名称(如果已翻译，则不设置)
             if ("0".equals(prodCommonField.getTranslateStatus())) {
-                // 主类目叶子级中文名称（"服饰>服饰配件>钱包卡包钥匙包>护照夹" -> "护照夹"）
-                String leafCategoryCnName = mtCategoryKeysModel.getCnName().substring(mtCategoryKeysModel.getCnName().lastIndexOf(">") + 1,
-                        mtCategoryKeysModel.getCnName().length());
-                // 设置商品中文名称（品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称）
-                prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(prodCommonField.getBrand()
-                        , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
+                if (!StringUtils.isEmpty(searchResult.getCnName())) {
+                    // 主类目叶子级中文名称（"服饰>服饰配件>钱包卡包钥匙包>护照夹" -> "护照夹"）
+                    String leafCategoryCnName = searchResult.getCnName().substring(searchResult.getCnName().lastIndexOf(">") + 1,
+                            searchResult.getCnName().length());
+                    // 设置商品中文名称（品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称）
+                    prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(prodCommonField.getBrand()
+                            , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
+                }
             }
         }
     }
@@ -1866,7 +1873,34 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      * @param brand 产品品牌
      * @return SearchResult 匹配度最高的第一个查询结果
      */
-    public SearchResult<MtCategoryKeysModel> getMainCatInfo(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
+    public MatchResult getMainCatInfo(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
+        // 取得查询条件
+        FeedQuery query = getFeedQuery(feedCategoryPath, productType, sizeType, productNameEn, brand);
+
+        // 调用主类目匹配接口，取得匹配度最高的一个主类目和sizeType
+        MatchResult searchResult = searcher.search(query, false);
+        if (searchResult == null) {
+            String errMsg = String.format("调用Feed到主数据的匹配程序匹配主类目失败！[feedCategoryPath:%s] [productType:%s] " +
+                    "[sizeType:%s] [productNameEn:%s] [brand:%s]", feedCategoryPath, productType, sizeType, productNameEn, brand);
+            $error(errMsg);
+            return null;
+        }
+
+        // 取得匹配度最高的主类目
+        return searchResult;
+    }
+
+    /**
+     * 取得查询条件
+     *
+     * @param feedCategoryPath feed类目Path
+     * @param productType 产品分类
+     * @param sizeType 适合人群(英文)
+     * @param productNameEn 产品名称（英文）
+     * @param brand 产品品牌
+     * @return FeedQuer 查询条件
+     */
+    private FeedQuery getFeedQuery(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
         // 调用Feed到主数据的匹配程序匹配主类目
         StopWordCleaner cleaner = new StopWordCleaner();
         // 子店feed类目path分隔符(由于导入feedInfo表时全部替换成用"-"来分隔了，所以这里写固定值就可以了)
@@ -1879,16 +1913,6 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         query.setSizeType(sizeType);
         query.setProductName(productNameEn, brand);
 
-        // 调用主类目匹配接口，取得匹配度最高的一个主类目
-        List<SearchResult<MtCategoryKeysModel>> searchResults = searcher.search(query, 1);
-        if (ListUtils.isNull(searchResults)) {
-            String errMsg = String.format("调用Feed到主数据的匹配程序匹配主类目失败！[feedCategoryPath:%s] [productType:%s] " +
-                    "[sizeType:%s] [productNameEn:%s] [brand:%s]", feedCategoryPath, productType, sizeType, productNameEn, brand);
-            $error(errMsg);
-            return null;
-        }
-
-        // 取得匹配度最高的主类目
-        return searchResults.get(0);
+        return query;
     }
 }

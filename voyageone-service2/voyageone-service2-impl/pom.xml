@@ -70,6 +70,12 @@
 
         <dependency>
             <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-dt</artifactId>
+            <version>${voyageone.components.dt.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.voyageone</groupId>
             <artifactId>voyageone-components-sneakerhead</artifactId>
             <version>${voyageone.components.sneakerhead.version}</version>
         </dependency>

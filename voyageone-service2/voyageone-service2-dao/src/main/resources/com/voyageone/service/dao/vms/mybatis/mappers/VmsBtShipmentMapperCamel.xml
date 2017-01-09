@@ -140,6 +140,12 @@
         <include refid="Base_Column_List" />
         from vms_bt_shipment
         <where >
+            <if test="id !=null and 0 != id">
+                and `id` = #{shipmentId, jdbcType=INTEGER}
+            </if>
+            <if test="shipmentId !=null and 0 != shipmentId">
+                and `id` = #{shipmentId, jdbcType=INTEGER}
+            </if>
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>

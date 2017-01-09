@@ -58,6 +58,7 @@ define([
                             $scope.vm.product = resp.data.product;
                             $scope.vm.product.cartId = $scope.vm.product.cartId + "";
                             $scope.vm.product._id = $scope.vm.copyOne._id;
+                            $scope.vm.product.wuliubaoCode = $scope.vm.copyOne.wuliubaoCode;
                             // 记录此套装中sku
                             var skuCodes = new Array();
                             _.each($scope.vm.product.skus, function (skuBean, index, list) {
