@@ -119,6 +119,9 @@
         <!-- DFO 导入 cms2 -->
         <task:scheduled ref="CmsDfoAnalysisJob" method="run" cron="40 0/1 * * * ?"/>
 
+        <!-- Champion 导入 cms2 -->
+        <task:scheduled ref="CmsChampionAnalysisJob" method="run" cron="0 0/5 0-23 * * ?"/>
+
         <!-- SneakerHead feed 导入 cms2 -->
         <task:scheduled ref="CmsSneakerHeadAnalysisJob" method="run" cron="0 0 1 * * ?"/>
 

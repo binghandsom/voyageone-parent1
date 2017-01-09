@@ -53,7 +53,7 @@ public class TaobaoScItemServiceTest {
 		for (int i = 0; i < numIIdList.length; i++) {
 			long numIId = numIIdList[i];
 			System.out.println("NOW:" + i + "/" + numIIdList.length + ", numIID:" + numIId);
-			taobaoScItemService.doSetScItem(getShopBean(), numIId);
+//			taobaoScItemService.doSetScItem(getShopBean(), numIId);
 		}
 //      taobaoScItemService.doSetScItem(getShopBean(), 524011540895L);
 //		taobaoScItemService.doSetScItem(getShopBean(), 524038603921L);
@@ -196,7 +196,7 @@ public class TaobaoScItemServiceTest {
 			// 创建货品
 			// 初始化库存
 			// 创建关联
-			taobaoScItemService.doSetScItem(shopBean, numIId);
+//			taobaoScItemService.doSetScItem(shopBean, numIId);
 
 			// 人工通知赵杰同步库存
 
