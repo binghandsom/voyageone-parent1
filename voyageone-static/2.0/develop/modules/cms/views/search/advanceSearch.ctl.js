@@ -776,15 +776,26 @@ define([
                 return;
             }
             var picList = [];
-            for (var attr in item.common.fields) {
-                if (attr.indexOf("images") >= 0) {
-                    var image = _.map(item.common.fields[attr], function (entity) {
-                        var imageKeyName = "image" + attr.substring(6, 7);
+            for(var i=1;i<=9;i++){
+                if(item.common.fields["images"+i]){
+                    var image = _.map(item.common.fields["images"+i], function (entity) {
+                        var imageKeyName = "image" + i;
                         return entity[imageKeyName] != null ? entity[imageKeyName] : "";
                     });
                     picList.push(image);
+                }else{
+                    picList.push([""]);
                 }
             }
+            // for (var attr in item.common.fields) {
+            //     if (attr.indexOf("images") >= 0) {
+            //         var image = _.map(item.common.fields[attr], function (entity) {
+            //             var imageKeyName = "image" + attr.substring(6, 7);
+            //             return entity[imageKeyName] != null ? entity[imageKeyName] : "";
+            //         });
+            //         picList.push(image);
+            //     }
+            // }
             this.openImagedetail({'mainPic': picList[0][0], 'picList': picList, 'search': 'master'});
         }
 
