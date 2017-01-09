@@ -1613,44 +1613,46 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             List<Map<String, Object>> multiComplex2 = new LinkedList<>();
             List<Map<String, Object>> multiComplex6 = new LinkedList<>();
 
-            // jeff 2016/05 change start
-            //  List<String> lstImageOrg = feed.getImage();
-            List<String> lstImageOrg = null;
-            if (isSplit) {
-                if (feed.getSkus() != null && feed.getSkus().size() > 0) {
-                    lstImageOrg = feed.getSkus().get(0).getImage();
-                }
-                if (lstImageOrg == null) {
+            if(!feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())) {
+                // jeff 2016/05 change start
+                //  List<String> lstImageOrg = feed.getImage();
+                List<String> lstImageOrg = null;
+                if (isSplit) {
+                    if (feed.getSkus() != null && feed.getSkus().size() > 0) {
+                        lstImageOrg = feed.getSkus().get(0).getImage();
+                    }
+                    if (lstImageOrg == null) {
+                        lstImageOrg = feed.getImage();
+                    }
+                } else {
                     lstImageOrg = feed.getImage();
                 }
-            } else {
-                lstImageOrg = feed.getImage();
-            }
-            // jeff 2016/05 change end
-            if (lstImageOrg != null && lstImageOrg.size() > 0) {
-                for (String imgOrg : lstImageOrg) {
-                    Map<String, Object> multiComplexChildren = new HashMap<>();
-                    Map<String, Object> multiComplexChildren6 = new HashMap<>();
-                    // jeff 2016/04 change start
-                    // multiComplexChildren.put("image1", imgOrg);
-                    String picName = doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg);
-                    multiComplexChildren.put("image1", picName);
-                    multiComplexChildren6.put("image6", picName);
-                    // jeff 2016/04 add end
-                    multiComplex.add(multiComplexChildren);
-                    multiComplex6.add(multiComplexChildren6);
+                // jeff 2016/05 change end
+                if (lstImageOrg != null && lstImageOrg.size() > 0) {
+                    for (String imgOrg : lstImageOrg) {
+                        Map<String, Object> multiComplexChildren = new HashMap<>();
+                        Map<String, Object> multiComplexChildren6 = new HashMap<>();
+                        // jeff 2016/04 change start
+                        // multiComplexChildren.put("image1", imgOrg);
+                        String picName = doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg);
+                        multiComplexChildren.put("image1", picName);
+                        multiComplexChildren6.put("image6", picName);
+                        // jeff 2016/04 add end
+                        multiComplex.add(multiComplexChildren);
+                        multiComplex6.add(multiComplexChildren6);
+                    }
                 }
-            }
 //            productField.put("images1", multiComplex);
-            productCommonField.put("images1", multiComplex);
-            // 新增商品时，根据设置决定是否同时设置PC端自拍商品图images6,更新商品时不更新images6(老的数据里面本来就没有images6的时候更新)
-            if (newFlg
-                    || (ListUtils.isNull(productCommonField.getImages6()) || StringUtils.isEmpty(productCommonField.getImages6().get(0).getName()))
-                    || "1".equals(feed.getIsFeedReImport())) {
+                productCommonField.put("images1", multiComplex);
+                // 新增商品时，根据设置决定是否同时设置PC端自拍商品图images6,更新商品时不更新images6(老的数据里面本来就没有images6的时候更新)
+                if (newFlg
+                        || (ListUtils.isNull(productCommonField.getImages6()) || StringUtils.isEmpty(productCommonField.getImages6().get(0).getName()))
+                        || "1".equals(feed.getIsFeedReImport())) {
 
-                if ("1".equals(autoSetImages6Flg)) {
-                    // 设置PC端自拍商品图images6
-                    productCommonField.put("images6", multiComplex6);
+                    if ("1".equals(autoSetImages6Flg)) {
+                        // 设置PC端自拍商品图images6
+                        productCommonField.put("images6", multiComplex6);
+                    }
                 }
             }
             CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
