@@ -141,7 +141,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             ie.printStackTrace();
         }
 
-        $info("=================" + UPLOAD_NAME + "  最终结果=====================");
+        $info("=================" + UPLOAD_NAME + "上新  最终结果=====================");
         for(String channelId : channelIdList) {
             int totalCnt = 0;
             int addOkCnt = 0;
@@ -172,12 +172,12 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                 }
             }
             OrderChannelBean channel = Channels.getChannel(channelId);
-            String strResult = String.format("%s %s%s结果: [总件数:%s 新增(成功:%s 失败:%s) 更新(成功:%s 失败:%s)]",
+            String strResult = String.format("%s %s%s上新结果: [总件数:%s 新增(成功:%s 失败:%s) 更新(成功:%s 失败:%s)]",
                     channelId, String.format("%1$-15s", channel != null ? channel.getFull_name() : "未知店铺名"),
                     UPLOAD_NAME, totalCnt, addOkCnt, addNgCnt, updOkCnt, updNgCnt);
             $info(strResult);
         }
-        $info("=================" + UPLOAD_NAME + "  主线程结束====================");
+        $info("=================" + UPLOAD_NAME + "上新  主线程结束====================");
     }
 
     /**
@@ -187,7 +187,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
      * @param cartId     平台ID
      */
     public void doUploadChannel(String channelId, int cartId)  {
-        $info("当前渠道的%s任务开始！[channelId:%s] [cartId:%s]", UPLOAD_NAME, channelId, CART_ID_CNN);
+        $info("当前渠道的%s上新任务开始！[channelId:%s] [cartId:%s]", UPLOAD_NAME, channelId, CART_ID_CNN);
 
         try{
             // 获取店铺信息
@@ -228,10 +228,10 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                 ie.printStackTrace();
             }
 
-            $info("当前渠道的%s任务执行完毕！[channelId:%s] [cartId:%s] [上新对象group件数:%s]", UPLOAD_NAME, channelId, cartId, sxWorkloadModels.size());
+            $info("当前渠道的%s上新任务执行完毕！[channelId:%s] [cartId:%s] [上新对象group件数:%s]", UPLOAD_NAME, channelId, cartId, sxWorkloadModels.size());
 
         } catch (Exception e) {
-            $info("当前渠道的%s任务执行失败！[channelId:%s] [cartId:%s] [errMsg:%s]", UPLOAD_NAME, channelId, cartId, e.getMessage());
+            $info("当前渠道的%s上新任务执行失败！[channelId:%s] [cartId:%s] [errMsg:%s]", UPLOAD_NAME, channelId, cartId, e.getMessage());
             return;
         }
 
