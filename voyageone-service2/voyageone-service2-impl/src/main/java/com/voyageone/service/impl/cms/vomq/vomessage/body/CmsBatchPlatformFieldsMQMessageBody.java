@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by james on 2017/1/3.
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_BATCH_PlatformFieldsTaskJob)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_BATCH_PLATFORM_FIELDS)
 public class CmsBatchPlatformFieldsMQMessageBody extends BaseMQMessageBody {
 
     private List<String> productCodes;

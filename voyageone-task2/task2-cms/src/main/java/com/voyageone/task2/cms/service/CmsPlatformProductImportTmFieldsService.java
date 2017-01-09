@@ -18,8 +18,10 @@ import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
 import com.voyageone.service.dao.cms.CmsBtPlatformNumiidDao;
@@ -28,6 +30,8 @@ import com.voyageone.service.daoext.cms.CmsBtPlatformNumiidDaoExt;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.CmsBtPlatformNumiidModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
@@ -76,7 +80,7 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
 //    private TbItemService tbItemService;
 
     @Autowired
-    private MqSender sender;
+    private CmsMqSenderService sender;
     @Autowired
     private PlatformCategoryService platformCategoryService;
 
@@ -542,7 +546,16 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
 
         // added by morse.lu 2017/01/05 start
         // 向Mq发送消息同步sku,code,group价格范围
-        listProducts.forEach(product -> sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, product));
+
+        listProducts.forEach(product -> {
+            ProductPriceUpdateMQMessageBody productPriceUpdateMQMessageBody = new ProductPriceUpdateMQMessageBody();
+            productPriceUpdateMQMessageBody.setParams(product);
+            try {
+                sender.sendMessage(productPriceUpdateMQMessageBody);
+            } catch (MQMessageRuleException e) {
+                e.printStackTrace();
+            }
+        });
         // added by morse.lu 2017/01/05 end
     }
 

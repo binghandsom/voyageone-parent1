@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by james on 2017/1/3.
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_BATCH_ShelvesMonitorJob)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_BATCH_SHELVES_MONITOR)
 public class CmsShelvesMonitorMQMessageBody extends BaseMQMessageBody {
 
     private Integer shelvesId;

@@ -24,10 +24,10 @@ public class CmsMqRoutingKey {
     public static final String CMS_JM_PROMOTION_PRODUCT_STOCK_SYNC= "VOCmsJmPromotionProductStockSyncQueue";
 
      //高级检索-取得产品的bi信息
-    public static final String CMS_PPRODUCT_BI_DATA = "VoCMSProductBIDataQueue";
+    public static final String CMS_PPRODUCT_BI_DATA = "VOCMSProductBIDataQueue";
 
     //品牌黑名单，屏蔽任务
-    public static final String CMS_BRAND_BLOCK = "VoCmsBrandBlockQueue";
+    public static final String CMS_BRAND_BLOCK = "VOCmsBrandBlockQueue";
 
     // 批量更新商品
     public static final String CMS_BATCH_UPDATE_PRODUCT = "VOCmsBatchUpdateProductQueue";
@@ -50,29 +50,25 @@ public class CmsMqRoutingKey {
     // 高级检索-重新计算中国指导价
     public static final String CMS_ADV_SEARCH_REFRESH_RETAIL_PRICE = "VOCmsAdvSearchRefreshRetailPriceQueue";
 
-    /**
-     * jumei mq task
-     */
-//    public static final String CMS_JM_PromotionImportTask = "voyageone_cms_batchjob_JmBtPromotionImportTask_queue";
+    // 批量设置平台属性
+    public static final String CMS_BATCH_PLATFORM_FIELDS = "VOCmsPlatformFieldsTaskQueue";
 
+    // 获取货架里的商品信息
+    public static final String CMS_BATCH_SHELVES_MONITOR = "VOCmsShelvesMonitorQueue";
 
-    public static final String CMS_BATCH_JmPromotionRecovery = "voyageone_cms_batchjob_JmPromotionRecovery_queue";
+     // 货架监控
+    public static final String CMS_BATCH_SHELVES_IMAGE_UPLOAD = "VOCmsShelvesImageUploadQueue";
 
-    public static final String CMS_BATCH_JuMeiProductUpdate = "voyageone_cms_batchjob_JuMeiProductUpdate_queue";
+     // cart追加 把product表中的platform追加一个cart
+    public static final String CMS_BATCH_CART_ADD_JOB = "VOCmsCartAddQueue";
 
-    public static final String CMS_BATCH_JmSynPromotionDealPrice = "voyageone_cms_batchjob_JmSynPromotionDealPrice_queue";
+    // 默认属性功能，用于强制对某商品或某类目进行属性的重新计算赋值和上新
+    public static final String CMS_TASK_REFRESH_PRODUCTS = "VOCmsRefreshProductsQueue";
 
-    public static final String CMS_BATCH_JuMeiProductUpdateDealEndTimeJob = "voyageone_cms_batchjob_JuMeiProductUpdateDealEndTimeJobService_queue";
-    /**
-     * 聚美活动中的产品的库存同步
-     */
-    public static final String CMS_BATCH_JmPromotionProductStockSyncServiceJob = "voyageone_cms_batchjob_JmPromotionProductStockSyncService_queue";
     /**
      * image create task
      */
     public static final String CMS_BATCH_CmsMtImageCreateTaskJob = "voyageone_cms_batchjob_CmsMtImageCreateTaskJob_queue";
-
-    public static final String CMS_BATCH_PlatformFieldsTaskJob = "voyageone_cms_batchjob_PlatformFieldsTaskJob_queue";
 
     public static final String CMS_BATCH_CmsBatchSetMainCategoryJob = "voyageone_cms_batchjob_SetMainCategoryJob_queue";
 
@@ -103,7 +99,6 @@ public class CmsMqRoutingKey {
      */
     public static final String CMS_BATCH_PlatformCategorySchemaTmJob = "voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaTmJob_queue";
 
-    public static final String CMS_BATCH_PlatformProductUploadTmJob = "voyageone_cms_batchjob_CmsBuildPlatformProductUploadTmJob_queue";
     /**
      * ca api task
      */
@@ -115,21 +110,6 @@ public class CmsMqRoutingKey {
      * 平台标题翻译
      */
     public static final String CMS_BATCH_PlatformTitleTranslateJob = "voyageone_cms_batchjob_CmsPlatformTitleTranslateJob_queue";
-
-    /**
-     * 货架监控
-     */
-    public static final String CMS_BATCH_ShelvesMonitorJob = "voyageone_cms_batchjob_ShelvesMonitor_queue";
-
-    /**
-     * 货架监控
-     */
-    public static final String CMS_BATCH_ShelvesImageUploadJob = "voyageone_cms_batchjob_ShelvesImageUpload_queue";
-
-    /**
-     * cart追加 把product表中的platform追加一个cart
-     */
-    public static final String CMS_BATCH_CartAddJob = "voyageone_cms_batchjob_CartAdd_queue";
 
     /**
      * 记录上下架操作历史
@@ -152,13 +132,7 @@ public class CmsMqRoutingKey {
      * @since 2.6.0
      */
     public static final String CMS_TASK_BRANDBLOCKJOB = "voyageone_cms_task_CmsBrandBlockJobService_queue";
-    /**
-     * 默认属性功能，用于强制对某商品或某类目进行属性的重新计算赋值和上新
-     * create by jonas on 2016-11-02 19:26:28
-     *
-     * @since 2.9.0
-     */
-    public static final String CMS_TASK_REFRESH_PRODUCTS = "voyageone_cms_task_CmsRefreshProductsJobService_queue";
+
     /**
      * 天猫同购共通标题描述翻译
      *

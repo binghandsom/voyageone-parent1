@@ -13,7 +13,7 @@ import java.util.Map;
  * 更新product和group的价格Job
  *
  * @Author rex
- * @Create 2017-01-03 16:03
+ * @Create 2017-01-03 16:03VOCmsProductPriceUpdateQueue
  */
 @VOMQQueue(value = CmsMqRoutingKey.CMS_PRODUCT_PRICE_UPDATE)
 public class ProductPriceUpdateMQMessageBody extends BaseMQMessageBody {
