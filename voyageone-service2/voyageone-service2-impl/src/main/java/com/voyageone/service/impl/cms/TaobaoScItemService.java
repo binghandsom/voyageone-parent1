@@ -67,7 +67,7 @@ public class TaobaoScItemService extends BaseService {
 			// 没有发布过仓储商品的场合， 发布仓储商品
 			try {
 				scItem = tbScItemService.addScItemSimple(shopBean, title, sku_outerId);
-				Thread.sleep(3000); // 一定要睡一会儿， 操作太快后面的操作目测会有70%几率失败
+				Thread.sleep(6000); // 一定要睡一会儿， 操作太快后面的操作目测会有70%几率失败
 			} catch (ApiException e) {
 				String errMsg = String.format("自动设置天猫商品全链路库存管理:发布仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
 				throw new BusinessException(errMsg);
@@ -88,7 +88,7 @@ public class TaobaoScItemService extends BaseService {
 				String errMsg = String.format("自动设置天猫商品全链路库存管理:库存初始化:{outerId: %s, err_msg: %s}", sku_outerId, errinfo);
 				System.out.println(errMsg);
 			}
-			Thread.sleep(3000); // 一定要睡一会儿， 操作太快后面的操作目测会有70%几率失败
+			Thread.sleep(500); // 一定要睡一会儿， 操作太快后面的操作目测会有70%几率失败
 		} catch (ApiException e) {
 			String errMsg = String.format("自动设置天猫商品全链路库存管理:库存初始化:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
 			throw new BusinessException(errMsg);
