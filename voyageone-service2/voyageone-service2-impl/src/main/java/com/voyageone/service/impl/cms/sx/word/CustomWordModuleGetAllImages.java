@@ -16,6 +16,8 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +65,10 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
         RuleExpression imageIndexExpression = customModuleUserParamGetAllImages.getImageIndex();
         List<String> imageIndexList = parseRuleExpression(imageIndexExpression, expressionParser, shopBean, user, extParameter);
         // added by morse.lu 2016/12/05 end
+        // added by morse.lu 2017/01/06 start
+        RuleExpression imageParamWordExpression = customModuleUserParamGetAllImages.getImageParamWord();
+        List<String> imageParamWordList = parseRuleExpression(imageParamWordExpression, expressionParser, shopBean, user, extParameter);
+        // added by morse.lu 2017/01/06 end
 
         //system param
         List<CmsBtProductModel> sxProducts = sxData.getProductList();
@@ -80,11 +86,12 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                     // 主商品跳过
                     continue;
                 }
-                if (!codeIndexList.contains(String.valueOf(iCodeIndex))) {
+                if (codeIndexList.contains(String.valueOf(iCodeIndex)) || "-1".equals(codeIndexList.get(0))) {
+                    // -1表示全部code都要，除了主商品
                     iCodeIndex++;
-                    continue;
                 } else {
                     iCodeIndex++;
+                    continue;
                 }
             }
             // added by morse.lu 2016/12/05 end
@@ -127,6 +134,13 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                 if (StringUtils.isEmpty(cmsBtProductModelFieldImage.getName())) {
                     continue;
                 }
+                // added by morse.lu 2017/01/06 start
+                String[] params = new String[imageParamWordList.size() + 1];
+                params[0] = cmsBtProductModelFieldImage.getName();
+                for (int k = 0; k < imageParamWordList.size(); k++) {
+                    params[k + 1] = convertUrlEncode(getPropValueFromProductModel(sxProduct, sxData.getCartId(), imageParamWordList.get(k)));
+                }
+                // added by morse.lu 2017/01/06 end
                 // 20160512 tom 有可能为空 add END
                 // 20160513 tom 图片服务器切换 START
 //                String completeImageUrl = String.format(imageTemplate, cmsBtProductModelFieldImage.getName());
@@ -151,7 +165,8 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                                                     sxData.getMainProduct().getCommon().getFields().getBrand(),
                                                     sxData.getMainProduct().getCommon().getFields().getProductType(),
                                                     sxData.getMainProduct().getCommon().getFields().getSizeType(),
-                                                    cmsBtProductModelFieldImage.getName());
+//                                                    cmsBtProductModelFieldImage.getName());
+                                                    params);
                     if (StringUtils.isEmpty(completeImageUrl)) {
                         $warn("商品详情图url未在图片管理模板表里设定!" +
                                 ",BrandName= " + sxData.getMainProduct().getCommon().getFields().getBrand() +
@@ -192,7 +207,8 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                     // end
                 } else {
 //                    completeImageUrl = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, cmsBtProductModelFieldImage.getName());
-                    completeImageUrl = String.format(imageTemplate, cmsBtProductModelFieldImage.getName());
+//                    completeImageUrl = String.format(imageTemplate, cmsBtProductModelFieldImage.getName());
+                    completeImageUrl = String.format(imageTemplate, params);
                 }
                 // 20160513 tom 图片服务器切换 END
 //                completeImageUrl = sxProductService.encodeImageUrl(completeImageUrl);
@@ -229,5 +245,29 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
         }
 
         return parseResult;
+    }
+
+    /**
+     * 优先从各自平台的fields里去取，取不到再从common的fields里取
+     */
+    private String getPropValueFromProductModel(CmsBtProductModel sxProduct, int cartId, String propName) {
+        String plainPropValueObj = sxProduct.getPlatform(cartId).getFields().getStringAttribute(propName);
+        if (StringUtils.isEmpty(plainPropValueObj)) {
+            plainPropValueObj = sxProduct.getCommon().getFields().getStringAttribute(propName);
+        }
+        return StringUtils.null2Space2(plainPropValueObj);
+    }
+
+    private String convertUrlEncode(String val) {
+        if (val == null) {
+            return "";
+        }
+        try {
+            return URLEncoder.encode(val, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.fillInStackTrace();
+            $error(e.getMessage(), e);
+            return val;
+        }
     }
 }
