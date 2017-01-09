@@ -7,7 +7,9 @@ import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.apache.commons.lang.math.NumberUtils;
@@ -34,6 +36,8 @@ public class CmsBuildPlatformProductUploadCnnServiceTest {
 
     @Autowired
     CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    SxProductService sxProductService;
 
     @Test
     public void testOnStartup() throws Exception {
@@ -96,6 +100,23 @@ public class CmsBuildPlatformProductUploadCnnServiceTest {
 
         uploadCnnService.doUploadProduct(shopProp, workload);
         System.out.println("testUploadProduct 测试正常结束!");
+    }
+
+    @Test
+    public void testUpdateSxCnnSku() throws Exception {
+        String channelId = "928";
+        int cartId = NumberUtils.toInt(CartEnums.Cart.CNN.getId());   // 34
+        Long groupId = 9900002L;
+
+        // 上新用的商品数据信息取得
+        SxData sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
+        if (sxData == null) {
+            System.out.println("取得上新用的商品数据信息失败！请向管理员确认 [sxData=null]");
+            return;
+        }
+
+        int cnt = uploadCnnService.updateSxCnnSku(channelId, cartId, sxData);
+        System.out.println("testUploadProduct 测试正常结束! 回写件数:" + cnt);
     }
 
 }

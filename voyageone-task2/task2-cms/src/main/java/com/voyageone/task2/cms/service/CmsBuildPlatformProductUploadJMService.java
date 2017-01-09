@@ -870,13 +870,24 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         //更新Deal失败
                         else
                         {
-                            if (htDealUpdateResponse != null && !StringUtils.isEmpty(htDealUpdateResponse.getErrorMsg()) && htDealUpdateResponse.getErrorMsg().contains("没有可用的sku")) {
-                                String msg = String.format("聚美更新Deal失败,该Deal中没有可用的sku，请检查sku是否在该deal中存在，" +
-                                        "不存在请添加sku或将该sku变成有效后再试！[ProductId:%s] [HashId:%s] [Message:%s] [skuNo:%s]",
-                                        product.getProdId(), hashId, htDealUpdateResponse.getErrorMsg(), htDealUpdateRequest.getUpdate_data().getJumei_sku_no());
-                                $info(msg);
+                            if (htDealUpdateResponse != null && !StringUtils.isEmpty(htDealUpdateResponse.getErrorMsg())) {
+                                if (htDealUpdateResponse.getErrorMsg().contains("没有可用的sku")) {
+                                    String msg = String.format("聚美更新Deal失败,该Deal中没有可用的sku，请检查sku是否在该deal中存在，" +
+                                                    "不存在请添加sku或将该sku变成有效后再试！[ProductId:%s] [HashId:%s] [Message:%s] [skuNo:%s]",
+                                            product.getProdId(), hashId, htDealUpdateResponse.getErrorMsg(), htDealUpdateRequest.getUpdate_data().getJumei_sku_no());
+                                    $info(msg);
+                                } else if (htDealUpdateResponse.getErrorMsg().contains("商城价不能大于市场价")
+                                        || htDealUpdateResponse.getErrorMsg().contains("商城价不能小于团购价")) {
+                                    String msg = String.format("聚美更新Deal失败,但是这是关于商城价的check,不报错继续往后更新商城价格！[ProductId:%s] [HashId:%s] [Message:%s] [skuNo:%s]",
+                                            product.getProdId(), hashId, htDealUpdateResponse.getErrorMsg(), htDealUpdateRequest.getUpdate_data().getJumei_sku_no());
+                                    $info(msg);
+                                } else {
+                                    String msg = String.format("聚美更新Deal失败！[ProductId:%s], [HashId:%s], [Message:%s]", product.getProdId(), hashId, htDealUpdateResponse.getErrorMsg());
+                                    $error(msg);
+                                    throw  new BusinessException(msg);
+                                }
                             } else {
-                                String msg = String.format("聚美更新Deal失败！[ProductId:%s], [HashId:%s], [Message:%s]", product.getProdId(), hashId, htDealUpdateResponse.getErrorMsg());
+                                String msg = String.format("聚美更新Deal失败！[ProductId:%s], [HashId:%s], [Message:%s]", product.getProdId(), hashId, "聚美更新Deal失败返回为空!");
                                 $error(msg);
                                 throw  new BusinessException(msg);
                             }
@@ -1019,14 +1030,22 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         HtDealUpdateRequest htDealUpdateRequest = new HtDealUpdateRequest();
         htDealUpdateRequest.setJumei_hash_id(hashId);
         HtDealUpdate_DealInfo dealInfo = new HtDealUpdate_DealInfo();
+        // 仓库ID
         String shippingId = Codes.getCode("JUMEI", channelId);
         dealInfo.setShipping_system_id(NumberUtils.toInt(shippingId));
+        // 产品长标题
         dealInfo.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
+        // 产品中标题
         dealInfo.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
+        // 产品短标题
         dealInfo.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
+        // 保质期限
         dealInfo.setBefore_date(jmFields.getStringAttribute("beforeDate"));
+        // 适用人群
         dealInfo.setSuit_people(jmFields.getStringAttribute("suitPeople"));
+        // 特殊说明
         dealInfo.setSpecial_explain(jmFields.getStringAttribute("specialExplain"));
+        // 自定义搜索词
         dealInfo.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
 //        dealInfo.setAttribute(jmFields.getStringAttribute("attribute"));
         dealInfo.setUser_purchase_limit(jmFields.getIntAttribute("userPurchaseLimit"));
@@ -1273,17 +1292,21 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         String productCode = fields.getCode();
 
         BaseMongoMap<String, Object> jmFields = jmCart.getFields();
-
+        // 商品规格编号
         bean.setProduct_spec_number(fields.getCode());
         // update by desmond 2016/09/01 start
+        // 分类id
 //        bean.setCategory_v3_4_id(Integer.valueOf(jmCart.getpCatId()));
         bean.setCategory_v3_4_id(NumberUtils.toInt(jmCart.getpCatId()));
+        // 品牌id
 //        bean.setBrand_id(Integer.valueOf(jmCart.getpBrandId()));
         bean.setBrand_id(NumberUtils.toInt(jmCart.getpBrandId()));
         // update by desmond 2016/09/01 end
+        // 产品名
         bean.setName(jmFields.getStringAttribute("productNameCn") + " " +  special_symbol.matcher(productCode).replaceAll("-"));
+        // 外文名
         bean.setForeign_language_name(jmFields.getStringAttribute("productNameEn"));
-        //白底方图
+        // 白底方图
         String picTemplate = getTemplate("聚美白底方图", expressionParser, shopProp);
 
         if (!StringUtils.isNullOrBlank2(picTemplate)) {
@@ -1292,10 +1315,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         }
 
         JmProductBean_DealInfo deal = new JmProductBean_DealInfo();
+        // 商家自定义deal_id
         deal.setPartner_deal_id(productCode + "-" + channelId + "-" + CART_ID);
-
+        // 限购数量
         deal.setUser_purchase_limit(jmFields.getIntAttribute("userPurchaseLimit"));
 
+        // 发货仓库ID
         String shippingId = Codes.getCode("JUMEI", channelId);
         deal.setShipping_system_id(NumberUtils.toInt(shippingId));
 
@@ -1307,24 +1332,36 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         String jmUseageTemplate = getTemplate("聚美使用方法", expressionParser, shopProp);
         deal.setDescription_usage(jmUseageTemplate);
 
+        // 产品长标题
         deal.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
+        // 产品中标题
         deal.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
+        // 产品短标题
         deal.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
+        // 保质期限
         deal.setBefore_date(jmFields.getStringAttribute("beforeDate"));
+        // 适用人群
         deal.setSuit_people(jmFields.getStringAttribute("suitPeople"));
+        // 特殊说明
         deal.setSpecial_explain(jmFields.getStringAttribute("specialExplain"));
+        // 自定义搜索词
         deal.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
+        // 生产地区
         deal.setAddress_of_produce(jmFields.getStringAttribute("originCn"));
+        // Deal开始时间
         deal.setStart_time(System.currentTimeMillis() / 1000);
+        // Deal结束时间
         Calendar rightNow = Calendar.getInstance();
         // edward 2016-07-11 时间从30分钟改成3分钟
         rightNow.add(Calendar.MINUTE, 3);
         deal.setEnd_time(rightNow.getTimeInMillis() / 1000);
+        // 商家自定义skuInfo下的partner_sku_no(多个sku_no 用 "," 隔开)
         List<String> skuCodeList = product.getCommon().getSkus().stream().filter(p -> !StringUtils.isEmpty(p.getStringAttribute("skuCode")))
                 .map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList());
         String skuString = Joiner.on(",").join(skuCodeList);
         deal.setPartner_sku_nos(skuString);
         deal.setRebate_ratio("1");
+        // Deal信息
         bean.setDealInfo(deal);
 
 
@@ -1338,21 +1375,28 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
         for (BaseMongoMap<String, Object> jmSku : jmSkus) {
             JmProductBean_Spus spu = new JmProductBean_Spus();
+            // 商家spu_no
             spu.setPartner_spu_no(jmSku.getStringAttribute("skuCode"));
+            // 商品自带条码
             spu.setUpc_code(addVoToBarcode(jmSku.getStringAttribute("barcode"), channelId, jmSku.getStringAttribute("skuCode")));
+            // 规格 :FORMAL 正装 MS 中小样 OTHER 其他
             spu.setPropery(jmSku.getStringAttribute("property"));
             spu.setAttribute(jmFields.getStringAttribute("attribute"));//Code级
             // update by desmond 2016/07/08 start
+            // 容量/尺寸
 //            String size = jmSku.getStringAttribute("size");
 //            String  sizeStr = getSizeFromSizeMap(size, channelId, brandName, productType, sizeType);
             String sizeStr = jmSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
             // update by desmond 2016/07/08 end
             spu.setSize(sizeStr);
-
+            // 海外价格
             spu.setAbroad_price(Math.ceil(jmSku.getDoubleAttribute("clientMsrpPrice")));
+            // 货币符号Id
             spu.setArea_code("19"); //TODO
 
+            // sku信息
             JmProductBean_Spus_Sku jmSpuSku = new JmProductBean_Spus_Sku();
+            // 商家自定义sku_no，请务必确保本次请求的sku_no唯一
             jmSpuSku.setPartner_sku_no(jmSku.getStringAttribute("skuCode"));
             // 是否在本次团购售卖，1是，0否
             jmSpuSku.setSale_on_this_deal("0");
@@ -1360,13 +1404,17 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             if (Boolean.getBoolean(jmSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
                 jmSpuSku.setSale_on_this_deal("1");
             }
+            // 海关备案商品编码
 //            jmSpuSku.setCustoms_product_number(jmSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
             jmSpuSku.setCustoms_product_number(" ");
+            // 商家商品编码
             jmSpuSku.setBusinessman_num(jmSku.getStringAttribute("skuCode"));
+            // 库存
             Integer stock = skuLogicQtyMap.get(jmSku.getStringAttribute("skuCode"));
             jmSpuSku.setStocks(String.valueOf(stock));
-
+            // 团购价
             jmSpuSku.setDeal_price(jmSku.getStringAttribute("priceSale"));
+            // 市场价
             jmSpuSku.setMarket_price(jmSku.getStringAttribute("priceMsrp"));
 
             spu.setSkuInfo(jmSpuSku);
@@ -1703,9 +1751,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 //                        if (stock == 0) {
 //                        	continue;
 //						}
-
+                        // 库存
                         skuInfo.setStocks(stock);
+                        // 商城价
                         skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+                        // 市场价
                         skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
 
                         StringBuffer sb = new StringBuffer("");
@@ -1739,18 +1789,30 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 BaseMongoMap<String, Object> jmFields = product.getPlatform(CART_ID).getFields();
 
                 HtMallUpdateInfo mallUpdateInfo = new HtMallUpdateInfo();
+                // 聚美Mall Id
                 mallUpdateInfo.setJumeiMallId(mallId);
                 HtMallUpdateInfo.UpdateDataInfo updateDataInfo = mallUpdateInfo.getUpdateDataInfo();
+                // 发货仓库
                 updateDataInfo.setShipping_system_id(NumberUtils.toInt(Codes.getCode("JUMEI", product.getOrgChannelId())));
+                // 产品长标题
                 updateDataInfo.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
+                // 产品中标题
                 updateDataInfo.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
+                // 产品短标题
                 updateDataInfo.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
+                // 保质期限
                 updateDataInfo.setBefore_date(jmFields.getStringAttribute("beforeDate"));
+                // 适用人群
                 updateDataInfo.setSuit_people(jmFields.getStringAttribute("suitPeople"));
+                // 特殊说明
                 updateDataInfo.setSpecial_explain(jmFields.getStringAttribute("specialExplain"));
+                // 自定义搜索词
                 updateDataInfo.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
+                // 本单详情
                 updateDataInfo.setDescription_properties(getTemplate("聚美详情", expressionParser, shopBean));
+                // 使用方法
                 updateDataInfo.setDescription_usage(getTemplate("聚美使用方法", expressionParser, shopBean));
+                // 商品实拍
                 updateDataInfo.setDescription_images(getTemplate("聚美实拍", expressionParser, shopBean));
 
                 StringBuffer sb = new StringBuffer("");
@@ -2379,6 +2441,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         } else {
             // 存在，更新
             $info("更新cms_bt_jm_sku开始 [ProductCode:%s] [SkuCode:%s]", productCode, jmsku.getSkuCode());
+            jmsku.setId(currentCmsBtJmSku.getId());
             cmsBtJmSkuDao.update(jmsku);
             $info("更新cms_bt_jm_sku成功 [ProductCode:%s] [SkuCode:%s]", productCode, jmsku.getSkuCode());
         }
