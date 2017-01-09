@@ -127,10 +127,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
     /*报备数据导出文件列*/
     private final static String[] _filingSkuCol = {"SKU", "Code", "model", "SIZE", "欧码", "英文标题", "中文标题", "产品图片链接", "性别", "材质", "产地", "颜色", "品牌", "重量", "UPC", "英文描述", "中文描述", "类目", "HSCode", "HSCodePU", "Price (RMB)"};
 
-    @Override
-    public void onStartup(Map<String, Object> messageMap) throws Exception {
-        $debug("高级检索 文件下载任务 param=" + messageMap.toString());
-        Integer taskId = (Integer) messageMap.get("_taskId");
+    public void export(AdvSearchExportMQMessageBody messageBody) throws Exception {
+        $debug("高级检索 文件下载任务 param=" + JacksonUtil.bean2Json(messageBody));
+        Integer taskId = messageBody.getCmsBtExportTaskId();
         if (taskId == null) {
             $error("高级检索 文件下载任务 查询参数不正确 缺少ID");
             return;

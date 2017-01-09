@@ -4,6 +4,7 @@ import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
+import com.voyageone.task2.cms.service.product.CmsAdvSearchExportFileService;
 import com.voyageone.task2.cms.service.product.batch.CmsAdvSearchExportFileService;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -32,6 +33,6 @@ public class CmsAdvSearchExportMQJob extends TBaseMQCmsService<AdvSearchExportMQ
             this.cmsLog(messageBody, OperationLog_Type.parameterException, "cms.bt.export.task.id不存在");
             return;
         }
-        cmsAdvSearchExportFileService.export(messageBody);
+        cmsAdvSearchExportFileService.equals(messageBody);
     }
 }
