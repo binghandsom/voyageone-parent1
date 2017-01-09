@@ -52,6 +52,10 @@ define(function () {
                     "getHomeSumData": "getHomeSumData",
                     "getCmsConfig": session('getCmsConfig', [KEY.CHANNEL]),
                     getMenuHeaderInfo:"getMenuHeaderInfo"
+                },
+                "$modifyPassWordService":{
+                    "root":"/cms/home/menu/modifyPassword/",
+                    "save":"save"
                 }
             },
             "search": {

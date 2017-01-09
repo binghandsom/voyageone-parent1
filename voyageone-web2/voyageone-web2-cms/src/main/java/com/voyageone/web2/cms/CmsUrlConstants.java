@@ -32,6 +32,10 @@ public interface CmsUrlConstants {
             String GET_CARTS = "getCarts";
             String GetMenuHeaderInfo="getMenuHeaderInfo";
         }
+        interface MODIFY_PASS_WORD {
+            String ROOT = "/cms/home/menu/modifyPassword";
+            String submit = "submit";
+        }
     }
 
     interface JMPROMOTION {
