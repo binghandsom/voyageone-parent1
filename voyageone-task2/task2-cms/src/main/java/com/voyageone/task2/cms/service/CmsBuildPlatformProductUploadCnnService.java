@@ -103,7 +103,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
     @Override
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         if (ListUtils.isNull(taskControlList)) {
-            String errMsg = String.format("%s处理JOB没有启动! tm_task_control表中没有相应的配置信息", UPLOAD_NAME);
+            String errMsg = String.format("%s上新处理JOB没有启动! tm_task_control表中没有相应的配置信息", UPLOAD_NAME);
             $warn(errMsg);
             return;
         }
@@ -373,7 +373,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                         }
                     } else {
                         // 新增/更新商品失败
-                        String errMsg = String.format("%s调用接口API%s失败! [groupId:%s] [errMsg=%s]", UPLOAD_NAME, updateType, groupId, responseMap.get("msg"));
+                        String errMsg = String.format("%s上新调用接口API%s失败! [groupId:%s] [errMsg=%s]", UPLOAD_NAME, updateType, groupId, responseMap.get("msg"));
                         throw new BusinessException(errMsg);
                     }
                 }
