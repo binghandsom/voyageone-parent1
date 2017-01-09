@@ -22,6 +22,9 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -34,6 +37,11 @@ import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchConfirmRetailPriceMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchRefreshRetailPriceMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.BatchUpdateProductMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.PlatformActiveLogMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductVoRateUpdateMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsBatchPlatformFieldsMQMessageBody;
 import com.voyageone.service.impl.com.cache.CommCacheService;
@@ -94,6 +102,8 @@ public class CmsFieldEditService extends BaseViewService {
     private ProductStatusHistoryService productStatusHistoryService;
     @Autowired
     private MqSender sender;
+    @Autowired
+    private MqSenderService mqSenderService;
     @Autowired
     private CommCacheService commCacheService;
     @Autowired
@@ -281,7 +291,7 @@ public class CmsFieldEditService extends BaseViewService {
             JongoUpdate updObj = new JongoUpdate();
             updObj.setQuery("{'common.fields.code':{$in:#}}");
             updObj.setQueryParameters(productCodes);
-            updObj.setUpdate("{$set:{'common.catConf':'1','common.fields." + prop_id + "':#}}");
+            updObj.setUpdate("{$set:{'common.fields." + prop_id + "':#}}");
             updObj.setUpdateParameters(stsCode);
 
             WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
@@ -324,12 +334,24 @@ public class CmsFieldEditService extends BaseViewService {
             $debug("VO扣点值批量更新结果 " + rs.toString());
 
             // 调用批处理程序 记录价格变更履历/记录商品修改历史/同步价格范围/插入上新程序
-            Map<String, Object> logParams = new HashMap<>(3);
+            /*Map<String, Object> logParams = new HashMap<>(3);
             logParams.put("channelId", userInfo.getSelChannelId());
             logParams.put("creater", userInfo.getUserName());
             logParams.put("codeList", productCodes);
-            logParams.put("voRate", voRateVal);
-            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob, logParams);
+            logParams.put("voRate", voRateVal);*/
+
+            ProductVoRateUpdateMQMessageBody mqMessageBody = new ProductVoRateUpdateMQMessageBody();
+            mqMessageBody.setChannelId(userInfo.getSelChannelId());
+            mqMessageBody.setCreater(userInfo.getUserName());
+            mqMessageBody.setCodeList(productCodes);
+            mqMessageBody.setVoRate(voRateVal);
+            mqMessageBody.setSender(userInfo.getUserName());
+            try {
+                mqSenderService.sendMessage(mqMessageBody);
+            } catch (MQMessageRuleException e) {
+                $error(String.format("VO扣点值批量更新MQ发送异常,channelId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
+                throw new BusinessException("MQ发送异常:" + e.getMessage());
+            }
 
         } else if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id) || "translateStatus".equals(prop_id)) {
             // 税号更新 /翻译状态更新
@@ -344,11 +366,25 @@ public class CmsFieldEditService extends BaseViewService {
                 return rsMap;
             }
 
-            params.put("productIds", productCodes);
-            params.put("_taskName", "batchupdate");
+            /*params.put("productIds", productCodes);
             params.put("_channleId", userInfo.getSelChannelId());
             params.put("_userName", userInfo.getUserName());
-            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+            params.put("_taskName", "batchupdate");
+            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);*/
+
+            BatchUpdateProductMQMessageBody mqMessageBody = new BatchUpdateProductMQMessageBody();
+            mqMessageBody.setChannelId(userInfo.getSelChannelId());
+            mqMessageBody.setUserNmme(userInfo.getUserName());
+            mqMessageBody.setProductCodes(productCodes);
+            mqMessageBody.setParams(params);
+            mqMessageBody.setSender(userInfo.getUserName());
+            try {
+                mqSenderService.sendMessage(mqMessageBody);
+            } catch (MQMessageRuleException e) {
+                $error(String.format("批量更新商品发送MQ异常,channleId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
+                throw new BusinessException("MQ发送异常:" + e.getMessage());
+            }
+
             rsMap.put("ecd", 0);
             return rsMap;
 
@@ -442,7 +478,7 @@ public class CmsFieldEditService extends BaseViewService {
         $debug("批量修改属性.(商品上下架) 结果1=：" + rs.toString());
 
         // 发送请求到MQ,插入操作历史记录
-        Map<String, Object> logParams = new HashMap<>(6);
+        /*Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", userInfo.getSelChannelId());
         logParams.put("cartIdList", cartList);
         logParams.put("activeStatus", statusVal.name());
@@ -454,7 +490,25 @@ public class CmsFieldEditService extends BaseViewService {
         }
 
         logParams.put("codeList", productCodes);
-        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);
+        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);*/
+
+        PlatformActiveLogMQMessageBody mqMessageBody = new PlatformActiveLogMQMessageBody();
+        mqMessageBody.setChannelId(userInfo.getSelChannelId());
+        mqMessageBody.setCartList(cartList);
+        mqMessageBody.setActiveStatus(statusVal.name());
+        mqMessageBody.setUserName(userInfo.getUserName());
+        mqMessageBody.setSender(userInfo.getUserName());
+        if (cartId == null || cartId == 0) {
+            mqMessageBody.setComment("高级检索 批量上下架(全店铺操作)");
+        } else {
+            mqMessageBody.setComment("高级检索 批量上下架");
+        }
+        mqMessageBody.setProductCodes(productCodes);
+        try {
+            mqSenderService.sendMessage(mqMessageBody);
+        } catch (MQMessageRuleException e) {
+            $error(String.format("商品上下架MQ发送异常,channelId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
+        }
 
         rsMap.put("ecd", 0);
         return rsMap;
@@ -1247,13 +1301,24 @@ public class CmsFieldEditService extends BaseViewService {
         params.put("_taskName", params.get("_option"));
         params.put("_channleId", userInfo.getSelChannelId());
         params.put("_userName", userInfo.getUserName());
-        if ("refreshRetailPrice".equalsIgnoreCase((String) params.get("_option"))) {
-            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
-        } else {
-            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+
+        try {
+            if ("refreshRetailPrice".equalsIgnoreCase((String) params.get("_option"))) {
+                // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
+                AdvSearchRefreshRetailPriceMQMessageBody mqMessageBody = new AdvSearchRefreshRetailPriceMQMessageBody();
+                mqMessageBody.setParams(params);
+                mqMessageBody.setSender(userInfo.getUserName());
+                mqSenderService.sendMessage(mqMessageBody);
+            } else {
+                // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+                AdvSearchConfirmRetailPriceMQMessageBody mqMessageBody = new AdvSearchConfirmRetailPriceMQMessageBody();
+                mqMessageBody.setParams(params);
+                mqMessageBody.setSender(userInfo.getUserName());
+                mqSenderService.sendMessage(mqMessageBody);
+            }
+        } catch (MQMessageRuleException e) {
+            throw new BusinessException("MQ发送异常:" + e.getMessage());
         }
-
-
         rsMap.put("ecd", 0);
         return rsMap;
     }

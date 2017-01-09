@@ -1185,7 +1185,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                             newLog.setChannelId(channelId);
 
                             // 向Mq发送消息同步sku,code,group价格范围
-                            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob,
+                            sender.sendMessage(CmsMqRoutingKey.CMS_PRODUCT_PRICE_UPDATE,
                                     JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
                         }
 

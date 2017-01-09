@@ -1,26 +1,16 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.base.dao.mongodb.BaseJongoPartTemplate;
-import com.voyageone.base.dao.mongodb.BaseJongoTemplate;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.dao.cms.mongo.CmsBtCAdProductDao;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  * @author james.li on 2016/6/28.
@@ -44,7 +34,7 @@ public class CmsFeedExportServiceTest {
         s.remove("bb");
         List<CmsBtExportTaskModel> cmsBtExportTaskModels = cmsBtExportTaskService.getExportTaskByUser("010", CmsBtExportTaskService.FEED, "james", 0, 10);
 
-        cmsFeedExportService.onStartup(JacksonUtil.jsonToMap(JacksonUtil.bean2Json(cmsBtExportTaskModels.get(0))));
+//        cmsFeedExportService.export(JacksonUtil.jsonToMap(JacksonUtil.bean2Json(cmsBtExportTaskModels.get(0))));
     }
     @Test
     public void test2() throws Exception {

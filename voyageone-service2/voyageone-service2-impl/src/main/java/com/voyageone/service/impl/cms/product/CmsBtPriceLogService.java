@@ -5,12 +5,14 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -40,17 +42,18 @@ public class CmsBtPriceLogService extends BaseService {
     private final CmsBtPriceLogDao priceLogDao;
     private final CmsBtPriceLogDaoExt priceLogDaoExt;
     private final CmsBtProductDao productDao;
-    private final MqSender sender;
+    /*private final MqSender sender;*/
+    private MqSenderService mqSenderService;
     private final CmsBtPriceConfirmLogService priceConfirmLogService;
 
     @Autowired
     public CmsBtPriceLogService(CmsBtPriceLogDao priceLogDao, CmsBtPriceLogDaoExt priceLogDaoExt,
-                                CmsBtProductDao productDao, MqSender sender,
+                                CmsBtProductDao productDao, MqSenderService mqSenderService,
                                 CmsBtPriceConfirmLogService priceConfirmLogService) {
         this.priceLogDao = priceLogDao;
         this.priceLogDaoExt = priceLogDaoExt;
         this.productDao = productDao;
-        this.sender = sender;
+        this.mqSenderService = mqSenderService;
         this.priceConfirmLogService = priceConfirmLogService;
     }
 
@@ -87,13 +90,20 @@ public class CmsBtPriceLogService extends BaseService {
                     paramMap.put(key, cmsBtPriceLogModel);
                 }
             }
-            paramMap.forEach((s, cmsBtPriceLogModel) -> sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(cmsBtPriceLogModel))));
+            if (paramMap.size() > 0) {
+                for (CmsBtPriceLogModel value:paramMap.values()) {
+                    ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
+                    mqMessageBody.setParams(JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(value)));
+                    mqMessageBody.setSender(CmsMqRoutingKey.CMS_PRODUCT_PRICE_UPDATE);
+                    try {
+                        mqSenderService.sendMessage(mqMessageBody);
+                    } catch (MQMessageRuleException e) {
+                        $error(String.format("价格同步MQ发送异常,cartId=%s,productId=%s,channelId=%s", value.getCartId(), value.getProductId(), value.getChannelId()), e);
+                    }
+
+                }
+            }
         }
-
-//        for (CmsBtPriceLogModel newLog : paramList)
-//            // 向Mq发送消息同步sku,code,group价格范围
-//            sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(newLog)));
-
         // 先做完所有价格范围同步的请求后，再开始处理是否记录未确认价格的操作
         for (CmsBtPriceLogModel newLog : paramList) {
             String channelId = newLog.getChannelId();
@@ -126,7 +136,14 @@ public class CmsBtPriceLogService extends BaseService {
         newLog.put("productId",productId);
         newLog.put("channelId",channelId);
         // 向Mq发送消息同步sku,code,group价格范围
-        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
+        ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
+        mqMessageBody.setParams(newLog);
+        mqMessageBody.setSender(username);
+        try {
+            mqSenderService.sendMessage(mqMessageBody);
+        } catch (MQMessageRuleException e) {
+            $error(String.format("同步sku,code,group价格范围MQ发送异常,cartId=%s,productId=%s,channelId=%s", cartId, productId, channelId), e);
+        }
 
     }
 
@@ -224,8 +241,15 @@ public class CmsBtPriceLogService extends BaseService {
                         newLog.setChannelId(channelId);
 
                         // 向Mq发送消息同步sku,code,group价格范围
-                        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob,
-                                JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
+                        // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
+                        ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
+                        mqMessageBody.setParams(JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
+                        mqMessageBody.setSender(username);
+                        try {
+                            mqSenderService.sendMessage(mqMessageBody);
+                        } catch (MQMessageRuleException e) {
+                            $error(String.format("同步sku,code,group价格范围MQ发送异常,cartId=%s,productId=%s,channelId=%s", boxedCartId, productId, channelId), e);
+                        }
                     }
                 });
     }

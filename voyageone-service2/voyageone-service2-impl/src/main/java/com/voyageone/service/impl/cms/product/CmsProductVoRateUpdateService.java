@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service.product;
+package com.voyageone.service.impl.cms.product;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
@@ -9,19 +9,14 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.prices.PriceService;
-import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
-import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.task2.base.BaseMQCmsService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,8 +33,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob)
-public class CmsProductVoRateUpdateService extends BaseMQCmsService {
+public class CmsProductVoRateUpdateService extends BaseService {
 
     @Autowired
     private ProductService productService;
@@ -52,8 +46,7 @@ public class CmsProductVoRateUpdateService extends BaseMQCmsService {
     @Autowired
     private SxProductService sxProductService;
 
-    @Override
-    public void onStartup(Map<String, Object> messageMap) throws Exception {
+    public void updateProductVoRate(Map<String, Object> messageMap) throws Exception {
         $info("CmsProductVoRateUpdateService start");
         $info("参数" + JacksonUtil.bean2Json(messageMap));
         String channelId = StringUtils.trimToNull((String) messageMap.get("channelId"));

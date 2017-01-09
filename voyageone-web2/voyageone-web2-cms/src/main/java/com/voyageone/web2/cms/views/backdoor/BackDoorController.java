@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -14,6 +15,8 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.dao.cms.CmsBtJmProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
 import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
@@ -32,8 +35,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -104,8 +106,10 @@ public class BackDoorController extends CmsController {
     @Autowired
     private SxProductService sxProductService;
 
+    /*@Autowired
+    private MqSender sender;*/
     @Autowired
-    private MqSender sender;
+    private MqSenderService mqSenderService;
 
 
     /**
@@ -1856,14 +1860,28 @@ public class BackDoorController extends CmsController {
         List<CmsBtProductModel> productList = cmsBtProductDao.select(query, channelId);
         List<Long> prodId = productList.stream().map(CmsBtProductModel::getProdId).collect(toList());
 
-        prodId.forEach(id-> {
+        if (prodId != null && prodId.size() > 0) {
             Map<String,Object> newLog = new HashMap<>();
-            newLog.put("cartId",cartId);
-            newLog.put("productId",id.intValue());
-            newLog.put("channelId",channelId);
-            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob,newLog);
+            for (Long id:prodId) {
+                newLog.clear();
+                newLog.put("cartId",cartId);
+                newLog.put("productId",id.intValue());
+                newLog.put("channelId",channelId);
+                ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
+                mqMessageBody.setParams(JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
+                mqMessageBody.setSender(getUser().getUserName());
+                try {
+                    mqSenderService.sendMessage(mqMessageBody);
+                } catch (MQMessageRuleException e) {
+                    $error(String.format("商品价格更新MQ发送异常，cartId=%s,productId=%s,channelId=%s", cartId, id, channelId), e);
+                    throw new BusinessException(String.format("MQ发送异常,cartId=%s,productId=%s,channelId=%s,异常:%s", cartId, id, channelId, e.getMessage()));
+                }
+            }
 
-        });
+        }
+        /*prodId.forEach(id-> {
+            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob,newLog);
+        });*/
         return "finish";
     }
 

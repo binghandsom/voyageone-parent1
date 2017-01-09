@@ -24,6 +24,7 @@ import com.voyageone.components.tmall.service.TbSaleService;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
@@ -51,8 +52,7 @@ import java.util.Map;
  * @since 2.0.0
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_PlatformActiveLogJob)
-public class CmsPlatformActiveLogService extends BaseMQCmsService {
+public class CmsPlatformActiveLogService extends BaseService {
 
     private final CmsBtPlatformActiveLogDao platformActiveLogDao;
     private final CmsBtProductDao cmsBtProductDao;
@@ -78,8 +78,6 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
         this.sxProductService = sxProductService;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
     public void onStartup(Map<String, Object> messageMap) throws Exception {
 
         $info("CmsPlatformActiceLogService start 参数 " + JacksonUtil.bean2Json(messageMap));
