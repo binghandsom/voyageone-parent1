@@ -6,6 +6,7 @@ import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.configs.VmsChannelConfigs;
@@ -296,24 +297,25 @@ public class FeedToCmsService extends BaseService {
     }
 
     public Boolean checkProduct(CmsBtFeedInfoModel product) {
-        if (product.getImage() == null || product.getImage().size() == 0) {
-            product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
-            product.setUpdMessage("没有图片");
-            for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
-                sku.setErrInfo("没有图片");
+        if(!product.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())) {
+            if (product.getImage() == null || product.getImage().size() == 0) {
+                product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
+                product.setUpdMessage("没有图片");
+                for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
+                    sku.setErrInfo("没有图片");
+                }
+                $info(product.getCode() + "----" + product.getUpdMessage());
+                return false;
+            } else if (product.getImage().stream().filter(str -> !StringUtil.isEmpty(str.trim())).collect(Collectors.toList()).size() == 0) {
+                product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
+                product.setUpdMessage("没有图片");
+                for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
+                    sku.setErrInfo("没有图片");
+                }
+                $info(product.getCode() + "----" + product.getUpdMessage());
+                return false;
             }
-            $info(product.getCode()+"----" +product.getUpdMessage());
-            return false;
-        } else if (product.getImage().stream().filter(str -> !StringUtil.isEmpty(str.trim())).collect(Collectors.toList()).size() == 0) {
-            product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
-            product.setUpdMessage("没有图片");
-            for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
-                sku.setErrInfo("没有图片");
-            }
-            $info(product.getCode()+"----" +product.getUpdMessage());
-            return false;
         }
-
         if (product.getBrand() == null || StringUtil.isEmpty(product.getBrand().trim())) {
             product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
             product.setUpdMessage("没有品牌");
