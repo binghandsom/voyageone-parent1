@@ -1042,6 +1042,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //                    cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     if(feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())){
+                        cmsProduct.getCommon().getFields().setProductNameEn(feed.getName());
                         cmsProduct.getCommon().getFields().setOriginalTitleCn(feed.getName());
                         cmsProduct.getCommon().getFields().setLongDesEn(feed.getLongDescription());
                         cmsProduct.getCommon().getFields().setShortDesEn(feed.getShortDescription());
