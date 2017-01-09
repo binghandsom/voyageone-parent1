@@ -14,7 +14,11 @@ public class CustomWordValueGetAllImages extends CustomWordValue {
     }
 
     public CustomWordValueGetAllImages(RuleExpression htmlTemplate, RuleExpression imageTemplate, RuleExpression imageType, RuleExpression useOriUrl, RuleExpression useCmsBtImageTemplate, RuleExpression viewType, RuleExpression codeIndex, RuleExpression imageIndex) {
-        this.userParam = new CustomModuleUserParamGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, useCmsBtImageTemplate, viewType, codeIndex, imageIndex);
+        this.userParam = new CustomModuleUserParamGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, useCmsBtImageTemplate, viewType, codeIndex, imageIndex, null);
+    }
+
+    public CustomWordValueGetAllImages(RuleExpression htmlTemplate, RuleExpression imageTemplate, RuleExpression imageType, RuleExpression useOriUrl, RuleExpression useCmsBtImageTemplate, RuleExpression viewType, RuleExpression codeIndex, RuleExpression imageIndex, RuleExpression imageParamWord) {
+        this.userParam = new CustomModuleUserParamGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, useCmsBtImageTemplate, viewType, codeIndex, imageIndex, imageParamWord);
     }
 
     public CustomModuleUserParamGetAllImages getUserParam() {

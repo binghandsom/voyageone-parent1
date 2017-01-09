@@ -76,6 +76,12 @@
 
         <dependency>
             <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-cnn</artifactId>
+            <version>${voyageone.components.cnn.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.voyageone</groupId>
             <artifactId>voyageone-components-sneakerhead</artifactId>
             <version>${voyageone.components.sneakerhead.version}</version>
         </dependency>

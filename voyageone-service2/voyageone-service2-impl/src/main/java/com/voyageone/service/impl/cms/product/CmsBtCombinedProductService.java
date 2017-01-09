@@ -106,11 +106,11 @@ public class CmsBtCombinedProductService extends BaseService {
      */
     public CmsBtCombinedProductModel getCombinedProductPlatformDetail(String numId, String channelId, Integer cartId, boolean local) {
         ShopBean shopBean = Shops.getShop(channelId, cartId);
-        /*shopBean.setAppKey("21008948");
-        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
-        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-        shopBean.setSessionKey("620230429acceg4103a72932e22e4d53856b145a192140b2854639042");
-        shopBean.setShop_name("Target海外旗舰店");*/
+//        shopBean.setAppKey("21008948");
+//        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
+//        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
+//        shopBean.setSessionKey("620230429acceg4103a72932e22e4d53856b145a192140b2854639042");
+//        shopBean.setShop_name("Target海外旗舰店");
         if (shopBean != null) {
             long threadNo = Thread.currentThread().getId();
             $info("threadNo:" + threadNo + " numiid:" + numId );
@@ -247,6 +247,9 @@ public class CmsBtCombinedProductService extends BaseService {
                                         break;
                                     }
                                 }
+                                if(StringUtil.isEmpty(ratioVal)){
+                                    ratioVal = "1";
+                                }
                                 int ratio = 0;
                                 if (StringUtils.isNumeric(ratioVal)) {
                                     ratio = Integer.parseInt(ratioVal);
@@ -274,6 +277,9 @@ public class CmsBtCombinedProductService extends BaseService {
                             ratioVal = subItem.getRatio();
                             break;
                         }
+                    }
+                    if(StringUtil.isEmpty(ratioVal)){
+                        ratioVal = "1";
                     }
                     int ratio = 0;
                     if (StringUtils.isNumeric(ratioVal)) {

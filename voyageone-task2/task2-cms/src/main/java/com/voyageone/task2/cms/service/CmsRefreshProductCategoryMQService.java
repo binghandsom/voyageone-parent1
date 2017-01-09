@@ -133,8 +133,8 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             CmsBtProductModel_Field prodCommonField = prodObj.getCommonNotNull().getFieldsNotNull();
             // 调用Feed到主数据的匹配接口取得匹配度最高的主类目
             MatchResult searchResult = uploadToUSJoiService.getMainCatInfo(prodObj.getFeed().getCatPath(),
-                    prodCommonField.getProductType(),
-                    prodCommonField.getSizeType(),
+                    !StringUtils.isEmpty(prodCommonField.getOrigProductType()) ? prodCommonField.getOrigProductType() : prodCommonField.getProductType(),
+                    !StringUtils.isEmpty(prodCommonField.getOrigSizeType()) ? prodCommonField.getOrigSizeType() : prodCommonField.getSizeType(),
                     prodCommonField.getProductNameEn(),
                     prodCommonField.getBrand());
             if (searchResult == null) {
@@ -178,7 +178,10 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             // 适合人群(中文)
             if (!StringUtils.isEmpty(searchResult.getSizeTypeCn()))      updateMap.put("common.fields.sizeTypeCn", searchResult.getSizeTypeCn());
             // TODO 2016/12/30暂时这样更新，以后要改
-            if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter())) {
+            if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter())
+                    || (StringUtils.isEmpty(prodCommonField.getHsCodePrivate()))
+                    || (!StringUtils.isEmpty(prodCommonField.getHsCodePrivate())
+                        && prodCommonField.getHsCodePrivate().split(",").length != 3)) {
                 // 税号个人
                 if (!StringUtils.isEmpty(searchResult.getTaxPersonal())) {
                     updateMap.put("common.fields.hsCodePrivate", searchResult.getTaxPersonal());

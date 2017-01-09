@@ -13,6 +13,7 @@ import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -1040,6 +1041,13 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     // 一般只改改价格神马的
 //                    cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
+                    if(feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())){
+                        cmsProduct.getCommon().getFields().setProductNameEn(feed.getName());
+                        cmsProduct.getCommon().getFields().setOriginalTitleCn(feed.getName());
+                        cmsProduct.getCommon().getFields().setLongDesEn(feed.getLongDescription());
+                        cmsProduct.getCommon().getFields().setShortDesEn(feed.getShortDescription());
+                        cmsProduct.getCommon().getFields().setCodeDiff(feed.getColor());
+                    }
                     if (cmsProduct == null) {
                         // 有出错, 跳过
                         String errMsg = "feed->master导入:更新:编辑商品的时候出错(cmsProduct = null):" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
@@ -1132,6 +1140,17 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     // 不存在的场合, 新建一个product
 //                    cmsProduct = doCreateCmsBtProductModel(feed, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
+
+                    if(feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())){
+                        cmsProduct.getCommon().getFields().setOriginalTitleCn(feed.getName());
+                        cmsProduct.getCommon().getFields().setShortDesCn(feed.getShortDescription());
+                        cmsProduct.getCommon().getFields().setLongDesCn(feed.getLongDescription());
+                        cmsProduct.getCommon().getFields().setColor(feed.getColor());
+                        cmsProduct.getCommon().getFields().setTranslateStatus("1");
+                        cmsProduct.getCommon().getFields().setTranslator(getTaskName());
+                        cmsProduct.getCommon().getFields().setTranslateTime(DateTimeUtil.getGMTTime());
+                    }
+
                     $info("doCreateCmsBtProductModel:" + (System.currentTimeMillis() - startTime));
                     if (cmsProduct == null) {
                         // 有出错, 跳过
@@ -1406,6 +1425,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             if (newFlg || StringUtils.isEmpty(productCommonField.getProductNameEn()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setProductNameEn(feed.getName());
             }
+
             // 长标题, 中标题, 短标题: 都是中文, 需要自己翻译的
             // 款号model
 //            if (newFlg || StringUtils.isEmpty(productField.getModel()))  {
@@ -1422,6 +1442,20 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             // 小林说common.fields.color是中文颜色，不用在这里设置了，英文颜色值设到新加的字段codeDiff（商品特质英文）里面
             if (newFlg || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setColor("");   // 初期值
+
+                // 20161227 tom champion特殊处理， 目前没有设置common的配置画面， 将来会增加 START
+                if ("007".equals(feed.getChannelId())) {
+                    String colorName = "";
+                    if (feed.getAttribute() != null && feed.getAttribute().containsKey("ColorName") && feed.getAttribute().get("ColorName").size() > 0) {
+                        colorName = feed.getAttribute().get("ColorName").get(0);
+                    }
+                    String colorId = "";
+                    if (feed.getAttribute() != null && feed.getAttribute().containsKey("ColorId") && feed.getAttribute().get("ColorId").size() > 0) {
+                        colorId = feed.getAttribute().get("ColorId").get(0);
+                    }
+                    productCommonField.setColor(colorName + colorId);
+                }
+                // 20161227 tom champion特殊处理， 目前没有设置common的配置画面， 将来会增加 END
             }
             // 商品特质英文(颜色/口味/香型等)
             if (newFlg || StringUtils.isEmpty(productCommonField.getCodeDiff()) || "1".equals(feed.getIsFeedReImport())) {

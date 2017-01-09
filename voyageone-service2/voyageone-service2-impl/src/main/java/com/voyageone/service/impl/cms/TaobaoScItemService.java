@@ -18,6 +18,7 @@ import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbScItemService;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,9 +47,9 @@ public class TaobaoScItemService extends BaseService {
 	 * @param title 商品标题
 	 * @return 货品id（如果返回为空那就是不需要设置， 如果出错会抛出BusinessError）
 	 */
-	public String doCreateScItem(ShopBean shopBean, String sku_outerId, String title, String qty) {
+	public String doCreateScItem(ShopBean shopBean, CmsBtProductModel productModel, String sku_outerId, String title, String qty) {
 		// 判断一下是否需要做货品绑定
-		String storeCode = doCheckNeedSetScItem(shopBean);
+		String storeCode = doCheckNeedSetScItem(shopBean, productModel);
 		if (StringUtils.isEmpty(storeCode)) {
 			return null;
 		}
@@ -103,7 +104,13 @@ public class TaobaoScItemService extends BaseService {
      * @param shopBean shopBean
      * @param numIId 天猫id
      */
-    public void doSetScItem(ShopBean shopBean, long numIId) {
+    public void doSetScItem(ShopBean shopBean, CmsBtProductModel productModel, long numIId) {
+
+		// 判断一下是否需要做货品绑定
+		String storeCode = doCheckNeedSetScItem(shopBean, productModel);
+		if (StringUtils.isEmpty(storeCode)) {
+			return;
+		}
 
         // 到天猫获取商品信息
         TbItemSchema tbItemSchema;
@@ -157,7 +164,7 @@ public class TaobaoScItemService extends BaseService {
                     String scProductId = skuFieldValue.getInputFieldValue("sku_scProductId");
 					String qty = skuFieldValue.getInputFieldValue("sku_quantity");
 
-                    doSetScItemSku(shopBean, numIId, outerId, skuId, scProductId, title, qty);
+                    doSetScItemSku(shopBean, productModel, numIId, outerId, skuId, scProductId, title, qty);
                 }
             }
         }
@@ -174,7 +181,7 @@ public class TaobaoScItemService extends BaseService {
                     String scProductId = skuFieldValue.getInputFieldValue("sku_scProductId");
 					String qty = skuFieldValue.getInputFieldValue("sku_quantity");
 
-                    doSetScItemSku(shopBean, numIId, outerId, skuId, scProductId, title, qty);
+                    doSetScItemSku(shopBean, productModel, numIId, outerId, skuId, scProductId, title, qty);
                 }
             }
         }
@@ -184,7 +191,7 @@ public class TaobaoScItemService extends BaseService {
             String scProductId = ((InputField)mapFields.get("item_sc_product_id")).getDefaultValue();
 			String qty = ((InputField)mapFields.get("quantity")).getDefaultValue();
 
-            doSetScItemSku(shopBean, numIId, outerId, null, scProductId, title, qty);
+            doSetScItemSku(shopBean, productModel, numIId, outerId, null, scProductId, title, qty);
         }
 
 
@@ -195,7 +202,13 @@ public class TaobaoScItemService extends BaseService {
 	 * @param shopBean shopBean
 	 * @return 商家仓库编码（如果返回内容为null， 那么就不需要做）
 	 */
-	public String doCheckNeedSetScItem(ShopBean shopBean) {
+	public String doCheckNeedSetScItem(ShopBean shopBean, CmsBtProductModel productModel) {
+		int cartId = Integer.valueOf(shopBean.getCart_id());
+		if (!Boolean.parseBoolean(productModel.getPlatform(cartId).getFields().getStringAttribute("customsClearanceWay"))) {
+			// 入关方案=false(邮关)
+			// 不做货品绑定
+			return null;
+		}
 		// 获取当前channel的配置
 		CmsChannelConfigBean scItemConfig = CmsChannelConfigs.getConfigBean(shopBean.getOrder_channel_id(), CmsConstants.ChannelConfig.SCITEM, shopBean.getCart_id());
 
@@ -218,10 +231,10 @@ public class TaobaoScItemService extends BaseService {
 
 	}
 
-    private String doSetScItemSku(ShopBean shopBean, long numIId, String sku_outerId, String sku_id, String sku_scProductId, String title, String qty) {
+    private String doSetScItemSku(ShopBean shopBean, CmsBtProductModel productModel, long numIId, String sku_outerId, String sku_id, String sku_scProductId, String title, String qty) {
 
 		// 判断一下是否需要做货品绑定
-		String storeCode = doCheckNeedSetScItem(shopBean);
+		String storeCode = doCheckNeedSetScItem(shopBean, productModel);
 		if (StringUtils.isEmpty(storeCode)) {
 			return null;
 		}
@@ -233,7 +246,7 @@ public class TaobaoScItemService extends BaseService {
         }
 
         // 创建货品（如果没有创建过的话）并初始化库存
-		doCreateScItem(shopBean, sku_outerId, title, qty);
+		doCreateScItem(shopBean, productModel, sku_outerId, title, qty);
 
 		// 创建关联
 		String outerCodeResult;
