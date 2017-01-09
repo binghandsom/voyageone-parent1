@@ -82,6 +82,25 @@ public class SxData {
 		}
 	}
 
+	// added by morse.lu 2017/01/05 start
+	// 保存sku的各种上新用的扩展属性,方便在各个方法里直接拿到，以后有啥需要的，可以都加到这个里面
+	private Map<String, SxSkuExInfo> mapSxSkuExInfo; // Map<skuCode, SxSkuExInfo>
+
+	public class SxSkuExInfo {
+		private SxSkuExInfo() {}
+
+		private String scProductId; // 货品id
+
+		public String getScProductId() {
+			return scProductId;
+		}
+
+		public void setScProductId(String scProductId) {
+			this.scProductId = scProductId;
+		}
+	}
+	// added by morse.lu 2017/01/05 end
+
     // added by morse.lu 2016/10/19 start
     // 独立域名上新，临时用的，以后不看cms_tmp_sx_cn_code这张表且删了这张表之后，把这里的删掉
     private CmsTmpSxCnCodeModel tmpSxCnCode;
@@ -259,5 +278,27 @@ public class SxData {
 		}
 
 		return sxDarwinSkuProps;
+	}
+
+	public Map<String, SxSkuExInfo> getMapSxSkuExInfo() {
+		return mapSxSkuExInfo;
+	}
+
+	public SxSkuExInfo getSxSkuExInfo(String skuCode, boolean isCreate) {
+		if (mapSxSkuExInfo == null) {
+			if (isCreate) {
+				mapSxSkuExInfo = new HashMap<>();
+			} else {
+				return null;
+			}
+		}
+
+		SxSkuExInfo sxSkuExInfo = mapSxSkuExInfo.get(skuCode);
+		if (sxSkuExInfo == null && isCreate) {
+			sxSkuExInfo = new SxSkuExInfo();
+			mapSxSkuExInfo.put(skuCode, sxSkuExInfo);
+		}
+
+		return sxSkuExInfo;
 	}
 }
