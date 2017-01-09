@@ -1442,6 +1442,20 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             // 小林说common.fields.color是中文颜色，不用在这里设置了，英文颜色值设到新加的字段codeDiff（商品特质英文）里面
             if (newFlg || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setColor("");   // 初期值
+
+                // 20161227 tom champion特殊处理， 目前没有设置common的配置画面， 将来会增加 START
+                if ("007".equals(feed.getChannelId())) {
+                    String colorName = "";
+                    if (feed.getAttribute() != null && feed.getAttribute().containsKey("ColorName") && feed.getAttribute().get("ColorName").size() > 0) {
+                        colorName = feed.getAttribute().get("ColorName").get(0);
+                    }
+                    String colorId = "";
+                    if (feed.getAttribute() != null && feed.getAttribute().containsKey("ColorId") && feed.getAttribute().get("ColorId").size() > 0) {
+                        colorId = feed.getAttribute().get("ColorId").get(0);
+                    }
+                    productCommonField.setColor(colorName + colorId);
+                }
+                // 20161227 tom champion特殊处理， 目前没有设置common的配置画面， 将来会增加 END
             }
             // 商品特质英文(颜色/口味/香型等)
             if (newFlg || StringUtils.isEmpty(productCommonField.getCodeDiff()) || "1".equals(feed.getIsFeedReImport())) {
