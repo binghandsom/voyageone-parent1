@@ -24,6 +24,7 @@ public class UpdateProductSalePriceMQMessageBody extends BaseMQMessageBody {
     private Integer cartId;
     private String channelId;
     private Map<String, Object> params;
+    private Integer userId;
 
     public List<String> getProductCodes() {
         return productCodes;
@@ -57,6 +58,14 @@ public class UpdateProductSalePriceMQMessageBody extends BaseMQMessageBody {
         this.params = params;
     }
 
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
     @Override
     public void check() throws MQMessageRuleException {
         if (org.apache.commons.lang.StringUtils.isBlank(channelId)) {
@@ -70,6 +79,10 @@ public class UpdateProductSalePriceMQMessageBody extends BaseMQMessageBody {
         }
         if (params == null || params.size() <= 0) {
             throw new MQMessageRuleException("批量修改商品价格MQ发送异常,修改参数为空.");
+        }
+
+        if (userId == null) {
+            throw new MQMessageRuleException("批量修改商品价格MQ发送异常,参数userId为空.");
         }
 
         if (StringUtils.isEmpty(getSender())) {
