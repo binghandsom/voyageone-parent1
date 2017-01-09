@@ -12,7 +12,7 @@ public class CmsMqRoutingKey {
     public static final String CMS_JM_PROMOTION_EXPORT = "VOCmsJmPromotionExportQueue";
 
     /*修改最终售价*/
-    public static final String CMS_UPDATE_PRODUCT_SALE_PRECE = "VOCmsUpdateProductSalePriceQueue";
+    public static final String CMS_UPDATE_PRODUCT_SALE_PRICE = "VOCmsUpdateProductSalePriceQueue";
 
 
     /**
