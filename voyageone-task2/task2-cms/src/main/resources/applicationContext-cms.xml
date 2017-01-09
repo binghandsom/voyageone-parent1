@@ -219,6 +219,12 @@
         <!-- 被迫下架的商品 自动上架（每5分钟一次） -->
         <task:scheduled ref="platformForcedInStockProduct_AutoOnSaleJob" method="run" cron="0 0/5 0-23 * * ?" />
 
+        <!-- 分销上新（每3分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadDtJob" method="run" cron="0 0/3 0-23 * * ?"/>
+
+        <!-- Liking新独立域名上新（每3分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadCnnJob" method="run" cron="0 0/3 0-23 * * ?"/>
+
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->
