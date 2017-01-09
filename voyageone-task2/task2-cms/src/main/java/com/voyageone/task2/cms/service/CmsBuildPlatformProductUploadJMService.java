@@ -870,13 +870,24 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         //更新Deal失败
                         else
                         {
-                            if (htDealUpdateResponse != null && !StringUtils.isEmpty(htDealUpdateResponse.getErrorMsg()) && htDealUpdateResponse.getErrorMsg().contains("没有可用的sku")) {
-                                String msg = String.format("聚美更新Deal失败,该Deal中没有可用的sku，请检查sku是否在该deal中存在，" +
-                                        "不存在请添加sku或将该sku变成有效后再试！[ProductId:%s] [HashId:%s] [Message:%s] [skuNo:%s]",
-                                        product.getProdId(), hashId, htDealUpdateResponse.getErrorMsg(), htDealUpdateRequest.getUpdate_data().getJumei_sku_no());
-                                $info(msg);
+                            if (htDealUpdateResponse != null && !StringUtils.isEmpty(htDealUpdateResponse.getErrorMsg())) {
+                                if (htDealUpdateResponse.getErrorMsg().contains("没有可用的sku")) {
+                                    String msg = String.format("聚美更新Deal失败,该Deal中没有可用的sku，请检查sku是否在该deal中存在，" +
+                                                    "不存在请添加sku或将该sku变成有效后再试！[ProductId:%s] [HashId:%s] [Message:%s] [skuNo:%s]",
+                                            product.getProdId(), hashId, htDealUpdateResponse.getErrorMsg(), htDealUpdateRequest.getUpdate_data().getJumei_sku_no());
+                                    $info(msg);
+                                } else if (htDealUpdateResponse.getErrorMsg().contains("商城价不能大于市场价")
+                                        || htDealUpdateResponse.getErrorMsg().contains("商城价不能小于团购价")) {
+                                    String msg = String.format("聚美更新Deal失败,但是这是关于商城价的check,不报错继续往后更新商城价格！[ProductId:%s] [HashId:%s] [Message:%s] [skuNo:%s]",
+                                            product.getProdId(), hashId, htDealUpdateResponse.getErrorMsg(), htDealUpdateRequest.getUpdate_data().getJumei_sku_no());
+                                    $info(msg);
+                                } else {
+                                    String msg = String.format("聚美更新Deal失败！[ProductId:%s], [HashId:%s], [Message:%s]", product.getProdId(), hashId, htDealUpdateResponse.getErrorMsg());
+                                    $error(msg);
+                                    throw  new BusinessException(msg);
+                                }
                             } else {
-                                String msg = String.format("聚美更新Deal失败！[ProductId:%s], [HashId:%s], [Message:%s]", product.getProdId(), hashId, htDealUpdateResponse.getErrorMsg());
+                                String msg = String.format("聚美更新Deal失败！[ProductId:%s], [HashId:%s], [Message:%s]", product.getProdId(), hashId, "聚美更新Deal失败返回为空!");
                                 $error(msg);
                                 throw  new BusinessException(msg);
                             }
