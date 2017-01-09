@@ -876,7 +876,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                         product.getProdId(), hashId, htDealUpdateResponse.getErrorMsg(), htDealUpdateRequest.getUpdate_data().getJumei_sku_no());
                                 $info(msg);
                             } else {
-                                String msg = String.format("聚美更新Deal失败！[ProductId:%s], [HashId:], [Message:%s]", product.getProdId(), hashId, htDealUpdateResponse.getErrorMsg());
+                                String msg = String.format("聚美更新Deal失败！[ProductId:%s], [HashId:%s], [Message:%s]", product.getProdId(), hashId, htDealUpdateResponse.getErrorMsg());
                                 $error(msg);
                                 throw  new BusinessException(msg);
                             }
