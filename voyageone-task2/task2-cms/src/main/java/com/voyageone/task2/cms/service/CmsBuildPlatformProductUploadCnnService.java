@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
 public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService {
 
     // 新独立域名平台ID(34)
-    private static final int CART_ID_CNN = CartEnums.Cart.CNN.getValue();
+    private static final int CART_ID_CNN = CartEnums.Cart.LIKING.getValue();
     // 分隔符(,)
     private final static String Separtor_Coma = ",";
     // 线程数(synship.tm_task_control中设置的当前job的最大线程数"thread_count", 默认为3)
