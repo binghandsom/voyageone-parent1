@@ -29,7 +29,10 @@
             a.cms_cfg_name_order cmsCfgNameOrder,
             a.cms_is_cfg_val1_display cmsIsCfgVal1Display,
             a.cms_is_cfg_val2_display cmsIsCfgVal2Display,
-            a.cms_is_cfg_val3_display cmsIsCfgVal3Display
+            a.cms_is_cfg_val3_display cmsIsCfgVal3Display,
+            b.created created,
+            b.modified modified,
+            b.modifier modifier
         FROM
             voyageone_cms2.cms_mt_feed_config_key a
         LEFT JOIN voyageone_cms2.cms_mt_feed_config b ON a.cfg_name = b.cfg_name
