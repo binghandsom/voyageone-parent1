@@ -39,13 +39,20 @@ define([
                     self.alert('两次输入的密码不匹配，请重新输入');
                 }
             },
-            validation:function(){
+            newPassValidation:function(){
                 var self = this;
                 if (!self.patrn.exec(self.newPass)) {
-                    self.alert('只能输入6-20个字母、数字、下划线');return;
+                    self.alertMSG1='只能输入6～20个字母、数字、下划线';return;
+                }else{
+                    self.alertMSG1=''
                 }
+            },
+            newPassAgainValidation:function(){
+                var self = this;
                 if (!self.patrn.exec(self.newPassAgain)) {
-                    self.alert('只能输入6-20个字母、数字、下划线');return;
+                    self.alertMSG2='只能输入6～20个字母、数字、下划线';return;
+                }else{
+                    self.alertMSG2=''
                 }
             }
         };
