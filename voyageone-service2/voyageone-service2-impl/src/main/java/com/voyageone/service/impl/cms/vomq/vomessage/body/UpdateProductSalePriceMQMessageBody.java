@@ -17,7 +17,7 @@ import java.util.Map;
  * @Author rex
  * @Create 2017-01-09 13:57
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_UPDATE_PRODUCT_SALE_PRECE)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_UPDATE_PRODUCT_SALE_PRICE)
 public class UpdateProductSalePriceMQMessageBody extends BaseMQMessageBody {
 
     private List<String> productCodes;
