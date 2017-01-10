@@ -54,16 +54,16 @@ public class CmsMqRoutingKey {
     public static final String CMS_ADV_SEARCH_REFRESH_RETAIL_PRICE = "VOCmsAdvSearchRefreshRetailPriceQueue";
 
     // 批量设置平台属性
-    public static final String CMS_BATCH_PLATFORM_FIELDS = "VOCmsPlatformFieldsTaskQueue";
+    public static final String CMS_BATCH_PLATFORM_FIELDS = "VOCmsPlatformFieldsSetQueue";
 
     // 获取货架里的商品信息
-    public static final String CMS_BATCH_SHELVES_MONITOR = "VOCmsShelvesMonitorQueue";
+    public static final String CMS_BATCH_SHELVES_MONITOR = "VOCmsShelvesMonitorGetQueue";
 
      // 货架监控
     public static final String CMS_BATCH_SHELVES_IMAGE_UPLOAD = "VOCmsShelvesImageUploadQueue";
 
      // cart追加 把product表中的platform追加一个cart
-    public static final String CMS_BATCH_CART_ADD_JOB = "VOCmsCartAddQueue";
+    public static final String CMS_BATCH_CART_ADD_JOB = "VOCmsPlatformCartAddQueue";
 
     // 默认属性功能，用于强制对某商品或某类目进行属性的重新计算赋值和上新
     public static final String CMS_TASK_REFRESH_PRODUCTS = "VOCmsRefreshProductsQueue";
@@ -118,7 +118,7 @@ public class CmsMqRoutingKey {
      * 记录上下架操作历史
      */
     //public static final String CMS_TASK_PlatformActiveLogJob = "voyageone_cms_task_PlatformActiveLogJob_queue";
-    public static final String CMS_PLATFORM_ACTIVE_LOG = "VOCmsPlatformActiveLogQueue";
+    public static final String CMS_PLATFORM_ACTIVE_LOG = "VOCmsPlatformActiveSetQueue";
 
 
     /*高级检索-指导价变更确认*/

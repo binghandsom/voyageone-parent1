@@ -91,4 +91,14 @@ public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> e
     public void cmsBusinessExLog(TMQMessageBody messageBody, String msg) {
         cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.businessException, msg);
     }
+
+    /**
+     * 成功结束
+     *
+     * @param messageBody messageBody
+     * @param msg         msg
+     */
+    public void cmsSuccessLog(TMQMessageBody messageBody, String msg) {
+        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.success, msg);
+    }
 }
