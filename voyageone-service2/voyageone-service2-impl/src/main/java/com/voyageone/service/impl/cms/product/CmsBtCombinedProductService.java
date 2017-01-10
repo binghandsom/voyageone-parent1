@@ -241,7 +241,8 @@ public class CmsBtCombinedProductService extends BaseService {
                                 // 循环subItemList
                                 String ratioVal = "";
                                 for (TmallItemCombinedSubItem subItem:tmallItemCombine.getSubItemList()) {
-                                    if (subSku.getOuterId().equals(subItem.getOuterId()) && subSku.getSubItemId().equalsIgnoreCase(subItem.getSubItemId())) {
+//                                    if (subSku.getOuterId().equals(subItem.getOuterId()) && subSku.getSubItemId().equalsIgnoreCase(subItem.getSubItemId())) {
+                                    if (subSku.getSubItemId().equalsIgnoreCase(subItem.getSubItemId())) {
                                         //skuItem.setProductName(subItem.getTitle()); // 真实SKU商品名称
                                         ratioVal = subItem.getRatio();
                                         break;
@@ -272,7 +273,8 @@ public class CmsBtCombinedProductService extends BaseService {
                     // 循环subItemList
                     String ratioVal = "";
                     for (TmallItemCombinedSubItem subItem:tmallItemCombine.getSubItemList()) {
-                        if (subSku.getOuterId().equals(subItem.getOuterId()) && subSku.getSubItemId().equalsIgnoreCase(subItem.getSubItemId())) {
+//                        if (subSku.getOuterId().equals(subItem.getOuterId()) && subSku.getSubItemId().equalsIgnoreCase(subItem.getSubItemId())) {
+                        if (subSku.getSubItemId().equalsIgnoreCase(subItem.getSubItemId())) {
                             //skuItem.setProductName(subItem.getTitle());
                             ratioVal = subItem.getRatio();
                             break;
