@@ -40,7 +40,6 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseMQCmsService;
-import com.voyageone.task2.cms.service.product.CmsProcductPriceUpdateService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,8 +81,7 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
 
     @Autowired
     private CmsMqSenderService sender;
-    @Autowired
-    private CmsProcductPriceUpdateService cmsProcductPriceUpdateService;
+
     @Autowired
     private PlatformCategoryService platformCategoryService;
 
