@@ -520,7 +520,9 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
         // 品牌名/制造商名
         paramCommonFields.put("brand", mainProdCommField.getBrand());
         // 产品名称(中文) (对应于cms中的originalTitleCn/productNameEn)
-        if (!StringUtils.isEmpty(mainProdCommField.getOriginalTitleCn())) {
+        if (mainProdPlatCart != null && !StringUtils.isEmpty(mainProdPlatCart.getFieldsNotNull().getStringAttribute("productTitle"))) {
+            paramCommonFields.put("title", mainProdPlatCart.getFieldsNotNull().getStringAttribute("productTitle"));
+        } else if (!StringUtils.isEmpty(mainProdCommField.getOriginalTitleCn())) {
             paramCommonFields.put("title", mainProdCommField.getOriginalTitleCn());
         } else {
             paramCommonFields.put("title", mainProdCommField.getProductNameEn());
