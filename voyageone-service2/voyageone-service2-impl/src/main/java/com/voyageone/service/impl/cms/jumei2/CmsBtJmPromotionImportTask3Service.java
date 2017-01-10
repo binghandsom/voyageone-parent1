@@ -99,8 +99,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     @Autowired
     CmsMqSenderService cmsMqSenderService;
     public void importFile(int JmBtPromotionImportTaskId, String importPath) throws Exception {
-        String errorMsg = "";
-        boolean isError = false;
+
         CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask = cmsBtJmPromotionImportTaskDao.select(JmBtPromotionImportTaskId);
         modelCmsBtJmPromotionImportTask.setBeginTime(DateTimeUtilBeijing.getCurrentBeiJingDate());
         try {
@@ -128,7 +127,6 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
 
     private CallResult importExcel(CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask, String importPath) throws Exception {
         CallResult result=new CallResult();
-        boolean isError;
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(modelCmsBtJmPromotionImportTask.getCmsBtJmPromotionId());
         modelCmsBtJmPromotionImportTask.setBeginTime(DateTimeUtilBeijing.getCurrentBeiJingDate());
         //"/usr/JMImport/"

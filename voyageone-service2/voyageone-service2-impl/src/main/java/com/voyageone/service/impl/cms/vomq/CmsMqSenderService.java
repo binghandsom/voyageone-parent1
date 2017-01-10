@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.vomq;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
@@ -33,7 +34,7 @@ public class CmsMqSenderService extends BaseService {
         } catch (Exception ex) {
             String name = this.getClass().getName();
             cmsBtOperationLogService.log(name, name, message, ex);
-            throw ex;
+            throw new BusinessException("消息发送失败",ex) ;
         }
     }
     public void sendMessage(BaseMQMessageBody message, int delaySecond) throws MQMessageRuleException {
