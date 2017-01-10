@@ -1,13 +1,14 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtTmTonggouFeedAttrDao;
 import com.voyageone.service.dao.cms.CmsMtChannelConditionMappingConfigDao;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.CmsBtTmTonggouFeedAttrModel;
-import com.voyageone.service.model.cms.CmsMtChannelConditionMappingConfigModel;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,15 +50,22 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
     @Test
     public void testUploadProduct() throws Exception {
 
-        String channelId = "024";
-        Integer cartId = 30;
+        // 清除缓存（cms.channel_config表）
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_ShopConfigs.toString());
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_ShopConfigConfigs.toString());
+
+//        String channelId = "024";
+//        Integer cartId = 30;
+        String channelId = "928";
+        Integer cartId = 31;
 
         CmsBtSxWorkloadModel workload = new CmsBtSxWorkloadModel();
         workload.setId(762584);
         workload.setChannelId(channelId);
         workload.setCartId(cartId);
 //        workload.setGroupId(Long.parseLong("110022"));  // code:SCL020400
-        workload.setGroupId(Long.parseLong("1253259"));  // code:SCL020400
+        workload.setGroupId(Long.parseLong("9920001"));  // code:SCL020400
         workload.setPublishStatus(0);
         workload.setModifier("SYSTEM");
 
@@ -88,18 +96,8 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
             tmTonggouFeedAttrModelList.forEach(p -> tmTonggouFeedAttrList.add(p.getFeedAttr()));
         }
 
-        // 从cms_mt_channel_condition_mapping_config表中取得该渠道，平台对应的客户过来的类目id和天猫平台一级类目之间的mapping关系数据
-        Map<String, String> conditionMappingParamMap = new HashMap<>();
-        conditionMappingParamMap.put("channelId", channelId);
-        conditionMappingParamMap.put("cartId", StringUtils.toString(cartId));
-        conditionMappingParamMap.put("propName", "tt_category");   // 天猫同购一级类目匹配
-        List<CmsMtChannelConditionMappingConfigModel> conditionMappingConfigModels =
-                cmsMtChannelConditionMappingConfigDao.selectList(conditionMappingParamMap);
-        if (ListUtils.isNull(conditionMappingConfigModels)) {
-            return;
-        }
-        Map<String, String> conditionMappingMap = new HashMap<>();
-        conditionMappingConfigModels.forEach(p -> conditionMappingMap.put(p.getMapKey(), p.getMapValue()));
+        // 从cms_mt_channel_condition_mapping_config表中取得当前渠道的取得产品主类目与天猫平台叶子类目(或者平台一级类目)，以及feed类目id和天猫平台类目之间的mapping关系数据
+        Map<String, Map<String, String>> categoryMappingMap = uploadTmTongGouService.getCategoryMapping(channelId, cartId);
 
         // 测试的时候要往uploadProduct()方面里面最前面加上下面这段初期化的代码，不然会报nullpoint错误 start
 //        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
@@ -116,7 +114,8 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
         // 如果希望新增一个新的测试商品的话，在uploadProduct()的判断新增商品还是更新商品之前，追加sxData.getPlatform().setNumIId("");
         // 如果连接生产环境，不希望因为上传图片之后因为回写图片信息报错的话，暂时注释掉SxProductService.uploadImage()方法里面530,588行的2个回写动作就可以了
 
-        uploadTmTongGouService.uploadProduct(workload, shopProp, tmTonggouFeedAttrList, conditionMappingMap);
+        uploadTmTongGouService.uploadProduct(workload, shopProp, tmTonggouFeedAttrList, categoryMappingMap);
+        System.out.println("天猫官网同购 testUploadProduct 测试结束!");
     }
 
 
