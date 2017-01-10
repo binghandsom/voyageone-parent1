@@ -43,7 +43,7 @@ public class ValueChannelController  extends BaseController {
         String hsCodes = params.get("hsCodes").toString();
         String[] hsCodeList = hsCodes.split("\n");
         for (int i = 0; i < hsCodeList.length; i++) {
-            String  temp[] = hsCodeList[i].split("\t");
+            String  temp[] = hsCodeList[i].split(" ");
             if(temp.length != 2){
                 throw new BusinessException("格式不正确");
             }
