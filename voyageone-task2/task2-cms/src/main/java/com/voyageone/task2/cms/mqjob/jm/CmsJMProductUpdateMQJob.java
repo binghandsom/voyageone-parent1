@@ -31,7 +31,7 @@ public class CmsJMProductUpdateMQJob extends TBaseMQCmsService<JMProductUpdateMQ
         long errorCount = listResult.stream().filter(f -> !f.isResult()).count();
         listResult.forEach(f -> {
             if (!f.isResult()) {
-                sb.append(f.getCode()).append(":").append(f.getMsg()).append("errorId:").append(f.getId()).append("\\r\\n");
+                sb.append("code:").append(f.getCode()).append(":").append(f.getMsg()).append("errorId:").append(f.getId()).append("\\r\\n");
             }
         });
         if (errorCount > 0) {
