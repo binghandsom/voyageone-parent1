@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.sx.rule_parser;
 
 import com.voyageone.common.logger.VOAbsLoggable;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.FeedOrgWord;
 import com.voyageone.ims.rule_expression.RuleWord;
@@ -71,9 +72,9 @@ public class FeedOrgWordParser extends VOAbsLoggable {
             if (cmsBtFeedInfoModel.getAttribute().containsKey(propName)) {
                 // 先看看attribute里有没有
                 plainPropValueObj = cmsBtFeedInfoModel.getAttribute().get(propName).get(0);
-            } else if (cmsBtFeedInfoModel.getFullAttribute().containsKey(propName)) {
+            } else if (JacksonUtil.bean2Map(cmsBtFeedInfoModel).containsKey(propName)) {
                 // 再看看外面有没有
-                plainPropValueObj = cmsBtFeedInfoModel.getFullAttribute().get(propName);
+                plainPropValueObj = JacksonUtil.bean2Map(cmsBtFeedInfoModel).get(propName);
             } else {
                 // 找不到这个属性, 那就设为空的吧
                 plainPropValueObj = null;

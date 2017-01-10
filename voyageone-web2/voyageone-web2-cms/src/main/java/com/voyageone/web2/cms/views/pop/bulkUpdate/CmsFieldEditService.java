@@ -21,6 +21,7 @@ import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
@@ -44,6 +45,7 @@ import com.voyageone.service.impl.cms.vomq.vomessage.body.PlatformActiveLogMQMes
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductVoRateUpdateMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsBatchPlatformFieldsMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.UpdateProductSalePriceMQMessageBody;
 import com.voyageone.service.impl.com.cache.CommCacheService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
@@ -880,7 +882,25 @@ public class CmsFieldEditService extends BaseViewService {
             throw new BusinessException("本店铺未配置所销售平台");
         }
 
-        // 检查商品价格 notChkPrice=1时表示忽略价格超过阈值
+        List<List<String>> productCodesList = CommonUtil.splitList(productCodes, 100);
+        UpdateProductSalePriceMQMessageBody mqMessageBody = new UpdateProductSalePriceMQMessageBody();
+        mqMessageBody.setCartId(cartId);
+        mqMessageBody.setChannelId(userInfo.getSelChannelId());
+        mqMessageBody.setSender(userInfo.getUserName());
+        mqMessageBody.setUserId(userInfo.getUserId());
+        mqMessageBody.setParams(params);
+        for (List<String> codes:productCodesList) {
+            mqMessageBody.setProductCodes(codes);
+            try {
+                mqSenderService.sendMessage(mqMessageBody);
+            } catch (MQMessageRuleException e) {
+                $error(String.format("修改商品中国最终上架MQ发送异常,channelId=%s,cartId=%s,userName=%s", userInfo.getSelChannelId(), cartId, userInfo.getUserName()), e);
+                throw new BusinessException(e.getMessage());
+            }
+        }
+
+
+/*        // 检查商品价格 notChkPrice=1时表示忽略价格超过阈值
         Integer notChkPriceFlg = (Integer) params.get("notChkPrice");
         if (notChkPriceFlg == null) {
             notChkPriceFlg = 0;
@@ -1157,7 +1177,7 @@ public class CmsFieldEditService extends BaseViewService {
         if (prodPriceDownExList.size() > 0) {
             commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "4", prodPriceDownExList);
         }
-        rsMap.put("unProcList", prodPriceUpList.size() + prodPriceDownList.size() + prodPriceDownExList.size());
+        rsMap.put("unProcList", prodPriceUpList.size() + prodPriceDownList.size() + prodPriceDownExList.size());*/
         rsMap.put("ecd", 0);
         return rsMap;
     }

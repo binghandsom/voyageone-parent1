@@ -40,6 +40,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseMQCmsService;
+import com.voyageone.task2.cms.service.product.CmsProcductPriceUpdateService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,8 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
 
     @Autowired
     private CmsMqSenderService sender;
+    @Autowired
+    private CmsProcductPriceUpdateService cmsProcductPriceUpdateService;
     @Autowired
     private PlatformCategoryService platformCategoryService;
 
@@ -546,7 +549,7 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
 
         // added by morse.lu 2017/01/05 start
         // 向Mq发送消息同步sku,code,group价格范围
-
+//        listProducts.forEach(product -> sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, product));
         listProducts.forEach(product -> {
             ProductPriceUpdateMQMessageBody productPriceUpdateMQMessageBody = new ProductPriceUpdateMQMessageBody();
             productPriceUpdateMQMessageBody.setParams(product);

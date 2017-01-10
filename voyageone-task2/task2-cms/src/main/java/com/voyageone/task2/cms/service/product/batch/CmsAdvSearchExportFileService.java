@@ -308,6 +308,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
             int offset = 0; // SKU导出时，startRowIndex可能行数会增加，因为一个code可有有多个sku
             for (int i = 0; i < pageCount; i++) {
+                $info(String.format("%d/%d",i+1,pageCount));
                 queryObject.setSkip(i * SELECT_PAGE_SIZE);
                 queryObject.setLimit(SELECT_PAGE_SIZE);
                 List<CmsBtProductBean> items = productService.getBeanList(channelId, queryObject);
@@ -363,7 +364,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
             } finally {
                 outputStream.close();
             }
-        } finally {
+        }catch (Exception e){
+            $error(e);
+        } finally{
             book.close();
         }
         return fileName;

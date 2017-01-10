@@ -228,6 +228,10 @@ vo-message {
     background: #00afef;
 }
 
+.plateform-status .violation {
+    background: #a397ea;
+}
+
 .plateform-status .error {
     border: 2px solid #fd0001;
 }
