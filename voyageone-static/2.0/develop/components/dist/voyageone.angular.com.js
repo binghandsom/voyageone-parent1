@@ -341,6 +341,40 @@ angular.module("voyageone.angular.directives").directive("enterClick", function 
 
 /**
  * @Description:
+ * 比较两个值是否相等
+ * @Date:    2017-01-10 17:35:22
+ * @User:    edward
+ * @Version: 2.10.0
+ */
+angular.module("voyageone.angular.directives").directive("equalTo", function () {
+    return {
+        restrict: "A",
+        require: "ngModel",
+        scope: {
+            equalTo:"="
+        },
+        link: function (scope, ele, attrs, ctrl) {
+
+            var target = attrs["equalTo"];//获取自定义指令属性键值
+
+            if (target) {//判断键是否存在
+                scope.$watch("equalTo", function () {//存在启动监听其值
+                    ctrl.$validate()//每次改变手动调用验证
+                });
+
+                ctrl.$validators.equalTo = function (viewVale) {//自定义验证器内容
+
+                    return scope.equalTo == viewVale;//是否等于passwordConfirm的值
+                };
+            }
+        }
+    }
+});
+
+/*****************************/
+
+/**
+ * @Description:
  * 引入对上传框插件 fileStyle 的指令支持 基于Bootstrap Filestyle
  * @Date:    2015-11-19 17:35:22
  * @User:    Jonas
@@ -564,7 +598,8 @@ var errorTypes = {
     maxbytelength: 'INVALID_MAXLENGTH',
     max: 'INVALID_MAX',
     min: 'INVALID_MIN',
-    pattern: 'INVALID_PATTERN'
+    pattern: 'INVALID_PATTERN',
+    equalTo: "INVALID_NOT_EQUAL"
 };
 
 /**
@@ -639,7 +674,7 @@ angular.module("voyageone.angular.directives")
                             show(attrs[error]);
                         } else {
                             // 如果用户没有设定提示信息，那么就自己根据参数生成
-                            if (['maxlength', 'minlength', 'maxbytelength', 'minbytelength', 'max', 'min', 'pattern'].indexOf(error) > -1) {
+                            if (['maxlength', 'minlength', 'maxbytelength', 'minbytelength', 'max', 'min', 'pattern', 'equalTo'].indexOf(error) > -1) {
                                 if (!(translateParam.value = targetElement.attr(error)) && 'pattern' === error)
                                     translateParam.value = targetElement.attr('ng-pattern');
                             }

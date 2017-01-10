@@ -731,6 +731,7 @@ define(function () {
         "INVALID_MAX": "请输入的数据不能大于:{{value}}",
         "INVALID_MIN": "请输入的数据不能小于:{{value}}",
         "INVALID_PATTERN": "请输入的数据必须满足规则:{{value}}",
+        "INVALID_NOT_EQUAL": "两次输入不一致",
 
         /**平台schema*/
         "TXT_BAR_CODE": "条形码",
