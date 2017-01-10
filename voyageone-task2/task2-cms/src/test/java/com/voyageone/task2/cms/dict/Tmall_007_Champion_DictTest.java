@@ -17,14 +17,14 @@ public class Tmall_007_Champion_DictTest extends BaseDictTest {
 		System.out.println("=====================================");
 		{
 			// 产品图片
-			String templateUrl = "";
+			String templateUrl = "http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x1200_1200x?$1200x1200$&$product=%s";
 			for (int i = 0; i < 5; i++) {
 				doCreateJson("产品图片-" + ( i + 1 ), false, doDict_商品图片(templateUrl, String.valueOf(i)));
 			}
 		}
 		{
 			// 商品图片
-			String templateUrl = "";
+			String templateUrl = "http://s7d5.scene7.com/is/image/sneakerhead/champion_zhutu_moban?$900x900$&$layer_1_src=%s";
 			for (int i = 0; i < 5; i++) {
 				doCreateJson("商品图片-" + ( i + 1 ), false, doDict_商品图片(templateUrl, String.valueOf(i)));
 			}
