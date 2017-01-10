@@ -1,9 +1,11 @@
 package com.voyageone.service.bean.cms;
 
+import com.voyageone.base.dao.mysql.BaseModel;
+
 /**
  * Created by gjl on 2016/12/21.
  */
-public class CmsMtFeedConfigBean {
+public class CmsMtFeedConfigBean extends BaseModel {
 
     private String orderChannelId;
 

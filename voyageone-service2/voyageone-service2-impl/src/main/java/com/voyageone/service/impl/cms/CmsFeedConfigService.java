@@ -44,7 +44,7 @@ public class CmsFeedConfigService extends BaseService {
     /**
      * Feed配置项目管理*数据初始化
      */
-    public Map<String, Object> search(String channelId) {
+    public Map<String, Object> search(String channelId, String userName) {
         Map<String, Object> resultMap = new HashMap();
         //cms_mt_feed_config_key取得主数据
         List<CmsMtFeedConfigBean> cmsMtFeedConfigKeyList = cmsMtFeedConfigDaoExt.selectFeedConFigKey();
@@ -60,6 +60,9 @@ public class CmsFeedConfigService extends BaseService {
                 cmsMtFeedConfigBean.setCmsIsCfgVal1Display(bean.getCmsIsCfgVal1Display());
                 cmsMtFeedConfigBean.setCmsIsCfgVal2Display(bean.getCmsIsCfgVal2Display());
                 cmsMtFeedConfigBean.setCmsIsCfgVal3Display(bean.getCmsIsCfgVal3Display());
+                cmsMtFeedConfigBean.setCreated(bean.getCreated());
+                cmsMtFeedConfigBean.setModifier(userName);
+                cmsMtFeedConfigBean.setModified(new Date());
             });
         }
         //Feed-Master属性一览
