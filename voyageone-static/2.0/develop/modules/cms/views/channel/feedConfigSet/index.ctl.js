@@ -35,10 +35,12 @@ define([
          */
         feedConfigSet.prototype.save = function (item) {
             var self = this,
+                notify = self.notify,
                 cmsFeedConfigService = self.cmsFeedConfigService;
 
             cmsFeedConfigService.save(item).then(function (res) {
                 self.search();
+                notify.success("保存成功！");
             });
         };
 
@@ -103,10 +105,12 @@ define([
          */
         feedConfigSet.prototype.saveFeed = function (item) {
             var self = this,
+                notify = self.notify,
                 cmsFeedConfigService = self.cmsFeedConfigService;
 
             cmsFeedConfigService.saveFeed(item).then(function (res) {
                 self.search();
+                notify.success("保存成功！");
             });
         };
 
@@ -115,10 +119,12 @@ define([
          */
         feedConfigSet.prototype.createFeed = function (item) {
             var self = this,
+                notify = self.notify,
                 cmsFeedConfigService = self.cmsFeedConfigService;
 
             cmsFeedConfigService.createFeed(item).then(function (res) {
                 self.search();
+                notify.success("保存成功！");
             });
         };
         return feedConfigSet;
