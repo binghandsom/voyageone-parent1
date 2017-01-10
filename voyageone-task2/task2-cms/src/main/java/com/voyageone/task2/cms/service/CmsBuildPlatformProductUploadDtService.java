@@ -257,6 +257,7 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
                     cmsBtDtSkuDao.insert(dtSkuModel);
                 } else {
                     // 存在，更新
+                    dtSkuModel.setId(currentCmsBtDtSku.getId());
                     cmsBtDtSkuDao.update(dtSkuModel);
                 }
             }

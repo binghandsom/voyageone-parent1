@@ -89,10 +89,10 @@ public class WmfPriceAnalysisService extends BaseCronTaskService {
     }
 
     private void updateMastPrice(CmsZzFeedWmfPriceModel cmsZzFeedWmfPriceModel) {
-        CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductBySku(WMF.getId(), cmsZzFeedWmfPriceModel.getSkuCode());
+        CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductBySku(WMF.getId(), cmsZzFeedWmfPriceModel.getSkuCode()+"-OneSize");
         if(cmsBtFeedInfoModel != null){
             for (CmsBtFeedInfoModel_Sku sku : cmsBtFeedInfoModel.getSkus()) {
-                if (sku.getSku().equalsIgnoreCase(cmsZzFeedWmfPriceModel.getSkuCode())) {
+                if (sku.getSku().equalsIgnoreCase(cmsZzFeedWmfPriceModel.getSkuCode()+"-OneSize")) {
                     sku.setPriceCurrent(Double.parseDouble(cmsZzFeedWmfPriceModel.getFinalRmbPrice()));
                     if(!StringUtils.isEmpty(cmsZzFeedWmfPriceModel.getMsrpPrice())){
                         sku.setPriceMsrp(Double.parseDouble(cmsZzFeedWmfPriceModel.getMsrpPrice()));

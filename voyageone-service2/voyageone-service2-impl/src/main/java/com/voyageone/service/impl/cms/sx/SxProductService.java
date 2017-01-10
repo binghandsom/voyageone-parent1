@@ -2766,12 +2766,16 @@ public class SxProductService extends BaseService {
                         // 外部填写的时候，只有一个code，一个sku，这个check在商品外部编码(outer_id)的逻辑里有了，这里就不再做了
                         String skuCode = mainSxProduct.getCommon().getSkus().get(0).getSkuCode();
                         String scProductId = updateTmScProductId(shopBean,
+                                            mainSxProduct,
                                             skuCode,
                                             getProductValueByMasterMapping("title", shopBean, expressionParser, user),
                                             skuInventoryMap.get(skuCode) != null ? Integer.toString(skuInventoryMap.get(skuCode)) : "0"
                         );
                         inputField.setValue(scProductId);
                         // modified by morse.lu 2016/10/17 end
+                        // added by morse.lu 2017/01/05 start
+                        sxData.getSxSkuExInfo(skuCode, true).setScProductId(scProductId);
+                        // added by morse.lu 2017/01/05 end
 
                         retMap.put(field.getId(), inputField);
                     }
@@ -3252,13 +3256,13 @@ public class SxProductService extends BaseService {
     /**
      * 更新天猫货品id(关联商品)
      */
-    public String updateTmScProductId(ShopBean shopBean, String skuCode, String title, String qty) {
-        if (StringUtils.isEmpty(taobaoScItemService.doCheckNeedSetScItem(shopBean))) {
+    public String updateTmScProductId(ShopBean shopBean, CmsBtProductModel productModel, String skuCode, String title, String qty) {
+        if (StringUtils.isEmpty(taobaoScItemService.doCheckNeedSetScItem(shopBean, productModel))) {
             // 不要关联商品
             return null;
         }
         try {
-            String scProductId = taobaoScItemService.doCreateScItem(shopBean, skuCode, title, qty);
+            String scProductId = taobaoScItemService.doCreateScItem(shopBean, productModel, skuCode, title, qty);
 			// 临时忽略检查
 //            if (StringUtils.isEmpty(scProductId)) {
 //                throw new BusinessException(String.format("自动设置天猫商品全链路库存管理时,发生不明异常!skuCode:%s", skuCode));
@@ -5216,6 +5220,63 @@ public class SxProductService extends BaseService {
         } catch (IOException e) {
             throw new BusinessException(String.format("转透明图失败!图片url是:%s", picUrl));
         }
+    }
+
+    /**
+     * 取得指定SKU的价格
+     *
+     * @param sku BaseMongoMap<String, Object> SKU对象
+     * @param channelId String 渠道id
+     * @param cartId String 平台id
+     * @param priceCode String 价格类型 (".retail_price"(指导价)  ".sale_price"(最终销售价))
+     * @return double SKU价格
+     */
+    public double getSkuPrice(BaseMongoMap<String, Object> sku, String channelId, String cartId, String priceKey, String priceCode) {
+        // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
+        // priceCode:".retail_price"(指导价)  ".sale_price"(最终销售价)
+        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, priceKey, cartId + priceCode);
+
+        // 检查一下
+        String sxPricePropName;
+        if (sxPriceConfig == null) {
+            return 0.0d;
+        } else {
+            // 取得价格属性名
+            sxPricePropName = sxPriceConfig.getConfigValue1();
+            if (StringUtils.isEmpty(sxPricePropName)) {
+                return 0.0d;
+            }
+        }
+
+        // 取得该SKU相应字段的价格
+        return sku.getDoubleAttribute(sxPricePropName);
+    }
+
+    /**
+     * 取得Redis中缓存cms_mt_channel_config配置表中配置的值
+     *
+     * @param channelId String 渠道id
+     * @param configKey CmsConstants.ChannelConfig ConfigKey
+     * @param configCode String ConfigCode
+     * @return String cms_mt_channel_config配置表中配置的值
+     */
+    public String getRedisChannelConfigValue(String channelId, String configKey, String configCode) {
+        if (StringUtils.isEmpty(channelId) || StringUtils.isEmpty(configKey)) return "";
+
+        // 配置表(cms_mt_channel_config)表中ConfigCode的默认值为0
+        String strConfigCode = "0";
+        if (!StringUtils.isEmpty(configCode)) {
+            strConfigCode = configCode;
+        }
+
+        String strConfigValue = "";
+        // 通过配置表(cms_mt_channel_config)取得Configykey和ConfigCode对应的配置值(config_value1)
+        CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBean(channelId, configKey, strConfigCode);
+        if (channelConfig != null) {
+            strConfigValue = channelConfig.getConfigValue1();
+        }
+
+        return strConfigValue;
     }
 
 }

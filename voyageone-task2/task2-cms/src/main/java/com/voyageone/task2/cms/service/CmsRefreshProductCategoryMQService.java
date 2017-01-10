@@ -133,8 +133,8 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             CmsBtProductModel_Field prodCommonField = prodObj.getCommonNotNull().getFieldsNotNull();
             // 调用Feed到主数据的匹配接口取得匹配度最高的主类目
             MatchResult searchResult = uploadToUSJoiService.getMainCatInfo(prodObj.getFeed().getCatPath(),
-                    prodCommonField.getProductType(),
-                    prodCommonField.getSizeType(),
+                    !StringUtils.isEmpty(prodCommonField.getOrigProductType()) ? prodCommonField.getOrigProductType() : prodCommonField.getProductType(),
+                    !StringUtils.isEmpty(prodCommonField.getOrigSizeType()) ? prodCommonField.getOrigSizeType() : prodCommonField.getSizeType(),
                     prodCommonField.getProductNameEn(),
                     prodCommonField.getBrand());
             if (searchResult == null) {
@@ -170,15 +170,18 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
                 updateMap.put("common.fields.categoryStatus", "0");
             }
             // 产品分类(英文)
-            if (!StringUtils.isEmpty(searchResult.getProductTypeEn()))   updateMap.put("common.fields.productType", searchResult.getProductTypeEn());
+            if (!StringUtils.isEmpty(searchResult.getProductTypeEn()))   updateMap.put("common.fields.productType", searchResult.getProductTypeEn().toLowerCase());
             // 产品分类(中文)
             if (!StringUtils.isEmpty(searchResult.getProductTypeCn()))   updateMap.put("common.fields.productTypeCn", searchResult.getProductTypeCn());
             // 适合人群(英文)
-            if (!StringUtils.isEmpty(searchResult.getSizeTypeEn()))      updateMap.put("common.fields.sizeType", searchResult.getSizeTypeEn());
+            if (!StringUtils.isEmpty(searchResult.getSizeTypeEn()))      updateMap.put("common.fields.sizeType", searchResult.getSizeTypeEn().toLowerCase());
             // 适合人群(中文)
             if (!StringUtils.isEmpty(searchResult.getSizeTypeCn()))      updateMap.put("common.fields.sizeTypeCn", searchResult.getSizeTypeCn());
             // TODO 2016/12/30暂时这样更新，以后要改
-            if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter())) {
+            if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter())
+                    || (StringUtils.isEmpty(prodCommonField.getHsCodePrivate()))
+                    || (!StringUtils.isEmpty(prodCommonField.getHsCodePrivate())
+                        && prodCommonField.getHsCodePrivate().split(",").length != 3)) {
                 // 税号个人
                 if (!StringUtils.isEmpty(searchResult.getTaxPersonal())) {
                     updateMap.put("common.fields.hsCodePrivate", searchResult.getTaxPersonal());
@@ -205,6 +208,8 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
                     // 设置商品中文名称（品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称）
                     String titleCn = uploadToUSJoiService.getOriginalTitleCnByCategory(prodCommonField.getBrand(), prodCommonField.getSizeTypeCn(), leafCategoryCnName);
                     if (!StringUtils.isEmpty(titleCn)) {
+                        if (!"017".equals(prodObj.getOrgChannelId())
+                                || ("017".equals(prodObj.getOrgChannelId()) && StringUtils.isEmpty(prodCommonField.getOriginalTitleCn())))
                         updateMap.put("common.fields.originalTitleCn", titleCn);
                     }
                 }

@@ -8,9 +8,10 @@ package com.voyageone.ims.rule_expression;
  * @useOriUrl 1:使用原图 其它或者未设置，不使用原图
  * @useCmsBtImageTemplate 是否使用图片模板，true为使用，默认不使用
  * @viewType 1:PC 2:App 默认PC (使用图片模板时才用的到)
- * @codeIndex 没有的话表示全code，有的话用指定的codeIndex(index从0开始，上新的productList里依次计数，会跳过主商品，即主商品不计数)
+ * @codeIndex 没有的话表示全code，有的话用指定的codeIndex(index从0开始，上新的productList里依次计数，会跳过主商品，即主商品不计数, index为-1表示全部code都要，除了主商品)
  *              可指定多个index，示例："codeIndex": {"ruleWordList": [{"type": "TEXT","value": "0"},{"type": "TEXT","value": "2"},{"type": "TEXT","value": "3"}]}
  * @imageIndex 没有的话表示指定的imageType下的所有图都要，有的话用指定的index(index从0开始) 示例与codeIndex一致
+ * @imageParamWord 参数属性名，先去PXX.fields下取，取不到去common.fields下取，示例："imageParamWord": {"ruleWordList": [{"type": "TEXT","value": "color"},{"type": "TEXT","value": "brand"}]}
  */
 public class CustomModuleUserParamGetAllImages extends CustomModuleUserParam {
     //user param
@@ -29,10 +30,13 @@ public class CustomModuleUserParamGetAllImages extends CustomModuleUserParam {
     private RuleExpression codeIndex;
     private RuleExpression imageIndex;
     // added by morse.lu 2016/12/05 end
+    // added by morse.lu 2017/01/06 start
+    private RuleExpression imageParamWord;
+    // added by morse.lu 2017/01/06 end
 
     public CustomModuleUserParamGetAllImages() {}
 
-    public CustomModuleUserParamGetAllImages(RuleExpression htmlTemplate, RuleExpression imageTemplate, RuleExpression imageType, RuleExpression useOriUrl, RuleExpression useCmsBtImageTemplate, RuleExpression viewType, RuleExpression codeIndex, RuleExpression imageIndex) {
+    public CustomModuleUserParamGetAllImages(RuleExpression htmlTemplate, RuleExpression imageTemplate, RuleExpression imageType, RuleExpression useOriUrl, RuleExpression useCmsBtImageTemplate, RuleExpression viewType, RuleExpression codeIndex, RuleExpression imageIndex, RuleExpression imageParamWord) {
         this.htmlTemplate = htmlTemplate;
         this.imageTemplate = imageTemplate;
         this.imageType = imageType;
@@ -41,6 +45,7 @@ public class CustomModuleUserParamGetAllImages extends CustomModuleUserParam {
         this.viewType = viewType;
         this.codeIndex = codeIndex;
         this.imageIndex = imageIndex;
+        this.imageParamWord = imageParamWord;
     }
 
     public RuleExpression getHtmlTemplate() {
@@ -105,5 +110,13 @@ public class CustomModuleUserParamGetAllImages extends CustomModuleUserParam {
 
     public void setImageIndex(RuleExpression imageIndex) {
         this.imageIndex = imageIndex;
+    }
+
+    public RuleExpression getImageParamWord() {
+        return imageParamWord;
+    }
+
+    public void setImageParamWord(RuleExpression imageParamWord) {
+        this.imageParamWord = imageParamWord;
     }
 }
