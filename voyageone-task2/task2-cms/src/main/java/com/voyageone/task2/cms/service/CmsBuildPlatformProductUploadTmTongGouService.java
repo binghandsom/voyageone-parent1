@@ -593,13 +593,15 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                     if (categoryMappingMap.containsKey(TtPropName.tt_main_category_leaf.name())
                             && categoryMappingMap.get(TtPropName.tt_main_category_leaf.name()) != null
                             && categoryMappingMap.get(TtPropName.tt_main_category_leaf.name()).containsKey(mainCatPath)) {
-                        // 直接匹配到天猫叶子类目
-                        valCategory = categoryMappingMap.get(TtPropName.tt_main_category_leaf.name()).get(mainCatPath);
+                        // 直接匹配到天猫叶子类目id(叶子类目需要配置到id)
+                        Map<String, Object> paramCategory = new HashMap<>();
+                        paramCategory.put("cat_id", categoryMappingMap.get(TtPropName.tt_main_category_leaf.name()).get(mainCatPath));
+                        valCategory = JacksonUtil.bean2Json(paramCategory);
 
                     } else if (categoryMappingMap.containsKey(TtPropName.tt_main_category.name())
                             && categoryMappingMap.get(TtPropName.tt_main_category.name()) != null
                             && categoryMappingMap.get(TtPropName.tt_main_category.name()).containsKey(mainCatPath)) {
-                        // 如果没有匹配到叶子类目，再匹配主类目到天猫一级类目
+                        // 如果没有匹配到叶子类目，再匹配主类目到天猫一级类目Path
                         valCategory = categoryMappingMap.get(TtPropName.tt_main_category.name()).get(mainCatPath);
 
                     }
