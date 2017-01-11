@@ -202,7 +202,7 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
             updateCmsBtPlatformNumiid(channelId, cartId, listSuccessNumiid, listErrorNumiid);
             if (ListUtils.notNull(listAllNumiid)) {
                 // 存在没有搜到的numIId
-                cmsBtPlatformNumiidDaoExt.updateStatusByNumiids(channelId, Integer.valueOf(cartId), "3", getTaskName(), listSuccessNumiid);
+                cmsBtPlatformNumiidDaoExt.updateStatusByNumiids(channelId, Integer.valueOf(cartId), "3", getTaskName(), listAllNumiid);
             }
         }
     }
