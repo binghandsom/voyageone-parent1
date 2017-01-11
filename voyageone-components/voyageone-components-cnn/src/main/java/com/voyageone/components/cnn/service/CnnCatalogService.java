@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 新独立域名Liking店铺内分类类API调用服务
+ * 新独立域名Liking店铺内分类API调用服务
  * <p/>
  * Created by desmond on 2017/01/11.
  */
