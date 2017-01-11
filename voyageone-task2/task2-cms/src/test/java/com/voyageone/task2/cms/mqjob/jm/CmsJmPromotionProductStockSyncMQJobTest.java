@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.mqjob.jm;
 
 import com.voyageone.common.configs.MQConfigInitTestUtil;
+import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,17 @@ public class CmsJmPromotionProductStockSyncMQJobTest {
     @Autowired
     CmsJmPromotionProductStockSyncMQJob serviceJob;
 
+    @Autowired
+    CmsBtJmPromotionProduct3Service cmsBtJmPromotionProduct3Service;
+
     @Test
     public void testOnStartup() throws InterruptedException {
         MQConfigInitTestUtil.startMQ(serviceJob);
+    }
+
+    @Test
+    public  void  testSender()
+    {
+        cmsBtJmPromotionProduct3Service.sendMessageJmPromotionProductStockSync("test");
     }
 }
