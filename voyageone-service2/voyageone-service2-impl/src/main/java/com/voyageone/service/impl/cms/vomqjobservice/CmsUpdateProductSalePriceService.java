@@ -155,7 +155,7 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                     skuCode = skuObj.getStringAttribute("skuCode");
                     if (StringUtils.isEmpty(skuCode)) {
                         $warn(String.format("setProductSalePrice: 缺少数据 code=%s, para=%s", prodCode, skuCode, params.toString()));
-                        throw new BusinessException(prodCode, String.format("商品[code=%s]的数据错误，没有skuCode。", prodCode));
+                        throw new BusinessException(prodCode, String.format("商品[code=%s, cartId=%s, channelId=%s]的数据错误，没有skuCode。", prodCode, cartId, channelId), null);
                     }
 
                     // 修改后的最终售价
@@ -164,7 +164,7 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                         // 使用固定值
                         if (priceValue == null) {
                             $warn(String.format("setProductSalePrice: 没有填写金额 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                            throw new BusinessException(prodCode, String.format("商品[code=%s]的数据错误，没有填写价格。", prodCode));
+                            throw new BusinessException(prodCode, String.format("商品[code=%s, cartId=%s, channelId=%s]的数据错误，没有填写价格。", prodCode, cartId, channelId), null);
                         }
                         rs = getFinalSalePrice(null, optionType, priceValue, roundType);
                     } else {
@@ -179,17 +179,17 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                             rs = getFinalSalePrice(baseVal, optionType, priceValue, roundType);
                         } else {
                             $warn(String.format("setProductSalePrice: 缺少数据 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                            throw new BusinessException(prodCode, String.format("商品[code=%s, sku=%s]的数据错误，没有priceType的数据。", prodCode, skuCode));
+                            throw new BusinessException(prodCode, String.format("商品[code=%s, cartId=%s, channelId=%s, sku=%s]的数据错误，没有priceType的数据。", prodCode, cartId, channelId, skuCode), null);
                         }
                     }
 
                     if (rs == null) {
                         $warn(String.format("setProductSalePrice: 数据错误 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                        throw new BusinessException(prodCode, String.format("商品[code=%s, sku=%s]的价格计算发生错误。请联系IT.", prodCode, skuCode));
+                        throw new BusinessException(prodCode, String.format("商品[code=%s, cartId=%s, channelId=%s, sku=%s]的价格计算发生错误。请联系IT.", prodCode, cartId, channelId, skuCode), null);
                     }
                     if (rs < 0) {
                         $warn(String.format("setProductSalePrice: 数据错误 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                        throw new BusinessException(prodCode, String.format("商品[code=%s, sku=%s]的最终售价计算结果为负数，请重新输入。", prodCode, skuCode));
+                        throw new BusinessException(prodCode, String.format("商品[code=%s, cartId=%s, channelId=%s, sku=%s]的最终售价计算结果为负数，请重新输入。", prodCode, cartId, channelId, skuCode), null);
                     }
                     // 修改前的最终售价
                     double befPriceSale = skuObj.getDoubleAttribute("priceSale");
@@ -202,7 +202,7 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                     Object priceRetail = skuObj.get("priceRetail");
                     if (priceRetail == null) {
                         $warn(String.format("setProductSalePrice: 缺少数据 priceRetail为空 code=%s, sku=%s", prodCode, skuCode));
-                        throw new BusinessException(prodCode, String.format("商品[code=%s, sku=%s]的数据错误，没有priceRetail的数据。", prodCode, skuCode));
+                        throw new BusinessException(prodCode, String.format("商品[code=%s, cartId=%s, channelId=%s, sku=%s]的数据错误，没有priceRetail的数据。", prodCode, cartId, channelId, skuCode), null);
                     }
                     // 指导价
                     Double result = 0D;
@@ -213,7 +213,7 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                             result = new Double(priceRetail.toString());
                         } else {
                             $warn(String.format("setProductSalePrice: 数据错误 priceRetail格式错误 code=%s, sku=%s", prodCode, skuCode));
-                            throw new BusinessException(prodCode, String.format("商品[code=%s, sku=%s]的数据错误，priceRetail格式错误。", prodCode, skuCode));
+                            throw new BusinessException(prodCode, String.format("商品[code=%s, cartId=%s, channelId=%s, sku=%s]的数据错误，priceRetail格式错误。", prodCode, cartId, channelId, skuCode), null);
                         }
                     }
                     // 要更新最终售价变化状态
@@ -280,14 +280,14 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                     priceService.setPrice(prodObj, cartId, false);
                 }catch (IllegalPriceConfigException | PriceCalculateException e) {
                     $error(String.format("批量修改商品价格　调用PriceService.setPrice失败 channelId=%s, cartId=%s msg=%s", channelId, cartId.toString(), e.getMessage()), e);
-                    throw new BusinessException(prodCode, e.getMessage());
+                    throw new BusinessException(prodCode, String.format("批量修改商品价格　调用PriceService.setPrice失败 channelId=%s, cartId=%s", channelId, cartId), e);
                 }
                 // 是天猫平台时直接调用API更新sku价格(要求已上新)
                 try {
                     priceService.updateSkuPrice(channelId, cartId, prodObj);
                 } catch (Exception e) {
                     $error(String.format("批量修改商品价格　调用天猫API失败 channelId=%s, cartId=%s msg=%s", channelId, cartId.toString(), e.getMessage()), e);
-                    throw new BusinessException(prodCode, e.getMessage());
+                    throw new BusinessException(prodCode, String.format("批量修改商品价格　调用天猫API失败 channelId=%s, cartId=%s", channelId, cartId.toString()), e);
                 }
 
                 // 更新产品的信息

@@ -2494,7 +2494,9 @@ public class SxProductService extends BaseService {
                     }
                     boolean hasSku = false;
                     for (CustomMappingType customMappingIter : mappingTypePropsMap.keySet()) {
-                        if (customMappingIter == CustomMappingType.SKU_INFO) {
+                        // 只要包含SKU销售属性(SKU_INFO和DARWIN_SKU都算SKU属性)，就不用填TMALL_OUT_ID
+                        if (CustomMappingType.SKU_INFO == customMappingIter
+                                || CustomMappingType.DARWIN_SKU == customMappingIter) {
                             hasSku = true;
                             break;
                         }
