@@ -7,6 +7,9 @@ import com.voyageone.service.impl.cms.vomqjobservice.CmsConfirmRetailPriceServic
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 高级检索-确认指定价更新Job
  *
@@ -22,11 +25,17 @@ public class CmsAdvSearchConfirmRetailPriceMQJob extends TBaseMQCmsService<AdvSe
     @Override
     public void onStartup(AdvSearchConfirmRetailPriceMQMessageBody messageBody) throws Exception {
 
-        if (messageBody.getParams() == null || messageBody.getParams().size() <= 0) {
-            this.cmsLog(messageBody, OperationLog_Type.parameterException, "高级检索-确认指定价变更MQ参数为空");
-            return;
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("productIds", messageBody.getCodeList());
+        params.put("cartIds", messageBody.getCartList());
+        params.put("_channleId", messageBody.getChannelId());
+        params.put("_userName", messageBody.getUserName());
+
+        try {
+            confirmRetailPriceService.onStartup(params);
+        } catch (Exception e) {
+            cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
         }
-        confirmRetailPriceService.onStartup(messageBody.getParams());
 
     }
 }

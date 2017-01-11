@@ -1316,11 +1316,11 @@ public class CmsFieldEditService extends BaseViewService {
         }
 
         $debug("指导价变更批量确认 开始批量处理");
-        params.put("productIds", productCodes);
+        /*params.put("productIds", productCodes);
         params.put("cartIds", cartList);
         params.put("_taskName", params.get("_option"));
         params.put("_channleId", userInfo.getSelChannelId());
-        params.put("_userName", userInfo.getUserName());
+        params.put("_userName", userInfo.getUserName());*/
 
         try {
             if ("refreshRetailPrice".equalsIgnoreCase((String) params.get("_option"))) {
@@ -1332,7 +1332,10 @@ public class CmsFieldEditService extends BaseViewService {
             } else {
                 // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
                 AdvSearchConfirmRetailPriceMQMessageBody mqMessageBody = new AdvSearchConfirmRetailPriceMQMessageBody();
-                mqMessageBody.setParams(params);
+                mqMessageBody.setChannelId(userInfo.getSelChannelId());
+                mqMessageBody.setCartList(cartList);
+                mqMessageBody.setCodeList(productCodes);
+                mqMessageBody.setUserName(userInfo.getUserName());
                 mqMessageBody.setSender(userInfo.getUserName());
                 mqSenderService.sendMessage(mqMessageBody);
             }
