@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.mqjob;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
@@ -50,14 +51,16 @@ public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> e
     @Override
     public void startup(TMQMessageBody messageBody) throws Exception {
         try {
-            $debug(this.getTaskName() , ":start->");
+            $debug(this.getTaskName(), ":start->");
             onStartup(messageBody);
+        } catch (BusinessException ex) {
+            cmsBusinessExLog(messageBody, ex.getMessage());
         } catch (Exception ex) {
             //记异常日志
             cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, ex);
             throw ex;
         } finally {
-            $debug(this.getTaskName() , ":end");
+            $debug(this.getTaskName(), ":end");
         }
     }
 

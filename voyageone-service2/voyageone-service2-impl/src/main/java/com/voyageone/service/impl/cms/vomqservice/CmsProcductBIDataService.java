@@ -5,6 +5,7 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.util.DateTimeUtil;
@@ -53,20 +54,12 @@ public class CmsProcductBIDataService extends BaseService {
         $info("CmsProcductBIDataService start... 参数" + JacksonUtil.bean2Json(messageMap));
         String channelId = StringUtils.trimToNull(messageMap.getChannelId());
         Integer cartId = messageMap.getCartId(); //(Integer) messageMap.get("cartId");
-        if (channelId == null || cartId == null) {
-            $error("CmsProcductBIDataService 缺少参数");
-            return;
-        }
-        if (cartId == 0) {
-            $error("CmsProcductBIDataService 缺少参数");
-            return;
-        }
 
         // 先判断该店铺的cms_bt_product_cxxx表是否存在
         boolean exists = cmsBtProductDao.collectionExists(cmsBtProductDao.getCollectionName(channelId));
         if (!exists) {
             $warn("本店铺对应的cms_bt_product_cxxx表不存在！ channelId=" + channelId);
-            return;
+            throw  new BusinessException("本店铺对应的cms_bt_product_cxxx表不存在！ channelId=" + channelId);
         }
 
         Map<String, Object> sqlParams = new HashMap<>(6);
