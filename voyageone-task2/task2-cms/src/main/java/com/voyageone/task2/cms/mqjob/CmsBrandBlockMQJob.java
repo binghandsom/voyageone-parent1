@@ -48,15 +48,8 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
     @Override
     public void onStartup(CmsBrandBlockMQMessageBody messageMap) throws Exception {
 
-        Object blockingObject = messageMap.isBlocking();
+        boolean blocking = messageMap.isBlocking();
         CmsBtBrandBlockModel dataObject = messageMap.getData();
-
-        if (blockingObject == null || dataObject == null) {
-            logIssue("调用品牌黑名单的 MQ Job 时，参数不完整。参考附加信息", messageMap);
-            return;
-        }
-
-        boolean blocking = (boolean) blockingObject;
 
         if (blocking)
             block(dataObject);
