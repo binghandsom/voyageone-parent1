@@ -1,6 +1,8 @@
 package com.voyageone.components.cnn.service;
 
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.cnn.CnnBase;
 import com.voyageone.components.cnn.enums.CnnConstants;
