@@ -57,6 +57,7 @@ public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImag
     private final CmsBtShelvesTemplateService cmsBtShelvesTemplateService;
     private final CmsBtShelvesService cmsBtShelvesService;
     private final JdImgzoneService jdImgzoneService;
+    private StringBuffer failMessage = new StringBuffer();
 
     @Autowired
     public CmsShelvesImageUploadMQJob(CmsBtShelvesProductService cmsBtShelvesProductService,
@@ -94,6 +95,11 @@ public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImag
                 cmsBtShelvesProductModels.forEach(item -> es.execute(() -> uploadImage(shopBean, cmsBtShelvesInfoBean.getShelvesModel(), (CmsBtShelvesProductBean) item, cmsBtShelvesTemplateModel, picCatId)));
                 es.shutdown();
                 es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+                if(failMessage.length()>0){
+                    cmsBusinessExLog(messageMap, failMessage.toString());
+                }else{
+                    cmsSuccessLog(messageMap,"shelvesId:" + shelvesId + " 图片上次成功");
+                }
             }
         }
     }
@@ -118,6 +124,7 @@ public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImag
         String imageUrl = getImageUrl(cmsBtShelvesProductModel, cmsBtShelvesTemplateModel);
         byte[] imageBuf = downImage(imageUrl);
         if(imageBuf == null && imageBuf.length == 0) {
+            failMessage.append("图片下载失败url=" + imageUrl);
             throw new BusinessException("图片下载失败url=" + imageUrl);
         }
         try (FileOutputStream fileOutputStream = new FileOutputStream((new File(saveFile)))) {
@@ -137,10 +144,10 @@ public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImag
 //        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
 //        shopBean.setSessionKey("620272892e6145ee7c3ed73c555b4309f748ZZ9427ff3412641101981");
 //        shopBean.setShop_name("Jewelry海外旗舰店");
+        String imageUrl = getImageUrl(cmsBtShelvesProductModel, cmsBtShelvesTemplateModel);
         try {
             PictureUploadResponse pictureUploadResponse = null;
 
-            String imageUrl = getImageUrl(cmsBtShelvesProductModel, cmsBtShelvesTemplateModel);
             // 图片是否传过
             if (StringUtil.isEmpty(cmsBtShelvesProductModel.getPlatformImageId())) {
                 //没有传过 上传
@@ -160,6 +167,7 @@ public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImag
                 cmsBtShelvesProductService.updatePlatformImage(cmsBtShelvesProductModel);
             }
         } catch (ApiException e) {
+            failMessage.append("图片上传TM失败url=" + imageUrl + "\t");
             e.printStackTrace();
             $error(e);
         }
@@ -171,10 +179,10 @@ public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImag
 //        shopBean.setAppKey("BFA3102EFD4B981E9EEC2BE32DF1E44E");
 //        shopBean.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
 //        shopBean.setSessionKey("8bac1a4d-3853-446b-832d-060ed9d8bb8c");
+        String imageUrl = getImageUrl(cmsBtShelvesProductModel, cmsBtShelvesTemplateModel);
         try {
             ImgzonePictureUploadResponse pictureUploadResponse;
 
-            String imageUrl = getImageUrl(cmsBtShelvesProductModel, cmsBtShelvesTemplateModel);
             // 图片是否传过
             if (!StringUtil.isEmpty(cmsBtShelvesProductModel.getPlatformImageId())) {
                 try {
@@ -192,6 +200,7 @@ public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImag
                 cmsBtShelvesProductService.updatePlatformImage(cmsBtShelvesProductModel);
             }
         } catch (Exception e) {
+            failMessage.append("图片上传TM失败url=" + imageUrl + "\t");
             e.printStackTrace();
             $error(e);
         }
