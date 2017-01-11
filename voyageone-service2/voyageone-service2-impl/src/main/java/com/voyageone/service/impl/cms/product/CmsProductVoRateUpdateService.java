@@ -82,6 +82,7 @@ public class CmsProductVoRateUpdateService extends BaseService {
 
                     Map<String, String> failMap = new HashMap<String, String>();
                     failMap.put(prodCode, String.format("CmsProductVoRateUpdateService 产品不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId));
+                    failList.add(failMap);
 
                     $warn("CmsProductVoRateUpdateService 产品不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
                     continue;
@@ -91,6 +92,7 @@ public class CmsProductVoRateUpdateService extends BaseService {
 
                     Map<String, String> failMap = new HashMap<String, String>();
                     failMap.put(prodCode, String.format("CmsProductVoRateUpdateService 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId));
+                    failList.add(failMap);
 
                     $warn("CmsProductVoRateUpdateService 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
                     continue;
@@ -103,6 +105,7 @@ public class CmsProductVoRateUpdateService extends BaseService {
 
                     Map<String, String> failMap = new HashMap<String, String>();
                     failMap.put(prodCode, String.format("CmsProductVoRateUpdateService 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channelId, prodCode, cartId, exp.getMessage()));
+                    failList.add(failMap);
 
                     $error(String.format("CmsProductVoRateUpdateService 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channelId, prodCode, cartId, exp.getMessage()), exp);
                     continue;
