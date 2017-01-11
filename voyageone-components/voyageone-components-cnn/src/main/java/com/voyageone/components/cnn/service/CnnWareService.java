@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 新独立域名商品类API调用服务
+ * 新独立域名Liking商品类API调用服务
  * <p/>
  * Created by desmond on 2017/01/04.
  */
