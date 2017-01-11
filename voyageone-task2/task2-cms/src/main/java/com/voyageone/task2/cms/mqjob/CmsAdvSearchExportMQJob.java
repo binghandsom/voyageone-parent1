@@ -27,9 +27,14 @@ public class CmsAdvSearchExportMQJob extends TBaseMQCmsService<AdvSearchExportMQ
 
     @Override
     public void onStartup(AdvSearchExportMQMessageBody messageBody) throws Exception {
-        CmsBtExportTaskModel exportTaskModel = cmsBtExportTaskService.getExportById(messageBody.getCmsBtExportTaskId());
-        if (exportTaskModel == null) {
+        Integer cmsBtExportTaskId = messageBody.getCmsBtExportTaskId();
+        if (cmsBtExportTaskId == null) {
             this.cmsLog(messageBody, OperationLog_Type.parameterException, "cms.bt.export.task.id不存在");
+            return;
+        }
+        CmsBtExportTaskModel exportTaskModel = cmsBtExportTaskService.getExportById(cmsBtExportTaskId);
+        if (exportTaskModel == null) {
+            this.cmsLog(messageBody, OperationLog_Type.parameterException, String.format("cms.bt.export.task(id=%s)不存在", cmsBtExportTaskId));
             return;
         }
         cmsAdvSearchExportFileService.export(messageBody);
