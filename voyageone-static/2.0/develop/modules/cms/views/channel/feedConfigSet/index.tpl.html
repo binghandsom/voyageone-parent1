@@ -84,24 +84,24 @@
                             </tr>
                         </div>
                     </table>
-                    <sticky top-fix="90px" style="position: absolute; top: 180px; right: 10px;" drag>
-                        <nav class="sidebar" style="width: 130px;">
-                            <h3>导航栏</h3>
-                            <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.refresh()">
-                                <i class="fa fa-refresh"></i>刷新
-                            </button>
-                            <button type="button" class="btn btn-nav btn-nav-pop"
-                                    ng-click="ctrl.saveFeed(ctrl.feedList)">
-                                <i class="glyphicon glyphicon-floppy-disk"></i>属性保存
-                            </button>
-                            <button type="button" class="btn btn-nav btn-nav-pop"
-                                    ng-click="ctrl.createFeed({feedList:ctrl.feedList,tableName:ctrl.tableName})">
-                                <i class="glyphicon glyphicon-floppy-disk"></i>表创建
-                            </button>
-                            <br>
-                        </nav>
-                    </sticky>
                 </div>
+                <sticky top-fix="90px" style="position: absolute; top: 250px; right: 10px;" drag>
+                    <nav class="sidebar" style="width: 130px;">
+                        <h3>导航栏</h3>
+                        <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.refresh()">
+                            <i class="fa fa-refresh"></i>刷新
+                        </button>
+                        <button type="button" class="btn btn-nav btn-nav-pop"
+                                ng-click="ctrl.saveFeed(ctrl.feedList)">
+                            <i class="glyphicon glyphicon-floppy-disk"></i>属性保存
+                        </button>
+                        <button type="button" class="btn btn-nav btn-nav-pop"
+                                ng-click="ctrl.createFeed({feedList:ctrl.feedList,tableName:ctrl.tableName})">
+                            <i class="glyphicon glyphicon-floppy-disk"></i>表创建
+                        </button>
+                        <br>
+                    </nav>
+                </sticky>
             </uib-tab>
             <uib-tab>
                 <tab-heading><i class="fa fa-search-plus text-default"></i>Feed-Master属性一览</tab-heading>
@@ -109,9 +109,8 @@
                     <uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
                         <uib-accordion-group is-open="vm.status.open">
                             <uib-accordion-heading>
-                                CODE级别feed必要共通属性匹配情况
-                                <i class="pull-right glyphicon glyphicon-plus"
-                                   ng-class="{'glyphicon-minus': vm.status.open, 'glyphicon-plus': !vm.status.open}"></i>
+                                <i class="fa {{vm.status.open?'fa-minus':'fa-plus'}}"></i>&nbsp;<span>{{i.shelvesName}}</span>
+                                <span style="margin-right: 20px;">CODE级别feed必要共通属性匹配情况</span>
                             </uib-accordion-heading>
                             <table class="table table-hover-new text-center">
                                 <thead>
@@ -168,9 +167,8 @@
                     <uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
                         <uib-accordion-group is-open="vm.status.open">
                             <uib-accordion-heading>
-                                SKU级别feed必要共通属性匹配情况
-                                <i class="pull-right glyphicon glyphicon-plus"
-                                   ng-class="{'glyphicon-minus': vm.status.open, 'glyphicon-plus': !vm.status.open}"></i>
+                                <i class="fa {{vm.status.open?'fa-minus':'fa-plus'}}"></i>&nbsp;<span>{{i.shelvesName}}</span>
+                                <span style="margin-right: 20px;">SKU级别feed必要共通属性匹配情况</span>
                             </uib-accordion-heading>
                             <table class="table table-hover-new text-center">
                                 <thead>
@@ -215,19 +213,19 @@
                             </table>
                         </uib-accordion-group>
                     </uib-accordion>
-                    <sticky top-fix="90px" style="position: absolute; top: 100px; right: 10px;" drag>
-                        <nav class="sidebar">
-                            <h3>导航栏</h3>
-                            <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.refresh()">
-                                <i class="fa fa-refresh"></i>刷新
-                            </button>
-                            <br>
-                            <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.save(ctrl.dataList)">
-                                <i class="glyphicon glyphicon-floppy-disk"></i>保存
-                            </button>
-                        </nav>
-                    </sticky>
                 </div>
+                <sticky top-fix="90px" style="position: absolute; top: 250px; right: 10px;" drag>
+                    <nav class="sidebar">
+                        <h3>导航栏</h3>
+                        <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.refresh()">
+                            <i class="fa fa-refresh"></i>刷新
+                        </button>
+                        <br>
+                        <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.save(ctrl.dataList)">
+                            <i class="glyphicon glyphicon-floppy-disk"></i>保存
+                        </button>
+                    </nav>
+                </sticky>
             </uib-tab>
 
         </uib-tabset>
