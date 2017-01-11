@@ -391,7 +391,7 @@ public class ProductService extends BaseService {
 
         insertProductHistory(channelId, product);
         // 记录价格变更履历
-//        addPriceUpdateHistory(product, modifier, "New");
+        addPriceUpdateHistory(product, modifier, "New");
     }
 
     public WriteResult updateProduct(String channelId, Map paraMap, Map updateMap) {

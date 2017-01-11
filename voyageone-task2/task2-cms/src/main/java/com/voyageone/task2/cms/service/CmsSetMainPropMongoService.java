@@ -1046,6 +1046,11 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         cmsProduct.getCommon().getFields().setOriginalTitleCn(feed.getName());
                         cmsProduct.getCommon().getFields().setLongDesEn(feed.getLongDescription());
                         cmsProduct.getCommon().getFields().setShortDesEn(feed.getShortDescription());
+                        cmsProduct.getCommon().getFields().setLongDesCn(feed.getLongDescription());
+                        cmsProduct.getCommon().getFields().setShortDesCn(feed.getShortDescription());
+                        cmsProduct.getCommon().getFields().setMaterialCn(feed.getMaterial());
+                        cmsProduct.getCommon().getFields().setMaterialEn(feed.getMaterial());
+                        cmsProduct.getCommon().getFields().setOrigin(feed.getOrigin());
                         cmsProduct.getCommon().getFields().setCodeDiff(feed.getColor());
                     }
                     if (cmsProduct == null) {
@@ -1145,7 +1150,9 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         cmsProduct.getCommon().getFields().setOriginalTitleCn(feed.getName());
                         cmsProduct.getCommon().getFields().setShortDesCn(feed.getShortDescription());
                         cmsProduct.getCommon().getFields().setLongDesCn(feed.getLongDescription());
-                        cmsProduct.getCommon().getFields().setColor(feed.getColor());
+                        if(!StringUtil.isEmpty(feed.getColor())){
+                            cmsProduct.getCommon().getFields().setColor(feed.getColor().split("-")[0]);
+                        }
                         cmsProduct.getCommon().getFields().setTranslateStatus("1");
                         cmsProduct.getCommon().getFields().setTranslator(getTaskName());
                         cmsProduct.getCommon().getFields().setTranslateTime(DateTimeUtil.getGMTTime());

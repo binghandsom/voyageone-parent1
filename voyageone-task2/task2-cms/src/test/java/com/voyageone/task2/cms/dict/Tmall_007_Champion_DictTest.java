@@ -165,7 +165,7 @@ public class Tmall_007_Champion_DictTest extends BaseDictTest {
 			RuleExpression imageTemplate = null;
 
 			RuleExpression imageType = new RuleExpression();
-			imageType.addRuleWord(new TextWord(C_自定义图片));
+			imageType.addRuleWord(new TextWord(C_移动端自定义图片));
 
 			RuleExpression useOriUrl = new RuleExpression();
 			useOriUrl.addRuleWord(new TextWord("1"));
@@ -498,115 +498,138 @@ public class Tmall_007_Champion_DictTest extends BaseDictTest {
 				do处理无线端20张图片(1, ruleRoot, new CustomWord(imagesWithParamWord));
 			}
 
-			for (int i = 2; i < 12; i++) {
-				// 十张自定义图
+			for (int i = 2; i < 10; i++) {
+				// 八张自定义图
 				do处理无线端20张图片(i, ruleRoot, new DictWord("无线自定义图片-" + (i - 1))); // 原图，参照target
 			}
 
 			{
 				// 固定图片 - DISPLAY商品展示
 				String strImg = "https://img.alicdn.com/imgextra/i4/2533968112/TB2jcgRbUlnpuFjSZFjXXXTaVXa_!!2533968112.jpg";
-				do处理无线端20张图片(12, ruleRoot, new TextWord(strImg));
+				do处理无线端20张图片(10, ruleRoot, new TextWord(strImg));
 			}
 
 			{
-				// 第14张, 参数图片（商品展示模板1）主商品的主图-1,2
-				RuleExpression imageTemplate = new RuleExpression();
-				String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/champion_xq_app_detail?$cp_750x1450$&$layer_1_src=%s&$layer_2_src=%s";
-				imageTemplate.addRuleWord(new TextWord(htmlTemplate));
-
-				// 设置参数imageParams的值
-				List<RuleExpression> imageParams = new ArrayList<>();
-				{
-					// 第一个参数是product_id(GetMainProductImages)
+				// 主商品
+				for (int i = 1; i < 5; i++){
+					// 主商品的第2-5张图
 					CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
 					RuleExpression imageIndex = new RuleExpression();
-					imageIndex.addRuleWord(new TextWord("0"));   // 第一张商品图片
+					imageIndex.addRuleWord(new TextWord(String.valueOf(i)));   // 第2-5张商品图片
 					userParam.setImageIndex(imageIndex);
 					RuleExpression img_imageType = new RuleExpression();
 					img_imageType.addRuleWord(new TextWord(C_商品图片));
 					userParam.setImageType(img_imageType);
 
-					CustomWordValueGetMainProductImages wordValueGetMainProductImages = new CustomWordValueGetMainProductImages();
-					wordValueGetMainProductImages.setUserParam(userParam);
-
-					RuleExpression imgWord = new RuleExpression();
-					imgWord.addRuleWord(new CustomWord(wordValueGetMainProductImages));
-					imageParams.add(imgWord);
-				}
-				{
-					// 第二个参数是product_id(GetMainProductImages)
-					CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
-					RuleExpression imageIndex = new RuleExpression();
-					imageIndex.addRuleWord(new TextWord("1"));   // 第二张商品图片
-					userParam.setImageIndex(imageIndex);
-					RuleExpression img_imageType = new RuleExpression();
-					img_imageType.addRuleWord(new TextWord(C_商品图片));
-					userParam.setImageType(img_imageType);
+					RuleExpression imageTemplate = new RuleExpression();
+					imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/champion_xq_app_detail?$cp_750x720$&$layer_1_src=%s"));
+					userParam.setImageTemplate(imageTemplate);
 
 					CustomWordValueGetMainProductImages wordValueGetMainProductImages = new CustomWordValueGetMainProductImages();
 					wordValueGetMainProductImages.setUserParam(userParam);
 
-					RuleExpression imgWord = new RuleExpression();
-					imgWord.addRuleWord(new CustomWord(wordValueGetMainProductImages));
-					imageParams.add(imgWord);
+					do处理无线端20张图片(10 + i, ruleRoot, new CustomWord(wordValueGetMainProductImages));
 				}
-
-				CustomWordValueImageWithParam imagesWithParamWord = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
-				do处理无线端20张图片(13, ruleRoot, new CustomWord(imagesWithParamWord));
 			}
 
-			{
-				// 第15张, 参数图片（商品展示模板1）主商品的主图-3,4
-				RuleExpression imageTemplate = new RuleExpression();
-				String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/champion_xq_app_detail?$cp_750x1450$&$layer_1_src=%s&$layer_2_src=%s";
-				imageTemplate.addRuleWord(new TextWord(htmlTemplate));
-
-				// 设置参数imageParams的值
-				List<RuleExpression> imageParams = new ArrayList<>();
-				{
-					// 第一个参数是product_id(GetMainProductImages)
-					CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
-					RuleExpression imageIndex = new RuleExpression();
-					imageIndex.addRuleWord(new TextWord("2"));   // 第三张商品图片
-					userParam.setImageIndex(imageIndex);
-					RuleExpression img_imageType = new RuleExpression();
-					img_imageType.addRuleWord(new TextWord(C_商品图片));
-					userParam.setImageType(img_imageType);
-
-					CustomWordValueGetMainProductImages wordValueGetMainProductImages = new CustomWordValueGetMainProductImages();
-					wordValueGetMainProductImages.setUserParam(userParam);
-
-					RuleExpression imgWord = new RuleExpression();
-					imgWord.addRuleWord(new CustomWord(wordValueGetMainProductImages));
-					imageParams.add(imgWord);
-				}
-				{
-					// 第二个参数是product_id(GetMainProductImages)
-					CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
-					RuleExpression imageIndex = new RuleExpression();
-					imageIndex.addRuleWord(new TextWord("3"));   // 第四张商品图片
-					userParam.setImageIndex(imageIndex);
-					RuleExpression img_imageType = new RuleExpression();
-					img_imageType.addRuleWord(new TextWord(C_商品图片));
-					userParam.setImageType(img_imageType);
-
-					CustomWordValueGetMainProductImages wordValueGetMainProductImages = new CustomWordValueGetMainProductImages();
-					wordValueGetMainProductImages.setUserParam(userParam);
-
-					RuleExpression imgWord = new RuleExpression();
-					imgWord.addRuleWord(new CustomWord(wordValueGetMainProductImages));
-					imageParams.add(imgWord);
-				}
-
-				CustomWordValueImageWithParam imagesWithParamWord = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
-				do处理无线端20张图片(14, ruleRoot, new CustomWord(imagesWithParamWord));
-			}
+//			{
+//				// 参数图片（商品展示模板1）主商品的主图-1,2
+//				RuleExpression imageTemplate = new RuleExpression();
+//				String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/champion_xq_app_detail?$cp_750x1450$&$layer_1_src=%s&$layer_2_src=%s";
+//				imageTemplate.addRuleWord(new TextWord(htmlTemplate));
+//
+//				// 设置参数imageParams的值
+//				List<RuleExpression> imageParams = new ArrayList<>();
+//				{
+//					// 第一个参数是product_id(GetMainProductImages)
+//					CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
+//					RuleExpression imageIndex = new RuleExpression();
+//					imageIndex.addRuleWord(new TextWord("0"));   // 第一张商品图片
+//					userParam.setImageIndex(imageIndex);
+//					RuleExpression img_imageType = new RuleExpression();
+//					img_imageType.addRuleWord(new TextWord(C_商品图片));
+//					userParam.setImageType(img_imageType);
+//
+//					CustomWordValueGetMainProductImages wordValueGetMainProductImages = new CustomWordValueGetMainProductImages();
+//					wordValueGetMainProductImages.setUserParam(userParam);
+//
+//					RuleExpression imgWord = new RuleExpression();
+//					imgWord.addRuleWord(new CustomWord(wordValueGetMainProductImages));
+//					imageParams.add(imgWord);
+//				}
+//				{
+//					// 第二个参数是product_id(GetMainProductImages)
+//					CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
+//					RuleExpression imageIndex = new RuleExpression();
+//					imageIndex.addRuleWord(new TextWord("1"));   // 第二张商品图片
+//					userParam.setImageIndex(imageIndex);
+//					RuleExpression img_imageType = new RuleExpression();
+//					img_imageType.addRuleWord(new TextWord(C_商品图片));
+//					userParam.setImageType(img_imageType);
+//
+//					CustomWordValueGetMainProductImages wordValueGetMainProductImages = new CustomWordValueGetMainProductImages();
+//					wordValueGetMainProductImages.setUserParam(userParam);
+//
+//					RuleExpression imgWord = new RuleExpression();
+//					imgWord.addRuleWord(new CustomWord(wordValueGetMainProductImages));
+//					imageParams.add(imgWord);
+//				}
+//
+//				CustomWordValueImageWithParam imagesWithParamWord = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
+//				do处理无线端20张图片(13, ruleRoot, new CustomWord(imagesWithParamWord));
+//			}
+//
+//			{
+//				// 第15张, 参数图片（商品展示模板1）主商品的主图-3,4
+//				RuleExpression imageTemplate = new RuleExpression();
+//				String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/champion_xq_app_detail?$cp_750x1450$&$layer_1_src=%s&$layer_2_src=%s";
+//				imageTemplate.addRuleWord(new TextWord(htmlTemplate));
+//
+//				// 设置参数imageParams的值
+//				List<RuleExpression> imageParams = new ArrayList<>();
+//				{
+//					// 第一个参数是product_id(GetMainProductImages)
+//					CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
+//					RuleExpression imageIndex = new RuleExpression();
+//					imageIndex.addRuleWord(new TextWord("2"));   // 第三张商品图片
+//					userParam.setImageIndex(imageIndex);
+//					RuleExpression img_imageType = new RuleExpression();
+//					img_imageType.addRuleWord(new TextWord(C_商品图片));
+//					userParam.setImageType(img_imageType);
+//
+//					CustomWordValueGetMainProductImages wordValueGetMainProductImages = new CustomWordValueGetMainProductImages();
+//					wordValueGetMainProductImages.setUserParam(userParam);
+//
+//					RuleExpression imgWord = new RuleExpression();
+//					imgWord.addRuleWord(new CustomWord(wordValueGetMainProductImages));
+//					imageParams.add(imgWord);
+//				}
+//				{
+//					// 第二个参数是product_id(GetMainProductImages)
+//					CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
+//					RuleExpression imageIndex = new RuleExpression();
+//					imageIndex.addRuleWord(new TextWord("3"));   // 第四张商品图片
+//					userParam.setImageIndex(imageIndex);
+//					RuleExpression img_imageType = new RuleExpression();
+//					img_imageType.addRuleWord(new TextWord(C_商品图片));
+//					userParam.setImageType(img_imageType);
+//
+//					CustomWordValueGetMainProductImages wordValueGetMainProductImages = new CustomWordValueGetMainProductImages();
+//					wordValueGetMainProductImages.setUserParam(userParam);
+//
+//					RuleExpression imgWord = new RuleExpression();
+//					imgWord.addRuleWord(new CustomWord(wordValueGetMainProductImages));
+//					imageParams.add(imgWord);
+//				}
+//
+//				CustomWordValueImageWithParam imagesWithParamWord = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
+//				do处理无线端20张图片(14, ruleRoot, new CustomWord(imagesWithParamWord));
+//			}
 
 			{
 				// 第16张, 参数图片（商品展示模板2）非主商品的第一张图
 				RuleExpression imageTemplate = new RuleExpression();
-				imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/champion_xq_app_color?$cp_750X725$&$layer_2_src=%s&$text1=%s&$text2=%s"));
+				imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/champion_xq_app_color?$cp_750x780$&$layer_2_src=%s&$text1=%s&$text2=%s"));
 
 				RuleExpression imageType = new RuleExpression();
 				imageType.addRuleWord(new TextWord(C_商品图片));
@@ -627,7 +650,7 @@ public class Tmall_007_Champion_DictTest extends BaseDictTest {
 			{
 				// 第17张, 参数图片（商品展示模板2）非主商品的第一张图
 				RuleExpression imageTemplate = new RuleExpression();
-				imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/champion_xq_app_color?$cp_750X725$&$layer_2_src=%s&$text1=%s&$text2=%s"));
+				imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/champion_xq_app_color?$cp_750x780$&$layer_2_src=%s&$text1=%s&$text2=%s"));
 
 				RuleExpression imageType = new RuleExpression();
 				imageType.addRuleWord(new TextWord(C_商品图片));
@@ -648,7 +671,7 @@ public class Tmall_007_Champion_DictTest extends BaseDictTest {
 			{
 				// 第18张, 参数图片（商品展示模板2）非主商品的第一张图
 				RuleExpression imageTemplate = new RuleExpression();
-				imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/champion_xq_app_color?$cp_750X725$&$layer_2_src=%s&$text1=%s&$text2=%s"));
+				imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/champion_xq_app_color?$cp_750x780$&$layer_2_src=%s&$text1=%s&$text2=%s"));
 
 				RuleExpression imageType = new RuleExpression();
 				imageType.addRuleWord(new TextWord(C_商品图片));
@@ -669,7 +692,7 @@ public class Tmall_007_Champion_DictTest extends BaseDictTest {
 			{
 				// 第19张, 参数图片（商品展示模板2）非主商品的第一张图
 				RuleExpression imageTemplate = new RuleExpression();
-				imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/champion_xq_app_color?$cp_750X725$&$layer_2_src=%s&$text1=%s&$text2=%s"));
+				imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/champion_xq_app_color?$cp_750x780$&$layer_2_src=%s&$text1=%s&$text2=%s"));
 
 				RuleExpression imageType = new RuleExpression();
 				imageType.addRuleWord(new TextWord(C_商品图片));
