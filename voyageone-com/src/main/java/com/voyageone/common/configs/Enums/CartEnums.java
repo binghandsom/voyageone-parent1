@@ -82,11 +82,6 @@ public class CartEnums {
         DT("33"),
 
         /**
-         * 新独立域名
-         */
-        CNN("34"),
-
-        /**
          * USJOI测试
          */
         JGT("98"),
@@ -142,8 +137,6 @@ public class CartEnums {
                     return LIKING;
                 case "33":
                     return DT;
-                case "34":
-                    return CNN;
                 case "928":
                     return USJGJ;
                 case "929":
