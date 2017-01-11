@@ -738,16 +738,20 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 sxData.setErrorMessage(getPreMsg(shopProp.getShop_name(), sxType) + sxData.getErrorMessage());
             }
 
-            // 更新商品出错时，也要设置运费模板和关联板式
-            if (updateWare) {
-                // 设置京东运费模板
-                updateJdWareTransportId(shopProp, sxData, jdWareId);
-                // 设置京东关联板式
-                updateJdWareLayoutId(shopProp, sxData, jdWareId);
-            }
-
             // 上新出错时状态回写操作
             sxProductService.doUploadFinalProc(shopProp, false, sxData, cmsBtSxWorkloadModel, "", null, "", getTaskName());
+
+            // 更新商品出错时，也要设置运费模板和关联板式
+            if (updateWare && !(sxData.getErrorMessage().contains("11200014:操作非法：商品已经删除"))) {
+                try {
+                    // 设置京东运费模板
+                    updateJdWareTransportId(shopProp, sxData, jdWareId);
+                    // 设置京东关联板式
+                    updateJdWareLayoutId(shopProp, sxData, jdWareId);
+                } catch (Exception e) {
+                    // 什么都不做，保证不要报异常
+                }
+            }
             return;
         }
 
@@ -1883,6 +1887,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             String errMsg = String.format("取得京东关联板式id失败！[ChannelId:%s] [CartId:%s] [Prop_CommonHtmlId:%s]",
                     shop.getOrder_channel_id(), shop.getCart_id(), Prop_CommonHtmlId);
             $info(errMsg, ex);
+            return;
         }
 
         // 调用京东API设置关联板式（取消商品关联版式时，请将commonHtml_Id值设置为空）
