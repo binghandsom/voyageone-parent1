@@ -48,7 +48,9 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
     @Autowired
     private CmsBtSxCnProductSellercatDaoExt cnProductSellercatDao;
 
-    public void onStartup(Map<String, Object> messageMap) {
+    // 返回值由void改为Map，存放因“产品数据不完整”跳过的产品code和对于的错误提示信息
+    public Map<String, String> onStartup(Map<String, Object> messageMap) {
+        Map<String, String> errorMap = new HashMap<>();
         List<String> codeList = (List) messageMap.get("productIds");
         List<String> approvedCodeList = new ArrayList<>();
         if (codeList == null || codeList.isEmpty()) {
@@ -104,6 +106,8 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
             String prodCode = prodObj.getCommon().getFields().getCode();
             CmsBtProductModel_Platform_Cart platformObj = prodObj.getPlatform(cartId);
             if (platformObj == null) {
+                // 产品数据不完整的记录到日志中
+                errorMap.put(prodCode, String.format("产品数据不完整，缺少Platform，prodCode=%s，cartId=%s", prodCode, cartId));
                 $warn("产品数据不完整，缺少Platform， prodCode=" + prodCode);
                 continue;
             }
@@ -229,6 +233,7 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
             msg = "高级检索 批量设置[" + cartObj.getName() + "]店铺内分类" + catNameStr.toString();
         }
         productStatusHistoryService.insertList(channelId, codeList, cartId, EnumProductOperationType.BatchSetCats, msg, userName);
+        return errorMap;
     }
 
     /**
