@@ -1004,14 +1004,17 @@ public class PriceService extends BaseService {
             obj3.setPrice(priceSale.toString());
             list2.add(obj3);
         }
-        if ("s".equals(updType)) {
-            // 更新sku价格
-            maxPrice = null;
-        } else {
+//        if ("s".equals(updType)) {
+//            // 更新sku价格
+//            maxPrice = null;
+//        } else {
+//            // 更新商品价格
+//            list2 = null;
+//        }
+        if ("p".equals(updType)) {
             // 更新商品价格
             list2 = null;
         }
-
         TmallItemPriceUpdateResponse response = tbItemService.updateSkuPrice(shopBean, pNumIId, maxPrice, list2);
         if (response != null) {
             logger.info("PriceService　更新商品SKU的价格 " + response.getBody());
