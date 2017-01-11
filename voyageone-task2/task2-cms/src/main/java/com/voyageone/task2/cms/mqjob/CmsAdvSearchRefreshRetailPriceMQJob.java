@@ -1,11 +1,19 @@
 package com.voyageone.task2.cms.mqjob;
 
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.product.CmsProductPriceUpdateService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchRefreshRetailPriceMQMessageBody;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 高级检索-重新计算指导价Job消息实体
@@ -22,10 +30,24 @@ public class CmsAdvSearchRefreshRetailPriceMQJob extends TBaseMQCmsService<AdvSe
 
     @Override
     public void onStartup(AdvSearchRefreshRetailPriceMQMessageBody messageBody) throws Exception {
-        if (messageBody.getParams() == null || messageBody.getParams().size() <= 0) {
-            this.cmsLog(messageBody, OperationLog_Type.parameterException, "批量重新计算指导价MQ参数为空");
-            return;
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("productIds", messageBody.getCodeList());
+        params.put("cartIds", messageBody.getCartList());
+        params.put("_channleId", messageBody.getChannelId());
+        params.put("_userName", messageBody.getUserName());
+
+        try {
+            List<Map<String, String>> failList = cmsProductPriceUpdateService.updateProductRetailPrice(params);
+            if (CollectionUtils.isNotEmpty(failList)) {
+                cmsLog(messageBody, OperationLog_Type.successIncludeFail, JacksonUtil.bean2Json(failList));
+            }
+        } catch (Exception e) {
+            if (e instanceof BusinessException) {
+                cmsLog(messageBody, OperationLog_Type.businessException, e.getMessage());
+            } else {
+                cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
+            }
         }
-        cmsProductPriceUpdateService.updateProductRetailPrice(messageBody.getParams());
     }
 }

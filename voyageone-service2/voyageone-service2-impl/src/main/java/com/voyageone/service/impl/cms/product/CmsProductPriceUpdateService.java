@@ -4,6 +4,7 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -13,6 +14,7 @@ import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.prices.PriceService;
@@ -29,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -206,7 +209,8 @@ public class CmsProductPriceUpdateService extends BaseService {
      * 更新product的retialPrice
      * @param messageMap messageMap
      */
-    public void updateProductRetailPrice(Map<String, Object> messageMap) {
+    public List<Map<String, String>> updateProductRetailPrice(Map<String, Object> messageMap) {
+        List<Map<String, String>> failList = new ArrayList<Map<String, String>>();
         $info("高级检索 重新计算指导价 开始执行... param=" + messageMap.toString());
         String channleId = StringUtils.trimToNull((String) messageMap.get("_channleId"));
         String userName = StringUtils.trimToNull((String) messageMap.get("_userName"));
@@ -214,7 +218,7 @@ public class CmsProductPriceUpdateService extends BaseService {
         List<Integer> cartList = (List<Integer>) messageMap.get("cartIds");
         if (channleId == null || userName == null || codeList == null || codeList.isEmpty() || cartList == null || cartList.isEmpty()) {
             $error("高级检索 重新计算指导价 缺少参数");
-            return;
+            throw new BusinessException(String.format("高级检索 重新计算指导价 缺少参数, channelId/userName/codeList=/cartList为空, params=%s", JacksonUtil.bean2Json(messageMap)));
         }
 
         // 是否自动最终售价同步指导价格
@@ -236,7 +240,12 @@ public class CmsProductPriceUpdateService extends BaseService {
             ShopBean shopObj = Shops.getShop(channleId, cartId.toString());
             CartBean cartObj = Carts.getCart(cartId);
             if (shopObj == null) {
-                $error("CmsRefreshRetailPriceTask 未配置平台 channelId=%s, cartId=%s", channleId, cartId.toString());
+
+                Map<String, String> failMap = new HashMap<String, String>();
+                failMap.put(String.format("channelId=%s,cartId=%s", channleId, cartId.toString()), String.format("未配置平台, channelId=%s, cartId=%s", channleId, cartId));
+                failList.add(failMap);
+
+                $error("CmsProductPriceUpdateService.updateProductRetailPrice 未配置平台 channelId=%s, cartId=%s", channleId, cartId.toString());
                 continue;
             }
 
@@ -248,12 +257,22 @@ public class CmsProductPriceUpdateService extends BaseService {
                     queryObj.setProjectionExt("prodId", "channelId", "orgChannelId", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".skus", "common.fields", "common.skus");
                     CmsBtProductModel prodObj = productService.getProductByCondition(channleId, queryObj);
                     if (prodObj == null) {
-                        $warn("CmsRefreshRetailPriceTask 产品不存在 channelId=%s, code=%s, cartId=%d", channleId, prodCode, cartId);
+
+                        Map<String, String> failMap = new HashMap<String, String>();
+                        failMap.put(prodCode, String.format("产品不存在, channelId=%s, code=%s, cartId=%s", channleId, prodCode, cartId));
+                        failList.add(failMap);
+
+                        $warn("CmsProductPriceUpdateService.updateProductRetailPrice 产品不存在 channelId=%s, code=%s, cartId=%d", channleId, prodCode, cartId);
                         continue;
                     }
                     List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
                     if (skuList == null || skuList.isEmpty()) {
-                        $warn("CmsRefreshRetailPriceTask 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channleId, prodCode, cartId);
+
+                        Map<String, String> failMap = new HashMap<String, String>();
+                        failMap.put(prodCode, String.format("产品sku数据不存在, channelId=%s, code=%s, cartId=%s", channleId, prodCode, cartId));
+                        failList.add(failMap);
+
+                        $warn("CmsProductPriceUpdateService.updateProductRetailPrice 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channleId, prodCode, cartId);
                         continue;
                     }
 
@@ -261,17 +280,22 @@ public class CmsProductPriceUpdateService extends BaseService {
                     try {
                         if ($isDebugEnabled()) {
                             for (BaseMongoMap skuObj : skuList) {
-                                $debug("CmsRefreshRetailPriceTask 计算前的sku价格 skuCode=%s, priceMsrp=%s, priceRetail=%s, priceSale=%s", skuObj.getStringAttribute("skuCode"), skuObj.getDoubleAttribute("priceMsrp"), skuObj.getDoubleAttribute("priceRetail"), skuObj.getDoubleAttribute("priceSale"));
+                                $debug("CmsProductPriceUpdateService.updateProductRetailPrice 计算前的sku价格 skuCode=%s, priceMsrp=%s, priceRetail=%s, priceSale=%s", skuObj.getStringAttribute("skuCode"), skuObj.getDoubleAttribute("priceMsrp"), skuObj.getDoubleAttribute("priceRetail"), skuObj.getDoubleAttribute("priceSale"));
                             }
                         }
                         priceService.setPrice(prodObj, cartId, false);
                         if ($isDebugEnabled()) {
                             for (BaseMongoMap skuObj : skuList) {
-                                $debug("CmsRefreshRetailPriceTask 计算后的sku价格 skuCode=%s, priceMsrp=%s, priceRetail=%s, priceSale=%s", skuObj.getStringAttribute("skuCode"), skuObj.getDoubleAttribute("priceMsrp"), skuObj.getDoubleAttribute("priceRetail"), skuObj.getDoubleAttribute("priceSale"));
+                                $debug("CmsProductPriceUpdateService.updateProductRetailPrice 计算后的sku价格 skuCode=%s, priceMsrp=%s, priceRetail=%s, priceSale=%s", skuObj.getStringAttribute("skuCode"), skuObj.getDoubleAttribute("priceMsrp"), skuObj.getDoubleAttribute("priceRetail"), skuObj.getDoubleAttribute("priceSale"));
                             }
                         }
                     } catch (Exception exp) {
-                        $error(String.format("CmsRefreshRetailPriceTask 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channleId, prodCode, cartId, exp.getMessage()), exp);
+
+                        Map<String, String> failMap = new HashMap<String, String>();
+                        failMap.put(prodCode, String.format("调用共通函数priceService.setPrice计算指导价时出错, channelId=%s, code=%s, cartId=%s, errmsg=%s", channleId, prodCode, cartId, exp.getMessage()));
+                        failList.add(failMap);
+
+                        $error(String.format("CmsProductPriceUpdateService.updateProductRetailPrice 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channleId, prodCode, cartId, exp.getMessage()), exp);
                         continue;
                     }
 
@@ -324,11 +348,21 @@ public class CmsProductPriceUpdateService extends BaseService {
                             try {
                                 priceService.updateSkuPrice(channleId, cartId, prodObj);
                             } catch (Exception e) {
-                                $error(String.format("CmsRefreshRetailPriceTask修改商品价格 调用天猫API失败 channelId=%s, cartId=%d msg=%s", channleId, cartId, e.getMessage()), e);
+
+                                Map<String, String> failMap = new HashMap<String, String>();
+                                failMap.put(prodCode, String.format("修改商品价格 调用天猫API失败, channelId=%s, code=%s, errmsg=%s", channleId, prodCode, e.getMessage()));
+                                failList.add(failMap);
+
+                                $error(String.format("CmsProductPriceUpdateService.updateProductRetailPrice 修改商品价格 调用天猫API失败 channelId=%s, cartId=%d msg=%s", channleId, cartId, e.getMessage()), e);
                             }
                         }
                     }
                 }catch (Exception e){
+
+                    Map<String, String> failMap = new HashMap<String, String>();
+                    failMap.put(prodCode, String.format("CmsProductPriceUpdateService.updateProductRetailPrice执行出错, channelId=%s, code=%s, cartId=%s, errmsg=%s", channleId, prodCode, cartId, e.getMessage()));
+                    failList.add(failMap);
+
                     $error(e);
                 }
             }
@@ -351,6 +385,7 @@ public class CmsProductPriceUpdateService extends BaseService {
                 }
             }
         }
+        return failList;
     }
 
 }
