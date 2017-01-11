@@ -131,6 +131,13 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
     /*报备数据导出文件列*/
     private final static String[] _filingSkuCol = {"SKU", "Code", "model", "SIZE", "欧码", "英文标题", "中文标题", "产品图片链接", "性别", "材质", "产地", "颜色", "品牌", "重量", "UPC", "英文描述", "中文描述", "类目", "HSCode", "HSCodePU", "Price (RMB)"};
 
+//    bi_report导出列, SKU 日报
+    private final static String[] header={"SKU日报"};
+    private final static String[] _BiReportFirstCol={"SKU","销售指标","运营指标","属性"};
+    private final static  String[] _BiRepSecondeCol={"SKU","销售额","销售量","买家数","人均成交件数","客单价","PV","UV","转化率","加购件数","收藏人数","页面停留时间","跳失率","访客价值","类目","Brand","Color","Origin","Material","Weight","Size"};
+
+
+
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
         $debug("高级检索 文件下载任务 param=" + messageMap.toString());
