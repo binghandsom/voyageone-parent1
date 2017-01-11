@@ -127,7 +127,7 @@ define([
                     search();
                     return;
                 }
-                if ($routeParams.type == "1" || $routeParams.type == "2") {
+                if ($routeParams.type == "1" || $routeParams.type == "2" || $routeParams.type == "10001") {
                     search();
                     return;
                 }

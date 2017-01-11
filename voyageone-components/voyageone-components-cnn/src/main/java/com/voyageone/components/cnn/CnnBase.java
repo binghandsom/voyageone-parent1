@@ -4,6 +4,7 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpExcuteUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.ComponentBase;
+import com.voyageone.components.ComponentConstants;
 
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public abstract class CnnBase extends ComponentBase {
     }
 
     protected String reqApi(ShopBean shop, String apiAction, String jsonBody) throws Exception {
-        return reqApi(shop, apiAction, jsonBody, 3, 1000);
+        return reqApi(shop, apiAction, jsonBody, ComponentConstants.C_MAX_API_ERROR, ComponentConstants.C_CONNECT_TIMEOUT);
     }
 
     private String reqApi(ShopBean shopBean, String apiAction, String jsonBody, int tryCount, int tryWait) throws Exception {
