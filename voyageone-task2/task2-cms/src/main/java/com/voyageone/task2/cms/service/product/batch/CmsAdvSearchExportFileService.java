@@ -128,18 +128,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
     /*报备数据导出文件列*/
     private final static String[] _filingSkuCol = {"SKU", "Code", "model", "SIZE", "欧码", "英文标题", "中文标题", "产品图片链接", "性别", "材质", "产地", "颜色", "品牌", "重量", "UPC", "英文描述", "中文描述", "类目", "HSCode", "HSCodePU", "Price (RMB)"};
 
-    public void export(AdvSearchExportMQMessageBody messageBody) throws Exception {
+    public List<Map<String, String>> export(AdvSearchExportMQMessageBody messageBody) throws Exception {
         $debug("高级检索 文件下载任务 param=" + JacksonUtil.bean2Json(messageBody));
-        Integer taskId = messageBody.getCmsBtExportTaskId();
-        if (taskId == null) {
-            $error("高级检索 文件下载任务 查询参数不正确 缺少ID");
-            return;
-        }
-        CmsBtExportTaskModel taskModel = cmsBtExportTaskService.getExportById(taskId);
-        if (taskModel == null) {
-            $error("高级检索 文件下载任务 查询参数不正确 该任务不存在");
-            return;
-        }
+        CmsBtExportTaskModel taskModel = cmsBtExportTaskService.getExportById(messageBody.getCmsBtExportTaskId());
         Map<String, Object> messageMap = messageBody.getSearchValue();
         CmsSearchInfoBean2 searchValue = null;
         try {
@@ -151,7 +142,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
             taskModel.setComment("查询参数不正确");
             taskModel.setModified(new Date());
             cmsBtExportTaskService.update(taskModel);
-            return;
+            /*return;*/
+            throw new BusinessException("高级检索 文件下载任务 查询参数不正确", exp);
         }
 
         $debug("高级检索 文件下载任务 开始执行...");
@@ -165,11 +157,14 @@ public class CmsAdvSearchExportFileService extends BaseService {
             taskModel.setComment("缺少参数");
             taskModel.setModified(new Date());
             cmsBtExportTaskService.update(taskModel);
-            return;
+            /*return;*/
+            throw new BusinessException(String.format("高级检索 文件下载任务 缺少参数, channelId=%s, language=%s, userName=%s, sesseionBean=%s", channleId, language, userName, JacksonUtil.bean2Json(sessionBean)));
         }
 
+        // 不满足条件而未导出的记录，key-value分别对应 code/skuCode/group-未提出提示信息
+        List<Map<String, String>> failList = new ArrayList<Map<String, String>>();
         try {
-            String fileName = createExcelFile(searchValue, (List<String>) messageMap.get("_selCodeList"), channleId, sessionBean, userName, language);
+            String fileName = createExcelFile(searchValue, (List<String>) messageMap.get("_selCodeList"), channleId, sessionBean, userName, language, failList);
             taskModel.setFileName(fileName);
             taskModel.setStatus(1); // 成功
         } catch (Throwable exp) {
@@ -177,15 +172,19 @@ public class CmsAdvSearchExportFileService extends BaseService {
             // 更新任务状态，然后结束
             taskModel.setStatus(2);
             taskModel.setComment("创建文件时出错 " + exp.getMessage());
+            taskModel.setModified(new Date());
+            cmsBtExportTaskService.update(taskModel);
+            throw new BusinessException("高级检索 文件下载任务 创建文件时出错", exp);
         }
         taskModel.setModified(new Date());
         cmsBtExportTaskService.update(taskModel);
+        return failList;
     }
 
     /**
      * 获取数据文件内容
      */
-    private String createExcelFile(CmsSearchInfoBean2 searchValue, List<String> codeList, String channelId, Map<String, Object> cmsSessionBean, String userName, String language)
+    private String createExcelFile(CmsSearchInfoBean2 searchValue, List<String> codeList, String channelId, Map<String, Object> cmsSessionBean, String userName, String language, List<Map<String, String>> failList)
             throws IOException, InvalidFormatException {
         String fileName = null;
         String templatePath = null;
@@ -341,12 +340,12 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     isContinueOutput = writeRecordToGroupFile(book, items, channelId, cartList, startRowIndex);
                 } else if (searchValue.getFileType() == 3) {
                     /*isContinueOutput暂时无用*/
-                    offset += writeRecordToSkuFile(book, items, channelId, cartList, startRowIndex + offset);
+                    offset += writeRecordToSkuFile(book, items, channelId, cartList, startRowIndex + offset, failList);
                 } else if (searchValue.getFileType() == 4) {
                     /*isContinueOutput暂时无用*/
-                    offset += writePublishJMSkuFile(book, items, startRowIndex + offset);
+                    offset += writePublishJMSkuFile(book, items, startRowIndex + offset, failList);
                 } else if (searchValue.getFileType() == 5) {
-                    offset += writeFilingToFile(book, items, startRowIndex + offset, userName);
+                    offset += writeFilingToFile(book, items, startRowIndex + offset, userName, failList);
                 }
                 // 超过最大行的场合
                 /*if (!isContinueOutput) {
@@ -1003,9 +1002,10 @@ public class CmsAdvSearchExportFileService extends BaseService {
      * @param channelId
      * @param cartList
      * @param startRowIndex 开始
+     * @param failList
      * @return 行数偏移量
      */
-    private int writeRecordToSkuFile(Workbook book, List<CmsBtProductBean> items, String channelId, List<TypeChannelBean> cartList, int startRowIndex) {
+    private int writeRecordToSkuFile(Workbook book, List<CmsBtProductBean> items, String channelId, List<TypeChannelBean> cartList, int startRowIndex, List<Map<String, String>> failList) {
         int total = 0;
         List<CmsBtProductBean> products = new ArrayList<CmsBtProductBean>();
         Set<String> codes = new HashSet<String>();
@@ -1019,6 +1019,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
             List<CmsBtProductModel_Sku> skuList = item.getCommon().getSkus();
             if (skuList == null || skuList.isEmpty()) {
+                Map<String, String> failMap = new HashMap<String, String>();
+                failMap.put(fields.getCode(), String.format("商品common.skus为空, code=%s", fields.getCode()));
                 continue;
             }
             if (org.apache.commons.lang.StringUtils.isNotBlank(fields.getOriginalCode())) {
@@ -1192,8 +1194,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
      * @param book
      * @param items
      * @param startRowIndex
+     * @param failList
      */
-    private int writePublishJMSkuFile(Workbook book, List<CmsBtProductBean> items, int startRowIndex) {
+    private int writePublishJMSkuFile(Workbook book, List<CmsBtProductBean> items, int startRowIndex, List<Map<String, String>> failList) {
         int total = 0;
         List<CmsBtProductBean> products = new ArrayList<CmsBtProductBean>();
         Set<String> codes = new HashSet<String>();
@@ -1201,14 +1204,25 @@ public class CmsAdvSearchExportFileService extends BaseService {
             CmsBtProductModel_Common common = null;
             CmsBtProductModel_Field fields = null;
             CmsBtProductModel_Platform_Cart cart = null;
-            if (
-                    (common = item.getCommon()) == null
-                    || (fields = common.getFields()) == null
-                    || CollectionUtils.isEmpty(common.getSkus())
-                    || (cart = item.getPlatform(27)) == null
-                    || CollectionUtils.isEmpty(cart.getSkus())
-                    /*|| org.apache.commons.lang.StringUtils.isBlank(cart.getpNumIId())) {*/
-                    || org.apache.commons.lang.StringUtils.isBlank(cart.getpPlatformMallId())) {
+            if ((common = item.getCommon()) == null || (fields = common.getFields()) == null) {
+                continue;
+            }
+            if ((cart = item.getPlatform(Integer.valueOf(CartEnums.Cart.JM.getId()))) == null) {
+                Map<String, String> failMap = new HashMap<String, String>();
+                failMap.put(fields.getCode(), String.format("商品没有聚美Platform, code=%s, cartId=%s", fields.getCode(), CartEnums.Cart.JM.getId()));
+                failList.add(failMap);
+                continue;
+            }
+            if (org.apache.commons.lang.StringUtils.isBlank(cart.getpPlatformMallId())) {
+                Map<String, String> failMap = new HashMap<String, String>();
+                failMap.put(fields.getCode(), String.format("商品没有聚美PlatformMallId, code=%s, cartId=%s", fields.getCode(), CartEnums.Cart.JM.getId()));
+                failList.add(failMap);
+                continue;
+            }
+            if (CollectionUtils.isEmpty(cart.getSkus())) {
+                Map<String, String> failMap = new HashMap<String, String>();
+                failMap.put(fields.getCode(), String.format("商品没有聚美skus, code=%s, cartId=%s", fields.getCode(), CartEnums.Cart.JM.getId()));
+                failList.add(failMap);
                 continue;
             }
             if (org.apache.commons.lang.StringUtils.isNotBlank(fields.getOriginalCode())) {
@@ -1225,7 +1239,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 }
             }
         }
-        String jmUrlPrefix = platformService.getPlatformProductUrl("27");
+        String jmUrlPrefix = platformService.getPlatformProductUrl(CartEnums.Cart.JM.getId());
         // 写入导出数据
         Sheet sheet = book.getSheetAt(0);
         CellStyle unlock = FileUtils.createUnLockStyle(book);
@@ -1233,7 +1247,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
             CmsBtProductModel_Common common = item.getCommon();
             CmsBtProductModel_Field fields = common.getFields();
             List<CmsBtProductModel_Sku> skus = common.getSkus();
-            CmsBtProductModel_Platform_Cart cart = item.getPlatform(27);
+            CmsBtProductModel_Platform_Cart cart = item.getPlatform(Integer.valueOf(CartEnums.Cart.JM.getId()));
             List<BaseMongoMap<String, Object>> platformSkus = cart.getSkus();
             // 内容输出
             for (BaseMongoMap<String, Object> skuMap : platformSkus) {
@@ -1274,8 +1288,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
      * @param items
      * @param startRowIndex
      * @param userName
+     * @param failList
      */
-    private int  writeFilingToFile(Workbook workbook, List<CmsBtProductBean> items, int startRowIndex, String userName) {
+    private int  writeFilingToFile(Workbook workbook, List<CmsBtProductBean> items, int startRowIndex, String userName, List<Map<String, String>> failList) {
         int total = 0;
         List<CmsBtProductBean> products = new ArrayList<CmsBtProductBean>();
         List<String> codes = new ArrayList<>();
@@ -1288,8 +1303,12 @@ public class CmsAdvSearchExportFileService extends BaseService {
             if (fields == null)
                 continue;
             Integer isFiled = fields.getIntAttribute("isFiled");
-            if (isFiled.intValue() == 1)
+            if (isFiled.intValue() == 1) {
+                Map<String, String> failMap = new HashMap<String, String>();
+                failMap.put(fields.getCode(), String.format("商品已经报备过，code=%s, isFiled=%s", fields.getCode(), isFiled));
+                failList.add(failMap);
                 continue; // 已经报备过，直接跳过
+            }
             boolean skip = true;
             Map<String, CmsBtProductModel_Platform_Cart> platforms = item.getPlatforms();
             if (platforms != null && platforms.size() > 0) {
@@ -1301,6 +1320,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 }
             }
             if (skip) {
+                Map<String, String> failMap = new HashMap<String, String>();
+                failMap.put(fields.getCode(), String.format("商品没有平台状态为Approved，code=%s", fields.getCode()));
+                failList.add(failMap);
                 continue; // 如果没有任何一个平台的pStatus=Approved，直接跳过
             }
             products.add(item);

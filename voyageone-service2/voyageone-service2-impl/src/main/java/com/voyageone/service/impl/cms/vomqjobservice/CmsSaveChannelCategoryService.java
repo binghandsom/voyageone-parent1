@@ -4,6 +4,7 @@ import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -11,6 +12,7 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -46,19 +48,23 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
     @Autowired
     private CmsBtSxCnProductSellercatDaoExt cnProductSellercatDao;
 
-    public void onStartup(Map<String, Object> messageMap) {
+    // 返回值由void改为Map，存放因“产品数据不完整”跳过的产品code和对于的错误提示信息
+    public Map<String, String> onStartup(Map<String, Object> messageMap) {
+        Map<String, String> errorMap = new HashMap<>();
         List<String> codeList = (List) messageMap.get("productIds");
         List<String> approvedCodeList = new ArrayList<>();
         if (codeList == null || codeList.isEmpty()) {
-            $warn("没有code条件 params=" + messageMap.toString());
-            return;
+            /*$warn("没有code条件 params=" + messageMap.toString());
+            return;*/
+            throw new BusinessException(String.format("参数中没有code条件(productIds),params=%s"), JacksonUtil.bean2Json(messageMap));
         }
 
         //cartId
         int cartId = StringUtils.toIntValue(messageMap.get("cartId"));
         if (cartId <= 0) {
-            $warn("未选择平台/店铺 params=" + messageMap.toString());
-            return;
+            /*$warn("未选择平台/店铺 params=" + messageMap.toString());
+            return;*/
+            throw new BusinessException(String.format("未选择平台/店铺(cartId),params=%s"), JacksonUtil.bean2Json(messageMap));
         }
 
         // 已勾选的分类
@@ -83,8 +89,9 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
 
         List<CmsBtProductModel> prodList = productService.getList(channelId, queryObject);
         if (prodList == null && prodList.size() == 0) {
-            $warn("查询不到产品 params=" + messageMap.toString());
-            return;
+            /*$warn("查询不到产品 params=" + messageMap.toString());
+            return;*/
+            throw new BusinessException(String.format("查询不到产品,params=%s"), JacksonUtil.bean2Json(messageMap));
         }
 
         // 被变更的分类类目ID
@@ -99,6 +106,8 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
             String prodCode = prodObj.getCommon().getFields().getCode();
             CmsBtProductModel_Platform_Cart platformObj = prodObj.getPlatform(cartId);
             if (platformObj == null) {
+                // 产品数据不完整的记录到日志中
+                errorMap.put(prodCode, String.format("产品数据不完整，缺少Platform，prodCode=%s，cartId=%s", prodCode, cartId));
                 $warn("产品数据不完整，缺少Platform， prodCode=" + prodCode);
                 continue;
             }
@@ -224,6 +233,7 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
             msg = "高级检索 批量设置[" + cartObj.getName() + "]店铺内分类" + catNameStr.toString();
         }
         productStatusHistoryService.insertList(channelId, codeList, cartId, EnumProductOperationType.BatchSetCats, msg, userName);
+        return errorMap;
     }
 
     /**

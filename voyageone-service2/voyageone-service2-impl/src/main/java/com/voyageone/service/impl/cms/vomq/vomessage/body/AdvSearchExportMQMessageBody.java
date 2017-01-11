@@ -19,14 +19,14 @@ import java.util.Map;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_ADV_SEARCH_EXPORT)
 public class AdvSearchExportMQMessageBody extends BaseMQMessageBody {
 
-    private int cmsBtExportTaskId;
+    private Integer cmsBtExportTaskId;
     private Map<String, Object> searchValue;
 
-    public int getCmsBtExportTaskId() {
+    public Integer getCmsBtExportTaskId() {
         return cmsBtExportTaskId;
     }
 
-    public void setCmsBtExportTaskId(int cmsBtExportTaskId) {
+    public void setCmsBtExportTaskId(Integer cmsBtExportTaskId) {
         this.cmsBtExportTaskId = cmsBtExportTaskId;
     }
 
@@ -40,7 +40,7 @@ public class AdvSearchExportMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (cmsBtExportTaskId == 0) {
+        if (cmsBtExportTaskId == null) {
             throw new MQMessageRuleException("高级检索导出MQ发送异常,参数cmsBtExportTaskId为空.");
         }
         if (searchValue == null || searchValue.size() < 1) {

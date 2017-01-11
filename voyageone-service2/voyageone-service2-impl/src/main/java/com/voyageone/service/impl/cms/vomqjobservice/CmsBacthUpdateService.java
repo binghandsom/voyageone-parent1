@@ -4,6 +4,7 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
@@ -11,6 +12,7 @@ import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
@@ -24,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -46,20 +49,24 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
 
-    public void onStartup(Map<String, Object> messageMap) {
+    public Map<String, String> onStartup(Map<String, Object> messageMap) {
+        // 错误map，key-value分别对于产品code和错误信息
+        Map<String, String> failMap = new HashMap<String, String>();
         $debug("高级检索 批量更新 开始执行... param=" + messageMap.toString());
         String channleId = StringUtils.trimToNull((String) messageMap.get("_channleId"));
         String userName = StringUtils.trimToNull((String) messageMap.get("_userName"));
         List<String> codeList = (List<String>) messageMap.get("productIds");
         if (channleId == null || userName == null || codeList == null || codeList.isEmpty()) {
-            $error("高级检索 批量更新 缺少参数");
-            return;
+            /*$error("高级检索 批量更新 缺少参数");
+            return;*/
+            throw new BusinessException(String.format("高级检索 批量更新 缺少参数, channelId=%s, userName=%s, codeList=%s", channleId, userName, JacksonUtil.bean2Json(codeList)));
         }
 
         Map<String, Object> prop = (Map<String, Object>) messageMap.get("property");
         if (prop == null || prop.isEmpty()) {
-            $error("高级检索 批量更新 缺少property参数");
-            return;
+            /*$error("高级检索 批量更新 缺少property参数");
+            return;*/
+            throw new BusinessException("高级检索 批量更新 缺少property参数");
         }
         String prop_id = StringUtils.trimToEmpty((String) prop.get("id"));
         if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id)) {
@@ -74,7 +81,7 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
             if (synPriceFlg == null) {
                 synPriceFlg = false;
             }
-            updateHsCode(prop_id, hsCode, codeList, channleId, userName, synPriceFlg);
+            failMap = updateHsCode(prop_id, hsCode, codeList, channleId, userName, synPriceFlg);
         } else if ("translateStatus".equals(prop_id)) {
             // 翻译状态更新
             String stsCode = null;
@@ -86,12 +93,14 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
             }
             updateTranslateStatus(stsCode, codeList, channleId, userName, priorDate);
         }
+        return failMap;
     }
 
     /*
      * 税号变更
      */
-    private void updateHsCode(String propId, String propValue, List<String> codeList, String channelId, String userName, Boolean synPriceFlg) {
+    private Map<String, String> updateHsCode(String propId, String propValue, List<String> codeList, String channelId, String userName, Boolean synPriceFlg) {
+        Map<String, String> failMap = new HashMap<String, String>();
         String msg = "税号变更 " + propId + "=> " + propValue;
         // 未配置自动同步的店铺，显示同步状况
         if (synPriceFlg) {
@@ -158,16 +167,26 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
                     }
                 }
             } catch (PriceCalculateException e) {
+
+                failMap.put(prodCode, String.format("高级检索 批量更新 价格计算错误 channleid=%s, prodcode=%s", channelId, prodCode));
+
                 $error(String.format("高级检索 批量更新 价格计算错误 channleid=%s, prodcode=%s", channelId, prodCode), e);
                 continue;
             } catch (IllegalPriceConfigException e) {
+
+                failMap.put(prodCode, String.format("高级检索 批量更新 配置错误 channleid=%s, prodcode=%s", channelId, prodCode));
+
                 $error(String.format("高级检索 批量更新 配置错误 channleid=%s, prodcode=%s", channelId, prodCode), e);
                 continue;
             } catch (Throwable e) {
+
+                failMap.put(prodCode, String.format("高级检索 批量更新 未知错误 channleid=%s, prodcode=%s", channelId, prodCode));
+
                 $error(String.format("高级检索 批量更新 未知错误 channleid=%s, prodcode=%s", channelId, prodCode), e);
                 continue;
             }
         }
+        return failMap;
     }
 
     /**
@@ -181,8 +200,9 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
         qryObj.setProjection("{'mainProductCode':1,'_id':0}");
         List<CmsBtProductGroupModel> grpList = productGroupService.getList(channelId, qryObj);
         if (grpList == null || grpList.isEmpty()) {
-            $error("高级检索 批量更新 翻译状态更新 没有找到主商品");
-            return;
+            /*$error("高级检索 批量更新 翻译状态更新 没有找到主商品");
+            return;*/
+            throw new BusinessException(String.format("高级检索 批量更新 翻译状态更新 没有找到主商品, channelId=%s, codeList=%s", channelId, JacksonUtil.bean2Json(codeList)));
         }
         List<String> mnCodeList = grpList.stream().map(grpObj -> grpObj.getMainProductCode()).filter(mnCode -> mnCode != null && mnCode.length() > 0).collect(Collectors.toList());
 
@@ -198,8 +218,9 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
             updObj.setUpdate("{$set:{'common.fields.translateStatus':'2','common.fields.translator':'','common.fields.translateTime':'','common.fields.priorTranslateDate':#}}");
             updObj.setUpdateParameters(priorDate);
         } else {
-            $warn("高级检索 批量更新 翻译状态更新 未知设置");
-            return;
+            /*$warn("高级检索 批量更新 翻译状态更新 未知设置");
+            return;*/
+            throw new BusinessException(String.format("高级检索 批量更新 翻译状态更新 未知设置, translateStatus=%s", propValue));
         }
         WriteResult rs = productService.updateMulti(updObj, channelId);
         $debug("高级检索 批量更新 翻译状态批量更新结果 " + rs.toString());

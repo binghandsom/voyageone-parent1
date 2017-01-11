@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,16 +47,17 @@ public class CmsProductVoRateUpdateService extends BaseService {
     @Autowired
     private SxProductService sxProductService;
 
-    public void updateProductVoRate(Map<String, Object> messageMap) throws Exception {
+    public List<Map<String, String>> updateProductVoRate(Map<String, Object> messageMap) throws Exception {
+        List<Map<String, String>> failList = new ArrayList<Map<String, String>>();
         $info("CmsProductVoRateUpdateService start");
         $info("参数" + JacksonUtil.bean2Json(messageMap));
         String channelId = StringUtils.trimToNull((String) messageMap.get("channelId"));
         List<String> codeList = (List<String>) messageMap.get("codeList");
         String creater = StringUtils.trimToEmpty((String) messageMap.get("creater"));
-        if (channelId == null || codeList == null || codeList.isEmpty()) {
+        /*if (channelId == null || codeList == null || codeList.isEmpty()) {
             $error("CmsProductVoRateUpdateService 缺少参数");
             return;
-        }
+        }*/
 
         String voRate = (String) messageMap.get("voRate");
         String msg = null;
@@ -77,11 +79,21 @@ public class CmsProductVoRateUpdateService extends BaseService {
                 queryObj.setProjectionExt("prodId", "channelId", "orgChannelId", "platforms.P" + cartId + ".skus", "common.fields", "common.skus");
                 CmsBtProductModel prodObj = productService.getProductByCondition(channelId, queryObj);
                 if (prodObj == null) {
+
+                    Map<String, String> failMap = new HashMap<String, String>();
+                    failMap.put(prodCode, String.format("CmsProductVoRateUpdateService 产品不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId));
+                    failList.add(failMap);
+
                     $warn("CmsProductVoRateUpdateService 产品不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
                     continue;
                 }
                 List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
                 if (skuList == null || skuList.isEmpty()) {
+
+                    Map<String, String> failMap = new HashMap<String, String>();
+                    failMap.put(prodCode, String.format("CmsProductVoRateUpdateService 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId));
+                    failList.add(failMap);
+
                     $warn("CmsProductVoRateUpdateService 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
                     continue;
                 }
@@ -90,6 +102,11 @@ public class CmsProductVoRateUpdateService extends BaseService {
                 try {
                     priceService.setPrice(prodObj, cartId, false);
                 } catch (Exception exp) {
+
+                    Map<String, String> failMap = new HashMap<String, String>();
+                    failMap.put(prodCode, String.format("CmsProductVoRateUpdateService 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channelId, prodCode, cartId, exp.getMessage()));
+                    failList.add(failMap);
+
                     $error(String.format("CmsProductVoRateUpdateService 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channelId, prodCode, cartId, exp.getMessage()), exp);
                     continue;
                 }
@@ -148,5 +165,6 @@ public class CmsProductVoRateUpdateService extends BaseService {
         sta = System.currentTimeMillis();
         sxProductService.insertSxWorkLoad(channelId, codeList, null, creater);
         $debug("CmsProductVoRateUpdateService 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
+        return failList;
     }
 }
