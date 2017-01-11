@@ -32,6 +32,6 @@ public class CmsAdvSearchExportMQJob extends TBaseMQCmsService<AdvSearchExportMQ
             this.cmsLog(messageBody, OperationLog_Type.parameterException, "cms.bt.export.task.id不存在");
             return;
         }
-        cmsAdvSearchExportFileService.equals(messageBody);
+        cmsAdvSearchExportFileService.export(messageBody);
     }
 }
