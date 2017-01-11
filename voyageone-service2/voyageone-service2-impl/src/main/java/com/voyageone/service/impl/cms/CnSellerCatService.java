@@ -119,20 +119,10 @@ public class CnSellerCatService {
     public Map<String, String> addSellerCat(String channelId, String parentCId, String catName, String urlKey, ShopBean shopBean, int index) {
         String catId = Long.toString(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_CnShopCategory_ID));
         try {
-            String result = cnnCatalogService.addCatalog(shopBean, catName,catId,parentCId);
-            if(!StringUtil.isEmpty(result)){
-                Map<String, Object> ret = JacksonUtil.jsonToMap(result);
-                if(!"0".equalsIgnoreCase((String)ret.get("code"))){
-                    throw new BusinessException("创建类目失败， 请再尝试一下。 "+ result);
-                }
-            }else{
-                throw new BusinessException("创建类目失败， 请再尝试一下。 ");
-            }
-        }catch (BusinessException e){
-            throw e;
+            cnnCatalogService.addCatalog(shopBean, catName,catId,parentCId);
         }
         catch (Exception e) {
-            throw new BusinessException("创建类目失败， 请再尝试一下。");
+            throw new BusinessException("创建类目失败， 请再尝试一下。" + e.getMessage());
         }
 
         Map<String, String> resultMap = new HashMap<String, String>();
@@ -144,40 +134,18 @@ public class CnSellerCatService {
     public void  updateSellerCat(CmsBtSellerCatModel currentNode, ShopBean shopBean, int index)
     {
         try {
-            String result = cnnCatalogService.updateCatalog(shopBean, currentNode.getCatId(),currentNode.getCatName());
-            if(!StringUtil.isEmpty(result)){
-                Map<String, Object> ret = JacksonUtil.jsonToMap(result);
-                if(!"0".equalsIgnoreCase((String)ret.get("code"))){
-                    throw new BusinessException("更新类目失败， 请再尝试一下。 "+ result);
-                }
-            }else{
-                throw new BusinessException("更新类目失败， 请再尝试一下。 ");
-            }
-        }catch (BusinessException e){
-            throw e;
-        }
-        catch (Exception e) {
-            throw new BusinessException("更新类目失败， 请再尝试一下。");
+            cnnCatalogService.updateCatalog(shopBean, currentNode.getCatId(),currentNode.getCatName());
+        } catch (Exception e) {
+            throw new BusinessException("更新类目失败， 请再尝试一下。" + e.getMessage());
         }
     }
 
     public void  deleteSellerCat(CmsBtSellerCatModel currentNode, ShopBean shopBean)
     {
         try {
-            String result = cnnCatalogService.deleteCatalog(shopBean, currentNode.getCatId());
-            if(!StringUtil.isEmpty(result)){
-                Map<String, Object> ret = JacksonUtil.jsonToMap(result);
-                if(!"0".equalsIgnoreCase((String)ret.get("code"))){
-                    throw new BusinessException("删除类目失败， 请再尝试一下。 "+ result);
-                }
-            }else{
-                throw new BusinessException("删除类目失败， 请再尝试一下。 ");
-            }
-        }catch (BusinessException e){
-            throw e;
-        }
-        catch (Exception e) {
-            throw new BusinessException("删除类目失败， 请再尝试一下。");
+            cnnCatalogService.deleteCatalog(shopBean, currentNode.getCatId());
+        }catch (Exception e) {
+            throw new BusinessException("删除类目失败， 请再尝试一下。" + e.getMessage());
         }
     }
 }

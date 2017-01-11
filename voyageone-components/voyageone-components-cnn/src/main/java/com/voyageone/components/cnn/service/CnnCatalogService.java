@@ -1,5 +1,6 @@
 package com.voyageone.components.cnn.service;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
@@ -29,7 +30,7 @@ public class CnnCatalogService extends CnnBase {
      * @param parentCatalogId 该分类的父节点ID(为空时表示是顶级节点)(任意)
      * @return String 返回结果JSON串
      */
-    public String addCatalog(ShopBean shop, String name, String id, String parentCatalogId) throws Exception {
+    public Map<String, Object>  addCatalog(ShopBean shop, String name, String id, String parentCatalogId) throws Exception {
         String result;
 
         Map<String, Object> request = new HashMap<>();
@@ -39,8 +40,15 @@ public class CnnCatalogService extends CnnBase {
 
         // 调用新独立域名添加店铺内分类API
         result = reqApi(shop, CnnConstants.CnnApiAction.CATALOG_ADD, request);
-
-        return result;
+        if(!StringUtil.isEmpty(result)){
+            Map<String, Object> ret = JacksonUtil.jsonToMap(result);
+            if(CnnConstants.C_CNN_RETURN_SUCCESS_0 != (Integer)ret.get("code")){
+                throw new BusinessException("创建类目失败， 请再尝试一下。 "+ result);
+            }
+            return ret;
+        }else{
+            throw new BusinessException("创建类目失败， 请再尝试一下。 ");
+        }
     }
 
     /**
@@ -51,7 +59,7 @@ public class CnnCatalogService extends CnnBase {
      * @param name 店铺内分类名称(必须)
      * @return String 返回结果JSON串
      */
-    public String updateCatalog(ShopBean shop, String id, String name) throws Exception {
+    public Map<String, Object> updateCatalog(ShopBean shop, String id, String name) throws Exception {
         String result;
 
         Map<String, Object> request = new HashMap<>();
@@ -60,8 +68,15 @@ public class CnnCatalogService extends CnnBase {
 
         // 调用新独立域名修改店铺内分类名称API
         result = reqApi(shop, CnnConstants.CnnApiAction.CATALOG_UPDATE, request);
-
-        return result;
+        if(!StringUtil.isEmpty(result)){
+            Map<String, Object> ret = JacksonUtil.jsonToMap(result);
+            if(CnnConstants.C_CNN_RETURN_SUCCESS_0 != (Integer)ret.get("code")){
+                throw new BusinessException("创建类目失败， 请再尝试一下。 "+ result);
+            }
+            return ret;
+        }else{
+            throw new BusinessException("创建类目失败， 请再尝试一下。 ");
+        }
     }
 
     /**
@@ -71,7 +86,7 @@ public class CnnCatalogService extends CnnBase {
      * @param id   店铺内分类ID(必须)
      * @return String 返回结果JSON串
      */
-    public String deleteCatalog(ShopBean shop, String id) throws Exception {
+    public Map<String, Object> deleteCatalog(ShopBean shop, String id) throws Exception {
         String result;
 
         Map<String, Object> request = new HashMap<>();
@@ -79,8 +94,15 @@ public class CnnCatalogService extends CnnBase {
 
         // 调用新独立域名修改店铺内分类名称API
         result = reqApi(shop, CnnConstants.CnnApiAction.CATALOG_DELETE + id, request);
-
-        return result;
+        if(!StringUtil.isEmpty(result)){
+            Map<String, Object> ret = JacksonUtil.jsonToMap(result);
+            if(CnnConstants.C_CNN_RETURN_SUCCESS_0 != (Integer)ret.get("code")){
+                throw new BusinessException("创建类目失败， 请再尝试一下。 "+ result);
+            }
+            return ret;
+        }else{
+            throw new BusinessException("创建类目失败， 请再尝试一下。 ");
+        }
     }
 
     /**
