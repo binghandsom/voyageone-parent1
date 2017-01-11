@@ -59,17 +59,17 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
             $error("PromotionProductStockSyncService 店铺及平台数据不存在！");
             return;
         }
-        OperationResult result=new OperationResult();
+        OperationResult result = new OperationResult();
         for (ShopBean shopObj : shopList) {
-            OperationResult resultShop= syncStockByShop(shopObj);
-            if(!resultShop.isResult())
-            {
+            OperationResult resultShop = syncStockByShop(shopObj);
+            if (!resultShop.isResult()) {
+                //加入错误
                 result.addErrorln(resultShop.getMsg());
             }
         }
-        if(!result.isResult())
-        {
-            cmsBusinessExLog(messageMap,result.getMsg());
+        if (!result.isResult()) {
+            //写业务错误日志
+            cmsBusinessExLog(messageMap, result.getMsg());
         }
         $debug("PromotionProductStockSyncService: end");
     }
