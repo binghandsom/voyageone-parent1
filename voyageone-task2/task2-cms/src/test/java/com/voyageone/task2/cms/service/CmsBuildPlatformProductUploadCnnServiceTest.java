@@ -77,13 +77,13 @@ public class CmsBuildPlatformProductUploadCnnServiceTest {
 
         // viw_com_cart_shop_channel_mapping的View里面可以看到有哪些渠道会上分销平台(用cart_id=33过滤)
         String likingChannelId = "928";
-        int cartId = NumberUtils.toInt(CartEnums.Cart.CNN.getId());   // 34
+        int cartId = NumberUtils.toInt(CartEnums.Cart.LIKING.getId());   // 32
 
         CmsBtSxWorkloadModel workload = new CmsBtSxWorkloadModel();
         workload.setId(864987);
         workload.setChannelId(likingChannelId);   // "928"
         workload.setCartId(cartId);               // "33"
-        workload.setGroupId(Long.parseLong("9900002"));
+        workload.setGroupId(Long.parseLong("9900003"));
         workload.setPublishStatus(CmsConstants.SxWorkloadPublishStatusNum.initNum);   // 普通上新模式
         workload.setModifier("desmond");
 
@@ -105,7 +105,7 @@ public class CmsBuildPlatformProductUploadCnnServiceTest {
     @Test
     public void testUpdateSxCnnSku() throws Exception {
         String channelId = "928";
-        int cartId = NumberUtils.toInt(CartEnums.Cart.CNN.getId());   // 34
+        int cartId = NumberUtils.toInt(CartEnums.Cart.LIKING.getId());   // 32
         Long groupId = 9900002L;
 
         // 上新用的商品数据信息取得

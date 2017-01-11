@@ -47,7 +47,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * 新独立域名平台产品上新服务
+ * 新独立域名(Liking)平台产品上新服务
  *
  * @author desmond on 2017/01/04.
  * @version 2.11.0
@@ -56,8 +56,8 @@ import java.util.stream.Collectors;
 @Service
 public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService {
 
-    // 新独立域名平台ID(34)
-    private static final int CART_ID_CNN = CartEnums.Cart.CNN.getValue();
+    // 新独立域名平台ID(32 Liking)
+    private static final int CART_ID_CNN = CartEnums.Cart.LIKING.getValue();
     // 分隔符(,)
     private final static String Separtor_Coma = ",";
     // 线程数(synship.tm_task_control中设置的当前job的最大线程数"thread_count", 默认为3)
@@ -65,7 +65,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
     // 抽出件数(synship.tm_task_control中设置的当前job的最大线程数"row_count", 默认为500)
     private int rowCount;
     // 上新名称
-    private final static String UPLOAD_NAME = "新独立域名";
+    private final static String UPLOAD_NAME = "新独立域名Liking";
 
     @Autowired
     private PlatformProductUploadService platformProductUploadService;
@@ -124,6 +124,9 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
 //            }
 //        }
 
+        // 所有渠道Liking上新开始时间
+        long totalStartTime = System.currentTimeMillis();
+
         // 创建线程池(外面channel级别的线程池，只给2个channel同时上新，防止一个channel上新数据太多，影响其他channel的上新)
         ExecutorService executor = Executors.newFixedThreadPool(2);
         // 根据上新任务列表中的groupid循环上新处理
@@ -177,7 +180,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                     UPLOAD_NAME, totalCnt, addOkCnt, addNgCnt, updOkCnt, updNgCnt);
             $info(strResult);
         }
-        $info("=================" + UPLOAD_NAME + "上新  主线程结束====================");
+        $info("=================" + UPLOAD_NAME + "上新  主线程结束 [总耗时:" + (System.currentTimeMillis() - totalStartTime) + "]====================");
     }
 
     /**
@@ -187,6 +190,8 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
      * @param cartId     平台ID
      */
     public void doUploadChannel(String channelId, int cartId)  {
+        // 所有渠道Liking上新开始时间
+        long channelStartTime = System.currentTimeMillis();
         $info("当前渠道的%s上新任务开始！[channelId:%s] [cartId:%s]", UPLOAD_NAME, channelId, CART_ID_CNN);
 
         try{
@@ -228,10 +233,12 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                 ie.printStackTrace();
             }
 
-            $info("当前渠道的%s上新任务执行完毕！[channelId:%s] [cartId:%s] [上新对象group件数:%s]", UPLOAD_NAME, channelId, cartId, sxWorkloadModels.size());
+            $info("当前渠道的%s上新任务执行完毕！[channelId:%s] [cartId:%s] [上新对象group件数:%s] [当前渠道上新总耗时:%s]",
+                    UPLOAD_NAME, channelId, cartId, sxWorkloadModels.size(), (System.currentTimeMillis() - channelStartTime));
 
         } catch (Exception e) {
-            $info("当前渠道的%s上新任务执行失败！[channelId:%s] [cartId:%s] [errMsg:%s]", UPLOAD_NAME, channelId, cartId, e.getMessage());
+            $info("当前渠道的%s上新任务执行失败！[channelId:%s] [cartId:%s] [errMsg:%s] [当前渠道上新总耗时:%s]",
+                    UPLOAD_NAME, channelId, cartId, e.getMessage(), (System.currentTimeMillis() - channelStartTime));
             return;
         }
 
@@ -259,6 +266,8 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
         boolean isUpdate = false;
         // 新增/更新商品类型
         String updateType = "新增商品";
+        // 开始时间
+        long prodStartTime = System.currentTimeMillis();
 
         try {
             // 上新用的商品数据信息取得
@@ -428,8 +437,8 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             // 把上新成功状态放入结果map中
             add2ResultMap(channelId, cartId, groupId, isUpdate, true);
 
-            $info(String.format("%s单个商品%s成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s] ",
-                    UPLOAD_NAME, isUpdate ? "上新" : "更新", channelId, cartId, groupId, cnnWareId));
+            $info(String.format("%s单个商品%s成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s] [耗时:%s]",
+                    UPLOAD_NAME, isUpdate ? "更新" : "上新", channelId, cartId, groupId, cnnWareId, (System.currentTimeMillis() - prodStartTime)));
 
         } catch (Exception ex) {
 
@@ -471,8 +480,8 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             // 上新出错时状态回写操作
             sxProductService.doUploadFinalProc(shop, false, sxData, cmsBtSxWorkloadModel, "", null, "", getTaskName());
 
-            $error(String.format("%s单个商品上新异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s] [errMsg:%s]",
-                        UPLOAD_NAME, channelId, cartId, groupId, cnnWareId, Arrays.toString(ex.getStackTrace())));
+            $error(String.format("%s单个商品%s异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s] [errMsg:%s] [耗时:%s]",
+                        UPLOAD_NAME, isUpdate ? "更新" : "上新", channelId, cartId, groupId, cnnWareId, Arrays.toString(ex.getStackTrace())), (System.currentTimeMillis() - prodStartTime));
             return;
         }
     }
@@ -520,7 +529,9 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
         // 品牌名/制造商名
         paramCommonFields.put("brand", mainProdCommField.getBrand());
         // 产品名称(中文) (对应于cms中的originalTitleCn/productNameEn)
-        if (!StringUtils.isEmpty(mainProdCommField.getOriginalTitleCn())) {
+        if (mainProdPlatCart != null && !StringUtils.isEmpty(mainProdPlatCart.getFieldsNotNull().getStringAttribute("productTitle"))) {
+            paramCommonFields.put("title", mainProdPlatCart.getFieldsNotNull().getStringAttribute("productTitle"));
+        } else if (!StringUtils.isEmpty(mainProdCommField.getOriginalTitleCn())) {
             paramCommonFields.put("title", mainProdCommField.getOriginalTitleCn());
         } else {
             paramCommonFields.put("title", mainProdCommField.getProductNameEn());

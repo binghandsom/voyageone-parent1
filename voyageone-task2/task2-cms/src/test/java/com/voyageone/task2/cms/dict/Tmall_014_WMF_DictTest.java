@@ -69,7 +69,7 @@ public class Tmall_014_WMF_DictTest extends BaseDictTest{
             {
                 // imageTemplate
                 RuleExpression imageTemplate = new RuleExpression();
-                String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/PC%%2Dcanshu?$790%%5F500$&$layer_2_src=%s&$1=%s&$2=%s&$3=%%20%s&$4=%s&$5=%%20%s&$6=%s&$7=%s&$8=%s&$9=%s&$10=%s";
+                String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/canshu08?$790_500$&$layer_10_src=%s&$layer_2_textps_0=%s&$layer_3_textps_0=%s&$layer_4_textps_0=%s&$layer_5_textps_0=%s&$layer_6_textps_0=%s&$layer_7_textps_0=%s&$layer_8_textps_0=%s&$layer_9_textps_0=%%20%s";
                 imageTemplate.addRuleWord(new TextWord(htmlTemplate));
 
                 // 参数imageParams
@@ -93,8 +93,8 @@ public class Tmall_014_WMF_DictTest extends BaseDictTest{
                     imageParams.add(imgWord);
                 }
                 {
-                    // 第二个开始，共十个属性
-                    for (int index = 0; index < 10; index++) {
+                    // 第二个开始，共八个属性
+                    for (int index = 0; index < 8; index++) {
                         RuleExpression ruleExpression = new RuleExpression();
                         ruleExpression.addRuleWord(new FeedCnWord(true, index));
                         ruleExpression.addRuleWord(new TextWord("   "));
@@ -216,7 +216,7 @@ public class Tmall_014_WMF_DictTest extends BaseDictTest{
             {
                 // 第9张, 参数图片
                 RuleExpression imageTemplate = new RuleExpression();
-                String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/shoujicanshu?$750x750$&$layer_2_src=%s&$1=%s&$2=%s&$3=%s&$4=%s&$5=%s&$6=%s&$7=%s&$8=%s&$9=%s&$10=%s";
+                String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/wuxiancanshu-1?$750x750$&$layer_10_src=%s&$layer_2_textps_0=%s&$layer_3_textps_0=%s&$layer_4_textps_0=%s&$layer_5_textps_0=%s&$layer_6_textps_0=%s&$layer_7_textps_0=%s&$layer_8_textps_0=%s&$layer_9_textps_0=%s";
                 imageTemplate.addRuleWord(new TextWord(htmlTemplate));
 
                 // 设置参数imageParams的值
@@ -240,8 +240,8 @@ public class Tmall_014_WMF_DictTest extends BaseDictTest{
                 }
 
                 {
-                    // 第二个开始，共十个属性
-                    for (int index = 0; index < 10; index++) {
+                    // 第二个开始，共八个属性
+                    for (int index = 0; index < 8; index++) {
                         RuleExpression ruleExpression = new RuleExpression();
                         ruleExpression.addRuleWord(new FeedCnWord(true, index));
                         ruleExpression.addRuleWord(new TextWord("   "));
