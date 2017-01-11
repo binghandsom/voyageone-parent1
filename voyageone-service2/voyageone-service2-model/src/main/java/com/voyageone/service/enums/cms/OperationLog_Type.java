@@ -37,8 +37,14 @@ public enum OperationLog_Type {
         this.id = id;
     }
 
-    public OperationLog_Type get(int id)
+    public OperationLog_Type get(short id)
     {
-            return   null;
+        for (OperationLog_Type operationLog_type : OperationLog_Type.values()) {
+            if(operationLog_type.getId()==id)
+            {
+                return  operationLog_type;
+            }
+        }
+        return  null;
     }
 }
