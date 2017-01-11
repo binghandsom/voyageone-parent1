@@ -605,6 +605,8 @@ public class CmsBtCombinedProductService extends BaseService {
             if (!targetModel.getNumID().equals(model.getNumID())) {
                 throw new BusinessException("组合套装商品numID不允许修改！");
             }
+            model.setCreater(targetModel.getCreater());
+            model.setCreated(targetModel.getCreated());
         }else if (ACTION_TYPE_ADD.equals(actionType)) {
             CmsBtCombinedProductModel existModel = this.getCombinedProduct(model, channelId);
             if (existModel != null) {
