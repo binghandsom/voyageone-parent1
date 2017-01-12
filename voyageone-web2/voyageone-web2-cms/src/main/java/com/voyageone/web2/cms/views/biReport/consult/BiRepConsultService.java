@@ -27,21 +27,22 @@ public class BiRepConsultService {
     private BiRepSupport BiRepSupport;
 
     public Map<String, Object> biRepDownload(PageQueryParameters parameters) {
-        String channel=parameters.getParameterValue("channel");
-        String channelStart=parameters.getParameterValue("channelStart");
-        String channelEnd=parameters.getParameterValue("channelEnd");
-        Map<String, Object> result = new HashMap<>();
-        List<TestBean> testBeanList=new ArrayList<TestBean>();
-        for(int i=0;i<10;i++)
-        {
-            TestBean testBean=new TestBean("channel"+i,channel,channelStart,channelEnd);
-            testBeanList.add(testBean);
-        }
-        result.put("testBeanList",testBeanList);
-      /*  result.put("platformTypeList", TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
-        result.put("promotionStatus", TypeConfigEnums.MastType.promotionStatus.getList(language));*/
-
-        return result;
+//        String channel=parameters.getParameterValue("channel");
+//        String channelStart=parameters.getParameterValue("channelStart");
+//        String channelEnd=parameters.getParameterValue("channelEnd");
+//        Map<String, Object> result = new HashMap<>();
+//        List<TestBean> testBeanList=new ArrayList<TestBean>();
+//        for(int i=0;i<10;i++)
+//        {
+//            TestBean testBean=new TestBean("channel"+i,channel,channelStart,channelEnd);
+//            testBeanList.add(testBean);
+//        }
+//        result.put("testBeanList",testBeanList);
+//      /*  result.put("platformTypeList", TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
+//        result.put("promotionStatus", TypeConfigEnums.MastType.promotionStatus.getList(language));*/
+//
+//        return result;
+        return null;
     }
     //create the bi_report xls file
     //first step:create the xls recognized fileName
