@@ -902,7 +902,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
      * @return String  log头部信息
      */
     private String getPreMsg(String shopName, String sxType) {
-        return shopName + "[" + sxType + "] ";
+        return StringUtils.isEmpty(sxType) ? (shopName + " ") : (shopName + "[" + sxType + "] ");
     }
 
     /**
