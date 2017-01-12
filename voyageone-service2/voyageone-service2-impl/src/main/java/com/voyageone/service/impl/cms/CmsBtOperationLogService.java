@@ -127,8 +127,8 @@ public class CmsBtOperationLogService {
         JongoQuery queryObject = new JongoQuery();
         String parameter = getSearchQuery(params);
         queryObject.setQuery(parameter);
-        int pageNum = (Integer) params.get("pageNum");
-        int pageSize = (Integer) params.get("pageSize");
+        int pageNum = (Integer) params.get("curr");
+        int pageSize = (Integer) params.get("size");
         queryObject.setSkip((pageNum - 1) * pageSize);
         queryObject.setLimit(pageSize);
         List<CmsBtOperationLogModel> mqErrorList =dao.select(queryObject);

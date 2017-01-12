@@ -18,9 +18,10 @@ define(['cms'], function (cms) {
             var self = this;
             self.search();
         };
-        mqListSetController.prototype.search = function (res) {
+
+        mqListSetController.prototype.search = function () {
             var self = this,
-                data = this.prodPageOption;
+                data = this.mqErrorPageOption;
             _.extend(data, {"name": this.name});
             _.extend(data, {"title": this.title});
             self.$mqErrorListService.search(data).then(function (res) {

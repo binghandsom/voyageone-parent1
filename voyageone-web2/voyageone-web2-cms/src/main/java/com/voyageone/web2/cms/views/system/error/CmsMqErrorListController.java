@@ -28,8 +28,6 @@ public class CmsMqErrorListController extends CmsController {
     @RequestMapping(CmsUrlConstants.SYSTEM.MQ_ERROR.SEARCH)
     public AjaxResponse search(@RequestBody Map params){
         Map<String, Object> result = new HashMap<>();
-        //店铺渠道取得
-        String channelId = this.getUser().getSelChannelId();
         // 检索Master品牌匹配的数据
         result.put("mqErrorList", cmsBtOperationLogService.searchMqCmsBtOperationLogData(params));
         // 检索Master品牌匹配的数量
