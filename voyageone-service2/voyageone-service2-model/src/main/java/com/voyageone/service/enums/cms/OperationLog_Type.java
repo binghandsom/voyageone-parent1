@@ -54,7 +54,7 @@ public enum OperationLog_Type {
 
     public static List<Map<String,Object>> getList() {
         List<Map<String, Object>> list = new ArrayList<>();
-        Map<String, Object> map = null;
+        Map<String, Object> map;
         for (OperationLog_Type operationLog_type : OperationLog_Type.values()) {
             map = new HashedMap();
             map.put("id", operationLog_type.getId());
