@@ -427,16 +427,10 @@ public class CmsAdvanceSearchService extends BaseViewService {
         List<String> prodCodeList;
         if (isSelAll == 1) {
             CmsSearchInfoBean2 searchValue = (CmsSearchInfoBean2) cmsSession.getAttribute("_adv_search_params");
-//            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-//            prodCodeList = getProductCodeList(channelId, cmsSession);
-//            if (prodCodeList == null || prodCodeList.isEmpty()) {
-//                $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未查询到商品");
-//                throw new BusinessException("缺少参数，未选择商品!");
-//            }
-            cmsProductFreeTagsUpdateService.sendMessage(channelId,searchValue,orgDispTagList,modifier);
+            cmsProductFreeTagsUpdateService.sendMessage(channelId,searchValue,tagPathList,orgDispTagList,modifier);
         } else {
             prodCodeList = (List<String>) params.get("prodIdList");
-            cmsProductFreeTagsUpdateService.sendMessage(channelId,prodCodeList,orgDispTagList,modifier);
+            cmsProductFreeTagsUpdateService.sendMessage(channelId,prodCodeList,tagPathList,orgDispTagList,modifier);
         }
     }
 

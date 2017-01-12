@@ -24,21 +24,24 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
     @Autowired
     private ProductTagService productTagService;
 
-    public void sendMessage(String chanelId, CmsSearchInfoBean2 searchValue, List<String> orgDispTagList, String sender) throws MQMessageRuleException {
+    public void sendMessage(String chanelId, CmsSearchInfoBean2 searchValue,List<String> tagPathList ,List<String> orgDispTagList, String sender) throws MQMessageRuleException {
         CmsProductFreeTagsUpdateMQMessageBody mqMessageBody = new CmsProductFreeTagsUpdateMQMessageBody();
         mqMessageBody.setChannelId(chanelId);
         mqMessageBody.setIsSelAll(true);
         mqMessageBody.setSearchValue(searchValue);
+        mqMessageBody.setTagPathList(tagPathList);
         mqMessageBody.setOrgDispTagList(orgDispTagList);
         mqMessageBody.setSender(sender);
+
         cmsMqSenderService.sendMessage(mqMessageBody);
     }
 
-    public void sendMessage(String chanelId, List<String> prodCodeList, List<String> orgDispTagList, String sender) throws MQMessageRuleException {
+    public void sendMessage(String chanelId, List<String> prodCodeList,List<String> tagPathList, List<String> orgDispTagList, String sender) throws MQMessageRuleException {
         CmsProductFreeTagsUpdateMQMessageBody mqMessageBody = new CmsProductFreeTagsUpdateMQMessageBody();
         mqMessageBody.setChannelId(chanelId);
         mqMessageBody.setIsSelAll(false);
         mqMessageBody.setProdCodeList(prodCodeList);
+        mqMessageBody.setTagPathList(tagPathList);
         mqMessageBody.setOrgDispTagList(orgDispTagList);
         mqMessageBody.setSender(sender);
         cmsMqSenderService.sendMessage(mqMessageBody);
