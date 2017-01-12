@@ -30,6 +30,16 @@ public class CmsProductFreeTagsUpdateMQMessageBody extends BaseMQMessageBody {
 
     List<String> tagPathList;
 
+    List<String> orgDispTagList;
+
+    public List<String> getOrgDispTagList() {
+        return orgDispTagList;
+    }
+
+    public void setOrgDispTagList(List<String> orgDispTagList) {
+        this.orgDispTagList = orgDispTagList;
+    }
+
     public List<String> getTagPathList() {
         return tagPathList;
     }
