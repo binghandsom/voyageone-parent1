@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms.vomqservice;
+package com.voyageone.service.impl.cms.vomqjobservice;
 
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
