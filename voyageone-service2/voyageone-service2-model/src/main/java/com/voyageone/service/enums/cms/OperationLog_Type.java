@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public enum OperationLog_Type {
     success(1, "成功"),
-    successIncludeFail(2,"失败异常"),
+    successIncludeFail(2,"部分成功"),
     parameterException(3,"参数异常"),
     configException(4,"配置异常"),
     businessException(5,"业务异常"),
