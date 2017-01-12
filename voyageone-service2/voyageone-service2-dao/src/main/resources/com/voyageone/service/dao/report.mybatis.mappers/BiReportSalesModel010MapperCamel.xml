@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.voyageone.service.dao.cms.BiReportSalesProduct010Dao" >
-    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.BiReportSalesProduct010Model" />
+<mapper namespace="com.voyageone.service.dao.report.BiReportSalesModel010Dao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.report.BiReportSalesModel010Model" />
     <sql id="Base_Column_List" >
-        `date`, `shop_id`, `product_id`, `model_id`, `qty`, `amt`, `buyers`, `uv`, `pv`, 
-        `add_favorite`, `add_cart`, `visit_time_avg`, `bounce_rate`
+        `date`, `shop_id`, `model_id`, `num_iid`, `qty`, `amt`, `buyers`, `uv`, `pv`, `add_favorite`, 
+        `add_cart`, `visit_time_avg`, `bounce_rate`
     </sql>
-
-    <select id="select" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.cms.BiReportSalesProduct010Key" >
+    <select id="select" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.report.BiReportSalesModel010Key" >
         select 
         <include refid="Base_Column_List" />
-        from bi_report_sales_product_010
+        from bi_report_sales_model_010
         where `date` = #{date,jdbcType=DATE}
           and `shop_id` = #{shopId,jdbcType=INTEGER}
-          and `product_id` = #{productId,jdbcType=INTEGER}
+          and `model_id` = #{modelId,jdbcType=INTEGER}
     </select>
-
-    <update id="update" parameterType="com.voyageone.service.model.cms.BiReportSalesProduct010Model" >
-        update bi_report_sales_product_010
+    <update id="update" parameterType="com.voyageone.service.model.report.BiReportSalesModel010Model" >
+        update bi_report_sales_model_010
         <set >
-            <if test="modelId != null" >
-                `model_id` = #{modelId,jdbcType=INTEGER},
+            <if test="numIid != null" >
+                `num_iid` = #{numIid,jdbcType=VARCHAR},
             </if>
             <if test="qty != null" >
                 `qty` = #{qty,jdbcType=INTEGER},
@@ -52,23 +50,21 @@
         </set>
         where `date` = #{date,jdbcType=DATE}
           and `shop_id` = #{shopId,jdbcType=INTEGER}
-          and `product_id` = #{productId,jdbcType=INTEGER}
+          and `model_id` = #{modelId,jdbcType=INTEGER}
     </update>
-
-    <delete id="delete" parameterType="com.voyageone.service.model.cms.BiReportSalesProduct010Key" >
-        delete from bi_report_sales_product_010
+    <delete id="delete" parameterType="com.voyageone.service.model.report.BiReportSalesModel010Key" >
+        delete from bi_report_sales_model_010
         where `date` = #{date,jdbcType=DATE}
           and `shop_id` = #{shopId,jdbcType=INTEGER}
-          and `product_id` = #{productId,jdbcType=INTEGER}
+          and `model_id` = #{modelId,jdbcType=INTEGER}
     </delete>
-
     <select id="selectOne" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
-        from bi_report_sales_product_010
+        from bi_report_sales_model_010
         <where >
-            <if test="modelId != null" >
-                and `model_id` = #{modelId,jdbcType=INTEGER}
+            <if test="numIid != null" >
+                and `num_iid` = #{numIid,jdbcType=VARCHAR}
             </if>
             <if test="qty != null" >
                 and `qty` = #{qty,jdbcType=INTEGER}
@@ -100,14 +96,13 @@
         </where>
         limit 1
     </select>
-
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
-        from bi_report_sales_product_010
+        from bi_report_sales_model_010
         <where >
-            <if test="modelId != null" >
-                and `model_id` = #{modelId,jdbcType=INTEGER}
+            <if test="numIid != null" >
+                and `num_iid` = #{numIid,jdbcType=VARCHAR}
             </if>
             <if test="qty != null" >
                 and `qty` = #{qty,jdbcType=INTEGER}
@@ -138,12 +133,11 @@
             </if>
         </where>
     </select>
-
     <select id="selectCount" resultType="java.lang.Integer" >
-        select count(*) from bi_report_sales_product_010
+        select count(*) from bi_report_sales_model_010
         <where >
-            <if test="modelId != null" >
-                and `model_id` = #{modelId,jdbcType=INTEGER}
+            <if test="numIid != null" >
+                and `num_iid` = #{numIid,jdbcType=VARCHAR}
             </if>
             <if test="qty != null" >
                 and `qty` = #{qty,jdbcType=INTEGER}
@@ -174,9 +168,8 @@
             </if>
         </where>
     </select>
-
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.BiReportSalesProduct010Model" >
-        insert into bi_report_sales_product_010
+    <insert id="insert" parameterType="com.voyageone.service.model.report.BiReportSalesModel010Model" >
+        insert into bi_report_sales_model_010
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="date != null" >
                 `date`,
@@ -184,11 +177,11 @@
             <if test="shopId != null" >
                 `shop_id`,
             </if>
-            <if test="productId != null" >
-                `product_id`,
-            </if>
             <if test="modelId != null" >
                 `model_id`,
+            </if>
+            <if test="numIid != null" >
+                `num_iid`,
             </if>
             <if test="qty != null" >
                 `qty`,
@@ -225,11 +218,11 @@
             <if test="shopId != null" >
                 #{shopId,jdbcType=INTEGER},
             </if>
-            <if test="productId != null" >
-                #{productId,jdbcType=INTEGER},
-            </if>
             <if test="modelId != null" >
                 #{modelId,jdbcType=INTEGER},
+            </if>
+            <if test="numIid != null" >
+                #{numIid,jdbcType=VARCHAR},
             </if>
             <if test="qty != null" >
                 #{qty,jdbcType=INTEGER},
@@ -260,5 +253,4 @@
             </if>
         </trim>
     </insert>
-
 </mapper>

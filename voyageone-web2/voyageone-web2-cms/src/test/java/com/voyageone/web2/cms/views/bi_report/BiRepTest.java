@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.text.ParseException;
+
 /**
  * Created by dell on 2017/1/11.
  */
@@ -25,8 +27,16 @@ public class BiRepTest {
         biRepConsultService.createXLSFile();
     }*/
     @Test
-    public void getData()
+    public void getData() throws ParseException
     {
         biRepConsultService.getData();
+       /* BiReportSalesProduct010Model bpm=new BiReportSalesProduct010Model();
+        Class bClz=bpm.getClass();
+        Field [] fields=bClz.getDeclaredFields();
+        System.out.println(fields.length);
+        for(Field f:fields)
+        {
+            System.out.println(f.getName());
+        }*/
     }
 }

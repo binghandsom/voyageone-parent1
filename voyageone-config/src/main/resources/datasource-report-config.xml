@@ -34,13 +34,13 @@
     </bean>
 
     <!--sqlSessionTemplateReport-->
-    <bean id="sqlSessionTemplateAdminCom" class="org.mybatis.spring.SqlSessionTemplate">
+    <bean id="sqlSessionTemplateReport" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg ref="sqlSessionFactoryReport"/>
     </bean>
     
     <!--mybatis的dao接口和mapper的扫描-->
-    <bean id="mapperScannerConfigurerAdminCom" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="sqlSessionTemplateBeanName" value="sqlSessionTemplateAdminCom"/>
+    <bean id="mapperScannerConfigurerReport" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionTemplateBeanName" value="sqlSessionTemplateReport"/>
         <property name="basePackage" value="com.voyageone.service.dao.report,
         com.voyageone.service.daoext.report"/>
         <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
