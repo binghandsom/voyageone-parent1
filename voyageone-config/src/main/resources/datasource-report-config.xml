@@ -41,7 +41,6 @@
     <!--mybatis的dao接口和mapper的扫描-->
     <bean id="mapperScannerConfigurerAdminCom" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="sqlSessionTemplateBeanName" value="sqlSessionTemplateAdminCom"/>
-        <property name="basePackage" value="com.voyageone.service.daoext.core"/>
         <property name="basePackage" value="com.voyageone.service.dao.report,
         com.voyageone.service.daoext.report"/>
         <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
