@@ -665,23 +665,31 @@ public class ProductService extends BaseService {
             // 获取HsCodePrivate
             String hsCodePrivate = product.getCommon().getFields().getHsCodePrivate();
             if (!StringUtils.isEmpty(hsCodePrivate)) {
-//                TypeChannelBean bean = TypeChannels.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, channelId, hsCodePrivate);
-//                if (!StringUtils.isEmpty(hsCodePrivate)) {
                 String[] hsCodePu = hsCodePrivate.split(",");
                 resultInfo.setHsCodePuId(hsCodePrivate);
                 resultInfo.setHsCodePu(hsCodePu[0]);
                 resultInfo.setHsDescriptionPu(hsCodePu[1]);
                 resultInfo.setUnitPu(hsCodePu[2]);
-//                }
-            }
-            if (!StringUtil.isEmpty(hsCodePrivate)) {
+
                 CmsMtEtkHsCodeModel cmsMtEtkHsCodeModel = cmsMtEtkHsCodeService.getEdcHsCodeByHsCode(hsCodePrivate);
                 if (cmsMtEtkHsCodeModel != null) {
                     resultInfo.setEtkHsCode(cmsMtEtkHsCodeModel.getEtkHsCode());
                     resultInfo.setEtkDescription(cmsMtEtkHsCodeModel.getEtkDescription());
                     resultInfo.setEtkUnit(cmsMtEtkHsCodeModel.getEtkUnit());
+                }else{
+                    resultInfo.setEtkHsCode(hsCodePu[0]);
+                    resultInfo.setEtkDescription(hsCodePu[1]);
+                    resultInfo.setEtkUnit(hsCodePu[2]);
                 }
             }
+//            if (!StringUtil.isEmpty(hsCodePrivate)) {
+//                CmsMtEtkHsCodeModel cmsMtEtkHsCodeModel = cmsMtEtkHsCodeService.getEdcHsCodeByHsCode(hsCodePrivate);
+//                if (cmsMtEtkHsCodeModel != null) {
+//                    resultInfo.setEtkHsCode(cmsMtEtkHsCodeModel.getEtkHsCode());
+//                    resultInfo.setEtkDescription(cmsMtEtkHsCodeModel.getEtkDescription());
+//                    resultInfo.setEtkUnit(cmsMtEtkHsCodeModel.getEtkUnit());
+//                }
+//            }
 //            for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
 //                if(entry.getValue().getCartId() > 10 && entry.getValue().getCartId() < 900 && entry.getValue().getStatus().equalsIgnoreCase("Approved") && !StringUtil.isEmpty(entry.getValue().getpCatPath())){
 //                    CmsMtEtkHsCodeModel cmsMtEtkHsCodeModel = cmsMtEtkHsCodeService.getEdcHsCodeByHsCode(entry.getValue().getCartId(),  entry.getValue().getpCatPath());

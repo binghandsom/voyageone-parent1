@@ -54,7 +54,8 @@ public class Tmall_014_WMF_DictTest extends BaseDictTest{
             RuleExpression imageType = new RuleExpression();
             imageType.addRuleWord(new TextWord(C_自定义图片));
 
-            RuleExpression useOriUrl = null;
+            RuleExpression useOriUrl = new RuleExpression();
+            useOriUrl.addRuleWord(new TextWord("1"));
 
             CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, null);
             ruleRoot.addRuleWord(new CustomWord(word));
