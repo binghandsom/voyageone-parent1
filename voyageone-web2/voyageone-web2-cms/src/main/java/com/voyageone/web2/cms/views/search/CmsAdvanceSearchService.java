@@ -266,6 +266,10 @@ public class CmsAdvanceSearchService extends BaseViewService {
      */
     public List<String> getProductCodeList(String channelId, CmsSessionBean cmsSessionBean) {
         CmsSearchInfoBean2 searchValue = (CmsSearchInfoBean2) cmsSessionBean.getAttribute("_adv_search_params");
+        return getProductCodeList(channelId, searchValue);
+    }
+
+    private List<String> getProductCodeList(String channelId, CmsSearchInfoBean2 searchValue) {
         if (searchValue == null) {
             $warn("高级检索 getProductCodeList session中的查询条件为空");
             return new ArrayList<>(0);
@@ -428,7 +432,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
         }
 
         List<String> orgDispTagList = null;
-        if(params.get("orgDispTagList") != null){
+        if (params.get("orgDispTagList") != null) {
             orgDispTagList = (List<String>) params.get("orgDispTagList");
         }
 
