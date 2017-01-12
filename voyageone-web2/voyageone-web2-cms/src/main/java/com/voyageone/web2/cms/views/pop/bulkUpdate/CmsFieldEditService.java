@@ -510,6 +510,7 @@ public class CmsFieldEditService extends BaseViewService {
             mqSenderService.sendMessage(mqMessageBody);
         } catch (MQMessageRuleException e) {
             $error(String.format("商品上下架MQ发送异常,channelId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
+            throw new BusinessException("商品上下架MQ发送异常: " + e.getMessage());
         }
 
         rsMap.put("ecd", 0);

@@ -1,5 +1,8 @@
 package com.voyageone.task2.cms.mqjob;
 
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.PlatformActiveLogMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
@@ -10,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,6 +38,19 @@ public class CmsPlatformActiveLogMQJob extends TBaseMQCmsService<PlatformActiveL
         params.put("creater", messageBody.getUserName());
         params.put("comment", messageBody.getComment());
         params.put("codeList", messageBody.getProductCodes());
-        cmsPlatformActiveLogService.onStartup(params);
+
+        try {
+            List<Map<String, String>> failList = cmsPlatformActiveLogService.onStartup(params);
+            if (failList != null && failList.size() > 0) {
+                cmsLog(messageBody, OperationLog_Type.successIncludeFail, JacksonUtil.bean2Json(failList));
+            }
+        } catch (Exception e) {
+            if (e instanceof BusinessException) {
+                cmsLog(messageBody, OperationLog_Type.businessException, e.getMessage());
+            } else {
+                cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
+            }
+        }
+
     }
 }

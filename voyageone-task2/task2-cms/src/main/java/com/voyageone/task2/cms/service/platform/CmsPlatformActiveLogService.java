@@ -12,6 +12,7 @@ import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
@@ -40,6 +41,7 @@ import com.voyageone.task2.base.BaseMQCmsService;
 
 import net.sf.json.util.JSONUtils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONObject;
@@ -49,6 +51,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -89,7 +92,8 @@ public class CmsPlatformActiveLogService extends BaseService {
         this.dtWareService = dtWareService;
     }
 
-    public void onStartup(Map<String, Object> messageMap) throws Exception {
+    public List<Map<String, String>> onStartup(Map<String, Object> messageMap) throws Exception {
+        List<Map<String, String>> failList = new ArrayList<Map<String, String>>();
 
         $info("CmsPlatformActiceLogService start 参数 " + JacksonUtil.bean2Json(messageMap));
 
@@ -97,18 +101,13 @@ public class CmsPlatformActiveLogService extends BaseService {
         Collection<String> codeList = (Collection<String>) messageMap.get("codeList");
         String activeStatus = StringUtils.trimToNull((String) messageMap.get("activeStatus"));
         String userName = StringUtils.trimToNull((String) messageMap.get("creater"));
-
-        if (channelId == null || codeList == null || codeList.isEmpty()
-                || activeStatus == null || userName == null) {
-            $error("CmsPlatformActiceLogService 缺少参数");
-            return;
-        }
-
         Collection<Integer> cartIdList = (Collection<Integer>) messageMap.get("cartIdList");
 
-        if (cartIdList == null || cartIdList.isEmpty()) {
-            $error("CmsPlatformActiceLogService 缺少cartid参数");
-            return;
+        if (org.apache.commons.lang.StringUtils.isBlank(channelId) || CollectionUtils.isEmpty(codeList)
+                || org.apache.commons.lang.StringUtils.isBlank(activeStatus) || org.apache.commons.lang.StringUtils.isBlank(userName)
+                || CollectionUtils.isEmpty(cartIdList)) {
+            $error("CmsPlatformActiceLogService 缺少参数");
+            throw new BusinessException(String.format("CmsPlatformActiceLogService 缺少channelId/userName/activeStatus/codeList/cartIdList参数, params=%s", JacksonUtil.bean2Json(messageMap)));
         }
 
         long batchNo = sequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PLATFORMACTIVEJOB_ID);
@@ -121,6 +120,11 @@ public class CmsPlatformActiveLogService extends BaseService {
             queryObj.setProjectionExt("mainProductCode", "productCodes", "groupId", "numIId", "platformMallId");
             List<CmsBtProductGroupModel> grpObjList = cmsBtProductGroupDao.select(queryObj, channelId);
             if (grpObjList == null || grpObjList.isEmpty()) {
+
+                Map<String, String> failMap = new HashMap<String, String>();
+                failMap.put(String.format("cartId=%d", cartId), String.format("产品对于的group不存在, cartId=%d, channelId=%s, codeList=%s", cartId, channelId, JacksonUtil.bean2Json(codeList)));
+                failList.add(failMap);
+
                 $error("CmsPlatformActiceLogService 产品对应的group不存在 cartId=%d, channelId=%s, codes=%s", cartId, channelId, codeList.toString());
                 continue;
             }
@@ -128,6 +132,11 @@ public class CmsPlatformActiveLogService extends BaseService {
             for (CmsBtProductGroupModel grpObj : grpObjList) {
                 List<String> pCodeArr = grpObj.getProductCodes();
                 if (pCodeArr == null || pCodeArr.isEmpty()) {
+
+                    Map<String, String> failMap = new HashMap<String, String>();
+                    failMap.put(String.format("group=%s", grpObj.get_id()), String.format("产品group下没有商品codes, cartId=%d, channelId=%s, grpInfo=%s", cartId, channelId, JacksonUtil.bean2Json(grpObj)));
+                    failList.add(failMap);
+
                     $error("CmsPlatformActiceLogService cartId=%d, channelId=%s, grpInfo=%s", cartId, channelId, grpObj.toString());
                     continue;
                 }
@@ -184,6 +193,11 @@ public class CmsPlatformActiveLogService extends BaseService {
         for (Integer cartId : cartIdList) {
             ShopBean shopProp = Shops.getShop(channelId, cartId);
             if (shopProp == null) {
+
+                Map<String, String> failMap = new HashMap<String, String>();
+                failMap.put(String.format("channelId=%s, cartId=%d", channelId, cartId), String.format("获取到店铺信息失败, channelId=%s, cartId=%d", channelId, cartId));
+                failList.add(failMap);
+
                 $error("CmsPlatformActiceLogService 获取到店铺信息失败(shopProp == null)! [ChannelId:%s] [CartId:%s]", channelId, cartId);
                 continue;
             }
@@ -194,6 +208,11 @@ public class CmsPlatformActiveLogService extends BaseService {
             queryObj.setProjectionExt("prodCode", "mainProdCode", "numIId");
             List<CmsBtPlatformActiveLogModel> actLogList = platformActiveLogDao.select(queryObj, channelId);
             if (actLogList.isEmpty()) {
+
+                Map<String, String> failMap = new HashMap<String, String>();
+                failMap.put(String.format("cartId=%d, batchNo=%d", cartId, batchNo), String.format("找不到商品上下架历史, cartId=%d, batchNo=%d", cartId, batchNo));
+                failList.add(failMap);
+
                 $warn("CmsPlatformActiceLogService 找不到商品上下架历史 cartId=%d，batchNo=%d", cartId, batchNo);
                 continue;
             }
@@ -265,6 +284,11 @@ public class CmsPlatformActiveLogService extends BaseService {
 
             List<Map<String, Object>> prs = platformActiveLogDao.aggregateToMap(channelId, aggrList);
             if (prs == null || prs.isEmpty()) {
+
+                Map<String, String> failMap = new HashMap<String, String>();
+                failMap.put(String.format("cartId=%d, channelId=%s, batchNo=%d", cartId, channelId, batchNo), String.format("产品不存在, cartId=%d, channelId=%s, batchNo=%d", cartId, channelId, batchNo));
+                failList.add(failMap);
+
                 $error("CmsPlatformActiceLogService 产品不存在 cartId=%d, channelId=%s", cartId, channelId);
                 continue;
             }
@@ -274,6 +298,11 @@ public class CmsPlatformActiveLogService extends BaseService {
                 String numIId = StringUtils.trimToNull((String) prodObj.get("_id"));
                 List<String> pcdList = (List<String>) prodObj.get("pcdList");
                 if (numIId == null || pcdList == null || pcdList.isEmpty()) {
+
+                    Map<String, String> failMap = new HashMap<String, String>();
+                    failMap.put(String.format("cartId=%d, channelId=%s, data=%s", cartId, channelId, JacksonUtil.bean2Json(prodObj)), "数据错误");
+                    failList.add(failMap);
+
                     $error("CmsPlatformActiceLogService 数据错误 cartId=%d, channelId=%s data=%s", cartId, channelId, prodObj.toString());
                     continue;
                 }
@@ -416,6 +445,11 @@ public class CmsPlatformActiveLogService extends BaseService {
                     }
 
                 } else {
+
+                    Map<String, String> failMap = new HashMap<String, String>();
+                    failMap.put(String.format("cartId=%d", cartId), String.format("不正确的平台 cartId=%d", cartId));
+                    failList.add(failMap);
+
                     $error("CmsPlatformActiceLogService 不正确的平台 cartId=%d", cartId);
                 }
                 if (!updRsFlg) {
@@ -492,6 +526,7 @@ public class CmsPlatformActiveLogService extends BaseService {
                 $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, batchNo=%d cmsBtProduct更新结果=%s", cartId, channelId, batchNo, rs.toString());
             }
         }
+        return failList;
     }
 
     // 取得商品对应的平台状态
