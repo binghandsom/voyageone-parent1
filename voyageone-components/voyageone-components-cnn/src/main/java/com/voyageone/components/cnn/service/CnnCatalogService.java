@@ -93,7 +93,7 @@ public class CnnCatalogService extends CnnBase {
         request.put("id", id);
 
         // 调用新独立域名修改店铺内分类名称API
-        result = reqApi(shop, CnnConstants.CnnApiAction.CATALOG_DELETE + id, request);
+        result = reqApi(shop, CnnConstants.CnnApiAction.CATALOG_DELETE, request);
         if(!StringUtil.isEmpty(result)){
             Map<String, Object> ret = JacksonUtil.jsonToMap(result);
             if(CnnConstants.C_CNN_RETURN_SUCCESS_0 != (Integer)ret.get("code")){

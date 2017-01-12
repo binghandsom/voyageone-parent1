@@ -260,6 +260,7 @@ public class SellerCatService extends BaseService {
             if (index == -1) {
                 throw new BusinessException("从树形目录中获取序号错误！");
             }
+            currentNode.setCatName(cName);
             cnSellerCatService.updateSellerCat(currentNode, shopBean, index + 1);
         }
 
