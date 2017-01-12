@@ -540,7 +540,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
         if (!StringUtils.isEmpty(mainProdCommField.getShortDesCn())) {
             paramCommonFields.put("shortDesc", mainProdCommField.getShortDesCn());
         } else {
-            paramCommonFields.put("shortDesc", mainProdCommField.getShortDesEn());
+            paramCommonFields.put("shortDesc", mainProdCommField.getShortDesEn().substring(0, 1000));
         }
         // 详情描述(中文)
         if (!StringUtils.isEmpty(mainProdCommField.getLongDesCn())) {
@@ -552,7 +552,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
         if (!StringUtils.isEmpty(mainProdCommField.getMaterialCn())) {
             paramCommonFields.put("material", mainProdCommField.getMaterialCn());
         } else {
-            paramCommonFields.put("material", mainProdCommField.getMaterialEn());
+            paramCommonFields.put("material", mainProdCommField.getMaterialEn().substring(0, 1000));
         }
         // 商品特质(颜色/口味/香型等)(中文) (对应于cms中的color/codeDiff)
         if (!StringUtils.isEmpty(mainProdCommField.getColor())) {
@@ -578,7 +578,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
         if (!StringUtils.isEmpty(mainProdCommField.getUsageCn())) {
             paramCommonFields.put("usage", mainProdCommField.getUsageCn());
         } else {
-            paramCommonFields.put("usage", mainProdCommField.getUsageEn());
+            paramCommonFields.put("usage", mainProdCommField.getUsageEn().substring(0, 1000));
         }
 
         if (ListUtils.isNull(mainProdCommField.getImages1())
