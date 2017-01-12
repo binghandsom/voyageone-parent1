@@ -406,7 +406,7 @@ define(function () {
         "shelves-template": {
             "hash": "/shelves/template/management",
             "templateUrl": "views/shelves/template-management.tpl.html",
-            "controllerUrl": "modules/cms/views/shelves/template-management.ctl",
+            "controllerUrl": "modules/cms/views/shelves/template-management.ctl",//js type file
             "controller": "shelvesTemplateController as ctrl"
         },
         "shelves-list": {
@@ -439,6 +439,18 @@ define(function () {
             "templateUrl": "views/channel/channel-config-set/index.tpl.html",
             "controllerUrl": "modules/cms/views/channel/channel-config-set/index.ctl",
             "controller": "channelConfigSet as ctrl"
+        },
+        "test": {
+            "hash": "/test/test1",
+            "templateUrl": "views/test/Test.html",
+            "controllerUrl": "modules/cms/views/test/test.ctl"
+        },
+        "bi_report":
+        {
+           // "url": "/bi_report/download",    //url:what is this used for
+            "hash": "/bi_report/download",
+            "templateUrl": "views/bi_report/bi_report_advanceSearch.tpl.html",
+            "controllerUrl": "modules/cms/views/bi_report/bi_report_advanceSearch.ctl"
         }
     };
 });

@@ -176,6 +176,7 @@ public interface CmsUrlConstants {
                 String PROMOTION_EXPORT = "exportPromotion";
 
                 String DEL_PROMOTION = "delPromotion";
+                String TEST = "test";
             }
 
             interface DETAIL {
@@ -940,4 +941,16 @@ public interface CmsUrlConstants {
             String GET_SHELVES_HTML = "getShelvesHtml";
         }
     }
+    //bi_report
+    interface BIREPORT {
+        interface LIST {
+            interface DOWNLOAD {
+                String ROOT = "/cms/biReport/download";
+                String BIREPDOWNLOAD = "biRepDownload";
+                String CREATEXLSFILE="createXlsFile";
+                String DOWNLOADTEST="downloadTestss";
+            }
+        }
+    }
 }
+
