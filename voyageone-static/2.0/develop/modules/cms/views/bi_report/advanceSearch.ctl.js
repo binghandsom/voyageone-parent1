@@ -81,10 +81,11 @@ define([
         $scope.jdCategoryMapping = jdCategoryMapping;
         $scope.editPlatformAttribute = editPlatformAttribute;
         $scope.addShelves = addShelves;
+        $scope.advancetest = advancetest;
 
         function advancetest(data)
         {
-            alert(data);
+            alert("")
         }
 
         /**

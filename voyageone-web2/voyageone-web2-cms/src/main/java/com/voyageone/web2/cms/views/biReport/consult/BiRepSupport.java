@@ -1,44 +1,37 @@
-package com.voyageone.web2.cms.views.bi_report;
+package com.voyageone.web2.cms.views.biReport.consult;
 
-/**
- * Created by dell on 2017/1/10.
- */
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.springframework.stereotype.Service;
 
-import javax.swing.*;
-import java.io.*;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 利用开源组件POI3.0.2动态导出EXCEL文档
- * 转载时请保留以下信息，注明出处！
- * @author leno
- * @version v1.0
- * @param <T> 应用泛型，代表任意一个符合javabean风格的类
- * 注意这里为了简单起见，boolean型的属性xxx的get器方式为getXxx(),而不是isXxx()
- * byte[]表jpg格式的图片数据
+ * Created by dell on 2017/1/11.
  */
-public class ExportExcel<T>{
-
-    public void exportExcel(Collection<T> dataset, OutputStream out) {
-        exportExcel("测试POI导出EXCEL文档","测试表", null, dataset, out, "yyyy-MM-dd");
+@Service
+public class BiRepSupport<T> {
+    public  HSSFWorkbook exportExcel(Collection<T> dataset) {
+        return exportExcel("测试POI导出EXCEL文档","测试表", null, dataset, "yyyy-MM-dd");
     }
 
-    public void exportExcel(String[] headers, Collection<T> dataset,
-                            OutputStream out) {
-        exportExcel("测试POI导出EXCEL文档", "测试表",headers, dataset, out, "yyyy-MM-dd");
+    public HSSFWorkbook exportExcel(String[] headers, Collection<T> dataset) {
+       return exportExcel("测试POI导出EXCEL文档", "测试表",headers, dataset, "yyyy-MM-dd");
     }
 
-    public void exportExcel(String[] headers, Collection<T> dataset,
+    public HSSFWorkbook exportExcel(String[] headers, Collection<T> dataset,
                             OutputStream out, String pattern) {
-        exportExcel("测试POI导出EXCEL文档","测试表", headers, dataset, out, pattern);
+       return  exportExcel("测试POI导出EXCEL文档","测试表", headers, dataset, pattern);
     }
 
     /**
@@ -48,12 +41,11 @@ public class ExportExcel<T>{
      * @param headers 表格属性列名数组
      * @param dataset 需要显示的数据集合,集合中一定要放置符合javabean风格的类的对象。此方法支持的
      *                javabean属性的数据类型有基本数据类型及String,Date,byte[](图片数据)
-     * @param out     与输出设备关联的流对象，可以将EXCEL文档导出到本地文件或者网络中
      * @param pattern 如果有时间数据，设定输出格式。默认为"yyy-MM-dd"
      */
     @SuppressWarnings("unchecked")
-    public void exportExcel(String title,String Name,String[] headers,
-                            Collection<T> dataset, OutputStream out, String pattern) {
+    public  HSSFWorkbook exportExcel(String title,String Name,String[] headers,
+                            Collection<T> dataset, String pattern) {
         // 声明一个工作薄
         HSSFWorkbook workbook = new HSSFWorkbook();
         // 生成一个表格
@@ -102,8 +94,8 @@ public class ExportExcel<T>{
         // 设置注释作者，当鼠标移动到单元格上是可以在状态栏中看到该内容.
         comment.setAuthor("leno");
         //create the name row
-        HSSFRow bigTitlerow=sheet.createRow(6);
-        HSSFCell bigTitlecell=bigTitlerow.createCell(15);
+        HSSFRow bigTitlerow=sheet.createRow(0);
+        HSSFCell bigTitlecell=bigTitlerow.createCell(0);
         bigTitlecell.setCellStyle(style);
         bigTitlecell.setCellValue(Name);
         //产生表格标题行
@@ -218,54 +210,14 @@ public class ExportExcel<T>{
             }
 
         }
-        try {
+        sheet.addMergedRegion(new CellRangeAddress(0,0,0,headers.length-1));//merge the cell
+      /*  try {
+
             workbook.write(out);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
-
-    }
-
-    public static void main(String[] args) {
-        // 测试学生
-        ExportExcel<Student> ex = new ExportExcel<Student>();
-        String[] headers = {"学号", "姓名", "年龄", "性别", "出生日期"};
-        List<Student> dataset = new ArrayList<Student>();
-        dataset.add(new Student(10000001, "张三", 20, true, new Date()));
-        dataset.add(new Student(20000002, "李四", 24, false, new Date()));
-        dataset.add(new Student(30000003, "王五", 22, true, new Date()));
-        // 测试图书
-        ExportExcel<Book> ex2 = new ExportExcel<Book>();
-        String[] headers2 = {"图书编号", "图书名称", "图书作者", "图书价格", "图书ISBN",
-                "图书出版社", "封面图片"};
-        List<Book> dataset2 = new ArrayList<Book>();
-        try {
-            BufferedInputStream bis = new BufferedInputStream(
-                    new FileInputStream("voyageone-static/2.0/develop/static/img/01.jpg"));
-            byte[] buf = new byte[bis.available()];
-            while ((bis.read(buf)) != -1) {
-                //
-            }
-            dataset2.add(new Book(1, "jsp", "leno", 300.33f, "1234567", "清华出版社", buf));
-            dataset2.add(new Book(2, "java编程思想", "brucl", 300.33f, "1234567", "阳光出版社", buf));
-            dataset2.add(new Book(3, "DOM艺术", "lenotang", 300.33f, "1234567", "清华出版社", buf));
-            dataset2.add(new Book(4, "c++经典", "leno", 400.33f, "1234567", "清华出版社", buf));
-            dataset2.add(new Book(5, "c#入门", "leno", 300.33f, "1234567", "汤春秀出版社", buf));
-
-            OutputStream out = new FileOutputStream("E://test.xls");
-            OutputStream out2 = new FileOutputStream("E://test1.xls");
-            ex.exportExcel(headers, dataset, out);
-            ex2.exportExcel(headers2, dataset2, out2);
-            out.close();
-            JOptionPane.showMessageDialog(null, "导出成功!");
-            System.out.println("excel导出成功！");
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        }*/
+        return workbook;
     }
 }
