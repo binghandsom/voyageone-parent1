@@ -2,7 +2,7 @@ package com.voyageone.web2.openapi.bi.control;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
-import com.voyageone.service.impl.cms.vomqservice.CmsProcductBIDataService;
+import com.voyageone.service.impl.cms.vomqjobservice.CmsProcductBIDataService;
 import com.voyageone.web2.openapi.OpenApiBaseController;
 import com.voyageone.web2.openapi.bi.constants.BiUrlConstants;
 import com.voyageone.web2.openapi.bi.service.DataServiceTB;

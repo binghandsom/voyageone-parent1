@@ -45,10 +45,10 @@ public class CmsConfirmRetailPriceService extends VOAbsLoggable {
         String userName = StringUtils.trimToNull((String) messageMap.get("_userName"));
         List<String> codeList = (List<String>) messageMap.get("productIds");
         List<Integer> cartList = (List<Integer>) messageMap.get("cartIds");
-        if (channleId == null || userName == null || codeList == null || codeList.isEmpty() || cartList == null || cartList.isEmpty()) {
+        /*if (channleId == null || userName == null || codeList == null || codeList.isEmpty() || cartList == null || cartList.isEmpty()) {
             $error("高级检索 指导价变更批量确认 缺少参数");
             return;
-        }
+        }*/
 
         JongoQuery qryObj = new JongoQuery();
         JongoUpdate updObj = new JongoUpdate();

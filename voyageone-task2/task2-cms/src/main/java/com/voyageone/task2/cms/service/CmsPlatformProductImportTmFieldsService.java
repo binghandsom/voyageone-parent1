@@ -202,7 +202,7 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
             updateCmsBtPlatformNumiid(channelId, cartId, listSuccessNumiid, listErrorNumiid);
             if (ListUtils.notNull(listAllNumiid)) {
                 // 存在没有搜到的numIId
-                cmsBtPlatformNumiidDaoExt.updateStatusByNumiids(channelId, Integer.valueOf(cartId), "3", getTaskName(), listSuccessNumiid);
+                cmsBtPlatformNumiidDaoExt.updateStatusByNumiids(channelId, Integer.valueOf(cartId), "3", getTaskName(), listAllNumiid);
             }
         }
     }
@@ -550,11 +550,14 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
 //        listProducts.forEach(product -> sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, product));
         listProducts.forEach(product -> {
             ProductPriceUpdateMQMessageBody productPriceUpdateMQMessageBody = new ProductPriceUpdateMQMessageBody();
-            productPriceUpdateMQMessageBody.setParams(product);
+            productPriceUpdateMQMessageBody.setChannelId(channelId);
+            productPriceUpdateMQMessageBody.setProdId((Long) product.get("productId"));
+            productPriceUpdateMQMessageBody.setCartId((Integer) product.get("cartId"));
+            productPriceUpdateMQMessageBody.setSender(CmsMqRoutingKey.CMS_BATCH_TMFieldsImportCms2Job);
             try {
                 sender.sendMessage(productPriceUpdateMQMessageBody);
             } catch (MQMessageRuleException e) {
-                e.printStackTrace();
+                $error("向Mq发送消息同步sku,code,group价格范围异常", e);
             }
         });
         // added by morse.lu 2017/01/05 end

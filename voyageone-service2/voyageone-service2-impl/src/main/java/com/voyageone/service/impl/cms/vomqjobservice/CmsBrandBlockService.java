@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms.vomqservice;
+package com.voyageone.service.impl.cms.vomqjobservice;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;

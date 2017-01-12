@@ -466,7 +466,8 @@ define(function () {
                 },
                 "$valueChannelService": {
                     "root": "/cms/system/valueChannel/",
-                    "addHsCodes": "addHsCode"
+                    "addHsCodes": "addHsCode",
+                    "addEtkHsCode":"addEtkHsCode"
                 }
             },
             "pop": {

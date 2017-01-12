@@ -31,11 +31,11 @@ public class OperationResult {
     }
 
     public String getMsg() {
-        return msg;
+        return sbError.toString();
     }
 
     public void setMsg(String msg) {
-        this.msg = msg;
+        sbError.append(msg);
     }
 
     public int getErrorCode() {
@@ -52,5 +52,16 @@ public class OperationResult {
 
     public void setResult(boolean result) {
         this.result = result;
+    }
+
+    StringBuilder sbError = new StringBuilder();
+
+    public void addError(String format, Object... args) {
+        this.result = false;
+        sbError.append(String.format(format, args));
+    }
+    public void addErrorln(String format, Object... args) {
+        this.addError(format,args);
+        sbError.append("\\r\\n");
     }
 }

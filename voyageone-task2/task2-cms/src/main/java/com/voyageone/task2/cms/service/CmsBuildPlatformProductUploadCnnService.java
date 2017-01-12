@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
 public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService {
 
     // 新独立域名平台ID(34)
-    private static final int CART_ID_CNN = CartEnums.Cart.CNN.getValue();
+    private static final int CART_ID_CNN = CartEnums.Cart.LIKING.getValue();
     // 分隔符(,)
     private final static String Separtor_Coma = ",";
     // 线程数(synship.tm_task_control中设置的当前job的最大线程数"thread_count", 默认为3)
@@ -520,7 +520,9 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
         // 品牌名/制造商名
         paramCommonFields.put("brand", mainProdCommField.getBrand());
         // 产品名称(中文) (对应于cms中的originalTitleCn/productNameEn)
-        if (!StringUtils.isEmpty(mainProdCommField.getOriginalTitleCn())) {
+        if (mainProdPlatCart != null && !StringUtils.isEmpty(mainProdPlatCart.getFieldsNotNull().getStringAttribute("productTitle"))) {
+            paramCommonFields.put("title", mainProdPlatCart.getFieldsNotNull().getStringAttribute("productTitle"));
+        } else if (!StringUtils.isEmpty(mainProdCommField.getOriginalTitleCn())) {
             paramCommonFields.put("title", mainProdCommField.getOriginalTitleCn());
         } else {
             paramCommonFields.put("title", mainProdCommField.getProductNameEn());

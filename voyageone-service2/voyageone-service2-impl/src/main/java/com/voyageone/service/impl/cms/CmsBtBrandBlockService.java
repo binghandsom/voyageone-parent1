@@ -4,7 +4,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.dao.cms.CmsBtBrandBlockDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.vomqservice.CmsBrandBlockService;
+import com.voyageone.service.impl.cms.vomqjobservice.CmsBrandBlockService;
 import com.voyageone.service.model.cms.CmsBtBrandBlockModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
