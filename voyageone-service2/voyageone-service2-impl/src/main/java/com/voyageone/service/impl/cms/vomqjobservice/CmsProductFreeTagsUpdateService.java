@@ -11,8 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
+
 /**
- * Created by dell on 2017/1/12.
+ * CmsProductFreeTagsUpdateService    高级搜索-设置自由标签 消息处理服务类
+ *
+ * @author sunpt on 2017/01/12
+ * @version 2.0.0
  */
 @Service
 public class CmsProductFreeTagsUpdateService extends BaseService {
