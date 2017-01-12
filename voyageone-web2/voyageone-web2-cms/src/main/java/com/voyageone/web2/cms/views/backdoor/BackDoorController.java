@@ -1861,12 +1861,12 @@ public class BackDoorController extends CmsController {
         List<Long> prodId = productList.stream().map(CmsBtProductModel::getProdId).collect(toList());
 
         if (prodId != null && prodId.size() > 0) {
-            Map<String,Object> newLog = new HashMap<>();
+            /*Map<String,Object> newLog = new HashMap<>();*/
             for (Long id:prodId) {
-                newLog.clear();
+                /*newLog.clear();
                 newLog.put("cartId",cartId);
                 newLog.put("productId",id.intValue());
-                newLog.put("channelId",channelId);
+                newLog.put("channelId",channelId);*/
                 ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
                 mqMessageBody.setChannelId(channelId);
                 mqMessageBody.setProdId(id);
