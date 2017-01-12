@@ -2,42 +2,40 @@ package com.voyageone.web2.cms.views.bi_report;
 
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.util.CellRangeAddress;
 
 import javax.swing.*;
 import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by dell on 2017/1/10.
  */
 public class BiRep<T>{
-    String explain="test poi output excel document";
+
+    private static int rowIndex=0;
+    public void exportExcel(String[] headers1,String[] headers2,String[] headers3,Collection<T> dataset, OutputStream out) {
+        exportExcel( null,headers1, headers2,headers3,dataset,  out,null);
+    }
+   /* String explain="test poi output excel document";
     public void exportExcel(String bigTitle,Collection<T> dataset, OutputStream out) {
-        exportExcel( bigTitle,"测试POI导出EXCEL文档", null, dataset, out, "yyyy-MM-dd");
+        exportExcel( null,headers1, headers2,headers3,dataset,  out,null);
     }
 
     public void exportExcel(String bigTitle,String[] headers, Collection<T> dataset,
                             OutputStream out) {
-        exportExcel(bigTitle,"测试POI导出EXCEL文档", headers, dataset, out, "yyyy-MM-dd");
-    }
+        exportExcel( null,headers1, headers2,headers3,dataset,  out,null);
+    }*/
 
-    public void exportExcel(String bigTitle,String[] headers, Collection<T> dataset,
+    public void exportExcel(String headers1,String[] headers2,String[] headers3, Collection<T> dataset,
                             OutputStream out, String pattern) {
-        exportExcel(bigTitle,"测试POI导出EXCEL文档", headers, dataset, out, pattern);
+        exportExcel( headers1, headers2,headers3,dataset,  out,pattern);
     }
-    public void exportExcel(String bigTitle,String title, String[] headers,Collection<T> dataset, OutputStream out, String pattern)
+    public void exportExcel(String SheetTitle,String[] headers1, String[] headers2,String[] headers3,Collection<T> dataset, OutputStream out, String pattern)
     {
         //declaim a woorkbook
         HSSFWorkbook workbook=new HSSFWorkbook();
         //create a new sheet
-        HSSFSheet sheet=workbook.createSheet(title);
+        HSSFSheet sheet=workbook.createSheet(SheetTitle);
         //set the sheet default column width via character
         sheet.setDefaultColumnWidth((short)15);
         //create a sheet style
@@ -91,20 +89,40 @@ public class BiRep<T>{
         style2.setFont(font2);
 
         //declaim a top manager painter, what is this?
-        HSSFPatriarch patriarch=sheet.createDrawingPatriarch();
+     /*   HSSFPatriarch patriarch=sheet.createDrawingPatriarch();
         //define comment location nd weight
         HSSFComment comment = patriarch.createComment(new HSSFClientAnchor(0, 0, 0, 0, (short) 4, 2, (short) 6, 5));
         //design the comment context
         comment.setString(new HSSFRichTextString("you can comment in the poi"));
 
-        comment.setAuthor("leno");
+        comment.setAuthor("leno");*/
         //create table header rows
+
+        //Field [] fields=
+        HSSFRow headers1Row=sheet.createRow(rowIndex);
+        HSSFCell headers1Cell=headers1Row.createCell(rowIndex);
+        headers1Cell.setCellStyle(style);
+        headers1Cell.setCellValue(headers1[0]);
+
+       HSSFRow headers2Row=sheet.createRow(1);
+        for(int i=0;i<headers2.length;i++)
+        {
+            HSSFCell headers2Cell=headers2Row.createCell(i+3);
+            headers2Cell.setCellStyle(style2);
+            headers2Cell.setCellValue(headers2[i]);
+        }
+        //HSSF
+
+
+
+
+        /*
         HSSFRow bigTitlerow=sheet.createRow(0);
         HSSFCell bigTitlecell=bigTitlerow.createCell(0);
         bigTitlecell.setCellStyle(style);
-        bigTitlecell.setCellValue(bigTitle);
+        bigTitlecell.setCellValue(headers1[0]);
         HSSFRow row=sheet.createRow(1);
-        for(short i=0;i<headers.length;i++)
+        for(short i=0;i<headers2.length;i++)
         {
             HSSFCell cell=row.createCell(i);
             cell.setCellStyle(style);
@@ -189,32 +207,39 @@ public class BiRep<T>{
 
             }
         }
-        sheet.addMergedRegion(new CellRangeAddress(0,0,0,headers.length-1));
+        sheet.addMergedRegion(new CellRangeAddress(0,0,0,headers.length-1));//merge the cell
         try {
             workbook.write(out);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public static void main(String[] args)
     {
+        //set the headers value
         String [] header1={"SKU 日报"};
         Map attrMap=new HashMap<String,String>();
         String [] header2={"销售指标","运营指标","属性"};
-        
+        String [] headers3_cn={"商品ID","商品名称","商品Code","SKU","销售额","销售量","买家数","人居成交件数","客单价","PV","UV","转化率","加购件数","收藏人数","页面停留时间","跳失率","访客价值","收藏价值","类目","Branch","Color","Origin","Material","Weight","Size"};
+        //set the dataset
+        List<BiReportModel> biRepList=new ArrayList<BiReportModel>();
+        biRepList.add(new BiReportModel(327242940d,"美国原装进口Archer Farms燕麦片340g 营养早餐谷物冲饮 多种口味","112233","aaa",1000,20f,8,2f,7.89f,22506,8345,12.43f,404,429f,48.00f,61.92f,"0.98","食品","amazon","green","amazon",4,5));
+        biRepList.add(new BiReportModel(327242934d,"南非原装进口Archer Farms燕麦片560g 营养早餐谷物冲饮 多种口味","112233","aaa",1000,20f,8,2f,7.89f,22506,8345,12.43f,404,429f,48.00f,61.92f,"0.98","食品","amazon","green","amazon",4,5));
+
+        //create the excel xls file;
+        BiRep<BiReportModel> bip1=new BiRep<BiReportModel>();
+        bip1.exportExcel(header1,header2,headers3_cn,biRepList,null);
 
 
 
-
-
-        String[] bigTitle={"学生表","书籍表"};
+      /*  String[] bigTitle={"学生表","书籍表"};
         BiRep<Student> biRep1 = new BiRep<Student>();
         String[] headers = {"学号", "姓名", "年龄", "性别", "出生日期"};
         List<Student> dataset = new ArrayList<Student>();
         dataset.add(new Student(10000001, "张三", 20, true, new Date()));
         dataset.add(new Student(20000002, "李四", 24, false, new Date()));
-        dataset.add(new Student(30000003, "王五", 22, true, new Date()));
+        dataset.add(new Student(30000003, "王五", 22, true, new Date()));*/
         BiRep<Book> biRep = new BiRep<Book>();
         String[] headers2 = {"图书编号", "图书名称", "图书作者", "图书价格", "图书ISBN",
                 "图书出版社", "封面图片"};
@@ -234,8 +259,8 @@ public class BiRep<T>{
 
             OutputStream out = new FileOutputStream("E://book.xls");
             OutputStream out2 = new FileOutputStream("E://student.xls");
-            biRep1.exportExcel(bigTitle[1],headers, dataset, out);
-            biRep.exportExcel(bigTitle[1],headers2, dataset2, out2);
+          /*  biRep1.exportExcel(bigTitle[1],headers, dataset, out);*/
+           // biRep.exportExcel(bigTitle[2],headers2, dataset2, out2);
             out.close();
             JOptionPane.showMessageDialog(null, "导出成功!");
             System.out.println("excel导出成功！");

@@ -33,7 +33,6 @@ public class BiReportModel {
             Double goodsId,
             String goodsName,
             String goodsCode,
-            Integer id,
              String skuName,
               Integer sale_number,
              Float sale_account,
@@ -59,7 +58,6 @@ public class BiReportModel {
         this.goodsId=goodsId;
         this.goodsName=goodsName;
         this.skuName=skuName;
-        this.id=id;
         this.skuName=skuName;
         this.sale_number=sale_number;
         this. sale_account=sale_account;
