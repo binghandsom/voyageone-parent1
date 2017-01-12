@@ -10,6 +10,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
@@ -481,7 +482,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             sxProductService.doUploadFinalProc(shop, false, sxData, cmsBtSxWorkloadModel, "", null, "", getTaskName());
 
             $error(String.format("%s单个商品%s异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s] [errMsg:%s] [耗时:%s]",
-                        UPLOAD_NAME, isUpdate ? "更新" : "上新", channelId, cartId, groupId, cnnWareId, Arrays.toString(ex.getStackTrace())), (System.currentTimeMillis() - prodStartTime));
+                    UPLOAD_NAME, isUpdate ? "更新" : "上新", channelId, cartId, groupId, cnnWareId, Arrays.toString(ex.getStackTrace())), (System.currentTimeMillis() - prodStartTime));
             return;
         }
     }
@@ -537,10 +538,17 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             paramCommonFields.put("title", mainProdCommField.getProductNameEn());
         }
         // 简短描述(中文)
-        if (!StringUtils.isEmpty(mainProdCommField.getShortDesCn())) {
-            paramCommonFields.put("shortDesc", mainProdCommField.getShortDesCn());
+        String shortDesc = org.apache.commons.lang3.StringUtils.trimToNull(mainProdCommField.getShortDesCn());
+        if (shortDesc == null) {
+            shortDesc = org.apache.commons.lang3.StringUtils.trimToNull(mainProdCommField.getShortDesEn());
+            if (shortDesc == null) {
+                paramCommonFields.put("shortDesc", "");
+            } else {
+                paramCommonFields.put("shortDesc", shortDesc.length() > 1000 ? shortDesc.substring(0, 1000) : shortDesc);
+            }
         } else {
-            paramCommonFields.put("shortDesc", mainProdCommField.getShortDesEn().substring(0, 1000));
+            paramCommonFields.put("shortDesc", shortDesc.length() > 1000 ? shortDesc.substring(0, 1000) : shortDesc);
+
         }
         // 详情描述(中文)
         if (!StringUtils.isEmpty(mainProdCommField.getLongDesCn())) {
@@ -549,10 +557,16 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             paramCommonFields.put("longDesc", mainProdCommField.getLongDesEn());
         }
         // 材质(中文)
-        if (!StringUtils.isEmpty(mainProdCommField.getMaterialCn())) {
-            paramCommonFields.put("material", mainProdCommField.getMaterialCn());
+        String material = org.apache.commons.lang3.StringUtils.trimToNull(mainProdCommField.getMaterialCn());
+        if (material == null) {
+            material = org.apache.commons.lang3.StringUtils.trimToNull(mainProdCommField.getMaterialEn());
+            if (material == null) {
+                paramCommonFields.put("material", "");
+            } else {
+                paramCommonFields.put("material", material.length() > 1000 ? material.substring(0, 1000) : material);
+            }
         } else {
-            paramCommonFields.put("material", mainProdCommField.getMaterialEn().substring(0, 1000));
+            paramCommonFields.put("material", material.length() > 1000 ? material.substring(0, 1000) : material);
         }
         // 商品特质(颜色/口味/香型等)(中文) (对应于cms中的color/codeDiff)
         if (!StringUtils.isEmpty(mainProdCommField.getColor())) {
@@ -578,7 +592,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
         if (!StringUtils.isEmpty(mainProdCommField.getUsageCn())) {
             paramCommonFields.put("usage", mainProdCommField.getUsageCn());
         } else {
-            paramCommonFields.put("usage", mainProdCommField.getUsageEn().substring(0, 1000));
+            paramCommonFields.put("usage", mainProdCommField.getUsageEn());
         }
 
         if (ListUtils.isNull(mainProdCommField.getImages1())
@@ -911,7 +925,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
      * @return String  log头部信息
      */
     private String getPreMsg(String shopName, String sxType) {
-        return shopName + "[" + sxType + "] ";
+        return StringUtils.isEmpty(sxType) ? (shopName + " ") : (shopName + "[" + sxType + "] ");
     }
 
     /**
