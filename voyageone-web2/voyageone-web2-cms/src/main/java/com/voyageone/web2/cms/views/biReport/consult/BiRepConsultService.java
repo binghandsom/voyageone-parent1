@@ -102,7 +102,7 @@ public class BiRepConsultService {
         key.setDate(date1);
         key.setShopId(19);
         key.setProductId(249);
-        BiReportSalesProduct010Model model1=biReportSalesProduct010Dao.selectOne(key);
+        BiReportSalesProduct010Model model1=biReportSalesProduct010Dao.select(key);
         System.out.println(model1.getAddCart()+" ————"+model1.getAddFavorite());
 //        map.put("Date",date1);
 //        product010ModelList=biReportSalesProduct010Dao.selectList(date1);
