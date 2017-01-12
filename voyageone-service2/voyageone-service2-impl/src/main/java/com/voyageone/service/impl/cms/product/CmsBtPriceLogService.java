@@ -93,8 +93,10 @@ public class CmsBtPriceLogService extends BaseService {
             if (paramMap.size() > 0) {
                 for (CmsBtPriceLogModel value:paramMap.values()) {
                     ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
-                    mqMessageBody.setParams(JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(value)));
-                    mqMessageBody.setSender(CmsMqRoutingKey.CMS_PRODUCT_PRICE_UPDATE);
+                    mqMessageBody.setChannelId(value.getChannelId());
+                    mqMessageBody.setCartId(value.getCartId());
+                    mqMessageBody.setProdId(Long.valueOf(String.valueOf(value.getProductId())));
+                    mqMessageBody.setSender(this.getClass().getSimpleName());
                     try {
                         mqSenderService.sendMessage(mqMessageBody);
                     } catch (MQMessageRuleException e) {
@@ -131,13 +133,15 @@ public class CmsBtPriceLogService extends BaseService {
         for (String sku : skuList) {
             addLogAndCallSyncPriceJob(sku, channelId, cartId, username, comment);
         }
-        Map<String,Object> newLog = new HashMap<>();
+        /*Map<String,Object> newLog = new HashMap<>();
         newLog.put("cartId",cartId);
         newLog.put("productId",productId);
-        newLog.put("channelId",channelId);
+        newLog.put("channelId",channelId);*/
         // 向Mq发送消息同步sku,code,group价格范围
         ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
-        mqMessageBody.setParams(newLog);
+        mqMessageBody.setChannelId(channelId);
+        mqMessageBody.setCartId(cartId);
+        mqMessageBody.setProdId(productId);
         mqMessageBody.setSender(username);
         try {
             mqSenderService.sendMessage(mqMessageBody);
@@ -234,16 +238,17 @@ public class CmsBtPriceLogService extends BaseService {
                             .count();
 
                     if (logCount > 0) {
-                        CmsBtPriceLogModel newLog = new CmsBtPriceLogModel();
-
+                        /*CmsBtPriceLogModel newLog = new CmsBtPriceLogModel();
                         newLog.setCartId(boxedCartId);
                         newLog.setProductId(productId);
-                        newLog.setChannelId(channelId);
+                        newLog.setChannelId(channelId);*/
 
                         // 向Mq发送消息同步sku,code,group价格范围
                         // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
                         ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
-                        mqMessageBody.setParams(JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
+                        mqMessageBody.setChannelId(channelId);
+                        mqMessageBody.setCartId(boxedCartId);
+                        mqMessageBody.setProdId(productModel.getProdId());
                         mqMessageBody.setSender(username);
                         try {
                             mqSenderService.sendMessage(mqMessageBody);
