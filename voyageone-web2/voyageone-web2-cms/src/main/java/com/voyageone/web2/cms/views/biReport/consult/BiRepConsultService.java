@@ -2,14 +2,17 @@ package com.voyageone.web2.cms.views.biReport.consult;
 
 import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.configs.beans.TestBean;
-import com.voyageone.service.dao.cms.BiReportSalesProduct010Dao;
-import com.voyageone.service.model.cms.BiReportSalesProduct010Model;
+import com.voyageone.service.dao.report.BiReportSalesProduct010Dao;
+import com.voyageone.service.model.report.BiReportSalesProduct010Key;
+import com.voyageone.service.model.report.BiReportSalesProduct010Model;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -86,15 +89,28 @@ public class BiRepConsultService {
 //        }
 
     }
-    public List<BiReportSalesProduct010Model> getData()
+    public List<BiReportSalesProduct010Model> getData() throws ParseException
     {
-        List<BiReportSalesProduct010Model> product010ModelList=new ArrayList<BiReportSalesProduct010Model>();
-        product010ModelList =biReportSalesProduct010Dao.selectList(null);
-        for(int i=0;i<10;i++)
+        BiReportSalesProduct010Key key=new BiReportSalesProduct010Key();
+
+        List<BiReportSalesProduct010Model> product010ModelList=null;
+        Map <String,Date> map=new HashMap<>();
+//        Date date=new Date("2016-03-05");
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+        Date date1=sdf.parse("2016-03-05");
+        key.setDate(date1);
+        key.setShopId(19);
+        key.setProductId(249);
+        BiReportSalesProduct010Model model1=biReportSalesProduct010Dao.selectOne(key);
+        System.out.println(model1.getAddCart()+" ————"+model1.getAddFavorite());
+//        map.put("Date",date1);
+//        product010ModelList=biReportSalesProduct010Dao.selectList(date1);
+       /* for(int i=0;i<10;i++)
         {
             System.out.println(product010ModelList.get(i).getAddCart()+"------"+product010ModelList.get(i).getAddFavorite());
         }
-        return null;
+        return null;*/
+       return null;
     }
 
 

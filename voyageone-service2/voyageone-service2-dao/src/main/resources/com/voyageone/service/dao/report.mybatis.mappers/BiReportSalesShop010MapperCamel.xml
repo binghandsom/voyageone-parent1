@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.voyageone.service.dao.cms.BiReportSalesShop010Dao" >
-    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.BiReportSalesShop010Model" />
+<mapper namespace="com.voyageone.service.dao.report.BiReportSalesShop010Dao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.report.BiReportSalesShop010Model" />
     <sql id="Base_Column_List" >
         `date`, `shop_id`, `orders`, `qty`, `amt`, `buyers`, `uv`, `pv`, `add_favortite`, 
         `uv_regular`, `on_sale`, `in_stock`, `shipping`, `direct_express`, `not_express_72h`, 
@@ -9,7 +9,7 @@
         `return_rate`, `return_quality_ranking`, `return_disputes_rate`
     </sql>
 
-    <select id="select" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.cms.BiReportSalesShop010Key" >
+    <select id="select" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.report.BiReportSalesShop010Key" >
         select 
         <include refid="Base_Column_List" />
         from bi_report_sales_shop_010
@@ -17,7 +17,7 @@
           and `shop_id` = #{shopId,jdbcType=INTEGER}
     </select>
 
-    <update id="update" parameterType="com.voyageone.service.model.cms.BiReportSalesShop010Model" >
+    <update id="update" parameterType="com.voyageone.service.model.report.BiReportSalesShop010Model" >
         update bi_report_sales_shop_010
         <set >
             <if test="orders != null" >
@@ -88,7 +88,7 @@
           and `shop_id` = #{shopId,jdbcType=INTEGER}
     </update>
 
-    <delete id="delete" parameterType="com.voyageone.service.model.cms.BiReportSalesShop010Key" >
+    <delete id="delete" parameterType="com.voyageone.service.model.report.BiReportSalesShop010Key" >
         delete from bi_report_sales_shop_010
         where `date` = #{date,jdbcType=DATE}
           and `shop_id` = #{shopId,jdbcType=INTEGER}
@@ -306,7 +306,7 @@
         </where>
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.BiReportSalesShop010Model" >
+    <insert id="insert" parameterType="com.voyageone.service.model.report.BiReportSalesShop010Model" >
         insert into bi_report_sales_shop_010
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="date != null" >
