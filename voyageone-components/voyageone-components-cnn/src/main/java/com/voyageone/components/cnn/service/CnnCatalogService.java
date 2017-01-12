@@ -7,6 +7,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.cnn.CnnBase;
 import com.voyageone.components.cnn.enums.CnnConstants;
+import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -156,21 +157,27 @@ public class CnnCatalogService extends CnnBase {
      * 重置所有店铺内分类
      *
      * @param shop 店铺信息
-     * @param numIId 商品id
      * @param idList 店铺内分类ID(必须) 店铺内分类ID列表，最多10个，目前必须是叶子节点
      * @return String 返回结果JSON串
      */
-    public String resetAllCatalog(ShopBean shop, String numIId, List<String> idList) throws Exception {
+    public Map<String, Object> resetAllCatalog(ShopBean shop, List<CmsBtSellerCatModel> idList) throws Exception {
         String result;
 
         Map<String, Object> request = new HashMap<>();
-//        request.put("numIId", numIId);// 这里要改 TODO
+        request.put("catalogList", idList);// 这里要改 TODO
 //        request.put("idList", idList);
 
         // 调用新独立域名修改店铺内分类名称API
-        result = reqApi(shop, CnnConstants.CnnApiAction.CATALOG_ADD, request);  // 这里要改 TODO
-
-        return result;
+        result = reqApi(shop, CnnConstants.CnnApiAction.CATALOG_RESET, request);  // 这里要改 TODO
+        if(!StringUtil.isEmpty(result)){
+            Map<String, Object> ret = JacksonUtil.jsonToMap(result);
+            if(CnnConstants.C_CNN_RETURN_SUCCESS_0 != (Integer)ret.get("code")){
+                throw new BusinessException("重置所有店铺内分类失败， 请再尝试一下。 "+ result);
+            }
+            return ret;
+        }else{
+            throw new BusinessException("重置所有店铺内分类失败， 请再尝试一下。 ");
+        }
     }
 
     /**

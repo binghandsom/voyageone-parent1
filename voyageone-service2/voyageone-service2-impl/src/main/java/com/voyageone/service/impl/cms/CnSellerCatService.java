@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.sun.tools.javac.jvm.ByteCodes.ret;
@@ -94,7 +95,6 @@ public class CnSellerCatService {
 
     /**
      * 重载上面的方法，独立官网修改单个类目的名称后，调用单个独立官网的类目更新接口时，需要传入该类目的index给类目
-     * @param currentNode
      * @param shopBean
      * @param index
      */
@@ -146,6 +146,14 @@ public class CnSellerCatService {
             cnnCatalogService.deleteCatalog(shopBean, currentNode.getCatId());
         }catch (Exception e) {
             throw new BusinessException("删除类目失败， 请再尝试一下。" + e.getMessage());
+        }
+    }
+
+    public void resetAllCatalog(List<CmsBtSellerCatModel> cmsBtSellerCatModels, ShopBean shopBean){
+        try {
+            cnnCatalogService.resetAllCatalog(shopBean,cmsBtSellerCatModels);
+        } catch (Exception e) {
+            throw new BusinessException("重置所有店铺内分类失败， 请再尝试一下。" + e.getMessage());
         }
     }
 }

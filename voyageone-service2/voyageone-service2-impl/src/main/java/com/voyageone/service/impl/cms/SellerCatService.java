@@ -579,6 +579,11 @@ public class SellerCatService extends BaseService {
         // 获取店铺内分类的列表
         List<CmsBtSellerCatModel> sellerCatList = getSellerCatsByChannelCart(channelId, cartId);
 
+        if(cartId == CartEnums.Cart.LIKING.getValue()){
+            cnSellerCatService.resetAllCatalog(sellerCatList, shopBean);
+            return true;
+        }
+
         return doResetPlatformSellerCatIndex_sub(shopBean, sellerCatList);
     }
 
@@ -791,6 +796,8 @@ public class SellerCatService extends BaseService {
     public void saveSortableCat(List<Map> allCats, String channelId, Integer cartId) {
         //根据channelId和cartId去删除数据库对应的树
         cmsBtSellerCatDao.deleteSortableCat(cartId, channelId);
+
+        List<CmsBtSellerCatModel> sellerCatList = new ArrayList<>();
         //保存整组分类树
         for (Map model : allCats) {
             CmsBtSellerCatModel modelCat = new CmsBtSellerCatModel();
@@ -798,13 +805,15 @@ public class SellerCatService extends BaseService {
             BeanUtils.copyProperties(model, modelCat);
             //将整组树插入数据库
             cmsBtSellerCatDao.insert(modelCat);
+            sellerCatList.add(modelCat);
         }
         //重新设置店铺内分类的顺序
         // doResetPlatformSellerCatIndex(channelId, cartId);
         ShopBean shopBean = Shops.getShop(channelId, cartId);
         /*if (shopBean != null && CartEnums.Cart.LIKING.getId().equals(shopBean.getCart_id())) {*/
         if (shopBean != null && (CartEnums.Cart.LIKING.getId().equals(shopBean.getCart_id()) || CartEnums.Cart.CN.getId().equals(shopBean.getCart_id()))) {
-            cnCategoryService.uploadAllCnCategory(channelId, cartId, shopBean);
+            cnSellerCatService.resetAllCatalog(sellerCatList, shopBean);
+//            cnCategoryService.uploadAllCnCategory(channelId, cartId, shopBean);
         }
 
     }
