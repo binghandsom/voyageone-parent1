@@ -449,6 +449,11 @@ define(function () {
                         "init": "init",
                         "search": "search",
                         "updateFinishStatus": "updateFinishStatus"
+                    },
+                    "$mqErrorListService": {
+                        "root": "/cms/system/mqError",
+                        "init": "init",
+                        "search": "search"
                     }
                 },
                 "$storeOpService": {

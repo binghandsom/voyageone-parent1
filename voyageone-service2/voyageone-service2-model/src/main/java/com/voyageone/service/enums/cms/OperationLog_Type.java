@@ -5,11 +5,11 @@ package com.voyageone.service.enums.cms;
  */
 public enum OperationLog_Type {
     success(1, "成功"),
-    successIncludeFail(2),
-    parameterException(3),
-    configException(4),
-    businessException(5),
-    unknownException(6);
+    successIncludeFail(2,"失败异常"),
+    parameterException(3,"参数异常"),
+    configException(4,"配置异常"),
+    businessException(5,"业务异常"),
+    unknownException(6,"未知异常");
 
     short id;
 
@@ -41,7 +41,6 @@ public enum OperationLog_Type {
     }
 
     public static OperationLog_Type get(short id) {
-
         for (OperationLog_Type operationLog_type : OperationLog_Type.values()) {
             if (operationLog_type.getId() == id) {
                 return operationLog_type;

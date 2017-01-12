@@ -461,6 +461,14 @@ public interface CmsUrlConstants {
 
             String UPDATE_FINISH_STATUS = "updateFinishStatus";
         }
+        interface MQ_ERROR {
+
+            String ROOT = "/cms/system/mqError";
+
+            String INIT = "init";
+
+            String SEARCH = "search";
+        }
 
         interface CACHE {
 
