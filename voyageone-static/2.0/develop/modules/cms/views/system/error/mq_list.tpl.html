@@ -1,0 +1,93 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="fa fa-cogs"></i>&nbsp;Mq错误一览</h4>
+                </div>
+                <div class="container-fluid m-t-xs m-b-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <label class="col-sm-2 control-label">name</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" ng-model="ctrl.name" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <label class="col-sm-2 control-label">title</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" ng-model="ctrl.title" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-horizontal">
+                                <div class="row form-group">
+                                    <label class="col-sm-2 control-label ng-binding">Type 状态&nbsp;&nbsp;</label>
+                                    <label class="checkbox-inline c-checkbox ng-binding">
+                                        <input type="checkbox" ng-model=""
+                                               class="ng-pristine ng-untouched ng-valid ng-empty">
+                                        <span class="fa fa-check"></span> 新产品
+                                    </label> 
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-12 text-center m-b-sm">
+                            <div class="form-inline">
+                                <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'
+                                    | translate}}
+                                </button>
+                                <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH'
+                                    | translate}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        <div class="box-body">
+            <div class="table-responsive">
+                <table class="table table-hover-new vo_table tableWordBreak"
+                       style="margin-bottom:0px;table-layout: fixed;">
+                    <thead>
+                    <tr>
+                        <th class="text-center">name</th>
+                        <th class="text-center">title</th>
+                        <th class="text-center">type</th>
+                        <th class=" text-center">messageBody</th>
+                        <th class="text-center">comment</th>
+                        <th class="text-center">stackTrace</th>
+                        <th class="text-center">created</th>
+                        <th class="text-center">modified</th>
+                        <th class="text-center">modifier</th>
+                    </tr>
+                    </thead>
+                    <tbody ng-if="vm.errorList.length">
+                    <tr ng-repeat="errorInfo in vm.errorList track by errorInfo.id">
+                        <th class="text-center" ng-bind=""></th>
+                        <th class="text-left" ng-bind=""></th>
+                        <th class="text-left" ng-bind=""></th>
+                        <th class=" text-left"ng-bind=""></th>
+                        <th class="text-left" ng-bind=""></th>
+                        <th class="text-left" ng-bind=""></th>
+                        <th class="text-center"ng-bind=""></th>
+                    </tr>
+                    </tbody>
+                </table>
+                <div if-no-rows="vm.errorList.length"></div>
+            </div>
+        </div><!-- /.box-body -->
+        <div class="m-t-xs">
+            <vpagination config="ctrl.mqErrorPageOption"></vpagination>
+        </div>
+    </div>
+</div><!-- end .wrapper-md -->
