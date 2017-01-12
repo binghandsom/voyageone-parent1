@@ -1861,20 +1861,22 @@ public class BackDoorController extends CmsController {
         List<Long> prodId = productList.stream().map(CmsBtProductModel::getProdId).collect(toList());
 
         if (prodId != null && prodId.size() > 0) {
-            Map<String,Object> newLog = new HashMap<>();
+            /*Map<String,Object> newLog = new HashMap<>();*/
             for (Long id:prodId) {
-                newLog.clear();
+                /*newLog.clear();
                 newLog.put("cartId",cartId);
                 newLog.put("productId",id.intValue());
-                newLog.put("channelId",channelId);
+                newLog.put("channelId",channelId);*/
                 ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
-                mqMessageBody.setParams(JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
+                mqMessageBody.setChannelId(channelId);
+                mqMessageBody.setProdId(id);
+                mqMessageBody.setCartId(cartId);
                 mqMessageBody.setSender(getUser().getUserName());
                 try {
                     mqSenderService.sendMessage(mqMessageBody);
                 } catch (MQMessageRuleException e) {
                     $error(String.format("商品价格更新MQ发送异常，cartId=%s,productId=%s,channelId=%s", cartId, id, channelId), e);
-                    throw new BusinessException(String.format("MQ发送异常,cartId=%s,productId=%s,channelId=%s,异常:%s", cartId, id, channelId, e.getMessage()));
+                    throw new BusinessException(String.format("MQ发送异常,cartId=%d, productId=%d, channelId=%s,异常:%s", cartId, id, channelId, e.getMessage()));
                 }
             }
 
