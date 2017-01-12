@@ -24,6 +24,16 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
     @Autowired
     private ProductTagService productTagService;
 
+    /**
+     * 全量 高级查询条件 发送mq
+     *
+     * @param chanelId
+     * @param searchValue
+     * @param tagPathList
+     * @param orgDispTagList
+     * @param sender
+     * @throws MQMessageRuleException
+     */
     public void sendMessage(String chanelId, CmsSearchInfoBean2 searchValue,List<String> tagPathList ,List<String> orgDispTagList, String sender) throws MQMessageRuleException {
         CmsProductFreeTagsUpdateMQMessageBody mqMessageBody = new CmsProductFreeTagsUpdateMQMessageBody();
         mqMessageBody.setChannelId(chanelId);
@@ -36,6 +46,15 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
         cmsMqSenderService.sendMessage(mqMessageBody);
     }
 
+    /**
+     *
+     * @param chanelId
+     * @param prodCodeList
+     * @param tagPathList
+     * @param orgDispTagList
+     * @param sender
+     * @throws MQMessageRuleException
+     */
     public void sendMessage(String chanelId, List<String> prodCodeList,List<String> tagPathList, List<String> orgDispTagList, String sender) throws MQMessageRuleException {
         CmsProductFreeTagsUpdateMQMessageBody mqMessageBody = new CmsProductFreeTagsUpdateMQMessageBody();
         mqMessageBody.setChannelId(chanelId);
