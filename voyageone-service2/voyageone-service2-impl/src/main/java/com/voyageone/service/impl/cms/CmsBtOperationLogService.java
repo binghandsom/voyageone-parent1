@@ -134,7 +134,7 @@ public class CmsBtOperationLogService {
         List<CmsBtOperationLogModel> mqErrorList =dao.select(queryObject);
         // 获取mq错误信息列表
         mqCmsBtOperationLogData.put("mqErrorList",mqErrorList);
-        OperationLog_Type operationLog_type = null;
+        OperationLog_Type.getList();
         // 获取mqTypeList
         mqCmsBtOperationLogData.put("", "");
         return mqCmsBtOperationLogData;

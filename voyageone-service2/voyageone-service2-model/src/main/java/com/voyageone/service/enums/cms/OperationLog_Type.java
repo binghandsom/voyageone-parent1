@@ -1,5 +1,11 @@
 package com.voyageone.service.enums.cms;
 
+import org.apache.commons.collections.map.HashedMap;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by dell on 2016/12/27.
  */
@@ -47,5 +53,18 @@ public enum OperationLog_Type {
             }
         }
         return null;
+    }
+
+
+    public static List<Map<String,Object>> getList() {
+        List<Map<String, Object>> list = new ArrayList<>();
+        Map<String, Object> map = null;
+        for (OperationLog_Type operationLog_type : OperationLog_Type.values()) {
+            map = new HashedMap();
+            map.put("id", operationLog_type.getId());
+            map.put("name", operationLog_type.getName());
+            list.add(map);
+        }
+        return list;
     }
 }
