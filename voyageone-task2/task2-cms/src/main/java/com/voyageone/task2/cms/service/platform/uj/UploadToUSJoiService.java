@@ -1068,8 +1068,11 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             insertMtValueChannelInfo(usJoiChannelId, mapBrandMapping, targetProductList);
 
             // 子店->USJOI主店产品导入的虚拟上新成功之后回写workload表中的状态(1:USJOI上新成功)
-            sxWorkLoadBean.setPublishStatus(1);
-            cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
+//            sxWorkLoadBean.setPublishStatus(1);
+//            cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
+            // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
+            sxProductService.updateSxWorkload(sxWorkLoadBean, CmsConstants.SxWorkloadPublishStatusNum.okNum,
+                    StringUtils.isEmpty(sxWorkLoadBean.getModifier()) ? getTaskName() : sxWorkLoadBean.getModifier());
 
             // 子店->USJOI主店产品导入的虚拟上新成功之后,取得子店的productGroup信息，设置状态，调用共通的上新成功回写方法，回写子店状态
             // 子店的group表里面getPlatformActive是由feed->master导入根据配置设置的，上新成功之后，根据这个值回写状态（因为是虚拟上新，所以回写的这个状态没啥太大意义）
@@ -1115,8 +1118,12 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 errMsg += e.getMessage();
             }
             // 将子店->主店的上新workload的状态更新为2(导入上新失败)
-            sxWorkLoadBean.setPublishStatus(2);
-            cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
+//            sxWorkLoadBean.setPublishStatus(2);
+//            cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
+            // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
+            sxProductService.updateSxWorkload(sxWorkLoadBean, CmsConstants.SxWorkloadPublishStatusNum.errorNum,
+                    StringUtils.isEmpty(sxWorkLoadBean.getModifier()) ? getTaskName() : sxWorkLoadBean.getModifier());
+
             $info(String.format("channelId:%s [%d/%d] groupId:%d  复制到%s USJOI 异常", sxWorkLoadBean.getChannelId(),
                     currentIndex, totalCnt, sxWorkLoadBean.getGroupId(), usJoiChannelId));
             e.printStackTrace();
