@@ -98,7 +98,7 @@ public class BiRepConsultService {
         Map <String,Date> map=new HashMap<>();
 //        Date date=new Date("2016-03-05");
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-        Date date1=sdf.parse("2016-03-05");
+        Date date1=sdf.parse("2016-10-01");
         key.setDate(date1);
         key.setShopId(19);
         key.setProductId(249);
