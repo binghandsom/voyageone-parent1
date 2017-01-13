@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RabbitListener()
-public class CmdAdvSearchProductApprovalMQJob extends TBaseMQCmsService<AdvSearchProductApprovalMQMessageBody> {
+public class CmsAdvSearchProductApprovalMQJob extends TBaseMQCmsService<AdvSearchProductApprovalMQMessageBody> {
 
     @Autowired
     protected CmsAdvSearchProductApprovalService cmsAdvSearchProductApprovalService;
