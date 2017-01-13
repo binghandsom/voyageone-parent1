@@ -182,7 +182,11 @@ public class CmsFeedConfigService extends BaseService {
 
         //
         List<CmsMtFeedConfigInfoModel> cmsMtFeedConfigInfoList = cmsMtFeedConfigInfoDaoExt.selectFeedConFigInfo(channelId);
-
+        for(CmsMtFeedConfigInfoModel model:cmsMtFeedConfigInfoList){
+            if(("sku".equals(model.getCfgTableName())||"category".equals(model.getCfgTableName()))){
+                throw new BusinessException("Feed表结构名称无sku");
+            }
+        }
         //取得表结构的列称
         String[] columns = new String[cfgTableNameColumn.size()];
         int i = 0;
