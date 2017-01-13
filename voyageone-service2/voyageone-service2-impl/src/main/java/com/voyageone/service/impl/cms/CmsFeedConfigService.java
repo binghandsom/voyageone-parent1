@@ -142,6 +142,8 @@ public class CmsFeedConfigService extends BaseService {
         List<String> cfgTableNameColumn = new ArrayList<>();
         Boolean isSku = true;
         Boolean isCategory = true;
+        Boolean isDbSku = true;
+        Boolean isDbCategory = true;
         for (HashMap modelHashMap : cmsMtFeedConfigInfoModelList) {
             String name = (String) modelHashMap.get("cfgTableName");
             //判断表结构是否填写
@@ -173,19 +175,27 @@ public class CmsFeedConfigService extends BaseService {
                 }
             }
         }
+        List<CmsMtFeedConfigInfoModel> cmsMtFeedConfigInfoList = cmsMtFeedConfigInfoDaoExt.selectFeedConFigInfo(channelId);
+        if(cmsMtFeedConfigInfoList.size()==0)throw new BusinessException("请按属性保存按钮");
+        for(CmsMtFeedConfigInfoModel model:cmsMtFeedConfigInfoList){
+            if(("sku".equals(model.getCfgTableName()))){
+                isDbSku = true;
+            }
+            if(("category".equals(model.getCfgTableName()))){
+                isDbCategory = true;
+            }
+        }
         if (isSku) {
             throw new BusinessException("Feed表结构名称无sku");
         }
         if (isCategory) {
             throw new BusinessException("Feed表结构名称无category");
         }
-
-        //
-        List<CmsMtFeedConfigInfoModel> cmsMtFeedConfigInfoList = cmsMtFeedConfigInfoDaoExt.selectFeedConFigInfo(channelId);
-        for(CmsMtFeedConfigInfoModel model:cmsMtFeedConfigInfoList){
-            if(("sku".equals(model.getCfgTableName())||"category".equals(model.getCfgTableName()))){
-                throw new BusinessException("Feed表结构名称无sku");
-            }
+        if (isDbSku) {
+            throw new BusinessException("请按属性保存按钮,数据库无sku");
+        }
+        if (isDbCategory) {
+            throw new BusinessException("请按属性保存按钮,数据库无category");
         }
         //取得表结构的列称
         String[] columns = new String[cfgTableNameColumn.size()];
