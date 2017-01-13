@@ -431,12 +431,21 @@ class PlatformMappingViewService extends BaseViewService {
                             break;
                         case MULTICHECK:
                             MultiCheckField multiCheckField = (MultiCheckField) field;
-                            @SuppressWarnings("unchecked")
-                            List<String> valueList = (List<String>) mapping.getValue();
-                            List<Value> valueObjectList = valueList.stream().map(v -> new Value() {{
-                                setValue(v);
-                            }}).collect(toList());
-                            multiCheckField.setValues(valueObjectList);
+
+                            if(mapping.getValue() instanceof List){
+                                List<String> valueList = (List<String>) mapping.getValue();
+                                List<Value> valueObjectList = valueList.stream().map(v -> new Value() {{
+                                    setValue(v);
+                                }}).collect(toList());
+                                multiCheckField.setValues(valueObjectList);
+                            }else if(mapping.getValue() instanceof String){
+                                List<String> valueList =  new ArrayList<String>() ;
+                                valueList.add(mapping.getValue().toString());
+                                List<Value> valueObjectList = valueList.stream().map(v -> new Value() {{
+                                    setValue(v);
+                                }}).collect(toList());
+                                multiCheckField.setValues(valueObjectList);
+                            }
                             break;
                         case COMPLEX:
                             ComplexField complexField = (ComplexField) field;
