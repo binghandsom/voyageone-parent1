@@ -75,7 +75,10 @@
                         <th class="mfb-x text-left">modifier</th>
                     </tr>
                     </thead>
-                    <tbody ng-if="ctrl.mqErrorList">
+                    <tbody>
+                    <tr>
+                        <td if-no-rows="ctrl.mqErrorList" colspan="24" style="padding: 0px"></td>
+                    </tr>
                     <tr ng-repeat="mq in ctrl.mqErrorList">
                         <th class="mfb-xxs text-left">{{mq.name}}</th>
                         <th class="mfb-xxs text-left">{{mq.title}}</th>
