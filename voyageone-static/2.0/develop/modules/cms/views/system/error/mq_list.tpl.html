@@ -29,10 +29,14 @@
                             <div class="form-horizontal">
                                 <div class="row form-group">
                                     <label class="col-sm-2 control-label ng-binding">Type 状态&nbsp;&nbsp;</label>
-                                    <label class="checkbox-inline c-checkbox ng-binding">
-                                        <input type="checkbox" ng-model=""
-                                               class="ng-pristine ng-untouched ng-valid ng-empty">
-                                        <span class="fa fa-check"></span> 新产品
+                                    <label ng-repeat="type in ctrl.type">
+                                        <label class="checkbox-inline c-checkbox ng-binding">
+                                            <input type="checkbox" ng-model="ctrl.typeStatus[type.id]" name="typeList"
+                                                   class="ng-pristine ng-untouched ng-valid ng-empty">
+                                            <span class="fa fa-check"></span>
+                                        </label>
+                                        {{type.name}}&nbsp;
+                                    </label>
                                     </label> 
                                 </div>
                             </div>
@@ -40,10 +44,10 @@
                         </div>
                         <div class="col-sm-12 text-center m-b-sm">
                             <div class="form-inline">
-                                <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'
+                                <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'
                                     | translate}}
                                 </button>
-                                <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH'
+                                <button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH'
                                     | translate}}
                                 </button>
                             </div>
@@ -57,33 +61,34 @@
         <div class="box-body">
             <div class="table-responsive">
                 <table class="table table-hover-new vo_table tableWordBreak"
-                       style="margin-bottom:0px;table-layout: fixed;">
+                       style="margin-bottom:0px;table-layout: fixed;" >
                     <thead>
                     <tr>
-                        <th class="text-center">name</th>
-                        <th class="text-center">title</th>
-                        <th class="text-center">type</th>
-                        <th class=" text-center">messageBody</th>
-                        <th class="text-center">comment</th>
-                        <th class="text-center">stackTrace</th>
-                        <th class="text-center">created</th>
-                        <th class="text-center">modified</th>
-                        <th class="text-center">modifier</th>
+                        <th class="mfb-xxs text-left">name</th>
+                        <th class="mfb-xxs text-left">title</th>
+                        <th class="mfb-x text-left">type</th>
+                        <th class="mfb-xxs text-left">messageBody</th>
+                        <th class="mfb-xxs text-left">comment</th>
+                        <th class="mfb-xxs text-left">stackTrace</th>
+                        <th class="mfb-x text-left">created</th>
+                        <th class="mfb-x text-left">modified</th>
+                        <th class="mfb-x text-left">modifier</th>
                     </tr>
                     </thead>
-                    <tbody ng-if="vm.errorList.length">
-                    <tr ng-repeat="errorInfo in vm.errorList track by errorInfo.id">
-                        <th class="text-center" ng-bind=""></th>
-                        <th class="text-left" ng-bind=""></th>
-                        <th class="text-left" ng-bind=""></th>
-                        <th class=" text-left"ng-bind=""></th>
-                        <th class="text-left" ng-bind=""></th>
-                        <th class="text-left" ng-bind=""></th>
-                        <th class="text-center"ng-bind=""></th>
+                    <tbody ng-if="ctrl.mqErrorList">
+                    <tr ng-repeat="mq in ctrl.mqErrorList">
+                        <th class="mfb-xxs text-left">{{mq.name}}</th>
+                        <th class="mfb-xxs text-left">{{mq.title}}</th>
+                        <th class="mfb-x text-left">{{ctrl.getStatusName(mq.type).name}}</th>
+                        <th class="mfb-xxs text-left"><popover-text content="mq.messageBody" direct="left" size="20"></popover-text></th>
+                        <th class="mfb-xxs text-left">{{mq.comment}}</th>
+                        <th class="mfb-xxs text-left"><popover-text content="mq.stackTrace" direct="left" size="20"></popover-text></th>
+                        <th class="mfb-x text-left">{{mq.created}}</th>
+                        <th class="mfb-x text-left">{{mq.modified}}</th>
+                        <th class="mfb-x text-left">{{mq.modifier}}</th>
                     </tr>
                     </tbody>
                 </table>
-                <div if-no-rows="vm.errorList.length"></div>
             </div>
         </div><!-- /.box-body -->
         <div class="m-t-xs">
