@@ -314,6 +314,7 @@ public class CmsUpdateProductSalePriceService extends BaseService {
             }
         }
         if (CollectionUtils.isNotEmpty(errorInfos)) {
+
             // 批量有错误，发邮件
             issueLog.log("中国最终售价设置错误", JacksonUtil.bean2Json(errorInfos), ErrorType.BatchJob, SubSystem.CMS);
         }
@@ -334,23 +335,23 @@ public class CmsUpdateProductSalePriceService extends BaseService {
             // 不是天猫平台时插入上新程序 votodo
             $debug("批量修改商品价格 开始记入SxWorkLoad表");
             sta = System.currentTimeMillis();
-            sxProductService.insertSxWorkLoad(channelId, productCodes, cartId, userName);
+//            sxProductService.insertSxWorkLoad(channelId, productCodes, cartId, userName);
             $debug("批量修改商品价格 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
         }
 
-        // 如果有未处理的商品，则放入缓存
-        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userId + "2");
-        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userId + "3");
-        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userId + "4");
-        if (prodPriceUpList.size() > 0) {
-            commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userId + "2", prodPriceUpList);
-        }
-        if (prodPriceDownList.size() > 0) {
-            commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userId + "3", prodPriceDownList);
-        }
-        if (prodPriceDownExList.size() > 0) {
-            commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userId + "4", prodPriceDownExList);
-        }
+//        // 如果有未处理的商品，则放入缓存
+//        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userId + "2");
+//        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userId + "3");
+//        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userId + "4");
+//        if (prodPriceUpList.size() > 0) {
+//            commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userId + "2", prodPriceUpList);
+//        }
+//        if (prodPriceDownList.size() > 0) {
+//            commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userId + "3", prodPriceDownList);
+//        }
+//        if (prodPriceDownExList.size() > 0) {
+//            commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userId + "4", prodPriceDownExList);
+//        }
         // rsMap.put("unProcList", prodPriceUpList.size() + prodPriceDownList.size() + prodPriceDownExList.size());
     }
 

@@ -974,6 +974,7 @@ public class PriceService extends BaseService {
         if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
             // 天猫平台直接调用API
             tmUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType, platObj.getpNumIId());
+
         } else if (PlatFormEnums.PlatForm.JM.getId().equals(cartObj.getPlatform_id())) {
             // votodo -- PriceService  聚美平台 更新商品SKU的价格
 
