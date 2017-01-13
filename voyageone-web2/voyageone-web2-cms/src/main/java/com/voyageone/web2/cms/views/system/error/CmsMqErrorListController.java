@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.system.error;
 
+import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.CmsBtOperationLogService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -28,10 +29,12 @@ public class CmsMqErrorListController extends CmsController {
     @RequestMapping(CmsUrlConstants.SYSTEM.MQ_ERROR.SEARCH)
     public AjaxResponse search(@RequestBody Map params){
         Map<String, Object> result = new HashMap<>();
+        // 获取mqTypeList
+        result.put("type", OperationLog_Type.getList());
         // 检索Master品牌匹配的数据
         result.put("mqErrorList", cmsBtOperationLogService.searchMqCmsBtOperationLogData(params));
         // 检索Master品牌匹配的数量
-        result.put("mqErrorCnt", cmsBtOperationLogService.searchMqCmsBtOperationLogDataCnt());
+        result.put("mqErrorCnt", cmsBtOperationLogService.searchMqCmsBtOperationLogDataCnt(params));
         //返回数据的类型
         return success(result);
     }
