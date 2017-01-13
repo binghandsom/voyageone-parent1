@@ -940,7 +940,7 @@ public class PriceService extends BaseService {
             throw new BusinessException("产品数据不全,缺少Platform！");
         }
         if (!CmsConstants.ProductStatus.Approved.name().equals(platObj.getStatus())) {
-            $warn("PriceService 产品未上新,不可修改价格 channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
+            $warn("PriceService 产品未上新,不可修改价格 channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.getCommon().getFields().getCode());
             return;
         }
 
