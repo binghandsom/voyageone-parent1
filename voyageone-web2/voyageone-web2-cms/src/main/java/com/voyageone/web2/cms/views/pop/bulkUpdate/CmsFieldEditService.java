@@ -23,6 +23,7 @@ import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.rabbitmq.service.MqSenderService;
@@ -39,6 +40,7 @@ import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchConfirmRetailPriceMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchProductApprovalMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchRefreshRetailPriceMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.BatchUpdateProductMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.PlatformActiveLogMQMessageBody;
@@ -560,7 +562,22 @@ public class CmsFieldEditService extends BaseViewService {
             cartList.add(cartId);
         }
 
-        // 先判断是否是ready状态（minimall店铺不验证）
+        //============================以下业务改造成MQ========================================
+        AdvSearchProductApprovalMQMessageBody mqMessageBody = new AdvSearchProductApprovalMQMessageBody();
+        mqMessageBody.setParams(params);
+        mqMessageBody.setCmsSessionParams(JacksonUtil.bean2Map(cmsSession));
+        mqMessageBody.setChannelId(userInfo.getSelChannelId());
+        mqMessageBody.setUserName(userInfo.getUserName());
+        mqMessageBody.setCartList(cartList);
+        mqMessageBody.setSender(userInfo.getUserName());
+        try {
+            mqSenderService.sendMessage(mqMessageBody);
+        } catch (MQMessageRuleException e) {
+            throw new BusinessException("MQ发送异常: " + e.getMessage());
+        }
+
+
+        /*// 先判断是否是ready状态（minimall店铺不验证）
         List<Integer> newcartList = new ArrayList<>();
         for (Integer cartIdVal : cartList) {
             TypeChannelBean cartType = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, userInfo.getSelChannelId(), cartIdVal.toString(), "en");
@@ -785,7 +802,7 @@ public class CmsFieldEditService extends BaseViewService {
 
             // 记录商品修改历史
             productStatusHistoryService.insertList(userInfo.getSelChannelId(), newProdCodeList, cartIdVal, EnumProductOperationType.ProductApproved, msg, userInfo.getUserName());
-        }
+        }*/
 
         rsMap.put("ecd", 0);
         return rsMap;
