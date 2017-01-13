@@ -18,6 +18,7 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
@@ -105,7 +106,7 @@ public class CmsUpdateProductSalePriceService extends BaseService {
 
         // 获取产品的信息
         JongoQuery qryObj = new JongoQuery();
-        qryObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + ".skus.0':{$exists:true}}");
+        qryObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + ".skus.0':{$exists:true},'platforms.P" + cartId + ".status':'Approved'}");
         qryObj.setParameters(productCodes);
 //        qryObj.setProjection("{'common.fields.code':1,'prodId':1,'common.skus.skuCode':1,'common.skus.clientMsrpPrice':1,'common.skus.clientRetailPrice':1,'common.skus.clientNetPrice':1,'platforms.P" + cartId + ".pNumIId':1,'platforms.P" + cartId + ".status':1,'platforms.P" + cartId + ".skus':1,'_id':0}");
 
@@ -118,6 +119,7 @@ public class CmsUpdateProductSalePriceService extends BaseService {
 
         List<ErrorInfo> errorInfos = new ArrayList<ErrorInfo>();
         List<CmsBtProductModel> prodObjList = productService.getList(channelId, qryObj);
+        if(ListUtils.isNull(prodObjList)) return;
         $debug("批量修改商品价格 开始批量处理");
         for (CmsBtProductModel prodObj : prodObjList) {
             prodObj.setChannelId(channelId); // 为后面调用priceService.setPrice使用
@@ -282,14 +284,6 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                     $error(String.format("批量修改商品价格　调用PriceService.setPrice失败 channelId=%s, cartId=%s msg=%s", channelId, cartId.toString(), e.getMessage()), e);
                     throw new BusinessException(prodCode, String.format("批量修改商品价格　调用PriceService.setPrice失败 channelId=%s, cartId=%s", channelId, cartId), e);
                 }
-                // 是天猫平台时直接调用API更新sku价格(要求已上新)
-                try {
-                    priceService.updateSkuPrice(channelId, cartId, prodObj);
-                } catch (Exception e) {
-                    $error(String.format("批量修改商品价格　调用天猫API失败 channelId=%s, cartId=%s msg=%s", channelId, cartId.toString(), e.getMessage()), e);
-                    throw new BusinessException(prodCode, String.format("批量修改商品价格　调用天猫API失败 channelId=%s, cartId=%s", channelId, cartId.toString()), e);
-                }
-
                 // 更新产品的信息
                 JongoUpdate updObj = new JongoUpdate();
                 updObj.setQuery("{'common.fields.code':#}");
@@ -299,6 +293,14 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                 BulkWriteResult rs = bulkList.addBulkJongo(updObj);
                 if (rs != null) {
                     $debug(String.format("批量修改商品价格 channelId=%s 执行结果=%s", userName, rs.toString()));
+                }
+
+                // 是天猫平台时直接调用API更新sku价格(要求已上新)
+                try {
+                    priceService.updateSkuPrice(channelId, cartId, prodObj);
+                } catch (Exception e) {
+                    $error(String.format("批量修改商品价格　调用API失败 channelId=%s, cartId=%s msg=%s", channelId, cartId.toString(), e.getMessage()), e);
+                    throw new BusinessException(prodCode, String.format("批量修改商品价格　调用API失败 channelId=%s, cartId=%s", channelId, cartId.toString()), e);
                 }
             } catch (BusinessException be) {
                 ErrorInfo errorInfo = new ErrorInfo();

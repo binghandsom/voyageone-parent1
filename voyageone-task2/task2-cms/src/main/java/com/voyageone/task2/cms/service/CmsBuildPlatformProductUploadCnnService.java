@@ -10,6 +10,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
@@ -537,10 +538,17 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             paramCommonFields.put("title", mainProdCommField.getProductNameEn());
         }
         // 简短描述(中文)
-        if (!StringUtils.isEmpty(mainProdCommField.getShortDesCn())) {
-            paramCommonFields.put("shortDesc", mainProdCommField.getShortDesCn());
+        String shortDesc = org.apache.commons.lang3.StringUtils.trimToNull(mainProdCommField.getShortDesCn());
+        if (shortDesc == null) {
+            shortDesc = org.apache.commons.lang3.StringUtils.trimToNull(mainProdCommField.getShortDesEn());
+            if (shortDesc == null) {
+                paramCommonFields.put("shortDesc", "");
+            } else {
+                paramCommonFields.put("shortDesc", shortDesc.length() > 1000 ? shortDesc.substring(0, 1000) : shortDesc);
+            }
         } else {
-            paramCommonFields.put("shortDesc", mainProdCommField.getShortDesEn());
+            paramCommonFields.put("shortDesc", shortDesc.length() > 1000 ? shortDesc.substring(0, 1000) : shortDesc);
+
         }
         // 详情描述(中文)
         if (!StringUtils.isEmpty(mainProdCommField.getLongDesCn())) {
@@ -549,10 +557,16 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             paramCommonFields.put("longDesc", mainProdCommField.getLongDesEn());
         }
         // 材质(中文)
-        if (!StringUtils.isEmpty(mainProdCommField.getMaterialCn())) {
-            paramCommonFields.put("material", mainProdCommField.getMaterialCn());
+        String material = org.apache.commons.lang3.StringUtils.trimToNull(mainProdCommField.getMaterialCn());
+        if (material == null) {
+            material = org.apache.commons.lang3.StringUtils.trimToNull(mainProdCommField.getMaterialEn());
+            if (material == null) {
+                paramCommonFields.put("material", "");
+            } else {
+                paramCommonFields.put("material", material.length() > 1000 ? material.substring(0, 1000) : material);
+            }
         } else {
-            paramCommonFields.put("material", mainProdCommField.getMaterialEn());
+            paramCommonFields.put("material", material.length() > 1000 ? material.substring(0, 1000) : material);
         }
         // 商品特质(颜色/口味/香型等)(中文) (对应于cms中的color/codeDiff)
         if (!StringUtils.isEmpty(mainProdCommField.getColor())) {
