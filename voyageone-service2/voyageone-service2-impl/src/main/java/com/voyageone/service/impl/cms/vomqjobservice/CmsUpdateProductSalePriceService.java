@@ -284,14 +284,6 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                     $error(String.format("批量修改商品价格　调用PriceService.setPrice失败 channelId=%s, cartId=%s msg=%s", channelId, cartId.toString(), e.getMessage()), e);
                     throw new BusinessException(prodCode, String.format("批量修改商品价格　调用PriceService.setPrice失败 channelId=%s, cartId=%s", channelId, cartId), e);
                 }
-                // 是天猫平台时直接调用API更新sku价格(要求已上新)
-                try {
-                    priceService.updateSkuPrice(channelId, cartId, prodObj);
-                } catch (Exception e) {
-                    $error(String.format("批量修改商品价格　调用天猫API失败 channelId=%s, cartId=%s msg=%s", channelId, cartId.toString(), e.getMessage()), e);
-                    throw new BusinessException(prodCode, String.format("批量修改商品价格　调用天猫API失败 channelId=%s, cartId=%s", channelId, cartId.toString()), e);
-                }
-
                 // 更新产品的信息
                 JongoUpdate updObj = new JongoUpdate();
                 updObj.setQuery("{'common.fields.code':#}");
@@ -301,6 +293,14 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                 BulkWriteResult rs = bulkList.addBulkJongo(updObj);
                 if (rs != null) {
                     $debug(String.format("批量修改商品价格 channelId=%s 执行结果=%s", userName, rs.toString()));
+                }
+
+                // 是天猫平台时直接调用API更新sku价格(要求已上新)
+                try {
+                    priceService.updateSkuPrice(channelId, cartId, prodObj);
+                } catch (Exception e) {
+                    $error(String.format("批量修改商品价格　调用API失败 channelId=%s, cartId=%s msg=%s", channelId, cartId.toString(), e.getMessage()), e);
+                    throw new BusinessException(prodCode, String.format("批量修改商品价格　调用API失败 channelId=%s, cartId=%s", channelId, cartId.toString()), e);
                 }
             } catch (BusinessException be) {
                 ErrorInfo errorInfo = new ErrorInfo();
