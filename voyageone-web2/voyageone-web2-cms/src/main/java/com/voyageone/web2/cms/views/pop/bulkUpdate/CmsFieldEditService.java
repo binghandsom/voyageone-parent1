@@ -570,6 +570,7 @@ public class CmsFieldEditService extends BaseViewService {
         mqMessageBody.setUserName(userInfo.getUserName());
         mqMessageBody.setCartList(cartList);
         mqMessageBody.setSender(userInfo.getUserName());
+        mqMessageBody.setProductCodes(productCodes);
         try {
             mqSenderService.sendMessage(mqMessageBody);
         } catch (MQMessageRuleException e) {
