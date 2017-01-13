@@ -73,23 +73,26 @@ define([
                         scope.productInfo.translateStatus = _fields.translateStatus == null ? 0 : +_fields.translateStatus;
                         scope.productInfo.hsCodeStatus = _fields.hsCodeStatus == null ? 0 : +_fields.hsCodeStatus;
 
-
                         /**图片显示*/
                         if ($rootScope.imageUrl == undefined) {
                             $rootScope.imageUrl = '';
                         }
 
-                        scope.vm.currentImage = $rootScope.imageUrl.replace('%s', _fields.images1[0].image1);
+                        //暂存税号个人
+                        scope.vm.hsCodeOrigin = angular.copy(_.find(scope.vm.productComm.schemaFields, function (field) {
+                            return field.id === "hsCodePrivate";
+                        }));
+
+                        //champion不存在主商品图
+                        if(_fields.images1 && _fields.images1[0])
+                            scope.vm.currentImage = $rootScope.imageUrl.replace('%s', _fields.images1[0].image1);
 
                         scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
                         scope.vm.lockStatus.onOffSwitch1 = scope.vm.mastData.appSwitch == "1" ? true : false;
                         scope.vm.lockStatus.onOffSwitch2 = scope.vm.mastData.translateStatus == "1" ? true : false;
                         scope.vm.lockStatus.onOffSwitch3 = scope.vm.mastData.lock == "1" ? true : false;
 
-                        //暂存税号个人
-                        scope.vm.hsCodeOrigin = angular.copy(_.find(scope.vm.productComm.schemaFields, function (field) {
-                            return field.id === "hsCodePrivate";
-                        }));
+
 
                         /**主商品提示*/
                         if (!scope.vm.mastData.isMain) {

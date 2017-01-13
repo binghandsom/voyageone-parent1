@@ -83,7 +83,7 @@ public class CmsBuildPlatformProductUploadCnnServiceTest {
         workload.setId(864987);
         workload.setChannelId(likingChannelId);   // "928"
         workload.setCartId(cartId);               // "33"
-        workload.setGroupId(Long.parseLong("9900002"));
+        workload.setGroupId(Long.parseLong("9900003"));
         workload.setPublishStatus(CmsConstants.SxWorkloadPublishStatusNum.initNum);   // 普通上新模式
         workload.setModifier("desmond");
 
