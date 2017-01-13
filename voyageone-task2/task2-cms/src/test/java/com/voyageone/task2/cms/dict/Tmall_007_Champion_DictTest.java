@@ -124,9 +124,14 @@ public class Tmall_007_Champion_DictTest extends BaseDictTest {
 					ruleExpression.addRuleWord(new MasterWord("model"));
 					imageParams.add(ruleExpression);
 				}
-				{
+//				{
+//					RuleExpression ruleExpression = new RuleExpression();
+//					ruleExpression.addRuleWord(new FeedCnWord("style"));
+//					imageParams.add(ruleExpression);
+//				}
+				{ // 最初yaoshasha想要用feed的style， 后来说是要用中文短描述
 					RuleExpression ruleExpression = new RuleExpression();
-					ruleExpression.addRuleWord(new FeedCnWord("style"));
+					ruleExpression.addRuleWord(new MasterWord("shortDesCn"));
 					imageParams.add(ruleExpression);
 				}
 				{
@@ -482,9 +487,14 @@ public class Tmall_007_Champion_DictTest extends BaseDictTest {
 						ruleExpression.addRuleWord(new MasterWord("materialCn"));
 						imageParams.add(ruleExpression);
 					}
-					{
+//					{
+//						RuleExpression ruleExpression = new RuleExpression();
+//						ruleExpression.addRuleWord(new FeedCnWord("style"));
+//						imageParams.add(ruleExpression);
+//					}
+					{ // 最初yaoshasha想要用feed的style， 后来说是要用中文短描述
 						RuleExpression ruleExpression = new RuleExpression();
-						ruleExpression.addRuleWord(new FeedCnWord("style"));
+						ruleExpression.addRuleWord(new MasterWord("shortDesCn"));
 						imageParams.add(ruleExpression);
 					}
 					{
