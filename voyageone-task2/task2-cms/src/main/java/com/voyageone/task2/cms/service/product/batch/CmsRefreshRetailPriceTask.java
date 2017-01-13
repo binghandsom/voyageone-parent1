@@ -164,7 +164,7 @@ public class CmsRefreshRetailPriceTask extends VOAbsLoggable {
                     // 只有最终售价变化了，才需要上新
                     if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
                         // 最终售价被自动同步
-                        if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
+                        if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id()) && CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(prodObj.getPlatform(cartId).getStatus())) {
                             // 天猫平台直接调用API
                             try {
                                 priceService.updateSkuPrice(channleId, cartId, prodObj);
