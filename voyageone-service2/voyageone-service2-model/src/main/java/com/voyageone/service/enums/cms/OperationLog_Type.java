@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public enum OperationLog_Type {
     success(1, "成功"),
-    successIncludeFail(2,"失败异常"),
+    successIncludeFail(2,"部分成功"),
     parameterException(3,"参数异常"),
     configException(4,"配置异常"),
     businessException(5,"业务异常"),
@@ -42,10 +42,6 @@ public enum OperationLog_Type {
         this.name = name;
     }
 
-    OperationLog_Type(int id) {
-        this.id = (short) id;
-    }
-
     public static OperationLog_Type get(short id) {
         for (OperationLog_Type operationLog_type : OperationLog_Type.values()) {
             if (operationLog_type.getId() == id) {
@@ -58,7 +54,7 @@ public enum OperationLog_Type {
 
     public static List<Map<String,Object>> getList() {
         List<Map<String, Object>> list = new ArrayList<>();
-        Map<String, Object> map = null;
+        Map<String, Object> map;
         for (OperationLog_Type operationLog_type : OperationLog_Type.values()) {
             map = new HashedMap();
             map.put("id", operationLog_type.getId());
