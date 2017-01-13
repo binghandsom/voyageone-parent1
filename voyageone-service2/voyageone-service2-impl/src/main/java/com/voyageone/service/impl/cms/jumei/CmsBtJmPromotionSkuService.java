@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.jumei;
 
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
@@ -32,6 +33,7 @@ public class CmsBtJmPromotionSkuService {
         return dao.update(entity);
     }
 
+    @VOTransactional
     public int updateWithDiscount(CmsBtJmPromotionSkuModel entity, String channelId, String modifer) {
         // 计算discount
         entity.setChannelId(channelId);
