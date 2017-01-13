@@ -31,6 +31,7 @@ import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
+import com.voyageone.service.impl.cms.vomqjobservice.CmsProductFreeTagsUpdateService;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
@@ -266,26 +267,10 @@ public class CmsAdvanceSearchService extends BaseViewService {
      */
     public List<String> getProductCodeList(String channelId, CmsSessionBean cmsSessionBean) {
         CmsSearchInfoBean2 searchValue = (CmsSearchInfoBean2) cmsSessionBean.getAttribute("_adv_search_params");
-        if (searchValue == null) {
-            $warn("高级检索 getProductCodeList session中的查询条件为空");
-            return new ArrayList<>(0);
-        }
-        JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue);
-        queryObject.setProjection("{'common.fields.code':1,'_id':0}");
-        if ($isDebugEnabled()) {
-            $debug(String.format("高级检索 获取当前查询的product列表 (session) ChannelId=%s, %s", channelId, queryObject.toString()));
-        }
-
-        List<CmsBtProductModel> prodObjList = productService.getList(channelId, queryObject);
-        if (prodObjList == null || prodObjList.isEmpty()) {
-            $warn("高级检索 getProductCodeList prodObjList为空 查询条件(session)=：" + queryObject.toString());
-            return new ArrayList<>(0);
-        }
-
-        // 取得符合条件的产品code列表
-        List<String> codeList = prodObjList.stream().map(prodObj -> prodObj.getCommonNotNull().getFieldsNotNull().getCode()).filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).collect(Collectors.toList());
-        return codeList;
+        return advSearchQueryService.getProductCodeList(searchValue,channelId,false);
     }
+
+
 
     /**
      * 获取当前查询的product id列表（查询条件从session而来）
@@ -418,17 +403,20 @@ public class CmsAdvanceSearchService extends BaseViewService {
         return (Integer) rsMap.get("count");
     }
 
+    @Autowired
+    CmsProductFreeTagsUpdateService cmsProductFreeTagsUpdateService;
+
     /**
      * 设置产品free tag，同时添加该tag的所有上级tag
      */
-    public void setProdFreeTag(String channelId, Map<String, Object> params, String modifier, CmsSessionBean cmsSession) {
+    public void setProdFreeTagMQ(String channelId, Map<String, Object> params, String modifier, CmsSessionBean cmsSession) {
         List<String> tagPathList = (List<String>) params.get("tagPathList");
         if (tagPathList == null || tagPathList.isEmpty()) {
             $info("CmsAdvanceSearchService：setProdFreeTag 未选择标签,将清空所有自由标签");
         }
 
         List<String> orgDispTagList = null;
-        if(params.get("orgDispTagList") != null){
+        if (params.get("orgDispTagList") != null) {
             orgDispTagList = (List<String>) params.get("orgDispTagList");
         }
 
@@ -438,20 +426,12 @@ public class CmsAdvanceSearchService extends BaseViewService {
         }
         List<String> prodCodeList;
         if (isSelAll == 1) {
-            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            prodCodeList = getProductCodeList(channelId, cmsSession);
-            if (prodCodeList == null || prodCodeList.isEmpty()) {
-                $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未查询到商品");
-                throw new BusinessException("缺少参数，未选择商品!");
-            }
+            CmsSearchInfoBean2 searchValue = (CmsSearchInfoBean2) cmsSession.getAttribute("_adv_search_params");
+            cmsProductFreeTagsUpdateService.sendMessage(channelId,searchValue,tagPathList,orgDispTagList,modifier);
         } else {
             prodCodeList = (List<String>) params.get("prodIdList");
-            if (prodCodeList == null || prodCodeList.isEmpty()) {
-                $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未选择商品");
-                throw new BusinessException("缺少参数，未选择商品!");
-            }
+            cmsProductFreeTagsUpdateService.sendMessage(channelId,prodCodeList,tagPathList,orgDispTagList,modifier);
         }
-        productTagService.setProdFreeTag(channelId, tagPathList, prodCodeList, orgDispTagList, modifier);
     }
 
     /**

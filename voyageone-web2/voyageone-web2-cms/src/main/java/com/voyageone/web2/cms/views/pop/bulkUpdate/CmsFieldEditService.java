@@ -505,6 +505,7 @@ public class CmsFieldEditService extends BaseViewService {
             mqSenderService.sendMessage(mqMessageBody);
         } catch (MQMessageRuleException e) {
             $error(String.format("商品上下架MQ发送异常,channelId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
+            throw new BusinessException("商品上下架MQ发送异常: " + e.getMessage());
         }
 
         rsMap.put("ecd", 0);
@@ -1311,23 +1312,29 @@ public class CmsFieldEditService extends BaseViewService {
         }
 
         $debug("指导价变更批量确认 开始批量处理");
-        params.put("productIds", productCodes);
+        /*params.put("productIds", productCodes);
         params.put("cartIds", cartList);
         params.put("_taskName", params.get("_option"));
         params.put("_channleId", userInfo.getSelChannelId());
-        params.put("_userName", userInfo.getUserName());
+        params.put("_userName", userInfo.getUserName());*/
 
         try {
             if ("refreshRetailPrice".equalsIgnoreCase((String) params.get("_option"))) {
                 // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
                 AdvSearchRefreshRetailPriceMQMessageBody mqMessageBody = new AdvSearchRefreshRetailPriceMQMessageBody();
-                mqMessageBody.setParams(params);
+                mqMessageBody.setCodeList(productCodes);
+                mqMessageBody.setCartList(cartList);
+                mqMessageBody.setUserName(userInfo.getUserName());
+                mqMessageBody.setChannelId(userInfo.getSelChannelId());
                 mqMessageBody.setSender(userInfo.getUserName());
                 mqSenderService.sendMessage(mqMessageBody);
             } else {
                 // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
                 AdvSearchConfirmRetailPriceMQMessageBody mqMessageBody = new AdvSearchConfirmRetailPriceMQMessageBody();
-                mqMessageBody.setParams(params);
+                mqMessageBody.setChannelId(userInfo.getSelChannelId());
+                mqMessageBody.setCartList(cartList);
+                mqMessageBody.setCodeList(productCodes);
+                mqMessageBody.setUserName(userInfo.getUserName());
                 mqMessageBody.setSender(userInfo.getUserName());
                 mqSenderService.sendMessage(mqMessageBody);
             }

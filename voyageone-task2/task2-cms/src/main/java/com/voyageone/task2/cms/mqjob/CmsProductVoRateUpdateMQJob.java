@@ -1,13 +1,17 @@
 package com.voyageone.task2.cms.mqjob;
 
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductVoRateUpdateMQMessageBody;
 import com.voyageone.service.impl.cms.product.CmsProductVoRateUpdateService;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,6 +34,14 @@ public class CmsProductVoRateUpdateMQJob extends TBaseMQCmsService<ProductVoRate
         params.put("creater", messageBody.getCreater());
         params.put("codeList", messageBody.getCodeList());
         params.put("voRate", messageBody.getVoRate());
-        cmsProductVoRateUpdateService.updateProductVoRate(params);
+
+        try {
+            List<Map<String, String>> failList = cmsProductVoRateUpdateService.updateProductVoRate(params);
+            if (CollectionUtils.isNotEmpty(failList)) {
+                cmsLog(messageBody, OperationLog_Type.successIncludeFail, JacksonUtil.bean2Json(failList));
+            }
+        } catch (Exception e) {
+            cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
+        }
     }
 }

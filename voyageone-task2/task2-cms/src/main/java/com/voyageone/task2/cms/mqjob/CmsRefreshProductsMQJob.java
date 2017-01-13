@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.fields.cms.CmsBtRefreshProductTaskModelStatus;
 import com.voyageone.service.dao.cms.CmsBtRefreshProductTaskDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -58,13 +59,17 @@ public class CmsRefreshProductsMQJob extends TBaseMQCmsService<CmsRefreshProduct
         // 获取参数
         Integer taskId = messageMap.getTaskId();
 
-        if (taskId == null)
+        if (taskId == null) {
+            cmsLog(messageMap, OperationLog_Type.parameterException, "参数taskId为空.");
             return;
+        }
 
         CmsBtRefreshProductTaskModel cmsBtRefreshProductTaskModel = cmsBtRefreshProductTaskDao.select(taskId);
 
-        if (cmsBtRefreshProductTaskModel == null)
+        if (cmsBtRefreshProductTaskModel == null) {
+            cmsLog(messageMap, OperationLog_Type.parameterException, "找不到CmsBtRefreshProductTaskModel, taskId" + taskId);
             return;
+        }
 
         // 取商品
         CmsBtRefreshProductTaskItemModel cmsBtRefreshProductTaskItemModel = platformMappingService.popRefreshProduct(cmsBtRefreshProductTaskModel);

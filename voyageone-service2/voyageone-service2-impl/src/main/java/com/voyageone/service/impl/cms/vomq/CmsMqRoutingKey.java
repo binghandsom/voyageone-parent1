@@ -26,6 +26,8 @@ public class CmsMqRoutingKey {
     // 聚美活动中的产品的库存同步
     public static final String CMS_JM_PROMOTION_PRODUCT_STOCK_SYNC= "VOCmsJmPromotionProductStockSyncQueue";
 
+    //高级搜索-设置自由标签
+    public  static  final  String CMS_PPRODUCT_FREE_TAGS_UPDATE="VOCmsProductFreeTagsUpdateQueue";
      //高级检索-取得产品的bi信息
     public static final String CMS_PPRODUCT_BI_DATA = "VOCMSProductBIDataQueue";
 
