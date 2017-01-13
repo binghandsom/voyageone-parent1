@@ -23,6 +23,7 @@ import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.rabbitmq.service.MqSenderService;
@@ -38,14 +39,8 @@ import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchConfirmRetailPriceMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchRefreshRetailPriceMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.BatchUpdateProductMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.PlatformActiveLogMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductVoRateUpdateMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.*;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsBatchPlatformFieldsMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.UpdateProductSalePriceMQMessageBody;
 import com.voyageone.service.impl.com.cache.CommCacheService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
@@ -1372,24 +1367,37 @@ public class CmsFieldEditService extends BaseViewService {
         if (StringUtil.isEmpty(pCatPath) || StringUtil.isEmpty(pCatId)) {
             new BusinessException("类目不能为空");
         }
-        List<BulkUpdateModel> bulkList = new ArrayList<>(productCodes.size());
-        for (String productCode : productCodes) {
-            HashMap<String, Object> updateMap = new HashMap<>();
-            updateMap.put("platforms.P" + cartId + ".pCatPath", pCatPath);
-            updateMap.put("platforms.P" + cartId + ".pCatId", pCatId);
-            updateMap.put("platforms.P" + cartId + ".pCatStatus", 1);
-            HashMap<String, Object> queryMap = new HashMap<>();
-            queryMap.put("common.fields.code", productCode);
-            HashMap<String, Object> queryMap2 = new HashMap<>();
-            queryMap2.put("$in", new String[]{null, ""});
-            queryMap.put("platforms.P" + cartId + ".pCatPath", queryMap2);
-            BulkUpdateModel model = new BulkUpdateModel();
-            model.setUpdateMap(updateMap);
-            model.setQueryMap(queryMap);
-            bulkList.add(model);
-        }
 
-        cmsBtProductDao.bulkUpdateWithMap(userInfo.getSelChannelId(), bulkList, userInfo.getUserName(), "$set");
+        CmsPlatformCategoryUpdateMQMessageBody cmsPlatformCategoryUpdateMQMessageBody = new CmsPlatformCategoryUpdateMQMessageBody();
+        cmsPlatformCategoryUpdateMQMessageBody.setpCatId(pCatId);
+        cmsPlatformCategoryUpdateMQMessageBody.setpCatPath(pCatPath);
+        cmsPlatformCategoryUpdateMQMessageBody.setSender(userInfo.getUserName());
+        cmsPlatformCategoryUpdateMQMessageBody.setChannelId(userInfo.getSelChannelId());
+        cmsPlatformCategoryUpdateMQMessageBody.setCartId(cartId);
+        List<List<String>> productCodesList = CommonUtil.splitList(productCodes, 500);
+        productCodesList.forEach(codes -> {
+            cmsPlatformCategoryUpdateMQMessageBody.setProductCodes(codes);
+            mqSenderService.sendMessage(cmsPlatformCategoryUpdateMQMessageBody);
+        });
+
+//        List<BulkUpdateModel> bulkList = new ArrayList<>(productCodes.size());
+//        for (String productCode : productCodes) {
+//            HashMap<String, Object> updateMap = new HashMap<>();
+//            updateMap.put("platforms.P" + cartId + ".pCatPath", pCatPath);
+//            updateMap.put("platforms.P" + cartId + ".pCatId", pCatId);
+//            updateMap.put("platforms.P" + cartId + ".pCatStatus", 1);
+//            HashMap<String, Object> queryMap = new HashMap<>();
+//            queryMap.put("common.fields.code", productCode);
+//            HashMap<String, Object> queryMap2 = new HashMap<>();
+//            queryMap2.put("$in", new String[]{null, ""});
+//            queryMap.put("platforms.P" + cartId + ".pCatPath", queryMap2);
+//            BulkUpdateModel model = new BulkUpdateModel();
+//            model.setUpdateMap(updateMap);
+//            model.setQueryMap(queryMap);
+//            bulkList.add(model);
+//        }
+//
+//        cmsBtProductDao.bulkUpdateWithMap(userInfo.getSelChannelId(), bulkList, userInfo.getUserName(), "$set");
     }
 
     public void bulkSetPlatformFields(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
