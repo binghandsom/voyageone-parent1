@@ -106,7 +106,7 @@ public class CmsUpdateProductSalePriceService extends BaseService {
 
         // 获取产品的信息
         JongoQuery qryObj = new JongoQuery();
-        qryObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + ".skus.0':{$exists:true},'platforms.P" + cartId + ".status':'Approved'}");
+        qryObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + ".skus.0':{$exists:true}}");
         qryObj.setParameters(productCodes);
 //        qryObj.setProjection("{'common.fields.code':1,'prodId':1,'common.skus.skuCode':1,'common.skus.clientMsrpPrice':1,'common.skus.clientRetailPrice':1,'common.skus.clientNetPrice':1,'platforms.P" + cartId + ".pNumIId':1,'platforms.P" + cartId + ".status':1,'platforms.P" + cartId + ".skus':1,'_id':0}");
 
