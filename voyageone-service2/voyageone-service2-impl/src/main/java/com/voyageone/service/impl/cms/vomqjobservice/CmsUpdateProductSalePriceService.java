@@ -70,6 +70,7 @@ public class CmsUpdateProductSalePriceService extends BaseService {
     private SxProductService sxProductService;
 
     public void process(UpdateProductSalePriceMQMessageBody mqMessageBody){
+        long threadNo =  Thread.currentThread().getId();
         String channelId = mqMessageBody.getChannelId();
         Integer cartId = mqMessageBody.getCartId();
         List<String> productCodes = mqMessageBody.getProductCodes();
@@ -121,7 +122,10 @@ public class CmsUpdateProductSalePriceService extends BaseService {
         List<CmsBtProductModel> prodObjList = productService.getList(channelId, qryObj);
         if(ListUtils.isNull(prodObjList)) return;
         $debug("批量修改商品价格 开始批量处理");
+        int i=0;
         for (CmsBtProductModel prodObj : prodObjList) {
+            i++;
+            $info(String.format("threadNo=%d %d/%d",threadNo, i , prodObjList.size()));
             prodObj.setChannelId(channelId); // 为后面调用priceService.setPrice使用
             List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
             String prodCode = prodObj.getCommonNotNull().getFieldsNotNull().getCode();
@@ -197,7 +201,7 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                     double befPriceSale = skuObj.getDoubleAttribute("priceSale");
                     if (rs == befPriceSale) {
                         // 修改前后价格相同
-                        $info(String.format("setProductSalePrice: 修改前后价格相同 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+//                        $info(String.format("setProductSalePrice: 修改前后价格相同 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
                         continue;
                     }
 
