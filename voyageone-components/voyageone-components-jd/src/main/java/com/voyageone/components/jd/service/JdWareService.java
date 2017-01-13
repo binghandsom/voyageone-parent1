@@ -1054,7 +1054,7 @@ public class JdWareService extends JdBase {
                     return response.getSkuList();
                 } else {
                     // 京东返回失败的场合
-                    throw new BusinessException(response.getZhDesc());
+                    throw new BusinessException(response.getMsg());
                 }
             } else {
                 // response = null（https://api.jd.com/routerjson）不能访问的可能原因是服务器禁掉了https端口
@@ -1095,7 +1095,7 @@ public class JdWareService extends JdBase {
                 // 京东返回正常的场合
                 if (!JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
                     // 京东返回失败的场合
-                    throw new BusinessException(response.getZhDesc());
+                    throw new BusinessException(response.getMsg());
                 }
             } else {
                 // response = null（https://api.jd.com/routerjson）不能访问的可能原因是服务器禁掉了https端口

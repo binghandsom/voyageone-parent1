@@ -7,6 +7,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.daoext.cms.CmsZzFeedWmfPriceDaoExt;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
@@ -39,12 +40,14 @@ public class WmfPriceAnalysisService extends BaseCronTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         List<CmsZzFeedWmfPriceModel> wmfPrices = getRetailPriceList();
-        wmfPrices.forEach(this::insertPrice);
-        Map<String, Object> map = new HashMap<>();
-        wmfPrices = cmsZzFeedWmfPriceDaoExt.selectList(map);
-        wmfPrices.forEach(this::updateMastPrice);
+        if(!ListUtils.isNull(wmfPrices)) {
+            wmfPrices.forEach(this::insertPrice);
+//            Map<String, Object> map = new HashMap<>();
+//            wmfPrices = cmsZzFeedWmfPriceDaoExt.selectList(map);
+            wmfPrices.forEach(this::updateMastPrice);
 
-        backupFeedFile(FeedEnums.Name.file_id_import_sku);
+            backupFeedFile(FeedEnums.Name.file_id_import_sku);
+        }
     }
 
     public List<CmsZzFeedWmfPriceModel> getRetailPriceList() {

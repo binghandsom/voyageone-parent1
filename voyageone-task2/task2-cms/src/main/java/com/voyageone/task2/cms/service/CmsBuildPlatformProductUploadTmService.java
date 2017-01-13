@@ -12,6 +12,7 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbSaleService;
@@ -214,6 +215,10 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
         String platformCategoryId = "";
         // 达尔文是否能上新商品
         boolean canSxDarwinItem = false;
+        // 上新对象产品code列表，回写状态时使用
+        List<String> listSxCode = null;
+        // 开始时间
+        long prodStartTime = System.currentTimeMillis();
 
         // 天猫产品上新处理
         try {
@@ -290,6 +295,11 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 $error(errMsg);
                 sxData.setErrorMessage(errMsg);
                 throw new BusinessException(errMsg);
+            }
+
+            // 上新对象code(后面回写状态时要用到)
+            if (ListUtils.notNull(sxData.getProductList())) {
+                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
             }
 
             // 判断商品是否是达尔文
@@ -456,10 +466,11 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, getTaskName());
-            // modified by morse.lu 2016/06/06 start
-//            throw new BusinessException(ex.getMessage());
+            // 上新失败后回写product表pPublishError的值("Error")和pPublishMessage(上新错误信息)
+            productGroupService.updateUploadErrorStatus(sxData.getPlatform(), listSxCode, sxData.getErrorMessage());
+            $error(String.format("天猫平台单个产品和商品新增或更新信息异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [耗时:%s]",
+                    channelId, cartId, groupId, (System.currentTimeMillis() - prodStartTime)));
             return;
-            // modified by morse.lu 2016/06/06 end
         }
 
         // added by morse.lu 2016/08/10 start
@@ -470,6 +481,10 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.review, getTaskName());
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, getTaskName());
+            // 上新失败后回写product表pPublishError的值("Error")和pPublishMessage(上新错误信息)
+            productGroupService.updateUploadErrorStatus(sxData.getPlatform(), listSxCode, sxData.getErrorMessage());
+            $info(String.format("天猫平台单个商品上新结束,达尔文产品更新成功,请等待审核通过,再重新Approve上新商品！[ChannelId:%s] [CartId:%s] [GroupId:%s] [耗时:%s]",
+                    channelId, cartId, groupId, (System.currentTimeMillis() - prodStartTime)));
             return;
         }
         // added by morse.lu 2016/08/10 end
@@ -530,6 +545,9 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                     // 回写workload表   (成功1)
                     sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
 
+                    // 上新成功时更新该model对应的所有和上新有关的状态信息,同时清空product表pPublishError的值("Error")和pPublishMessage(上新错误信息)
+                    productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
+
                     // delete by morse.lu 2016/06/06 start
                     // 不会为空的吧，即使为空，下面的逻辑不抛错，直接return，真的好吗？
 //                } else {
@@ -566,16 +584,17 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
                 // 回写详细错误信息表(cms_bt_business_log)
                 sxProductService.insertBusinessLog(sxData, getTaskName());
-                // modified by morse.lu 2016/06/06 start
-//                throw new BusinessException(ex.getMessage());
+                // 上新失败后回写product表pPublishError的值("Error")和pPublishMessage(上新错误信息)
+                productGroupService.updateUploadErrorStatus(sxData.getPlatform(), listSxCode, sxData.getErrorMessage());
+                $error(String.format("天猫平台新增或更新商品时异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [numIId:%s] [耗时:%s]",
+                        channelId, cartId, groupId, numIId, (System.currentTimeMillis() - prodStartTime)));
                 return;
-                // modified by morse.lu 2016/06/06 end
             }
 //        }
 
         // 正常结束
-        $info(String.format("天猫平台单个产品和商品新增或更新信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformProductId:%s] [itemId:%s]",
-                channelId, cartId, groupId, platformProductId, numIId));
+        $info(String.format("天猫平台单个产品和商品新增或更新信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformProductId:%s] [numIId:%s] [耗时:%s]",
+                channelId, cartId, groupId, platformProductId, numIId, (System.currentTimeMillis() - prodStartTime)));
     }
 
     private void saveCmsBtTmScItem(String channelId, int cartId, SxData sxData) {

@@ -548,7 +548,6 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             }
         } else {
             paramCommonFields.put("shortDesc", shortDesc.length() > 1000 ? shortDesc.substring(0, 1000) : shortDesc);
-
         }
         // 详情描述(中文)
         if (!StringUtils.isEmpty(mainProdCommField.getLongDesCn())) {
