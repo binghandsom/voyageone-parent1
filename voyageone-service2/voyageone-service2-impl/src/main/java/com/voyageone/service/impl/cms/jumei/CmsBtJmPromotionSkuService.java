@@ -1,6 +1,8 @@
 package com.voyageone.service.impl.cms.jumei;
 
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
+import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import java.util.Map;
 public class CmsBtJmPromotionSkuService {
     @Autowired
     CmsBtJmPromotionSkuDao dao;
+    @Autowired
+    CmsBtJmPromotionProductDaoExt cmsBtJmPromotionProductDaoExt;
 
     public CmsBtJmPromotionSkuModel select(int id) {
         return dao.select(id);
@@ -25,6 +29,7 @@ public class CmsBtJmPromotionSkuService {
         return dao.update(entity);
     }
 
+    @VOTransactional
     public int updateWithDiscount(CmsBtJmPromotionSkuModel entity, String channelId, String modifer) {
         // 计算discount
         entity.setChannelId(channelId);
@@ -35,6 +40,7 @@ public class CmsBtJmPromotionSkuService {
             this.update(entity);
         else
             this.insert(entity);
+        cmsBtJmPromotionProductDaoExt.updateAvgPriceByPromotionProductId(entity.getCmsBtJmPromotionProductId());
         return entity.getId();
     }
 
