@@ -5026,7 +5026,23 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 解析cms_mt_platform_dict表中的数据字典
         if (mainProduct.getCommon().getFields().getAppSwitch() != null &&
                 mainProduct.getCommon().getFields().getAppSwitch() == 1) {
-            productInfoMap.put("wireless_desc", getValueByDict("天猫同购无线描述", expressionParser, shopProp));
+
+            String valWirelessDetails;
+            RuleExpression ruleWirelessDetails = new RuleExpression();
+            MasterWord masterWordWirelessDetails = new MasterWord("wirelessDetails");
+            ruleWirelessDetails.addRuleWord(masterWordWirelessDetails);
+            String wirelessDetails = null;
+            try {
+                wirelessDetails = expressionParser.parse(ruleWirelessDetails, shopProp, getTaskName(), null);
+            } catch (Exception e) {
+            }
+            if (!StringUtils.isEmpty(wirelessDetails)) {
+                valWirelessDetails = getValueByDict(wirelessDetails, expressionParser, shopProp);
+            } else {
+                valWirelessDetails = getValueByDict("天猫同购无线描述", expressionParser, shopProp);
+            }
+
+            productInfoMap.put("wireless_desc", valWirelessDetails);
         }
 
         // 商品上下架

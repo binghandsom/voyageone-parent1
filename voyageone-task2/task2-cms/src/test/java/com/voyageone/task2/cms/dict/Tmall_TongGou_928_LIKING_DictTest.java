@@ -366,6 +366,10 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
                 do处理天猫同购无线端20张图片(2, ruleRoot, new CustomWord(getCommonImagesWord));
             }
 
+			{
+				do处理天猫同购无线端20张图片(3, ruleRoot, new TextWord("https://img.alicdn.com/imgextra/i1/3081276392/TB2Y4tkdbBnpuFjSZFGXXX51pXa_!!3081276392.jpg"));
+			}
+
             if (!blnImport) {   // 参数图 - 普通商品
 
                 // imageTemplate
@@ -386,7 +390,7 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
                 }
 
                 CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
-                do处理天猫同购无线端20张图片(3, ruleRoot, new CustomWord(word));
+                do处理天猫同购无线端20张图片(4, ruleRoot, new CustomWord(word));
 
             }
 
@@ -413,7 +417,7 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
                     }
 
                     CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
-                    do处理天猫同购无线端20张图片(3, ruleRoot, new CustomWord(word));
+                    do处理天猫同购无线端20张图片(4, ruleRoot, new CustomWord(word));
                 }
 
             }
@@ -430,7 +434,7 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
                 imageIndex.addRuleWord(new TextWord("0"));
 
                 CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(null, imageType, viewType, null, imageIndex);
-                do处理天猫同购无线端20张图片(4, ruleRoot, new CustomWord(getCommonImagesWord));
+                do处理天猫同购无线端20张图片(5, ruleRoot, new CustomWord(getCommonImagesWord));
             }
 
             {
@@ -445,17 +449,17 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
                 imageIndex.addRuleWord(new TextWord("0"));
 
                 CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(null, imageType, viewType, null, imageIndex);
-                do处理天猫同购无线端20张图片(5, ruleRoot, new CustomWord(getCommonImagesWord));
+                do处理天猫同购无线端20张图片(6, ruleRoot, new CustomWord(getCommonImagesWord));
             }
 
-            for (int i = 6; i < 11; i++) {
+            for (int i = 7; i < 12; i++) {
                 // 前八张自定义图
-                int j = i - 5;
+                int j = i - 6;
                 do处理天猫同购无线端20张图片(i, ruleRoot, new DictWord("无线自定义图片-" + j)); // 原图，参照target
             }
 
-            for (int i = 11; i < 15; i++) {
-                int j = i - 10;
+            for (int i = 12; i < 16; i++) {
+                int j = i - 11;
                 do处理天猫同购无线端20张图片(i, ruleRoot, new DictWord("无线商品图片-" + j)); // url用详情页790*790的
             }
 
