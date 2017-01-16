@@ -85,6 +85,7 @@ public class CmsBtJmPromotionService extends BaseService {
     @Autowired
     private CmsBtJmPromotionImagesDao cmsBtJmPromotionImagesDao;
 
+    CmsBtTagJmModuleExtensionDao  tagJmModuleExtensionDao;
     @Autowired
     public CmsBtJmPromotionService(CmsBtPromotionDao daoCmsBtPromotion,
                                    CmsBtJmPromotionDao dao, CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand,
@@ -95,7 +96,7 @@ public class CmsBtJmPromotionService extends BaseService {
                                    CmsBtJmImageTemplateService jmImageTemplateService,
                                    CmsMtJmConfigService jmConfigService,
                                    CmsBtJmBayWindowService cmsBtJmBayWindowService,
-                                   CmsBtJmPromotionBrandLogoDao cmsBtJmPromotionBrandLogoDao) {
+                                   CmsBtJmPromotionBrandLogoDao cmsBtJmPromotionBrandLogoDao,CmsBtTagJmModuleExtensionDao tagJmModuleExtensionDao) {
         this.tagService = tagService;
         this.daoCmsBtPromotion = daoCmsBtPromotion;
         this.dao = dao;
@@ -108,6 +109,7 @@ public class CmsBtJmPromotionService extends BaseService {
         this.jmConfigService = jmConfigService;
         this.cmsBtJmBayWindowService = cmsBtJmBayWindowService;
         this.cmsBtJmPromotionBrandLogoDao = cmsBtJmPromotionBrandLogoDao;
+        this.tagJmModuleExtensionDao=tagJmModuleExtensionDao;
     }
 
     /**
@@ -456,17 +458,19 @@ public class CmsBtJmPromotionService extends BaseService {
                 .map(tag -> {
                     CmsBtTagModel tagModel = tag.getModel();
                     tagModel.setModifier(jmPromotionModel.getModifier());
-                    CmsBtTagJmModuleExtensionModel module;
+                    CmsBtTagJmModuleExtensionModel module = null;
                     if (tagModel.getId() != null && tagModel.getId() > 0) {
                         tagService.updateTagModel(tagModel);
-                        module = tagService.getJmModule(tagModel);
+                        if(tagModel.getActive()==1) {
+                            module = tagService.getJmModule(tagModel);
+                        }
                     } else {
                         addChildTag(tagModel, jmPromotionModel);
                         module = tagService.createJmModuleExtension(tagModel);
                         tagService.addJmModule(module);
                     }
                     return module;
-                })
+                }).filter(f -> f != null)
                 .collect(toList());
 
         // 更新飘窗
