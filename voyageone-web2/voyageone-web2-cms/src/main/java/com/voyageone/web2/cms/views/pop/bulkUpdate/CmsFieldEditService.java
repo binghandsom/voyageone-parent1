@@ -23,8 +23,12 @@ import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
+import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.rabbitmq.service.MqSenderService;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -36,7 +40,14 @@ import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.UpdateProductSalePriceMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchConfirmRetailPriceMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchProductApprovalMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchRefreshRetailPriceMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.BatchUpdateProductMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.PlatformActiveLogMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductVoRateUpdateMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.*;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.com.cache.CommCacheService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
@@ -103,6 +114,8 @@ public class CmsFieldEditService extends BaseViewService {
     private PriceService priceService;
     @Autowired
     private CmsMtPlatformCommonSchemaService cmsMtPlatformCommonSchemaService;
+    @Autowired
+    private CmsMqSenderService cmsMqSenderService;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -282,7 +295,7 @@ public class CmsFieldEditService extends BaseViewService {
             JongoUpdate updObj = new JongoUpdate();
             updObj.setQuery("{'common.fields.code':{$in:#}}");
             updObj.setQueryParameters(productCodes);
-            updObj.setUpdate("{$set:{'common.catConf':'1','common.fields." + prop_id + "':#}}");
+            updObj.setUpdate("{$set:{'common.fields." + prop_id + "':#}}");
             updObj.setUpdateParameters(stsCode);
 
             WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
@@ -325,12 +338,24 @@ public class CmsFieldEditService extends BaseViewService {
             $debug("VO扣点值批量更新结果 " + rs.toString());
 
             // 调用批处理程序 记录价格变更履历/记录商品修改历史/同步价格范围/插入上新程序
-            Map<String, Object> logParams = new HashMap<>(3);
+            /*Map<String, Object> logParams = new HashMap<>(3);
             logParams.put("channelId", userInfo.getSelChannelId());
             logParams.put("creater", userInfo.getUserName());
             logParams.put("codeList", productCodes);
-            logParams.put("voRate", voRateVal);
-            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob, logParams);
+            logParams.put("voRate", voRateVal);*/
+
+            ProductVoRateUpdateMQMessageBody mqMessageBody = new ProductVoRateUpdateMQMessageBody();
+            mqMessageBody.setChannelId(userInfo.getSelChannelId());
+            mqMessageBody.setCreater(userInfo.getUserName());
+            mqMessageBody.setCodeList(productCodes);
+            mqMessageBody.setVoRate(voRateVal);
+            mqMessageBody.setSender(userInfo.getUserName());
+            try {
+                mqSenderService.sendMessage(mqMessageBody);
+            } catch (MQMessageRuleException e) {
+                $error(String.format("VO扣点值批量更新MQ发送异常,channelId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
+                throw new BusinessException("MQ发送异常:" + e.getMessage());
+            }
 
         } else if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id) || "translateStatus".equals(prop_id)) {
             // 税号更新 /翻译状态更新
@@ -345,11 +370,25 @@ public class CmsFieldEditService extends BaseViewService {
                 return rsMap;
             }
 
-            params.put("productIds", productCodes);
-            params.put("_taskName", "batchupdate");
+            /*params.put("productIds", productCodes);
             params.put("_channleId", userInfo.getSelChannelId());
             params.put("_userName", userInfo.getUserName());
-            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+            params.put("_taskName", "batchupdate");
+            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);*/
+
+            BatchUpdateProductMQMessageBody mqMessageBody = new BatchUpdateProductMQMessageBody();
+            mqMessageBody.setChannelId(userInfo.getSelChannelId());
+            mqMessageBody.setUserNmme(userInfo.getUserName());
+            mqMessageBody.setProductCodes(productCodes);
+            mqMessageBody.setParams(params);
+            mqMessageBody.setSender(userInfo.getUserName());
+            try {
+                mqSenderService.sendMessage(mqMessageBody);
+            } catch (MQMessageRuleException e) {
+                $error(String.format("批量更新商品发送MQ异常,channleId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
+                throw new BusinessException("MQ发送异常:" + e.getMessage());
+            }
+
             rsMap.put("ecd", 0);
             return rsMap;
 
@@ -443,7 +482,7 @@ public class CmsFieldEditService extends BaseViewService {
         $debug("批量修改属性.(商品上下架) 结果1=：" + rs.toString());
 
         // 发送请求到MQ,插入操作历史记录
-        Map<String, Object> logParams = new HashMap<>(6);
+        /*Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", userInfo.getSelChannelId());
         logParams.put("cartIdList", cartList);
         logParams.put("activeStatus", statusVal.name());
@@ -455,7 +494,26 @@ public class CmsFieldEditService extends BaseViewService {
         }
 
         logParams.put("codeList", productCodes);
-        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);
+        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);*/
+
+        PlatformActiveLogMQMessageBody mqMessageBody = new PlatformActiveLogMQMessageBody();
+        mqMessageBody.setChannelId(userInfo.getSelChannelId());
+        mqMessageBody.setCartList(cartList);
+        mqMessageBody.setActiveStatus(statusVal.name());
+        mqMessageBody.setUserName(userInfo.getUserName());
+        mqMessageBody.setSender(userInfo.getUserName());
+        if (cartId == null || cartId == 0) {
+            mqMessageBody.setComment("高级检索 批量上下架(全店铺操作)");
+        } else {
+            mqMessageBody.setComment("高级检索 批量上下架");
+        }
+        mqMessageBody.setProductCodes(productCodes);
+        try {
+            mqSenderService.sendMessage(mqMessageBody);
+        } catch (MQMessageRuleException e) {
+            $error(String.format("商品上下架MQ发送异常,channelId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
+            throw new BusinessException("商品上下架MQ发送异常: " + e.getMessage());
+        }
 
         rsMap.put("ecd", 0);
         return rsMap;
@@ -504,7 +562,23 @@ public class CmsFieldEditService extends BaseViewService {
             cartList.add(cartId);
         }
 
-        // 先判断是否是ready状态（minimall店铺不验证）
+        //============================以下业务改造成MQ========================================
+        AdvSearchProductApprovalMQMessageBody mqMessageBody = new AdvSearchProductApprovalMQMessageBody();
+        mqMessageBody.setParams(params);
+        mqMessageBody.setCmsSessionParams(JacksonUtil.bean2Map(cmsSession));
+        mqMessageBody.setChannelId(userInfo.getSelChannelId());
+        mqMessageBody.setUserName(userInfo.getUserName());
+        mqMessageBody.setCartList(cartList);
+        mqMessageBody.setSender(userInfo.getUserName());
+        mqMessageBody.setProductCodes(productCodes);
+        try {
+            mqSenderService.sendMessage(mqMessageBody);
+        } catch (MQMessageRuleException e) {
+            throw new BusinessException("MQ发送异常: " + e.getMessage());
+        }
+
+
+        /*// 先判断是否是ready状态（minimall店铺不验证）
         List<Integer> newcartList = new ArrayList<>();
         for (Integer cartIdVal : cartList) {
             TypeChannelBean cartType = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, userInfo.getSelChannelId(), cartIdVal.toString(), "en");
@@ -729,7 +803,7 @@ public class CmsFieldEditService extends BaseViewService {
 
             // 记录商品修改历史
             productStatusHistoryService.insertList(userInfo.getSelChannelId(), newProdCodeList, cartIdVal, EnumProductOperationType.ProductApproved, msg, userInfo.getUserName());
-        }
+        }*/
 
         rsMap.put("ecd", 0);
         return rsMap;
@@ -1261,18 +1335,35 @@ public class CmsFieldEditService extends BaseViewService {
         }
 
         $debug("指导价变更批量确认 开始批量处理");
-        params.put("productIds", productCodes);
+        /*params.put("productIds", productCodes);
         params.put("cartIds", cartList);
         params.put("_taskName", params.get("_option"));
         params.put("_channleId", userInfo.getSelChannelId());
-        params.put("_userName", userInfo.getUserName());
-        if ("refreshRetailPrice".equalsIgnoreCase((String) params.get("_option"))) {
-            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
-        } else {
-            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+        params.put("_userName", userInfo.getUserName());*/
+
+        try {
+            if ("refreshRetailPrice".equalsIgnoreCase((String) params.get("_option"))) {
+                // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
+                AdvSearchRefreshRetailPriceMQMessageBody mqMessageBody = new AdvSearchRefreshRetailPriceMQMessageBody();
+                mqMessageBody.setCodeList(productCodes);
+                mqMessageBody.setCartList(cartList);
+                mqMessageBody.setUserName(userInfo.getUserName());
+                mqMessageBody.setChannelId(userInfo.getSelChannelId());
+                mqMessageBody.setSender(userInfo.getUserName());
+                mqSenderService.sendMessage(mqMessageBody);
+            } else {
+                // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+                AdvSearchConfirmRetailPriceMQMessageBody mqMessageBody = new AdvSearchConfirmRetailPriceMQMessageBody();
+                mqMessageBody.setChannelId(userInfo.getSelChannelId());
+                mqMessageBody.setCartList(cartList);
+                mqMessageBody.setCodeList(productCodes);
+                mqMessageBody.setUserName(userInfo.getUserName());
+                mqMessageBody.setSender(userInfo.getUserName());
+                mqSenderService.sendMessage(mqMessageBody);
+            }
+        } catch (MQMessageRuleException e) {
+            throw new BusinessException("MQ发送异常:" + e.getMessage());
         }
-
-
         rsMap.put("ecd", 0);
         return rsMap;
     }
@@ -1306,24 +1397,37 @@ public class CmsFieldEditService extends BaseViewService {
         if (StringUtil.isEmpty(pCatPath) || StringUtil.isEmpty(pCatId)) {
             new BusinessException("类目不能为空");
         }
-        List<BulkUpdateModel> bulkList = new ArrayList<>(productCodes.size());
-        for (String productCode : productCodes) {
-            HashMap<String, Object> updateMap = new HashMap<>();
-            updateMap.put("platforms.P" + cartId + ".pCatPath", pCatPath);
-            updateMap.put("platforms.P" + cartId + ".pCatId", pCatId);
-            updateMap.put("platforms.P" + cartId + ".pCatStatus", 1);
-            HashMap<String, Object> queryMap = new HashMap<>();
-            queryMap.put("common.fields.code", productCode);
-            HashMap<String, Object> queryMap2 = new HashMap<>();
-            queryMap2.put("$in", new String[]{null, ""});
-            queryMap.put("platforms.P" + cartId + ".pCatPath", queryMap2);
-            BulkUpdateModel model = new BulkUpdateModel();
-            model.setUpdateMap(updateMap);
-            model.setQueryMap(queryMap);
-            bulkList.add(model);
-        }
 
-        cmsBtProductDao.bulkUpdateWithMap(userInfo.getSelChannelId(), bulkList, userInfo.getUserName(), "$set");
+        CmsPlatformCategoryUpdateMQMessageBody cmsPlatformCategoryUpdateMQMessageBody = new CmsPlatformCategoryUpdateMQMessageBody();
+        cmsPlatformCategoryUpdateMQMessageBody.setpCatId(pCatId);
+        cmsPlatformCategoryUpdateMQMessageBody.setpCatPath(pCatPath);
+        cmsPlatformCategoryUpdateMQMessageBody.setSender(userInfo.getUserName());
+        cmsPlatformCategoryUpdateMQMessageBody.setChannelId(userInfo.getSelChannelId());
+        cmsPlatformCategoryUpdateMQMessageBody.setCartId(cartId);
+        List<List<String>> productCodesList = CommonUtil.splitList(productCodes, 500);
+        productCodesList.forEach(codes -> {
+            cmsPlatformCategoryUpdateMQMessageBody.setProductCodes(codes);
+            mqSenderService.sendMessage(cmsPlatformCategoryUpdateMQMessageBody);
+        });
+
+//        List<BulkUpdateModel> bulkList = new ArrayList<>(productCodes.size());
+//        for (String productCode : productCodes) {
+//            HashMap<String, Object> updateMap = new HashMap<>();
+//            updateMap.put("platforms.P" + cartId + ".pCatPath", pCatPath);
+//            updateMap.put("platforms.P" + cartId + ".pCatId", pCatId);
+//            updateMap.put("platforms.P" + cartId + ".pCatStatus", 1);
+//            HashMap<String, Object> queryMap = new HashMap<>();
+//            queryMap.put("common.fields.code", productCode);
+//            HashMap<String, Object> queryMap2 = new HashMap<>();
+//            queryMap2.put("$in", new String[]{null, ""});
+//            queryMap.put("platforms.P" + cartId + ".pCatPath", queryMap2);
+//            BulkUpdateModel model = new BulkUpdateModel();
+//            model.setUpdateMap(updateMap);
+//            model.setQueryMap(queryMap);
+//            bulkList.add(model);
+//        }
+//
+//        cmsBtProductDao.bulkUpdateWithMap(userInfo.getSelChannelId(), bulkList, userInfo.getUserName(), "$set");
     }
 
     public void bulkSetPlatformFields(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
@@ -1363,14 +1467,28 @@ public class CmsFieldEditService extends BaseViewService {
         Map<String, Object> result = new LinkedHashMap<>();
         fields.getFieldValueToMap(result);
 
-        Map<String, Object> mqMessage = new HashedMap();
-        mqMessage.put("cartId", cartId);
-        mqMessage.put("channelId", userInfo.getSelChannelId());
-        mqMessage.put("productCodes", productCodes);
-        mqMessage.put("userName", userInfo.getUserName());
-        mqMessage.put("fieldsId", prop_id);
-        mqMessage.put("fieldsValue", result.get(prop_id));
-        sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_PlatformFieldsTaskJob, mqMessage);
+//        Map<String, Object> mqMessage = new HashedMap();
+//        mqMessage.put("cartId", cartId);
+//        mqMessage.put("channelId", userInfo.getSelChannelId());
+//        mqMessage.put("productCodes", productCodes);
+//        mqMessage.put("userName", userInfo.getUserName());
+//        mqMessage.put("fieldsId", prop_id);
+//        mqMessage.put("fieldsValue", result.get(prop_id));
+
+        CmsBatchPlatformFieldsMQMessageBody mqMessageBody = new CmsBatchPlatformFieldsMQMessageBody();
+        mqMessageBody.setCartId(cartId);
+        mqMessageBody.setChannelId(userInfo.getSelChannelId());
+        mqMessageBody.setProductCodes(productCodes);
+        mqMessageBody.setUserName(userInfo.getUserName());
+        mqMessageBody.setFieldsId(prop_id);
+        mqMessageBody.setFieldsValue(result.get(prop_id));
+        mqMessageBody.setSender(userInfo.getUserName());
+        try {
+            cmsMqSenderService.sendMessage(mqMessageBody);
+        } catch (MQMessageRuleException e) {
+            $error(e);
+            e.printStackTrace();
+        }
     }
 
     /**

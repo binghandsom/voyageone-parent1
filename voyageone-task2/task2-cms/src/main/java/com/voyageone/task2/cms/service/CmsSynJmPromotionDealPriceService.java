@@ -1,7 +1,9 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionSkuService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.task2.base.BaseCronTaskService;
@@ -21,9 +23,8 @@ public class CmsSynJmPromotionDealPriceService extends BaseCronTaskService {
 
     @Autowired
     private CmsBtJmPromotionService cmsBtJmPromotionService;
-
     @Autowired
-    private MqSender sender;
+    CmsBtJmPromotionSkuService cmsBtJmPromotionSkuService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -38,11 +39,16 @@ public class CmsSynJmPromotionDealPriceService extends BaseCronTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         List<Integer> jmPromotionIds = cmsBtJmPromotionService.selectEffectiveJmPromotionId();
-        if(jmPromotionIds != null){
-            jmPromotionIds.forEach(jmPromotionId ->{
-                Map<String,Object> param = new HashedMap();
-                param.put("jmPromotionId",jmPromotionId);
-                sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_JmSynPromotionDealPrice, param);
+        if (jmPromotionIds != null) {
+
+            jmPromotionIds.forEach(jmPromotionId -> {
+                if (jmPromotionId > 0) {
+                    try {
+                        cmsBtJmPromotionSkuService.senderJMRefreshPriceMQMessage(jmPromotionId, "定时自动刷新");
+                    } catch (MQMessageRuleException e) {
+                        e.printStackTrace();
+                    }
+                }
             });
         }
     }

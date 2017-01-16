@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.mqjob;
 
-import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionImportMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.UpdateProductSalePriceMQMessageBody;
 import com.voyageone.service.impl.cms.vomqjobservice.CmsUpdateProductSalePriceService;
 
@@ -23,6 +22,8 @@ public class CmsUpdateProductSalePriceMQJob extends TBaseMQCmsService<UpdateProd
 
     @Override
     public void onStartup(UpdateProductSalePriceMQMessageBody messageBody) throws Exception {
+        long threadNo =  Thread.currentThread().getId();
         cmsUpdateProductSalePriceService.process(messageBody);
+        $info("threadNo="+threadNo+" finish");
     }
 }

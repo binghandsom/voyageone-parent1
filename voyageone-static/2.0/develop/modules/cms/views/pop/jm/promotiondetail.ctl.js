@@ -86,7 +86,28 @@ define([
 
             return newTag;
         };
+        /**
+         * 判断标签是否重复
+         * @param model
+         */
+        $scope.validTagName = function(model){
+            var self = this,
+             tagList = $scope.editModel.tagList;
 
+            if(!tagList || tagList.length === 0)
+                return;
+
+            mark = _.some(tagList,function(ele){
+                return ele.model != model && ele.model.tagName === model.tagName
+            });
+
+            if(mark){
+                alert('标签不可以重复！');
+                model.tagName = '';
+            }
+
+
+        };
         $scope.delTag = function (tag, index) {
             confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                 .then(function () {

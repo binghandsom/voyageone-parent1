@@ -3406,7 +3406,7 @@ public class SxProductService extends BaseService {
      *   2	Asics	Shoe        All
      *   结果：根据优先顺序，选择2号规则
      *
-     * @param imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
+     * @param imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图 6：使用保养图 7：测量方式图
      * @param viewType 1:PC端 2：APP端
      * @param brandName product.fields.brand
      * @param productType product.fields.productType
@@ -3480,7 +3480,7 @@ public class SxProductService extends BaseService {
                 throw new BusinessException("共通图片表找到两条以上符合的记录,请修正设定!" +
                         "channelId= " + channelId +
                         ",cartId= " + cartId +
-                        ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图)" +
+                        ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图 6：使用保养图 7：测量方式图)" +
                         ",viewType= "+ viewType + "(1:PC端 2：APP端)" +
                         ",BrandName= " + paramBrandName +
                         ",ProductType= " + paramProductType +
@@ -3492,7 +3492,7 @@ public class SxProductService extends BaseService {
                     throw new BusinessException("共通图片表找到的图片类型对应的图片数为0,请确保至少上传1张图片！" +
                             "channelId= " + channelId +
                             ",cartId= " + cartId +
-                            ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图)" +
+                            ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图 6：使用保养图 7：测量方式图)" +
                             ",viewType= "+ viewType + "(1:PC端 2：APP端)" +
                             ",BrandName= " + paramBrandName +
                             ",ProductType= " + paramProductType +
@@ -5053,6 +5053,12 @@ public class SxProductService extends BaseService {
                 throw new BusinessException("填写的颜色别名(颜色/口味/香型)的长度不能超过" + maxLength);
             }
         }
+
+        // 部分code中有下划线， 运营又无法修改， 所以这里统一变成中杠 START
+        if (!StringUtils.isEmpty(alias)) {
+            alias = alias.replaceAll("_", "-");
+        }
+        // 部分code中有下划线， 运营又无法修改， 所以这里统一变成中杠 END
 
         return alias;
     }

@@ -210,9 +210,13 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="tag in ctrlEdit.editModel.tagList" ng-if="tag.model.active!=0">
+                            <tr ng-repeat="tag in ctrlEdit.editModel.tagList"
+                                ng-if="tag.model.active!=0">
                                 <td>
-                                    <input class="form-control" ng-model="tag.model.tagName" name="tagName{{$index}}" maxlength="20" required ng-readonly="tag.featured">
+                                    <input class="form-control" name="tagName{{$index}}" maxlength="20" required
+                                           ng-model = "tag.model.tagName"
+                                           ng-blur = "ctrlEdit.validTagName(tag.model)"
+                                           ng-readonly = "tag.featured">
                                     <vo-message target="ctrlEdit.promotionForm['tagName' + $index]" ng-if="!tag.featured"></vo-message>
                                 </td>
                                 <td class="text-center">
