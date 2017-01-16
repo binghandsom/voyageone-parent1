@@ -112,7 +112,8 @@
             tag.created,
             tag.creater,
             tag.modified,
-            tag.modifier
+            tag.modifier,
+            active
         from voyageone_cms2.cms_bt_tag tag
         where
             tag.parent_tag_id = #{parentTagId,jdbcType=INTEGER}

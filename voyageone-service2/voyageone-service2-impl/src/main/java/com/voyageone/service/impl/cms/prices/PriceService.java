@@ -940,7 +940,7 @@ public class PriceService extends BaseService {
             throw new BusinessException("产品数据不全,缺少Platform！");
         }
         if (!CmsConstants.ProductStatus.Approved.name().equals(platObj.getStatus())) {
-            $warn("PriceService 产品未上新,不可修改价格 channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
+            $warn("PriceService 产品未上新,不可修改价格 channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.getCommon().getFields().getCode());
             return;
         }
 
@@ -952,7 +952,7 @@ public class PriceService extends BaseService {
         String updType = null;
         if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id()) || PlatFormEnums.PlatForm.JD.getId().equals(cartObj.getPlatform_id())) {
             // 先要判断更新类型
-            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(channleId, cartId, prodCode);
+            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(productModel.getOrgChannelId(), cartId, prodCode);
             if (imsBtProductModel == null) {
                 $error("PriceService 产品数据不全 未配置ims_bt_product表 channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
                 throw new BusinessException("产品数据不全,未配置ims_bt_product表！");
@@ -974,6 +974,7 @@ public class PriceService extends BaseService {
         if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
             // 天猫平台直接调用API
             tmUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType, platObj.getpNumIId());
+
         } else if (PlatFormEnums.PlatForm.JM.getId().equals(cartObj.getPlatform_id())) {
             // votodo -- PriceService  聚美平台 更新商品SKU的价格
 

@@ -32,8 +32,8 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
-import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -1865,6 +1865,49 @@ public class BackDoorController extends CmsController {
 
         });
         return "finish";
+    }
+    @RequestMapping(value = "updateErrorTranslateInfo", method = RequestMethod.GET)
+    public Object updateErrorTranslateInfo (@RequestParam("channelId") String channelId, @RequestParam("code") String code, @RequestParam("regex") String regex) {
+        JongoQuery query = new JongoQuery();
+        if (StringUtils.isEmpty(code)) {
+            query.setQuery("{\"common.fields.translateStatus\": \"1\", \"common.fields.translator\": {$regex: #}}");
+            query.setParameters(regex);
+        }
+        else {
+            query.setQuery("{\"common.fields.translateStatus\": \"1\", \"common.fields.code\": #, \"common.fields.translator\": {$regex: #}}");
+            query.setParameters(code, regex);
+        }
+
+        List<String> updateList = new ArrayList<>();
+
+        List<CmsBtProductModel> productList = cmsBtProductDao.select(query, channelId);
+        for (CmsBtProductModel product : productList) {
+
+            JongoUpdate updateQuery = new JongoUpdate();
+            updateQuery.setQuery("{\"prodId\": #}");
+            updateQuery.setQueryParameters(product.getProdId());
+            updateQuery.setUpdate("{$set:{\"common.fields.translator\": #, \"common.fields.translateTime\": #}}");
+            updateQuery.setUpdateParameters(product.getCommon().getFieldsNotNull().getTranslateTime(), product.getCommon().getFieldsNotNull().getTranslator());
+
+            updateList.add("code:" + product.getCommon().getFields().getCode()
+                    + "===translator:" + product.getCommon().getFieldsNotNull().getTranslateTime()
+                    + "===translateTime:" + product.getCommon().getFieldsNotNull().getTranslator());
+            cmsBtProductDao.updateFirst(updateQuery, channelId);
+
+        }
+
+        StringBuilder builder = new StringBuilder("<body>");
+        builder.append("<h2>修改的product</h2>");
+        System.out.println("<h2>修改的product</h2>");
+        builder.append("<ul>");
+        updateList.forEach(groupCheckMessage -> {
+            builder.append("<li>").append(groupCheckMessage).append("</li>");
+            System.out.println(groupCheckMessage);
+        });
+        builder.append("</ul>");
+        builder.append("</body>");
+
+        return builder.toString();
     }
 
     public class skuPlatformSizeAndQty {
