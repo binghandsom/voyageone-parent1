@@ -35,9 +35,9 @@ public class CmsJMProductUpdateMQJob extends TBaseMQCmsService<JMProductUpdateMQ
             }
         });
         if (errorCount > 0) {
-            cmsBusinessExLog(messageBody, String.format("code总数(%s) 失败(%s) \\r\\n %s", listResult.size(), errorCount, sb.toString()));
+            cmsSuccessIncludeFailLog(messageBody, String.format("code总数(%s) 失败(%s) \\r\\n %s", listResult.size(), errorCount, sb.toString()));
         } else {
-            cmsBusinessExLog(messageBody, "执行成功");
+            cmsSuccessLog(messageBody, String.format("执行成功 code总数(%s)", listResult.size()));
         }
     }
 }

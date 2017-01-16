@@ -58,10 +58,13 @@ public class CmsJmPromotionPriceRefreshMQJob extends TBaseMQCmsService<JMRefresh
                 $error(sku.getSkuCode() + ":" + errorId, ex);
             }
         }
+
+
+
         if (sbError.length() > 0) {
-            cmsBusinessExLog(messageBody, String.format("skuCode总数(%s) 失败(%s) \\r\\n %s", skus.size(), errorCount, sbError.toString()));
+            cmsSuccessIncludeFailLog(messageBody, String.format("skuCode总数(%s) 失败(%s) \\r\\n %s", skus.size(), errorCount, sbError.toString()));
         } else {
-            cmsBusinessExLog(messageBody, "执行成功");
+            cmsSuccessLog(messageBody, String.format("执行成功 skuCode总数(%s)", skus.size()));
         }
     }
     private CmsBtProductModel updateJMPromotionSkuPrice(Integer jmPromotionId, CmsBtProductModel cacheProduct, CmsBtJmPromotionSkuModel sku) {
