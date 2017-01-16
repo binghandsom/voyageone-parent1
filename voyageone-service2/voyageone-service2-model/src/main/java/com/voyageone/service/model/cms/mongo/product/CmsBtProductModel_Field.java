@@ -569,6 +569,38 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public void setWeightKG(Double weightKG) {
         setAttribute("weightKG", weightKG == null ? 0.0 : weightKG);
     }
+    //->客户建议零售价(double)
+    public Double getClientMsrpPriceSt() {
+        return getDoubleAttribute("clientMsrpPriceSt");
+    }
+
+    public void setClientMsrpPriceSt(Double clientMsrpPriceSt) {
+        setAttribute("clientMsrpPriceSt", clientMsrpPriceSt);
+    }
+    //->客户建议零售价(double)
+    public Double getClientMsrpPriceEd() {
+        return getDoubleAttribute("clientMsrpPriceEd");
+    }
+
+    public void setClientMsrpPriceEd(Double clientMsrpPriceEd) {
+        setAttribute("clientMsrpPriceEd", clientMsrpPriceEd);
+    }
+    //->客户成本价(double)
+    public Double getClientNetPriceSt() {
+        return getDoubleAttribute("clientNetPriceSt");
+    }
+
+    public void setClientNetPriceSt(Double clientNetPriceSt) {
+        setAttribute("clientNetPriceSt", clientNetPriceSt);
+    }
+    //->客户成本价(double)
+    public Double getClientNetPriceEd() {
+        return getDoubleAttribute("clientNetPriceEd");
+    }
+
+    public void setClientNetPriceEd(Double clientNetPriceEd) {
+        setAttribute("clientNetPriceEd", clientNetPriceEd);
+    }
 
     @Override
     public Object put(String key, Object value) {
