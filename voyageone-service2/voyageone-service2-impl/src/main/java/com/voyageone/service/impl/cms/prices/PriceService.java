@@ -359,6 +359,15 @@ public class PriceService extends BaseService {
             taxRate = feeTaxService.getTaxRate(hsCode, shippingType);
         }
 
+        Double catCostRate = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_CATEGORY_COST);
+        if (catCostRate == null || catCostRate.doubleValue() < 0) {
+            catCostRate = 1D;
+        }
+        Double catCommission = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_CATEGORY);
+        if (catCommission == null) {
+            catCommission = 0D;
+        }
+
         // 进入计算阶段
         SystemPriceCalculator systemPriceCalculator = new SystemPriceCalculator()
                 .setRoundUp(isRoundUp(channelId))
@@ -367,7 +376,9 @@ public class PriceService extends BaseService {
                 .setReturnRate(returnRate)
                 .setVoCommission(voyageOneCommission)
                 .setExchangeRate(exchangeRate)
-                .setOtherFee(otherFee);
+                .setOtherFee(otherFee)
+                .setCatCostRate(catCostRate)
+                .setCatCommission(catCommission);
 
         // 对设置到价格计算器上的参数
         // 在计算之前做一次检查
@@ -823,6 +834,11 @@ public class PriceService extends BaseService {
 
         private boolean roundUp = false;
 
+        /*参照CMSDOC-436*/
+        private Double catCostRate;
+        /*参照CMSDOC-436*/
+        private Double catCommission;
+
         private List<String> messageList = new ArrayList<>();
 
         private void checkValid(Double inputFee, String title) {
@@ -873,6 +889,16 @@ public class PriceService extends BaseService {
             return this;
         }
 
+        private SystemPriceCalculator setCatCostRate(Double catCostRate) {
+            checkValid(this.catCostRate = catCostRate, "目录成本费率");
+            return this;
+        }
+
+        private SystemPriceCalculator setCatCommission(Double catCommission) {
+            checkValid(this.catCommission = catCommission, "目录佣金");
+            return this;
+        }
+
         private SystemPriceCalculator setRoundUp(boolean roundUp) {
             this.roundUp = roundUp;
             return this;
@@ -899,14 +925,14 @@ public class PriceService extends BaseService {
                 return -1D;
 
             // 计算公式分母
-            double denominator = 100d - voCommission - pfCommission - returnRate - taxRate;
+            double denominator = 100d - voCommission - pfCommission - returnRate - taxRate - catCommission;
 
             // 如果分母不合法。。。
             if (denominator == 0)
-                throw new IllegalPriceConfigException("根据这些参数 [VoyageOne Commission:%s], [Platform Commission:%s], [Return Rate:%s], [Tax Rate:%s] 计算出公式的分母为 0"
-                        , voCommission, pfCommission, returnRate, taxRate, denominator);
+                throw new IllegalPriceConfigException("根据这些参数 [VoyageOne Commission:%s], [Platform Commission:%s], [Return Rate:%s], [Tax Rate:%s], [Category Commission:%s] 计算出公式的分母为 0"
+                        , voCommission, pfCommission, returnRate, taxRate, catCommission, denominator);
 
-            Double price = ((inputPrice + shippingFee + otherFee) * exchangeRate * 100d) / denominator;
+            Double price = ((inputPrice * catCostRate + shippingFee + otherFee) * exchangeRate * 100d) / denominator;
 
             return roundDouble(price, roundUp);
         }
