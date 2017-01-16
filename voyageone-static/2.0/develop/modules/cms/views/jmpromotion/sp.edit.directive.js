@@ -402,6 +402,31 @@ define([
     };
 
     /**
+     * 判断标签是否重复
+     * @param model
+     */
+    SpEditDirectiveController.prototype.validTagName = function(model){
+        var self = this,
+            tagList = self.editModel.tagList,
+            mark,
+            alert = self.alert;
+
+        if(!tagList || tagList.length === 0)
+            return;
+
+        mark = _.some(tagList,function(ele){
+            return ele.model != model && ele.model.tagName === model.tagName
+        });
+
+        if(mark){
+            alert('标签不可以重复！');
+            model.tagName = '';
+        }
+
+
+    };
+
+    /**
      * @param date 字符串格式为yyyy-MM-dd ss:ss:ss
      * @returns {Date}
      */
