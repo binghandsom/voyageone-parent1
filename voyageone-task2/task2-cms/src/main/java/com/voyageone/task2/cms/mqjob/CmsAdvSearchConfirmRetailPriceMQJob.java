@@ -6,6 +6,7 @@ import com.voyageone.service.impl.cms.vomqjobservice.CmsConfirmRetailPriceServic
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +17,7 @@ import java.util.Map;
  * @Author dell
  * @Create 2016-12-30 17:18
  */
+@Service
 @RabbitListener()
 public class CmsAdvSearchConfirmRetailPriceMQJob extends TBaseMQCmsService<AdvSearchConfirmRetailPriceMQMessageBody> {
 

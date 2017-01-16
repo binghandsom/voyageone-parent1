@@ -1624,4 +1624,8 @@ public class ProductService extends BaseService {
         prodObj.getCommon().getFields().getCode();
         return prodObj.getProdId();
     }
+
+    public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key){
+        return cmsBtProductDao.bulkUpdateWithMap(channelId,bulkList,modifier,key);
+    }
 }

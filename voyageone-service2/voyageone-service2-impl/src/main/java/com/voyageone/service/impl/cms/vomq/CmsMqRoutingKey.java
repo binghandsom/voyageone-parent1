@@ -70,6 +70,11 @@ public class CmsMqRoutingKey {
     // 默认属性功能，用于强制对某商品或某类目进行属性的重新计算赋值和上新
     public static final String CMS_TASK_REFRESH_PRODUCTS = "VOCmsRefreshProductsQueue";
 
+    public static final String CMS_PLATFORM_CATEGORY_UPDATE = "VOCmsPlatformCategoryUpdateQueue";
+
+    /*高级检索-商品审批MQ新增*/
+    public static final String CMS_ADV_SEARCH_PRODUCT_APPROVAL = "VOCmsAdvSearchProductApprovalQueue";
+
     /**
      * image create task
      */
