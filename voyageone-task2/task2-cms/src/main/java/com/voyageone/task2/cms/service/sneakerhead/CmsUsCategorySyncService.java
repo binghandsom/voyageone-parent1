@@ -42,7 +42,7 @@ public class CmsUsCategorySyncService extends BaseCronTaskService {
 
     @Override
     protected String getTaskName() {
-        return "cmsUsCategorySyncJob";
+        return "CmsUsCategorySyncJob";
     }
 
     @Override
