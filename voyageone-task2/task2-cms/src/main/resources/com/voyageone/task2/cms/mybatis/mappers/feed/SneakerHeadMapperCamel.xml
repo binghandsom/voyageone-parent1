@@ -575,6 +575,7 @@
         ,${weight_org} as weight_org
         ,${weight_org_unit} as weight_org_unit
         ,${weight_calc} as weightCalc
+        ,${last_received_on} as lastReceivedOn
         <if test="attr != null">
             ,${attr}
         </if>

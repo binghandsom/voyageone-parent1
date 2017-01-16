@@ -44,6 +44,7 @@ public class SneakerHeadCodeModel {
     private String orderLimitCount;
     private String approvedDescriptions;
     private String urlKey;
+    private String lastReceivedOn;
 
     public List<SneakerHeadSkuModel> getSkus() {
         return skus;
@@ -299,5 +300,13 @@ public class SneakerHeadCodeModel {
 
     public void setUrlKey(String urlKey) {
         this.urlKey = urlKey;
+    }
+
+    public String getLastReceivedOn() {
+        return lastReceivedOn;
+    }
+
+    public void setLastReceivedOn(String lastReceivedOn) {
+        this.lastReceivedOn = lastReceivedOn;
     }
 }

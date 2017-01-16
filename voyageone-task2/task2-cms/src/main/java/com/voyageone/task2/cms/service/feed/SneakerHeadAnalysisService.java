@@ -202,6 +202,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
                     superFeedSneakerHeadBean.setApproveddescriptions(model.getApprovedDescriptions());
                     superFeedSneakerHeadBean.setUrlkey(model.getUrlKey());
                     superFeedSneakerHeadBean.setCreated(skuModel.getCreated());
+                    superFeedSneakerHeadBean.setLastReceivedOn(model.getLastReceivedOn());
                     superFeed.add(superFeedSneakerHeadBean);
                 }
             }
