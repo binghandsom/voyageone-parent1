@@ -93,7 +93,7 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
         if (!blnImport) {   // 参数图 - 普通商品
             {
                 // 前缀
-                String html = "<div><img src=\"";
+                String html = "<img width=790px src=\"";
                 ruleRoot.addRuleWord(new TextWord(html));
             }
 
@@ -120,7 +120,7 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
 
             {
                 // 后缀
-                String html = "\"></div>";
+                String html = "\">";
                 ruleRoot.addRuleWord(new TextWord(html));
             }
         }
@@ -128,7 +128,7 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
         if (blnImport) {   // 参数图 - 重点商品
             {
                 // 前缀
-                String html = "<div><img src=\"";
+                String html = "<img width=790px src=\"";
                 ruleRoot.addRuleWord(new TextWord(html));
             }
 
@@ -158,7 +158,7 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
 
             {
                 // 后缀
-                String html = "\"></div>";
+                String html = "\">";
                 ruleRoot.addRuleWord(new TextWord(html));
             }
         }
