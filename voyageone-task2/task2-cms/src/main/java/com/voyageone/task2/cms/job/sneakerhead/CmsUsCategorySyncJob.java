@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * Created by vantis on 2016/11/28.
  * 闲舟江流夕照晚 =。=
  */
-@Component
+@Component("CmsUsCategorySyncJob")
 public class CmsUsCategorySyncJob extends BaseTaskJob {
 
     private final CmsUsCategorySyncService cmsUsCategorySyncService;
