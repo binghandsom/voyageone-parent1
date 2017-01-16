@@ -1024,8 +1024,8 @@ public class PriceService extends BaseService {
     private void   jm_UpdateDealPriceBatch(ShopBean shopBean, CmsBtProductModel_Platform_Cart platObj,String priceConfigValue,boolean isUpdateJmDealPrice) throws Exception {
 
         HtDeal_UpdateDealPriceBatch_UpdateData updateData = null;
-        String pNumIId=platObj.getpNumIId();
-        List<BaseMongoMap<String, Object>> skuList=platObj.getSkus();
+        String pNumIId = platObj.getpNumIId();
+        List<BaseMongoMap<String, Object>> skuList = platObj.getSkus();
         List<HtDeal_UpdateDealPriceBatch_UpdateData> list = new ArrayList<>(skuList.size());
         for (BaseMongoMap skuObj : skuList) {
             updateData = new HtDeal_UpdateDealPriceBatch_UpdateData();
@@ -1034,16 +1034,7 @@ public class PriceService extends BaseService {
                 continue;
             }
             updateData.setJumei_sku_no(jmSkuNo);
-            Double priceSale = null;
-            if (priceConfigValue == null) {
-                priceSale = skuObj.getDoubleAttribute("priceSale");
-            } else {
-                priceSale = skuObj.getDoubleAttribute(priceConfigValue);
-            }
             Double priceMsrp = skuObj.getDoubleAttribute("priceMsrp");
-            if(isUpdateJmDealPrice) {
-                updateData.setDeal_price(priceSale);
-            }
             updateData.setMarket_price(priceMsrp);
             updateData.setJumei_hash_id(pNumIId);
             list.add(updateData);
@@ -1058,12 +1049,36 @@ public class PriceService extends BaseService {
             request.setUpdate_data(page);
             HtDealUpdateDealPriceBatchResponse response = serviceJumeiHtDeal.updateDealPriceBatch(shopBean, request);
             if (!response.is_Success()) {
-                errorMsg += response.getErrorMsg();
+                //是否抛出错误
+                boolean isThrowError = isThrowError(response);
+                if (isThrowError) {
+                    errorMsg += response.getErrorMsg();
+                }
             }
         }
         if (!StringUtil.isEmpty(errorMsg)) {
             throw new BusinessException("jm_UpdateDealPriceBatch:" + errorMsg);
         }
+    }
+
+    /**
+     * 是否抛出错误
+     * @param response
+     * @return
+     */
+    private boolean isThrowError(HtDealUpdateDealPriceBatchResponse response) {
+        boolean isThrowError=true;
+        if (response.getErrorList()!=null&&response.getErrorList().size() > 0) {
+            for (HtDealUpdateDealPriceBatchResponse.JuMeiSkuError error : response.getErrorList()) {
+                //if错误码为505 且错误信息包含"不存在!" then 错误信息不抛出
+                if ("505".equals(error.getError_code())) {
+                    if (!StringUtils.isEmpty(error.getError_message())&&error.getError_message().indexOf("不存在!") >= 0) {
+                        isThrowError = false;
+                    }
+                }
+            }
+        }
+        return isThrowError;
     }
 
     //聚美 更新商品价格
