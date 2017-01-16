@@ -461,13 +461,9 @@ public class CmsBtJmPromotionService extends BaseService {
                     CmsBtTagJmModuleExtensionModel module = null;
                     if (tagModel.getId() != null && tagModel.getId() > 0) {
                         tagService.updateTagModel(tagModel);
-//                        if (tagModel.getActive()==null||tagModel.getActive() == 0) {
-//                            tagJmModuleExtensionDao.delete(tagModel.getId());
-//                        } else {
                         if(tagModel.getActive()==1) {
                             module = tagService.getJmModule(tagModel);
                         }
-                       // }
                     } else {
                         addChildTag(tagModel, jmPromotionModel);
                         module = tagService.createJmModuleExtension(tagModel);
