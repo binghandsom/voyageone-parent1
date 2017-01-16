@@ -9,6 +9,7 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.task2.base.BaseCronTaskService;
@@ -56,6 +57,9 @@ public class CmsSynInventoryToCmsService extends BaseCronTaskService {
     // mongoDB 每次批量执行的数
     public static final int BULK_COUNT = 500;
 
+    @Autowired
+    CmsBtJmPromotionProduct3Service cmsBtJmPromotionProduct3Service;
+
     /**
      * 批量插入code级别的库存数据到mongdodb，以便db端的定时任务进行处理
      *
@@ -88,9 +92,9 @@ public class CmsSynInventoryToCmsService extends BaseCronTaskService {
 
                 //usjoi的对应
                 // 如果这个channel是usjoi的子channel的场合 库存也更新
-                List<TypeChannelBean> typeChannelBeans = TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.SKU_CARTS_53, orderChannelID,"cn");
+                List<TypeChannelBean> typeChannelBeans = TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.SKU_CARTS_53, orderChannelID, "cn");
                 typeChannelBeans.forEach(typeChannelBean -> {
-                    if(Channels.isUsJoi(typeChannelBean.getValue())){
+                    if (Channels.isUsJoi(typeChannelBean.getValue())) {
                         bulkUpdateCodeQty(typeChannelBean.getValue(), orderChannelID, codeInventoryList, getTaskName());
                     }
                 });
@@ -101,7 +105,8 @@ public class CmsSynInventoryToCmsService extends BaseCronTaskService {
         }
 
         // 同步库存数据到聚美活动表 cms_bt_jm_promotion_product
-        sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_JmPromotionProductStockSyncServiceJob, null);
+        cmsBtJmPromotionProduct3Service.sendMessageJmPromotionProductStockSync(this.getTaskName());
+       // sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_JmPromotionProductStockSyncServiceJob, null);
     }
 
     /**

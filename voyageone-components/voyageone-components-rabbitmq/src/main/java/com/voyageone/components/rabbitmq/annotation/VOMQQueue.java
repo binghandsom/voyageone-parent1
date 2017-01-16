@@ -21,15 +21,12 @@ public @interface VOMQQueue {
     /**
      * 出错时是否把消息保存在数据库中，以后会自动发送到消息中 [true: try catch; false:throw exception]
      */
-    boolean isBackMessage() default true;
+    boolean isBackMessage() default false;
 
     /**
      * 是否检测消息定义存在
      */
     boolean isDeclareQueue() default true;
 
-    /**
-     * 延迟发送时间(秒)
-     */
-    long delaySecond() default 0;
+
 }

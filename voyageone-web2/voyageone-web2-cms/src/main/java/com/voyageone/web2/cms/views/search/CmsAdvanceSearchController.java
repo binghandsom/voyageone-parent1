@@ -430,7 +430,7 @@ public class CmsAdvanceSearchController extends CmsController {
     public AjaxResponse addFreeTag(@RequestBody Map<String, Object> params) {
         UserSessionBean userInfo = getUser();
 
-        searchIndexService.setProdFreeTag(userInfo.getSelChannelId(), params, userInfo.getUserName(), getCmsSession());
+        searchIndexService.setProdFreeTagMQ(userInfo.getSelChannelId(), params, userInfo.getUserName(), getCmsSession());
         return success(null);
     }
 

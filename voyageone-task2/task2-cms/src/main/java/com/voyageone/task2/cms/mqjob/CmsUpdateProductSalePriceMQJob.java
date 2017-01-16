@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.mqjob;
 
-import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionImportMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.UpdateProductSalePriceMQMessageBody;
 import com.voyageone.service.impl.cms.vomqjobservice.CmsUpdateProductSalePriceService;
 

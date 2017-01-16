@@ -9,8 +9,7 @@ public  interface IMQMessageBody {
 
      int getConsumerRetryTimes();
      int getMqId();
+     int getDelaySecond();
      String getSender();
-
      void check() throws MQMessageRuleException;
-
 }

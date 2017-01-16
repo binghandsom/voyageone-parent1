@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service.tools;
 
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.task2.cms.mqjob.CmsRefreshProductsMQJob;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ import static org.junit.Assert.*;
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class ProductUpdaterTest {
     @Autowired
-    private CmsRefreshProductsJobService cmsRefreshProductsJobService;
+    private CmsRefreshProductsMQJob cmsRefreshProductsMQJob;
 
     @Autowired
     private ProductService productService;
@@ -44,7 +45,7 @@ public class ProductUpdaterTest {
 
         valueMap.put(fieldId, expected);
 
-        cmsRefreshProductsJobService.new ProductUpdater(cmsBtProductModel, valueMap, cartId, channelId)
+        cmsRefreshProductsMQJob.new ProductUpdater(cmsBtProductModel, valueMap, cartId, channelId)
                 .update();
 
         cmsBtProductModel = productService.getProductById(channelId, productId);

@@ -184,6 +184,12 @@ define(function () {
             "templateUrl": "views/system/error/list.tpl.html",
             "controllerUrl": "modules/cms/views/system/error/list.ctl"
         },
+        "maintain_error_mq_error_list": {
+            "hash": "/maintain_error/mq_list",
+            "templateUrl": "views/system/error/mq_list.tpl.html",
+            "controllerUrl": "modules/cms/views/system/error/mq_list.ctl",
+            "controller": "mqListSetController as ctrl"
+        },
         "maintain_error_import_error_list_param": {
             "hash": "/maintain_error/import_error_list/:type/:cartId",
             "templateUrl": "views/system/error/list.tpl.html",
