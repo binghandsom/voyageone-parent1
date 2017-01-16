@@ -3,7 +3,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    var Drag_Carts = [20,23,25,30,31,32];
+    var Drag_Carts = [20, 23, 25, 30, 31, 32];
 
     /**
      *
@@ -100,8 +100,8 @@ define([
             var key = this.key[index];
 
             return key ? _.filter(arr, function (item) {
-                return item.catName.indexOf(key[index]) > -1;
-            }) : arr;
+                    return item.catName.indexOf(key[index]) > -1;
+                }) : arr;
         };
 
         CategoryController.prototype.search = function (index) {
@@ -171,7 +171,7 @@ define([
             self.sellerCatService.addCat({
                 "cartId": +this.cartInfo.cart,
                 "catName": catName,
-                "urlKey" : urlKey,
+                "urlKey": urlKey,
                 "parentCatId": parentCatId
             }).then(function (res) {
                 var newNode = getNodeByName(catName, res.data.catTree);
@@ -212,15 +212,18 @@ define([
         CategoryController.prototype.updateCat = function (node) {
             var self = this;
 
+            console.log('old', node.catName);
+            console.log('new', node.newCatName);
+
             if (node.value == null) {
                 node.value = 1;
                 node.newCatName = node.catName;
             } else {
                 node.value = null;
-                if (node.newCatName == "" || node.newCatName == null)
+                if (node.newCatName == "" || node.newCatName == null || node.catName === node.newCatName)
                     return;
                 self.sellerCatService.updateCat({
-                    "cartId": +this.cartInfo.cart,
+                    "cartId": +self.cartInfo.cart,
                     "catId": node.catId,
                     "catName": node.newCatName
                 }).then(function (res) {

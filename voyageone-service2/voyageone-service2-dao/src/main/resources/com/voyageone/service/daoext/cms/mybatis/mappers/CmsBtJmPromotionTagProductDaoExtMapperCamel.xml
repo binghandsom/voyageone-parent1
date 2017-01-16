@@ -37,7 +37,7 @@
                                     #{item}
                                  </foreach>
         RIGHT JOIN `cms_bt_tag` AS c ON b.`cms_bt_tag_id`=c.`id`
-        WHERE c.`parent_tag_id`=#{parentTagId}
+        WHERE c.`parent_tag_id`=#{parentTagId} and c.active=1
         GROUP BY c.`id`
     </select>
 
