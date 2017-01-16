@@ -6,7 +6,7 @@
         `date`, `shop_id`, `orders`, `qty`, `amt`, `buyers`, `uv`, `pv`, `add_favortite`, 
         `uv_regular`, `on_sale`, `in_stock`, `shipping`, `direct_express`, `not_express_72h`, 
         `dsr_service`, `dsr_describe`, `dsr_express`, `response_rate_48h`, `return_duration_ranking`, 
-        `return_rate`, `return_quality_ranking`, `return_disputes_rate`
+        `return_orders`, `return_quality_ranking`, `return_disputes_rate`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.report.BiReportSalesShop010Key" >
@@ -74,8 +74,8 @@
             <if test="returnDurationRanking != null" >
                 `return_duration_ranking` = #{returnDurationRanking,jdbcType=DECIMAL},
             </if>
-            <if test="returnRate != null" >
-                `return_rate` = #{returnRate,jdbcType=DECIMAL},
+            <if test="returnOrders != null" >
+                `return_orders` = #{returnOrders,jdbcType=DECIMAL},
             </if>
             <if test="returnQualityRanking != null" >
                 `return_quality_ranking` = #{returnQualityRanking,jdbcType=DECIMAL},
@@ -153,8 +153,8 @@
             <if test="returnDurationRanking != null" >
                 and `return_duration_ranking` = #{returnDurationRanking,jdbcType=DECIMAL}
             </if>
-            <if test="returnRate != null" >
-                and `return_rate` = #{returnRate,jdbcType=DECIMAL}
+            <if test="returnOrders != null" >
+                and `return_orders` = #{returnOrders,jdbcType=DECIMAL}
             </if>
             <if test="returnQualityRanking != null" >
                 and `return_quality_ranking` = #{returnQualityRanking,jdbcType=DECIMAL}
@@ -225,8 +225,8 @@
             <if test="returnDurationRanking != null" >
                 and `return_duration_ranking` = #{returnDurationRanking,jdbcType=DECIMAL}
             </if>
-            <if test="returnRate != null" >
-                and `return_rate` = #{returnRate,jdbcType=DECIMAL}
+            <if test="returnOrders != null" >
+                and `return_orders` = #{returnOrders,jdbcType=DECIMAL}
             </if>
             <if test="returnQualityRanking != null" >
                 and `return_quality_ranking` = #{returnQualityRanking,jdbcType=DECIMAL}
@@ -294,8 +294,8 @@
             <if test="returnDurationRanking != null" >
                 and `return_duration_ranking` = #{returnDurationRanking,jdbcType=DECIMAL}
             </if>
-            <if test="returnRate != null" >
-                and `return_rate` = #{returnRate,jdbcType=DECIMAL}
+            <if test="returnOrders != null" >
+                and `return_orders` = #{returnOrders,jdbcType=DECIMAL}
             </if>
             <if test="returnQualityRanking != null" >
                 and `return_quality_ranking` = #{returnQualityRanking,jdbcType=DECIMAL}
@@ -369,8 +369,8 @@
             <if test="returnDurationRanking != null" >
                 `return_duration_ranking`,
             </if>
-            <if test="returnRate != null" >
-                `return_rate`,
+            <if test="returnOrders != null" >
+                `return_orders`,
             </if>
             <if test="returnQualityRanking != null" >
                 `return_quality_ranking`,
@@ -440,8 +440,8 @@
             <if test="returnDurationRanking != null" >
                 #{returnDurationRanking,jdbcType=DECIMAL},
             </if>
-            <if test="returnRate != null" >
-                #{returnRate,jdbcType=DECIMAL},
+            <if test="returnOrders != null" >
+                #{returnOrders,jdbcType=DECIMAL},
             </if>
             <if test="returnQualityRanking != null" >
                 #{returnQualityRanking,jdbcType=DECIMAL},

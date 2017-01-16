@@ -106,7 +106,7 @@ public class BiReportSalesShop010Model extends BiReportSalesShop010Key {
     /**
      * 退款率
      */
-    protected BigDecimal returnRate;
+    protected BigDecimal returnOreders;
 
     /**
      * 品质退款率排名
@@ -262,12 +262,12 @@ public class BiReportSalesShop010Model extends BiReportSalesShop010Key {
         this.returnDurationRanking = returnDurationRanking;
     }
 
-    public BigDecimal getReturnRate() {
-        return returnRate;
+    public BigDecimal getreturnOreders() {
+        return returnOreders;
     }
 
-    public void setReturnRate(BigDecimal returnRate) {
-        this.returnRate = returnRate;
+    public void setreturnOreders(BigDecimal returnOreders) {
+        this.returnOreders = returnOreders;
     }
 
     public BigDecimal getReturnQualityRanking() {

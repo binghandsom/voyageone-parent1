@@ -135,7 +135,7 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
             throw new BusinessException("4004");
         }
        return genResponseEntityFromFile("hello.xls", exportPath);*/
-        return genResponseEntityFromBytes("test.txt",biRepConsultService.createXLSFile());
+        return genResponseEntityFromBytes("test.xlsx",biRepConsultService.createXLSFile());
     }
 
     @RequestMapping(value = BIREPORT.LIST.DOWNLOAD.DOWNLOADTEST)

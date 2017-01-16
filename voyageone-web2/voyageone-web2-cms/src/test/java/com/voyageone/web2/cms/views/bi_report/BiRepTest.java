@@ -9,6 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.text.ParseException;
+import java.util.Collection;
 
 /**
  * Created by dell on 2017/1/11.
@@ -20,6 +21,7 @@ public class BiRepTest {
     BiRepSupport biRepSupport;
     @Autowired
     private BiRepConsultService biRepConsultService;
+
 /*
     @Test
     public void biReportTest()
@@ -27,16 +29,20 @@ public class BiRepTest {
         biRepConsultService.createXLSFile();
     }*/
     @Test
-    public void getData() throws ParseException
+    public void getData()
     {
-        biRepConsultService.getData();
-       /* BiReportSalesProduct010Model bpm=new BiReportSalesProduct010Model();
-        Class bClz=bpm.getClass();
-        Field [] fields=bClz.getDeclaredFields();
-        System.out.println(fields.length);
-        for(Field f:fields)
-        {
-            System.out.println(f.getName());
-        }*/
+        try {
+            biRepConsultService.getData();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        finally {
+            System.out.println("End!");
+        }
+//        biRepConsultService.createXLSFile();
+    }
+
+    public <T> void testcall(Collection<T> dataset) {
+
     }
 }

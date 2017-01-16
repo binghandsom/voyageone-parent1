@@ -1,16 +1,19 @@
 package com.voyageone.web2.cms.views.biReport.consult;
 
 import com.voyageone.common.PageQueryParameters;
-import com.voyageone.common.configs.beans.TestBean;
 import com.voyageone.service.dao.report.BiReportSalesProduct010Dao;
-import com.voyageone.service.model.report.BiReportSalesProduct010Key;
-import com.voyageone.service.model.report.BiReportSalesProduct010Model;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import com.voyageone.service.dao.report.BiReportSalesShop010Dao;
+import com.voyageone.service.daoext.report.BiReportSalesShop010DaoExt;
+import com.voyageone.service.model.report.BiReportSalesShop010Model;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.*;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -25,6 +28,14 @@ public class BiRepConsultService {
     private BiReportSalesProduct010Dao biReportSalesProduct010Dao;
     @Autowired
     private BiRepSupport BiRepSupport;
+    @Autowired
+    private BiReportSalesShop010Dao biReportSalesShop010Dao;
+    @Autowired
+    private BiRepExcelFileCreator biRepExcelFileCreator;
+    @Autowired
+    private BiReportSalesShop010DaoExt biReportSalesShop010DaoExt;
+
+
 
     public Map<String, Object> biRepDownload(PageQueryParameters parameters) {
 //        String channel=parameters.getParameterValue("channel");
@@ -55,7 +66,7 @@ public class BiRepConsultService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 //        workbook.write(baos);
 
-        // 测试数据
+        /*// 测试数据
         BiRepSupport<Student> biRepSupport = new BiRepSupport<Student>();
         String[] headers = {"学号", "姓名", "年龄", "性别", "出生日期"};
         List<Student> dataset = new ArrayList<Student>();
@@ -63,9 +74,10 @@ public class BiRepConsultService {
         dataset.add(new Student(20000002, "李四", 24, false, new Date()));
         dataset.add(new Student(30000003, "王五", 22, true, new Date()));
         String[] headers2 = {"图书编号", "图书名称", "图书作者", "图书价格", "图书ISBN",
-                "图书出版社", "封面图片"};
-        HSSFWorkbook workbook=biRepSupport.exportExcel(headers2, dataset);
-        try {
+                "图书出版社", "封面图片"};*/
+//        HSSFWorkbook workbook=biRepSupport.exportExcel(headers2, dataset);
+        Workbook workbook =biRepExcelFileCreator.createExcelFile();
+      /*  try {
             workbook.write(baos);
             baos.flush();
         } catch (IOException e) {
@@ -74,44 +86,49 @@ public class BiRepConsultService {
             byte[] aa = baos.toByteArray();
             return aa;
         }
-
-//        try {
-//            OutputStream out = new FileOutputStream("E://test.xls");
-////            OutputStream out2 = new FileOutputStream("E://test1.xls");
-//            biRepSupport.exportExcel(headers, dataset, out);
-////            biRepSupport.exportExcel(headers2, dataset2, out2);
-//            out.close();
-//            JOptionPane.showMessageDialog(null, "导出成功!");
-//            System.out.println("excel导出成功！");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            System.out.println("process end!");
-//        }
+*/
+        try {
+            OutputStream out = new FileOutputStream("E://shopSample.xls");
+//            OutputStream out2 = new FileOutputStream("E://test1.xls");
+         /*   biRepSupport.exportExcel(headers, dataset, out);*/
+              workbook.write(out);
+//            biRepSupport.exportExcel(headers2, dataset2, out2);
+            out.close();
+            JOptionPane.showMessageDialog(null, "导出成功!");
+            System.out.println("excel导出成功！");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            System.out.println("process end!");
+        }
+        return null;
 
     }
-    public List<BiReportSalesProduct010Model> getData() throws ParseException
+    public List<BiReportSalesShop010Model> getData() throws ParseException
     {
-        BiReportSalesProduct010Key key=new BiReportSalesProduct010Key();
+        //BiReportSalesProduct010Key key=new BiReportSalesProduct010Key();
+//        Map
+        List shop010ModelList=new ArrayList<BiReportSalesShop010Model>();
+        BiReportSalesShop010Model biReportSalesShop010Model=null;
+        Map <String,Object> map=new HashMap<>();
 
-        List<BiReportSalesProduct010Model> product010ModelList=null;
-        Map <String,Date> map=new HashMap<>();
+
+        map.put("shopId",20);
+        Map <String,Object> map1=new HashMap<>();
+//        map.put("")
 //        Date date=new Date("2016-03-05");
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-        Date date1=sdf.parse("2016-10-01");
-        key.setDate(date1);
-        key.setShopId(19);
-        key.setProductId(249);
-        BiReportSalesProduct010Model model1=biReportSalesProduct010Dao.select(key);
-        System.out.println(model1.getAddCart()+" ————"+model1.getAddFavorite());
-//        map.put("Date",date1);
-//        product010ModelList=biReportSalesProduct010Dao.selectList(date1);
-       /* for(int i=0;i<10;i++)
-        {
-            System.out.println(product010ModelList.get(i).getAddCart()+"------"+product010ModelList.get(i).getAddFavorite());
-        }
-        return null;*/
-       return null;
+        Date staDate=sdf.parse("2016-11-01");
+        Date endDate=sdf.parse("2016-11-11");
+        map1.put("staDate",staDate);
+        map1.put("endDate",endDate);
+//        List<?> shopSalesList=biReportSalesShop010DaoExt.selectListByDate(map1);
+        System.out.println();
+//        System.out.println(biReportSalesShop010Model.getShopId()+" "+biReportSalesShop010Model.getAmt()+biReportSalesShop010Model.getBuyers());
+
+//        shop010ModelList=biReportSalesShop010Dao.selectList(map);
+//        System.out.println(shop010ModelList.size());
+       return shop010ModelList;
     }
 
 

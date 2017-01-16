@@ -4,26 +4,26 @@ package com.voyageone.web2.cms.views.bi_report;
  * Created by dell on 2017/1/11.
  */
 public class BiReportModel {
-    private Double goodsId;
-    private String goodsName;
-    private String goodsCode;
-    private Integer id;
-    private String skuName;
-    private  Integer sale_number;
-    private Float sale_account;
-    private Integer buier_number;
-    private Float buerAvaItem;
-    private Float cusPrice;
-    private Integer PV;
-    private Integer UV ;
-    private Float tranRate;
-    private Integer addFav;
-    private Float pageStayTime;
-    private Float loseRate;
-    private Float visitorValue;
-    private String category;
-    private String brand;
-    private String color;
+    private Double goodsId;   // 1商品ID
+    private String goodsName; //2
+    private String goodsCode;  //3
+    private Integer id;   //4
+    private String skuName;  //5
+    private  Integer sale_number;                  // 6
+    private Float sale_account;                     // 7
+    private Integer buier_number;                    //8
+    private Float buerAvaItem;                      //9
+    private Float cusPrice;                       //10
+    private Integer PV;                   //11
+    private Integer UV ;                    //12
+    private Float tranRate;                           //13
+    private Integer addFav;                            //14
+    private Float pageStayTime;                       //15
+    private Float loseRate;                              //16
+    private Float visitorValue;                //17
+    private String category;                    //18
+    private String brand;                         //19
+    private String color;                         //20
     private String origin;
     private String material;
     private Integer weight;
