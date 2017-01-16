@@ -107,11 +107,10 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
                 List<RuleExpression> imageParams = new ArrayList<>();
 
                 {
-                    // 第一个参数是中文短描述
-                    MasterClrHtmlWord word = new MasterClrHtmlWord("shortDesCn");
-
+                    // 第一个参数是描述
                     RuleExpression ruleExpression = new RuleExpression();
-                    ruleExpression.addRuleWord(word);
+                    ruleExpression.addRuleWord(new MasterClrHtmlWord("longDesEn")); // 英文长描述
+                    ruleExpression.addRuleWord(new MasterClrHtmlWord("usageEn")); // 英文使用方法
                     imageParams.add(ruleExpression);
                 }
 
@@ -381,11 +380,10 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
                 List<RuleExpression> imageParams = new ArrayList<>();
 
                 {
-                    // 第一个参数是中文短描述
-                    MasterClrHtmlWord word = new MasterClrHtmlWord("shortDesCn");
-
+                    // 第一个参数是描述
                     RuleExpression ruleExpression = new RuleExpression();
-                    ruleExpression.addRuleWord(word);
+                    ruleExpression.addRuleWord(new MasterClrHtmlWord("longDesEn")); // 英文长描述
+                    ruleExpression.addRuleWord(new MasterClrHtmlWord("usageEn")); // 英文使用方法
                     imageParams.add(ruleExpression);
                 }
 

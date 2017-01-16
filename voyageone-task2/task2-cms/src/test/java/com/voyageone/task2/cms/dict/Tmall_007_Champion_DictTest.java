@@ -343,6 +343,16 @@ public class Tmall_007_Champion_DictTest extends BaseDictTest {
 
 			RuleExpression imageIndex = new RuleExpression();
 			imageIndex.addRuleWord(new TextWord("0")); // 第一张图
+			// 20160116 姚莎莎新增需求， PC端描述里， 非主商品的所有图片都要显示 START
+			imageIndex.addRuleWord(new TextWord("1"));
+			imageIndex.addRuleWord(new TextWord("2"));
+			imageIndex.addRuleWord(new TextWord("3"));
+			imageIndex.addRuleWord(new TextWord("4"));
+			imageIndex.addRuleWord(new TextWord("5"));
+			imageIndex.addRuleWord(new TextWord("6"));
+			imageIndex.addRuleWord(new TextWord("7"));
+			imageIndex.addRuleWord(new TextWord("8"));
+			// 20160116 姚莎莎新增需求， PC端描述里， 非主商品的所有图片都要显示 END
 
 			RuleExpression imageParamWord = new RuleExpression();
 			imageParamWord.addRuleWord(new TextWord("color")); // 参数 颜色
