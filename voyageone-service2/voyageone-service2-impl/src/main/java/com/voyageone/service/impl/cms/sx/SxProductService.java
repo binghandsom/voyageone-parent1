@@ -2226,6 +2226,8 @@ public class SxProductService extends BaseService {
 
         SxData sxData = expressionParser.getSxData();
         CmsBtProductModel mainSxProduct = sxData.getMainProduct();
+        // 更新用schema(用于取得特定field的defaultValue)
+        Map<String, Field> updateItemFields = sxData.getUpdateItemFields();
 
         //品牌
         for (Map.Entry<CustomMappingType, List<Field>> entry : mappingTypePropsMap.entrySet()) {
@@ -2263,7 +2265,13 @@ public class SxProductService extends BaseService {
                     skuFieldService.setCodeImageTemplate(resolveDict("属性图片模板",expressionParser,shopBean, user, null));
 
                     try {
+                        // 设置schema中SKU信息
                         List<Field> skuInfoFields = skuFieldService.buildSkuInfoField(allSkuFields, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
+                        // 更新商品时，判断一下是否需要做货品绑定,如果是全链路(返回值为非空)的场合,设置成schema中默认的SKU库存数
+                        if (sxData.isUpdateProductFlg()
+                                && !StringUtils.isEmpty(taobaoScItemService.doCheckNeedSetScItem(shopBean, mainSxProduct))) {
+                            setFieldDefaultValue("sku", skuInfoFields, updateItemFields);
+                        }
                         skuInfoFields.forEach(field -> retMap.put(field.getId(), field)); // TODO：暂时只存放最大的field（即sku，颜色扩展，size扩展）以后再改
                         // added by morse.lu 2016/07/18 start
                     } catch (BusinessException e) {
@@ -2293,7 +2301,13 @@ public class SxProductService extends BaseService {
                     skuFieldService.setCodeImageTemplate(resolveDict("属性图片模板",expressionParser,shopBean, user, null));
 
                     try {
+                        // 设置schema中DARWIN_SKU信息
                         List<Field> skuInfoFields = skuFieldService.buildSkuInfoField(allSkuFields, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
+                        // 更新商品时，判断一下是否需要做货品绑定,如果是全链路(返回值为非空)的场合,设置成schema中默认的SKU库存数
+                        if (sxData.isUpdateProductFlg()
+                                && !StringUtils.isEmpty(taobaoScItemService.doCheckNeedSetScItem(shopBean, mainSxProduct))) {
+                            setFieldDefaultValue("darwin_sku", skuInfoFields, updateItemFields);
+                        }
                         skuInfoFields.forEach(field -> retMap.put(field.getId(), field));
                     } catch (BusinessException e) {
                         sxData.setErrorMessage(e.getMessage());
@@ -2422,6 +2436,7 @@ public class SxProductService extends BaseService {
                 }
                 case TMALL_ITEM_QUANTITY:
                 {
+                    // 设置商品数量
                     if (processFields == null || processFields.size() != 1) {
                         throw new BusinessException("tmall item quantity's platformProps must have only one prop!");
                     }
@@ -2436,7 +2451,13 @@ public class SxProductService extends BaseService {
                         for (Map.Entry<String, Integer> skuInventoryEntry : skuInventoryMap.entrySet()) {
                             totalInventory += skuInventoryEntry.getValue();
                         }
+                        // 更新商品时,判断一下是否需要做货品绑定,如果是全链路(返回值为非空)的场合,设置成schema中默认的库存数
                         processField.setValue(String.valueOf(totalInventory));
+                        // 更新商品时,判断一下是否需要做货品绑定,如果是全链路(返回值为非空)的场合,设置成schema中默认的库存数
+                        if (sxData.isUpdateProductFlg()
+                                && !StringUtils.isEmpty(taobaoScItemService.doCheckNeedSetScItem(shopBean, mainSxProduct))) {
+                            setFieldDefaultValue(processField.getId(), processField, updateItemFields);
+                        }
                         retMap.put(field.getId(), processField);
                     }
                     break;
@@ -5279,6 +5300,98 @@ public class SxProductService extends BaseService {
         }
 
         return strConfigValue;
+    }
+
+    /**
+     * 从天猫更新schema中取得指定fieldId的默认值设置到目标Field里面
+     *
+     * @param fieldId 要设置默认值的fieldId
+     * @param targetField 更新用单个目标Field
+     * @param updateItemFields 天猫更新用商品schema(propsItem)
+     */
+    public void setFieldDefaultValue(String fieldId, Field targetField, Map<String, Field> updateItemFields) {
+        List<Field> targetFields = new ArrayList<>();
+        targetFields.add(targetField);
+
+        setFieldDefaultValue(fieldId, targetFields, updateItemFields);
+    }
+
+    /**
+     * 从天猫更新schema中取得指定fieldId的默认值设置到目标Field里面
+     *
+     * @param fieldId 要设置默认值的fieldId
+     * @param targetFields 更新用目标Field列表
+     * @param updateItemFields 天猫更新用商品schema(propsItem)
+     */
+    public void setFieldDefaultValue(String fieldId, List<Field> targetFields, Map<String, Field> updateItemFields) {
+
+        if (StringUtils.isEmpty(fieldId) || ListUtils.isNull(targetFields) || MapUtils.isEmpty(updateItemFields)) return;
+
+        // 当目标Field列表中或天猫更新用schema列表中没有包含想要设定默认值的fieldId时，什么也不做
+        if (targetFields.stream().filter(f -> fieldId.equals(f.getId())).count() == 0
+                || !updateItemFields.containsKey(fieldId)) return;
+
+        try {
+            // 修改对象field
+            Field targetField = targetFields.stream().filter(f -> fieldId.equals(f.getId())).findFirst().get();
+            // 天猫更新schema field
+            Field updateItemField = updateItemFields.get(fieldId);
+
+            switch (fieldId) {
+                case "sku":
+                case "darwin_sku":
+                    // SKU 或者 DARWIN_SKU(达尔文SKU) 的时候
+                    // 修改对象
+                    MultiComplexField targetMultiSkuFields = (MultiComplexField)targetField;
+                    List<ComplexValue> targetSkuFields = targetMultiSkuFields.getValue();
+                    // 更新schema对象
+                    MultiComplexField updateMultiItemFields = (MultiComplexField)updateItemField;
+                    List<ComplexValue> updateSkuFields = updateMultiItemFields.getDefaultComplexValues();
+
+                    // 根据修改对象Field列表循环设置成更新schema中的默认值
+                    for (ComplexValue targetSku : targetSkuFields) {
+                        if (MapUtils.isEmpty(targetSku.getFieldMap())) continue;
+
+                        if (!targetSku.getFieldMap().containsKey("sku_outerId")
+                                || !targetSku.getFieldMap().containsKey("sku_quantity")) {
+                            continue;
+                        }
+
+                        // 商家编码
+                        String outerId = targetSku.getInputFieldValue("sku_outerId");
+                        if (StringUtils.isEmpty(outerId)) continue;
+
+                        // 目标对象sku库存field
+                        InputField targetSkuField = (InputField)targetSku.getFieldMap().get("sku_quantity");
+
+                        // 取得更新schema Field列表中的默认值
+                        ComplexValue updateValue = updateSkuFields.stream()
+                                .filter(cv -> outerId.equals(cv.getInputFieldValue("sku_outerId")))
+                                .findFirst()
+                                .get();
+                        if (updateValue != null
+                                && updateValue.getFieldMap() != null
+                                && updateValue.getFieldMap().containsKey("sku_quantity")) {
+                            // 设置成更新schema中的sku库存
+                            targetSkuField.setValue(StringUtils.toString(updateValue.getFieldMap().get("sku_quantity").getValue()));
+                        }
+                    }
+                    break;
+                case "quantity":
+                    // 商品数量的时候
+                    // 修改对象
+                    InputField targetQuantityField = (InputField)targetField;
+                    // 更新用schema对象
+                    InputField updatequantityField = (InputField)updateItemField;
+                    // 从更新用schema中取得商品数量"quantity"对应的defaultValue (也就是当前天猫平台上的商品数量)
+                    targetQuantityField.setValue(updatequantityField.getDefaultValue());
+                    break;
+            }
+        } catch (Exception e) {
+            String errMsg = String.format("把schema中默认值设置到目标Field中时出现异常(如：全链路禁止编辑库存，所以要设置成天猫上的默认库存)！ [fieldId:%s]", fieldId);
+            $warn(errMsg);
+//            throw new BusinessException(errMsg);
+        }
     }
 
 }
