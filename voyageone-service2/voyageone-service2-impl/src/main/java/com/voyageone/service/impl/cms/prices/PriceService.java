@@ -451,7 +451,7 @@ public class PriceService extends BaseService {
             unifySkus.add(platformSku);
         }
         // 走MSRP统一配置
-        unifySkuPriceMsrp(platformSkus, channelId, cartId);
+        unifySkuPriceMsrp(unifySkus, channelId, cartId);
     }
 
     /**
