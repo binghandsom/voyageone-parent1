@@ -516,9 +516,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                     String errMsg = "";
                     // 如果是错误代码是"109902"(HTML解析错误)的时候
                     if (!StringUtils.isEmpty(htProductAddResponse.getError_code()) && htProductAddResponse.getError_code().contains(INVALID_HTML_CONTENT)) {
-                        errMsg = "Master产品详情中的简短描述,详情描述或聚美使用方法等中英文项目的HTML内容语法解析错误！";
+                        errMsg = "Master产品详情中的详情描述或聚美使用方法的HTML内容语法解析错误或者使用了聚美之外的图片！";
                     }
-                    String msg = String.format("聚美新增产品上新失败！%s [ProductId:%s], [Message:%s]", errMsg, product.getProdId(), htProductAddResponse.getErrorMsg());
+                    String msg = String.format("聚美新增产品上新失败！%s [ProductId:%s] [Message:%s] [详情描述:%s] " +
+                            "[聚美使用方法:%s]", errMsg, product.getProdId(), htProductAddResponse.getErrorMsg(),
+                            bean.getDealInfo().getDescription_properties(), bean.getDealInfo().getDescription_usage());
                     $error(msg);
                     throw  new BusinessException(msg);
                 }

@@ -4571,7 +4571,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             searchParam.put("sku", skuCode);
             CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
 
-            String scProductId = String.valueOf(skuMap.get("scProductId"));
+            String scProductId = null;
+            if (skuMap.containsKey("scProductId") && skuMap.get("scProductId") != null) {
+                scProductId = String.valueOf(skuMap.get("scProductId"));
+            }
             if (StringUtils.isEmpty(scProductId)) {
                 // delete
                 if (scItemModel != null) {
