@@ -84,7 +84,7 @@ public class SuperFeedSneakerHeadBean extends SuperFeedBean{
 
     private String urlkey;
 
-    private String lastReceivedOn;
+    private Date lastReceivedOn;
 
     public String getSku() {
         return sku;
@@ -397,11 +397,11 @@ public class SuperFeedSneakerHeadBean extends SuperFeedBean{
         this.created = created;
     }
 
-    public String getLastReceivedOn() {
+    public Date getLastReceivedOn() {
         return lastReceivedOn;
     }
 
-    public void setLastReceivedOn(String lastReceivedOn) {
+    public void setLastReceivedOn(Date lastReceivedOn) {
         this.lastReceivedOn = lastReceivedOn;
     }
 }

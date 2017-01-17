@@ -1,6 +1,7 @@
 package com.voyageone.components.sneakerhead.bean;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,7 +45,7 @@ public class SneakerHeadCodeModel {
     private String orderLimitCount;
     private String approvedDescriptions;
     private String urlKey;
-    private String lastReceivedOn;
+    private Date lastReceivedOn;
 
     public List<SneakerHeadSkuModel> getSkus() {
         return skus;
@@ -302,11 +303,11 @@ public class SneakerHeadCodeModel {
         this.urlKey = urlKey;
     }
 
-    public String getLastReceivedOn() {
+    public Date getLastReceivedOn() {
         return lastReceivedOn;
     }
 
-    public void setLastReceivedOn(String lastReceivedOn) {
+    public void setLastReceivedOn(Date lastReceivedOn) {
         this.lastReceivedOn = lastReceivedOn;
     }
 }

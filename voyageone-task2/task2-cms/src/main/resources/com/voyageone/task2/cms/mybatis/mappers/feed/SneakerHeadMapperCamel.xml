@@ -11,6 +11,7 @@
         <result column="created" property="created" jdbcType="TIMESTAMP" />
         <result column="md5" property="md5" jdbcType="VARCHAR" />
         <result column="updateFlag" property="updateflag" jdbcType="INTEGER" />
+        <result column="lastReceivedOn" property="lastReceivedOn" jdbcType="TIMESTAMP" />
     </resultMap>
     <resultMap id="ResultMapWithBLOBs" type="com.voyageone.task2.cms.bean.SuperFeedSneakerHeadBean" extends="BaseResultMap" >
         <result column="relationshipType" property="relationshiptype" jdbcType="LONGVARCHAR" />
@@ -44,7 +45,8 @@
         <result column="urlKey" property="urlkey" jdbcType="LONGVARCHAR" />
     </resultMap>
     <sql id="Base_Column_List" >
-        "sku", "code", "price", "msrp", "quantity", "category", "created", "md5", "updateFlag"
+        "sku", "code", "price", "msrp", "quantity", "category", "created", "md5", "updateFlag",
+        "lastReceivedOn"
     </sql>
     <sql id="Blob_Column_List" >
         "relationshipType", "variationTheme", "title", "barcode", "weight", "images", "description",
@@ -69,6 +71,7 @@
         insert into cms_zz_feed_sneakerhead_product_temp ("sku", "code", "price",
         "msrp", "quantity", "category",
         "created", "md5", "updateFlag",
+        "lastReceivedOn",
         "relationshipType", "variationTheme",
         "title", "barcode", "weight",
         "images", "description", "shortDescription",
@@ -83,6 +86,7 @@
         values (#{sku,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{price,jdbcType=VARCHAR},
         #{msrp,jdbcType=VARCHAR}, #{quantity,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR},
         #{created,jdbcType=TIMESTAMP}, #{md5,jdbcType=VARCHAR}, #{updateflag,jdbcType=INTEGER},
+        #{lastReceivedOn,jdbcType=TIMESTAMP},
         #{relationshiptype,jdbcType=LONGVARCHAR}, #{variationtheme,jdbcType=LONGVARCHAR},
         #{title,jdbcType=LONGVARCHAR}, #{barcode,jdbcType=LONGVARCHAR}, #{weight,jdbcType=LONGVARCHAR},
         #{images,jdbcType=LONGVARCHAR}, #{description,jdbcType=LONGVARCHAR}, #{shortdescription,jdbcType=LONGVARCHAR},
@@ -124,6 +128,9 @@
             </if>
             <if test="updateflag != null" >
                 updateFlag,
+            </if>
+            <if test="lastReceivedOn != null" >
+                lastReceivedOn,
             </if>
             <if test="relationshiptype != null" >
                 relationshipType,
@@ -241,6 +248,9 @@
             <if test="updateflag != null" >
                 #{updateflag,jdbcType=INTEGER},
             </if>
+            <if test="lastReceivedOn != null" >
+                #{lastReceivedOn,jdbcType=TIMESTAMP},
+            </if>
             <if test="relationshiptype != null" >
                 #{relationshiptype,jdbcType=LONGVARCHAR},
             </if>
@@ -357,6 +367,9 @@
             <if test="updateflag != null" >
                 "updateFlag" = #{updateflag,jdbcType=INTEGER},
             </if>
+            <if test="lastReceivedOn != null" >
+                "lastReceivedOn" = #{lastReceivedOn,jdbcType=TIMESTAMP},
+            </if>
             <if test="relationshiptype != null" >
                 "relationshipType" = #{relationshiptype,jdbcType=LONGVARCHAR},
             </if>
@@ -457,6 +470,7 @@
         "created" = #{created,jdbcType=TIMESTAMP},
         "md5" = #{md5,jdbcType=VARCHAR},
         "updateFlag" = #{updateflag,jdbcType=INTEGER},
+        "lastReceivedOn" = #{lastReceivedOn,jdbcType=TIMESTAMP},
         "relationshipType" = #{relationshiptype,jdbcType=LONGVARCHAR},
         "variationTheme" = #{variationtheme,jdbcType=LONGVARCHAR},
         "title" = #{title,jdbcType=LONGVARCHAR},
@@ -498,6 +512,7 @@
         "created" = #{created,jdbcType=TIMESTAMP},
         "md5" = #{md5,jdbcType=VARCHAR},
         "updateFlag" = #{updateflag,jdbcType=INTEGER}
+        "lastReceivedOn" = #{lastReceivedOn,jdbcType=TIMESTAMP}
         where "sku" = #{sku,jdbcType=VARCHAR}
     </update>
 

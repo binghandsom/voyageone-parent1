@@ -95,7 +95,6 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
     protected int superFeedImport() {
         $info("SneakerHead产品api调用开始");
         isErr = false;
-        List<SuperFeedSneakerHeadBean> superFeed = new ArrayList<>();
         sumCnt = 0;
         try {
             $info("SneakerHead取得full表里最新的时间");
@@ -103,7 +102,6 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
             final Date lastDate = getFeedDate == null ? new Date(0) : getFeedDate;
             //取得sneakerHead的Feed的总数
             int anInt = sneakerheadApiService.getFeedCount(lastDate, DEFAULT_DOMAIN);
-
             int pageCnt = anInt / pageSize + (anInt % pageSize > 0 ? 1 : 0);
             $info("共" + pageCnt + "页");
             //根据feed取得总数取得对应的SKU并进行解析
@@ -132,7 +130,6 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
 
 
     public void getSku(int pageNum, Date lastDate) {
-        int cnt = 0;
         long threadNo = Thread.currentThread().getId();
         synchronized (isErr) {
             if (isErr) return;
@@ -236,29 +233,26 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
     }
 
     @Override
-    protected List<CmsBtFeedInfoModel> getFeedInfoByCategory(String categorPath) {
-        Map colums = getColumns();
+    protected List<CmsBtFeedInfoModel> getFeedInfoByCategory(String categoryPath) {
+        Map column = getColumns();
         Map<String, CmsBtFeedInfoModel> codeMap = new HashMap<>();
 
         List<FeedBean> feedBeans = Feeds.getConfigs(channel.getId(), FeedEnums.Name.valueOf("attribute"));
-        List<String> attList = new ArrayList<>();
-        for (FeedBean feedConfig : feedBeans) {
-            if (!StringUtil.isEmpty(feedConfig.getCfg_val1())) {
-                attList.add(feedConfig.getCfg_val1());
-            }
-        }
+        List<String> attList = feedBeans.stream()
+                .filter(feedConfig -> !StringUtil.isEmpty(feedConfig.getCfg_val1()))
+                .map(FeedBean::getCfg_val1).collect(Collectors.toList());
 
         // 条件则根据类目筛选
-        String where = String.format("WHERE %s AND %s = '%s' ", INSERT_FLG, colums.get("category").toString(),
-                categorPath.replace("'", "\\\'"));
+        String where = String.format("WHERE %s AND %s = '%s' ", INSERT_FLG, column.get("category").toString(),
+                categoryPath.replace("'", "\\\'"));
 
-        colums.put("keyword", where);
-        colums.put("tableName", table);
+        column.put("keyword", where);
+        column.put("tableName", table);
         if (attList.size() > 0) {
-            colums.put("attr", attList.stream().map(s -> "`" + s + "`").collect(Collectors.joining(",")));
+            column.put("attr", attList.stream().map(s -> "`" + s + "`").collect(Collectors.joining(",")));
         }
 
-        List<CmsBtFeedInfoSneakerHeadModel> sneakerHeadModelBeans = sneakerHeadFeedDao.selectSuperFeedModel(colums);
+        List<CmsBtFeedInfoSneakerHeadModel> sneakerHeadModelBeans = sneakerHeadFeedDao.selectSuperFeedModel(column);
         List<CmsBtFeedInfoModel> modelBeans = new ArrayList<>();
         for (CmsBtFeedInfoSneakerHeadModel modelBean : sneakerHeadModelBeans) {
 
@@ -309,7 +303,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
             }
 
         }
-        $info("取得 [ %s ] 的 Product 数 %s", categorPath, modelBeans.size());
+        $info("取得 [ %s ] 的 Product 数 %s", categoryPath, modelBeans.size());
 
         return modelBeans;
     }
