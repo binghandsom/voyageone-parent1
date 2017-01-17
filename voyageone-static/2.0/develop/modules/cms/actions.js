@@ -379,7 +379,9 @@ define(function () {
                 "taskPriceService": {
                     "root": "/cms/task/price",
                     "getPriceList": "getPriceList",
-                    "updateTaskStatus": "updateTaskStatus"
+                    "updateTaskStatus": "updateTaskStatus",
+                    "refreshAllPromotionByCustomPromotionId":"refreshAllPromotionByCustomPromotionId",
+                    "delAllPromotionByCustomPromotionId":"delAllPromotionByCustomPromotionId"
                 },
                 "taskStockService": {
                     "root": "/cms/promotion/task_stock",

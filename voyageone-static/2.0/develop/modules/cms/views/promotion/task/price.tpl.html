@@ -53,6 +53,12 @@
 								<button class="btn btn-danger"  ng-click="updateAllFailStatus()"><i class="fa fa-warning"></i> {{'TXT_FAIL_STARTUP_ALL' | translate}}</button>
 							</div><!-- /right-btn -->
 						</div>
+						<div class="col-sm-12" ng-if="vm.isAllPromotion != 1">
+							<div class="form-inline m-b-xs text-center" ng-controller = "popupCtrl">
+								<button class="btn btn-danger"   ng-click="delAllPromotionByCustomPromotionId()"><i class="fa fa-warning"></i> 删除全店特价宝</button>
+								<button class="btn btn-danger"   ng-click="refreshAllPromotionByCustomPromotionId()"><i class="fa fa-warning"></i> 重新刷全店特价宝</button>
+							</div><!-- /right-btn -->
+						</div>
 						<div class="col-sm-12">
 							<div class="form-inline m-b-xs text-right" >
 								<button class="btn btn-vo" ng-click="searchStatus(1)"><i class="fa fa-warning"></i> Pending{{vm.statusCnt.pendingCnt}}</button>

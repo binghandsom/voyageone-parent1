@@ -1150,6 +1150,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         cmsProduct.getCommon().getFields().setOriginalTitleCn(feed.getName());
                         cmsProduct.getCommon().getFields().setShortDesCn(feed.getShortDescription());
                         cmsProduct.getCommon().getFields().setLongDesCn(feed.getLongDescription());
+                        cmsProduct.getCommon().getFields().setMaterialCn(feed.getMaterial());
                         if(!StringUtil.isEmpty(feed.getColor())){
                             cmsProduct.getCommon().getFields().setColor(feed.getColor().split("-")[0]);
                         }

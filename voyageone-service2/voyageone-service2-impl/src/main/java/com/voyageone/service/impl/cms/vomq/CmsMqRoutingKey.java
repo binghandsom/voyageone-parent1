@@ -7,6 +7,8 @@ package com.voyageone.service.impl.cms.vomq;
  */
 public class CmsMqRoutingKey {
 
+    // 天猫特价宝操作MQ
+    public static final String CMS_TM_TEJIABAO_DEL = "VOCmsTmTejiabaoDelQueue";
 
     // 聚美活动文件生成导出
     public static final String CMS_JM_PROMOTION_EXPORT = "VOCmsJmPromotionExportQueue";
