@@ -317,7 +317,7 @@
                 <!------------------------------------------------以下为产品SKU------------------------------------------------------->
                 <div class="container-fluid" id="sku">
                     <div class="table-responsive">
-                        <table class="table text-left">
+                        <table class="table text-left" style="min-width: 1400px">
                             <thead>
                             <tr>
                                 <th class="text-center">
@@ -329,6 +329,8 @@
                                 <th class="text-center">{{"TXT_SKU_INVENTORY"|translate}}</th>
                                 <th class="text-center">size</th>
                                 <th class="text-center">platform size</th>
+                                <th class="text-right">客户建议零售价</th>
+                                <th class="text-right">客户成本价</th>
                                 <th class="mfb-xxx text-center">{{"TXT_CHINA_MSRP_PRICE"|translate}}</th>
                                 <th class="text-center">{{"TXT_CHINA_RETAIL_PRICE"|translate}}</th>
                                 <th class="text-center">容量/尺码</th>
@@ -352,6 +354,8 @@
                                 <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].qty}}</td>
                                 <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].size}}</td>
                                 <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].platformSize}}</td>
+                                <td class="text-right v-middle">{{vm.skuTemp[entity.skuCode].clientMsrpPrice}}</td>
+                                <td class="text-right v-middle">{{vm.skuTemp[entity.skuCode].clientNetPrice}}</td>
                                 <td class="mfb-xxx text-center v-middle">
                                     <label class="col-sm-3 control-label vo_reqfield"></label>
                                     <input class="form-control ng-number" type="number" ng-model="entity.priceMsrp"
