@@ -5343,14 +5343,14 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // 销售属性map(颜色，尺寸)
                 BaseMongoMap<String, Object> saleProp = new BaseMongoMap<>();
                 // 商品特质英文（颜色/口味/香型等）(根据配置决定是用code还是codeDiff，默认为code)
-                saleProp.put("color", color);
+                saleProp.put("颜色", color);
                 // 根据skuCode从skuList中取得common.sku和PXX.sku合并之后的sku
                 BaseMongoMap<String, Object> mergedSku = skuList.stream()
                         .filter(s -> s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()).equals(skuCode))
                         .findFirst()
                         .get();
                 // 尺寸
-                saleProp.put("size", mergedSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
+                saleProp.put("规格", mergedSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
                 // 追加销售属性
                 if (type == 0) { // 只有在type是0的场合（有多个颜色尺码的场合）才需要sale_prop这个属性
                     skuMap.put("sale_prop", saleProp);
