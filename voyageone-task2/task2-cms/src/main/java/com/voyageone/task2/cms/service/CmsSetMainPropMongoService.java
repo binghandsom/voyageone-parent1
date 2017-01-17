@@ -1663,10 +1663,11 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     }
                 }
             }
-            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
-            if (cmsChannelConfigBean != null && cmsChannelConfigBean.getChannelId() != null
-                    && feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())) {
-
+            // sneakerHead 鞋盒图
+//            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
+//            if (cmsChannelConfigBean != null && cmsChannelConfigBean.getChannelId() != null
+//                    && feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())) {
+            if(feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.SN.getId())){
                 if (feed.getAttribute() != null && feed.getAttribute().get("boximages") != null) {
                     for (String images : feed.getAttribute().get("boximages")) {
                         Map<String, Object> multiComplexChildren = new HashMap<>();
@@ -3113,7 +3114,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //            param.setOriginalUrl(originalUrl);
 //            List<CmsBtImagesModel> findImage = cmsBtImageDaoExt.selectImages(param);
             CmsBtImagesModel findImage = imagesService.getImageIsExists(channelId, code, originalUrl);
-            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
+//            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
 
             // 不存在则插入
             if (findImage == null) {
@@ -3146,8 +3147,9 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 newModel.setModifier(getTaskName());
                 String URL_FORMAT = "[~@.' ';#+$%&*_'':/‘’^\\()]";
                 Pattern special_symbol = Pattern.compile(URL_FORMAT);
-                if (cmsChannelConfigBean != null && cmsChannelConfigBean.getChannelId() != null &&
-                        channelId.equals(cmsChannelConfigBean.getChannelId()) && "1".equalsIgnoreCase(cmsChannelConfigBean.getConfigValue1())) {
+//                if (cmsChannelConfigBean != null && cmsChannelConfigBean.getChannelId() != null &&
+//                        channelId.equals(cmsChannelConfigBean.getChannelId()) && "1".equalsIgnoreCase(cmsChannelConfigBean.getConfigValue1())) {
+                if (channelId.equalsIgnoreCase(ChannelConfigEnums.Channel.SN.getId())) {
                     String[] imgName = originalUrl.split("/");
                     newModel.setImgName(imgName[imgName.length - 1]);
                     newModel.setUpdFlg(1);
