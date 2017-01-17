@@ -583,7 +583,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return getStringAttribute("clientNetPrice");
     }
 
-    public void setClientNetPrice(Double clientNetPrice) {
+    public void setClientNetPrice(String clientNetPrice) {
         setAttribute("clientNetPrice", clientNetPrice);
     }
 
