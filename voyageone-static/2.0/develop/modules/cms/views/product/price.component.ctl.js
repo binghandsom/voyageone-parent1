@@ -109,7 +109,7 @@ define([
                         saveCartSkuPrice(parameter);
                     }
 
-                }
+                };
 
                 function saveCartSkuPrice(parameter) {
                     $productDetailService.saveCartSkuPrice(parameter).then(function () {
