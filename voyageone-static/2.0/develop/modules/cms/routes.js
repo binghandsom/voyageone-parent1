@@ -3,7 +3,8 @@ define(function () {
         "home": {
             "hash": "/home",
             "templateUrl": "views/home/welcome/datachart.tpl.html",
-            "controllerUrl": "modules/cms/views/home/welcome/datachart.ctl"
+            "controllerUrl": "modules/cms/views/home/welcome/datachart.ctl",
+            "controller":'datachartController'
         },
         "feed_product_list": {
             "url": "/feed/product_list",
