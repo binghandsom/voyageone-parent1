@@ -1271,7 +1271,6 @@ public class CmsFieldEditService extends BaseViewService {
             codesList.forEach(codes -> {
                 params.put("productIds", codes);
                 sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
-                sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
             });
         } else {
             sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
