@@ -1267,7 +1267,12 @@ public class CmsFieldEditService extends BaseViewService {
         params.put("_channleId", userInfo.getSelChannelId());
         params.put("_userName", userInfo.getUserName());
         if ("refreshRetailPrice".equalsIgnoreCase((String) params.get("_option"))) {
-            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
+            List<List<String>> codesList = CommonUtil.splitList(productCodes,100);
+            codesList.forEach(codes -> {
+                params.put("productIds", codes);
+                sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
+                sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
+            });
         } else {
             sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
         }
