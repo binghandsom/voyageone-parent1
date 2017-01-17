@@ -2822,7 +2822,47 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 if (!CartEnums.Cart.JM.getId().equals(shop.getValue())
                         && !CartEnums.Cart.CN.getId().equals(shop.getValue())) {
                     // 取得product.model对应的group信息
-                    CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
+
+                    boolean isQuarter = false;
+                    CmsChannelConfigBean cmsChannelConfigBean = null;
+                    if (ChannelConfigEnums.Channel.SN.getId().equals(feed.getChannelId())) {
+                        if ("0".equals(shop.getValue()) || "1".equals(shop.getValue())) {
+                            isQuarter = false;
+                        } else {
+                            cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, shop.getValue());
+                            if (cmsChannelConfigBean != null && feed.getChannelId().equals(cmsChannelConfigBean.getChannelId()) && "1".equals(cmsChannelConfigBean.getConfigValue1())) {
+                                isQuarter = true;
+                            }
+                        }
+                    } else {
+                        cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
+                        if (cmsChannelConfigBean != null && feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())) {
+                            isQuarter = true;
+                        }
+                    }
+                    if (isQuarter) {
+                        //根据当前feed的code判断是否属于最新的group还是创建group
+                        DateTimeFormatter formatter = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss");
+                        //取得当前code的创建的时间
+                        LocalDate feedDate = formatter.parseLocalDate(feed.getCreated());
+                        //取得当前group的创建的时间
+                        CmsBtProductGroupModel groupCode = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                        if (groupCode != null) {
+                            LocalDate groupDate = formatter.parseLocalDate(groupCode.getCreated());
+                            //feed和group的创建时间作比较
+                            if (feedDate.getYearOfCentury() == groupDate.getYearOfCentury()
+                                    && Math.ceil(feedDate.getMonthOfYear() / 4) == Math.ceil(groupDate.getMonthOfYear() / 4)) {
+                                group = groupCode;
+                            } else {
+                                //根据当前model取得最新的group
+                                group = null;
+                            }
+                        }
+                    } else {
+                        group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                    }
+
+                    /*CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
 
                     if (cmsChannelConfigBean != null && cmsChannelConfigBean.getChannelId() != null &&
                             feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())) {
@@ -2846,7 +2886,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         }
                     } else {
                         group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
-                    }
+                    }*/
 
                 }
 
