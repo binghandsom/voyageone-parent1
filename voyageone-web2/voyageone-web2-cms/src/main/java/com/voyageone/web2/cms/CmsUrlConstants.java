@@ -254,6 +254,10 @@ public interface CmsUrlConstants {
                 String GET_PRICE_LIST = "getPriceList";
 
                 String UPDATE_TASK_STATUS = "updateTaskStatus";
+
+                String DEL_ALL_PROMOTION_BY_CUSTOM_PROMOTION_ID = "delAllPromotionByCustomPromotionId";
+
+                String REFRESH_ALL_PROMOTION_BY_CUSTOM_PROMOTION_ID = "refreshAllPromotionByCustomPromotionId";
             }
 
             interface STOCK {

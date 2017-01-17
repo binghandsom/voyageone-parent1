@@ -49,6 +49,7 @@ define([
                 $scope.vm.statusCnt.failCnt = res.data.failCnt;
                 $scope.vm.statusCnt.pendingCnt = res.data.pendingCnt;
                 $scope.vm.statusCnt.stopCnt = res.data.stopCnt;
+                $scope.vm.isAllPromotion = res.data.isAllPromotion;
             }, function (err) {
 
             })
@@ -97,9 +98,30 @@ define([
                         notify.warning("fail")
                     })
                 })
-        }
+        };
 
-        
+        $scope.delAllPromotionByCustomPromotionId = function () {
+            confirm("是否从全店特价宝删除一下商品")
+                .then(function () {
+                    taskPriceService.delAllPromotionByCustomPromotionId($routeParams.promotionId).then(function (res) {
+                        notify.success("成功")
+                    }, function (err) {
+                        notify.warning("fail")
+                    })
+                })
+
+        };
+
+        $scope.refreshAllPromotionByCustomPromotionId = function () {
+            confirm("是否从全店特价宝回复一下商品")
+                .then(function () {
+                    taskPriceService.refreshAllPromotionByCustomPromotionId($routeParams.promotionId).then(function (res) {
+                        notify.success("成功")
+                    }, function (err) {
+                        notify.warning("fail")
+                    })
+                })
+        }
         
         
         
