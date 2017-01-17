@@ -1,5 +1,7 @@
 /**
  * 用于ng-repeat的过滤功能
+ *
+ * controller定义在angular 主入口:app.js
  */
 
 define(function () {
