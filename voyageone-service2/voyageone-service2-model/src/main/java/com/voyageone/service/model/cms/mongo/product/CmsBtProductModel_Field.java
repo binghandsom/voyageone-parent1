@@ -23,6 +23,14 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setStringAttribute("model",model);
     }
 
+    public String getLastReceivedOn() {
+        return getStringAttribute("lastReceivedOn");
+    }
+
+    public void setLastReceivedOn(String lastReceivedOn) {
+        setStringAttribute("lastReceivedOn",lastReceivedOn);
+    }
+
     //code 产品code
     public String getCode() {
         return getStringAttribute("code");
