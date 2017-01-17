@@ -5075,6 +5075,12 @@ public class SxProductService extends BaseService {
             }
         }
 
+        // 部分code中有下划线， 运营又无法修改， 所以这里统一变成中杠 START
+        if (!StringUtils.isEmpty(alias)) {
+            alias = alias.replaceAll("_", "-");
+        }
+        // 部分code中有下划线， 运营又无法修改， 所以这里统一变成中杠 END
+
         return alias;
     }
 

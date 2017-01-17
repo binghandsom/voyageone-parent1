@@ -4571,7 +4571,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             searchParam.put("sku", skuCode);
             CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
 
-            String scProductId = String.valueOf(skuMap.get("scProductId"));
+            String scProductId = null;
+            if (skuMap.containsKey("scProductId") && skuMap.get("scProductId") != null) {
+                scProductId = String.valueOf(skuMap.get("scProductId"));
+            }
             if (StringUtils.isEmpty(scProductId)) {
                 // delete
                 if (scItemModel != null) {
@@ -4761,7 +4764,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
             if (mainProductPlatformCart == null
                     || StringUtils.isEmpty(mainProductPlatformCart.getpCatPath())
-                    || (!mainProductPlatformCart.getpCatPath().startsWith("孕妇装/孕产妇用品/营养>"))
+                    || (
+                        !mainProductPlatformCart.getpCatPath().startsWith("孕妇装/孕产妇用品/营养>") &&
+                        !mainProductPlatformCart.getpCatPath().startsWith("奶粉/辅食/营养品/零食>")
+                        )
                     ) {
                 Map<String, Object> paramCategory = new HashMap<>();
                 paramCategory.put("cat_id", "50026470"); // 孕妇装/孕产妇用品/营养>孕产妇营养品>其它
