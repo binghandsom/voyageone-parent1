@@ -3458,7 +3458,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     }
 
                     if (commonSku.getClientNetPrice() > maxClientNetPrice) {
-                        minClientNetPrice = commonSku.getClientNetPrice();
+                        maxClientNetPrice = commonSku.getClientNetPrice();
                     }
                     if (commonSku.getClientNetPrice() < minClientNetPrice) {
                         minClientNetPrice = commonSku.getClientNetPrice();
