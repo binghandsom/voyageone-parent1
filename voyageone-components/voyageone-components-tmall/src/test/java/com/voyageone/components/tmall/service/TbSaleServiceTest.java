@@ -1,6 +1,7 @@
 package com.voyageone.components.tmall.service;
 
 import com.taobao.api.ApiException;
+import com.taobao.api.response.ItemUpdateDelistingResponse;
 import com.taobao.api.response.ItemUpdateListingResponse;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -44,5 +45,25 @@ public class TbSaleServiceTest {
         ItemUpdateListingResponse listingResponse = tbSaleService.doWareUpdateListing(shopBean, numIId);
 //        assert listingResponse != null;
         System.out.println(listingResponse.getBody());
+    }
+
+    @Test
+    public void testDoWareUpdateDelisting() throws TopSchemaException, ApiException, GetUpdateSchemaFailException {
+        // 测试天猫一口价商品下架功能
+
+        ShopBean shopBean = new ShopBean();
+        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
+        shopBean.setAppKey("");
+        shopBean.setAppSecret("");
+//        shopBean.setSessionKey(""); // 018 Target
+//        shopBean.setSessionKey(""); // 天猫官网同购测试店铺
+
+//        String numIId = "532856371018";   // 无SKU  https://detail.tmall.hk/hk/item.htm?id=532856371018
+//        String numIId = "535914991001";   // 有SKU  https://detail.tmall.hk/hk/item.htm?id=535914991001
+        String numIId = "542998554105";   // 天猫官网同购  https://detail.tmall.hk/hk/item.htm?id=542998554105
+
+        ItemUpdateDelistingResponse delistingResponse = tbSaleService.doWareUpdateDelisting(shopBean, numIId);
+//        assert listingResponse != null;
+        System.out.println(delistingResponse.getBody());
     }
 }
