@@ -5,6 +5,7 @@ import com.google.common.collect.SetMultimap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.components.sneakerhead.SneakerHeadBase;
 import com.voyageone.components.sneakerhead.bean.SneakerheadCategoryModel;
 import com.voyageone.components.sneakerhead.service.SneakerheadApiService;
 import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
@@ -59,7 +60,7 @@ public class CmsUsCategorySyncService extends BaseCronTaskService {
         try {
             $info("调用接口 获取 category...");
             // 获得 category
-            List<SneakerheadCategoryModel> categoryList = sneakerheadApiService.getCategory(true, "10.0.0.91:52233");
+            List<SneakerheadCategoryModel> categoryList = sneakerheadApiService.getCategory(true, SneakerHeadBase.DEFAULT_DOMAIN);
 
             $info("获取 category 完毕 拍平之...");
 
