@@ -1052,7 +1052,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         cmsProduct.getCommon().getFields().setMaterialEn(feed.getMaterial());
                         cmsProduct.getCommon().getFields().setOrigin(feed.getOrigin());
                         cmsProduct.getCommon().getFields().setCodeDiff(feed.getColor());
-                        cmsProduct.getCommon().getFields().setLastReceivedOn(feed.getLastReceivedOn());
                     }
                     if (cmsProduct == null) {
                         // 有出错, 跳过
@@ -1157,7 +1156,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         cmsProduct.getCommon().getFields().setTranslateStatus("1");
                         cmsProduct.getCommon().getFields().setTranslator(getTaskName());
                         cmsProduct.getCommon().getFields().setTranslateTime(DateTimeUtil.getGMTTime());
-                        cmsProduct.getCommon().getFields().setLastReceivedOn(feed.getLastReceivedOn());
                     }
 
                     $debug("doCreateCmsBtProductModel:" + (System.currentTimeMillis() - startTime));
@@ -1492,6 +1490,10 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             if (newFlg || StringUtils.isEmpty(productCommonField.getLongDesEn()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setLongDesEn(feed.getLongDescription());
             }
+
+            if (newFlg || StringUtils.isEmpty(productCommonField.getLastReceivedOn()) || "1".equals(feed.getIsFeedReImport())) {
+                productCommonField.setLastReceivedOn(feed.getLastReceivedOn());
+            }
             // 税号集货: 不要设置
             // 税号个人: 不要设置
 //            if (newFlg || (StringUtils.isEmpty(productField.getHsCodePrivate()))) {
@@ -1767,6 +1769,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             if (newFlg || StringUtils.isEmpty(productCommonField.getTranslateStatus()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setTranslateStatus("0");  // 初期值为0
             }
+
 
             // 税号设置状态
             if (newFlg || StringUtils.isEmpty(productCommonField.getHsCodeStatus()) || "1".equals(feed.getIsFeedReImport())) {
