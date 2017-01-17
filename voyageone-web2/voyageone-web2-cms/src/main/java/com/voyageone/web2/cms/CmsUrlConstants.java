@@ -23,6 +23,7 @@ public interface CmsUrlConstants {
             String SET_CATE_TYPE = "setPlatformType";
 
             String GetHomeSumData = "getHomeSumData";
+
             String SumHome="sumHome";
 
             String GET_CMS_CONFIG = "getCmsConfig";
@@ -30,6 +31,7 @@ public interface CmsUrlConstants {
             String GET_MAIN_CATEGORIES = "getMainCategories";
 
             String GET_CARTS = "getCarts";
+
             String GetMenuHeaderInfo="getMenuHeaderInfo";
         }
         interface MODIFY_PASS_WORD {

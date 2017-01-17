@@ -6,8 +6,9 @@ define([
     'modules/cms/actions',
     'modules/cms/translate/en',
     'modules/cms/translate/zh',
+    'modules/cms/controller/repeatFilter.ctl',
     'modules/cms/controller/popup.ctl'
-], function (angularAMD, angular, _, routes, actions, enTranslate, zhTranslate) {
+], function (angularAMD, angular, _, routes, actions, enTranslate, zhTranslate,repeatFilter) {
 
     var mainApp = angular.module('voyageone.cms', [
         'com.voyageone.popups',
@@ -89,7 +90,10 @@ define([
         .controller('breadcrumbsCtrl', breadcrumbsCtrl)
 
         // menu.aside.
-        .controller('asideCtrl', asideCtrl);
+        .controller('asideCtrl', asideCtrl)
+
+        //定义一些常用filter
+        .controller('repeatFilter',repeatFilter);
 
     function appCtrl($scope, $window, translateService) {
 
