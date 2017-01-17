@@ -204,7 +204,11 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         cmsBtProduct.getPlatforms().values().forEach(f -> {
 
             ProductPrice productPrice = getProductPrice(f);
-            if (productPrice != null) productPriceList.add(productPrice);
+            if (productPrice != null) {
+                productPrice.setClientMsrpPrice(cmsBtProduct.getCommon().getFields().getClientMsrpPrice());
+                productPrice.setClientNetPrice(cmsBtProduct.getCommon().getFields().getClientNetPrice());
+                productPriceList.add(productPrice);
+            }
 
         });
 
@@ -248,6 +252,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             productPrice.setPriceSaleSt(f.getpPriceSaleSt());
 
             productPrice.setCartId(f.getCartId());
+
             int count = f.getSkus().size();
             int isSaleTrueCount = 0;
 
