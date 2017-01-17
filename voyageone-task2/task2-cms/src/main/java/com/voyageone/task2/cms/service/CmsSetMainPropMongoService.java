@@ -2824,19 +2824,11 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     // 取得product.model对应的group信息
 
                     boolean isQuarter = false;
-                    CmsChannelConfigBean cmsChannelConfigBean = null;
-                    if (ChannelConfigEnums.Channel.SN.getId().equals(feed.getChannelId())) {
-                        if ("0".equals(shop.getValue()) || "1".equals(shop.getValue())) {
-                            isQuarter = false;
-                        } else {
-                            cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, shop.getValue());
-                            if (cmsChannelConfigBean != null && feed.getChannelId().equals(cmsChannelConfigBean.getChannelId()) && "1".equals(cmsChannelConfigBean.getConfigValue1())) {
-                                isQuarter = true;
-                            }
-                        }
+                    if ("0".equals(shop.getValue()) || "1".equals(shop.getValue())) {
+                        isQuarter = false;
                     } else {
-                        cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
-                        if (cmsChannelConfigBean != null && feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())) {
+                        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, shop.getValue());
+                        if (cmsChannelConfigBean != null && feed.getChannelId().equals(cmsChannelConfigBean.getChannelId()) && "1".equals(cmsChannelConfigBean.getConfigValue1())) {
                             isQuarter = true;
                         }
                     }
