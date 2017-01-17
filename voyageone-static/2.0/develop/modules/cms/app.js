@@ -92,6 +92,7 @@ define([
         // menu.aside.
         .controller('asideCtrl', asideCtrl)
 
+        //定义一些常用filter
         .controller('repeatFilter',repeatFilter);
 
     function appCtrl($scope, $window, translateService) {
