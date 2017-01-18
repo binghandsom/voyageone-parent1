@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
@@ -11,10 +12,8 @@ import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsCartAddMQMessageBody;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,7 +48,7 @@ public class CmsCartAddMQJob extends TBaseMQCmsService<CmsCartAddMQMessageBody> 
     }
 
     @Override
-    public void onStartup(CmsCartAddMQMessageBody messageMap) throws Exception {
+    public void onStartup(CmsCartAddMQMessageBody messageMap) {
         String channelId = messageMap.getChannelId();
         Integer cartId =  messageMap.getCartId();
         Boolean isSingle = messageMap.getSingle() == null ? false : messageMap.getSingle();
@@ -60,19 +59,27 @@ public class CmsCartAddMQJob extends TBaseMQCmsService<CmsCartAddMQMessageBody> 
 
         long pageCnt = sumCnt / pageSize + (sumCnt % pageSize > 0 ? 1 : 0);
         Map<String, String> failMap = new HashMap<String, String>();
-        for (int pageNum = 1; pageNum <= pageCnt; pageNum++) {
-            JongoQuery jongoQuery = new JongoQuery();
+        try {
+            for (int pageNum = 1; pageNum <= pageCnt; pageNum++) {
+                JongoQuery jongoQuery = new JongoQuery();
 
-            jongoQuery.setSkip((pageNum - 1) * pageSize);
-            jongoQuery.setLimit(pageSize);
-            List<CmsBtProductModel> cmsBtProductModels = productService.getList(channelId, jongoQuery);
-            for (int i = 0; i < cmsBtProductModels.size(); i++) {
-                $info(String.format("%d/%d  code:%s", (pageNum - 1) * pageSize + i + 1, sumCnt, cmsBtProductModels.get(i).getCommon().getFields().getCode()));
-                createPlatform(cmsBtProductModels.get(i), cartId, isSingle, failMap);
+                jongoQuery.setSkip((pageNum - 1) * pageSize);
+                jongoQuery.setLimit(pageSize);
+                List<CmsBtProductModel> cmsBtProductModels = productService.getList(channelId, jongoQuery);
+                for (int i = 0; i < cmsBtProductModels.size(); i++) {
+                    $info(String.format("%d/%d  code:%s", (pageNum - 1) * pageSize + i + 1, sumCnt, cmsBtProductModels.get(i).getCommon().getFields().getCode()));
+                    createPlatform(cmsBtProductModels.get(i), cartId, isSingle, failMap);
+                }
             }
-        }
-        if (failMap.size() > 0) {
-            cmsLog(messageMap, OperationLog_Type.successIncludeFail, JacksonUtil.bean2Json(failMap));
+            if (failMap.size() > 0) {
+                cmsSuccessIncludeFailLog(messageMap, JacksonUtil.bean2Json(failMap));
+            }
+        } catch (Exception e) {
+            if (e instanceof BusinessException) {
+                cmsBusinessExLog(messageMap, e.getMessage());
+            } else {
+                cmsLog(messageMap, OperationLog_Type.unknownException, e.getMessage());
+            }
         }
     }
 

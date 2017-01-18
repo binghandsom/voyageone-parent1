@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.mqjob;
 
-import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsProcductBIDataMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsProductBIDataMQMessageBody;
 import com.voyageone.service.impl.cms.vomqjobservice.CmsProductBIDataService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +14,13 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RabbitListener//(queues = CmsMqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob)
-public class CmsProductBIDataMQJob extends TBaseMQCmsService<CmsProcductBIDataMQMessageBody> {
+public class CmsProductBIDataMQJob extends TBaseMQCmsService<CmsProductBIDataMQMessageBody> {
 
     @Autowired
     CmsProductBIDataService cmsProductBIDataService;
 
     @Override
-    public void onStartup(CmsProcductBIDataMQMessageBody messageMap) throws Exception {
+    public void onStartup(CmsProductBIDataMQMessageBody messageMap) throws Exception {
         cmsProductBIDataService.onStartup(messageMap);
     }
 }

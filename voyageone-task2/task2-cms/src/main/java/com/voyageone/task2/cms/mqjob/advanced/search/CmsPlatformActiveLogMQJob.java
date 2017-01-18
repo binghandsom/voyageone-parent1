@@ -40,11 +40,11 @@ public class CmsPlatformActiveLogMQJob extends TBaseMQCmsService<PlatformActiveL
         try {
             List<Map<String, String>> failList = cmsPlatformActiveLogService.onStartup(params);
             if (failList != null && failList.size() > 0) {
-                cmsLog(messageBody, OperationLog_Type.successIncludeFail, JacksonUtil.bean2Json(failList));
+                cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(failList));
             }
         } catch (Exception e) {
             if (e instanceof BusinessException) {
-                cmsLog(messageBody, OperationLog_Type.businessException, e.getMessage());
+                cmsBusinessExLog(messageBody, e.getMessage());
             } else {
                 cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
             }

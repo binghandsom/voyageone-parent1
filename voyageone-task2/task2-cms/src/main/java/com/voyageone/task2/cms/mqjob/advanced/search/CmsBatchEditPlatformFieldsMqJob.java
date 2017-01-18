@@ -6,7 +6,6 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -90,7 +89,7 @@ public class CmsBatchEditPlatformFieldsMqJob extends TBaseMQCmsService<CmsBatchP
             }
         });
         if(failList.size()>0){
-            cmsLog(messageBody, OperationLog_Type.successIncludeFail, JacksonUtil.bean2Json(failList));
+            cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(failList));
         }else{
             cmsSuccessLog(messageBody, "共处理了"+successList.size()+"个");
         }

@@ -17,7 +17,7 @@ import com.voyageone.service.daoext.bi.BiVtSalesProductExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsProcductBIDataMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsProductBIDataMQMessageBody;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -50,7 +50,7 @@ public class CmsProductBIDataService extends BaseService {
     private final static int PAGE_LIMIT = 1000;
 
 
-    public void onStartup(CmsProcductBIDataMQMessageBody messageMap) throws Exception {
+    public void onStartup(CmsProductBIDataMQMessageBody messageMap) throws Exception {
         $info("CmsProcductBIDataService start... 参数" + JacksonUtil.bean2Json(messageMap));
         String channelId = StringUtils.trimToNull(messageMap.getChannelId());
         Integer cartId = messageMap.getCartId(); //(Integer) messageMap.get("cartId");
@@ -257,7 +257,7 @@ public class CmsProductBIDataService extends BaseService {
      * @throws MQMessageRuleException
      */
     public void sendMessage(String channelId, int cartId,String sender) throws MQMessageRuleException {
-        CmsProcductBIDataMQMessageBody mqMessageBody = new CmsProcductBIDataMQMessageBody();
+        CmsProductBIDataMQMessageBody mqMessageBody = new CmsProductBIDataMQMessageBody();
         mqMessageBody.setChannelId(channelId);
         mqMessageBody.setCartId(cartId);
         mqMessageBody.setSender(sender);

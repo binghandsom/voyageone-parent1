@@ -30,7 +30,7 @@ public class CmsAdvSearchProductApprovalMQJob extends TBaseMQCmsService<AdvSearc
             cmsAdvSearchProductApprovalService.approval(messageBody);
         } catch (Exception e) {
             if (e instanceof BusinessException) {
-                cmsLog(messageBody, OperationLog_Type.businessException, e.getMessage());
+                cmsBusinessExLog(messageBody, e.getMessage());
             } else {
                 cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
             }

@@ -22,7 +22,7 @@ public class BatchUpdateProductMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;
     private List<String> productCodes;
-    private String userNmme;
+    private String userName;
     private Map<String, Object> params;
 
     public String getChannelId() {
@@ -41,12 +41,12 @@ public class BatchUpdateProductMQMessageBody extends BaseMQMessageBody {
         this.productCodes = productCodes;
     }
 
-    public String getUserNmme() {
-        return userNmme;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUserNmme(String userNmme) {
-        this.userNmme = userNmme;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Map<String, Object> getParams() {
@@ -65,7 +65,7 @@ public class BatchUpdateProductMQMessageBody extends BaseMQMessageBody {
         if (CollectionUtils.isEmpty(productCodes)) {
             throw new MQMessageRuleException("BatchUpdateProduct参数productCodes为空.");
         }
-        if (StringUtils.isBlank(userNmme)) {
+        if (StringUtils.isBlank(userName)) {
             throw new MQMessageRuleException("BatchUpdateProduct参数userNmme为空.");
         }
 

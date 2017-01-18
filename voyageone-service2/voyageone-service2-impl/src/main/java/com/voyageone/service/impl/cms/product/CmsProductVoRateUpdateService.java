@@ -12,6 +12,7 @@ import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductVoRateUpdateMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -47,19 +48,15 @@ public class CmsProductVoRateUpdateService extends BaseService {
     @Autowired
     private SxProductService sxProductService;
 
-    public List<Map<String, String>> updateProductVoRate(Map<String, Object> messageMap) throws Exception {
+    public List<Map<String, String>> updateProductVoRate(ProductVoRateUpdateMQMessageBody messageBody) throws Exception {
         List<Map<String, String>> failList = new ArrayList<Map<String, String>>();
         $info("CmsProductVoRateUpdateService start");
-        $info("参数" + JacksonUtil.bean2Json(messageMap));
-        String channelId = StringUtils.trimToNull((String) messageMap.get("channelId"));
-        List<String> codeList = (List<String>) messageMap.get("codeList");
-        String creater = StringUtils.trimToEmpty((String) messageMap.get("creater"));
-        /*if (channelId == null || codeList == null || codeList.isEmpty()) {
-            $error("CmsProductVoRateUpdateService 缺少参数");
-            return;
-        }*/
+        $info("参数" + JacksonUtil.bean2Json(messageBody));
+        String channelId = StringUtils.trimToNull(messageBody.getChannelId());
+        List<String> codeList = messageBody.getCodeList();
+        String creater = StringUtils.trimToEmpty(messageBody.getCreater());
 
-        String voRate = (String) messageMap.get("voRate");
+        String voRate = messageBody.getVoRate();
         String msg = null;
         if (voRate == null) {
             msg = "高价检索 批量更新VO扣点 清空";

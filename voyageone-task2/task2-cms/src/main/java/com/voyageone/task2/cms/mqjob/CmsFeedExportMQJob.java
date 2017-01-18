@@ -29,7 +29,7 @@ public class CmsFeedExportMQJob extends TBaseMQCmsService<FeedExportMQMessageBod
     public void onStartup(FeedExportMQMessageBody messageBody) throws Exception {
         CmsBtExportTaskModel exportTaskModel = cmsBtExportTaskService.getExportById(messageBody.getCmsBtExportTaskId());
         if (exportTaskModel == null) {
-            this.cmsLog(messageBody, OperationLog_Type.parameterException, "cms.bt.export.task.id不存在");
+            this.cmsBusinessExLog(messageBody, "cms.bt.export.task.id不存在");
             return;
         }
         cmsFeedExportService.export(exportTaskModel);

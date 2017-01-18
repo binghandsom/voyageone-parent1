@@ -28,11 +28,8 @@ public class CmsBatchUpdateProductMQJob extends TBaseMQCmsService<BatchUpdatePro
 
     @Override
     public void onStartup(BatchUpdateProductMQMessageBody messageBody) throws Exception {
-        messageBody.getParams().put("productIds", messageBody.getProductCodes());
-        messageBody.getParams().put("_channleId", messageBody.getChannelId());
-        messageBody.getParams().put("_userName", messageBody.getUserNmme());
         try {
-            Map<String, String> failMap = bacthUpdateService.onStartup(messageBody.getParams());
+            Map<String, String> failMap = bacthUpdateService.onStartup(messageBody);
             if (failMap != null && failMap.size() > 0) {
                 cmsLog(messageBody, OperationLog_Type.successIncludeFail, JacksonUtil.bean2Json(failMap));
             }

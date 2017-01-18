@@ -20,6 +20,8 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchRefreshRetailPriceMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -29,11 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -61,25 +59,17 @@ public class CmsProductPriceUpdateService extends BaseService {
 
     /**
      * 更新product及group的价格
-     * @param messageMap messageMap
+     * @param messageBody messageBody
      * @throws Exception Exception
      */
-    public void updateProductAndGroupPrice(Map<String, Object> messageMap) throws Exception {
+    public void updateProductAndGroupPrice(ProductPriceUpdateMQMessageBody messageBody) throws Exception {
 
         //$info("参数" + JacksonUtil.bean2Json(messageMap));
-        String channelId = StringUtils.trimToNull((String) messageMap.get("channelId"));
-        if (channelId == null || messageMap.get("productId") == null || messageMap.get("cartId") == null) {
-            $error("CmsProcductPriceUpdateService 缺少参数");
-            throw new BusinessException(String.format("缺少channelId/productId/cartId参数, params=%s", JacksonUtil.bean2Json(messageMap)));
-        }
+        String channelId = StringUtils.trimToNull(messageBody.getChannelId());
 
-        int cartId = (Integer) messageMap.get("cartId");
-        Long prodId = null;
-        if(messageMap.get("productId") instanceof Integer){
-            prodId = Long.valueOf((Integer)messageMap.get("productId"));
-        }else if(messageMap.get("productId") instanceof Long){
-            prodId = (long) messageMap.get("productId");
-        }
+        int cartId = messageBody.getCartId();
+        Long prodId = messageBody.getProdId();
+
         $info( String.format("CmsProcductPriceUpdateService start channelId = %s  cartId = %d  prodId = %d",channelId,cartId,prodId));
         JongoQuery queryObj = new JongoQuery();
         queryObj.setQuery("{'prodId':#,'platforms.P#.skus':{$exists:true}}");
@@ -87,47 +77,47 @@ public class CmsProductPriceUpdateService extends BaseService {
         queryObj.setProjectionExt("platforms.P" + cartId + ".mainProductCode", "platforms.P" + cartId + ".skus.priceMsrp", "platforms.P" + cartId + ".skus.priceRetail", "platforms.P" + cartId + ".skus.priceSale");
         CmsBtProductModel prodObj = productService.getProductByCondition(channelId, queryObj);
         if (prodObj == null) {
-            $error("CmsProcductPriceUpdateService 产品不存在 参数=" + messageMap.toString());
-            throw new BusinessException(String.format("产品不存在, params=%s", JacksonUtil.bean2Json(messageMap)));
+            $error("CmsProcductPriceUpdateService 产品不存在 参数=" + JacksonUtil.bean2Json(messageBody));
+            throw new BusinessException(String.format("产品不存在, params=%s", JacksonUtil.bean2Json(messageBody)));
         }
 
         CmsBtProductModel_Platform_Cart platObj =  prodObj.getPlatform(cartId);
         if (platObj == null) {
-            $error("CmsProcductPriceUpdateService 产品数据不正确 参数=" + messageMap.toString());
+            $error("CmsProcductPriceUpdateService 产品数据不正确 参数=" + JacksonUtil.bean2Json(messageBody));
             throw new BusinessException(String.format("产品Platform不存在, prodId=%d, channelId=%s, cartId=%d", prodId, channelId, cartId));
         }
         // 主商品code
         String mProdCode = StringUtils.trimToNull(platObj.getMainProductCode());
         if (mProdCode == null) {
-            $error("CmsProcductPriceUpdateService 产品数据不正确 缺少主商品code 参数=" + messageMap.toString());
+            $error("CmsProcductPriceUpdateService 产品数据不正确 缺少主商品code 参数=" + JacksonUtil.bean2Json(messageBody));
             throw new BusinessException(String.format("产品缺少主商品code prodId=%d, channelId=%s", prodId, channelId));
         }
         List<BaseMongoMap<String, Object>> skuList = platObj.getSkus();
         if (skuList == null || skuList.isEmpty()) {
-            $error("CmsProcductPriceUpdateService 产品数据不正确 缺少platforms.skus 参数=" + messageMap.toString());
+            $error("CmsProcductPriceUpdateService 产品数据不正确 缺少platforms.skus 参数=" + JacksonUtil.bean2Json(messageBody));
             throw new BusinessException(String.format("产品参数不正确, 缺少platforms.skus prodId=%d, channelId=%s, cartId=%d", prodId, channelId, cartId));
         }
         CmsBtProductGroupModel grpObj = productGroupService.selectMainProductGroupByCode(channelId, mProdCode, cartId);
         if (grpObj == null) {
-            $error("CmsProcductPriceUpdateService 产品对应的group不存在 参数=" + messageMap.toString());
+            $error("CmsProcductPriceUpdateService 产品对应的group不存在 参数=" + JacksonUtil.bean2Json(messageBody));
             throw new BusinessException(String.format("产品对于的group不存在, mainProductCode=%s, channelId=%s, cartId=%d", mProdCode, channelId, cartId));
         }
 
         // 先计算价格范围
         List<Double> priceMsrpList = skuList.stream().map(skuObj -> skuObj.getDoubleAttribute("priceMsrp")).sorted().collect(Collectors.toList());
         if (priceMsrpList == null || priceMsrpList.isEmpty()) {
-            $error("CmsProcductPriceUpdateService 产品数据sku priceMsrp不正确 参数=" + messageMap.toString());
-            throw new BusinessException(String.format("产品数据sku priceMsrp不正确, params=%s", JacksonUtil.bean2Json(messageMap)));
+            $error("CmsProcductPriceUpdateService 产品数据sku priceMsrp不正确 参数=" + JacksonUtil.bean2Json(messageBody));
+            throw new BusinessException(String.format("产品数据sku priceMsrp不正确, params=%s", JacksonUtil.bean2Json(messageBody)));
         }
         List<Double> priceRetailList = skuList.stream().map(skuObj -> skuObj.getDoubleAttribute("priceRetail")).sorted().collect(Collectors.toList());
         if (priceRetailList == null || priceRetailList.isEmpty()) {
-            $error("CmsProcductPriceUpdateService 产品数据sku priceRetail不正确 参数=" + messageMap.toString());
-            throw new BusinessException(String.format("产品数据sku priceRetail不正确, params=%s", JacksonUtil.bean2Json(messageMap)));
+            $error("CmsProcductPriceUpdateService 产品数据sku priceRetail不正确 参数=" + JacksonUtil.bean2Json(messageBody));
+            throw new BusinessException(String.format("产品数据sku priceRetail不正确, params=%s", JacksonUtil.bean2Json(messageBody)));
         }
         List<Double> priceSaleList = skuList.stream().map(skuObj -> skuObj.getDoubleAttribute("priceSale")).sorted().collect(Collectors.toList());
         if (priceSaleList == null || priceSaleList.isEmpty()) {
-            $error("CmsProcductPriceUpdateService 产品数据sku priceSale不正确 参数=" + messageMap.toString());
-            throw new BusinessException(String.format("产品数据sku priceSale不正确, params=%s", JacksonUtil.bean2Json(messageMap)));
+            $error("CmsProcductPriceUpdateService 产品数据sku priceSale不正确 参数=" + JacksonUtil.bean2Json(messageBody));
+            throw new BusinessException(String.format("产品数据sku priceSale不正确, params=%s", JacksonUtil.bean2Json(messageBody)));
         }
         double newPriceMsrpSt = priceMsrpList.get(0);
         double newPriceMsrpEd = priceMsrpList.get(priceMsrpList.size() - 1);
@@ -201,25 +191,20 @@ public class CmsProductPriceUpdateService extends BaseService {
         updObj.setUpdate("{$set:{'priceMsrpSt':#,'priceMsrpEd':#, 'priceRetailSt':#,'priceRetailEd':#, 'priceSaleSt':#,'priceSaleEd':#, 'modified':#,'modifier':#}}");
         updObj.setUpdateParameters(newPriceMsrpSt, newPriceMsrpEd, newPriceRetailSt, newPriceRetailEd, newPriceSaleSt, newPriceSaleEd, DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_BATCH_COUNT_PRODUCT_PRICE);
 
-        rs = productGroupService.updateFirst(updObj, (String) messageMap.get("channelId"));
+        rs = productGroupService.updateFirst(updObj, messageBody.getChannelId());
         $debug("CmsProcductPriceUpdateService 产品group价格范围更新结果 " + rs.toString());
     }
 
     /**
-     * 更新product的retialPrice
-     * @param messageMap messageMap
+     * 更新product的retailPrice
+     * @param messageBody messageBody
      */
-    public List<Map<String, String>> updateProductRetailPrice(Map<String, Object> messageMap) {
+    public List<Map<String, String>> updateProductRetailPrice(AdvSearchRefreshRetailPriceMQMessageBody messageBody) {
         List<Map<String, String>> failList = new ArrayList<Map<String, String>>();
-        $info("高级检索 重新计算指导价 开始执行... param=" + messageMap.toString());
-        String channleId = StringUtils.trimToNull((String) messageMap.get("_channleId"));
-        String userName = StringUtils.trimToNull((String) messageMap.get("_userName"));
-        List<String> codeList = (List<String>) messageMap.get("productIds");
-        List<Integer> cartList = (List<Integer>) messageMap.get("cartIds");
-        if (channleId == null || userName == null || codeList == null || codeList.isEmpty() || cartList == null || cartList.isEmpty()) {
-            $error("高级检索 重新计算指导价 缺少参数");
-            throw new BusinessException(String.format("高级检索 重新计算指导价 缺少参数, channelId/userName/codeList=/cartList为空, params=%s", JacksonUtil.bean2Json(messageMap)));
-        }
+        String channleId = StringUtils.trimToNull(messageBody.getChannelId());
+        String userName = StringUtils.trimToNull(messageBody.getUserName());
+        List<String> codeList = messageBody.getCodeList();
+        List<Integer> cartList = messageBody.getCartList();
 
         // 是否自动最终售价同步指导价格
         CmsChannelConfigBean autoPriceCfg = CmsChannelConfigs.getConfigBeanNoCode(channleId, CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);

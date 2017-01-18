@@ -64,10 +64,6 @@ public class CmsUpdateProductSalePriceService extends BaseService {
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
-    @Autowired
-    private CommCacheService commCacheService;
-    @Autowired
-    private SxProductService sxProductService;
 
     public void process(UpdateProductSalePriceMQMessageBody mqMessageBody){
         long threadNo =  Thread.currentThread().getId();

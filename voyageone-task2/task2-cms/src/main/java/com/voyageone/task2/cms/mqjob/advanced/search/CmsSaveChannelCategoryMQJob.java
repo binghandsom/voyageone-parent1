@@ -31,7 +31,7 @@ public class CmsSaveChannelCategoryMQJob extends TBaseMQCmsService<SaveChannelCa
         try {
             Map<String, String> errorMap = saveChannelCategoryService.onStartup(messageBody.getParams());
             if (errorMap != null && errorMap.size() > 0) {
-                cmsLog(messageBody, OperationLog_Type.successIncludeFail, JacksonUtil.bean2Json(errorMap));
+                cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(errorMap));
             }
         } catch (Exception e) {
             if (e instanceof BusinessException) {

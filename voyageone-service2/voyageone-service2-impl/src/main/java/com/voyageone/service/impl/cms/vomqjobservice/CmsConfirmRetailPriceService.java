@@ -12,6 +12,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.CmsBtPriceConfirmLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchConfirmRetailPriceMQMessageBody;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 指导价变更批量确认
@@ -39,12 +39,12 @@ public class CmsConfirmRetailPriceService extends VOAbsLoggable {
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
 
-    public void onStartup(Map<String, Object> messageMap) {
-        $debug("高级检索 指导价变更批量确认 开始执行... param=" + messageMap.toString());
-        String channleId = StringUtils.trimToNull((String) messageMap.get("_channleId"));
-        String userName = StringUtils.trimToNull((String) messageMap.get("_userName"));
-        List<String> codeList = (List<String>) messageMap.get("productIds");
-        List<Integer> cartList = (List<Integer>) messageMap.get("cartIds");
+    public void onStartup(AdvSearchConfirmRetailPriceMQMessageBody messageBody) {
+
+        String channelId = StringUtils.trimToNull(messageBody.getChannelId());
+        String userName = StringUtils.trimToNull(messageBody.getUserName());
+        List<String> codeList = messageBody.getCodeList();
+        List<Integer> cartList = messageBody.getCartList();
         /*if (channleId == null || userName == null || codeList == null || codeList.isEmpty() || cartList == null || cartList.isEmpty()) {
             $error("高级检索 指导价变更批量确认 缺少参数");
             return;
@@ -52,7 +52,7 @@ public class CmsConfirmRetailPriceService extends VOAbsLoggable {
 
         JongoQuery qryObj = new JongoQuery();
         JongoUpdate updObj = new JongoUpdate();
-        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channleId);
+        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
 
         // 获取产品的信息
         for (Integer cartIdVal : cartList) {
@@ -62,7 +62,7 @@ public class CmsConfirmRetailPriceService extends VOAbsLoggable {
 
             List<String> newCodeList = new ArrayList<>();
             boolean isUpdFlg = false;
-            List<CmsBtProductModel> prodObjList = productService.getList(channleId, qryObj);
+            List<CmsBtProductModel> prodObjList = productService.getList(channelId, qryObj);
             for (CmsBtProductModel prodObj : prodObjList) {
                 String prodCode = prodObj.getCommonNotNull().getFieldsNotNull().getCode();
 
@@ -87,20 +87,20 @@ public class CmsConfirmRetailPriceService extends VOAbsLoggable {
                     updObj.setUpdateParameters(skuList, DateTimeUtil.getNowTimeStamp(), userName);
                     BulkWriteResult rs = bulkList.addBulkJongo(updObj);
                     if (rs != null) {
-                        $debug(String.format("指导价变更批量确认 channelId=%s 执行结果=%s", channleId, rs.toString()));
+                        $debug(String.format("指导价变更批量确认 channelId=%s 执行结果=%s", channelId, rs.toString()));
                     }
 
                     // 保存确认历史
-                    priceConfirmLogService.addConfirmed(channleId, prodCode, prodObj.getPlatformNotNull(cartIdVal), userName);
+                    priceConfirmLogService.addConfirmed(channelId, prodCode, prodObj.getPlatformNotNull(cartIdVal), userName);
                 }
             }
 
             // 记录商品修改历史
-            productStatusHistoryService.insertList(channleId, newCodeList, cartIdVal, EnumProductOperationType.BatchConfirmRetailPrice, "", userName);
+            productStatusHistoryService.insertList(channelId, newCodeList, cartIdVal, EnumProductOperationType.BatchConfirmRetailPrice, "", userName);
         }
         BulkWriteResult rs = bulkList.execute();
         if (rs != null) {
-            $debug(String.format("指导价变更批量确认 channelId=%s 结果=%s", channleId, rs.toString()));
+            $debug(String.format("指导价变更批量确认 channelId=%s 结果=%s", channelId, rs.toString()));
         }
     }
 

@@ -1,22 +1,17 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.service.enums.cms.OperationLog_Type;
-import com.voyageone.service.fields.cms.CmsBtRefreshProductTaskModelStatus;
 import com.voyageone.service.dao.cms.CmsBtRefreshProductTaskDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.fields.cms.CmsBtRefreshProductTaskModelStatus;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsRefreshProductsMQMessageBody;
-import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtRefreshProductTaskItemModel;
 import com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.task2.base.BaseMQCmsService;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
-import org.apache.commons.collections.MapUtils;
 import org.bson.types.ObjectId;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,16 +54,10 @@ public class CmsRefreshProductsMQJob extends TBaseMQCmsService<CmsRefreshProduct
     public void onStartup(CmsRefreshProductsMQMessageBody messageMap) throws Exception {
         // 获取参数
         Integer taskId = messageMap.getTaskId();
-
-        if (taskId == null) {
-            cmsLog(messageMap, OperationLog_Type.parameterException, "参数taskId为空.");
-            return;
-        }
-
         CmsBtRefreshProductTaskModel cmsBtRefreshProductTaskModel = cmsBtRefreshProductTaskDao.select(taskId);
 
         if (cmsBtRefreshProductTaskModel == null) {
-            cmsLog(messageMap, OperationLog_Type.parameterException, "找不到CmsBtRefreshProductTaskModel, taskId" + taskId);
+            cmsBusinessExLog(messageMap, "找不到CmsBtRefreshProductTaskModel, taskId" + taskId);
             return;
         }
 

@@ -32,20 +32,14 @@ public class CmsAdvSearchRefreshRetailPriceMQJob extends TBaseMQCmsService<AdvSe
     @Override
     public void onStartup(AdvSearchRefreshRetailPriceMQMessageBody messageBody) throws Exception {
 
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("productIds", messageBody.getCodeList());
-        params.put("cartIds", messageBody.getCartList());
-        params.put("_channleId", messageBody.getChannelId());
-        params.put("_userName", messageBody.getUserName());
-
         try {
-            List<Map<String, String>> failList = cmsProductPriceUpdateService.updateProductRetailPrice(params);
+            List<Map<String, String>> failList = cmsProductPriceUpdateService.updateProductRetailPrice(messageBody);
             if (CollectionUtils.isNotEmpty(failList)) {
-                cmsLog(messageBody, OperationLog_Type.successIncludeFail, JacksonUtil.bean2Json(failList));
+                cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(failList));
             }
         } catch (Exception e) {
             if (e instanceof BusinessException) {
-                cmsLog(messageBody, OperationLog_Type.businessException, e.getMessage());
+                cmsBusinessExLog(messageBody, e.getMessage());
             } else {
                 cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
             }

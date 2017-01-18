@@ -1,11 +1,9 @@
 package com.voyageone.task2.cms.service.platform;
 
-import com.jd.open.api.sdk.internal.JSON.JSON;
 import com.jd.open.api.sdk.response.ware.WareUpdateDelistingResponse;
 import com.jd.open.api.sdk.response.ware.WareUpdateListingResponse;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
-import com.taobao.api.internal.parser.json.ObjectJsonParser;
 import com.taobao.api.response.ItemUpdateDelistingResponse;
 import com.taobao.api.response.ItemUpdateListingResponse;
 import com.voyageone.base.dao.mongodb.JongoAggregate;
@@ -20,7 +18,6 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.JsonUtil;
 import com.voyageone.components.dt.enums.DtConstants;
 import com.voyageone.components.dt.service.DtWareService;
 import com.voyageone.components.jd.service.JdSaleService;
@@ -33,27 +30,16 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtPlatformActiveLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.task2.base.BaseMQCmsService;
-
-import net.sf.json.util.JSONUtils;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.json.JSONObject;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 记录上下架操作历史(新增记录), 并调用上下架API

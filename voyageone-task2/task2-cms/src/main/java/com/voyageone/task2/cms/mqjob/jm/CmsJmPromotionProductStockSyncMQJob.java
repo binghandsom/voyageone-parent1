@@ -52,11 +52,10 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
 
     @Override
     public void onStartup(JmPromotionProductStockSyncMQMessageBody messageMap) throws Exception {
-        $debug("PromotionProductStockSyncService： start");
         // 取得所有店铺
         List<ShopBean> shopList = Shops.getShopList();
         if (shopList == null || shopList.isEmpty()) {
-            $error("PromotionProductStockSyncService 店铺及平台数据不存在！");
+            this.cmsConfigExLog(messageMap, "CmsJmPromotionProductStockSyncMQJob 店铺及平台数据不存在！");
             return;
         }
         OperationResult result = new OperationResult();
@@ -71,7 +70,6 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
             //写业务错误日志
             cmsBusinessExLog(messageMap, result.getMsg());
         }
-        $debug("PromotionProductStockSyncService: end");
     }
 
     private OperationResult syncStockByShop(ShopBean shopObj) {

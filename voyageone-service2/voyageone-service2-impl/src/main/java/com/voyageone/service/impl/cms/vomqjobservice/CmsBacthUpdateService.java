@@ -20,6 +20,7 @@ import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.BatchUpdateProductMQMessageBody;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.lang3.StringUtils;
@@ -49,20 +50,14 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
 
-    public Map<String, String> onStartup(Map<String, Object> messageMap) {
+    public Map<String, String> onStartup(BatchUpdateProductMQMessageBody messageBody) {
         // 错误map，key-value分别对于产品code和错误信息
         Map<String, String> failMap = new HashMap<String, String>();
-        $debug("高级检索 批量更新 开始执行... param=" + messageMap.toString());
-        String channleId = StringUtils.trimToNull((String) messageMap.get("_channleId"));
-        String userName = StringUtils.trimToNull((String) messageMap.get("_userName"));
-        List<String> codeList = (List<String>) messageMap.get("productIds");
-        if (channleId == null || userName == null || codeList == null || codeList.isEmpty()) {
-            /*$error("高级检索 批量更新 缺少参数");
-            return;*/
-            throw new BusinessException(String.format("高级检索 批量更新 缺少参数, channelId=%s, userName=%s, codeList=%s", channleId, userName, JacksonUtil.bean2Json(codeList)));
-        }
+        String channelId = StringUtils.trimToNull(messageBody.getChannelId());
+        String userName = StringUtils.trimToNull(messageBody.getUserName());
+        List<String> codeList = messageBody.getProductCodes();
 
-        Map<String, Object> prop = (Map<String, Object>) messageMap.get("property");
+        Map<String, Object> prop = (Map<String, Object>) messageBody.getParams().get("property");
         if (prop == null || prop.isEmpty()) {
             /*$error("高级检索 批量更新 缺少property参数");
             return;*/
@@ -77,11 +72,11 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
                 hsCode = StringUtils.trimToEmpty((String) valObj.get("value"));
             }
             // 是否自动同步指导价到最终售价
-            Boolean synPriceFlg = (Boolean) messageMap.get("synPrice");
+            Boolean synPriceFlg = (Boolean) messageBody.getParams().get("synPrice");
             if (synPriceFlg == null) {
                 synPriceFlg = false;
             }
-            failMap = updateHsCode(prop_id, hsCode, codeList, channleId, userName, synPriceFlg);
+            failMap = updateHsCode(prop_id, hsCode, codeList, channelId, userName, synPriceFlg);
         } else if ("translateStatus".equals(prop_id)) {
             // 翻译状态更新
             String stsCode = null;
@@ -91,7 +86,7 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
                 stsCode = StringUtils.trimToEmpty((String) valObj.get("value"));
                 priorDate = StringUtils.trimToEmpty((String) valObj.get("priorTranslateDate"));
             }
-            updateTranslateStatus(stsCode, codeList, channleId, userName, priorDate);
+            updateTranslateStatus(stsCode, codeList, channelId, userName, priorDate);
         }
         return failMap;
     }

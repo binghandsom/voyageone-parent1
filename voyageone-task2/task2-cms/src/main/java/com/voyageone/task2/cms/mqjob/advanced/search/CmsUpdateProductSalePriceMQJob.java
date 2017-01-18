@@ -23,8 +23,6 @@ public class CmsUpdateProductSalePriceMQJob extends TBaseMQCmsService<UpdateProd
 
     @Override
     public void onStartup(UpdateProductSalePriceMQMessageBody messageBody) throws Exception {
-        long threadNo =  Thread.currentThread().getId();
         cmsUpdateProductSalePriceService.process(messageBody);
-        $info("threadNo="+threadNo+" finish");
     }
 }

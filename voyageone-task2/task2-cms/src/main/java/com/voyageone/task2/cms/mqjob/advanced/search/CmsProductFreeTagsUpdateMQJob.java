@@ -1,5 +1,7 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsProductFreeTagsUpdateMQMessageBody;
 import com.voyageone.service.impl.cms.vomqjobservice.CmsProductFreeTagsUpdateService;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
@@ -22,7 +24,16 @@ public class CmsProductFreeTagsUpdateMQJob extends TBaseMQCmsService<CmsProductF
     CmsProductFreeTagsUpdateService service;
 
     @Override
-    public void onStartup(CmsProductFreeTagsUpdateMQMessageBody messageMap) throws Exception {
-        service.onStartup(messageMap);
+    public void onStartup(CmsProductFreeTagsUpdateMQMessageBody messageBody) throws Exception {
+        try {
+            service.onStartup(messageBody);
+        } catch (Exception e) {
+            if (e instanceof BusinessException) {
+                cmsBusinessExLog(messageBody, e.getMessage());
+            } else {
+                cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
+            }
+        }
+
     }
 }

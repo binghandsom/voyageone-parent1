@@ -35,23 +35,20 @@ public class CmsAdvSearchExportMQJob extends TBaseMQCmsService<AdvSearchExportMQ
     @Override
     public void onStartup(AdvSearchExportMQMessageBody messageBody) throws Exception {
         Integer cmsBtExportTaskId = messageBody.getCmsBtExportTaskId();
-        if (cmsBtExportTaskId == null) {
-            this.cmsLog(messageBody, OperationLog_Type.parameterException, "cms.bt.export.task.id不存在");
-            return;
-        }
         CmsBtExportTaskModel exportTaskModel = cmsBtExportTaskService.getExportById(cmsBtExportTaskId);
         if (exportTaskModel == null) {
-            this.cmsLog(messageBody, OperationLog_Type.parameterException, String.format("cms.bt.export.task(id=%s)不存在", cmsBtExportTaskId));
+            cmsBusinessExLog(messageBody, String.format("cms.bt.export.task(id=%s)不存在", cmsBtExportTaskId));
             return;
         }
+
         try {
             List<Map<String, String>> failList = cmsAdvSearchExportFileService.export(messageBody);
             if (CollectionUtils.isNotEmpty(failList)) {
-                cmsLog(messageBody, OperationLog_Type.successIncludeFail, JacksonUtil.bean2Json(failList));
+                cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(failList));
             }
         } catch (Exception e) {
             if (e instanceof BusinessException) {
-                cmsLog(messageBody, OperationLog_Type.businessException, e.getMessage());
+                cmsBusinessExLog(messageBody, e.getMessage());
             } else {
                 cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
             }
