@@ -1491,6 +1491,10 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             if (newFlg || StringUtils.isEmpty(productCommonField.getLongDesEn()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setLongDesEn(feed.getLongDescription());
             }
+
+            if (newFlg || StringUtils.isEmpty(productCommonField.getLastReceivedOn()) || "1".equals(feed.getIsFeedReImport())) {
+                productCommonField.setLastReceivedOn(feed.getLastReceivedOn());
+            }
             // 税号集货: 不要设置
             // 税号个人: 不要设置
 //            if (newFlg || (StringUtils.isEmpty(productField.getHsCodePrivate()))) {
@@ -1767,6 +1771,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             if (newFlg || StringUtils.isEmpty(productCommonField.getTranslateStatus()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setTranslateStatus("0");  // 初期值为0
             }
+
 
             // 税号设置状态
             if (newFlg || StringUtils.isEmpty(productCommonField.getHsCodeStatus()) || "1".equals(feed.getIsFeedReImport())) {
@@ -3481,7 +3486,11 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
         private CmsBtProductModel doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
 
             List<CmsBtProductModel_Sku> commonSkuList = cmsProduct.getCommon().getSkus();
-
+            double maxClientMsrpPrice = 0;
+            double minClientMsrpPrice = 0;
+            double maxClientNetPrice = 0;
+            double minClientNetPrice = 0;
+            boolean isFirst=true;
             // 设置common.skus里面的价格
             for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
                 CmsBtProductModel_Sku commonSku = null;
@@ -3519,9 +3528,34 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     commonSku.setPriceMsrp(sku.getPriceMsrp());
                     // 人民币指导价(后面价格计算要用到，因为010,018等店铺不用新价格体系，还是用老的价格公式)
                     commonSku.setPriceRetail(sku.getPriceCurrent());
+                    if (isFirst) {
+                        minClientNetPrice = commonSku.getClientNetPrice();
+                        minClientMsrpPrice = commonSku.getClientMsrpPrice();
+                        isFirst = false;
+                    }
+                    //clientMsrpPrice
+                    if (commonSku.getClientMsrpPrice() > maxClientMsrpPrice) {
+                        maxClientMsrpPrice = commonSku.getClientMsrpPrice();
+                    }
+                    if (commonSku.getClientMsrpPrice() < minClientMsrpPrice) {
+                        minClientMsrpPrice = commonSku.getClientMsrpPrice();
+                    }
+
+                    //clientNetPrice
+                    if (commonSku.getClientNetPrice() > maxClientNetPrice) {
+                        maxClientNetPrice = commonSku.getClientNetPrice();
+                    }
+                    if (commonSku.getClientNetPrice() < minClientNetPrice) {
+                        minClientNetPrice = commonSku.getClientNetPrice();
+                    }
+
                 }
 
             }
+
+            cmsProduct.getCommon().getFields().setClientMsrpPrice(String.format("%s~%s",minClientMsrpPrice,maxClientMsrpPrice));
+
+            cmsProduct.getCommon().getFields().setClientNetPrice(String.format("%s~%s",minClientNetPrice,maxClientNetPrice));
 
             // 设置platform.PXX.skus里面的价格
             try {

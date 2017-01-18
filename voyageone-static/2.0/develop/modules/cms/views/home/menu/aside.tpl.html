@@ -20,8 +20,8 @@
                     <!--<span class="caret"></span>-->
                     <!--<span class="sr-only" translate="TXT_CATEGORY_VIEWS"></span>-->
                 <!--</button>-->
-                <ul uib-dropdown-menu style="width:220px">
-                    <li ng-repeat="platformType in menuInfo.platformTypeList">
+                <ul uib-dropdown-menu style="width:220px" ng-controller="repeatFilter as filter">
+                    <li ng-repeat="platformType in menuInfo.platformTypeList | filter:filter.byAddName2">
                         <a href ng-bind="platformType.name" ng-click="selectPlatformType(platformType)"></a>
                     </li>
                 </ul>

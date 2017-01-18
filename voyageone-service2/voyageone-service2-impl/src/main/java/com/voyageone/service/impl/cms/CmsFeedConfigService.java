@@ -179,10 +179,10 @@ public class CmsFeedConfigService extends BaseService {
         if(cmsMtFeedConfigInfoList.size()==0)throw new BusinessException("请按属性保存按钮");
         for(CmsMtFeedConfigInfoModel model:cmsMtFeedConfigInfoList){
             if(("sku".equals(model.getCfgTableName()))){
-                isDbSku = true;
+                isDbSku = false;
             }
             if(("category".equals(model.getCfgTableName()))){
-                isDbCategory = true;
+                isDbCategory = false;
             }
         }
         if (isSku) {
