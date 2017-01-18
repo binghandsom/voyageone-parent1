@@ -2,7 +2,7 @@ package com.voyageone.task2.cms.service.tools;
 
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.task2.cms.mqjob.CmsRefreshProductsMQJob;
+import com.voyageone.task2.cms.mqjob.advanced.search.CmsRefreshProductsMQJob;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

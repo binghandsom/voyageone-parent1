@@ -1,9 +1,10 @@
-package com.voyageone.task2.cms.mqjob;
+package com.voyageone.task2.cms.mqjob.advanced.search;
 
 import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchConfirmRetailPriceMQMessageBody;
 import com.voyageone.service.impl.cms.vomqjobservice.CmsConfirmRetailPriceService;
 
+import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

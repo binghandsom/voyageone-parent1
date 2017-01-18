@@ -1,10 +1,11 @@
-package com.voyageone.task2.cms.mqjob;
+package com.voyageone.task2.cms.mqjob.advanced.search;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductVoRateUpdateMQMessageBody;
 import com.voyageone.service.impl.cms.product.CmsProductVoRateUpdateService;
 
+import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;

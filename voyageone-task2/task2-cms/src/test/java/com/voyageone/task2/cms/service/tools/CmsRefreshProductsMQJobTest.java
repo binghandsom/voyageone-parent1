@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service.tools;
 
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsRefreshProductsMQMessageBody;
-import com.voyageone.task2.cms.mqjob.CmsRefreshProductsMQJob;
+import com.voyageone.task2.cms.mqjob.advanced.search.CmsRefreshProductsMQJob;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

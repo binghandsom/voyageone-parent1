@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.mqjob;
+package com.voyageone.task2.cms.mqjob.advanced.search;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.JacksonUtil;
@@ -6,6 +6,7 @@ import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.SaveChannelCategoryMQMessageBody;
 import com.voyageone.service.impl.cms.vomqjobservice.CmsSaveChannelCategoryService;
 
+import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

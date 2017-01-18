@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.mqjob;
+package com.voyageone.task2.cms.mqjob.advanced.search;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.JacksonUtil;
@@ -6,6 +6,7 @@ import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
+import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import com.voyageone.task2.cms.service.product.batch.CmsAdvSearchExportFileService;
 
 import org.apache.commons.collections.CollectionUtils;

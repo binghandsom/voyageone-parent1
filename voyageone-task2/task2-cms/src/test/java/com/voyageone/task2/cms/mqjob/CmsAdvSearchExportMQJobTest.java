@@ -1,16 +1,13 @@
 package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.common.configs.MQConfigInitTestUtil;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
 
+import com.voyageone.task2.cms.mqjob.advanced.search.CmsAdvSearchExportMQJob;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by rex on 2017/1/5.
