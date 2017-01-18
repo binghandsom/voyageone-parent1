@@ -266,13 +266,13 @@ public class CmsAdvSearchExportFileService extends BaseService {
             searchItemStr += ";";
         if (searchValue.getFileType() == 3) {
             // 要输出sku级信息
-            searchItemStr += "common.skus;common.fields.model;common.fields.color;common.fields.originalCode;";
+            searchItemStr += "common.skus;common.fields.model;common.fields.color;feed.catPath;common.fields.origSizeType;";
         } else if (searchValue.getFileType() == 2) {
             // 要输出group级信息
-            searchItemStr += "common.fields.model;common.fields.catPath;";
+            searchItemStr += "common.fields.model;feed.catPath;common.fields.origSizeType;";
         } else if (searchValue.getFileType() == 1) {
             //code
-            searchItemStr += "common.fields.model;common.fields.color;";
+            searchItemStr += "common.fields.model;common.fields.color;feed.catPath;common.fields.origSizeType;";
         } else if (searchValue.getFileType() == 4) {
             searchItemStr += "common.skus.clientNetPrice;common.fields.color;common.fields.originalCode;platforms";
         } else if (searchValue.getFileType() == 5) {
