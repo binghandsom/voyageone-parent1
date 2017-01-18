@@ -151,12 +151,15 @@ public class CmsFeedConfigService extends BaseService {
                 throw new BusinessException("Feed表结构名称必须填写");
             cfgTableNameColumn.add(name);
             //取得sku
-            if ("sku".equals(modelHashMap.get("cfgTableName"))) {
+            if ("sku".equals(name)) {
                 isSku = false;
             }
             //取得category
-            if ("category".equals(modelHashMap.get("cfgTableName"))) {
+            if ("category".equals(name)) {
                 isCategory = false;
+            }
+            if (StringUtils.isDigit(name)){
+                throw new BusinessException("Feed表结构名称不能为数字");
             }
             if (!StringUtils.isEmpty((String) modelHashMap.get("cfgIsAttribute"))) {
                 String cfgIsAttribute = (String) modelHashMap.get("cfgIsAttribute");
