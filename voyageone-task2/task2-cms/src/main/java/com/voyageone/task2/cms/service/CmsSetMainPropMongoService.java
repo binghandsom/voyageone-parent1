@@ -3537,7 +3537,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     if (commonSku.getClientMsrpPrice() > maxClientMsrpPrice) {
                         maxClientMsrpPrice = commonSku.getClientMsrpPrice();
                     }
-                    if (commonSku.getClientMsrpPrice() < minClientMsrpPrice) {
+                   else if (commonSku.getClientMsrpPrice() < minClientMsrpPrice) {
                         minClientMsrpPrice = commonSku.getClientMsrpPrice();
                     }
 
@@ -3545,7 +3545,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     if (commonSku.getClientNetPrice() > maxClientNetPrice) {
                         maxClientNetPrice = commonSku.getClientNetPrice();
                     }
-                    if (commonSku.getClientNetPrice() < minClientNetPrice) {
+                    else if (commonSku.getClientNetPrice() < minClientNetPrice) {
                         minClientNetPrice = commonSku.getClientNetPrice();
                     }
 
@@ -3553,9 +3553,19 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
             }
 
-            cmsProduct.getCommon().getFields().setClientMsrpPrice(String.format("%s~%s",minClientMsrpPrice,maxClientMsrpPrice));
+            if(minClientMsrpPrice==maxClientMsrpPrice) {
+                cmsProduct.getCommon().getFields().setClientMsrpPrice(String.format("%s", minClientMsrpPrice));
+            }
+            else {
+                cmsProduct.getCommon().getFields().setClientMsrpPrice(String.format("%s~%s", minClientMsrpPrice, maxClientMsrpPrice));
+            }
 
-            cmsProduct.getCommon().getFields().setClientNetPrice(String.format("%s~%s",minClientNetPrice,maxClientNetPrice));
+            if(maxClientNetPrice==minClientNetPrice) {
+                cmsProduct.getCommon().getFields().setClientNetPrice(String.format("%s", minClientNetPrice));
+            }
+            else {
+                cmsProduct.getCommon().getFields().setClientNetPrice(String.format("%s~%s", minClientNetPrice, maxClientNetPrice));
+            }
 
             // 设置platform.PXX.skus里面的价格
             try {
