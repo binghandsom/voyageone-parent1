@@ -119,9 +119,8 @@
         <constructor-arg ref="sqlSessionFactorySlave"/>
     </bean>
 
-    <bean class="com.voyageone.category.match.MtCategoryKeysDao">
+    <bean class="com.voyageone.category.match.DatabaseConfiguration">
         <constructor-arg name="dataSource" ref="dataSourceSlave"/>
         <constructor-arg name="schema" value="voyageone_cms2"/>
     </bean>
-
 </beans>

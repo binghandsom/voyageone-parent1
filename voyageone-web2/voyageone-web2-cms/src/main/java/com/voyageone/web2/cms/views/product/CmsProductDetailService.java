@@ -21,6 +21,7 @@ import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
@@ -569,6 +570,39 @@ public class CmsProductDetailService extends BaseViewService {
         return resultMap;
     }
 
+    public Map<String, Object> refreshProductCategory(Map requestMap, UserSessionBean userInfo, CmsSessionBean cmsSession) {
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Integer isSelAll = (Integer) requestMap.get("isSelAll");
+        if (isSelAll == null) {
+            isSelAll = 0;
+        }
+        List<String> prodCodes = null;
+        if (isSelAll == 1) {
+            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
+            prodCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+        } else {
+            prodCodes = (List<String>) requestMap.get("prodIds");
+        }
+        if (prodCodes == null || prodCodes.isEmpty()) {
+            $error("切换类目 没有prod id条件 params=" + requestMap.toString());
+            resultMap.put("isChangeCategory", false);
+            return resultMap;
+        }
+        requestMap.put("userName",userInfo.getUserName());
+        requestMap.put("channelId",userInfo.getSelChannelId());
+        List<List<String>> splitCodes = CommonUtil.splitList(prodCodes,100);
+        splitCodes.forEach(codes -> {
+            requestMap.put("codeList",codes);
+            sender.sendMessage( CmsMqRoutingKey.CMS_BATCH_CmsBatchRefreshMainCategoryJob, requestMap);
+        });
+
+        // 获取更新结果
+        resultMap.put("isChangeCategory", true);
+        return resultMap;
+    }
+
     public Map<String, Object> getMastProductInfo(String channelId, Long prodId, String lang) {
         Map<String, Object> result = new HashMap<>();
 
@@ -583,7 +617,15 @@ public class CmsProductDetailService extends BaseViewService {
             if (product != null) {
                 Map<String, Object> image = new HashMap<String, Object>();
                 image.put("productCode", s1);
-                image.put("imageName", product.getCommon().getFields().getImages1().get(0).get("image1"));
+                String imageName ="";
+
+                if(!ListUtils.isNull(product.getCommon().getFields().getImages1()) && product.getCommon().getFields().getImages1().get(0).size()>0){
+                    imageName = (String) product.getCommon().getFields().getImages1().get(0).get("image1");
+                }
+                if(StringUtil.isEmpty(imageName) && !ListUtils.isNull(product.getCommon().getFields().getImages6()) && product.getCommon().getFields().getImages6().get(0).size()>0){
+                    imageName = (String) product.getCommon().getFields().getImages6().get(0).get("image6");
+                }
+                image.put("imageName", imageName);
                 image.put("isMain", finalCmsBtProductGroup.getMainProductCode().equalsIgnoreCase(s1));
                 image.put("prodId", product.getProdId());
                 image.put("qty",product.getCommon().getFields().getQuantity());

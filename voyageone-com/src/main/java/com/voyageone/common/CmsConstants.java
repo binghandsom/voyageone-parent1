@@ -25,7 +25,8 @@ public class CmsConstants {
     public enum PlatformStatus {
         WaitingPublish,		// 等待上新
         OnSale, 			// 在售
-        InStock 			// 在库
+        InStock,			// 在库,
+        Violation             // 违规下架
     }
 
 
@@ -161,6 +162,10 @@ public class CmsConstants {
 
         // 上新方式
         String SX_SMART = "SX_SMART";
+
+        // hscode
+        String HSCODE = "HSCODE";
+        String SX_HSCODE = ".sx_hscode";
 
         // 发货方式
         String SHIPPING_TYPE = "SHIPPING_TYPE";

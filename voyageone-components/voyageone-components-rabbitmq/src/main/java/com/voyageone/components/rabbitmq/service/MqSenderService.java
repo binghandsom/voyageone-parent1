@@ -43,7 +43,7 @@ public class MqSenderService extends ComponentBase {
 
         message.check();
 
-        sendMessage(voQueue.exchange(), voQueue.value(), message, voQueue.isBackMessage(), isLoad, voQueue.isDeclareQueue(), voQueue.delaySecond());
+        sendMessage(voQueue.exchange(), voQueue.value(), message, voQueue.isBackMessage(), isLoad, voQueue.isDeclareQueue(), message.getDelaySecond());
     }
 
     /**

@@ -3,19 +3,25 @@ package com.voyageone.task2.cms.service;
 import com.taobao.api.domain.Item;
 import com.taobao.api.domain.SellerCat;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
 import com.voyageone.service.dao.cms.CmsBtPlatformNumiidDao;
@@ -24,9 +30,13 @@ import com.voyageone.service.daoext.cms.CmsBtPlatformNumiidDaoExt;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
+import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.CmsBtPlatformNumiidModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseMQCmsService;
@@ -68,6 +78,9 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
 
 //    @Autowired
 //    private TbItemService tbItemService;
+
+    @Autowired
+    private CmsMqSenderService sender;
 
     @Autowired
     private PlatformCategoryService platformCategoryService;
@@ -189,7 +202,7 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
             updateCmsBtPlatformNumiid(channelId, cartId, listSuccessNumiid, listErrorNumiid);
             if (ListUtils.notNull(listAllNumiid)) {
                 // 存在没有搜到的numIId
-                cmsBtPlatformNumiidDaoExt.updateStatusByNumiids(channelId, Integer.valueOf(cartId), "3", getTaskName(), listSuccessNumiid);
+                cmsBtPlatformNumiidDaoExt.updateStatusByNumiids(channelId, Integer.valueOf(cartId), "3", getTaskName(), listAllNumiid);
             }
         }
     }
@@ -295,6 +308,13 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
 
     private void upProductPlatform(Map<String, Object> fieldMap, CmsBtProductGroupModel cmsBtProductGroup, String channelId, int cartId, List<Map<String, Object>> sellerCats) {
         List<BulkUpdateModel> bulkList = new ArrayList<>();
+        String pricePropName = getPricePropName(channelId, cartId);
+        Map<String, Double> mapSkuSalePrice = getSalePriceBySku(channelId);
+        Map<String, Double> mapNumIIdSalePrice = getSalePriceByNumIId(channelId);
+        // added by morse.lu 2017/01/05 start
+        // 用于之后价格同步
+        List<Map<String, Object>> listProducts = new ArrayList<>();
+        // added by morse.lu 2017/01/05 end
         final boolean[] hasErr = {false};
         cmsBtProductGroup.getProductCodes().forEach(s -> {
             HashMap<String, Object> queryMap = new HashMap<>();
@@ -304,7 +324,12 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
             // modified by morse.lu 2016/11/18 start
             // 全小写比较skuCode
 //            List<String> listSkuCode = product.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList());
-            List<String> listSkuCode = product.getCommon().getSkus().stream().map(sku -> sku.getSkuCode().toLowerCase()).collect(Collectors.toList());
+//            List<String> listSkuCode = product.getCommon().getSkus().stream().map(sku -> sku.getSkuCode().toLowerCase()).collect(Collectors.toList());
+            Map<String, BaseMongoMap<String, Object>> mapSkus = product.getPlatform(cartId).getSkus().stream()
+                    .collect(Collectors.toMap(
+                            sku -> sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()).toLowerCase(),
+                            sku -> sku)
+                    );
             // modified by morse.lu 2016/11/18 end
             // added by morse.lu 2016/07/18 end
             HashMap<String, Object> updateMap = new HashMap<>();
@@ -323,12 +348,54 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
 //                        if (listSkuCode.contains(skuVal.get("sku_outerId"))) {
                         if (skuVal.get("sku_outerId") == null || "".equals(skuVal.get("sku_outerId").toString())) {
                             hasErr[0] = true;
-                        } else
-                        if (listSkuCode.contains(skuVal.get("sku_outerId").toString().toLowerCase())) {
-                            upValSku.add(skuVal);
-                            hasPublishSku[1] = true;
+                        } else {
+//                            if (listSkuCode.contains(skuVal.get("sku_outerId").toString().toLowerCase())) {
+                            BaseMongoMap<String, Object> skuInfo = mapSkus.get(skuVal.get("sku_outerId").toString().toLowerCase());
+                            if (skuInfo != null) {
+                                upValSku.add(skuVal);
+                                hasPublishSku[1] = true;
+                                if (needWritePrice(channelId, pricePropName)) {
+                                    // 回写price
+                                    // added by morse.lu 2017/01/05 start
+                                    // 用于之后价格同步
+                                    Map<String, Object> products = new HashMap<>();
+                                    products.put("channelId", channelId);
+                                    products.put("productId", product.getProdId());
+                                    products.put("cartId", cartId);
+                                    listProducts.add(products);
+                                    // added by morse.lu 2017/01/05 end
+                                    String price = (String) skuVal.get("sku_price");
+                                    skuInfo.setAttribute(pricePropName, Double.valueOf(price));
+                                    skuInfo.setAttribute("priceRetail", Double.valueOf(price));
+                                    if (mapSkuSalePrice != null) {
+                                        // 需要回写 写死的priceSale
+                                        double salePrice = mapSkuSalePrice.getOrDefault(skuVal.get("sku_outerId").toString().toLowerCase(), 9999999d);
+                                        if (salePrice == 0d) {
+                                            // 原价 - 1
+                                            salePrice = Double.valueOf(price) - 1d;
+                                        }
+                                        skuInfo.setAttribute("priceSale", salePrice);
+                                        skuInfo.setAttribute("priceRetail", salePrice);
+                                    }
+                                    if (mapNumIIdSalePrice != null) {
+                                        // 需要回写 写死的priceSale
+                                        double salePrice = mapNumIIdSalePrice.getOrDefault(cmsBtProductGroup.getNumIId(), 9999999d);
+                                        if (salePrice == 0d) {
+                                            // 原价 - 1
+                                            salePrice = Double.valueOf(price) - 1d;
+                                        }
+                                        skuInfo.setAttribute("priceSale", salePrice);
+                                        skuInfo.setAttribute("priceRetail", salePrice);
+                                    }
+                                }
+                            }
                         }
                     });
+
+                    if (needWritePrice(channelId, pricePropName)) {
+                        // 回写price
+                        updateMap.put("platforms.P" + cartId + ".skus", product.getPlatform(cartId).getSkus());
+                    }
                     updateMap.put("platforms.P" + cartId + ".fields." + s1, upValSku);
 //                } else if ("prop_13021751".equals(s1)) {
                     // 不要回写,model是主字段,会影响别的逻辑,改上新逻辑,货号优先去platform.P23.prop_13021751里取，取不到，再用model
@@ -358,6 +425,49 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
                 // 产品id错了，取不到产品信息
                 $warn(String.format("PlatformPid[%s] numIid=[%s] 天猫上不存在!group表PlatformPid已经清除,product表的平台类目pCatId需要重新选择填写!", cmsBtProductGroup.getPlatformPid(), cmsBtProductGroup.getNumIId()));
                 cmsBtProductGroup.setPlatformPid("");
+            }
+
+            if (!hasPublishSku[0]) {
+                // product级
+                if (needWritePrice(channelId, pricePropName)) {
+                    // 回写price
+                    // added by morse.lu 2017/01/05 start
+                    // 用于之后价格同步
+                    Map<String, Object> products = new HashMap<>();
+                    products.put("channelId", channelId);
+                    products.put("productId", product.getProdId());
+                    products.put("cartId", cartId);
+                    listProducts.add(products);
+                    // added by morse.lu 2017/01/05 end
+                    BaseMongoMap<String, Object> skuInfo = mapSkus.get(StringUtils.null2Space((String)fieldMap.get("outer_id")).toLowerCase());
+                    if (skuInfo != null) {
+                        String price = (String) fieldMap.get("price");
+                        skuInfo.setAttribute(pricePropName, Double.valueOf(price));
+                        skuInfo.setAttribute("priceRetail", Double.valueOf(price));
+                        if (mapSkuSalePrice != null) {
+                            // 需要回写 写死的priceSale
+                            double salePrice = mapSkuSalePrice.getOrDefault(StringUtils.null2Space((String)fieldMap.get("outer_id")).toLowerCase(), 9999999d);
+                            if (salePrice == 0d) {
+                                // 原价 - 1
+                                salePrice = Double.valueOf(price) - 1d;
+                            }
+                            skuInfo.setAttribute("priceSale", salePrice);
+                            skuInfo.setAttribute("priceRetail", salePrice);
+                        }
+                        if (mapNumIIdSalePrice != null) {
+                            // 需要回写 写死的priceSale
+                            double salePrice = mapNumIIdSalePrice.getOrDefault(cmsBtProductGroup.getNumIId(), 9999999d);
+                            if (salePrice == 0d) {
+                                // 原价 - 1
+                                salePrice = Double.valueOf(price) - 1d;
+                            }
+                            skuInfo.setAttribute("priceSale", salePrice);
+                            skuInfo.setAttribute("priceRetail", salePrice);
+                        }
+
+                        updateMap.put("platforms.P" + cartId + ".skus", product.getPlatform(cartId).getSkus());
+                    }
+                }
             }
 
             if (!hasPublishSku[0] || hasPublishSku[1]) {
@@ -434,19 +544,49 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
         }
         productGroupService.update(cmsBtProductGroup);
         // added by morse.lu 2016/07/18 end
+
+        // added by morse.lu 2017/01/05 start
+        // 向Mq发送消息同步sku,code,group价格范围
+//        listProducts.forEach(product -> sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, product));
+        listProducts.forEach(product -> {
+            ProductPriceUpdateMQMessageBody productPriceUpdateMQMessageBody = new ProductPriceUpdateMQMessageBody();
+            productPriceUpdateMQMessageBody.setChannelId(channelId);
+            productPriceUpdateMQMessageBody.setProdId((Long) product.get("productId"));
+            productPriceUpdateMQMessageBody.setCartId((Integer) product.get("cartId"));
+            productPriceUpdateMQMessageBody.setSender(CmsMqRoutingKey.CMS_BATCH_TMFieldsImportCms2Job);
+            try {
+                sender.sendMessage(productPriceUpdateMQMessageBody);
+            } catch (MQMessageRuleException e) {
+                $error("向Mq发送消息同步sku,code,group价格范围异常", e);
+            }
+        });
+        // added by morse.lu 2017/01/05 end
     }
 
-//    private String getPricePropName(String channelId) {
-//        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId
-//                                    , CmsConstants.ChannelConfig.PRICE
-//                                    , String.valueOf(23) + CmsConstants.ChannelConfig.PRICE_SX_PRICE);
-//
-//        if (sxPriceConfig == null) {
-//            return null;
-//        } else {
-//            return sxPriceConfig.getConfigValue1();
-//        }
-//    }
+    private String getPricePropName(String channelId, int cartId) {
+        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId
+                                    , CmsConstants.ChannelConfig.PRICE_SX_KEY
+                                    , String.valueOf(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE_CODE);
+
+        if (sxPriceConfig == null) {
+            return null;
+        } else {
+            return sxPriceConfig.getConfigValue1();
+        }
+    }
+
+    private boolean needWritePrice(String channelId, String pricePropName) {
+        boolean needWritePrice = false;
+        if (!StringUtils.isEmpty(pricePropName)){
+            // 如果以后要临时写死就扔这里， 用完后要删掉
+//            if (channelId.equals(ChannelConfigEnums.Channel.WMF.getId())) {
+//                // WMF 回写price
+//                needWritePrice = true;
+//            }
+        }
+
+        return needWritePrice;
+    }
 
     public Map<String, Object> getPlatformProduct(String productId, ShopBean shopBean) throws Exception {
         fieldHashMap fieldMap = new fieldHashMap();
@@ -467,7 +607,7 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
     public Map<String, Object> getPlatformWareInfoItem(String numIid, ShopBean shopBean) throws Exception {
         fieldHashMap fieldMap = new fieldHashMap();
         String schema = tbProductService.doGetWareInfoItem(numIid, shopBean).getUpdateItemResult();
-        $info("取得天猫商品信息schema:" + schema);
+        $debug("取得天猫商品信息schema:" + schema);
         if (schema != null) {
             List<Field> fields = SchemaReader.readXmlForList(schema);
             fields.forEach(field -> {
@@ -642,5 +782,29 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
             }
         }
         return results;
+    }
+
+
+    // 销售价格，写死，用于回写platforms.PXX.skus.priceSale
+    private Map<String, Double> getSalePriceBySku(String channelId) {
+        Map<String, Double> ret = null; // Map<skuCode, price>
+//        if (channelId.equals(ChannelConfigEnums.Channel.WMF.getId())) {
+//            ret = new HashMap<>();
+//            ret.put("".toLowerCase(), 0d);
+//        }
+
+        return ret;
+    }
+
+    // 销售价格，写死，用于回写platforms.PXX.skus.priceSale
+    private Map<String, Double> getSalePriceByNumIId(String channelId) {
+        Map<String, Double> ret = null; // Map<numIId, price>
+        // 如果以后要临时写死就扔这里， 用完后要删掉
+//        if (channelId.equals(ChannelConfigEnums.Channel.WMF.getId())) {
+//            ret = new HashMap<>();
+////            ret.put("537755258629", 130d);
+//        }
+
+        return ret;
     }
 }

@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.product;
 
+import com.google.common.base.Joiner;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
@@ -265,6 +266,7 @@ public class ProductGroupService extends BaseService {
         }
 
         // 更新cms_bt_product_groups表
+        model.setModified(DateTimeUtil.getNow());
         this.update(model);
 
         // 如果传入的groups包含code列表,则同时更新code的状态
@@ -332,6 +334,11 @@ public class ProductGroupService extends BaseService {
                         bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pCatStatus", "1");
                 }
 
+                // 更新时间
+                bulkUpdateMap.put("platforms.P" + model.getCartId() + ".modified", model.getModified());
+                // 更新者
+                bulkUpdateMap.put("platforms.P" + model.getCartId() + ".modifier", model.getModifier());
+
                 // 设定批量更新条件和值
                 if (!bulkUpdateMap.isEmpty()) {
                     BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
@@ -347,6 +354,9 @@ public class ProductGroupService extends BaseService {
                 cmsBtProductDao.bulkUpdateWithMap(model.getChannelId(), bulkList, null, "$set", false);
             }
         }
+
+        $info("上新成功时回写group和产品表上新状态信息结束！[groupId:%s] [codes:%s]",
+                model.getGroupId(), ListUtils.isNull(listSxCode) ? "空" : Joiner.on(",").join(listSxCode));
 
         return model;
     }
@@ -357,7 +367,7 @@ public class ProductGroupService extends BaseService {
      * @param errMsg String sxData中的上新错误消息
      * @return boolean 更新结果状态
      */
-    public boolean updateUploadErrorStatus(CmsBtProductGroupModel model, String errMsg) {
+    public boolean updateUploadErrorStatus(CmsBtProductGroupModel model, List<String> listSxCode, String errMsg) {
 
         if (model == null) {
             $error("回写上新错误信息时失败! [GroupModel=null]");
@@ -365,38 +375,48 @@ public class ProductGroupService extends BaseService {
         }
 
         // 如果传入的groups包含code列表,则同时更新code的状态
-        if (!model.getProductCodes().isEmpty()) {
+        if (ListUtils.isNull(listSxCode)) {
+            $error("回写上新失败状态信息时失败!上新对象产品Code列表为空 [listSxCode=null]");
+            return false;
+        }
 
-            // 批量更新产品的平台状态.
-            List<BulkUpdateModel> bulkList = new ArrayList<>();
-            for (String code : model.getProductCodes()) {
-                // 设置批量更新条件
-                HashMap<String, Object> bulkQueryMap = new HashMap<>();
-                bulkQueryMap.put("common.fields.code", code);
+        // 批量更新产品的平台状态.
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        for (String code : listSxCode) {
+            // 设置批量更新条件
+            HashMap<String, Object> bulkQueryMap = new HashMap<>();
+            bulkQueryMap.put("common.fields.code", code);
 
-                // 设置更新值
-                HashMap<String, Object> bulkUpdateMap = new HashMap<>();
-                // 设置pPublishError：如果上新失败，设置固定值"Error"
-                // 这个方法是用于上新成功时的回写，上新失败时的回写用另外一个方法
-                bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "Error");
-                // 设置pPublishMessage(产品平台详情页显示用的错误信息)
-                bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishMessage", errMsg);
+            // 设置更新值
+            HashMap<String, Object> bulkUpdateMap = new HashMap<>();
+            // 设置pPublishError：如果上新失败，设置固定值"Error"
+            // 这个方法是用于上新成功时的回写，上新失败时的回写用另外一个方法
+            bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "Error");
+            // 设置pPublishMessage(产品平台详情页显示用的错误信息)
+            bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishMessage", errMsg);
 
-                // 设定批量更新条件和值
-                if (!bulkUpdateMap.isEmpty()) {
-                    BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
-                    bulkUpdateModel.setUpdateMap(bulkUpdateMap);
-                    bulkUpdateModel.setQueryMap(bulkQueryMap);
-                    bulkList.add(bulkUpdateModel);
-                }
-            }
+            // 更新时间
+            bulkUpdateMap.put("platforms.P" + model.getCartId() + ".modified", model.getModified());
+            // 更新者
+            bulkUpdateMap.put("platforms.P" + model.getCartId() + ".modifier", model.getModifier());
 
-            // 批量更新product表
-            if (!bulkList.isEmpty()) {
-                // 因为是回写产品状态，找不到产品时也不插入新错误的记录
-                cmsBtProductDao.bulkUpdateWithMap(model.getChannelId(), bulkList, null, "$set", false);
+            // 设定批量更新条件和值
+            if (!bulkUpdateMap.isEmpty()) {
+                BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
+                bulkUpdateModel.setUpdateMap(bulkUpdateMap);
+                bulkUpdateModel.setQueryMap(bulkQueryMap);
+                bulkList.add(bulkUpdateModel);
             }
         }
+
+        // 批量更新product表
+        if (!bulkList.isEmpty()) {
+            // 因为是回写产品状态，找不到产品时也不插入新错误的记录
+            cmsBtProductDao.bulkUpdateWithMap(model.getChannelId(), bulkList, null, "$set", false);
+        }
+
+        $info("上新失败时回写group和产品表上新状态信息结束！[groupId:%s] [codes:%s] [errMsg:%s]",
+                model.getGroupId(), ListUtils.isNull(listSxCode) ? "空" : Joiner.on(",").join(listSxCode), errMsg);
 
         return true;
     }

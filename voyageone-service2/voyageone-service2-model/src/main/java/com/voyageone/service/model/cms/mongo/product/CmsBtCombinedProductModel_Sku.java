@@ -12,6 +12,7 @@ public class CmsBtCombinedProductModel_Sku {
     private Double suitSellingPriceCn; // 组合套装中国最终售价
     private Double suitPreferentialPrice;  // 组合套装优惠售价
     private List<CmsBtCombinedProductModel_Sku_Item> skuItems;
+    private String skuId;
 
     public String getSuitSkuCode() {
         return suitSkuCode;
@@ -46,5 +47,13 @@ public class CmsBtCombinedProductModel_Sku {
 
     public void setSkuItems(List<CmsBtCombinedProductModel_Sku_Item> skuItems) {
         this.skuItems = skuItems;
+    }
+
+    public String getSkuId() {
+        return skuId;
+    }
+
+    public void setSkuId(String skuId) {
+        this.skuId = skuId;
     }
 }

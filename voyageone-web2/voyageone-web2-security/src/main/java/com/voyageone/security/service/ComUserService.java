@@ -19,10 +19,14 @@ import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.config.Ini;
+import org.apache.shiro.crypto.RandomNumberGenerator;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.mgt.RealmSecurityManager;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager;
 import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
@@ -56,6 +60,12 @@ public class ComUserService {
 
     @Autowired
     ComUserDao comUserDao;
+
+
+    // 密码加密固定盐值
+    public static final String MD5_FIX_SALT = "crypto.voyageone.la";
+    // 密码加密散列加密次数
+    public static final int MD5_HASHITERATIONS = 4;
 
 
     /**
@@ -114,7 +124,12 @@ public class ComUserService {
         }
         model.setIp(clientIP);
 
-        comLoginLogDao.insert(model);
+        try{
+            comLoginLogDao.insert(model);
+        }catch (Exception e){
+
+        }
+
 
         return userModel;
     }
@@ -316,6 +331,53 @@ public class ComUserService {
 
         }
 
+    }
+
+    /**
+     * 重设密码
+     *
+     */
+
+    public boolean changePass(String account ,String oldPass,  String pass, String username) throws Exception {
+
+        ComUserModel query = new ComUserModel();
+        query.setUserAccount(account);
+        ComUserModel result = comUserDao.selectOne(query);
+
+        //检查原始密码是否正确
+        if (result != null) {
+            String password = "";
+            if (StringUtils.isNotEmpty(result.getCredentialSalt()) ) {
+                password = new SimpleHash("md5", oldPass, ByteSource.Util.bytes(account + result.getCredentialSalt()), 2).toHex();
+            }
+            //老系统密码生成方式
+            else {
+                password = new SimpleHash("md5", oldPass, ByteSource.Util.bytes(account + MD5_FIX_SALT), MD5_HASHITERATIONS).toHex();
+            }
+            if (password.equals(result.getPassword())) {
+                ComUserModel model = new ComUserModel();
+                model.setId(result.getId());
+                model.setPassword(pass);
+                model.setModifier(username);
+                model.setUserAccount(account);
+                encryptPassword(model);
+                if (!(comUserDao.update(model) > 0)) {
+                    return false;
+                }
+                //清除该用户的登录缓存
+                clearCachedAuthenticationInfo(account);
+                return true;
+            }
+        }
+        throw new Exception("invalid password.");
+    }
+
+    private void encryptPassword(ComUserModel model) {
+        RandomNumberGenerator randomNumberGenerator = new SecureRandomNumberGenerator();
+        String salt = randomNumberGenerator.nextBytes().toHex();
+        model.setCredentialSalt(salt);
+        String newPassword = new SimpleHash("md5", model.getPassword(), ByteSource.Util.bytes(model.getUserAccount() + salt), 2).toHex();
+        model.setPassword(newPassword);
     }
 
 }

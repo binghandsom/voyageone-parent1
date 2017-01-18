@@ -1,8 +1,9 @@
 package com.voyageone.components.rabbitmq.exception;
 
 
+import com.voyageone.base.exception.BusinessException;
 
-public class MQMessageRuleException extends Exception {
+public class MQMessageRuleException extends BusinessException {
     String code;
 
     public String getCode() {
@@ -13,8 +14,8 @@ public class MQMessageRuleException extends Exception {
         this.code = code;
     }
 
-    public MQMessageRuleException() {
-    }
+//    public MQMessageRuleException() {
+//    }
 
     public MQMessageRuleException(String message, Throwable cause) {
         super(message, cause);

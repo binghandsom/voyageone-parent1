@@ -89,6 +89,8 @@
         <voyageone.components.jd.version>0.0.1-SNAPSHOT</voyageone.components.jd.version>
         <voyageone.components.channeladvisor.version>0.0.1-SNAPSHOT</voyageone.components.channeladvisor.version>
         <voyageone.components.cn.version>0.0.1-SNAPSHOT</voyageone.components.cn.version>
+        <voyageone.components.dt.version>0.0.1-SNAPSHOT</voyageone.components.dt.version>
+        <voyageone.components.cnn.version>0.0.1-SNAPSHOT</voyageone.components.cnn.version>
         <voyageone.components.eexpress.version>0.0.1-SNAPSHOT</voyageone.components.eexpress.version>
         <voyageone.components.gilt.version>0.0.1-SNAPSHOT</voyageone.components.gilt.version>
         <voyageone.components.jumei.version>0.0.1-SNAPSHOT</voyageone.components.jumei.version>
@@ -113,7 +115,9 @@
             <dependency>
                 <groupId>com.voyageone.tools.feed</groupId>
                 <artifactId>category-matcher-java</artifactId>
-                <version>1.4.5-RELEASE</version>
+                <!--<version>1.6.3-RELEASE</version>-->
+                <version>1.7.3-RELEASE</version>
+                <!--<version>[1.7.0,)</version>-->
                 <!--<version>LATEST</version>-->
             </dependency>
             <!-- spring -->
@@ -371,7 +375,7 @@
             <dependency>
                 <groupId>taobao</groupId>
                 <artifactId>taobao-sdk-java</artifactId>
-                <version>1457083595467-20160817</version>
+                <version>1482374325329-20161222</version>
             </dependency>
             <dependency>
                 <groupId>taobao</groupId>

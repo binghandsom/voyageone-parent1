@@ -1,11 +1,14 @@
 package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.impl.CmsProperty;
@@ -107,6 +110,27 @@ public class CmsAdvanceSearchController extends CmsController {
 
         List<String> currCodeList = advSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), true);
         List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
+
+        Map<String,TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), "cn");
+        Map<String,TypeChannelBean> sizeTypes  = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), "cn");
+        prodInfoList.forEach(cmsBtProductBean -> {
+            String productType =cmsBtProductBean.getCommon().getFields().getProductType();
+            if(!StringUtil.isEmpty(productType)){
+                TypeChannelBean temp = productTypes.get(productType);
+                if(temp != null){
+                    cmsBtProductBean.getCommon().getFields().setProductTypeCn(temp.getName());
+                }
+            }
+
+            String sizeType =cmsBtProductBean.getCommon().getFields().getSizeType();
+            if(!StringUtil.isEmpty(sizeType)){
+                TypeChannelBean temp = sizeTypes.get(sizeType);
+                if(temp != null){
+                    cmsBtProductBean.getCommon().getFields().setSizeTypeCn(temp.getName());
+                }
+            }
+        });
+
         searchIndexService.checkProcStatus(prodInfoList, getLang());
         resultBean.put("productList", prodInfoList);
         resultBean.put("productListTotal", productListTotal);
@@ -155,6 +179,25 @@ public class CmsAdvanceSearchController extends CmsController {
         List<String> groupCodeList = advSearchQueryService.getGroupCodeList(params, userInfo.getSelChannelId());
         List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(groupCodeList, params, userInfo, cmsSession);
         searchIndexService.checkProcStatus(grpInfoList, getLang());
+        Map<String,TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), "cn");
+        Map<String,TypeChannelBean> sizeTypes  = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), "cn");
+        grpInfoList.forEach(cmsBtProductBean -> {
+            String productType =cmsBtProductBean.getCommon().getFields().getProductType();
+            if(!StringUtil.isEmpty(productType)){
+                TypeChannelBean temp = productTypes.get(productType);
+                if(temp != null){
+                    cmsBtProductBean.getCommon().getFields().setProductTypeCn(temp.getName());
+                }
+            }
+
+            String sizeType =cmsBtProductBean.getCommon().getFields().getSizeType();
+            if(!StringUtil.isEmpty(sizeType)){
+                TypeChannelBean temp = sizeTypes.get(sizeType);
+                if(temp != null){
+                    cmsBtProductBean.getCommon().getFields().setSizeTypeCn(temp.getName());
+                }
+            }
+        });
         resultBean.put("groupList", grpInfoList);
         resultBean.put("groupListTotal", groupListTotal);
 
@@ -189,6 +232,26 @@ public class CmsAdvanceSearchController extends CmsController {
         // 获取product列表
         List<String> currCodeList = advSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), true);
         List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
+
+        Map<String,TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), "cn");
+        Map<String,TypeChannelBean> sizeTypes  = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), "cn");
+        prodInfoList.forEach(cmsBtProductBean -> {
+            String productType =cmsBtProductBean.getCommon().getFields().getProductType();
+            if(!StringUtil.isEmpty(productType)){
+                TypeChannelBean temp = productTypes.get(productType);
+                if(temp != null){
+                    cmsBtProductBean.getCommon().getFields().setProductTypeCn(temp.getName());
+                }
+            }
+
+            String sizeType =cmsBtProductBean.getCommon().getFields().getSizeType();
+            if(!StringUtil.isEmpty(sizeType)){
+                TypeChannelBean temp = sizeTypes.get(sizeType);
+                if(temp != null){
+                    cmsBtProductBean.getCommon().getFields().setSizeTypeCn(temp.getName());
+                }
+            }
+        });
         searchIndexService.checkProcStatus(prodInfoList, getLang());
         resultBean.put("productList", prodInfoList);
         resultBean.put("productListTotal", productListTotal);
@@ -222,6 +285,8 @@ public class CmsAdvanceSearchController extends CmsController {
             fileName = "skuList_";
         } else if (fileType == 4) {
             fileName = "publishJMSkuList_";
+        } else if (fileType == 5) {
+            fileName = "filingList_";
         }
         if (fileName == null) {
             resultBean.put("ecd", "4002");
@@ -365,7 +430,7 @@ public class CmsAdvanceSearchController extends CmsController {
     public AjaxResponse addFreeTag(@RequestBody Map<String, Object> params) {
         UserSessionBean userInfo = getUser();
 
-        searchIndexService.setProdFreeTag(userInfo.getSelChannelId(), params, userInfo.getUserName(), getCmsSession());
+        searchIndexService.setProdFreeTagMQ(userInfo.getSelChannelId(), params, userInfo.getUserName(), getCmsSession());
         return success(null);
     }
 

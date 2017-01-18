@@ -12,14 +12,24 @@
     <bean id="dataSourceMaster" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
         <property name="jdbcUrl"
-                  value="jdbc:mysql://10.0.0.83:3306/Synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round&amp;allowMultiQueries=true"/>
+        value="jdbc:mysql://10.0.0.83:3306/Synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round&amp;allowMultiQueries=true"/>
         <property name="user" value="app_my_dev"/>
         <property name="password" value="s28Bw_1IL1bz"/>
+
+        <!--不要提交  不要改这里  59的配置对应配置文件datasource-cms2-config-mast.xml-->
+        <!--<property name="jdbcUrl"-->
+                  <!--value="jdbc:mysql://10.0.0.59:8989/synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round"/>-->
+        <!--<property name="user" value="app_web_read"/>-->
+        <!--<property name="password" value="ND-_123B-"/>-->
+        <!--<property name="jdbcUrl"
+                  value="jdbc:mysql://10.0.0.82:3306/synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round"/>
+        <property name="user" value="app"/>
+        <property name="password" value="ZAQ!2wsx"/>-->
         <!--初始化时获取连接的数目，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
-        <property name="initialPoolSize" value="1"></property>
+        <property name="initialPoolSize" value="5"></property>
         <!--连接池中保留的最大连接数。Default: 15 -->
         <property name="maxPoolSize" value="30"></property>
-        <property name="minPoolSize" value="1"></property>
+        <property name="minPoolSize" value="5"></property>
         <property name="testConnectionOnCheckout" value="true"></property>
         <!--如果设为true那么在取得连接的同时将校验连接的有效性。Default: false -->
         <property name="testConnectionOnCheckin" value="true"></property>
@@ -72,9 +82,17 @@
     <bean id="dataSourceSlave" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
         <property name="jdbcUrl"
-                  value="jdbc:mysql://10.0.0.83:3306/Synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round&amp;allowMultiQueries=true"/>
+        value="jdbc:mysql://10.0.0.83:3306/Synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round&amp;allowMultiQueries=true"/>
         <property name="user" value="app_my_dev"/>
         <property name="password" value="s28Bw_1IL1bz"/>
+        <!--<property name="jdbcUrl"-->
+                  <!--value="jdbc:mysql://10.0.0.59:8989/synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round"/>-->
+        <!--<property name="user" value="app_web_read"/>-->
+        <!--<property name="password" value="ND-_123B-"/>-->
+        <!--<property name="jdbcUrl"
+                  value="jdbc:mysql://10.0.0.82:3306/synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round"/>
+        <property name="user" value="app"/>
+        <property name="password" value="ZAQ!2wsx"/>-->
         <!--初始化时获取连接的数目，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
         <property name="initialPoolSize" value="1"></property>
         <!--连接池中保留的最大连接数。Default: 15 -->
@@ -119,7 +137,7 @@
         <constructor-arg ref="sqlSessionFactorySlave"/>
     </bean>
 
-    <bean class="com.voyageone.category.match.MtCategoryKeysDao">
+    <bean class="com.voyageone.category.match.DatabaseConfiguration">
         <constructor-arg name="dataSource" ref="dataSourceSlave"/>
         <constructor-arg name="schema" value="voyageone_cms2"/>
     </bean>

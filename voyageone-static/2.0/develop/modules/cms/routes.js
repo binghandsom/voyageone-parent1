@@ -184,6 +184,12 @@ define(function () {
             "templateUrl": "views/system/error/list.tpl.html",
             "controllerUrl": "modules/cms/views/system/error/list.ctl"
         },
+        "maintain_error_mq_error_list": {
+            "hash": "/maintain_error/mq_list",
+            "templateUrl": "views/system/error/mq_list.tpl.html",
+            "controllerUrl": "modules/cms/views/system/error/mq_list.ctl",
+            "controller": "mqListSetController as ctrl"
+        },
         "maintain_error_import_error_list_param": {
             "hash": "/maintain_error/import_error_list/:type/:cartId",
             "templateUrl": "views/system/error/list.tpl.html",
@@ -439,6 +445,12 @@ define(function () {
             "templateUrl": "views/channel/channel-config-set/index.tpl.html",
             "controllerUrl": "modules/cms/views/channel/channel-config-set/index.ctl",
             "controller": "channelConfigSet as ctrl"
+        },
+        "feed_config_set":{
+            "hash": "/feed/feed_config_set",
+            "templateUrl": "views/channel/feedConfigSet/index.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/feedConfigSet/index.ctl",
+            "controller": "feedConfigSet as ctrl"
         }
     };
 });

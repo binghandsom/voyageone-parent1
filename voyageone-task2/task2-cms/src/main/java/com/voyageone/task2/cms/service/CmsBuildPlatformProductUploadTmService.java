@@ -11,6 +11,8 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbSaleService;
@@ -19,6 +21,7 @@ import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtSxCspuDao;
 import com.voyageone.service.dao.cms.CmsBtSxProductDao;
+import com.voyageone.service.dao.cms.CmsBtTmScItemDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformMappingDeprecatedService;
@@ -30,11 +33,13 @@ import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtSxCspuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.CmsBtTmScItemModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -86,6 +91,9 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
     private CmsBtSxProductDao cmsBtSxProductDao;
     @Autowired
     private CmsBtSxCspuDao cmsBtSxCspuDao;
+    @Autowired
+    private CmsBtTmScItemDao cmsBtTmScItemDao;
+
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
 
@@ -207,6 +215,10 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
         String platformCategoryId = "";
         // 达尔文是否能上新商品
         boolean canSxDarwinItem = false;
+        // 上新对象产品code列表，回写状态时使用
+        List<String> listSxCode = null;
+        // 开始时间
+        long prodStartTime = System.currentTimeMillis();
 
         // 天猫产品上新处理
         try {
@@ -283,6 +295,11 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 $error(errMsg);
                 sxData.setErrorMessage(errMsg);
                 throw new BusinessException(errMsg);
+            }
+
+            // 上新对象code(后面回写状态时要用到)
+            if (ListUtils.notNull(sxData.getProductList())) {
+                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
             }
 
             // 判断商品是否是达尔文
@@ -449,10 +466,11 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, getTaskName());
-            // modified by morse.lu 2016/06/06 start
-//            throw new BusinessException(ex.getMessage());
+            // 上新失败后回写product表pPublishError的值("Error")和pPublishMessage(上新错误信息)
+            productGroupService.updateUploadErrorStatus(sxData.getPlatform(), listSxCode, sxData.getErrorMessage());
+            $error(String.format("天猫平台单个产品和商品新增或更新信息异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [耗时:%s]",
+                    channelId, cartId, groupId, (System.currentTimeMillis() - prodStartTime)));
             return;
-            // modified by morse.lu 2016/06/06 end
         }
 
         // added by morse.lu 2016/08/10 start
@@ -463,6 +481,10 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.review, getTaskName());
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, getTaskName());
+            // 上新失败后回写product表pPublishError的值("Error")和pPublishMessage(上新错误信息)
+            productGroupService.updateUploadErrorStatus(sxData.getPlatform(), listSxCode, sxData.getErrorMessage());
+            $info(String.format("天猫平台单个商品上新结束,达尔文产品更新成功,请等待审核通过,再重新Approve上新商品！[ChannelId:%s] [CartId:%s] [GroupId:%s] [耗时:%s]",
+                    channelId, cartId, groupId, (System.currentTimeMillis() - prodStartTime)));
             return;
         }
         // added by morse.lu 2016/08/10 end
@@ -485,7 +507,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                     // 达尔文的场合， 货品关联可能会丢失， 需要重新绑定货品
                     if (sxData.isDarwin() && canSxDarwinItem) {
                         // 自动设置天猫商品全链路库存管理（函数里会自动判断当前店铺是否需要处理全链路）
-                        taobaoScItemService.doSetScItem(shopProp, Long.parseLong(numIId));
+                        taobaoScItemService.doSetScItem(shopProp, sxData.getMainProduct(), Long.parseLong(numIId));
 
                         // 如果action是onsale的场合， 再做一次上架
                         if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
@@ -493,6 +515,11 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                         }
                     }
                     // 20161202 达尔文货品关联问题的对应 END
+
+                    // added by morse.lu 2017/01/05 start
+                    // 更新cms_bt_tm_sc_item表，把货品id记下来，同步库存用
+                    saveCmsBtTmScItem(channelId, cartId, sxData);
+                    // added by morse.lu 2017/01/05 end
 
                     // 上传商品成功的时候
                     // 上新或更新成功后回写product group表中的numIId和platformStatus(Onsale/InStock)
@@ -517,6 +544,9 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
 
                     // 回写workload表   (成功1)
                     sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
+
+                    // 上新成功时更新该model对应的所有和上新有关的状态信息,同时清空product表pPublishError的值("Error")和pPublishMessage(上新错误信息)
+                    productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
 
                     // delete by morse.lu 2016/06/06 start
                     // 不会为空的吧，即使为空，下面的逻辑不抛错，直接return，真的好吗？
@@ -554,16 +584,60 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
                 // 回写详细错误信息表(cms_bt_business_log)
                 sxProductService.insertBusinessLog(sxData, getTaskName());
-                // modified by morse.lu 2016/06/06 start
-//                throw new BusinessException(ex.getMessage());
+                // 上新失败后回写product表pPublishError的值("Error")和pPublishMessage(上新错误信息)
+                productGroupService.updateUploadErrorStatus(sxData.getPlatform(), listSxCode, sxData.getErrorMessage());
+                $error(String.format("天猫平台新增或更新商品时异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [numIId:%s] [耗时:%s]",
+                        channelId, cartId, groupId, numIId, (System.currentTimeMillis() - prodStartTime)));
                 return;
-                // modified by morse.lu 2016/06/06 end
             }
 //        }
 
         // 正常结束
-        $info(String.format("天猫平台单个产品和商品新增或更新信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformProductId:%s] [itemId:%s]",
-                channelId, cartId, groupId, platformProductId, numIId));
+        $info(String.format("天猫平台单个产品和商品新增或更新信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformProductId:%s] [numIId:%s] [耗时:%s]",
+                channelId, cartId, groupId, platformProductId, numIId, (System.currentTimeMillis() - prodStartTime)));
+    }
+
+    private void saveCmsBtTmScItem(String channelId, int cartId, SxData sxData) {
+        for (CmsBtProductModel productModel : sxData.getProductList()) {
+            for(CmsBtProductModel_Sku commonSku : productModel.getCommon().getSkus()) {
+                String code = productModel.getCommon().getFields().getCode();
+                String skuCode = commonSku.getSkuCode();
+                Map<String, Object> searchParam = new HashMap<>();
+                searchParam.put("channelId", channelId);
+                searchParam.put("cartId", cartId);
+                searchParam.put("code", code);
+                searchParam.put("sku", skuCode);
+                CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
+                SxData.SxSkuExInfo sxSkuExInfo = sxData.getSxSkuExInfo(skuCode, false);
+                String scProductId = sxSkuExInfo != null? sxSkuExInfo.getScProductId() : null;
+                if (StringUtils.isEmpty(scProductId)) {
+                    // delete
+                    if (scItemModel != null) {
+                        cmsBtTmScItemDao.delete(scItemModel.getId());
+                    }
+                } else {
+                    if (scItemModel == null) {
+                        // add
+                        scItemModel = new CmsBtTmScItemModel();
+                        scItemModel.setChannelId(channelId);
+                        scItemModel.setCartId(cartId);
+                        scItemModel.setCode(code);
+                        scItemModel.setSku(skuCode);
+                        scItemModel.setScProductId(scProductId);
+                        scItemModel.setCreater(getTaskName());
+                        cmsBtTmScItemDao.insert(scItemModel);
+                    } else {
+                        // update
+                        if (!scProductId.equals(scItemModel.getScProductId())) {
+                            scItemModel.setScProductId(scProductId);
+                            scItemModel.setModifier(getTaskName());
+                            scItemModel.setModified(DateTimeUtil.getDate());
+                            cmsBtTmScItemDao.update(scItemModel);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**

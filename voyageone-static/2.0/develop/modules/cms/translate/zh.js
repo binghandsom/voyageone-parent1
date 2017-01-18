@@ -558,6 +558,7 @@ define(function () {
         "BTN_BATCH_UPDATE_ATTRIBUTE": "批量更新",
         "BTN_UPDATE_COMMON_ATTRIBUTE": "更新共通属性",
         "BTN_CHANGE_MASTER_CATEGORY": "切换主类目",
+        "BTN_REFRESH_MASTER_CATEGORY": "重新计算主类目",
         "BTN_OK": "确定",
         "BTN_CLEAR": "清空",
         "BTN_EXPORT": "导出",
@@ -588,7 +589,7 @@ define(function () {
         "BTN_DOWNLOAD_ERROR": "Error日志",
         "BTN_IMPORT_PROMOTION_FILE": "导入活动文件",
         "BTN_CHOOSE_FILE": "选择文件",
-        "BTN_IMPORT_FILE": "Import File",
+        "BTN_IMPORT_FILE": "导入",
         "BTN_UPLOAD_FILE": "上传",
         "BTN_REUPLOAD_FILE": "重传",
         "BTN_CUSTOMIZE_COLUMNS": "自定义列设置",
@@ -730,6 +731,7 @@ define(function () {
         "INVALID_MAX": "请输入的数据不能大于:{{value}}",
         "INVALID_MIN": "请输入的数据不能小于:{{value}}",
         "INVALID_PATTERN": "请输入的数据必须满足规则:{{value}}",
+        "INVALID_NOT_EQUAL": "两次输入不一致",
 
         /**平台schema*/
         "TXT_BAR_CODE": "条形码",
@@ -914,6 +916,7 @@ define(function () {
         "TXT_WULIUBAO_PRODUCT_CODE" : "物流宝后台商品编码",
         "TXT_COMBINED_PRODUCT_NEW" : "新建组合套装",
         "TXT_COMBINED_NUM_ID" : "商品编码（numID）",
-        "TXT_COMBINED_PRODUCT_EDIT" : "编辑组合套装"
+        "TXT_COMBINED_PRODUCT_EDIT" : "编辑组合套装",
+        "TXT_CHANGE_PASS": "修改密码",
     };
 });

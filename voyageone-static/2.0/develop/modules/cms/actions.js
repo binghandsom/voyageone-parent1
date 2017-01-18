@@ -52,6 +52,10 @@ define(function () {
                     "getHomeSumData": "getHomeSumData",
                     "getCmsConfig": session('getCmsConfig', [KEY.CHANNEL]),
                     getMenuHeaderInfo:"getMenuHeaderInfo"
+                },
+                "$modifyPassWordService":{
+                    "root":"/cms/home/menu/modifyPassword/",
+                    "save":"save"
                 }
             },
             "search": {
@@ -101,6 +105,7 @@ define(function () {
                     "updateProductSkuInfo": "updateProductSkuInfo",
                     "updateProductAllInfo": "updateProductAllInfo",
                     "changeCategory": "changeCategory",
+                    "refreshProductCategory":"refreshProductCategory",
                     "revertCategory": "revertCategory",
                     "getProductPlatform": "getProductPlatform",
                     "changePlatformCategory": "changePlatformCategory",
@@ -158,7 +163,8 @@ define(function () {
                     "getCombinedProductDetail" : "getCombinedProductDetail",
                     "edit" : "edit",
                     "onOffShelves" : "onOffShelves",
-                    "getOperateLogs" : "getOperateLogs"
+                    "getOperateLogs" : "getOperateLogs",
+                    "batchGetSkuDetail" : "batchGetSkuDetail"
                 },
                 productTopService: {
                     "root": "/cms/producttop",
@@ -373,7 +379,9 @@ define(function () {
                 "taskPriceService": {
                     "root": "/cms/task/price",
                     "getPriceList": "getPriceList",
-                    "updateTaskStatus": "updateTaskStatus"
+                    "updateTaskStatus": "updateTaskStatus",
+                    "refreshAllPromotionByCustomPromotionId":"refreshAllPromotionByCustomPromotionId",
+                    "delAllPromotionByCustomPromotionId":"delAllPromotionByCustomPromotionId"
                 },
                 "taskStockService": {
                     "root": "/cms/promotion/task_stock",
@@ -447,6 +455,11 @@ define(function () {
                         "init": "init",
                         "search": "search",
                         "updateFinishStatus": "updateFinishStatus"
+                    },
+                    "$mqErrorListService": {
+                        "root": "/cms/system/mqError",
+                        "init": "init",
+                        "search": "search"
                     }
                 },
                 "$storeOpService": {
@@ -459,7 +472,8 @@ define(function () {
                 },
                 "$valueChannelService": {
                     "root": "/cms/system/valueChannel/",
-                    "addHsCodes": "addHsCode"
+                    "addHsCodes": "addHsCode",
+                    "addEtkHsCode":"addEtkHsCode"
                 }
             },
             "pop": {
@@ -632,6 +646,18 @@ define(function () {
                         "root": "/cms/mt/channel/config",
                         "search": "search",
                         "saveList":"saveList"
+                    }
+                },
+                "FeedConfig":{
+                    "cmsFeedConfigService": {
+                        "root": "/cms/channel/feedConfig",
+                        "search": "search",
+                        "save":"save",
+                        "export":"export",
+                        "import":"import",
+                        "delete":"delete",
+                        "saveFeed":"saveFeed",
+                        "createFeed":"createFeed",
                     }
                 }
             },

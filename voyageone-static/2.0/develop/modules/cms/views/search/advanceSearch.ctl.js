@@ -60,6 +60,7 @@ define([
         $scope.getGroupList = getGroupList;
         $scope.getProductList = getProductList;
         $scope.openCategoryMapping = openCategoryMapping;
+        $scope.refreshProductCategory = refreshProductCategory;
         $scope.openMasterCategoryMapping = openMasterCategoryMapping;
         $scope.openFeedCategoryMapping = openFeedCategoryMapping;
         $scope.openChannelInnerCategory = openChannelInnerCategory;
@@ -126,7 +127,7 @@ define([
                     search();
                     return;
                 }
-                if ($routeParams.type == "1" || $routeParams.type == "2") {
+                if ($routeParams.type == "1" || $routeParams.type == "2" || $routeParams.type == "10001") {
                     search();
                     return;
                 }
@@ -323,6 +324,8 @@ define([
                 msg = '即将导出SKU级的搜索结果，请确认。' + msg;
             } else if (fileType == 4) {
                 msg = '即将导出聚美上新SKU级的搜索结果，请确认。' + msg;
+            } else if (fileType == 5) {
+                msg = "即将根据搜索结果导出报备文件，请确认。" + msg;
             }
             confirm(msg).then(function () {
                 $scope.vm.searchInfo.fileType = fileType;
@@ -461,6 +464,28 @@ define([
                 openFieldEdit(selList, context).then(function (res) {
                     $scope.search();
                 })
+            }
+        }
+
+
+        function refreshProductCategory() {
+            _chkProductSel(null, _refreshProductCategory);
+
+            function _refreshProductCategory(cartId, selList) {
+                var productIds = [];
+                if (selList) {
+                    _.forEach(selList, function (object) {
+                        productIds.push(object.code);
+                    });
+                }
+                var data = {
+                    prodIds: productIds,
+                    isSelAll: $scope.vm._selall ? 1 : 0
+                };
+                productDetailService.refreshProductCategory(data).then(function (res) {
+                    notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    $scope.search();
+                });
             }
         }
 
@@ -751,15 +776,26 @@ define([
                 return;
             }
             var picList = [];
-            for (var attr in item.common.fields) {
-                if (attr.indexOf("images") >= 0) {
-                    var image = _.map(item.common.fields[attr], function (entity) {
-                        var imageKeyName = "image" + attr.substring(6, 7);
+            for(var i=1;i<=9;i++){
+                if(item.common.fields["images"+i]){
+                    var image = _.map(item.common.fields["images"+i], function (entity) {
+                        var imageKeyName = "image" + i;
                         return entity[imageKeyName] != null ? entity[imageKeyName] : "";
                     });
                     picList.push(image);
+                }else{
+                    picList.push([""]);
                 }
             }
+            // for (var attr in item.common.fields) {
+            //     if (attr.indexOf("images") >= 0) {
+            //         var image = _.map(item.common.fields[attr], function (entity) {
+            //             var imageKeyName = "image" + attr.substring(6, 7);
+            //             return entity[imageKeyName] != null ? entity[imageKeyName] : "";
+            //         });
+            //         picList.push(image);
+            //     }
+            // }
             this.openImagedetail({'mainPic': picList[0][0], 'picList': picList, 'search': 'master'});
         }
 

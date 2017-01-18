@@ -1,7 +1,8 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsShelvesMonitorMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
-import org.apache.commons.collections.map.HashedMap;
+import com.voyageone.task2.cms.mqjob.CmsShelvesMonitorMQJob;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by james on 2016/11/11.
@@ -20,16 +20,16 @@ import java.util.Map;
 public class CmsShelvesMonitorServiceTest {
 
     @Autowired
-    CmsShelvesMonitorMQService cmsShelvesMonitorMQService;
+    CmsShelvesMonitorMQJob cmsShelvesMonitorMQJob;
 
 
     @Test
     public void setInfo() throws Exception {
 //
 
-        Map<String,Object> map = new HashedMap();
-        map.put("shelvesId",6);
-        cmsShelvesMonitorMQService.onStartup(map);
+        CmsShelvesMonitorMQMessageBody map = new CmsShelvesMonitorMQMessageBody();
+        map.setShelvesId(6);
+        cmsShelvesMonitorMQJob.onStartup(map);
     }
 
     @Test

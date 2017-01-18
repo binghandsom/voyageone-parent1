@@ -23,6 +23,8 @@ import com.voyageone.web2.openapi.channeladvisor.exception.CAApiException;
 import com.voyageone.web2.openapi.channeladvisor.exception.CAApiExceptions;
 import com.voyageone.web2.openapi.channeladvisor.service.CAOrderService;
 import org.apache.commons.collections.MapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,8 @@ import java.util.stream.Collectors;
 @Profile("product")
 @VOTransactional
 public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderService {
+
+    private static final Logger log= LoggerFactory.getLogger(CAOrderService.class);
 
     private static final String AcknowledgedBySeller = "AcknowledgedBySeller";
 
@@ -300,6 +304,9 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
     @VOTransactional
     public ActionResponse shipOrder(String orderID, ShipRequest request) {
+
+        log.info("ship order start...");
+
         if (StringUtils.isEmpty(orderID)) {
             //If there is no order with that ID, return Error ID 6000 (OrderNotFound)
             throw new CAApiException(ErrorIDEnum.InvalidRequest, "OrderID in request is missing.");
@@ -354,7 +361,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                         "OrderID=" + orderID + " status is " + vmsBtClientOrdersModel.getOrderStatus() + " which is invalid.");
             }
         } else {
-            throw new CAApiException(ErrorIDEnum.OrderNotFound, "OrderID=" + orderID + " is not provided.");
+            throw new CAApiException(ErrorIDEnum.OrderNotFound, "OrderID=" + orderID + " cannot found.");
         }
 
         // 检索【品牌方订单明细】vms_bt_client_order_details
@@ -407,7 +414,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         if (tempSkuQtyMap.keySet().size() == issueSkuNotExistList.size()) {
             tempSkuQtyMap.keySet().stream().forEach(key -> {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                        "SellerSku=" + key + " is not provided."));
+                        "SellerSku=" + key + " is either not provided, not acknowledged by seller, or already cancelled."));
             });
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
@@ -423,7 +430,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
             issueSkuNotExistList.stream().forEach(key -> {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                        "SellerSku=" + key + " is not provided."));
+                        "SellerSku=" + key + " is either not provided, not acknowledged by seller, or already cancelled."));
             });
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
@@ -513,7 +520,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         }
 
         if (!orderID.equals(request.getOrderId())) {
-            throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "OrderID is inconsistent.");
+            throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "OrderID in the request endpoint and the request body are not the same. Please double check the OrderID.");
         }
 
         if (CollectionUtils.isEmpty(request.getItems())) {
@@ -678,7 +685,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                     "SellerSku=[" + issueSkuNotExistList.stream().reduce((a, b) -> a + "," + b).get() + "] is not provided.");*/
 
             issueSkuNotExistList.stream().forEach(key -> {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SellerSku=" + key + " is not provided."));
+                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SellerSku=" + key + " is not provided or status is not AcknowledgedBySeller."));
             });
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
@@ -754,7 +761,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         }
 
         if (!orderID.equals(request.getOrderId())) {
-            throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "OrderID is inconsistent.");
+            throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "OrderID in the request endpoint and the request body are not the same. Please double check the OrderID.");
         }
 
         if (CollectionUtils.isEmpty(request.getItems())) {
@@ -916,7 +923,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             /*throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
                     "SellerSku=[" + issueSkuNotExistList.stream().reduce((a, b) -> a + "," + b).get() + "] is not provided.");*/
             issueSkuNotExistList.stream().forEach(key -> {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SellerSku=" + key + " is not provided."));
+                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SellerSku=" + key + " is not provided or status is not Shipped."));
             });
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);

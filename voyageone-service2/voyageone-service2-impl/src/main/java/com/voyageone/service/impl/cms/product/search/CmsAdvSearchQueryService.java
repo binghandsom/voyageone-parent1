@@ -2,7 +2,11 @@ package com.voyageone.service.impl.cms.product.search;
 
 import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -63,6 +67,50 @@ public class CmsAdvSearchQueryService extends BaseService {
         }
         List<String> codeList = prodObjList.stream().map(prodObj -> prodObj.getCommonNotNull().getFieldsNotNull().getCode()).filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).collect(Collectors.toList());
         return codeList;
+    }
+
+    /**
+     * 获取当前查询的product列表（查询条件从画面而来）<br>
+     */
+    public List<String> getProductCodeList(CmsSearchInfoBean2 searchValue, String channelId, Boolean isSort, int fileType) {
+        if (fileType == 5) { // 报备文件
+            JongoQuery queryObject = getSearchQuery(searchValue);
+            queryObject.addQuery("{'common.fields.isFiled':{$ne:1}}");
+            List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "");
+            if (cartList != null && cartList.size() > 0) {
+                StringBuilder extQuery = new StringBuilder("{$or:[");
+                int count = 0;
+                for (TypeChannelBean tcb:cartList) {
+                    extQuery.append(String.format("{'platforms.P%s.status':'%s'}", tcb.getValue(), CmsConstants.ProductStatus.Approved.name()));
+                    if (++count != cartList.size()) {
+                        extQuery.append(",");
+                    }
+                }
+                extQuery.append("]}");
+                queryObject.addQuery(extQuery.toString());
+            }
+            queryObject.setProjection("{'common.fields.code':1,'_id':0}");
+            if(isSort) {
+                queryObject.setSort(getSortValue(searchValue));
+            }
+            if (searchValue.getProductPageNum() > 0) {
+                queryObject.setSkip((searchValue.getProductPageNum() - 1) * searchValue.getProductPageSize());
+                queryObject.setLimit(searchValue.getProductPageSize());
+            }
+
+            if ($isDebugEnabled()) {
+                $debug(String.format("高级检索 获取当前查询的product列表 ChannelId=%s, %s", channelId, queryObject.toString()));
+            }
+            List<CmsBtProductModel> prodObjList = productService.getList(channelId, queryObject);
+            if (prodObjList == null || prodObjList.isEmpty()) {
+                $warn("高级检索 getProductCodeList prodObjList为空 查询条件=：" + queryObject.toString());
+                return new ArrayList<>(0);
+            }
+            List<String> codeList = prodObjList.stream().map(prodObj -> prodObj.getCommonNotNull().getFieldsNotNull().getCode()).filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).collect(Collectors.toList());
+            return codeList;
+        } else {
+            return getProductCodeList(searchValue, channelId, isSort);
+        }
     }
 
     /**

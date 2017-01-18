@@ -32,6 +32,10 @@ public interface CmsUrlConstants {
             String GET_CARTS = "getCarts";
             String GetMenuHeaderInfo="getMenuHeaderInfo";
         }
+        interface MODIFY_PASS_WORD {
+            String ROOT = "/cms/home/menu/modifyPassword";
+            String submit = "submit";
+        }
     }
 
     interface JMPROMOTION {
@@ -250,6 +254,10 @@ public interface CmsUrlConstants {
                 String GET_PRICE_LIST = "getPriceList";
 
                 String UPDATE_TASK_STATUS = "updateTaskStatus";
+
+                String DEL_ALL_PROMOTION_BY_CUSTOM_PROMOTION_ID = "delAllPromotionByCustomPromotionId";
+
+                String REFRESH_ALL_PROMOTION_BY_CUSTOM_PROMOTION_ID = "refreshAllPromotionByCustomPromotionId";
             }
 
             interface STOCK {
@@ -461,6 +469,14 @@ public interface CmsUrlConstants {
 
             String UPDATE_FINISH_STATUS = "updateFinishStatus";
         }
+        interface MQ_ERROR {
+
+            String ROOT = "/cms/system/mqError";
+
+            String INIT = "init";
+
+            String SEARCH = "search";
+        }
 
         interface CACHE {
 
@@ -586,6 +602,8 @@ public interface CmsUrlConstants {
 
             String CHANGE_CATEGORY = "changeCategory";
 
+            String REFRESH_PRODUCT_CATEGORY = "refreshProductCategory";
+
             String GET_PRODUCT_PLATFORM = "getProductPlatform";
 
             String UPDATE_PRODUCT_PLATFORM = "updateProductPlatform";
@@ -680,6 +698,7 @@ public interface CmsUrlConstants {
             String EDIT = "edit";
             String ON_OFF_SHELVES = "onOffShelves";
             String GET_OPERATE_LOGS = "getOperateLogs";
+            String BATCH_GET_SKU_DETAIL = "batchGetSkuDetail";
         }
     }
     interface ProductTop {
@@ -850,6 +869,16 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/mt/channel/config";
             String Search = "search";
             String saveList="saveList";
+        }
+        interface FEED_CONFIG {
+            String ROOT = "/cms/channel/feedConfig";
+            String SEARCH = "search";
+            String SAVE ="save";
+            String EXPORT ="export";
+            String IMPORT ="import";
+            String DELETE = "delete";
+            String SAVE_FEED ="saveFeed";
+            String CREATE_FEED ="createFeed";
         }
     }
 

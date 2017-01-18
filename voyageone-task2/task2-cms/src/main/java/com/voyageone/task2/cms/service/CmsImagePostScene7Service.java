@@ -184,7 +184,7 @@ public class CmsImagePostScene7Service extends BaseCronTaskService {
                     }
                     try {
                         $info("thread-" + threadNo + ":" + imageUrl + "流取得开始");
-                        if(ChannelConfigEnums.Channel.Modotex.getId().equalsIgnoreCase(orderChannelId)){
+                        if(ChannelConfigEnums.Channel.Modotex.getId().equalsIgnoreCase(orderChannelId) || ChannelConfigEnums.Channel.WMF.getId().equalsIgnoreCase(orderChannelId)){
                             imageUrl = imageUrl.replace("https","http");
                         }
                         inputStream = HttpUtils.getInputStream(imageUrl);
