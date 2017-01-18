@@ -98,7 +98,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     private  CmsBtPromotionSkusDao daoCmsBtPromotionSkus;
     @Autowired
     CmsMqSenderService cmsMqSenderService;
-    public void importFile(int JmBtPromotionImportTaskId, String importPath) throws Exception {
+    public void importFile(int JmBtPromotionImportTaskId, String importPath) {
 
         CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask = cmsBtJmPromotionImportTaskDao.select(JmBtPromotionImportTaskId);
         modelCmsBtJmPromotionImportTask.setBeginTime(DateTimeUtilBeijing.getCurrentBeiJingDate());

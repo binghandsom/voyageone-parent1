@@ -1,6 +1,8 @@
 package com.voyageone.task2.cms.mqjob.jm;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.FileUtils;
+import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JmPromotionImportMQMessageBody;
@@ -24,15 +26,23 @@ public class CmsJmPromotionImportMQJob extends TBaseMQCmsService<JmPromotionImpo
     CmsBtJmPromotionImportTask3Service service;
 
     @Override
-    public void onStartup(JmPromotionImportMQMessageBody messageMap) throws Exception {
+    public void onStartup(JmPromotionImportMQMessageBody messageBody) {
         TaskControlBean taskControlBean = getTaskControlBean(taskControlList, "cms.jm.import.path");
         if (taskControlBean == null) {
-            this.cmsConfigExLog(messageMap, "请配置cms.jm.import.path");
+            this.cmsConfigExLog(messageBody, "请tm_task_control中配置cms.jm.import.path");
             return;
         }
         String importPath = taskControlBean.getCfg_val1();
         FileUtils.mkdirPath(importPath);
-        int id = messageMap.getJmBtPromotionImportTaskId();
-        service.importFile(id, importPath);
+        int id = messageBody.getJmBtPromotionImportTaskId();
+        try {
+            service.importFile(id, importPath);
+        } catch (Exception e) {
+            if (e instanceof BusinessException) {
+                cmsBusinessExLog(messageBody, e.getMessage());
+            } else {
+                cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
+            }
+        }
     }
 }

@@ -1,6 +1,8 @@
 package com.voyageone.task2.cms.mqjob.jm;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.FileUtils;
+import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionExportTask3Service;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JmPromotionExportMQMessageBody;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -24,12 +26,12 @@ public class CmsJmPromotionExportMQJob extends TBaseMQCmsService<JmPromotionExpo
     private CmsBtJmPromotionExportTask3Service service;
 
     @Override
-    public void onStartup(JmPromotionExportMQMessageBody messageBody) throws Exception {
+    public void onStartup(JmPromotionExportMQMessageBody messageBody) {
 
         // 获取Mq的配置信息
         TaskControlBean taskControlBean = getTaskControlBean(taskControlList, "cms.jm.export.path");
         if (taskControlBean == null) {
-            this.cmsConfigExLog(messageBody, "请配置cms.jm.export.path");
+            this.cmsConfigExLog(messageBody, "请在tm_task_control中确认配置cms.jm.export.path");
             return;
         }
 
@@ -37,6 +39,14 @@ public class CmsJmPromotionExportMQJob extends TBaseMQCmsService<JmPromotionExpo
         String exportPath = taskControlBean.getCfg_val1();
         FileUtils.mkdirPath(exportPath);
         int id = messageBody.getJmBtPromotionExportTaskId();
-        service.export(id, exportPath);
+        try {
+            service.export(id, exportPath);
+        } catch (Exception e) {
+            if (e instanceof BusinessException) {
+                cmsBusinessExLog(messageBody, e.getMessage());
+            } else {
+                cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
+            }
+        }
     }
 }

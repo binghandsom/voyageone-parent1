@@ -24,7 +24,7 @@ public class CmsJMProductUpdateMQJob extends TBaseMQCmsService<JMProductUpdateMQ
     private JuMeiProductPlatform3Service service;
 
     @Override
-    public void onStartup(JMProductUpdateMQMessageBody messageBody) throws Exception {
+    public void onStartup(JMProductUpdateMQMessageBody messageBody) {
         int id = messageBody.getCmsBtJmPromotionId();
         List<OperationResult> listResult = service.updateJmByPromotionId(id);
         StringBuilder sb = new StringBuilder();

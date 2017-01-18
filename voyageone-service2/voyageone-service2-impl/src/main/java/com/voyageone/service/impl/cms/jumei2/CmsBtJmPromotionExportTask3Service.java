@@ -59,7 +59,7 @@ public class CmsBtJmPromotionExportTask3Service {
         return daoExt.selectByPromotionId(promotionId);
     }
 
-    public void export(int JmBtPromotionExportTaskId, String exportPath) throws IOException, ExcelException {
+    public void export(int JmBtPromotionExportTaskId, String exportPath) {
         CmsBtJmPromotionExportTaskModel model = dao.select(JmBtPromotionExportTaskId);
         Parameter parameter = null;
         if(!StringUtil.isEmpty(model.getParameter())){

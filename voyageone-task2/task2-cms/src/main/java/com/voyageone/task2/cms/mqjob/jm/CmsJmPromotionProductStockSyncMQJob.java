@@ -51,11 +51,11 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
     private CmsBtPromotionCodesDaoExtCamel promotionCodesDaoExtCamel;
 
     @Override
-    public void onStartup(JmPromotionProductStockSyncMQMessageBody messageMap) throws Exception {
+    public void onStartup(JmPromotionProductStockSyncMQMessageBody messageBody) throws Exception {
         // 取得所有店铺
         List<ShopBean> shopList = Shops.getShopList();
         if (shopList == null || shopList.isEmpty()) {
-            this.cmsConfigExLog(messageMap, "CmsJmPromotionProductStockSyncMQJob 店铺及平台数据不存在！");
+            this.cmsConfigExLog(messageBody, "CmsJmPromotionProductStockSyncMQJob 店铺及平台数据不存在！");
             return;
         }
         OperationResult result = new OperationResult();
@@ -68,7 +68,9 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
         }
         if (!result.isResult()) {
             //写业务错误日志
-            cmsBusinessExLog(messageMap, result.getMsg());
+            cmsBusinessExLog(messageBody, result.getMsg());
+        } else {
+            cmsSuccessLog(messageBody, "库存同步执行成功!");
         }
     }
 
