@@ -20,7 +20,7 @@
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
 
-        <javaModelGenerator targetPackage="com.voyageone.service.model.cms"
+        <javaModelGenerator targetPackage="com.voyageone.service.model.report"
                             targetProject="voyageone-service2/voyageone-service2-model/src/main/java/">
             <!--<property name="constructorBased" value="true"/>-->
             <property name="enableSubPackages" value="true"/>
@@ -28,12 +28,12 @@
             <property name="rootClass" value="com.voyageone.base.dao.mysql.BaseModel"/>
         </javaModelGenerator>
 
-        <sqlMapGenerator targetPackage="com.voyageone.service.dao.cms.mybatis.mappers"
+        <sqlMapGenerator targetPackage="com.voyageone.service.dao.report.mybatis.mappers"
                          targetProject="voyageone-service2/voyageone-service2-dao/src/main/resources/">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
 
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.voyageone.service.dao.cms"
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.voyageone.service.dao.report"
                              targetProject="voyageone-service2/voyageone-service2-dao/src/main/java/">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
@@ -54,7 +54,7 @@
                selectByExampleQueryId="false">
             <generatedKey column="id" sqlStatement="JDBC"/>
         </table>-->
-        <table tableName="bi_report_sales_model_010" delimitAllColumns="true" enableCountByExample="false"
+        <table tableName="bi_report_download_task" delimitAllColumns="true" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
             <generatedKey column="id" sqlStatement="JDBC"/>

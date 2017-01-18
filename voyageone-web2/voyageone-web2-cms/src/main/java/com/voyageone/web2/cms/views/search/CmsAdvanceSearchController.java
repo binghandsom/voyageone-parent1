@@ -223,10 +223,6 @@ public class CmsAdvanceSearchController extends CmsController {
         } else if (fileType == 5) {
             fileName = "filingList_";
         }
-        else if (fileType==6)
-        {
-            fileName="biRepList_";
-        }
         if (fileName == null) {
             resultBean.put("ecd", "4002");
             return success(resultBean);

@@ -236,6 +236,8 @@ public class BiRepConsultService {
         mergeRangeList.add(new HeaderInfo("商品指标", new CellRangeAddress(1, 1, 12, 19)));
         mergeRangeList.add(new HeaderInfo("物流指标", new CellRangeAddress(1, 1, 20, 22)));
         mergeRangeList.add(new HeaderInfo("服务指标", new CellRangeAddress(1, 1, 23, 34)));
+        mergeRangeList.add(new HeaderInfo("店铺名称", new CellRangeAddress(1, 2, 0, 0)));
+        mergeRangeList.add(new HeaderInfo("日期", new CellRangeAddress(1, 2, 1, 1)));
         return mergeRangeList;
     }
     /**
@@ -259,5 +261,40 @@ public class BiRepConsultService {
         {
             return subtrahend.subtract(subtractor);
         }
+    }
+    /**
+     * 创建命名规则
+     *
+     */
+    public String getName(Map<String,Object> nameParameters,int type)
+    {
+        String fileSuffix=".xlsx";
+        StringBuffer fileName=new StringBuffer();
+        String shopName=(String)nameParameters.get("shopName");
+        String staDate=(String)nameParameters.get("staDate");
+        String endDate=(String)nameParameters.get("endDate");
+        String level=(String)nameParameters.get("level");
+        fileName.append(shopName);
+        fileName.append(staDate);
+        fileName.append("-");
+        fileName.append(endDate);
+        fileName.append(level);
+        switch(type)
+        {
+            case 1:fileName.append("店铺月报"); break;
+            case 2:fileName.append("店铺周报"); break;
+            case 3:fileName.append("店铺日报"); break;
+            case 4:fileName.append("商品月报"); break;
+            case 5:fileName.append("商品周报"); break;
+            case 6:fileName.append("商品日报"); break;
+            case 7:fileName.append("产品月报"); break;
+            case 8:fileName.append("产品周报"); break;
+            case 9:fileName.append("产品日报"); break;
+            case 10:fileName.append("SKU月报"); break;
+            case 11:fileName.append("SKU周报"); break;
+            default:fileName.append("SKU日报");
+        }
+        fileName.append(fileSuffix);
+        return fileName.toString();
     }
 }

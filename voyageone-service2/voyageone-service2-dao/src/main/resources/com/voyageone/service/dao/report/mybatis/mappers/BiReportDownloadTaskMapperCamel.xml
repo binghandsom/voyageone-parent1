@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.report.BiReportDownloadTaskDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.report.BiReportDownloadTaskModel" />
+    <sql id="Base_Column_List" >
+        `id`, `creator_id`, `file_name`, `create_time`, `file_path`, `task_status`, `finish_time`, 
+        `attr1`, `attr2`, `attr3`, `attr4`, `attr5`, `attr6`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from bi_report_download_task
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="update" parameterType="com.voyageone.service.model.report.BiReportDownloadTaskModel" >
+        update bi_report_download_task
+        <set >
+            <if test="creatorId != null" >
+                `creator_id` = #{creatorId,jdbcType=INTEGER},
+            </if>
+            <if test="fileName != null" >
+                `file_name` = #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                `create_time` = #{createTime,jdbcType=DATE},
+            </if>
+            <if test="filePath != null" >
+                `file_path` = #{filePath,jdbcType=VARCHAR},
+            </if>
+            <if test="taskStatus != null" >
+                `task_status` = #{taskStatus,jdbcType=INTEGER},
+            </if>
+            <if test="finishTime != null" >
+                `finish_time` = #{finishTime,jdbcType=DATE},
+            </if>
+            <if test="attr1 != null" >
+                `attr1` = #{attr1,jdbcType=INTEGER},
+            </if>
+            <if test="attr2 != null" >
+                `attr2` = #{attr2,jdbcType=INTEGER},
+            </if>
+            <if test="attr3 != null" >
+                `attr3` = #{attr3,jdbcType=INTEGER},
+            </if>
+            <if test="attr4 != null" >
+                `attr4` = #{attr4,jdbcType=VARCHAR},
+            </if>
+            <if test="attr5 != null" >
+                `attr5` = #{attr5,jdbcType=VARCHAR},
+            </if>
+            <if test="attr6 != null" >
+                `attr6` = #{attr6,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from bi_report_download_task
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from bi_report_download_task
+        <where >
+            <if test="creatorId != null" >
+                and `creator_id` = #{creatorId,jdbcType=INTEGER}
+            </if>
+            <if test="fileName != null" >
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime != null" >
+                and `create_time` = #{createTime,jdbcType=DATE}
+            </if>
+            <if test="filePath != null" >
+                and `file_path` = #{filePath,jdbcType=VARCHAR}
+            </if>
+            <if test="taskStatus != null" >
+                and `task_status` = #{taskStatus,jdbcType=INTEGER}
+            </if>
+            <if test="finishTime != null" >
+                and `finish_time` = #{finishTime,jdbcType=DATE}
+            </if>
+            <if test="attr1 != null" >
+                and `attr1` = #{attr1,jdbcType=INTEGER}
+            </if>
+            <if test="attr2 != null" >
+                and `attr2` = #{attr2,jdbcType=INTEGER}
+            </if>
+            <if test="attr3 != null" >
+                and `attr3` = #{attr3,jdbcType=INTEGER}
+            </if>
+            <if test="attr4 != null" >
+                and `attr4` = #{attr4,jdbcType=VARCHAR}
+            </if>
+            <if test="attr5 != null" >
+                and `attr5` = #{attr5,jdbcType=VARCHAR}
+            </if>
+            <if test="attr6 != null" >
+                and `attr6` = #{attr6,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from bi_report_download_task
+        <where >
+            <if test="creatorId != null" >
+                and `creator_id` = #{creatorId,jdbcType=INTEGER}
+            </if>
+            <if test="fileName != null" >
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime != null" >
+                and `create_time` = #{createTime,jdbcType=DATE}
+            </if>
+            <if test="filePath != null" >
+                and `file_path` = #{filePath,jdbcType=VARCHAR}
+            </if>
+            <if test="taskStatus != null" >
+                and `task_status` = #{taskStatus,jdbcType=INTEGER}
+            </if>
+            <if test="finishTime != null" >
+                and `finish_time` = #{finishTime,jdbcType=DATE}
+            </if>
+            <if test="attr1 != null" >
+                and `attr1` = #{attr1,jdbcType=INTEGER}
+            </if>
+            <if test="attr2 != null" >
+                and `attr2` = #{attr2,jdbcType=INTEGER}
+            </if>
+            <if test="attr3 != null" >
+                and `attr3` = #{attr3,jdbcType=INTEGER}
+            </if>
+            <if test="attr4 != null" >
+                and `attr4` = #{attr4,jdbcType=VARCHAR}
+            </if>
+            <if test="attr5 != null" >
+                and `attr5` = #{attr5,jdbcType=VARCHAR}
+            </if>
+            <if test="attr6 != null" >
+                and `attr6` = #{attr6,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from bi_report_download_task
+        <where >
+            <if test="creatorId != null" >
+                and `creator_id` = #{creatorId,jdbcType=INTEGER}
+            </if>
+            <if test="fileName != null" >
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime != null" >
+                and `create_time` = #{createTime,jdbcType=DATE}
+            </if>
+            <if test="filePath != null" >
+                and `file_path` = #{filePath,jdbcType=VARCHAR}
+            </if>
+            <if test="taskStatus != null" >
+                and `task_status` = #{taskStatus,jdbcType=INTEGER}
+            </if>
+            <if test="finishTime != null" >
+                and `finish_time` = #{finishTime,jdbcType=DATE}
+            </if>
+            <if test="attr1 != null" >
+                and `attr1` = #{attr1,jdbcType=INTEGER}
+            </if>
+            <if test="attr2 != null" >
+                and `attr2` = #{attr2,jdbcType=INTEGER}
+            </if>
+            <if test="attr3 != null" >
+                and `attr3` = #{attr3,jdbcType=INTEGER}
+            </if>
+            <if test="attr4 != null" >
+                and `attr4` = #{attr4,jdbcType=VARCHAR}
+            </if>
+            <if test="attr5 != null" >
+                and `attr5` = #{attr5,jdbcType=VARCHAR}
+            </if>
+            <if test="attr6 != null" >
+                and `attr6` = #{attr6,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.report.BiReportDownloadTaskModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into bi_report_download_task
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="creatorId != null" >
+                `creator_id`,
+            </if>
+            <if test="fileName != null" >
+                `file_name`,
+            </if>
+            <if test="createTime != null" >
+                `create_time`,
+            </if>
+            <if test="filePath != null" >
+                `file_path`,
+            </if>
+            <if test="taskStatus != null" >
+                `task_status`,
+            </if>
+            <if test="finishTime != null" >
+                `finish_time`,
+            </if>
+            <if test="attr1 != null" >
+                `attr1`,
+            </if>
+            <if test="attr2 != null" >
+                `attr2`,
+            </if>
+            <if test="attr3 != null" >
+                `attr3`,
+            </if>
+            <if test="attr4 != null" >
+                `attr4`,
+            </if>
+            <if test="attr5 != null" >
+                `attr5`,
+            </if>
+            <if test="attr6 != null" >
+                `attr6`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="creatorId != null" >
+                #{creatorId,jdbcType=INTEGER},
+            </if>
+            <if test="fileName != null" >
+                #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=DATE},
+            </if>
+            <if test="filePath != null" >
+                #{filePath,jdbcType=VARCHAR},
+            </if>
+            <if test="taskStatus != null" >
+                #{taskStatus,jdbcType=INTEGER},
+            </if>
+            <if test="finishTime != null" >
+                #{finishTime,jdbcType=DATE},
+            </if>
+            <if test="attr1 != null" >
+                #{attr1,jdbcType=INTEGER},
+            </if>
+            <if test="attr2 != null" >
+                #{attr2,jdbcType=INTEGER},
+            </if>
+            <if test="attr3 != null" >
+                #{attr3,jdbcType=INTEGER},
+            </if>
+            <if test="attr4 != null" >
+                #{attr4,jdbcType=VARCHAR},
+            </if>
+            <if test="attr5 != null" >
+                #{attr5,jdbcType=VARCHAR},
+            </if>
+            <if test="attr6 != null" >
+                #{attr6,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

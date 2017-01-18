@@ -94,9 +94,6 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
             endDate=(String)params.get("endDate");
             System.out.println(endDate);
         }
-        System.out.println(nameCn);
-        System.out.println(staDate);
-        System.out.println(endDate);
         Map mapForSelect=new HashMap<String,Object>();
         mapForSelect.put("nameCn",nameCn);
         mapForSelect.put("staDate",staDate);
@@ -104,5 +101,6 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
 
         return genResponseEntityFromBytes("shopsale.xlsx",biRepConsultService.createXLSFile(mapForSelect));
     }
+
 
 }

@@ -5,11 +5,7 @@
                 <i class="glyphicon glyphicon-star"></i>&nbsp;销售情形查询
                 <i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
             </uib-accordion-heading>
-            <div>
-                <label >{{vm.searchInfo.channelStart}}</label>
-                <label >{{vm.searchInfo.channelName}}</label>
-                <label >{{vm.searchInfo.channelEnd}}</label>
-            </div>
+         <!--   主体-->
             <div class="container-fluid m-t-sm m-b-md">
                 <div class="col-sm-12">
                     <div class="col-sm-6">
@@ -45,11 +41,60 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-sm-12 text-center m-t-sm">
+                        <div class="col-sm-2 text-center m-t-sm">文件类型</div>
+                        <div class="col-sm-4 text-center m-t-sm">
+                            <div class="form-inline col-md-4">
+                                <input type="checkbox" value="1" name="fileType">店铺月报
+                            </div><!-- .form-inline -->
+                            <div class="form-inline col-md-4">
+                                <input type="checkbox" value="2" name="fileType">店铺周报
+                            </div><!-- .form-inline -->
+                            <div class="form-inline col-md-4">
+                                <input type="checkbox" value="2" name="fileType">店铺日报
+                            </div><!-- .form-inline -->
+                            <div class="form-inline col-md-4">
+                                <input type="checkbox" value="1" name="fileType">商品月报
+                            </div><!-- .form-inline -->
+                            <div class="form-inline col-md-4">
+                                <input type="checkbox" value="2" name="fileType">商品周报
+                            </div><!-- .form-inline -->
+                            <div class="form-inline col-md-4">
+                                <input type="checkbox" value="2" name="fileType">商品日报
+                            </div><!-- .form-inline -->
+                        </div>
+                        <div class="col-sm-4 text-center m-t-sm">
+                            <div class="form-inline col-md-4">
+                                <input type="checkbox" value="1" name="fileType">产品月报
+                            </div><!-- .form-inline -->
+                            <div class="form-inline col-md-4">
+                                <input type="checkbox" value="2" name="fileType">产品周报
+                            </div><!-- .form-inline -->
+                            <div class="form-inline col-md-4">
+                                <input type="checkbox" value="2" name="fileType">产品日报
+                            </div><!-- .form-inline -->
+                            <div class="form-inline col-md-4">
+                                <input type="checkbox" value="1" name="fileType">SKU月报
+                            </div><!-- .form-inline -->
+                            <div class="form-inline col-md-4">
+                                <input type="checkbox" value="2" name="fileType">SKU周报
+                            </div><!-- .form-inline -->
+                            <div class="form-inline col-md-4">
+                                <input type="checkbox" value="2" name="fileType">SKU日报
+                            </div><!-- .form-inline -->
+                        </div>
+                        <div class="col-sm-2 text-center m-t-sm"></div>
+
+                    </div><!-- .form-inline -->
+
+
+
+
+                    </div>
                     <div class="col-sm-12 text-center m-t-sm" ng-controller="popupCtrl">
                         <div class="form-inline">
                             <button class="btn btn-default" ng-click="$parent.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
                            <!-- <button class="btn btn-vo" ng-click="biRepDownload()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>-->
-                            <button class="btn btn-danger btn-xs" ng-click="SearchopenDownload(book.xlsx,0)"><i class="fa fa-cloud-download"></i>search文件下载</button>
                             <button class="btn btn-danger btn-xs" ng-click="bireportDownload()"><i class="fa fa-cloud-download"></i>文件下载</button>
                         </div><!-- .form-inline -->
                     </div>
@@ -60,7 +105,7 @@
 
     <div class="box">
         <div class="box-body-new">
-            <div class="col-md-10">
+            <div class="col-md-40">
                         <h5>
                            销售情形查询结果
                           <!--  <i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>-->
