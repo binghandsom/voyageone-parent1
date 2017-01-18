@@ -3454,7 +3454,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     if (commonSku.getClientMsrpPrice() > maxClientMsrpPrice) {
                         maxClientMsrpPrice = commonSku.getClientMsrpPrice();
                     }
-                    if (commonSku.getClientMsrpPrice() < minClientMsrpPrice) {
+                   else if (commonSku.getClientMsrpPrice() < minClientMsrpPrice) {
                         minClientMsrpPrice = commonSku.getClientMsrpPrice();
                     }
 
@@ -3462,7 +3462,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     if (commonSku.getClientNetPrice() > maxClientNetPrice) {
                         maxClientNetPrice = commonSku.getClientNetPrice();
                     }
-                    if (commonSku.getClientNetPrice() < minClientNetPrice) {
+                    else if (commonSku.getClientNetPrice() < minClientNetPrice) {
                         minClientNetPrice = commonSku.getClientNetPrice();
                     }
 
