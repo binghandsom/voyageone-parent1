@@ -10,10 +10,6 @@
                 <label >{{vm.searchInfo.channelName}}</label>
                 <label >{{vm.searchInfo.channelEnd}}</label>
             </div>
-            <button class="btn btn-danger btn-xs" ng-click="openDownload()"><i class="fa fa-cloud-download"></i>文件下载</button>
-            <button class="btn btn-danger btn-xs" ng-click="SearchopenDownload(book.xlsx,0)"><i class="fa fa-cloud-download"></i>search文件下载</button>
-            <button class="btn btn-danger btn-xs" ng-click="myDownload(book.xlsx,0)"><i class="fa fa-cloud-download"></i>creaexlfile文件下载</button>
-            <a href="openDownload()">download</a>
             <div class="container-fluid m-t-sm m-b-md">
                 <div class="col-sm-12">
                     <div class="col-sm-6">
@@ -51,9 +47,10 @@
                     </div>
                     <div class="col-sm-12 text-center m-t-sm" ng-controller="popupCtrl">
                         <div class="form-inline">
-                            <button class="btn btn-default" ng-click="$parent.exportFile(6)"><i class="fa fa-remove"></i>&nbsp;Exportxls</button>
                             <button class="btn btn-default" ng-click="$parent.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
-                            <button class="btn btn-vo" ng-click="biRepDownload()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+                           <!-- <button class="btn btn-vo" ng-click="biRepDownload()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>-->
+                            <button class="btn btn-danger btn-xs" ng-click="SearchopenDownload(book.xlsx,0)"><i class="fa fa-cloud-download"></i>search文件下载</button>
+                            <button class="btn btn-danger btn-xs" ng-click="bireportDownload()"><i class="fa fa-cloud-download"></i>文件下载</button>
                         </div><!-- .form-inline -->
                     </div>
                 </div>

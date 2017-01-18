@@ -6,17 +6,10 @@ import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.CmsUrlConstants.BIREPORT;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchController;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,80 +72,37 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
             return success(resultBean);
         }
     }
-    //@RequestMapping(value = BIREPORT.LIST.DOWNLOAD.CREATEXLSFILE)
-    public ResponseEntity<byte[]> createXlsFile1()
-    {
-
-
-//        biRepSupport.createXlsFile();
-     /*   Local local=request.getLocale();
-        String[] file = new String[]{"a.txt","a,b"};
-        byte[] bs = file[1].getBytes("UTF-8");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", new String(file[0].getBytes("UTF-8"), "ISO8859-1"));  //解决文件名中文乱码问题
-        return new ResponseEntity<byte[]>(bs, headers, HttpStatus.CREATED);
-        return
-        return;*/
-        //String exportPath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_PATH);
-        String exportPath="E:/";
-        String fileName="test.xls";
-       /* File pathFileObj = new File(exportPath);
-        if (!pathFileObj.exists()) {
-            $info("高级检索 文件下载任务 文件目录不存在 " + exportPath);
-            throw new BusinessException("4004");
-        }
-
-        exportPath += fileName;
-        pathFileObj = new File(exportPath);
-        if (!pathFileObj.exists()) {
-            $info("高级检索 文件下载任务 文件不存在 " + exportPath);
-            throw new BusinessException("4004");
-        }
-     /*   return genResponseEntityFromFile(fileName, exportPath);*//*
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", "dict.txt");
-        return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(FileUtils.getUserDirectory()),
-                headers, HttpStatus.CREATED);*/
-        return null;
-    }
 
     @RequestMapping(value = BIREPORT.LIST.DOWNLOAD.CREATEXLSFILE)
-    public ResponseEntity<byte[]> createXlsFile() throws IOException {
-        /*String exportPath = "D:/";
-        File pathFileObj = new File(exportPath);
+    public ResponseEntity<byte[]> createXlsFile(@RequestParam Map<String, Object> params) {
+        String nameCn=null;
+        String staDate=null;
+        String endDate=null;
+        if((String)params.get("nameCn")!=null &&(String)params.get("nameCn")!="")
+        {
 
-        if (!pathFileObj.exists()) {
-            $info("高级检索 文件下载任务 文件目录不存在 " + exportPath);
-            throw new BusinessException("4004");
+            nameCn=(String)params.get("nameCn");
+            System.out.println(nameCn);
         }
+        if((String)params.get("staDate")!=null &&(String)params.get("staDate")!="")
+        {
+            staDate=(String)params.get("staDate");
+            System.out.println(staDate);
+        }
+        if((String)params.get("endDate")!=null &&(String)params.get("endDate")!="")
+        {
+            endDate=(String)params.get("endDate");
+            System.out.println(endDate);
+        }
+        System.out.println(nameCn);
+        System.out.println(staDate);
+        System.out.println(endDate);
+        Map mapForSelect=new HashMap<String,Object>();
+        mapForSelect.put("nameCn",nameCn);
+        mapForSelect.put("staDate",staDate);
+        mapForSelect.put("endDate",endDate);
 
-        exportPath += "hello.xlsx";
-        pathFileObj = new File(exportPath);
-        if (!pathFileObj.exists()) {
-            $info("高级检索 文件下载任务 文件不存在 " + exportPath);
-            throw new BusinessException("4004");
-        }
-       return genResponseEntityFromFile("hello.xls", exportPath);*/
-        return genResponseEntityFromBytes("test.xlsx",biRepConsultService.createXLSFile());
+        return genResponseEntityFromBytes("shopsale.xlsx",biRepConsultService.createXLSFile(mapForSelect));
     }
 
-    @RequestMapping(value = BIREPORT.LIST.DOWNLOAD.DOWNLOADTEST)
-    public void download(HttpServletResponse res) throws IOException {
-        OutputStream os = res.getOutputStream();
-        try {
-            res.reset();
-            res.setHeader("Content-Disposition", "attachment; filename=dict.txt");
-            res.setContentType("application/octet-stream; charset=utf-8");
-            os.write(FileUtils.readFileToByteArray(FileUtils.getUserDirectory()));
-            os.flush();
-        } finally {
-            if (os != null) {
-                os.close();
-            }
-        }
-    }
-
-    //    -------------------------------------------------------------------------------------------------------------------------
 }

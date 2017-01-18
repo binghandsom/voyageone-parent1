@@ -21,7 +21,7 @@ define([
             {
                 channel:"",
                 channelStart:"",
-                channelStart:"",
+                channelEnd:"",
                 fileType:6
             },
             "testBeanList":[],
@@ -74,18 +74,20 @@ define([
                 // $scope.search();
             });
         };
-        $scope.myDownload=function () {
-                /*if (status == -1) {
-                    alert("文件已经过期，请重新下载");
-                    return;
-                }*/
+        $scope.bireportDownload=function () {
+            var parameters=getPageParameter();
                 function _exportFileCallback(res) {
                     var obj = JSON.parse(res);
                     if (obj.code == '4004') {
                         alert("此文件不存在");
                     }
                 }
-                $.download.post(cActions.cms.biReportService.root + cActions.cms.biReportService.createXlsFile, {"fileName": fileName}, _exportFileCallback);
+                $.download.post(cActions.cms.biReportService.root + cActions.cms.biReportService.createXlsFile,
+                    {"nameCn":$scope.vm.searchInfo.channel,
+                        "staDate":$scope.vm.searchInfo.channelStart,
+                        "endDate":$scope.vm.searchInfo.channelEnd
+                    },
+                    _exportFileCallback);
         };
         // 下载已创建完成的数据文件
         $scope.SearchopenDownload = function (fileName, status) {
@@ -100,11 +102,15 @@ define([
                 }
             }
 
-            $.download.post(cActions.cms.search.$searchAdvanceService2.root + cActions.cms.search.$searchAdvanceService2.exportDownload, {"fileName": fileName}, _exportFileCallback);
+            $.download.post(cActions.cms.search.$searchAdvanceService2.root + cActions.cms.search.$searchAdvanceService2.exportDownload,
+                {"fileName": fileName
+                },
+                _exportFileCallback);
         };
 
 
         $scope.openDownload = function (fileName, status) {
+
             if (status == -1) {
                 alert("文件已经过期，请重新下载");
                 return;
@@ -120,7 +126,7 @@ define([
                 }
             }
 
-            $.download.post(cActions.cms.search.$searchAdvanceService2.root + cActions.cms.search.$searchAdvanceService2.exportDownload, {"fileName": fileName}, _exportFileCallback);
+            $.download.post(cActions.cms.search.$searchAdvanceService2.root + cActions.cms.search.$searchAdvanceService2.exportDownload, {}, _exportFileCallback);
         };
 
 
