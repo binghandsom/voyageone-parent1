@@ -3470,9 +3470,19 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
             }
 
-            cmsProduct.getCommon().getFields().setClientMsrpPrice(String.format("%s~%s",minClientMsrpPrice,maxClientMsrpPrice));
+            if(minClientMsrpPrice==maxClientMsrpPrice) {
+                cmsProduct.getCommon().getFields().setClientMsrpPrice(String.format("%s", minClientMsrpPrice));
+            }
+            else {
+                cmsProduct.getCommon().getFields().setClientMsrpPrice(String.format("%s~%s", minClientMsrpPrice, maxClientMsrpPrice));
+            }
 
-            cmsProduct.getCommon().getFields().setClientNetPrice(String.format("%s~%s",minClientNetPrice,maxClientNetPrice));
+            if(maxClientNetPrice==minClientNetPrice) {
+                cmsProduct.getCommon().getFields().setClientNetPrice(String.format("%s", minClientNetPrice));
+            }
+            else {
+                cmsProduct.getCommon().getFields().setClientNetPrice(String.format("%s~%s", minClientNetPrice, maxClientNetPrice));
+            }
 
             // 设置platform.PXX.skus里面的价格
             try {
