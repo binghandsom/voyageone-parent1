@@ -13,11 +13,22 @@ define([
                 $scope.vm = {
                     config: {
                         open: true,
-                        showFlag: false,
+                        showFlag: true,
                         startSupplyChain : false
                     },
                     carts: {},
-                    product: {}
+                    product: {
+                        pf:0,
+                        skus : [
+                            {
+                                skuItems : [
+                                    {}
+                                ],
+                                tempSuitSellingPriceCn : 0,
+                                tempSuitPreferentialPrice : 0
+                            }
+                        ]
+                    }
                 };
                 $scope.vm.carts = context.carts;
                 $scope.vm.config.startSupplyChain = context.startSupplyChain == 1;
@@ -37,10 +48,12 @@ define([
                         "numID": numID,
                         "new" : "1"
                     }).then(function (resp) {
-                        $scope.vm.config.showFlag = true;
-                        $scope.vm.product = resp.data.product == null ? {} : resp.data.product;
-                        $scope.vm.product.cartId = $scope.vm.product.cartId == null ? "" : $scope.vm.product.cartId + "";
-                        if(resp.data.product != null) {
+                        // $scope.vm.config.showFlag = true;
+                        if (resp.data.product != null) {
+                            $scope.vm.product = resp.data.product;
+                            $scope.vm.product.pf = 1;
+                            $scope.vm.product.cartId = $scope.vm.product.cartId + "";
+
                             // 记录此套装中sku
                             var skuCodes = new Array();
                             _.each($scope.vm.product.skus, function (skuBean, index, list) {
@@ -69,8 +82,28 @@ define([
                                     dynamicSkuPrice(skuBean);
                                 });
                             });
+                        } else {
+                            $scope.vm.product.pf = 0;
+                            $scope.vm.product.skus = [{skuItems:[{}]}];
+                            alert("查询不到组合商品信息！");
                         }
 
+                    }, function (resp) {
+                        var tempProduct = angular.copy($scope.vm.product);
+                        $scope.vm.product = {
+                            pf : 0,
+                            cartId : tempProduct.cartId,
+                            numID : tempProduct.numID,
+                            skus : [
+                                {
+                                    skuItems : [
+                                        {}
+                                    ],
+                                    tempSuitSellingPriceCn : 0,
+                                    tempSuitPreferentialPrice : 0
+                                }
+                            ]
+                        };
                     });
                 };
 
@@ -81,8 +114,8 @@ define([
                     /*if (!sku || !sku.skuItems || sku.skuItems.length == 0) {*/
                     if (sku && sku.skuItems && sku.skuItems.length > 0) {
                         _.each(sku.skuItems, function (skuItem) {
-                            tempSuitPreferentialPrice += skuItem.preferentialPrice;
-                            tempSuitSellingPriceCn += skuItem.sellingPriceCn;
+                            tempSuitPreferentialPrice += (skuItem.preferentialPrice == null ? 0 : skuItem.preferentialPrice);
+                            tempSuitSellingPriceCn += (skuItem.sellingPriceCn == null ? 0 : skuItem.sellingPriceCn);
                         });
                     }
                     sku.warn = sku.suitPreferentialPrice != tempSuitPreferentialPrice;
@@ -96,9 +129,20 @@ define([
                     $scope.equalFlag = flag;
                 }
 
+                // 新增虚拟SKU
+                $scope.copySku = function () {
+                    $scope.vm.product.skus.push(
+                        {
+                            tempSuitSellingPriceCn : 0,
+                            tempSuitPreferentialPrice : 0,
+                            skuItems : [{}]
+                        }
+                    );
+                }
+                
                 // 新增实际SKU
                 $scope.copySkuItem = function (skuItems) {
-                    if (!skuItems || skuItems.length == 0) {
+                    if (!skuItems) {
                         return;
                     }
                     skuItems.push({});
@@ -117,11 +161,17 @@ define([
                     if (!skuItem || !skuItem.skuCode) {
                         return;
                     }
+                    if (!$scope.vm.product.cartId) {
+                        clearSkuItem(skuItem);
+                        alert("请先选择平台!");
+                        return;
+                    }
                     combinedProductService.getSkuDetail({
                         "skuCode": skuItem.skuCode,
                         "cartId": $scope.vm.product.cartId
                     }).then(function (resp) {
                         if(resp.data.skuItem == null) {
+                            clearSkuItem(skuItem); // 查询不到清空信息
                             alert("查询不到SKU信息！");
                         }else {
                             _.extend(skuItem, resp.data.skuItem);
@@ -129,17 +179,30 @@ define([
                         }
                     });
                 };
+
+                // 清空skuItem信息
+                function clearSkuItem(skuItem) {
+                    if (!skuItem){
+                        return;
+                    }
+                    _.extend(skuItem, {code:"",skuCode:"",sellingPriceCn:"",preferentialPrice:"",productName:""});
+                }
                 
                 // 改变实际SKU价格
                 $scope.changeSkuItemPrice = function (sku) {
                     dynamicSkuPrice(sku);
                 };
+                // 改变虚拟SKU价格
+                $scope.changeSkuPrice = function (sku) {
+                    dynamicSkuPrice(sku);
+                };
 
+                // status=0时暂存，此时至少输入cartId和numID
                 $scope.addSubmit = function (status) {
                     var cartId = $scope.vm.product.cartId;
                     var numId = $scope.vm.product.numID;
                     if (status == 0 && (!cartId || !numId)) { // 暂存
-                        alert("组合套装商品暂存，请至少输入平台和商品编码！");
+                        alert("[暂存]请至少输入 [平台] 和 [商品编码] ");
                         return;
                     }
                     combinedProductService.add(_.extend($scope.vm.product, {"status": status})).then(function (resp) {

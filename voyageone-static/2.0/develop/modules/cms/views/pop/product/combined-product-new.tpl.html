@@ -56,10 +56,9 @@
             </div>
 
             <div class="row form-group">
-                <label class="col-sm-3 control-label"><strong translate="TXT_COMBINED_PRODUCT_NAME"></strong></label>
+                <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_COMBINED_PRODUCT_NAME"></strong></label>
                 <div class="col-sm-3">
-                    <textarea class="form-control no-resize" cols="3" rows="3" ng-model="vm.product.productName" disabled required></textarea>
-                    <!--<input type="text" class="form-control" name="productName" ng-model="vm.product.productName" required>-->
+                    <textarea class="form-control no-resize" cols="3" rows="3" ng-model="vm.product.productName" ng-disabled="vm.product.pf==1" required></textarea>
                 </div>
             </div>
 
@@ -77,7 +76,12 @@
                         <th class="mfb-xxx text-left">单品中国最终售价</th>
                         <th class="mfb-xxx text-left">单品优惠售价</th>
                         <th class="mfb-xxxs text-left">商品名称</th>
-                        <th class="text-left">操作</th>
+                        <th class="text-left">
+                            操作
+                            <button type="submit" class="btn btn-success btn-xxs" ng-click="copySku()">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </th>
                     </tr>
                     </thead>
                     <tbody ng-if="vm.product.skus">
@@ -85,8 +89,11 @@
                             <td colspan="5">
                                 <div class="text-left table_bg_gray">
                                     <div style="float: left">
-                                        组合套装sku（商家编码） ：{{sku.suitSkuCode}}<br/>
-                                        组合套装实际售价 ：{{sku.suitPreferentialPrice | currency:''}} <i ng-show="sku.warn" style="color: #ff0000;">组合套装优惠售价与实际售价不一致，请修正单品sku的优惠售价！</i>
+                                        组合套装sku（商家编码） ：<input type="text" ng-if="vm.product.pf==0" ng-model="sku.suitSkuCode" required/> <label ng-if="vm.product.pf==1">{{sku.suitSkuCode}}</label><br/>
+                                        组合套装实际售价 ：
+                                        <input type="number" ng-if="vm.product.pf==0" ng-model="sku.suitPreferentialPrice" ng-change="changeSkuPrice(sku)" required/>
+                                        <label ng-if="vm.product.pf==1">{{sku.suitPreferentialPrice | currency:''}}</label>
+                                        <i ng-show="sku.warn" style="color: #ff0000;">组合套装优惠售价与实际售价不一致，请修正单品sku的优惠售价！</i>
                                     </div>
                                     <div style="float: right; padding-right: 37px;">
                                         <button type="submit" class="btn btn-success btn-xxs" ng-click="copySkuItem(sku.skuItems)">
