@@ -2,7 +2,7 @@ package com.voyageone.web2.openapi.bi.control;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
-import com.voyageone.service.impl.cms.vomqjobservice.CmsProcductBIDataService;
+import com.voyageone.service.impl.cms.vomqjobservice.CmsProductBIDataService;
 import com.voyageone.web2.openapi.OpenApiBaseController;
 import com.voyageone.web2.openapi.bi.constants.BiUrlConstants;
 import com.voyageone.web2.openapi.bi.service.DataServiceTB;
@@ -28,7 +28,7 @@ public class BiSaveDataController extends OpenApiBaseController {
     private DataServiceTB dataServiceTB;
 
     @Autowired
-    CmsProcductBIDataService cmsProcductBIDataService;
+    CmsProductBIDataService cmsProductBIDataService;
 
     @RequestMapping(BiUrlConstants.URL.LIST.SAVE_SHOP_URL_DATA)
     public VoApiResponse saveShopData(@RequestBody Map<String, Object> params) {
@@ -67,7 +67,7 @@ public class BiSaveDataController extends OpenApiBaseController {
         @SuppressWarnings("unchecked")
         Map<String, Object> shopInfo = (Map<String, Object>) params.get("shop_info");
         String cartId = (String) shopInfo.get("ecommCode");
-        cmsProcductBIDataService.sendMessage(shopInfo.get("channelCode").toString(),Integer.parseInt(cartId),BiUrlConstants.URL.LIST.SAVE_SHOP_FINISH);
+        cmsProductBIDataService.sendMessage(shopInfo.get("channelCode").toString(),Integer.parseInt(cartId),BiUrlConstants.URL.LIST.SAVE_SHOP_FINISH);
 
         return simpleResponse("OK");
     }

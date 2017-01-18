@@ -1,7 +1,7 @@
 package com.voyageone.service.impl.cms.mqservice;
 
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
-import com.voyageone.service.impl.cms.vomqjobservice.CmsProcductBIDataService;
+import com.voyageone.service.impl.cms.vomqjobservice.CmsProductBIDataService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CmsProcductBIDataServiceTest {
 
     @Autowired
-    CmsProcductBIDataService service;
+    CmsProductBIDataService service;
 
      @Test
     public  void  test() throws MQMessageRuleException {

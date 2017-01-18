@@ -37,7 +37,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class CmsProcductBIDataService extends BaseService {
+public class CmsProductBIDataService extends BaseService {
     @Autowired
     private BiVtSalesProductExt biDataDao;
     @Autowired

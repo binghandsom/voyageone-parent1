@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service.product;
 
-import com.voyageone.task2.cms.mqjob.CmsProcductBIDataMQJob;
+import com.voyageone.task2.cms.mqjob.CmsProductBIDataMQJob;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import java.util.Map;
 public class CmsProcductBIDataServiceTest {
 
     @Autowired
-    CmsProcductBIDataMQJob targetService;
+    CmsProductBIDataMQJob targetService;
 
     @Test
     public void testTMPlatform() {

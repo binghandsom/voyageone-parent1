@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CmsProcductBIDataMQJobTest {
 
     @Autowired
-    CmsProcductBIDataMQJob service;
+    CmsProductBIDataMQJob service;
 
     @Test
     public void testOnStartup() throws Exception {
