@@ -20,39 +20,46 @@
         <result column="modified" property="modified" jdbcType="TIMESTAMP"/>
         <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
     </resultMap>
+    
+    <sql id="Base_Column_List">
+        `id`,`channel_id`,`product_id`,`cart_id`,`code`,`sku`,`msrp_price`,`retail_price`,`sale_price`,`client_msrp_price`,`client_retail_price`,`client_net_price`,`comment`,`created`,`creater`,`modified`,`modifier`
+    </sql>
 
     <select id="select_cms_bt_price_log_by_code" resultMap="PriceLogMap" parameterType="HashMap">
-        select DISTINCT
-        log.id,
-        log.channel_id,
-        log.product_id,
-        log.code,
-        log.sku,
-        log.msrp_price,
-        log.retail_price,
-        log.sale_price,
-        log.client_msrp_price,
-        log.client_retail_price,
-        log.client_net_price,
-        log.comment,
-        log.created,
-        log.creater,
-        log.modified,
-        log.modifier
-        from voyageone_cms2.cms_bt_price_log log
-        where log.code = #{code}
-        <if test="sku != null and sku !=''">
-            and log.sku = #{sku}
-        </if>
-        and log.channel_id = #{channelId}
-        order by log.modified desc
+        (
+            SELECT
+            <include refid="Base_Column_List"/> FROM voyageone_cms2.cms_bt_price_log
+            where code = #{code}
+            <if test="sku != null and sku !=''">
+                and sku = #{sku}
+            </if>
+            and channel_id = #{channelId}
+        )
+        UNION ALL
+        (
+            SELECT <include refid="Base_Column_List"/> FROM voyageone_cms2.cms_bt_price_log_history
+            where code = #{code}
+            <if test="sku != null and sku !=''">
+                and sku = #{sku}
+            </if>
+            and channel_id = #{channelId}
+        )
+        order by modified desc
         limit #{offset}, #{rows}
     </select>
 
     <select id="select_cms_bt_price_log_by_code_cnt" resultType="int" parameterType="HashMap">
-        SELECT count(1)
-        FROM voyageone_cms2.cms_bt_price_log log
-        WHERE log.code = #{code} AND log.sku = #{sku} AND log.channel_id = #{channelId}
+        select SUM(tempCount) FROM (
+            (
+                SELECT count(1) AS tempCount FROM voyageone_cms2.cms_bt_price_log log
+                WHERE log.code = #{code} AND log.sku = #{sku} AND log.channel_id = #{channelId}
+            )
+            UNION ALL
+            (
+                SELECT count(1) AS tempCount FROM voyageone_cms2.cms_bt_price_log_history log_history
+                WHERE log_history.code = #{code} AND log_history.sku = #{sku} AND log_history.channel_id = #{channelId}
+            )
+        )temp
     </select>
 
     <insert id="insert_cms_bt_price_log_list" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
@@ -97,79 +104,73 @@
     </insert>
 
     <select id="selectLastOneBySkuOnCart" resultMap="PriceLogMap">
-        SELECT
-            id,
-            channel_id,
-            product_id,
-            cart_id,
-            code,
-            sku,
-            msrp_price,
-            retail_price,
-            sale_price,
-            client_msrp_price,
-            client_retail_price,
-            client_net_price,
-            comment,
-            created,
-            creater,
-            modified,
-            modifier
-        FROM voyageone_cms2.cms_bt_price_log
-        WHERE channel_id = #{channel_id}
-              AND cart_id = #{cart_id}
-              AND sku = #{sku}
+        (
+            SELECT <include refid="Base_Column_List"/> FROM voyageone_cms2.cms_bt_price_log
+            WHERE channel_id = #{channel_id} AND cart_id = #{cart_id} AND sku = #{sku}
+        )
+        UNION ALL
+        (
+            SELECT <include refid="Base_Column_List"/> FROM voyageone_cms2.cms_bt_price_log_history
+            WHERE channel_id = #{channel_id} AND cart_id = #{cart_id} AND sku = #{sku}
+        )
         ORDER BY created DESC
         LIMIT 1
     </select>
 
     <select id="selectPageBySkuOnCart" resultMap="PriceLogMap">
-        SELECT
-            id,
-            channel_id,
-            product_id,
-            cart_id,
-            code,
-            sku,
-            msrp_price,
-            retail_price,
-            sale_price,
-            client_msrp_price,
-            client_retail_price,
-            client_net_price,
-            comment,
-            created,
-            creater,
-            modified,
-            modifier
-        FROM voyageone_cms2.cms_bt_price_log
-        WHERE channel_id = #{channel_id}
-              and code = #{code}
-              <if test="cart_id != null">
-                  and cart_id = #{cart_id}
-              </if>
-              <if test="sku != null">
-                  and sku = #{sku}
-              </if>
-        ORDER BY created DESC
-        <if test="offset != null and limit != null">
-            LIMIT #{offset}, #{limit}
-        </if>
-
-    </select>
-
-    <select id="selectCountBySkuOnCart" resultType="int">
-        SELECT
-            COUNT(1)
-        FROM voyageone_cms2.cms_bt_price_log
-        WHERE channel_id = #{channel_id}
-            and code = #{code}
+        (
+            SELECT <include refid="Base_Column_List"/> FROM voyageone_cms2.cms_bt_price_log
+            WHERE channel_id = #{channel_id} and code = #{code}
             <if test="cart_id != null">
                 and cart_id = #{cart_id}
             </if>
             <if test="sku != null">
                 and sku = #{sku}
             </if>
+        )
+        UNION ALL
+        (
+            SELECT <include refid="Base_Column_List"/> FROM voyageone_cms2.cms_bt_price_log_history
+            WHERE channel_id = #{channel_id} and code = #{code}
+            <if test="cart_id != null">
+                and cart_id = #{cart_id}
+            </if>
+            <if test="sku != null">
+                and sku = #{sku}
+            </if>
+        )
+        ORDER BY created DESC
+        <if test="offset != null and limit != null">
+            LIMIT #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="selectCountBySkuOnCart" resultType="int">
+        SELECT SUM(tempCount) from (
+            (
+
+                SELECT COUNT(1) as tempCount FROM voyageone_cms2.cms_bt_price_log
+                WHERE channel_id = #{channel_id} AND code = #{code}
+                <if test="cart_id != null">
+                    and cart_id = #{cart_id}
+                </if>
+                <if test="sku != null">
+                    and sku = #{sku}
+                </if>
+            )
+            UNION ALL
+            (
+
+                SELECT COUNT(1) as tempCount FROM voyageone_cms2.cms_bt_price_log_history
+                WHERE channel_id = #{channel_id} AND code = #{code}
+                <if test="cart_id != null">
+                    and cart_id = #{cart_id}
+                </if>
+                <if test="sku != null">
+                    and sku = #{sku}
+                </if>
+            )
+        )temp
     </select>
 
     <update id="updateCodeForMove" parameterType="HashMap">
