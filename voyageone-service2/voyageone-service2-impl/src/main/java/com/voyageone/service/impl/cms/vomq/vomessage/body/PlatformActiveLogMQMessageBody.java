@@ -8,9 +8,7 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 记录上下架操作历史 Job
@@ -18,7 +16,7 @@ import java.util.Map;
  * @Author rex
  * @Create 2017-01-04 19:31
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_PLATFORM_ACTIVE_LOG)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_UPDATE_PRODUCT_PLATFORM_PSTATUS_OFF_OR_ON)
 public class PlatformActiveLogMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;

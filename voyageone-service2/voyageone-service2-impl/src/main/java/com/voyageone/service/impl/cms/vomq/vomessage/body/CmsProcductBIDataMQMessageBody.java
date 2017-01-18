@@ -13,7 +13,7 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
  * @version 2.0.0
  * @since 2.0.0
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_PPRODUCT_BI_DATA)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_BATCH_GET_PRODUCT_BI_DATA)
 public class CmsProcductBIDataMQMessageBody extends BaseMQMessageBody {
     String channelId;
     int cartId;

@@ -9,7 +9,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Product VoRate Update Job
@@ -17,7 +16,7 @@ import java.util.Map;
  * @Author rex
  * @Create 2016-12-30 18:06
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_PRODUCT_VO_RATE_UPDATE)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_UPDATE_PRODUCT_VO_RATE)
 public class ProductVoRateUpdateMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;

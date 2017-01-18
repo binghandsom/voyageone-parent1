@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.vomq.vomessage.body;
 
-import com.aliyun.api.internal.parser.json.ObjectJsonParser;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
@@ -18,7 +17,7 @@ import java.util.Map;
  * @Author rex
  * @Create 2017-01-13 11:29
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_ADV_SEARCH_PRODUCT_APPROVAL)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_UPDATE_PRODUCT_PLATFORM_STATUS_TO_APPROVE)
 public class AdvSearchProductApprovalMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;

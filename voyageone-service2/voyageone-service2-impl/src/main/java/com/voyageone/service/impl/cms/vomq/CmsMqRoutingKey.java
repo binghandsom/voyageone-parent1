@@ -7,76 +7,86 @@ package com.voyageone.service.impl.cms.vomq;
  */
 public class CmsMqRoutingKey {
 
-    // 天猫特价宝操作MQ
-    public static final String CMS_TM_TEJIABAO_DEL = "VOCmsTmTejiabaoDelQueue";
-
-    // 聚美活动文件生成导出
+    // 聚美活动 - 导出文件生成
     public static final String CMS_JM_PROMOTION_EXPORT = "VOCmsJmPromotionExportQueue";
 
-    /*修改最终售价*/
-    public static final String CMS_UPDATE_PRODUCT_SALE_PRICE = "VOCmsUpdateProductSalePriceQueue";
-
-    // 聚美活动文件 导入
+    // 聚美活动 - 文件导入
     public static final String CMS_JM_PROMOTION_IMPORT = "VOCmsJmPromotionImportQueue";
 
-    // 聚美平台上传更新
-    public static final String CMS_JM_PRODUCT_UPDATE = "VOCmsJmProductUpdateQueue";
-
-    // 聚美刷新参考价
-    public static final String CMS_JM_REFRESH_PRICE = "VOCmsJMRefreshPriceQueue";
-
-    // 聚美活动中的产品的库存同步
+    // 聚美活动 - 活动产品的库存同步
     public static final String CMS_JM_PROMOTION_PRODUCT_STOCK_SYNC= "VOCmsJmPromotionProductStockSyncQueue";
 
-    //高级搜索-设置自由标签
-    public  static  final  String CMS_PPRODUCT_FREE_TAGS_UPDATE="VOCmsProductFreeTagsUpdateQueue";
-     //高级检索-取得产品的bi信息
-    public static final String CMS_PPRODUCT_BI_DATA = "VOCMSProductBIDataQueue";
+    // 聚美活动 - 平台上传更新
+    public static final String CMS_JM_PROMOTION_PRODUCT_UPDATE = "VOCmsJmPromotionProductUpdateQueue";
 
-    //品牌黑名单，屏蔽任务
+    // 聚美活动 - 获取聚美日常销售的参考价
+    public static final String CMS_JM_PROMOTION_REFRESH_PRICE = "VOCmsJMPromotionRefreshPriceQueue";
+
+    // 高级检索 - 批量修改中国最终售价
+    public static final String CMS_UPDATE_PRODUCT_PLATFORM_SALE_PRICE = "VOCmsUpdateProductPlatformSalePriceQueue";
+
+    // 高级搜索 - 批量设置自由标签
+    public static final String CMS_UPDATE_PRODUCT_FREE_TAGS ="VOCmsUpdateProductFreeTagsQueue";
+
+    // 高级检索 - 批量重新计算中国指导价
+    public static final String CMS_REFRESH_PLATFORM_RETAIL_PRICE = "VOCmsRefreshPlatformRetailPriceQueue";
+
+    // 高级检索 - 批量更新商品vo扣点
+    public static final String CMS_UPDATE_PRODUCT_VO_RATE = "VOCmsUpdateProductVoRateQueue";
+
+    // 高级检索 - 批量确认中国指导价变更
+    public static final String CMS_CONFIRM_PLATFORM_RETAIL_PRICE = "VOCmsConfirmPlatformRetailPriceQueue";
+
+    // 高级检索 - 批量设置店铺分类
+    public static final String CMS_UPDATE_PRODUCT_PLATFORM_CHANNEL_CATEGORY = "VOCmsUpdateProductPlatformChannelCategoryQueue";
+
+    // 高级检索 - 批量设置平台属性
+    public static final String CMS_UPDATE_PRODUCT_PLATFORM_FIELDS = "VOCmsUpdateProductPlatformFieldsQueue";
+
+    // 高级检索 - 批量设置平台类目
+    public static final String CMS_UPDATE_PRODUCT_PLATFORM_CATEGORY = "VOCmsUpdateProductPlatformCategoryQueue";
+
+    // 高级检索 - 批量审批商品平台状态为Approve
+    public static final String CMS_UPDATE_PRODUCT_PLATFORM_STATUS_TO_APPROVE = "VOCmsUpdateProductPlatformStatusToApproveQueue";
+
+    // 高级检索 - 批量设置商品上下架
+    public static final String CMS_UPDATE_PRODUCT_PLATFORM_PSTATUS_OFF_OR_ON = "VOCmsUpdateProductPlatformPStatusOffOrOnQueue";
+
+    // 高级检索 - 批量更新商品
+    public static final String CMS_UPDATE_PRODUCT_FIELDS = "VOCmsUpdateProductFieldsQueue";
+
+    // 高级检索 - 异步生成文件
+    public static final String CMS_EXPORT_PRODUCT_INFO = "VOCmsExportProductInfoQueue";
+
+    // Feed检索 - Feed文件导出
+    public static final String CMS_EXPORT_FEED_INFO = "VOCmsExportFeedInfoQueue";
+
+    // 黑名单 - 指定品牌加入到黑名单或指定品牌从黑名单中移除
     public static final String CMS_BRAND_BLOCK = "VOCmsBrandBlockQueue";
 
-    // 批量更新商品
-    public static final String CMS_BATCH_UPDATE_PRODUCT = "VOCmsBatchUpdateProductQueue";
+    // 货架管理 - 获取货架里的商品信息
+    public static final String CMS_GET_SHELVES_MONITOR = "VOCmsGetShelvesMonitorQueue";
 
-    // 保存店铺分类
-    public static final String CMS_SAVE_CHANNEL_CATEGORY = "VOCmsSaveChannelCategoryQueue";
+    // 货架管理 - 货架监控
+    public static final String CMS_UPLOAD_SHELVES_IMAGE = "VOCmsUploadShelvesImageQueue";
 
-    // Feed文件导出
-    public static final String CMS_FEED_EXPORT = "VOCmsFeedExportQueue";
+    // 天猫活动管理 - 天猫特价宝刷新
+    public static final String CMS_TM_TE_JIA_BAO_DEL = "VOCmsTmTeJiaBaoDelQueue";
 
-    // 同步产品sku的价格至code的group价格范围
-    public static final String CMS_PRODUCT_PRICE_UPDATE = "VOCmsProductPriceUpdateQueue";
+    // 定时任务 - 取得产品的bi信息
+    public static final String CMS_BATCH_GET_PRODUCT_BI_DATA = "VOCMSBatchGetProductBIDataQueue";
 
-    // 更新商品vo扣点相关
-    public static final String CMS_PRODUCT_VO_RATE_UPDATE = "VOCmsProductVoRateUpdateQueue";
+    // 定时任务 - 同步产品sku的价格至code的group价格范围
+    public static final String CMS_BATCH_COUNT_PRODUCT_PRICE = "VOCmsBatchCountProductPriceQueue";
 
-    // 高级检索-异步生成文件
-    public static final String CMS_ADV_SEARCH_EXPORT = "VOCmsAdvSearchExportQueue";
+    // 手动触发 - cart追加 把product表中的platform追加一个cart
+    public static final String CMS_ADD_PLATFORM_CART = "VOCmsAddPlatformCartQueue";
 
-    // 高级检索-重新计算中国指导价
-    public static final String CMS_ADV_SEARCH_REFRESH_RETAIL_PRICE = "VOCmsAdvSearchRefreshRetailPriceQueue";
+    // 平台属性默认设置 - 用于强制对某商品或某类目进行属性的重新计算赋值和上新
+    public static final String CMS_REFRESH_PRODUCT_PLATFORM_FIELDS = "VOCmsRefreshProductPlatformFieldsQueue";
 
-    // 批量设置平台属性
-    public static final String CMS_BATCH_PLATFORM_FIELDS = "VOCmsPlatformFieldsSetQueue";
 
-    // 获取货架里的商品信息
-    public static final String CMS_BATCH_SHELVES_MONITOR = "VOCmsShelvesMonitorGetQueue";
-
-     // 货架监控
-    public static final String CMS_BATCH_SHELVES_IMAGE_UPLOAD = "VOCmsShelvesImageUploadQueue";
-
-     // cart追加 把product表中的platform追加一个cart
-    public static final String CMS_BATCH_CART_ADD_JOB = "VOCmsPlatformCartAddQueue";
-
-    // 默认属性功能，用于强制对某商品或某类目进行属性的重新计算赋值和上新
-    public static final String CMS_TASK_REFRESH_PRODUCTS = "VOCmsRefreshProductsQueue";
-
-    public static final String CMS_PLATFORM_CATEGORY_UPDATE = "VOCmsPlatformCategoryUpdateQueue";
-
-    /*高级检索-商品审批MQ新增*/
-    public static final String CMS_ADV_SEARCH_PRODUCT_APPROVAL = "VOCmsAdvSearchProductApprovalQueue";
-
+    // 未整理的业务内容
     /**
      * image create task
      */
@@ -122,17 +132,6 @@ public class CmsMqRoutingKey {
      * 平台标题翻译
      */
     public static final String CMS_BATCH_PlatformTitleTranslateJob = "voyageone_cms_batchjob_CmsPlatformTitleTranslateJob_queue";
-
-    /**
-     * 记录上下架操作历史
-     */
-    //public static final String CMS_TASK_PlatformActiveLogJob = "voyageone_cms_task_PlatformActiveLogJob_queue";
-    public static final String CMS_PLATFORM_ACTIVE_LOG = "VOCmsPlatformActiveSetQueue";
-
-
-    /*高级检索-指导价变更确认*/
-    //public static final String CMS_TASK_AdvSearch_AsynProcessJob = "voyageone_cms_task_AdvSearch_AsynProcessJob_queue";
-    public static final String CMS_ADV_SEARCH_CONFIRM_RETAIL_PRICE = "VOCmsAdvSearchConfirmRetailPriceQueue";
     /**
      * 高级检索-取得产品的bi信息
      */

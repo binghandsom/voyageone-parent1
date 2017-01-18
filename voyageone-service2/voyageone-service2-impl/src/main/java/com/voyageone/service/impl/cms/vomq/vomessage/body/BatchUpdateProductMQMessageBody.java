@@ -17,7 +17,7 @@ import java.util.Map;
  * @Author rex
  * @Create 2017-01-03 13:59
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_BATCH_UPDATE_PRODUCT)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_UPDATE_PRODUCT_FIELDS)
 public class BatchUpdateProductMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;

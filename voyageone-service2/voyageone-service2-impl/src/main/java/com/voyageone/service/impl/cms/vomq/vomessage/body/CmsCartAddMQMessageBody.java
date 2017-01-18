@@ -9,7 +9,7 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 /**
  * Created by james on 2017/1/3.
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_BATCH_CART_ADD_JOB)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_ADD_PLATFORM_CART)
 public class CmsCartAddMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;

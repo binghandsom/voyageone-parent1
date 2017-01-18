@@ -16,7 +16,7 @@ import java.util.List;
  * @version 2.0.0
  * @since 2.0.0
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_PPRODUCT_FREE_TAGS_UPDATE)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_UPDATE_PRODUCT_FREE_TAGS)
 public class CmsProductFreeTagsUpdateMQMessageBody extends BaseMQMessageBody {
 
     //channelId

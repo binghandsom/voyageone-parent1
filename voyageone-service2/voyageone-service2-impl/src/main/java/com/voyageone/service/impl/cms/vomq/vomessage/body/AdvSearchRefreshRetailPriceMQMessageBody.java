@@ -9,7 +9,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 重新计算指导价Job消息实体
@@ -17,7 +16,7 @@ import java.util.Map;
  * @Author rex
  * @Create 2016-12-30 16:09
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_ADV_SEARCH_REFRESH_RETAIL_PRICE)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_REFRESH_PLATFORM_RETAIL_PRICE)
 public class AdvSearchRefreshRetailPriceMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;

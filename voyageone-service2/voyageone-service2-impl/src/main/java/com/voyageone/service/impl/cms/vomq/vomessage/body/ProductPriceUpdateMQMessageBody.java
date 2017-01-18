@@ -7,15 +7,13 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.util.Map;
-
 /**
  * 更新product和group的价格Job
  *
  * @Author rex
  * @Create 2017-01-03 16:03VOCmsProductPriceUpdateQueue
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_PRODUCT_PRICE_UPDATE)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_BATCH_COUNT_PRODUCT_PRICE)
 public class ProductPriceUpdateMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;

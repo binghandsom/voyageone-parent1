@@ -13,7 +13,7 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
  * @version 2.0.0
  * @since 2.0.0
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_JM_PRODUCT_UPDATE)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_JM_PROMOTION_PRODUCT_UPDATE)
 public class JMProductUpdateMQMessageBody extends BaseMQMessageBody {
 
     // 表cms_bt_jm_promotion的id

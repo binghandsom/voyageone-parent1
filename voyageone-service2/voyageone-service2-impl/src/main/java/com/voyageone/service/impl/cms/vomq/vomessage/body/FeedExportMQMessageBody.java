@@ -12,7 +12,7 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
  * @Author rex
  * @Create 2016-12-30 10:38
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_FEED_EXPORT)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_EXPORT_FEED_INFO)
 public class FeedExportMQMessageBody extends BaseMQMessageBody {
 
     private int cmsBtExportTaskId;

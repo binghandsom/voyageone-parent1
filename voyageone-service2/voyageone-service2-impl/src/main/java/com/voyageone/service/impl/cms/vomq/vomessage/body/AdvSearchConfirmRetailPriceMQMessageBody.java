@@ -8,9 +8,7 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 高级检索-确认指导价变更Job消息实体
@@ -18,7 +16,7 @@ import java.util.Map;
  * @Author rex
  * @Create 2016-12-30 17:08
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_ADV_SEARCH_CONFIRM_RETAIL_PRICE)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_CONFIRM_PLATFORM_RETAIL_PRICE)
 public class AdvSearchConfirmRetailPriceMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;

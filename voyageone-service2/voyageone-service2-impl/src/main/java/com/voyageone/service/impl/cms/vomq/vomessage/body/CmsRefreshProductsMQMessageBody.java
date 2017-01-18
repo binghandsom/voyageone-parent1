@@ -8,7 +8,7 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 /**
  * Created by james on 2017/1/4.
  */
-@VOMQQueue(value =  CmsMqRoutingKey.CMS_TASK_REFRESH_PRODUCTS)
+@VOMQQueue(value =  CmsMqRoutingKey.CMS_REFRESH_PRODUCT_PLATFORM_FIELDS)
 public class CmsRefreshProductsMQMessageBody extends BaseMQMessageBody  {
 
     Integer taskId;

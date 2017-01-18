@@ -6,8 +6,6 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 
-import org.apache.commons.collections.CollectionUtils;
-
 import java.util.Map;
 
 /**
@@ -16,7 +14,7 @@ import java.util.Map;
  * @Author rex
  * @Create 2016-12-30 14:18
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_ADV_SEARCH_EXPORT)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_EXPORT_PRODUCT_INFO)
 public class AdvSearchExportMQMessageBody extends BaseMQMessageBody {
 
     private Integer cmsBtExportTaskId;

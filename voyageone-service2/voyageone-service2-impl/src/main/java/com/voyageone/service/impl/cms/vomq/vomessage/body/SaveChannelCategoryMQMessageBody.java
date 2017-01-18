@@ -15,7 +15,7 @@ import java.util.Map;
  * @Author rex
  * @Create 2017-01-03 14:10
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_SAVE_CHANNEL_CATEGORY)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_UPDATE_PRODUCT_PLATFORM_CHANNEL_CATEGORY)
 public class SaveChannelCategoryMQMessageBody extends BaseMQMessageBody {
 
     private Map<String, Object> params;

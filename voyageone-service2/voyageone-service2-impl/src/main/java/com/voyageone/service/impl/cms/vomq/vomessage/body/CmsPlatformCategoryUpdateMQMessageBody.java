@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.vomq.vomessage.body;
 
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
@@ -8,13 +7,12 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by james on 2017/1/13.
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_PLATFORM_CATEGORY_UPDATE)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_UPDATE_PRODUCT_PLATFORM_CATEGORY)
 public class CmsPlatformCategoryUpdateMQMessageBody extends BaseMQMessageBody {
     String channelId;
     List<String> productCodes;

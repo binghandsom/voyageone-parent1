@@ -141,7 +141,7 @@ public class CmsProductPriceUpdateService extends BaseService {
         updObj.setQuery("{'prodId':#,'platforms.P#.skus':{$exists:true}}");
         updObj.setQueryParameters(prodId, cartId);
         updObj.setUpdate("{$set:{'platforms.P#.pPriceMsrpSt':#,'platforms.P#.pPriceMsrpEd':#, 'platforms.P#.pPriceRetailSt':#,'platforms.P#.pPriceRetailEd':#, 'platforms.P#.pPriceSaleSt':#,'platforms.P#.pPriceSaleEd':#, 'modified':#,'modifier':#}}");
-        updObj.setUpdateParameters(cartId, newPriceMsrpSt, cartId, newPriceMsrpEd, cartId, newPriceRetailSt, cartId, newPriceRetailEd, cartId, newPriceSaleSt, cartId, newPriceSaleEd, DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_PRODUCT_PRICE_UPDATE);
+        updObj.setUpdateParameters(cartId, newPriceMsrpSt, cartId, newPriceMsrpEd, cartId, newPriceRetailSt, cartId, newPriceRetailEd, cartId, newPriceSaleSt, cartId, newPriceSaleEd, DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_BATCH_COUNT_PRODUCT_PRICE);
         WriteResult rs = productService.updateFirstProduct(updObj, channelId);
         $debug("CmsProcductPriceUpdateService 产品platforms价格范围更新结果 " + rs.toString());
 
@@ -199,7 +199,7 @@ public class CmsProductPriceUpdateService extends BaseService {
         updObj.setQuery("{'mainProductCode':#,'cartId':#}");
         updObj.setQueryParameters(mProdCode, cartId);
         updObj.setUpdate("{$set:{'priceMsrpSt':#,'priceMsrpEd':#, 'priceRetailSt':#,'priceRetailEd':#, 'priceSaleSt':#,'priceSaleEd':#, 'modified':#,'modifier':#}}");
-        updObj.setUpdateParameters(newPriceMsrpSt, newPriceMsrpEd, newPriceRetailSt, newPriceRetailEd, newPriceSaleSt, newPriceSaleEd, DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_PRODUCT_PRICE_UPDATE);
+        updObj.setUpdateParameters(newPriceMsrpSt, newPriceMsrpEd, newPriceRetailSt, newPriceRetailEd, newPriceSaleSt, newPriceSaleEd, DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_BATCH_COUNT_PRODUCT_PRICE);
 
         rs = productGroupService.updateFirst(updObj, (String) messageMap.get("channelId"));
         $debug("CmsProcductPriceUpdateService 产品group价格范围更新结果 " + rs.toString());

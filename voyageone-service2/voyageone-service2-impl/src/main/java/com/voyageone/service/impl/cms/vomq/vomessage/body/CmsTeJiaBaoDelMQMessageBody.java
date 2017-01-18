@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by james on 2017/1/16.
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_TM_TEJIABAO_DEL)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_TM_TE_JIA_BAO_DEL)
 public class CmsTeJiaBaoDelMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;

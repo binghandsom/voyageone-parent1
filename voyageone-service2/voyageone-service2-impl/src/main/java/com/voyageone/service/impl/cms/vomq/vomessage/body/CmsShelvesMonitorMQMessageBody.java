@@ -5,12 +5,10 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 
-import java.util.List;
-
 /**
  * Created by james on 2017/1/3.
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_BATCH_SHELVES_MONITOR)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_GET_SHELVES_MONITOR)
 public class CmsShelvesMonitorMQMessageBody extends BaseMQMessageBody {
 
     private Integer shelvesId;
