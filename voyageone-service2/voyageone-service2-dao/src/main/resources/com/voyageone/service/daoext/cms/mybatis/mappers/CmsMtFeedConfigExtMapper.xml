@@ -84,8 +84,11 @@
                 <when test="k =='sku'">
                     ${k} varchar(200) NOT NULL DEFAULT ''
                 </when>
+                <when test="k =='category'">
+                    ${k} varchar(200) NOT NULL DEFAULT ''
+                </when>
                 <otherwise>
-                    ${k} varchar(128) NOT NULL DEFAULT ''
+                    ${k} text
                 </otherwise>
             </choose>
         </foreach>
