@@ -426,10 +426,11 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             platform.setpBrandId(null);
                             platform.setpBrandName(null);
                             platform.getSkus().forEach(sku->{
-                                sku.setAttribute("priceSale",null);
-                                sku.setAttribute("priceRetail",null);
-                                sku.setAttribute("priceMsrp",null);
-                                sku.setAttribute("originalPriceMsrp",null);
+                                BaseMongoMap<String, Object> newSku = new BaseMongoMap<String, Object>();
+                                newSku.setAttribute("skuCode",sku.getStringAttribute("skuCode"));
+                                newSku.setAttribute("isSale",sku.get("isSale"));
+                                newSku.setAttribute("sizeNick",sku.get("sizeNick"));
+                                sku = newSku;
                             });
                             // 重新设置P28平台的mainProductCode和pIsMain
                             CmsBtProductGroupModel cartGroupModel = productGroupService.selectProductGroupByCode(usJoiChannelId, productModel.getCommon().getFields().getCode(), cartId);
@@ -845,10 +846,11 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 // 重新设置newPlatform的skus，因为fromPlatform里面过来的是全部的sku，要去掉拆分到其他产品的sku
                                 newPlatform.setSkus(correctPlatformSkus);
                                 newPlatform.getSkus().forEach(sku->{
-                                    sku.setAttribute("priceSale",null);
-                                    sku.setAttribute("priceRetail",null);
-                                    sku.setAttribute("priceMsrp",null);
-                                    sku.setAttribute("originalPriceMsrp",null);
+                                    BaseMongoMap<String, Object> newSku = new BaseMongoMap<String, Object>();
+                                    newSku.setAttribute("skuCode",sku.getStringAttribute("skuCode"));
+                                    newSku.setAttribute("isSale",sku.get("isSale"));
+                                    newSku.setAttribute("sizeNick",sku.get("sizeNick"));
+                                    sku = newSku;
                                 });
 
                                 // 设定是否主商品(根据主店商品code来判断)
