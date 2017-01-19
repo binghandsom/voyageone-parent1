@@ -86,7 +86,6 @@ public class ImagesService extends BaseService {
         if (CmsConstants.IMAGE_COMPARE_RULE.ORIGINAL_IAMGE_NAME.equals(imgCompareRule)) {
             String imageName = ImgUtils.getImageName(originalUrl);//originalUrl.substring(originalUrl.lastIndexOf("/") + 1).substring(0, originalUrl.substring(originalUrl.lastIndexOf("/") + 1).indexOf("?"));
 
-
             List<CmsBtImagesModel> findImages = this.selectImagesByCode(channelId, code);
 
             findImages = findImages.stream().filter(image ->
