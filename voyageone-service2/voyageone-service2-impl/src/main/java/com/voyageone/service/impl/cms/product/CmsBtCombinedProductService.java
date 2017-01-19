@@ -629,7 +629,7 @@ public class CmsBtCombinedProductService extends BaseService {
                     if (!numID.equals(editOne.getNumID()) || !channelId.equals(editOne.getChannelId()) || cartId.intValue() != editOne.getCartId().intValue()) {
                         throw new BusinessException("编辑组合商品失败, 数据错误.");
                     }
-                    model.setSyncPlatform(editOne.getSyncPlatform());
+                    // model.setSyncPlatform(editOne.getSyncPlatform());
                     model.setCreater(editOne.getCreater());
                     model.setCreated(editOne.getCreated());
                 }

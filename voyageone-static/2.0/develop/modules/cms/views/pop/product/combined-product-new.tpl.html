@@ -70,14 +70,12 @@
 
             <div class="row form-group">
                 <div class="panel panel-default">
-                    <div class="panel-heading">
+                    <div class="panel-heading" ng-if="vm.product.syncPlatform==0">
                         <div class="row">
                             <div class="col-md-1 col-md-offset-11">
                                 <button type="button" class="btn btn-success btn-pop" ng-click="copySku()">添加</button>
                             </div>
                         </div>
-
-
                     </div>
                     <div class="panel-body">
                         <table class="table table-hover-new text-center">
@@ -96,7 +94,7 @@
                             <tr ng-repeat="sku in vm.product.skus">
                                 <td colspan="5">
                                     <div class="panel panel-danger">
-                                        <div class="panel-heading" style="background: #f2dede">
+                                        <div class="panel-heading" ng-if="vm.product.syncPlatform==0" style="background: #f2dede">
                                             <div class="row">
                                                 <button type="button" class="btn btn-danger pull-right" ng-click="removeSku($index)">删除</button>&nbsp;
                                             </div>

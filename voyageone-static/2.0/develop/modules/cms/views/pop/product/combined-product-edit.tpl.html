@@ -9,7 +9,7 @@
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_PLATFORM"></strong></label>
                 <div class="col-sm-4">
-                    <select class="form-control" ng-model="vm.product.cartId">
+                    <select class="form-control" ng-model="vm.product.cartId" disabled>
                         <option ng-repeat="(key,value) in vm.carts" value="{{key}}">{{value}}</option>
                     </select>
                 </div>

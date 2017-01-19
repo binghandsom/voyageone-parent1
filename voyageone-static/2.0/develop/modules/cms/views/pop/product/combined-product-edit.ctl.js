@@ -112,6 +112,7 @@ define([
                         if ($scope.vm.product.syncPlatform == 1) {
                             var tempProduct = angular.copy($scope.vm.product);
                             $scope.vm.product = {
+                                _id: tempProduct._id,
                                 syncPlatform: 0,
                                 cartId: tempProduct.cartId,
                                 numID: tempProduct.numID,
