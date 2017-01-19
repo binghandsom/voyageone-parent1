@@ -9,6 +9,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author james.li on 2016/5/4.
@@ -23,7 +25,14 @@ public class SneakerHeadAnalysisServiceTest {
     @Test
     public void testOnStartup() throws Exception {
         Feeds.reload();
-        sneakerHeadAnalysisService.onStartup(new ArrayList<TaskControlBean>());
+        TaskControlBean taskControlBean = new TaskControlBean();
+        taskControlBean.setTask_id("CmsSneakerHeadAnalysisJob");
+        taskControlBean.setCfg_name("run_flg");
+        taskControlBean.setCfg_val1("1");
+        taskControlBean.setEnd_time("1464163223766");
+        List<TaskControlBean> taskControlBeans = new ArrayList<TaskControlBean>();
+        taskControlBeans.add(taskControlBean);
+        sneakerHeadAnalysisService.onStartup(taskControlBeans);
 
     }
 }
