@@ -3082,7 +3082,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //            List<CmsBtImagesModel> findImage = cmsBtImageDaoExt.selectImages(param);
             CmsBtImagesModel findImage = imagesService.getImageIsExists(channelId, code, originalUrl);
             CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
-
+            $info(originalUrl);
             // 不存在则插入
             if (findImage == null) {
                 $info("findImage == null");

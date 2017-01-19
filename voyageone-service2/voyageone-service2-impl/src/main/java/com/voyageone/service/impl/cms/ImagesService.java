@@ -83,9 +83,10 @@ public class ImagesService extends BaseService {
         }
         // update by desmond 2016/07/14 end
 
+        $info("imgCompareRule="+imgCompareRule);
         if (CmsConstants.IMAGE_COMPARE_RULE.ORIGINAL_IAMGE_NAME.equals(imgCompareRule)) {
             String imageName = ImgUtils.getImageName(originalUrl);//originalUrl.substring(originalUrl.lastIndexOf("/") + 1).substring(0, originalUrl.substring(originalUrl.lastIndexOf("/") + 1).indexOf("?"));
-
+            $info("imageName="+imageName);
 
             List<CmsBtImagesModel> findImages = this.selectImagesByCode(channelId, code);
 
