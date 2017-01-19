@@ -82,22 +82,22 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private final static int SELECT_PAGE_SIZE = 100;
 
     /*group级导出时和平台无关的固定列：英文和中文列头名称*/
-    private final static String[] _GROUP_STATIC_COLS = {"model", "brand", "category", "productNameEn", "originalTitleCn", "mainCode"};
-    private final static String[] _GROUP_STATIC_COLS_ZN = {"款号", "品牌", "主类目", "产品名称英语", "产品名称中文", "主商品编码"};
-
+    private final static String[] _GROUP_STATIC_COLS = {"model", "brand", "category", "productNameEn", "originalTitleCn", "mainCode","feeCatPath","origSizeType"};
+    private final static String[] _GROUP_STATIC_COLS_ZN = {"款号", "品牌", "主类目", "产品名称英语", "产品名称中文", "主商品编码","feed分类","原始尺码类型"};
+    //common.fields.origSizeType
     /*code级导出时和平台无关的固定列：英文和中文列头名称*/
-    private final static String[] _CODE_STATIC_COLS = {"code", "brand", "category", "productNameEn", "originalTitleCn", "model", "quantity", "color"};
-    private final static String[] _CODE_STATIC_COLS_ZN = {"商品编码", "品牌", "主类目", "产品名称英语", "产品名称中文", "款号", "库存", "颜色/口味/香型等"};
+    private final static String[] _CODE_STATIC_COLS = {"code", "brand", "category", "productNameEn", "originalTitleCn", "model", "quantity", "color","feeCatPath","origSizeType"};
+    private final static String[] _CODE_STATIC_COLS_ZN = {"商品编码", "品牌", "主类目", "产品名称英语", "产品名称中文", "款号", "库存", "颜色/口味/香型等","feed分类","原始尺码类型"};
 
     /*sku级导出时和平台无关的固定列：英文和中文列头名称*/
     private final static String[] _SKU_STATIC_COLS = {
             "code", "barcode", "clientSKU", "brand", "category", "productNameEn",
             "originalTitleCn", "model", "code", "inventory", "color", "clientSize",
-            "size", "clientPriceMsrp", "clientPriceRetail", "clientPriceCost", "weightCalc"};
+            "size", "clientPriceMsrp", "clientPriceRetail", "clientPriceCost", "weightCalc","feeCatPath","origSizeType"};
     private final static String[] _SKU_STATIC_COLS_ZN = {
             "sku", "条形码", "客户原始SKU", "品牌", "主类目", "产品名称英语",
             "产品名称中文", "款号", "商品编码", "库存", "颜色/口味/香型等", "客户原始Size",
-            "转换后Size", "客户建议售价", "客户指导价", "客户成本价", "重量（lb）"};
+            "转换后Size", "客户建议售价", "客户指导价", "客户成本价", "重量（lb）","feed分类","原始尺码类型"};
 
 
     // 各平台固定输出列
@@ -266,12 +266,13 @@ public class CmsAdvSearchExportFileService extends BaseService {
             searchItemStr += ";";
         if (searchValue.getFileType() == 3) {
             // 要输出sku级信息
-            searchItemStr += "common.skus;common.fields.model;common.fields.color;common.fields.originalCode;";
+            searchItemStr += "common.skus;common.fields.model;common.fields.color;feed.catPath;common.fields.origSizeType;";
         } else if (searchValue.getFileType() == 2) {
             // 要输出group级信息
-            searchItemStr += "common.fields.model;";
+            searchItemStr += "common.fields.model;feed.catPath;common.fields.origSizeType;";
         } else if (searchValue.getFileType() == 1) {
-            searchItemStr += "common.fields.model;common.fields.color;";
+            //code
+            searchItemStr += "common.fields.model;common.fields.color;feed.catPath;common.fields.origSizeType;";
         } else if (searchValue.getFileType() == 4) {
             searchItemStr += "common.skus.clientNetPrice;common.fields.color;common.fields.originalCode;platforms";
         } else if (searchValue.getFileType() == 5) {
@@ -725,6 +726,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(fields.getQuantity());
             }
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getColor()));
+            FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getFeed().getCatPath()));
+            FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommon().getFields().getOrigSizeType()));
 
             for (TypeChannelBean cartObj : cartList) {
                 CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
@@ -930,6 +933,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getOriginalTitleCn()));
             // 2016-12-08 group级导出，追加下载主商品的code字段
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getPlatformNotNull(0).getMainProductCode()));
+            FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getFeed().getCatPath()));
+            FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommon().getFields().getOrigSizeType()));
+
 
             for (TypeChannelBean cartObj : cartList) {
                 CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
@@ -1094,6 +1100,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 } else {
                     FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getWeight());
                 }
+                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getFeed().getCatPath()));
+                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommon().getFields().getOrigSizeType()));
 
                 for (TypeChannelBean cartObj : cartList) {
                     CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
