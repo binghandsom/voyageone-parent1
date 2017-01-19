@@ -25,6 +25,7 @@ define([
 
         $scope.initialize = function () {
             jmPromotionDetailService.init({jmPromotionRowId: $routeParams.jmpromId}).then(function (res) {
+
                 $scope.parentModel = res.data.modelPromotion;
                 $scope.parentModel.prodSum = $scope.parentModel.prodSum || 0;
                 $scope.parentModel.quantitySum = $scope.parentModel.quantitySum || 0;
@@ -35,6 +36,8 @@ define([
                 $scope.vm.isEnd = res.data.isEnd;//活动是否结束
                 $scope.vm.isUpdateJM = res.data.isUpdateJM;
                 $scope.vm.brandList = res.data.brandList;
+
+                spDataService.passDated = $scope.vm.passDated = $scope.parentModel.passDated;
             });
             $scope.search();
             $scope.modelUpdateDealEndTime.promotionId = $routeParams.jmpromId;

@@ -120,10 +120,10 @@
                     <hr>
                 </li>
                 <li>
-                    <button type="button" class="btn btn-success" ng-click="ctrl.save()">暂存</button>
+                    <button type="button" class="btn btn-success" ng-click="ctrl.save()" ng-disabled="ctrl.spDataService.passDated">暂存</button>
                 </li>
                 <li>
-                    <button type="button" class="btn btn-primary" ng-click="ctrl.submit()">提交</button>
+                    <button type="button" class="btn btn-primary" ng-click="ctrl.submit()" ng-disabled="ctrl.spDataService.passDated">提交</button>
                 </li>
             </ul>
         </sticky>
