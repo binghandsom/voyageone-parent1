@@ -50,7 +50,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private String isFeedReImport;
     private String productType;
     private String material;
-    private String lastReceivedOn;
+    private String lastReceivedOn = "";
 
     public String getCategory() {
         return category;
