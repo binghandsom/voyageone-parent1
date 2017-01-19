@@ -3085,6 +3085,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
             // 不存在则插入
             if (findImage == null) {
+                $info("findImage == null");
                 // 图片名最后一部分的值（索引）
                 int index = 1;
 
@@ -3128,7 +3129,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
                 return newModel.getImgName();
             } else {
-
+                $info("findImage != null");
                 // 如果原始图片的地址发生变更则做更新操作
                 if (!originalUrl.equals(findImage.getOriginalUrl())) {
                     findImage.setOriginalUrl(originalUrl);
