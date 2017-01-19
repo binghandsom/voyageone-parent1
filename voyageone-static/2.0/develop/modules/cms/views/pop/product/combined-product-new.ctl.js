@@ -9,23 +9,23 @@ define([
     ], function (cms) {
         cms.controller("CombinedProductNewController", (function () {
 
-            function CombinedProductNewController($scope, context, combinedProductService, $compile, $templateRequest, $document, alert) {
+            function CombinedProductNewController($scope, context, combinedProductService, $compile, $templateRequest, $document, alert, confirm) {
                 $scope.vm = {
                     config: {
                         open: true,
                         showFlag: true,
-                        startSupplyChain : false
+                        startSupplyChain: false
                     },
                     carts: {},
                     product: {
-                        pf:0,
-                        skus : [
+                        pf: 0,
+                        skus: [
                             {
-                                skuItems : [
+                                skuItems: [
                                     {}
                                 ],
-                                tempSuitSellingPriceCn : 0,
-                                tempSuitPreferentialPrice : 0
+                                tempSuitSellingPriceCn: 0,
+                                tempSuitPreferentialPrice: 0
                             }
                         ]
                     }
@@ -46,7 +46,7 @@ define([
                     combinedProductService.getCombinedProductPlatformDetail({
                         "cartId": cartId,
                         "numID": numID,
-                        "new" : "1"
+                        "new": "1"
                     }).then(function (resp) {
                         // $scope.vm.config.showFlag = true;
                         if (resp.data.product != null) {
@@ -73,7 +73,7 @@ define([
                                         });
                                         if (!targetSkuItem) {
                                             alert("SKU:" + skuItem.skuCode + "查询不到具体信息！");
-                                        }else {
+                                        } else {
                                             skuItem.code = targetSkuItem.code;
                                             skuItem.productName = targetSkuItem.productName;
                                             skuItem.sellingPriceCn = targetSkuItem.sellingPriceCn;
@@ -84,23 +84,23 @@ define([
                             });
                         } else {
                             $scope.vm.product.pf = 0;
-                            $scope.vm.product.skus = [{skuItems:[{}]}];
+                            $scope.vm.product.skus = [{skuItems: [{}]}];
                             alert("查询不到组合商品信息！");
                         }
 
                     }, function (resp) {
                         var tempProduct = angular.copy($scope.vm.product);
                         $scope.vm.product = {
-                            pf : 0,
-                            cartId : tempProduct.cartId,
-                            numID : tempProduct.numID,
-                            skus : [
+                            pf: 0,
+                            cartId: tempProduct.cartId,
+                            numID: tempProduct.numID,
+                            skus: [
                                 {
-                                    skuItems : [
+                                    skuItems: [
                                         {}
                                     ],
-                                    tempSuitSellingPriceCn : 0,
-                                    tempSuitPreferentialPrice : 0
+                                    tempSuitSellingPriceCn: 0,
+                                    tempSuitPreferentialPrice: 0
                                 }
                             ]
                         };
@@ -133,13 +133,27 @@ define([
                 $scope.copySku = function () {
                     $scope.vm.product.skus.push(
                         {
-                            tempSuitSellingPriceCn : 0,
-                            tempSuitPreferentialPrice : 0,
-                            skuItems : [{}]
+                            tempSuitSellingPriceCn: 0,
+                            tempSuitPreferentialPrice: 0,
+                            skuItems: [{}]
                         }
                     );
-                }
-                
+                };
+
+                $scope.removeSku = function (index) {
+                    confirm('您确定要删除该组合商品吗？').then(function () {
+
+                        var _skuList = $scope.vm.product.skus;
+
+                        if (!_skuList || _skuList.length === 0)
+                            return;
+
+                        _skuList.splice(index, 1);
+
+                    });
+
+                };
+
                 // 新增实际SKU
                 $scope.copySkuItem = function (skuItems) {
                     if (!skuItems) {
@@ -170,10 +184,10 @@ define([
                         "skuCode": skuItem.skuCode,
                         "cartId": $scope.vm.product.cartId
                     }).then(function (resp) {
-                        if(resp.data.skuItem == null) {
+                        if (resp.data.skuItem == null) {
                             clearSkuItem(skuItem); // 查询不到清空信息
                             alert("查询不到SKU信息！");
-                        }else {
+                        } else {
                             _.extend(skuItem, resp.data.skuItem);
                             dynamicSkuPrice(sku);
                         }
@@ -182,12 +196,12 @@ define([
 
                 // 清空skuItem信息
                 function clearSkuItem(skuItem) {
-                    if (!skuItem){
+                    if (!skuItem) {
                         return;
                     }
-                    _.extend(skuItem, {code:"",skuCode:"",sellingPriceCn:"",preferentialPrice:"",productName:""});
+                    _.extend(skuItem, {code: "", skuCode: "", sellingPriceCn: "", preferentialPrice: "", productName: ""});
                 }
-                
+
                 // 改变实际SKU价格
                 $scope.changeSkuItemPrice = function (sku) {
                     dynamicSkuPrice(sku);
