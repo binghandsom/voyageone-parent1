@@ -584,7 +584,9 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
     public Map<String, Object> getPlatformProduct(String productId, ShopBean shopBean) throws Exception {
         fieldHashMap fieldMap = new fieldHashMap();
         if(StringUtils.isEmpty(productId)) return fieldMap;
-        String schema = tbProductService.getProductSchema(Long.parseLong(productId), shopBean);
+//        String schema = tbProductService.getProductSchema(Long.parseLong(productId), shopBean);
+		StringBuffer failCause = null;
+		String schema = tbProductService.getProductUpdateSchema(Long.parseLong(productId), shopBean, failCause);
         if (schema != null) {
             List<Field> fields = SchemaReader.readXmlForList(schema);
 
@@ -646,18 +648,18 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
                 MultiComplexField multiComplexField = (MultiComplexField) field;
                 List<Map<String, Object>> multiComplexValues = new ArrayList<>();
 
-                if ("cspu_list".equals(field.getId())) {
-                    if (multiComplexField.getFields() != null) {
-                        for (Field f : multiComplexField.getFields()) {
-                            ComplexField item = (ComplexField)f;
-                            fieldHashMap obj = new fieldHashMap();
-                            for (Field ff : item.getFields()) {
-                                obj.put(ff.getId(), getFieldDefaultValue(ff));
-                            }
-                            multiComplexValues.add(obj);
-                        }
-                    }
-                } else {
+//                if ("cspu_list".equals(field.getId())) {
+//                    if (multiComplexField.getFields() != null) {
+//                        for (Field f : multiComplexField.getFields()) {
+//                            ComplexField item = (ComplexField)f;
+//                            fieldHashMap obj = new fieldHashMap();
+//                            for (Field ff : item.getFields()) {
+//                                obj.put(ff.getId(), getFieldDefaultValue(ff));
+//                            }
+//                            multiComplexValues.add(obj);
+//                        }
+//                    }
+//                } else {
                     if (multiComplexField.getDefaultComplexValues() != null) {
                         for (ComplexValue item : multiComplexField.getDefaultComplexValues()) {
                             fieldHashMap obj = new fieldHashMap();
@@ -667,7 +669,7 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
                             multiComplexValues.add(obj);
                         }
                     }
-                }
+//                }
                 fieldMap.put(multiComplexField.getId(), multiComplexValues);
                 break;
         }
@@ -721,53 +723,53 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
         return null;
     }
 
-    private Object getFieldDefaultValue(Field field) {
-        List<String> values;
-        switch (field.getType()) {
-            case INPUT:
-                InputField inputField = (InputField) field;
-                return inputField.getDefaultValue();
-
-            case MULTIINPUT:
-                MultiInputField multiInputField = (MultiInputField) field;
-                values = new ArrayList<>();
-                multiInputField.getDefaultValues().forEach(value -> values.add(value));
-                return values;
-
-            case SINGLECHECK:
-                SingleCheckField singleCheckField = (SingleCheckField) field;
-                return singleCheckField.getDefaultValue();
-
-            case MULTICHECK:
-                MultiCheckField multiCheckField = (MultiCheckField) field;
-                values = new ArrayList<>();
-                multiCheckField.getDefaultValues().forEach(value -> values.add(value));
-                return values;
-
-            case COMPLEX:
-                ComplexField complexField = (ComplexField) field;
-                Map<String, Field> fieldMap = complexField.getFieldMap();
-                fieldHashMap complexValues = new fieldHashMap();
-                for (String key : fieldMap.keySet()) {
-                    complexValues.put(key, getFieldDefaultValue(fieldMap.get(key)));
-                }
-                return complexValues;
-
-            case MULTICOMPLEX:
-                MultiComplexField multiComplexField = (MultiComplexField) field;
-                List<Object> multiComplexValues = new ArrayList<>();
-                if (multiComplexField.getFieldMap() != null) {
-                    for (ComplexValue item : multiComplexField.getComplexValues()) {
-                        for (String fieldId : item.getFieldKeySet()) {
-                            multiComplexValues.add(getFieldDefaultValue(item.getValueField(fieldId)));
-                        }
-                    }
-                }
-                return multiComplexValues;
-        }
-
-        return null;
-    }
+//    private Object getFieldDefaultValue(Field field) {
+//        List<String> values;
+//        switch (field.getType()) {
+//            case INPUT:
+//                InputField inputField = (InputField) field;
+//                return inputField.getDefaultValue();
+//
+//            case MULTIINPUT:
+//                MultiInputField multiInputField = (MultiInputField) field;
+//                values = new ArrayList<>();
+//                multiInputField.getDefaultValues().forEach(value -> values.add(value));
+//                return values;
+//
+//            case SINGLECHECK:
+//                SingleCheckField singleCheckField = (SingleCheckField) field;
+//                return singleCheckField.getDefaultValue();
+//
+//            case MULTICHECK:
+//                MultiCheckField multiCheckField = (MultiCheckField) field;
+//                values = new ArrayList<>();
+//                multiCheckField.getDefaultValues().forEach(value -> values.add(value));
+//                return values;
+//
+//            case COMPLEX:
+//                ComplexField complexField = (ComplexField) field;
+//                Map<String, Field> fieldMap = complexField.getFieldMap();
+//                fieldHashMap complexValues = new fieldHashMap();
+//                for (String key : fieldMap.keySet()) {
+//                    complexValues.put(key, getFieldDefaultValue(fieldMap.get(key)));
+//                }
+//                return complexValues;
+//
+//            case MULTICOMPLEX:
+//                MultiComplexField multiComplexField = (MultiComplexField) field;
+//                List<Object> multiComplexValues = new ArrayList<>();
+//                if (multiComplexField.getFieldMap() != null) {
+//                    for (ComplexValue item : multiComplexField.getComplexValues()) {
+//                        for (String fieldId : item.getFieldKeySet()) {
+//                            multiComplexValues.add(getFieldDefaultValue(item.getValueField(fieldId)));
+//                        }
+//                    }
+//                }
+//                return multiComplexValues;
+//        }
+//
+//        return null;
+//    }
 
     class fieldHashMap extends HashMap<String, Object> {
         @Override
