@@ -439,7 +439,7 @@
                                     </td>
                                     <td class="text-center mfb-xxt">{{feedInfo.created}}</td>
                                     <td class="text-center mfb-xxt">{{feedInfo.modified}}</td>
-                                    <td class="text-center mfb-xxt">{{feedInfo.lastReceivedOn?feedInfo.lastReceivedOn:''}}</td>
+                                    <td class="text-center mfb-xxt">{{feedInfo.lastReceivedOn?(feedInfo.lastReceivedOn.length>19?feedInfo.lastReceivedOn.substring(0,19):feedInfo.lastReceivedOn):''}}</td>
                                 </tr>
                                 </tbody>
                             </table>
