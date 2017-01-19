@@ -106,11 +106,11 @@ public class CmsBtCombinedProductService extends BaseService {
      */
     public CmsBtCombinedProductModel getCombinedProductPlatformDetail(String numId, String channelId, Integer cartId, boolean local) {
         ShopBean shopBean = Shops.getShop(channelId, cartId);
-//        shopBean.setAppKey("21008948");
-//        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
-//        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-//        shopBean.setSessionKey("620230429acceg4103a72932e22e4d53856b145a192140b2854639042");
-//        shopBean.setShop_name("Target海外旗舰店");
+        shopBean.setAppKey("21008948");
+        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
+        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
+        shopBean.setSessionKey("620230429acceg4103a72932e22e4d53856b145a192140b2854639042");
+        shopBean.setShop_name("Target海外旗舰店");
         if (shopBean != null) {
             long threadNo = Thread.currentThread().getId();
             $info("threadNo:" + threadNo + " numiid:" + numId );
@@ -397,15 +397,14 @@ public class CmsBtCombinedProductService extends BaseService {
      * @param user
      */
     public void addCombinedProduct (CmsBtCombinedProductModel product, String channelId, String user) {
-        // 校验输入值是否合法
-        checkCombinedProducrtModel(product, channelId, ACTION_TYPE_ADD);
-        product.setCreater(user);
-        product.setCreated(DateTimeUtil.getNow());
         if (product.getStatus() == null || !CmsBtCombinedProductStatus.KV.containsKey(product.getStatus())) {
             product.setStatus(CmsBtCombinedProductStatus.TEMPORAL); // 默认暂存状态
         }
-        /*product.setPlatformStatus(CmsBtCombinedProductPlatformStatus.OFF_SHELVES);*/
+        product.setCreater(user);
+        product.setCreated(DateTimeUtil.getNow());
         product.setChannelId(channelId);
+        // 组合商品校验
+        checkCombinedProducrtModel(product, channelId, ACTION_TYPE_ADD);
         WriteResult rs = cmsBtCombinedProductDao.insert(product);
         $debug("新增 组合套装商品 结果 " + rs.toString());
 
@@ -572,17 +571,135 @@ public class CmsBtCombinedProductService extends BaseService {
      * 新增或者编辑时校验组合套装商品
      * @param model
      * @param channelId
+     * @param userName
      * @param actionType
      */
-    public void checkCombinedProducrtModel (CmsBtCombinedProductModel model, String channelId, String actionType) {
-        // 如果是暂存，不进行check，只需输入numId和选择cartId就行了
-        if (model != null && model.getStatus() != null && model.getStatus().intValue() == CmsBtCombinedProductStatus.TEMPORAL) {
-            if (model.getCartId() == null || StringUtils.isBlank(model.getNumID())) {
-                throw new BusinessException("组合套装商品暂存，请至少输入平台和商品编码！");
-            }
-            return;
+    public void checkCombinedProducrtModel (CmsBtCombinedProductModel model, String channelId, String userName, String actionType) {
+        if (!ACTION_TYPE_ADD.equals(actionType) && !ACTION_TYPE_EDIT.equals(actionType)) {
+            throw new BusinessException("异常操作!");
         }
-        List<CmsBtCombinedProductModel_Sku> skus = model.getSkus();
+        if (model.getStatus() == null)
+            model.setStatus(CmsBtCombinedProductStatus.TEMPORAL); // 默认状态-[暂存]
+        boolean isTemporal = model.getStatus().intValue() == CmsBtCombinedProductStatus.TEMPORAL.intValue(); // 是否暂存
+        if (isTemporal) {
+            if (model.getCartId() == null || StringUtils.isBlank(model.getNumID())) {
+                throw new BusinessException("[暂存]请至少输入 [平台] 和 [商品编码]");
+            }
+            // TODO 直接保存
+        } else {
+            String _id = model.get_id();
+            Integer cartId = model.getCartId();
+            String numID = model.getNumID();
+            String productName = model.getProductName();
+            List<CmsBtCombinedProductModel_Sku> skus = model.getSkus();
+            if (cartId == null) {
+                throw new BusinessException("组合商品数据错误, 平台为空.");
+            }
+            if (StringUtils.isBlank(numID)) {
+                throw new BusinessException("组合商品数据错误, 组合商品编码为空.");
+            }
+            if (StringUtils.isBlank(productName)) {
+                throw new BusinessException("组合商品数据错误, 组合商品名称为空.");
+            }
+            if (CollectionUtils.isEmpty(skus)) {
+                throw new BusinessException("组合商品数据错误, 组合商品SKU为空.");
+            }
+
+            CmsBtCombinedProductModel editOne = null;
+            if (ACTION_TYPE_EDIT.equals(actionType) && (StringUtils.isBlank(_id) || (editOne = cmsBtCombinedProductDao.selectById(_id)) == null)) {
+                throw new BusinessException("要编辑的组合商品不存在.");
+            }
+
+            boolean exist = false;
+            CmsBtCombinedProductModel targetModel = this.getByNumId(numID, channelId, cartId);
+            if (targetModel != null) {
+                if (ACTION_TYPE_ADD.equals(actionType)) {
+                    exist = true;
+                } else {
+                    exist = !model.get_id().equals(targetModel.get_id());
+                }
+                if (exist) {
+                    throw new BusinessException(String.format("组合商品数据错误, numID=%s已被占用.", numID));
+                }
+            }
+
+            Map<String, Double> suitSkuMap = new HashMap<String, Double>();
+
+            String suitSkuCode = null;
+            Double suitPreferentialPrice = null;
+            Double tempSuitPreferentialPrice = 0D;
+            List<CmsBtCombinedProductModel_Sku_Item> skuItems = null;
+            for (CmsBtCombinedProductModel_Sku sku:skus) {
+                suitSkuCode = sku.getSuitSkuCode();
+                suitPreferentialPrice = sku.getSuitPreferentialPrice();
+                skuItems = sku.getSkuItems();
+                if (StringUtils.isNotBlank(suitSkuCode) || suitPreferentialPrice == null || CollectionUtils.isEmpty(skuItems)) {
+                    $error(String.format("组合商品数据错误, numID=%s, sku=%s", numID, JacksonUtil.bean2Json(sku)));
+                    throw new BusinessException("组合商品数据错误, SKU数据异常.");
+                }
+
+                String skuCode = null;
+                Double preferentialPrice = null;
+                String skuProductName = null;
+                for (CmsBtCombinedProductModel_Sku_Item skuItem:skuItems) {
+                    skuCode = skuItem.getSkuCode();
+                    preferentialPrice = skuItem.getPreferentialPrice();
+                    if (StringUtils.isBlank(skuCode) || preferentialPrice == null) {
+                        throw new BusinessException("组合商品数据错误, 真实SKU编号或单品优惠售价为空.");
+                    }
+                    tempSuitPreferentialPrice += preferentialPrice;
+                    if (suitPreferentialPrice.doubleValue() != tempSuitPreferentialPrice.doubleValue()) {
+                        throw new BusinessException(String.format("组合商品数据错误, SKU=%s实际售价和商品单品优惠售价之和不相等."));
+                    }
+
+                    CmsBtCombinedProductModel_Sku_Item tempSkuItem = this.getSkuDetail(skuCode, channelId, cartId);
+                    if (tempSkuItem == null) {
+                        throw new BusinessException(String.format("组合商品数据错误, 真实SKU=%s不存在.", skuCode));
+                    }
+                    skuItem.setSellingPriceCn(tempSkuItem.getSellingPriceCn()); // 设置中国最终售价
+                    skuItem.setProductName(tempSkuItem.getProductName()); // 设置商品名称
+                }
+                suitSkuMap.put(suitSkuCode, suitPreferentialPrice);
+            }
+            if (skus.size() != suitSkuMap.size()) {
+                throw new BusinessException("组合商品数据错误, 虚拟SKU编号重复.");
+            }
+            // 校验虚拟SKU编号是否已经存在
+            for (String tempSuitSkuCode:suitSkuMap.keySet()) {
+                CmsBtCombinedProductModel tempModel = this.getCombinedProductBySuitSkuCode(suitSkuCode);
+                exist = false;
+                if (tempModel != null) {
+                    if (ACTION_TYPE_ADD.equals(actionType)) {
+                        exist = true; // 新增已存在
+                    } else {
+                        exist = !numID.equals(tempModel.getNumID());
+                    }
+                    throw new BusinessException(String.format("数据错误, 虚拟SKU=%s已在其他组合商品中存在.", tempSuitSkuCode));
+                }
+            }
+
+            // 校验pf参数 TODO
+        }
+
+
+
+
+
+        if (model.getCartId() == null || StringUtils.isBlank(model.getNumID()) || StringUtils.isBlank(model.getProductName()) || CollectionUtils.isEmpty(skus = model.getSkus())) {
+            $error(String.format("组合商品数据错误, userName=%s, channelId=%s, params=%s", userName, channelId, JacksonUtil.bean2Json(model)));
+            throw new BusinessException("组合商品数据错误!");
+        }
+
+        for (CmsBtCombinedProductModel_Sku sku:skus) {
+            String suitSkuCode = sku.getSuitSkuCode();
+            Double suitPreferentialPrice = sku.getSuitPreferentialPrice();
+            List<CmsBtCombinedProductModel_Sku_Item> skuItems = sku.getSkuItems();
+            if (StringUtils.isBlank(suitSkuCode) || suitPreferentialPrice == null || CollectionUtils.isEmpty(skuItems)) {
+
+            }
+        }
+
+
         if (model == null || StringUtils.isBlank(model.getNumID()) || model.getCartId() == null ) {
             throw new BusinessException("参数错误！");
         }
