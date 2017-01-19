@@ -123,7 +123,7 @@ define([
                 };
 
                 $scope.removeSku = function (index) {
-                    confirm('您确定要删除该组合商品吗？').then(function () {
+                    confirm('您确定要删除该组合商品SKU吗？').then(function () {
 
                         var _skuList = $scope.vm.product.skus;
 
