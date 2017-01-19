@@ -16,6 +16,7 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.tmall.TbBase;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -33,6 +34,9 @@ public class TbSaleService extends TbBase {
 
     private static final int PAGE_SIZE = 200;
 
+    @Autowired
+    private TbProductService tbProductService;
+
     /**
      * 天猫/淘宝商品上架
      *
@@ -40,19 +44,48 @@ public class TbSaleService extends TbBase {
      * @param numIid String 商品数字ID，该参数必须
      */
     public ItemUpdateListingResponse doWareUpdateListing(ShopBean shopBean, String numIid) {
+//        // 商品上架之前，去天猫获取一下实时库存
+//        String fieldId = "quantity";     // "商品数量"
+//        Map<String, Field> updateItemFieldMap = null;
+//        try {
+//            // 获取商品编辑规则信息
+//            updateItemFieldMap = tbProductService.getWareInfoItem(numIid, shopBean);
+//        } catch (Exception e) {
+//            logger.info(e.getMessage());
+//            return null;
+//        }
+//        if (MapUtils.isEmpty(updateItemFieldMap)) {
+//            String errMsg = String.format("商品上架 获取天猫实时库存失败！[numIId:%s]", numIid);
+//            logger.info(errMsg);
+//            return null;
+//        }
+//        if (!updateItemFieldMap.containsKey(fieldId)) {
+//            String errMsg = String.format("商品上架 获取天猫实时库存失败！从天猫上取得的更新商品信息中没找到\"商品数量(quantity)\"这个项目！[numIId:%s]", numIid);
+//            logger.info(errMsg);
+//            return null;
+//        }
+//        // 商品数量(有SKU时等于所有SKU库存之和)
+//        InputField updateQuantityField = (InputField)updateItemFieldMap.get(fieldId);
+//        String quantityCnt = updateQuantityField.getDefaultValue();
+//        if (StringUtils.isEmpty(quantityCnt)) {
+//            String errMsg = String.format("商品上架 获取天猫实时库存失败！从天猫上取得的更新商品信息中的\"商品数量(quantity)\"为空！[numIId:%s]", numIid);
+//            logger.info(errMsg);
+//            return null;
+//        }
+        String quantityCnt = "0";
         logger.info("商品上架 " + numIid);
-        ItemUpdateListingRequest request = new ItemUpdateListingRequest ();
+        ItemUpdateListingRequest request = new ItemUpdateListingRequest();
         request.setNumIid(NumberUtils.toLong(numIid));
         // 需要上架的商品的数量。取值范围:大于零的整数。如果商品有sku，则上架数量默认为所有sku数量总和，不可修改。否则商品数量根据设置数量调整为num
-        request.setNum(1L);  // 例如:1L, 2L等,这里固定设成1L，因为不管设成多少都是一样的效果
+        request.setNum(org.apache.commons.lang.math.NumberUtils.toLong(quantityCnt));
         ItemUpdateListingResponse response = null;
 
         try {
             response = reqTaobaoApi(shopBean, request);
         } catch (ApiException apiExp) {
-            logger.error("调用淘宝API商品上架时API出错", apiExp);
+            logger.error(String.format("调用淘宝API商品上架时API出错 [numIId:%s] [quantity:%s]", numIid, quantityCnt), apiExp);
         } catch (Exception exp) {
-            logger.error("调用淘宝API商品上架时出错", exp);
+            logger.error(String.format("调用淘宝API商品上架时出错 [numIId:%s] [quantity:%s]", numIid, quantityCnt), exp);
         }
         return response;
     }
