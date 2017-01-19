@@ -18,7 +18,7 @@ define([
                     },
                     carts: {},
                     product: {
-                        pf: 0,
+                        syncPlatform: 0,
                         skus: [
                             {
                                 skuItems: [
@@ -50,9 +50,9 @@ define([
                     }).then(function (resp) {
                         // $scope.vm.config.showFlag = true;
                         if (resp.data.product != null) {
+                            var tempProduct = angular.copy($scope.vm.product);
                             $scope.vm.product = resp.data.product;
-                            $scope.vm.product.pf = 1;
-                            $scope.vm.product.cartId = $scope.vm.product.cartId + "";
+                            _.extend($scope.vm.product, {cartId:$scope.vm.product.cartId + "",syncPlatform:1,wuliubaoCode:tempProduct.wuliubaoCode});
 
                             // 记录此套装中sku
                             var skuCodes = new Array();
@@ -83,27 +83,9 @@ define([
                                 });
                             });
                         } else {
-                            $scope.vm.product.pf = 0;
-                            $scope.vm.product.skus = [{skuItems: [{}]}];
                             alert("查询不到组合商品信息！");
                         }
 
-                    }, function (resp) {
-                        var tempProduct = angular.copy($scope.vm.product);
-                        $scope.vm.product = {
-                            pf: 0,
-                            cartId: tempProduct.cartId,
-                            numID: tempProduct.numID,
-                            skus: [
-                                {
-                                    skuItems: [
-                                        {}
-                                    ],
-                                    tempSuitSellingPriceCn: 0,
-                                    tempSuitPreferentialPrice: 0
-                                }
-                            ]
-                        };
                     });
                 };
 

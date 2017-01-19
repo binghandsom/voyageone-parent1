@@ -58,7 +58,7 @@
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_COMBINED_PRODUCT_NAME"></strong></label>
                 <div class="col-sm-3">
-                    <textarea class="form-control no-resize" cols="3" rows="3" ng-model="vm.product.productName" ng-disabled="vm.product.pf==1" required></textarea>
+                    <textarea class="form-control no-resize" cols="3" rows="3" ng-model="vm.product.productName" ng-disabled="vm.product.syncPlatform==1" required></textarea>
                 </div>
             </div>
 
@@ -108,18 +108,18 @@
                                                         <div class="row">
                                                             <label class="col-md-5 control-label">组合套装sku（商家编码） ：</label>
                                                             <div class="col-md-6">
-                                                                <input type="text" class="form-control" ng-if="vm.product.pf==0" ng-model="sku.suitSkuCode" required/>
-                                                                <label class="control-label" ng-if="vm.product.pf==1">{{sku.suitSkuCode}}</label><br/>
+                                                                <input type="text" class="form-control" ng-if="vm.product.syncPlatform==0" ng-model="sku.suitSkuCode" required/>
+                                                                <label class="control-label" ng-if="vm.product.syncPlatform==1">{{sku.suitSkuCode}}</label><br/>
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <label class="col-md-5 control-label">组合套装实际售价 ：</label>
                                                             <div class="col-md-6">
-                                                                <input type="number" class="form-control" ng-if="vm.product.pf==0" ng-model="sku.suitPreferentialPrice" ng-change="changeSkuPrice(sku)" required/>
-                                                                <label class="control-label" ng-if="vm.product.pf==1">{{sku.suitPreferentialPrice | currency:''}}</label>
+                                                                <input type="number" class="form-control" ng-if="vm.product.syncPlatform==0" ng-model="sku.suitPreferentialPrice" ng-change="changeSkuPrice(sku)" required/>
+                                                                <label class="control-label" ng-if="vm.product.syncPlatform==1">{{sku.suitPreferentialPrice | currency:''}}</label>
                                                             </div>
                                                         </div>
-                                                        <div class="row">
+                                                        <div class="row" ng-if="sku.warn">
                                                             <div class="text-warnings">
                                                                 <i class="fa fa-warning"></i>&nbsp;&nbsp;组合套装优惠售价与实际售价不一致，请修正单品sku的优惠售价！
                                                             </div>
