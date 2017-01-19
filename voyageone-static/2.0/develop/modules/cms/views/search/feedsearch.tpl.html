@@ -377,6 +377,7 @@
                                     <th class="text-center mfb-xxt" translate="TXT_ERROR_MESSAGE"></th>
                                     <th class="text-center mfb-xxt" translate="TXT_CREATE_TIME"></th>
                                     <th class="text-center mfb-xxt" translate="TXT_UPDATE_TIME"></th>
+                                    <th class="text-center mfb-xxt" translate="LAST_RECEIVED_ON"></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -438,6 +439,7 @@
                                     </td>
                                     <td class="text-center mfb-xxt">{{feedInfo.created}}</td>
                                     <td class="text-center mfb-xxt">{{feedInfo.modified}}</td>
+                                    <td class="text-center mfb-xxt">{{feedInfo.lastReceivedOn?feedInfo.lastReceivedOn,''}}</td>
                                 </tr>
                                 </tbody>
                             </table>
