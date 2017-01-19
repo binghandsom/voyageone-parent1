@@ -1642,7 +1642,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         Map<String, Object> multiComplexChildren6 = new HashMap<>();
                         // jeff 2016/04 change start
                         // multiComplexChildren.put("image1", imgOrg);
-                        String picName = doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg);
+                        String picName = doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg.trim());
                         multiComplexChildren.put("image1", picName);
                         multiComplexChildren6.put("image6", picName);
                         // jeff 2016/04 add end
