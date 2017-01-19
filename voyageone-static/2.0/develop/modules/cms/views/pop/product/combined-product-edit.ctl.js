@@ -9,7 +9,7 @@ define([
     ], function (cms) {
         cms.controller("CombinedProductEditController", (function () {
 
-            function CombinedProductEditController($scope, context, combinedProductService, $compile, $templateRequest, $document) {
+            function CombinedProductEditController($scope, context, combinedProductService, $compile, $templateRequest, $document, confirm) {
                 $scope.vm = {
                     config : {
                         startSupplyChain:false
