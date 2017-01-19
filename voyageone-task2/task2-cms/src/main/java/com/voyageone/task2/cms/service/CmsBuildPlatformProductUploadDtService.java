@@ -214,6 +214,8 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
                     channelId, cartId, groupId, dtWareId);
             $error(errMsg);
 
+            ex.printStackTrace();
+
             // 回写workload表(2:上新失败)
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
 
