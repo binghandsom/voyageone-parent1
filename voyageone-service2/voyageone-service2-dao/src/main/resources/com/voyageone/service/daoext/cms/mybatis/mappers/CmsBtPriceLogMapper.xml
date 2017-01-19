@@ -104,15 +104,15 @@
     </insert>
 
     <select id="selectLastOneBySkuOnCart" resultMap="PriceLogMap">
-        (
-            SELECT <include refid="Base_Column_List"/> FROM voyageone_cms2.cms_bt_price_log
-            WHERE channel_id = #{channel_id} AND cart_id = #{cart_id} AND sku = #{sku}
-        )
-        UNION ALL
-        (
-            SELECT <include refid="Base_Column_List"/> FROM voyageone_cms2.cms_bt_price_log_history
-            WHERE channel_id = #{channel_id} AND cart_id = #{cart_id} AND sku = #{sku}
-        )
+        SELECT <include refid="Base_Column_List"/> FROM voyageone_cms2.cms_bt_price_log
+        WHERE channel_id = #{channel_id} AND cart_id = #{cart_id} AND sku = #{sku}
+        ORDER BY created DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectLastOneBySkuOnCardFromHistory" resultMap="PriceLogMap">
+        SELECT <include refid="Base_Column_List"/> FROM voyageone_cms2.cms_bt_price_log_history
+        WHERE channel_id = #{channel_id} AND cart_id = #{cart_id} AND sku = #{sku}
         ORDER BY created DESC
         LIMIT 1
     </select>
