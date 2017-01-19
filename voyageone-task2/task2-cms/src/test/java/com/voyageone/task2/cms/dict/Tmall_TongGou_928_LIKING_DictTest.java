@@ -205,7 +205,7 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
 
         {
             // 固定图片 - 商品展示
-            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "https://img.alicdn.com/imgextra/i1/3081276392/TB2Y4tkdbBnpuFjSZFGXXX51pXa_!!3081276392.jpg")));
+            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "https://img.alicdn.com/imgextra/i3/3081276392/TB2uPGydH4npuFjSZFmXXXl4FXa_!!3081276392.jpg")));
         }
 
         {

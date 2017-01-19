@@ -357,6 +357,11 @@ public class PriceService extends BaseService {
         }else {
             // 公式参数: 税率
             taxRate = feeTaxService.getTaxRate(hsCode, shippingType);
+
+            if(taxRate == null){
+                taxRate = feeTaxService.getDefaultTaxRate();
+                $error(hsCode + " " + shippingType + " 没有找到税率");
+            }
         }
 
         // 进入计算阶段

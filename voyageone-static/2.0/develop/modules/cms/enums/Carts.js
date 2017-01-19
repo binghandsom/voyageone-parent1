@@ -51,7 +51,7 @@ define(['underscore'], function (_) {
         /**
          * 天猫
          */
-        TM: new Cart('TM', 20, '天猫', ''),
+        TM: new Cart('TM', 20, '天猫', 'https://detail.tmall.com/item.htm?id='),
 
         /**
          * 淘宝

@@ -23,19 +23,11 @@ import java.util.List;
  */
 //@RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration("classpath:context-cms-test.xml")
-public class Tmall_TongGou_024_OverStock_DictTest {
+public class Tmall_TongGou_024_OverStock_DictTest extends BaseDictTest{
 	@Autowired
 	private SxProductService sxProductService;
 
 	private boolean isWatch = false;
-
-	String C_TEXT_BR = "<br />";
-	String C_TEMPLATE_IMG = "<img src=%s>";
-
-	String C_商品图片 = "PRODUCT_IMAGE";
-	String C_包装图片 = "PACKAGE_IMAGE";
-	String C_带角度图片 = "ANGLE_IMAGE";
-	String C_自定义图片 = "CUSTOM_IMAGE";
 
 	@Test
 	public void startupTest() {
@@ -55,7 +47,6 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 				"&$layer_8_textps_0=%s" +
 				"&$layer_9_textps_0=%s", false));
 		isWatch = false;
-
 	}
 
 	@Test
@@ -82,30 +73,6 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 
 	private String getTaskName() {
 		return getClass().getName();
-	}
-
-	/**
-	 * 生成json
-	 *
-	 * @param title    字典名字
-	 * @param isUrl    生成出来的内容是否是url(一般是图片的话就是true, 其他有文字的都是false)
-	 * @param ruleRoot rule
-	 */
-	private void doCreateJson(String title, boolean isUrl, RuleExpression ruleRoot) {
-
-		DictWord dictRoot = new DictWord();
-		dictRoot.setName(title);
-		dictRoot.setExpression(ruleRoot);
-		dictRoot.setIsUrl(isUrl);
-
-//		RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-//		String json = ruleJsonMapper.serializeRuleWord(dictRoot);
-		String json = JacksonUtil.bean2JsonNotNull(dictRoot);
-
-		System.out.println("=====================================");
-		System.out.println("字典: " + title);
-		System.out.println(json);
-
 	}
 
 	/**
