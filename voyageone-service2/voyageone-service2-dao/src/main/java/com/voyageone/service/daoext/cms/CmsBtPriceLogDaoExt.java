@@ -31,10 +31,11 @@ public class CmsBtPriceLogDaoExt extends ServiceBaseDao {
     }
 
     public CmsBtPriceLogModel selectLastOneBySkuOnCart(String sku, Integer cartId, String channelId) {
-        return selectOne("selectLastOneBySkuOnCart", parameters(
-                "sku", sku,
-                "channel_id", channelId,
-                "cart_id", cartId));
+        CmsBtPriceLogModel model = selectOne("selectLastOneBySkuOnCart", parameters("sku", sku, "channel_id", channelId, "cart_id", cartId));
+        if (model == null) {
+            model = selectOne("selectLastOneBySkuOnCardFromHistory", parameters("sku", sku, "channel_id", channelId, "cart_id", cartId));
+        }
+        return model;
     }
 
     public List<CmsBtPriceLogModel> selectListBySkuOnCart(String sku, String code, String cartId, String channelId) {
