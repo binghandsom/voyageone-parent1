@@ -7,7 +7,7 @@
             <span>（按住鼠标拖拽更改排序，按住 ctrl 可多选）</span>
         </div>
         <div class="col-sm-6 text-right">
-            <button type="button" class="btn btn-primary" ng-click="ctrl.save()">保存</button>
+            <button type="button" class="btn btn-primary" ng-click="ctrl.save()" ng-disabled="ctrl.spDataService.passDated">保存</button>
             <button type="button" class="btn btn-default" ng-click="ctrl.destroy()">取消</button>
         </div>
     </div>
