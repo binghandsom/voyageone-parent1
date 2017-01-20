@@ -662,9 +662,9 @@ public class CmsBtCombinedProductService extends BaseService {
             if (platformSuitSkuMap.get(suitSkuCode) == null) {
                 throw new BusinessException("组合套装SKU(" + suitSkuCode + ")在平台组合商品numId=" + model.getNumID() + "下不存在！");
             }
-            if (suitSkuMap.get(suitSkuCode).doubleValue() != platformSuitSkuMap.get(suitSkuCode).doubleValue()) {
-                throw new BusinessException("组合套装SKU(" + suitSkuCode + ")优惠售价和平台实际销售价格不一致！");
-            }
+//            if (suitSkuMap.get(suitSkuCode).doubleValue() != platformSuitSkuMap.get(suitSkuCode).doubleValue()) {
+//                throw new BusinessException("组合套装SKU(" + suitSkuCode + ")优惠售价和平台实际销售价格不一致！");
+//            }
             // 新增校验，组合套装SKU不能挂在多个组合套装商品
             CmsBtCombinedProductModel target = this.getCombinedProductBySuitSkuCode(suitSkuCode);
             if (target != null && !model.getNumID().equals(target.getNumID())) {
