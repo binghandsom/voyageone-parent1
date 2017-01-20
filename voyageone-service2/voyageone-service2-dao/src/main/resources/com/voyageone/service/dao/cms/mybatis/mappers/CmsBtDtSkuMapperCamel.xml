@@ -3,8 +3,8 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtDtSkuDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtDtSkuModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `cart_id`, `product_code`, `sku_code`, `creater`, `created`, 
-        `modifier`, `modified`
+        `id`, `channel_id`, `product_code`, `sku_code`, `creater`, `created`, `modifier`, 
+        `modified`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -19,9 +19,6 @@
         <set >
             <if test="channelId != null" >
                 `channel_id` = #{channelId,jdbcType=VARCHAR},
-            </if>
-            <if test="cartId != null" >
-                `cart_id` = #{cartId,jdbcType=INTEGER},
             </if>
             <if test="productCode != null" >
                 `product_code` = #{productCode,jdbcType=VARCHAR},
@@ -61,9 +58,6 @@
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
-            <if test="cartId != null" >
-                and `cart_id` = #{cartId,jdbcType=INTEGER}
-            </if>
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
@@ -94,9 +88,6 @@
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
-            <if test="cartId != null" >
-                and `cart_id` = #{cartId,jdbcType=INTEGER}
-            </if>
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
@@ -123,9 +114,6 @@
         <where >
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="cartId != null" >
-                and `cart_id` = #{cartId,jdbcType=INTEGER}
             </if>
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
@@ -154,9 +142,6 @@
             <if test="channelId != null" >
                 `channel_id`,
             </if>
-            <if test="cartId != null" >
-                `cart_id`,
-            </if>
             <if test="productCode != null" >
                 `product_code`,
             </if>
@@ -178,9 +163,6 @@
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
                 #{channelId,jdbcType=VARCHAR},
-            </if>
-            <if test="cartId != null" >
-                #{cartId,jdbcType=INTEGER},
             </if>
             <if test="productCode != null" >
                 #{productCode,jdbcType=VARCHAR},

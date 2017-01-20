@@ -19,6 +19,7 @@ public class Tmall_014_WMF_DictTest extends BaseDictTest{
     @Test
     public void startupTest() {
         doCreateJson("详情页描述", false, doDict_详情页描述());
+        doCreateJson("详情页描述-重点商品", false, doDict_详情页描述_重点商品());
         doCreateJson("无线描述", false, doDict_无线描述());
         doCreateJson("无线描述-重点商品", false, doDict_无线描述_重点商品());
     }
@@ -209,13 +210,28 @@ public class Tmall_014_WMF_DictTest extends BaseDictTest{
             TextWord prefix = new TextWord(kv);
             ruleRoot.addRuleWord(prefix);
 
+            {
+                // 第1张 品牌故事图
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("3"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
+
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
+
+                RuleExpression imageIndex = new RuleExpression();
+                imageIndex.addRuleWord(new TextWord("0"));
+
+                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(null, imageType, viewType, null, imageIndex);
+                do处理无线端20张图片(0, ruleRoot, new CustomWord(getCommonImagesWord));
+            }
+
             for (int i = 0; i < 8; i++) {
-                // 前八张自定义图
-                do处理无线端20张图片(i, ruleRoot, new DictWord("无线自定义图片-" + (i + 1))); // 原图，参照target
+                // 八张自定义图
+                do处理无线端20张图片((i + 1), ruleRoot, new DictWord("无线自定义图片-" + (i + 1))); // 原图，参照target
             }
 
             {
-                // 第9张, 参数图片
+                // 第10张, 参数图片
                 RuleExpression imageTemplate = new RuleExpression();
                 String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/wuxiancanshu-1?$750x750$&$layer_10_src=%s&$layer_2_textps_0=%s&$layer_3_textps_0=%s&$layer_4_textps_0=%s&$layer_5_textps_0=%s&$layer_6_textps_0=%s&$layer_7_textps_0=%s&$layer_8_textps_0=%s&$layer_9_textps_0=%s";
                 imageTemplate.addRuleWord(new TextWord(htmlTemplate));
@@ -252,28 +268,13 @@ public class Tmall_014_WMF_DictTest extends BaseDictTest{
                 }
 
                 CustomWordValueImageWithParam imagesWithParamWord = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
-                do处理无线端20张图片(8, ruleRoot, new CustomWord(imagesWithParamWord));
+                do处理无线端20张图片(9, ruleRoot, new CustomWord(imagesWithParamWord));
             }
 
             for (int i = 9; i < 17; i++) {
-                // 10~17
+                // 11~18
                 int j = i - 8;
-                do处理无线端20张图片(i, ruleRoot, new DictWord("无线商品图片-" + j)); // url用详情页790*790的
-            }
-
-            {
-                // 第18张 品牌故事图
-                RuleExpression imageType = new RuleExpression();
-                imageType.addRuleWord(new TextWord("3"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
-
-                RuleExpression viewType = new RuleExpression();
-                viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
-
-                RuleExpression imageIndex = new RuleExpression();
-                imageIndex.addRuleWord(new TextWord("0"));
-
-                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(null, imageType, viewType, null, imageIndex);
-                do处理无线端20张图片(17, ruleRoot, new CustomWord(getCommonImagesWord));
+                do处理无线端20张图片((i + 1), ruleRoot, new DictWord("无线商品图片-" + j)); // url用详情页790*790的
             }
 
             // 19~20 共通图片-物流图  (2张无线图片)
@@ -290,7 +291,7 @@ public class Tmall_014_WMF_DictTest extends BaseDictTest{
                 viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
 
                 CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(null, imageType, viewType, null, imageIndex);
-                do处理无线端20张图片(i, ruleRoot, new CustomWord(getCommonImagesWord));
+                do处理无线端20张图片((i + 1), ruleRoot, new CustomWord(getCommonImagesWord));
             }
 
             // end
@@ -375,5 +376,35 @@ public class Tmall_014_WMF_DictTest extends BaseDictTest{
         }
 
         return ruleRoot;
+    }
+
+    /**
+     * 详情页描述_重点商品(PC端)
+     * 重点商品里， 全是自定义图
+     */
+    private RuleExpression doDict_详情页描述_重点商品() {
+        // 根字典
+        RuleExpression ruleRoot = new RuleExpression();
+
+        // 生成内容
+        {
+            // 自定义图
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageTemplate = null;
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord(C_自定义图片));
+
+            RuleExpression useOriUrl = new RuleExpression();
+            useOriUrl.addRuleWord(new TextWord("1"));
+
+            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, null);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
+        return ruleRoot;
+
     }
 }

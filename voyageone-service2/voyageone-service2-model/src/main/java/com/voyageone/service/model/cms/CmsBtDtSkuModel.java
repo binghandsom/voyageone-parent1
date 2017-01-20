@@ -19,11 +19,6 @@ public class CmsBtDtSkuModel extends BaseModel {
     protected String channelId;
 
     /**
-     * 平台ID
-     */
-    protected Integer cartId;
-
-    /**
      * 产品CODE
      */
     protected String productCode;
@@ -39,14 +34,6 @@ public class CmsBtDtSkuModel extends BaseModel {
 
     public void setChannelId(String channelId) {
         this.channelId = channelId == null ? null : channelId.trim();
-    }
-
-    public Integer getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(Integer cartId) {
-        this.cartId = cartId;
     }
 
     public String getProductCode() {

@@ -1646,7 +1646,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         Map<String, Object> multiComplexChildren6 = new HashMap<>();
                         // jeff 2016/04 change start
                         // multiComplexChildren.put("image1", imgOrg);
-                        String picName = doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg);
+                        String picName = doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg.trim());
                         multiComplexChildren.put("image1", picName);
                         multiComplexChildren6.put("image6", picName);
                         // jeff 2016/04 add end
@@ -1710,7 +1710,12 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                                 break;
                         }
                     }
-
+                    break;
+                case "007":
+                    feedProductType = feed.getProductType();
+                    productCommonField.setProductType(feed.getProductType());
+                    feedSizeType = feed.getSizeType();
+                    productCommonField.setSizeType(feed.getSizeType());
                     break;
                 default:
                     // 产品分类
@@ -3167,7 +3172,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
                 return newModel.getImgName();
             } else {
-
+                $info("findImage != null");
                 // 如果原始图片的地址发生变更则做更新操作
                 if (!originalUrl.equals(findImage.getOriginalUrl())) {
                     findImage.setOriginalUrl(originalUrl);

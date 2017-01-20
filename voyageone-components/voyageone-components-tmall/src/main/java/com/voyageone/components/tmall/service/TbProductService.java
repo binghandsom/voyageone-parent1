@@ -5,9 +5,14 @@ import com.taobao.api.request.*;
 import com.taobao.api.response.*;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
+import com.voyageone.common.masterdate.schema.factory.SchemaReader;
+import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.TbBase;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 /**
  * Created by Leo on 2015-05-28.
@@ -136,6 +141,44 @@ public class TbProductService extends TbBase {
         TmallItemUpdateSchemaGetRequest request = new TmallItemUpdateSchemaGetRequest();
         request.setItemId(Long.parseLong(itemId));
         return reqTaobaoApi(config, request);
+    }
+
+    /**
+     * 获取商品编辑规则信息
+     * taobao.item.update.schema.get
+     *
+     * @param itemId 商品id
+     * @param config 店铺信息
+     * @return Map<String, Field> 从天猫返回的Field集合map
+     */
+    public Map<String, Field> getWareInfoItem(String itemId, ShopBean config) {
+        if (StringUtils.isEmpty(itemId) || config == null) return null;
+
+        Map<String, Field> updateItemSchemaMap = null;
+        try {
+            // 调用天猫获取商品编辑规则信息API(taobao.item.update.schema.get)
+            TmallItemUpdateSchemaGetResponse updateItemResponse = this.doGetWareInfoItem(itemId, config);
+            if (updateItemResponse == null || updateItemResponse.getErrorCode() != null) {
+                logger.error(updateItemResponse.getSubMsg());
+                throw new BusinessException(updateItemResponse.getSubMsg());
+            }
+            // 天猫商品编辑规则
+            String updateItemSchema = updateItemResponse.getUpdateItemResult();
+            if (StringUtils.isEmpty(updateItemSchema)) {
+                throw new BusinessException("从天猫上取得的商品编辑规则为空");
+            }
+            // 把从天猫平台获得的商品编辑规则转换成map对象
+            updateItemSchemaMap = SchemaReader.readXmlForMap(updateItemSchema);
+        } catch (TopSchemaException e) {
+            logger.error(e.getMessage(), e);
+            throw new BusinessException("Can't convert schema to fields: " + e.getMessage());
+        } catch (ApiException e) {
+            throw new BusinessException(String.format("调用天猫获取商品编辑规则信息API失败! [errMsg:%s]", e.getMessage()));
+        } catch (Exception e) {
+            throw new BusinessException(String.format("获取天猫商品编辑规则失败! [errMsg:%s]", e.getMessage()));
+        }
+
+        return updateItemSchemaMap;
     }
 
     /**
