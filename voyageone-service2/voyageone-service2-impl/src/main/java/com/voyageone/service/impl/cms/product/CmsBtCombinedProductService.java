@@ -162,14 +162,13 @@ public class CmsBtCombinedProductService extends BaseService {
                             throw new BusinessException("获取天猫组合商品数据出错了！");
                         } else {
                             if (CollectionUtils.isEmpty(resp.getResults()) || StringUtils.isBlank(resp.getResults().get(0))) {
-                                if (local) {
+                                /*if (local) {
                                     productBean.getSkus().forEach(skuBean -> {
                                         if (skuBean.getSkuItems().size() < 1) {
-                                            // 初始化一个空的真实SKU对象，以便在页面显示一个真实SKU输入框组
                                             skuBean.getSkuItems().add(new CmsBtCombinedProductModel_Sku_Item());
                                         }
                                     });
-                                }
+                                }*/
                             } else {
                                 String json = resp.getResults().get(0);
                                 if (json.startsWith("\"")) {
