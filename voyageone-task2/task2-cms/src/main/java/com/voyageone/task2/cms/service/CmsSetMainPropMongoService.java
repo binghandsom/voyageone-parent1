@@ -1705,7 +1705,11 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                                 break;
                         }
                     }
+                    break;
+                case "007":
 
+                    productCommonField.setProductType(feed.getProductType());
+                    productCommonField.setSizeType(feed.getSizeType());
                     break;
                 default:
                     // 产品分类
