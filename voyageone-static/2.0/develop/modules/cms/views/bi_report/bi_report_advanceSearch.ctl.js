@@ -24,7 +24,7 @@ define([
                 channelEnd:"",
                 fileType:6
             },
-            "testBeanList":[],
+            "downloadList":[],
             "message":"successfully!",
             status: {open: true}
         }
@@ -128,12 +128,6 @@ define([
 
             $.download.post(cActions.cms.search.$searchAdvanceService2.root + cActions.cms.search.$searchAdvanceService2.exportDownload, {}, _exportFileCallback);
         };
-
-
-
-
-
-
         /**
          * 数据导出
          */
@@ -175,7 +169,22 @@ define([
             });*!/
         };*/
 
-
+        $scope.initialize = function () {
+            getDownloadTaskList();
+        };
+        function getDownloadTaskList() {
+          /*  var data = {
+                code: $scope.vm.code,
+                cartId: $scope.vm.cartId,
+                offset: ($scope.vm.pageOption.curr - 1) * $scope.vm.pageOption.size,
+                rows: $scope.vm.pageOption.size
+            };*/
+            biReportService.getDownloadTaskList().then(function (res) {
+                $scope.vm.downloadTaskList = res.data.list;
+               /* $scope.vm.pageOption.total = res.data.total;
+                $scope.vm.cartList = res.data.cartList*/
+            });
+        }
 
 
 

@@ -86,6 +86,12 @@ public class BiRepExcelFileCreator {
         {
             writeHead(sheet, header, h1xCellStyle);
         }
+        int colunmNum=sheet.getRow(rowIndex-1).getLastCellNum();
+        for(short k=0;k<colunmNum;k++)
+        {
+            String dataValue=sheet.getRow(rowIndex-1).getCell(k).getStringCellValue();
+            sheet.setColumnWidth(k,dataValue.getBytes().length*2*256);
+        }
        /*
         sheet.setDefaultColumnWidth((short) 30);
         writeHead(sheet, headers1, h1xCellStyle);
@@ -93,13 +99,6 @@ public class BiRepExcelFileCreator {
         writeHead(sheet, headers3, h1xCellStyle);*/
         writeData(dataset, "yyyy-MM-dd", bxCellStyle, sheet, rowIndex-1);
         RangeMerge(sheet,mergeRangeList,h1xCellStyle);
-
-        int colunmNum=sheet.getRow(2).getLastCellNum();
-        for(short k=0;k<colunmNum;k++)
-        {
-            String dataValue=sheet.getRow(2).getCell(k).getStringCellValue();
-            sheet.setColumnWidth(k,dataValue.getBytes().length*2*256);
-        }
         return book;
     }
     /**

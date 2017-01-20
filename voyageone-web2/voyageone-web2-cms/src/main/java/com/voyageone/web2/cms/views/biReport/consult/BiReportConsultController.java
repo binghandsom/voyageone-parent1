@@ -1,16 +1,19 @@
 package com.voyageone.web2.cms.views.biReport.consult;
 
 import com.voyageone.common.PageQueryParameters;
+import com.voyageone.service.dao.report.BiReportDownloadTaskDao;
+import com.voyageone.service.model.report.BiReportDownloadTaskModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.CmsUrlConstants.BIREPORT;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchController;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,21 +27,31 @@ import java.util.Map;
 )
 public class BiReportConsultController extends CmsAdvanceSearchController {
     private final BiRepConsultService biRepConsultService;
-    private final BiRepSupport biRepSupport;
     @Autowired
-    public BiReportConsultController(BiRepConsultService biRepConsultService,BiRepSupport biRepSupport) {
+    public BiReportConsultController(BiRepConsultService biRepConsultService) {
         this.biRepConsultService = biRepConsultService;
-        this.biRepSupport=biRepSupport;
     }
     @Autowired
     private CmsAdvanceSearchService searchIndexService;
+    @Autowired
+    private BiReportDownloadTaskDao biReportDownloadTaskDao;
 
     @RequestMapping(BIREPORT.LIST.DOWNLOAD.BIREPDOWNLOAD)
     public AjaxResponse biRepDownload(@RequestBody PageQueryParameters platform) {
         return success(biRepConsultService.biRepDownload(platform));
     }
+    @RequestMapping(BIREPORT.LIST.DOWNLOAD.DOWNLOADTASKLIST)
+    public AjaxResponse downloadTaskList()   //@RequestBody PageQueryParameters searchInfo
+    {
+        Map<String,Object> mapForTask=new HashedMap();
+        mapForTask.put("fileName",null);
+        mapForTask.put("creatorId",1);
+        mapForTask.put("taskStatus",null);
+        List<BiReportDownloadTaskModel> taskModelList=biRepConsultService.getDownloadTaskList(mapForTask);
+        return success(taskModelList);
+    }
     /**
-     * 创建文件下载任务，发送消息到MQ，开始批处理
+     * 创建文件下载任务
      */
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.EXPORT_PRODUCTS)
     public AjaxResponse createFile(@RequestBody Map<String, Object> params) {
@@ -74,7 +87,38 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
     }
 
     @RequestMapping(value = BIREPORT.LIST.DOWNLOAD.CREATEXLSFILE)
-    public ResponseEntity<byte[]> createXlsFile(@RequestParam Map<String, Object> params) {
+    public AjaxResponse createXlsFile(@RequestParam Map<String, Object> params) {
+        Map<String, Object> resultBean = new HashMap<>();
+        Map<String,Map> mapForPara=getParamMap(params);
+        Map<String,Object> mapForTask=mapForPara.get("mapForTask");
+        Map<String,Object> mapForSelect=mapForPara.get("mapForSelect");
+        String fileName=(String)mapForSelect.get("fileName");
+
+        CreateXlsThread createXlsThread=new CreateXlsThread(fileName,mapForTask,mapForSelect,biRepConsultService,biReportDownloadTaskDao);
+        Thread t=new Thread(createXlsThread);
+        t.start();
+      /*  }*/
+
+        return null;
+    }
+    @RequestMapping("")
+    public void createDownloadTask(@RequestParam Map<String,Object> parameters)
+    {
+        int fileType=1;
+        String fileName=biRepConsultService.getName(parameters,fileType);
+        int taskStatus=1;
+
+    }
+
+    /**
+     * 获取查询channel数据库中的参数，用来查询用于创建excel数据
+     * @param params
+     * @return
+     */
+    public Map<String,Map> getParamMap(Map<String,Object> params)
+    {
+        //获取mapforSelelct,用于从数据库中查找创建excel文件的数据
+        Integer fileType=(Integer)params.get("fileType");
         String nameCn=null;
         String staDate=null;
         String endDate=null;
@@ -94,13 +138,22 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
             endDate=(String)params.get("endDate");
             System.out.println(endDate);
         }
-        Map mapForSelect=new HashMap<String,Object>();
+
+        Map<String,Object> mapForSelect=new HashMap();
         mapForSelect.put("nameCn",nameCn);
         mapForSelect.put("staDate",staDate);
         mapForSelect.put("endDate",endDate);
 
-        return genResponseEntityFromBytes("shopsale.xlsx",biRepConsultService.createXLSFile(mapForSelect));
+        String fileName=biRepConsultService.getName(mapForSelect,2);
+        mapForSelect.put("fileName",fileName);
+        Map<String ,Object> mapForTask=new HashedMap();
+        mapForTask.put("fileName",fileName);
+        mapForTask.put("creatorId",1);
+
+        Map<String,Map> totalParameters=new HashedMap();
+        totalParameters.put("mapForTask",mapForTask);
+        totalParameters.put("mapForSelect",mapForSelect);
+
+        return totalParameters;
     }
-
-
 }

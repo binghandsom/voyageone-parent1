@@ -1,17 +1,23 @@
 package com.voyageone.web2.cms.views.biReport.consult;
 
 import com.voyageone.common.PageQueryParameters;
+import com.voyageone.service.dao.report.BiReportDownloadTaskDao;
 import com.voyageone.service.dao.report.BiReportSalesProduct010Dao;
 import com.voyageone.service.dao.report.BiReportSalesShop010Dao;
+import com.voyageone.service.daoext.report.BiReportDownloadTaskDaoExt;
 import com.voyageone.service.daoext.report.BiReportSalesShop010DaoExt;
+import com.voyageone.service.model.report.BiReportDownloadTaskModel;
 import com.voyageone.service.model.report.ShopSalesOfChannel010Model;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.*;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,7 +28,12 @@ import java.util.*;
  */
 @Service
 public class BiRepConsultService {
+    private final String filePath="E://bi_report//xlsxFile//";
 
+    @Autowired
+    private BiReportDownloadTaskDaoExt  biReportDownloadTaskDaoExt;
+    @Autowired
+    private BiReportDownloadTaskDao biReportDownloadTaskDao;
     @Autowired
     private DateUtilHelper dateUtilHelper;
     @Autowired
@@ -47,8 +58,10 @@ public class BiRepConsultService {
      * @param para
      * @return
      */
-    public byte[] createXLSFile(Map para)
+    public boolean createXLSFile(Map para)
     {
+          boolean result=false;
+          String fileName=(String)para.get("fileName");
           final String[] headers1={"店铺日报"};
           final String[] headers2={"销售指标"," 运营指标 ","商品指标","物流指标","服务指标"};
           final String[] headers3={"店铺名称","日期","销售额","销售量","销售额环比","环比增幅%","销售额同比","同比增幅%","YTD金额","YTD完成率",
@@ -58,7 +71,7 @@ public class BiRepConsultService {
         String sheetName=headers1[0];
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Workbook workbook =biRepExcelFileCreator.createExcelFile(dealSaleShopModel(getData(para)),getMergeInfo(),sheetName,headers1,headers2,headers3);
-        try {
+      /*  try {
             workbook.write(baos);
             baos.flush();
         } catch (IOException e) {
@@ -66,23 +79,22 @@ public class BiRepConsultService {
         } finally {
             byte[] aa = baos.toByteArray();
             return aa;
+        }*/
+        try {
+            System.out.println(fileName);
+            OutputStream out = new FileOutputStream(filePath+fileName);
+              workbook.write(out);
+//            biRepSupport.exportExcel(headers2, dataset2, out2);
+            out.close();
+            JOptionPane.showMessageDialog(null, "导出成功!");
+            System.out.println("excel导出成功！");
+            result=true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            System.out.println("process end!");
         }
-//        try {
-//            OutputStream out = new FileOutputStream("E://shopSample.xls");
-////            OutputStream out2 = new FileOutputStream("E://test1.xls");
-////            biRepSupport.exportExcel(headers, dataset, out);
-//              workbook.write(out);
-////            biRepSupport.exportExcel(headers2, dataset2, out2);
-//            out.close();
-//            JOptionPane.showMessageDialog(null, "导出成功!");
-//            System.out.println("excel导出成功！");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            System.out.println("process end!");
-//        }
-//        return null;
-
+        return result;
     }
 
     /**
@@ -193,9 +205,13 @@ public class BiRepConsultService {
     }
     public BigDecimal selfDivide(BigDecimal dividend,BigDecimal divisor)
     {
-        if(divisor.compareTo(BigDecimal.ZERO)==0||divisor==null||dividend==null)
+        if(divisor==null||dividend==null)
         {
             return null;
+        }
+        else if(divisor.compareTo(BigDecimal.ZERO)==0)
+        {
+            return new BigDecimal(10000000000000d);
         }
         else {
             return dividend.divide(divisor,2,BigDecimal.ROUND_HALF_UP);
@@ -249,11 +265,11 @@ public class BiRepConsultService {
         {
             return null;
         }
-        if(subtrahend!=null&&subtractor!=null)
+        if(subtrahend != null&&subtractor == null)
         {
             return subtrahend;
         }
-        if(subtrahend==null&&subtractor!=null)
+        if(subtrahend == null&&subtractor != null)
         {
             return BigDecimal.ZERO.subtract(subtractor);
         }
@@ -266,20 +282,18 @@ public class BiRepConsultService {
      * 创建命名规则
      *
      */
-    public String getName(Map<String,Object> nameParameters,int type)
+    public String getName(Map<String,Object> nameParameters,int fileType)
     {
         String fileSuffix=".xlsx";
         StringBuffer fileName=new StringBuffer();
-        String shopName=(String)nameParameters.get("shopName");
+        String shopName=(String)nameParameters.get("nameCn");
         String staDate=(String)nameParameters.get("staDate");
         String endDate=(String)nameParameters.get("endDate");
-        String level=(String)nameParameters.get("level");
-        fileName.append(shopName);
+        fileName.append(shopName+"_");
         fileName.append(staDate);
-        fileName.append("-");
-        fileName.append(endDate);
-        fileName.append(level);
-        switch(type)
+        fileName.append("_");
+        fileName.append(endDate+"_");
+        switch(fileType)
         {
             case 1:fileName.append("店铺月报"); break;
             case 2:fileName.append("店铺周报"); break;
@@ -297,4 +311,30 @@ public class BiRepConsultService {
         fileName.append(fileSuffix);
         return fileName.toString();
     }
+
+    /**
+     * 创建下载任务之前，查询是要求下载文件是否存在,如果存在，那么返回文件状态，如果不存在，则将参数传递给excel 文件生成函数
+     * 逻辑控制
+     */
+    public boolean fileExist(String fileName,Integer creatorId,Integer taskStatus)
+    {
+        Map<String,Object> selectMap=new HashMap();
+        selectMap.put("fileName",fileName);
+        selectMap.put("creatorId",creatorId);
+        selectMap.put("taskStatus",taskStatus);
+        List<BiReportDownloadTaskModel> taskModelList=biReportDownloadTaskDaoExt.selectNoTasksByCreatorId(selectMap);
+        if(taskModelList==null)
+            return false;
+        else
+        {
+            return true;
+        }
+    }
+
+    public List<BiReportDownloadTaskModel> getDownloadTaskList(Map map)
+    {
+        List<BiReportDownloadTaskModel> taskModelList=biReportDownloadTaskDaoExt.selectNoTasksByCreatorId(map);
+        return taskModelList;
+    }
+
 }

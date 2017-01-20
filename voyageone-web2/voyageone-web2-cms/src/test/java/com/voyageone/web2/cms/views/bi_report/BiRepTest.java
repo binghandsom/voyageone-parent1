@@ -1,6 +1,9 @@
 package com.voyageone.web2.cms.views.bi_report;
 
+import com.voyageone.service.dao.report.BiReportDownloadTaskDao;
+import com.voyageone.service.daoext.report.BiReportDownloadTaskDaoExt;
 import com.voyageone.service.daoext.report.BiReportSalesShop010DaoExt;
+import com.voyageone.service.model.report.BiReportDownloadTaskModel;
 import com.voyageone.web2.cms.views.biReport.consult.BiRepConsultService;
 import com.voyageone.web2.cms.views.biReport.consult.BiRepSupport;
 import org.junit.Test;
@@ -9,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * Created by dell on 2017/1/11.
@@ -24,7 +27,10 @@ public class BiRepTest {
     private BiRepConsultService biRepConsultService;
     @Autowired
     private BiReportSalesShop010DaoExt biReportSalesShop010DaoExt;
-
+    @Autowired
+    private BiReportDownloadTaskDaoExt biReportDownloadTaskDaoExt;
+    @Autowired
+    private BiReportDownloadTaskDao biReportDownloadTaskDao;
     /*
         @Test
         public void biReportTest()
@@ -32,51 +38,17 @@ public class BiRepTest {
             biRepConsultService.createXLSFile();
         }*/
     @Test
-    public void getData() {
-       /* NumberFormat percent = NumberFormat.getPercentInstance();  //建立百分比格式化引用
-        percent.setMaximumFractionDigits(3); //百分比小数点最多3位
-        BigDecimal interestRate = new BigDecimal("0.008"); //利率
-        BigDecimal bg=new BigDecimal(percent.format(interestRate));
-        System.out.println(bg.toString());*/
+    public void testDemo() {
 
-        BigDecimal bg1=new BigDecimal(2.4535);
-        BigDecimal nbg=bg1.setScale(2,BigDecimal.ROUND_HALF_UP);
-        System.out.println(nbg.multiply(new BigDecimal(1000)).doubleValue());
-        System.out.println((double)1/200);
-        BigDecimal rate=new BigDecimal((double)1/200);
-        System.out.println(rate.setScale(2,BigDecimal.ROUND_HALF_UP).toString());
-       /* BigDecimal a=new BigDecimal(0);
-        BigDecimal b=new BigDecimal(1);
-        System.out.println(a==null+" "+a.equals());
-        System.out.println(b.divide(a));*/
-
-     /*   Map<String, Object> map = new HashMap<>();
-        map.put("shopId", 19);
-        map.put("staDate", "2016-1-1");
-        map.put("endDate", "2017-1-1");
-      *//*  BigDecimal bd=*//*
-        System.out.println(biReportSalesShop010DaoExt.selectAmtDateToDate(map));*/
-      /*  bd.setScale(2,BigDecimal.ROUND_CEILING);
-
-        System.out.println(bd.doubleValue());*/
-       /* Map mapForWTD= new HashMap<String,Object>();
-        mapForWTD.put("shopId",id);
-        mapForWTD.put("staDate",thisWeekFirstDay);
-        mapForWTD.put("endDate",date);
-        BigDecimal WTD=biReportSalesShop010DaoExt.selectAmtDateToDate(mapForWTD);*/
-       /* Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
-        Date now = new Date();
-        Date date = new Date(117, 1, 17);
-        System.out.println();
-        calendar.setTime(now);
-        System.out.println(calendar.get(Calendar.YEAR) + " " + calendar.get(Calendar.MONTH) + " " + calendar.get(Calendar.DAY_OF_MONTH) + " " + calendar.get(Calendar.DAY_OF_WEEK));*/
-//            biRepConsultService.getData();
-
+//       System.out.println( biRepConsultService.fileExist(null,null,null));
+        BiReportDownloadTaskModel model=new BiReportDownloadTaskModel(1,"E//a.xlsx",new Date(116,4,5),2);
+        Integer i=biReportDownloadTaskDao.insert(model);
+       System.out.println(i);
 //        biRepConsultService.createXLSFile();
     }
 
     public <T> void testcall(Collection<T> dataset) {
-
     }
+
+   /* public void testSelect*/
 }

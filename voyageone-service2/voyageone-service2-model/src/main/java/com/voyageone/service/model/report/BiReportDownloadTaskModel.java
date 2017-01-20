@@ -8,6 +8,7 @@
 package com.voyageone.service.model.report;
 
 import com.voyageone.base.dao.mysql.BaseModel;
+
 import java.util.Date;
 
 /**
@@ -150,5 +151,18 @@ public class BiReportDownloadTaskModel extends BaseModel {
 
     public void setAttr6(String attr6) {
         this.attr6 = attr6 == null ? null : attr6.trim();
+    }
+
+    @Override
+    public String toString()
+    {
+        return "["+creatorId+" "+filePath+" "+fileName+createTime+" "+finishTime+" "+ taskStatus+"]";
+    }
+    public BiReportDownloadTaskModel (Integer creatorId, String fileName, Date createTime,Integer taskStatus)
+    {
+        this.creatorId=creatorId;
+        this.fileName=fileName;
+        this.createTime=createTime;
+        this.taskStatus=taskStatus;
     }
 }

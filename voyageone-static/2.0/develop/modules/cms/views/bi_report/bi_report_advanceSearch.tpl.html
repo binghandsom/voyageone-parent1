@@ -116,15 +116,15 @@
                 <tr>
                     <th class="text-left mfb-x"></th>
                     <th class="text-center" translate="TXT_SEQ"></th>
-                    <th class="text-left"> 渠道</th>
-                    <th class="text-left"> 時間</th>
-                    <th class="text-left"> 信息名稱</th>
-                    <th class="text-left"> 销售信息EXCEL下载</th>
-                    <th class="text-left" translate="TXT_ACTION"></th>
+                    <th class="text-left">导出文件名称</th>
+                    <th class="text-left"> 申请导出时间</th>
+                    <th class="text-left"> EXCEL生成时间</th>
+                    <th class="text-left"> 导出申请者</th>
+                    <th class="text-left">操作</th>
                 </tr>
                 </thead>
-                <tbody  ng-if="vm.testBeanList.length" ng-controller="popupCtrl" >
-                    <tr ng-repeat="item in vm.testBeanList">
+                <tbody  ng-if="vm.downloadTaskList.length" ng-controller="popupCtrl" >
+                    <tr ng-repeat="item in vm.downloadTaskList">
                         <td class="text-left mfb-x">
                             <label class="checkbox-inline c-checkbox">
                                 <input type="checkbox" ng-model="vm.groupSelList.selFlag[promotion.id]" ng-controller="selectRowsCtrl"ng-click="selectOne(promotion.id, vm.groupSelList)">

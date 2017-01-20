@@ -753,10 +753,9 @@ define(function () {
                 deleteByPromotionId: "deleteByPromotionId",
                 setPromotionStatus: "setPromotionStatus",
                 getPromotionSimpleList: "getPromotionSimpleList",
-                test:"test",
                 biRepDownload:"biRepDownload",
                 createXlsFile:"createXlsFile",
-                downloadTest:"downloadTest"
+                getDownloadTaskList:"getDownloadTaskList"
 
             }
         }

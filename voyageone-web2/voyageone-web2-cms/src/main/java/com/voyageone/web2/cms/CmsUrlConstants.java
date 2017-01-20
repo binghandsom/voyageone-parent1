@@ -946,8 +946,10 @@ public interface CmsUrlConstants {
         interface LIST {
             interface DOWNLOAD {
                 String ROOT = "/cms/biReport/download";
+                String INIT = "init";
                 String BIREPDOWNLOAD = "biRepDownload";
                 String CREATEXLSFILE="createXlsFile";
+                String DOWNLOADTASKLIST="getDownloadTaskList";
             }
         }
     }
