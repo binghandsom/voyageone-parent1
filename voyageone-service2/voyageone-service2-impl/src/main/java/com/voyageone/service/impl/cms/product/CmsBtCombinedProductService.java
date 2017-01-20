@@ -379,7 +379,7 @@ public class CmsBtCombinedProductService extends BaseService {
             for (BaseMongoMap<String, Object> sku:skus) {
                 if (skuCode.equals(sku.getStringAttribute("skuCode"))) {
                     skuItem = new CmsBtCombinedProductModel_Sku_Item();
-                    skuItem.setProductName(product.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn());
+                    skuItem.setProductName(StringUtils.isBlank(product.getCommon().getFields().getOriginalTitleCn()) ? product.getCommon().getFields().getProductNameEn() : product.getCommon().getFields().getOriginalTitleCn());
                     skuItem.setCode(product.getCommonNotNull().getFieldsNotNull().getCode());
                     skuItem.setSkuCode(skuCode);
                     skuItem.setSellingPriceCn(sku.getDoubleAttribute("priceSale"));
@@ -638,9 +638,9 @@ public class CmsBtCombinedProductService extends BaseService {
                 tempSuitPreferentialPrice += skuItem.getPreferentialPrice().doubleValue();
             }
             skuBean.setSuitSellingPriceCn(tempSuitSellingPriceCn);
-            if (tempSuitPreferentialPrice != skuBean.getSuitPreferentialPrice()) {
-                throw new BusinessException("组合套装SKU(" + skuBean.getSuitSkuCode() + ")和真实SKU优惠售价之和不一致！");
-            }
+//            if (tempSuitPreferentialPrice != skuBean.getSuitPreferentialPrice()) {
+//                throw new BusinessException("组合套装SKU(" + skuBean.getSuitSkuCode() + ")和真实SKU优惠售价之和不一致！");
+//            }
         }
 
         CmsBtCombinedProductModel platformModel = this.getCombinedProductPlatformDetail(model.getNumID(), channelId, model.getCartId(), false);
@@ -662,9 +662,9 @@ public class CmsBtCombinedProductService extends BaseService {
             if (platformSuitSkuMap.get(suitSkuCode) == null) {
                 throw new BusinessException("组合套装SKU(" + suitSkuCode + ")在平台组合商品numId=" + model.getNumID() + "下不存在！");
             }
-            if (suitSkuMap.get(suitSkuCode).doubleValue() != platformSuitSkuMap.get(suitSkuCode).doubleValue()) {
-                throw new BusinessException("组合套装SKU(" + suitSkuCode + ")优惠售价和平台实际销售价格不一致！");
-            }
+//            if (suitSkuMap.get(suitSkuCode).doubleValue() != platformSuitSkuMap.get(suitSkuCode).doubleValue()) {
+//                throw new BusinessException("组合套装SKU(" + suitSkuCode + ")优惠售价和平台实际销售价格不一致！");
+//            }
             // 新增校验，组合套装SKU不能挂在多个组合套装商品
             CmsBtCombinedProductModel target = this.getCombinedProductBySuitSkuCode(suitSkuCode);
             if (target != null && !model.getNumID().equals(target.getNumID())) {

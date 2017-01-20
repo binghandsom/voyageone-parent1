@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
@@ -13,6 +14,7 @@ import com.voyageone.service.dao.cms.CmsBtDtSkuDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtDtSkuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -56,6 +58,8 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
     private CmsBtDtSkuDao cmsBtDtSkuDao;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private SxProductService sxProductService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -174,6 +178,8 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
         int cartId = Integer.parseInt(shop.getCart_id());
         // 商品id
         long dtWareId = 0;
+        // 开始时间
+        long prodStartTime = System.currentTimeMillis();
 
         try {
             // 获取group信息
@@ -188,16 +194,31 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
             for(String code : codes) {
                 // 分销上新
                 String result = dtWareService.onShelfProduct(shop, code);
-                $info("产品(%s)分销上新成功! [result:%s]", code, result);
+                $info("产品(%s)调用分销上新接口成功! [result:%s]", code, result);
             }
 
             // 回写分销SKU信息表(cms_bt_dt_sku)
             saveProductDtSku(channelId, cartId, codes);
+
+            // 上新成功时状态回写操作
+            // 回写workload表(1:上新成功)
+            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
+
+            // 正常结束时
+            $info(String.format("分销单个商品上新成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s] [耗时:%s]",
+                    channelId, cartId, groupId, dtWareId, (System.currentTimeMillis() - prodStartTime)));
+
         } catch (Exception ex) {
             // 异常结束时
             String errMsg = String.format("分销单个商品上新异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
                     channelId, cartId, groupId, dtWareId);
             $error(errMsg);
+
+            ex.printStackTrace();
+
+            // 回写workload表(2:上新失败)
+            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+
             return;
         }
     }
@@ -235,8 +256,7 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
             List<BaseMongoMap<String, Object>> skus = platform.getSkus();
             for (BaseMongoMap<String, Object> sku : skus) {
                 CmsBtDtSkuModel dtSkuModel = new CmsBtDtSkuModel();
-                dtSkuModel.setChannelId(channelId);
-                dtSkuModel.setCartId(cartId);
+                dtSkuModel.setChannelId(prodObj.getOrgChannelId()); // ims表同步库存需要用OrgChannelId
                 dtSkuModel.setProductCode(code);
                 dtSkuModel.setSkuCode(sku.getStringAttribute("skuCode"));
                 dtSkuModel.setCreater(getTaskName());

@@ -59,7 +59,7 @@
                             <div class="text-left table_bg_gray">
                                 <div style="float: left">
                                     组合套装sku（商家编码） ：{{sku.suitSkuCode}}<br/>
-                                    组合套装实际售价 ：{{sku.suitPreferentialPrice | currency:''}} <i ng-show="sku.warn" style="color: #ff0000;">组合套装优惠售价与实际售价不一致，请修正单品sku的优惠售价！</i>
+                                    组合套装实际售价 ：{{sku.suitPreferentialPrice | currency:''}} <i ng-show="sku.warn" style="color: #ff0000;">组合套装优惠售价小于实际售价，请修正单品sku的优惠售价！</i>
                                 </div>
                                 <div style="float: right; padding-right: 37px;">
                                     <button type="submit" class="btn btn-success btn-xxs" ng-click="copySkuItem(sku.skuItems)">

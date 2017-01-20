@@ -45,7 +45,9 @@ define([
                             var skuCodes = new Array();
                             _.each($scope.vm.product.skus, function (skuBean, index, list) {
                                 _.each(skuBean.skuItems, function (skuItem, index, list) {
-                                    skuCodes.push(skuItem.skuCode);
+                                    if (skuItem.skuCode != null) {
+                                        skuCodes.push(skuItem.skuCode);
+                                    }
                                 });
                             });
                             var parameter = {};
@@ -85,7 +87,7 @@ define([
                             tempSuitSellingPriceCn += skuItem.sellingPriceCn;
                         });
                     }
-                    sku.warn = sku.suitPreferentialPrice != tempSuitPreferentialPrice;
+                    sku.warn = sku.suitPreferentialPrice < tempSuitPreferentialPrice;
                     sku.tempSuitPreferentialPrice = tempSuitPreferentialPrice;
                     sku.tempSuitSellingPriceCn = tempSuitSellingPriceCn;
                     // 每次sku.warn改变后，判断所有SKU的warn值，来决定提交按钮是否disabled
