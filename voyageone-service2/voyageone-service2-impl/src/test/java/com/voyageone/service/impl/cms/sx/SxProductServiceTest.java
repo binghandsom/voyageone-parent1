@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author james.li on 2016/5/12.
@@ -199,5 +200,41 @@ public class SxProductServiceTest {
         System.out.println("测试完成");
     }
 
+    @Test
+    public void testDoPrintResultMap() {
+        // 输出最终结果信息测试
+
+
+        // 保存每个渠道每个平台上每个商品的上新结果(成功失败件数信息,key为"channelId_cartId_groupId")
+        Map<String, Map<String, Object>> resultMap = new ConcurrentHashMap<>();
+        sxProductService.add2ResultMap(resultMap, "010", 20, 100001L, false, true);  // 新增 成功
+        sxProductService.add2ResultMap(resultMap, "010", 20, 100002L, false, false); // 新增 失败
+        sxProductService.add2ResultMap(resultMap, "010", 20, 100003L, true, true);   // 更新 失败
+        sxProductService.add2ResultMap(resultMap, "010", 20, 100004L, true, false);  // 更新 失败
+        sxProductService.add2ResultMap(resultMap, "010", 30, 200001L, false, true);  // 新增 成功
+        sxProductService.add2ResultMap(resultMap, "010", 30, 200002L, false, false); // 新增 失败
+        sxProductService.add2ResultMap(resultMap, "010", 30, 200003L, true, true);   // 更新 失败
+        sxProductService.add2ResultMap(resultMap, "010", 30, 200004L, true, false);  // 更新 失败
+
+        sxProductService.add2ResultMap(resultMap, "015", 20, 100001L, false, true);  // 新增 成功
+        sxProductService.add2ResultMap(resultMap, "015", 20, 100002L, false, true);  // 新增 成功
+        sxProductService.add2ResultMap(resultMap, "015", 20, 100003L, true, true);   // 更新 失败
+        sxProductService.add2ResultMap(resultMap, "015", 20, 100004L, true, false);  // 更新 失败
+        sxProductService.add2ResultMap(resultMap, "015", 20, 100005L, true, false);  // 更新 失败
+        sxProductService.add2ResultMap(resultMap, "015", 30, 200001L, false, true);  // 新增 成功
+        sxProductService.add2ResultMap(resultMap, "015", 30, 200002L, true, true);   // 更新 成功
+        sxProductService.add2ResultMap(resultMap, "015", 30, 200003L, true, true);   // 更新 成功
+        sxProductService.add2ResultMap(resultMap, "015", 30, 200004L, true, false);  // 更新 失败
+
+        // 保存渠道平台信息
+        List<Map<String, Object>> channelCartMapList = new ArrayList<>();
+        sxProductService.add2ChannelCartMapList(channelCartMapList, "010", 20);
+        sxProductService.add2ChannelCartMapList(channelCartMapList, "010", 30);
+        sxProductService.add2ChannelCartMapList(channelCartMapList, "015", 20);
+        sxProductService.add2ChannelCartMapList(channelCartMapList, "015", 30);
+
+        sxProductService.doPrintResultMap(resultMap, "天猫官网同购", channelCartMapList);
+        System.out.println("测试完成");
+    }
 
 }
