@@ -62,7 +62,9 @@ define([
                             var skuCodes = new Array();
                             _.each($scope.vm.product.skus, function (skuBean, index, list) {
                                 _.each(skuBean.skuItems, function (skuItem, index, list) {
-                                    skuCodes.push(skuItem.skuCode);
+                                    if (skuItem.skuCode != null) {
+                                        skuCodes.push(skuItem.skuCode);
+                                    }
                                 });
                             });
                             var parameter = {};
