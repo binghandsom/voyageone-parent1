@@ -511,10 +511,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 platformStatus = CmsConstants.PlatformStatus.InStock;   // 在库
             }
 
-            // 更新特价宝
-            sxData.getPlatform().setNumIId(numIId);
-            updateTeJiaBaoPromotion(sxData);
-
             // 回写PXX.pCatId, PXX.pCatPath等信息
             Map<String, String> pCatInfoMap = getSimpleItemCatInfo(shopProp, numIId);
             if (pCatInfoMap != null && pCatInfoMap.size() > 0) {
@@ -526,6 +522,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, numIId,
                         platformStatus, "", getTaskName());
             }
+
+            // 更新特价宝
+            sxData.getPlatform().setNumIId(numIId);
+            updateTeJiaBaoPromotion(sxData);
 
             // added by morse.lu 2016/12/08 start
             if (ChannelConfigEnums.Channel.SN.equals(channelId)) {
