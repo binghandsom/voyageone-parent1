@@ -526,11 +526,11 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             // added by morse.lu 2016/12/08 end
 
             // 正常结束
-            $info(String.format("天猫官网同购单个商品上新成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [NumIId:%s] [耗时:%s]",
-                    channelId, cartId, groupId, numIId, (System.currentTimeMillis() - prodStartTime)));
+            $info(String.format("天猫官网同购单个商品%s成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [NumIId:%s] [耗时:%s]",
+                    updateWare ? "更新" : "上新", channelId, cartId, groupId, numIId, (System.currentTimeMillis() - prodStartTime)));
         } catch (Exception ex) {
             // 异常结束时
-            String errMsg = String.format(" 天猫官网同购上新异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [NumIId:%s]",
+            String errMsg = String.format("天猫官网同购上新异常结束，开始记录异常状态！[ChannelId:%s] [CartId:%s] [GroupId:%s] [NumIId:%s]",
                     channelId, cartId, groupId, numIId);
             $error(errMsg);
 
@@ -557,8 +557,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             // 上新出错时状态回写操作
             sxProductService.doUploadFinalProc(shopProp, false, sxData, cmsBtSxWorkloadModel, "", null, "", getTaskName());
 
-            $error(String.format("天猫官网同购单个商品上新失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [NumIId:%s] [耗时:%s] [errMsg:%s]",
-                    channelId, cartId, groupId, numIId, (System.currentTimeMillis() - prodStartTime), sxData.getErrorMessage()));
+            // 异常结束
+            $error(String.format("天猫官网同购单个商品%s失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [NumIId:%s] [耗时:%s] [errMsg:%s]",
+                    updateWare ? "更新" : "上新", channelId, cartId, groupId, numIId, (System.currentTimeMillis() - prodStartTime), sxData.getErrorMessage()));
         }
     }
 
