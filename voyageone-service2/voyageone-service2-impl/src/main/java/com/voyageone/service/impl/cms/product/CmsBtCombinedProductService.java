@@ -379,7 +379,7 @@ public class CmsBtCombinedProductService extends BaseService {
             for (BaseMongoMap<String, Object> sku:skus) {
                 if (skuCode.equals(sku.getStringAttribute("skuCode"))) {
                     skuItem = new CmsBtCombinedProductModel_Sku_Item();
-                    skuItem.setProductName(product.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn());
+                    skuItem.setProductName(StringUtils.isBlank(product.getCommon().getFields().getOriginalTitleCn()) ? product.getCommon().getFields().getProductNameEn() : product.getCommon().getFields().getOriginalTitleCn());
                     skuItem.setCode(product.getCommonNotNull().getFieldsNotNull().getCode());
                     skuItem.setSkuCode(skuCode);
                     skuItem.setSellingPriceCn(sku.getDoubleAttribute("priceSale"));
