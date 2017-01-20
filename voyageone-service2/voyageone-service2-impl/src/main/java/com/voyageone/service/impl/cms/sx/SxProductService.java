@@ -5485,7 +5485,7 @@ public class SxProductService extends BaseService {
             OrderChannelBean channel = Channels.getChannel(channelId);
             if (0 == cnt) $info("=================" + uploadName + "  最终结果=====================");  // 免得Channels.getChannel()里面答应一些另外的信息
 
-            String strResult = String.format("%s %s 上新结果: [cartId:%s 总件数:%s 新增(成功:%s 失败:%s) 更新(成功:%s 失败:%s)]",
+            String strResult = String.format("%s %s 结果: [cartId:%s 总件数:%s 新增(成功:%s 失败:%s) 更新(成功:%s 失败:%s)]",
                     channelId, String.format("%1$-15s", channel != null ? channel.getFull_name() : "未知店铺名"),
                     cartId, totalCnt, addOkCnt, addNgCnt, updOkCnt, updNgCnt);
             $info(strResult);

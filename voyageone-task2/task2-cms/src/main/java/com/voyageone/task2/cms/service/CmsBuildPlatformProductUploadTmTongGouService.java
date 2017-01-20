@@ -178,7 +178,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         }
 
         // 输出最终结果
-        sxProductService.doPrintResultMap(resultMap, "天猫官网同购", channelCartMapList);
+        sxProductService.doPrintResultMap(resultMap, "天猫官网同购上新", channelCartMapList);
 
         // 正常结束
         $info("天猫国际官网同购主线程正常结束");
