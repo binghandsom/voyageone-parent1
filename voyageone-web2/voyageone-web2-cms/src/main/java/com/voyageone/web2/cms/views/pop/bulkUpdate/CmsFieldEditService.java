@@ -1331,12 +1331,15 @@ public class CmsFieldEditService extends BaseViewService {
             if ("refreshRetailPrice".equalsIgnoreCase((String) params.get("_option"))) {
                 // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
                 AdvSearchRefreshRetailPriceMQMessageBody mqMessageBody = new AdvSearchRefreshRetailPriceMQMessageBody();
-                mqMessageBody.setCodeList(productCodes);
                 mqMessageBody.setCartList(cartList);
                 mqMessageBody.setUserName(userInfo.getUserName());
                 mqMessageBody.setChannelId(userInfo.getSelChannelId());
                 mqMessageBody.setSender(userInfo.getUserName());
-                mqSenderService.sendMessage(mqMessageBody);
+                List<List<String>> codesList = CommonUtil.splitList(productCodes,100);
+                codesList.forEach(codes->{
+                    mqMessageBody.setCodeList(codes);
+                    mqSenderService.sendMessage(mqMessageBody);
+                });
             } else {
                 // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
                 AdvSearchConfirmRetailPriceMQMessageBody mqMessageBody = new AdvSearchConfirmRetailPriceMQMessageBody();
