@@ -13,10 +13,12 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
@@ -5398,6 +5400,99 @@ public class SxProductService extends BaseService {
             $warn(errMsg);
 //            throw new BusinessException(errMsg);
         }
+    }
+
+    /**
+     * 将上新状态添加到结果map里面
+     *
+     * @param resultMap  结果map(必须是线程安全的ConcurrentHashMap)
+     * @param channelId  渠道id
+     * @param cartId     平台id
+     * @param isUpdate   是否更新商品(true:更新商品, false:新增商品)
+     * @param result     上新结果(true:成功, false:失败)
+     */
+    public void add2ResultMap(Map resultMap, String channelId, int cartId, Long groupId, boolean isUpdate, boolean result) {
+        Map<String, Object> currResult = new HashMap<>();
+        currResult.put("channelId", channelId);
+        currResult.put("cartId", cartId);
+        currResult.put("groupId", groupId);
+        currResult.put("isUpdate", isUpdate);
+        currResult.put("result", result);
+        resultMap.put(channelId + "_" + cartId + "_" + groupId, currResult);
+    }
+
+    /**
+     * 将渠道id和平台id加入到列表中
+     *
+     * @param channelCartMapList  渠道id和平台id列表
+     * @param channelId  渠道id
+     * @param cartId     平台id
+     */
+    public void add2ChannelCartMapList(List<Map<String, Object>> channelCartMapList, String channelId, int cartId) {
+        if (channelCartMapList == null) return;
+
+        Map currMap = new HashMap<>();
+        currMap.put("channelId", channelId);
+        currMap.put("cartId", cartId);
+        channelCartMapList.add(currMap);
+    }
+
+    /**
+     * 将上新状态结果map里面数据统计之后，输入到log信息中
+     *
+     * @param resultMap  结果map(必须是线程安全的ConcurrentHashMap)
+     * @param uploadName 上新处理名(如：分销上新，天猫官网同购上新，京东上新等)
+     * @param channelCartMapList 上新job配置的全部可以上新的渠道id和平台id列表
+     */
+    public void doPrintResultMap(Map resultMap, String uploadName, List<Map<String, Object>> channelCartMapList) {
+        if (MapUtils.isEmpty(resultMap) || ListUtils.isNull(channelCartMapList)) return;
+
+        int cnt = 0;
+        for(Map<String, Object> channelCartMap : channelCartMapList) {
+            String channelId = channelCartMap.containsKey("channelId") ? (String)channelCartMap.get("channelId") : null;
+            int cartId = channelCartMap.containsKey("cartId") ? (int)channelCartMap.get("cartId") : 0;
+            if (StringUtils.isEmpty(channelId) || 0 == cartId) continue;
+
+            int totalCnt = 0;
+            int addOkCnt = 0;
+            int updOkCnt = 0;
+            int addNgCnt = 0;
+            int updNgCnt = 0;
+
+            for (Object obj: resultMap.values()) {
+                Map<String, Object> result = (Map<String, Object>)obj;
+                if (!channelId.equals(result.get("channelId"))
+                        || cartId != (int)result.get("cartId")) {
+                    continue;
+                }
+                totalCnt++;
+                if (!(boolean)result.get("isUpdate")) {
+                    // 新增商品
+                    if ((boolean)result.get("result")) {
+                        addOkCnt++;
+                    } else {
+                        addNgCnt++;
+                    }
+                } else {
+                    // 更新商品
+                    if ((boolean)result.get("result")) {
+                        updOkCnt++;
+                    } else {
+                        updNgCnt++;
+                    }
+                }
+            }
+            OrderChannelBean channel = Channels.getChannel(channelId);
+            if (0 == cnt) $info("=================" + uploadName + "  最终结果=====================");  // 免得Channels.getChannel()里面答应一些另外的信息
+
+            String strResult = String.format("%s %s 上新结果: [cartId:%s 总件数:%s 新增(成功:%s 失败:%s) 更新(成功:%s 失败:%s)]",
+                    channelId, String.format("%1$-15s", channel != null ? channel.getFull_name() : "未知店铺名"),
+                    cartId, totalCnt, addOkCnt, addNgCnt, updOkCnt, updNgCnt);
+            $info(strResult);
+
+            cnt++;
+        }
+        $info("=================" + uploadName + "  主线程结束====================");
     }
 
 }

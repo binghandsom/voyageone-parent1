@@ -57,6 +57,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -129,6 +130,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
     private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
 
+    // 保存每个渠道每个平台上每个商品的上新结果(成功失败件数信息,key为"channelId_cartId_groupId")
+    Map<String, Map<String, Object>> resultMap = new ConcurrentHashMap<>();
+
     /**
      * 天猫国际官网同购上新处理
      *
@@ -156,18 +160,25 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             }
         }
 
+        List<Map<String, Object>> channelCartMapList = new ArrayList<>();
+
         // 循环所有销售渠道
         if (ListUtils.notNull(channelIdList)) {
             for (String channelId : channelIdList) {
                 if (ChannelConfigEnums.Channel.USJGJ.getId().equals(channelId)) {
                     // 商品上传(USJOI天猫国际官网同购)
                     doProductUpload(channelId, CartEnums.Cart.USTT.getValue(), threadCount, rowCount);
+                    sxProductService.add2ChannelCartMapList(channelCartMapList, channelId, CartEnums.Cart.USTT.getValue());
                 } else {
                     // 商品上传(天猫国际官网同购)
                     doProductUpload(channelId, CartEnums.Cart.TT.getValue(), threadCount, rowCount);
+                    sxProductService.add2ChannelCartMapList(channelCartMapList, channelId, CartEnums.Cart.TT.getValue());
                 }
             }
         }
+
+        // 输出最终结果
+        sxProductService.doPrintResultMap(resultMap, "天猫官网同购", channelCartMapList);
 
         // 正常结束
         $info("天猫国际官网同购主线程正常结束");
@@ -525,6 +536,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             }
             // added by morse.lu 2016/12/08 end
 
+            // 把上新成功状态放入结果map中
+            sxProductService.add2ResultMap(resultMap, channelId, cartId, groupId, updateWare, true);
+
             // 正常结束
             $info(String.format("天猫官网同购单个商品%s成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [NumIId:%s] [耗时:%s]",
                     updateWare ? "更新" : "上新", channelId, cartId, groupId, numIId, (System.currentTimeMillis() - prodStartTime)));
@@ -533,6 +547,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             String errMsg = String.format("天猫官网同购上新异常结束，开始记录异常状态！[ChannelId:%s] [CartId:%s] [GroupId:%s] [NumIId:%s]",
                     channelId, cartId, groupId, numIId);
             $error(errMsg);
+
+            // 把上新失败结果加入到resultMap中
+            sxProductService.add2ResultMap(resultMap, channelId, cartId, groupId, updateWare, false);
 
             if (sxData == null) {
                 // 回写详细错误信息表(cms_bt_business_log)用
