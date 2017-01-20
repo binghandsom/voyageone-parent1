@@ -1642,7 +1642,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         Map<String, Object> multiComplexChildren6 = new HashMap<>();
                         // jeff 2016/04 change start
                         // multiComplexChildren.put("image1", imgOrg);
-                        String picName = doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg);
+                        String picName = doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg.trim());
                         multiComplexChildren.put("image1", picName);
                         multiComplexChildren6.put("image6", picName);
                         // jeff 2016/04 add end
@@ -3082,7 +3082,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //            List<CmsBtImagesModel> findImage = cmsBtImageDaoExt.selectImages(param);
             CmsBtImagesModel findImage = imagesService.getImageIsExists(channelId, code, originalUrl);
             CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
-
             // 不存在则插入
             if (findImage == null) {
                 // 图片名最后一部分的值（索引）
@@ -3128,7 +3127,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
                 return newModel.getImgName();
             } else {
-
+                $info("findImage != null");
                 // 如果原始图片的地址发生变更则做更新操作
                 if (!originalUrl.equals(findImage.getOriginalUrl())) {
                     findImage.setOriginalUrl(originalUrl);
