@@ -17,8 +17,8 @@ public class CmsBatchPlatformFieldsMQMessageBody extends BaseMQMessageBody {
     private String channelId;
     private Integer cartId;
     private String fieldsId;
+    private String fieldsName;
     private Object fieldsValue;
-    private String userName;
 
     public List<String> getProductCodes() {
         return productCodes;
@@ -52,20 +52,20 @@ public class CmsBatchPlatformFieldsMQMessageBody extends BaseMQMessageBody {
         this.fieldsId = fieldsId;
     }
 
+    public String getFieldsName() {
+        return fieldsName;
+    }
+
+    public void setFieldsName(String fieldsName) {
+        this.fieldsName = fieldsName;
+    }
+
     public Object getFieldsValue() {
         return fieldsValue;
     }
 
     public void setFieldsValue(Object fieldsValue) {
         this.fieldsValue = fieldsValue;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     @Override

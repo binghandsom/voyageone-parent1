@@ -5,7 +5,6 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
-import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
@@ -32,14 +31,8 @@ import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchConfirmRetailPriceMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchProductApprovalMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchRefreshRetailPriceMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.BatchUpdateProductMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.PlatformActiveLogMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductVoRateUpdateMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.*;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.*;
 import com.voyageone.service.impl.com.cache.CommCacheService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
@@ -1441,7 +1434,6 @@ public class CmsFieldEditService extends BaseViewService {
         }
         Map<String, Object> prop = (Map<String, Object>) params.get("property");
         String prop_id = StringUtils.trimToEmpty((String) prop.get("id"));
-        List<BulkUpdateModel> bulkList = new ArrayList<>(productCodes.size());
 
         Field fields = SchemaJsonReader.readJsonForObject(prop);
 
@@ -1456,27 +1448,19 @@ public class CmsFieldEditService extends BaseViewService {
         Map<String, Object> result = new LinkedHashMap<>();
         fields.getFieldValueToMap(result);
 
-//        Map<String, Object> mqMessage = new HashedMap();
-//        mqMessage.put("cartId", cartId);
-//        mqMessage.put("channelId", userInfo.getSelChannelId());
-//        mqMessage.put("productCodes", productCodes);
-//        mqMessage.put("userName", userInfo.getUserName());
-//        mqMessage.put("fieldsId", prop_id);
-//        mqMessage.put("fieldsValue", result.get(prop_id));
-
         CmsBatchPlatformFieldsMQMessageBody mqMessageBody = new CmsBatchPlatformFieldsMQMessageBody();
         mqMessageBody.setCartId(cartId);
         mqMessageBody.setChannelId(userInfo.getSelChannelId());
         mqMessageBody.setProductCodes(productCodes);
-        mqMessageBody.setUserName(userInfo.getUserName());
         mqMessageBody.setFieldsId(prop_id);
+        mqMessageBody.setFieldsName(fields.getName());
         mqMessageBody.setFieldsValue(result.get(prop_id));
         mqMessageBody.setSender(userInfo.getUserName());
         try {
             cmsMqSenderService.sendMessage(mqMessageBody);
         } catch (MQMessageRuleException e) {
             $error(e);
-            e.printStackTrace();
+            throw new BusinessException("批量修改平台级商品属性失败, 请重新设置");
         }
     }
 

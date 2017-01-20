@@ -45,14 +45,16 @@ public class CmsBatchEditPlatformFieldsMqJob extends TBaseMQCmsService<CmsBatchP
     @Override
     public void onStartup(CmsBatchPlatformFieldsMQMessageBody messageBody) throws Exception {
 
-        List<String> successList = new ArrayList<>();
         Map<String,String> failList = new HashMap<>();
+
         List<String> productCodes = messageBody.getProductCodes();
         String channelId = messageBody.getChannelId();
         Integer cartId = messageBody.getCartId();
         String fieldsId = messageBody.getFieldsId().replace(".","->");
         Object fieldsValue = messageBody.getFieldsValue();
-        String userName = messageBody.getUserName();
+        String userName = messageBody.getSender();
+
+        // 循环更新平台的商品属性
         productCodes.forEach(code -> {
             try {
                 CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, code);
@@ -74,13 +76,11 @@ public class CmsBatchEditPlatformFieldsMqJob extends TBaseMQCmsService<CmsBatchP
                     bulkList.add(model);
                     cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
 
-
                     if (CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(cmsBtProductModel_platform_cart.getStatus())) {
                         sxProductService.insertSxWorkLoad(channelId, new ArrayList<String>(Arrays.asList(code)), cartId, userName);
                     }
-                    productStatusHistoryService.insert(channelId, code, cmsBtProductModel_platform_cart.getStatus(), cartId, EnumProductOperationType.BatchSetPlatformAttr, "批量设置平台共同属性", userName);
-                    productService.insertProductHistory(channelId, cmsBtProductModel);
-                    successList.add(code);
+                    String insertMsg = "平台属性:" + messageBody.getFieldsName() + ": " + fieldsValue;
+                    productStatusHistoryService.insert(channelId, code, cmsBtProductModel_platform_cart.getStatus(), cartId, EnumProductOperationType.BatchSetPlatformAttr, insertMsg, userName);
                 }else{
                     failList.put(code, "没有 platform数据");
                 }
@@ -91,7 +91,7 @@ public class CmsBatchEditPlatformFieldsMqJob extends TBaseMQCmsService<CmsBatchP
         if(failList.size()>0){
             cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(failList));
         }else{
-            cmsSuccessLog(messageBody, "共处理了"+successList.size()+"个");
+            cmsSuccessLog(messageBody, "共处理了"+productCodes.size()+"个");
         }
     }
 }
