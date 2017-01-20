@@ -930,7 +930,7 @@ schema .ng-invalid.focus-error {
     border-radius: 5px;
     padding: 5px;
     background: white;
-    height: 118px;
+    min-height: 118px;
 }
 
 .jm-sortable-product .close {
