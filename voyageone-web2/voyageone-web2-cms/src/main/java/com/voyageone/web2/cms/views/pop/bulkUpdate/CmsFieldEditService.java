@@ -336,7 +336,7 @@ public class CmsFieldEditService extends BaseViewService {
                 throw new BusinessException("MQ发送异常:" + e.getMessage());
             }
 
-        } else if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id) || "translateStatus".equals(prop_id)) {
+        } else if ("hsCodePrivate".equals(prop_id) || "hsCodeCross".equals(prop_id) || "translateStatus".equals(prop_id)) {
             // 税号更新 /翻译状态更新
             String hsCode = null;
             Map<String, Object> valObj = (Map<String, Object>) prop.get("value");
@@ -349,15 +349,8 @@ public class CmsFieldEditService extends BaseViewService {
                 return rsMap;
             }
 
-            /*params.put("productIds", productCodes);
-            params.put("_channleId", userInfo.getSelChannelId());
-            params.put("_userName", userInfo.getUserName());
-            params.put("_taskName", "batchupdate");
-            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);*/
-
             BatchUpdateProductMQMessageBody mqMessageBody = new BatchUpdateProductMQMessageBody();
             mqMessageBody.setChannelId(userInfo.getSelChannelId());
-            mqMessageBody.setUserName(userInfo.getUserName());
             mqMessageBody.setProductCodes(productCodes);
             mqMessageBody.setParams(params);
             mqMessageBody.setSender(userInfo.getUserName());
@@ -365,7 +358,7 @@ public class CmsFieldEditService extends BaseViewService {
                 mqSenderService.sendMessage(mqMessageBody);
             } catch (MQMessageRuleException e) {
                 $error(String.format("批量更新商品发送MQ异常,channleId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
-                throw new BusinessException("MQ发送异常:" + e.getMessage());
+                throw new BusinessException("高级检索 批量更新失败!");
             }
 
             rsMap.put("ecd", 0);

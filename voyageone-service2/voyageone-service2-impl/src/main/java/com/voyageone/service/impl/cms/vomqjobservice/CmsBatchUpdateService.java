@@ -21,12 +21,12 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.BatchUpdateProductMQMessageBody;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-public class CmsBacthUpdateService extends VOAbsLoggable {
+public class CmsBatchUpdateService extends VOAbsLoggable {
 
     @Autowired
     private ProductService productService;
@@ -54,17 +54,16 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
         // 错误map，key-value分别对于产品code和错误信息
         Map<String, String> failMap = new HashMap<String, String>();
         String channelId = StringUtils.trimToNull(messageBody.getChannelId());
-        String userName = StringUtils.trimToNull(messageBody.getUserName());
+        String userName = StringUtils.trimToNull(messageBody.getSender());
         List<String> codeList = messageBody.getProductCodes();
 
         Map<String, Object> prop = (Map<String, Object>) messageBody.getParams().get("property");
         if (prop == null || prop.isEmpty()) {
-            /*$error("高级检索 批量更新 缺少property参数");
-            return;*/
             throw new BusinessException("高级检索 批量更新 缺少property参数");
         }
         String prop_id = StringUtils.trimToEmpty((String) prop.get("id"));
-        if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id)) {
+        String prop_name = StringUtils.trimToEmpty((String) prop.get("name"));
+        if ("hsCodePrivate".equals(prop_id) || "hsCodeCross".equals(prop_id)) {
             // 税号更新
             String hsCode = null;
             Map<String, Object> valObj = (Map<String, Object>) prop.get("value");
@@ -76,7 +75,7 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
             if (synPriceFlg == null) {
                 synPriceFlg = false;
             }
-            failMap = updateHsCode(prop_id, hsCode, codeList, channelId, userName, synPriceFlg);
+            failMap = updateHsCode(prop_id, prop_name, hsCode, codeList, channelId, userName, synPriceFlg);
         } else if ("translateStatus".equals(prop_id)) {
             // 翻译状态更新
             String stsCode = null;
@@ -86,15 +85,23 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
                 stsCode = StringUtils.trimToEmpty((String) valObj.get("value"));
                 priorDate = StringUtils.trimToEmpty((String) valObj.get("priorTranslateDate"));
             }
-            updateTranslateStatus(stsCode, codeList, channelId, userName, priorDate);
+            updateTranslateStatus(prop_name, stsCode, codeList, channelId, userName, priorDate);
         }
         return failMap;
     }
 
-    /*
+    /**
      * 税号变更
+     * @param propId 属性Id
+     * @param propName 属性名称
+     * @param propValue 属性值
+     * @param codeList 产品Code列表
+     * @param channelId 店铺Id
+     * @param userName 操作者
+     * @param synPriceFlg 价格是否同步Flg
+     * @return 未处理错误数据列表
      */
-    private Map<String, String> updateHsCode(String propId, String propValue, List<String> codeList, String channelId, String userName, Boolean synPriceFlg) {
+    private Map<String, String> updateHsCode(String propId, String propName, String propValue, List<String> codeList, String channelId, String userName, Boolean synPriceFlg) {
         Map<String, String> failMap = new HashMap<String, String>();
         String msg = "税号变更 " + propId + "=> " + propValue;
         // 未配置自动同步的店铺，显示同步状况
@@ -112,6 +119,7 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
         JongoUpdate updObj = new JongoUpdate();
         WriteResult rs = null;
 
+        List<String> succesList = new ArrayList<>();
         for (String prodCode : codeList) {
             try {
                 CmsBtProductModel newProduct = productService.getProductByCode(channelId, prodCode);
@@ -161,6 +169,7 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
                         }
                     }
                 }
+                succesList.add(prodCode);
             } catch (PriceCalculateException e) {
 
                 failMap.put(prodCode, String.format("高级检索 批量更新 价格计算错误 channleid=%s, prodcode=%s", channelId, prodCode));
@@ -181,25 +190,37 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
                 continue;
             }
         }
+        productStatusHistoryService.insertList(channelId, succesList, -1, EnumProductOperationType.BatchUpdate, "高级检索 批量更新：" + propName + "设置--" + propValue, userName);
         return failMap;
     }
 
     /**
      * 翻译状态更新
+     * @param propName 属性名称
+     * @param propValue 属性值
+     * @param codeList 产品Code列表
+     * @param channelId 店铺Id
+     * @param userName 操作者
+     * @param priorDate 操作日期
      */
-    private void updateTranslateStatus(String propValue, List<String> codeList, String channelId, String userName, String priorDate) {
+    private void updateTranslateStatus(String propName, String propValue, List<String> codeList, String channelId, String userName, String priorDate) {
+
         // 先找出所选商品的主商品code
         JongoQuery qryObj = new JongoQuery();
-        qryObj.setQuery("{'productCodes':{$in:#},'cartId':0}");
+        qryObj.setQuery("{\"common.fields.code\":{$in:#}}");
         qryObj.setParameters(codeList);
-        qryObj.setProjection("{'mainProductCode':1,'_id':0}");
-        List<CmsBtProductGroupModel> grpList = productGroupService.getList(channelId, qryObj);
-        if (grpList == null || grpList.isEmpty()) {
+        qryObj.setProjection("{'platforms.P0.mainProductCode':1,'_id':0}");
+        List<CmsBtProductModel> prodList = productService.getList(channelId, qryObj);
+        if (prodList == null || prodList.isEmpty()) {
             /*$error("高级检索 批量更新 翻译状态更新 没有找到主商品");
             return;*/
-            throw new BusinessException(String.format("高级检索 批量更新 翻译状态更新 没有找到主商品, channelId=%s, codeList=%s", channelId, JacksonUtil.bean2Json(codeList)));
+            throw new BusinessException(String.format("高级检索 批量更新 翻译状态更新 没有找到对应的商品, channelId=%s, codeList=%s", channelId, JacksonUtil.bean2Json(codeList)));
         }
-        List<String> mnCodeList = grpList.stream().map(grpObj -> grpObj.getMainProductCode()).filter(mnCode -> mnCode != null && mnCode.length() > 0).collect(Collectors.toList());
+
+        List<String> mnCodeList = prodList.stream()
+                .map(prodObj -> prodObj.getPlatform(0).getMainProductCode())
+                .filter(mnCode -> mnCode != null && mnCode.length() > 0)
+                .collect(Collectors.toList());
 
         JongoUpdate updObj = new JongoUpdate();
         updObj.setQuery("{'platforms.P0.mainProductCode':{$in:#}}");
@@ -213,8 +234,6 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
             updObj.setUpdate("{$set:{'common.fields.translateStatus':'2','common.fields.translator':'','common.fields.translateTime':'','common.fields.priorTranslateDate':#}}");
             updObj.setUpdateParameters(priorDate);
         } else {
-            /*$warn("高级检索 批量更新 翻译状态更新 未知设置");
-            return;*/
             throw new BusinessException(String.format("高级检索 批量更新 翻译状态更新 未知设置, translateStatus=%s", propValue));
         }
         WriteResult rs = productService.updateMulti(updObj, channelId);
@@ -222,7 +241,7 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
 
         // 记录商品修改历史
         propValue = Types.getTypeName(TypeConfigEnums.MastType.translationStatus.getId(), "cn", propValue);
-        productStatusHistoryService.insertList(channelId, codeList, -1, EnumProductOperationType.BatchUpdate, "高级检索 批量更新：翻译状态--" + propValue, userName);
+        productStatusHistoryService.insertList(channelId, codeList, -1, EnumProductOperationType.BatchUpdate, "高级检索 批量更新：" + propName +"--" + propValue, userName);
     }
 
 }
