@@ -85,9 +85,45 @@ define([
                                 });
                             });
                         } else {
+                            var tempProduct = angular.copy($scope.vm.product);
+                            $scope.vm.product = {
+                                syncPlatform: 0,
+                                cartId: tempProduct.cartId,
+                                numID: tempProduct.numID,
+                                wuliubaoCode : tempProduct.wuliubaoCode,
+                                skus: [
+                                    {
+                                        skuItems: [
+                                            {}
+                                        ],
+                                        tempSuitSellingPriceCn: 0,
+                                        tempSuitPreferentialPrice: 0
+                                    }
+                                ]
+                            };
                             alert("查询不到组合商品信息！");
                         }
 
+                    }, function (resp) {
+                        if ($scope.vm.product.syncPlatform == 1) {
+                            var tempProduct = angular.copy($scope.vm.product);
+                            $scope.vm.product = {
+                                _id: tempProduct._id,
+                                syncPlatform: 0,
+                                cartId: tempProduct.cartId,
+                                numID: tempProduct.numID,
+                                wuliubaoCode : tempProduct.wuliubaoCode,
+                                skus: [
+                                    {
+                                        skuItems: [
+                                            {}
+                                        ],
+                                        tempSuitSellingPriceCn: 0,
+                                        tempSuitPreferentialPrice: 0
+                                    }
+                                ]
+                            };
+                        }
                     });
                 };
 
@@ -170,7 +206,7 @@ define([
                     }).then(function (resp) {
                         if (resp.data.skuItem == null) {
                             clearSkuItem(skuItem); // 查询不到清空信息
-                            alert("查询不到SKU信息！");
+                            //alert("查询不到SKU信息！");
                         } else {
                             _.extend(skuItem, resp.data.skuItem);
                             dynamicSkuPrice(sku);
@@ -183,7 +219,7 @@ define([
                     if (!skuItem) {
                         return;
                     }
-                    _.extend(skuItem, {code: "", skuCode: "", sellingPriceCn: "", preferentialPrice: "", productName: ""});
+                    _.extend(skuItem, {code: "", sellingPriceCn: "", preferentialPrice: skuItem.preferentialPrice, productName: ""});
                 }
 
                 // 改变实际SKU价格

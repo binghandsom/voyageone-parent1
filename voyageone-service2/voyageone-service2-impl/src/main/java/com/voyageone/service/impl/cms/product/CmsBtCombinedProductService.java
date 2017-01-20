@@ -681,9 +681,9 @@ public class CmsBtCombinedProductService extends BaseService {
                     skuItem.setSellingPriceCn(tempSkuItem.getSellingPriceCn()); // 设置中国最终售价
                     skuItem.setProductName(tempSkuItem.getProductName()); // 设置商品名称
                 }
-                if (suitPreferentialPrice.doubleValue() != tempSuitPreferentialPrice.doubleValue()) {
+                /*if (suitPreferentialPrice.doubleValue() != tempSuitPreferentialPrice.doubleValue()) {
                     throw new BusinessException(String.format("组合商品数据错误, SKU=%s实际售价和商品单品优惠售价之和不相等.", suitSkuCode));
-                }
+                }*/
                 suitSkuMap.put(suitSkuCode, suitPreferentialPrice);
             }
             if (skus.size() != suitSkuMap.size()) {
@@ -727,9 +727,9 @@ public class CmsBtCombinedProductService extends BaseService {
                     if (!platformSuitSkuMap.containsKey(entry.getKey())) {
                         throw new BusinessException("数据错误, 组合商品SKU=%s在平台组合商品中不存在.");
                     }
-                    if (entry.getValue().doubleValue() !=  platformSuitSkuMap.get(entry.getKey()).doubleValue()) {
+                    /*if (entry.getValue().doubleValue() !=  platformSuitSkuMap.get(entry.getKey()).doubleValue()) {
                         throw new BusinessException("数据错误, 组合商品SKU=%s优惠售价和平台数据不一致.");
-                    }
+                    }*/
                     // SKU 就不做实际校验了
                 }
             }

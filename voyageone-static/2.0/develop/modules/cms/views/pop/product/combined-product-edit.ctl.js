@@ -211,7 +211,7 @@ define([
                     }).then(function (resp) {
                         if (resp.data.skuItem == null) {
                             clearSkuItem(skuItem); // 查询不到清空信息
-                            alert("查询不到SKU信息！");
+                            //alert("查询不到SKU信息！");
                         } else {
                             _.extend(skuItem, resp.data.skuItem);
                             dynamicSkuPrice(sku);
@@ -224,7 +224,7 @@ define([
                     if (!skuItem) {
                         return;
                     }
-                    _.extend(skuItem, {code: "", skuCode: "", sellingPriceCn: "", preferentialPrice: "", productName: ""});
+                    _.extend(skuItem, {code: "", sellingPriceCn: "", preferentialPrice: skuItem.preferentialPrice, productName: ""});
                 }
 
                 // 改变实际SKU价格
