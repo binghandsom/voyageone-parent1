@@ -243,6 +243,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         } catch (InterruptedException ie) {
             ie.printStackTrace();
         }
+
+        $info("当前渠道的天猫官网同购上新任务执行完毕！[channelId:%s] [cartId:%s] [上新对象group件数:%s] ", channelId, cartId, sxWorkloadModels.size());
     }
 
     /**
