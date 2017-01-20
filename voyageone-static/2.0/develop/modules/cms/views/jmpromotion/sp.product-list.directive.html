@@ -324,7 +324,9 @@
             </li>
             <hr>
             <li>
-                <button type="button" class="btn btn-success" style="width:90px" ng-click="refreshPrice()">参考价刷新</button>
+                <button type="button" class="btn btn-success" style="width:90px"
+                        ng-click="refreshPrice()"
+                        ng-disabled="vm.passDated">参考价刷新</button>
             </li>
             <li>
                 <button type="button" class="btn btn-primary" style="width:90px" ng-click="save()" ng-disabled="ctrlEdit.promotionForm.$invalid || vm.passDated">提交</button>
