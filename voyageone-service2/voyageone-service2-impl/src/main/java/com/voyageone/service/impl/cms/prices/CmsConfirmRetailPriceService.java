@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms.vomqjobservice;
+package com.voyageone.service.impl.cms.prices;
 
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
@@ -39,16 +39,12 @@ public class CmsConfirmRetailPriceService extends VOAbsLoggable {
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
 
-    public void onStartup(AdvSearchConfirmRetailPriceMQMessageBody messageBody) {
+    public void confirmPlatformsRetailPrice(AdvSearchConfirmRetailPriceMQMessageBody messageBody) {
 
         String channelId = StringUtils.trimToNull(messageBody.getChannelId());
         String userName = StringUtils.trimToNull(messageBody.getUserName());
         List<String> codeList = messageBody.getCodeList();
         List<Integer> cartList = messageBody.getCartList();
-        /*if (channleId == null || userName == null || codeList == null || codeList.isEmpty() || cartList == null || cartList.isEmpty()) {
-            $error("高级检索 指导价变更批量确认 缺少参数");
-            return;
-        }*/
 
         JongoQuery qryObj = new JongoQuery();
         JongoUpdate updObj = new JongoUpdate();

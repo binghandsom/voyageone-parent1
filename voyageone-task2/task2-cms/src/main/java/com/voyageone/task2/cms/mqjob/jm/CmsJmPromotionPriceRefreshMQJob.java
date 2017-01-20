@@ -11,7 +11,6 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import org.apache.commons.collections.map.HashedMap;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,7 +37,7 @@ public class CmsJmPromotionPriceRefreshMQJob extends TBaseMQCmsService<JMRefresh
     private ProductService productService;
 
     @Override
-    public void onStartup(JMRefreshPriceMQMessageBody messageBody) throws Exception {
+    public void onStartup(JMRefreshPriceMQMessageBody messageBody) {
         Integer jmPromotionId = messageBody.getCmsBtJmPromotionId();
 
         Map<String, Object> param = new HashedMap();
@@ -59,14 +58,13 @@ public class CmsJmPromotionPriceRefreshMQJob extends TBaseMQCmsService<JMRefresh
             }
         }
 
-
-
         if (sbError.length() > 0) {
             cmsSuccessIncludeFailLog(messageBody, String.format("skuCode总数(%s) 失败(%s) \\r\\n %s", skus.size(), errorCount, sbError.toString()));
         } else {
             cmsSuccessLog(messageBody, String.format("执行成功 skuCode总数(%s)", skus.size()));
         }
     }
+
     private CmsBtProductModel updateJMPromotionSkuPrice(Integer jmPromotionId, CmsBtProductModel cacheProduct, CmsBtJmPromotionSkuModel sku) {
         if (cacheProduct == null || sku.getProductCode().compareToIgnoreCase(cacheProduct.getCommon().getFields().getCode()) != 0) {
             cacheProduct = productService.getProductByCode(sku.getChannelId(), sku.getProductCode());
@@ -102,7 +100,7 @@ public class CmsJmPromotionPriceRefreshMQJob extends TBaseMQCmsService<JMRefresh
             }
         }
         if (editFlg) {
-            $info(String.format("jmPromotionId:%d sku:%s 价格有变化 MsrpUsd:%s MsrpRmb:%s RetailPrice:%s SalePrice:%s", jmPromotionId, sku.getSkuCode(), sku.getMsrpUsd().doubleValue(), sku.getMsrpRmb().doubleValue(), sku.getRetailPrice().doubleValue(), sku.getSalePrice().doubleValue()));
+            $debug(String.format("jmPromotionId:%d sku:%s 价格有变化 MsrpUsd:%s MsrpRmb:%s RetailPrice:%s SalePrice:%s", jmPromotionId, sku.getSkuCode(), sku.getMsrpUsd().doubleValue(), sku.getMsrpRmb().doubleValue(), sku.getRetailPrice().doubleValue(), sku.getSalePrice().doubleValue()));
             cmsBtJmPromotionSkuService.updateWithDiscount(sku, sku.getChannelId(), getTaskName());
         }
         return cacheProduct;

@@ -24,12 +24,12 @@ public class CmsJmPromotionExportMQJob extends TBaseMQCmsService<JmPromotionExpo
     private CmsBtJmPromotionExportTask3Service service;
 
     @Override
-    public void onStartup(JmPromotionExportMQMessageBody messageBody) throws Exception {
+    public void onStartup(JmPromotionExportMQMessageBody messageBody) {
 
         // 获取Mq的配置信息
         TaskControlBean taskControlBean = getTaskControlBean(taskControlList, "cms.jm.export.path");
         if (taskControlBean == null) {
-            this.cmsConfigExLog(messageBody, "请配置cms.jm.export.path");
+            this.cmsConfigExLog(messageBody, "请在tm_task_control中确认配置cms.jm.export.path");
             return;
         }
 

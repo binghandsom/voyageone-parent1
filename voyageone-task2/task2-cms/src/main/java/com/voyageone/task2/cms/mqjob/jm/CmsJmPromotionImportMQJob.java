@@ -24,15 +24,15 @@ public class CmsJmPromotionImportMQJob extends TBaseMQCmsService<JmPromotionImpo
     CmsBtJmPromotionImportTask3Service service;
 
     @Override
-    public void onStartup(JmPromotionImportMQMessageBody messageMap) throws Exception {
+    public void onStartup(JmPromotionImportMQMessageBody messageBody) {
         TaskControlBean taskControlBean = getTaskControlBean(taskControlList, "cms.jm.import.path");
         if (taskControlBean == null) {
-            this.cmsConfigExLog(messageMap, "请配置cms.jm.import.path");
+            this.cmsConfigExLog(messageBody, "请tm_task_control中配置cms.jm.import.path");
             return;
         }
         String importPath = taskControlBean.getCfg_val1();
         FileUtils.mkdirPath(importPath);
-        int id = messageMap.getJmBtPromotionImportTaskId();
+        int id = messageBody.getJmBtPromotionImportTaskId();
         service.importFile(id, importPath);
     }
 }

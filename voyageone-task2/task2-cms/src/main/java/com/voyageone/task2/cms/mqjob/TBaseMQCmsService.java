@@ -57,6 +57,7 @@ public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> e
             cmsBusinessExLog(messageBody, ex.getMessage());
         } catch (Exception ex) {
             //记异常日志
+            cmsLog(messageBody, OperationLog_Type.unknownException, ex.getMessage());
             cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, ex);
             throw ex;
         } finally {
