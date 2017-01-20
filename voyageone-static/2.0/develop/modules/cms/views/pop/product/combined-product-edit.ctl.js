@@ -213,7 +213,9 @@ define([
                             clearSkuItem(skuItem); // 查询不到清空信息
                             //alert("查询不到SKU信息！");
                         } else {
+                            var suitPreferentialPrice = skuItem.preferentialPrice;
                             _.extend(skuItem, resp.data.skuItem);
+                            skuItem.preferentialPrice = suitPreferentialPrice;
                             dynamicSkuPrice(sku);
                         }
                     });
