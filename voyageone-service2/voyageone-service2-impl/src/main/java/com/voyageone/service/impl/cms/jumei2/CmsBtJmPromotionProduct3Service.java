@@ -94,14 +94,19 @@ public class CmsBtJmPromotionProduct3Service {
         //return null;
         InitResult result = new InitResult();
         CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(parameter.getJmPromotionRowId());
-        if (model == null) throw new BusinessException("该活动不存在");
-        result.setModelPromotion(model);//CmsBtJmPromotion
+
+        if (model == null)
+            throw new BusinessException("该活动不存在");
+
+        result.setModelPromotion(model);
         result.setListTag(service3CmsBtJmPromotion.getTagListByPromotionId(parameter.getJmPromotionRowId()));//聚美活动的所有tag
         result.setChangeCount(selectChangeCountByPromotionId(parameter.getJmPromotionRowId()));//获取变更数量
         result.setProductCount(selectCountByPromotionId(parameter.getJmPromotionRowId()));
 
-        if (result.getModelPromotion().getActivityEnd() != null) {
-            long activityEndTime = DateTimeUtilBeijing.toLocalTime(result.getModelPromotion().getActivityEnd());//北京时间转本地时区时间戳
+        Date activityEnd = result.getModelPromotion().getActivityEnd();
+
+        if (activityEnd != null) {
+            long activityEndTime = DateTimeUtilBeijing.toLocalTime(activityEnd);//北京时间转本地时区时间戳
             result.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
         }
         if (result.getModelPromotion().getPrePeriodStart() != null) {
@@ -121,6 +126,10 @@ public class CmsBtJmPromotionProduct3Service {
         // // ODO: 2016/8/10   测试完 取消注释  spt end
         // 获取brand list
         result.setBrandList(TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, language));
+
+        //判断活动是否过期
+        result.getModelPromotion().setPassDated(activityEnd.getTime() < new Date().getTime());
+
         return result;
     }
 

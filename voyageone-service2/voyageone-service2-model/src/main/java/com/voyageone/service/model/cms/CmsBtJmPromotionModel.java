@@ -15,130 +15,42 @@ import java.util.Date;
  * JMBTPromotion|| 聚美推广活动表
  */
 public class CmsBtJmPromotionModel extends BaseModel {
-    /**
-     * 渠道商
-     */
-    protected String channelId;
 
-    /**
-     * 名称
-     */
-    protected String name;
-
+    protected String channelId;                         //  渠道商
+    protected String name;                              //  名称
     protected Long activityPcId;
-
     protected Long activityAppId;
-
     protected Integer cmsBtJmMasterBrandId;
-
-    /**
-     * 专场涉及品牌 明细汇总 顿号、分隔
-     */
-    protected String brand;
-    /**
-     * 主品牌名
-     */
-    protected String masterBrandName;
-    /**
-     * 专场涉及品类
-     */
-    protected String category;
-
-    /**
-     * 活动开始时间
-     */
-    protected Date activityStart;
-
-    /**
-     * 活动结束时间
-     */
-    protected Date activityEnd;
-
-    /**
-     * 预热开始时间
-     */
-    protected Date prePeriodStart;
-
-    /**
-     * 预热结束时间
-     */
-    protected Date prePeriodEnd;
-
+    protected String brand;                             //  专场涉及品牌 明细汇总 顿号、分隔
+    protected String masterBrandName;                   //  主品牌名
+    protected String category;                          //  专场涉及品类
+    protected Date activityStart;                       //  活动开始时间
+    protected Date activityEnd;                         //  活动结束时间
+    protected Date prePeriodStart;                      //  预热开始时间
+    protected Date prePeriodEnd;                        //  预热结束时间
     protected Integer active;
-
-    /**
-     * 备注
-     */
-    protected String comment;
-
+    protected String comment;                           //  备注
     protected Integer refTagId;
+    protected Integer status;                           //  1:有商品上新
+    protected Integer recoveryStatus;                   //  0：未恢复  1:已恢复  团购价变回【中国最终售价】
+    protected String promotionScene;                    //  活动场景,因为可以多选,逗号分割
+    protected Integer promotionType;                    //  活动类型 0:日常专场 1:导购团 2:大促 3长期场馆
+    protected Boolean isPromotionDown;                  //  是否直降
+    protected Boolean isPromotionFullMinus;             //  是否满减
+    protected BigDecimal promotionFullAmount;           //  满减活动-满金额
+    protected BigDecimal promotionMinusAmount;          //  满减活动-减金额
+    protected Boolean isPromotionGiveCoupons;           //  是否赠送优惠卷
+    protected Date signupDeadline;                      //  准备期截止时间
+    protected Integer prodSum;                          //  有库存商品数
+    protected Integer quantitySum;                      //  库存合计
 
-    /**
-     * 1:有商品上新
-     */
-    protected Integer status;
-
-    /**
-     * 0：未恢复  1:已恢复  团购价变回【中国最终售价】
-     */
-    protected Integer recoveryStatus;
-
-    /**
-     * 活动场景,因为可以多选,逗号分割
-     */
-    protected String promotionScene;
-
-    /**
-     * 活动类型 0:日常专场 1:导购团 2:大促 3长期场馆
-     */
-    protected Integer promotionType;
-
-    /**
-     * 是否直降
-     */
-    protected Boolean isPromotionDown;
-
-    /**
-     * 是否满减
-     */
-    protected Boolean isPromotionFullMinus;
-
-    /**
-     * 满减活动-满金额
-     */
-    protected BigDecimal promotionFullAmount;
-
-    /**
-     * 满减活动-减金额
-     */
-    protected BigDecimal promotionMinusAmount;
-
-    /**
-     * 是否赠送优惠卷
-     */
-    protected Boolean isPromotionGiveCoupons;
-
-    /**
-     * 准备期截止时间
-     */
-    protected Date signupDeadline;
-
-    /**
-     * 有库存商品数
-     */
-    protected Integer prodSum;
-
-    /**
-     * 库存合计
-     */
-    protected Integer quantitySum;
-
-    private int uploadStatus;    // 专场上传
-    private int detailStatus;   // 活动信息
+    private boolean passDated;                          //  是否过期
+    private int uploadStatus;                           //   专场上传
+    private int detailStatus;                           //   活动信息
     private int isFstSave;
-    private int shelfStatus;    // 活动货架
-    private int imageStatus;    // 活动图片
-    private int bayWindowStatus;    // 活动飘窗
+    private int shelfStatus;                            //   活动货架
+    private int imageStatus;                            //   活动图片
+    private int bayWindowStatus;                        //   活动飘窗
 
     public String getChannelId() {
         return channelId;
@@ -402,5 +314,13 @@ public class CmsBtJmPromotionModel extends BaseModel {
 
     public void setMasterBrandName(String masterBrandName) {
         this.masterBrandName = masterBrandName;
+    }
+
+    public boolean isPassDated() {
+        return passDated;
+    }
+
+    public void setPassDated(boolean passDated) {
+        this.passDated = passDated;
     }
 }

@@ -34,8 +34,8 @@ define([
             routeParams = self.$routeParams,
             editModel = self.editModel,
             jmPromotionService = self.jmPromotionService;
-        vm.currentTime = new Date();
 
+        vm.currentTime = new Date();
         jmPromotionService.getEditModelExt({model: {id: routeParams.jmpromId}, hasExt: true}).then(function (res) {
             editModel.model = res.data.model;
             editModel.extModel = res.data.extModel;

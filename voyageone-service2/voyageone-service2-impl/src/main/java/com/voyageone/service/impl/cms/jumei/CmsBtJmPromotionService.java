@@ -299,6 +299,9 @@ public class CmsBtJmPromotionService extends BaseService {
             info.setExtModel(jmPromotionExtensionDaoExt.selectOne(jmPromotionId));
         }
 
+        //判断是否过期
+        info.getModel().setPassDated(info.getModel().getActivityEnd().getTime() < new Date().getTime());
+
         return info;
     }
 
