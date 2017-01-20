@@ -1384,6 +1384,8 @@ public class ProductService extends BaseService {
             switch (cartEnum) {
                 case TM:
                 case TG:
+                case TT:
+                case USTT:
                     tbProductService.delItem(shopBean, numIid);
                     break;
                 case JD:
