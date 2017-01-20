@@ -638,9 +638,9 @@ public class CmsBtCombinedProductService extends BaseService {
                 tempSuitPreferentialPrice += skuItem.getPreferentialPrice().doubleValue();
             }
             skuBean.setSuitSellingPriceCn(tempSuitSellingPriceCn);
-            if (tempSuitPreferentialPrice != skuBean.getSuitPreferentialPrice()) {
-                throw new BusinessException("组合套装SKU(" + skuBean.getSuitSkuCode() + ")和真实SKU优惠售价之和不一致！");
-            }
+//            if (tempSuitPreferentialPrice != skuBean.getSuitPreferentialPrice()) {
+//                throw new BusinessException("组合套装SKU(" + skuBean.getSuitSkuCode() + ")和真实SKU优惠售价之和不一致！");
+//            }
         }
 
         CmsBtCombinedProductModel platformModel = this.getCombinedProductPlatformDetail(model.getNumID(), channelId, model.getCartId(), false);
