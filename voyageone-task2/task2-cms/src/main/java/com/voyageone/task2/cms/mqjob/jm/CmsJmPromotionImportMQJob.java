@@ -1,8 +1,6 @@
 package com.voyageone.task2.cms.mqjob.jm;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.FileUtils;
-import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JmPromotionImportMQMessageBody;
@@ -35,14 +33,6 @@ public class CmsJmPromotionImportMQJob extends TBaseMQCmsService<JmPromotionImpo
         String importPath = taskControlBean.getCfg_val1();
         FileUtils.mkdirPath(importPath);
         int id = messageBody.getJmBtPromotionImportTaskId();
-        try {
-            service.importFile(id, importPath);
-        } catch (Exception e) {
-            if (e instanceof BusinessException) {
-                cmsBusinessExLog(messageBody, e.getMessage());
-            } else {
-                cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
-            }
-        }
+        service.importFile(id, importPath);
     }
 }
