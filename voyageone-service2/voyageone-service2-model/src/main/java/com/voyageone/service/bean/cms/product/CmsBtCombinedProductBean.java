@@ -17,6 +17,8 @@ public class CmsBtCombinedProductBean extends CmsBtCombinedProductModel {
     private int total;
     private int curr;
 
+    private int pf = 1; // 组合商品信息是否从平台获取，1是0否
+
     public String getNumIDs() {
         return numIDs;
     }
@@ -71,5 +73,13 @@ public class CmsBtCombinedProductBean extends CmsBtCombinedProductModel {
 
     public void setCurr(int curr) {
         this.curr = curr;
+    }
+
+    public int getPf() {
+        return pf;
+    }
+
+    public void setPf(int pf) {
+        this.pf = pf;
     }
 }

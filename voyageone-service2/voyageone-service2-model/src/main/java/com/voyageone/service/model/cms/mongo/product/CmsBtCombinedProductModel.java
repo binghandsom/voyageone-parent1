@@ -18,7 +18,8 @@ public class CmsBtCombinedProductModel extends BaseMongoModel {
     private String productName; // 组合套装商品名称
     private Integer status; // 套装商品状态
     private Integer platformStatus; // 套装商品平台状态
-    private Integer active = 1; // 标记是否被删除，默认1表示未被删除，0表示被删除
+    private Integer active = 1; // 逻辑删除? 0是1否
+    private Integer syncPlatform; // 组合商品信息是否依据真实平台数据录入, 1是0否
 
 
     private List<CmsBtCombinedProductModel_Sku> skus;
@@ -96,5 +97,13 @@ public class CmsBtCombinedProductModel extends BaseMongoModel {
 
     public void setActive(Integer active) {
         this.active = active;
+    }
+
+    public Integer getSyncPlatform() {
+        return syncPlatform;
+    }
+
+    public void setSyncPlatform(Integer syncPlatform) {
+        this.syncPlatform = syncPlatform;
     }
 }

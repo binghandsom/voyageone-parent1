@@ -56,10 +56,9 @@
             </div>
 
             <div class="row form-group">
-                <label class="col-sm-3 control-label"><strong translate="TXT_COMBINED_PRODUCT_NAME"></strong></label>
+                <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_COMBINED_PRODUCT_NAME"></strong></label>
                 <div class="col-sm-3">
-                    <textarea class="form-control no-resize" cols="3" rows="3" ng-model="vm.product.productName" disabled required></textarea>
-                    <!--<input type="text" class="form-control" name="productName" ng-model="vm.product.productName" required>-->
+                    <textarea class="form-control no-resize" cols="3" rows="3" ng-model="vm.product.productName" ng-disabled="vm.product.syncPlatform==1" required></textarea>
                 </div>
             </div>
 
@@ -69,60 +68,106 @@
                 </div>
             </div>
 
-            <div class="row form-group" ng-show="vm.config.showFlag">
-                <table class="table table-hover-new text-center">
-                    <thead>
-                    <tr>
-                        <th class="mfb-xxs text-left">单品SKU</th>
-                        <th class="mfb-xxx text-left">单品中国最终售价</th>
-                        <th class="mfb-xxx text-left">单品优惠售价</th>
-                        <th class="mfb-xxxs text-left">商品名称</th>
-                        <th class="text-left">操作</th>
-                    </tr>
-                    </thead>
-                    <tbody ng-if="vm.product.skus">
-                        <tr ng-repeat="sku in vm.product.skus">
-                            <td colspan="5">
-                                <div class="text-left table_bg_gray">
-                                    <div style="float: left">
-                                        组合套装sku（商家编码） ：{{sku.suitSkuCode}}<br/>
-                                        组合套装实际售价 ：{{sku.suitPreferentialPrice | currency:''}} <i ng-show="sku.warn" style="color: #ff0000;">组合套装优惠售价与实际售价不一致，请修正单品sku的优惠售价！</i>
+            <div class="row form-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading" ng-if="vm.product.syncPlatform==0">
+                        <div class="row">
+                            <div class="col-md-1 col-md-offset-11">
+                                <button type="button" class="btn btn-success btn-pop" ng-click="copySku()">添加</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover-new text-center">
+                            <thead>
+                            <tr>
+                                <th class="mfb-xxs text-left">单品SKU</th>
+                                <th class="mfb-xxx text-left">单品中国最终售价</th>
+                                <th class="mfb-xxx text-left">单品优惠售价</th>
+                                <th class="mfb-xxxs text-left">商品名称</th>
+                                <th class="text-left">
+                                    操作
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody ng-if="vm.product.skus">
+                            <tr ng-repeat="sku in vm.product.skus">
+                                <td colspan="5">
+                                    <div class="panel panel-danger">
+                                        <div class="panel-heading" ng-if="vm.product.syncPlatform==0" style="background: #f2dede">
+                                            <div class="row">
+                                                <button type="button" class="btn btn-danger pull-right" ng-click="removeSku($index)">删除</button>&nbsp;
+                                            </div>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="text-left table_bg_gray">
+                                                <div class="row wrapper-xs">
+                                                    <div class="col-md-6 form-horizontal">
+                                                        <div class="row">
+                                                            <label class="col-md-5 control-label">组合套装sku（商家编码） ：</label>
+                                                            <div class="col-md-6">
+                                                                <input type="text" class="form-control" ng-if="vm.product.syncPlatform==0" ng-model="sku.suitSkuCode" required/>
+                                                                <label class="control-label" ng-if="vm.product.syncPlatform==1">{{sku.suitSkuCode}}</label><br/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <label class="col-md-5 control-label">组合套装实际售价 ：</label>
+                                                            <div class="col-md-6">
+                                                                <input type="number" class="form-control" ng-if="vm.product.syncPlatform==0" ng-model="sku.suitPreferentialPrice" ng-change="changeSkuPrice(sku)" required/>
+                                                                <label class="control-label" ng-if="vm.product.syncPlatform==1">{{sku.suitPreferentialPrice | currency:''}}</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row" ng-if="sku.warn">
+                                                            <div class="text-warnings">
+                                                                <i class="fa fa-warning"></i>&nbsp;&nbsp;组合套装优惠售价与实际售价不一致，请修正单品sku的优惠售价！
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="col-md-2 pull-right">
+                                                            <button type="submit" class="btn btn-success btn-xxs" ng-click="copySkuItem(sku.skuItems)" style="margin-left: 7px">
+                                                                <i class="fa fa-plus"></i>
+                                                            </button>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <table class="table table-hover-new text-center">
+                                                <tbody>
+                                                <tr ng-repeat="skuItem in sku.skuItems">
+                                                    <td class="mfb-xxs text-left">
+                                                        <input type="text" class="form-control" ng-model="skuItem.skuCode" ng-change="getSkuDetail(sku, skuItem)" required>
+                                                    </td>
+                                                    <td class="mfb-xxx text-left">{{skuItem.sellingPriceCn | currency:''}}</td>
+                                                    <td class="mfb-xxx text-left"><input type="number" class="form-control" ng-model="skuItem.preferentialPrice" value="{{skuItem.preferentialPrice}}" ng-change="changeSkuItemPrice(sku)" required></td>
+                                                    <td class="mfb-xxxs text-left">{{skuItem.productName}}</td>
+                                                    <td class="mfb-xxt text-center">
+                                                        <button type="submit" class="btn btn-danger btn-xxs" ng-click="deleteSkuItem(sku,$index)">
+                                                            <i class="fa fa-minus"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+
+                                            </table>
+                                            <div class="text-right table_bg_gray wrapper-xs">
+                                                组合套装中国最终售价 合计：{{sku.tempSuitSellingPriceCn | currency:''}}
+                                                组合套装优惠售价 合计：{{sku.tempSuitPreferentialPrice | currency:''}}
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div style="float: right; padding-right: 37px;">
-                                        <button type="submit" class="btn btn-success btn-xxs" ng-click="copySkuItem(sku.skuItems)">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <table class="table table-hover-new text-center">
-                                    <tbody>
-                                        <tr ng-repeat="skuItem in sku.skuItems">
-                                            <td class="mfb-xxs text-left">
-                                                <input type="text" class="form-control" ng-model="skuItem.skuCode" ng-change="getSkuDetail(sku, skuItem)" required>
-                                            </td>
-                                            <td class="mfb-xxx text-left">{{skuItem.sellingPriceCn | currency:''}}</td>
-                                            <td class="mfb-xxx text-left"><input type="number" class="form-control" ng-model="skuItem.preferentialPrice" value="{{skuItem.preferentialPrice}}" ng-change="changeSkuItemPrice(sku)" required></td>
-                                            <td class="mfb-xxxs text-left">{{skuItem.productName}}</td>
-                                            <td class="mfb-xxt text-center">
-                                                <button type="submit" class="btn btn-success btn-xxs" ng-click="deleteSkuItem(sku,$index)">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
 
-                                </table>
-                                <div class="text-right table_bg_gray">
-                                    组合套装中国最终售价 合计：{{sku.tempSuitSellingPriceCn | currency:''}}
-                                    组合套装优惠售价 合计：{{sku.tempSuitPreferentialPrice | currency:''}}
-                                </div>
 
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
+
         </form>
     </div>
 
