@@ -256,7 +256,7 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
             List<BaseMongoMap<String, Object>> skus = platform.getSkus();
             for (BaseMongoMap<String, Object> sku : skus) {
                 CmsBtDtSkuModel dtSkuModel = new CmsBtDtSkuModel();
-                dtSkuModel.setChannelId(channelId);
+                dtSkuModel.setChannelId(prodObj.getOrgChannelId()); // ims表同步库存需要用OrgChannelId
                 dtSkuModel.setProductCode(code);
                 dtSkuModel.setSkuCode(sku.getStringAttribute("skuCode"));
                 dtSkuModel.setCreater(getTaskName());
