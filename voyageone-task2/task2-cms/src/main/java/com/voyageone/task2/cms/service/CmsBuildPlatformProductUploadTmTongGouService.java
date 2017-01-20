@@ -744,37 +744,12 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                     }
                 }
             }
-
         }
-
-        // 防止母婴类目 START
-        if (valTitle.contains("孕妇")
-                || valTitle.contains("婴幼儿")
-                || valTitle.contains("儿童")
-                || valTitle.contains("产前")
-                || valTitle.contains("婴儿")
-                || valTitle.contains("幼儿")
-                || valTitle.contains("孩子")
-                || valTitle.contains("宝宝")
-                || valTitle.contains("母婴")
-                ) {
-
-            if (mainProductPlatformCart == null
-                    || StringUtils.isEmpty(mainProductPlatformCart.getpCatPath())
-                    || (
-                    !mainProductPlatformCart.getpCatPath().startsWith("孕妇装/孕产妇用品/营养>") &&
-                            !mainProductPlatformCart.getpCatPath().startsWith("奶粉/辅食/营养品/零食>")
-            )
-                    ) {
-                Map<String, Object> paramCategory = new HashMap<>();
-                paramCategory.put("cat_id", "50026470"); // 孕妇装/孕产妇用品/营养>孕产妇营养品>其它
-                valCategory = JacksonUtil.bean2Json(paramCategory);
-            }
-        }
-        // 防止母婴类目 END
 
         // 如果根据主类目没有匹配到平台类目的时候，再根据feed类目来匹配
-        if (StringUtils.isEmpty(valCategory) && MapUtils.isNotEmpty(categoryMappingListMap)) {
+        if (StringUtils.isEmpty(valCategory) && MapUtils.isNotEmpty(categoryMappingListMap)
+                && feedInfo != null && !StringUtils.isEmpty(feedInfo.getCategory())) {
+
             // 普通的获取类目的方式(只能匹配到cms_mt_channel_condition_mapping_config表中配置过配置过天猫一级类目)
             String feedCategory = getValueFromPageOrCondition("tmall_category_key", "", mainProductPlatformCart, sxData, shopProp);
             if (StringUtils.isEmpty(feedCategory)) {
@@ -794,6 +769,42 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             $error(errMsg);
             throw new BusinessException(errMsg);
         }
+
+        // 防止母婴类目 START            注意：这段逻辑一定要放在类目匹配最后来做
+        // 如果标题包含下列关键字,再检查一下有没有设置错类目,防止天猫报错
+        if (valTitle.contains("孕妇")
+                || valTitle.contains("婴幼儿")
+                || valTitle.contains("儿童")
+                || valTitle.contains("产前")
+                || valTitle.contains("婴儿")
+                || valTitle.contains("幼儿")
+                || valTitle.contains("孩子")
+                || valTitle.contains("宝宝")
+                || valTitle.contains("母婴")
+                ) {
+
+            // 天猫平台类目(valCategory有可能为catId的json串，或者天猫叶子类目，天猫一级类目)
+            String strCategoryPath = valCategory;
+            if (valCategory.startsWith("{")) {
+                // 获取到该产品上已经设置好的或者前面匹配到的天猫平台id
+                Map<String, Object> categoryMap = JacksonUtil.json2Bean(valCategory, HashMap.class);
+                String pCatId = categoryMap.containsKey("cat_id") ? (String)categoryMap.get("cat_id") : null;
+                if (!StringUtils.isEmpty(pCatId)) {
+                    // 取得设置好的或者前面匹配到的天猫平台id对应的pCatPath
+                    strCategoryPath = getTongGouCatFullPathByCatId(shopProp, pCatId);
+                }
+            }
+
+            // 如果不是下面这些类目，统一设置成"50026470"
+            if (!StringUtils.isEmpty(strCategoryPath)
+                    && !strCategoryPath.startsWith("孕妇装/孕产妇用品/营养")
+                    && !strCategoryPath.startsWith("奶粉/辅食/营养品/零食")) {
+                Map<String, Object> paramCategory = new HashMap<>();
+                paramCategory.put("cat_id", "50026470"); // 孕妇装/孕产妇用品/营养>孕产妇营养品>其它
+                valCategory = JacksonUtil.bean2Json(paramCategory);
+            }
+        }
+        // 防止母婴类目 END
 
         productInfoMap.put("category", valCategory);
 
@@ -1495,14 +1506,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         Map<String, String> pCatInfoMap = new HashMap<>(2, 1f);
         pCatInfoMap.put("pCatId", pCatId);
 
-        try {
-            // 取得天猫官网同购pCatId对应的pCatPath
-            String pCatPath = getTongGouCatFullPathByCatId(shopProp, pCatId);
-            if (!StringUtils.isEmpty(pCatPath)) {
-                pCatInfoMap.put("pCatPath", pCatPath);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        // 取得天猫官网同购pCatId对应的pCatPath
+        String pCatPath = getTongGouCatFullPathByCatId(shopProp, pCatId);
+        if (!StringUtils.isEmpty(pCatPath)) {
+            pCatInfoMap.put("pCatPath", pCatPath);
         }
 
         return pCatInfoMap;
@@ -1518,11 +1525,15 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     protected String getTongGouCatFullPathByCatId(ShopBean shopProp, String pCatdId) {
         String pCatPath = null;
 
-        // 从cms_mt_platform_category_schema_tm_cXXX(channelId)表中取得pCatId对应的pCatPath
-        CmsMtPlatformCategorySchemaTmModel categorySchemaTm = platformCategorySchemaDao.selectPlatformCatSchemaTmModel(
-                pCatdId, shopProp.getOrder_channel_id(), NumberUtils.toInt(shopProp.getCart_id()));
-        if (categorySchemaTm != null) {
-            pCatPath = categorySchemaTm.getCatFullPath();
+        try {
+            // 从cms_mt_platform_category_schema_tm_cXXX(channelId)表中取得pCatId对应的pCatPath
+            CmsMtPlatformCategorySchemaTmModel categorySchemaTm = platformCategorySchemaDao.selectPlatformCatSchemaTmModel(
+                    pCatdId, shopProp.getOrder_channel_id(), NumberUtils.toInt(shopProp.getCart_id()));
+            if (categorySchemaTm != null) {
+                pCatPath = categorySchemaTm.getCatFullPath();
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
         }
 
         return pCatPath;
