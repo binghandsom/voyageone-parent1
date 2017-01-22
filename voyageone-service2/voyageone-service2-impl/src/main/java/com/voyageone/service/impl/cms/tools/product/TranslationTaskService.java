@@ -184,8 +184,8 @@ public class TranslationTaskService extends BaseService {
                         if (!StringUtils.isNullOrBlank2(keyWord)) {
                             replaceIndex = 3;
                         }
-                        aggregateList.remove(3);
-                        aggregateList.add(3, new JongoAggregate("{ $sort : {\"totalQuantity\" : -1}}"));
+                        aggregateList.remove(replaceIndex);
+                        aggregateList.add(replaceIndex, new JongoAggregate("{ $sort : {\"totalQuantity\" : -1}}"));
                         mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
                         if (CollectionUtils.isEmpty(mapList)) {
                             // 再查询未翻译的
