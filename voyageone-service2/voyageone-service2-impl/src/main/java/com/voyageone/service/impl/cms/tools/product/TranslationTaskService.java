@@ -146,7 +146,7 @@ public class TranslationTaskService extends BaseService {
         if (product == null) {
             //没有过期任务，按分发规则分配
             List<JongoAggregate> aggregateList = new ArrayList<JongoAggregate>();
-            aggregateList.add(new JongoAggregate("{ $match : {\"lock\":\"0\", \"common.fields.translateStatus\":\"0\"}}"));
+            // aggregateList.add(new JongoAggregate("{ $match : {\"lock\":\"0\", \"common.fields.translateStatus\":\"0\"}}"));
             aggregateList.add(new JongoAggregate("{ $match : {$or : [{\"common.fields.translator\" : \"\"}, {\"common.fields.translateTime\" : {$lte : #}}, {\"common.fields.translator\" : null}, {\"common.fields.translateTime\" : null}, {\"common.fields.translateTime\" : \"\"}]}}", translateTimeStr));
             if (!StringUtils.isNullOrBlank2(keyWord)) {
                 List<String> codeList = Arrays.asList(keyWord.split("\n"));
@@ -159,6 +159,7 @@ public class TranslationTaskService extends BaseService {
 
             if (!StringUtils.isNullOrBlank2(priority)) {
                 if ("quantity".equalsIgnoreCase(priority)) {
+                    aggregateList.add(0, new JongoAggregate("{ $match : {\"lock\":\"0\", \"common.fields.translateStatus\":\"0\"}}"));
                     aggregateList.add(new JongoAggregate("{ $group : {_id : \"$platforms.P0.mainProductCode\", totalQuantity : {$sum : \"$common.fields.quantity\"}, codeCnt : {$sum : 1}}}"));
                     if ("asc".equalsIgnoreCase(sort)) {
                         aggregateList.add(new JongoAggregate("{ $sort : {\"totalQuantity\" : 1}}"));
@@ -179,8 +180,12 @@ public class TranslationTaskService extends BaseService {
                         // 再查询优先翻译并且没有优先翻译日期的
                         aggregateList.remove(0);
                         aggregateList.add(0, new JongoAggregate("{ $match : {\"lock\" : \"0\", \"common.fields.translateStatus\":\"2\", \"common.fields.priorTranslateDate\" : {$in : [null, \"\"]}}}"));
+                        int replaceIndex = 2;
+                        if (!StringUtils.isNullOrBlank2(keyWord)) {
+                            replaceIndex = 3;
+                        }
                         aggregateList.remove(3);
-                        aggregateList.add(new JongoAggregate("{ $sort : {\"totalQuantity\" : -1}}"));
+                        aggregateList.add(3, new JongoAggregate("{ $sort : {\"totalQuantity\" : -1}}"));
                         mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
                         if (CollectionUtils.isEmpty(mapList)) {
                             // 再查询未翻译的
