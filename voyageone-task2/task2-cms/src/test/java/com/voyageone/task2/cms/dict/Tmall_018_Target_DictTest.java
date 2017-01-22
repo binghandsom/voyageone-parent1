@@ -232,7 +232,7 @@ public class Tmall_018_Target_DictTest {
 						htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
 
 						RuleExpression imageTemplate = new RuleExpression();
-						imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x790_500x?$bbbbbbbb790x500bbbbbbbb$&$product=%s"));
+						imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/Target_20161213_x790_500x-1?$790x500$&$790_500$&$product=%s"));
 
 						RuleExpression imageType = new RuleExpression();
 						imageType.addRuleWord(new TextWord(C_商品图片));
