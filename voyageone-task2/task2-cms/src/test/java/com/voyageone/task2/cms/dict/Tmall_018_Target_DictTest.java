@@ -240,11 +240,11 @@ public class Tmall_018_Target_DictTest {
 						RuleExpression useOriUrl = null;
 
                         RuleExpression imageIndex = new RuleExpression();
+                        imageIndex.addRuleWord(new TextWord("0"));
                         imageIndex.addRuleWord(new TextWord("1"));
                         imageIndex.addRuleWord(new TextWord("2"));
                         imageIndex.addRuleWord(new TextWord("3"));
                         imageIndex.addRuleWord(new TextWord("4"));
-                        imageIndex.addRuleWord(new TextWord("5"));
 
 						CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, imageIndex);
 						ruleRoot.addRuleWord(new CustomWord(word));
