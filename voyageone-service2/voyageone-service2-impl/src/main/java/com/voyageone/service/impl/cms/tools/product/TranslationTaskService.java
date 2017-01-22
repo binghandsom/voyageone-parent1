@@ -4,6 +4,8 @@ import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
@@ -134,7 +136,7 @@ public class TranslationTaskService extends BaseService {
             throw new BusinessException("当前任务还未完成，不能领取新的任务！");
         }
 
-        //再查当前用户是否有过期任务，优先分配过期任务
+        //再查是否有过期任务，优先分配过期任务
         queryStr = String.format("{'lock':'0','common.fields.isMasterMain':1," +
                 "'common.fields.translateStatus':{$in:['0','2']}," +
                 "'common.fields.translator':'%s'}", userName);
@@ -166,31 +168,34 @@ public class TranslationTaskService extends BaseService {
                     aggregateList.add(new JongoAggregate("{ $limit : 1}"));
                     mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
                 } else if ("priority".equalsIgnoreCase(priority)) {
+                    // 先查询优先翻译并且有优先翻译日期的
                     aggregateList.remove(0);
                     aggregateList.add(0, new JongoAggregate("{ $match : {\"lock\" : \"0\", \"common.fields.translateStatus\":\"2\", \"common.fields.priorTranslateDate\" : {$nin : [null, \"\"]}}}"));
                     aggregateList.add(new JongoAggregate("{ $group : {_id : \"$platforms.P0.mainProductCode\", totalQuantity : {$sum : \"$common.fields.quantity\"}, codeCnt : {$sum : 1}}}"));
                     aggregateList.add(new JongoAggregate("{ $sort : {\"common.fields.priorTranslateDate\" : 1, \"totalQuantity\" : -1}}"));
                     aggregateList.add(new JongoAggregate("{ $limit : 1}"));
                     mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
-                    // 如果优先翻译的数据,并且设置了翻译时间的获取不到,则获取未设置时间的任务
                     if (CollectionUtils.isEmpty(mapList)) {
+                        // 再查询优先翻译并且没有优先翻译日期的
                         aggregateList.remove(0);
                         aggregateList.add(0, new JongoAggregate("{ $match : {\"lock\" : \"0\", \"common.fields.translateStatus\":\"2\", \"common.fields.priorTranslateDate\" : {$in : [null, \"\"]}}}"));
+                        aggregateList.remove(3);
                         aggregateList.add(new JongoAggregate("{ $sort : {\"totalQuantity\" : -1}}"));
                         mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
-                        // 如果优先翻译的数据获取不到,则通过未翻译获取
                         if (CollectionUtils.isEmpty(mapList)) {
+                            // 再查询未翻译的
                             aggregateList.remove(0);
                             aggregateList.add(0, new JongoAggregate("{ $match : {\"lock\":\"0\", \"common.fields.translateStatus\":\"0\"}}"));
                             mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
                         }
                     }
                 }
-            }
-
-            // 如果按照现有条件未获取到翻译任务,并且没有输入 模糊查询
-            if (CollectionUtils.isEmpty(mapList) && !StringUtils.isNullOrBlank2(keyWord)) {
-                throw new BusinessException("根据输入的模糊查询["+keyWord+"]无法获取未翻译任务!");
+            } else {
+                // 无分发规则
+                aggregateList.add(new JongoAggregate("{ $group : {_id : \"$platforms.P0.mainProductCode\", totalQuantity : {$sum : \"$common.fields.quantity\"}, codeCnt : {$sum : 1}}}"));
+                aggregateList.add(new JongoAggregate("{ $sort : {\"totalQuantity\" : -1}}"));
+                aggregateList.add(new JongoAggregate("{ $limit : 1}"));
+                mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
             }
         }
         if (product == null && (CollectionUtils.isEmpty(mapList) || mapList.get(0) == null)) {
