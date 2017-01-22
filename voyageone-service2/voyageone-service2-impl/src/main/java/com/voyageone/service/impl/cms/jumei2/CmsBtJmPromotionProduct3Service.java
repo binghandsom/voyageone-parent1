@@ -3,7 +3,6 @@ package com.voyageone.service.impl.cms.jumei2;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
@@ -23,7 +22,6 @@ import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.*;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -106,8 +104,8 @@ public class CmsBtJmPromotionProduct3Service {
             // int hour = DateTimeUtil.getDateHour(DateTimeUtilBeijing.getCurrentBeiJingDate());
             result.setIsUpdateJM(true);
             // result.setIsUpdateJM(!(hour == 10));//是否可以更新聚美  10到11点一小时之内不允许更新聚美平台
-            boolean isBefore5DaysBeforePreBegin = DateTimeUtil.addDays(new Date(), 10).getTime() < preStartLocalTime;//是否是预热开始前10天之前  预热开始前10天之前不让更新聚美
-            if (isBefore5DaysBeforePreBegin)// 预热开始前5天之前不让更新聚美
+            boolean isBefore5DaysBeforePreBegin = DateTimeUtil.addDays(new Date(), 20).getTime() < preStartLocalTime;//是否是预热开始前20天之前  预热开始前20天之前不让更新聚美
+            if (isBefore5DaysBeforePreBegin)// 预热开始前20天之前不让更新聚美
             {
                 result.setIsUpdateJM(false);
             }
