@@ -399,10 +399,10 @@ public class CmsPlatformActiveLogService extends BaseService {
                         if (org.apache.commons.lang.StringUtils.isNotBlank(result)) {
                             Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
                             if (responseMap != null && responseMap.containsKey("data") && responseMap.get("data") != null) {
-                                Map<String, Object> resultMap = JacksonUtil.jsonToMap((String)responseMap.get("data"));
-                                if (DtConstants.C_DT_RETURN_SUCCESS_OK.equals((String) resultMap.get("result"))) {
+                                Map<String, Object> resultMap = (Map<String, Object>) responseMap.get("data");
+                                if (DtConstants.C_DT_RETURN_SUCCESS_OK.equals(resultMap.get("result"))) {
                                     updRsFlg = true;
-                                }else {
+                                } else {
                                     errMsg = (String) resultMap.get("reason");
                                 }
                             }
@@ -417,10 +417,10 @@ public class CmsPlatformActiveLogService extends BaseService {
                         if (org.apache.commons.lang.StringUtils.isNotBlank(result)) {
                             Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
                             if (responseMap != null && responseMap.containsKey("data") && responseMap.get("data") != null) {
-                                Map<String, Object> resultMap = JacksonUtil.jsonToMap((String)responseMap.get("data"));
-                                if (DtConstants.C_DT_RETURN_SUCCESS_OK.equals((String) resultMap.get("result"))) {
+                                Map<String, Object> resultMap = (Map<String, Object>) responseMap.get("data");
+                                if (DtConstants.C_DT_RETURN_SUCCESS_OK.equals(resultMap.get("result"))) {
                                     updRsFlg = true;
-                                }else {
+                                } else {
                                     errMsg = (String) resultMap.get("reason");
                                 }
                             }
