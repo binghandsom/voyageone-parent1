@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.ListUtils;
@@ -65,24 +66,25 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
         workload.setChannelId(channelId);
         workload.setCartId(cartId);
 //        workload.setGroupId(Long.parseLong("110022"));  // code:SCL020400
-        workload.setGroupId(Long.parseLong("9920001"));  // code:SCL020400
+//        workload.setGroupId(Long.parseLong("9920001"));  // code:SCL020400
+        workload.setGroupId(Long.parseLong("3379530"));  // code:001001A07_GREY
         workload.setPublishStatus(0);
         workload.setModifier("SYSTEM");
 
         // for test only=============================================================
-//        ShopBean shopProp = Shops.getShop("010", "30");
-//        if (shopProp == null) {
-//            return;
-//        }
-        ShopBean shopProp = new ShopBean();
-        shopProp.setOrder_channel_id(channelId);
-        shopProp.setCart_id(String.valueOf(cartId));
-        shopProp.setApp_url("http://gw.api.taobao.com/router/rest");
-        shopProp.setAppKey("");
-        shopProp.setAppSecret("");
-        shopProp.setSessionKey("");
-        // platformid默认为天猫（1），expressionParser.parse里面会上传照片到天猫空间
-        shopProp.setPlatform_id("1");
+        ShopBean shopProp = Shops.getShop(channelId, cartId);
+        if (shopProp == null) {
+            return;
+        }
+//        ShopBean shopProp = new ShopBean();
+//        shopProp.setOrder_channel_id(channelId);
+//        shopProp.setCart_id(String.valueOf(cartId));
+//        shopProp.setApp_url("http://gw.api.taobao.com/router/rest");
+//        shopProp.setAppKey("");
+//        shopProp.setAppSecret("");
+//        shopProp.setSessionKey("");
+//        // platformid默认为天猫（1），expressionParser.parse里面会上传照片到天猫空间
+//        shopProp.setPlatform_id("1");
         // for test only==============================================================
 
         // 从cms_bt_tm_tonggou_feed_attr表中取得该渠道，平台对应的天猫官网同购允许上传的feed attribute属性，如果为空则全部上传
@@ -97,7 +99,7 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
         }
 
         // 从cms_mt_channel_condition_mapping_config表中取得当前渠道的取得产品主类目与天猫平台叶子类目(或者平台一级类目)，以及feed类目id和天猫平台类目之间的mapping关系数据
-        Map<String, Map<String, String>> categoryMappingMap = uploadTmTongGouService.getCategoryMapping(channelId, cartId);
+        Map<String, List<Map<String, String>>> categoryMappingMap = uploadTmTongGouService.getCategoryMapping(channelId, cartId);
 
         // 测试的时候要往uploadProduct()方面里面最前面加上下面这段初期化的代码，不然会报nullpoint错误 start
 //        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
@@ -164,6 +166,53 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
         String pCatFullPath = uploadTmTongGouService.getTongGouCatFullPathByCatId(shopProp, "50017233");
         System.out.println("");
         System.out.println("pCatPath = " + pCatFullPath);
+    }
+
+    @Test
+    public void testGetCategoryMapping() {
+//        Map<String, String> tempMap = new LinkedHashMap<>();
+//        tempMap.put("t_key_category", "服饰内衣>服饰配件>围巾/手套/帽子套装");
+//        tempMap.put("t_key_sizeType", "Women");
+//
+//        String result = JacksonUtil.bean2Json(tempMap);
+//        System.out.println("result = " + result);
+
+        String channelId = "928";
+        int cartId = 31;
+
+        Map<String, List<Map<String, String>>> result = uploadTmTongGouService.getCategoryMapping(channelId, cartId);
+        System.out.println("ok");
+    }
+
+    @Test
+    public void testGetMainCategoryMappingInfo() {
+        String channelId = "928";
+        int cartId = 31;
+
+        String mainCatPath1 = "服饰>女装>休闲运动服饰>衬衫T恤>背心";   // 125024039
+
+        Map<String, List<Map<String, String>>> categoryMappingListMap = uploadTmTongGouService.getCategoryMapping(channelId, cartId);
+        // 1.主类目匹配天猫叶子类目
+        String leafCategory = uploadTmTongGouService.getMainCategoryMappingInfo(mainCatPath1, null, null,
+                CmsBuildPlatformProductUploadTmTongGouService.TtPropName.tt_main_category_leaf, categoryMappingListMap);
+
+        System.out.println("leafCategory=" + leafCategory);
+
+        // 2.主类目匹配天猫一级类目
+        String mainCatPath2 = "手表";   // 手表/瑞士腕表
+        String brand2 = "a_line";
+        String sizeType2 = "";
+        String mainCategory = uploadTmTongGouService.getMainCategoryMappingInfo(mainCatPath2, brand2, sizeType2,
+                CmsBuildPlatformProductUploadTmTongGouService.TtPropName.tt_main_category, categoryMappingListMap);
+        System.out.println("mainCategory=" + mainCategory);
+
+        // 3.feed类目匹配天猫一级类目
+        String mainCatPath3 = "Accessories-Womens-Bags-Non_exotic bags-Shoulder bag";  // 箱包皮具/热销女包/男包
+        String feedCategory = uploadTmTongGouService.getMainCategoryMappingInfo(mainCatPath3, null, null,
+                CmsBuildPlatformProductUploadTmTongGouService.TtPropName.tt_category, categoryMappingListMap);
+        System.out.println("feedCategory=" + feedCategory);
+
+        System.out.println("ok");
     }
 
 }

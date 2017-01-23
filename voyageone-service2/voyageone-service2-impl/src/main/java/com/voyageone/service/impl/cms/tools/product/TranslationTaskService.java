@@ -1,11 +1,9 @@
 package com.voyageone.service.impl.cms.tools.product;
 
-import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
@@ -15,12 +13,10 @@ import com.voyageone.service.bean.cms.translation.TranslationTaskBean_CommonFiel
 import com.voyageone.service.bean.cms.translation.TranslationTaskBean_GroupProduct;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
@@ -35,13 +31,13 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toMap;
 
 /**
- * Created by Ethan Shi on 2016/6/28.
+ * 翻译任务相关
  *
  * @author Ethan Shi
  * @version 2.2.0
- * @since 2.2.0
+ * @author Edward.lin(翻译任务重新修改)
+ * @since 2.12.0
  */
-
 @Service
 public class TranslationTaskService extends BaseService {
 
@@ -53,227 +49,257 @@ public class TranslationTaskService extends BaseService {
     @Autowired
     ProductGroupService productGroupService;
     @Autowired
-    private CmsBtProductDao cmsBtProductDao;
+    CmsBtProductDao cmsBtProductDao;
     @Autowired
-    private CmsBtProductGroupDao CmsBtProductGroupDao;
-    @Autowired
-    private ProductService productService;
+    ProductService productService;
 
     /**
      * 计算翻译任务的汇总信息
+     * @param channelId 店铺Id
+     * @param userName 操作者
+     * @return TaskSummaryBean
+     * @throws BusinessException
      */
     public TaskSummaryBean getTaskSummary(String channelId, String userName) throws BusinessException {
-        Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), EXPIRE_HOURS);
-        String translateTimeStr = DateTimeUtil.format(date, null);
-
         TaskSummaryBean taskSummary = new TaskSummaryBean();
 
         //未分配的任务
-        String queryStr = String.format("{'$and':[ {'lock':'0'},{'common.fields.isMasterMain':1}," +
-                "{'common.fields.translateStatus': {'$ne' : '1' }}, " +
-                "{'$or': [{'common.fields.translator':''} ,  " +
-                "{'common.fields.translator':null}, " +
-                "{'common.fields.translateTime':{'$lte':'%s'}} , " +
-                "{'common.fields.translateTime':''}, " +
-                "{'common.fields.translateTime': null}]}]}", translateTimeStr);
-
+        String queryStr = "{\"lock\": {$in: [\"0\", null]}" +
+                ", \"common.fields.isMasterMain\":1" +
+                ", \"common.fields.translateStatus\": {$ne : \"1\"}" +
+                ", \"common.fields.translator\":{$in: [\"\", null]}}";
         taskSummary.setUnassginedCount(cmsBtProductDao.countByQuery(queryStr, channelId));
 
         //已分配但未完成的任务
-        queryStr = String.format("{'common.fields.isMasterMain':1," +
-                "'common.fields.translateStatus':'0'," +
-                "'common.fields.translator':{'$ne' : null}," +
-                "'common.fields.translator':{'$ne' : ''}," +
-                "'common.fields.translateTime':{'$gt':'%s'}}", translateTimeStr);
+        queryStr = "{\"lock\":{$in: [\"0\", \"1\", null]}" +
+                ", \"common.fields.isMasterMain\":1" +
+                ", \"common.fields.translateStatus\": {$ne : \"1\"}" +
+                ", \"common.fields.translator\":{$nin : [\"\", null]}}";
         taskSummary.setIncompleteCount(cmsBtProductDao.countByQuery(queryStr, channelId));
 
         //完成翻译总商品数
-        queryStr = "{'common.fields.isMasterMain':1," +
-                "'common.fields.translateStatus':'1'}";
+        queryStr = "{\"lock\": {$in: [\"0\", \"1\", null]}" +
+                ", \"common.fields.isMasterMain\":1" +
+                ", \"common.fields.translateStatus\":\"1\"}";
         taskSummary.setCompleteCount(cmsBtProductDao.countByQuery(queryStr, channelId));
 
         //个人完成翻译商品数
-        queryStr = String.format("{'common.fields.isMasterMain':1," +
-                "'common.fields.translateStatus':'1'," +
-                "'common.fields.translator':'%s'}", userName);
+        queryStr = String.format("{\"lock\": {$in: [\"0\", \"1\", null]}" +
+                ", \"common.fields.isMasterMain\":1" +
+                ", \"common.fields.translateStatus\":\"1\"" +
+                ", \"common.fields.translator\": \"%s\"}", userName);
         taskSummary.setUserCompleteCount(cmsBtProductDao.countByQuery(queryStr, channelId));
         return taskSummary;
     }
 
-
     /**
      * 按proId获取翻译任务详情
+     * @param channelId 店铺Id
+     * @param userName 操作者
+     * @param prodId 产品Id
+     * @return TranslationTaskBean
+     * @throws BusinessException
      */
     public TranslationTaskBean getTaskById(String channelId, String userName, long prodId) throws BusinessException {
 
-        String queryStr = String.format("{'common.fields.isMasterMain':1, " +
-                "'prodId':%s, " +
-                "'common.fields.translator':'%s' " +
-                " }", prodId, userName);
-
-        CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryStr, channelId);
-
-        return fillTranslationTaskBean(product);
+        JongoQuery query = new JongoQuery();
+        query.setQuery("{\"common.fields.isMasterMain\":1, \"prodId\": #, \"common.fields.translator\": #}");
+        query.setParameters(prodId, userName);
+        CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(query, channelId);
+        List<CmsBtProductModel> groupProducts = null;
+        if (product != null) {
+            JongoQuery mainProductQuery = new JongoQuery();
+            mainProductQuery.setQuery("{\"platforms.P0.mainProductCode\": #}");
+            mainProductQuery.setParameters(product.getPlatformNotNull(0).getMainProductCode());
+            groupProducts = cmsBtProductDao.select(mainProductQuery, channelId);
+        }
+        return fillTranslationTaskBean(product, groupProducts);
     }
 
-
     /**
-     * assignTask
+     * 获取任务
+     * @param channelId 店铺Id
+     * @param userName 操作者
+     * @param priority 分发规则
+     * @param sort 按库存分发时,排序规则
+     * @param keyWord 模糊查询
+     * @return TranslationTaskBean
+     * @throws BusinessException
      */
     public TranslationTaskBean assignTask(String channelId, String userName, String priority, String sort, String
             keyWord) throws BusinessException {
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), EXPIRE_HOURS);
         String translateTimeStr = DateTimeUtil.format(date, null);
 
-        //先查是否有任务未完成
-        String queryStr = String.format("{'lock':'0','common.fields.isMasterMain':1," +
-                "'common.fields.translateStatus':{$in:['0','2']}," +
-                "'common.fields.translator':'%s', " +
-                "'common.fields.translateTime':{'$gt':'%s'} }", userName, translateTimeStr);
-
+        // 先查该用户当前是否有任务未完成
+        String queryStr = String.format("{\"lock\":\"0\"" +
+                ", \"common.fields.isMasterMain\":1" +
+                ", \"common.fields.translateStatus\":{$in:[\"0\",\"2\"]}" +
+                ", \"common.fields.translator\":\"%s\"" +
+                ", \"common.fields.translateTime\":{\"$gt\":\"%s\"}" +
+                "}", userName, translateTimeStr);
         long cnt = cmsBtProductDao.countByQuery(queryStr, channelId);
         if (cnt > 0) {
             throw new BusinessException("当前任务还未完成，不能领取新的任务！");
         }
 
-        //再查是否有过期任务，优先分配过期任务
-        queryStr = String.format("{'lock':'0','common.fields.isMasterMain':1," +
-                "'common.fields.translateStatus':{$in:['0','2']}," +
-                "'common.fields.translator':'%s'}", userName);
-
+        // 再查该用户是否有过期未翻译完成的任务，优先分配过期任务
+        queryStr = String.format("{\"lock\":\"0\"" +
+                        ", \"common.fields.isMasterMain\":1" +
+                        ", \"common.fields.translateStatus\":{$in:[\"0\",\"2\"]}" +
+                        ", \"common.fields.translator\":\"%s\"}"
+                , userName);
         CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryStr, channelId);
-        List<Map<String, Object>> mapList = null;
+
+        // 分配新翻译任务(所有获取翻译任务,末尾都在找库存多优先的原则)
         if (product == null) {
-            //没有过期任务，按分发规则分配
-            List<JongoAggregate> aggregateList = new ArrayList<JongoAggregate>();
-            // aggregateList.add(new JongoAggregate("{ $match : {\"lock\":\"0\", \"common.fields.translateStatus\":\"0\"}}"));
-            aggregateList.add(new JongoAggregate("{ $match : {$or : [{\"common.fields.translator\" : \"\"}, {\"common.fields.translateTime\" : {$lte : #}}, {\"common.fields.translator\" : null}, {\"common.fields.translateTime\" : null}, {\"common.fields.translateTime\" : \"\"}]}}", translateTimeStr));
+
+            // 判断是否存在输入指定code列表获取翻译任务
+            List<String> codeList = null;
             if (!StringUtils.isNullOrBlank2(keyWord)) {
-                List<String> codeList = Arrays.asList(keyWord.split("\n"));
-                if (codeList.size() == 1) {
-                    aggregateList.add(new JongoAggregate("{ $match : {$or : [{\"common.fields.code\" : #}, {\"common.fields.productNameEn\" : {$regex : #}}, {\"common.fields.originalTitleCn\" : {$regex : #}}]}}", keyWord, keyWord, keyWord));
-                } else {
-                    aggregateList.add(new JongoAggregate("{ $match : {\"common.fields.code\" : {$in : #}}}", codeList));
-                }
+                codeList = Arrays.asList(keyWord.split("\n"));
             }
 
-            if (!StringUtils.isNullOrBlank2(priority)) {
-                if ("quantity".equalsIgnoreCase(priority)) {
-                    aggregateList.add(0, new JongoAggregate("{ $match : {\"lock\":\"0\", \"common.fields.translateStatus\":\"0\"}}"));
-                    aggregateList.add(new JongoAggregate("{ $group : {_id : \"$platforms.P0.mainProductCode\", totalQuantity : {$sum : \"$common.fields.quantity\"}, codeCnt : {$sum : 1}}}"));
-                    if ("asc".equalsIgnoreCase(sort)) {
-                        aggregateList.add(new JongoAggregate("{ $sort : {\"totalQuantity\" : 1}}"));
-                    } else {
-                        aggregateList.add(new JongoAggregate("{ $sort : {\"totalQuantity\" : -1}}"));
-                    }
-                    aggregateList.add(new JongoAggregate("{ $limit : 1}"));
-                    mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
-                } else if ("priority".equalsIgnoreCase(priority)) {
-                    // 先查询优先翻译并且有优先翻译日期的
-                    aggregateList.remove(0);
-                    aggregateList.add(0, new JongoAggregate("{ $match : {\"lock\" : \"0\", \"common.fields.translateStatus\":\"2\", \"common.fields.priorTranslateDate\" : {$nin : [null, \"\"]}}}"));
-                    aggregateList.add(new JongoAggregate("{ $group : {_id : \"$platforms.P0.mainProductCode\", totalQuantity : {$sum : \"$common.fields.quantity\"}, codeCnt : {$sum : 1}}}"));
-                    aggregateList.add(new JongoAggregate("{ $sort : {\"common.fields.priorTranslateDate\" : 1, \"totalQuantity\" : -1}}"));
-                    aggregateList.add(new JongoAggregate("{ $limit : 1}"));
-                    mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
-                    if (CollectionUtils.isEmpty(mapList)) {
-                        // 再查询优先翻译并且没有优先翻译日期的
-                        aggregateList.remove(0);
-                        aggregateList.add(0, new JongoAggregate("{ $match : {\"lock\" : \"0\", \"common.fields.translateStatus\":\"2\", \"common.fields.priorTranslateDate\" : {$in : [null, \"\"]}}}"));
-                        int replaceIndex = 2;
-                        if (!StringUtils.isNullOrBlank2(keyWord)) {
-                            replaceIndex = 3;
-                        }
-                        aggregateList.remove(replaceIndex);
-                        aggregateList.add(replaceIndex, new JongoAggregate("{ $sort : {\"totalQuantity\" : -1}}"));
-                        mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
-                        if (CollectionUtils.isEmpty(mapList)) {
-                            // 再查询未翻译的
-                            aggregateList.remove(0);
-                            aggregateList.add(0, new JongoAggregate("{ $match : {\"lock\":\"0\", \"common.fields.translateStatus\":\"0\"}}"));
-                            mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
-                        }
-                    }
+            // 如果未选择翻译条件,则默认按照[优先翻译]原则获取翻译任务
+            if (StringUtils.isNullOrBlank2(priority)) {
+                priority = "priority";
+            }
+
+            // 根据主商品的[库存优选]原则获取翻译任务
+            if ("quantity".equalsIgnoreCase(priority)) {
+
+                // 获取翻译任务(主商品)
+                JongoQuery query = new JongoQuery();
+                query.setQuery("{\"lock\": \"0\"" +
+                        ", \"common.fields.isMasterMain\": 1" +
+                        ", \"common.fields.translateStatus\": {$in: [\"0\", \"2\", null]}" +
+                        ", \"common.fields.translator\": {$in: [\"\", null]}" +
+                        (codeList != null ? ", \"common.fields.code\": {$in: #}" : "") +
+                        "}");
+                if (codeList != null)
+                    query.setParameters(codeList);
+                if ("asc".equalsIgnoreCase(sort)) {
+                    query.setSort("{\"common.fields.quantity\": 1}");
+                } else {
+                    query.setSort("{\"common.fields.quantity\": -1}");
                 }
-            } else {
-                // 无分发规则
-                aggregateList.add(new JongoAggregate("{ $group : {_id : \"$platforms.P0.mainProductCode\", totalQuantity : {$sum : \"$common.fields.quantity\"}, codeCnt : {$sum : 1}}}"));
-                aggregateList.add(new JongoAggregate("{ $sort : {\"totalQuantity\" : -1}}"));
-                aggregateList.add(new JongoAggregate("{ $limit : 1}"));
-                mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
+                query.setLimit(1);
+                product = cmsBtProductDao.selectOneWithQuery(query, channelId);
+
+            }
+            // 先查询优先翻译并且有优先翻译日期的
+            else if ("priority".equalsIgnoreCase(priority)) {
+
+                // 优先获取设置了[优先翻译时间]的翻译任务(主商品)
+                JongoQuery query = new JongoQuery();
+                query.setQuery("{\"lock\" : \"0\"" +
+                        ", \"common.fields.isMasterMain\": 1" +
+                        ", \"common.fields.translateStatus\":\"2\"" +
+                        ", \"common.fields.priorTranslateDate\" : {$nin : [null, \"\"]}" +
+                        (codeList != null ? ", \"common.fields.code\": {$in: #}" : "") +
+                        "}");
+                if (codeList != null)
+                    query.setParameters(codeList);
+                query.setSort("{\"common.fields.priorTranslateDate\": 1, \"common.fields.quantity\": -1}");
+                query.setLimit(1);
+                product = cmsBtProductDao.selectOneWithQuery(query, channelId);
+
+                // 如果不存在设置了[优先翻译时间]的翻译任务, 则根据设置了[优先顺序, 翻译状态:2->0]的顺序获取翻译任务
+                if (product == null) {
+
+                    // 获取翻译任务
+                    query = new JongoQuery();
+                    query.setQuery("{\"lock\" : \"0\"" +
+                            ", \"common.fields.isMasterMain\": 1" +
+                            ", \"common.fields.translateStatus\": {$in: [\"2\", \"0\"]}" +
+                            ", \"common.fields.priorTranslateDate\" : {$in : [null, \"\"]}" +
+                            (codeList != null ? ", \"common.fields.code\": {$in: #}" : "") +
+                            "}");
+                    if (codeList != null)
+                        query.setParameters(codeList);
+                    query.setSort("{\"common.fields.translateStatus\": -1, \"common.fields.quantity\": -1}");
+                    query.setLimit(1);
+                    product = cmsBtProductDao.selectOneWithQuery(query, channelId);
+                }
             }
         }
-        if (product == null && (CollectionUtils.isEmpty(mapList) || mapList.get(0) == null)) {
+
+        // 获取不到翻译任务
+        if (product == null) {
             throw new BusinessException("当前没有待领取的翻译任务！");
         }
 
-        if (product == null) {
-            Map<String, Object> map = mapList.get(0);
-            product = cmsBtProductDao.selectByCode( map.get("_id").toString(), channelId);
-        }
-        // 查找Group和同组商品信息
-        String code = product.getPlatform(0).getMainProductCode();
-        String queryGroupStr = String.format("{'mainProductCode' : '%s', 'cartId':0}", code);
-        CmsBtProductGroupModel group = CmsBtProductGroupDao.selectOneWithQuery(queryGroupStr, channelId);
-        if (group == null) {
-            throw new BusinessException("无法找到主产品为[" + code + "]的产品组!");
-        }
         // 有任务，修改任务状态
-        Map<String, Object> rsMap = new HashMap<>();
-        Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put("prodId", product.getProdId());
-        rsMap.put("common.fields.translator", userName);
-        rsMap.put("common.fields.translateTime", DateTimeUtil.getNow());
-        if (!"2".equals(product.getCommonNotNull().getFieldsNotNull().getTranslateStatus())) {
-            rsMap.put("common.fields.translateStatus", '0');
-        }
+        JongoUpdate updateQuery = new JongoUpdate();
+        updateQuery.setQuery("{\"platforms.P0.mainProductCode\": #}");
+        updateQuery.setQueryParameters(product.getPlatform(0).getMainProductCode());
+        updateQuery.setUpdate("{$set: {\"common.fields.translator\": #" +
+                ", \"common.fields.translateTime\": #" +
+                ", \"common.fields.translateStatus\": #" +
+                ", \"modifier\": #" +
+                ", \"modified\": #}}");
+        updateQuery.setUpdateParameters(userName, DateTimeUtil.getNow()
+                , "2".equals(product.getCommon().getFields().getTranslateStatus()) ? "2": "0"
+                , userName, DateTimeUtil.getNow());
+        cmsBtProductDao.updateMulti(updateQuery, channelId);
 
-        rsMap.put("modifier", userName);
-        rsMap.put("modified", DateTimeUtil.getNow());
-        Map<String, Object> updateMap = new HashMap<>();
-        updateMap.put("$set", rsMap);
-
-        cmsBtProductDao.update(channelId, queryMap, updateMap);
         //查找产品组
-        List<CmsBtProductModel> productList = cmsBtProductDao.selectProductByCodes(group.getProductCodes(), channelId);
+        JongoQuery mainProductQuery = new JongoQuery();
+        mainProductQuery.setQuery("{\"platforms.P0.mainProductCode\": #}");
+        mainProductQuery.setParameters(product.getPlatformNotNull(0).getMainProductCode());
+        List<CmsBtProductModel> productList = cmsBtProductDao.select(mainProductQuery, channelId);
         return fillTranslationTaskBean(product, productList);
     }
 
     /**
      * 取当前任务
+     * @param channelId 店铺Id
+     * @param userName 操作者
+     * @return TranslationTaskBean
+     * @throws BusinessException
      */
     public TranslationTaskBean getCurrentTask(String channelId, String userName) throws BusinessException {
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), EXPIRE_HOURS);
         String translateTimeStr = DateTimeUtil.format(date, null);
 
-        String queryStr = String.format("{'common.fields.isMasterMain':1," +
-                "'common.fields.translateStatus':{$in:['0', '2']}," +
-                "'common.fields.translator':'%s', " +
-                "'common.fields.translateTime':{'$gt':'%s'} }", userName, translateTimeStr);
-
-        CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryStr, channelId);
+        JongoQuery query = new JongoQuery();
+        query.setQuery("{\"local\": {$in: [\"0\", null]}" +
+                ", \"common.fields.isMasterMain\":1" +
+                ", \"common.fields.translateStatus\": {$ne : \"1\"}" +
+                ", \"common.fields.translator\": #" +
+                ", \"common.fields.translateTime\": {$gt: #}}");
+        query.setParameters(userName, translateTimeStr);
+        CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(query, channelId);
         List<CmsBtProductModel> groupProducts = null;
         if (product != null) {
-            String mainProductCode = product.getPlatformNotNull(0).getMainProductCode();
-            String queryGroupStr = String.format("{'mainProductCode' : '%s', 'cartId':0}", mainProductCode);
-            CmsBtProductGroupModel group = CmsBtProductGroupDao.selectOneWithQuery(queryGroupStr, channelId);
-            groupProducts = cmsBtProductDao.selectProductByCodes(group.getProductCodes(), channelId);
+            JongoQuery mainProductQuery = new JongoQuery();
+            mainProductQuery.setQuery("{\"platforms.P0.mainProductCode\": #}");
+            mainProductQuery.setParameters(product.getPlatformNotNull(0).getMainProductCode());
+            groupProducts = cmsBtProductDao.select(mainProductQuery, channelId);
         }
         return fillTranslationTaskBean(product, groupProducts);
     }
 
-
     /**
      * 保存翻译任务
+     * @param bean TranslationTaskBean
+     * @param channelId 店铺Id
+     * @param userName 操作者
+     * @param status 翻译状态
+     * @return TranslationTaskBean
+     * @throws BusinessException
      */
     public TranslationTaskBean saveTask(TranslationTaskBean bean, String channelId, String userName, String status)
             throws BusinessException {
 
         String mainCode = bean.getProductCode();
-        String queryStr = String.format("{'mainProductCode' : '%s', 'cartId':0}", mainCode);
-        CmsBtProductGroupModel group = CmsBtProductGroupDao.selectOneWithQuery(queryStr, channelId);
+        JongoQuery query = new JongoQuery();
+        query.setQuery("{\"platforms.P0.mainProductCode\": #}");
+        query.setParameters(mainCode);
 
-        if (group == null) {
+        //查找产品组
+        List<CmsBtProductModel> productList = cmsBtProductDao.select(query, channelId);
+        if (productList == null || productList.size() == 0) {
             throw new BusinessException("无法找打主产品为[" + mainCode + "]的产品组!");
         }
 
@@ -300,11 +326,6 @@ public class TranslationTaskService extends BaseService {
             cnProps = cnProps.stream().filter(w -> custPropKeySet.contains(w.getFeedAttrEn())).collect(Collectors.toList());
         }
 
-
-        //查找产品组
-        List<CmsBtProductModel> productList = cmsBtProductDao.selectProductByCodes(group.getProductCodes(),
-                channelId);
-
         for (CmsBtProductModel product : productList) {
             Map<String, Object> rsMap = new HashMap<>();
 
@@ -330,10 +351,6 @@ public class TranslationTaskService extends BaseService {
             rsMap.put("modified", DateTimeUtil.getNow());
 
             if (cnProps != null) {
-//                    rsMap.put("feed.customIds", cnProps.stream().map(CustomPropBean::getFeedAttrEn)
-//                            .collect(Collectors.toList()));
-//                    rsMap.put("feed.customIdsCn", cnProps.stream().map
-//                            (CustomPropBean::getFeedAttrCn).collect(Collectors.toList()));
                 rsMap.put("feed.orgAtts", cnProps.stream().collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueEn)));
                 rsMap.put("feed.cnAtts", cnProps.stream().collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueCn)));
             }
@@ -342,15 +359,21 @@ public class TranslationTaskService extends BaseService {
             updateMap.put("$set", rsMap);
 
             cmsBtProductDao.update(channelId, queryMap, updateMap);
-
         }
 
         return getTaskById(channelId, userName, bean.getProdId());
     }
 
-
     /**
      * 检索用户的历史任务
+     * @param pageNum 起始页码
+     * @param pageSize 每页显示行数
+     * @param keyWord 模糊查询
+     * @param channelId 店铺Id
+     * @param userName 操作者
+     * @param status 翻译状态
+     * @return Map<String, Object>
+     * @throws BusinessException
      */
     public Map<String, Object> searchTask(int pageNum, int pageSize, String keyWord, String channelId, String
             userName, String status) throws BusinessException {
@@ -361,29 +384,29 @@ public class TranslationTaskService extends BaseService {
         String translateTimeStr = DateTimeUtil.format(date, null);
 
         JongoQuery queryObj = new JongoQuery();
-        queryObj.addQuery("{'lock':'0'}");
-        queryObj.addQuery("{'common.fields.isMasterMain':1}");
-        queryObj.addQuery("{'common.fields.translator':#}");
+        queryObj.addQuery("{\"lock\":\"0\"}");
+        queryObj.addQuery("{\"common.fields.isMasterMain\":1}");
+        queryObj.addQuery("{\"common.fields.translator\":#}");
         queryObj.addParameters(userName);
         if (!StringUtils.isNullOrBlank2(keyWord)) {
-            queryObj.addQuery("{'$or':[ {'common.fields.code':#},{'common.fields.productNameEn':{'$regex': #}}," +
-                    "{'common.fields.originalTitleCn':{'$regex': #}}]}");
+            queryObj.addQuery("{$or:[ {\"common.fields.code\":#},{\"common.fields.productNameEn\":{$regex: #}}," +
+                    "{\"common.fields.originalTitleCn\":{$regex: #}}]}");
             queryObj.addParameters(keyWord, keyWord, keyWord);
         }
 
         //不能有2个or
         if (StringUtils.isNullOrBlank2(status)) {
-            queryObj.addQuery("{'$or':[{'common.fields.translateStatus':'0','common.fields.translateTime':{'$gt':#}},{'common.fields.translateStatus':'1'}]}");
+            queryObj.addQuery("{$or:[{\"common.fields.translateStatus\":\"0\",\"common.fields.translateTime\":{$gt:#}},{\"common.fields.translateStatus\":\"1\"}]}");
             queryObj.addParameters(translateTimeStr);
         } else if ("1".equals(status)) {
-            queryObj.addQuery("{'common.fields.translateStatus':'1'}");
+            queryObj.addQuery("{\"common.fields.translateStatus\":\"1\"}");
         } else if ("0".equals(status)) {
-            queryObj.addQuery("{'common.fields.translateStatus':'0'}");
-            queryObj.addQuery("{'common.fields.translateTime':{'$gt':#}}");
+            queryObj.addQuery("{\"common.fields.translateStatus\":\"0\"}");
+            queryObj.addQuery("{\"common.fields.translateTime\":{$gt:#}}");
             queryObj.addParameters(translateTimeStr);
         }
 
-        queryObj.setSort("{'common.fields.translateTime' : -1}");
+        queryObj.setSort("{\"common.fields.translateTime\" : -1}");
 
         queryObj.setSkip(pageSize * (pageNum - 1)).setLimit(pageSize);
 
@@ -414,7 +437,7 @@ public class TranslationTaskService extends BaseService {
                     Date translateTime = sdf.parse(fields.getTranslateTime());
                     map.put("translateTime", translateTime.getTime());
                 } catch (Exception e) {
-                    map.put("translateTime", getString(fields.getTranslateTime()));
+                    map.put("translateTime", StringUtils.toString(fields.getTranslateTime()));
                 }
                 list.add(map);
             }
@@ -424,38 +447,35 @@ public class TranslationTaskService extends BaseService {
         return result;
     }
 
-    private String getString(String str) {
-        return StringUtils.isNullOrBlank2(str) ? "" : str;
-    }
-
     /**
      * 装填TranslationTaskBean
+     * @param product 产品信息
+     * @return TranslationTaskBean
      */
     private TranslationTaskBean fillTranslationTaskBean(CmsBtProductModel product) {
-
 
         if (product != null) {
             TranslationTaskBean translationTaskBean = new TranslationTaskBean();
             //装填Bean
             translationTaskBean.setProdId(product.getProdId());
-            translationTaskBean.setFeedCategory(getString(product.getFeed().getCatPath()));
+            translationTaskBean.setFeedCategory(StringUtils.toString(product.getFeed().getCatPath()));
 
             CmsBtProductModel_Field fields = product.getCommon().getFields();
-            translationTaskBean.setCatPath(getString(product.getCommon().getCatPath()));
-            translationTaskBean.setProductCode(getString(fields.getCode()));
+            translationTaskBean.setCatPath(StringUtils.toString(product.getCommon().getCatPath()));
+            translationTaskBean.setProductCode(StringUtils.toString(fields.getCode()));
             TranslationTaskBean_CommonFields commonFields = new TranslationTaskBean_CommonFields();
-            commonFields.setBrand(getString(fields.getBrand()));
-            commonFields.setProductNameEn(getString(fields.getProductNameEn()));
-            commonFields.setOriginalTitleCn(getString(fields.getOriginalTitleCn()));
-            commonFields.setMaterialEn(getString(fields.getMaterialEn()));
-            commonFields.setMaterialCn(getString(fields.getMaterialCn()));
-            commonFields.setOrigin(getString(fields.getOrigin()));
-            commonFields.setShortDesEn(getString(fields.getShortDesEn()));
-            commonFields.setShortDesCn(getString(fields.getShortDesCn()));
-            commonFields.setLongDesEn(getString(fields.getLongDesEn()));
-            commonFields.setLongDesCn(getString(fields.getLongDesCn()));
-            commonFields.setUsageEn(getString(fields.getUsageEn()));
-            commonFields.setUsageCn(getString(fields.getUsageCn()));
+            commonFields.setBrand(StringUtils.toString(fields.getBrand()));
+            commonFields.setProductNameEn(StringUtils.toString(fields.getProductNameEn()));
+            commonFields.setOriginalTitleCn(StringUtils.toString(fields.getOriginalTitleCn()));
+            commonFields.setMaterialEn(StringUtils.toString(fields.getMaterialEn()));
+            commonFields.setMaterialCn(StringUtils.toString(fields.getMaterialCn()));
+            commonFields.setOrigin(StringUtils.toString(fields.getOrigin()));
+            commonFields.setShortDesEn(StringUtils.toString(fields.getShortDesEn()));
+            commonFields.setShortDesCn(StringUtils.toString(fields.getShortDesCn()));
+            commonFields.setLongDesEn(StringUtils.toString(fields.getLongDesEn()));
+            commonFields.setLongDesCn(StringUtils.toString(fields.getLongDesCn()));
+            commonFields.setUsageEn(StringUtils.toString(fields.getUsageEn()));
+            commonFields.setUsageCn(StringUtils.toString(fields.getUsageCn()));
             List<CmsBtProductModel_Field_Image> img1 = fields.getImages1();
             if (img1 != null && !img1.isEmpty()) {
                 commonFields.setImages1(img1);
@@ -496,10 +516,10 @@ public class TranslationTaskService extends BaseService {
                 commonFields.setImages8(img8);
             }
 
-            commonFields.setClientProductUrl(getString(fields.getClientProductUrl()));
-            commonFields.setTranslator(getString(fields.getTranslator()));
-            commonFields.setTranslateStatus(getString(fields.getTranslateStatus()));
-            commonFields.setTranslateTime(getString(fields.getTranslateTime()));
+            commonFields.setClientProductUrl(StringUtils.toString(fields.getClientProductUrl()));
+            commonFields.setTranslator(StringUtils.toString(fields.getTranslator()));
+            commonFields.setTranslateStatus(StringUtils.toString(fields.getTranslateStatus()));
+            commonFields.setTranslateTime(StringUtils.toString(fields.getTranslateTime()));
             translationTaskBean.setCommonFields(commonFields);
 
             List<CustomPropBean> props = productService.getCustomProp(product);
@@ -512,10 +532,9 @@ public class TranslationTaskService extends BaseService {
 
     /**
      * 重载：装填TranslationTaskBean
-     * @param product
-     * @param groupProducts
-     * @return
-     * @author rex.wu
+     * @param product 产品信息
+     * @param groupProducts 一组产品
+     * @return TranslationTaskBean
      */
     private TranslationTaskBean fillTranslationTaskBean(CmsBtProductModel product, List<CmsBtProductModel> groupProducts) {
         TranslationTaskBean translationTaskBean = this.fillTranslationTaskBean(product);

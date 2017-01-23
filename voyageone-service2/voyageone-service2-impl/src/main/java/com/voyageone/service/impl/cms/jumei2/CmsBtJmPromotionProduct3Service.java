@@ -115,8 +115,8 @@ public class CmsBtJmPromotionProduct3Service {
             // int hour = DateTimeUtil.getDateHour(DateTimeUtilBeijing.getCurrentBeiJingDate());
             result.setIsUpdateJM(true);
             // result.setIsUpdateJM(!(hour == 10));//是否可以更新聚美  10到11点一小时之内不允许更新聚美平台
-            boolean isBefore5DaysBeforePreBegin = DateTimeUtil.addDays(new Date(), 10).getTime() < preStartLocalTime;//是否是预热开始前10天之前  预热开始前10天之前不让更新聚美
-            if (isBefore5DaysBeforePreBegin)// 预热开始前5天之前不让更新聚美
+            boolean isBefore5DaysBeforePreBegin = DateTimeUtil.addDays(new Date(), 20).getTime() < preStartLocalTime;//是否是预热开始前20天之前  预热开始前20天之前不让更新聚美
+            if (isBefore5DaysBeforePreBegin)// 预热开始前20天之前不让更新聚美
             {
                 result.setIsUpdateJM(false);
             }
