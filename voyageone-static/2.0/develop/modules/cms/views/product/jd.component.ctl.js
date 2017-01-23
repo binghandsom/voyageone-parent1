@@ -126,7 +126,7 @@ define([
                  */
                 function jdCategoryMapping(popupNewCategory) {
 
-                    if (scope.vm.status == 'Approved' && (cartInfo.value == 27 || cartInfo.value == 26 || cartInfo.value == 28 || cartInfo.value == 29)) {
+                    if (scope.vm.status == 'Approved' && (scope.cartInfo.value == 27 || scope.cartInfo.value == 26 || scope.cartInfo.value == 28 || scope.cartInfo.value == 29)) {
                         alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
                         return;
                     }
