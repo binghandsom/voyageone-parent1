@@ -1,16 +1,22 @@
 package com.voyageone.task2.cms.service;
 
+import com.google.common.base.Joiner;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.dt.enums.DtConstants;
 import com.voyageone.components.dt.service.DtWareService;
 import com.voyageone.service.dao.cms.CmsBtDtSkuDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -30,9 +36,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,6 +54,8 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
 
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private PlatformProductUploadService platformProductUploadService;
     @Autowired
@@ -93,14 +99,6 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
 
         // 获取该任务可以运行的销售渠道
         List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
-
-//        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
-//        channelConditionConfig = new HashMap<>();
-//        if (ListUtils.notNull(channelIdList)) {
-//            for (final String orderChannelID : channelIdList) {
-//                channelConditionConfig.put(orderChannelID, conditionPropValueRepo.getAllByChannelId(orderChannelID));
-//            }
-//        }
 
         if (ListUtils.notNull(channelIdList)) {
             for (String channelId : channelIdList) {
@@ -177,7 +175,9 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
         // 平台id
         int cartId = Integer.parseInt(shop.getCart_id());
         // 商品id
-        long dtWareId = 0;
+        String dtWareId = null;
+        // 产品code
+        String prodCode = null;
         // 开始时间
         long prodStartTime = System.currentTimeMillis();
 
@@ -187,18 +187,56 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
             if (grpModel == null) {
                 String errMsg = String.format("取得group信息失败! 没找到对应的group数据! [groupId=%s]", groupId);
                 $error(errMsg);
-                return;
+                throw new BusinessException(errMsg);
             }
-
+            // 分销numIId
+            if (!StringUtils.isEmpty(grpModel.getNumIId())) {
+                dtWareId = grpModel.getNumIId();
+            }
             List<String> codes = grpModel.getProductCodes();
+            if (ListUtils.isNull(codes)) {
+                String errMsg = String.format("分销上新对象group信息里面没有找到对应的产品code信息! [groupId=%s]", groupId);
+                $error(errMsg);
+                throw new BusinessException(errMsg);
+            }
+            // 分销numIId
+            if (StringUtils.isEmpty(dtWareId)) {
+                dtWareId = Joiner.on(",").join(codes);
+            }
+            prodCode = codes.get(0);
+            // 每个group应该只有一个code
             for(String code : codes) {
                 // 分销上新
                 String result = dtWareService.onShelfProduct(shop, code);
-                $info("产品(%s)调用分销上新接口成功! [result:%s]", code, result);
+                $info("产品(%s)调用分销上新接口结束! [result:%s]", code, result);
+
+                // 判断调用API分销上新成功与否
+                if (StringUtils.isEmpty(result)) {
+                    throw new BusinessException(String.format("当前产品分销上新失败！调用分销上新接口返回值为空! [groupId:%s] [code:%s]", groupId, code));
+                } else {
+                    // 分销返回结果基类里面一定要设置data,所以分销比别的平台(如:cnn)返回的结果里面多了一层data
+                    // 例如：{"data":{"result":"OK"}}  {"data":{"result":"NG","reason":"没有可以上架的SKU。(code:022-EA3060538652)"}}
+                    Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
+                    if (responseMap != null && responseMap.containsKey("data") && responseMap.get("data") != null) {
+                        Map<String, Object> resultMap = (LinkedHashMap)responseMap.get("data");
+                        if (resultMap != null && resultMap.containsKey("result") && resultMap.get("result") != null
+                                && DtConstants.C_DT_RETURN_SUCCESS_OK.equals(resultMap.get("result"))) {
+                            // 新增/更新商品成功,回写product表numIId(code)和上下架状态(OnSale)
+                            saveProductStatus(channelId, StringUtils.toString(cartId), code, CmsConstants.PlatformActive.ToOnSale, true, null, getTaskName());
+
+                            // 回写分销SKU信息表(cms_bt_dt_sku)
+                            saveProductDtSku(channelId, cartId, code);
+                        } else {
+                            // 新增/更新商品失败
+                            String errMsg = String.format("当前产品调用分销接口上新失败! [groupId:%s] [code:%s] [errMsg=%s]", groupId, code, resultMap.get("reason"));
+                            throw new BusinessException(errMsg);
+                        }
+                    }
+                }
             }
 
-            // 回写分销SKU信息表(cms_bt_dt_sku)
-            saveProductDtSku(channelId, cartId, codes);
+            // 回写numIid(code)到productGroup表中
+            saveProductGroupStatus(channelId, StringUtils.toString(cartId), groupId, prodCode, CmsConstants.PlatformActive.ToOnSale, getTaskName());
 
             // 上新成功时状态回写操作
             // 回写workload表(1:上新成功)
@@ -216,32 +254,112 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
 
             ex.printStackTrace();
 
+            String resultMsg = !StringUtils.isEmpty(ex.getMessage()) ? ex.getMessage() : errMsg;
+
+            // 新增/更新商品失败,回写错误信息到product表
+            saveProductStatus(channelId, StringUtils.toString(cartId), prodCode, CmsConstants.PlatformActive.ToOnSale, false, resultMsg, getTaskName());
+
             // 回写workload表(2:上新失败)
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
-
-            return;
         }
     }
 
     /**
-     * 取得cms_mt_channel_config配置表中配置的值集合
+     * 回写product表的numIId和platfromStatus
      *
-     * @param channelId String 渠道id
-     * @param cartId int 平台id
-     * @param channelConfigValueMap 返回cms_mt_channel_config配置表中配置的值集合用
+     * @param channelId 渠道Id
+     * @param cartId    平台Id
+     * @param code  产品code
+     * @param platformActive 上下架动作(ToOnSale/ToInStock)
+     * @param resultFlg  分销上新是否成功(true：成功，false:失败)
+     * @param errMsg    分销上新失败时的错误信息
+     * @param modifier  更新者(可以不填)
      */
-    public void doChannelConfigInit(String channelId, int cartId, Map<String, String> channelConfigValueMap) {
+    public void saveProductStatus(String channelId, String cartId, String code, CmsConstants.PlatformActive platformActive, boolean resultFlg, String errMsg, String modifier) {
+        if (StringUtils.isEmpty(channelId) || StringUtils.isEmpty(cartId) || StringUtils.isEmpty(code) || platformActive == null) return;
 
-//        // 从配置表(cms_mt_channel_config)表中取得颜色别名(ALIAS_29.color_alias)
-//        String colorAliasKey = CmsConstants.ChannelConfig.ALIAS + "_" + cartId + CmsConstants.ChannelConfig.COLOR_ALIAS;
-//        String colorAliasValue1 = getChannelConfigValue(channelId, CmsConstants.ChannelConfig.ALIAS,
-//                cartId + CmsConstants.ChannelConfig.COLOR_ALIAS);
-//        channelConfigValueMap.put(colorAliasKey, colorAliasValue1);
+        String platformStatus = null;
+        if (CmsConstants.PlatformActive.ToOnSale.name().equals(platformActive.name())) {
+            // 上架
+            platformStatus = CmsConstants.PlatformStatus.OnSale.name();
+        } else {
+            // 下架
+            platformStatus = CmsConstants.PlatformStatus.InStock.name();
+        }
+
+        // 更新产品的numIId(更新成code)和平台状态
+        JongoUpdate updProductObj = new JongoUpdate();
+        updProductObj.setQuery("{'common.fields.code':#}");
+        updProductObj.setQueryParameters(code);
+        if (resultFlg) {
+            // 上新成功
+            updProductObj.setUpdate("{$set:{'platforms.P#.pNumIId':#,'platforms.P#.pStatus':#,'platforms.P#.pReallyStatus':#,'platforms.P#.pPublishError':'','platforms.P#.pPublishMessage':'','platforms.P#.modified':#,'platforms.P#.modifier':#}}");
+            updProductObj.setUpdateParameters(cartId, code, cartId, platformStatus, cartId, platformStatus, cartId, cartId, cartId, DateTimeUtil.getNow(), cartId, modifier);
+        } else {
+            // 上新失败
+            updProductObj.setUpdate("{$set:{'platforms.P#.pPublishError':'Error','platforms.P#.pPublishMessage':#,'platforms.P#.modified':#,'platforms.P#.modifier':#}}");
+            updProductObj.setUpdateParameters(cartId, cartId, errMsg, cartId, DateTimeUtil.getNow(), cartId, modifier);
+        }
+        cmsBtProductDao.updateFirst(updProductObj, channelId);
+    }
+
+    /**
+     * 回写productGroup表的numIId和platfromStatus,并记录每个产品的上下架历史到cms_bt_platform_active_log_cXXX表
+     * (分销的数据，应该是一个code一个group)
+     *
+     * @param channelId 渠道Id
+     * @param cartId    平台Id
+     * @param code  产品code
+     * @param platformActive 上下架动作(ToOnSale/ToInStock)
+     * @param modifier  更新者(可以不填)
+     */
+    public void saveProductGroupStatus(String channelId, String cartId, Long groupId, String code, CmsConstants.PlatformActive platformActive, String modifier) {
+        if (StringUtils.isEmpty(channelId) || groupId == null || platformActive == null) return;
+
+        String platformStatus = null;
+        // 更新产品Group的numIId(更新成其中的一个code)和平台状态
+        // 回写上下架状态productGroup表
+        JongoUpdate updateGroupObj = new JongoUpdate();
+        updateGroupObj.setQuery("{'groupId':#}");
+        updateGroupObj.setQueryParameters(groupId);
+        if (CmsConstants.PlatformActive.ToOnSale.name().equals(platformActive.name())) {
+            // 上架
+            platformStatus = CmsConstants.PlatformStatus.OnSale.name();
+            updateGroupObj.setUpdate("{$set:{'numIId':#,'platformStatus':#,'onSaleTime':#,'modified':#,'modifier':#}}");
+            updateGroupObj.setUpdateParameters(code, platformStatus, DateTimeUtil.getNow(), DateTimeUtil.getNow(), modifier);
+        } else {
+            // 下架
+            platformStatus = CmsConstants.PlatformStatus.InStock.name();
+            updateGroupObj.setUpdate("{$set:{'numIId':#,'platformStatus':#,'inStockTime':#,'modified':#,'modifier':#}}");
+            updateGroupObj.setUpdateParameters(code, platformStatus, DateTimeUtil.getNow(), DateTimeUtil.getNow(), modifier);
+        }
+        cmsBtProductGroupDao.updateFirst(updateGroupObj, channelId);
+
+        // 记录每个产品的上下架历史到mongoDB
+        List<String> codeList = new ArrayList<>();
+        codeList.add(code);
+        sxProductService.addPlatformActiveLog(channelId, cartId, groupId, codeList, true, modifier, modifier);
     }
 
     /**
      * 回写分销SKU信息表(cms_bt_dt_sku)
      *
+     * @param channelId 渠道id
+     * @param cartId 平台id
+     * @param code 单个产品code
+     */
+    protected void saveProductDtSku(String channelId, int cartId, String code) {
+        List<String> codes = new ArrayList<>();
+        codes.add(code);
+
+        saveProductDtSku(channelId, cartId, codes);
+    }
+
+    /**
+     * 回写分销SKU信息表(cms_bt_dt_sku)
+     *
+     * @param channelId 渠道id
+     * @param cartId 平台id
      * @param codes 产品code列表
      */
     protected void saveProductDtSku(String channelId, int cartId, List<String> codes) {
@@ -266,7 +384,7 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
 
                 // 查询mySql表中的sku列表(一个产品查询一次，如果每个sku更新/新增的时候都去查的话，效率太低了)
                 Map<String, String> query = new HashMap<>();
-                query.put("channelId", channelId);
+                query.put("channelId", prodObj.getOrgChannelId());  // ims表同步库存需要用OrgChannelId
                 query.put("cartId", StringUtils.toString(cartId));
                 query.put("productCode", code);
                 query.put("skuCode", sku.getStringAttribute("skuCode"));
@@ -278,6 +396,8 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
                 } else {
                     // 存在，更新
                     dtSkuModel.setId(currentCmsBtDtSku.getId());
+                    dtSkuModel.setCreater(currentCmsBtDtSku.getCreater());
+                    dtSkuModel.setCreated(currentCmsBtDtSku.getCreated());
                     cmsBtDtSkuDao.update(dtSkuModel);
                 }
             }
