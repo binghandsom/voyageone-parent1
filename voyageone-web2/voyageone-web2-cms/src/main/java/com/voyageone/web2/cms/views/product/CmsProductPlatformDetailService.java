@@ -518,6 +518,9 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         if(platformModel.getCartId() == 27){
             blnSmartSx = false;
         }
+        if(platformModel.getCartId() == CartEnums.Cart.TG.getValue() || platformModel.getCartId() == CartEnums.Cart.TM.getValue() || platformModel.getCartId() == CartEnums.Cart.JM.getValue()){
+
+        }
 
         return productService.updateProductPlatform(channelId, prodId, platformModel, modifier, true, blnSmartSx);
 

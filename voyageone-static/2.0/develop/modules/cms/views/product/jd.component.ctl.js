@@ -126,7 +126,7 @@ define([
                  */
                 function jdCategoryMapping(popupNewCategory) {
 
-                    if (scope.vm.status == 'Approved') {
+                    if (scope.vm.status == 'Approved' && (cartInfo.value == 27 || cartInfo.value == 26 || cartInfo.value == 28 || cartInfo.value == 29)) {
                         alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
                         return;
                     }
@@ -150,6 +150,14 @@ define([
                         if (scope.vm.platform != null) {
                             if (context.selected.catPath == scope.vm.platform.pCatPath)
                                 return;
+                            if(scope.vm.status == 'Approved' && scope.vm.platform.pCatPath){
+                                var c1 = scope.vm.platform.pCatPath.split(">");
+                                var c2 = context.selected.catPath.split(">");
+                                if(c1[0] != c2[0]){
+                                    alert("商品可能已经上线，如果要修改类目一级类目必须与修改前的一样。");
+                                    return;
+                                }
+                            }
                         }
 
                         productDetailService.changePlatformCategory({
