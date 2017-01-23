@@ -126,7 +126,7 @@ define([
                  */
                 function jdCategoryMapping(popupNewCategory) {
 
-                    if (scope.vm.status == 'Approved' && (scope.cartInfo.value == 27 || scope.cartInfo.value == 26 || scope.cartInfo.value == 28 || scope.cartInfo.value == 29)) {
+                    if (scope.vm.status == 'Approved' && (scope.cartInfo.value == 26 || scope.cartInfo.value == 28 || scope.cartInfo.value == 29)) {
                         alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
                         return;
                     }
@@ -150,7 +150,7 @@ define([
                         if (scope.vm.platform != null) {
                             if (context.selected.catPath == scope.vm.platform.pCatPath)
                                 return;
-                            if(scope.vm.status == 'Approved' && scope.vm.platform.pCatPath){
+                            if((scope.cartInfo.value == 23 || scope.cartInfo.value == 20) && scope.vm.status == 'Approved' && scope.vm.platform.pCatPath){
                                 var c1 = scope.vm.platform.pCatPath.split(">");
                                 var c2 = context.selected.catPath.split(">");
                                 if(c1[0] != c2[0]){
