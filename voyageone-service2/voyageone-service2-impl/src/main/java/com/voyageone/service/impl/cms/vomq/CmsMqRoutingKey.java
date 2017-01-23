@@ -85,6 +85,10 @@ public class CmsMqRoutingKey {
     // 平台属性默认设置 - 用于强制对某商品或某类目进行属性的重新计算赋值和上新
     public static final String CMS_REFRESH_PRODUCT_PLATFORM_FIELDS = "VOCmsRefreshProductPlatformFieldsQueue";
 
+    // 聚美活动价格同步到聚美商城价格
+    public static final String CMS_JM_MALL_PROMOTION_PRICE_SYNC = "VOCmsJmMallPromotionPriceSyncQueue";
+
+
 
     // 未整理的业务内容
     /**

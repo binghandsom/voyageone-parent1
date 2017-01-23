@@ -37,6 +37,7 @@ define([
 
         vm.currentTime = new Date();
         jmPromotionService.getEditModelExt({model: {id: routeParams.jmpromId}, hasExt: true}).then(function (res) {
+
             editModel.model = res.data.model;
             editModel.extModel = res.data.extModel;
             editModel.tagList = res.data.tagList;
@@ -44,6 +45,7 @@ define([
             editModel.model.activityEnd = formatToDate(editModel.model.activityEnd);
             editModel.model.prePeriodStart = formatToDate(editModel.model.prePeriodStart);
             editModel.model.signupDeadline = formatToDate(editModel.model.signupDeadline);
+
 
             // 准备期是否结束
             vm.isDeadline = editModel.model.signupDeadline && editModel.model.signupDeadline < vm.currentTime;
@@ -124,6 +126,8 @@ define([
                 // 记住主频道英文缩写
                 _getJmMainChannelAb(self, editModel.extModel.mainChannel);
             });
+
+            self.spDataService.editModel = editModel;
         });
     };
 

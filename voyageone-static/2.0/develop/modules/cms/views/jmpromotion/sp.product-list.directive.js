@@ -38,6 +38,7 @@ define([
                 $scope.vm.brandList = res.data.brandList;
 
                 spDataService.passDated = $scope.vm.passDated = $scope.parentModel.passDated;
+                $scope.vm.editModel = spDataService.editModel;
             });
             $scope.search();
             $scope.modelUpdateDealEndTime.promotionId = $routeParams.jmpromId;
