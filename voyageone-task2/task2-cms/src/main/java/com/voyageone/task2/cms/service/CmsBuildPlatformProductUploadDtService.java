@@ -100,14 +100,6 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
         // 获取该任务可以运行的销售渠道
         List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
-//        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
-//        channelConditionConfig = new HashMap<>();
-//        if (ListUtils.notNull(channelIdList)) {
-//            for (final String orderChannelID : channelIdList) {
-//                channelConditionConfig.put(orderChannelID, conditionPropValueRepo.getAllByChannelId(orderChannelID));
-//            }
-//        }
-
         if (ListUtils.notNull(channelIdList)) {
             for (String channelId : channelIdList) {
                 // 平台商品信息新增或更新(分销)
@@ -270,22 +262,6 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
             // 回写workload表(2:上新失败)
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
         }
-    }
-
-    /**
-     * 取得cms_mt_channel_config配置表中配置的值集合
-     *
-     * @param channelId String 渠道id
-     * @param cartId int 平台id
-     * @param channelConfigValueMap 返回cms_mt_channel_config配置表中配置的值集合用
-     */
-    public void doChannelConfigInit(String channelId, int cartId, Map<String, String> channelConfigValueMap) {
-
-//        // 从配置表(cms_mt_channel_config)表中取得颜色别名(ALIAS_29.color_alias)
-//        String colorAliasKey = CmsConstants.ChannelConfig.ALIAS + "_" + cartId + CmsConstants.ChannelConfig.COLOR_ALIAS;
-//        String colorAliasValue1 = getChannelConfigValue(channelId, CmsConstants.ChannelConfig.ALIAS,
-//                cartId + CmsConstants.ChannelConfig.COLOR_ALIAS);
-//        channelConfigValueMap.put(colorAliasKey, colorAliasValue1);
     }
 
     /**
