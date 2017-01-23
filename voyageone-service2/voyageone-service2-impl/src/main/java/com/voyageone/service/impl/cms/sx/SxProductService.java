@@ -3040,6 +3040,21 @@ public class SxProductService extends BaseService {
                         }
 //                    }
                 }
+
+                // 如果当前店铺在cms_mt_channel_config表中配置成了运营自己在天猫后台管理无线端共通模块时
+                CmsChannelConfigBean config = CmsChannelConfigs.getConfigBean(shopBean.getOrder_channel_id(),
+                        CmsConstants.ChannelConfig.TMALL_WIRELESS_COMMON_MODULE_BY_USER, shopBean.getCart_id());
+                if (config != null && "1".equals(config.getConfigValue1())) {
+                    // 如果设置成"1：运营自己天猫后台管理"时,用天猫平台上取下来的运营自己后台设置的值设置schema无线端共通模块相关属性
+                    // 店铺活动(Complex)
+                    setTmWirelessAttrByOperator(field, "shop_discount", defaultComplexValue);
+                    // 文字说明(Complex)
+                    setTmWirelessAttrByOperator(field, "item_text", defaultComplexValue);
+                    // 优惠(Complex)
+                    setTmWirelessAttrByOperator(field, "coupon", defaultComplexValue);
+                    // 同店推荐(Complex)
+                    setTmWirelessAttrByOperator(field, "hot_recommanded", defaultComplexValue);
+                }
             }
         }
         // added by morse.lu 2012/12 end
@@ -5390,9 +5405,9 @@ public class SxProductService extends BaseService {
                     // 修改对象
                     InputField targetQuantityField = (InputField)targetField;
                     // 更新用schema对象
-                    InputField updatequantityField = (InputField)updateItemField;
+                    InputField updateQuantityField = (InputField)updateItemField;
                     // 从更新用schema中取得商品数量"quantity"对应的defaultValue (也就是当前天猫平台上的商品数量)
-                    targetQuantityField.setValue(updatequantityField.getDefaultValue());
+                    targetQuantityField.setValue(updateQuantityField.getDefaultValue());
                     break;
             }
         } catch (Exception e) {
@@ -5493,6 +5508,28 @@ public class SxProductService extends BaseService {
             cnt++;
         }
         $info("=================" + uploadName + "  主线程结束====================");
+    }
+
+    /**
+     * 用天猫平台上取下来的运营自己后台设置的值设置schema无线端共通模块相关属性(包含里面的"是否启用"和"选择模板"属性值)
+     *
+     * @param field  天猫无线描述schema中的complesField
+     * @param complexFieldId 天猫无线描述schema中的complesField id(例：shop_discount:店铺活动, item_text:文字说明, coupon:优惠, hot_recommanded:同店推荐)
+     * @param defaultComplexValue 从天猫平台上取下来的运营设置的无线描述值
+     */
+    public void setTmWirelessAttrByOperator(Field field, String complexFieldId, ComplexValue defaultComplexValue) {
+
+        if (field == null || StringUtils.isEmpty(complexFieldId) || defaultComplexValue == null) return;
+
+        // shop_discount:店铺活动, item_text:文字说明, coupon:优惠, hot_recommanded:同店推荐
+        Field fieldObj = ((ComplexField) field).getValue().getValueField(complexFieldId);
+        if (fieldObj != null && FieldTypeEnum.COMPLEX == fieldObj.getType()) {
+            // 设置成天猫平台上运营设置的值(包含里面的"是否启用"和"选择模板"属性值)
+            ComplexValue complexValue = defaultComplexValue.getComplexFieldValue(complexFieldId);
+            if (complexValue != null && MapUtils.isNotEmpty(complexValue.getFieldMap())) {
+                ((ComplexField) fieldObj).setComplexValue(complexValue);
+            }
+        }
     }
 
 }
