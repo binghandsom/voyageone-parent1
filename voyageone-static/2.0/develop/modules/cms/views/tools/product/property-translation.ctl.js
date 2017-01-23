@@ -22,17 +22,6 @@ define([
             this.searchBtnClicked = false;
 
             /**
-             * 历史任务搜索结果每页行数选项
-             * @type {*[]}
-             */
-            this.searchPageSizeOption = [
-                {name: "10行", value: 10},
-                {name: "20行", value: 20},
-                {name: "50行", value: 50},
-                {name: "100行", value: 100}
-            ];
-
-            /**
              * 历史任务搜索设定
              * @type {{curr: number, total: number, size: number, keyWord: string, translateStatus: string, fetch: (function(this:TranslationManageController))}}
              */
@@ -126,6 +115,7 @@ define([
                 });
                 self.translationService.submit(req).then(function (res) {
                     self.vm.taskInfo = res.data.taskInfo;
+                    self.vm.taskDetail = null;
                     self.vm.taskSummary = res.data.taskSummary;
                     self.notify.success('TXT_SUBMIT_SUCCESS');
                 })

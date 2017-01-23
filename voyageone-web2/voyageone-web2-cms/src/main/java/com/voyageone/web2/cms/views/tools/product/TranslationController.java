@@ -16,10 +16,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by lewis on 15-12-16.
+ * 获取翻译任务
  *
  * @author Ethan Shi
  * @version 2.2.0
+ * @author edward.lin
+ * @version 2.12.0
  */
 @RestController
 @RequestMapping(method = RequestMethod.POST, value = CmsUrlConstants.TRANSLATION.TASKS.ROOT)
@@ -29,15 +31,13 @@ public class TranslationController extends CmsController {
 
     private static final String TASK_INCOMPLETE = "0";
 
-
     @Autowired
     TranslationTaskService translationTaskService;
-
 
     /**
      * 初始化页面
      *
-     * @return
+     * @return AjaxResponse
      */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.INIT)
     public AjaxResponse doInit() {
@@ -54,10 +54,10 @@ public class TranslationController extends CmsController {
     }
 
     /**
-     * 保存任务
+     * 暂存翻译任务
      *
-     * @param requestBean
-     * @return
+     * @param requestBean TranslationTaskBean
+     * @return AjaxResponse
      */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SAVE)
     public AjaxResponse doSave(@RequestBody TranslationTaskBean requestBean) {
@@ -65,10 +65,10 @@ public class TranslationController extends CmsController {
     }
 
     /**
-     * 提交任务
+     * 提交翻译任务
      *
-     * @param requestBean
-     * @return
+     * @param requestBean TranslationTaskBean
+     * @return AjaxResponse
      */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SUBMIT)
     public AjaxResponse doSubmit(@RequestBody TranslationTaskBean requestBean) {
@@ -79,8 +79,8 @@ public class TranslationController extends CmsController {
     /**
      * 检索历史任务
      *
-     * @param requestBean
-     * @return
+     * @param requestBean Map
+     * @return AjaxResponse
      */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SEARCH)
     public AjaxResponse doSearch(@RequestBody Map requestBean) {
@@ -98,8 +98,8 @@ public class TranslationController extends CmsController {
     /**
      * 按prodId取翻译任务详细
      *
-     * @param requestBean
-     * @return
+     * @param requestBean Map
+     * @return AjaxResponse
      */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.GET)
     public AjaxResponse doGet(@RequestBody Map requestBean) {
@@ -113,7 +113,11 @@ public class TranslationController extends CmsController {
         return success(translateTaskGetResponse);
     }
 
-
+    /**
+     * 获取翻译任务
+     * @param requestBean Map
+     * @return AjaxResponse
+     */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.ASSIGN)
     public AjaxResponse doAssign(@RequestBody Map requestBean) {
 
@@ -134,9 +138,9 @@ public class TranslationController extends CmsController {
     /**
      * 保存任务
      *
-     * @param requestBean
-     * @param status
-     * @return
+     * @param requestBean TranslationTaskBean
+     * @param status 保存类型: 暂存, 提交
+     * @return Map<String, Object>
      */
     private Map<String, Object> save(@RequestBody TranslationTaskBean requestBean, String status) {
         String channelId = this.getUser().getSelChannelId();
