@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
@@ -17,11 +18,13 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -154,10 +157,12 @@ public class TranslationTaskService extends BaseService {
         // 分配新翻译任务(所有获取翻译任务,末尾都在找库存多优先的原则)
         if (product == null) {
 
+
             // 判断是否存在输入指定code列表获取翻译任务
             List<String> codeList = null;
             if (!StringUtils.isNullOrBlank2(keyWord)) {
                 codeList = Arrays.asList(keyWord.split("\n"));
+                codeList = getMainProductCode(channelId, codeList);
             }
 
             // 如果未选择翻译条件,则默认按照[优先翻译]原则获取翻译任务
@@ -251,6 +256,26 @@ public class TranslationTaskService extends BaseService {
         return fillTranslationTaskBean(product, productList);
     }
 
+
+    /**
+     * 找出对应主商品
+     * @param channelId
+     * @param productCodes
+     * @return
+     */
+    private List<String> getMainProductCode(String channelId, List<String> productCodes){
+
+        JongoQuery queryObject = new JongoQuery();
+        Criteria criteria = new Criteria("productCodes").in(productCodes).and("cartId").is(0);
+        queryObject.setQuery(criteria);
+        List<CmsBtProductGroupModel> cmsBtProductGroupModels = productGroupService.getList(channelId,queryObject);
+        if(ListUtils.isNull(cmsBtProductGroupModels)){
+            return null;
+        }else{
+            return cmsBtProductGroupModels.stream().map(CmsBtProductGroupModel::getMainProductCode).collect(Collectors.toList());
+        }
+
+    }
     /**
      * 取当前任务
      * @param channelId 店铺Id
