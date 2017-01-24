@@ -2441,12 +2441,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
         if (currentCmsBtJmSku == null) {
             // 不存在，新增
-            $info("新增cms_bt_jm_sku开始 [ProductCode:%s] [SkuCode:%s]", productCode, jmsku.getSkuCode());
             cmsBtJmSkuDao.insert(jmsku);
             $info("新增cms_bt_jm_sku成功 [ProductCode:%s] [SkuCode:%s]", productCode, jmsku.getSkuCode());
         } else {
             // 存在，更新
-            $info("更新cms_bt_jm_sku开始 [ProductCode:%s] [SkuCode:%s]", productCode, jmsku.getSkuCode());
             jmsku.setId(currentCmsBtJmSku.getId());
             jmsku.setCreated(currentCmsBtJmSku.getCreated());
             jmsku.setCreater(currentCmsBtJmSku.getCreater());
