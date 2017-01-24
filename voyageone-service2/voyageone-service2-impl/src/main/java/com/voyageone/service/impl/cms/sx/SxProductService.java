@@ -1048,12 +1048,9 @@ public class SxProductService extends BaseService {
             // modified by morse.lu 2016/06/15 end
         }
 
-        // Add by desmond 2016/06/12 start
-        if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
-            // 有错误(例如feed信息不存在)的时候，直接返回
-            return sxData;
-        }
-        // Add by desmond 2016/06/12 end
+        // 万一没有一条有效的产品code时，用于回写错误信息到mongo产品表中
+        List<CmsBtProductModel> allProductModelList = new ArrayList<>();
+        allProductModelList.addAll(productModelList);
 
         removeProductList.forEach(productModelList::remove);
         // added by morse.lu 2016/06/12 start
@@ -1065,10 +1062,25 @@ public class SxProductService extends BaseService {
                     "下面有效的产品，请确保产品未被锁定,已完成审批且品牌不在黑名单中.";
             $error(errorMsg);
             sxData.setErrorMessage(errorMsg);
-            return sxData;
+            // 如果没有一个有效的code,就把这个错误信息回写到所有code中
+            sxData.setProductList(allProductModelList);
             // update by desmond 2016/07/12 end
+        } else {
+            // added by morse.lu 2016/06/12 end
+
+            // 由于后面出现错误之后回写mongo产品表需要从sxData.ProductList里面取得对象code，所以要先设置对象产品列表的值
+            // 否则，后面的报错之后直接返回sxData里面没有上新对象code列表信息，导致不能回写错误信息到mongo的product表中
+            sxData.setProductList(productModelList);    // 这里先加到sxData里面，后面取得了sizeSx之后再排序
         }
-        // added by morse.lu 2016/06/12 end
+        // 设置排好序之后的skuList
+        sxData.setSkuList(skuList);                     // 这里先加到sxData里面，后面取得了sizeSx之后再排序
+
+        // Add by desmond 2016/06/12 start
+        if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
+            // 有错误(例如feed信息不存在)的时候，直接返回
+            return sxData;
+        }
+        // Add by desmond 2016/06/12 end
 
         // 20161020 tom 判断是否是隔离库存的商品 START
         List<String> strSqlSkuList = new ArrayList<>();
@@ -1294,8 +1306,8 @@ public class SxProductService extends BaseService {
 
         // 20160707 tom 将上新用的size全部整理好, 放到sizeSx里, 并排序 END
 
-        sxData.setProductList(productModelList);
-        sxData.setSkuList(skuList);
+//        sxData.setProductList(productModelList);
+//        sxData.setSkuList(skuList);
 
         return sxData;
     }
