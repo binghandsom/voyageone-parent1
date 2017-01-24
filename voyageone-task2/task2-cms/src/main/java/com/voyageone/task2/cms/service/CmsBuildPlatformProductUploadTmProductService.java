@@ -295,22 +295,85 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             if (CSPU_FIELD_ID_MATCH.equals(field.getId())) {
                 // 产品规格
                 MultiComplexField cspuListField = (MultiComplexField) field;
+
+                // 20170124 过滤重复删除的规格的处理 tom START
+                // key【条形码】； value【状态 + 半角冒号 + 规格编号】
+                Map<String, String> mapTempCspu = new HashMap<>();
+                // 预处理
                 for (Field subField : cspuListField.getFields()) {
                     if (subField.getType() != FieldTypeEnum.COMPLEX) {
                         continue;
                     }
                     ComplexField cspuField = (ComplexField) subField;
                     Map<String, Field> mapFields = cspuField.getFieldMap();
+
+                    // 规格编号
+                    String tmpId = ((InputField)mapFields.get("id")).getDefaultValue();
+                    // 状态
+                    String tmpStatus = ((InputField)mapFields.get("status")).getDefaultValue();
+                    // 条形码
+                    String tmpBarcode = ((InputField)mapFields.get("barcode")).getDefaultValue().split(":")[1];
+
+                    // 判断条码是否已经存在
+                    if (mapTempCspu.containsKey(tmpBarcode)) {
+                        // 判断当前的规格的状态， 如果是【被删除】以外的场合， 说明当前的规格才是对的规格
+                        if (!"被删除".equals(tmpStatus)) {
+                            mapTempCspu.put(tmpBarcode, tmpStatus + ":" + tmpId);
+                        }
+                    } else {
+                        // 如果之前还没添加过， 那就添加一下
+                        mapTempCspu.put(tmpBarcode, tmpStatus + ":" + tmpId);
+                    }
+                }
+                // 20170124 过滤重复删除的规格的处理 tom END
+
+                for (Field subField : cspuListField.getFields()) {
+                    if (subField.getType() != FieldTypeEnum.COMPLEX) {
+                        continue;
+                    }
+                    ComplexField cspuField = (ComplexField) subField;
+                    Map<String, Field> mapFields = cspuField.getFieldMap();
+
+                    // 20170124 过滤重复删除的规格的处理 tom START
+                    // 规格编号
+                    String tmpId = ((InputField)mapFields.get("id")).getDefaultValue();
+                    // 状态
+                    String tmpStatus = ((InputField)mapFields.get("status")).getDefaultValue();
+                    // 条形码
+                    String tmpBarcode = ((InputField)mapFields.get("barcode")).getDefaultValue().split(":")[1];
+
+                    // 判断当前商品是否是被删除的商品
+                    if ("被删除".equals(tmpStatus)) {
+                        // 根据条形码， 找到预处理mapTempCspu里的那条记录
+                        String tmpMapVal = mapTempCspu.get(tmpBarcode);
+                        String[] split = tmpMapVal.split(":"); // 【状态 + 半角冒号 + 规格编号】
+                        if (!"被删除".equals(split[0])) { // 看看当前的barcode有正常的记录
+                            if (!tmpId.equals(split[1])) { // 看看正常的记录是不是自己， 如果不是自己就跳过
+                                // 跳过
+                                continue;
+                            }
+                        }
+                    }
+                    // 20170124 过滤重复删除的规格的处理 tom END
+
                     String[] barcodeXml = ((InputField) mapFields.get("barcode")).getDefaultValue().split(":"); // 3:090891203253  1:3607342551800 冒号前面不知道是什么
                     if (barcodeXml.length != 2) {
                         throw new BusinessException("天猫条形码属性值保存方式变更!要修正代码重新解析!");
                     }
 
                     String barCode = barcodeXml[1];
-                    if (listBarcode.contains(barCode)) {
-                        throw new BusinessException(String.format("本产品的规格,天猫条形码[%s]有重复!请先在天猫后台修正正确的条形码,再Approve!", barCode));
+                    // 20170124 过滤重复删除的规格的处理 tom START
+//                    if (listBarcode.contains(barCode)) {
+//                        throw new BusinessException(String.format("本产品的规格,天猫条形码[%s]有重复!请先在天猫后台修正正确的条形码,再Approve!", barCode));
+//                    }
+//                    listBarcode.add(barCode);
+
+                    // 上面这几行， 改一下逻辑， 即使有重复的， 也要把所有的重复的错误信息显示出来， 因为不知道哪个是最新的
+                    // 当时如果相同的barcode里， 有非错误的（"被删除"以外的状态）的话， 那就不会走到这里的
+                    if (!listBarcode.contains(barCode)) {
+                        listBarcode.add(barCode);
                     }
-                    listBarcode.add(barCode);
+                    // 20170124 过滤重复删除的规格的处理 tom END
 
                     SxDarwinSkuProps sxDarwinSkuProps = mapBarcodeProps.get(barCode);
                     if (sxDarwinSkuProps != null) {
