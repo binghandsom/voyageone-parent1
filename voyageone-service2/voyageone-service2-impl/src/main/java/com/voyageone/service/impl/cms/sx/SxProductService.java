@@ -3490,7 +3490,12 @@ public class SxProductService extends BaseService {
             paramSizeType = CmsBtImageGroupDao.VALUE_ALL;
         }
 
-        List<CmsBtImageGroupModel> modelsAll = cmsBtImageGroupDao.selectListByKeysWithAll(channelId, cartId, imageType, viewType, paramBrandName, paramProductType, paramSizeType, 1);
+        // 新官网 和 分销， 使用官网同购的素材图
+        int cartIdTempSearch = cartId;
+        if (CartEnums.Cart.LIKING.getValue() == cartId || CartEnums.Cart.DT.getValue() == cartId) {
+            cartIdTempSearch = CartEnums.Cart.USTT.getValue();
+        }
+        List<CmsBtImageGroupModel> modelsAll = cmsBtImageGroupDao.selectListByKeysWithAll(channelId, cartIdTempSearch, imageType, viewType, paramBrandName, paramProductType, paramSizeType, 1);
         for (CmsBtImageGroupModel model : modelsAll) {
             // 这里第一位是，第二位是productType，第三位是sizeType，按顺序判断
             String matchVal = "";
