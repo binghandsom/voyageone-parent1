@@ -52,7 +52,7 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
         // 找到该活动下所有sku
         List<Map<String, Object>> skus = cmsBtJmPromotionService.selectCloseJmPromotionSku(jmPid);
         List<HtMallSkuPriceUpdateInfo> list = new ArrayList<>();
-        HtMallSkuPriceUpdateInfo updateData = null;
+        HtMallSkuPriceUpdateInfo updateData;
         // 设置请求参数
         for (Map<String, Object> skuPriceBean : skus) {
             if (ListUtils.isNull(productCodes) || productCodes.contains(skuPriceBean.get("product_code").toString())) {
