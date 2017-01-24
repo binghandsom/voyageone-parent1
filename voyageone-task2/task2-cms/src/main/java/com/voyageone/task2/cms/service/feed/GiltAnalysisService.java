@@ -4,14 +4,18 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.gilt.bean.*;
 import com.voyageone.components.gilt.service.GiltSalesService;
+import com.voyageone.components.gilt.service.GiltSizeChartService;
 import com.voyageone.components.gilt.service.GiltSkuService;
 import com.voyageone.service.daoext.cms.CmsZzFeedGiltInventoryDaoExt;
+import com.voyageone.service.impl.cms.CmsMtGiltSizeChartService;
 import com.voyageone.service.model.cms.CmsZzFeedGiltInventoryModel;
+import com.voyageone.service.model.cms.mongo.CmsMtGiltSizeChartModel;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.dao.TaskDao;
@@ -39,7 +43,7 @@ import static java.util.stream.Collectors.joining;
 @Service
 public class GiltAnalysisService extends BaseCronTaskService {
 
-    private static int pageIndex = 40;
+    private static int pageIndex = 0;
     //允许webSericce请求超时的连续最大次数
     private static int ALLOWLOSEPAGECOUNT = 10;
     @Autowired
@@ -59,6 +63,12 @@ public class GiltAnalysisService extends BaseCronTaskService {
 
     @Autowired
     private CmsZzFeedGiltInventoryDaoExt cmsZzFeedGiltInventoryDaoExt;
+
+    @Autowired
+    private CmsMtGiltSizeChartService cmsMtGiltSizeChartService;
+
+    @Autowired
+    private GiltSizeChartService giltSizeChartService;
 
 
     private Long lastExecuteTime = 0L;
@@ -359,7 +369,10 @@ public class GiltAnalysisService extends BaseCronTaskService {
             } else if (map1.containsKey("size")) {
                 map2 = map1.get("size");
                 superFeedGiltBean.setAttributes_size_size_chart_id(String.valueOf(map2.get("size_chart_id")));
-                superFeedGiltBean.setAttributes_size_type(String.valueOf(map2.get("type")));
+                superFeedGiltBean.setAttributes_size_type_name(String.valueOf(map2.get("type")));
+                if(!StringUtil.isEmpty(superFeedGiltBean.getAttributes_size_size_chart_id())) {
+                    superFeedGiltBean.setAttributes_size_type(getGiltSizeChartName(Long.parseLong(superFeedGiltBean.getAttributes_size_size_chart_id())));
+                }
                 superFeedGiltBean.setAttributes_size_value(String.valueOf(map2.get("value")));
             }
         }
@@ -399,5 +412,20 @@ public class GiltAnalysisService extends BaseCronTaskService {
 
 
         return superFeedGiltBean;
+    }
+
+    private String getGiltSizeChartName(Long id){
+        CmsMtGiltSizeChartModel cmsMtGiltSizeChartModel = cmsMtGiltSizeChartService.getGiltSizeChartById(id);
+        if(cmsMtGiltSizeChartModel != null) return cmsMtGiltSizeChartModel.getName();
+        GiltSizeChart giltSizeChart = null;
+        try {
+            giltSizeChart = giltSizeChartService.getSizeChartById(id.toString());
+            cmsMtGiltSizeChartModel = JacksonUtil.json2Bean(JacksonUtil.bean2Json(giltSizeChart),CmsMtGiltSizeChartModel.class);
+            cmsMtGiltSizeChartService.insert(cmsMtGiltSizeChartModel);
+            return cmsMtGiltSizeChartModel.getName();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 }
