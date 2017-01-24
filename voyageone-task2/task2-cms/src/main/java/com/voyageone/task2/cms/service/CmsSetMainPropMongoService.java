@@ -1221,7 +1221,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
                 // 插入尺码表
                 insertCmsBtFeedImportSize(channelId, cmsProduct);
-                $info("insertCmsBtFeedImportSize:" + (System.currentTimeMillis() - startTime));
+//                $info("insertCmsBtFeedImportSize:" + (System.currentTimeMillis() - startTime));
                 // jeff 2016/04 change start
                 // 生成更新前的价格履历Bean
                 // ProductPriceBean productPriceBeanBefore = getProductPriceBeanBefore(cmsProduct, blnProductExist);
