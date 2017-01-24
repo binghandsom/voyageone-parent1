@@ -46,6 +46,7 @@ import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -205,6 +206,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
     public void updateProduct(CmsBtSxWorkloadModel work) throws Exception {
 
         SxData sxData =  null;
+        // 上新对象产品code列表(应该只有一个code)
+        List<String> listSxCode = null;
 
         try {
 
@@ -269,7 +272,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             // 增加聚美规格的默认属性设置 END
 
             // 上新对象产品Code列表
-            List<String> listSxCode = sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
+            listSxCode = sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
 
             //读店铺信息
             ShopBean shop = Shops.getShop(channelId, CART_ID);
@@ -916,6 +919,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
                 productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
 
+                // 回写mongo中的product.P27.skus中的sku_no，spu_no等信息到mysql的bt_jm_sku表(为了保持mongodb和sku_no，spu_no等信息跟mysql表一致)
+                // CMSDOC-450 如果不一致，商品重新approve的时候会报“聚美上新 调用聚美商城商品上架API失败”的错误
+                // 理论上来说，只需要在上新/更新成功结束后的这里回写一次jm_sku表就行了，前面完全没有必要没做一步都回写一下
+                saveBtJmSku(channelId, listSxCode, sxData);
+
                 // add by desmond 2016/09/29 start
                 // 批量修改deal市场价(为了后面uploadMall时不报商城市场价与团购市场价不一致的错误，即使异常也继续uploadMall)
                 updateDealPriceBatch(shop, product, true, false);
@@ -997,11 +1005,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                     sxData.setErrorMessage(e.getMessage());
                 }
             }
-            // 上新对象code
-            List<String> listSxCode = null;
-            if (ListUtils.notNull(sxData.getProductList())) {
-                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
-            }
+
             // 上新失败后回写product表pPublishError的值("Error")和pPublishMessage(上新错误信息)
             productGroupService.updateUploadErrorStatus(sxData.getPlatform(), listSxCode, sxData.getErrorMessage());
 
@@ -2444,6 +2448,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             // 存在，更新
             $info("更新cms_bt_jm_sku开始 [ProductCode:%s] [SkuCode:%s]", productCode, jmsku.getSkuCode());
             jmsku.setId(currentCmsBtJmSku.getId());
+            jmsku.setCreated(currentCmsBtJmSku.getCreated());
+            jmsku.setCreater(currentCmsBtJmSku.getCreater());
             cmsBtJmSkuDao.update(jmsku);
             $info("更新cms_bt_jm_sku成功 [ProductCode:%s] [SkuCode:%s]", productCode, jmsku.getSkuCode());
         }
@@ -2486,6 +2492,45 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         // 上下架失败时，抛出错误
         if (!StringUtils.isEmpty(errMsg)) {
             throw new BusinessException(errMsg);
+        }
+    }
+
+    /**
+     * 回写mongo中product.P27.skus里面的信息到mysql的cms_bt_jm_sku表中
+     * 保持mongodb中的信息跟mysql表中的信息一致
+     *
+     * @param channelId 渠道id
+     * @param codes 聚美上新对象code列表(应该只有一个code)
+     */
+    protected void saveBtJmSku(String channelId, List<String> codes, SxData sxData) {
+        if (StringUtils.isEmpty(channelId) || ListUtils.isNull(codes) || sxData == null) return;
+        // 合并之后的sku信息列表(包含上新用sizeSx)
+        List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
+
+        for(String code : codes) {
+            // 取得产品信息
+            CmsBtProductModel prodObj = productService.getProductByCode(channelId, code);
+            if (prodObj == null
+                    || prodObj.getPlatform(CART_ID) == null
+                    || ListUtils.isNull(prodObj.getPlatform(CART_ID).getSkus())) continue;
+
+            List<BaseMongoMap<String, Object>> pSkus = prodObj.getPlatform(CART_ID).getSkus();
+            for(BaseMongoMap<String, Object> pSku : pSkus) {
+                String pSkuCode = pSku.getStringAttribute("skuCode");
+                // 在skuList中找到对应sku信息，然后设置需要的属性
+                BaseMongoMap<String, Object> sku = skuList.stream().filter(s -> pSkuCode.equals(s.getStringAttribute("skuCode"))).findFirst().orElse(null);
+                // 如果不在本次上新对象sku列表之中(例如:sku.isSale=false等)，直接跳过
+                if (MapUtils.isEmpty(sku)) continue;
+
+                // 其实这个mysql的库存同步用表cms_bt_jm_sku里面的channelId应该回写成原始channelId的(其他上新都是回写成原始channelId)，
+                // 但库存同步那边做了相应的mapping配置，所以聚美sku表里面回写成Liking(928)也没问题
+                CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, code, sku, sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
+                cmsBtJmSkuModel.setJmSpuNo(pSku.getStringAttribute("jmSpuNo"));   // 设置成mongo表中的spu_no
+                cmsBtJmSkuModel.setJmSkuNo(pSku.getStringAttribute("jmSkuNo"));   // 设置成mongo表中的sku_no
+
+                // 回写mysql的cms_bt_jm_sku表中(存在时更新，不存在时新增)
+                insertOrUpdateCmsBtJmSku(cmsBtJmSkuModel, channelId, code);
+            }
         }
     }
 }
