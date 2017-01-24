@@ -95,7 +95,8 @@ public class CmsMtPlatformCategoryDao extends BaseMongoCartDao<CmsMtPlatformCate
 
             CmsMtPlatformCategoryTreeModel cmsMtPlatformCategoryTreeModel = new CmsMtPlatformCategoryTreeModel();
             cmsMtPlatformCategoryTreeModel.setCatId(newCategoryTree.get("catId").toString());
-            cmsMtPlatformCategoryTreeModel.setCartId(Integer.valueOf(newCategoryTree.get("cartId").toString()));
+//            cmsMtPlatformCategoryTreeModel.setCartId(Integer.valueOf(newCategoryTree.get("cartId").toString()));
+            cmsMtPlatformCategoryTreeModel.setCartId(cartId);
             cmsMtPlatformCategoryTreeModel.setChannelId(newCategoryTree.get("channelId").toString());
             cmsMtPlatformCategoryTreeModel.setCatName(newCategoryTree.get("catName").toString());
             cmsMtPlatformCategoryTreeModel.setCatPath(newCategoryTree.get("catPath").toString());
