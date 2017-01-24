@@ -224,6 +224,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 throw new BusinessException(errorMsg);
             }
 
+            // 上新对象产品Code列表
+            if (ListUtils.notNull(sxData.getProductList())) {
+                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
+            }
+
             // 如果取得上新对象商品信息出错时，报错
             if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
                 String errorMsg = sxData.getErrorMessage();
@@ -270,9 +275,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             }
 
             // 增加聚美规格的默认属性设置 END
-
-            // 上新对象产品Code列表
-            listSxCode = sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
 
             //读店铺信息
             ShopBean shop = Shops.getShop(channelId, CART_ID);
