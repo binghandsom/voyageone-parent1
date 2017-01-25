@@ -38,7 +38,7 @@ define([
                 $scope.vm.brandList = res.data.brandList;
 
                 spDataService.passDated = $scope.vm.passDated = $scope.parentModel.passDated;
-                $scope.vm.editModel = spDataService.editModel;
+                $scope.vm.spDataService = spDataService;
             });
             $scope.search();
             $scope.modelUpdateDealEndTime.promotionId = $routeParams.jmpromId;
@@ -313,10 +313,10 @@ define([
         };
 
         $scope.getSelectedPromotionProductCodeList = function () {
-            var listPromotionProductId = [];
+            var listPromotionProductCode = [];
             for (var i = 0; i < $scope.vm.modelList.length; i++) {
                 if ($scope.vm.modelList[i].isChecked) {
-                    listPromotionProductId.push($scope.vm.modelList[i].productCode);
+                    listPromotionProductCode.push($scope.vm.modelList[i].productCode);
                 }
             }
             return listPromotionProductCode;
@@ -415,8 +415,8 @@ define([
 
         function batchSynchMallPrice_item(listPromotionProductCodes) {
             var parameter = {};
-            parameter.promotionId = $scope.vm.promotionId;
-            parameter.listPromotionProductCodes = listPromotionProductCodes;
+            parameter.jmPromotionId = $scope.vm.promotionId;
+            parameter.productCodes = listPromotionProductCodes;
             jmPromotionDetailService.batchSynchMallPrice(parameter).then(function (res) {
                 if (res.data.result) {
                     $scope.search();
@@ -439,6 +439,12 @@ define([
                         alert(res.data.msg);
                     }
                 });
+            });
+        };
+
+        $scope.synchAllMallPrice = function () {
+            confirm("您确定要同步商场价格吗?").then(function () {
+                batchSynchMallPrice_item()
             });
         };
 
