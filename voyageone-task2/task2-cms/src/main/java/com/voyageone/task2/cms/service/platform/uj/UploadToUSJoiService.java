@@ -21,12 +21,14 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
+import com.voyageone.service.impl.cms.feed.CmsBtFeedImportSizeService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -34,6 +36,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
+import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseCronTaskService;
@@ -100,6 +103,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
     @Autowired
     private Searcher searcher;
+
+    @Autowired
+    private CmsBtFeedImportSizeService cmsBtFeedImportSizeService;
 
     // 每个channel的子店->USJOI主店导入最大件数
     private final static int UPLOAD_TO_USJOI_MAX_500 = 500;
@@ -1068,6 +1074,13 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 }
             }
 
+            if (ListUtils.notNull(targetProductList)) {
+                targetProductList.forEach(p -> {
+                    // 插入尺码表(不存在插入，存在不更新)
+                    insertCmsBtFeedImportSize(usJoiChannelId, p);
+                });
+            }
+
             // delete by desmond 2016/09/06 start
             // 因为productService.updateProductPlatform()里面已经调用了记录价格变动履历的方法，所以这里不要再重新记录价格变动履历了
             // 记录商品价格变动履历,并向Mq发送消息同步sku,code,group价格范围
@@ -1943,4 +1956,25 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
         return query;
     }
+
+    /**
+     * 插入尺码表(不存在插入，存在不更新)
+     *
+     * @param channelId 渠道id
+     * @param cmsProduct 产品对象
+     */
+    public void insertCmsBtFeedImportSize(String channelId, CmsBtProductModel cmsProduct) {
+        if (StringUtils.isEmpty(channelId) || cmsProduct == null) return;
+
+        CmsBtFeedImportSizeModel cmsBtFeedImportSizeModel = new CmsBtFeedImportSizeModel();
+        cmsBtFeedImportSizeModel.setChannelId(channelId);
+        cmsBtFeedImportSizeModel.setBrandName(cmsProduct.getCommonNotNull().getFieldsNotNull().getBrand());
+        cmsBtFeedImportSizeModel.setProductType(cmsProduct.getCommonNotNull().getFieldsNotNull().getProductType());
+        cmsBtFeedImportSizeModel.setSizeType(cmsProduct.getCommonNotNull().getFieldsNotNull().getSizeType());
+        cmsProduct.getCommon().getSkus().forEach(sku -> {
+            cmsBtFeedImportSizeModel.setOriginalSize(sku.getSize());
+            cmsBtFeedImportSizeService.saveCmsBtFeedImportSizeModel(cmsBtFeedImportSizeModel, getTaskName());
+        });
+    }
+
 }
