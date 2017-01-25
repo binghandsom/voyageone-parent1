@@ -185,7 +185,7 @@
                         <li><a href="" ng-click="openDealExtensionWin()" ng-hide="!vm.isUpdateJM&&!vm.isEnd">全量Deal延期</a></li>
                     </ul>
                 </div>
-                <div class="btn-group dropdown" uib-dropdown="" >
+                <div class="btn-group dropdown" uib-dropdown="" >{{vm.editModel.model | json}}
                     <button ng-disabled="!vm.modelList.length" type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-arrow-circle-right"></i>&nbsp;批量操作&nbsp;<span class="caret"></span>
                     </button>

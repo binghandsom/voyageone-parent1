@@ -288,6 +288,7 @@ define(function () {
                     "updateJM": "updateJM",
                     "batchUpdateDealPrice": "batchUpdateDealPrice",
                     "batchSynchPrice": "batchSynchPrice",
+                    "batchSynchMallPrice":"batchSynchMallPrice",
                     "synchAllPrice": "synchAllPrice",
                     "batchCopyDeal": "batchCopyDeal",
                     "copyDealAll": "copyDealAll",

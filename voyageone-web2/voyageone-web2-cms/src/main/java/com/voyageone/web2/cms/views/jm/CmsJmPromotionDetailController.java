@@ -12,6 +12,7 @@ import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.jumei.*;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionSku3Service;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsJmMallPromotionPriceSyncMQMessageBody;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
@@ -190,6 +191,14 @@ public class CmsJmPromotionDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchUpdateSkuDealPrice)
     public AjaxResponse batchUpdateSkuDealPrice(@RequestBody BatchUpdateSkuPriceParameterBean parameter) {
         CallResult result = service3.batchUpdateSkuDealPrice(parameter,getUser().getUserName());
+        return success(result);
+    }
+    //批量同步商城价格
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchSynchMallPrice)
+    public AjaxResponse batchSyncMallPrice(@RequestBody CmsJmMallPromotionPriceSyncMQMessageBody parameter) throws MQMessageRuleException {
+        service3.batchSynchPrice(parameter);
+        service3.sendMessage(parameter.getPromotionId(),getUser().getUserName());
+        CallResult result = new CallResult();
         return success(result);
     }
     //批量同步价格

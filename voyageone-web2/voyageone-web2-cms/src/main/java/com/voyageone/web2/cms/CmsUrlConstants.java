@@ -84,6 +84,7 @@ public interface CmsUrlConstants {
                 String BatchUpdateSkuDealPrice="batchUpdateSkuDealPrice";
                 String BatchSynchPrice = "batchSynchPrice";
                 String SynchAllPrice = "synchAllPrice";
+                String BatchSynchMallPrice = "batchSynchMallPrice";
                 String BatchCopyDeal = "batchCopyDeal";
                 String CopyDealAll = "copyDealAll";
                 String BatchDeleteProduct = "batchDeleteProduct";
