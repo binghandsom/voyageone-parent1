@@ -432,7 +432,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, cmsBtProduct.getCommon().getFields().getBrand(), cmsBtProduct.getCommon().getFields().getProductType(), cmsBtProduct.getCommon().getFields().getSizeType());
             if (sizeMap != null && sizeMap.size() > 0) {
                 cmsBtProduct.getCommon().getSkus().forEach(sku -> {
-                    sku.setAttribute("platformSize",sizeMap.get(sku.getSize()));
+                    sku.setAttribute("platformSize",sizeMap.get(sku.getSize().trim()));
                 });
             }
         }catch (Exception e){
