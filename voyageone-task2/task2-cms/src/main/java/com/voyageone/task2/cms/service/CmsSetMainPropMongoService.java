@@ -1221,7 +1221,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
                 // 插入尺码表
                 insertCmsBtFeedImportSize(channelId, cmsProduct);
-                $info("insertCmsBtFeedImportSize:" + (System.currentTimeMillis() - startTime));
+//                $info("insertCmsBtFeedImportSize:" + (System.currentTimeMillis() - startTime));
                 // jeff 2016/04 change start
                 // 生成更新前的价格履历Bean
                 // ProductPriceBean productPriceBeanBefore = getProductPriceBeanBefore(cmsProduct, blnProductExist);
@@ -3132,7 +3132,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
                 return newModel.getImgName();
             } else {
-                $info("findImage != null");
                 // 如果原始图片的地址发生变更则做更新操作
                 if (!originalUrl.equals(findImage.getOriginalUrl())) {
                     findImage.setOriginalUrl(originalUrl);
@@ -3912,6 +3911,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                             $error(errMsg);
                             throw new BusinessException(errMsg);
                         }
+                        itemDetailsBean.setIs_sale(oldRecord.getIs_sale());
                         // 已经存在的场合: 更新数据库
                         itemDetailsDao.updateItemDetails(itemDetailsBean, getTaskName());
                     } else {

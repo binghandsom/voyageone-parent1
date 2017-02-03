@@ -274,6 +274,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
             // 然后对可以上下架的商品调用API并记录结果
             for (Map<String, Object> prodObj : prs) {
                 String numIId = StringUtils.trimToNull((String) prodObj.get("_id"));
+                $info("numIId=" + numIId + " activeStatus" + activeStatus);
                 List<String> pcdList = (List<String>) prodObj.get("pcdList");
                 if (numIId == null || pcdList == null || pcdList.isEmpty()) {
                     $error("CmsPlatformActiceLogService 数据错误 cartId=%d, channelId=%s data=%s", cartId, channelId, prodObj.toString());

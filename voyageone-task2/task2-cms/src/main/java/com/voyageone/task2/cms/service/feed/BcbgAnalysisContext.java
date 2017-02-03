@@ -114,6 +114,7 @@ class BcbgAnalysisContext {
         }
         
         String productDesc = bcbgBean.getStyleBean().getProductDesc();
+        if(productDesc == null) productDesc = "";
 
         feedInfoModel = new CmsBtFeedInfoModel();
 
@@ -128,7 +129,7 @@ class BcbgAnalysisContext {
         feedInfoModel.setBrand(bcbgBean.getBRAND_ID());
         feedInfoModel.setWeight(Constants.EmptyString);
         feedInfoModel.setShortDescription(name);
-        feedInfoModel.setLongDescription(productDesc);
+        feedInfoModel.setLongDescription(productDesc + bcbgBean.getStyleBean().getSizeFit());
         feedInfoModel.setSkus(new ArrayList<>());
         feedInfoModel.setAttribute(new HashMap<>());
         feedInfoModel.setUpdFlg(0);
