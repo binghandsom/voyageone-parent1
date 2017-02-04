@@ -551,7 +551,7 @@ public class CmsFieldEditService extends BaseViewService {
                 rsMap.put("ecd", 2);
 
                 if (hsCodeList.size() > 0 && (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId())))) {
+                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId())))) {
                     rsMap.put("ts", true);
                     rsMap.put("codeList", hsCodeList);
                 }else{
