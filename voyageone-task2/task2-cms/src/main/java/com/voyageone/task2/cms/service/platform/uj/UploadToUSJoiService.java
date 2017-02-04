@@ -1816,8 +1816,8 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         // 调用Feed到主数据的匹配接口取得匹配度最高的主类目
         long beginTime = System.currentTimeMillis();
         MatchResult searchResult = getMainCatInfo(feedCategoryPath,
-                !StringUtils.isEmpty(prodCommonField.getOrigProductType()) ? prodCommonField.getOrigProductType() : prodCommonField.getProductType(),
-                !StringUtils.isEmpty(prodCommonField.getOrigSizeType()) ? prodCommonField.getOrigSizeType() : prodCommonField.getSizeType(),
+                !StringUtils.isEmpty(prodCommonField.getOrigProductType()) ? prodCommonField.getOrigProductType() : "",
+                !StringUtils.isEmpty(prodCommonField.getOrigSizeType()) ? prodCommonField.getOrigSizeType() : "",
                 prodCommonField.getProductNameEn(),
                 prodCommonField.getBrand());
         if (searchResult != null) {
