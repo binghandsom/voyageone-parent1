@@ -414,6 +414,8 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     // CMSDOC-365,CMCDOC-414 如果common.catConf="0"(非人工匹配主类目)时，自动匹配商品主类目
                     // TODO 2016/12/30暂时这样更新，以后要改
 //                    if ("0".equals(productModel.getCommonNotNull().getCatConf())) {
+                        productModel.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
+                        productModel.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType());
                         doSetMainCategory(productModel.getCommon(), productModel.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
 //                    }
 
@@ -1825,15 +1827,15 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
             // 先备份原来的productType和sizeType
             // feed原始产品分类
-            if (StringUtils.isEmpty(prodCommonField.getOrigProductType())
-                    && !StringUtils.isEmpty(prodCommonField.getProductType())) {
-                prodCommonField.setOrigProductType(prodCommonField.getProductType());
-             }
-            // feed原始适合人群
-            if (StringUtils.isEmpty(prodCommonField.getOrigSizeType())
-                    && !StringUtils.isEmpty(prodCommonField.getSizeType())) {
-                prodCommonField.setOrigSizeType(prodCommonField.getSizeType());
-            }
+//            if (StringUtils.isEmpty(prodCommonField.getOrigProductType())
+//                    && !StringUtils.isEmpty(prodCommonField.getProductType())) {
+//                prodCommonField.setOrigProductType(prodCommonField.getProductType());
+//             }
+//            // feed原始适合人群
+//            if (StringUtils.isEmpty(prodCommonField.getOrigSizeType())
+//                    && !StringUtils.isEmpty(prodCommonField.getSizeType())) {
+//                prodCommonField.setOrigSizeType(prodCommonField.getSizeType());
+//            }
 
             // 主类目path(中文)
             if (!StringUtils.isEmpty(searchResult.getCnName()))   prodCommon.setCatPath(searchResult.getCnName());
