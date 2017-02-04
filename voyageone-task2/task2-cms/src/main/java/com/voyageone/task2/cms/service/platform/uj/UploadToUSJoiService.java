@@ -761,6 +761,8 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                         // TODO 2016/12/30暂时这样更新，以后要改
 //                        if ("0".equals(pr.getCommonNotNull().getCatConf())) {
                             // 自动匹配商品主类目
+                            pr.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
+                            pr.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType());
                             doSetMainCategory(pr.getCommon(), pr.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
 //                        }
 

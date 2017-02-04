@@ -133,8 +133,8 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
             CmsBtProductModel_Field prodCommonField = prodObj.getCommonNotNull().getFieldsNotNull();
             // 调用Feed到主数据的匹配接口取得匹配度最高的主类目
             MatchResult searchResult = uploadToUSJoiService.getMainCatInfo(prodObj.getFeed().getCatPath(),
-                    !StringUtils.isEmpty(prodCommonField.getOrigProductType()) ? prodCommonField.getOrigProductType() : prodCommonField.getProductType(),
-                    !StringUtils.isEmpty(prodCommonField.getOrigSizeType()) ? prodCommonField.getOrigSizeType() : prodCommonField.getSizeType(),
+                    !StringUtils.isEmpty(prodCommonField.getOrigProductType()) ? prodCommonField.getOrigProductType() : "",
+                    !StringUtils.isEmpty(prodCommonField.getOrigSizeType()) ? prodCommonField.getOrigSizeType() : "",
                     prodCommonField.getProductNameEn(),
                     prodCommonField.getBrand());
             if (searchResult == null) {
