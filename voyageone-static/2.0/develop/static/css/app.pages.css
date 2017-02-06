@@ -500,12 +500,14 @@ s-field textarea.s-html {
 }
 
 .product-shema-detail .product-title {
-    position: absolute;
-    margin-top: -43px;
-    margin-left: 11px;
-    font-size: 15px;
-    background: white;
+    margin-bottom: 13px;
+    border-bottom: 2px solid #e67e22;
+}
+
+.product-shema-detail .product-title h3{
+    padding-left: 10px;
     color: #e67e22;
+    font-size: 15px;
 }
 
 .product-shema-detail .nav span.tagFlag {

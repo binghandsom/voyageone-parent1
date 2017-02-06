@@ -18,7 +18,8 @@ define([
     './dl.component.ctl',
     './price.component.ctl',
     './dl.component.ctl',
-    './inventory.component.ctl'
+    './inventory.component.ctl',
+    './jd.sub-page.ctl'
 ], function (cms) {
 
     return cms.controller('productDetailController', (function () {
@@ -61,7 +62,7 @@ define([
                 self.product.autoApprovePrice = resp.autoApprovePrice[0];
             });
 
-            if(_cartObj){
+/*            if(_cartObj){
                 var strArr = _cartObj.split("|");
 
                 if(strArr.length > 1){
@@ -69,7 +70,9 @@ define([
                     self.product.skuBlock = true;
                 }else
                     self.defaultCartId = _cartObj;
-            }
+            }*/
+
+            self.defaultCartId = 26;
 
         };
 
