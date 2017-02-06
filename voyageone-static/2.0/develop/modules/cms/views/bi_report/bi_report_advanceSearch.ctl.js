@@ -19,15 +19,27 @@ define([
         {
             searchInfo:
             {
-                channel:"",
-                channelStart:"",
-                channelEnd:"",
-                fileType:6
+
             },
             "downloadList":[],
             "message":"successfully!",
             status: {open: true}
-        }
+        };
+        $scope.sites = [
+            {site : "Google", url : "http://www.google.com"},
+            {site : "Runoob", url : "http://www.runoob.com"},
+            {site : "Taobao", url : "http://www.taobao.com"}
+        ];
+        $scope.channels=[
+            {channelId : "007", channelName :"ALL"},
+            {channelId : "010", channelName :"Jewelry"},
+            {channelId : "012", channelName :"BCBG"},
+            {channelId : "014", channelName :"SC"},
+            {channelId : "017", channelName :"LV"},
+            {channelId : "018", channelName :"Jewelry"},
+            {channelId : "024", channelName :"OverStock"},
+            {channelId : "030", channelName :"WL"}
+        ];
         // $scope.currentChannelId = cookieService.channel();
         // $scope.vm={"testBeanList":[],"message":"successfully!",status: {open: true}};
         $scope.exportFile = exportFile;
@@ -37,6 +49,10 @@ define([
                 $scope.search();
             });
         };*/
+       $scope.showCode=function () {
+           log.info(vm.searchInfo.channel);
+           alert(vm.searchInfo.channel);
+       }
         $scope.clear = function () {
             $scope.searchInfo = {};
         };

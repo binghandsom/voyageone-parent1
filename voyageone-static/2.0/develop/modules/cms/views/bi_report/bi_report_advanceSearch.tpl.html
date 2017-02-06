@@ -7,14 +7,20 @@
             </uib-accordion-heading>
          <!--   主体-->
             <div class="container-fluid m-t-sm m-b-md">
+               <pre>
+                   {{ vm.searchInfo }}
+                   {{  channelTest }}
+                   {{ channel }}
+                   </pre>
                 <div class="col-sm-12">
                     <div class="col-sm-6">
                         <div class="form-horizontal">
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" translate="渠道（品牌）"></label>
-                                <div class="col-sm-7">
-                                    <input class="form-control" ng-model="vm.searchInfo.channel">
-                                </div>
+                                <select ng-model="vm.searchInfo.channel">
+                                    <option ng-repeat="x in channels" value="{{ x.channelId }}">{{ x.channelName }}</option>
+                                </select>
+
                             </div>
                         </div><!-- .form-group -->
                     </div>
@@ -99,7 +105,6 @@
                         </div><!-- .form-inline -->
                     </div>
                 </div>
-            </div>
         </uib-accordion-group>
     </uib-accordion>
 
