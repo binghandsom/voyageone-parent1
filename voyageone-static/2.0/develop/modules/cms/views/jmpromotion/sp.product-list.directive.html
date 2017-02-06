@@ -180,7 +180,8 @@
                     <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
                         <li><a href="" ng-click="deleteAllProduct();" ng-if="!vm.isBegin&&!vm.isEnd">全量清空</a></li>
                         <li><a href="" ng-click="copyDealAll()" ng-if="!vm.isBegin&&!vm.isEnd&&vm.isUpdateJM">全量上传</a></li>
-                        <li><a href="" ng-click="synchAllPrice()" ng-if="!vm.isBegin&&!vm.isEnd&&vm.isUpdateJM">全量同步价格</a></li>
+                        <li><a href="" ng-click="synchAllMallPrice()" ng-if="!vm.isBegin&&!vm.isEnd&&vm.isUpdateJM && true == vm.spDataService.editModel.model.promotionScene[2]">全量同步商城价格</a></li>
+                        <li><a href="" ng-click="synchAllPrice()" ng-if="!vm.isBegin&&!vm.isEnd&&vm.isUpdateJM && true == vm.spDataService.editModel.model.promotionScene[1]">全量同步活动价格</a></li>
                         <li><a href="" ng-click="openDealExtensionWin()" ng-hide="!vm.isUpdateJM&&!vm.isEnd">全量Deal延期</a></li>
                     </ul>
                 </div>
@@ -191,7 +192,8 @@
                     <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
                         <li><a href="" ng-click="batchDeleteProduct()">批量清空</a></li>
                         <li><a href="" ng-click="batchCopyDeal()" ng-if="!vm.isEnd && vm.isUpdateJM">批量上传</a></li>
-                        <li><a href="" ng-click="batchSynchPrice()" ng-if="!vm.isEnd && vm.isUpdateJM">批量同步价格</a></li>
+                        <li><a href="" ng-click="batchSynchMallPrice()" ng-if="!vm.isEnd && vm.isUpdateJM && true == vm.spDataService.editModel.model.promotionScene[2]">批量同步商城价格</a></li>
+                        <li><a href="" ng-click="batchSynchPrice()" ng-if="!vm.isEnd && vm.isUpdateJM && true == vm.spDataService.editModel.model.promotionScene[1]">批量同步活动价格</a></li>
                         <li><a href="" ng-click="openPriceModifyWin()" ng-if="!vm.isEnd">批量变更价格</a></li>
                         <li><a href="" ng-click="openTagModifyWin()" ng-if="!vm.isEnd && vm.isUpdateJM">批量修改Tag</a></li>
                     </ul>

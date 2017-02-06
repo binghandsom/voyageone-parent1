@@ -12,6 +12,8 @@ import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.jumei.*;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionSku3Service;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsJmMallPromotionPriceSyncMQMessageBody;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
@@ -46,6 +48,8 @@ public class CmsJmPromotionDetailController extends CmsController {
     private final CmsBtJmMasterBrandService cmsBtJmMasterBrandService;
     private final MqSender sender;
 
+    private final CmsMqSenderService cmsMqSenderService;
+
     //begin 2
     private final CmsBtJmPromotionProduct3Service service3;
     private final CmsBtJmPromotionSku3Service service3CmsBtJmPromotionSku;
@@ -68,7 +72,7 @@ public class CmsJmPromotionDetailController extends CmsController {
                                           CmsBtJmMasterBrandService cmsBtJmMasterBrandService,
                                           CmsBtJmSkuService cmsBtJmSkuService, MqSender sender,
                                           CmsJmPromotionService jmPromotionService, TagService tagService,
-                                          CmsBtJmImageTemplateService jmImageTemplateService) {
+                                          CmsBtJmImageTemplateService jmImageTemplateService, CmsMqSenderService cmsMqSenderService) {
         this.serviceCmsBtJmPromotionProduct = serviceCmsBtJmPromotionProduct;
         this.service3CmsBtJmPromotionSku = service3CmsBtJmPromotionSku;
         this.cmsBtJmPromotionSkuService = cmsBtJmPromotionSkuService;
@@ -81,6 +85,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         this.jmPromotionService = jmPromotionService;
         this.tagService = tagService;
         this.jmImageTemplateService = jmImageTemplateService;
+        this.cmsMqSenderService = cmsMqSenderService;
     }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.INIT)
@@ -191,6 +196,14 @@ public class CmsJmPromotionDetailController extends CmsController {
     public AjaxResponse batchUpdateSkuDealPrice(@RequestBody BatchUpdateSkuPriceParameterBean parameter) {
         CallResult result = service3.batchUpdateSkuDealPrice(parameter,getUser().getUserName());
         return success(result);
+    }
+    //批量同步商城价格
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchSynchMallPrice)
+    public AjaxResponse batchSyncMallPrice(@RequestBody CmsJmMallPromotionPriceSyncMQMessageBody parameter) throws MQMessageRuleException {
+        parameter.setChannelId(getUser().getSelChannelId());
+        parameter.setSender(getUser().getUserName());
+        cmsMqSenderService.sendMessage(parameter);
+        return success(true);
     }
     //批量同步价格
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchSynchPrice)

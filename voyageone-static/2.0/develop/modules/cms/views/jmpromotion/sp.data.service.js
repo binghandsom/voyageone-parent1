@@ -5,6 +5,7 @@ define(['cms'], function (cms) {
 
         self.$routeParams = $routeParams;
         self.passDated = false;
+        self.editModel={};
         self.$q = $q;
         self.jmPromotionService = jmPromotionService;
         self.jmPromotionDetailService = jmPromotionDetailService;

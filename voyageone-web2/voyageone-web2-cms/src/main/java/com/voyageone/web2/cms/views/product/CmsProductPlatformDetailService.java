@@ -518,8 +518,21 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         if(platformModel.getCartId() == 27){
             blnSmartSx = false;
         }
+        Boolean isCatPathChg = false;
+        CmsBtProductModel cmsBtProductModel = null;
+        if(platformModel.getCartId() == CartEnums.Cart.TG.getValue() || platformModel.getCartId() == CartEnums.Cart.TM.getValue()){
+            cmsBtProductModel = productService.getProductById(channelId, prodId);
+            CmsBtProductModel_Platform_Cart oldPlatForm = cmsBtProductModel.getPlatform(platformModel.getCartId());
+            if(platformModel.getpCatId() != null && !platformModel.getpCatId().equalsIgnoreCase(oldPlatForm.getpCatId())){
+                isCatPathChg = true;
+            }
+        }
 
-        return productService.updateProductPlatform(channelId, prodId, platformModel, modifier, true, blnSmartSx);
+        String modified  = productService.updateProductPlatform(channelId, prodId, platformModel, modifier, true, blnSmartSx);
+        if(isCatPathChg){
+            resetProductGroupPlatformPid(channelId, platformModel.getCartId(), cmsBtProductModel.getCommon().getFields().getCode());
+        }
+        return modified;
 
     }
 
