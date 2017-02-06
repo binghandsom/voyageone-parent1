@@ -398,6 +398,8 @@ public class PriceService extends BaseService {
 
         List<BaseMongoMap<String, Object>> unifySkus = new ArrayList<BaseMongoMap<String, Object>>();
 
+        Double minRetail = null;
+        Double maxRetail = null;
         // 对 sku 进行匹配
         // 获取重量进行运费计算
         for (BaseMongoMap<String, Object> platformSku : platformSkus) {
@@ -441,6 +443,16 @@ public class PriceService extends BaseService {
             // 计算指导价
             Double retailPrice = systemPriceCalculator.calculate(clientNetPrice);
 
+            //计算Retail Price范围 只计算isSale = true
+            if(platformSku.get("isSale") == null || (Boolean) platformSku.get("isSale")) {
+                if (minRetail == null || minRetail > retailPrice) {
+                    minRetail = retailPrice;
+                }
+                if (minRetail == null || maxRetail < retailPrice) {
+                    maxRetail = retailPrice;
+                }
+            }
+
             if (retailPrice <= 0)
                 throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的指导价不合法: %s", channelId, cartId, skuCodeValue, retailPrice);
 
@@ -457,6 +469,54 @@ public class PriceService extends BaseService {
         }
         // 走MSRP统一配置
         unifySkuPriceMsrp(unifySkus, channelId, cartId);
+        unifySkuPriceSale(unifySkus,channelId, cartId, minRetail, maxRetail);
+    }
+
+    private void unifySkuPriceSale(List<BaseMongoMap<String, Object>> unifySkus, String channelId, Integer cartId, Double minRetail, Double maxRetail) {
+        // 读取配置
+        CmsChannelConfigBean channelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE, cartId.toString());
+        if (channelConfigBean == null) {
+            channelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
+        }
+
+        Integer configValue1 = 0;
+        Integer configValue2 = 0;
+        Integer configValue3 = 0;
+        if (channelConfigBean != null) {
+            if (!StringUtil.isEmpty(channelConfigBean.getConfigValue1())) {
+                configValue1 = Integer.parseInt(channelConfigBean.getConfigValue1());
+            }
+            if (!StringUtil.isEmpty(channelConfigBean.getConfigValue2())) {
+                configValue2 = Integer.parseInt(channelConfigBean.getConfigValue2());
+            }
+            if (!StringUtil.isEmpty(channelConfigBean.getConfigValue3())) {
+                configValue3 = Integer.parseInt(channelConfigBean.getConfigValue3());
+            }
+        }
+
+        for(BaseMongoMap<String, Object> skuInPlatform : unifySkus) {
+            Double priceSale = getProductPrice(skuInPlatform, CmsBtProductConstants.Platform_SKU_COM.priceSale);
+            Double retailPrice = getProductPrice(skuInPlatform, CmsBtProductConstants.Platform_SKU_COM.priceRetail);
+
+            if (configValue1 == 1 || (configValue1 == 2 && retailPrice > priceSale)) {
+                skuInPlatform.put(CmsBtProductConstants.Platform_SKU_COM.priceSale.name(), retailPrice);
+            }
+
+            if(configValue2 == 1 && maxRetail != null){
+                skuInPlatform.put(CmsBtProductConstants.Platform_SKU_COM.priceSale.name(), maxRetail);
+            }else if(configValue2 == 2 && minRetail != null){
+                skuInPlatform.put(CmsBtProductConstants.Platform_SKU_COM.priceSale.name(), minRetail);
+            }else if(configValue2 == 3 && minRetail != null){
+                // 拿hua'jing'ma价格
+                max
+            }
+
+
+        }
+
+        if (configValue2 == 3 && minRetail != null) {
+            for
+        }
     }
 
     /**
