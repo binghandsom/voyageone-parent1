@@ -415,7 +415,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     // TODO 2016/12/30暂时这样更新，以后要改
 //                    if ("0".equals(productModel.getCommonNotNull().getCatConf())) {
                         productModel.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
-                        productModel.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType());
+                        productModel.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
                         doSetMainCategory(productModel.getCommon(), productModel.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
 //                    }
 
@@ -764,7 +764,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 //                        if ("0".equals(pr.getCommonNotNull().getCatConf())) {
                             // 自动匹配商品主类目
                             pr.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
-                            pr.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType());
+                            pr.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
                             doSetMainCategory(pr.getCommon(), pr.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
 //                        }
 
