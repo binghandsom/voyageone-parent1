@@ -22,6 +22,7 @@ public class CmsAdvSearchConfirmRetailPriceMQJob extends TBaseMQCmsService<AdvSe
 
     @Override
     public void onStartup(AdvSearchConfirmRetailPriceMQMessageBody messageBody) {
-        confirmRetailPriceService.confirmPlatformsRetailPrice(messageBody);
+        List<String> errorCodeList = confirmRetailPriceService.confirmPlatformsRetailPrice(messageBody);
+        cmsSuccessIncludeFailLog(messageBody,JacksonUtil.bean2Json(errorCodeList));
     }
 }

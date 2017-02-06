@@ -5,8 +5,10 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.CmsBtPriceConfirmLogService;
@@ -39,12 +41,13 @@ public class CmsConfirmRetailPriceService extends VOAbsLoggable {
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
 
-    public void confirmPlatformsRetailPrice(AdvSearchConfirmRetailPriceMQMessageBody messageBody) {
+    public  List<String> confirmPlatformsRetailPrice(AdvSearchConfirmRetailPriceMQMessageBody messageBody) {
 
         String channelId = StringUtils.trimToNull(messageBody.getChannelId());
         String userName = StringUtils.trimToNull(messageBody.getUserName());
         List<String> codeList = messageBody.getCodeList();
         List<Integer> cartList = messageBody.getCartList();
+        List<String> errorCodeList = new ArrayList<>();
 
         JongoQuery qryObj = new JongoQuery();
         JongoUpdate updObj = new JongoUpdate();
@@ -76,28 +79,26 @@ public class CmsConfirmRetailPriceService extends VOAbsLoggable {
 
                 // 更新产品的信息
                 if (isUpdFlg) {
-                    newCodeList.add(prodCode);
                     updObj.setQuery("{'common.fields.code':#}");
                     updObj.setQueryParameters(prodCode);
                     updObj.setUpdate("{$set:{'platforms.P" + cartIdVal + ".skus':#,'modified':#,'modifier':#}}");
                     updObj.setUpdateParameters(skuList, DateTimeUtil.getNowTimeStamp(), userName);
                     BulkWriteResult rs = bulkList.addBulkJongo(updObj);
                     if (rs != null) {
+                        newCodeList.add(prodCode);
                         $debug(String.format("指导价变更批量确认 channelId=%s 执行结果=%s", channelId, rs.toString()));
+                        // 保存确认历史
+                        priceConfirmLogService.addConfirmed(channelId, prodCode, prodObj.getPlatformNotNull(cartIdVal), userName);
+                    } else {
+                        errorCodeList.add("指导价变更批量确认失败channelId:"+channelId+",cartId:"+cartIdVal+",code:"+prodCode);
                     }
-
-                    // 保存确认历史
-                    priceConfirmLogService.addConfirmed(channelId, prodCode, prodObj.getPlatformNotNull(cartIdVal), userName);
                 }
             }
-
             // 记录商品修改历史
             productStatusHistoryService.insertList(channelId, newCodeList, cartIdVal, EnumProductOperationType.BatchConfirmRetailPrice, "", userName);
         }
-        BulkWriteResult rs = bulkList.execute();
-        if (rs != null) {
-            $debug(String.format("指导价变更批量确认 channelId=%s 结果=%s", channelId, rs.toString()));
-        }
+
+        return errorCodeList;
     }
 
 }
