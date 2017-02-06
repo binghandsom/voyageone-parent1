@@ -112,6 +112,9 @@ public class UserSessionBean implements Serializable {
     }
 
     public String getSelChannelId() {
+        if (selChannel == null) {
+            return null;
+        }
         return selChannel.getId();
     }
 
