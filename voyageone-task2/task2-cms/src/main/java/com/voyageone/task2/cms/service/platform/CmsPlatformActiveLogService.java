@@ -221,7 +221,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                     } else {
                         String mainCode = StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getMainProductCode());
                         String numIId = CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? prodObj.getPlatformNotNull(cartId).getpPlatformMallId() : prodObj.getPlatformNotNull(cartId).getpNumIId();
-                        $info("numIId="+numIId);
+
                         if (StringUtil.isEmpty(numIId.trim()) || numIId.trim().equals("0")) {
                             $warn("CmsPlatformActiceLogService numIId错误 channelId=%s, code=%s", channelId, prodCode);
                             failedComment = "NumIId为空";
