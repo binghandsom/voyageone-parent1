@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * 高级检索-确认指定价更新Job
+ * 高级检索-确认指导价更新Job
  *
  * @Author dell
  * @Create 2016-12-30 17:18
@@ -26,6 +26,9 @@ public class CmsAdvSearchConfirmRetailPriceMQJob extends TBaseMQCmsService<AdvSe
     @Override
     public void onStartup(AdvSearchConfirmRetailPriceMQMessageBody messageBody) {
         List<String> errorCodeList = confirmRetailPriceService.confirmPlatformsRetailPrice(messageBody);
-        cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(errorCodeList));
+        if (errorCodeList.size() > 0)
+            cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(errorCodeList));
+        else
+            cmsSuccessLog(messageBody, "确认指导价正常结束!");
     }
 }
