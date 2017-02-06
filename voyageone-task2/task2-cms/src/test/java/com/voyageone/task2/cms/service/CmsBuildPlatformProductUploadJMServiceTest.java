@@ -13,6 +13,7 @@ import com.voyageone.components.jumei.bean.HtMallSkuAddInfo;
 import com.voyageone.components.jumei.bean.JmGetProductInfoRes;
 import com.voyageone.components.jumei.bean.JmGetProductInfo_Spus;
 import com.voyageone.components.jumei.service.JumeiProductService;
+import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -682,6 +683,34 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
                 }
             }
         }
+    }
+
+    @Test
+    public void testSaveBtJmSku() {
+        // 回写mysql的cms_bt_jm_sku表的测试
+
+        String channelId = "928";
+        long groupId = 503173L;
+
+        SxData sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
+
+        if (sxData == null) {
+            System.out.println("sxData == null");
+            return;
+        }
+
+        // 如果取得上新对象商品信息出错时，报错
+        if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
+            System.out.println(sxData.getErrorMessage());
+            return;
+        }
+
+        // 上新对象产品Code列表
+        List<String> listSxCode = sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
+
+        // 调用聚美商城商品上下架
+        cmsBuildPlatformProductUploadJMService.saveBtJmSku(channelId, listSxCode, sxData);
+        System.out.println("回写mysql的cms_bt_jm_sku表的测试 ok");
     }
 
 }

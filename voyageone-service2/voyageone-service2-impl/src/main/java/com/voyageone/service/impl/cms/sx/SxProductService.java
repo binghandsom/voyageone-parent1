@@ -1048,12 +1048,9 @@ public class SxProductService extends BaseService {
             // modified by morse.lu 2016/06/15 end
         }
 
-        // Add by desmond 2016/06/12 start
-        if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
-            // 有错误(例如feed信息不存在)的时候，直接返回
-            return sxData;
-        }
-        // Add by desmond 2016/06/12 end
+        // 万一没有一条有效的产品code时，用于回写错误信息到mongo产品表中
+        List<CmsBtProductModel> allProductModelList = new ArrayList<>();
+        allProductModelList.addAll(productModelList);
 
         removeProductList.forEach(productModelList::remove);
         // added by morse.lu 2016/06/12 start
@@ -1065,10 +1062,25 @@ public class SxProductService extends BaseService {
                     "下面有效的产品，请确保产品未被锁定,已完成审批且品牌不在黑名单中.";
             $error(errorMsg);
             sxData.setErrorMessage(errorMsg);
-            return sxData;
+            // 如果没有一个有效的code,就把这个错误信息回写到所有code中
+            sxData.setProductList(allProductModelList);
             // update by desmond 2016/07/12 end
+        } else {
+            // added by morse.lu 2016/06/12 end
+
+            // 由于后面出现错误之后回写mongo产品表需要从sxData.ProductList里面取得对象code，所以要先设置对象产品列表的值
+            // 否则，后面的报错之后直接返回sxData里面没有上新对象code列表信息，导致不能回写错误信息到mongo的product表中
+            sxData.setProductList(productModelList);    // 这里先加到sxData里面，后面取得了sizeSx之后再排序
         }
-        // added by morse.lu 2016/06/12 end
+        // 设置排好序之后的skuList
+        sxData.setSkuList(skuList);                     // 这里先加到sxData里面，后面取得了sizeSx之后再排序
+
+        // Add by desmond 2016/06/12 start
+        if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
+            // 有错误(例如feed信息不存在)的时候，直接返回
+            return sxData;
+        }
+        // Add by desmond 2016/06/12 end
 
         // 20161020 tom 判断是否是隔离库存的商品 START
         List<String> strSqlSkuList = new ArrayList<>();
@@ -1294,8 +1306,8 @@ public class SxProductService extends BaseService {
 
         // 20160707 tom 将上新用的size全部整理好, 放到sizeSx里, 并排序 END
 
-        sxData.setProductList(productModelList);
-        sxData.setSkuList(skuList);
+//        sxData.setProductList(productModelList);
+//        sxData.setSkuList(skuList);
 
         return sxData;
     }
@@ -3040,6 +3052,21 @@ public class SxProductService extends BaseService {
                         }
 //                    }
                 }
+
+                // 如果当前店铺在cms_mt_channel_config表中配置成了运营自己在天猫后台管理无线端共通模块时
+                CmsChannelConfigBean config = CmsChannelConfigs.getConfigBean(shopBean.getOrder_channel_id(),
+                        CmsConstants.ChannelConfig.TMALL_WIRELESS_COMMON_MODULE_BY_USER, shopBean.getCart_id());
+                if (config != null && "1".equals(config.getConfigValue1())) {
+                    // 如果设置成"1：运营自己天猫后台管理"时,用天猫平台上取下来的运营自己后台设置的值设置schema无线端共通模块相关属性
+                    // 店铺活动(Complex)
+                    setTmWirelessAttrByOperator(field, "shop_discount", defaultComplexValue);
+                    // 文字说明(Complex)
+                    setTmWirelessAttrByOperator(field, "item_text", defaultComplexValue);
+                    // 优惠(Complex)
+                    setTmWirelessAttrByOperator(field, "coupon", defaultComplexValue);
+                    // 同店推荐(Complex)
+                    setTmWirelessAttrByOperator(field, "hot_recommanded", defaultComplexValue);
+                }
             }
         }
         // added by morse.lu 2012/12 end
@@ -3478,7 +3505,7 @@ public class SxProductService extends BaseService {
         // 新官网 和 分销， 使用官网同购的素材图
         int cartIdTempSearch = cartId;
         if (CartEnums.Cart.LIKING.getValue() == cartId || CartEnums.Cart.DT.getValue() == cartId) {
-            cartIdTempSearch = CartEnums.Cart.JM.getValue();
+            cartIdTempSearch = CartEnums.Cart.USTT.getValue();
         }
         List<CmsBtImageGroupModel> modelsAll = cmsBtImageGroupDao.selectListByKeysWithAll(channelId, cartIdTempSearch, imageType, viewType, paramBrandName, paramProductType, paramSizeType, 1);
         for (CmsBtImageGroupModel model : modelsAll) {
@@ -5395,9 +5422,9 @@ public class SxProductService extends BaseService {
                     // 修改对象
                     InputField targetQuantityField = (InputField)targetField;
                     // 更新用schema对象
-                    InputField updatequantityField = (InputField)updateItemField;
+                    InputField updateQuantityField = (InputField)updateItemField;
                     // 从更新用schema中取得商品数量"quantity"对应的defaultValue (也就是当前天猫平台上的商品数量)
-                    targetQuantityField.setValue(updatequantityField.getDefaultValue());
+                    targetQuantityField.setValue(updateQuantityField.getDefaultValue());
                     break;
             }
         } catch (Exception e) {
@@ -5498,6 +5525,28 @@ public class SxProductService extends BaseService {
             cnt++;
         }
         $info("=================" + uploadName + "  主线程结束====================");
+    }
+
+    /**
+     * 用天猫平台上取下来的运营自己后台设置的值设置schema无线端共通模块相关属性(包含里面的"是否启用"和"选择模板"属性值)
+     *
+     * @param field  天猫无线描述schema中的complesField
+     * @param complexFieldId 天猫无线描述schema中的complesField id(例：shop_discount:店铺活动, item_text:文字说明, coupon:优惠, hot_recommanded:同店推荐)
+     * @param defaultComplexValue 从天猫平台上取下来的运营设置的无线描述值
+     */
+    public void setTmWirelessAttrByOperator(Field field, String complexFieldId, ComplexValue defaultComplexValue) {
+
+        if (field == null || StringUtils.isEmpty(complexFieldId) || defaultComplexValue == null) return;
+
+        // shop_discount:店铺活动, item_text:文字说明, coupon:优惠, hot_recommanded:同店推荐
+        Field fieldObj = ((ComplexField) field).getValue().getValueField(complexFieldId);
+        if (fieldObj != null && FieldTypeEnum.COMPLEX == fieldObj.getType()) {
+            // 设置成天猫平台上运营设置的值(包含里面的"是否启用"和"选择模板"属性值)
+            ComplexValue complexValue = defaultComplexValue.getComplexFieldValue(complexFieldId);
+            if (complexValue != null && MapUtils.isNotEmpty(complexValue.getFieldMap())) {
+                ((ComplexField) fieldObj).setComplexValue(complexValue);
+            }
+        }
     }
 
 }

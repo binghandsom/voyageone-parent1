@@ -49,6 +49,8 @@ public class SuperFeedGiltBean {
 
     private String attributes_size_type;
 
+    private String attributes_size_type_name;
+
     private String attributes_size_value;
 
     private String prices_retail_currency;
@@ -173,6 +175,14 @@ public class SuperFeedGiltBean {
 
     public void setAttributes_color_name(String attributes_color_name) {
         this.attributes_color_name = attributes_color_name;
+    }
+
+    public String getAttributes_size_type_name() {
+        return attributes_size_type_name;
+    }
+
+    public void setAttributes_size_type_name(String attributes_size_type_name) {
+        this.attributes_size_type_name = attributes_size_type_name;
     }
 
     public String getAttributes_style_name() {
@@ -329,6 +339,7 @@ public class SuperFeedGiltBean {
         temp.append(this.attributes_material_value);
         temp.append(this.attributes_size_size_chart_id);
         temp.append(this.attributes_size_type);
+        temp.append(this.attributes_size_type_name);
         temp.append(this.attributes_size_value);
         temp.append(this.prices_retail_currency);
         temp.append(this.prices_retail_value);

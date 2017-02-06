@@ -95,8 +95,7 @@ public class CmsBuildPlatformProductUploadDtServiceTest {
 
         // 保存渠道级别(channel)的共通配置项目(从cms_mt_channel_config表中取得的)
         Map<String, String> channelConfigValueMap = new ConcurrentHashMap<>();
-        // 取得cms_mt_channel_config表中配置的渠道级别的配置项目值(如：颜色别名等)
-//        uploadDtService.doChannelConfigInit(likingChannelId, cartId, channelConfigValueMap);
+
         uploadDtService.uploadProduct(workload, shopProp, channelConfigValueMap);
         System.out.println("testUploadProduct 测试正常结束!");
     }

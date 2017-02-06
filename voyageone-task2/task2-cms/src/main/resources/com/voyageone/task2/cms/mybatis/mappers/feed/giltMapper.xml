@@ -4,7 +4,7 @@
     <insert id="cms_zz_worktable_gilt_superfeed_insertList">
         INSERT IGNORE INTO voyageone_cms2.cms_zz_feed_gilt_product_temp (id, product_id, product_look_id, locale, name,
         description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name,
-        attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
+        attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,attributes_size_type_name,
         attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value,
         prices_cost_currency, prices_cost_value, product_codes, product_codes_first, categories_id, categories_name,
         categories_key, qty,updateFlag, md5) VALUES
@@ -13,7 +13,7 @@
             #{i.country_code}, #{i.brand_id},
             #{i.brand_name}, #{i.images_url}, #{i.attributes_color_nfr_code}, #{i.attributes_color_name},
             #{i.attributes_style_name},
-            #{i.attributes_material_value}, #{i.attributes_size_size_chart_id}, #{i.attributes_size_type},
+            #{i.attributes_material_value}, #{i.attributes_size_size_chart_id}, #{i.attributes_size_type},#{i.attributes_size_type_name},
             #{i.attributes_size_value}, #{i.prices_retail_currency}, #{i.prices_retail_value},
             #{i.prices_sale_currencty},
             #{i.prices_sale_value}, #{i.prices_cost_currency}, #{i.prices_cost_value}, #{i.product_codes},
@@ -149,7 +149,7 @@
         prices_cost_currency, prices_cost_value, product_codes, product_codes_first, categories_id, categories_name,
         categories_key, qty, updateFlag, md5) SELECT id,product_id, product_look_id, locale, name,
         description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name,
-        attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
+        attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type, attributes_size_type_name,
         attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value,
         prices_cost_currency, prices_cost_value, product_codes, product_codes_first, categories_id, categories_name,
         categories_key, qty, updateFlag, md5 from
