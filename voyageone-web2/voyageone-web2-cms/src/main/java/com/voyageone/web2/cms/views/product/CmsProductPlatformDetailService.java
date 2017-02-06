@@ -520,6 +520,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         }
         Boolean isCatPathChg = false;
         CmsBtProductModel cmsBtProductModel = null;
+        // 天猫的场合如果平台类目发生变化 清空platforms.Pxx.pProductId    CMSDOC-262
         if(platformModel.getCartId() == CartEnums.Cart.TG.getValue() || platformModel.getCartId() == CartEnums.Cart.TM.getValue()){
             cmsBtProductModel = productService.getProductById(channelId, prodId);
             CmsBtProductModel_Platform_Cart oldPlatForm = cmsBtProductModel.getPlatform(platformModel.getCartId());
