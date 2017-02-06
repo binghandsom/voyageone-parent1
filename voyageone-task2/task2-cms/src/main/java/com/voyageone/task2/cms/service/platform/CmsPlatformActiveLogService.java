@@ -16,6 +16,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.dt.enums.DtConstants;
@@ -222,9 +223,9 @@ public class CmsPlatformActiveLogService extends BaseService {
                         failedComment = "商品不存在";
                     } else {
                         String mainCode = StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getMainProductCode());
-                        long numIId = NumberUtils.toLong(CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? prodObj.getPlatformNotNull(cartId).getpPlatformMallId() : prodObj.getPlatformNotNull(cartId).getpNumIId());
+                        String numIId = CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? prodObj.getPlatformNotNull(cartId).getpPlatformMallId() : prodObj.getPlatformNotNull(cartId).getpNumIId();
 
-                        if (numIId == 0) {
+                        if (StringUtil.isEmpty(numIId.trim()) || numIId.trim().equals("0")) {
                             $warn("CmsPlatformActiceLogService numIId错误 channelId=%s, code=%s", channelId, prodCode);
                             failedComment = "NumIId为空";
                         } else if (mainCode == null) {
@@ -282,6 +283,7 @@ public class CmsPlatformActiveLogService extends BaseService {
             // 然后对可以上下架的商品调用API并记录结果
             for (Map<String, Object> prodObj : prs) {
                 String numIId = StringUtils.trimToNull((String) prodObj.get("_id"));
+                $info("numIId=" + numIId + " activeStatus" + activeStatus);
                 List<String> pcdList = (List<String>) prodObj.get("pcdList");
                 if (numIId == null || pcdList == null || pcdList.isEmpty()) {
 

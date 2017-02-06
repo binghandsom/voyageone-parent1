@@ -68,6 +68,7 @@ public class CmsBtFeedImportSizeService extends BaseService {
         if("928".equals(channelId)) {
 
             channelIdList=comMtValueChannelDaoExt.selectList928ChannelId();
+            channelIdList.add("928");
         }
         else
         {

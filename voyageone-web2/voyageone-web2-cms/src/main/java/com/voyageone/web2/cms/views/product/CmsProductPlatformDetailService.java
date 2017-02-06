@@ -378,7 +378,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 }
             }
             // added by morse.lu 2016/09/13 end
-            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), platformCart.getpCatId(), channelId, cartId, prodId, language,null));
+            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), platformCart.getpCatId(), channelId, cartId, prodId, language,null, platformCart.getpBrandId()));
         }
         return platformCart;
     }
@@ -437,7 +437,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, cmsBtProduct.getCommon().getFields().getBrand(), cmsBtProduct.getCommon().getFields().getProductType(), cmsBtProduct.getCommon().getFields().getSizeType());
             if (sizeMap != null && sizeMap.size() > 0) {
                 cmsBtProduct.getCommon().getSkus().forEach(sku -> {
-                    sku.setAttribute("platformSize",sizeMap.get(sku.getSize()));
+                    sku.setAttribute("platformSize",sizeMap.get(sku.getSize().trim()));
                 });
             }
         }catch (Exception e){
@@ -471,7 +471,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getPlatform(cartId);
         if (platformCart != null) {
             if(platformCart.getFields() == null) platformCart.setFields(new BaseMongoMap<>());
-            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, prodId, language, catPath));
+            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, prodId, language, catPath, platformCart.getpBrandId()));
             platformCart.setpCatId(catId);
             // platform 品牌名
 //            if (StringUtil.isEmpty(platformCart.getpBrandId()) || StringUtil.isEmpty(platformCart.getpBrandName())) {
@@ -489,7 +489,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         } else {
             platformCart = new CmsBtProductModel_Platform_Cart();
             if(platformCart.getFields() == null) platformCart.setFields(new BaseMongoMap<>());
-            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, prodId, language, catPath));
+            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, prodId, language, catPath, platformCart.getpBrandId()));
 
             Map<String, Object> parm = new HashMap<>();
             parm.put("channelId", channelId);
@@ -656,7 +656,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         }
     }
 
-    private Map<String, List<Field>> getSchemaFields(BaseMongoMap<String, Object> fieldsValue, String catId, String channelId, Integer cartId, Long productId, String language, String catPath) {
+    private Map<String, List<Field>> getSchemaFields(BaseMongoMap<String, Object> fieldsValue, String catId, String channelId, Integer cartId, Long productId, String language, String catPath, String platformBrandId) {
         Map<String, List<Field>> fields = null;
 
         // 从mapping 来的默认值合并到商品属性中
@@ -667,10 +667,10 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         // JM的场合schema就一条
         if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
             if (!StringUtil.isEmpty(catId)) {
-                fields = platformSchemaService.getFieldForProductImage("1", channelId, cartId, language);
+                fields = platformSchemaService.getFieldForProductImage("1", channelId, cartId, language, platformBrandId);
             }
         } else {
-            fields = platformSchemaService.getFieldForProductImage(catId, channelId, cartId, language);
+            fields = platformSchemaService.getFieldForProductImage(catId, channelId, cartId, language, platformBrandId);
         }
         if (fieldsValue != null && fields != null && fields.get(PlatformSchemaService.KEY_ITEM) != null) {
             FieldUtil.setFieldsValueFromMap(fields.get(PlatformSchemaService.KEY_ITEM), fieldsValue);
@@ -708,7 +708,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             }
         });
 
-        platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId, prodId, language, null));
+        platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId, prodId, language, null, platform.getpBrandId()));
 
         return platform;
     }
