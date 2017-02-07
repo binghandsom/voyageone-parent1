@@ -5,7 +5,6 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Carts;
@@ -15,7 +14,6 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -57,32 +55,24 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
 
-    public void approval(AdvSearchProductApprovalMQMessageBody mqMessageBody) {
-        List<Integer> cartList = mqMessageBody.getCartList();
+    public Map<String, Object> approval(AdvSearchProductApprovalMQMessageBody mqMessageBody) {
+        Integer cartIdValue = mqMessageBody.getCartList().get(0);
         String channelId = mqMessageBody.getChannelId();
         String userName = mqMessageBody.getUserName();
         List<String> productCodes = mqMessageBody.getProductCodes();
         Map<String, Object> params = mqMessageBody.getParams();
-
-        // 先判断是否是ready状态（minimall店铺不验证）
-        List<Integer> newcartList = new ArrayList<>();
-        for (Integer cartIdVal : cartList) {
-            TypeChannelBean cartType = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, cartIdVal.toString(), "en");
-            if (!"3".equals(cartType.getCartType())) {
-                newcartList.add(cartIdVal);
-            }
-        }
-        if (newcartList.size() > 0) {
+        Map<String, Object> errorCodeList = new HashMap();
+        // 先判断是否是ready状态（miNiMall店铺不验证）
+        TypeChannelBean cartType = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, cartIdValue.toString(), "en");
+        if (!"3".equals(cartType.getCartType())) {
             JongoQuery queryObject = new JongoQuery();
             StringBuilder qryStr = new StringBuilder();
             qryStr.append("{'common.fields.code':{$in:#},$or:[");
-            for (Integer cartIdVal : newcartList) {
-                if (!CartEnums.Cart.TT.getId().equals(String.valueOf(cartIdVal))
-                        && !CartEnums.Cart.USTT.getId().equals(String.valueOf(cartIdVal)))
-                    qryStr.append("{'platforms.P" + cartIdVal + ".status':{$nin:['Ready','Approved']}},");
-                else
-                    qryStr.append("{'common.fields.hsCodeStatus': '0'},");
-            }
+            if (!CartEnums.Cart.TT.getId().equals(String.valueOf(cartIdValue))
+                    && !CartEnums.Cart.USTT.getId().equals(String.valueOf(cartIdValue)))
+                qryStr.append("{'platforms.P" + cartIdValue + ".status':{$nin:['Ready','Approved']}},");
+            else
+                qryStr.append("{'common.fields.hsCodeStatus': '0'},");
             qryStr.deleteCharAt(qryStr.length() - 1);
             qryStr.append("]}");
             queryObject.setQuery(qryStr.toString());
@@ -92,30 +82,24 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
             List<CmsBtProductModel> prodList = productService.getList(channelId, queryObject);
             if (prodList != null && prodList.size() > 0) {
                 // 存在未ready状态
-                List<String> codeList = new ArrayList<>(prodList.size());
-                List<String> hsCodeList = new ArrayList<>();
-
                 for (CmsBtProductModel prodObj : prodList) {
                     if (prodObj.getCommon() == null) {
+                        errorCodeList.put(prodObj.getProdId().toString(), "有商品pending状态, 无法审批 channelId:" + channelId + ",cartIdValue:" + cartIdValue);
                         continue;
                     }
                     CmsBtProductModel_Field field = prodObj.getCommon().getFields();
                     if (field != null && field.getCode() != null) {
-                        codeList.add(field.getCode());
+                        errorCodeList.put(field.getCode(), "有商品pending状态, 无法审批 channelId:" + channelId + ",cartIdValue:" + cartIdValue);
+                        continue;
                     }
-
-                    if(field != null && "0".equals(field.getHsCodeStatus())){
-                        hsCodeList.add(field.getCode());
+                    if (field != null && "0".equals(field.getHsCodeStatus())) {
+                        errorCodeList.put(field.getCode(), "有商品商品没有设置税号, 无法审批 channelId:" + channelId + ",cartIdValue:" + cartIdValue);
+                        continue;
                     }
-                }
-
-                if (hsCodeList.size() > 0 && (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId())))) {
-                    throw new BusinessException("有商品商品没有设置税号, 无法审批, 请修改. codes=" + JacksonUtil.bean2Json(hsCodeList));
-                }else{
-                    throw new BusinessException("有商品pending状态, 无法审批, 请修改. codes=" + JacksonUtil.bean2Json(codeList));
                 }
             }
+            //处理pending状态和没有设置税号的商品
+            productCodes.stream().filter(code -> errorCodeList.containsKey(code)).forEach(productCodes::remove);
         }
 
         //###############################################################################################################
@@ -137,7 +121,6 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                 breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D + 1.0;
             }
 
-            Map<String, Object> rsMap = new HashMap<>();
             int idx = 0;
             for (String code : productCodes) {
                 if (idx < startIdx) {
@@ -150,46 +133,40 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                 List<Map<String, Object>> prodInfoList = new ArrayList<>();
                 double priceLimit = 0;
 
-                for (Integer cartIdVal : cartList) {
-                    CmsBtProductModel_Platform_Cart ptmObj = productModel.getPlatform(cartIdVal);
-                    if (ptmObj == null) {
-                        continue;
+                CmsBtProductModel_Platform_Cart ptmObj = productModel.getPlatform(cartIdValue);
+                if (ptmObj == null) {
+                    continue;
+                }
+                String cartName = Carts.getCart(cartIdValue).getName();
+                List<BaseMongoMap<String, Object>> skuObjList = ptmObj.getSkus();
+                if (skuObjList == null) {
+                    continue;
+                }
+                for (BaseMongoMap<String, Object> skuObj : skuObjList) {
+                    double priceSale = skuObj.getDoubleAttribute("priceSale");
+                    double priceRetail = skuObj.getDoubleAttribute("priceRetail");
+                    Map<String, Object> priceInfo = new HashMap<>();
+                    if (priceSale < priceRetail) {
+                        priceInfo.put("priceRetail", priceRetail);
                     }
-                    String cartName = Carts.getCart(cartIdVal).getName();
-                    List<BaseMongoMap<String, Object>> skuObjList = ptmObj.getSkus();
-                    if (skuObjList == null) {
-                        continue;
+                    if (breakThreshold != null) {
+                        priceLimit = priceRetail * breakThreshold;
                     }
-                    for (BaseMongoMap<String, Object> skuObj : skuObjList) {
-                        double priceSale = skuObj.getDoubleAttribute("priceSale");
-                        double priceRetail = skuObj.getDoubleAttribute("priceRetail");
-                        Map<String, Object> priceInfo = new HashMap<>();
-                        if (priceSale < priceRetail) {
-                            priceInfo.put("priceRetail", priceRetail);
-                        }
-                        if (breakThreshold != null) {
-                            priceLimit = priceRetail * breakThreshold;
-                        }
-                        if (breakThreshold != null && priceSale > priceLimit) {
-                            priceInfo.put("priceLimit", priceLimit);
-                        }
-                        if (priceSale < priceRetail || (breakThreshold != null && priceSale > priceLimit)) {
-                            priceInfo.put("priceSale", priceSale);
-                            priceInfo.put("skuCode", skuObj.get("skuCode"));
-                            priceInfo.put("cartName", cartName);
-                            prodInfoList.add(priceInfo);
-                        }
+                    if (breakThreshold != null && priceSale > priceLimit) {
+                        priceInfo.put("priceLimit", priceLimit);
+                    }
+                    if (priceSale < priceRetail || (breakThreshold != null && priceSale > priceLimit)) {
+                        priceInfo.put("priceSale", priceSale);
+                        priceInfo.put("skuCode", skuObj.get("skuCode"));
+                        priceInfo.put("cartName", cartName);
+                        prodInfoList.add(priceInfo);
                     }
                 }
+
                 if (prodInfoList.size() > 0) {
-                    rsMap.put("startIdx", idx);
-                    rsMap.put("code", code);
-                    rsMap.put("infoList", prodInfoList);
-                    break;
+                    productCodes.remove(code);
+                    errorCodeList.put(code, "商品价格有问题 channelId:" + channelId + ",cartIdValue:" + cartIdValue + ",startIdx" + idx + ",infoList" + prodInfoList);
                 }
-            }
-            if (rsMap.size() > 0) {
-               throw new BusinessException("商品价格有问题, msg=" + JacksonUtil.bean2Json(rsMap));
             }
         }
 
@@ -202,34 +179,36 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
             // 获取产品的信息
             CmsBtProductModel productModel = productService.getProductByCode(channelId, code);
             if (productModel.getCommon() == null) {
+                errorCodeList.put(code, "Common为空 channelId:" + channelId + ",cartIdValue:" + cartIdValue);
                 continue;
             }
             CmsBtProductModel_Field field = productModel.getCommon().getFields();
             if (field == null) {
+                errorCodeList.put(code, "field为空 channelId:" + channelId + ",cartIdValue:" + cartIdValue);
                 continue;
             }
 
             List<String> strList = new ArrayList<>();
-            for (Integer cartIdVal : cartList) {
-                // 如果该产品以前就是approved,则不更新pStatus
-                String prodStatus = productModel.getPlatformNotNull(cartIdVal).getStatus();
-                TypeChannelBean cartType = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, cartIdVal.toString(), "en");
-                if ("3".equals(cartType.getCartType())) {
-                    strList.add("'platforms.P" + cartIdVal + ".status':'Approved','platforms.P" + cartIdVal + ".pStatus':'WaitingPublish'");
-                } else {
-                    if (CmsConstants.ProductStatus.Ready.name().equals(prodStatus)) {
-                        strList.add("'platforms.P" + cartIdVal + ".status':'Approved','platforms.P" + cartIdVal + ".pStatus':'WaitingPublish'");
-                    } else if (CmsConstants.ProductStatus.Approved.name().equals(prodStatus)) {
-                        strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
-                    } else if (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId()))) {
-                        strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
-                    }
+
+            // 如果该产品以前就是approved,则不更新pStatus
+            String prodStatus = productModel.getPlatformNotNull(cartIdValue).getStatus();
+            if ("3".equals(cartType.getCartType())) {
+                strList.add("'platforms.P" + cartIdValue + ".status':'Approved','platforms.P" + cartIdValue + ".pStatus':'WaitingPublish'");
+            } else {
+                if (CmsConstants.ProductStatus.Ready.name().equals(prodStatus)) {
+                    strList.add("'platforms.P" + cartIdValue + ".status':'Approved','platforms.P" + cartIdValue + ".pStatus':'WaitingPublish'");
+                } else if (CmsConstants.ProductStatus.Approved.name().equals(prodStatus)) {
+                    strList.add("'platforms.P" + cartIdValue + ".status':'Approved'");
+                } else if (CartEnums.Cart.TT.getId().equals(String.valueOf(cartIdValue))
+                        || CartEnums.Cart.USTT.getId().equals(String.valueOf(cartIdValue))) {
+                    strList.add("'platforms.P" + cartIdValue + ".status':'Approved','platforms.P" + cartIdValue + ".pStatus':'WaitingPublish'");
                 }
             }
 
+
             if (strList.isEmpty()) {
                 $debug("产品未更新 code=" + code);
+                errorCodeList.put(code, "产品未更新 channelId:" + channelId + ",cartIdValue:" + cartIdValue);
                 continue;
             }
             newProdCodeList.add(code);
@@ -247,11 +226,10 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
             if (rs != null) {
                 $debug(String.format("商品审批(product表) channelId=%s 执行结果=%s", channelId, rs.toString()));
             }
-
             // 更新group表的platformStatus
             JongoUpdate grpUpdObj = new JongoUpdate();
-            grpUpdObj.setQuery("{'productCodes':#,'channelId':#,'cartId':{$in:#},'platformStatus':{$in:[null,'']}}");
-            grpUpdObj.setQueryParameters(code, channelId, cartList);
+            grpUpdObj.setQuery("{'productCodes':#,'channelId':#,'cartId':#,'platformStatus':{$in:[null,'']}}");
+            grpUpdObj.setQueryParameters(code, channelId, cartIdValue);
             grpUpdObj.setUpdate("{$set:{'platformStatus':'WaitingPublish','modified':#,'modifier':#}}");
             grpUpdObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userName);
 
@@ -271,23 +249,22 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
         }
 
         String msg;
-        Integer cartId = (Integer) params.get("cartId");
-        if (cartId == null || cartId == 0) {
+        if (cartIdValue == null || cartIdValue == 0) {
             msg = "高级检索 商品审批(全平台)";
         } else {
             msg = "高级检索 商品审批";
         }
-        for (Integer cartIdVal : cartList) {
-            // 插入上新程序
-            $debug("批量修改属性 (商品审批) 开始记入SxWorkLoad表");
-            long sta = System.currentTimeMillis();
-            sxProductService.insertSxWorkLoad(channelId, newProdCodeList, cartIdVal, userName, false);
-            $debug("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
 
-            // 记录商品修改历史
-            productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdVal, EnumProductOperationType.ProductApproved, msg, userName);
-        }
+        // 插入上新程序
+        $debug("批量修改属性 (商品审批) 开始记入SxWorkLoad表");
+        long sta = System.currentTimeMillis();
+        sxProductService.insertSxWorkLoad(channelId, newProdCodeList, cartIdValue, userName, false);
+        $debug("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
 
+        // 记录商品修改历史
+        productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdValue, EnumProductOperationType.ProductApproved, msg, userName);
+
+        return errorCodeList;
     }
 
 }
