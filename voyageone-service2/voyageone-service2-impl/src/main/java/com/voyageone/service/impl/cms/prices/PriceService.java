@@ -29,8 +29,10 @@ import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -41,10 +43,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.voyageone.common.CmsConstants.ChannelConfig.*;
 import static com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM.*;
@@ -70,20 +69,21 @@ public class PriceService extends BaseService {
     private final ProductSkuService productSkuService;
     private final ImsBtProductDao imsBtProductDao;
     private final TbItemService tbItemService;
+    private final SxProductService sxProductService;
 
-    @Autowired
+    final
     JumeiHtMallService jumeiHtMallService;
 
-    @Autowired
+    final
     JdSkuService jdSkuService;
 
-    @Autowired
+    final
     JumeiHtDealService serviceJumeiHtDeal;
 
     @Autowired
     public PriceService(CmsMtFeeShippingService feeShippingService, CmsMtFeeTaxService feeTaxService,
                         CmsMtFeeCommissionService feeCommissionService, CmsMtFeeExchangeService feeExchangeService,
-                        ProductSkuService productSkuService, ImsBtProductDao imsBtProductDao, TbItemService tbItemService) {
+                        ProductSkuService productSkuService, ImsBtProductDao imsBtProductDao, TbItemService tbItemService, SxProductService sxProductService, JumeiHtMallService jumeiHtMallService, JdSkuService jdSkuService, JumeiHtDealService serviceJumeiHtDeal) {
         this.feeShippingService = feeShippingService;
         this.feeTaxService = feeTaxService;
         this.feeCommissionService = feeCommissionService;
@@ -91,6 +91,10 @@ public class PriceService extends BaseService {
         this.productSkuService = productSkuService;
         this.imsBtProductDao = imsBtProductDao;
         this.tbItemService = tbItemService;
+        this.sxProductService = sxProductService;
+        this.jumeiHtMallService = jumeiHtMallService;
+        this.jdSkuService = jdSkuService;
+        this.serviceJumeiHtDeal = serviceJumeiHtDeal;
     }
 
     /**
@@ -469,10 +473,10 @@ public class PriceService extends BaseService {
         }
         // 走MSRP统一配置
         unifySkuPriceMsrp(unifySkus, channelId, cartId);
-        unifySkuPriceSale(unifySkus,channelId, cartId, minRetail, maxRetail);
+        unifySkuPriceSale(product, unifySkus,channelId, cartId, minRetail, maxRetail);
     }
 
-    private void unifySkuPriceSale(List<BaseMongoMap<String, Object>> unifySkus, String channelId, Integer cartId, Double minRetail, Double maxRetail) {
+    public void unifySkuPriceSale(CmsBtProductModel product, List<BaseMongoMap<String, Object>> unifySkus, String channelId, Integer cartId, Double minRetail, Double maxRetail) {
         // 读取配置
         CmsChannelConfigBean channelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE, cartId.toString());
         if (channelConfigBean == null) {
@@ -494,9 +498,41 @@ public class PriceService extends BaseService {
             }
         }
 
+        CmsChannelConfigBean priceCalculator = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.PRICE_CALCULATOR);
+        Integer calculatorConfigValue3 = 0;
+        if (priceCalculator != null) {
+            calculatorConfigValue3 = StringUtil.isEmpty(priceCalculator.getConfigValue3()) ? 0 : Integer.parseInt(priceCalculator.getConfigValue3());
+        }
+
+        // 阀值
+        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId
+                , CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
+
+        Double breakThreshold = null;
+        if (cmsChannelConfigBean != null) {
+            breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D;
+        }
+
+        Map<String, String> goldSize  = null;
+        Double goldPrice = null;
+        Map<String, CmsBtProductModel_Sku> skuinfo = new HashMap();
+
+
+        // 取出sku的size 和 黄金尺码
+        if(configValue2 == 3){
+            try {
+                product.getCommonNotNull().getSkus().forEach(sku -> {
+                    skuinfo.put(sku.getSkuCode(), sku);
+                });
+                goldSize = sxProductService.getSizeMap(channelId, product.getCommon().getFields().getBrand(), product.getCommon().getFields().getProductType(), product.getCommon().getFields().getSizeType());
+            }catch (BusinessException e){
+                $warn(e.getMessage());
+            }
+        }
+        // 先处理 configValue1 = 1 和 =2 的场合
         for(BaseMongoMap<String, Object> skuInPlatform : unifySkus) {
-            Double priceSale = getProductPrice(skuInPlatform, CmsBtProductConstants.Platform_SKU_COM.priceSale);
-            Double retailPrice = getProductPrice(skuInPlatform, CmsBtProductConstants.Platform_SKU_COM.priceRetail);
+            Double priceSale = skuInPlatform.getDoubleAttribute("priceSale");
+            Double retailPrice = skuInPlatform.getDoubleAttribute("priceRetail");
 
             if (configValue1 == 1 || (configValue1 == 2 && retailPrice > priceSale)) {
                 skuInPlatform.put(CmsBtProductConstants.Platform_SKU_COM.priceSale.name(), retailPrice);
@@ -506,16 +542,80 @@ public class PriceService extends BaseService {
                 skuInPlatform.put(CmsBtProductConstants.Platform_SKU_COM.priceSale.name(), maxRetail);
             }else if(configValue2 == 2 && minRetail != null){
                 skuInPlatform.put(CmsBtProductConstants.Platform_SKU_COM.priceSale.name(), minRetail);
-            }else if(configValue2 == 3 && minRetail != null){
-                // 拿hua'jing'ma价格
-                max
+            }else if(configValue2 == 3 && goldSize != null){
+                if(skuInPlatform.get("isSale") != null ){
+                    CmsBtProductModel_Sku comSkuInfo = skuinfo.get((String) skuInPlatform.get("skuCode"));
+                    if(comSkuInfo != null && comSkuInfo.getQty() > 0 && goldSize.containsKey(comSkuInfo.getSize())){
+                        if(goldPrice == null || goldPrice < skuInPlatform.getDoubleAttribute("priceSale")){
+                            goldPrice = skuInPlatform.getDoubleAttribute("priceSale");
+                        }
+                    }
+                }
             }
-
-
         }
 
-        if (configValue2 == 3 && minRetail != null) {
-            for
+        // 设置黄金码价格
+        if (configValue2 == 3 && goldPrice != null) {
+            for(BaseMongoMap<String, Object> skuInPlatform : unifySkus) {
+                Double sale = skuInPlatform.getDoubleAttribute("priceSale");
+                Double retailPrice = skuInPlatform.getDoubleAttribute("priceRetail");
+                if(sale < goldPrice){
+                    skuInPlatform.setAttribute("priceSale", goldPrice);
+                }else if(breakThreshold != null && sale > goldPrice && ((Double)(retailPrice * (1D - breakThreshold))).compareTo(goldPrice) != 1){
+                    skuInPlatform.setAttribute("priceSale", goldPrice);
+                }else if(breakThreshold != null && sale > goldPrice && ((Double)(retailPrice * (1D - breakThreshold))).compareTo(goldPrice) == 1){
+                    skuInPlatform.setAttribute("priceSale", retailPrice);
+                    skuInPlatform.setAttribute("isSale",false);
+                }
+            }
+        }
+
+        // 最后计算有没有 priceRetail > priceSale 的商品 和 小数点保留
+        for (BaseMongoMap<String, Object> skuInPlatform : unifySkus) {
+            Double sale = skuInPlatform.getDoubleAttribute("priceSale");
+            Double retailPrice = skuInPlatform.getDoubleAttribute("priceRetail");
+
+            if (sale.compareTo(0.0) <= 0 && retailPrice.compareTo(0.0) <= 0) {
+                skuInPlatform.setAttribute("isSale", false);
+            } else if (retailPrice.compareTo(sale) > 0) {
+                if (calculatorConfigValue3 == 2 || (calculatorConfigValue3 == 1 && ((Double) (retailPrice * (1D - breakThreshold))).compareTo(sale) > 0)) {
+                    skuInPlatform.setAttribute("isSale", false);
+                }
+            }
+
+            if(configValue3 != 0) {
+                BigDecimal rs = new BigDecimal(sale);
+                if (configValue3 == 1) {
+                    // 小数点向上取整
+                    sale = rs.setScale(0, BigDecimal.ROUND_CEILING).doubleValue();
+                } else if (configValue3 == 2) {
+                    // 个位向下取整
+                    BigDecimal multyValue = new BigDecimal("10");
+                    if (rs.compareTo(multyValue) <= 0) {
+                        // 少于10的直接返回
+                        sale = rs.setScale(2, BigDecimal.ROUND_CEILING).doubleValue();
+                    } else {
+                        rs = rs.divide(multyValue);
+                        rs = rs.setScale(0, BigDecimal.ROUND_DOWN);
+                        rs = rs.multiply(multyValue);
+                        sale = rs.doubleValue();
+                    }
+                } else if (configValue3 == 3) {
+                    // 个位向上取整
+                    BigDecimal multyValue = new BigDecimal("10");
+                    rs = rs.divide(multyValue);
+                    rs = rs.setScale(1, BigDecimal.ROUND_UP);
+                    rs = rs.setScale(0, BigDecimal.ROUND_CEILING);
+                    rs = rs.multiply(multyValue);
+                    sale = rs.doubleValue();
+                }
+                skuInPlatform.setAttribute("priceSale", sale);
+            }
+
+            // 保存击穿标识
+            String priceDiffFlgValue = productSkuService.getPriceDiffFlg(channelId, skuInPlatform);
+            // 最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，比指导价高:3，向上击穿警告:4，向下击穿警告:5）
+            skuInPlatform.put(priceDiffFlg.name(), priceDiffFlgValue);
         }
     }
 
