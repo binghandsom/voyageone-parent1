@@ -291,7 +291,7 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
             if (cartIdList.isEmpty() || codeList.isEmpty())
                 return;
             try {
-                platformActiveLogService.onStartup(mqParams);
+                platformActiveLogService.setProductOnSaleOrInStock(mqParams);
             } catch (Exception e) {
                 throw new BlockBrandOffShelfFailException(e);
             }

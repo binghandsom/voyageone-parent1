@@ -38,7 +38,7 @@ public class CmsPlatformActiveLogMQJob extends TBaseMQCmsService<PlatformActiveL
         params.put("codeList", messageBody.getProductCodes());
 
         try {
-            List<Map<String, String>> failList = cmsPlatformActiveLogService.onStartup(params);
+            List<Map<String, String>> failList = cmsPlatformActiveLogService.setProductOnSaleOrInStock(params);
             if (failList != null && failList.size() > 0) {
                 cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(failList));
             }

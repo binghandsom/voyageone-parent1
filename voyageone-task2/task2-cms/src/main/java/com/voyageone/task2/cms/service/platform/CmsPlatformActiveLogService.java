@@ -36,7 +36,6 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -79,10 +78,16 @@ public class CmsPlatformActiveLogService extends BaseService {
         this.dtWareService = dtWareService;
     }
 
-    public List<Map<String, String>> onStartup(Map<String, Object> messageMap) throws Exception {
+    /**
+     * 执行产品上下架操作
+     * @param messageMap 参数
+     * @return List<Map<String, String>>
+     * @throws Exception Exception
+     */
+    public List<Map<String, String>> setProductOnSaleOrInStock(Map<String, Object> messageMap) throws Exception {
         List<Map<String, String>> failList = new ArrayList<Map<String, String>>();
 
-        $info("CmsPlatformActiceLogService start 参数 " + JacksonUtil.bean2Json(messageMap));
+        $info("CmsPlatformActiveLogService start 参数 " + JacksonUtil.bean2Json(messageMap));
 
         String channelId = StringUtils.trimToNull((String) messageMap.get("channelId"));
         Collection<String> codeList = (Collection<String>) messageMap.get("codeList");
