@@ -53,15 +53,15 @@ public class CmsJmPromotionPriceRefreshMQJob extends TBaseMQCmsService<JMRefresh
             } catch (Exception ex) {
                 errorCount++;
                 long errorId = FactoryIdWorker.nextId();
-                sbError.append("skuCode:").append(sku.getSkuCode()).append(":").append(ex.getMessage()).append("errorId:").append(errorId).append("\\r\\n");
+                sbError.append("sku:").append(sku.getSkuCode()).append(":").append(ex.getMessage()).append("errorId:").append(errorId).append("\\r\\n");
                 $error(sku.getSkuCode() + ":" + errorId, ex);
             }
         }
 
         if (sbError.length() > 0) {
-            cmsSuccessIncludeFailLog(messageBody, String.format("skuCode总数(%s) 失败(%s) \\r\\n %s", skus.size(), errorCount, sbError.toString()));
+            cmsSuccessIncludeFailLog(messageBody, String.format("sku总数(%s) 失败(%s) \\r\\n %s", skus.size(), errorCount, sbError.toString()));
         } else {
-            cmsSuccessLog(messageBody, String.format("执行成功 skuCode总数(%s)", skus.size()));
+            cmsSuccessLog(messageBody, String.format("sku总数(%s)", skus.size()));
         }
     }
 

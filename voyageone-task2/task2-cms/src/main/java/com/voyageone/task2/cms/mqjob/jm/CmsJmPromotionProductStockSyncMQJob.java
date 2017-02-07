@@ -70,7 +70,7 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
             //写业务错误日志
             cmsBusinessExLog(messageBody, result.getMsg());
         } else {
-            cmsSuccessLog(messageBody, "库存同步执行成功!");
+            cmsSuccessLog(messageBody, "库存同步执行成功");
         }
     }
 
