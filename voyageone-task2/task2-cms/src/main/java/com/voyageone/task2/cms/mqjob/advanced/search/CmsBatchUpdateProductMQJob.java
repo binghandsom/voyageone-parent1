@@ -25,9 +25,11 @@ public class CmsBatchUpdateProductMQJob extends TBaseMQCmsService<BatchUpdatePro
 
     @Override
     public void onStartup(BatchUpdateProductMQMessageBody messageBody) {
-        Map<String, String> failMap = batchUpdateService.onStartup(messageBody);
+        Map<String, String> failMap = batchUpdateService.updateProductComField(messageBody);
         if (failMap != null && failMap.size() > 0) {
-            this.cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(failMap));
+            cmsSuccessIncludeFailLog(messageBody, String.format("Code总数(%s) 失败(%s) \\r\\n %s", messageBody.getProductCodes().size(), failMap.size(), JacksonUtil.bean2Json(failMap)));
+        } else {
+            cmsSuccessLog(messageBody, String.format("Code总数(%s)", messageBody.getProductCodes().size()));
         }
     }
 }

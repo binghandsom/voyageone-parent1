@@ -88,10 +88,11 @@ public class CmsBatchEditPlatformFieldsMqJob extends TBaseMQCmsService<CmsBatchP
                 failList.put(code, Arrays.toString(e.getStackTrace()));
             }
         });
+
         if(failList.size()>0){
-            cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(failList));
+            cmsSuccessIncludeFailLog(messageBody, String.format("Code总数(%s) 失败(%s) \\r\\n %s", productCodes.size(), failList.size(), JacksonUtil.bean2Json(failList)));
         }else{
-            cmsSuccessLog(messageBody, "共处理了"+productCodes.size()+"个");
+            cmsSuccessLog(messageBody, String.format("Code总数(%s)", productCodes.size()));
         }
     }
 }

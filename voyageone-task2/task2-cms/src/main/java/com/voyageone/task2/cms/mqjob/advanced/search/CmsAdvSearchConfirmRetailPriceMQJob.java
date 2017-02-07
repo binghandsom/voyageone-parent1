@@ -29,6 +29,6 @@ public class CmsAdvSearchConfirmRetailPriceMQJob extends TBaseMQCmsService<AdvSe
         if (errorCodeList.size() > 0)
             cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(errorCodeList));
         else
-            cmsSuccessLog(messageBody, "确认指导价正常结束!");
+            cmsSuccessLog(messageBody, "确认指导价执行成功");
     }
 }

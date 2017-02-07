@@ -17,7 +17,6 @@ import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
-import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.BatchUpdateProductMQMessageBody;
@@ -46,11 +45,9 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
     @Autowired
     private PriceService priceService;
     @Autowired
-    private ProductGroupService productGroupService;
-    @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
 
-    public Map<String, String> onStartup(BatchUpdateProductMQMessageBody messageBody) {
+    public Map<String, String> updateProductComField(BatchUpdateProductMQMessageBody messageBody) {
         // 错误map，key-value分别对于产品code和错误信息
         Map<String, String> failMap = new HashMap<String, String>();
         String channelId = StringUtils.trimToNull(messageBody.getChannelId());
