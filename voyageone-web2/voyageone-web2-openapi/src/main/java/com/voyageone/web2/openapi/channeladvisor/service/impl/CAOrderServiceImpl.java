@@ -317,7 +317,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         VmsBtClientOrdersModel vmsBtClientOrdersModel = caClientService.getClientOrderById(channelId, orderID);
 
         // 待匹配Sku集合
-        List<VmsBtClientOrderDetailsModel> orderItems;
+        List<VmsBtClientOrderDetailsModel> orderItems = new ArrayList<>();
         if (vmsBtClientOrdersModel != null) {
             //校验状态是否正确
             if (!vmsBtClientOrdersModel.getOrderStatus().equals(AcknowledgedBySeller)) {
@@ -330,7 +330,10 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                             "OrderID=" + orderID + " status is " + vmsBtClientOrdersModel.getOrderStatus() + " which is invalid.");
                 }
             } else {
-                orderItems = caClientService.getClientOrderDetailById(channelId, orderID, AcknowledgedBySeller);
+                List<VmsBtClientOrderDetailsModel> orderItemList = caClientService.getClientOrderDetailById(channelId, orderID, null);
+                if(!CollectionUtils.isEmpty(orderItemList)){
+                    orderItems = orderItemList.stream().filter(m->m.getStatus().equals(AcknowledgedBySeller)||m.getStatus().equals(Canceled)).collect(Collectors.toList());
+                }
             }
         } else {
             throw new CAApiException(ErrorIDEnum.OrderNotFound, "OrderID=" + orderID + " cannot found.");
