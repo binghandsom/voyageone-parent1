@@ -1,6 +1,7 @@
 package com.voyageone.web2.openapi.channeladvisor.control;
 
 import com.voyageone.common.util.HttpExcuteUtils;
+import com.voyageone.common.util.excel.ExcelException;
 import com.voyageone.web2.openapi.channeladvisor.constants.CAUrlConstants;
 import org.junit.Test;
 import org.springframework.test.context.ActiveProfiles;
@@ -27,8 +28,8 @@ public class CAOrderServiceTest {
          * clientSecret(SellerToken):   Y2hhbm5lbGFkdmlzb3I=
          * channelId:                   028
          */
-        HEADER.put("SellerID", "channeladvisor");
-        HEADER.put("SellerToken", "Y2hhbm5lbGFkdmlzb3I=");
+        HEADER.put("SellerID", "049beea8-bdd1-48f0-a930-e56e42f85458");
+        HEADER.put("SellerToken", "caf8e5ed-16c4-40d8-92ce-1ce86e03cac5");
     }
 
 
@@ -120,6 +121,21 @@ public class CAOrderServiceTest {
                 "\"Items\":{\"3645966\":1,\"2689852\":1,\"2818819\":1}}";
         String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111116003"), reqJson, HEADER);
         System.out.println(result);//,"3645966":1,"2689852":1,"2818819":1
+    }
+
+    @Test
+    public void testShippedCancel() throws Exception{
+        //id在表中不存在
+        String url = BASE_URL + CAUrlConstants.ORDERS.SHIP_ORDER;
+
+        //取消物品发货
+        String reqJson = "{\"ShippedDateUtc\":\"2016-09-19T04:52:32.9431095Z\"," +
+                "\"TrackingNumber\":\"Z123456789W\"," +
+                "\"ShippingCarrier\":\"Bantha Union\"," +
+                "\"ShippingClass\":\"Express\"," +
+                "\"Items\":{\"3483906\":1,\"3108487\":1}}";
+        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111116004"), reqJson, HEADER);
+        System.out.println(result);
     }
 
     @Test
