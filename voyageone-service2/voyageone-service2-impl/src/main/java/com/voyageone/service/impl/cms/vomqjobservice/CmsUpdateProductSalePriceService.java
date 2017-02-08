@@ -40,10 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 修改商品saleprice业务类
@@ -64,6 +61,8 @@ public class CmsUpdateProductSalePriceService extends BaseService {
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
+    @Autowired
+    private SxProductService sxProductService;
 
     public void process(UpdateProductSalePriceMQMessageBody mqMessageBody){
         long threadNo =  Thread.currentThread().getId();
@@ -149,9 +148,34 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                             maxPriceSale = befPriceSale;
                         }
                     }
+                }else if(skuUpdType == 3){
+                    try {
+                        Map<String, String> goldSize  = null;
+                        Map<String, CmsBtProductModel_Sku> skuinfo = new HashMap();
+                        //找出黄金尺码
+                        prodObj.getCommonNotNull().getSkus().forEach(sku -> {
+                            skuinfo.put(sku.getSkuCode(), sku);
+                        });
+                        goldSize = sxProductService.getSizeMap(channelId, prodObj.getCommon().getFields().getBrand(), prodObj.getCommon().getFields().getProductType(), prodObj.getCommon().getFields().getSizeType());
+                        // 统一最低价
+                        for (BaseMongoMap skuObj : skuList) {
+                            if(skuObj.get("isSale") != null ){
+                                double befPriceSale = skuObj.getDoubleAttribute(priceType);
+                                CmsBtProductModel_Sku comSkuInfo = skuinfo.get((String) skuObj.get("skuCode"));
+                                if(comSkuInfo != null && comSkuInfo.getQty() > 0 && goldSize.containsKey(comSkuInfo.getSize())){
+                                    if(maxPriceSale == null || maxPriceSale < befPriceSale){
+                                        maxPriceSale = befPriceSale;
+                                    }
+                                }
+                            }
+                        }
+                        $debug("黄金尺码最大值"+ (maxPriceSale==null?"": maxPriceSale+""));
+                    }catch (BusinessException e){
+                        $warn(e.getMessage());
+                        throw e;
+                    }
                 }
             }
-
             try {
                 for (BaseMongoMap skuObj : skuList) {
                     skuCode = skuObj.getStringAttribute("skuCode");
