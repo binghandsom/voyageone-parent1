@@ -353,7 +353,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         List<ErrorModel> errorModels = new ArrayList<>();
         //shipped匹配处理
-        shippedMatchSkuProcess(errorModels, request, reservationIds, orderItems);
+        shippedMatchSkuProcess(tempSkuQtyMap,issueSkuNotExistList,errorModels, request, reservationIds, orderItems);
 
         //响应结果
         return matchShippedOrderUpdate(tempSkuQtyMap, issueSkuNotExistList, channelId, orderID, request, reservationIds, errorModels);
@@ -364,10 +364,8 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
     // 根据请求参数中Items.SellerSku， 匹配 品牌方订单明细中的 seller_sku，找出对应的明细。
     // 如果明细状态为Canceled，则记录警告响应
     // 修改匹配到的订单明细状态为Shipped 【回滚埋点】
-    private void shippedMatchSkuProcess(List<ErrorModel> errorModels, ShipRequest request, List<Long> reservationIds, List<VmsBtClientOrderDetailsModel> orderItems) {
+    private void shippedMatchSkuProcess(Map<String, Integer> tempSkuQtyMap,Set<String> issueSkuNotExistList,List<ErrorModel> errorModels, ShipRequest request, List<Long> reservationIds, List<VmsBtClientOrderDetailsModel> orderItems) {
         List<VmsBtClientOrderDetailsModel> matchModelList = new ArrayList<>();
-        Map<String, Integer> tempSkuQtyMap = new HashMap<>(request.getItems());
-        Set<String> issueSkuNotExistList = new HashSet<>(tempSkuQtyMap.keySet());
         for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : orderItems) {
             String sku = vmsBtClientOrderDetailsModel.getSellerSku();
             if (tempSkuQtyMap.get(sku) != null && tempSkuQtyMap.get(sku) > 0) {
