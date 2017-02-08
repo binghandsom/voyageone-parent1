@@ -133,8 +133,8 @@ public class CAOrderServiceTest {
                 "\"TrackingNumber\":\"Z123456789W\"," +
                 "\"ShippingCarrier\":\"Bantha Union\"," +
                 "\"ShippingClass\":\"Express\"," +
-                "\"Items\":{\"3483906\":1,\"3108487\":1}}";
-        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111116004"), reqJson, HEADER);
+                "\"Items\":{\"3402153\":1,\"3141226\":1}}";
+        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111117006"), reqJson, HEADER);
         System.out.println(result);
     }
 
