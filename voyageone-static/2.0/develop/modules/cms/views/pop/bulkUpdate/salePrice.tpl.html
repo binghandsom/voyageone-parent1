@@ -68,17 +68,17 @@
             </div>
             <div class="form-group">
                 <div style="margin-left:60px;margin-top:10px">
-                    <label class="checkbox-inline c-radio">
-                        <input type="radio" value="1" ng-model="vm.roundType"><span class="fa fa-check"></span> 小数点向上取整
+                    <label class="checkbox-inline c-radio" >
+                        <input ng-disabled = "vm.config && vm.config.configValue3 != '0' && vm.config.configValue3 != '1'" type="radio" value="1" ng-model="vm.roundType"><span class="fa fa-check"></span> 小数点向上取整
                     </label>
                     <label class="checkbox-inline c-radio" style="margin-left:25px">
-                        <input type="radio" value="2" ng-model="vm.roundType"><span class="fa fa-check"></span> 个位向下取整
+                        <input ng-disabled = "vm.config && vm.config.configValue3 != '0' && vm.config.configValue3 != '2'" type="radio" value="2" ng-model="vm.roundType"><span class="fa fa-check"></span> 个位向下取整
                     </label>
                     <label class="checkbox-inline c-radio" style="margin-left:25px">
-                        <input type="radio" value="3" ng-model="vm.roundType"><span class="fa fa-check"></span> 个位向上取整
+                        <input ng-disabled = "vm.config && vm.config.configValue3 != '0' && vm.config.configValue3 != '3'" type="radio" value="3" ng-model="vm.roundType"><span class="fa fa-check"></span> 个位向上取整
                     </label>
                     <label class="checkbox-inline c-radio" style="margin-left:25px">
-                        <input type="radio" value="4" ng-model="vm.roundType"><span class="fa fa-check"></span> 无特殊处理
+                        <input ng-disabled = "vm.config && vm.config.configValue3 != '0'" type="radio" value="0" ng-model="vm.roundType"><span class="fa fa-check"></span> 无特殊处理
                     </label>
                 </div>
             </div>
@@ -94,13 +94,16 @@
             <div class="form-group" ng-if="vm.priceType">
                 <div style="margin-left:60px;margin-top:15px">
                     <label class="checkbox-inline c-radio">
-                        <input type="radio" value="1" ng-model="vm.skuUpdType"><span class="fa fa-check"></span> 商品内，SKU统一最高价
+                        <input ng-disabled = "vm.config && vm.config.configValue2 != '0' && vm.config.configValue2 != '1'" type="radio" value="1" ng-model="vm.skuUpdType"><span class="fa fa-check"></span> SKU统一最高价
                     </label>
                     <label class="checkbox-inline c-radio">
-                        <input type="radio" value="2" ng-model="vm.skuUpdType"><span class="fa fa-check"></span> 商品内，SKU统一最低价
+                        <input ng-disabled = "vm.config && vm.config.configValue2 != '0' && vm.config.configValue2 != '2'" type="radio" value="2" ng-model="vm.skuUpdType"><span class="fa fa-check"></span> SKU统一最低价
                     </label>
                     <label class="checkbox-inline c-radio">
-                        <input type="radio" value="3" ng-model="vm.skuUpdType"><span class="fa fa-check"></span> 商品内，SKU价格不统一
+                        <input ng-disabled = "vm.config && vm.config.configValue2 != '0' && vm.config.configValue2 != '3'" type="radio" value="3" ng-model="vm.skuUpdType"><span class="fa fa-check"></span> SKU价格按黄金码统一
+                    </label>
+                    <label class="checkbox-inline c-radio">
+                        <input ng-disabled = "vm.config && vm.config.configValue2 != '0'" type="radio" value="0" ng-model="vm.skuUpdType"><span class="fa fa-check"></span> SKU价格不统一
                     </label>
                 </div>
             </div>

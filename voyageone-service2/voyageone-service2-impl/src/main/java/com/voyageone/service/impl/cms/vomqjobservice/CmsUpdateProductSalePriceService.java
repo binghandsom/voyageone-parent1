@@ -83,12 +83,12 @@ public class CmsUpdateProductSalePriceService extends BaseService {
         String priceType = StringUtils.trimToNull((String) params.get("priceType"));
         String optionType = StringUtils.trimToNull((String) params.get("optionType"));
         String priceValue = StringUtils.trimToNull((String) params.get("priceValue"));
-        // 小数点向上取整:1    个位向下取整:2    个位向上取整:3    无特殊处理:4
+        // 无特殊处理:0  小数点向上取整:1    个位向下取整:2    个位向上取整:3
         Integer roundType = (Integer) params.get("roundType");
         if (roundType == null) {
             roundType = 0;
         }
-        // 商品内，SKU统一最高价:1 商品内，SKU统一最低价:2  商品内，SKU价格不统一:3
+        // 商品内，SKU价格不统一:0  商品内，SKU统一最高价:1 商品内，SKU统一最低价:2   黄金码:3
         Integer skuUpdType = (Integer) params.get("skuUpdType");
         if (skuUpdType == null) {
             skuUpdType = 0;

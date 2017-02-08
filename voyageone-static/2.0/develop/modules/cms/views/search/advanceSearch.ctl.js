@@ -961,7 +961,12 @@ define([
                 var property = {'cartId': cartId, '_option': 'saleprice', 'productIds': productIds};
                 property.isSelAll = $scope.vm._selall ? 1 : 0;
 
-                openSalePriceFnc({'property': property, 'cartList': $scope.vm.cartList, 'config': $scope.vm.cart}).then(
+                var config = $scope.vm.masterData.autoApprovePrice["0"];
+                if($scope.vm.masterData.autoApprovePrice[cartId]){
+                    config = $scope.vm.masterData.autoApprovePrice[cartId];
+                }
+
+                openSalePriceFnc({'property': property, 'cartList': $scope.vm.cartList, 'config': config}).then(
                     function () {
                         $scope.search();
                     });
