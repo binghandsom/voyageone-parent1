@@ -388,7 +388,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
                 //记录警告
                 if (vmsBtClientOrderDetailsModel.getStatus().equals(Canceled)) {
-                    errorModels.add(new ErrorModel(ErrorIDEnum.Warning, "Canceled Item [" + vmsBtClientOrderDetailsModel.getSellerSku() + "] should NOT be shipped"));
+                    errorModels.add(new ErrorModel(ErrorIDEnum.Warning, "Canceled Item [" + vmsBtClientOrderDetailsModel.getSellerSku() + "] should NOT be shipped."));
                 }
             }
         }
