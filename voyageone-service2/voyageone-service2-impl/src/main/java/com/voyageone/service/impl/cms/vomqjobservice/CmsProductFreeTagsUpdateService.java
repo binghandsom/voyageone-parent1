@@ -73,7 +73,7 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
     /**
      * 设置产品free tag，同时添加该tag的所有上级tag
      */
-    public void onStartup(CmsProductFreeTagsUpdateMQMessageBody messageMap) throws Exception {
+    public List<String> setProductFreeTags(CmsProductFreeTagsUpdateMQMessageBody messageMap) throws Exception {
 
         List<String> tagPathList = messageMap.getTagPathList();
         if (tagPathList == null || tagPathList.isEmpty()) {
@@ -96,5 +96,7 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
         }
         //设置自由标签
         productTagService.setProdFreeTag(messageMap.getChannelId(), tagPathList, prodCodeList, orgDispTagList, messageMap.getSender());
+
+        return prodCodeList;
     }
 }

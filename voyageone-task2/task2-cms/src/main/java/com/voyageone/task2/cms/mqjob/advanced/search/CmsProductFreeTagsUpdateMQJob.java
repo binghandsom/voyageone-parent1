@@ -1,13 +1,13 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsProductFreeTagsUpdateMQMessageBody;
 import com.voyageone.service.impl.cms.vomqjobservice.CmsProductFreeTagsUpdateService;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 /**
@@ -25,15 +25,7 @@ public class CmsProductFreeTagsUpdateMQJob extends TBaseMQCmsService<CmsProductF
 
     @Override
     public void onStartup(CmsProductFreeTagsUpdateMQMessageBody messageBody) throws Exception {
-        try {
-            service.onStartup(messageBody);
-        } catch (Exception e) {
-            if (e instanceof BusinessException) {
-                cmsBusinessExLog(messageBody, e.getMessage());
-            } else {
-                cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
-            }
-        }
-
+        List<String> productCodeList =  service.setProductFreeTags(messageBody);
+        cmsSuccessLog(messageBody, String.format("Code总数(%s)", productCodeList.size()));
     }
 }

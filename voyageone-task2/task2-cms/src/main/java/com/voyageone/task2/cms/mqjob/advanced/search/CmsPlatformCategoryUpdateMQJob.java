@@ -47,6 +47,6 @@ public class CmsPlatformCategoryUpdateMQJob extends TBaseMQCmsService<CmsPlatfor
         }
 
         BulkWriteResult bulkWriteResult = productService.bulkUpdateWithMap(messageBody.getChannelId(), bulkList, messageBody.getSender(), "$set");
-        cmsSuccessLog(messageBody, "更新了"+bulkWriteResult.getModifiedCount()+"条");
+        cmsSuccessLog(messageBody, String.format("Code总数(%s)", bulkWriteResult.getModifiedCount()));
     }
 }
