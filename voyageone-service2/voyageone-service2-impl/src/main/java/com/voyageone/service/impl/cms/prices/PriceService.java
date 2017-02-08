@@ -194,7 +194,8 @@ public class PriceService extends BaseService {
 
         // 获取价格处理的部分配置
         boolean roundUp = isRoundUp(channelId);
-        boolean isAutoApprovePrice = isAutoApprovePrice(channelId) || synSalePriceFlg;
+//        boolean isAutoApprovePrice = isAutoApprovePrice(channelId) || synSalePriceFlg;
+        boolean isAutoApprovePrice = synSalePriceFlg;
         /*boolean isAutoSyncPriceMsrp = getAutoSyncPriceMsrpOption(channelId);*/
         String autoSyncPriceMsrp = getAutoSyncPriceMsrpOption(channelId, cartId);
 
@@ -206,6 +207,9 @@ public class PriceService extends BaseService {
         List<BaseMongoMap<String, Object>> skus = cart.getSkus();
 
         List<BaseMongoMap<String, Object>> unifySkus = new ArrayList<BaseMongoMap<String, Object>>();
+
+        Double minRetail = null;
+        Double maxRetail = null;
 
         for (BaseMongoMap<String, Object> sku : skus) {
 
@@ -221,6 +225,16 @@ public class PriceService extends BaseService {
 
             setProductRetailPrice(sku, retailPrice, isAutoApprovePrice, channelId);
 
+            //计算Retail Price范围 只计算isSale = true
+            if(sku.get("isSale") != null && (Boolean) sku.get("isSale")) {
+                if (minRetail == null || minRetail > retailPrice) {
+                    minRetail = retailPrice;
+                }
+                if (minRetail == null || maxRetail < retailPrice) {
+                    maxRetail = retailPrice;
+                }
+            }
+
             // 计算 MSRP
             Double originMsrp = calculateByFormula(msrpFormula, skuInCommon, roundUp);
 
@@ -232,6 +246,7 @@ public class PriceService extends BaseService {
         }
         // 走MSRP统一配置
         unifySkuPriceMsrp(unifySkus, channelId, cartId);
+        unifySkuPriceSale(product, unifySkus,channelId, cartId, minRetail, maxRetail);
     }
 
     /**
@@ -294,7 +309,8 @@ public class PriceService extends BaseService {
         Integer platformId = Integer.valueOf(Carts.getCart(cartId).getPlatform_id());
 
         // 计算是否自动同步最终售价
-        boolean isAutoApprovePrice = isAutoApprovePrice(channelId) || synSalePriceFlg;
+//        boolean isAutoApprovePrice = isAutoApprovePrice(channelId) || synSalePriceFlg;
+        boolean isAutoApprovePrice = synSalePriceFlg;
 
         // 计算是否计算 MSRP
         /*boolean isAutoSyncPriceMsrp = isAutoSyncPriceMsrp(channelId);*/
@@ -448,7 +464,7 @@ public class PriceService extends BaseService {
             Double retailPrice = systemPriceCalculator.calculate(clientNetPrice);
 
             //计算Retail Price范围 只计算isSale = true
-            if(platformSku.get("isSale") == null || (Boolean) platformSku.get("isSale")) {
+            if(platformSku.get("isSale") != null && (Boolean) platformSku.get("isSale")) {
                 if (minRetail == null || minRetail > retailPrice) {
                     minRetail = retailPrice;
                 }
