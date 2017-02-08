@@ -279,10 +279,10 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                 }
 
                 try {
-                    priceService.setPrice(prodObj, cartId, false);
-                }catch (IllegalPriceConfigException | PriceCalculateException e) {
-                    $error(String.format("批量修改商品价格　调用PriceService.setPrice失败 channelId=%s, cartId=%s msg=%s", channelId, cartId.toString(), e.getMessage()), e);
-                    throw new BusinessException(prodCode, String.format("批量修改商品价格　调用PriceService.setPrice失败 channelId=%s, cartId=%s", channelId, cartId), e);
+                    priceService.unifySkuPriceMsrp(prodObj.getPlatform(cartId).getSkus(),channelId,cartId);
+                }catch (Exception e) {
+                    $error(String.format("批量修改商品价格　调用priceService.unifySkuPriceMsrp失败 channelId=%s, cartId=%s msg=%s", channelId, cartId.toString(), e.getMessage()), e);
+                    throw new BusinessException(prodCode, String.format("批量修改商品价格　调用priceService.unifySkuPriceMsrp失败 channelId=%s, cartId=%s", channelId, cartId), e);
                 }
                 // 更新产品的信息
                 JongoUpdate updObj = new JongoUpdate();

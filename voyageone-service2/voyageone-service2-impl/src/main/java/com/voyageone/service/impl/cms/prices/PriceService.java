@@ -244,9 +244,10 @@ public class PriceService extends BaseService {
             setProductMsrp(sku, originMsrp, autoSyncPriceMsrp, retailPrice);
             unifySkus.add(sku);
         }
+        unifySkuPriceSale(product, unifySkus,channelId, cartId, minRetail, maxRetail);
         // 走MSRP统一配置
         unifySkuPriceMsrp(unifySkus, channelId, cartId);
-        unifySkuPriceSale(product, unifySkus,channelId, cartId, minRetail, maxRetail);
+
     }
 
     /**
@@ -487,9 +488,9 @@ public class PriceService extends BaseService {
             setProductMsrp(platformSku, originPriceMsrp, autoSyncPriceMsrp, retailPrice);
             unifySkus.add(platformSku);
         }
+        unifySkuPriceSale(product, unifySkus,channelId, cartId, minRetail, maxRetail);
         // 走MSRP统一配置
         unifySkuPriceMsrp(unifySkus, channelId, cartId);
-        unifySkuPriceSale(product, unifySkus,channelId, cartId, minRetail, maxRetail);
     }
 
     public void unifySkuPriceSale(CmsBtProductModel product, List<BaseMongoMap<String, Object>> unifySkus, String channelId, Integer cartId, Double minRetail, Double maxRetail) {
@@ -642,7 +643,7 @@ public class PriceService extends BaseService {
      * @param cartId
      * @throws IllegalPriceConfigException
      */
-    private void unifySkuPriceMsrp(List<BaseMongoMap<String, Object>> platformSkus, String channelId, Integer cartId) throws IllegalPriceConfigException {
+    public void unifySkuPriceMsrp(List<BaseMongoMap<String, Object>> platformSkus, String channelId, Integer cartId) throws IllegalPriceConfigException {
         String commonSyncPriceMsrpVal = null;
         CmsChannelConfigBean commonSyncPriceMsrp = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.UNIFY_SKU_PRICE_MSRP, cartId + "");
         if (commonSyncPriceMsrp != null && !"0".equals(commonSyncPriceMsrp.getConfigValue1())
