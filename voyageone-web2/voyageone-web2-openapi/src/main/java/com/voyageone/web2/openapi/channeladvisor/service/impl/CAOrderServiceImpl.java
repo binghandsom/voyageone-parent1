@@ -7,6 +7,7 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.vms.channeladvisor.ErrorModel;
 import com.voyageone.service.bean.vms.channeladvisor.enums.CancellationReasonEnum;
 import com.voyageone.service.bean.vms.channeladvisor.enums.ErrorIDEnum;
 import com.voyageone.service.bean.vms.channeladvisor.enums.OrderStatusEnum;
@@ -357,6 +358,61 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         if (vmsBtClientOrdersModel != null) {
             //校验状态是否正确
             if (!vmsBtClientOrdersModel.getOrderStatus().equals(AcknowledgedBySeller)) {
+                //since email subject: Fw:Case 01348493: Concerns with Orders Validator Test 9 [ref:_00D00hYgt._5002A14MUwf:ref ]
+                //订单状态和SKU状态都为Canceled，那么Ship后，订单和物品状态都为Shipped，但抛Warining
+                if(vmsBtClientOrdersModel.getOrderStatus().equals(Canceled)) {
+                    //是否全部订单明细都为shipped
+                    boolean isAllShiped=true;
+                    List<VmsBtClientOrderDetailsModel> cancelList = new ArrayList<>();
+                    //查订单是否存在
+                    List<VmsBtClientOrderDetailsModel> mOrderList = caClientService.getClientOrderDetailById(channelId, orderID, null);
+                    List<ErrorModel> errorModel=new ArrayList<>();
+                    for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : mOrderList) {
+                        if(!vmsBtClientOrderDetailsModel.getStatus().equals(Canceled)){
+                            isAllShiped=false;
+                        }else{
+                            errorModel.add(new ErrorModel(ErrorIDEnum.Warning,"Canceled Item ["+vmsBtClientOrderDetailsModel.getSellerSku()+"] should NOT be shipped"));
+                            VmsBtClientOrderDetailsModel tempUpdateModel = new VmsBtClientOrderDetailsModel();
+                            tempUpdateModel.setShippedDate(request.getShippedDateUtc());
+                            tempUpdateModel.setTrackingNumber(request.getTrackingNumber());
+                            tempUpdateModel.setShippingCarrier(request.getShippingCarrier());
+                            tempUpdateModel.setShippingClass(request.getShippingClass());
+                            tempUpdateModel.setStatus(Shipped);
+                            tempUpdateModel.setId(vmsBtClientOrderDetailsModel.getId());
+                            cancelList.add(tempUpdateModel);
+                        }
+                    }
+                    if(isAllShiped){
+                        // 更新 【品牌方订单一览】vms_bt_client_orders
+                        caClientService.updateClientOrderStatusWithDetails(channelId, orderID, Shipped, "shipOrder", true);
+                    }else{
+                        //根据Items.SellerSku对应的件数，更新 对应件数的明细。
+                        caClientService.updateItemsSkuList(cancelList, "shipOrder");
+                        // 更新 【品牌方订单一览】vms_bt_client_orders
+                        caClientService.updateClientOrderStatusWithDetails(channelId, orderID, PartiallyShipped, "shipOrder", false);
+                    }
+                    // 消息生成
+                    Map<String, Object> mqMessageMap = new HashMap<>();
+                    mqMessageMap.put("order_channel_id", channelId);
+                    mqMessageMap.put("client_order_id", orderID);
+                    mqMessageMap.put("shipped_date", DateTimeUtil.format(request.getShippedDateUtc(), null));
+                    mqMessageMap.put("tracking_number", request.getTrackingNumber());
+                    mqMessageMap.put("shipping_carrier", request.getShippingCarrier());
+                    mqMessageMap.put("shipping_class", request.getShippingClass());
+
+                    mqMessageMap.put("items", cancelList.stream().map(VmsBtClientOrderDetailsModel::getReservationId).collect(Collectors.toList()));
+
+                    Map<String, Object> mqMessageBody = new HashMap<>();
+                    mqMessageBody.put("body", JacksonUtil.bean2Json(mqMessageMap));
+
+                    logger.info("发送mq消息：" + JacksonUtil.bean2Json(mqMessageBody));
+
+                    mqSender.sendMessage("voyageone_vms_wsdl_mq_ship_order_queue", mqMessageBody);
+
+                    ActionResponse res=success();
+                    res.setErrors(errorModel);
+                    return res;
+                }else
                 throw new CAApiException(ErrorIDEnum.InvalidOrderStatus,
                         "OrderID=" + orderID + " status is " + vmsBtClientOrdersModel.getOrderStatus() + " which is invalid.");
             }
@@ -421,6 +477,22 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             }
             /*throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
                     "SellerSku=[" + tempSkuQtyMap.keySet().stream().reduce((a, b) -> a + "," + b).get() + "] is not provided.");*/
+        }
+
+        List<ErrorModel> errorModel = new ArrayList<>();
+        //Items.SellerSku 在品牌方订单明细 中不存在，查看是否为canceled订单明细
+        if (!CollectionUtils.isEmpty(issueSkuNotExistList)) {
+            //查询全部订单明细
+            List<VmsBtClientOrderDetailsModel> orderDetails = caClientService.getClientOrderDetailById(channelId, orderID, null);
+            if (!CollectionUtils.isEmpty(orderDetails)) {
+                //判断不存在的订单状态是否为canceled，如果为Canceled，记录warning
+                for (VmsBtClientOrderDetailsModel orderDetail : orderDetails) {
+                    if (issueSkuNotExistList.contains(orderDetail.getSellerSku()) && orderDetail.getStatus().equals(Canceled)) {
+                        issueSkuNotExistList.remove(orderDetail.getSellerSku());
+                        errorModel.add(new ErrorModel(ErrorIDEnum.Warning, "Canceled Item [" + orderDetail.getSellerSku() + "] should NOT be shipped"));
+                    }
+                }
+            }
         }
 
         //Items.SellerSku 在品牌方订单明细 中不存在，issuelog 输出，处理继续
@@ -501,7 +573,9 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         mqSender.sendMessage("voyageone_vms_wsdl_mq_ship_order_queue", mqMessageBody);
 
-        return success();
+        ActionResponse res= success();
+        res.setErrors(errorModel);
+        return res;
     }
 
     @VOTransactional

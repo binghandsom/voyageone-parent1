@@ -518,7 +518,8 @@ public class CmsFieldEditService extends BaseViewService {
             qryStr.append("{'common.fields.code':{$in:#},$or:[");
             for (Integer cartIdVal : newcartList) {
                 if (!CartEnums.Cart.TT.getId().equals(String.valueOf(cartIdVal))
-                        && !CartEnums.Cart.USTT.getId().equals(String.valueOf(cartIdVal)))
+                        && !CartEnums.Cart.USTT.getId().equals(String.valueOf(cartIdVal))
+                        && !CartEnums.Cart.DT.getId().equals(String.valueOf(cartIdVal)))
                     qryStr.append("{'platforms.P" + cartIdVal + ".status':{$nin:['Ready','Approved']}},");
                 else
                     qryStr.append("{'common.fields.hsCodeStatus': '0'},");
@@ -551,7 +552,8 @@ public class CmsFieldEditService extends BaseViewService {
                 rsMap.put("ecd", 2);
 
                 if (hsCodeList.size() > 0 && (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId())))) {
+                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId()))
+                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.DT.getId())))) {
                     rsMap.put("ts", true);
                     rsMap.put("codeList", hsCodeList);
                 }else{
@@ -666,7 +668,8 @@ public class CmsFieldEditService extends BaseViewService {
                     } else if (CmsConstants.ProductStatus.Approved.name().equals(prodStatus)) {
                         strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
                     } else if (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId()))) {
+                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId()))
+                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.DT.getId()))) {
                         strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
                     }
                 }
