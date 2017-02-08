@@ -17,8 +17,7 @@ import com.voyageone.service.daoext.cms.CmsBtJmPromotionExportTaskDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionExportMQMessageBody;
-import com.voyageone.components.rabbitmq.service.MqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JmPromotionExportMQMessageBody;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionProductService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel;
 import com.voyageone.service.model.util.MapModel;
@@ -60,7 +59,7 @@ public class CmsBtJmPromotionExportTask3Service {
         return daoExt.selectByPromotionId(promotionId);
     }
 
-    public void export(int JmBtPromotionExportTaskId, String exportPath) throws IOException, ExcelException {
+    public void export(int JmBtPromotionExportTaskId, String exportPath) {
         CmsBtJmPromotionExportTaskModel model = dao.select(JmBtPromotionExportTaskId);
         Parameter parameter = null;
         if(!StringUtil.isEmpty(model.getParameter())){

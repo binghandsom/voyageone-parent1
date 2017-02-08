@@ -26,11 +26,28 @@ public class ProductPrice {
     //平台 id
     int cartId;
     String cartName;
-
-
+    //客户建议零售价
+    String clientMsrpPrice;
+    //客户成本价
+    String clientNetPrice;
     int checked;//0:未选中 1半选中   2选中
-
     private String autoSyncPriceMsrp; // channelId and cartId 配置的选项值
+
+    public String getClientMsrpPrice() {
+        return clientMsrpPrice;
+    }
+
+    public void setClientMsrpPrice(String clientMsrpPrice) {
+        this.clientMsrpPrice = clientMsrpPrice;
+    }
+
+    public String getClientNetPrice() {
+        return clientNetPrice;
+    }
+
+    public void setClientNetPrice(String clientNetPrice) {
+        this.clientNetPrice = clientNetPrice;
+    }
 
     public int getChecked() {
         return checked;
@@ -79,7 +96,6 @@ public class ProductPrice {
     public void setNumberId(String numberId) {
         this.numberId = numberId;
     }
-
 
 
     public String getCartName() {

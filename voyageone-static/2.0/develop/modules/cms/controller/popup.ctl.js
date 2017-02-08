@@ -1451,8 +1451,13 @@ define([
         };
         $scope.popCombinedProductLogs = function (context) {
             return openModal(popActions.product.combinedProductLogs, context)
+        };
+        /**
+         * 打开新建权限配置页面
+         */
+        $scope.openModifyPass= function openModifyPass(context) {
+            return openModal(popActions.modifyPass, context);
         }
-
     }).factory('popups', function ($controller, $rootScope) {
 
         var popupScope = $rootScope.$new();

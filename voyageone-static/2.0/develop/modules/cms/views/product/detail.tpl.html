@@ -34,13 +34,13 @@
             </uib-tab>
 
             <!---------------------------------------------------平台产品详情页面(不包含独立官网)---------------------------------->
-            <uib-tab ng-repeat="platformType in ctrl.platformTypes | filter : {value:'!25'}"
+            <uib-tab ng-repeat="platformType in ctrl.platformTypes"
                      ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="$active">
 
                     <tab-heading>{{platformType.name}}详情</tab-heading>
 
                     <!--聚美 & 京东 & 天猫国际-->
-                    <div ng-if="(platformType.value >= 20 && platformType.value < 30)  || platformType.value == 32 ">
+                    <div ng-if="(platformType.value >= 20 && platformType.value < 30)  ">
                         <jd-schema product-info="ctrl.product" cart-info="platformType"></jd-schema>
                     </div>
 
@@ -49,6 +49,10 @@
                         <gw-schema product-info="ctrl.product" cart-info="platformType"></gw-schema>
                     </div>
 
+                <tab-heading>{{platformType.name}}详情</tab-heading>
+                <div ng-if="platformType.value == 25 || platformType.value == 32 ">
+                    <dl-schema product-info="ctrl.product" cart-info="platformType"></dl-schema>
+                </div>
                     <!--usjoi & 匠心界   相关子店价格check要去掉  -->
 <!--                    <div ng-if="platformType.value > 900">
                         <jgj-schema product-info="ctrl.product" cart-info="platformType"></jgj-schema>
@@ -57,14 +61,15 @@
             </uib-tab>
 
             <!---------------------------------------------------独立官网详情页面-------------------------------------------------->
-            <uib-tab ng-repeat="platformType in ctrl.platformTypes | filter : {value:'25'}"
-                     ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="$active">
+            <!--<uib-tab ng-repeat="platformType in ctrl.platformTypes "-->
+                     <!--ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="$active">-->
 
-                <tab-heading>{{platformType.name}}详情</tab-heading>
+                <!--<tab-heading>{{platformType.name}}详情</tab-heading>-->
+                <!--<div ng-if="platformType.value == 25 || platformType.value == 32 ">-->
+                    <!--<dl-schema product-info="ctrl.product" cart-info="platformType"></dl-schema>-->
+                <!--</div>-->
 
-                <dl-schema product-info="ctrl.product" cart-info="platformType"></dl-schema>
-
-            </uib-tab>
+            <!--</uib-tab>-->
 
         </uib-tabset>
     </div>

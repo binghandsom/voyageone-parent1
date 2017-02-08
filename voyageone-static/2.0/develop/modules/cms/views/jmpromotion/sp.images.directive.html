@@ -714,16 +714,19 @@
             </li>
             <hr>
             <li>
-                <button type="button" class="btn btn-info btn-pop" ng-click="ctrlImages.refreshImg()"><i class="fa fa-refresh"></i>&nbsp;&nbsp;刷新</button>
+                <button type="button" class="btn btn-info btn-pop"
+                        ng-click="ctrlImages.refreshImg()"
+                        ng-disabled="ctrlImages.spDataService.passDated"><i class="fa fa-refresh"></i>&nbsp;&nbsp;刷新</button>
             </li>
             <li>
-                <button type="button" class="btn btn-success btn-pop" ng-click="ctrlImages.save(0)"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;暂存</button>
+                <button type="button" class="btn btn-success btn-pop"
+                        ng-click="ctrlImages.save(0)"
+                        ng-disabled="ctrlImages.spDataService.passDated"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;暂存</button>
             </li>
-            <!--<li>
-                <button type="button" class="btn btn-success" ng-click="ctrlImages.save()">发布任务</button>
-            </li>-->
             <li>
-                <button type="button" class="btn btn-primary btn-pop" ng-click="ctrlImages.save(1)"><i class="fa fa-send"></i>&nbsp;&nbsp;提交</button>
+                <button type="button" class="btn btn-primary btn-pop"
+                        ng-click="ctrlImages.save(1)"
+                        ng-disabled="ctrlImages.spDataService.passDated"><i class="fa fa-send"></i>&nbsp;&nbsp;提交</button>
             </li>
         </ul>
     </sticky>

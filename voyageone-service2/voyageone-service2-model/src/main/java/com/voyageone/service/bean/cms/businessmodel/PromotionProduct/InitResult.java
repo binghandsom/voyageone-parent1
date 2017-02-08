@@ -11,6 +11,7 @@ import java.util.List;
  * Created by dell on 2016/6/30.
  */
 public class InitResult {
+
     CmsBtJmPromotionModel modelPromotion;
     List<CmsBtTagModel> listTag;//活动的tag
     int changeCount;//变更数量

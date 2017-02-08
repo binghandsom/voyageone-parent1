@@ -153,6 +153,7 @@ public class FeedEnums {
         translationName1,
         translationValue1,
         translationName2,
-        translationValue2
+        translationValue2,
+        last_received_on
     }
 }

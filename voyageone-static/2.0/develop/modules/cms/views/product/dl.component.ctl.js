@@ -49,7 +49,7 @@ define([
                 function initialize() {
                     //监控税号和翻译状态
                     var checkFlag = scope.$watch("productInfo.checkFlag", function () {
-                        scope.vm.checkFlag.translate = scope.productInfo.translateStatus;
+                        //scope.vm.checkFlag.translate = scope.productInfo.translateStatus;
                         scope.vm.checkFlag.tax = scope.productInfo.hsCodeStatus;
                     });
 

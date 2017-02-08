@@ -482,7 +482,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             sxProductService.doUploadFinalProc(shop, false, sxData, cmsBtSxWorkloadModel, "", null, "", getTaskName());
 
             $error(String.format("%s单个商品%s异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s] [errMsg:%s] [耗时:%s]",
-                        UPLOAD_NAME, isUpdate ? "更新" : "上新", channelId, cartId, groupId, cnnWareId, Arrays.toString(ex.getStackTrace())), (System.currentTimeMillis() - prodStartTime));
+                    UPLOAD_NAME, isUpdate ? "更新" : "上新", channelId, cartId, groupId, cnnWareId, Arrays.toString(ex.getStackTrace())), (System.currentTimeMillis() - prodStartTime));
             return;
         }
     }

@@ -23,7 +23,7 @@ import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionImportMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JmPromotionImportMQMessageBody;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -98,9 +98,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     private  CmsBtPromotionSkusDao daoCmsBtPromotionSkus;
     @Autowired
     CmsMqSenderService cmsMqSenderService;
-    public void importFile(int JmBtPromotionImportTaskId, String importPath) throws Exception {
-        String errorMsg = "";
-        boolean isError = false;
+    public void importFile(int JmBtPromotionImportTaskId, String importPath) {
+
         CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask = cmsBtJmPromotionImportTaskDao.select(JmBtPromotionImportTaskId);
         modelCmsBtJmPromotionImportTask.setBeginTime(DateTimeUtilBeijing.getCurrentBeiJingDate());
         try {
@@ -128,7 +127,6 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
 
     private CallResult importExcel(CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask, String importPath) throws Exception {
         CallResult result=new CallResult();
-        boolean isError;
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(modelCmsBtJmPromotionImportTask.getCmsBtJmPromotionId());
         modelCmsBtJmPromotionImportTask.setBeginTime(DateTimeUtilBeijing.getCurrentBeiJingDate());
         //"/usr/JMImport/"

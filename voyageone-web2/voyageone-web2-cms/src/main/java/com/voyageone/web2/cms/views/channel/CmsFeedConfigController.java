@@ -33,7 +33,7 @@ public class CmsFeedConfigController extends CmsController {
     @RequestMapping(value = CmsUrlConstants.CHANNEL.FEED_CONFIG.SEARCH)
     public AjaxResponse search() {
         UserSessionBean user = getUser();
-        return success(cmsFeedConfigService.search(user.getSelChannelId()));
+        return success(cmsFeedConfigService.search(user.getSelChannelId(),user.getUserName()));
     }
 
     /**

@@ -54,6 +54,12 @@ public final class StringUtils {
     }
 
     /**
+     * 空白Check
+     */
+    public static boolean isAnyEmpty(String... chkParams ) {
+        return org.apache.commons.lang3.StringUtils.isAnyEmpty(chkParams);
+    }
+    /**
      * 数字Check
      */
     public static boolean isDigit(String chkParam) {

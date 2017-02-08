@@ -284,10 +284,12 @@
     <select id="selectCloseJmPromotionSku" resultType="HashMap" parameterType="java.lang.Integer">
     SELECT
         t2.channel_id,
+        t1.product_code,
         t2.jm_sku_no,
         t2.sku_code,
         t2.sale_price,
-        t1.market_price
+        t1.market_price,
+        t1.deal_price
     FROM
         (
             SELECT

@@ -44,7 +44,7 @@ public class CmsFeedConfigService extends BaseService {
     /**
      * Feed配置项目管理*数据初始化
      */
-    public Map<String, Object> search(String channelId) {
+    public Map<String, Object> search(String channelId, String userName) {
         Map<String, Object> resultMap = new HashMap();
         //cms_mt_feed_config_key取得主数据
         List<CmsMtFeedConfigBean> cmsMtFeedConfigKeyList = cmsMtFeedConfigDaoExt.selectFeedConFigKey();
@@ -60,6 +60,9 @@ public class CmsFeedConfigService extends BaseService {
                 cmsMtFeedConfigBean.setCmsIsCfgVal1Display(bean.getCmsIsCfgVal1Display());
                 cmsMtFeedConfigBean.setCmsIsCfgVal2Display(bean.getCmsIsCfgVal2Display());
                 cmsMtFeedConfigBean.setCmsIsCfgVal3Display(bean.getCmsIsCfgVal3Display());
+                cmsMtFeedConfigBean.setCreated(bean.getCreated());
+                cmsMtFeedConfigBean.setModifier(userName);
+                cmsMtFeedConfigBean.setModified(new Date());
             });
         }
         //Feed-Master属性一览
@@ -116,10 +119,11 @@ public class CmsFeedConfigService extends BaseService {
             cmsMtFeedConfigInfoModel.setCfgTableName(model.getCfgTableName());
             cmsMtFeedConfigInfoModel.setCfgName(model.getCfgName());
             cmsMtFeedConfigInfoModel.setCfgIsAttribute(model.getCfgIsAttribute());
+            cmsMtFeedConfigInfoModel.setCreater(model.getCreater());
             cmsMtFeedConfigInfoModel.setCreated(model.getCreated());
             cmsMtFeedConfigInfoModel.setModifier(userName);
             cmsMtFeedConfigInfoModel.setModified(new Date());
-            isUpdateAndInsert(cmsMtFeedConfigInfoModel,userName);
+            isUpdateAndInsert(cmsMtFeedConfigInfoModel, userName);
         }
     }
 
@@ -138,37 +142,28 @@ public class CmsFeedConfigService extends BaseService {
         List<String> cfgTableNameColumn = new ArrayList<>();
         Boolean isSku = true;
         Boolean isCategory = true;
+        Boolean isDbSku = true;
+        Boolean isDbCategory = true;
         for (HashMap modelHashMap : cmsMtFeedConfigInfoModelList) {
-
-            if (!StringUtils.isEmpty((String) modelHashMap.get("cfgTableName"))) {
-                String name =(String) modelHashMap.get("cfgTableName");
-                cfgTableNameColumn.add(name);
-                if("sku".equals(modelHashMap.get("cfgTableName"))){
-                    isSku = false;
-                }
-                if("category".equals(modelHashMap.get("cfgTableName"))){
-                    isCategory = false;
-                }
-                //更新
-                CmsMtFeedConfigInfoModel model = new CmsMtFeedConfigInfoModel();
-                model.setId((Integer) modelHashMap.get("id"));
-                model.setOrderChannelId(channelId);
-                model.setCfgTableName(name);
-                model.setCfgName((String) modelHashMap.get("cfgName"));
-                model.setCfgIsAttribute((String) modelHashMap.get("cfgIsAttribute"));
-                model.setModifier(userName);
-                model.setModified(new Date());
-                if (model.getId()==null) {
-                    isUpdateAndInsert(model,userName);
-                }else{
-                    cmsMtFeedConfigInfoDao.updateByPrimaryKeySelective(model);
-                }
-            }else{
+            String name = (String) modelHashMap.get("cfgTableName");
+            //判断表结构是否填写
+            if (StringUtils.isEmpty(name))
                 throw new BusinessException("Feed表结构名称必须填写");
+            cfgTableNameColumn.add(name);
+            //取得sku
+            if ("sku".equals(name)) {
+                isSku = false;
+            }
+            //取得category
+            if ("category".equals(name)) {
+                isCategory = false;
+            }
+            if (StringUtils.isDigit(name)){
+                throw new BusinessException("Feed表结构名称不能为数字");
             }
             if (!StringUtils.isEmpty((String) modelHashMap.get("cfgIsAttribute"))) {
-                String cfgIsAttribute =(String) modelHashMap.get("cfgIsAttribute");
-                if("Y".equals(cfgIsAttribute)){
+                String cfgIsAttribute = (String) modelHashMap.get("cfgIsAttribute");
+                if ("Y".equals(cfgIsAttribute)) {
                     CmsMtFeedConfigModel cmsMtFeedConfigModel = new CmsMtFeedConfigModel();
                     cmsMtFeedConfigModel.setOrderChannelId(channelId);
                     cmsMtFeedConfigModel.setCfgName("attribute");
@@ -183,13 +178,28 @@ public class CmsFeedConfigService extends BaseService {
                 }
             }
         }
-        if(isSku){
+        List<CmsMtFeedConfigInfoModel> cmsMtFeedConfigInfoList = cmsMtFeedConfigInfoDaoExt.selectFeedConFigInfo(channelId);
+        if(cmsMtFeedConfigInfoList.size()==0)throw new BusinessException("请按属性保存按钮");
+        for(CmsMtFeedConfigInfoModel model:cmsMtFeedConfigInfoList){
+            if(("sku".equals(model.getCfgTableName()))){
+                isDbSku = false;
+            }
+            if(("category".equals(model.getCfgTableName()))){
+                isDbCategory = false;
+            }
+        }
+        if (isSku) {
             throw new BusinessException("Feed表结构名称无sku");
         }
-        if(isCategory){
+        if (isCategory) {
             throw new BusinessException("Feed表结构名称无category");
         }
-
+        if (isDbSku) {
+            throw new BusinessException("请按属性保存按钮,数据库无sku");
+        }
+        if (isDbCategory) {
+            throw new BusinessException("请按属性保存按钮,数据库无category");
+        }
         //取得表结构的列称
         String[] columns = new String[cfgTableNameColumn.size()];
         int i = 0;
@@ -200,9 +210,9 @@ public class CmsFeedConfigService extends BaseService {
         if (columns.length > 0) {
             Map<Object, Object> params = new HashMap<>();
             params.put("keys", columns);
-            params.put("tableName", "voyageone_cms2." + "cms_zz_feed_"+tableName+"_product_temp");
+            params.put("tableName", "voyageone_cms2." + "cms_zz_feed_" + tableName + "_product_temp");
             cmsMtFeedConfigInfoDaoExt.createdTable(params);
-            params.put("tableName", "voyageone_cms2." +"cms_zz_feed_" +tableName+"_product_full");
+            params.put("tableName", "voyageone_cms2." + "cms_zz_feed_" + tableName + "_product_full");
             cmsMtFeedConfigInfoDaoExt.createdTable(params);
         }
     }
@@ -266,10 +276,10 @@ public class CmsFeedConfigService extends BaseService {
                     colIndex = 0;
                     //Title行*文件Title判断
                     isHeader = false;
-                    String id= row.getCell(colIndex++).getStringCellValue();
-                    String cfgName= row.getCell(colIndex++).getStringCellValue();
-                    String cfgIsAttribute= row.getCell(colIndex++).getStringCellValue();
-                    String cfgTableName= row.getCell(colIndex++).getStringCellValue();
+                    String id = row.getCell(colIndex++).getStringCellValue();
+                    String cfgName = row.getCell(colIndex++).getStringCellValue();
+                    String cfgIsAttribute = row.getCell(colIndex++).getStringCellValue();
+                    String cfgTableName = row.getCell(colIndex++).getStringCellValue();
                     if (!"id".equals(id)) {
                         throw new BusinessException("表格Tittle错误");
                     }
@@ -286,35 +296,35 @@ public class CmsFeedConfigService extends BaseService {
                     colIndex = 0;
                     CmsMtFeedConfigInfoModel model = new CmsMtFeedConfigInfoModel();
                     row.getCell(colIndex).setCellType(Cell.CELL_TYPE_STRING);
-                    if(row.getCell(colIndex)==null){
+                    if (row.getCell(colIndex) == null) {
                         model.setCfgName("");
-                    }else{
+                    } else {
                         model.setId(Integer.parseInt(row.getCell(colIndex).getStringCellValue()));
                     }
                     model.setOrderChannelId(channelId);
                     row.getCell(colIndex++).setCellType(Cell.CELL_TYPE_STRING);
-                    if(row.getCell(colIndex)==null){
+                    if (row.getCell(colIndex) == null) {
                         model.setCfgName("");
-                    }else{
+                    } else {
                         model.setCfgName(row.getCell(colIndex).getStringCellValue());
                     }
                     row.getCell(colIndex++).setCellType(Cell.CELL_TYPE_STRING);
-                    if(row.getCell(colIndex)==null){
+                    if (row.getCell(colIndex) == null) {
                         model.setCfgIsAttribute("");
-                    }else{
+                    } else {
                         model.setCfgIsAttribute(row.getCell(colIndex).getStringCellValue());
                     }
                     row.getCell(colIndex++).setCellType(Cell.CELL_TYPE_STRING);
-                    if(row.getCell(colIndex)==null){
+                    if (row.getCell(colIndex) == null) {
                         model.setCfgTableName("");
-                    }else{
+                    } else {
                         model.setCfgTableName(row.getCell(colIndex).getStringCellValue());
                     }
 
                     model.setModifier(userName);
                     model.setModified(new Date());
                     //判断excel的数据是插入还是更新
-                    isUpdateAndInsert(model,userName);
+                    isUpdateAndInsert(model, userName);
                 }
             }
         } catch (Exception e) {
@@ -322,11 +332,11 @@ public class CmsFeedConfigService extends BaseService {
         }
     }
 
-    public void isUpdateAndInsert(CmsMtFeedConfigInfoModel model,String userName){
+    public void isUpdateAndInsert(CmsMtFeedConfigInfoModel model, String userName) {
         int cnt;
-        if (model.getId()==null) {
-            cnt =0;
-        }else{
+        if (model.getId() == null) {
+            cnt = 0;
+        } else {
             cnt = cmsMtFeedConfigInfoDaoExt.selectFeedConFigInfoCnt(model.getId());
         }
         if (cnt == 0) {
@@ -337,7 +347,7 @@ public class CmsFeedConfigService extends BaseService {
             cmsMtFeedConfigInfoDao.insert(model);
         } else {
             //更新
-            cmsMtFeedConfigInfoDao.updateByPrimaryKey(model);
+            cmsMtFeedConfigInfoDao.updateByPrimaryKeySelective(model);
         }
     }
 }
