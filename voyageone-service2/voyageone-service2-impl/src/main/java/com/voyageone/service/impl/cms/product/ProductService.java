@@ -823,7 +823,7 @@ public class ProductService extends BaseService {
                         case TM:
                         case TB:
                         case TT:
-                        case USTT:
+                        case LTT:
                             numIid = grpObj != null && !StringUtils.isEmpty(grpObj.getNumIId())
                                     ? Constants.productForOtherSystemInfo.TMALL_NUM_IID + grpObj.getNumIId() : "";
                             break;
@@ -1385,7 +1385,7 @@ public class ProductService extends BaseService {
                 case TM:
                 case TG:
                 case TT:
-                case USTT:
+                case LTT:
                     tbProductService.delItem(shopBean, numIid);
                     break;
                 case JD:

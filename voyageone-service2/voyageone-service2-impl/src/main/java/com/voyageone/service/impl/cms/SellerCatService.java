@@ -756,7 +756,7 @@ public class SellerCatService extends BaseService {
     private boolean isTMPlatform(String shopCartId) {
         if (shopCartId.equals(CartEnums.Cart.TM.getId()) || shopCartId.equals(CartEnums.Cart.TB.getId()) ||
                 shopCartId.equals(CartEnums.Cart.TG.getId()) || shopCartId.equals(CartEnums.Cart.TT.getId())
-                || shopCartId.equals(CartEnums.Cart.USTT.getId())) {
+                || shopCartId.equals(CartEnums.Cart.LTT.getId())) {
             return true;
         }
         return false;

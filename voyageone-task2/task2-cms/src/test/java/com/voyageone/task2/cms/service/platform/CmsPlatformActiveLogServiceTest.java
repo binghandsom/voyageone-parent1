@@ -1,13 +1,6 @@
 package com.voyageone.task2.cms.service.platform;
 
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
-import com.voyageone.common.configs.Shops;
-import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.util.JacksonUtil;
-
-import net.sf.json.JSON;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -80,7 +73,7 @@ public class CmsPlatformActiveLogServiceTest {
         logParams.put("comment", "高级检索 批量上下架");
         logParams.put("codeList", new ArrayList(Arrays.asList("CRWNRG01LBO-10","CRWNRG01LBO-9","CRWNRG01LBO-8","CRWNRG01LBO-7","CRWNRG01LBO-6","CRWNRG01LBO-5")));
         try {
-            targetService.onStartup(logParams);
+            targetService.setProductOnSaleOrInStock(logParams);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -98,7 +91,7 @@ public class CmsPlatformActiveLogServiceTest {
         logParams.put("comment", "高级检索 批量上下架");
         logParams.put("codeList", new ArrayList(Arrays.asList("CRWNRG01LBO-10","CRWNRG01LBO-9","CRWNRG01LBO-8","CRWNRG01LBO-7","CRWNRG01LBO-6","CRWNRG01LBO-5")));
         try {
-            targetService.onStartup(logParams);
+            targetService.setProductOnSaleOrInStock(logParams);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,7 +109,7 @@ public class CmsPlatformActiveLogServiceTest {
         logParams.put("comment", "高级检索 批量上下架");
         logParams.put("codeList", new ArrayList(Arrays.asList("VN-04OJJPV")));
         try {
-            targetService.onStartup(logParams);
+            targetService.setProductOnSaleOrInStock(logParams);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -134,7 +127,7 @@ public class CmsPlatformActiveLogServiceTest {
         logParams.put("comment", "高级检索 批量上下架");
         logParams.put("codeList", new ArrayList(Arrays.asList("VN-04OJJPV")));
         try {
-            targetService.onStartup(logParams);
+            targetService.setProductOnSaleOrInStock(logParams);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -152,7 +145,7 @@ public class CmsPlatformActiveLogServiceTest {
         logParams.put("comment", "高级检索 批量上下架");
         logParams.put("codeList", new ArrayList(Arrays.asList("51A0HC13E1-00LCNB0")));
         try {
-            targetService.onStartup(logParams);
+            targetService.setProductOnSaleOrInStock(logParams);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -170,7 +163,7 @@ public class CmsPlatformActiveLogServiceTest {
         logParams.put("comment", "高级检索 批量上下架");
         logParams.put("codeList", new ArrayList(Arrays.asList("51A0HC13E1-00LCNB0")));
         try {
-            targetService.onStartup(logParams);
+            targetService.setProductOnSaleOrInStock(logParams);
         } catch (Exception e) {
             e.printStackTrace();
         }
