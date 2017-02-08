@@ -7,20 +7,17 @@
             </uib-accordion-heading>
          <!--   主体-->
             <div class="container-fluid m-t-sm m-b-md">
-               <pre>
-                   {{ vm.searchInfo }}
-                   {{  channelTest }}
-                   {{ channel }}
-                   </pre>
                 <div class="col-sm-12">
+                     <pre>
+                                    {{vm.searchInfo}}
+                                </pre>
                     <div class="col-sm-6">
                         <div class="form-horizontal">
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" translate="渠道（品牌）"></label>
-                                <select ng-model="vm.searchInfo.channel">
+                                <select ng-model="vm.searchInfo.channelCode">
                                     <option ng-repeat="x in channels" value="{{ x.channelId }}">{{ x.channelName }}</option>
                                 </select>
-
                             </div>
                         </div><!-- .form-group -->
                     </div>
@@ -30,14 +27,14 @@
                                 <label class="col-sm-4 control-label" >销售时间段</label>
                                 <div class="col-sm-8 form-inline">
                                     <div class="col-sm-5 input-group">
-                                        <input type="text" class="form-control" uib-datepicker-popup ng-model="vm.searchInfo.channelStart"
+                                        <input type="text" class="form-control" uib-datepicker-popup ng-model="vm.searchInfo.staDate"
                                                max-date="searchInfo.channelEnd" date-model-format="yyyy-MM-dd" is-open="datePicker3" ng-required="true" close-text="Close" />
                                         <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                     </div>&nbsp;~&nbsp;
                                     <div class="col-sm-5 input-group">
-                                        <input type="text" class="form-control" uib-datepicker-popup ng-model="vm.searchInfo.channelEnd"
+                                        <input type="text" class="form-control" uib-datepicker-popup ng-model="vm.searchInfo.endDate"
                                                min-date="searchInfo.channelStart" date-model-format="yyyy-MM-dd" is-open="datePicker4" ng-required="true" close-text="Close" />
                                         <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -48,60 +45,23 @@
                         </div>
                     </div>
                     <div class="col-sm-12 text-center m-t-sm">
-                        <div class="col-sm-2 text-center m-t-sm">文件类型</div>
-                        <div class="col-sm-4 text-center m-t-sm">
-                            <div class="form-inline col-md-4">
-                                <input type="checkbox" value="1" name="fileType">店铺月报
-                            </div><!-- .form-inline -->
-                            <div class="form-inline col-md-4">
-                                <input type="checkbox" value="2" name="fileType">店铺周报
-                            </div><!-- .form-inline -->
-                            <div class="form-inline col-md-4">
-                                <input type="checkbox" value="2" name="fileType">店铺日报
-                            </div><!-- .form-inline -->
-                            <div class="form-inline col-md-4">
-                                <input type="checkbox" value="1" name="fileType">商品月报
-                            </div><!-- .form-inline -->
-                            <div class="form-inline col-md-4">
-                                <input type="checkbox" value="2" name="fileType">商品周报
-                            </div><!-- .form-inline -->
-                            <div class="form-inline col-md-4">
-                                <input type="checkbox" value="2" name="fileType">商品日报
-                            </div><!-- .form-inline -->
+                        <div class="col-sm-3 text-center m-t-sm">
+                            <label> 文件类型：</label>
                         </div>
-                        <div class="col-sm-4 text-center m-t-sm">
-                            <div class="form-inline col-md-4">
-                                <input type="checkbox" value="1" name="fileType">产品月报
-                            </div><!-- .form-inline -->
-                            <div class="form-inline col-md-4">
-                                <input type="checkbox" value="2" name="fileType">产品周报
-                            </div><!-- .form-inline -->
-                            <div class="form-inline col-md-4">
-                                <input type="checkbox" value="2" name="fileType">产品日报
-                            </div><!-- .form-inline -->
-                            <div class="form-inline col-md-4">
-                                <input type="checkbox" value="1" name="fileType">SKU月报
-                            </div><!-- .form-inline -->
-                            <div class="form-inline col-md-4">
-                                <input type="checkbox" value="2" name="fileType">SKU周报
-                            </div><!-- .form-inline -->
-                            <div class="form-inline col-md-4">
-                                <input type="checkbox" value="2" name="fileType">SKU日报
-                            </div><!-- .form-inline -->
+                        <div class="col-sm-9 text-center m-t-sm">
+                            <div class="col-sm-3 text-center m-t-sm" ng-repeat="item in fileTypes">
+                                <div class="form-inline col-md-3">
+                                    <input type="checkbox" ng-true-value="{{item.fileTypeCode}}" ng-false-value="false" ng-model="vm.searchInfo.fileTypes[$index]" /> {{item.fileTypeName}}
+                                </div><!-- .form-inline -->
+                            </div>
                         </div>
-                        <div class="col-sm-2 text-center m-t-sm"></div>
-
                     </div><!-- .form-inline -->
-
-
-
-
                     </div>
                     <div class="col-sm-12 text-center m-t-sm" ng-controller="popupCtrl">
                         <div class="form-inline">
                             <button class="btn btn-default" ng-click="$parent.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
                            <!-- <button class="btn btn-vo" ng-click="biRepDownload()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>-->
-                            <button class="btn btn-danger btn-xs" ng-click="bireportDownload()"><i class="fa fa-cloud-download"></i>文件下载</button>
+                            <button class="btn btn-danger btn-xs" ng-click="createXlsFileTask()"><i class="fa fa-cloud-download"></i>生成文件</button>
                         </div><!-- .form-inline -->
                     </div>
                 </div>
@@ -110,49 +70,38 @@
 
     <div class="box">
         <div class="box-body-new">
-            <div class="col-md-40">
-                        <h5>
-                           销售情形查询结果
-                          <!--  <i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>-->
-                        </h5>
-            </div>
             <table class="table table-hover-new text-center" >
                 <thead>
                 <tr>
-                    <th class="text-left mfb-x"></th>
-                    <th class="text-center" translate="TXT_SEQ"></th>
+                    <th class="text-left "><Button type="button" class="btn btn-info btn-xs"  ng-click="initialize()"><i class="glyphicon glyphicon-repeat"></i></Button></th>
+                    <th class="text-left" >编号</th>
                     <th class="text-left">导出文件名称</th>
                     <th class="text-left"> 申请导出时间</th>
                     <th class="text-left"> EXCEL生成时间</th>
                     <th class="text-left"> 导出申请者</th>
+                    <th class="text-left"> 文件状态</th>
                     <th class="text-left">操作</th>
                 </tr>
                 </thead>
                 <tbody  ng-if="vm.downloadTaskList.length" ng-controller="popupCtrl" >
                     <tr ng-repeat="item in vm.downloadTaskList">
-                        <td class="text-left mfb-x">
-                            <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox" ng-model="vm.groupSelList.selFlag[promotion.id]" ng-controller="selectRowsCtrl"ng-click="selectOne(promotion.id, vm.groupSelList)">
-                                <span class="fa fa-check"></span>
-                            </label>
-                        </td>
+                        <td class="text-left"></td>
                         <td class="text-left">
-                            1232
+                            {{ item.id }}
                         </td>
-                        <td class="text-left">{{item.channel}}</td>
-                        <td class="text-left">{{item.startTime}}</td>
                         <td class="text-left">{{item.fileName}}</td>
-                        <td class="text-left"><button class="btn btn-danger btn-xs" ng-click="test2()"><i class="fa fa-cloud-download"></i>文件下载</button></td>　　　<!--downloadExcel(item)-->
+                        <td class="text-left">{{item.createTime}}</td>
+                        <td class="text-left">{{item.finishTime}}</td>
+                        <td calss="text-left">{{item.creatorName}}</td>
+                        <td class="text-left" ng-switch = "item.taskStatus">
+                            <span ng-switch-when="1">文件创建失败</span>
+                            <span ng-switch-when="2">文件正在创建</span>
+                            <span ng-switch-when="3">文件创建成功</span>
+                            <span ng-switch-default>文件已经失效</span>
+                        </td>
+                       <!-- <td class="text-left"><button class="btn btn-danger btn-xs" ng-click="test2()"><i class="fa fa-cloud-download"></i>文件下载</button></td>　-->　　<!--downloadExcel(item)-->
                         <td class="text-right" ng-controller="popupCtrl">
-                            <button ng-if="promotion.cartId != '27'" title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs"
-                                    ng-click="openPromotion('md',vm.platformTypeList,{id:promotion.id},search)"><i class="fa fa-pencil"></i>
-                            </button>
-                            <button ng-if = "promotion.cartId == '27'" title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs"
-                                    ng-click="openJmPromotionDetail({id:promotion.promotionId,search:search},search)"><i class="fa fa-pencil"></i>
-                            </button>
-                            <button ng-if = "promotion.cartId != '27'" ng-disabled="promotion.promotionStatus == '0'" title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
-                            <button ng-if = "promotion.cartId == '27'" ng-disabled="promotion.promotionStatus == '0'" title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
-                            <button ng-disabled="promotion.cartId == '27'" title="{{'BTN_DOWNLOAD' | translate}}" class="btn btn-danger btn-xs" ng-click="openOtherDownload(promotion)"><i class="fa fa-cloud-download"></i></button>
+                            <button ng-disabled="promotion.cartId == '27'" title="{{'BTN_DOWNLOAD' | translate}}" class="btn btn-danger btn-xs" ng-click="openOtherDownload(item)"><i class="fa fa-cloud-download"></i></button>
                         </td>
                     </tr>
                 </tbody>
@@ -162,6 +111,8 @@
         <div class="col-sm-12 m-t-lg m-b-lg">
             <vpagination config="dataPageOption"></vpagination>
         </div>
+
+
     </div>
 
 

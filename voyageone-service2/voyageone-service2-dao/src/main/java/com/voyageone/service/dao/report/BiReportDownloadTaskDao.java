@@ -8,9 +8,8 @@
 package com.voyageone.service.dao.report;
 
 import com.voyageone.service.model.report.BiReportDownloadTaskModel;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BiReportDownloadTaskDao {

@@ -8,13 +8,20 @@
 package com.voyageone.service.model.report;
 
 import com.voyageone.base.dao.mysql.BaseModel;
-
 import java.util.Date;
 
 /**
  * 
  */
 public class BiReportDownloadTaskModel extends BaseModel {
+    public BiReportDownloadTaskModel(){}
+    public BiReportDownloadTaskModel(Integer creatorId,String fileName, Date createTime,Integer taskStatus,String creatorName)
+    {
+        this.creatorId=creatorId;
+        this.creatorName=creatorName;
+        this.taskStatus=taskStatus;
+        this.fileName=fileName;
+    }
     /**
      * 创建者id
      */
@@ -36,7 +43,7 @@ public class BiReportDownloadTaskModel extends BaseModel {
     protected String filePath;
 
     /**
-     * 任务状态 0 为正在执行，-1 位任务失败，1 为成功完成
+     * 任务状态 1为失败，2 位任务正在进行，3为成功完成
      */
     protected Integer taskStatus;
 
@@ -56,6 +63,8 @@ public class BiReportDownloadTaskModel extends BaseModel {
     protected String attr5;
 
     protected String attr6;
+
+    protected String creatorName;
 
     public Integer getCreatorId() {
         return creatorId;
@@ -153,16 +162,11 @@ public class BiReportDownloadTaskModel extends BaseModel {
         this.attr6 = attr6 == null ? null : attr6.trim();
     }
 
-    @Override
-    public String toString()
-    {
-        return "["+creatorId+" "+filePath+" "+fileName+createTime+" "+finishTime+" "+ taskStatus+"]";
+    public String getCreatorName() {
+        return creatorName;
     }
-    public BiReportDownloadTaskModel (Integer creatorId, String fileName, Date createTime,Integer taskStatus)
-    {
-        this.creatorId=creatorId;
-        this.fileName=fileName;
-        this.createTime=createTime;
-        this.taskStatus=taskStatus;
+
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName == null ? null : creatorName.trim();
     }
 }

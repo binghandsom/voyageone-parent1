@@ -12,12 +12,13 @@ import java.util.Map;
 
 @Repository
 public interface BiReportDownloadTaskDaoExt {
-    List<BiReportDownloadTaskModel> selectTasksByCreatorId(Map map);
-
+    List<BiReportDownloadTaskModel> selectTasksByCreatorId(Map<String,Object>  map);
+    long selectCount(Map<String,Object>  map);
+    List<BiReportDownloadTaskModel> selectPage(Map<String,Object>  map);
     /**
      * 选择和status值不为参数的的下载任务
      * @param map
      * @return
      */
-    List<BiReportDownloadTaskModel> selectNoTasksByCreatorId(Map map);
+    List<BiReportDownloadTaskModel> selectNoTasksByCreatorId(Map<String,Object>  map);
 }

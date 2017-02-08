@@ -17,6 +17,7 @@
         <if test="taskStatus != null and taskStatus != '' ">
            <![CDATA[ and  task.task_status = #{taskStatus} ]]>
         </if>
+        ORDER  BY task.id DESC
     </select>
 
 
@@ -36,16 +37,9 @@
         <if test="taskStatus != null and taskStatus != '' ">
             <![CDATA[ and  task.task_status <> #{taskStatus} ]]>
         </if>
+        ORDER  BY task.id DESC
     </select>
 
-   <!-- <select id="selectSaleLastYearDayByDate" parameterType="Map" resultType="Double">
-        select sum
-        from cms_mt_platform_brands
-        where channel_id = #{channelId} and cart_id = #{cartId}
-        <if test="brandName != null and brandName != ''">
-            and brand_name like lower(concat('%', lower(#{brandName}), '%'));
-        </if>
-    </select>-->
     <select id="selectAmtDateToDate" parameterType="Map" resultType="BigDecimal">
         select SUM(brss.amt)
         from voyageone_bi_report.bi_report_sales_shop_010 brss
@@ -56,6 +50,44 @@
         <if test="endDate != null and endDate != '' ">
             <![CDATA[ and brss.date <= #{endDate} ]]>
         </if>
+    </select>
+
+    <select id="selectCount"  resultType="Long"><![CDATA[
+       SELECT
+        count(*)
+        FROM
+        voyageone_bi_report.bi_report_download_task task
+        WHERE  1=1
+        ]]>
+        <if test="creatorId != null  ">
+            AND task.creator_id = #{creatorId}
+        </if>
+        <if test="fileName != null  ">
+            AND task.file_name = #{fileName}
+        </if>
+        <if test="taskStatus != null ">
+            <![CDATA[ and  task.task_status <> #{taskStatus} ]]>
+        </if>
+    </select>
+
+
+    <select id="selectPage"  resultType="com.voyageone.service.model.report.BiReportDownloadTaskModel"><![CDATA[
+       SELECT
+        task.*
+        FROM
+        voyageone_bi_report.bi_report_download_task task
+        WHERE  1=1
+        ]]>
+        <if test="creatorId != null  ">
+            AND task.creator_id = #{creatorId}
+        </if>
+        <if test="fileName != null  ">
+            AND task.file_name = #{fileName}
+        </if>
+        <if test="taskStatus != null ">
+            <![CDATA[ and  task.task_status <> #{taskStatus} ]]>
+        </if>
+        order by ${orderByColumn}  limit #{offset} , #{pageRowCount}
     </select>
 
 </mapper>

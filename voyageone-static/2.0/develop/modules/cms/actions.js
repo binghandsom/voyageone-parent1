@@ -748,15 +748,10 @@ define(function () {
                 "init": "init",
                 getPage: "getPage",
                 getCount: "getCount",
-                getEditModel: "getEditModel",
-                saveEditModel: "saveEditModel",
-                deleteByPromotionId: "deleteByPromotionId",
-                setPromotionStatus: "setPromotionStatus",
-                getPromotionSimpleList: "getPromotionSimpleList",
                 biRepDownload:"biRepDownload",
                 createXlsFile:"createXlsFile",
-                getDownloadTaskList:"getDownloadTaskList"
-
+                getDownloadTaskList:"getDownloadTaskList",
+                createXlsFileTask:"createXlsFileTask"
             }
         }
     };

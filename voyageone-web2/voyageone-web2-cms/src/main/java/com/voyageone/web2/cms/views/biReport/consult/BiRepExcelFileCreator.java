@@ -1,19 +1,21 @@
 package com.voyageone.web2.cms.views.biReport.consult;
 
 import com.voyageone.common.util.FileUtils;
-import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
-import java.awt.Color;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,30 +59,8 @@ public class BiRepExcelFileCreator {
         XSSFCellStyle h3xCellStyle = (XSSFCellStyle) h3style;
         XSSFCellStyle bxCellStyle = (XSSFCellStyle) basicstyle;
         //设置h1 cellstyle
-        h1xCellStyle.setFillForegroundColor(new XSSFColor(new Color(250, 120, 119)));
-        h1xCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-        h1xCellStyle.setBorderTop(CellStyle.BORDER_THIN);
-        h1xCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-        h1xCellStyle.setBorderRight(CellStyle.BORDER_THIN);
-        h1xCellStyle.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
-        h1xCellStyle.setAlignment(HorizontalAlignment.CENTER);
-
-        //设置basic content cellstyle
-        bxCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-        bxCellStyle.setBorderTop(CellStyle.BORDER_THIN);
-        bxCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-        bxCellStyle.setBorderRight(CellStyle.BORDER_THIN);
-        bxCellStyle.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
-        bxCellStyle.setAlignment(HorizontalAlignment.CENTER);
-        bxCellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0.00"));
-        //设置ratestyle
-        xRateStyle.setBorderBottom(CellStyle.BORDER_THIN);
-        xRateStyle.setBorderTop(CellStyle.BORDER_THIN);
-        xRateStyle.setBorderLeft(CellStyle.BORDER_THIN);
-        xRateStyle.setBorderRight(CellStyle.BORDER_THIN);
-        xRateStyle.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
-        xRateStyle.setAlignment(HorizontalAlignment.CENTER);
-        xRateStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0.00%"));
+        h1xCellStyle=CellStyleFactory.getHeaderStyle(h1xCellStyle);
+        bxCellStyle=CellStyleFactory.getThoSepStyle(bxCellStyle);
 
         for(String[] header: headers)
         {

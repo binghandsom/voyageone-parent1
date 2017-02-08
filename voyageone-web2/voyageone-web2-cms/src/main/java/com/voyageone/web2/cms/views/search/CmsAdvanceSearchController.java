@@ -1,12 +1,12 @@
 package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.Types;
+import com.voyageone.common.configs.*;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.PlatformService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
@@ -223,6 +223,10 @@ public class CmsAdvanceSearchController extends CmsController {
         } else if (fileType == 5) {
             fileName = "filingList_";
         }
+        else if (fileType==6)
+        {
+            fileName="biRepList_";
+        }
         if (fileName == null) {
             resultBean.put("ecd", "4002");
             return success(resultBean);
@@ -267,16 +271,14 @@ public class CmsAdvanceSearchController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.EXPORT_DOWNLOAD)
     public ResponseEntity<byte[]> downloadFile(@RequestParam String fileName) {
-//        String exportPath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_PATH);
-        String exportPath = "D:/";
+        String exportPath = com.voyageone.common.configs.Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_PATH);
         File pathFileObj = new File(exportPath);
-
         if (!pathFileObj.exists()) {
             $info("高级检索 文件下载任务 文件目录不存在 " + exportPath);
             throw new BusinessException("4004");
         }
 
-        exportPath += "hello.xlsx";
+        exportPath += fileName;
         pathFileObj = new File(exportPath);
         if (!pathFileObj.exists()) {
             $info("高级检索 文件下载任务 文件不存在 " + exportPath);

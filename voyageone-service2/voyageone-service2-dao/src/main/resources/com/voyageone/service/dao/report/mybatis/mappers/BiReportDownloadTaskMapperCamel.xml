@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.report.BiReportDownloadTaskModel" />
     <sql id="Base_Column_List" >
         `id`, `creator_id`, `file_name`, `create_time`, `file_path`, `task_status`, `finish_time`, 
-        `attr1`, `attr2`, `attr3`, `attr4`, `attr5`, `attr6`
+        `attr1`, `attr2`, `attr3`, `attr4`, `attr5`, `attr6`, `creator_name`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -52,6 +52,9 @@
             </if>
             <if test="attr6 != null" >
                 `attr6` = #{attr6,jdbcType=VARCHAR},
+            </if>
+            <if test="creatorName != null" >
+                `creator_name` = #{creatorName,jdbcType=VARCHAR},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -103,6 +106,9 @@
             <if test="attr6 != null" >
                 and `attr6` = #{attr6,jdbcType=VARCHAR}
             </if>
+            <if test="creatorName != null" >
+                and `creator_name` = #{creatorName,jdbcType=VARCHAR}
+            </if>
         </where>
         limit 1
     </select>
@@ -148,6 +154,9 @@
             <if test="attr6 != null" >
                 and `attr6` = #{attr6,jdbcType=VARCHAR}
             </if>
+            <if test="creatorName != null" >
+                and `creator_name` = #{creatorName,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -189,6 +198,9 @@
             </if>
             <if test="attr6 != null" >
                 and `attr6` = #{attr6,jdbcType=VARCHAR}
+            </if>
+            <if test="creatorName != null" >
+                and `creator_name` = #{creatorName,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
@@ -232,6 +244,9 @@
             <if test="attr6 != null" >
                 `attr6`,
             </if>
+            <if test="creatorName != null" >
+                `creator_name`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="creatorId != null" >
@@ -269,6 +284,9 @@
             </if>
             <if test="attr6 != null" >
                 #{attr6,jdbcType=VARCHAR},
+            </if>
+            <if test="creatorName != null" >
+                #{creatorName,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
