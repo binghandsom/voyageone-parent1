@@ -668,7 +668,8 @@ public class CmsFieldEditService extends BaseViewService {
                     } else if (CmsConstants.ProductStatus.Approved.name().equals(prodStatus)) {
                         strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
                     } else if (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId()))) {
+                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId()))
+                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.DT.getId()))) {
                         strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
                     }
                 }
