@@ -81,7 +81,7 @@ public class CmsPlatformActiveLogService extends BaseService {
     /**
      * 执行产品上下架操作
      * @param messageMap 参数
-     * @return List<Map<String, String>>
+     * @return 执行结果错误记录
      * @throws Exception Exception
      */
     public List<Map<String, String>> setProductOnSaleOrInStock(Map<String, Object> messageMap) throws Exception {

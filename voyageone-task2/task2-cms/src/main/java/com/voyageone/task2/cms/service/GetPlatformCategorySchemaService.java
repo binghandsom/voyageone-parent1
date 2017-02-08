@@ -75,7 +75,7 @@ public class GetPlatformCategorySchemaService extends BaseCronTaskService {
         cartList.add(CartEnums.Cart.TM.getValue());
         cartList.add(CartEnums.Cart.TG.getValue());
         cartList.add(CartEnums.Cart.TT.getValue());
-        cartList.add(CartEnums.Cart.USTT.getValue());
+        cartList.add(CartEnums.Cart.LTT.getValue());
 
         // 获取该任务可以运行的销售渠道
         int idxChannel = 1;

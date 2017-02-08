@@ -167,8 +167,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             for (String channelId : channelIdList) {
                 if (ChannelConfigEnums.Channel.USJGJ.getId().equals(channelId)) {
                     // 商品上传(USJOI天猫国际官网同购)
-                    doProductUpload(channelId, CartEnums.Cart.USTT.getValue(), threadCount, rowCount);
-                    sxProductService.add2ChannelCartMapList(channelCartMapList, channelId, CartEnums.Cart.USTT.getValue());
+                    doProductUpload(channelId, CartEnums.Cart.LTT.getValue(), threadCount, rowCount);
+                    sxProductService.add2ChannelCartMapList(channelCartMapList, channelId, CartEnums.Cart.LTT.getValue());
                 } else {
                     // 商品上传(天猫国际官网同购)
                     doProductUpload(channelId, CartEnums.Cart.TT.getValue(), threadCount, rowCount);

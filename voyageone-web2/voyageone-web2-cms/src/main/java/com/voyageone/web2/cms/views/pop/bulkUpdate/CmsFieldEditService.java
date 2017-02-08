@@ -453,21 +453,6 @@ public class CmsFieldEditService extends BaseViewService {
         WriteResult rs = productGroupService.updateMulti(updObj, userInfo.getSelChannelId());
         $debug("批量修改属性.(商品上下架) 结果1=：" + rs.toString());
 
-        // 发送请求到MQ,插入操作历史记录
-        /*Map<String, Object> logParams = new HashMap<>(6);
-        logParams.put("channelId", userInfo.getSelChannelId());
-        logParams.put("cartIdList", cartList);
-        logParams.put("activeStatus", statusVal.name());
-        logParams.put("creater", userInfo.getUserName());
-        if (cartId == null || cartId == 0) {
-            logParams.put("comment", "高级检索 批量上下架(全店铺操作)");
-        } else {
-            logParams.put("comment", "高级检索 批量上下架");
-        }
-
-        logParams.put("codeList", productCodes);
-        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);*/
-
         PlatformActiveLogMQMessageBody mqMessageBody = new PlatformActiveLogMQMessageBody();
         mqMessageBody.setChannelId(userInfo.getSelChannelId());
         mqMessageBody.setCartList(cartList);
@@ -564,7 +549,7 @@ public class CmsFieldEditService extends BaseViewService {
             qryStr.append("{'common.fields.code':{$in:#},$or:[");
             for (Integer cartIdVal : newcartList) {
                 if (!CartEnums.Cart.TT.getId().equals(String.valueOf(cartIdVal))
-                        && !CartEnums.Cart.USTT.getId().equals(String.valueOf(cartIdVal)))
+                        && !CartEnums.Cart.LTT.getId().equals(String.valueOf(cartIdVal)))
                     qryStr.append("{'platforms.P" + cartIdVal + ".status':{$nin:['Ready','Approved']}},");
                 else
                     qryStr.append("{'common.fields.hsCodeStatus': '0'},");
@@ -597,7 +582,7 @@ public class CmsFieldEditService extends BaseViewService {
                 rsMap.put("ecd", 2);
 
                 if (hsCodeList.size() > 0 && (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId())))) {
+                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.LTT.getId())))) {
                     rsMap.put("ts", true);
                     rsMap.put("codeList", hsCodeList);
                 }else{
@@ -712,7 +697,7 @@ public class CmsFieldEditService extends BaseViewService {
                     } else if (CmsConstants.ProductStatus.Approved.name().equals(prodStatus)) {
                         strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
                     } else if (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId()))) {
+                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.LTT.getId()))) {
                         strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
                     }
                 }

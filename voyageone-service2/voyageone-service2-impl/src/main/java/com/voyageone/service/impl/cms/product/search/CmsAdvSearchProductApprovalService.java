@@ -69,7 +69,9 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
             StringBuilder qryStr = new StringBuilder();
             qryStr.append("{'common.fields.code':{$in:#},$or:[");
             if (!CartEnums.Cart.TT.getId().equals(String.valueOf(cartIdValue))
-                    && !CartEnums.Cart.USTT.getId().equals(String.valueOf(cartIdValue)))
+                    && !CartEnums.Cart.LTT.getId().equals(String.valueOf(cartIdValue))
+                    && !CartEnums.Cart.CN.getId().equals(String.valueOf(cartIdValue))
+                    && !CartEnums.Cart.DT.getId().equals(String.valueOf(cartIdValue)))
                 qryStr.append("{'platforms.P" + cartIdValue + ".status':{$nin:['Ready','Approved']}},");
             else
                 qryStr.append("{'common.fields.hsCodeStatus': '0'},");
@@ -200,7 +202,7 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                 } else if (CmsConstants.ProductStatus.Approved.name().equals(prodStatus)) {
                     strList.add("'platforms.P" + cartIdValue + ".status':'Approved'");
                 } else if (CartEnums.Cart.TT.getId().equals(String.valueOf(cartIdValue))
-                        || CartEnums.Cart.USTT.getId().equals(String.valueOf(cartIdValue))) {
+                        || CartEnums.Cart.LTT.getId().equals(String.valueOf(cartIdValue))) {
                     strList.add("'platforms.P" + cartIdValue + ".status':'Approved','platforms.P" + cartIdValue + ".pStatus':'WaitingPublish'");
                 }
             }

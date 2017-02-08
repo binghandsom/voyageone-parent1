@@ -98,7 +98,7 @@ public class PlatformSchemaService extends BaseService {
     public Map<String, List<Field>> getFieldForProductImage(String catId, String channelId, int cartId, String language, String platformBrandId) {
 //        if (CartEnums.Cart.JM.getValue() == cartId
 //                || CartEnums.Cart.TT.getValue() == cartId
-//                || CartEnums.Cart.USTT.getValue() == cartId
+//                || CartEnums.Cart.LTT.getValue() == cartId
 //                || CartEnums.Cart.CN.getValue() == cartId
 //                || CartEnums.Cart.LIKING.getValue() == cartId
 //                ) {
@@ -112,7 +112,7 @@ public class PlatformSchemaService extends BaseService {
 
         CmsMtPlatformCategorySchemaModel platformCatSchemaModel;
         if (CartEnums.Cart.TM.getValue() == cartId || CartEnums.Cart.TG.getValue() == cartId ||
-                CartEnums.Cart.TT.getValue() == cartId || CartEnums.Cart.USTT.getValue() == cartId) {
+                CartEnums.Cart.TT.getValue() == cartId || CartEnums.Cart.LTT.getValue() == cartId) {
             platformCatSchemaModel = platformCategoryService.getPlatformCatSchemaTm(catId, channelId, cartId);
         } else {
             platformCatSchemaModel = platformCategoryService.getPlatformCatSchema(catId, cartId);
