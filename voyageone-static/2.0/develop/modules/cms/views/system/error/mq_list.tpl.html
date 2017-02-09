@@ -28,14 +28,14 @@
                         <div class="col-sm-6">
                             <div class="form-horizontal">
                                 <div class="row form-group">
-                                    <label class="col-sm-2 control-label ng-binding">Type 状态&nbsp;&nbsp;</label>
-                                    <label ng-repeat="type in ctrl.type">
+                                    <label class="col-sm-2 control-label ng-binding">Type</label>
+                                    <label ng-repeat="type in ctrl.type">&nbsp;
                                         <label class="checkbox-inline c-checkbox ng-binding">
                                             <input type="checkbox" ng-model="ctrl.typeStatus[type.id]" name="typeList"
                                                    class="ng-pristine ng-untouched ng-valid ng-empty">
                                             <span class="fa fa-check"></span>
                                         </label>
-                                        {{type.name}}&nbsp;
+                                        {{type.name}}
                                     </label>
                                     </label> 
                                 </div>
@@ -64,14 +64,13 @@
                        style="margin-bottom:0px;table-layout: fixed;" >
                     <thead>
                     <tr>
-                        <th class="mfb-xxs text-left">name</th>
-                        <th class="mfb-xxs text-left">title</th>
+                        <th class="mfb-xxs text-left">name / title</th>
+                        <!--<th class="mfb-xxs text-left"></th>-->
                         <th class="mfb-x text-left">type</th>
                         <th class="mfb-xxs text-left">messageBody</th>
                         <th class="mfb-xxs text-left">comment</th>
-                        <th class="mfb-xxs text-left">stackTrace</th>
+                        <th class="mfb-xxs text-left">error list</th>
                         <th class="mfb-x text-left">created</th>
-                        <th class="mfb-x text-left">modified</th>
                         <th class="mfb-x text-left">modifier</th>
                     </tr>
                     </thead>
@@ -80,15 +79,13 @@
                         <td if-no-rows="ctrl.mqErrorList" colspan="24" style="padding: 0px"></td>
                     </tr>
                     <tr ng-repeat="mq in ctrl.mqErrorList">
-                        <th class="mfb-xxs text-left">{{mq.name}}</th>
-                        <th class="mfb-xxs text-left">{{mq.title}}</th>
-                        <th class="mfb-x text-left">{{ctrl.getStatusName(mq.type).name}}</th>
-                        <th class="mfb-xxs text-left"><popover-text content="mq.messageBody" direct="left" size="20"></popover-text></th>
-                        <th class="mfb-xxs text-left">{{mq.comment}}</th>
-                        <th class="mfb-xxs text-left"><popover-text content="mq.stackTrace" direct="left" size="20"></popover-text></th>
-                        <th class="mfb-x text-left">{{mq.created}}</th>
-                        <th class="mfb-x text-left">{{mq.modified}}</th>
-                        <th class="mfb-x text-left">{{mq.modifier}}</th>
+                        <td class="mfb-xxs text-left">{{mq.name}}<br>{{mq.title}}</td>
+                        <td class="mfb-x text-left">{{ctrl.getStatusName(mq.type).name}}</td>
+                        <td class="mfb-xxs text-left"><popover-text content="mq.messageBody" direct="left" size="30"></popover-text></td>
+                        <td class="mfb-xxs text-lef text-wrap">{{mq.comment}}</td>
+                        <td class="mfb-xxs text-left"><popover-text content="mq.msg" direct="left" size="30"></popover-text></td>
+                        <td class="mfb-x text-left">{{mq.created}}</td>
+                        <td class="mfb-x text-left">{{mq.modifier}}</td>
                     </tr>
                     </tbody>
                 </table>
