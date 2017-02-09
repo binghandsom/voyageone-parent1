@@ -31,7 +31,7 @@ public class CmsPlatformActiveLogMQJob extends TBaseMQCmsService<PlatformActiveL
     public void onStartup(PlatformActiveLogMQMessageBody messageBody) throws Exception {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("channelId", messageBody.getChannelId());
-        params.put("cartIdList", messageBody.getChannelId());
+        params.put("cartIdList", messageBody.getCartList());
         params.put("activeStatus", messageBody.getActiveStatus());
         params.put("creater", messageBody.getUserName());
         params.put("comment", messageBody.getComment());
@@ -46,6 +46,7 @@ public class CmsPlatformActiveLogMQJob extends TBaseMQCmsService<PlatformActiveL
             if (e instanceof BusinessException) {
                 cmsBusinessExLog(messageBody, e.getMessage());
             } else {
+                $error(e);
                 cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
             }
         }
