@@ -28,11 +28,17 @@ public class CmsMtFeeCommissionService extends BaseService {
     public static final String COMMISSION_TYPE_PLATFORM = "PF";
     public static final String COMMISSION_TYPE_RETURN = "RT";
 
+    /*价格公司变更, 参照CMSDOC-436*/
+    public static final String COMMISSION_TYPE_CATEGORY_COST = "CC";
+    public static final String COMMISSION_TYPE_CATEGORY = "CA";
+
     private static final List<String> COMMISSION_TYPE_LIST = new ArrayList<String>() {
         {
             add(COMMISSION_TYPE_VOYAGE_ONE);
             add(COMMISSION_TYPE_PLATFORM);
             add(COMMISSION_TYPE_RETURN);
+            add(COMMISSION_TYPE_CATEGORY);
+            add(COMMISSION_TYPE_CATEGORY_COST);
         }
     };
 

@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service.product;
 
-import com.voyageone.task2.cms.service.promotion.PromotionProductStockSyncService;
+import com.voyageone.task2.cms.mqjob.jm.CmsJmPromotionProductStockSyncMQJob;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class PromotionProductStockSyncServiceTest {
 
     @Autowired
-    PromotionProductStockSyncService targetService;
+    CmsJmPromotionProductStockSyncMQJob targetService;
 
     @Test
     public void testTMPlatform() {

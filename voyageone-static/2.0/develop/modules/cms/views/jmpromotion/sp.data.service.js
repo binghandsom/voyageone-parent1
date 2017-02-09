@@ -4,6 +4,8 @@ define(['cms'], function (cms) {
         var self = this;
 
         self.$routeParams = $routeParams;
+        self.passDated = false;
+        self.editModel={};
         self.$q = $q;
         self.jmPromotionService = jmPromotionService;
         self.jmPromotionDetailService = jmPromotionDetailService;

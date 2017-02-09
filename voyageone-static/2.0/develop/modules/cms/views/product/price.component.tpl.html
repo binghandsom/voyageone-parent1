@@ -78,18 +78,20 @@
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <table class="table table-hover-new table-hover" style="min-width:1200px">
+                        <table class="table table-hover-new table-hover" style="min-width:1400px">
                             <thead>
                             <tr>
                                 <th class="mfb-xt text-left">Live</th>
-                                <th class="mfb-xxt text-center">Platform</th>
+                                <th class="mfb-xt text-center">Platform</th>
+                                <th class="mfb-xxt text-right">客户建议零售价</th>
+                                <th class="mfb-xxt text-right">客户成本价</th>
                                 <th class="mfb-xxt text-right">中国建议售价(当前)</th>
                                 <th class="mfb-xxt text-right">中国指导售价</th>
                                 <th class="mfb-xxt text-right">中国最终售价(当前)</th>
                                 <th class="mfb-xxt text-center">中国建议售价</th>
                                 <th class="mfb-xxt text-center">中国最终售价</th>
-                                <th class="mfb-xxt text-center">操作</th>
-                                <th class="mfb-xxt text-right">Inventory</th>
+                                <th class="mfb-xt text-center">操作</th>
+                                <th class="mfb-xt text-right">Inventory</th>
                                 <th class="mfb-xxt text-right">Sale QTY</th>
                             </tr>
                             </thead>
@@ -113,7 +115,8 @@
                                         }"></platform-status>
                                     </a>
                                 </td>
-
+                                <td class="mfb-xxt text-right">{{item.clientMsrpPrice}}</td>
+                                <td class="mfb-xxt text-right">{{item.clientNetPrice}}</td>
                                 <td class="mfb-xxt text-right">
                                     {{item.priceMsrpSt}}
                                     ~
@@ -135,10 +138,10 @@
                                 <td class="mfb-xxt text-center">
                                     <input type="number" class="form-control text-right"  ng-model="item.priceSale" placeholder="中国最终售价" scale="15,2"  />
                                 </td>
-                                <td class="mfb-xxt text-center">
+                                <td class="mfb-xt text-center">
                                     <button class="btn btn-success btn-pop" ng-disabled="!(item.priceMsrp||item.priceSale)||(item.priceMsrp<=0&&item.priceSale<=0)"  ng-click="saveCartSkuPriceClick(item)">价格保存</button>
                                 </td>
-                                <td class="mfb-xxt  text-right">{{vm.model.quantity}}</td>
+                                <td class="mfb-xt  text-right">{{vm.model.quantity}}</td>
                                 <td class="mfb-xxt text-right">{{item.saleQty}}</td>
                             </tr>
                             </tbody>

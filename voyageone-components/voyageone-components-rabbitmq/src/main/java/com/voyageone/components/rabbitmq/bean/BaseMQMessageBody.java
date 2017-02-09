@@ -7,9 +7,22 @@ import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
  */
 public abstract class BaseMQMessageBody implements IMQMessageBody {
     //消费者重试次数
-    protected int consumerRetryTimes = 0;
+    int consumerRetryTimes = 0;
     //消息体id
     int mqId;
+
+    //延迟发送时间
+    int delaySecond;
+
+    @Override
+    public int getDelaySecond() {
+        return delaySecond;
+    }
+
+
+    public void setDelaySecond(int delaySecond) {
+        this.delaySecond = delaySecond;
+    }
 
     public int getMqId() {
         return mqId;
@@ -41,4 +54,6 @@ public abstract class BaseMQMessageBody implements IMQMessageBody {
     }
 
     public abstract void check() throws MQMessageRuleException;
+
+
 }

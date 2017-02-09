@@ -52,6 +52,10 @@ define(function () {
                     "getHomeSumData": "getHomeSumData",
                     "getCmsConfig": session('getCmsConfig', [KEY.CHANNEL]),
                     getMenuHeaderInfo:"getMenuHeaderInfo"
+                },
+                "$modifyPassWordService":{
+                    "root":"/cms/home/menu/modifyPassword/",
+                    "save":"save"
                 }
             },
             "search": {
@@ -284,6 +288,7 @@ define(function () {
                     "updateJM": "updateJM",
                     "batchUpdateDealPrice": "batchUpdateDealPrice",
                     "batchSynchPrice": "batchSynchPrice",
+                    "batchSynchMallPrice":"batchSynchMallPrice",
                     "synchAllPrice": "synchAllPrice",
                     "batchCopyDeal": "batchCopyDeal",
                     "copyDealAll": "copyDealAll",
@@ -451,6 +456,11 @@ define(function () {
                         "init": "init",
                         "search": "search",
                         "updateFinishStatus": "updateFinishStatus"
+                    },
+                    "$mqErrorListService": {
+                        "root": "/cms/system/mqError",
+                        "init": "init",
+                        "search": "search"
                     }
                 },
                 "$storeOpService": {

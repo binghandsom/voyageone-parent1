@@ -2,7 +2,7 @@
     <form role="form" class="form-horizontal" name="ctrlEdit.promotionForm" novalidate>
         <div id="jm-sp-edit-base" class="panel panel-vo">
             <div class="panel-heading">
-                <h4 class="panel-title">活动基本信息</h4>
+                <h4 class="panel-title">活动基本信息1</h4>
             </div>
             <div class="panel-body">
                 <div class="form-group">
@@ -534,10 +534,10 @@
             </li>
             <hr>
             <li ng-if="ctrlEdit.spDataService.jmPromotionObj.detailStatus != 1">
-                <button type="button" class="btn btn-success" style="width:90px" ng-click="ctrlEdit.save(0)">暂存</button>
+                <button type="button" class="btn btn-success" style="width:90px" ng-click="ctrlEdit.save(0)" ng-disabled="ctrlEdit.spDataService.passDated">暂存</button>
             </li>
             <li>
-                <button type="button" class="btn btn-primary" style="width:90px" ng-click="ctrlEdit.save(1)" ng-disabled="ctrlEdit.promotionForm.$invalid">提交</button>
+                <button type="button" class="btn btn-primary" style="width:90px" ng-click="ctrlEdit.save(1)" ng-disabled="ctrlEdit.promotionForm.$invalid || ctrlEdit.spDataService.passDated">提交</button>
             </li>
         </ul>
     </sticky>

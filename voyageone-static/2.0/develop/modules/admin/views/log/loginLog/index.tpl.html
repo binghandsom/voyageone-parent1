@@ -22,9 +22,9 @@
                                 <div class="row form-group"><!-- 系统 -->
                                     <label class="col-sm-3 control-label">{{'TXT_SYSTEM' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="ctrl.searchInfo.application">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.application"
+                                                ng-options="app.application as app.application for app in ctrl.appList">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="{{app}}" ng-repeat="app in ctrl.appList">&nbsp;{{app}}</option>
                                         </select>
                                     </div>
                                 </div>

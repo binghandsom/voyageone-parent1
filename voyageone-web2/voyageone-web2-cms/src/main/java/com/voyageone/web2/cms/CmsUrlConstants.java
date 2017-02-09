@@ -23,6 +23,7 @@ public interface CmsUrlConstants {
             String SET_CATE_TYPE = "setPlatformType";
 
             String GetHomeSumData = "getHomeSumData";
+
             String SumHome="sumHome";
 
             String GET_CMS_CONFIG = "getCmsConfig";
@@ -30,7 +31,12 @@ public interface CmsUrlConstants {
             String GET_MAIN_CATEGORIES = "getMainCategories";
 
             String GET_CARTS = "getCarts";
+
             String GetMenuHeaderInfo="getMenuHeaderInfo";
+        }
+        interface MODIFY_PASS_WORD {
+            String ROOT = "/cms/home/menu/modifyPassword";
+            String submit = "submit";
         }
     }
 
@@ -78,6 +84,7 @@ public interface CmsUrlConstants {
                 String BatchUpdateSkuDealPrice="batchUpdateSkuDealPrice";
                 String BatchSynchPrice = "batchSynchPrice";
                 String SynchAllPrice = "synchAllPrice";
+                String BatchSynchMallPrice = "batchSynchMallPrice";
                 String BatchCopyDeal = "batchCopyDeal";
                 String CopyDealAll = "copyDealAll";
                 String BatchDeleteProduct = "batchDeleteProduct";
@@ -464,6 +471,14 @@ public interface CmsUrlConstants {
             String SEARCH = "search";
 
             String UPDATE_FINISH_STATUS = "updateFinishStatus";
+        }
+        interface MQ_ERROR {
+
+            String ROOT = "/cms/system/mqError";
+
+            String INIT = "init";
+
+            String SEARCH = "search";
         }
 
         interface CACHE {

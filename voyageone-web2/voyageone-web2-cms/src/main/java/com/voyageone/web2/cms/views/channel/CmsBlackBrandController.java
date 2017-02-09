@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.channel;
 
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.CHANNEL.BLACK_BRAND;
@@ -40,7 +41,7 @@ public class CmsBlackBrandController extends CmsController {
      * 更新/批量更新 商品黑名单
      */
     @RequestMapping(BLACK_BRAND.UPDATE_BLACK_BRAND)
-    public AjaxResponse updateBlackBrand(@RequestBody CmsBlackBrandParamBean blackBrandParamBean) throws IllegalAccessException {
+    public AjaxResponse updateBlackBrand(@RequestBody CmsBlackBrandParamBean blackBrandParamBean) throws IllegalAccessException, MQMessageRuleException {
         return success(blackBrandViewService.switchBrandBlock(blackBrandParamBean, getUser()));
     }
 }

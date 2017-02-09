@@ -2,7 +2,6 @@ package com.voyageone.components.sneakerhead;
 
 import com.voyageone.components.ComponentBase;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -22,7 +21,8 @@ public class SneakerHeadBase extends ComponentBase {
 
     protected static final String CONTENT_TYPE = "application/json;charset=UTF-8";
 
-    public static final String DEFAULT_DOMAIN = "47.180.64.158:52233";
+//    public static final String DEFAULT_DOMAIN = "47.180.64.158:52233";
+    public static final String DEFAULT_DOMAIN = "10.0.0.91:52233";
 
     protected RestTemplate getRestTemplate() {
         SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();

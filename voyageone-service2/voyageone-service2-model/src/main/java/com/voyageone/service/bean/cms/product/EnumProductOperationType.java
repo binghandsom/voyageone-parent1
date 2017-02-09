@@ -18,7 +18,7 @@ public enum EnumProductOperationType {
     MoveCode(11, "移动Code"),                     // 移动Code
     MoveSku(12, "移动Sku"),                     // 移动Sku
 	IntelligentPublish(13, "智能上新"), // 商品智能上新
-    BatchSetPlatformAttr(14, "批量设置平台共同属性"),  // 高级检索 批量设置自由标签
+    BatchSetPlatformAttr(14, "高级检索 - 修改平台共通属性"),  // 高级检索 批量设置自由标签
     CotegoryDeleted(15, "店铺分类被删除"),  // 高级检索 批量设置自由标签
     CreateNewCart(16, "新建一个Cart对应的platform"),
     changeMainCategory(17, "修改主类目");

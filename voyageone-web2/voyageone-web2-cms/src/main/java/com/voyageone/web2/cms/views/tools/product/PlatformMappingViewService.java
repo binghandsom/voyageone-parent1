@@ -9,12 +9,15 @@ import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.dao.cms.CmsMtFeedCustomPropDao;
 import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsRefreshProductsMQMessageBody;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
@@ -53,7 +56,7 @@ class PlatformMappingViewService extends BaseViewService {
     private final CommonSchemaService commonSchemaService;
     private final CmsMtFeedCustomPropDao feedCustomPropDao;
     private final PlatformCategoryService platformCategoryService;
-    private final MqSender mqSender;
+    private final CmsMqSenderService mqSender;
 
     @Autowired
     public PlatformMappingViewService(PlatformMappingService platformMappingService,
@@ -61,7 +64,7 @@ class PlatformMappingViewService extends BaseViewService {
                                       CmsMtPlatformCommonSchemaService platformCommonSchemaService,
                                       CommonSchemaService commonSchemaService,
                                       CmsMtFeedCustomPropDao feedCustomPropDao,
-                                      PlatformCategoryService platformCategoryService, MqSender mqSender) {
+                                      PlatformCategoryService platformCategoryService, CmsMqSenderService mqSender) {
         this.platformMappingService = platformMappingService;
         this.platformSchemaService = platformSchemaService;
         this.platformCommonSchemaService = platformCommonSchemaService;
@@ -293,10 +296,15 @@ class PlatformMappingViewService extends BaseViewService {
         if (!need)
             return false;
 
-        Map<String, Object> map = new HashMap<>();
-        map.put(MqParameterKeys.key1, cmsBtRefreshProductTaskModel.getId());
-        mqSender.sendMessage(CmsMqRoutingKey.CMS_TASK_REFRESH_PRODUCTS, map);
-
+        CmsRefreshProductsMQMessageBody map = new CmsRefreshProductsMQMessageBody();
+        map.setTaskId(cmsBtRefreshProductTaskModel.getId());
+        map.setSender(userName);
+        try {
+            mqSender.sendMessage(map);
+        } catch (MQMessageRuleException e) {
+            $error(e);
+            e.printStackTrace();
+        }
         return true;
     }
 

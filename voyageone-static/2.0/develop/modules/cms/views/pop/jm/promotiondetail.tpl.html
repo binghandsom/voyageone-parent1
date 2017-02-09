@@ -234,6 +234,6 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>
-        <button class="btn btn-vo" ng-click="ok()" ng-disabled="promotionForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;确认</button>
+        <button class="btn btn-vo" ng-click="ok()" ng-disabled="promotionForm.$invalid || editModel.model.passDated"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;确认</button>
     </div>
 </div>

@@ -174,6 +174,7 @@ public abstract class BaseAnalysisService  extends BaseCronTaskService {
         map.put("weight_org", (Feeds.getVal1(channel, FeedEnums.Name.weight_org)));
         map.put("weight_org_unit", (Feeds.getVal1(channel, FeedEnums.Name.weight_org_unit)));
         map.put("weight_calc", (Feeds.getVal1(channel, FeedEnums.Name.weight_calc)));
+        map.put("last_received_on", (Feeds.getVal1(channel, FeedEnums.Name.last_received_on)));
         return map;
     }
 

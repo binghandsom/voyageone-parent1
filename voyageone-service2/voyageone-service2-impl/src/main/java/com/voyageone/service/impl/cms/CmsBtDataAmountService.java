@@ -1,4 +1,5 @@
 package com.voyageone.service.impl.cms;
+
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
@@ -26,6 +27,7 @@ public class CmsBtDataAmountService {
     CmsBtDataAmountDaoExt daoExt;
     @Autowired
     CmsBtBrandBlockService cmsBtBrandBlockService;
+
     //String feedBrand, int masterBrandId, String platformBrand
     public void sumByChannelId(String channelId) {
         //1.汇总FEED信息
@@ -43,7 +45,7 @@ public class CmsBtDataAmountService {
                 sumPrice(channelId, cartId);
                 //4.平台信息
                 sumPlatInfo(channelId, cartId);
-                sumBrandNoMatch(channelId,cartId);
+                sumBrandNoMatch(channelId, cartId);
 
             }
         }
@@ -83,7 +85,7 @@ public class CmsBtDataAmountService {
         for (EnumPlatformPriceSum enumFeed : list) {
             String strQuery = "";
             if (enumFeed.getFunFormat() != null) {
-                QueryStrFormatParam param=new QueryStrFormatParam();
+                QueryStrFormatParam param = new QueryStrFormatParam();
                 param.setCartId(cartId);
                 param.setQueryStr(enumFeed.getStrQuery());
                 strQuery = enumFeed.getFunFormat().apply(param);
@@ -116,8 +118,9 @@ public class CmsBtDataAmountService {
         int count = cmsBtBrandBlockService.getBrandCount(channelId, String.valueOf(cartId), 2);
         saveCmsBtDataAmount(channelId, cartId, EnumPlatformInfoSum.CMS_PLATFORM_BRAND_BLOCK, count);
     }
+
     //获取品牌未匹配数量
-    private  void sumBrandNoMatch(String channelId, int cartId) {
+    private void sumBrandNoMatch(String channelId, int cartId) {
         int count = daoExt.selectBrandNoMatchCount(channelId, cartId);
         saveCmsBtDataAmount(channelId, cartId, EnumPlatformInfoSum_BrandNoMatch.CMS_BRAND_NO_MATCH_COUNT, count);
     }
@@ -156,8 +159,8 @@ public class CmsBtDataAmountService {
     }
 
     //获取Home汇总信息数据源
-    public Object getHomeSumData(String channelId,String Lang) {
-        List<TypeChannelBean> listCarts = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D,Lang);
+    public Object getHomeSumData(String channelId, String Lang) {
+        List<TypeChannelBean> listCarts = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, Lang);
 
         Map<String, Object> result = new HashMap<>();
         List<Integer> listDataAmountTypeId = new ArrayList<>();
@@ -165,8 +168,7 @@ public class CmsBtDataAmountService {
         listDataAmountTypeId.add(EnumDataAmountType.MasterSum.getId());
         listDataAmountTypeId.add(EnumDataAmountType.PlatformInfoSum.getId());
         listDataAmountTypeId.add(EnumDataAmountType.PlatformPriceSum.getId());
-        List<CmsBtDataAmountModel> list = daoExt.selectByListDataAmountTypeId(channelId,listDataAmountTypeId);
-
+        List<CmsBtDataAmountModel> list = daoExt.selectByListDataAmountTypeId(channelId, listDataAmountTypeId);
 
         result.put("feedSum", getSumModel(list, EnumDataAmountType.FeedSum));
         result.put("masterSum", getSumModel(list, EnumDataAmountType.MasterSum));
@@ -176,22 +178,22 @@ public class CmsBtDataAmountService {
         return result;
     }
 
-   private Map<String,Object> getSumModel(List<CmsBtDataAmountModel> list,EnumDataAmountType enumDataAmountType) {
-       //1获取该分类所有数据
-       List<CmsBtDataAmountModel> listAmount = getByDataAmountTypeId(list, enumDataAmountType);
+    private Map<String, Object> getSumModel(List<CmsBtDataAmountModel> list, EnumDataAmountType enumDataAmountType) {
+        //1获取该分类所有数据
+        List<CmsBtDataAmountModel> listAmount = getByDataAmountTypeId(list, enumDataAmountType);
 
-       //2.行转列
-       Map<String, Object> map = new HashMap<>();
+        //2.行转列
+        Map<String, Object> map = new HashMap<>();
 //       listAmount.stream().forEach((m) -> {
 //           map.put(m.getAmountName(), m);
 //       });
-       for (CmsBtDataAmountModel m :listAmount)
-       {
-           map.put(m.getAmountName(), m);
-       }
-       return map;
-   }
-    private List<Map<String,Object>> getPlatformSumModel(List<CmsBtDataAmountModel> list, List<TypeChannelBean> listCarts,EnumDataAmountType enumDataAmountType) {
+        for (CmsBtDataAmountModel m : listAmount) {
+            map.put(m.getAmountName(), m);
+        }
+        return map;
+    }
+
+    private List<Map<String, Object>> getPlatformSumModel(List<CmsBtDataAmountModel> list, List<TypeChannelBean> listCarts, EnumDataAmountType enumDataAmountType) {
         List<Map<String, Object>> listResult = new ArrayList();
         //1获取该分类所有数据
         List<CmsBtDataAmountModel> listAmount = getByDataAmountTypeId(list, enumDataAmountType);
@@ -212,6 +214,7 @@ public class CmsBtDataAmountService {
                     model.put(m.getAmountName(), m);
                 }
                 model.put("platformName", chanelBean.getName());
+                model.put("add_name2", chanelBean.getAdd_name2());
                 listResult.add(model);
             }
         }
@@ -220,10 +223,8 @@ public class CmsBtDataAmountService {
 
     private List<CmsBtDataAmountModel> getByDataAmountTypeId(List<CmsBtDataAmountModel> list, EnumDataAmountType enumType) {
         List<CmsBtDataAmountModel> newList = new ArrayList<>();
-        for (CmsBtDataAmountModel m :list)
-        {
-            if(m.getDataAmountTypeId()==enumType.getId())
-            {
+        for (CmsBtDataAmountModel m : list) {
+            if (m.getDataAmountTypeId() == enumType.getId()) {
                 newList.add(m);
             }
         }
@@ -232,15 +233,14 @@ public class CmsBtDataAmountService {
 //        }).collect(Collectors.toList());
         return newList;
     }
+
     private List<CmsBtDataAmountModel> getBycartId(List<CmsBtDataAmountModel> list, int cartId) {
         List<CmsBtDataAmountModel> newList = new ArrayList<>();
 //        list.stream().filter((m) -> {
 //            return m.getCartId() == cartId;
 //        }).forEach(newList::add);
-        for (CmsBtDataAmountModel m :list)
-        {
-            if(m.getCartId()==cartId)
-            {
+        for (CmsBtDataAmountModel m : list) {
+            if (m.getCartId() == cartId) {
                 newList.add(m);
             }
         }
