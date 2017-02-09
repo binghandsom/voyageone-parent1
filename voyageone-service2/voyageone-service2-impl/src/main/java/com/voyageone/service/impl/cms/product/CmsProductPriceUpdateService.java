@@ -295,7 +295,7 @@ public class CmsProductPriceUpdateService extends BaseService {
                     // 记录价格变更履历/同步价格范围
                     List<CmsBtPriceLogModel> logModelList = new ArrayList<>(1);
                     for (BaseMongoMap skuObj : skuList) {
-                        String skuCode = (String) skuObj.getStringAttribute("skuCode");
+                        String skuCode = skuObj.getStringAttribute("skuCode");
                         CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
                         cmsBtPriceLogModel.setChannelId(channleId);
                         cmsBtPriceLogModel.setProductId(prodObj.getProdId().intValue());

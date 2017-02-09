@@ -1,7 +1,6 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.product.CmsProductVoRateUpdateService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductVoRateUpdateMQMessageBody;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
@@ -29,13 +28,11 @@ public class CmsProductVoRateUpdateMQJob extends TBaseMQCmsService<ProductVoRate
     @Override
     public void onStartup(ProductVoRateUpdateMQMessageBody messageBody) throws Exception {
 
-        try {
-            List<Map<String, String>> failList = cmsProductVoRateUpdateService.updateProductVoRate(messageBody);
-            if (CollectionUtils.isNotEmpty(failList)) {
-                cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(failList));
-            }
-        } catch (Exception e) {
-            cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
+        List<Map<String, String>> failList = cmsProductVoRateUpdateService.updateProductVoRate(messageBody);
+        if (CollectionUtils.isNotEmpty(failList)) {
+            cmsSuccessIncludeFailLog(messageBody, String.format("Code总数(%s) 失败(%s) \\r\\n %s", messageBody.getCodeList().size(), failList.size(), JacksonUtil.bean2Json(failList)));
+        } else {
+            cmsSuccessLog(messageBody, String.format("Code总数(%s)", messageBody.getCodeList().size()));
         }
     }
 }
