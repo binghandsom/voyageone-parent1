@@ -1,7 +1,6 @@
 package com.voyageone.web2.cms.views.product;
 
 import com.google.common.base.Preconditions;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.asserts.Assert;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
@@ -19,7 +18,6 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -329,7 +327,7 @@ public class CmsProductDetailController extends CmsController {
 
         // 只有天猫， 天猫国际有这个需要
         if (cartId == CartEnums.Cart.TM.getValue() || cartId == CartEnums.Cart.TG.getValue()) {
-            cmsProductPlatformDetailService.resetProductGroupPlatformPid(channelId, cartId, productCode);
+            productService.resetProductAndGroupPlatformPid(channelId, cartId, productCode);
         }
 
         return success(null);

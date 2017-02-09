@@ -531,7 +531,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         String modified  = productService.updateProductPlatform(channelId, prodId, platformModel, modifier, true, blnSmartSx);
         if(isCatPathChg){
-            resetProductGroupPlatformPid(channelId, platformModel.getCartId(), cmsBtProductModel.getCommon().getFields().getCode());
+            productService.resetProductAndGroupPlatformPid(channelId, platformModel.getCartId(), cmsBtProductModel.getCommon().getFields().getCode());
         }
         return modified;
 
@@ -747,15 +747,6 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 fieldMap.put(s, v);
             }
         });
-    }
-
-    /**
-     * 重置group的platformPid
-     */
-    public void resetProductGroupPlatformPid(String channelId, int cartId, String code) {
-
-        productGroupService.resetProductGroupPlatformPid(channelId, cartId, code);
-
     }
 
 }
