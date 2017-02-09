@@ -87,7 +87,6 @@ public class CmsPlatformActiveLogService extends BaseService {
         $info("CmsPlatformActiveLogService start 参数 " + JacksonUtil.bean2Json(messageMap));
         List<Map<String, String>> failList = new ArrayList<>();
         JongoQuery queryObj = new JongoQuery();
-        JongoUpdate updObj;
         String channelId = ((String) messageMap.get("channelId"));
         Collection<Integer> cartIdList = (Collection<Integer>) messageMap.get("cartIdList");
         String activeStatus = ((String) messageMap.get("activeStatus"));
@@ -117,13 +116,13 @@ public class CmsPlatformActiveLogService extends BaseService {
             //根据cartId和productCodes取得cmsBtProductGroup信息
             List<CmsBtProductGroupModel> grpObjList = getCmsBtProductGroupModelInfo(codeList, cartId, channelId);
             //根据取得grpObjList信息是否有异常，如果有异常保留异常信息
-            if (!isNullGrpObjList(grpObjList, codeList, cartId, channelId).isEmpty()){
+            if (!isNullGrpObjList(grpObjList, codeList, cartId, channelId).isEmpty()) {
                 failList.add(isNullGrpObjList(grpObjList, codeList, cartId, channelId));
                 continue;
             }
             for (CmsBtProductGroupModel cmsBtProductGroupModel : grpObjList) {
                 //根据取得cmsBtProductGroupModel信息是否有异常，如果有异常保留异常信息
-                if (isNullCmsBtProductGroupModel(cmsBtProductGroupModel, cartId, channelId).isEmpty()){
+                if (isNullCmsBtProductGroupModel(cmsBtProductGroupModel, cartId, channelId).isEmpty()) {
                     failList.add(isNullCmsBtProductGroupModel(cmsBtProductGroupModel, cartId, channelId));
                     continue;
                 }
@@ -275,11 +274,10 @@ public class CmsPlatformActiveLogService extends BaseService {
                 if (!updRsFlg) {
                     $error("CmsPlatformActiveLogService API调用返回错误结果");
                 }
-                boolean isUpdateCmsBtProductGroup =true;
+                boolean isUpdateCmsBtProductGroup = true;
                 // 保存调用结果
                 for (String prodCode : pcdList) {
-                    //先插入表cms_bt_platform_active_log数据
-//                    insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, channelId, activeStatus, comment, cmsBtProductGroupModel, userName);
+
                     //根据group的code取得cms_bt_product信息数据
                     String failedComment = null;
                     CmsBtProductModel prodObj = getCmsBtProductModelInfo(cartId, prodCode, channelId, queryObj);
@@ -287,27 +285,19 @@ public class CmsPlatformActiveLogService extends BaseService {
                     failedComment = failedComment(failedComment, prodObj, cartId, prodCode, channelId);
                     if (failedComment != null) {
                         String result = "3";
-                        //更新cms_bt_platform_active_log表
-                        updObj = updateCmsPlatformActiveLogServiceResult(result, cartId, prodCode, batchNo, failedComment, userName);
-                        rs = bulkList.addBulkJongo(updObj);
-                        if (rs != null) {
-                            $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s, code=%s, batchNo=%d platformActiveLog更新结果=%s", cartId, channelId, prodCode, batchNo, rs.toString());
-                        }
-                        isUpdateCmsBtProductGroup =false;
+                        //插入表cms_bt_platform_active_log数据
+                        insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, channelId, activeStatus, comment, cmsBtProductGroupModel, userName, result, failedComment);
+                        isUpdateCmsBtProductGroup = false;
                     } else {
                         if (updRsFlg) {
                             String result = "1";
-                            //更新cms_bt_platform_active_log表
-                            updObj = updateCmsPlatformActiveLogServiceResult(result, cartId, prodCode, batchNo, failedComment, userName);
+                            //插入ms_bt_platform_active_log表
+                            insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, channelId, activeStatus, comment, cmsBtProductGroupModel, userName, result, failedComment);
                         } else {
                             String result = "2";
                             failedComment = "调用API失败";
-                            //更新cms_bt_platform_active_log表
-                            updObj = updateCmsPlatformActiveLogServiceResult(result, cartId, prodCode, batchNo, failedComment, userName);
-                        }
-                        rs = bulkList.addBulkJongo(updObj);
-                        if (rs != null) {
-                            $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s, code=%s, batchNo=%d platformActiveLog更新结果=%s", cartId, channelId, prodCode, batchNo, rs.toString());
+                            //插入cms_bt_platform_active_log表
+                            insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, channelId, activeStatus, comment, cmsBtProductGroupModel, userName, result, failedComment);
                         }
                         // 更新cms_bt_product表
                         rs = bulkList3.addBulkJongo(updateCmsBtProductInfo(cartId, activeStatus, userName, prodCode, updRsFlg, errMsg));
@@ -316,17 +306,13 @@ public class CmsPlatformActiveLogService extends BaseService {
                         }
                     }
                 }
-                if (updRsFlg&&isUpdateCmsBtProductGroup) {
+                if (updRsFlg && isUpdateCmsBtProductGroup) {
                     //更新cms_bt_product_group表
                     rs = bulkList2.addBulkJongo(updateCmsBtProductGroupInfo(cartId, numIId, statusVal, activeStatus, userName));
                     if (rs != null) {
                         $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s, numIId=%s cmsBtProductGroup更新结果=%s", cartId, channelId, numIId, rs.toString());
                     }
                 }
-            }
-            rs = bulkList.execute();
-            if (rs != null) {
-                $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s, batchNo=%d platformActiveLog更新结果=%s", cartId, channelId, batchNo, rs.toString());
             }
             rs = bulkList2.execute();
             if (rs != null) {
@@ -352,7 +338,7 @@ public class CmsPlatformActiveLogService extends BaseService {
     }
 
     // 根据取得grpObjList信息是否有异常，如果有异常保留异常信息
-    private Map<String, String>  isNullGrpObjList(List<CmsBtProductGroupModel> grpObjList, Collection<String> codeList, Integer cartId, String channelId) {
+    private Map<String, String> isNullGrpObjList(List<CmsBtProductGroupModel> grpObjList, Collection<String> codeList, Integer cartId, String channelId) {
         Map<String, String> failMap = new HashMap<>();
         if (grpObjList == null || grpObjList.isEmpty()) {
             failMap.put(String.format("cartId=%d", cartId), String.format("产品对于的group不存在, cartId=%d, channelId=%s, codeList=%s", cartId, channelId, JacksonUtil.bean2Json(codeList)));
@@ -363,7 +349,7 @@ public class CmsPlatformActiveLogService extends BaseService {
     }
 
     // 根据取得cmsBtProductGroupModel信息是否有异常，如果有异常保留异常信息
-    private  Map<String, String>  isNullCmsBtProductGroupModel(CmsBtProductGroupModel cmsBtProductGroupModel, Integer cartId, String channelId) {
+    private Map<String, String> isNullCmsBtProductGroupModel(CmsBtProductGroupModel cmsBtProductGroupModel, Integer cartId, String channelId) {
         Map<String, String> failMap = new HashMap<>();
         if (cmsBtProductGroupModel.getProductCodes() == null || cmsBtProductGroupModel.getProductCodes().isEmpty()) {
             failMap.put(String.format("group=%s", cmsBtProductGroupModel.get_id()), String.format("产品group下没有商品codes, cartId=%d, channelId=%s, grpInfo=%s", cartId, channelId, JacksonUtil.bean2Json(cmsBtProductGroupModel)));
@@ -395,14 +381,20 @@ public class CmsPlatformActiveLogService extends BaseService {
     }
 
     // 根据参数插入cms_bt_platform_active_log表记录
-    private void insertCmsBtPlatformActiveLogModel(String prodCode, long batchNo, Integer cartId, String channelId, String activeStatus, String comment, CmsBtProductGroupModel cmsBtProductGroupModel, String userName) {
+    private void insertCmsBtPlatformActiveLogModel(String prodCode, long batchNo, Integer cartId, String channelId
+            , String activeStatus, String comment, CmsBtProductGroupModel cmsBtProductGroupModel, String userName
+            , String result, String failedComment) {
         CmsBtPlatformActiveLogModel model = new CmsBtPlatformActiveLogModel();
         model.setBatchNo(batchNo);
         model.setCartId(cartId);
         model.setChannelId(channelId);
         model.setActiveStatus(activeStatus);
         model.setPlatformStatus(getPlatformStatus(prodCode, channelId, cartId));
-        model.setComment(comment);
+        if (failedComment != null) {
+            model.setFailedComment(failedComment);
+        } else {
+            model.setComment(comment);
+        }
         model.setGroupId(cmsBtProductGroupModel.getGroupId());
         model.setMainProdCode(cmsBtProductGroupModel.getMainProductCode());
         model.setProdCode(prodCode);
@@ -416,7 +408,7 @@ public class CmsPlatformActiveLogService extends BaseService {
             numId = cmsBtProductGroupModel.getNumIId();
         }
         model.setNumIId(numId);
-        model.setResult("0");
+        model.setResult(result);
         model.setCreater(userName);
         model.setCreated(DateTimeUtil.getNow());
         model.setModified("");
@@ -477,22 +469,6 @@ public class CmsPlatformActiveLogService extends BaseService {
             }
         }
         return failedComment;
-    }
-
-    // 更新cms_bt_platform_active_log表
-    private JongoUpdate updateCmsPlatformActiveLogServiceResult(String result, Integer cartId, String prodCode
-            , long batchNo, String failedComment, String userName) {
-        JongoUpdate updObj = new JongoUpdate();
-        updObj.setQuery("{'cartId':#,'prodCode':#,'batchNo':#}");
-        updObj.setQueryParameters(cartId, prodCode, batchNo);
-        if ("1".equals(result)) {
-            updObj.setUpdate("{$set:{'result':#,'modified':#,'modifier':#}}");
-            updObj.setUpdateParameters("1", DateTimeUtil.getNowTimeStamp(), userName);
-        } else {
-            updObj.setUpdate("{$set:{'result':#,'failedComment':#,'modified':#,'modifier':#}}");
-            updObj.setUpdateParameters(result, failedComment, DateTimeUtil.getNowTimeStamp(), userName);
-        }
-        return updObj;
     }
 
     // 更新cms_bt_product表
