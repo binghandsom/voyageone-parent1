@@ -121,7 +121,7 @@ public class CmsPlatformActiveLogService extends BaseService {
             }
             for (CmsBtProductGroupModel cmsBtProductGroupModel : grpObjList) {
                 //根据取得cmsBtProductGroupModel信息是否有异常，如果有异常保留异常信息
-                if (isNullCmsBtProductGroupModel(cmsBtProductGroupModel, cartId, channelId).isEmpty()) {
+                if (!isNullCmsBtProductGroupModel(cmsBtProductGroupModel, cartId, channelId).isEmpty()) {
                     failList.add(isNullCmsBtProductGroupModel(cmsBtProductGroupModel, cartId, channelId));
                     continue;
                 }

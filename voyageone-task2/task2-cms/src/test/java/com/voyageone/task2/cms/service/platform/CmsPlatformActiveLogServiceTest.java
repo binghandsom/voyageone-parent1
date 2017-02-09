@@ -140,11 +140,11 @@ public class CmsPlatformActiveLogServiceTest {
         // 发送请求到MQ,插入操作历史记录
         Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", "010");
-        logParams.put("cartIdList", new ArrayList(Arrays.asList(27)));
-        logParams.put("activeStatus", "ToOnSale");
-        logParams.put("creater", "will2");
+        logParams.put("cartIdList", new ArrayList(Arrays.asList(23)));
+        logParams.put("activeStatus", "OnSale");
+        logParams.put("creator", "gump");
         logParams.put("comment", "高级检索 批量上下架");
-        logParams.put("codeList", new ArrayList(Arrays.asList("51A0HC13E1-00LCNB0")));
+        logParams.put("codeList", new ArrayList(Arrays.asList("1FMA3324Y11")));
         logParams.put("statusVal", CmsConstants.PlatformActive.ToInStock);
         try {
             targetService.setProductOnSaleOrInStock(logParams);
