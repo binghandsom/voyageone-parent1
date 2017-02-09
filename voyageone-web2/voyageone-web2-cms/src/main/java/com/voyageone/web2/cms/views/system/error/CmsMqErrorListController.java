@@ -31,6 +31,10 @@ public class CmsMqErrorListController extends CmsController {
         Map<String, Object> result = new HashMap<>();
         // 获取mqTypeList
         result.put("type", OperationLog_Type.getList());
+
+        if (params.get("userName") == null) {
+            params.put("userName", getUser().getUserName());
+        }
         // 检索Master品牌匹配的数据
         result.put("mqErrorList", cmsBtOperationLogService.searchMqCmsBtOperationLogData(params));
         // 检索Master品牌匹配的数量

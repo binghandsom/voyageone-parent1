@@ -4,15 +4,13 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.util.*;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
-import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.dao.cms.mongo.CmsBtOperationLogDao;
+import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -122,6 +120,7 @@ public class CmsBtOperationLogService {
         JongoQuery queryObject = new JongoQuery();
         String parameter = getSearchQuery(params);
         queryObject.setQuery(parameter);
+        queryObject.setSort("{\"modified\": -1}");
         int pageNum = (Integer) params.get("curr");
         int pageSize = (Integer) params.get("size");
         queryObject.setSkip((pageNum - 1) * pageSize);
@@ -150,6 +149,12 @@ public class CmsBtOperationLogService {
         List type = (List) params.get("typeValue");
         if (type.size() > 0) {
             sbQuery.append(MongoUtils.splicingValue("type", type.toArray(), "$in"));
+            sbQuery.append(",");
+        }
+        //type
+        String userName = String.valueOf(params.get("userName"));
+        if (!StringUtils.isEmpty(userName) && !"0".equals(userName)) {
+            sbQuery.append(MongoUtils.splicingValue("modifier", userName, "$regex"));
             sbQuery.append(",");
         }
         return "{" + sbQuery.toString() + "}";
