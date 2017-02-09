@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.dict;
+package com.voyageone.task2.cms.dictSellerCids;
 
 import com.voyageone.ims.rule_expression.*;
 import org.junit.Test;
@@ -26,8 +26,19 @@ import java.util.List;
  * @since 2.4.0
  *
  */
-public class SellerCats_DictTest {
+public class Tmall_010_Jewelry_SellerCids_DictTest {
 
+	// ------------------------------------------------------------------------------------------------
+	//   不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的
+	//
+	//   不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的
+	//
+	//   不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的
+	//
+	//   不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的
+	//
+	//   不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的  不全的
+	// ------------------------------------------------------------------------------------------------
 	@Test
 	public void startupTest() {
 
@@ -122,7 +133,7 @@ public class SellerCats_DictTest {
             CustomModuleUserParamIf customModuleUserParamIf = new CustomModuleUserParamIf();
             customModuleUserParamIf.setCondition(conditionListExpressionIf);
 
-            // propValue "cId(子分类id)|cIds(父分类id,子分类id)|cName(父分类id,子分类id)|cNames(父分类id,子分类id)"
+            // propValue "cId(子分类id)|cIds(父分类id,子分类id)|cName(父分类名字>子分类名字)|cNames(父分类名字,子分类名字)"
             RuleExpression propValue = new RuleExpression();
             propValue.addRuleWord(new TextWord("1124130584|1124130579,1124130584|系列>彩色宝石|系列,彩色宝石"));
             customModuleUserParamIf.setPropValue(propValue);

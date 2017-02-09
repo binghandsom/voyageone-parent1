@@ -46,7 +46,6 @@ public class CmsPlatformActiveLogMQJob extends TBaseMQCmsService<PlatformActiveL
             if (e instanceof BusinessException) {
                 cmsBusinessExLog(messageBody, e.getMessage());
             } else {
-                $error(e);
                 cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
             }
         }
