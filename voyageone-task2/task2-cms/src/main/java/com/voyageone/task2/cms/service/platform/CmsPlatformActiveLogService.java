@@ -100,7 +100,6 @@ public class CmsPlatformActiveLogService extends BaseService {
         long batchNo = sequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PLATFORMACTIVEJOB_ID);
         // 调用实际的上下架Api，记录调用结果，在group表和product表更新相关状态
         BulkWriteResult rs;
-        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(100, platformActiveLogDao, channelId);
         BulkJongoUpdateList bulkList2 = new BulkJongoUpdateList(100, cmsBtProductGroupDao, channelId);
         BulkJongoUpdateList bulkList3 = new BulkJongoUpdateList(100, cmsBtProductDao, channelId);
         for (Integer cartId : cartIdList) {
