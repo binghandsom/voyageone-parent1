@@ -1,6 +1,8 @@
 define([
     'cms',
-    'modules/cms/enums/Carts'
+    'modules/cms/enums/Carts',
+    'modules/cms/directives/platFormStatus.directive',
+    'modules/cms/directives/noticeTip.directive'
 ], function (cms, carts) {
 
     var cntConfig = {
@@ -559,7 +561,7 @@ define([
 
         if (!brandField.value.value)
             brandField.value.value = brandId;
-    }
+    };
 
     SpJdController.prototype.searchField = function (fieldName, schema) {
 

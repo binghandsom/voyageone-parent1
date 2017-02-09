@@ -544,19 +544,27 @@ s-field textarea.s-html {
     text-align: right;
 }
 
-.product-shema-detail .bs-docs-sidebar {
-    position: fixed;
+.product-shema-detail .p-warning{
+    border: 2px solid #d6e5f1;
+    padding: 7px 5px;
+}
+
+.product-shema-detail .p-arrow{
+    text-align: center;
+    font-size: 16px;
+    color: #d6e5f1;
+}
+
+.bs-docs-sidebar {
     width: 95px ! important;
-    right: 40px;
     color: white;
-    margin-top: 80px;
     border: 1px solid #ADCAE2;
     background: #fff;
     opacity: .5;
 }
 
-.product-shema-detail .master-sidebar,
-.product-shema-detail .feed-sidebar {
+.master-sidebar,
+.feed-sidebar {
     top: 200px;
     right: 40px;
     z-index: 9;
@@ -564,11 +572,11 @@ s-field textarea.s-html {
     white-space: nowrap;
 }
 
-.product-shema-detail .bs-docs-sidebar:hover {
+.bs-docs-sidebar:hover {
     opacity: 1;
 }
 
-.product-shema-detail .bs-docs-sidebar h3 {
+.bs-docs-sidebar h3 {
     background: #ADCAE2;
     text-align: center;
     font-size: 15px;
@@ -578,12 +586,12 @@ s-field textarea.s-html {
     cursor: move;
 }
 
-.product-shema-detail .bs-docs-sidebar .nav {
+.bs-docs-sidebar .nav {
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-.product-shema-detail .bs-docs-sidebar .nav > li > a {
+.bs-docs-sidebar .nav > li > a {
     display: block;
     padding: 4px 20px;
     font-size: 13px;
@@ -591,7 +599,7 @@ s-field textarea.s-html {
     color: #767676;
 }
 
-.product-shema-detail .bs-docs-sidebar .nav > li > a:focus, .bs-docs-sidebar .nav > li > a:hover {
+.bs-docs-sidebar .nav > li > a:focus, .bs-docs-sidebar .nav > li > a:hover {
     padding-left: 19px;
     color: #ADCAE2;
     text-decoration: none;
