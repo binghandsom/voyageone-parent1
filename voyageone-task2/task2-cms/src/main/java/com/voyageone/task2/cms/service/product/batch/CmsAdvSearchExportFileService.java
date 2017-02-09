@@ -1015,6 +1015,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         int total = 0;
         List<CmsBtProductBean> products = new ArrayList<CmsBtProductBean>();
         Set<String> codes = new HashSet<String>();
+        String orgChannelId = "";
         for (CmsBtProductBean item:items) {
             if (item.getCommon() == null) {
                 continue;
@@ -1033,10 +1034,11 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 codes.add(fields.getOriginalCode());
             }
             products.add(item);
+            orgChannelId = item.getOrgChannelId();
         }
         Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<SkuInventoryForCmsBean, Integer>();
         if (codes.size() > 0) {
-            List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(channelId, new ArrayList<String>(codes));
+            List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(orgChannelId, new ArrayList<String>(codes));
             if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
                 for (SkuInventoryForCmsBean skuInventory:inventoryForCmsBeanList) {
                     skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
