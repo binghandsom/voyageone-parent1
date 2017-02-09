@@ -110,7 +110,7 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
             if (platformObj == null) {
                 // 产品数据不完整的记录到日志中
                 errorMap.put(prodCode, String.format("产品数据不完整，缺少Platform，prodCode=%s，cartId=%s", prodCode, cartId));
-                $warn("产品数据不完整，缺少Platform， prodCode=" + prodCode);
+                $error("产品数据不完整，缺少Platform， prodCode=" + prodCode);
                 continue;
             }
             // 变更前的分类选择
@@ -173,6 +173,8 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
             if (rs != null) {
                 $debug(String.format("批量设置店铺内分类 channelId=%s 执行结果=%s", channelId, rs.toString()));
             }
+            $info("添加满足条件的code:" + prodObj.getPlatform(cartId));
+            $info("添加满足条件的code:" + CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(prodObj.getPlatform(cartId).getStatus()));
             if(prodObj.getPlatform(cartId) != null && CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(prodObj.getPlatform(cartId).getStatus())){
 
                 $info("添加满足条件的code:" + prodObj.getCommon().getFields().getCode());
