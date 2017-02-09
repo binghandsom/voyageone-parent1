@@ -24,10 +24,8 @@ import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.SizeChartService;
-import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
@@ -64,8 +62,6 @@ public class CmsFieldEditService extends BaseViewService {
     @Autowired
     private CategorySchemaService categorySchemaService;
     @Autowired
-    private ProductGroupService productGroupService;
-    @Autowired
     private ProductService productService;
     @Autowired
     private CmsAdvanceSearchService advanceSearchService;
@@ -74,13 +70,7 @@ public class CmsFieldEditService extends BaseViewService {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
-    private CmsBtProductGroupDao cmsBtProductGroupDao;
-    @Autowired
-    private ProductSkuService productSkuService;
-    @Autowired
     private SxProductService sxProductService;
-    @Autowired
-    private CmsBtPriceLogService cmsBtPriceLogService;
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
     @Autowired
@@ -89,8 +79,6 @@ public class CmsFieldEditService extends BaseViewService {
     private MqSenderService mqSenderService;
     @Autowired
     private CommCacheService commCacheService;
-    @Autowired
-    private PriceService priceService;
     @Autowired
     private CmsMtPlatformCommonSchemaService cmsMtPlatformCommonSchemaService;
     @Autowired
@@ -406,7 +394,7 @@ public class CmsFieldEditService extends BaseViewService {
         }
 
         Integer cartId = (Integer) params.get("cartId");
-        // 聚美及minimall店铺没有上下架业务
+        // 聚美及miNiMall店铺没有上下架业务
         List<Integer> cartList = null;
         if (cartId == null || cartId == 0) {
             // 表示全平台更新
@@ -414,7 +402,6 @@ public class CmsFieldEditService extends BaseViewService {
             List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
             cartList = new ArrayList<>();
             for (TypeChannelBean cartObj : cartTypeList) {
-//                if (!CartEnums.Cart.JM.getId().equals(cartObj.getValue()) && !"3".equals(cartObj.getCartType())) {
                 if (!"3".equals(cartObj.getCartType())) {
                     cartList.add(NumberUtils.toInt(cartObj.getValue()));
                 }
@@ -422,7 +409,6 @@ public class CmsFieldEditService extends BaseViewService {
             cartList = cartTypeList.stream().map((cartType) -> NumberUtils.toInt(cartType.getValue())).collect(Collectors.toList());
         } else {
             TypeChannelBean cartObj = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, userInfo.getSelChannelId(), cartId.toString(), "en");
-//            if (CartEnums.Cart.JM.getValue() != cartId && !"3".equals(cartObj.getCartType())) {
             if (!"3".equals(cartObj.getCartType())) {
                 cartList = new ArrayList<>(1);
                 cartList.add(cartId);
@@ -434,31 +420,21 @@ public class CmsFieldEditService extends BaseViewService {
             rsMap.put("ecd", 0);
             return rsMap;
         }
-
-        // 更新产品的信息
-        JongoUpdate updObj = new JongoUpdate();
-        updObj.setQuery("{'productCodes':{$in:#},'channelId':#,'cartId':{$in:#}}");
-        updObj.setUpdate("{$set:{'platformActive':#,'modified':#,'modifier':#}}");
-
         // 设置platformActive的状态
         CmsConstants.PlatformActive statusVal = null;
         if ("1".equals(prop_id)) {
-            statusVal = com.voyageone.common.CmsConstants.PlatformActive.ToOnSale;
+            statusVal = CmsConstants.PlatformActive.ToOnSale;
         } else if ("0".equals(prop_id)) {
-            statusVal = com.voyageone.common.CmsConstants.PlatformActive.ToInStock;
+            statusVal = CmsConstants.PlatformActive.ToInStock;
         }
-
-        updObj.setQueryParameters(productCodes, userInfo.getSelChannelId(), cartList);
-        updObj.setUpdateParameters(statusVal, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
-        WriteResult rs = productGroupService.updateMulti(updObj, userInfo.getSelChannelId());
-        $debug("批量修改属性.(商品上下架) 结果1=：" + rs.toString());
-
         PlatformActiveLogMQMessageBody mqMessageBody = new PlatformActiveLogMQMessageBody();
         mqMessageBody.setChannelId(userInfo.getSelChannelId());
         mqMessageBody.setCartList(cartList);
+        mqMessageBody.setStatusVal(statusVal);
         mqMessageBody.setActiveStatus(statusVal.name());
         mqMessageBody.setUserName(userInfo.getUserName());
         mqMessageBody.setSender(userInfo.getUserName());
+
         if (cartId == null || cartId == 0) {
             mqMessageBody.setComment("高级检索 批量上下架(全店铺操作)");
         } else {
@@ -852,7 +828,6 @@ public class CmsFieldEditService extends BaseViewService {
             return rsMap;
         }
         ShopBean shopObj = Shops.getShop(userInfo.getSelChannelId(), cartId.toString());
-        CartBean cartObj = Carts.getCart(cartId);
         if (shopObj == null) {
             $error("批量修改商品价格 未配置平台 channelId=%s, cartId=%s", userInfo.getSelChannelId(), cartId.toString());
             throw new BusinessException("本店铺未配置所销售平台");
