@@ -52,6 +52,7 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
     public Map<String, String> onStartup(Map<String, Object> messageMap) {
         Map<String, String> errorMap = new HashMap<>();
         List<String> codeList = (List) messageMap.get("productIds");
+        $info("原始code数:" + codeList.size());
         List<String> approvedCodeList = new ArrayList<>();
         if (codeList == null || codeList.isEmpty()) {
             /*$warn("没有code条件 params=" + messageMap.toString());
@@ -102,6 +103,7 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
 
         // 更新cms_bt_product表的Platform->SellerCat字段
         BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
+        $info("查出来的code数:" + prodList.size());
         for (CmsBtProductModel prodObj : prodList) {
             String prodCode = prodObj.getCommon().getFields().getCode();
             CmsBtProductModel_Platform_Cart platformObj = prodObj.getPlatform(cartId);
@@ -172,6 +174,8 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
                 $debug(String.format("批量设置店铺内分类 channelId=%s 执行结果=%s", channelId, rs.toString()));
             }
             if(prodObj.getPlatform(cartId) != null && CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(prodObj.getPlatform(cartId).getStatus())){
+
+                $info("添加满足条件的code:" + prodObj.getCommon().getFields().getCode());
                 approvedCodeList.add(prodObj.getCommon().getFields().getCode());
             }
         }
