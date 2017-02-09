@@ -180,36 +180,9 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
             $debug(String.format("批量设置店铺内分类 channelId=%s 结果=%s", channelId, rs.toString()));
         }
 
-        // 独立官网时，不做上新，只记录变更结果
-        if (CartEnums.Cart.CN.getValue() == cartId) {
-            // 记录分类的变更
-            List<CmsBtSxCnProductSellercatModel> updModelList = new ArrayList<>();
-            CmsBtSxCnProductSellercatModel model = new CmsBtSxCnProductSellercatModel();
-            model.setChannelId(channelId);
-            model.setUpdFlg("0");
-            model.setCreater(userName);
-
-            for (Map<String, Object> vatObj : updCatObjMap.values()) {
-                List<String> cIdList = (List<String>) vatObj.get("cIds");
-                if (cIdList == null || cIdList.isEmpty()) {
-                    continue;
-                }
-                for (String catId : cIdList) {
-                    if (isInList(updModelList, catId)) {
-                        continue;
-                    }
-                    model.setCatId(catId);
-                    updModelList.add(model);
-                }
-            }
-
-            int rsCnt = cnProductSellercatDao.insertByList(updModelList);
-            $debug(String.format("批量设置店铺内分类 记录变更结果=%d", rsCnt));
-        } else {
-            //取得approved的code插入
-            $debug("批量设置店铺内分类 开始记入SxWorkLoad表");
-            sxProductService.insertSxWorkLoad(channelId, approvedCodeList, cartId, userName);
-        }
+        //取得approved的code插入
+        $debug("批量设置店铺内分类 开始记入SxWorkLoad表");
+        sxProductService.insertSxWorkLoad(channelId, approvedCodeList, cartId, userName);
 
         // 记录商品修改历史
         TypeChannelBean cartObj = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, Integer.toString(cartId), "cn");
