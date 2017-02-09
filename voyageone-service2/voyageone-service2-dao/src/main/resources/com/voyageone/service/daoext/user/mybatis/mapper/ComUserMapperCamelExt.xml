@@ -98,5 +98,52 @@
         AND  u.id =  #{userId,jdbcType=INTEGER}
     </select>
 
+    <select id="selectChannelsByUser" resultType="java.util.Map">
+        SELECT
+        ch.channel_id,
+        ch.full_name AS channel_name
+        FROM
+        com_user u
+        INNER JOIN com_user_role ur ON u.id = ur.user_id
+        AND u.user_account = #{userAccount,jdbcType=VARCHAR}
+        INNER JOIN com_role r ON ur.role_id = r.id
+        AND r.active = 1
+        INNER JOIN (
+        SELECT
+        r.id AS role_id,
+        rc.cfg_val1 AS channel_id,
+        ch.full_name AS full_name
+        FROM
+        voyageone_core.com_role r
+        INNER JOIN voyageone_core.com_role_config rc ON (r.id = rc.role_id AND r.active = 1)
+        <![CDATA[
+            INNER JOIN synship.tm_order_channel ch ON (rc.cfg_val1 = ch.order_channel_id AND ch.active = 1 AND ch.order_channel_id <> '000')
+            ]]>
+        WHERE
+        rc.cfg_name = 'channel_id'
+        GROUP BY
+        r.id,
+        ch.order_channel_id
+
+        UNION ALL
+
+        SELECT
+        r.id AS role_id,
+        ch.order_channel_id AS channel_id,
+        ch.full_name AS full_name
+        FROM
+        voyageone_core.com_role r
+        INNER JOIN voyageone_core.com_role_config rc ON (r.id = rc.role_id AND r.active = 1)
+        <![CDATA[
+            INNER JOIN synship.tm_order_channel ch ON (ch.active = 1 AND ch.order_channel_id <> '000')
+            ]]>
+        WHERE
+        rc.cfg_name = 'channel_id' AND rc.cfg_val1 = 'ALL'
+        GROUP BY
+        r.id,
+        ch.order_channel_id
+        ) ch ON r.id = ch.role_id
+    </select>
+
 
 </mapper>

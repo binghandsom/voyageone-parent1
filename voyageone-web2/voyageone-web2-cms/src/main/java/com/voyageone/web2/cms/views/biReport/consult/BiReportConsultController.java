@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.security.service.ComUserService;
 import com.voyageone.service.dao.report.BiReportDownloadTaskDao;
 import com.voyageone.service.model.report.BiReportDownloadTaskModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -34,12 +35,13 @@ import java.util.stream.Collectors;
         method = RequestMethod.POST
 )
 public class BiReportConsultController extends CmsAdvanceSearchController {
-    private final BiRepConsultService biRepConsultService;
 
     @Autowired
-    public BiReportConsultController(BiRepConsultService biRepConsultService) {
-        this.biRepConsultService = biRepConsultService;
-    }
+    BiRepConsultService biRepConsultService;
+
+    @Autowired
+    ComUserService comUserService;
+
 
     @RequestMapping(BIREPORT.LIST.DOWNLOAD.DOWNLOADTASKLIST)
     public AjaxResponse downloadTaskList()   //@RequestBody PageQueryParameters searchInfo
@@ -106,8 +108,29 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
         //将值传递给biReport生成地方
         return;
     }
+
     @RequestMapping(BIREPORT.LIST.DOWNLOAD.INIT)
     public AjaxResponse init() {
         return success(biRepConsultService.init(getUser().getSelChannelId(), getLang()));
+    }
+
+    @RequestMapping(BIREPORT.LIST.DOWNLOAD.GET_CHANNEL_LIST)
+    public AjaxResponse  getChannelsByUser() {
+        List<Map<String , String>> channels = comUserService.selectChannelsByUser(getUser().getUserName());
+
+        //目前只返回有数据的channel
+        if(channels != null && channels.size() > 0)
+        {
+            List result = channels.stream().filter(w -> w.get("channel_id").equals("007") || w.get("channel_id").equals("010") || w.get("channel_id").equals("012")
+                    || w.get("channel_id").equals("014") || w.get("channel_id").equals("017") || w.get("channel_id").equals("018") || w.get("channel_id").equals("024")
+                    || w.get("channel_id").equals("030"))
+                    .collect(Collectors.toList());
+            return  success(result);
+        }
+
+        return success(Collections.EMPTY_LIST) ;
+
+
+
     }
 }

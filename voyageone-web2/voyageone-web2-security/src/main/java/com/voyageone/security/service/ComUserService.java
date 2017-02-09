@@ -318,4 +318,13 @@ public class ComUserService {
 
     }
 
+
+    public List<Map<String, String>> selectChannelsByUser(String userAccount)
+    {
+        return comUserDaoExt.selectChannelsByUser(userAccount);
+    }
+
+
+
+
 }

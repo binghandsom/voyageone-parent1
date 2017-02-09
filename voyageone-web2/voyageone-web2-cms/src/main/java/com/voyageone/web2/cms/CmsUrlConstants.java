@@ -952,6 +952,7 @@ public interface CmsUrlConstants {
                 String CREATEXLSFILETASK = "createXlsFileTask";
                 String GETCOUNT = "getCount";
                 String GETPAGE = "getPage";
+                String GET_CHANNEL_LIST = "get_channel_list";
             }
         }
     }
