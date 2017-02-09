@@ -86,7 +86,7 @@ public class CmsFieldEditService extends BaseViewService {
     @Autowired
     private MqSender sender;
     @Autowired
-    private MqSenderService mqSenderService;
+    private CmsMqSenderService mqSenderService;
     @Autowired
     private CommCacheService commCacheService;
     @Autowired
