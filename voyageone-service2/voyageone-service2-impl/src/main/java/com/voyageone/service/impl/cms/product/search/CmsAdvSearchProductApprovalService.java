@@ -78,7 +78,8 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
             qryStr.append("{'common.fields.code':{$in:#},$or:[");
             for (Integer cartIdVal : newcartList) {
                 if (!CartEnums.Cart.TT.getId().equals(String.valueOf(cartIdVal))
-                        && !CartEnums.Cart.USTT.getId().equals(String.valueOf(cartIdVal)))
+                        && !CartEnums.Cart.USTT.getId().equals(String.valueOf(cartIdVal))
+                        && !CartEnums.Cart.DT.getId().equals(String.valueOf(cartIdVal)))
                     qryStr.append("{'platforms.P" + cartIdVal + ".status':{$nin:['Ready','Approved']}},");
                 else
                     qryStr.append("{'common.fields.hsCodeStatus': '0'},");
@@ -110,7 +111,8 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                 }
 
                 if (hsCodeList.size() > 0 && (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId())))) {
+                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId()))
+                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.DT.getId())))) {
                     throw new BusinessException("有商品商品没有设置税号, 无法审批, 请修改. codes=" + JacksonUtil.bean2Json(hsCodeList));
                 }else{
                     throw new BusinessException("有商品pending状态, 无法审批, 请修改. codes=" + JacksonUtil.bean2Json(codeList));
