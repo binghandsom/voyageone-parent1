@@ -1034,12 +1034,12 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
             products.add(item);
         }
-        Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<SkuInventoryForCmsBean, Integer>();
+        Map<String, Integer> skuInventoryMap = new HashMap<String, Integer>();
         if (codes.size() > 0) {
             List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(channelId, new ArrayList<String>(codes));
             if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
                 for (SkuInventoryForCmsBean skuInventory:inventoryForCmsBeanList) {
-                    skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
+                    skuInventoryMap.put(skuInventory.getChannelId()+skuInventory.getCode()+skuInventory.getSku(), skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
                 }
             }
         }
@@ -1074,8 +1074,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getModel()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getCode()));
-                SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuItem.getSkuCode());
-                FileUtils.cell(row, index++, unlock).setCellValue(skuInventoryMap.get(temp) == null ? "0" : String.valueOf(skuInventoryMap.get(temp)));
+//                SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuItem.getSkuCode());
+                String key = item.getChannelId()+item.getCommonNotNull().getFieldsNotNull().getCode()+skuItem.getSkuCode();
+                FileUtils.cell(row, index++, unlock).setCellValue(skuInventoryMap.get(key) == null ? "0" : String.valueOf(skuInventoryMap.get(key)));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getColor()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSize()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getSize()));
