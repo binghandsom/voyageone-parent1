@@ -385,13 +385,8 @@ define([
             parameter.promotionId = $scope.vm.promotionId;
             parameter.listPromotionProductId = listPromotionProductId;
             jmPromotionDetailService.batchSynchPrice(parameter).then(function (res) {
-                if (res.data.result) {
-                    $scope.search();
-                    alert("请稍后几分钟刷新页面，查看最新上传结果");
-                }
-                else {
-                    alert($translate.instant('TXT_FAIL'));
-                }
+                $scope.search();
+                alert("请稍后几分钟刷新页面，查看最新上传结果");
             });
         }
         //批量同步价格
@@ -422,9 +417,7 @@ define([
                     $scope.search();
                     alert("请稍后几分钟刷新页面，查看最新上传结果");
                 }
-                else {
-                    alert($translate.instant('TXT_FAIL'));
-                }
+
             });
         }
 
