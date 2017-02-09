@@ -173,7 +173,7 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
             if (rs != null) {
                 $debug(String.format("批量设置店铺内分类 channelId=%s 执行结果=%s", channelId, rs.toString()));
             }
-            $info("添加满足条件的code:" + prodObj.getPlatform(cartId));
+            $info("添加满足条件的code:" + JacksonUtil.bean2Json(prodObj.getPlatform(cartId)));
             $info("添加满足条件的code:" + CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(prodObj.getPlatform(cartId).getStatus()));
             if(prodObj.getPlatform(cartId) != null && CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(prodObj.getPlatform(cartId).getStatus())){
 
