@@ -2,14 +2,15 @@ define([
     'cms',
     'modules/cms/enums/Carts',
     'modules/cms/directives/platFormStatus.directive',
-    'modules/cms/directives/noticeTip.directive'
+    'modules/cms/directives/noticeTip.directive',
+    './approved-example.ctl'
 ], function (cms, carts) {
 
     var cntConfig = {
         checkArr: ['translate', 'tax', 'category', 'attribute']
     };
 
-    function SpJdController($scope, productDetailService, $translate, notify, confirm, $q, $compile, alert, popups, $fieldEditService) {
+    function SpJdController($scope, productDetailService, $translate, notify, confirm, $q, $compile, alert, popups, $fieldEditService, $document, $templateRequest) {
         this.$scope = $scope;
         this.productDetailService = productDetailService;
         this.$translate = $translate;
@@ -20,6 +21,8 @@ define([
         this.alert = alert;
         this.popups = popups;
         this.$fieldEditService = $fieldEditService;
+        this.$document = $document;
+        this.$templateRequest = $templateRequest;
         this.vm = {
             productDetails: null,
             productCode: "",
@@ -586,10 +589,113 @@ define([
         return result;
     };
 
+    SpJdController.prototype.openOffLinePop = function (type) {
+        var self = this,
+            popups = self.popups,
+            vm = self.vm;
+
+        if (vm.mastData == null)
+            return;
+
+        if (vm.status != 'Approved') {
+            self.alert("商品未完成平台上新，无法操作平台下线。");
+            return;
+        }
+
+        if (vm.mastData.isMain && type != 'group') {
+            self.alert("当前商品为主商品，无法单品下线。如果想下线整个商品，请点击【全group下线】按钮");
+            return;
+        }
+
+        popups.openProductOffLine({
+            cartId: self.$scope.cartInfo.value,
+            productCode: vm.mastData.productCode,
+            type: type
+        }).then(function () {
+            //刷新子页面
+            self.getPlatformData();
+        });
+    };
+
+    SpJdController.prototype.openSwitchMainPop = function () {
+        var self = this,
+            popups = self.popups;
+
+        popups.openSwitchMain({
+            cartId: self.$scope.cartInfo.value,
+            productCode: self.vm.mastData.productCode
+        }).then(function () {
+            //刷新子页面
+            self.getPlatformData();
+            self.vm.noMaterMsg = null;
+        });
+    };
+
+    SpJdController.prototype.copyMainProduct = function () {
+        var self = this,
+            $scope = self.$scope,
+            productDetailService = self.productDetailService,
+            template = _.template("您确定要复制Master数据到<%=cartName%>吗？");
+
+        self.confirm(template({cartName: $scope.cartInfo.name})).then(function () {
+            productDetailService.copyProperty({
+                prodId: $scope.productInfo.productId,
+                cartId: +$scope.cartInfo.value
+            }).then(function (res) {
+                self.vm.platform = res.data.platform;
+            });
+        });
+    };
+
+    SpJdController.prototype.moveToGroup = function () {
+
+        var self = this,
+            $scope = self.$scope,
+            $translate = self.$translate,
+            productDetailService = self.productDetailService,
+            template = $translate.instant('TXT_CONFIRM_MOVE_SKU', {'cartName': $scope.cartInfo.name}),
+            moveCodeInfo = {
+                cartId: $scope.cartInfo.value,
+                cartName: $scope.cartInfo.name,
+                prodId: $scope.productInfo.productId
+            };
+
+        window.sessionStorage.setItem('moveCodeInfo', JSON.stringify(moveCodeInfo));
+
+        self.confirm(template).then(function () {
+            var newTab = window.open('about:blank');
+
+            productDetailService.moveCodeInitCheck({
+                cartId: $scope.cartInfo.value,
+                cartName: $scope.cartInfo.name,
+                prodId: $scope.productInfo.productId
+            }).then(function () {
+                newTab.location.href = "#/product/code_move";
+            }, function () {
+                newTab.close();
+            });
+        });
+    };
+
+    SpJdController.prototype.showExt = function () {
+        var self = this,
+            body = self.$document[0].body,
+            $compile = self.$compile,
+            $templateRequest = self.$templateRequest;
+
+        $templateRequest('/modules/cms/views/product/approved-example.tpl.html').then(function (html) {
+            var modal = $(html);
+            var modalChildScope = self.$scope.$new();
+
+            modal.appendTo(body);
+            $compile(modal)(modalChildScope);
+        });
+    };
+
     cms.directive('jdSubPage', function () {
         return {
             restrict: 'E',
-            controller: ['$scope', 'productDetailService', '$translate', 'notify', 'confirm', '$q', '$compile', 'alert', 'popups', '$fieldEditService', SpJdController],
+            controller: ['$scope', 'productDetailService', '$translate', 'notify', 'confirm', '$q', '$compile', 'alert', 'popups', '$fieldEditService', '$document', '$templateRequest', SpJdController],
             controllerAs: 'ctrl',
             scope: {
                 productInfo: "=productInfo",

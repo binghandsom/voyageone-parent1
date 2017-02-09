@@ -504,7 +504,7 @@ s-field textarea.s-html {
     border-bottom: 2px solid #e67e22;
 }
 
-.product-shema-detail .product-title h3{
+.product-shema-detail .product-title h3 {
     padding-left: 10px;
     color: #e67e22;
     font-size: 15px;
@@ -544,15 +544,35 @@ s-field textarea.s-html {
     text-align: right;
 }
 
-.product-shema-detail .p-warning{
+.product-shema-detail .p-warning {
     border: 2px solid #d6e5f1;
     padding: 7px 5px;
 }
 
-.product-shema-detail .p-arrow{
+.product-shema-detail .p-arrow {
     text-align: center;
     font-size: 16px;
     color: #d6e5f1;
+}
+
+.approved-example {
+    width: 100%;
+    padding: 17px;
+}
+
+.approved-example-modal {
+    position: fixed;
+    top: 10px;
+    right: 70px;
+    bottom: 10px;
+    padding: 10px;
+    z-index: 1050;
+    background: #fff;
+    border: 1px solid #27c24c;
+    max-height: 417px;
+    max-width: 500px;
+    margin: 0px auto;
+    border-radius: 5px;
 }
 
 .bs-docs-sidebar {
@@ -1023,7 +1043,7 @@ schema .ng-invalid.focus-error {
 
 }
 
-#newCategory .fix-img{
+#newCategory .fix-img {
     max-width: 100px;
     max-height: 98px;
     height: 98px;
@@ -1038,20 +1058,21 @@ schema .ng-invalid.focus-error {
     background: none;
 }
 
-#newCategory .top-area{
+#newCategory .top-area {
     margin-left: 37px;
 }
 
-#newCategory .top-element{
+#newCategory .top-element {
     width: 300px;
     padding: 7px;
     margin: 6px;
 }
 
-#newCategory tbody tr{
+#newCategory tbody tr {
     height: 100px;
 }
-    /**组合套装样式*/
+
+/**组合套装样式*/
 #combined-product .btn-group li {
     margin-bottom: 3px;
 }
@@ -1075,7 +1096,7 @@ schema .ng-invalid.focus-error {
     background: url(../img/combine-example.png) no-repeat 0px 0%;
 }
 
-#combined-product.combined-sortable-product-modal{
+#combined-product.combined-sortable-product-modal {
     position: fixed;
     top: 10px;
     left: 10px;
