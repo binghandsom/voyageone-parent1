@@ -1,13 +1,18 @@
 package com.voyageone.web2.cms.views.biReport.consult;
 
 import com.voyageone.common.PageQueryParameters;
+import com.voyageone.common.util.HttpExcuteUtils;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.report.BiReportDownloadTaskDao;
 import com.voyageone.service.dao.report.BiReportSalesProduct010Dao;
 import com.voyageone.service.dao.report.BiReportSalesShop010Dao;
 import com.voyageone.service.daoext.report.BiReportDownloadTaskDaoExt;
 import com.voyageone.service.daoext.report.BiReportSalesShop010DaoExt;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.report.BiReportDownloadTaskModel;
 import com.voyageone.service.model.report.ShopSalesOfChannel010Model;
+import com.voyageone.web2.openapi.channeladvisor.constants.CAUrlConstants;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -28,8 +33,13 @@ import java.util.*;
  * Created by dell on 2017/1/9.
  */
 @Service
-public class BiRepConsultService {
+public class BiRepConsultService extends BaseService {
     private final String filePath="E://bi_report//xlsxFile//";
+
+    private static final String CREATE_XLS_FILE_TASK_URL = "http://localhost:8080/rest/report/createXlsFileTask";
+
+
+
     @Autowired
     private BiReportDownloadTaskDaoExt  biReportDownloadTaskDaoExt;
     @Autowired
@@ -81,9 +91,30 @@ public class BiRepConsultService {
         model.setFileName(fileName);
         model.setTaskStatus(ISheetInfo.SHEET.BASICINFO.CREATING);
         model.setCreatorName((String) params.get("creatorName"));
-        biReportDownloadTaskDao.insert(model);
+
+
+
+        String url = CREATE_XLS_FILE_TASK_URL;
+        String result = null;
+        try {
+            String request = JacksonUtil.bean2Json(params);
+            result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url , request);
+        } catch (Exception e) {
+            $error(e.getMessage());
+        }
+
+        if(!StringUtils.isNullOrBlank2(result)) {
+            Map mapResult =  JacksonUtil.jsonToMap(result);
+
+            biReportDownloadTaskDao.insert(model);
+
+            //TO DO 判断返回的Code
+
+            return mapResult;
+        }
         return params;
     }
+
     public Integer outTimeTask(Integer taskId){
         BiReportDownloadTaskModel model=biReportDownloadTaskDao.select(taskId);
         model.setTaskStatus(ISheetInfo.SHEET.BASICINFO.OUTTIME);
