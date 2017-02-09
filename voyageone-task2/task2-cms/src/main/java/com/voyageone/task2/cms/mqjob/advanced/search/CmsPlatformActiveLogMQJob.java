@@ -33,9 +33,10 @@ public class CmsPlatformActiveLogMQJob extends TBaseMQCmsService<PlatformActiveL
         params.put("channelId", messageBody.getChannelId());
         params.put("cartIdList", messageBody.getChannelId());
         params.put("activeStatus", messageBody.getActiveStatus());
-        params.put("creater", messageBody.getUserName());
+        params.put("creator", messageBody.getUserName());
         params.put("comment", messageBody.getComment());
         params.put("codeList", messageBody.getProductCodes());
+        params.put("statusVal",messageBody.getStatusVal());
 
         try {
             List<Map<String, String>> failList = cmsPlatformActiveLogService.setProductOnSaleOrInStock(params);
