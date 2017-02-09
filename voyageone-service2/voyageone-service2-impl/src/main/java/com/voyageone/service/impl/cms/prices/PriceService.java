@@ -951,33 +951,33 @@ public class PriceService extends BaseService {
      * 需要查询 voyageone_ims.ims_bt_product表，若对应的产品quantity_update_type为s：更新sku价格；为p：则更新商品价格(用最高一个sku的价格)
      * CmsBtProductModel中需要属性：common.fields.code, platforms.Pxx.pNumIId, platforms.Pxx.status, platforms.Pxx.skus.skuCode, platforms.Pxx.skus.priceSale,platforms.Pxx.skus.priceMsrp
      */
-    public void updateSkuPrice(String channleId, int cartId, CmsBtProductModel productModel,boolean isUpdateJmDealPrice) throws Exception {
+    public void updateSkuPrice(String channelId, int cartId, CmsBtProductModel productModel,boolean isUpdateJmDealPrice) throws Exception {
         logger.info("PriceService　更新商品SKU的价格 ");
-        ShopBean shopObj = Shops.getShop(channleId, Integer.toString(cartId));
+        ShopBean shopObj = Shops.getShop(channelId, Integer.toString(cartId));
         CartBean cartObj = Carts.getCart(cartId);
         if (shopObj == null || cartObj == null) {
-            $error("PriceService 未配置平台 channelId=%s, cartId=%d", channleId, cartId);
+            $error("PriceService 未配置平台 channelId=%s, cartId=%d", channelId, cartId);
             throw new BusinessException("该店铺未配置销售平台！");
         }
 
         String prodCode = org.apache.commons.lang3.StringUtils.trimToNull(productModel.getCommonNotNull().getFieldsNotNull().getCode());
         if (prodCode == null) {
-            $error("PriceService 产品数据不全 缺少code channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
+            $error("PriceService 产品数据不全 缺少code channelId=%s, cartId=%d, prod=%s", channelId, cartId, productModel.toString());
             throw new BusinessException("产品数据不全,缺少code！");
         }
         CmsBtProductModel_Platform_Cart platObj = productModel.getPlatform(cartId);
         if (platObj == null) {
-            $error("PriceService 产品数据不全 缺少Platform channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
+            $error("PriceService 产品数据不全 缺少Platform channelId=%s, cartId=%d, prod=%s", channelId, cartId, productModel.toString());
             throw new BusinessException("产品数据不全,缺少Platform！");
         }
         if (!CmsConstants.ProductStatus.Approved.name().equals(platObj.getStatus())) {
-            $warn("PriceService 产品未上新,不可修改价格 channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.getCommon().getFields().getCode());
+            $warn("PriceService 产品未上新,不可修改价格 channelId=%s, cartId=%d, prod=%s", channelId, cartId, productModel.getCommon().getFields().getCode());
             return;
         }
 
         List<BaseMongoMap<String, Object>> skuList = platObj.getSkus();
         if (skuList == null || skuList.isEmpty()) {
-            $error("PriceService 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channleId, prodCode, cartId);
+            $error("PriceService 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
             throw new BusinessException("产品数据不全,缺少sku数据！");
         }
         String updType = null;
@@ -985,18 +985,18 @@ public class PriceService extends BaseService {
             // 先要判断更新类型
             ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(productModel.getOrgChannelId(), cartId, prodCode);
             if (imsBtProductModel == null) {
-                $error("PriceService 产品数据不全 未配置ims_bt_product表 channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
+                $error("PriceService 产品数据不全 未配置ims_bt_product表 channelId=%s, cartId=%d, prod=%s", channelId, cartId, productModel.toString());
                 throw new BusinessException("产品数据不全,未配置ims_bt_product表！");
             }
             updType = org.apache.commons.lang3.StringUtils.trimToNull(imsBtProductModel.getQuantityUpdateType());
             if (updType == null || (!"s".equals(updType) && !"p".equals(updType))) {
-                $error("PriceService 产品数据不全 未配置ims_bt_product表quantity_update_type channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
+                $error("PriceService 产品数据不全 未配置ims_bt_product表quantity_update_type channelId=%s, cartId=%d, prod=%s", channelId, cartId, productModel.toString());
                 throw new BusinessException("产品数据不全,未配置ims_bt_product表quantity_update_type！");
             }
         }
 
         // 判断上新时销售价用的是建议售价还是最终售价
-        CmsChannelConfigBean priceConfig = CmsChannelConfigs.getConfigBean(channleId, CmsConstants.ChannelConfig.PRICE_SX_KEY, cartId + CmsConstants.ChannelConfig.PRICE_SX_PRICE_CODE);
+        CmsChannelConfigBean priceConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.PRICE_SX_KEY, cartId + CmsConstants.ChannelConfig.PRICE_SX_PRICE_CODE);
         String priceConfigValue = null;
         if (priceConfig != null) {
             // 取得价格对应的configValue名

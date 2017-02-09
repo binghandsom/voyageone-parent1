@@ -313,7 +313,6 @@ public class CmsFieldEditService extends BaseViewService {
 
             ProductVoRateUpdateMQMessageBody mqMessageBody = new ProductVoRateUpdateMQMessageBody();
             mqMessageBody.setChannelId(userInfo.getSelChannelId());
-            mqMessageBody.setCreater(userInfo.getUserName());
             mqMessageBody.setCodeList(productCodes);
             mqMessageBody.setVoRate(voRateVal);
             mqMessageBody.setSender(userInfo.getUserName());

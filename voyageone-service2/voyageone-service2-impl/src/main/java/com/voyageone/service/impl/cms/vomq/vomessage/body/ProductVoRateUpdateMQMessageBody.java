@@ -20,7 +20,6 @@ import java.util.List;
 public class ProductVoRateUpdateMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;
-    private String creater;
     private List<String> codeList;
     private String voRate;
 
@@ -31,9 +30,6 @@ public class ProductVoRateUpdateMQMessageBody extends BaseMQMessageBody {
         }
         if (CollectionUtils.isEmpty(codeList)) {
             throw new MQMessageRuleException("ProductVoRateUpdate参数codeList为空.");
-        }
-        if (StringUtils.isBlank(creater)) {
-            throw new MQMessageRuleException("ProductVoRateUpdate参数creater为空.");
         }
         if (StringUtils.isBlank(getSender())) {
             throw new MQMessageRuleException("sender(发送者)不能为空");
@@ -54,14 +50,6 @@ public class ProductVoRateUpdateMQMessageBody extends BaseMQMessageBody {
 
     public void setChannelId(String channelId) {
         this.channelId = channelId;
-    }
-
-    public String getCreater() {
-        return creater;
-    }
-
-    public void setCreater(String creater) {
-        this.creater = creater;
     }
 
     public List<String> getCodeList() {
