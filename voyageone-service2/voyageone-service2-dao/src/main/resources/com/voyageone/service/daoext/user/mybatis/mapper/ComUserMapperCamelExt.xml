@@ -125,7 +125,7 @@
         r.id,
         ch.order_channel_id
 
-        UNION ALL
+        UNION
 
         SELECT
         r.id AS role_id,
@@ -142,7 +142,7 @@
         GROUP BY
         r.id,
         ch.order_channel_id
-        ) ch ON r.id = ch.role_id
+        ) ch ON r.id = ch.role_id GROUP BY ch.channel_id
     </select>
 
 
