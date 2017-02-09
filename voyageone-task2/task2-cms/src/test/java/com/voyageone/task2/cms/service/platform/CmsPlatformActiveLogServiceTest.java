@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service.platform;
 
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import org.junit.Before;
 import org.junit.Test;
@@ -144,6 +145,7 @@ public class CmsPlatformActiveLogServiceTest {
         logParams.put("creater", "will2");
         logParams.put("comment", "高级检索 批量上下架");
         logParams.put("codeList", new ArrayList(Arrays.asList("51A0HC13E1-00LCNB0")));
+        logParams.put("statusVal", CmsConstants.PlatformActive.ToInStock);
         try {
             targetService.setProductOnSaleOrInStock(logParams);
         } catch (Exception e) {
