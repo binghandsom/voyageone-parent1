@@ -84,4 +84,19 @@ public class BiRepConsultService {
         biReportDownloadTaskDao.insert(model);
         return params;
     }
+    public Integer outTimeTask(Integer taskId){
+        BiReportDownloadTaskModel model=biReportDownloadTaskDao.select(taskId);
+        model.setTaskStatus(ISheetInfo.SHEET.BASICINFO.OUTTIME);
+        return biReportDownloadTaskDao.update(model);
+    }
+    /**
+     *
+     * @param channelId chanelid
+     * @param language 语言
+     * @return mast数据
+     */
+    public Map<String, Object> init(String channelId, String language) {
+        Map<String, Object> result = new HashMap<>();
+        return result;
+    }
 }

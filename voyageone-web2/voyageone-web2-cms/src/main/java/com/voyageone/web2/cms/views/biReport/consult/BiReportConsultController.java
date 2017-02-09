@@ -76,7 +76,7 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
      * 　　　　　　　 也没考虑过期文件删除的问题
      */
     @RequestMapping(BIREPORT.LIST.DOWNLOAD.BIREPDOWNLOAD)
-    public ResponseEntity<byte[]> downloadFile(@RequestParam String fileName,@RequestParam String exportPath) {
+    public ResponseEntity<byte[]> downloadFile(@RequestParam String fileName,@RequestParam String exportPath ,@RequestParam Integer taskId) {
         File pathFileObj = new File(exportPath);
         if (!pathFileObj.exists()) {
             $info("高级检索 文件下载任务 文件目录不存在 " + exportPath);
@@ -87,6 +87,7 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
         pathFileObj = new File(exportPath);
         if (!pathFileObj.exists()) {
             $info("高级检索 文件下载任务 文件不存在 " + exportPath);
+            biRepConsultService.outTimeTask(taskId);
             throw new BusinessException("4004");
         }
         return genResponseEntityFromFile(fileName, exportPath);
@@ -105,5 +106,8 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
         //将值传递给biReport生成地方
         return;
     }
-
+    @RequestMapping(BIREPORT.LIST.DOWNLOAD.INIT)
+    public AjaxResponse init() {
+        return success(biRepConsultService.init(getUser().getSelChannelId(), getLang()));
+    }
 }

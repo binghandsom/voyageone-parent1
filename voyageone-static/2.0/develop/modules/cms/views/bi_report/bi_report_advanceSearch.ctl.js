@@ -99,15 +99,18 @@ define([
                 function _exportFileCallback(res) {
                     var obj = JSON.parse(res);
                     if (obj.code == '4004') {
+                        $scope.initialize();
                         alert("此文件不存在");
                     }
                 }
             $.download.post(cActions.cms.biReportService.root + cActions.cms.biReportService.biRepDownload,
                 {
+                    "taskId":item.id,
                     "fileName":item.fileName,
                     "exportPath":item.filePath
                 },
                 _exportFileCallback);
+
             };
         $scope.createXlsFileTask = function()
         {
@@ -130,7 +133,7 @@ define([
             biReportService.createXlsFileTask(parameter).then(function (res) {
                 if(res.ecd == "0")
                 {
-                    initialize();
+                    $scope.initialize();
                 }
                 else
                 {
