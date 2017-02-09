@@ -266,7 +266,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
             searchItemStr += ";";
         if (searchValue.getFileType() == 3) {
             // 要输出sku级信息
-            searchItemStr += "common.skus;common.fields.model;common.fields.color;feed.catPath;common.fields.origSizeType;";
+            searchItemStr += "common.skus;common.fields.model;common.fields.color;feed.catPath;common.fields.origSizeType;common.fields.originalCode;";
         } else if (searchValue.getFileType() == 2) {
             // 要输出group级信息
             searchItemStr += "common.fields.model;feed.catPath;common.fields.origSizeType;";
