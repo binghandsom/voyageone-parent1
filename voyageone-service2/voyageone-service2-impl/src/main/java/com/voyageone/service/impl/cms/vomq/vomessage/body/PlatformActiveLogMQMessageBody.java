@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.vomq.vomessage.body;
 
+import com.voyageone.common.CmsConstants;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
@@ -25,6 +26,8 @@ public class PlatformActiveLogMQMessageBody extends BaseMQMessageBody {
     private String activeStatus;
     private List<String> productCodes;
     private String comment;
+    private CmsConstants.PlatformActive statusVal;
+
 
     @Override
     public void check() throws MQMessageRuleException {
@@ -45,6 +48,9 @@ public class PlatformActiveLogMQMessageBody extends BaseMQMessageBody {
         }
         if (StringUtils.isBlank(getSender())) {
             throw new MQMessageRuleException("sender(发送者)不能为空");
+        }
+        if (StringUtils.isBlank(String.valueOf(statusVal))) {
+            throw new MQMessageRuleException("上下架PlatformActiveLogMQ参数statusVal为空.");
         }
     }
 
@@ -96,4 +102,11 @@ public class PlatformActiveLogMQMessageBody extends BaseMQMessageBody {
         this.comment = comment;
     }
 
+    public CmsConstants.PlatformActive getStatusVal() {
+        return statusVal;
+    }
+
+    public void setStatusVal(CmsConstants.PlatformActive statusVal) {
+        this.statusVal = statusVal;
+    }
 }
