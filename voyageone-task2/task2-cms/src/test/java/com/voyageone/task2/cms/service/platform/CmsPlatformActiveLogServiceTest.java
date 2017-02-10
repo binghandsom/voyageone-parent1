@@ -141,10 +141,14 @@ public class CmsPlatformActiveLogServiceTest {
         Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", "010");
         logParams.put("cartIdList", new ArrayList(Arrays.asList(23)));
-        logParams.put("activeStatus", "OnSale");
+        logParams.put("activeStatus", "ToOnSale");
         logParams.put("creator", "gump");
         logParams.put("comment", "高级检索 批量上下架");
-        logParams.put("codeList", new ArrayList(Arrays.asList("1FMA3324Y11")));
+        logParams.put("codeList", new ArrayList(Arrays.asList("00341",
+                "00395",
+                "00772YAK7",
+                "01411YAA",
+                "01614YAC")));
         logParams.put("statusVal", CmsConstants.PlatformActive.ToInStock);
         try {
             targetService.setProductOnSaleOrInStock(logParams);
