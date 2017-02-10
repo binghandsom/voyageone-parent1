@@ -409,7 +409,7 @@ public class CmsPlatformActiveLogService extends BaseService {
                             }
                         }
                         if (!updRsFlg && org.apache.commons.lang.StringUtils.isBlank(errMsg)) {
-                            errMsg = "调用分销平台上架API失败";
+                            errMsg = "调用分销平台上架API失败:" + errMsg;
                         }
                     } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
                         // 下架
@@ -427,7 +427,7 @@ public class CmsPlatformActiveLogService extends BaseService {
                             }
                         }
                         if (!updRsFlg && org.apache.commons.lang.StringUtils.isBlank(errMsg)) {
-                            errMsg = "调用分销平台下架API失败";
+                            errMsg = "调用分销平台下架API失败" + errMsg;
                         }
                     }
 
@@ -440,7 +440,7 @@ public class CmsPlatformActiveLogService extends BaseService {
                     $error("CmsPlatformActiceLogService 不正确的平台 cartId=%d", cartId);
                 }
                 if (!updRsFlg) {
-                    $error("CmsPlatformActiceLogService API调用返回错误结果");
+                    $error("CmsPlatformActiceLogService API调用返回错误结果" + errMsg);
                 }
 
                 // 保存调用结果
