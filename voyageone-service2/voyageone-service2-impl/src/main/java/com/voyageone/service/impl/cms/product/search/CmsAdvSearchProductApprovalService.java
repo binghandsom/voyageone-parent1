@@ -58,6 +58,8 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
     private ProductStatusHistoryService productStatusHistoryService;
 
     public void approval(AdvSearchProductApprovalMQMessageBody mqMessageBody) {
+        long threadNo =  Thread.currentThread().getId();
+        $info(String.format("threadNo=%d 参数%s",threadNo, JacksonUtil.bean2Json(mqMessageBody)));
         List<Integer> cartList = mqMessageBody.getCartList();
         String channelId = mqMessageBody.getChannelId();
         String userName = mqMessageBody.getUserName();
@@ -282,13 +284,15 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
         }
         for (Integer cartIdVal : cartList) {
             // 插入上新程序
-            $debug("批量修改属性 (商品审批) 开始记入SxWorkLoad表");
+            $info("批量修改属性 (商品审批) 开始记入SxWorkLoad表");
             long sta = System.currentTimeMillis();
             sxProductService.insertSxWorkLoad(channelId, newProdCodeList, cartIdVal, userName, false);
-            $debug("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
+            $info("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
 
+            sta = System.currentTimeMillis();
             // 记录商品修改历史
             productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdVal, EnumProductOperationType.ProductApproved, msg, userName);
+            $info("批量修改属性 (商品审批) 记入状态历史表结束 耗时" + (System.currentTimeMillis() - sta));
         }
 
     }
