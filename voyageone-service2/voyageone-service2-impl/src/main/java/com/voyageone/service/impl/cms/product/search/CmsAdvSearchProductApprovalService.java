@@ -59,12 +59,13 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
 
     public void approval(AdvSearchProductApprovalMQMessageBody mqMessageBody) {
         long threadNo =  Thread.currentThread().getId();
-        $info(String.format("threadNo=%d 参数%s",threadNo, JacksonUtil.bean2Json(mqMessageBody)));
         List<Integer> cartList = mqMessageBody.getCartList();
         String channelId = mqMessageBody.getChannelId();
         String userName = mqMessageBody.getUserName();
         List<String> productCodes = mqMessageBody.getProductCodes();
         Map<String, Object> params = mqMessageBody.getParams();
+
+        $info(String.format("threadNo=%d productCodes 数 %d",threadNo, productCodes.size()));
 
         // 先判断是否是ready状态（minimall店铺不验证）
         List<Integer> newcartList = new ArrayList<>();
