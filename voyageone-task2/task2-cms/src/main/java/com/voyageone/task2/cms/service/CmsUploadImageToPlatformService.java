@@ -273,12 +273,19 @@ public class CmsUploadImageToPlatformService extends BaseCronTaskService {
                 // 新建的场合
                 String imageName = originUrl.substring(originUrl.lastIndexOf("/") + 1, originUrl.lastIndexOf("."));
                 jmImageFileBean.setImgName(imageName);
+                jmImageFileBean.setDirName(SLASH + channelId + SLASH + imageType);
             } else {
                 // 更新的场合
                 String imageName = platformUrl.substring(platformUrl.lastIndexOf("/") + 1, platformUrl.lastIndexOf("."));
                 jmImageFileBean.setImgName(imageName);
+                String [] temp = platformUrl.split("/");
+                if (temp.length > 4) {
+                    jmImageFileBean.setDirName(SLASH + temp[temp.length - 3] + SLASH + temp[temp.length - 2]);
+                }else {
+                    jmImageFileBean.setDirName(SLASH + channelId + SLASH + imageType);
+                }
             }
-            jmImageFileBean.setDirName(SLASH + channelId + SLASH + imageType);
+
             jmImageFileBean.setInputStream(inputStream);
             jmImageFileBean.setNeedReplace(true);
             jmImageFileBean.setExtName("jpg");

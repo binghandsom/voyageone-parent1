@@ -55,7 +55,7 @@ public class Tmall_007_Champion_SellerCids_DictTest extends BaseSellerCidsDictTe
 		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, "category", "衬衫", new SellerCids("", "1294093088", "", "衬衫")));
 		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, "category", "运动裤", new SellerCids("", "1294098952", "", "运动裤")));
 		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, "category", "衬衫", new SellerCids("", "1294093088", "", "衬衫")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "sizeType", "Women ", new SellerCids("", "1280959564", "", "女装")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "sizeType", "Women", new SellerCids("", "1280959564", "", "女装")));
 		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "sizeType", "NoSize", new SellerCids("", "1280959563", "", "配饰")));
 	}
 
