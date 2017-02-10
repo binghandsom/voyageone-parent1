@@ -896,6 +896,7 @@ public class CmsFieldEditService extends BaseViewService {
         mqMessageBody.setChannelId(userInfo.getSelChannelId());
         mqMessageBody.setSender(userInfo.getUserName());
         mqMessageBody.setUserId(userInfo.getUserId());
+        params.put("notChkPrice",1);
         mqMessageBody.setParams(params);
         for (List<String> codes:productCodesList) {
             mqMessageBody.setProductCodes(codes);
