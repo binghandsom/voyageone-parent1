@@ -25,7 +25,15 @@ public class PriceServiceTest {
     @Test
     public void unifySkuPriceSale() throws Exception {
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode("928","10006255");
-        priceService.unifySkuPriceSale(cmsBtProductModel, cmsBtProductModel.getPlatform(28).getSkus(),"928", 28, 10D,10000D);
+        priceService.unifySkuPriceSale(cmsBtProductModel, cmsBtProductModel.getPlatform(28).getSkus(),"928", 28);
+        return;
+    }
+
+    @Test
+    public void repeatSizeChk() {
+        CmsBtProductModel cmsBtProductModel = productService.getProductByCode("928","10006255");
+        priceService.repeatSizeChk(cmsBtProductModel, cmsBtProductModel.getPlatform(28).getSkus(),"928");
+        return;
     }
 
 }
