@@ -4562,7 +4562,7 @@ public class SxProductService extends BaseService {
     public void insertSxWorkLoad(String channelId, List<String> codeList, Integer cartId, String modifier, boolean blnSmartSx) {
         // 输入参数检查
         if (StringUtils.isEmpty(channelId) || codeList == null || codeList.isEmpty() || StringUtils.isEmpty(modifier)) {
-            $warn("insertSxWorkLoad 缺少参数");
+            $error("insertSxWorkLoad 缺少参数" + channelId + "==" + codeList.size() + "===" + modifier);
             return;
         }
 

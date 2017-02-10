@@ -85,7 +85,7 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
         JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{'common.fields.code':{$in:#}}");
         queryObject.setParameters(codeList);
-        queryObject.setProjection("{'common.fields.code':1,'platforms.P" + cartId + ".sellerCats':1,'_id':0}");
+        queryObject.setProjection("{'common.fields.code':1,'platforms.P" + cartId + "':1,'_id':0}");
 
         List<CmsBtProductModel> prodList = productService.getList(channelId, queryObject);
         if (prodList == null && prodList.size() == 0) {
@@ -108,7 +108,7 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
             if (platformObj == null) {
                 // 产品数据不完整的记录到日志中
                 errorMap.put(prodCode, String.format("产品数据不完整，缺少Platform，prodCode=%s，cartId=%s", prodCode, cartId));
-                $warn("产品数据不完整，缺少Platform， prodCode=" + prodCode);
+                $error("产品数据不完整，缺少Platform， prodCode=" + prodCode);
                 continue;
             }
             // 变更前的分类选择

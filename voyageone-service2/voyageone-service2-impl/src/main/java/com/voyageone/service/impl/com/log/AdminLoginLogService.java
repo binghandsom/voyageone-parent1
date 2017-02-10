@@ -27,7 +27,7 @@ public class AdminLoginLogService extends BaseService {
 
 
     public PaginationResultBean<ComLoginLogModel> searchLog(Integer pageNum, Integer pageSize) {
-        return  searchLog(new ComLoginLogModel(), null, null, pageNum,  pageSize);
+        return searchLog(new ComLoginLogModel(), null, null, pageNum, pageSize);
     }
 
     public PaginationResultBean<ComLoginLogModel> searchLog(ComLoginLogModel params, Long startTime, Long endTime, Integer pageNum, Integer pageSize) {
@@ -37,19 +37,17 @@ public class AdminLoginLogService extends BaseService {
         // 判断查询结果是否分页
         boolean needPage = false;
 
-        Map<String, Object> beanMap = new BeanMap(params);
+        Map beanMap = new BeanMap(params);
         Map<String, Object> newMap = new HashMap<>();
 
         Date start = null;
         Date end = null;
 
-        if(startTime != null)
-        {
+        if (startTime != null) {
             start = new Date(startTime);
         }
 
-        if(endTime != null)
-        {
+        if (endTime != null) {
             end = new Date(endTime);
         }
 
@@ -58,17 +56,13 @@ public class AdminLoginLogService extends BaseService {
         newMap.putAll(beanMap);
 
 
-
         if (pageNum != null && pageSize != null) {
             needPage = true;
             paginationResultBean.setCount(adminLoginLogDaoExt.selectCount(newMap));
             newMap = MySqlPageHelper.build(newMap).page(pageNum).limit(pageSize).addSort("created", Order.Direction.DESC).toMap();
-        }
-        else
-        {
+        } else {
             newMap = MySqlPageHelper.build(newMap).addSort("created", Order.Direction.DESC).toMap();
         }
-
 
 
         List<ComLoginLogModel> list = adminLoginLogDaoExt.selectList(newMap);

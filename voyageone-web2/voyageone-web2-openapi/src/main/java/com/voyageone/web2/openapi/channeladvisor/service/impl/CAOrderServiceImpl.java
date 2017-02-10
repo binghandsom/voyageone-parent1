@@ -7,6 +7,7 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.vms.channeladvisor.ErrorModel;
 import com.voyageone.service.bean.vms.channeladvisor.enums.CancellationReasonEnum;
 import com.voyageone.service.bean.vms.channeladvisor.enums.ErrorIDEnum;
 import com.voyageone.service.bean.vms.channeladvisor.enums.OrderStatusEnum;
@@ -43,7 +44,7 @@ import java.util.stream.Collectors;
 @VOTransactional
 public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderService {
 
-    private static final Logger log= LoggerFactory.getLogger(CAOrderService.class);
+    private static final Logger log = LoggerFactory.getLogger(CAOrderService.class);
 
     private static final String AcknowledgedBySeller = "AcknowledgedBySeller";
 
@@ -307,6 +308,97 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         log.info("ship order start...");
 
+        // 参数校验
+        shippedValidate(orderID, request);
+
+        String channelId = getClientChannelId();
+
+        // 检索订单是否存在
+        VmsBtClientOrdersModel vmsBtClientOrdersModel = caClientService.getClientOrderById(channelId, orderID);
+
+        // 待匹配Sku集合
+        List<VmsBtClientOrderDetailsModel> orderItems = new ArrayList<>();
+        if (vmsBtClientOrdersModel != null) {
+            //校验状态是否正确
+            if (!vmsBtClientOrdersModel.getOrderStatus().equals(AcknowledgedBySeller)) {
+                //如果订单状态为Canceled，那么匹配相关sku进行处理
+                if (vmsBtClientOrdersModel.getOrderStatus().equals(Canceled)) {
+                    //查询Canceled状态的sku集合
+                    orderItems = caClientService.getClientOrderDetailById(channelId, orderID, Canceled);
+                } else {
+                    throw new CAApiException(ErrorIDEnum.InvalidOrderStatus,
+                            "OrderID=" + orderID + " status is " + vmsBtClientOrdersModel.getOrderStatus() + " which is invalid.");
+                }
+            } else {
+                List<VmsBtClientOrderDetailsModel> orderItemList = caClientService.getClientOrderDetailById(channelId, orderID, null);
+                if(!CollectionUtils.isEmpty(orderItemList)){
+                    orderItems = orderItemList.stream().filter(m->m.getStatus().equals(AcknowledgedBySeller)||m.getStatus().equals(Canceled)).collect(Collectors.toList());
+                }
+            }
+        } else {
+            throw new CAApiException(ErrorIDEnum.OrderNotFound, "OrderID=" + orderID + " cannot found.");
+        }
+
+        //检索结果不存在的场合，Error ID 6000 的 异常抛出
+        if (CollectionUtils.isEmpty(orderItems)) {
+            //查订单是否存在
+            List<VmsBtClientOrderDetailsModel> mOrderList = caClientService.getClientOrderDetailById(channelId, orderID, null);
+            if (CollectionUtils.isEmpty(mOrderList)) {
+                throw new CAApiException(ErrorIDEnum.OrderNotFound, "OrderID=" + orderID + " is not provided.");
+            } else {
+                throw new CAApiException(ErrorIDEnum.InvalidOrderStatus, "OrderID=" + orderID + " status is " + mOrderList.get(0).getStatus() + " which is invalid.");
+            }
+        }
+
+        List<Long> reservationIds = new ArrayList<>();
+        Map<String, Integer> tempSkuQtyMap = new HashMap<>(request.getItems());
+        Set<String> issueSkuNotExistList = new HashSet<>(tempSkuQtyMap.keySet());
+
+        List<ErrorModel> errorModels = new ArrayList<>();
+        //shipped匹配处理
+        shippedMatchSkuProcess(tempSkuQtyMap,issueSkuNotExistList,errorModels, request, reservationIds, orderItems);
+
+        //响应结果
+        return matchShippedOrderUpdate(tempSkuQtyMap, issueSkuNotExistList, channelId, orderID, request, reservationIds, errorModels);
+    }
+
+    // shipped匹配
+    // 匹配规则无关订单明细状态，只匹配sku相同项
+    // 根据请求参数中Items.SellerSku， 匹配 品牌方订单明细中的 seller_sku，找出对应的明细。
+    // 如果明细状态为Canceled，则记录警告响应
+    // 修改匹配到的订单明细状态为Shipped 【回滚埋点】
+    private void shippedMatchSkuProcess(Map<String, Integer> tempSkuQtyMap,Set<String> issueSkuNotExistList,List<ErrorModel> errorModels, ShipRequest request, List<Long> reservationIds, List<VmsBtClientOrderDetailsModel> orderItems) {
+        List<VmsBtClientOrderDetailsModel> matchModelList = new ArrayList<>();
+        for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : orderItems) {
+            String sku = vmsBtClientOrderDetailsModel.getSellerSku();
+            if (tempSkuQtyMap.get(sku) != null && tempSkuQtyMap.get(sku) > 0) {
+                tempSkuQtyMap.put(sku, tempSkuQtyMap.get(sku) - 1);
+                issueSkuNotExistList.remove(sku);
+
+                VmsBtClientOrderDetailsModel tempUpdateModel = new VmsBtClientOrderDetailsModel();
+                tempUpdateModel.setShippedDate(request.getShippedDateUtc());
+                tempUpdateModel.setTrackingNumber(request.getTrackingNumber());
+                tempUpdateModel.setShippingCarrier(request.getShippingCarrier());
+                tempUpdateModel.setShippingClass(request.getShippingClass());
+                tempUpdateModel.setStatus(Shipped);
+                tempUpdateModel.setId(vmsBtClientOrderDetailsModel.getId());
+
+                matchModelList.add(tempUpdateModel);
+                reservationIds.add(vmsBtClientOrderDetailsModel.getReservationId());
+
+                //记录警告
+                if (vmsBtClientOrderDetailsModel.getStatus().equals(Canceled)) {
+                    errorModels.add(new ErrorModel(ErrorIDEnum.Warning, "Canceled Item [" + vmsBtClientOrderDetailsModel.getSellerSku() + "] should NOT be shipped."));
+                }
+            }
+        }
+
+        //根据Items.SellerSku对应的件数，更新 对应件数的明细。
+        caClientService.updateItemsSkuList(matchModelList, "shipOrder");
+    }
+
+    // shipped校验
+    private void shippedValidate(String orderID, ShipRequest request) {
         if (StringUtils.isEmpty(orderID)) {
             //If there is no order with that ID, return Error ID 6000 (OrderNotFound)
             throw new CAApiException(ErrorIDEnum.InvalidRequest, "OrderID in request is missing.");
@@ -349,66 +441,18 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         if (!CollectionUtils.isEmpty(exceptionList)) {
             throw new CAApiExceptions(exceptionList);
         }
+    }
 
-        String channelId = getClientChannelId();
+    // 针对订单状态是Canceled 或 Ack， 进行以下操作
+    // 1.全部未匹配到，抛异常
+    // 2.匹配后剩余的sku数量映射结果校验，若请求shipped的数量大于匹配的数量，记录日志，抛异常信息
+    // 3.查询订单items，
+    //  若Sku全部Shipped，则修改订单状态为Shipped，
+    //  若订单非全部Shipped但存在Shipped，则修改订单状态为PartiallyShipped
+    // 4.发送mq消息，响应成功
+    private ActionResponse matchShippedOrderUpdate(Map<String, Integer> tempSkuQtyMap, Set<String> issueSkuNotExistList, String channelId, String orderID, ShipRequest request, List<Long> reservationIds, List<ErrorModel> errorModels) {
 
-        // 检索订单是否存在
-        VmsBtClientOrdersModel vmsBtClientOrdersModel = caClientService.getClientOrderById(channelId, orderID);
-        if (vmsBtClientOrdersModel != null) {
-            //校验状态是否正确
-            if (!vmsBtClientOrdersModel.getOrderStatus().equals(AcknowledgedBySeller)) {
-                throw new CAApiException(ErrorIDEnum.InvalidOrderStatus,
-                        "OrderID=" + orderID + " status is " + vmsBtClientOrdersModel.getOrderStatus() + " which is invalid.");
-            }
-        } else {
-            throw new CAApiException(ErrorIDEnum.OrderNotFound, "OrderID=" + orderID + " cannot found.");
-        }
-
-        // 检索【品牌方订单明细】vms_bt_client_order_details
-
-        List<VmsBtClientOrderDetailsModel> mList = caClientService.getClientOrderDetailById(channelId, orderID, AcknowledgedBySeller);
-
-        //检索结果不存在的场合，Error ID 6000 的 异常抛出
-
-        if (mList == null || mList.isEmpty()) {
-            //查订单是否存在
-            List<VmsBtClientOrderDetailsModel> mOrderList = caClientService.getClientOrderDetailById(channelId, orderID, null);
-            if (CollectionUtils.isEmpty(mOrderList)) {
-                throw new CAApiException(ErrorIDEnum.OrderNotFound, "OrderID=" + orderID + " is not provided.");
-            } else {
-                throw new CAApiException(ErrorIDEnum.InvalidOrderStatus, "OrderID=" + orderID + " status is " + mOrderList.get(0).getStatus() + " which is invalid.");
-            }
-        }
-
-        List<VmsBtClientOrderDetailsModel> matchModelList = new ArrayList<>();
-
-        //根据请求参数中Items.SellerSku， 匹配 品牌方订单明细中的 seller_sku，找出对应的明细。
-        List<Long> tempReservationId = new ArrayList<>();
-
-        Map<String, Integer> tempSkuQtyMap = request.getItems();
-        Set<String> issueSkuNotExistList = new HashSet<>(tempSkuQtyMap.keySet());
-        for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : mList) {
-            String sku = vmsBtClientOrderDetailsModel.getSellerSku();
-            if (tempSkuQtyMap.get(sku) != null && tempSkuQtyMap.get(sku) > 0) {
-                tempSkuQtyMap.put(sku, tempSkuQtyMap.get(sku) - 1);
-                issueSkuNotExistList.remove(sku);
-
-                VmsBtClientOrderDetailsModel tempUpdateModel = new VmsBtClientOrderDetailsModel();
-                tempUpdateModel.setShippedDate(request.getShippedDateUtc());
-                tempUpdateModel.setTrackingNumber(request.getTrackingNumber());
-                tempUpdateModel.setShippingCarrier(request.getShippingCarrier());
-                tempUpdateModel.setShippingClass(request.getShippingClass());
-                tempUpdateModel.setStatus(Shipped);
-                tempUpdateModel.setId(vmsBtClientOrderDetailsModel.getId());
-
-                matchModelList.add(tempUpdateModel);
-                tempReservationId.add(vmsBtClientOrderDetailsModel.getReservationId());
-            }
-        }
-
-        //根据Items.SellerSku对应的件数，更新 对应件数的明细。
-
-        caClientService.updateItemsSkuList(matchModelList, "shipOrder");
+        List<CAApiException> exceptionList = new ArrayList<>();
 
         //全部sku不存在
         if (tempSkuQtyMap.keySet().size() == issueSkuNotExistList.size()) {
@@ -419,11 +463,9 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
             }
-            /*throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                    "SellerSku=[" + tempSkuQtyMap.keySet().stream().reduce((a, b) -> a + "," + b).get() + "] is not provided.");*/
         }
 
-        //Items.SellerSku 在品牌方订单明细 中不存在，issuelog 输出，处理继续
+        //部分sku不存在，issuelog 输出，处理继续
         if (!CollectionUtils.isEmpty(issueSkuNotExistList)) {
             issueLog.log(new RuntimeException("Items.SellerSku 在品牌方订单明细 中不存在 请求订单号：orderId=" + orderID +
                     " skus=" + JacksonUtil.bean2Json(issueSkuNotExistList)), ErrorType.OpenAPI, SubSystem.VMS);
@@ -435,25 +477,22 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
             }
-            /*throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                    "SellerSku=[" + issueSkuNotExistList.stream().reduce((a, b) -> a + "," + b).get() + "] is not provided.");*/
         }
 
         //Items.SellerSku 对应的数量 > 对应SKU明细件数的数量，issuelog 输出，处理继续
+        //tempSkuQtyMap为和数据库进行匹配后剩余的sku数量映射
         List<String> issueSkuQtyNotComplete = tempSkuQtyMap.entrySet().stream().filter(e -> e.getValue() > 0).map(Map.Entry::getKey).collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(issueSkuQtyNotComplete)) {
             issueLog.log(new RuntimeException("Items.SellerSku 对应的数量 > 对应SKU明细件数的数量 请求订单号：orderId=" + orderID +
                     " skus=" + JacksonUtil.bean2Json(issueSkuQtyNotComplete)), ErrorType.OpenAPI, SubSystem.VMS);
             issueSkuQtyNotComplete.stream().forEach(key -> {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                        "The quantity of SellerSku=" + key + " is invalid."));
+                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "The quantity of SellerSku=" + key + " is invalid."));
             });
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
             }
-            /*throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                    "The quantity of SellerSku=[" + issueSkuQtyNotComplete.stream().reduce((a, b) -> a + "," + b).get() + "] is invalid.");*/
         }
+
 
         // 检索【品牌方订单明细】vms_bt_client_order_details
 
@@ -492,7 +531,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             reservationIds += aLong + ",";
         }*/
 
-        mqMessageMap.put("items", tempReservationId);
+        mqMessageMap.put("items", reservationIds);
 
         Map<String, Object> mqMessageBody = new HashMap<>();
         mqMessageBody.put("body", JacksonUtil.bean2Json(mqMessageMap));
@@ -501,7 +540,9 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         mqSender.sendMessage("voyageone_vms_wsdl_mq_ship_order_queue", mqMessageBody);
 
-        return success();
+        ActionResponse res = success();
+        res.setErrors(errorModels);
+        return res;
     }
 
     @VOTransactional
@@ -632,7 +673,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             }
             if (!validate) {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter
-                        , "Cannot find SellerSku=" + m.getSellerSku() + " with ID=" + m.getId()+"."));
+                        , "Cannot find SellerSku=" + m.getSellerSku() + " with ID=" + m.getId() + "."));
             }
         }
         if (!CollectionUtils.isEmpty(exceptionList)) {
@@ -870,7 +911,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             }
             if (!validate) {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter
-                        , "Cannot find SellerSku=" + m.getSellerSku() + " with ID=" + m.getId()+"."));
+                        , "Cannot find SellerSku=" + m.getSellerSku() + " with ID=" + m.getId() + "."));
             }
         }
         if (!CollectionUtils.isEmpty(exceptionList)) {

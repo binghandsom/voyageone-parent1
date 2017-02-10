@@ -5,8 +5,9 @@
 define(['cms'], function (cms) {
 
     cms.controller("mqListSetController", (function () {
-        function mqListSetController($mqErrorListService) {
+        function mqListSetController($mqErrorListService, $routeParams) {
             this.$mqErrorListService = $mqErrorListService;
+            this.$routeParams = $routeParams;
             this.mqErrorPageOption = {curr: 1, total: 0, size: 10, fetch: this.search.bind(this)};
             this.name = "";
             this.title = "";
@@ -42,6 +43,7 @@ define(['cms'], function (cms) {
                 "name": this.name,
                 "title": this.title,
                 "type": this.type,
+                "userName": self.$routeParams.userName,
                 "typeValue": _typeValue
             });
 

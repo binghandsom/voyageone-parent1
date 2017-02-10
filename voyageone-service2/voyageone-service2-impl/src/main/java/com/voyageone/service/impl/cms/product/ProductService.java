@@ -1638,4 +1638,36 @@ public class ProductService extends BaseService {
     public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key){
         return cmsBtProductDao.bulkUpdateWithMap(channelId,bulkList,modifier,key);
     }
+
+    /**
+     * 重置product和group的platformPid
+     * @param channelId 渠道Id
+     * @param cartId 平台Id
+     * @param code 产品Code
+     * @return WriteResult
+     */
+    public WriteResult resetProductAndGroupPlatformPid (String channelId, int cartId, String code) {
+
+        JongoUpdate query = new JongoUpdate();
+        query.setQuery("{\"common.fields.code\": #}");
+        query.setQueryParameters(code);
+
+        query.setUpdate("{$set: {\"platforms.P" + cartId + ".pProductId\": \"\"}}");
+
+        WriteResult rs = cmsBtProductDao.updateMulti(query, channelId);
+
+        if (rs != null) {
+
+            Map<String, Object> queryMap = new HashMap<>();
+            queryMap.put("cartId", cartId);
+            queryMap.put("productCodes", code);
+
+            Map<String, Object> updateMap = new HashMap<>();
+            updateMap.put("platformPid", "");
+
+            rs = cmsBtProductGroupDao.update(channelId, queryMap, updateMap);
+        }
+
+        return rs;
+    }
 }

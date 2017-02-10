@@ -76,7 +76,7 @@ public class CmsFieldEditService extends BaseViewService {
     @Autowired
     private MqSender sender;
     @Autowired
-    private MqSenderService mqSenderService;
+    private CmsMqSenderService mqSenderService;
     @Autowired
     private CommCacheService commCacheService;
     @Autowired
@@ -313,14 +313,18 @@ public class CmsFieldEditService extends BaseViewService {
 
             ProductVoRateUpdateMQMessageBody mqMessageBody = new ProductVoRateUpdateMQMessageBody();
             mqMessageBody.setChannelId(userInfo.getSelChannelId());
-            mqMessageBody.setCodeList(productCodes);
+            mqMessageBody.setCreater(userInfo.getUserName());
             mqMessageBody.setVoRate(voRateVal);
             mqMessageBody.setSender(userInfo.getUserName());
-            try {
-                mqSenderService.sendMessage(mqMessageBody);
-            } catch (MQMessageRuleException e) {
-                $error(String.format("VO扣点值批量更新MQ发送异常,channelId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
-                throw new BusinessException("MQ发送异常:" + e.getMessage());
+            List<List<String>>productCodesList = CommonUtil.splitList(productCodes,100);
+            for (List<String> codes:productCodesList) {
+                try {
+                    mqMessageBody.setCodeList(codes);
+                    mqSenderService.sendMessage(mqMessageBody);
+                } catch (MQMessageRuleException e) {
+                    $error(String.format("VO扣点值批量更新MQ发送异常,channelId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
+                    throw new BusinessException("MQ发送异常:" + e.getMessage());
+                }
             }
 
         } else if ("hsCodePrivate".equals(prop_id) || "hsCodeCross".equals(prop_id) || "translateStatus".equals(prop_id)) {
@@ -338,14 +342,18 @@ public class CmsFieldEditService extends BaseViewService {
 
             BatchUpdateProductMQMessageBody mqMessageBody = new BatchUpdateProductMQMessageBody();
             mqMessageBody.setChannelId(userInfo.getSelChannelId());
-            mqMessageBody.setProductCodes(productCodes);
+
             mqMessageBody.setParams(params);
             mqMessageBody.setSender(userInfo.getUserName());
-            try {
-                mqSenderService.sendMessage(mqMessageBody);
-            } catch (MQMessageRuleException e) {
-                $error(String.format("批量更新商品发送MQ异常,channleId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
-                throw new BusinessException("高级检索 批量更新失败!");
+            List<List<String>>productCodesList = CommonUtil.splitList(productCodes,100);
+            for (List<String> codes:productCodesList) {
+                try {
+                    mqMessageBody.setProductCodes(codes);
+                    mqSenderService.sendMessage(mqMessageBody);
+                } catch (MQMessageRuleException e) {
+                    $error(String.format("批量更新商品发送MQ异常,channleId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
+                    throw new BusinessException("高级检索 批量更新失败!");
+                }
             }
 
             rsMap.put("ecd", 0);
@@ -439,12 +447,15 @@ public class CmsFieldEditService extends BaseViewService {
         } else {
             mqMessageBody.setComment("高级检索 批量上下架");
         }
-        mqMessageBody.setProductCodes(productCodes);
-        try {
-            mqSenderService.sendMessage(mqMessageBody);
-        } catch (MQMessageRuleException e) {
-            $error(String.format("商品上下架MQ发送异常,channelId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
-            throw new BusinessException("商品上下架MQ发送异常: " + e.getMessage());
+        List<List<String>>productCodesList = CommonUtil.splitList(productCodes,100);
+        for (List<String> codes:productCodesList) {
+            try {
+                mqMessageBody.setProductCodes(codes);
+                mqSenderService.sendMessage(mqMessageBody);
+            } catch (MQMessageRuleException e) {
+                $error(String.format("商品上下架MQ发送异常,channelId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
+                throw new BusinessException("商品上下架MQ发送异常: " + e.getMessage());
+            }
         }
 
         rsMap.put("ecd", 0);
@@ -502,11 +513,15 @@ public class CmsFieldEditService extends BaseViewService {
         mqMessageBody.setUserName(userInfo.getUserName());
         mqMessageBody.setCartList(cartList);
         mqMessageBody.setSender(userInfo.getUserName());
-        mqMessageBody.setProductCodes(productCodes);
-        try {
-            mqSenderService.sendMessage(mqMessageBody);
-        } catch (MQMessageRuleException e) {
-            throw new BusinessException("MQ发送异常: " + e.getMessage());
+
+        List<List<String>>productCodesList = CommonUtil.splitList(productCodes,100);
+        for (List<String> codes:productCodesList) {
+            try {
+                mqMessageBody.setProductCodes(codes);
+                mqSenderService.sendMessage(mqMessageBody);
+            } catch (MQMessageRuleException e) {
+                throw new BusinessException("MQ发送异常: " + e.getMessage());
+            }
         }
 
 
@@ -524,7 +539,8 @@ public class CmsFieldEditService extends BaseViewService {
             qryStr.append("{'common.fields.code':{$in:#},$or:[");
             for (Integer cartIdVal : newcartList) {
                 if (!CartEnums.Cart.TT.getId().equals(String.valueOf(cartIdVal))
-                        && !CartEnums.Cart.LTT.getId().equals(String.valueOf(cartIdVal)))
+                        && !CartEnums.Cart.TT.getId().equals(String.valueOf(cartIdVal))
+                        && !CartEnums.Cart.DT.getId().equals(String.valueOf(cartIdVal)))
                     qryStr.append("{'platforms.P" + cartIdVal + ".status':{$nin:['Ready','Approved']}},");
                 else
                     qryStr.append("{'common.fields.hsCodeStatus': '0'},");
@@ -557,7 +573,8 @@ public class CmsFieldEditService extends BaseViewService {
                 rsMap.put("ecd", 2);
 
                 if (hsCodeList.size() > 0 && (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.LTT.getId())))) {
+                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.LTT.getId()))
+                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.DT.getId())))) {
                     rsMap.put("ts", true);
                     rsMap.put("codeList", hsCodeList);
                 }else{
@@ -672,7 +689,8 @@ public class CmsFieldEditService extends BaseViewService {
                     } else if (CmsConstants.ProductStatus.Approved.name().equals(prodStatus)) {
                         strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
                     } else if (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.LTT.getId()))) {
+                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.LTT.getId()))
+                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.DT.getId()))) {
                         strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
                     }
                 }
@@ -1403,16 +1421,19 @@ public class CmsFieldEditService extends BaseViewService {
         CmsBatchPlatformFieldsMQMessageBody mqMessageBody = new CmsBatchPlatformFieldsMQMessageBody();
         mqMessageBody.setCartId(cartId);
         mqMessageBody.setChannelId(userInfo.getSelChannelId());
-        mqMessageBody.setProductCodes(productCodes);
         mqMessageBody.setFieldsId(prop_id);
         mqMessageBody.setFieldsName(fields.getName());
         mqMessageBody.setFieldsValue(result.get(prop_id));
         mqMessageBody.setSender(userInfo.getUserName());
-        try {
-            cmsMqSenderService.sendMessage(mqMessageBody);
-        } catch (MQMessageRuleException e) {
-            $error(e);
-            throw new BusinessException("批量修改平台级商品属性失败, 请重新设置");
+        List<List<String>>productCodesList = CommonUtil.splitList(productCodes,100);
+        for (List<String> codes:productCodesList) {
+            mqMessageBody.setProductCodes(codes);
+            try {
+                cmsMqSenderService.sendMessage(mqMessageBody);
+            } catch (MQMessageRuleException e) {
+                $error(e);
+                throw new BusinessException("批量修改平台级商品属性失败, 请重新设置");
+            }
         }
     }
 

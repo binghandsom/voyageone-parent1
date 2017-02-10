@@ -520,6 +520,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         }
         Boolean isCatPathChg = false;
         CmsBtProductModel cmsBtProductModel = null;
+        // 天猫的场合如果平台类目发生变化 清空platforms.Pxx.pProductId    CMSDOC-262
         if(platformModel.getCartId() == CartEnums.Cart.TG.getValue() || platformModel.getCartId() == CartEnums.Cart.TM.getValue()){
             cmsBtProductModel = productService.getProductById(channelId, prodId);
             CmsBtProductModel_Platform_Cart oldPlatForm = cmsBtProductModel.getPlatform(platformModel.getCartId());
@@ -530,7 +531,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         String modified  = productService.updateProductPlatform(channelId, prodId, platformModel, modifier, true, blnSmartSx);
         if(isCatPathChg){
-            resetProductGroupPlatformPid(channelId, platformModel.getCartId(), cmsBtProductModel.getCommon().getFields().getCode());
+            productService.resetProductAndGroupPlatformPid(channelId, platformModel.getCartId(), cmsBtProductModel.getCommon().getFields().getCode());
         }
         return modified;
 
@@ -746,15 +747,6 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 fieldMap.put(s, v);
             }
         });
-    }
-
-    /**
-     * 重置group的platformPid
-     */
-    public void resetProductGroupPlatformPid(String channelId, int cartId, String code) {
-
-        productGroupService.resetProductGroupPlatformPid(channelId, cartId, code);
-
     }
 
 }
