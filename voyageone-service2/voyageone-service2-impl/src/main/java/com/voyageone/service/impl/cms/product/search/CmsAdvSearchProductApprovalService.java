@@ -58,11 +58,14 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
     private ProductStatusHistoryService productStatusHistoryService;
 
     public void approval(AdvSearchProductApprovalMQMessageBody mqMessageBody) {
+        long threadNo =  Thread.currentThread().getId();
         List<Integer> cartList = mqMessageBody.getCartList();
         String channelId = mqMessageBody.getChannelId();
         String userName = mqMessageBody.getUserName();
         List<String> productCodes = mqMessageBody.getProductCodes();
         Map<String, Object> params = mqMessageBody.getParams();
+
+        $info(String.format("threadNo=%d productCodes 数 %d",threadNo, productCodes.size()));
 
         // 先判断是否是ready状态（minimall店铺不验证）
         List<Integer> newcartList = new ArrayList<>();
@@ -78,7 +81,8 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
             qryStr.append("{'common.fields.code':{$in:#},$or:[");
             for (Integer cartIdVal : newcartList) {
                 if (!CartEnums.Cart.TT.getId().equals(String.valueOf(cartIdVal))
-                        && !CartEnums.Cart.USTT.getId().equals(String.valueOf(cartIdVal)))
+                        && !CartEnums.Cart.USTT.getId().equals(String.valueOf(cartIdVal))
+                        && !CartEnums.Cart.DT.getId().equals(String.valueOf(cartIdVal)))
                     qryStr.append("{'platforms.P" + cartIdVal + ".status':{$nin:['Ready','Approved']}},");
                 else
                     qryStr.append("{'common.fields.hsCodeStatus': '0'},");
@@ -110,7 +114,8 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                 }
 
                 if (hsCodeList.size() > 0 && (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId())))) {
+                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId()))
+                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.DT.getId())))) {
                     throw new BusinessException("有商品商品没有设置税号, 无法审批, 请修改. codes=" + JacksonUtil.bean2Json(hsCodeList));
                 }else{
                     throw new BusinessException("有商品pending状态, 无法审批, 请修改. codes=" + JacksonUtil.bean2Json(codeList));
@@ -222,7 +227,8 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                     } else if (CmsConstants.ProductStatus.Approved.name().equals(prodStatus)) {
                         strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
                     } else if (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId()))) {
+                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId()))
+                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.DT.getId()))) {
                         strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
                     }
                 }
@@ -279,13 +285,15 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
         }
         for (Integer cartIdVal : cartList) {
             // 插入上新程序
-            $debug("批量修改属性 (商品审批) 开始记入SxWorkLoad表");
+            $info("批量修改属性 (商品审批) 开始记入SxWorkLoad表");
             long sta = System.currentTimeMillis();
             sxProductService.insertSxWorkLoad(channelId, newProdCodeList, cartIdVal, userName, false);
-            $debug("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
+            $info("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
 
+            sta = System.currentTimeMillis();
             // 记录商品修改历史
             productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdVal, EnumProductOperationType.ProductApproved, msg, userName);
+            $info("批量修改属性 (商品审批) 记入状态历史表结束 耗时" + (System.currentTimeMillis() - sta));
         }
 
     }
