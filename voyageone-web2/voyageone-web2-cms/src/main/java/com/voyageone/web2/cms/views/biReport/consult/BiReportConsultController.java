@@ -42,14 +42,12 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
     @Autowired
     ComUserService comUserService;
 
-
     @RequestMapping(BIREPORT.LIST.DOWNLOAD.DOWNLOADTASKLIST)
     public AjaxResponse downloadTaskList()   //@RequestBody PageQueryParameters searchInfo
     {
         Map<String, Object> mapForTask = new HashedMap();
         mapForTask.put("fileName", null);
         mapForTask.put("creatorId", getUser().getUserId());
-        System.out.println("____________________"+getUser().getUserId()+"~~~~~~~~~~~~~~~~~~~~~~~~~"+getUser().getUserName());
         mapForTask.put("taskStatus", null);
         List<BiReportDownloadTaskModel> taskModelList = biRepConsultService.getDownloadTaskList(mapForTask);
         return success(taskModelList);
@@ -80,11 +78,15 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
     @RequestMapping(BIREPORT.LIST.DOWNLOAD.BIREPDOWNLOAD)
     public ResponseEntity<byte[]> downloadFile(@RequestParam String fileName,@RequestParam String exportPath ,@RequestParam Integer taskId) {
         File pathFileObj = new File(exportPath);
-        if (!pathFileObj.exists()) {
+        Boolean b=pathFileObj.exists();
+        if (!b) {
             $info("高级检索 文件下载任务 文件目录不存在 " + exportPath);
-            throw new BusinessException("4004");
+            if(!pathFileObj.mkdirs())
+            {
+                $info("创建目录 "+ exportPath + "失败！");
+                throw new BusinessException("4004");
+            }
         }
-
         exportPath += fileName;
         pathFileObj = new File(exportPath);
         if (!pathFileObj.exists()) {
@@ -94,26 +96,34 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
         }
         return genResponseEntityFromFile(fileName, exportPath);
     }
+    /**
+     * 生成文件生成任务
+     * @param map
+     */
     @RequestMapping(BIREPORT.LIST.DOWNLOAD.CREATEXLSFILETASK)
-    public void createFileTask(@RequestBody Map<String ,Object> map)
+    public AjaxResponse createFileTask(@RequestBody Map<String ,Object> map)
     {
-        Integer creatorId=getUser().getUserId();
-        String creatorName=getUser().getUserName();
-        Date createTime=new Date();
+        Integer creatorId = getUser().getUserId();
+        String creatorName = getUser().getUserName();
+        Date createTime = new Date();
         map.put("creatorId",creatorId);
         map.put("creatorName",creatorName);
         map.put("createTime",createTime);
-        biRepConsultService.dealTheFileCreateRequest(map);
-
-        //将值传递给biReport生成地方
-        return;
+        Map<String ,Object> result = biRepConsultService.dealTheFileCreateRequest(map);
+        return success(result);
     }
-
+    /**
+     * 初始化
+     * @return
+     */
     @RequestMapping(BIREPORT.LIST.DOWNLOAD.INIT)
     public AjaxResponse init() {
         return success(biRepConsultService.init(getUser().getSelChannelId(), getLang()));
     }
-
+    /**
+     * 获取到channelCodeList
+     * @return
+     */
     @RequestMapping(BIREPORT.LIST.DOWNLOAD.GET_CHANNEL_LIST)
     public AjaxResponse  getChannelsByUser() {
         List<Map<String , String>> channels = comUserService.selectChannelsByUser(getUser().getUserName());
@@ -127,10 +137,14 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
                     .collect(Collectors.toList());
             return  success(result);
         }
-
         return success(Collections.EMPTY_LIST) ;
-
-
-
+    }
+    /**
+     * 删除
+     * @return
+     */
+    @RequestMapping(BIREPORT.LIST.DOWNLOAD.DELETETASK)
+    public AjaxResponse deleteTask(@RequestBody int id) {
+        return success(biRepConsultService.delTask(id));
     }
 }

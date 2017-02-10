@@ -751,7 +751,9 @@ define(function () {
                 biRepDownload:"biRepDownload",
                 createXlsFile:"createXlsFile",
                 getDownloadTaskList:"getDownloadTaskList",
-                createXlsFileTask:"createXlsFileTask"
+                createXlsFileTask:"createXlsFileTask",
+                get_channel_list:"get_channel_list",
+                deleteTask:"deleteTask"
             }
         }
     };

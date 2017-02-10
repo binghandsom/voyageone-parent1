@@ -10,21 +10,13 @@ define([
         {
             downloadTaskList: [],
             searchInfo: {
+                channelCodeList:[],
                 fileTypes: []
             },
             "message": "successfully!",
             status: {open: true}
         };
-        $scope.channels = [
-            {channelId: "007", channelName: "ALL"},
-            {channelId: "010", channelName: "Jewelry"},
-            {channelId: "012", channelName: "BCBG"},
-            {channelId: "014", channelName: "SC"},
-            {channelId: "017", channelName: "LV"},
-            {channelId: "018", channelName: "Jewelry"},
-            {channelId: "024", channelName: "OverStock"},
-            {channelId: "030", channelName: "WL"}
-        ];
+        $scope.channels = [];
         $scope.fileTypes = [
             {fileTypeCode: "1", fileTypeName: "商铺月报"},
             {fileTypeCode: "2", fileTypeName: "商铺周报"},
@@ -43,9 +35,14 @@ define([
             $scope.searchInfo = {};
         };
         $scope.initialize = function () {
+            $scope.vm.minDate = new Date(2017,1,1);
+            $scope.vm.maxDate = new Date();
             biReportService.init().then(function (res) {
                 $scope.search();
             });
+            biReportService.get_channel_list().then(function (res) {
+                $scope.channels=res.data;
+            })
         };
         //分页
         $scope.dataPageOption = {curr: 1, total: 0, fetch: goPage};
@@ -88,12 +85,8 @@ define([
         }
         /* 分页以下*/
         $scope.openOtherDownload = function (item) {
-                if (item.taskStatus == 1) {
-                    alert("文件创建失败，请重新生成！");
-                    return;
-                }
-                if (item.taskStatus == 2) {
-                    alert("文件正在创建，不能下载！");
+                if (item.taskStatus != 3) {
+                    alert("文件无法下载，可能是尚未生成，或者已失效");
                     return;
                 }
                 function _exportFileCallback(res) {
@@ -115,7 +108,7 @@ define([
         $scope.createXlsFileTask = function()
         {
             var parameter=getPageParameter();
-            if(parameter.fileTypes == null || parameter.fileTypes.length == 0)
+            if( parameter.fileTypes.length == 0)
             {
                 alert("请选择文件类型");
                 return;
@@ -125,20 +118,29 @@ define([
                 alert("请选择时间！");
                 return ;
             }
-            if(parameter.channelCode == null ||parameter.channelCode == "")
+            if(parameter.channelCodeList.length == 0)
             {
-                alert("请选择渠道（品牌）");
+                alert("请选择渠道");
                 return ;
             }
             biReportService.createXlsFileTask(parameter).then(function (res) {
-                if(res.ecd == "0")
+                var ecd = res.data.ecd ;
+                switch (ecd)
                 {
-                    $scope.initialize();
+                    case "0":
+                        alert("正在生成！");
+                        break;
+                    case "4400":
+                        alert("无法找到文件路径！错误代码：" + res.data.ecd );
+                        break;
+                    case "4100":
+                        alert("无法连接远程API！错误代码："+ res.data.ecd );
+                        break;
+                    default:
+                        alert("生成文件失败，错误代码:" + res.data.ecd );
+                        break;
                 }
-                else
-                {
-                    alert("创建文件失败");
-                }
+                $scope.initialize();
             })
 
         };
@@ -147,6 +149,30 @@ define([
             return datePattern.test(val);
         }
 
+        $scope.del = function (data) {
+            confirm("确认删除？ %s".replace("%s",data.fileName)).then(function () {
+                // var index = _.indexOf($scope.vm.promotionList, data);
+                biReportService.deleteTask(data.id).then(function(res){
+                    if(res.data.result) {
+                        alert(res.data.message);
+                        $scope.search();
+                    }
+                    else
+                    {
+                        alert(res.data.message);
+                    }
+                });
+            })
+        };
+        $scope.deleteTask = function (item) {
+            biReportService.deleteTask(item.id).then(res)
+            {
+                if(res.data == 1)
+                {
+                    alert("删除成功！");
+                }
+            }
+        }
 
     }
 

@@ -1,8 +1,8 @@
 package com.voyageone.web2.cms.views.bi_report;
 
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.dao.report.BiReportDownloadTaskDao;
 import com.voyageone.service.daoext.report.BiReportDownloadTaskDaoExt;
-import com.voyageone.service.daoext.report.BiReportSalesShop010DaoExt;
 import com.voyageone.service.model.report.BiReportDownloadTaskModel;
 import com.voyageone.web2.cms.views.biReport.consult.BiRepConsultService;
 import org.junit.Test;
@@ -21,8 +21,6 @@ import java.io.File;
 public class BiRepTest {
     @Autowired
     private BiRepConsultService biRepConsultService;
-    @Autowired
-    private BiReportSalesShop010DaoExt biReportSalesShop010DaoExt;
     @Autowired
     private BiReportDownloadTaskDaoExt biReportDownloadTaskDaoExt;
     @Autowired
@@ -58,12 +56,14 @@ public class BiRepTest {
     @Test
     public void testDate()
     {
-        BiReportDownloadTaskModel model=new BiReportDownloadTaskModel();
-        model.setCreatorId(102);
-        model.setCreatorName("admin");
+    /*    BiReportDownloadTaskModel model=new BiReportDownloadTaskModel();
+        model.setCreater("admin");
         model.setFilePath("E//hello//");
         model.setFileName("hello.txt");
-        System.out.println(biReportDownloadTaskDao.insert(model));
+        System.out.println(" model id before insert : " +model.getId());
+        biReportDownloadTaskDao.insert(model);
+        System.out.println(" model id after insert : " + model.getId());*/
+        System.out.println(biReportDownloadTaskDaoExt.softDel(4));
     }
    /* public void testSelect*/
 }

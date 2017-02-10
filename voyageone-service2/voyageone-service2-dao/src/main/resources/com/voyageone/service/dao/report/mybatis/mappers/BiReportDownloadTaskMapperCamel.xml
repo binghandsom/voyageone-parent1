@@ -3,8 +3,8 @@
 <mapper namespace="com.voyageone.service.dao.report.BiReportDownloadTaskDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.report.BiReportDownloadTaskModel" />
     <sql id="Base_Column_List" >
-        `id`, `creator_id`, `file_name`, `create_time`, `file_path`, `task_status`, `finish_time`, 
-        `attr1`, `attr2`, `attr3`, `attr4`, `attr5`, `attr6`, `creator_name`
+        `id`, `file_name`, `file_path`, `task_status`, `finish_time`, `active`, `created`, 
+        `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -17,14 +17,8 @@
     <update id="update" parameterType="com.voyageone.service.model.report.BiReportDownloadTaskModel" >
         update bi_report_download_task
         <set >
-            <if test="creatorId != null" >
-                `creator_id` = #{creatorId,jdbcType=INTEGER},
-            </if>
             <if test="fileName != null" >
                 `file_name` = #{fileName,jdbcType=VARCHAR},
-            </if>
-            <if test="createTime != null" >
-                `create_time` = #{createTime,jdbcType=TIMESTAMP},
             </if>
             <if test="filePath != null" >
                 `file_path` = #{filePath,jdbcType=VARCHAR},
@@ -35,26 +29,23 @@
             <if test="finishTime != null" >
                 `finish_time` = #{finishTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="attr1 != null" >
-                `attr1` = #{attr1,jdbcType=INTEGER},
+            <if test="active != null" >
+                `active` = #{active,jdbcType=BIT},
             </if>
-            <if test="attr2 != null" >
-                `attr2` = #{attr2,jdbcType=INTEGER},
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
             </if>
-            <if test="attr3 != null" >
-                `attr3` = #{attr3,jdbcType=INTEGER},
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
             </if>
-            <if test="attr4 != null" >
-                `attr4` = #{attr4,jdbcType=VARCHAR},
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
             </if>
-            <if test="attr5 != null" >
-                `attr5` = #{attr5,jdbcType=VARCHAR},
+            <if test="modified == null" >
+                `modified` = now(),
             </if>
-            <if test="attr6 != null" >
-                `attr6` = #{attr6,jdbcType=VARCHAR},
-            </if>
-            <if test="creatorName != null" >
-                `creator_name` = #{creatorName,jdbcType=VARCHAR},
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -70,14 +61,8 @@
         <include refid="Base_Column_List" />
         from bi_report_download_task
         <where >
-            <if test="creatorId != null" >
-                and `creator_id` = #{creatorId,jdbcType=INTEGER}
-            </if>
             <if test="fileName != null" >
                 and `file_name` = #{fileName,jdbcType=VARCHAR}
-            </if>
-            <if test="createTime != null" >
-                and `create_time` = #{createTime,jdbcType=TIMESTAMP}
             </if>
             <if test="filePath != null" >
                 and `file_path` = #{filePath,jdbcType=VARCHAR}
@@ -88,26 +73,20 @@
             <if test="finishTime != null" >
                 and `finish_time` = #{finishTime,jdbcType=TIMESTAMP}
             </if>
-            <if test="attr1 != null" >
-                and `attr1` = #{attr1,jdbcType=INTEGER}
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
             </if>
-            <if test="attr2 != null" >
-                and `attr2` = #{attr2,jdbcType=INTEGER}
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
-            <if test="attr3 != null" >
-                and `attr3` = #{attr3,jdbcType=INTEGER}
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="attr4 != null" >
-                and `attr4` = #{attr4,jdbcType=VARCHAR}
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="attr5 != null" >
-                and `attr5` = #{attr5,jdbcType=VARCHAR}
-            </if>
-            <if test="attr6 != null" >
-                and `attr6` = #{attr6,jdbcType=VARCHAR}
-            </if>
-            <if test="creatorName != null" >
-                and `creator_name` = #{creatorName,jdbcType=VARCHAR}
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
         </where>
         limit 1
@@ -118,14 +97,8 @@
         <include refid="Base_Column_List" />
         from bi_report_download_task
         <where >
-            <if test="creatorId != null" >
-                and `creator_id` = #{creatorId,jdbcType=INTEGER}
-            </if>
             <if test="fileName != null" >
                 and `file_name` = #{fileName,jdbcType=VARCHAR}
-            </if>
-            <if test="createTime != null" >
-                and `create_time` = #{createTime,jdbcType=TIMESTAMP}
             </if>
             <if test="filePath != null" >
                 and `file_path` = #{filePath,jdbcType=VARCHAR}
@@ -136,26 +109,20 @@
             <if test="finishTime != null" >
                 and `finish_time` = #{finishTime,jdbcType=TIMESTAMP}
             </if>
-            <if test="attr1 != null" >
-                and `attr1` = #{attr1,jdbcType=INTEGER}
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
             </if>
-            <if test="attr2 != null" >
-                and `attr2` = #{attr2,jdbcType=INTEGER}
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
-            <if test="attr3 != null" >
-                and `attr3` = #{attr3,jdbcType=INTEGER}
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="attr4 != null" >
-                and `attr4` = #{attr4,jdbcType=VARCHAR}
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="attr5 != null" >
-                and `attr5` = #{attr5,jdbcType=VARCHAR}
-            </if>
-            <if test="attr6 != null" >
-                and `attr6` = #{attr6,jdbcType=VARCHAR}
-            </if>
-            <if test="creatorName != null" >
-                and `creator_name` = #{creatorName,jdbcType=VARCHAR}
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
@@ -163,14 +130,8 @@
     <select id="selectCount" resultType="java.lang.Integer" >
         select count(*) from bi_report_download_task
         <where >
-            <if test="creatorId != null" >
-                and `creator_id` = #{creatorId,jdbcType=INTEGER}
-            </if>
             <if test="fileName != null" >
                 and `file_name` = #{fileName,jdbcType=VARCHAR}
-            </if>
-            <if test="createTime != null" >
-                and `create_time` = #{createTime,jdbcType=TIMESTAMP}
             </if>
             <if test="filePath != null" >
                 and `file_path` = #{filePath,jdbcType=VARCHAR}
@@ -181,26 +142,20 @@
             <if test="finishTime != null" >
                 and `finish_time` = #{finishTime,jdbcType=TIMESTAMP}
             </if>
-            <if test="attr1 != null" >
-                and `attr1` = #{attr1,jdbcType=INTEGER}
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
             </if>
-            <if test="attr2 != null" >
-                and `attr2` = #{attr2,jdbcType=INTEGER}
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
-            <if test="attr3 != null" >
-                and `attr3` = #{attr3,jdbcType=INTEGER}
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="attr4 != null" >
-                and `attr4` = #{attr4,jdbcType=VARCHAR}
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="attr5 != null" >
-                and `attr5` = #{attr5,jdbcType=VARCHAR}
-            </if>
-            <if test="attr6 != null" >
-                and `attr6` = #{attr6,jdbcType=VARCHAR}
-            </if>
-            <if test="creatorName != null" >
-                and `creator_name` = #{creatorName,jdbcType=VARCHAR}
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
@@ -208,14 +163,8 @@
     <insert id="insert" parameterType="com.voyageone.service.model.report.BiReportDownloadTaskModel" useGeneratedKeys="true" keyProperty="id" >
         insert into bi_report_download_task
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="creatorId != null" >
-                `creator_id`,
-            </if>
             <if test="fileName != null" >
                 `file_name`,
-            </if>
-            <if test="createTime != null" >
-                `create_time`,
             </if>
             <if test="filePath != null" >
                 `file_path`,
@@ -226,37 +175,24 @@
             <if test="finishTime != null" >
                 `finish_time`,
             </if>
-            <if test="attr1 != null" >
-                `attr1`,
+            <if test="active != null" >
+                `active`,
             </if>
-            <if test="attr2 != null" >
-                `attr2`,
+            `created`,
+            <if test="creater != null" >
+                `creater`,
             </if>
-            <if test="attr3 != null" >
-                `attr3`,
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
             </if>
-            <if test="attr4 != null" >
-                `attr4`,
-            </if>
-            <if test="attr5 != null" >
-                `attr5`,
-            </if>
-            <if test="attr6 != null" >
-                `attr6`,
-            </if>
-            <if test="creatorName != null" >
-                `creator_name`,
+            <if test="modifier == null and creater != null" >
+                `modifier`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="creatorId != null" >
-                #{creatorId,jdbcType=INTEGER},
-            </if>
             <if test="fileName != null" >
                 #{fileName,jdbcType=VARCHAR},
-            </if>
-            <if test="createTime != null" >
-                #{createTime,jdbcType=TIMESTAMP},
             </if>
             <if test="filePath != null" >
                 #{filePath,jdbcType=VARCHAR},
@@ -267,26 +203,29 @@
             <if test="finishTime != null" >
                 #{finishTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="attr1 != null" >
-                #{attr1,jdbcType=INTEGER},
+            <if test="active != null" >
+                #{active,jdbcType=BIT},
             </if>
-            <if test="attr2 != null" >
-                #{attr2,jdbcType=INTEGER},
+            <if test="created == null" >
+                now(),
             </if>
-            <if test="attr3 != null" >
-                #{attr3,jdbcType=INTEGER},
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
             </if>
-            <if test="attr4 != null" >
-                #{attr4,jdbcType=VARCHAR},
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
             </if>
-            <if test="attr5 != null" >
-                #{attr5,jdbcType=VARCHAR},
+            <if test="modified == null" >
+                now(),
             </if>
-            <if test="attr6 != null" >
-                #{attr6,jdbcType=VARCHAR},
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
             </if>
-            <if test="creatorName != null" >
-                #{creatorName,jdbcType=VARCHAR},
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

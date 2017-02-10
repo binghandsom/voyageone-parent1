@@ -11,31 +11,13 @@ import com.voyageone.base.dao.mysql.BaseModel;
 import java.util.Date;
 
 /**
- * 
+ * 报告下载任务表
  */
 public class BiReportDownloadTaskModel extends BaseModel {
-    public BiReportDownloadTaskModel(){}
-    public BiReportDownloadTaskModel(Integer creatorId,String fileName, Date createTime,Integer taskStatus,String creatorName)
-    {
-        this.creatorId=creatorId;
-        this.creatorName=creatorName;
-        this.taskStatus=taskStatus;
-        this.fileName=fileName;
-    }
-    /**
-     * 创建者id
-     */
-    protected Integer creatorId;
-
     /**
      * 文件名称
      */
     protected String fileName;
-
-    /**
-     * 创建时间
-     */
-    protected Date createTime;
 
     /**
      * 文件路径
@@ -52,27 +34,10 @@ public class BiReportDownloadTaskModel extends BaseModel {
      */
     protected Date finishTime;
 
-    protected Integer attr1;
-
-    protected Integer attr2;
-
-    protected Integer attr3;
-
-    protected String attr4;
-
-    protected String attr5;
-
-    protected String attr6;
-
-    protected String creatorName;
-
-    public Integer getCreatorId() {
-        return creatorId;
-    }
-
-    public void setCreatorId(Integer creatorId) {
-        this.creatorId = creatorId;
-    }
+    /**
+     * 是否有效（1:有效；0：无效）
+     */
+    protected Boolean active;
 
     public String getFileName() {
         return fileName;
@@ -80,14 +45,6 @@ public class BiReportDownloadTaskModel extends BaseModel {
 
     public void setFileName(String fileName) {
         this.fileName = fileName == null ? null : fileName.trim();
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
     }
 
     public String getFilePath() {
@@ -114,59 +71,11 @@ public class BiReportDownloadTaskModel extends BaseModel {
         this.finishTime = finishTime;
     }
 
-    public Integer getAttr1() {
-        return attr1;
+    public Boolean getActive() {
+        return active;
     }
 
-    public void setAttr1(Integer attr1) {
-        this.attr1 = attr1;
-    }
-
-    public Integer getAttr2() {
-        return attr2;
-    }
-
-    public void setAttr2(Integer attr2) {
-        this.attr2 = attr2;
-    }
-
-    public Integer getAttr3() {
-        return attr3;
-    }
-
-    public void setAttr3(Integer attr3) {
-        this.attr3 = attr3;
-    }
-
-    public String getAttr4() {
-        return attr4;
-    }
-
-    public void setAttr4(String attr4) {
-        this.attr4 = attr4 == null ? null : attr4.trim();
-    }
-
-    public String getAttr5() {
-        return attr5;
-    }
-
-    public void setAttr5(String attr5) {
-        this.attr5 = attr5 == null ? null : attr5.trim();
-    }
-
-    public String getAttr6() {
-        return attr6;
-    }
-
-    public void setAttr6(String attr6) {
-        this.attr6 = attr6 == null ? null : attr6.trim();
-    }
-
-    public String getCreatorName() {
-        return creatorName;
-    }
-
-    public void setCreatorName(String creatorName) {
-        this.creatorName = creatorName == null ? null : creatorName.trim();
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }
