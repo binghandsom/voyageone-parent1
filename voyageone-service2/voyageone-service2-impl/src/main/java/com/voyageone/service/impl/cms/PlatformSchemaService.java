@@ -4,8 +4,10 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -18,6 +20,7 @@ import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryExtendFieldDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryInvisibleFieldDao;
@@ -47,16 +50,19 @@ public class PlatformSchemaService extends BaseService {
     private final CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao;
     private final CmsMtPlatformCategoryExtendFieldDao cmsMtPlatformCategoryExtendFieldDao;
     private final CmsMtPlatformCategoryInvisibleFieldDao cmsMtPlatformCategoryInvisibleFieldDao;
+    private final TbProductService tbProductService;
 
     @Autowired
     public PlatformSchemaService(PlatformCategoryService platformCategoryService,
                                  CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao,
                                  CmsMtPlatformCategoryInvisibleFieldDao cmsMtPlatformCategoryInvisibleFieldDao,
-                                 CmsMtPlatformCategoryExtendFieldDao cmsMtPlatformCategoryExtendFieldDao) {
+                                 CmsMtPlatformCategoryExtendFieldDao cmsMtPlatformCategoryExtendFieldDao,
+                                 TbProductService tbProductService) {
         this.platformCategoryService = platformCategoryService;
         this.cmsMtPlatformPropMappingCustomDao = cmsMtPlatformPropMappingCustomDao;
         this.cmsMtPlatformCategoryInvisibleFieldDao = cmsMtPlatformCategoryInvisibleFieldDao;
         this.cmsMtPlatformCategoryExtendFieldDao = cmsMtPlatformCategoryExtendFieldDao;
+        this.tbProductService = tbProductService;
     }
 
     /**
@@ -70,7 +76,7 @@ public class PlatformSchemaService extends BaseService {
     public Map<String, List<Field>> getFieldsByCategoryPath(String categoryPath, String channelId, int cartId, String language) {
 
         if (CartEnums.Cart.JM.getValue() == cartId)
-            return getFieldForProductImage(null, channelId, cartId, language);
+            return getFieldForProductImage(null, channelId, cartId, language, null);
 
         CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
 
@@ -83,13 +89,13 @@ public class PlatformSchemaService extends BaseService {
         if (platformCategorySchemaModel == null)
             return null;
 
-        return getFieldListMap(platformCategorySchemaModel, channelId, language);
+        return getFieldListMap(platformCategorySchemaModel, channelId, language, null);
     }
 
     /**
      * 产品画面属性list取得
      */
-    public Map<String, List<Field>> getFieldForProductImage(String catId, String channelId, int cartId, String language) {
+    public Map<String, List<Field>> getFieldForProductImage(String catId, String channelId, int cartId, String language, String platformBrandId) {
 //        if (CartEnums.Cart.JM.getValue() == cartId
 //                || CartEnums.Cart.TT.getValue() == cartId
 //                || CartEnums.Cart.USTT.getValue() == cartId
@@ -116,10 +122,10 @@ public class PlatformSchemaService extends BaseService {
             return null;
         }
 
-        return getFieldListMap(platformCatSchemaModel, channelId, language);
+        return getFieldListMap(platformCatSchemaModel, channelId, language, platformBrandId);
     }
 
-    private Map<String, List<Field>> getFieldListMap(CmsMtPlatformCategorySchemaModel platformCatSchemaModel, String channelId, String language) {
+    private Map<String, List<Field>> getFieldListMap(CmsMtPlatformCategorySchemaModel platformCatSchemaModel, String channelId, String language, String platformBrandId) {
 
         String catId = platformCatSchemaModel.getCatId();
 
@@ -144,6 +150,22 @@ public class PlatformSchemaService extends BaseService {
 
         // 产品
         String schemaProduct = platformCatSchemaModel.getPropsProduct();
+
+        if (CartEnums.Cart.isTmSeries(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) {
+            if (platformBrandId != null) {
+                // 如果传入的平台品牌id不是空的， 那么就从天猫上去获取一下
+                ShopBean shopBean = Shops.getShop(channelId, cartId);
+                try {
+                    String schema = tbProductService.getAddProductSchema(Long.parseLong(catId), Long.parseLong(platformBrandId), shopBean);
+                    if (!StringUtils.isEmpty(schema)) {
+                        schemaProduct = schema;
+                    }
+                } catch (Exception e) {
+
+                }
+            }
+        }
+
 //        if (CartEnums.Cart.JG.getValue() == cartId || CartEnums.Cart.JGJ.getValue() == cartId || CartEnums.Cart.JGY.getValue() == cartId) {
         if (CartEnums.Cart.isJdSeries(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) {
             // 京东的场合，产品schema是共通，写死 catId = 1

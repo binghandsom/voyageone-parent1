@@ -25,6 +25,7 @@ define([
 
         $scope.initialize = function () {
             jmPromotionDetailService.init({jmPromotionRowId: $routeParams.jmpromId}).then(function (res) {
+
                 $scope.parentModel = res.data.modelPromotion;
                 $scope.parentModel.prodSum = $scope.parentModel.prodSum || 0;
                 $scope.parentModel.quantitySum = $scope.parentModel.quantitySum || 0;
@@ -35,6 +36,9 @@ define([
                 $scope.vm.isEnd = res.data.isEnd;//活动是否结束
                 $scope.vm.isUpdateJM = res.data.isUpdateJM;
                 $scope.vm.brandList = res.data.brandList;
+
+                spDataService.passDated = $scope.vm.passDated = $scope.parentModel.passDated;
+                $scope.vm.spDataService = spDataService;
             });
             $scope.search();
             $scope.modelUpdateDealEndTime.promotionId = $routeParams.jmpromId;
@@ -308,6 +312,16 @@ define([
             return listPromotionProductId;
         };
 
+        $scope.getSelectedPromotionProductCodeList = function () {
+            var listPromotionProductCode = [];
+            for (var i = 0; i < $scope.vm.modelList.length; i++) {
+                if ($scope.vm.modelList[i].isChecked) {
+                    listPromotionProductCode.push($scope.vm.modelList[i].productCode);
+                }
+            }
+            return listPromotionProductCode;
+        };
+
         $scope.getSelectedPromotionProductList = function () {
             var listPromotionProduct = [];
             for (var i = 0; i < $scope.vm.modelList.length; i++) {
@@ -371,13 +385,39 @@ define([
             parameter.promotionId = $scope.vm.promotionId;
             parameter.listPromotionProductId = listPromotionProductId;
             jmPromotionDetailService.batchSynchPrice(parameter).then(function (res) {
+                $scope.search();
+                alert("请稍后几分钟刷新页面，查看最新上传结果");
+            });
+        }
+        //批量同步价格
+        $scope.batchSynchMallPrice = function () {
+            var listPromotionProductCodes = $scope.getSelectedPromotionProductCodeList();
+            if (listPromotionProductCodes.length == 0) {
+                alert("请选择同步价格的商品!");
+                return;
+            }
+            if ($scope.vm.isBegin) {
+                confirm("聚美专场已开始预热，价格变更将有极大可能性引起客诉。点击确认继续操作！").then(function () {
+                    batchSynchMallPrice_item(listPromotionProductCodes);
+                });
+            }
+            else {
+                confirm("聚美平台无任何删除功能，专场内一旦有商品完成上传，该商品禁止删除，该专场禁止删除，点击确认继续操作.").then(function () {
+                    batchSynchMallPrice_item(listPromotionProductCodes);
+                });
+            }
+        };
+
+        function batchSynchMallPrice_item(listPromotionProductCodes) {
+            var parameter = {};
+            parameter.jmPromotionId = $scope.vm.promotionId;
+            parameter.productCodes = listPromotionProductCodes;
+            jmPromotionDetailService.batchSynchMallPrice(parameter).then(function (res) {
                 if (res.data.result) {
                     $scope.search();
                     alert("请稍后几分钟刷新页面，查看最新上传结果");
                 }
-                else {
-                    alert($translate.instant('TXT_FAIL'));
-                }
+
             });
         }
 
@@ -392,6 +432,12 @@ define([
                         alert(res.data.msg);
                     }
                 });
+            });
+        };
+
+        $scope.synchAllMallPrice = function () {
+            confirm("您确定要同步商场价格吗?").then(function () {
+                batchSynchMallPrice_item()
             });
         };
 

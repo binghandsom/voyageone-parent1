@@ -36,4 +36,10 @@ public interface SwissWatchFeedDao {
     void delete();
 
     List<CmsBtFeedInfoSwissWatchModel> selectSuperfeedModel(Map colums);
+
+    int fullCopyTemp();
+
+    int updateMd5();
+
+    int updateUpdateFlag();
 }

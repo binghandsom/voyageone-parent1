@@ -63,7 +63,7 @@ public class DataServiceTB extends OpenApiBaseService {
         //result Data
         List<String> listColumns = new ArrayList<>();
         List<List<String>> listValues = new ArrayList<>();
-        if (iCartId == 20 || iCartId == 21 || iCartId == 23 || iCartId == 30) {
+        if (iCartId == 20 || iCartId == 21 || iCartId == 23 || iCartId == 30 || iCartId == 31) {
             // TM / TG
             paresTMUrlData(channelId, cartId, eCommId, jsonData, listColumns, listValues);
         } else if (iCartId == 24 || iCartId == 26 || iCartId == 28 || iCartId == 29) {
@@ -152,7 +152,7 @@ public class DataServiceTB extends OpenApiBaseService {
         // save excel file
         String newFileName = saveTBExcelFile(channelId, iCartId, fileName, multipartFile);
         $info("saveProductFileData file:" + newFileName);
-        if (iCartId == 20 || iCartId == 21 || iCartId == 23 || iCartId == 30) {
+        if (iCartId == 20 || iCartId == 21 || iCartId == 23 || iCartId == 30 || iCartId == 31) {
             // TM / TG
             // pares Excel File
             listValues = paresTBExcelFile(channelId, cartId, newFileName, listColumns, deleteDataKeyMap);
@@ -210,7 +210,7 @@ public class DataServiceTB extends OpenApiBaseService {
 
         String deviceStr = "0";
         // set Type
-        if (iCartId == 20 || iCartId == 21 || iCartId == 23 || iCartId == 30) {
+        if (iCartId == 20 || iCartId == 21 || iCartId == 23 || iCartId == 30 || iCartId == 31) {
             // TM / TG
             try (InputStream a = multipartFile.getInputStream();
                  Workbook wb = WorkbookFactory.create(a)) {

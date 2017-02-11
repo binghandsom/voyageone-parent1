@@ -21,12 +21,14 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
+import com.voyageone.service.impl.cms.feed.CmsBtFeedImportSizeService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -34,6 +36,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
+import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseCronTaskService;
@@ -100,6 +103,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
     @Autowired
     private Searcher searcher;
+
+    @Autowired
+    private CmsBtFeedImportSizeService cmsBtFeedImportSizeService;
 
     // 每个channel的子店->USJOI主店导入最大件数
     private final static int UPLOAD_TO_USJOI_MAX_500 = 500;
@@ -408,7 +414,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     // CMSDOC-365,CMCDOC-414 如果common.catConf="0"(非人工匹配主类目)时，自动匹配商品主类目
                     // TODO 2016/12/30暂时这样更新，以后要改
 //                    if ("0".equals(productModel.getCommonNotNull().getCatConf())) {
-                        doSetMainCategory(productModel.getCommon(), productModel.getFeed().getCatPath(), true);
+                        productModel.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
+                        productModel.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
+                        doSetMainCategory(productModel.getCommon(), productModel.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
 //                    }
 
                     // platform对应 从子店的platform.p928 929 中的数据生成usjoi的platform
@@ -425,6 +433,14 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             platform.setpCatPath(null);
                             platform.setpBrandId(null);
                             platform.setpBrandName(null);
+                            platform.setSkus(platform.getSkus().stream().map(sku->{
+                                BaseMongoMap<String, Object> newSku = new BaseMongoMap<String, Object>();
+                                newSku.setAttribute("skuCode",sku.getStringAttribute("skuCode"));
+                                newSku.setAttribute("isSale",sku.get("isSale"));
+                                newSku.setAttribute("sizeNick",sku.get("sizeNick"));
+                                sku = newSku;
+                                return sku;
+                            }).collect(Collectors.toList()));
                             // 重新设置P28平台的mainProductCode和pIsMain
                             CmsBtProductGroupModel cartGroupModel = productGroupService.selectProductGroupByCode(usJoiChannelId, productModel.getCommon().getFields().getCode(), cartId);
                             if (cartGroupModel != null && !StringUtils.isEmpty(cartGroupModel.getMainProductCode())) {
@@ -747,7 +763,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                         // TODO 2016/12/30暂时这样更新，以后要改
 //                        if ("0".equals(pr.getCommonNotNull().getCatConf())) {
                             // 自动匹配商品主类目
-                            doSetMainCategory(pr.getCommon(), pr.getFeed().getCatPath(), false);
+                            pr.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
+                            pr.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
+                            doSetMainCategory(pr.getCommon(), pr.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
 //                        }
 
                         // ****************common.skus的更新(有的sku可能在拆分后的product中)****************
@@ -838,6 +856,14 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 newPlatform.setCartId(cartId);
                                 // 重新设置newPlatform的skus，因为fromPlatform里面过来的是全部的sku，要去掉拆分到其他产品的sku
                                 newPlatform.setSkus(correctPlatformSkus);
+                                newPlatform.setSkus(newPlatform.getSkus().stream().map(sku->{
+                                    BaseMongoMap<String, Object> newSku = new BaseMongoMap<String, Object>();
+                                    newSku.setAttribute("skuCode",sku.getStringAttribute("skuCode"));
+                                    newSku.setAttribute("isSale",sku.get("isSale"));
+                                    newSku.setAttribute("sizeNick",sku.get("sizeNick"));
+                                    sku = newSku;
+                                    return sku;
+                                }).collect(Collectors.toList()));
 
                                 // 设定是否主商品(根据主店商品code来判断)
                                 CmsBtProductGroupModel group = productGroupService.selectMainProductGroupByCode(usJoiChannelId,
@@ -1052,6 +1078,13 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 }
             }
 
+            if (ListUtils.notNull(targetProductList)) {
+                targetProductList.forEach(p -> {
+                    // 插入尺码表(不存在插入，存在不更新)
+                    insertCmsBtFeedImportSize(usJoiChannelId, p);
+                });
+            }
+
             // delete by desmond 2016/09/06 start
             // 因为productService.updateProductPlatform()里面已经调用了记录价格变动履历的方法，所以这里不要再重新记录价格变动履历了
             // 记录商品价格变动履历,并向Mq发送消息同步sku,code,group价格范围
@@ -1068,8 +1101,11 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             insertMtValueChannelInfo(usJoiChannelId, mapBrandMapping, targetProductList);
 
             // 子店->USJOI主店产品导入的虚拟上新成功之后回写workload表中的状态(1:USJOI上新成功)
-            sxWorkLoadBean.setPublishStatus(1);
-            cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
+//            sxWorkLoadBean.setPublishStatus(1);
+//            cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
+            // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
+            sxProductService.updateSxWorkload(sxWorkLoadBean, CmsConstants.SxWorkloadPublishStatusNum.okNum,
+                    StringUtils.isEmpty(sxWorkLoadBean.getModifier()) ? getTaskName() : sxWorkLoadBean.getModifier());
 
             // 子店->USJOI主店产品导入的虚拟上新成功之后,取得子店的productGroup信息，设置状态，调用共通的上新成功回写方法，回写子店状态
             // 子店的group表里面getPlatformActive是由feed->master导入根据配置设置的，上新成功之后，根据这个值回写状态（因为是虚拟上新，所以回写的这个状态没啥太大意义）
@@ -1115,8 +1151,12 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 errMsg += e.getMessage();
             }
             // 将子店->主店的上新workload的状态更新为2(导入上新失败)
-            sxWorkLoadBean.setPublishStatus(2);
-            cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
+//            sxWorkLoadBean.setPublishStatus(2);
+//            cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
+            // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
+            sxProductService.updateSxWorkload(sxWorkLoadBean, CmsConstants.SxWorkloadPublishStatusNum.errorNum,
+                    StringUtils.isEmpty(sxWorkLoadBean.getModifier()) ? getTaskName() : sxWorkLoadBean.getModifier());
+
             $info(String.format("channelId:%s [%d/%d] groupId:%d  复制到%s USJOI 异常", sxWorkLoadBean.getChannelId(),
                     currentIndex, totalCnt, sxWorkLoadBean.getGroupId(), usJoiChannelId));
             e.printStackTrace();
@@ -1220,11 +1260,12 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             // 聚美和独立官网的时候，是一个Code对应一个Group，所以直接新增group, 其他的平台都是几个Code对应一个Group
             // group对象
             CmsBtProductGroupModel group = null;
-            // 如果是聚美或者独立官网的时候，是一个Code对应一个Group,其他的平台都是几个Code对应一个Group
+            // 如果是聚美，独立官网，Liking官网或分销的时候，是一个Code对应一个Group,其他的平台都是几个Code对应一个Group
             // 目前的USJOI有京东国际平台, 也有聚美平台(27)
             if (!CartEnums.Cart.JM.getId().equals(currentCartId)
                     && !CartEnums.Cart.CN.getId().equals(currentCartId)
-                    && !CartEnums.Cart.LIKING.getId().equals(currentCartId)) {
+                    && !CartEnums.Cart.LIKING.getId().equals(currentCartId)
+                    && !CartEnums.Cart.DT.getId().equals(currentCartId)) {
                 // 聚美和官网以外的平台，先取得product.model对应的group信息(根据model取得Product(没找到直接返回null),再根据productCode查找group信息)
                 // 由于可能存在2个子店的Product.model相同的情况，如果不加orgChannelId只用model去查product的话，会导致查出来别的店铺的product对应的group
                 // 例如:A店铺的Product1(model="model0001")已经生成了group信息，然后B店铺的Product2(model="model0001")就会查出来Product1对应的group,会把B店铺的Product2加到A店铺的Product1对应的group中去
@@ -1763,83 +1804,94 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      *
      * @param prodCommon 产品共通属性
      * @param feedCategoryPath feed类目Path
-     * @param blnAddFlg 是否新增商品(true:新增 false:更新)
+     * @param channelId channelId
+//     * @param blnAddFlg 是否新增商品(true:新增 false:更新)
      */
-    protected void doSetMainCategory(CmsBtProductModel_Common prodCommon, String feedCategoryPath, boolean blnAddFlg) {
+    protected void doSetMainCategory(CmsBtProductModel_Common prodCommon, String feedCategoryPath, String channelId) {
         if (prodCommon == null || StringUtils.isEmpty(feedCategoryPath)) return;
 
         // 共通Field
         CmsBtProductModel_Field prodCommonField = prodCommon.getFieldsNotNull();
 
         // 调用Feed到主数据的匹配接口取得匹配度最高的主类目
-        SearchResult searchResult = getMainCatInfo(feedCategoryPath,
-                prodCommonField.getProductType(),
-                prodCommonField.getSizeType(),
+        long beginTime = System.currentTimeMillis();
+        MatchResult searchResult = getMainCatInfo(feedCategoryPath,
+                !StringUtils.isEmpty(prodCommonField.getOrigProductType()) ? prodCommonField.getOrigProductType() : "",
+                !StringUtils.isEmpty(prodCommonField.getOrigSizeType()) ? prodCommonField.getOrigSizeType() : "",
                 prodCommonField.getProductNameEn(),
                 prodCommonField.getBrand());
-        if (searchResult != null && searchResult.getMtCategoryKeysModel() != null) {
+        if (searchResult != null) {
+            $info(String.format("调用主类目匹配接口取得主类目和适用人群正常结束！[耗时:%s] [feedCategoryPath:%s] [productType:%s] " +
+                    "[sizeType:%s] [productNameEn:%s] [brand:%s]", (System.currentTimeMillis() - beginTime), feedCategoryPath,
+                    prodCommonField.getProductType(), prodCommonField.getSizeType(), prodCommonField.getProductNameEn(), prodCommonField.getBrand()));
+
             // 先备份原来的productType和sizeType
             // feed原始产品分类
-            if (StringUtils.isEmpty(prodCommonField.getOrigProductType())
-                    && !StringUtils.isEmpty(prodCommonField.getProductType())) {
-                prodCommonField.setOrigProductType(prodCommonField.getProductType());
-             }
-            // feed原始适合人群
-            if (StringUtils.isEmpty(prodCommonField.getOrigSizeType())
-                    && !StringUtils.isEmpty(prodCommonField.getSizeType())) {
-                prodCommonField.setOrigSizeType(prodCommonField.getSizeType());
-            }
-
-            // 主类目匹配结果model
-            MtCategoryKeysModel mtCategoryKeysModel = searchResult.getMtCategoryKeysModel();
+//            if (StringUtils.isEmpty(prodCommonField.getOrigProductType())
+//                    && !StringUtils.isEmpty(prodCommonField.getProductType())) {
+//                prodCommonField.setOrigProductType(prodCommonField.getProductType());
+//             }
+//            // feed原始适合人群
+//            if (StringUtils.isEmpty(prodCommonField.getOrigSizeType())
+//                    && !StringUtils.isEmpty(prodCommonField.getSizeType())) {
+//                prodCommonField.setOrigSizeType(prodCommonField.getSizeType());
+//            }
 
             // 主类目path(中文)
-            prodCommon.setCatPath(mtCategoryKeysModel.getCnName());
+            if (!StringUtils.isEmpty(searchResult.getCnName()))   prodCommon.setCatPath(searchResult.getCnName());
             // 主类目path(英文)
-            prodCommon.setCatPathEn(mtCategoryKeysModel.getEnName());
+            if (!StringUtils.isEmpty(searchResult.getEnName()))   prodCommon.setCatPathEn(searchResult.getEnName());
             // 主类目id(就是主类目path中文的MD5码)
-            prodCommon.setCatId(MD5.getMD5(mtCategoryKeysModel.getCnName()));
-
-            // 更新主类目设置状态
-            if (!StringUtil.isEmpty(prodCommon.getCatId())) {
-                prodCommonField.setCategoryStatus("1");
+            if (!StringUtils.isEmpty(searchResult.getCnName())) {
+                prodCommon.setCatId(MD5.getMD5(searchResult.getCnName()));
                 prodCommonField.setCategorySetTime(DateTimeUtil.getNow());
                 prodCommonField.setCategorySetter(getTaskName());
+            }
+            // 更新主类目设置状态
+            if (!StringUtils.isEmpty(prodCommon.getCatId())) {
+                prodCommonField.setCategoryStatus("1");
             } else {
                 prodCommonField.setCategoryStatus("0");
             }
             // 产品分类(英文)
-            prodCommonField.setProductType(mtCategoryKeysModel.getProductTypeEn());
+            if (!StringUtils.isEmpty(searchResult.getProductTypeEn()))   prodCommonField.setProductType(searchResult.getProductTypeEn().toLowerCase());
             // 产品分类(中文)
-            prodCommonField.setProductTypeCn(mtCategoryKeysModel.getProductTypeCn());
+            if (!StringUtils.isEmpty(searchResult.getProductTypeCn()))   prodCommonField.setProductTypeCn(searchResult.getProductTypeCn());
             // 适合人群(英文)
-            prodCommonField.setSizeType(mtCategoryKeysModel.getSizeTypeEn());
+            if (!StringUtils.isEmpty(searchResult.getSizeTypeEn()))      prodCommonField.setSizeType(searchResult.getSizeTypeEn().toLowerCase());
             // 适合人群(中文)
-            prodCommonField.setSizeTypeCn(mtCategoryKeysModel.getSizeTypeCn());
+            if (!StringUtils.isEmpty(searchResult.getSizeTypeCn()))      prodCommonField.setSizeTypeCn(searchResult.getSizeTypeCn());
             // TODO 2016/12/30暂时这样更新，以后要改
             if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter())) {
                 // 税号个人
-                prodCommonField.setHsCodePrivate(mtCategoryKeysModel.getTaxPersonal());
-                // 更新税号设置状态
-                if (!StringUtil.isEmpty(prodCommonField.getHsCodePrivate())) {
-                    prodCommonField.setHsCodeStatus("1");
+                if (!StringUtils.isEmpty(searchResult.getTaxPersonal())) {
+                    prodCommonField.setHsCodePrivate(searchResult.getTaxPersonal());
                     prodCommonField.setHsCodeSetTime(DateTimeUtil.getNow());
                     prodCommonField.setHsCodeSetter(getTaskName());
+                }
+                // 更新税号设置状态
+                if (!StringUtils.isEmpty(prodCommonField.getHsCodePrivate())) {
+                    prodCommonField.setHsCodeStatus("1");
                 } else {
                     prodCommonField.setHsCodeStatus("0");
                 }
             }
             // 税号跨境申报（10位）
-            prodCommonField.setHsCodeCross(mtCategoryKeysModel.getTaxDeclare());
+            if (!StringUtils.isEmpty(searchResult.getTaxDeclare()))      prodCommonField.setHsCodeCross(searchResult.getTaxDeclare());
 
             // 商品中文名称(如果已翻译，则不设置)
+            // 临时特殊处理 017的名称不根据主类目自动翻译,如果后续有这个需求再改正
             if ("0".equals(prodCommonField.getTranslateStatus())) {
-                // 主类目叶子级中文名称（"服饰>服饰配件>钱包卡包钥匙包>护照夹" -> "护照夹"）
-                String leafCategoryCnName = mtCategoryKeysModel.getCnName().substring(mtCategoryKeysModel.getCnName().lastIndexOf(">") + 1,
-                        mtCategoryKeysModel.getCnName().length());
-                // 设置商品中文名称（品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称）
-                prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(prodCommonField.getBrand()
-                        , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
+                if (!StringUtils.isEmpty(searchResult.getCnName())) {
+                    // 主类目叶子级中文名称（"服饰>服饰配件>钱包卡包钥匙包>护照夹" -> "护照夹"）
+                    String leafCategoryCnName = searchResult.getCnName().substring(searchResult.getCnName().lastIndexOf(">") + 1,
+                            searchResult.getCnName().length());
+                    // 设置商品中文名称（品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称）
+                    if (!"017".equals(channelId)
+                            || ("017".equals(channelId) && StringUtils.isEmpty(prodCommonField.getOriginalTitleCn())))
+                        prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(prodCommonField.getBrand()
+                                , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
+                }
             }
         }
     }
@@ -1866,7 +1918,34 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      * @param brand 产品品牌
      * @return SearchResult 匹配度最高的第一个查询结果
      */
-    public SearchResult getMainCatInfo(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
+    public MatchResult getMainCatInfo(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
+        // 取得查询条件
+        FeedQuery query = getFeedQuery(feedCategoryPath, productType, sizeType, productNameEn, brand);
+
+        // 调用主类目匹配接口，取得匹配度最高的一个主类目和sizeType
+        MatchResult searchResult = searcher.search(query, false);
+        if (searchResult == null) {
+            String errMsg = String.format("调用Feed到主数据的匹配程序匹配主类目失败！[feedCategoryPath:%s] [productType:%s] " +
+                    "[sizeType:%s] [productNameEn:%s] [brand:%s]", feedCategoryPath, productType, sizeType, productNameEn, brand);
+            $error(errMsg);
+            return null;
+        }
+
+        // 取得匹配度最高的主类目
+        return searchResult;
+    }
+
+    /**
+     * 取得查询条件
+     *
+     * @param feedCategoryPath feed类目Path
+     * @param productType 产品分类
+     * @param sizeType 适合人群(英文)
+     * @param productNameEn 产品名称（英文）
+     * @param brand 产品品牌
+     * @return FeedQuer 查询条件
+     */
+    private FeedQuery getFeedQuery(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
         // 调用Feed到主数据的匹配程序匹配主类目
         StopWordCleaner cleaner = new StopWordCleaner();
         // 子店feed类目path分隔符(由于导入feedInfo表时全部替换成用"-"来分隔了，所以这里写固定值就可以了)
@@ -1879,16 +1958,27 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         query.setSizeType(sizeType);
         query.setProductName(productNameEn, brand);
 
-        // 调用主类目匹配接口，取得匹配度最高的一个主类目
-        List<SearchResult> searchResults = searcher.search(query, 1);
-        if (ListUtils.isNull(searchResults)) {
-            String errMsg = String.format("调用Feed到主数据的匹配程序匹配主类目失败！[feedCategoryPath:%s] [productType:%s] " +
-                    "[sizeType:%s] [productNameEn:%s] [brand:%s]", feedCategoryPath, productType, sizeType, productNameEn, brand);
-            $error(errMsg);
-            return null;
-        }
-
-        // 取得匹配度最高的主类目
-        return searchResults.get(0);
+        return query;
     }
+
+    /**
+     * 插入尺码表(不存在插入，存在不更新)
+     *
+     * @param channelId 渠道id
+     * @param cmsProduct 产品对象
+     */
+    public void insertCmsBtFeedImportSize(String channelId, CmsBtProductModel cmsProduct) {
+        if (StringUtils.isEmpty(channelId) || cmsProduct == null) return;
+
+        CmsBtFeedImportSizeModel cmsBtFeedImportSizeModel = new CmsBtFeedImportSizeModel();
+        cmsBtFeedImportSizeModel.setChannelId(channelId);
+        cmsBtFeedImportSizeModel.setBrandName(cmsProduct.getCommonNotNull().getFieldsNotNull().getBrand());
+        cmsBtFeedImportSizeModel.setProductType(cmsProduct.getCommonNotNull().getFieldsNotNull().getProductType());
+        cmsBtFeedImportSizeModel.setSizeType(cmsProduct.getCommonNotNull().getFieldsNotNull().getSizeType());
+        cmsProduct.getCommon().getSkus().forEach(sku -> {
+            cmsBtFeedImportSizeModel.setOriginalSize(sku.getSize());
+            cmsBtFeedImportSizeService.saveCmsBtFeedImportSizeModel(cmsBtFeedImportSizeModel, getTaskName());
+        });
+    }
+
 }

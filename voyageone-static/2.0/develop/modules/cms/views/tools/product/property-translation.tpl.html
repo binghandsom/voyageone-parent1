@@ -48,7 +48,6 @@
                             <label for="assignInfo-priority" class="control-label col-md-2" translate="TXT_DISTRIBUTION_RULE"></label>
                             <div class="col-md-6">
                                 <select id="assignInfo-priority" class="form-control" ng-model="ctrl.assignInfo.priority" ng-options="option.value as option.name for option in ctrl.vm.sortFieldOptions">
-                                    <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
                                 </select>
                             </div>
                             <div class="col-md-4" ng-if="ctrl.assignInfo.priority=='quantity'">
@@ -63,9 +62,9 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="fuzzy-search" class="control-label col-md-2" translate="TXT_FUZZY_SEARCH"></label>
+                            <label for="fuzzy-search" class="control-label col-md-2" translate="TXT_PRODUCT_CODE"></label>
                             <div class="col-md-6">
-                                <textarea id="fuzzy-search" class="form-control inherited" rows="3" ng-model="ctrl.assignInfo.keyWord" uib-tooltip="{{'TXT_TRANSLATION_FUZZY_SEARCH_TIP'|translate}}" tooltip-trigger="mouseenter" tooltip-placement="bottom"></textarea>
+                                <textarea id="fuzzy-search" class="form-control inherited no-resize" rows="3" ng-model="ctrl.assignInfo.keyWord"></textarea>
                                 <div class="text-warnings">
                                     <i class="icon fa fa-bell-o"></i>&nbsp;换行分隔可批量输入产品Code，锁定【获取任务】范围.
                                 </div>
@@ -96,21 +95,12 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="searchPageSettings-size" class="col-md-2 control-label" translate="TXT_PAGER_SIZE"></label>
-                            <div class="col-md-10">
-                                <select id="searchPageSettings-size" class="form-control" ng-model="ctrl.searchPageSettings.size"
-                                        ng-options="option.value as option.name for option in ctrl.searchPageSizeOption">
-                                    <option value=number:10>10行</option>
-                                    <option value=20>20行</option>
-                                    <option value=50>50行</option>
-                                    <option value=100>100行</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
                             <label for="searchPageSettings-keyWord" class="control-label col-md-2" translate="TXT_FUZZY_SEARCH"></label>
                             <div class="col-md-5">
-                                <input id="searchPageSettings-keyWord" class="form-control" ng-model="ctrl.searchPageSettings.keyWord" uib-tooltip="{{'TXT_TRANSLATION_FUZZY_SEARCH_TIP'|translate}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">
+                                <input id="searchPageSettings-keyWord" class="form-control" ng-model="ctrl.searchPageSettings.keyWord">
+                                <div class="text-warnings">
+                                    <i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_TRANSLATION_FUZZY_SEARCH_TIP'|translate}}
+                                </div>
                             </div>
                             <div class="col-md-5">
                                 <button class="btn btn-default col-sm-offset-1" ng-click="ctrl.clearConditions()"><i
@@ -160,26 +150,29 @@
                             <div class="row">
                                 <div class="col-sm-8">
                                     <div class="form-group">
-                                        <div class="col-sm-offset-3 col-sm-7">
-                                            <a href class="a a-link" ng-click="ctrl.openUrl(ctrl.vm.taskDetail.commonFields.clientProductUrl)"><i class="fa fa-search"></i> {{'TXT_PRODUCT_ORIGINAL_URL' | translate}}</a>
+                                        <div class="col-sm-offset-3 col-sm-7" ng-if="ctrl.vm.taskDetail.commonFields.clientProductUrl != ''">
+                                            <a href class="a a-link" ng-click="ctrl.openUrl(ctrl.vm.taskDetail.commonFields.clientProductUrl)"><i class="fa fa-search"></i>&nbsp;{{'TXT_PRODUCT_ORIGINAL_URL' | translate}}</a>
+                                        </div>
+                                        <div class="col-sm-offset-3 col-sm-7" ng-if="ctrl.vm.taskDetail.commonFields.clientProductUrl == ''">
+                                            <a href class="a a-link"><i class="fa fa-search"></i>&nbsp;无品牌方商品页面</a>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-sm-3 control-label s-not-required">{{'TXT_PRODUCT_CODE' | translate}}</label>
                                         <div class="col-sm-7">
-                                            <input name="productCode" class="form-control" ng-model="ctrl.vm.taskDetail.productCode" disabled="disabled">
+                                            <input name="productCode" class="form-control" ng-model="ctrl.vm.taskDetail.productCode" readonly>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-sm-3 control-label text-right s-not-required">{{'TXT_SIZE_CHART_BRAND_NAME' | translate}}</label>
                                         <div class="col-sm-7">
-                                            <input name="brand" class="form-control" ng-model="ctrl.vm.taskDetail.commonFields.brand" disabled="disabled">
+                                            <input name="brand" class="form-control" ng-model="ctrl.vm.taskDetail.commonFields.brand" readonly>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-sm-3 control-label s-not-required">{{'TXT_MASTER_CATEGORY' | translate}}</label>
+                                        <label class="col-sm-3 control-label s-not-required">{{'TXT_FEED_CATEGORY' | translate}}</label>
                                         <div class="col-sm-7">
-                                            <input class="form-control" ng-model="ctrl.vm.taskDetail.commonFields.feedCategory" disabled="disabled">
+                                            <input class="form-control" ng-model="ctrl.vm.taskDetail.feedCategory" readonly>
                                         </div>
                                     </div>
                                     <!-- Group Info Begin -->
@@ -187,8 +180,6 @@
                                         <div class="col-sm-3">
                                             <div class="row text-right">
                                                 <label class="control-label" style="min-height:107px;"><strong>Group Info</strong></label>
-                                                <!--<br>-->
-                                                <!--<label class="control-label"><strong>库存</strong></label>-->
                                             </div>
                                         </div>
                                         <div class="col-md-8">
@@ -378,7 +369,7 @@
                         <th class="col-sm-1 text-left" translate="TXT_PRODUCT_CODE"></th>
                         <th class="col-sm-3 text-left" translate="TXT_GROUP_NAME_WITH_COLON"></th>
                         <th class="col-sm-2 text-left" translate="TXT_MASTER_CATEGORY"></th>
-                        <th class="col-sm-2 text-left">翻译时间</th>
+                        <th class="col-sm-2 text-left" translate="TXT_TRANSLATION_DATE"></th>
                     </tr>
                     </thead>
                 </table>

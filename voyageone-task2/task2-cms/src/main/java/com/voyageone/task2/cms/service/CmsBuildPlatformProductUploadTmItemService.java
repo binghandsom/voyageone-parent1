@@ -11,6 +11,8 @@ import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.factory.SchemaWriter;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.tmall.bean.ItemSchema;
+import com.voyageone.components.tmall.service.TbCategoryService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.BaseService;
@@ -35,6 +37,8 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
     private SxProductService sxProductService;
     @Autowired
     private TbProductService tbProductService;
+    @Autowired
+    private TbCategoryService tbCategoryService;
 
     /**
      * TM上新商品
@@ -60,7 +64,21 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
         }
         // added by morse.lu 2016/07/14 end
 
-        String itemSchema = cmsMtPlatformCategorySchemaModel.getPropsItem();
+        // 20170206 tom 直接用天猫上最新的（这样就可以拿到最新的产品规格， 之后的版本会改进效率） START
+//        String itemSchema = cmsMtPlatformCategorySchemaModel.getPropsItem();
+        String itemSchema ="";
+        try {
+            String strCatId = expressionParser.getSxData().getMainProduct().getPlatform(expressionParser.getSxData().getCartId()).getpCatId();
+            Long catId = Long.parseLong(strCatId);
+            ItemSchema schema = tbCategoryService.getTbItemAddSchema(shopBean, catId, Long.parseLong(platformProductId));
+            if (schema != null && schema.getResult() == 0) {
+                itemSchema = schema.getItemResult();
+            }
+        } catch (Exception e) {
+
+        }
+        // 20170206 tom 直接用天猫上最新的（这样就可以拿到最新的产品规格， 之后的版本会改进效率） END
+
         // deleted by morse.lu 2016/10/16 start
         // 这段又不需要了- -！ 因为允许改类目了
         // added by morse.lu 2016/08/16 start

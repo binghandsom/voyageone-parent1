@@ -45,7 +45,7 @@ public class CmsUsPlatformStatusSyncService extends BaseCronTaskService {
 
     @Override
     protected String getTaskName() {
-        return "cmsUsPlatformStatusSyncJob";
+        return "CmsUsPlatformStatusSyncJob";
     }
 
     @Override

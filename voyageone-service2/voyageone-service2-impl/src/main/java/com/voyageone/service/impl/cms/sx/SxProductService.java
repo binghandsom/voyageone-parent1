@@ -13,10 +13,12 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
@@ -1046,12 +1048,9 @@ public class SxProductService extends BaseService {
             // modified by morse.lu 2016/06/15 end
         }
 
-        // Add by desmond 2016/06/12 start
-        if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
-            // 有错误(例如feed信息不存在)的时候，直接返回
-            return sxData;
-        }
-        // Add by desmond 2016/06/12 end
+        // 万一没有一条有效的产品code时，用于回写错误信息到mongo产品表中
+        List<CmsBtProductModel> allProductModelList = new ArrayList<>();
+        allProductModelList.addAll(productModelList);
 
         removeProductList.forEach(productModelList::remove);
         // added by morse.lu 2016/06/12 start
@@ -1063,10 +1062,25 @@ public class SxProductService extends BaseService {
                     "下面有效的产品，请确保产品未被锁定,已完成审批且品牌不在黑名单中.";
             $error(errorMsg);
             sxData.setErrorMessage(errorMsg);
-            return sxData;
+            // 如果没有一个有效的code,就把这个错误信息回写到所有code中
+            sxData.setProductList(allProductModelList);
             // update by desmond 2016/07/12 end
+        } else {
+            // added by morse.lu 2016/06/12 end
+
+            // 由于后面出现错误之后回写mongo产品表需要从sxData.ProductList里面取得对象code，所以要先设置对象产品列表的值
+            // 否则，后面的报错之后直接返回sxData里面没有上新对象code列表信息，导致不能回写错误信息到mongo的product表中
+            sxData.setProductList(productModelList);    // 这里先加到sxData里面，后面取得了sizeSx之后再排序
         }
-        // added by morse.lu 2016/06/12 end
+        // 设置排好序之后的skuList
+        sxData.setSkuList(skuList);                     // 这里先加到sxData里面，后面取得了sizeSx之后再排序
+
+        // Add by desmond 2016/06/12 start
+        if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
+            // 有错误(例如feed信息不存在)的时候，直接返回
+            return sxData;
+        }
+        // Add by desmond 2016/06/12 end
 
         // 20161020 tom 判断是否是隔离库存的商品 START
         List<String> strSqlSkuList = new ArrayList<>();
@@ -1292,8 +1306,8 @@ public class SxProductService extends BaseService {
 
         // 20160707 tom 将上新用的size全部整理好, 放到sizeSx里, 并排序 END
 
-        sxData.setProductList(productModelList);
-        sxData.setSkuList(skuList);
+//        sxData.setProductList(productModelList);
+//        sxData.setSkuList(skuList);
 
         return sxData;
     }
@@ -1517,6 +1531,22 @@ public class SxProductService extends BaseService {
                     // HS海关代码
                     if (!sxData.isHasSku()) {
                         String propValue = sxData.getMainProduct().getCommon().getFields().getHsCodePrivate(); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
+                        // added by morse.lu 2017/01/03 start
+                        // 通过配置表(cms_mt_channel_config)来决定用hsCodeCross，还是hsCodePrivate，默认用hsCodePrivate
+                        CmsChannelConfigBean hscodeConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId(),
+                                CmsConstants.ChannelConfig.HSCODE,
+                                String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.SX_HSCODE);
+                        if (hscodeConfig != null) {
+                            String hscodePropName = hscodeConfig.getConfigValue1(); // 目前配置的是code或者color或者codeDiff
+                            if (!StringUtils.isEmpty(hscodePropName)) {
+                                String val = sxData.getMainProduct().getCommon().getFields().getStringAttribute(hscodePropName);
+                                if (!StringUtils.isEmpty(val)) {
+                                    propValue = val;
+                                }
+                            }
+                        }
+                        // added by morse.lu 2017/01/03 end
+
                         ((InputField) field).setValue(propValue.split(",")[0]);
                         retMap.put(field.getId(), field);
                     }
@@ -2210,6 +2240,8 @@ public class SxProductService extends BaseService {
 
         SxData sxData = expressionParser.getSxData();
         CmsBtProductModel mainSxProduct = sxData.getMainProduct();
+        // 更新用schema(用于取得特定field的defaultValue)
+        Map<String, Field> updateItemFields = sxData.getUpdateItemFields();
 
         //品牌
         for (Map.Entry<CustomMappingType, List<Field>> entry : mappingTypePropsMap.entrySet()) {
@@ -2247,7 +2279,13 @@ public class SxProductService extends BaseService {
                     skuFieldService.setCodeImageTemplate(resolveDict("属性图片模板",expressionParser,shopBean, user, null));
 
                     try {
+                        // 设置schema中SKU信息
                         List<Field> skuInfoFields = skuFieldService.buildSkuInfoField(allSkuFields, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
+                        // 更新商品时，判断一下是否需要做货品绑定,如果是全链路(返回值为非空)的场合,设置成schema中默认的SKU库存数
+                        if (sxData.isUpdateProductFlg()
+                                && !StringUtils.isEmpty(taobaoScItemService.doCheckNeedSetScItem(shopBean, mainSxProduct))) {
+                            setFieldDefaultValue("sku", skuInfoFields, updateItemFields);
+                        }
                         skuInfoFields.forEach(field -> retMap.put(field.getId(), field)); // TODO：暂时只存放最大的field（即sku，颜色扩展，size扩展）以后再改
                         // added by morse.lu 2016/07/18 start
                     } catch (BusinessException e) {
@@ -2277,7 +2315,13 @@ public class SxProductService extends BaseService {
                     skuFieldService.setCodeImageTemplate(resolveDict("属性图片模板",expressionParser,shopBean, user, null));
 
                     try {
+                        // 设置schema中DARWIN_SKU信息
                         List<Field> skuInfoFields = skuFieldService.buildSkuInfoField(allSkuFields, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
+                        // 更新商品时，判断一下是否需要做货品绑定,如果是全链路(返回值为非空)的场合,设置成schema中默认的SKU库存数
+                        if (sxData.isUpdateProductFlg()
+                                && !StringUtils.isEmpty(taobaoScItemService.doCheckNeedSetScItem(shopBean, mainSxProduct))) {
+                            setFieldDefaultValue("darwin_sku", skuInfoFields, updateItemFields);
+                        }
                         skuInfoFields.forEach(field -> retMap.put(field.getId(), field));
                     } catch (BusinessException e) {
                         sxData.setErrorMessage(e.getMessage());
@@ -2406,6 +2450,7 @@ public class SxProductService extends BaseService {
                 }
                 case TMALL_ITEM_QUANTITY:
                 {
+                    // 设置商品数量
                     if (processFields == null || processFields.size() != 1) {
                         throw new BusinessException("tmall item quantity's platformProps must have only one prop!");
                     }
@@ -2420,7 +2465,13 @@ public class SxProductService extends BaseService {
                         for (Map.Entry<String, Integer> skuInventoryEntry : skuInventoryMap.entrySet()) {
                             totalInventory += skuInventoryEntry.getValue();
                         }
+                        // 更新商品时,判断一下是否需要做货品绑定,如果是全链路(返回值为非空)的场合,设置成schema中默认的库存数
                         processField.setValue(String.valueOf(totalInventory));
+                        // 更新商品时,判断一下是否需要做货品绑定,如果是全链路(返回值为非空)的场合,设置成schema中默认的库存数
+                        if (sxData.isUpdateProductFlg()
+                                && !StringUtils.isEmpty(taobaoScItemService.doCheckNeedSetScItem(shopBean, mainSxProduct))) {
+                            setFieldDefaultValue(processField.getId(), processField, updateItemFields);
+                        }
                         retMap.put(field.getId(), processField);
                     }
                     break;
@@ -2478,7 +2529,9 @@ public class SxProductService extends BaseService {
                     }
                     boolean hasSku = false;
                     for (CustomMappingType customMappingIter : mappingTypePropsMap.keySet()) {
-                        if (customMappingIter == CustomMappingType.SKU_INFO) {
+                        // 只要包含SKU销售属性(SKU_INFO和DARWIN_SKU都算SKU属性)，就不用填TMALL_OUT_ID
+                        if (CustomMappingType.SKU_INFO == customMappingIter
+                                || CustomMappingType.DARWIN_SKU == customMappingIter) {
                             hasSku = true;
                             break;
                         }
@@ -2750,12 +2803,16 @@ public class SxProductService extends BaseService {
                         // 外部填写的时候，只有一个code，一个sku，这个check在商品外部编码(outer_id)的逻辑里有了，这里就不再做了
                         String skuCode = mainSxProduct.getCommon().getSkus().get(0).getSkuCode();
                         String scProductId = updateTmScProductId(shopBean,
+                                            mainSxProduct,
                                             skuCode,
                                             getProductValueByMasterMapping("title", shopBean, expressionParser, user),
                                             skuInventoryMap.get(skuCode) != null ? Integer.toString(skuInventoryMap.get(skuCode)) : "0"
                         );
                         inputField.setValue(scProductId);
                         // modified by morse.lu 2016/10/17 end
+                        // added by morse.lu 2017/01/05 start
+                        sxData.getSxSkuExInfo(skuCode, true).setScProductId(scProductId);
+                        // added by morse.lu 2017/01/05 end
 
                         retMap.put(field.getId(), inputField);
                     }
@@ -2994,6 +3051,21 @@ public class SxProductService extends BaseService {
                             ((MultiComplexField) hotAreaField).setComplexValues(hotAreaValue);
                         }
 //                    }
+                }
+
+                // 如果当前店铺在cms_mt_channel_config表中配置成了运营自己在天猫后台管理无线端共通模块时
+                CmsChannelConfigBean config = CmsChannelConfigs.getConfigBean(shopBean.getOrder_channel_id(),
+                        CmsConstants.ChannelConfig.TMALL_WIRELESS_COMMON_MODULE_BY_USER, shopBean.getCart_id());
+                if (config != null && "1".equals(config.getConfigValue1())) {
+                    // 如果设置成"1：运营自己天猫后台管理"时,用天猫平台上取下来的运营自己后台设置的值设置schema无线端共通模块相关属性
+                    // 店铺活动(Complex)
+                    setTmWirelessAttrByOperator(field, "shop_discount", defaultComplexValue);
+                    // 文字说明(Complex)
+                    setTmWirelessAttrByOperator(field, "item_text", defaultComplexValue);
+                    // 优惠(Complex)
+                    setTmWirelessAttrByOperator(field, "coupon", defaultComplexValue);
+                    // 同店推荐(Complex)
+                    setTmWirelessAttrByOperator(field, "hot_recommanded", defaultComplexValue);
                 }
             }
         }
@@ -3236,13 +3308,13 @@ public class SxProductService extends BaseService {
     /**
      * 更新天猫货品id(关联商品)
      */
-    public String updateTmScProductId(ShopBean shopBean, String skuCode, String title, String qty) {
-        if (StringUtils.isEmpty(taobaoScItemService.doCheckNeedSetScItem(shopBean))) {
+    public String updateTmScProductId(ShopBean shopBean, CmsBtProductModel productModel, String skuCode, String title, String qty) {
+        if (StringUtils.isEmpty(taobaoScItemService.doCheckNeedSetScItem(shopBean, productModel))) {
             // 不要关联商品
             return null;
         }
         try {
-            String scProductId = taobaoScItemService.doCreateScItem(shopBean, skuCode, title, qty);
+            String scProductId = taobaoScItemService.doCreateScItem(shopBean, productModel, skuCode, title, qty);
 			// 临时忽略检查
 //            if (StringUtils.isEmpty(scProductId)) {
 //                throw new BusinessException(String.format("自动设置天猫商品全链路库存管理时,发生不明异常!skuCode:%s", skuCode));
@@ -3384,7 +3456,7 @@ public class SxProductService extends BaseService {
      *   2	Asics	Shoe        All
      *   结果：根据优先顺序，选择2号规则
      *
-     * @param imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
+     * @param imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图 6：使用保养图 7：测量方式图
      * @param viewType 1:PC端 2：APP端
      * @param brandName product.fields.brand
      * @param productType product.fields.productType
@@ -3430,7 +3502,12 @@ public class SxProductService extends BaseService {
             paramSizeType = CmsBtImageGroupDao.VALUE_ALL;
         }
 
-        List<CmsBtImageGroupModel> modelsAll = cmsBtImageGroupDao.selectListByKeysWithAll(channelId, cartId, imageType, viewType, paramBrandName, paramProductType, paramSizeType, 1);
+        // 新官网 和 分销， 使用官网同购的素材图
+        int cartIdTempSearch = cartId;
+        if (CartEnums.Cart.LIKING.getValue() == cartId || CartEnums.Cart.DT.getValue() == cartId) {
+            cartIdTempSearch = CartEnums.Cart.USTT.getValue();
+        }
+        List<CmsBtImageGroupModel> modelsAll = cmsBtImageGroupDao.selectListByKeysWithAll(channelId, cartIdTempSearch, imageType, viewType, paramBrandName, paramProductType, paramSizeType, 1);
         for (CmsBtImageGroupModel model : modelsAll) {
             // 这里第一位是，第二位是productType，第三位是sizeType，按顺序判断
             String matchVal = "";
@@ -3458,7 +3535,7 @@ public class SxProductService extends BaseService {
                 throw new BusinessException("共通图片表找到两条以上符合的记录,请修正设定!" +
                         "channelId= " + channelId +
                         ",cartId= " + cartId +
-                        ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图)" +
+                        ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图 6：使用保养图 7：测量方式图)" +
                         ",viewType= "+ viewType + "(1:PC端 2：APP端)" +
                         ",BrandName= " + paramBrandName +
                         ",ProductType= " + paramProductType +
@@ -3470,7 +3547,7 @@ public class SxProductService extends BaseService {
                     throw new BusinessException("共通图片表找到的图片类型对应的图片数为0,请确保至少上传1张图片！" +
                             "channelId= " + channelId +
                             ",cartId= " + cartId +
-                            ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图)" +
+                            ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图 6：使用保养图 7：测量方式图)" +
                             ",viewType= "+ viewType + "(1:PC端 2：APP端)" +
                             ",BrandName= " + paramBrandName +
                             ",ProductType= " + paramProductType +
@@ -4485,7 +4562,7 @@ public class SxProductService extends BaseService {
     public void insertSxWorkLoad(String channelId, List<String> codeList, Integer cartId, String modifier, boolean blnSmartSx) {
         // 输入参数检查
         if (StringUtils.isEmpty(channelId) || codeList == null || codeList.isEmpty() || StringUtils.isEmpty(modifier)) {
-            $warn("insertSxWorkLoad 缺少参数");
+            $error("insertSxWorkLoad 缺少参数" + channelId + "==" + codeList.size() + "===" + modifier);
             return;
         }
 
@@ -5032,6 +5109,12 @@ public class SxProductService extends BaseService {
             }
         }
 
+        // 部分code中有下划线， 运营又无法修改， 所以这里统一变成中杠 START
+        if (!StringUtils.isEmpty(alias)) {
+            alias = alias.replaceAll("_", "-");
+        }
+        // 部分code中有下划线， 运营又无法修改， 所以这里统一变成中杠 END
+
         return alias;
     }
 
@@ -5199,6 +5282,270 @@ public class SxProductService extends BaseService {
             return baos.toByteArray();
         } catch (IOException e) {
             throw new BusinessException(String.format("转透明图失败!图片url是:%s", picUrl));
+        }
+    }
+
+    /**
+     * 取得指定SKU的价格
+     *
+     * @param sku BaseMongoMap<String, Object> SKU对象
+     * @param channelId String 渠道id
+     * @param cartId String 平台id
+     * @param priceCode String 价格类型 (".retail_price"(指导价)  ".sale_price"(最终销售价))
+     * @return double SKU价格
+     */
+    public double getSkuPrice(BaseMongoMap<String, Object> sku, String channelId, String cartId, String priceKey, String priceCode) {
+        // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
+        // priceCode:".retail_price"(指导价)  ".sale_price"(最终销售价)
+        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, priceKey, cartId + priceCode);
+
+        // 检查一下
+        String sxPricePropName;
+        if (sxPriceConfig == null) {
+            return 0.0d;
+        } else {
+            // 取得价格属性名
+            sxPricePropName = sxPriceConfig.getConfigValue1();
+            if (StringUtils.isEmpty(sxPricePropName)) {
+                return 0.0d;
+            }
+        }
+
+        // 取得该SKU相应字段的价格
+        return sku.getDoubleAttribute(sxPricePropName);
+    }
+
+    /**
+     * 取得Redis中缓存cms_mt_channel_config配置表中配置的值
+     *
+     * @param channelId String 渠道id
+     * @param configKey CmsConstants.ChannelConfig ConfigKey
+     * @param configCode String ConfigCode
+     * @return String cms_mt_channel_config配置表中配置的值
+     */
+    public String getRedisChannelConfigValue(String channelId, String configKey, String configCode) {
+        if (StringUtils.isEmpty(channelId) || StringUtils.isEmpty(configKey)) return "";
+
+        // 配置表(cms_mt_channel_config)表中ConfigCode的默认值为0
+        String strConfigCode = "0";
+        if (!StringUtils.isEmpty(configCode)) {
+            strConfigCode = configCode;
+        }
+
+        String strConfigValue = "";
+        // 通过配置表(cms_mt_channel_config)取得Configykey和ConfigCode对应的配置值(config_value1)
+        CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBean(channelId, configKey, strConfigCode);
+        if (channelConfig != null) {
+            strConfigValue = channelConfig.getConfigValue1();
+        }
+
+        return strConfigValue;
+    }
+
+    /**
+     * 从天猫更新schema中取得指定fieldId的默认值设置到目标Field里面
+     *
+     * @param fieldId 要设置默认值的fieldId
+     * @param targetField 更新用单个目标Field
+     * @param updateItemFields 天猫更新用商品schema(propsItem)
+     */
+    public void setFieldDefaultValue(String fieldId, Field targetField, Map<String, Field> updateItemFields) {
+        List<Field> targetFields = new ArrayList<>();
+        targetFields.add(targetField);
+
+        setFieldDefaultValue(fieldId, targetFields, updateItemFields);
+    }
+
+    /**
+     * 从天猫更新schema中取得指定fieldId的默认值设置到目标Field里面
+     *
+     * @param fieldId 要设置默认值的fieldId
+     * @param targetFields 更新用目标Field列表
+     * @param updateItemFields 天猫更新用商品schema(propsItem)
+     */
+    public void setFieldDefaultValue(String fieldId, List<Field> targetFields, Map<String, Field> updateItemFields) {
+
+        if (StringUtils.isEmpty(fieldId) || ListUtils.isNull(targetFields) || MapUtils.isEmpty(updateItemFields)) return;
+
+        // 当目标Field列表中或天猫更新用schema列表中没有包含想要设定默认值的fieldId时，什么也不做
+        if (targetFields.stream().filter(f -> fieldId.equals(f.getId())).count() == 0
+                || !updateItemFields.containsKey(fieldId)) return;
+
+        try {
+            // 修改对象field
+            Field targetField = targetFields.stream().filter(f -> fieldId.equals(f.getId())).findFirst().get();
+            // 天猫更新schema field
+            Field updateItemField = updateItemFields.get(fieldId);
+
+            switch (fieldId) {
+                case "sku":
+                case "darwin_sku":
+                    // SKU 或者 DARWIN_SKU(达尔文SKU) 的时候
+                    // 修改对象
+                    MultiComplexField targetMultiSkuFields = (MultiComplexField)targetField;
+                    List<ComplexValue> targetSkuFields = targetMultiSkuFields.getValue();
+                    // 更新schema对象
+                    MultiComplexField updateMultiItemFields = (MultiComplexField)updateItemField;
+                    List<ComplexValue> updateSkuFields = updateMultiItemFields.getDefaultComplexValues();
+
+                    // 根据修改对象Field列表循环设置成更新schema中的默认值
+                    for (ComplexValue targetSku : targetSkuFields) {
+                        if (MapUtils.isEmpty(targetSku.getFieldMap())) continue;
+
+                        if (!targetSku.getFieldMap().containsKey("sku_outerId")
+                                || !targetSku.getFieldMap().containsKey("sku_quantity")) {
+                            continue;
+                        }
+
+                        // 商家编码
+                        String outerId = targetSku.getInputFieldValue("sku_outerId");
+                        if (StringUtils.isEmpty(outerId)) continue;
+
+                        // 目标对象sku库存field
+                        InputField targetSkuField = (InputField)targetSku.getFieldMap().get("sku_quantity");
+
+                        // 取得更新schema Field列表中的默认值
+                        ComplexValue updateValue = updateSkuFields.stream()
+                                .filter(cv -> outerId.equals(cv.getInputFieldValue("sku_outerId")))
+                                .findFirst()
+                                .get();
+                        if (updateValue != null
+                                && updateValue.getFieldMap() != null
+                                && updateValue.getFieldMap().containsKey("sku_quantity")) {
+                            // 设置成更新schema中的sku库存
+                            targetSkuField.setValue(StringUtils.toString(updateValue.getFieldMap().get("sku_quantity").getValue()));
+                        }
+                    }
+                    break;
+                case "quantity":
+                    // 商品数量的时候
+                    // 修改对象
+                    InputField targetQuantityField = (InputField)targetField;
+                    // 更新用schema对象
+                    InputField updateQuantityField = (InputField)updateItemField;
+                    // 从更新用schema中取得商品数量"quantity"对应的defaultValue (也就是当前天猫平台上的商品数量)
+                    targetQuantityField.setValue(updateQuantityField.getDefaultValue());
+                    break;
+            }
+        } catch (Exception e) {
+            String errMsg = String.format("把schema中默认值设置到目标Field中时出现异常(如：全链路禁止编辑库存，所以要设置成天猫上的默认库存)！ [fieldId:%s]", fieldId);
+            $warn(errMsg);
+//            throw new BusinessException(errMsg);
+        }
+    }
+
+    /**
+     * 将上新状态添加到结果map里面
+     *
+     * @param resultMap  结果map(必须是线程安全的ConcurrentHashMap)
+     * @param channelId  渠道id
+     * @param cartId     平台id
+     * @param isUpdate   是否更新商品(true:更新商品, false:新增商品)
+     * @param result     上新结果(true:成功, false:失败)
+     */
+    public void add2ResultMap(Map resultMap, String channelId, int cartId, Long groupId, boolean isUpdate, boolean result) {
+        Map<String, Object> currResult = new HashMap<>();
+        currResult.put("channelId", channelId);
+        currResult.put("cartId", cartId);
+        currResult.put("groupId", groupId);
+        currResult.put("isUpdate", isUpdate);
+        currResult.put("result", result);
+        resultMap.put(channelId + "_" + cartId + "_" + groupId, currResult);
+    }
+
+    /**
+     * 将渠道id和平台id加入到列表中
+     *
+     * @param channelCartMapList  渠道id和平台id列表
+     * @param channelId  渠道id
+     * @param cartId     平台id
+     */
+    public void add2ChannelCartMapList(List<Map<String, Object>> channelCartMapList, String channelId, int cartId) {
+        if (channelCartMapList == null) return;
+
+        Map currMap = new HashMap<>();
+        currMap.put("channelId", channelId);
+        currMap.put("cartId", cartId);
+        channelCartMapList.add(currMap);
+    }
+
+    /**
+     * 将上新状态结果map里面数据统计之后，输入到log信息中
+     *
+     * @param resultMap  结果map(必须是线程安全的ConcurrentHashMap)
+     * @param uploadName 上新处理名(如：分销上新，天猫官网同购上新，京东上新等)
+     * @param channelCartMapList 上新job配置的全部可以上新的渠道id和平台id列表
+     */
+    public void doPrintResultMap(Map resultMap, String uploadName, List<Map<String, Object>> channelCartMapList) {
+        if (MapUtils.isEmpty(resultMap) || ListUtils.isNull(channelCartMapList)) return;
+
+        int cnt = 0;
+        for(Map<String, Object> channelCartMap : channelCartMapList) {
+            String channelId = channelCartMap.containsKey("channelId") ? (String)channelCartMap.get("channelId") : null;
+            int cartId = channelCartMap.containsKey("cartId") ? (int)channelCartMap.get("cartId") : 0;
+            if (StringUtils.isEmpty(channelId) || 0 == cartId) continue;
+
+            int totalCnt = 0;
+            int addOkCnt = 0;
+            int updOkCnt = 0;
+            int addNgCnt = 0;
+            int updNgCnt = 0;
+
+            for (Object obj: resultMap.values()) {
+                Map<String, Object> result = (Map<String, Object>)obj;
+                if (!channelId.equals(result.get("channelId"))
+                        || cartId != (int)result.get("cartId")) {
+                    continue;
+                }
+                totalCnt++;
+                if (!(boolean)result.get("isUpdate")) {
+                    // 新增商品
+                    if ((boolean)result.get("result")) {
+                        addOkCnt++;
+                    } else {
+                        addNgCnt++;
+                    }
+                } else {
+                    // 更新商品
+                    if ((boolean)result.get("result")) {
+                        updOkCnt++;
+                    } else {
+                        updNgCnt++;
+                    }
+                }
+            }
+            OrderChannelBean channel = Channels.getChannel(channelId);
+            if (0 == cnt) $info("=================" + uploadName + "  最终结果=====================");  // 免得Channels.getChannel()里面答应一些另外的信息
+
+            String strResult = String.format("%s %s 结果: [cartId:%s 总件数:%s 新增(成功:%s 失败:%s) 更新(成功:%s 失败:%s)]",
+                    channelId, String.format("%1$-15s", channel != null ? channel.getFull_name() : "未知店铺名"),
+                    cartId, totalCnt, addOkCnt, addNgCnt, updOkCnt, updNgCnt);
+            $info(strResult);
+
+            cnt++;
+        }
+        $info("=================" + uploadName + "  主线程结束====================");
+    }
+
+    /**
+     * 用天猫平台上取下来的运营自己后台设置的值设置schema无线端共通模块相关属性(包含里面的"是否启用"和"选择模板"属性值)
+     *
+     * @param field  天猫无线描述schema中的complesField
+     * @param complexFieldId 天猫无线描述schema中的complesField id(例：shop_discount:店铺活动, item_text:文字说明, coupon:优惠, hot_recommanded:同店推荐)
+     * @param defaultComplexValue 从天猫平台上取下来的运营设置的无线描述值
+     */
+    public void setTmWirelessAttrByOperator(Field field, String complexFieldId, ComplexValue defaultComplexValue) {
+
+        if (field == null || StringUtils.isEmpty(complexFieldId) || defaultComplexValue == null) return;
+
+        // shop_discount:店铺活动, item_text:文字说明, coupon:优惠, hot_recommanded:同店推荐
+        Field fieldObj = ((ComplexField) field).getValue().getValueField(complexFieldId);
+        if (fieldObj != null && FieldTypeEnum.COMPLEX == fieldObj.getType()) {
+            // 设置成天猫平台上运营设置的值(包含里面的"是否启用"和"选择模板"属性值)
+            ComplexValue complexValue = defaultComplexValue.getComplexFieldValue(complexFieldId);
+            if (complexValue != null && MapUtils.isNotEmpty(complexValue.getFieldMap())) {
+                ((ComplexField) fieldObj).setComplexValue(complexValue);
+            }
         }
     }
 

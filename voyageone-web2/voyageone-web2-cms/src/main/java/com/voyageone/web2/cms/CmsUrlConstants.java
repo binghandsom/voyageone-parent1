@@ -23,6 +23,7 @@ public interface CmsUrlConstants {
             String SET_CATE_TYPE = "setPlatformType";
 
             String GetHomeSumData = "getHomeSumData";
+
             String SumHome="sumHome";
 
             String GET_CMS_CONFIG = "getCmsConfig";
@@ -30,7 +31,12 @@ public interface CmsUrlConstants {
             String GET_MAIN_CATEGORIES = "getMainCategories";
 
             String GET_CARTS = "getCarts";
+
             String GetMenuHeaderInfo="getMenuHeaderInfo";
+        }
+        interface MODIFY_PASS_WORD {
+            String ROOT = "/cms/home/menu/modifyPassword";
+            String submit = "submit";
         }
     }
 
@@ -78,6 +84,7 @@ public interface CmsUrlConstants {
                 String BatchUpdateSkuDealPrice="batchUpdateSkuDealPrice";
                 String BatchSynchPrice = "batchSynchPrice";
                 String SynchAllPrice = "synchAllPrice";
+                String BatchSynchMallPrice = "batchSynchMallPrice";
                 String BatchCopyDeal = "batchCopyDeal";
                 String CopyDealAll = "copyDealAll";
                 String BatchDeleteProduct = "batchDeleteProduct";
@@ -251,6 +258,10 @@ public interface CmsUrlConstants {
                 String GET_PRICE_LIST = "getPriceList";
 
                 String UPDATE_TASK_STATUS = "updateTaskStatus";
+
+                String DEL_ALL_PROMOTION_BY_CUSTOM_PROMOTION_ID = "delAllPromotionByCustomPromotionId";
+
+                String REFRESH_ALL_PROMOTION_BY_CUSTOM_PROMOTION_ID = "refreshAllPromotionByCustomPromotionId";
             }
 
             interface STOCK {
@@ -461,6 +472,14 @@ public interface CmsUrlConstants {
             String SEARCH = "search";
 
             String UPDATE_FINISH_STATUS = "updateFinishStatus";
+        }
+        interface MQ_ERROR {
+
+            String ROOT = "/cms/system/mqError";
+
+            String INIT = "init";
+
+            String SEARCH = "search";
         }
 
         interface CACHE {
@@ -854,6 +873,16 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/mt/channel/config";
             String Search = "search";
             String saveList="saveList";
+        }
+        interface FEED_CONFIG {
+            String ROOT = "/cms/channel/feedConfig";
+            String SEARCH = "search";
+            String SAVE ="save";
+            String EXPORT ="export";
+            String IMPORT ="import";
+            String DELETE = "delete";
+            String SAVE_FEED ="saveFeed";
+            String CREATE_FEED ="createFeed";
         }
     }
 

@@ -590,7 +590,7 @@ define(function () {
         "BTN_DOWNLOAD_ERROR": "Error日志",
         "BTN_IMPORT_PROMOTION_FILE": "导入活动文件",
         "BTN_CHOOSE_FILE": "选择文件",
-        "BTN_IMPORT_FILE": "Import File",
+        "BTN_IMPORT_FILE": "导入",
         "BTN_UPLOAD_FILE": "上传",
         "BTN_REUPLOAD_FILE": "重传",
         "BTN_CUSTOMIZE_COLUMNS": "自定义列设置",
@@ -732,6 +732,7 @@ define(function () {
         "INVALID_MAX": "请输入的数据不能大于:{{value}}",
         "INVALID_MIN": "请输入的数据不能小于:{{value}}",
         "INVALID_PATTERN": "请输入的数据必须满足规则:{{value}}",
+        "INVALID_NOT_EQUAL": "两次输入不一致",
 
         /**平台schema*/
         "TXT_BAR_CODE": "条形码",
@@ -917,6 +918,8 @@ define(function () {
         "TXT_WULIUBAO_PRODUCT_CODE" : "物流宝后台商品编码",
         "TXT_COMBINED_PRODUCT_NEW" : "新建组合套装",
         "TXT_COMBINED_NUM_ID" : "商品编码（numID）",
-        "TXT_COMBINED_PRODUCT_EDIT" : "编辑组合套装"
+        "TXT_COMBINED_PRODUCT_EDIT" : "编辑组合套装",
+        "TXT_CHANGE_PASS": "修改密码",
+        "TXT_TRANSLATION_DATE": "翻译时间"
     };
 });

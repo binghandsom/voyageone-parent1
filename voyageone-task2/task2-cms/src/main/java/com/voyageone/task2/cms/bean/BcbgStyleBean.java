@@ -57,7 +57,7 @@ public class BcbgStyleBean {
     }
 
     public String getSizeFit() {
-        return sizeFit;
+        return sizeFit == null ? "" : sizeFit;
     }
 
     public void setSizeFit(String sizeFit) {

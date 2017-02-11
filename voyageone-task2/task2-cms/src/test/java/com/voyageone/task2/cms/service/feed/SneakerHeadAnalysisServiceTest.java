@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service.feed;
 
+import com.voyageone.common.configs.Feeds;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +22,8 @@ public class SneakerHeadAnalysisServiceTest {
 
     @Test
     public void testOnStartup() throws Exception {
+        Feeds.reload();
         sneakerHeadAnalysisService.onStartup(new ArrayList<TaskControlBean>());
+
     }
 }

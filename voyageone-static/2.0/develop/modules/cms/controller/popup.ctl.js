@@ -160,6 +160,11 @@ define([
                 "templateUrl": "views/pop/channel/channelConfigEdit.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/channel/channelConfigEdit.ctl",
                 "controller": "channelConfigEditController as ctrl"
+            },
+            "importFeedConfig": {
+                "templateUrl": "views/pop/channel/feedConfigSet.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/channel/feedConfigSet.ctl",
+                "controller": "feedConfigSetController"
             }
         },
         "custom": {
@@ -1287,6 +1292,10 @@ define([
             });
         };
 
+        $scope.openFeedConfigImport = function openFeedConfigImport(context) {
+            return openModal(popActions.channel.importFeedConfig, context);
+        };
+
         $scope.openCategorySetting = function openCategorySetting(context) {
             return openModal(popActions.channel.categorySetting, context);
         };
@@ -1442,8 +1451,13 @@ define([
         };
         $scope.popCombinedProductLogs = function (context) {
             return openModal(popActions.product.combinedProductLogs, context)
+        };
+        /**
+         * 打开新建权限配置页面
+         */
+        $scope.openModifyPass= function openModifyPass(context) {
+            return openModal(popActions.modifyPass, context);
         }
-
     }).factory('popups', function ($controller, $rootScope) {
 
         var popupScope = $rootScope.$new();

@@ -1,9 +1,8 @@
 define([
-    'angularAMD',
-    'underscore',
+    'cms',
     'modules/cms/controller/popup.ctl'
-], function (angularAMD) {
-    angularAMD.controller('popJMPromotionDetailCtl', function ($scope, jmPromotionService, alert, context, confirm, $translate, $filter) {
+], function (cms) {
+    cms.controller('popJMPromotionDetailCtl', function ($scope, jmPromotionService, alert, context, confirm, $translate, $filter) {
         $scope.vm = {"isFromBox": false};
         $scope.editModel = {model: {}};
         $scope.datePicker = [];
@@ -57,7 +56,7 @@ define([
                 $scope.editModel.model.status = 0;
 
                 // 创建必须要的默认主推
-                $scope.addTag({model:{tagName:"移动端专场首推单品"}, featured:true});
+                $scope.addTag({model: {tagName: "移动端专场首推单品"}, featured: true});
                 // 创建一个空默认
                 $scope.addTag();
             }
@@ -86,7 +85,28 @@ define([
 
             return newTag;
         };
+        /**
+         * 判断标签是否重复
+         * @param model
+         */
+        $scope.validTagName = function (model) {
+            var self = this,
+                tagList = $scope.editModel.tagList;
 
+            if (!tagList || tagList.length === 0)
+                return;
+
+            mark = _.some(tagList, function (ele) {
+                return ele.model != model && ele.model.tagName === model.tagName
+            });
+
+            if (mark) {
+                alert('标签不可以重复！');
+                model.tagName = '';
+            }
+
+
+        };
         $scope.delTag = function (tag, index) {
             confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                 .then(function () {

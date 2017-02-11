@@ -13,6 +13,7 @@ import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -1040,6 +1041,21 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     // 一般只改改价格神马的
 //                    cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
+                    if(feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())){
+                        cmsProduct.getCommon().getFields().setProductNameEn(feed.getName());
+                        cmsProduct.getCommon().getFields().setOriginalTitleCn(feed.getName());
+                        cmsProduct.getCommon().getFields().setLongDesEn(feed.getLongDescription());
+                        cmsProduct.getCommon().getFields().setShortDesEn(feed.getShortDescription());
+                        cmsProduct.getCommon().getFields().setLongDesCn(feed.getLongDescription());
+                        cmsProduct.getCommon().getFields().setShortDesCn(feed.getShortDescription());
+                        cmsProduct.getCommon().getFields().setMaterialCn(feed.getMaterial());
+                        cmsProduct.getCommon().getFields().setMaterialEn(feed.getMaterial());
+                        cmsProduct.getCommon().getFields().setOrigin(feed.getOrigin());
+                        cmsProduct.getCommon().getFields().setCodeDiff(feed.getColor());
+                        if(!StringUtil.isEmpty(feed.getColor())){
+                            cmsProduct.getCommon().getFields().setColor(feed.getColor().split("-")[0]);
+                        }
+                    }
                     if (cmsProduct == null) {
                         // 有出错, 跳过
                         String errMsg = "feed->master导入:更新:编辑商品的时候出错(cmsProduct = null):" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
@@ -1128,11 +1144,25 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 } else {
                     // 生成productGroup数据
                     doSetGroup(feed);
-                    $info("doSetGroup:" + (System.currentTimeMillis() - startTime));
+                    $debug("doSetGroup:" + (System.currentTimeMillis() - startTime));
                     // 不存在的场合, 新建一个product
 //                    cmsProduct = doCreateCmsBtProductModel(feed, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
-                    $info("doCreateCmsBtProductModel:" + (System.currentTimeMillis() - startTime));
+
+                    if(feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())){
+                        cmsProduct.getCommon().getFields().setOriginalTitleCn(feed.getName());
+                        cmsProduct.getCommon().getFields().setShortDesCn(feed.getShortDescription());
+                        cmsProduct.getCommon().getFields().setLongDesCn(feed.getLongDescription());
+                        cmsProduct.getCommon().getFields().setMaterialCn(feed.getMaterial());
+                        if(!StringUtil.isEmpty(feed.getColor())){
+                            cmsProduct.getCommon().getFields().setColor(feed.getColor().split("-")[0]);
+                        }
+                        cmsProduct.getCommon().getFields().setTranslateStatus("1");
+                        cmsProduct.getCommon().getFields().setTranslator(getTaskName());
+                        cmsProduct.getCommon().getFields().setTranslateTime(DateTimeUtil.getGMTTime());
+                    }
+
+                    $debug("doCreateCmsBtProductModel:" + (System.currentTimeMillis() - startTime));
                     if (cmsProduct == null) {
                         // 有出错, 跳过
                         String errMsg = "feed->master导入:新增:编辑商品的时候出错(cmsProduct = null):" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
@@ -1157,16 +1187,16 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //                        cmsBtFeedInfoDao.update(originalFeed);
 //                        return;
                     }
-                    $info("doSaveItemDetails:" + (System.currentTimeMillis() - startTime));
+                    $debug("doSaveItemDetails:" + (System.currentTimeMillis() - startTime));
                     // tom 20160510 追加 END
 
                     platFromAttributeCopyFromMainProduct(cmsProduct);
                     // 更新价格相关项目
                     cmsProduct = doSetPrice(channelId, feed, cmsProduct);
-                    $info("doSetPrice:" + (System.currentTimeMillis() - startTime));
+                    $debug("doSetPrice:" + (System.currentTimeMillis() - startTime));
                     // 设置店铺共通的店铺内分类信息
                     setSellerCats(feed, cmsProduct);
-                    $info("setSellerCats:" + (System.currentTimeMillis() - startTime));
+                    $debug("setSellerCats:" + (System.currentTimeMillis() - startTime));
 
                     //james g kg 计算
                     weightCalculate(cmsProduct);
@@ -1174,7 +1204,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     // 设置sku数
                     cmsProduct.getCommon().getFields().setSkuCnt(cmsProduct.getCommon().getSkus().size());
                     productService.createProduct(channelId, cmsProduct, getTaskName());
-                    $info("createProduct:" + (System.currentTimeMillis() - startTime));
+                    $debug("createProduct:" + (System.currentTimeMillis() - startTime));
 
                     Integer prodId = cmsProduct.getProdId().intValue();
                     cmsProduct.getPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> {
@@ -1185,7 +1215,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                             newLog.setChannelId(channelId);
 
                             // 向Mq发送消息同步sku,code,group价格范围
-                            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob,
+                            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_COUNT_PRODUCT_PRICE,
                                     JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
                         }
 
@@ -1194,7 +1224,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
                 // 插入尺码表
                 insertCmsBtFeedImportSize(channelId, cmsProduct);
-                $info("insertCmsBtFeedImportSize:" + (System.currentTimeMillis() - startTime));
+//                $info("insertCmsBtFeedImportSize:" + (System.currentTimeMillis() - startTime));
                 // jeff 2016/04 change start
                 // 生成更新前的价格履历Bean
                 // ProductPriceBean productPriceBeanBefore = getProductPriceBeanBefore(cmsProduct, blnProductExist);
@@ -1406,6 +1436,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             if (newFlg || StringUtils.isEmpty(productCommonField.getProductNameEn()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setProductNameEn(feed.getName());
             }
+
             // 长标题, 中标题, 短标题: 都是中文, 需要自己翻译的
             // 款号model
 //            if (newFlg || StringUtils.isEmpty(productField.getModel()))  {
@@ -1422,6 +1453,20 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             // 小林说common.fields.color是中文颜色，不用在这里设置了，英文颜色值设到新加的字段codeDiff（商品特质英文）里面
             if (newFlg || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setColor("");   // 初期值
+
+                // 20161227 tom champion特殊处理， 目前没有设置common的配置画面， 将来会增加 START
+                if ("007".equals(feed.getChannelId())) {
+                    String colorName = "";
+                    if (feed.getAttribute() != null && feed.getAttribute().containsKey("ColorName") && feed.getAttribute().get("ColorName").size() > 0) {
+                        colorName = feed.getAttribute().get("ColorName").get(0);
+                    }
+                    String colorId = "";
+                    if (feed.getAttribute() != null && feed.getAttribute().containsKey("ColorId") && feed.getAttribute().get("ColorId").size() > 0) {
+                        colorId = feed.getAttribute().get("ColorId").get(0);
+                    }
+                    productCommonField.setColor(colorName + colorId);
+                }
+                // 20161227 tom champion特殊处理， 目前没有设置common的配置画面， 将来会增加 END
             }
             // 商品特质英文(颜色/口味/香型等)
             if (newFlg || StringUtils.isEmpty(productCommonField.getCodeDiff()) || "1".equals(feed.getIsFeedReImport())) {
@@ -1448,6 +1493,10 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //            }
             if (newFlg || StringUtils.isEmpty(productCommonField.getLongDesEn()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setLongDesEn(feed.getLongDescription());
+            }
+
+            if (newFlg || StringUtils.isEmpty(productCommonField.getLastReceivedOn()) || "1".equals(feed.getIsFeedReImport())) {
+                productCommonField.setLastReceivedOn(feed.getLastReceivedOn());
             }
             // 税号集货: 不要设置
             // 税号个人: 不要设置
@@ -1579,50 +1628,53 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             List<Map<String, Object>> multiComplex2 = new LinkedList<>();
             List<Map<String, Object>> multiComplex6 = new LinkedList<>();
 
-            // jeff 2016/05 change start
-            //  List<String> lstImageOrg = feed.getImage();
-            List<String> lstImageOrg = null;
-            if (isSplit) {
-                if (feed.getSkus() != null && feed.getSkus().size() > 0) {
-                    lstImageOrg = feed.getSkus().get(0).getImage();
-                }
-                if (lstImageOrg == null) {
+            if(!feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())) {
+                // jeff 2016/05 change start
+                //  List<String> lstImageOrg = feed.getImage();
+                List<String> lstImageOrg = null;
+                if (isSplit) {
+                    if (feed.getSkus() != null && feed.getSkus().size() > 0) {
+                        lstImageOrg = feed.getSkus().get(0).getImage();
+                    }
+                    if (lstImageOrg == null) {
+                        lstImageOrg = feed.getImage();
+                    }
+                } else {
                     lstImageOrg = feed.getImage();
                 }
-            } else {
-                lstImageOrg = feed.getImage();
-            }
-            // jeff 2016/05 change end
-            if (lstImageOrg != null && lstImageOrg.size() > 0) {
-                for (String imgOrg : lstImageOrg) {
-                    Map<String, Object> multiComplexChildren = new HashMap<>();
-                    Map<String, Object> multiComplexChildren6 = new HashMap<>();
-                    // jeff 2016/04 change start
-                    // multiComplexChildren.put("image1", imgOrg);
-                    String picName = doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg);
-                    multiComplexChildren.put("image1", picName);
-                    multiComplexChildren6.put("image6", picName);
-                    // jeff 2016/04 add end
-                    multiComplex.add(multiComplexChildren);
-                    multiComplex6.add(multiComplexChildren6);
+                // jeff 2016/05 change end
+                if (lstImageOrg != null && lstImageOrg.size() > 0) {
+                    for (String imgOrg : lstImageOrg) {
+                        Map<String, Object> multiComplexChildren = new HashMap<>();
+                        Map<String, Object> multiComplexChildren6 = new HashMap<>();
+                        // jeff 2016/04 change start
+                        // multiComplexChildren.put("image1", imgOrg);
+                        String picName = doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg.trim());
+                        multiComplexChildren.put("image1", picName);
+                        multiComplexChildren6.put("image6", picName);
+                        // jeff 2016/04 add end
+                        multiComplex.add(multiComplexChildren);
+                        multiComplex6.add(multiComplexChildren6);
+                    }
                 }
-            }
 //            productField.put("images1", multiComplex);
-            productCommonField.put("images1", multiComplex);
-            // 新增商品时，根据设置决定是否同时设置PC端自拍商品图images6,更新商品时不更新images6(老的数据里面本来就没有images6的时候更新)
-            if (newFlg
-                    || (ListUtils.isNull(productCommonField.getImages6()) || StringUtils.isEmpty(productCommonField.getImages6().get(0).getName()))
-                    || "1".equals(feed.getIsFeedReImport())) {
+                productCommonField.put("images1", multiComplex);
+                // 新增商品时，根据设置决定是否同时设置PC端自拍商品图images6,更新商品时不更新images6(老的数据里面本来就没有images6的时候更新)
+                if (newFlg
+                        || (ListUtils.isNull(productCommonField.getImages6()) || StringUtils.isEmpty(productCommonField.getImages6().get(0).getName()))
+                        || "1".equals(feed.getIsFeedReImport())) {
 
-                if ("1".equals(autoSetImages6Flg)) {
-                    // 设置PC端自拍商品图images6
-                    productCommonField.put("images6", multiComplex6);
+                    if ("1".equals(autoSetImages6Flg)) {
+                        // 设置PC端自拍商品图images6
+                        productCommonField.put("images6", multiComplex6);
+                    }
                 }
             }
-            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
-            if (cmsChannelConfigBean != null && cmsChannelConfigBean.getChannelId() != null
-                    && feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())) {
-
+            // sneakerHead 鞋盒图
+//            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
+//            if (cmsChannelConfigBean != null && cmsChannelConfigBean.getChannelId() != null
+//                    && feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())) {
+            if(feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.SN.getId())){
                 if (feed.getAttribute() != null && feed.getAttribute().get("boximages") != null) {
                     for (String images : feed.getAttribute().get("boximages")) {
                         Map<String, Object> multiComplexChildren = new HashMap<>();
@@ -1661,7 +1713,12 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                                 break;
                         }
                     }
-
+                    break;
+                case "007":
+                    feedProductType = feed.getProductType();
+                    productCommonField.setProductType(feed.getProductType());
+                    feedSizeType = feed.getSizeType();
+                    productCommonField.setSizeType(feed.getSizeType());
                     break;
                 default:
                     // 产品分类
@@ -1722,6 +1779,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             if (newFlg || StringUtils.isEmpty(productCommonField.getTranslateStatus()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setTranslateStatus("0");  // 初期值为0
             }
+
 
             // 税号设置状态
             if (newFlg || StringUtils.isEmpty(productCommonField.getHsCodeStatus()) || "1".equals(feed.getIsFeedReImport())) {
@@ -2778,7 +2836,39 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 if (!CartEnums.Cart.JM.getId().equals(shop.getValue())
                         && !CartEnums.Cart.CN.getId().equals(shop.getValue())) {
                     // 取得product.model对应的group信息
-                    CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
+
+                    boolean isQuarter = false;
+                    if ("0".equals(shop.getValue()) || "1".equals(shop.getValue())) {
+                        isQuarter = false;
+                    } else {
+                        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, shop.getValue());
+                        if (cmsChannelConfigBean != null && feed.getChannelId().equals(cmsChannelConfigBean.getChannelId()) && "1".equals(cmsChannelConfigBean.getConfigValue1())) {
+                            isQuarter = true;
+                        }
+                    }
+                    if (isQuarter) {
+                        //根据当前feed的code判断是否属于最新的group还是创建group
+                        DateTimeFormatter formatter = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss");
+                        //取得当前code的创建的时间
+                        LocalDate feedDate = formatter.parseLocalDate(feed.getCreated());
+                        //取得当前group的创建的时间
+                        CmsBtProductGroupModel groupCode = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                        if (groupCode != null) {
+                            LocalDate groupDate = formatter.parseLocalDate(groupCode.getCreated());
+                            //feed和group的创建时间作比较
+                            if (feedDate.getYearOfCentury() == groupDate.getYearOfCentury()
+                                    && Math.ceil(feedDate.getMonthOfYear() / 4) == Math.ceil(groupDate.getMonthOfYear() / 4)) {
+                                group = groupCode;
+                            } else {
+                                //根据当前model取得最新的group
+                                group = null;
+                            }
+                        }
+                    } else {
+                        group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                    }
+
+                    /*CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
 
                     if (cmsChannelConfigBean != null && cmsChannelConfigBean.getChannelId() != null &&
                             feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())) {
@@ -2802,7 +2892,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         }
                     } else {
                         group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
-                    }
+                    }*/
 
                 }
 
@@ -3037,7 +3127,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //            param.setOriginalUrl(originalUrl);
 //            List<CmsBtImagesModel> findImage = cmsBtImageDaoExt.selectImages(param);
             CmsBtImagesModel findImage = imagesService.getImageIsExists(channelId, code, originalUrl);
-            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
+//            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
 
             // 不存在则插入
             if (findImage == null) {
@@ -3070,8 +3160,9 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 newModel.setModifier(getTaskName());
                 String URL_FORMAT = "[~@.' ';#+$%&*_'':/‘’^\\()]";
                 Pattern special_symbol = Pattern.compile(URL_FORMAT);
-                if (cmsChannelConfigBean != null && cmsChannelConfigBean.getChannelId() != null &&
-                        channelId.equals(cmsChannelConfigBean.getChannelId()) && "1".equalsIgnoreCase(cmsChannelConfigBean.getConfigValue1())) {
+//                if (cmsChannelConfigBean != null && cmsChannelConfigBean.getChannelId() != null &&
+//                        channelId.equals(cmsChannelConfigBean.getChannelId()) && "1".equalsIgnoreCase(cmsChannelConfigBean.getConfigValue1())) {
+                if (channelId.equalsIgnoreCase(ChannelConfigEnums.Channel.SN.getId())) {
                     String[] imgName = originalUrl.split("/");
                     newModel.setImgName(imgName[imgName.length - 1]);
                     newModel.setUpdFlg(1);
@@ -3084,7 +3175,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
                 return newModel.getImgName();
             } else {
-
                 // 如果原始图片的地址发生变更则做更新操作
                 if (!originalUrl.equals(findImage.getOriginalUrl())) {
                     findImage.setOriginalUrl(originalUrl);
@@ -3403,7 +3493,11 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
         private CmsBtProductModel doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
 
             List<CmsBtProductModel_Sku> commonSkuList = cmsProduct.getCommon().getSkus();
-
+            double maxClientMsrpPrice = 0;
+            double minClientMsrpPrice = 0;
+            double maxClientNetPrice = 0;
+            double minClientNetPrice = 0;
+            boolean isFirst=true;
             // 设置common.skus里面的价格
             for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
                 CmsBtProductModel_Sku commonSku = null;
@@ -3441,8 +3535,43 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     commonSku.setPriceMsrp(sku.getPriceMsrp());
                     // 人民币指导价(后面价格计算要用到，因为010,018等店铺不用新价格体系，还是用老的价格公式)
                     commonSku.setPriceRetail(sku.getPriceCurrent());
+                    if (isFirst) {
+                        minClientNetPrice = commonSku.getClientNetPrice();
+                        minClientMsrpPrice = commonSku.getClientMsrpPrice();
+                        isFirst = false;
+                    }
+                    //clientMsrpPrice
+                    if (commonSku.getClientMsrpPrice() > maxClientMsrpPrice) {
+                        maxClientMsrpPrice = commonSku.getClientMsrpPrice();
+                    }
+                   else if (commonSku.getClientMsrpPrice() < minClientMsrpPrice) {
+                        minClientMsrpPrice = commonSku.getClientMsrpPrice();
+                    }
+
+                    //clientNetPrice
+                    if (commonSku.getClientNetPrice() > maxClientNetPrice) {
+                        maxClientNetPrice = commonSku.getClientNetPrice();
+                    }
+                    else if (commonSku.getClientNetPrice() < minClientNetPrice) {
+                        minClientNetPrice = commonSku.getClientNetPrice();
+                    }
+
                 }
 
+            }
+
+            if(minClientMsrpPrice==maxClientMsrpPrice) {
+                cmsProduct.getCommon().getFields().setClientMsrpPrice(String.format("%s", minClientMsrpPrice));
+            }
+            else {
+                cmsProduct.getCommon().getFields().setClientMsrpPrice(String.format("%s~%s", minClientMsrpPrice, maxClientMsrpPrice));
+            }
+
+            if(maxClientNetPrice==minClientNetPrice) {
+                cmsProduct.getCommon().getFields().setClientNetPrice(String.format("%s", minClientNetPrice));
+            }
+            else {
+                cmsProduct.getCommon().getFields().setClientNetPrice(String.format("%s~%s", minClientNetPrice, maxClientNetPrice));
             }
 
             // 设置platform.PXX.skus里面的价格
@@ -3864,6 +3993,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                             $error(errMsg);
                             throw new BusinessException(errMsg);
                         }
+                        itemDetailsBean.setIs_sale(oldRecord.getIs_sale());
                         // 已经存在的场合: 更新数据库
                         itemDetailsDao.updateItemDetails(itemDetailsBean, getTaskName());
                     } else {

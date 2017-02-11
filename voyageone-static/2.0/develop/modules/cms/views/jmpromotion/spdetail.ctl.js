@@ -23,7 +23,8 @@ define(['cms',
         confirm("是否要跳转的新建的返场活动。").then(function () {
             window.location.href = "#/jmpromotion/detail/" + res.data.promotionId + "/" + res.data.jmPromotionId;
         });
-    }
+    };
+
     SpDetailPageController.prototype.loadPromotion = function () {
         var self = this,
             spDataService = self.spDataService;
@@ -47,6 +48,7 @@ define(['cms',
 
         });
     };
+
     SpDetailPageController.prototype.downloadSpecialImageZip = function () {
         var self = this,
             cActions = self.cActions,

@@ -316,6 +316,8 @@ define([
                                             callSave();
                                         }
                                     });
+                                }else{
+                                    callSave();
                                 }
 
                             } else {

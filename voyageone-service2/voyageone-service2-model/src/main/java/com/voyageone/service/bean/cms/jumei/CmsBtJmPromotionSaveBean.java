@@ -1,6 +1,5 @@
 package com.voyageone.service.bean.cms.jumei;
 
-import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSpecialExtensionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;

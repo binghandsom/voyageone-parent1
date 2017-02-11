@@ -2,7 +2,6 @@ package com.voyageone.security.shiro.filter;
 
 import com.voyageone.common.util.JacksonUtil;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
-import org.apache.shiro.web.util.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

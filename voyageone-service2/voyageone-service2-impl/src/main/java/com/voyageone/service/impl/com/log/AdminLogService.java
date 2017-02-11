@@ -21,7 +21,7 @@ import java.util.Map;
  * Created by Ethan Shi on 2016-08-23.
  */
 @Service
-public class AdminLogService  extends BaseService {
+public class AdminLogService extends BaseService {
 
     @Autowired
     AdminLogDaoExt adminLogDaoExt;
@@ -31,7 +31,7 @@ public class AdminLogService  extends BaseService {
 
 
     public PaginationResultBean<ComLogModel> searchLog(Integer pageNum, Integer pageSize) {
-        return  searchLog(new ComLogModel(), null, null, pageNum,  pageSize);
+        return searchLog(new ComLogModel(), null, null, pageNum, pageSize);
     }
 
     public PaginationResultBean<ComLogModel> searchLog(ComLogModel params, Long startTime, Long endTime, Integer pageNum, Integer pageSize) {
@@ -39,22 +39,19 @@ public class AdminLogService  extends BaseService {
         PaginationResultBean<ComLogModel> paginationResultBean = new PaginationResultBean<>();
 
 
-
         // 判断查询结果是否分页
         boolean needPage = false;
-        Map<String, Object> beanMap = new BeanMap(params);
+        Map beanMap = new BeanMap(params);
         Map<String, Object> newMap = new HashMap<>();
 
         Date start = null;
         Date end = null;
 
-        if(startTime != null)
-        {
+        if (startTime != null) {
             start = new Date(startTime);
         }
 
-        if(endTime != null)
-        {
+        if (endTime != null) {
             end = new Date(endTime);
         }
 
@@ -66,12 +63,9 @@ public class AdminLogService  extends BaseService {
             needPage = true;
             paginationResultBean.setCount(adminLogDaoExt.selectCount(newMap));
             newMap = MySqlPageHelper.build(newMap).page(pageNum).limit(pageSize).addSort("created", Order.Direction.DESC).toMap();
-        }
-        else
-        {
+        } else {
             newMap = MySqlPageHelper.build(newMap).addSort("created", Order.Direction.DESC).toMap();
         }
-
 
 
         List<ComLogModel> list = adminLogDaoExt.selectList(newMap);
@@ -84,7 +78,7 @@ public class AdminLogService  extends BaseService {
     }
 
 
-    public ComLogModel  getLog(int id) {
+    public ComLogModel getLog(int id) {
         return comLogDao.select(id);
     }
 

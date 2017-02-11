@@ -5,10 +5,8 @@ import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.VoApiResponse;
 import org.apache.commons.beanutils.BeanMap;
 import org.apache.log4j.Logger;
-import org.junit.runner.RunWith;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;

@@ -23,6 +23,14 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setStringAttribute("model",model);
     }
 
+    public String getLastReceivedOn() {
+        return getStringAttribute("lastReceivedOn");
+    }
+
+    public void setLastReceivedOn(String lastReceivedOn) {
+        setStringAttribute("lastReceivedOn",lastReceivedOn);
+    }
+
     //code 产品code
     public String getCode() {
         return getStringAttribute("code");
@@ -569,6 +577,24 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public void setWeightKG(Double weightKG) {
         setAttribute("weightKG", weightKG == null ? 0.0 : weightKG);
     }
+
+    //->客户建议零售价(double)
+    public String getClientMsrpPrice() {
+        return getStringAttribute("clientMsrpPrice");
+    }
+
+    public void setClientMsrpPrice(String clientMsrpPrice) {
+        setAttribute("clientMsrpPrice", clientMsrpPrice);
+    }
+    //->客户成本价(double)
+    public String getClientNetPrice() {
+        return getStringAttribute("clientNetPrice");
+    }
+
+    public void setClientNetPrice(String clientNetPrice) {
+        setAttribute("clientNetPrice", clientNetPrice);
+    }
+
 
     @Override
     public Object put(String key, Object value) {

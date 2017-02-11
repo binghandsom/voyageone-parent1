@@ -119,11 +119,18 @@
         <!-- DFO 导入 cms2 -->
         <task:scheduled ref="CmsDfoAnalysisJob" method="run" cron="40 0/1 * * * ?"/>
 
+        <!-- Champion 导入 cms2 -->
+        <task:scheduled ref="CmsChampionAnalysisJob" method="run" cron="0 0/5 0-23 * * ?"/>
+
         <!-- SneakerHead feed 导入 cms2 -->
-        <task:scheduled ref="CmsSneakerHeadAnalysisJob" method="run" cron="0 0 1 * * ?"/>
+        <task:scheduled ref="CmsSneakerHeadAnalysisJob" method="run" cron="0 0/1 * * * ?"/>
 
         <!-- Wmf 导入 cms2 -->
         <task:scheduled ref="CmsWmfAnalysisJob" method="run" cron="40 * 0/1 * * ?"/>
+
+        <!-- Wmf价格 导入 cms2 -->
+        <task:scheduled ref="WmfPriceAnalysisJob" method="run" cron="30 * 0/1 * * ?"/>
+
 
         <!-- 产品数据上新到USJoi -->
         <task:scheduled ref="CmsUploadProductToUSJoiJob" method="run" cron="20 0/1 * * * ?"/>
@@ -194,8 +201,10 @@
         <task:scheduled ref="CmsTargetStautsJob" method="run" cron="0 20 0/1 * * ?"/>
 
         <!-- CmsUsCategorySyncJob: 获取 sneakerhead 在美国 cms 的类目结构和 product 的挂靠关系 vantis -->
-        <task:scheduled ref="cmsUsCategorySyncJob" method="run" cron="0 45 1 * * ?"/>
+        <task:scheduled ref="CmsUsCategorySyncJob" method="run" cron="0 45 0/1 * * ?"/>
 
+        <!-- CmsUsPlatformStatusSyncJob: 获取 sneakerhead 在美国销售平台的上新情况 vantis -->
+        <task:scheduled ref="CmsUsPlatformStatusSyncJob" method="run" cron="0 15 0/1 * * ?"/>
 
         <!-- 从老Cms系统取得销售数据（每天早上4：40点一次） -->
         <task:scheduled ref="CmsSumSneakerHeadSalesHisInfoJob" method="run" cron="0 40 20 * * ?"/>
@@ -214,6 +223,12 @@
 
         <!-- 被迫下架的商品 自动上架（每5分钟一次） -->
         <task:scheduled ref="platformForcedInStockProduct_AutoOnSaleJob" method="run" cron="0 0/5 0-23 * * ?" />
+
+        <!-- 分销上新（每3分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadDtJob" method="run" cron="0 0/3 0-23 * * ?"/>
+
+        <!-- Liking新独立域名上新（每3分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadCnnJob" method="run" cron="0 0/3 0-23 * * ?"/>
 
     </task:scheduled-tasks>
 

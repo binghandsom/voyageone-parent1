@@ -93,7 +93,7 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
         // 取得cms_mt_channel_config表中配置的渠道级别的配置项目值(如：颜色别名等)
         uploadJdService.doChannelConfigInit(likingChannelId, cartId, channelConfigValueMap);
 
-        uploadJdService.uploadProduct(workload, shopProp, channelConfigValueMap);
+        uploadJdService.uploadProduct(workload, shopProp, channelConfigValueMap, null);
     }
 
     @Test

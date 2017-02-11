@@ -206,7 +206,7 @@ public class UploadToUSJoiServiceTest {
         query.setProductName("productNameEn", "brand");
         query.setProductType("feedProductType");
 
-        List<SearchResult> result = searcher.search(query, 1);
+        MatchResult result = searcher.search(query, false);
         System.out.println("ok");
     }
 
@@ -224,7 +224,7 @@ public class UploadToUSJoiServiceTest {
             System.out.println(String.format("在product表中没有查到该产品code(%s)!", code));
         }
 
-//        uploadToUSJoiService.doSetMainCategory(prodObj.getCommon(), feedCategoryPath);
+        uploadToUSJoiService.doSetMainCategory(prodObj.getCommon(), feedCategoryPath, "017");
         System.out.println("ok");
     }
 }

@@ -16,6 +16,7 @@
         <module>voyageone-components-base</module>
         <module>voyageone-components-channeladvisor</module>
         <module>voyageone-components-cn</module>
+        <module>voyageone-components-cnn</module>
         <module>voyageone-components-eexpress</module>
         <module>voyageone-components-gilt</module>
         <module>voyageone-components-jd</module>
@@ -32,6 +33,7 @@
         <module>voyageone-components-solr</module>
         <module>voyageone-components-sneakerhead</module>
         <module>voyageone-components-onestop</module>
+        <module>voyageone-components-dt</module>
         <module>voyageone-components-rabbitmq</module>
     </modules>
     <properties>

@@ -35,7 +35,7 @@ public class CmsBtProductModel_Sales_Sku extends BaseMongoMap<String, Object> {
 
     //code_sum_7
     public Integer getSkuSum7() {
-        return getAttribute(CmsBtProductModel_Sales.CODE_SUM_7);
+        return getIntAttribute(CmsBtProductModel_Sales.CODE_SUM_7);
     }
     public void setSkuSum7(Integer qty) {
         setAttribute(CmsBtProductModel_Sales.CODE_SUM_7, qty);
@@ -43,7 +43,7 @@ public class CmsBtProductModel_Sales_Sku extends BaseMongoMap<String, Object> {
 
     //code_sum_30
     public Integer getSkuSum30() {
-        return getAttribute(CmsBtProductModel_Sales.CODE_SUM_30);
+        return getIntAttribute(CmsBtProductModel_Sales.CODE_SUM_30);
     }
     public void setSkuSum30(Integer qty) {
         setAttribute(CmsBtProductModel_Sales.CODE_SUM_30, qty);
@@ -51,7 +51,7 @@ public class CmsBtProductModel_Sales_Sku extends BaseMongoMap<String, Object> {
 
     //code_sum_all
     public Integer getSkuSumAll() {
-        return getAttribute(CmsBtProductModel_Sales.CODE_SUM_ALL);
+        return getIntAttribute(CmsBtProductModel_Sales.CODE_SUM_ALL);
     }
     public void setSkuSumAll(Integer qty) {
         setAttribute(CmsBtProductModel_Sales.CODE_SUM_ALL, qty);
