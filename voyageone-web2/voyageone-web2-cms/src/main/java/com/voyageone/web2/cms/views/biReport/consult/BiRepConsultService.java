@@ -5,8 +5,6 @@ import com.voyageone.common.util.HttpExcuteUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.report.BiReportDownloadTaskDao;
-import com.voyageone.service.dao.report.BiReportSalesProduct010Dao;
-import com.voyageone.service.dao.report.BiReportSalesShop010Dao;
 import com.voyageone.service.daoext.report.BiReportDownloadTaskDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.report.BiReportDownloadTaskModel;

@@ -6,9 +6,6 @@
                 <i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
             </uib-accordion-heading>
          <!--   主体-->
-            <pre>
-                {{ }}
-                </pre>
             <div class="container-fluid  m-t-sm">
                 <div class="col-sm-8 m-t-sm">
                     <label class="col-sm-2 text-right"> 渠道 </label>
@@ -51,7 +48,9 @@
                     </div>
                 </div>
                 <div class="col-sm-8 m-t-sm">
-                    <label class="col-sm-2 text-right">  文件类型：</label>
+                    <div >  <label class="col-sm-2 text-right">  文件类型：</label> &nbsp;
+                        <button  class="btn  btn-xs"  ng-click="selectAllFileTypes()"><i class="glyphicon glyphicon-ok">全选</i></button>
+                    </div>
                     <div class="col-sm-10 text-center" ng-switch="vm.searchInfo.channelCodeList.length">
 
                         <div class="col-sm-4" ng-switch-when= "0" ng-repeat="item in fileTypes">
@@ -119,7 +118,7 @@
                        <!-- <td class="text-left"><button class="btn btn-danger btn-xs" ng-click="test2()"><i class="fa fa-cloud-download"></i>文件下载</button></td>　-->　　<!--downloadExcel(item)-->
                         <td class="text-right" ng-controller="popupCtrl">
                             <button ng-if = "item.taskStatus != '2' "  title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"  ng-click="del(item)"><i class="fa  fa-trash-o"></i></button>
-                            <button title="{{'BTN_DOWNLOAD' | translate}}" class="btn btn-danger btn-xs" ng-click="openOtherDownload(item)"><i class="fa fa-cloud-download"></i></button>
+                            <button ng-if = "item.taskStatus == '3' " title="{{'BTN_DOWNLOAD' | translate}}" class="btn btn-danger btn-xs" ng-click="openOtherDownload(item)"><i class="fa fa-cloud-download"></i></button>
                         </td>
                     </tr>
                 </tbody>

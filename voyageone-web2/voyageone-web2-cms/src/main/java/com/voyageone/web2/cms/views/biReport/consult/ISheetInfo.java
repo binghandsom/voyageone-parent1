@@ -9,7 +9,7 @@ public interface ISheetInfo {
     {
         interface BASICINFO
         {
-//            String PATH="E://bi_report//xlsxFile//";           /* E://bi_report//xlsxFile//*/
+//           String PATH="E://bi_report//xlsxFile//";           /* E://bi_report//xlsxFile//*/
             Integer SUBMITNOTSTART=0;
             Integer FAILED=1;
             Integer CREATING=2;
