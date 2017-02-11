@@ -19,9 +19,7 @@ import java.util.*;
  */
 @Service
 public class BiRepConsultService extends BaseService {
-    private static final String CREATE_XLS_FILE_TASK_URL = "/rest/report/createXlsFileTask";
-
-    private static final String BI_HOST = "http://localhost:8081" ;
+    private static final String CREATE_XLS_FILE_TASK_URL = "http://localhost:8081/rest/report/createXlsFileTask";
     @Autowired
     private BiReportDownloadTaskDaoExt  biReportDownloadTaskDaoExt;
     @Autowired
@@ -99,7 +97,7 @@ public class BiRepConsultService extends BaseService {
         biReportDownloadTaskDao.insert(model);
         int id=model.getId();
         params.put("taskId",id);
-        String url = BI_HOST + CREATE_XLS_FILE_TASK_URL;
+        String url = CREATE_XLS_FILE_TASK_URL;
         String result = null;
         try {
             String request = JacksonUtil.bean2Json(params);

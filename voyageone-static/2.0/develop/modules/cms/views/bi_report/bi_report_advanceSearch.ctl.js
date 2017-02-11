@@ -19,9 +19,9 @@ define([
         };
         // $scope.channels = [];
         $scope.fileTypes = [
-            {fileTypeCode: "1", fileTypeName: "商铺月报"},
-            {fileTypeCode: "2", fileTypeName: "商铺周报"},
-            {fileTypeCode: "3", fileTypeName: "商铺日报"},
+            {fileTypeCode: "1", fileTypeName: "店铺月报"},
+            {fileTypeCode: "2", fileTypeName: "店铺周报"},
+            {fileTypeCode: "3", fileTypeName: "店铺日报"},
             {fileTypeCode: "4", fileTypeName: "商品月报"},
             {fileTypeCode: "5", fileTypeName: "商品周报"},
             {fileTypeCode: "6", fileTypeName: "商品日报"},
@@ -33,11 +33,8 @@ define([
             {fileTypeCode: "12", fileTypeName: "sku日报"}
         ];
         $scope.clear = function () {
-            // $scope.searchInfo.channels =[];
-            //     $scope.searchInfo.channelCodeList=[];
                 $scope.vm.searchInfo={};
                 $scope.vm.searchInfo.channelCodeList=[];
-                // $scope.searchInfo.fileTypes= [];
         };
         $scope.initialize = function () {
             $scope.vm.minDate = new Date(2015,1,1);

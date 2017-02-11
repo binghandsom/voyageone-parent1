@@ -32,67 +32,36 @@ public class NameCreator {
      */
     public static String createName(Map<String,Object> nameParameters)
     {
-        String prefix=createPrefix(nameParameters);
-        List<Integer> fileTypeList = (List<Integer>)nameParameters.get("fileTypes");
-        String reg="_";
-        String fileSuffix=".xlsx";
         StringBuffer fileName=new StringBuffer();
-        String channelCode=(String)nameParameters.get("channelCode");
+        String reg="_";
+        String channelFix = "等渠道";
+        String fileTypeFix="等";
+//        fileName.append(DENG);
+        String fileSuffix=".xlsx";
+        String[] fileTypesStr={"店铺月报","店铺周报","店铺日报",
+                "商品月报","商品周报","商品日报",
+                "产品月报","产品周报","产品日报",
+                "sku月报","sku周报","sku日报"};
+
+        String prefix=createPrefix(nameParameters);
+        Integer MIN= 12;
+        List<Integer> fileTypeList = (List<Integer>)nameParameters.get("fileTypes");
+        List<String> channelCodeList= (List<String>) nameParameters.get("channelCodeList");
+        fileName.append(channelCodeList.size()>1 ? channelCodeList.get(0)+channelFix: channelCodeList.get(0));
+        for(Integer i:fileTypeList)
+        {
+            if(MIN > i) MIN=i;
+        }
+        String file_fix=fileTypesStr[MIN];
+        fileName.append(fileTypeList.size()>1 ? channelCodeList.get(MIN-1)+channelFix: channelCodeList.get(0));
+//        String channelCode=(String)nameParameters.get("channelCode");
         String staDate=(String)nameParameters.get("staDate");
         String endDate=(String)nameParameters.get("endDate");
         fileName.append(prefix);
-        fileName.append(channelCode+reg);
+//        channelCodeList.forEach(Object -> fileName.append(Object + reg));
         fileName.append(staDate);
         fileName.append(reg);
         fileName.append(endDate+reg);
-        if(fileTypeList.contains(1))
-        {
-            fileName.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[0]+reg);
-        }
-        if(fileTypeList.contains(2))
-        {
-            fileName.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[1]+reg);
-        }
-        if(fileTypeList.contains(3))
-        {
-            fileName.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[2]+reg);
-        }
-        if(fileTypeList.contains(4))
-        {
-            fileName.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[3]+reg);
-        }
-        if(fileTypeList.contains(5))
-        {
-            fileName.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[4]+reg);
-        }
-        if(fileTypeList.contains(6))
-        {
-            fileName.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[5]+reg);
-        }
-        if(fileTypeList.contains(7))
-        {
-            fileName.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[6]+reg);
-        }
-        if(fileTypeList.contains(8))
-        {
-            fileName.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[7]+reg);
-        }
-        if(fileTypeList.contains(9))
-        {
-            fileName.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[8]+reg);
-        }
-        if(fileTypeList.contains(10))
-        {
-            fileName.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[9]+reg);
-        }
-        if(fileTypeList.contains(11))
-        {
-            fileName.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[10]+reg);
-        }
-        if(fileTypeList.contains(12))
-        {
-            fileName.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[11]+reg);
-        }
         fileName.append(fileSuffix);
         return fileName.toString().trim();
     }

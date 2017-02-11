@@ -2,7 +2,7 @@
     <uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
         <uib-accordion-group is-open="vm.status.open">
             <uib-accordion-heading>
-                <i class="glyphicon glyphicon-star"></i>&nbsp;销售情形查询
+                <i class="glyphicon glyphicon-star"></i>&nbsp;BI报表下载
                 <i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
             </uib-accordion-heading>
          <!--   主体-->
@@ -13,7 +13,7 @@
                         <div class="col-sm-6">
                             <div class="form-group ">
                                 <select multiple chosen width="'55%'" class=" text-left m-t-sm form-control" ng-model="vm.searchInfo.channelCodeList"
-                                        ng-options="brand.channel_id as brand.channel_name for brand in channels">
+                                        ng-options="brand.id as brand.channel_name for brand in channels">
                                 </select>
                             </div>
                         </div>
@@ -92,8 +92,10 @@
                     <th class="text-left "><Button type="button" class="btn btn-info btn-xs"  ng-click="search()"><i class="glyphicon glyphicon-repeat"></i></Button></th>
                     <th class="text-left" >编号</th>
                     <th class="text-left">导出文件名称</th>
+                    <th class="text-left" >查询时间段</th>
+                    <th class="text-left"> 查询渠道</th>
+                    <th class="text-left" >查询文件类型</th>
                     <th class="text-left"> 申请导出时间</th>
-                    <th class="text-left"> EXCEL生成时间</th>
                     <th class="text-left"> 导出申请者</th>
                     <th class="text-left"> 文件状态</th>
                     <th class="text-left">操作</th>
@@ -106,6 +108,9 @@
                             {{ item.id }}
                         </td>
                         <td class="text-left">{{item.fileName}}</td>
+                        <td class="text-left">{{item.checkPeriod}}</td>
+                        <td class="text-left">{{item.checkChannelCodeList}}</td>
+                        <td class="text-left">{{item.checkFileTypes}}</td>
                         <td class="text-left">{{item.created}}</td>
                         <td class="text-left">{{item.finishTime}}</td>
                         <td calss="text-left">{{item.creater}}</td>

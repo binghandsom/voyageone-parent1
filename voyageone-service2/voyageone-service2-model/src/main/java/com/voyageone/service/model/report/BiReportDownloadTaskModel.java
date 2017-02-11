@@ -39,7 +39,25 @@ public class BiReportDownloadTaskModel extends BaseModel {
      */
     protected Boolean active;
 
+    /**
+     * 0表示线程没有异常，4600表示输出流异常
+     */
     protected String log;
+
+    /**
+     * 查询时间
+     */
+    protected String checkPeriod;
+
+    /**
+     * 查询渠道类型
+     */
+    protected String checkChannels;
+
+    /**
+     * 查询文件类型
+     */
+    protected String checkFileTypes;
 
     public String getFileName() {
         return fileName;
@@ -87,5 +105,29 @@ public class BiReportDownloadTaskModel extends BaseModel {
 
     public void setLog(String log) {
         this.log = log == null ? null : log.trim();
+    }
+
+    public String getCheckPeriod() {
+        return checkPeriod;
+    }
+
+    public void setCheckPeriod(String checkPeriod) {
+        this.checkPeriod = checkPeriod == null ? null : checkPeriod.trim();
+    }
+
+    public String getCheckChannels() {
+        return checkChannels;
+    }
+
+    public void setCheckChannels(String checkChannels) {
+        this.checkChannels = checkChannels == null ? null : checkChannels.trim();
+    }
+
+    public String getCheckFileTypes() {
+        return checkFileTypes;
+    }
+
+    public void setCheckFileTypes(String checkFileTypes) {
+        this.checkFileTypes = checkFileTypes == null ? null : checkFileTypes.trim();
     }
 }
