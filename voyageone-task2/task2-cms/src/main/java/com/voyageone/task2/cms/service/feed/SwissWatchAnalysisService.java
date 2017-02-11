@@ -445,7 +445,13 @@ public class SwissWatchAnalysisService extends BaseAnalysisService {
         }
         return cnt;
     }
-
+    @Override
+    public int fullCopyTemp(){
+        int cnt = swissWatchFeedDao.fullCopyTemp();
+        swissWatchFeedDao.updateMd5();
+        swissWatchFeedDao.updateUpdateFlag();
+        return cnt;
+    }
     /**
      * JE产品信息插入
      *

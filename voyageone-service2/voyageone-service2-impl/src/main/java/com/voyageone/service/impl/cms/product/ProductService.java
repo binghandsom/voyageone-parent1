@@ -391,7 +391,7 @@ public class ProductService extends BaseService {
 
         insertProductHistory(channelId, product);
         // 记录价格变更履历
-//        addPriceUpdateHistory(product, modifier, "New");
+        addPriceUpdateHistory(product, modifier, "New");
     }
 
     public WriteResult updateProduct(String channelId, Map paraMap, Map updateMap) {
@@ -665,23 +665,31 @@ public class ProductService extends BaseService {
             // 获取HsCodePrivate
             String hsCodePrivate = product.getCommon().getFields().getHsCodePrivate();
             if (!StringUtils.isEmpty(hsCodePrivate)) {
-//                TypeChannelBean bean = TypeChannels.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, channelId, hsCodePrivate);
-//                if (!StringUtils.isEmpty(hsCodePrivate)) {
                 String[] hsCodePu = hsCodePrivate.split(",");
                 resultInfo.setHsCodePuId(hsCodePrivate);
                 resultInfo.setHsCodePu(hsCodePu[0]);
                 resultInfo.setHsDescriptionPu(hsCodePu[1]);
                 resultInfo.setUnitPu(hsCodePu[2]);
-//                }
-            }
-            if (!StringUtil.isEmpty(hsCodePrivate)) {
+
                 CmsMtEtkHsCodeModel cmsMtEtkHsCodeModel = cmsMtEtkHsCodeService.getEdcHsCodeByHsCode(hsCodePrivate);
                 if (cmsMtEtkHsCodeModel != null) {
                     resultInfo.setEtkHsCode(cmsMtEtkHsCodeModel.getEtkHsCode());
                     resultInfo.setEtkDescription(cmsMtEtkHsCodeModel.getEtkDescription());
                     resultInfo.setEtkUnit(cmsMtEtkHsCodeModel.getEtkUnit());
+                }else{
+                    resultInfo.setEtkHsCode(hsCodePu[0]);
+                    resultInfo.setEtkDescription(hsCodePu[1]);
+                    resultInfo.setEtkUnit(hsCodePu[2]);
                 }
             }
+//            if (!StringUtil.isEmpty(hsCodePrivate)) {
+//                CmsMtEtkHsCodeModel cmsMtEtkHsCodeModel = cmsMtEtkHsCodeService.getEdcHsCodeByHsCode(hsCodePrivate);
+//                if (cmsMtEtkHsCodeModel != null) {
+//                    resultInfo.setEtkHsCode(cmsMtEtkHsCodeModel.getEtkHsCode());
+//                    resultInfo.setEtkDescription(cmsMtEtkHsCodeModel.getEtkDescription());
+//                    resultInfo.setEtkUnit(cmsMtEtkHsCodeModel.getEtkUnit());
+//                }
+//            }
 //            for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
 //                if(entry.getValue().getCartId() > 10 && entry.getValue().getCartId() < 900 && entry.getValue().getStatus().equalsIgnoreCase("Approved") && !StringUtil.isEmpty(entry.getValue().getpCatPath())){
 //                    CmsMtEtkHsCodeModel cmsMtEtkHsCodeModel = cmsMtEtkHsCodeService.getEdcHsCodeByHsCode(entry.getValue().getCartId(),  entry.getValue().getpCatPath());
@@ -1376,6 +1384,8 @@ public class ProductService extends BaseService {
             switch (cartEnum) {
                 case TM:
                 case TG:
+                case TT:
+                case USTT:
                     tbProductService.delItem(shopBean, numIid);
                     break;
                 case JD:
@@ -1623,5 +1633,41 @@ public class ProductService extends BaseService {
         CmsBtProductModel prodObj = this.getProductByCondition(channelId, queryObj);
         prodObj.getCommon().getFields().getCode();
         return prodObj.getProdId();
+    }
+
+    public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key){
+        return cmsBtProductDao.bulkUpdateWithMap(channelId,bulkList,modifier,key);
+    }
+
+    /**
+     * 重置product和group的platformPid
+     * @param channelId 渠道Id
+     * @param cartId 平台Id
+     * @param code 产品Code
+     * @return WriteResult
+     */
+    public WriteResult resetProductAndGroupPlatformPid (String channelId, int cartId, String code) {
+
+        JongoUpdate query = new JongoUpdate();
+        query.setQuery("{\"common.fields.code\": #}");
+        query.setQueryParameters(code);
+
+        query.setUpdate("{$set: {\"platforms.P" + cartId + ".pProductId\": \"\"}}");
+
+        WriteResult rs = cmsBtProductDao.updateMulti(query, channelId);
+
+        if (rs != null) {
+
+            Map<String, Object> queryMap = new HashMap<>();
+            queryMap.put("cartId", cartId);
+            queryMap.put("productCodes", code);
+
+            Map<String, Object> updateMap = new HashMap<>();
+            updateMap.put("platformPid", "");
+
+            rs = cmsBtProductGroupDao.update(channelId, queryMap, updateMap);
+        }
+
+        return rs;
     }
 }

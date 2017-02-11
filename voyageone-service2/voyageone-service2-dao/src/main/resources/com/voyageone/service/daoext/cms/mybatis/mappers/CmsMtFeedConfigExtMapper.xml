@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+
+    <select id="cms_mt_feed_config_key" resultType="com.voyageone.service.bean.cms.CmsMtFeedConfigBean">
+        SELECT
+            a.cfg_name cfgName,
+            a.cms_cfg_name cmsCfgName,
+            a.cms_cfg_name_lev cmsCfgNameLev,
+            a.cms_cfg_name_order cmsCfgNameOrder,
+            a.cms_is_cfg_val1_display cmsIsCfgVal1Display,
+            a.cms_is_cfg_val2_display cmsIsCfgVal2Display,
+            a.cms_is_cfg_val3_display cmsIsCfgVal3Display
+        FROM
+            voyageone_cms2.cms_mt_feed_config_key a
+    </select>
+
+    <select id="cms_mt_feed_config_selectByChannelId" resultType="com.voyageone.service.bean.cms.CmsMtFeedConfigBean"
+            parameterType="String">
+        SELECT
+            b.order_channel_id orderChannelId,
+            b.cfg_val1 cfgVal1,
+            b.cfg_val2 cfgVal2,
+            b.cfg_val3 cfgVal3,
+            b.`comment` comment,
+            a.cfg_name cfgName,
+            a.cms_cfg_name cmsCfgName,
+            a.cms_cfg_name_lev cmsCfgNameLev,
+            a.cms_cfg_name_order cmsCfgNameOrder,
+            a.cms_is_cfg_val1_display cmsIsCfgVal1Display,
+            a.cms_is_cfg_val2_display cmsIsCfgVal2Display,
+            a.cms_is_cfg_val3_display cmsIsCfgVal3Display,
+            b.created created,
+            b.modified modified,
+            b.modifier modifier
+        FROM
+            voyageone_cms2.cms_mt_feed_config_key a
+        LEFT JOIN voyageone_cms2.cms_mt_feed_config b ON a.cfg_name = b.cfg_name
+        WHERE
+            b.order_channel_id = #{channelId, jdbcType=VARCHAR}
+        ORDER BY
+            a.cms_cfg_name_lev,
+            a.cms_cfg_name_order ASC
+    </select>
+
+    <delete id="cms_mt_feed_config_deleteByChannelId">
+        DELETE FROM voyageone_cms2.cms_mt_feed_config
+        WHERE order_channel_id = #{channelId}
+    </delete>
+
+    <select id="cms_mt_feed_config_info" resultType="com.voyageone.service.model.cms.CmsMtFeedConfigInfoModel"
+            parameterType="String">
+        SELECT
+        a.id id,
+        a.order_channel_id orderChannelId,
+        a.cfg_name cfgName,
+        a.cfg_table_name cfgTableName,
+        a.cfg_is_attribute cfgIsAttribute,
+        a.creater creater,
+        a.created created,
+        a.modified modified,
+        a.modifier modifier
+        FROM
+        voyageone_cms2.cms_mt_feed_config_info a
+        WHERE
+        a.order_channel_id = #{channelId, jdbcType=VARCHAR}
+    </select>
+
+    <delete id="cms_mt_feed_config_info_deleteByChannelId">
+        DELETE FROM voyageone_cms2.cms_mt_feed_config_info
+        WHERE order_channel_id = #{channelId}
+    </delete>
+
+    <select id="cms_mt_feed_config_info_cnt" resultType ="java.lang.Integer" parameterType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM voyageone_cms2.cms_mt_feed_config_info
+       WHERE id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="createdTable" parameterType="java.util.Map" statementType="STATEMENT">
+        create table if not exists ${tableName} (
+        <foreach collection="keys" item="k" index="index" separator=",">
+            <choose>
+                <when test="k =='sku'">
+                    ${k} varchar(200) NOT NULL DEFAULT ''
+                </when>
+                <when test="k =='category'">
+                    ${k} varchar(200) NOT NULL DEFAULT ''
+                </when>
+                <otherwise>
+                    ${k} text
+                </otherwise>
+            </choose>
+        </foreach>
+        ,`md5` varchar(32) DEFAULT '',
+        `updateFlag` int(1) NOT NULL DEFAULT '0',
+        PRIMARY KEY (`SKU`),
+        KEY `zzwork_idx01` (`md5`) USING BTREE,
+        KEY `zzwork_idx02` (`category`) USING BTREE)
+    </insert>
+</mapper>

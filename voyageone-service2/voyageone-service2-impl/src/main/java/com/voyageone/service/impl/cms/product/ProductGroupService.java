@@ -355,7 +355,7 @@ public class ProductGroupService extends BaseService {
             }
         }
 
-        $info("上新成功时回写group和产品表上新状态信息信息结束！[groupId:%s] [codes:%s]",
+        $info("上新成功时回写group和产品表上新状态信息结束！[groupId:%s] [codes:%s]",
                 model.getGroupId(), ListUtils.isNull(listSxCode) ? "空" : Joiner.on(",").join(listSxCode));
 
         return model;
@@ -415,7 +415,7 @@ public class ProductGroupService extends BaseService {
             cmsBtProductDao.bulkUpdateWithMap(model.getChannelId(), bulkList, null, "$set", false);
         }
 
-        $info("上新失败时回写group和产品表上新状态信息信息结束！[groupId:%s] [codes:%s] [errMsg:%s]",
+        $info("上新失败时回写group和产品表上新状态信息结束！[groupId:%s] [codes:%s] [errMsg:%s]",
                 model.getGroupId(), ListUtils.isNull(listSxCode) ? "空" : Joiner.on(",").join(listSxCode), errMsg);
 
         return true;
@@ -461,21 +461,6 @@ public class ProductGroupService extends BaseService {
         updateMap.put("modifier", model.getModifier());
 
         return cmsBtProductGroupDao.update(model.getChannelId(), queryMap, updateMap);
-    }
-
-    /**
-     * 重置group的platformPid
-     */
-    public WriteResult resetProductGroupPlatformPid (String channelId, int cartId, String code) {
-
-        Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put("cartId", cartId);
-        queryMap.put("productCodes", code);
-
-        Map<String, Object> updateMap = new HashMap<>();
-        updateMap.put("platformPid", "");
-
-        return cmsBtProductGroupDao.update(channelId, queryMap, updateMap);
     }
 
     /**

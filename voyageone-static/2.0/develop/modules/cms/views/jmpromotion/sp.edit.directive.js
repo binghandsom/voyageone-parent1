@@ -34,9 +34,10 @@ define([
             routeParams = self.$routeParams,
             editModel = self.editModel,
             jmPromotionService = self.jmPromotionService;
-        vm.currentTime = new Date();
 
+        vm.currentTime = new Date();
         jmPromotionService.getEditModelExt({model: {id: routeParams.jmpromId}, hasExt: true}).then(function (res) {
+
             editModel.model = res.data.model;
             editModel.extModel = res.data.extModel;
             editModel.tagList = res.data.tagList;
@@ -44,6 +45,7 @@ define([
             editModel.model.activityEnd = formatToDate(editModel.model.activityEnd);
             editModel.model.prePeriodStart = formatToDate(editModel.model.prePeriodStart);
             editModel.model.signupDeadline = formatToDate(editModel.model.signupDeadline);
+
 
             // 准备期是否结束
             vm.isDeadline = editModel.model.signupDeadline && editModel.model.signupDeadline < vm.currentTime;
@@ -124,6 +126,8 @@ define([
                 // 记住主频道英文缩写
                 _getJmMainChannelAb(self, editModel.extModel.mainChannel);
             });
+
+            self.spDataService.editModel = editModel;
         });
     };
 
@@ -399,6 +403,31 @@ define([
                 self.$fire('detail.saved');
             });
         });
+    };
+
+    /**
+     * 判断标签是否重复
+     * @param model
+     */
+    SpEditDirectiveController.prototype.validTagName = function(model){
+        var self = this,
+            tagList = self.editModel.tagList,
+            mark,
+            alert = self.alert;
+
+        if(!tagList || tagList.length === 0)
+            return;
+
+        mark = _.some(tagList,function(ele){
+            return ele.model != model && ele.model.tagName === model.tagName
+        });
+
+        if(mark){
+            alert('标签不可以重复！');
+            model.tagName = '';
+        }
+
+
     };
 
     /**

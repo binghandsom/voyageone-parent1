@@ -1,14 +1,5 @@
 package com.voyageone.security.shiro.cache;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -16,6 +7,9 @@ import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class RedisCache<K, V> implements Cache<K, V> {
 	
@@ -120,9 +114,10 @@ public class RedisCache<K, V> implements Cache<K, V> {
 			if (key == null) {
 	            return null;
 	        }else{
-
 				V value = (V)cache.opsForValue().get(getPrifixKey(key));
-				cache.expire(getPrifixKey(key), expireTime, TimeUnit.SECONDS);
+				if (value != null) {
+					cache.expire(getPrifixKey(key), expireTime, TimeUnit.SECONDS);
+				}
 	        	return value;
 	        }
 		} catch (Throwable t) {

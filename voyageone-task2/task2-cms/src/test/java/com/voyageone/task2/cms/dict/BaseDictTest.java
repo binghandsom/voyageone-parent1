@@ -15,6 +15,12 @@ public class BaseDictTest {
     protected String C_包装图片 = "PACKAGE_IMAGE";
     protected String C_带角度图片 = "ANGLE_IMAGE";
     protected String C_自定义图片 = "CUSTOM_IMAGE";
+    protected String C_移动端自定义图片 = "MOBILE_CUSTOM_IMAGE";
+
+    protected String C_PC端自拍商品图 = "CUSTOM_PRODUCT_IMAGE";
+    protected String C_APP端自拍商品图 = "M_CUSTOM_PRODUCT_IMAGE";
+    protected String C_吊牌图 = "HANG_TAG_IMAGE";
+    protected String C_耐久标签 = "DURABILITY_TAG_IMAGE";
 
     /**
      * 取得子类Task名称

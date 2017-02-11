@@ -12,7 +12,7 @@ import com.voyageone.components.jumei.bean.HtDeal_UpdateDealStockBatch_UpdateDat
 import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.components.jumei.reponse.*;
 import com.voyageone.components.jumei.request.*;
-import com.voyageone.service.bean.cms.CallResult;
+import com.voyageone.service.bean.cms.OperationResult;
 import com.voyageone.service.bean.cms.jumei.SkuPriceBean;
 import com.voyageone.service.bean.cms.jumei.UpdateJmParameter;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
@@ -21,13 +21,10 @@ import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.impl.BaseService;
-//import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
-//import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductAddPlatformService;
 import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.jumei.JMShopBeanService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -39,6 +36,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+//import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
+//import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductAddPlatformService;
 
 /**
  * Created by dell on 2016/4/19.
@@ -72,29 +72,31 @@ public class JuMeiProductPlatform3Service extends BaseService {
     JumeiHtMallService jumeiHtMallService;
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductPlatform3Service.class);
 
-    public void updateJmByPromotionId(int promotionId) throws Exception {
-        HashMap<String,Boolean> mapMasterBrand =new HashMap<>();//
+    public  List<OperationResult> updateJmByPromotionId(int promotionId) {
+        List<OperationResult> listOperationResult = new ArrayList<>();
+        HashMap<String, Boolean> mapMasterBrand = new HashMap<>();//
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(promotionId);
         long activityBeginTime = DateTimeUtilBeijing.toLocalTime(modelCmsBtJmPromotion.getActivityStart());//北京时间转本地时区时间戳
-        boolean isBegin=activityBeginTime < new Date().getTime();//活动是否看开始
+        boolean isBegin = activityBeginTime < new Date().getTime();//活动是否看开始
         ShopBean shopBean = serviceJMShopBean.getShopBean(modelCmsBtJmPromotion.getChannelId());
-        LOG.info(promotionId + " 聚美上新开始");
+        $info(promotionId + " 聚美上新开始");
         List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = daoExtCmsBtJmPromotionProduct.selectJMCopyList(promotionId);
-        try {
-            for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
-                LOG.info(promotionId + " code:" + model.getProductCode() + "上新begin");
-                updateJm(modelCmsBtJmPromotion, model, shopBean,mapMasterBrand,isBegin);
-                LOG.info(promotionId + " code:" + model.getProductCode() + "上新end");
-            }
-        } catch (Exception ex) {
-            LOG.error("addProductAndDealByPromotionId上新失败", ex);
-            ex.printStackTrace();
+
+        for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
+            $debug(promotionId + " code:" + model.getProductCode() + "上新begin");
+            OperationResult result = updateJm(modelCmsBtJmPromotion, model, shopBean, mapMasterBrand, isBegin);
+            $debug(promotionId + " code:" + model.getProductCode() + "上新end");
+            //if(!result.isResult()) {
+            //加入错误列表
+            listOperationResult.add(result);
+            //}
         }
-        finally {
-            mapMasterBrand.clear();
-        }
-        LOG.info(promotionId + " 聚美上新end");
+        mapMasterBrand.clear();
+
+        $info(promotionId + " 聚美上新end");
+        return listOperationResult;
     }
+
    protected  UpdateJmParameter getUpdateJmParameter(CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel model, ShopBean shopBean) {
        UpdateJmParameter parameter = new UpdateJmParameter();
        parameter.cmsBtJmPromotionProductModel = model;
@@ -106,7 +108,8 @@ public class JuMeiProductPlatform3Service extends BaseService {
        if(parameter.platform==null){throw new  BusinessException("CmsBtProduct商品聚美信息不存在.");}
        return parameter;
    }
-    public void updateJm(CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel, ShopBean shopBean,HashMap<String,Boolean> mapMasterBrand,boolean isBegin) throws Exception {
+    public OperationResult updateJm(CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel, ShopBean shopBean, HashMap<String,Boolean> mapMasterBrand, boolean isBegin) {
+        OperationResult result=new OperationResult();
         try {
             UpdateJmParameter parameter = getUpdateJmParameter(modelCmsBtJmPromotion, cmsBtJmPromotionProductModel, shopBean);
             parameter.setBegin(isBegin);//活动是否开始
@@ -134,7 +137,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
         } catch (Exception ex) {
             cmsBtJmPromotionProductModel.setErrorMsg(ex.getMessage());
             // model.setUpdateState(EnumJuMeiUpdateState.Error.getId());//同步更新失败
-            LOG.error("JuMeiProductPlatform3Service.addProductAndDealByPromotionId", ex);
+            $error("JuMeiProductPlatform3Service.addProductAndDealByPromotionId " + result.getId(), ex);
+            result.setMsg(ex.getMessage());
+            result.setCode(cmsBtJmPromotionProductModel.getProductCode());
+            result.setResult(false);
             try {
                 if (cmsBtJmPromotionProductModel.getErrorMsg().length() > 600) {
                     cmsBtJmPromotionProductModel.setErrorMsg(cmsBtJmPromotionProductModel.getErrorMsg().substring(0, 600));
@@ -142,9 +148,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
                 daoCmsBtJmPromotionProduct.update(cmsBtJmPromotionProductModel);
 
             } catch (Exception cex) {
-                LOG.error("JuMeiProductPlatform3Service.addProductAndDealByPromotionId", cex);
+                $error("JuMeiProductPlatform3Service.addProductAndDealByPromotionId", cex);
             }
         }
+        return  result;
     }
     public  void  setOriginJmHashId( UpdateJmParameter parameter)
     {

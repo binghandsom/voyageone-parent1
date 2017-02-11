@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.mqjob;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
@@ -50,14 +51,17 @@ public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> e
     @Override
     public void startup(TMQMessageBody messageBody) throws Exception {
         try {
-            $debug(this.getTaskName() , ":start->");
+            $debug(this.getTaskName(), ":start->");
             onStartup(messageBody);
+        } catch (BusinessException ex) {
+            cmsBusinessExLog(messageBody, ex.getMessage());
         } catch (Exception ex) {
             //记异常日志
+            cmsLog(messageBody, OperationLog_Type.unknownException, ex.getMessage());
             cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, ex);
             throw ex;
         } finally {
-            $debug(this.getTaskName() , ":end");
+            $debug(this.getTaskName(), ":end");
         }
     }
 
@@ -90,5 +94,24 @@ public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> e
      */
     public void cmsBusinessExLog(TMQMessageBody messageBody, String msg) {
         cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.businessException, msg);
+    }
+
+    /**
+     * 成功结束
+     *
+     * @param messageBody messageBody
+     * @param msg         msg
+     */
+    public void cmsSuccessLog(TMQMessageBody messageBody, String msg) {
+        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.success, msg);
+    }
+    /**
+     * 成功结束
+     *
+     * @param messageBody messageBody
+     * @param msg         msg
+     */
+    public void cmsSuccessIncludeFailLog(TMQMessageBody messageBody, String msg) {
+        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.successIncludeFail, msg);
     }
 }

@@ -115,6 +115,12 @@ public class GiltInsert extends BaseCronTaskService {
                 CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(channel);
                 cmsBtFeedInfoModel.setAttribute(attribute);
 
+                //gilt 类目不合法对应
+                if (cmsBtFeedInfoModel.getCategory().length() == cmsBtFeedInfoModel.getCategory().lastIndexOf("-") + 1) {
+                    String cat = cmsBtFeedInfoModel.getCategory().substring(0,cmsBtFeedInfoModel.getCategory().length()-1);
+                    cmsBtFeedInfoModel.setCategory(cat);
+                }
+
                 //设置重量
                 List<CmsBtFeedInfoModel_Sku> skus = vtmModelBean.getSkus();
                 for (CmsBtFeedInfoModel_Sku sku : skus) {

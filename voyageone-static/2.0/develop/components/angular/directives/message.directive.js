@@ -19,7 +19,8 @@ var errorTypes = {
     maxbytelength: 'INVALID_MAXLENGTH',
     max: 'INVALID_MAX',
     min: 'INVALID_MIN',
-    pattern: 'INVALID_PATTERN'
+    pattern: 'INVALID_PATTERN',
+    equalTo: "INVALID_NOT_EQUAL"
 };
 
 /**
@@ -94,7 +95,7 @@ angular.module("voyageone.angular.directives")
                             show(attrs[error]);
                         } else {
                             // 如果用户没有设定提示信息，那么就自己根据参数生成
-                            if (['maxlength', 'minlength', 'maxbytelength', 'minbytelength', 'max', 'min', 'pattern'].indexOf(error) > -1) {
+                            if (['maxlength', 'minlength', 'maxbytelength', 'minbytelength', 'max', 'min', 'pattern', 'equalTo'].indexOf(error) > -1) {
                                 if (!(translateParam.value = targetElement.attr(error)) && 'pattern' === error)
                                     translateParam.value = targetElement.attr('ng-pattern');
                             }

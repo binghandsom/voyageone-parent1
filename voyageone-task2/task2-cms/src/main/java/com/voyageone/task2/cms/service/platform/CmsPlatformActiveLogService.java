@@ -10,13 +10,17 @@ import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.components.dt.enums.DtConstants;
+import com.voyageone.components.dt.service.DtWareService;
 import com.voyageone.components.jd.service.JdSaleService;
 import com.voyageone.components.jumei.reponse.HtMallStatusUpdateBatchResponse;
 import com.voyageone.components.jumei.service.JumeiSaleService;
@@ -24,23 +28,18 @@ import com.voyageone.components.tmall.service.TbSaleService;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtPlatformActiveLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.task2.base.BaseMQCmsService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 记录上下架操作历史(新增记录), 并调用上下架API
@@ -51,8 +50,7 @@ import java.util.Map;
  * @since 2.0.0
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_PlatformActiveLogJob)
-public class CmsPlatformActiveLogService extends BaseMQCmsService {
+public class CmsPlatformActiveLogService extends BaseService {
 
     private final CmsBtPlatformActiveLogDao platformActiveLogDao;
     private final CmsBtProductDao cmsBtProductDao;
@@ -62,12 +60,13 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
     private final JumeiSaleService jmSaleService;
     private final MongoSequenceService sequenceService;
     private final SxProductService sxProductService;
+    private final DtWareService dtWareService;
 
     @Autowired
     public CmsPlatformActiveLogService(CmsBtProductGroupDao cmsBtProductGroupDao, JumeiSaleService jmSaleService,
                                        TbSaleService tbSaleService, JdSaleService jdSaleService,
                                        MongoSequenceService sequenceService, CmsBtPlatformActiveLogDao platformActiveLogDao,
-                                       CmsBtProductDao cmsBtProductDao, SxProductService sxProductService) {
+                                       CmsBtProductDao cmsBtProductDao, SxProductService sxProductService, DtWareService dtWareService) {
         this.cmsBtProductGroupDao = cmsBtProductGroupDao;
         this.jmSaleService = jmSaleService;
         this.tbSaleService = tbSaleService;
@@ -76,11 +75,11 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
         this.platformActiveLogDao = platformActiveLogDao;
         this.cmsBtProductDao = cmsBtProductDao;
         this.sxProductService = sxProductService;
+        this.dtWareService = dtWareService;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void onStartup(Map<String, Object> messageMap) throws Exception {
+    public List<Map<String, String>> onStartup(Map<String, Object> messageMap) throws Exception {
+        List<Map<String, String>> failList = new ArrayList<Map<String, String>>();
 
         $info("CmsPlatformActiceLogService start 参数 " + JacksonUtil.bean2Json(messageMap));
 
@@ -88,18 +87,13 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
         Collection<String> codeList = (Collection<String>) messageMap.get("codeList");
         String activeStatus = StringUtils.trimToNull((String) messageMap.get("activeStatus"));
         String userName = StringUtils.trimToNull((String) messageMap.get("creater"));
-
-        if (channelId == null || codeList == null || codeList.isEmpty()
-                || activeStatus == null || userName == null) {
-            $error("CmsPlatformActiceLogService 缺少参数");
-            return;
-        }
-
         Collection<Integer> cartIdList = (Collection<Integer>) messageMap.get("cartIdList");
 
-        if (cartIdList == null || cartIdList.isEmpty()) {
-            $error("CmsPlatformActiceLogService 缺少cartid参数");
-            return;
+        if (org.apache.commons.lang.StringUtils.isBlank(channelId) || CollectionUtils.isEmpty(codeList)
+                || org.apache.commons.lang.StringUtils.isBlank(activeStatus) || org.apache.commons.lang.StringUtils.isBlank(userName)
+                || CollectionUtils.isEmpty(cartIdList)) {
+            $error("CmsPlatformActiceLogService 缺少参数");
+            throw new BusinessException(String.format("CmsPlatformActiceLogService 缺少channelId/userName/activeStatus/codeList/cartIdList参数, params=%s", JacksonUtil.bean2Json(messageMap)));
         }
 
         long batchNo = sequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PLATFORMACTIVEJOB_ID);
@@ -112,6 +106,11 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
             queryObj.setProjectionExt("mainProductCode", "productCodes", "groupId", "numIId", "platformMallId");
             List<CmsBtProductGroupModel> grpObjList = cmsBtProductGroupDao.select(queryObj, channelId);
             if (grpObjList == null || grpObjList.isEmpty()) {
+
+                Map<String, String> failMap = new HashMap<String, String>();
+                failMap.put(String.format("cartId=%d", cartId), String.format("产品对于的group不存在, cartId=%d, channelId=%s, codeList=%s", cartId, channelId, JacksonUtil.bean2Json(codeList)));
+                failList.add(failMap);
+
                 $error("CmsPlatformActiceLogService 产品对应的group不存在 cartId=%d, channelId=%s, codes=%s", cartId, channelId, codeList.toString());
                 continue;
             }
@@ -119,6 +118,11 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
             for (CmsBtProductGroupModel grpObj : grpObjList) {
                 List<String> pCodeArr = grpObj.getProductCodes();
                 if (pCodeArr == null || pCodeArr.isEmpty()) {
+
+                    Map<String, String> failMap = new HashMap<String, String>();
+                    failMap.put(String.format("group=%s", grpObj.get_id()), String.format("产品group下没有商品codes, cartId=%d, channelId=%s, grpInfo=%s", cartId, channelId, JacksonUtil.bean2Json(grpObj)));
+                    failList.add(failMap);
+
                     $error("CmsPlatformActiceLogService cartId=%d, channelId=%s, grpInfo=%s", cartId, channelId, grpObj.toString());
                     continue;
                 }
@@ -133,7 +137,16 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                     model.setGroupId(grpObj.getGroupId());
                     model.setMainProdCode(grpObj.getMainProductCode());
                     model.setProdCode(pCode);
-                    model.setNumIId(CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? grpObj.getPlatformMallId() : grpObj.getNumIId());
+                    String numIId = null;
+                    if (CartEnums.Cart.JM.getId().equals(String.valueOf(cartId))) {
+                        numIId = grpObj.getPlatformMallId();
+                    } else if (CartEnums.Cart.DT.getId().equals(String.valueOf(cartId))) {
+                        numIId = pCode; // 如果是分销平台，numIId设置为商品code
+                    } else {
+                        numIId = grpObj.getNumIId();
+                    }
+                    // model.setNumIId(CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? grpObj.getPlatformMallId() : grpObj.getNumIId());
+                    model.setNumIId(numIId);
                     model.setResult("0");
                     model.setCreater(userName);
                     model.setCreated(DateTimeUtil.getNow());
@@ -141,7 +154,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                     model.setModifier("");
 
                     WriteResult rs = platformActiveLogDao.insert(model);
-                    $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, code=%s platformActiveLog保存结果=%s", cartId, channelId, pCode, rs.toString());
+                    $info("CmsPlatformActiceLogService cartId=%d, channelId=%s, code=%s platformActiveLog保存结果=%s", cartId, channelId, pCode, rs.toString());
                 }
             }
         }
@@ -166,6 +179,11 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
         for (Integer cartId : cartIdList) {
             ShopBean shopProp = Shops.getShop(channelId, cartId);
             if (shopProp == null) {
+
+                Map<String, String> failMap = new HashMap<String, String>();
+                failMap.put(String.format("channelId=%s, cartId=%d", channelId, cartId), String.format("获取到店铺信息失败, channelId=%s, cartId=%d", channelId, cartId));
+                failList.add(failMap);
+
                 $error("CmsPlatformActiceLogService 获取到店铺信息失败(shopProp == null)! [ChannelId:%s] [CartId:%s]", channelId, cartId);
                 continue;
             }
@@ -176,6 +194,11 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
             queryObj.setProjectionExt("prodCode", "mainProdCode", "numIId");
             List<CmsBtPlatformActiveLogModel> actLogList = platformActiveLogDao.select(queryObj, channelId);
             if (actLogList.isEmpty()) {
+
+                Map<String, String> failMap = new HashMap<String, String>();
+                failMap.put(String.format("cartId=%d, batchNo=%d", cartId, batchNo), String.format("找不到商品上下架历史, cartId=%d, batchNo=%d", cartId, batchNo));
+                failList.add(failMap);
+
                 $warn("CmsPlatformActiceLogService 找不到商品上下架历史 cartId=%d，batchNo=%d", cartId, batchNo);
                 continue;
             }
@@ -199,9 +222,9 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                         failedComment = "商品不存在";
                     } else {
                         String mainCode = StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getMainProductCode());
-                        long numIId = NumberUtils.toLong(CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? prodObj.getPlatformNotNull(cartId).getpPlatformMallId() : prodObj.getPlatformNotNull(cartId).getpNumIId());
+                        String numIId = CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? prodObj.getPlatformNotNull(cartId).getpPlatformMallId() : prodObj.getPlatformNotNull(cartId).getpNumIId();
 
-                        if (numIId == 0) {
+                        if (numIId == null || StringUtil.isEmpty(numIId.trim()) || numIId.trim().equals("0")) {
                             $warn("CmsPlatformActiceLogService numIId错误 channelId=%s, code=%s", channelId, prodCode);
                             failedComment = "NumIId为空";
                         } else if (mainCode == null) {
@@ -247,6 +270,11 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
 
             List<Map<String, Object>> prs = platformActiveLogDao.aggregateToMap(channelId, aggrList);
             if (prs == null || prs.isEmpty()) {
+
+                Map<String, String> failMap = new HashMap<String, String>();
+                failMap.put(String.format("cartId=%d, channelId=%s, batchNo=%d", cartId, channelId, batchNo), String.format("产品不存在, cartId=%d, channelId=%s, batchNo=%d", cartId, channelId, batchNo));
+                failList.add(failMap);
+
                 $error("CmsPlatformActiceLogService 产品不存在 cartId=%d, channelId=%s", cartId, channelId);
                 continue;
             }
@@ -254,8 +282,14 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
             // 然后对可以上下架的商品调用API并记录结果
             for (Map<String, Object> prodObj : prs) {
                 String numIId = StringUtils.trimToNull((String) prodObj.get("_id"));
+                $info("numIId=" + numIId + " activeStatus" + activeStatus);
                 List<String> pcdList = (List<String>) prodObj.get("pcdList");
                 if (numIId == null || pcdList == null || pcdList.isEmpty()) {
+
+                    Map<String, String> failMap = new HashMap<String, String>();
+                    failMap.put(String.format("cartId=%d, channelId=%s, data=%s", cartId, channelId, JacksonUtil.bean2Json(prodObj)), "数据错误");
+                    failList.add(failMap);
+
                     $error("CmsPlatformActiceLogService 数据错误 cartId=%d, channelId=%s data=%s", cartId, channelId, prodObj.toString());
                     continue;
                 }
@@ -357,11 +391,56 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                         }
                     }
 
+                } else if (PlatFormEnums.PlatForm.DT.getId().equals(shopProp.getPlatform_id())) { // 分销平台
+                    // 分销上下架
+                    if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
+                        // 上架
+                        String result = dtWareService.onShelfProduct(shopProp, numIId);
+                        $info(String.format("调用分销平台上架API,channelId=%s,cartId=%s,numIId=%s结果=%s", shopProp.getOrder_channel_id(), shopProp.getCart_id(), numIId, result));
+                        if (org.apache.commons.lang.StringUtils.isNotBlank(result)) {
+                            Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
+                            if (responseMap != null && responseMap.containsKey("data") && responseMap.get("data") != null) {
+                                Map<String, Object> resultMap = (Map<String, Object>) responseMap.get("data");
+                                if (DtConstants.C_DT_RETURN_SUCCESS_OK.equals(resultMap.get("result"))) {
+                                    updRsFlg = true;
+                                } else {
+                                    errMsg = (String) resultMap.get("reason");
+                                }
+                            }
+                        }
+                        if (!updRsFlg && org.apache.commons.lang.StringUtils.isBlank(errMsg)) {
+                            errMsg = "调用分销平台上架API失败:" + errMsg;
+                        }
+                    } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
+                        // 下架
+                        String result = dtWareService.offShelfProduct(shopProp, numIId);
+                        $info(String.format("调用分销平台下架API,channelId=%s,cartId=%s,numIId=%s结果=%s", shopProp.getOrder_channel_id(), shopProp.getCart_id(), numIId, result));
+                        if (org.apache.commons.lang.StringUtils.isNotBlank(result)) {
+                            Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
+                            if (responseMap != null && responseMap.containsKey("data") && responseMap.get("data") != null) {
+                                Map<String, Object> resultMap = (Map<String, Object>) responseMap.get("data");
+                                if (DtConstants.C_DT_RETURN_SUCCESS_OK.equals(resultMap.get("result"))) {
+                                    updRsFlg = true;
+                                } else {
+                                    errMsg = (String) resultMap.get("reason");
+                                }
+                            }
+                        }
+                        if (!updRsFlg && org.apache.commons.lang.StringUtils.isBlank(errMsg)) {
+                            errMsg = "调用分销平台下架API失败" + errMsg;
+                        }
+                    }
+
                 } else {
+
+                    Map<String, String> failMap = new HashMap<String, String>();
+                    failMap.put(String.format("cartId=%d", cartId), String.format("不正确的平台 cartId=%d", cartId));
+                    failList.add(failMap);
+
                     $error("CmsPlatformActiceLogService 不正确的平台 cartId=%d", cartId);
                 }
                 if (!updRsFlg) {
-                    $error("CmsPlatformActiceLogService API调用返回错误结果");
+                    $error("CmsPlatformActiceLogService API调用返回错误结果" + errMsg);
                 }
 
                 // 保存调用结果
@@ -434,6 +513,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                 $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, batchNo=%d cmsBtProduct更新结果=%s", cartId, channelId, batchNo, rs.toString());
             }
         }
+        return failList;
     }
 
     // 取得商品对应的平台状态
@@ -453,4 +533,5 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
         }
         return null;
     }
+
 }

@@ -549,6 +549,21 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
                     if (hscodeField != null && fieldId.equals(hscodeField.getId())) {
                         // hscode不做Mapping了，写死从个人税号里去取
                         String propValue = expressionParser.getSxData().getMainProduct().getCommon().getFields().getHsCodePrivate();
+                        // added by morse.lu 2017/01/03 start
+                        // 通过配置表(cms_mt_channel_config)来决定用hsCodeCross，还是hsCodePrivate，默认用hsCodePrivate
+                        CmsChannelConfigBean hscodeConfig = CmsChannelConfigs.getConfigBean(expressionParser.getSxData().getChannelId(),
+                                CmsConstants.ChannelConfig.HSCODE,
+                                String.valueOf(expressionParser.getSxData().getCartId()) + CmsConstants.ChannelConfig.SX_HSCODE);
+                        if (hscodeConfig != null) {
+                            String hscodePropName = hscodeConfig.getConfigValue1(); // 目前配置的是code或者color或者codeDiff
+                            if (!StringUtils.isEmpty(hscodePropName)) {
+                                String val = expressionParser.getSxData().getMainProduct().getCommon().getFields().getStringAttribute(hscodePropName);
+                                if (!StringUtils.isEmpty(val)) {
+                                    propValue = val;
+                                }
+                            }
+                        }
+                        // added by morse.lu 2017/01/03 end
                         skuFieldValue.setInputFieldValue(hscodeField.getId(), propValue.split(",")[0]);
                         continue;
                     }
@@ -578,12 +593,16 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
                         String skuCode = cmsSkuProp.getSkuCode();
                         String scProductId = expressionParser.getSxProductService().updateTmScProductId(
                                 shopBean,
+                                expressionParser.getSxData().getMainProduct(),
                                 skuCode,
                                 expressionParser.getSxProductService().getProductValueByMasterMapping("title", shopBean, expressionParser, user),
                                 skuInventoryMap.get(skuCode) != null ? Integer.toString(skuInventoryMap.get(skuCode)) : "0"
                         );
                         skuFieldValue.setInputFieldValue(sku_productIdField.getId(), scProductId);
                         // modified by morse.lu 2016/10/18 end
+                        // added by morse.lu 2017/01/05 start
+                        expressionParser.getSxData().getSxSkuExInfo(skuCode, true).setScProductId(scProductId);
+                        // added by morse.lu 2017/01/05 end
                         continue;
                     }
                     // added by morse.lu 2016/08/17 end

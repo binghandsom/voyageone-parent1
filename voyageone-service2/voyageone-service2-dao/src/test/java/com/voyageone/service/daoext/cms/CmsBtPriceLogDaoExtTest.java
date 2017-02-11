@@ -28,7 +28,7 @@ public class CmsBtPriceLogDaoExtTest {
     public void testSelectPriceLogByCode() throws Exception {
 
         HashMap map = new HashMap();
-        map.put("code", "1");
+        map.put("code", "49896");
         map.put("offset", 1);
         map.put("rows", 1);
 

@@ -3,7 +3,8 @@ define(function () {
         "home": {
             "hash": "/home",
             "templateUrl": "views/home/welcome/datachart.tpl.html",
-            "controllerUrl": "modules/cms/views/home/welcome/datachart.ctl"
+            "controllerUrl": "modules/cms/views/home/welcome/datachart.ctl",
+            "controller":'datachartController'
         },
         "feed_product_list": {
             "url": "/feed/product_list",
@@ -406,7 +407,7 @@ define(function () {
         "shelves-template": {
             "hash": "/shelves/template/management",
             "templateUrl": "views/shelves/template-management.tpl.html",
-            "controllerUrl": "modules/cms/views/shelves/template-management.ctl",//js type file
+            "controllerUrl": "modules/cms/views/shelves/template-management.ctl",
             "controller": "shelvesTemplateController as ctrl"
         },
         "shelves-list": {
@@ -440,10 +441,11 @@ define(function () {
             "controllerUrl": "modules/cms/views/channel/channel-config-set/index.ctl",
             "controller": "channelConfigSet as ctrl"
         },
-        "test": {
-            "hash": "/test/test1",
-            "templateUrl": "views/test/Test.html",
-            "controllerUrl": "modules/cms/views/test/test.ctl"
+        "feed_config_set":{
+            "hash": "/feed/feed_config_set",
+            "templateUrl": "views/channel/feedConfigSet/index.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/feedConfigSet/index.ctl",
+            "controller": "feedConfigSet as ctrl"
         },
         "bi_report":
         {

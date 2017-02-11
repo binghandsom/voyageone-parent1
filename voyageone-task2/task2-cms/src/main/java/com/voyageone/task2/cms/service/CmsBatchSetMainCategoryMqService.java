@@ -126,6 +126,15 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
                             updateMap.put("common.fields.sizeTypeCn", getString(sizeTypeCn));
                             updateMap.put("common.fields.hsCodePrivate", getString(hscodeName8));
                             updateMap.put("common.fields.hsCodeCross", getString(hscodeName10));
+                            if (!StringUtil.isEmpty(hscodeName8)) {
+                                updateMap.put("common.fields.hsCodeStatus", "1");
+                                updateMap.put("common.fields.hsCodeSetter", userName);
+                                updateMap.put("common.fields.hsCodeSetTime", DateTimeUtil.getNow());
+                            }else{
+                                updateMap.put("common.fields.hsCodeStatus", "0");
+                                updateMap.put("common.fields.hsCodeSetter", "");
+                                updateMap.put("common.fields.hsCodeSetTime", "");
+                            }
                         }
                         BulkUpdateModel model = new BulkUpdateModel();
                         model.setUpdateMap(updateMap);

@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.util.*;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
@@ -27,8 +28,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_FeedExportJob)
-public class CmsFeedExportService extends BaseMQCmsService {
+public class CmsFeedExportService extends BaseService {
 
     @Autowired
     FeedInfoService feedInfoService;
@@ -44,21 +44,13 @@ public class CmsFeedExportService extends BaseMQCmsService {
 
     Integer maxRowCnt = 10000;
 
-    @Override
-    public void onStartup(Map<String, Object> messageMap) throws Exception {
-
+    public void export(CmsBtExportTaskModel task) throws Exception {
         $info("CmsFeedExportService start");
-        $info("参数" + JacksonUtil.bean2Json(messageMap));
-        CmsBtExportTaskModel cmsBtExportTaskModel = new CmsBtExportTaskModel();
-        cmsBtExportTaskModel.setModified(new Date());
-        cmsBtExportTaskModel.setModifier(getTaskName());
-        messageMap.remove("created");
-        messageMap.remove("modified");
-        BeanUtils.populate(cmsBtExportTaskModel, messageMap);
+        $info("参数" + JacksonUtil.bean2Json(task));
         JongoQuery queryObject = new JongoQuery();
         Long cnt = 0L;
-        Map<String, Object> searchValue = JacksonUtil.jsonToMap(cmsBtExportTaskModel.getParameter());
-        String channelId = searchValue.get("orgChaId") == null ? cmsBtExportTaskModel.getChannelId() : searchValue.get("orgChaId").toString();
+        Map<String, Object> searchValue = JacksonUtil.jsonToMap(task.getParameter());
+        String channelId = searchValue.get("orgChaId") == null ? task.getChannelId() : searchValue.get("orgChaId").toString();
 
         if(searchValue.get("codeList") != null && searchValue.get("codeList") instanceof List){
             List<Map<String,Object>> codes = (List<Map<String, Object>>) searchValue.get("codeList");
@@ -74,13 +66,16 @@ public class CmsFeedExportService extends BaseMQCmsService {
         $info("导出的产品数" + cnt);
         List<String> files = new ArrayList<>();
 
-        String fileName = String.format("%s-%s.xlsx", cmsBtExportTaskModel.getChannelId(), DateTimeUtil.getLocalTime(8, "yyyyMMddHHmmss"));
+        String fileName = String.format("%s-%s.xlsx", task.getChannelId(), DateTimeUtil.getLocalTime(8, "yyyyMMddHHmmss"));
         files.add(fileName);
 
         long pageCnt = cnt / pageSize + (cnt % pageSize == 0 ? 0 : 1);
 
         int rowIndexCode = 2;
         int rowIndexSku = 2;
+        CmsBtExportTaskModel target = new CmsBtExportTaskModel();
+        target.setId(task.getId());
+        target.setModified(new Date());
         try (OutputStream outputStream = new FileOutputStream(outPath + fileName)){
             $info(outPath + fileName);
 //            InputStream inputStream = new FileInputStream(templatePath);
@@ -99,17 +94,17 @@ public class CmsFeedExportService extends BaseMQCmsService {
             }
             book.write(outputStream);
             outputStream.close();
-            cmsBtExportTaskModel.setStatus(1);
-            cmsBtExportTaskModel.setFileName(files.stream().collect(Collectors.joining(",")));
-            cmsBtExportTaskModel.setComment("");
+            target.setStatus(1);
+            target.setFileName(files.stream().collect(Collectors.joining(",")));
+            target.setComment("");
         }catch (Exception e){
             $error(e);
             e.printStackTrace();
-            cmsBtExportTaskModel.setComment(CommonUtil.getMessages(e));
-            cmsBtExportTaskModel.setStatus(2);
+            target.setComment(CommonUtil.getMessages(e));
+            target.setStatus(2);
         }
 
-        cmsBtExportTaskService.update(cmsBtExportTaskModel);
+        cmsBtExportTaskService.update(target);
     }
 
     private void writeHead(Workbook book){

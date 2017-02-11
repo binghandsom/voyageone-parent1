@@ -11,14 +11,14 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.MongoUtils;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.FeedExportMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
@@ -48,14 +48,16 @@ public class CmsFeedSearchService extends BaseViewService {
     @Autowired
     private CmsMasterBrandMappingService cmsMasterBrandMappingService;
 
-    @Autowired
-    private MqSender sender;
+    //@Autowired
+    //private MqSender sender;
 
     @Autowired
     private CmsMtChannelValuesService cmsMtChannelValuesService;
+    @Autowired
+    private MqSenderService mqSenderService;
 
     // 查询产品信息时的缺省输出列
-    private final String searchItems = "{'category':1,'code':1,'name':1,'model':1,'color':1,'origin':1,'brand':1,'image':1,'productType':1,'sizeType':1,'shortDescription':1,'longDescription':1,'skus':1,'attribute':1,'updFlg':1,'qty':1,'updMessage':1,'created':1,'modified':1}";
+    private final String searchItems = "{'category':1,'code':1,'name':1,'model':1,'color':1,'origin':1,'brand':1,'image':1,'productType':1,'sizeType':1,'shortDescription':1,'longDescription':1,'skus':1,'attribute':1,'updFlg':1,'qty':1,'updMessage':1,'created':1,'modified':1,'lastReceivedOn':1}";
 
     // 查询产品信息时的缺省排序条件
     private final String sortItems = "{'category':1,'code':1}";
@@ -265,7 +267,16 @@ public class CmsFeedSearchService extends BaseViewService {
     public CmsBtExportTaskModel export(String channelId, CmsBtExportTaskModel cmsBtExportTaskModel, String userName) {
         if (cmsBtExportTaskService.checkExportTaskByUser(channelId, CmsBtExportTaskService.FEED, userName) == 0) {
             cmsBtExportTaskService.add(cmsBtExportTaskModel);
-            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_FeedExportJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(cmsBtExportTaskModel)));
+
+            FeedExportMQMessageBody feedExportMQMessageBody = new FeedExportMQMessageBody();
+            feedExportMQMessageBody.setCmsBtExportTaskId(cmsBtExportTaskModel.getId());
+            feedExportMQMessageBody.setSender(userName);
+            try {
+                mqSenderService.sendMessage(feedExportMQMessageBody);
+            } catch (MQMessageRuleException e) {
+                $error(String.format("feed文件导出异常, channelId=%s, userName=%s", channelId, userName));
+                throw new BusinessException("MQ发送异常:" + e.getMessage());
+            }
             return cmsBtExportTaskModel;
         } else {
             throw new BusinessException("你已经有一个任务还没有执行完毕。请稍后再导出");

@@ -16,6 +16,8 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
@@ -28,8 +30,8 @@ import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
+import com.voyageone.service.impl.cms.vomqjobservice.CmsProductFreeTagsUpdateService;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
@@ -75,8 +77,10 @@ public class CmsAdvanceSearchService extends BaseViewService {
     private ProductTagService productTagService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    //@Autowired
+    //private MqSender sender;
     @Autowired
-    private MqSender sender;
+    private MqSenderService mqSenderService;
     @Autowired
     private CmsBtExportTaskService cmsBtExportTaskService;
 
@@ -263,6 +267,10 @@ public class CmsAdvanceSearchService extends BaseViewService {
      */
     public List<String> getProductCodeList(String channelId, CmsSessionBean cmsSessionBean) {
         CmsSearchInfoBean2 searchValue = (CmsSearchInfoBean2) cmsSessionBean.getAttribute("_adv_search_params");
+        return getProductCodeList(channelId, searchValue);
+    }
+
+    private List<String> getProductCodeList(String channelId, CmsSearchInfoBean2 searchValue) {
         if (searchValue == null) {
             $warn("高级检索 getProductCodeList session中的查询条件为空");
             return new ArrayList<>(0);
@@ -283,7 +291,6 @@ public class CmsAdvanceSearchService extends BaseViewService {
         List<String> codeList = prodObjList.stream().map(prodObj -> prodObj.getCommonNotNull().getFieldsNotNull().getCode()).filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).collect(Collectors.toList());
         return codeList;
     }
-
     /**
      * 获取当前查询的product id列表（查询条件从session而来）
      */
@@ -415,17 +422,20 @@ public class CmsAdvanceSearchService extends BaseViewService {
         return (Integer) rsMap.get("count");
     }
 
+    @Autowired
+    CmsProductFreeTagsUpdateService cmsProductFreeTagsUpdateService;
+
     /**
      * 设置产品free tag，同时添加该tag的所有上级tag
      */
-    public void setProdFreeTag(String channelId, Map<String, Object> params, String modifier, CmsSessionBean cmsSession) {
+    public void setProdFreeTagMQ(String channelId, Map<String, Object> params, String modifier, CmsSessionBean cmsSession) {
         List<String> tagPathList = (List<String>) params.get("tagPathList");
         if (tagPathList == null || tagPathList.isEmpty()) {
             $info("CmsAdvanceSearchService：setProdFreeTag 未选择标签,将清空所有自由标签");
         }
 
         List<String> orgDispTagList = null;
-        if(params.get("orgDispTagList") != null){
+        if (params.get("orgDispTagList") != null) {
             orgDispTagList = (List<String>) params.get("orgDispTagList");
         }
 
@@ -435,20 +445,12 @@ public class CmsAdvanceSearchService extends BaseViewService {
         }
         List<String> prodCodeList;
         if (isSelAll == 1) {
-            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            prodCodeList = getProductCodeList(channelId, cmsSession);
-            if (prodCodeList == null || prodCodeList.isEmpty()) {
-                $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未查询到商品");
-                throw new BusinessException("缺少参数，未选择商品!");
-            }
+            CmsSearchInfoBean2 searchValue = (CmsSearchInfoBean2) cmsSession.getAttribute("_adv_search_params");
+            cmsProductFreeTagsUpdateService.sendMessage(channelId,searchValue,tagPathList,orgDispTagList,modifier);
         } else {
             prodCodeList = (List<String>) params.get("prodIdList");
-            if (prodCodeList == null || prodCodeList.isEmpty()) {
-                $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未选择商品");
-                throw new BusinessException("缺少参数，未选择商品!");
-            }
+            cmsProductFreeTagsUpdateService.sendMessage(channelId,prodCodeList,tagPathList,orgDispTagList,modifier);
         }
-        productTagService.setProdFreeTag(channelId, tagPathList, prodCodeList, orgDispTagList, modifier);
     }
 
     /**
@@ -482,9 +484,17 @@ public class CmsAdvanceSearchService extends BaseViewService {
             sessionBean.put("_adv_search_selSalesType", cmsSessionBean.getAttribute("_adv_search_selSalesType"));
             sessionBean.put("_adv_search_selBiDataList", cmsSessionBean.getAttribute("_adv_search_selBiDataList"));
             searchValue.put("_sessionBean", sessionBean);
-            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_FileDldJob, searchValue);
+            AdvSearchExportMQMessageBody advSearchExportMQMessageBody = new AdvSearchExportMQMessageBody();
+            advSearchExportMQMessageBody.setCmsBtExportTaskId(taskModel.getId());
+            advSearchExportMQMessageBody.setSearchValue(searchValue);
+            advSearchExportMQMessageBody.setSender(userInfo.getUserName());
+            try {
+                mqSenderService.sendMessage(advSearchExportMQMessageBody);
+            } catch (MQMessageRuleException e) {
+                $error(String.format("高级检索文件导出消息发送异常, channelId=%s, userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()));
+                throw new BusinessException("MQ发送异常:" + e.getMessage());
+            }
             return true;
-
         } else {
             return false;
         }

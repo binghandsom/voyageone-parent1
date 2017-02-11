@@ -216,7 +216,7 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <button class="col-md-2 btn btn-default" ng-controller="popupCtrl" ng-click="jdCategoryMapping(popupNewCategory)" ng-disabled = "vm.mastData.isMain!= true || (cartInfo.value == 27 && vm.status == 'Approved') "><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
+                                <button class="col-md-2 btn btn-default" ng-controller="popupCtrl" ng-click="jdCategoryMapping(popupNewCategory)" ng-disabled = "vm.mastData.isMain!= true  "><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
                                 </button>
                                 <div class="col-md-8">
                                     <input class="form-control"  ng-model="vm.platform.pCatPath" readonly>
@@ -355,7 +355,7 @@
                         <div class="panel-body">
                             <div class="table-responsive">
                                 <ng-form name="skuForm" novalidate>
-                                    <table class="table text-left">
+                                    <table class="table text-left" style="min-width: 1400px">
                                         <thead>
                                         <tr>
                                             <th class="text-center">
@@ -365,6 +365,8 @@
                                             <th class="text-center">{{"TXT_SKU_INVENTORY"|translate}}</th>
                                             <th class="text-center">size</th>
                                             <th class="text-center">platform size</th>
+                                            <th class="text-right">客户建议零售价</th>
+                                            <th class="text-right">客户成本价</th>
                                             <th class="mfb-xxx text-center">{{"TXT_CHINA_MSRP_PRICE"|translate}}</th>
                                             <th class="text-center">{{"TXT_CHINA_RETAIL_PRICE"|translate}}</th>
                                             <th class="text-center">容量/尺码</th>
@@ -385,6 +387,8 @@
                                             <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].qty}}</td>
                                             <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].size}}</td>
                                             <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].platformSize}}</td>
+                                            <td class="text-right  v-middle">{{vm.skuTemp[entity.skuCode].clientMsrpPrice}}</td>
+                                            <td class="text-right  v-middle">{{vm.skuTemp[entity.skuCode].clientNetPrice}}</td>
                                             <td class="mfb-xxx text-center v-middle">
                                                 <label class="col-sm-3 control-label vo_reqfield"></label>
                                                 <input class="form-control ng-number" type="number" ng-disabled="autoSyncPriceMsrp=='1'" ng-model="entity.priceMsrp" scale="15,2" required>

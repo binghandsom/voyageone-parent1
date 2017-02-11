@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.product;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -19,6 +20,7 @@ import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -77,6 +79,13 @@ public class CombinedProductController extends CmsController {
     public AjaxResponse getCombinedProductPlatformDetail (@RequestBody Map<String, String> params) {
         String numId = params.get("numID");
         String cartId = params.get("cartId");
+        String newFlag = params.get("new");
+        if ("1".equals(newFlag)) { // 新增页面获取，判断是否已经存在
+            CmsBtCombinedProductModel existOne = cmsBtCombinedProductService.getByNumId(numId, getUser().getSelChannelId(), StringUtils.isNumeric(cartId) ? Integer.valueOf(cartId) : null);
+            if (existOne != null) {
+                throw new BusinessException(String.format("组合商品numID=%s已存在,请直接编辑。", numId));
+            }
+        }
         Object productDetail = cmsBtCombinedProductService.getCombinedProductPlatformDetail(numId, getUser().getSelChannelId(), Integer.valueOf(cartId), true);
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("product", productDetail);

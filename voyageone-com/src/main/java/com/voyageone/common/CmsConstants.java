@@ -163,6 +163,10 @@ public class CmsConstants {
         // 上新方式
         String SX_SMART = "SX_SMART";
 
+        // hscode
+        String HSCODE = "HSCODE";
+        String SX_HSCODE = ".sx_hscode";
+
         // 发货方式
         String SHIPPING_TYPE = "SHIPPING_TYPE";
 
@@ -206,6 +210,9 @@ public class CmsConstants {
 
         //被迫下架的商品是否自动上架
         String IS_FORCED_IN_STOCK_PRODUCT_AUTO_ON_SALE="IS_FORCED_IN_STOCK_PRODUCT_AUTO_ON_SALE";
+
+        // 天猫无线端的共通模块, 是否由运营自己在天猫后台进行管理(1：运营自己天猫后台管理，空或0：上新程序设定)
+        String TMALL_WIRELESS_COMMON_MODULE_BY_USER = "TMALL_WIRELESS_COMMON_MODULE_BY_USER";
     }
 
     public interface DataAmount {

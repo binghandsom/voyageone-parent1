@@ -70,6 +70,18 @@
 
         <dependency>
             <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-dt</artifactId>
+            <version>${voyageone.components.dt.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-cnn</artifactId>
+            <version>${voyageone.components.cnn.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.voyageone</groupId>
             <artifactId>voyageone-components-sneakerhead</artifactId>
             <version>${voyageone.components.sneakerhead.version}</version>
         </dependency>
@@ -123,6 +135,10 @@
 		    <artifactId>freemarker</artifactId>
 		    <version>2.3.20</version>
 		</dependency>
+        <dependency>
+            <groupId>com.voyageone.tools.feed</groupId>
+            <artifactId>category-matcher-java</artifactId>
+        </dependency>
 
     </dependencies>
     <build>

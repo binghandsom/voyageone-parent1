@@ -37,7 +37,7 @@ public class Tmall_012_Bcbg_DictTest extends BaseDictTest{
     @Test
     public void startupTest() {
 
-//		doCreateJson("详情页描述", false, doDict_详情页描述());
+		doCreateJson("详情页描述", false, doDict_详情页描述());
         doCreateJson("无线描述", false, doDict_无线描述());
 
     }
@@ -483,16 +483,16 @@ public class Tmall_012_Bcbg_DictTest extends BaseDictTest{
             {
                 // 第5,6张, 英/中文文字描述图片
                 // 文字描述(空两个位置)  把去掉HTML代码之后的文字转换为图片处理
-                {
-                    RuleExpression ruleExpressionField = new RuleExpression();
-                    ruleExpressionField.addRuleWord(new TextWord("longDesEn"));
-                    RuleExpression ruleExpressionFontSize = new RuleExpression();
-                    ruleExpressionFontSize.addRuleWord(new TextWord("23"));
-                    RuleExpression ruleExpressionOneLineBit = new RuleExpression();
-                    ruleExpressionOneLineBit.addRuleWord(new TextWord("58"));
-                    CustomWordValueGetDescImage img = new CustomWordValueGetDescImage(ruleExpressionField, null, null, null, null, ruleExpressionFontSize, ruleExpressionOneLineBit);
-                    do处理无线端20张图片(4, ruleRoot, new CustomWord(img));
-                }
+//                {
+//                    RuleExpression ruleExpressionField = new RuleExpression();
+//                    ruleExpressionField.addRuleWord(new TextWord("longDesEn"));
+//                    RuleExpression ruleExpressionFontSize = new RuleExpression();
+//                    ruleExpressionFontSize.addRuleWord(new TextWord("23"));
+//                    RuleExpression ruleExpressionOneLineBit = new RuleExpression();
+//                    ruleExpressionOneLineBit.addRuleWord(new TextWord("58"));
+//                    CustomWordValueGetDescImage img = new CustomWordValueGetDescImage(ruleExpressionField, null, null, null, null, ruleExpressionFontSize, ruleExpressionOneLineBit);
+//                    do处理无线端20张图片(4, ruleRoot, new CustomWord(img));
+//                }
                 {
                     RuleExpression ruleExpressionField = new RuleExpression();
                     ruleExpressionField.addRuleWord(new TextWord("longDesCn"));

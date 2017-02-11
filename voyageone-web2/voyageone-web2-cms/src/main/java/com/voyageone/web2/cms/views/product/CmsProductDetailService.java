@@ -617,7 +617,15 @@ public class CmsProductDetailService extends BaseViewService {
             if (product != null) {
                 Map<String, Object> image = new HashMap<String, Object>();
                 image.put("productCode", s1);
-                image.put("imageName", product.getCommon().getFields().getImages1().get(0).get("image1"));
+                String imageName ="";
+
+                if(!ListUtils.isNull(product.getCommon().getFields().getImages1()) && product.getCommon().getFields().getImages1().get(0).size()>0){
+                    imageName = (String) product.getCommon().getFields().getImages1().get(0).get("image1");
+                }
+                if(StringUtil.isEmpty(imageName) && !ListUtils.isNull(product.getCommon().getFields().getImages6()) && product.getCommon().getFields().getImages6().get(0).size()>0){
+                    imageName = (String) product.getCommon().getFields().getImages6().get(0).get("image6");
+                }
+                image.put("imageName", imageName);
                 image.put("isMain", finalCmsBtProductGroup.getMainProductCode().equalsIgnoreCase(s1));
                 image.put("prodId", product.getProdId());
                 image.put("qty",product.getCommon().getFields().getQuantity());
@@ -1319,7 +1327,16 @@ public class CmsProductDetailService extends BaseViewService {
             if (product != null) {
                 Map<String, Object> productInfo = new HashMap<String, Object>();
                 productInfo.put("productCode", s1);
-                productInfo.put("imageName", product.getCommon().getFields().getImages1().get(0).get("image1"));
+
+                String imageName ="";
+
+                if(!ListUtils.isNull(product.getCommon().getFields().getImages1()) && product.getCommon().getFields().getImages1().get(0).size()>0){
+                    imageName = (String) product.getCommon().getFields().getImages1().get(0).get("image1");
+                }
+                if(StringUtil.isEmpty(imageName) && !ListUtils.isNull(product.getCommon().getFields().getImages6()) && product.getCommon().getFields().getImages6().get(0).size()>0){
+                    imageName = (String) product.getCommon().getFields().getImages6().get(0).get("image6");
+                }
+                productInfo.put("imageName", imageName);
                 productInfo.put("isMain", cmsBtProductGroup.getMainProductCode().equalsIgnoreCase(s1));//common.fields.quantity   platforms.pXX.status
                 productInfo.put("quantity", product.getCommon().getFields().getQuantity());
                 productInfo.put("numIId", cmsBtProductGroup.getNumIId());

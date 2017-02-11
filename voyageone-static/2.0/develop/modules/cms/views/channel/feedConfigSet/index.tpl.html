@@ -1,0 +1,233 @@
+<div class="wrapper-md" ng-init="ctrl.init() " id="channelConfigSet">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="glyphicon glyphicon-star"></i>&nbsp;Feed设置一览</h4>
+                </div>
+            </div>
+        </div>
+        <uib-tabset class="tab-container vo_nav-tabs" style="background-color: #EEEDED;">
+            <uib-tab>
+                <tab-heading><i class="fa fa-search-plus text-default"></i>Feed属性一览</tab-heading>
+                <div style="position: relative">
+                    <table class="table table-hover-new text-center">
+                        <div class="container-fluid">
+                            <div class="col-sm-8">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label class="col-sm-1 control-label"><strong>表名:</strong></label>
+
+                                        <div class="col-sm-8 form-inline">
+                                            <input class="form-control ng-pristine ng-untouched ng-valid ng-empty"
+                                                   placeholder="cms_zz_feed_xxx_product_temp" ng-model="ctrl.tableName">
+                                            <i class="text-warnings icon fa fa-bell-o">&nbsp;eg: 如果希望生成的表名为: cms_zz_feed_bcbg_product_temp, 请只输入bcbg</i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="form-inline m-b-xs pull-right ng-scope" style="margin-left:5px">
+                                            <button type="button" class="btn btn-default"
+                                                    ng-click="ctrl.export(ctrl.feedList)">
+                                                <i class="fa fa-mail-reply"></i>模板导出
+                                            </button>
+                                        </div>
+                                        <div class="form-inline m-b-xs pull-right ng-scope" style="margin-left:5px"
+                                             ng-controller="popupCtrl">
+                                            <button type="button" class="btn btn-default" ng-click="ctrl.import()">
+                                                <i class="fa fa-cog"></i>导入
+                                            </button>
+                                        </div>
+                                        <div class="form-inline m-b-xs pull-right ng-scope" style="margin-left:5px">
+                                            <button type="button" class="btn btn-success btn-pop ng-binding"
+                                                    ng-click="ctrl.add()">
+                                                <i class="fa fa-plus-square-o"></i>新增feed属性
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <thead>
+                            <tr>
+                                <th class="text-center">Feed属性名称</th>
+                                <th class="text-center">Feed表结构名称</th>
+                                <th class="text-center">是否作为第三方属性导入</th>
+                                <th class="text-center">created</th>
+                                <th class="text-center">modified</th>
+                                <th class="text-center">modifier</th>
+                                <th class="text-center">操作</th>
+                            </tr>
+                            </thead>
+                            <tr ng-repeat="feedList in ctrl.feedList">
+                                <th class="text-left"><textarea ng-model="feedList.cfgName" class="no-resize"
+                                                                style="width: 100%"></textarea></th>
+                                <th class="text-left"><textarea ng-model="feedList.cfgTableName" class="no-resize"
+                                                                style="width: 100%"></textarea></th>
+                                <th class="text-center">
+                                    <select ng-model="feedList.cfgIsAttribute" class="form-control" style="width: 50px; margin: auto">
+                                        <option value="Y">Y</option>
+                                        <option value="N">N</option>
+                                    </select>
+                                </th>
+                                <th class="text-center">{{feedList.created}}</th>
+                                <th class="text-center">{{feedList.modified}}</th>
+                                <th class="text-center">{{feedList.modifier}}</th>
+                                <th class="text-center">
+                                    <button type="button" class="btn btn-danger btn-xs"
+                                            ng-click="ctrl.delete(feedList.id,$index)">
+                                        <i class="fa  fa-trash-o"></i>&nbsp;
+                                    </button>
+                                </th>
+                            </tr>
+                        </div>
+                    </table>
+                </div>
+                <sticky top-fix="90px" style="position: absolute; top: 250px; right: 10px;" drag>
+                    <nav class="sidebar" style="width: 130px;">
+                        <h3>导航栏</h3>
+                        <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.refresh()">
+                            <i class="fa fa-refresh"></i>刷新
+                        </button>
+                        <button type="button" class="btn btn-nav btn-nav-pop"
+                                ng-click="ctrl.saveFeed(ctrl.feedList)">
+                            <i class="glyphicon glyphicon-floppy-disk"></i>属性保存
+                        </button>
+                        <button type="button" class="btn btn-nav btn-nav-pop"
+                                ng-click="ctrl.createFeed({feedList:ctrl.feedList,tableName:ctrl.tableName})">
+                            <i class="glyphicon glyphicon-floppy-disk"></i>表创建
+                        </button>
+                        <br>
+                    </nav>
+                </sticky>
+            </uib-tab>
+            <uib-tab>
+                <tab-heading><i class="fa fa-search-plus text-default"></i>Feed-Master属性一览</tab-heading>
+                <div style="position: relative">
+                    <uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
+                        <uib-accordion-group is-open="vm.status.open">
+                            <uib-accordion-heading>
+                                <i class="fa {{vm.status.open?'fa-minus':'fa-plus'}}"></i>&nbsp;<span>{{i.shelvesName}}</span>
+                                <span style="margin-right: 20px;">CODE级别feed必要共通属性匹配情况</span>
+                            </uib-accordion-heading>
+                            <table class="table table-hover-new text-center">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">cfg_name</th>
+                                    <th class="text-center">备注</th>
+                                    <th class="text-center">cfg_vag1</th>
+                                    <th class="text-center">cfg_vag2</th>
+                                    <th class="text-center">cfg_vag3</th>
+                                    <th class="text-center">created</th>
+                                    <th class="text-center">modified</th>
+                                    <th class="text-center">modifier</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="element in ctrl.dataList" ng-if="ctrl.displayCode">
+                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left">{{element.cmsCfgName}}</th>
+                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
+                                            class="form-control"
+                                            ng-model="element.comment"
+                                            class="no-resize"
+                                            style="width: 100%"></textarea>
+                                    </th>
+                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
+                                            class="form-control"
+                                            ng-model="element.cfgVal1"
+                                            ng-disabled=element.cmsIsCfgVal1Display
+                                            class="no-resize"
+                                            style="width: 100%"></textarea>
+                                    </th>
+                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
+                                            class="form-control"
+                                            ng-model="element.cfgVal2"
+                                            ng-disabled=element.cmsIsCfgVal2Display
+                                            class="no-resize"
+                                            style="width: 100%"></textarea>
+                                    </th>
+                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea type="text"
+                                                                                                       class="form-control"
+                                                                                                       ng-disabled="element.cmsIsCfgVal3Display"
+                                                                                                       ng-model="element.cfgVal3"
+                                                                                                       class="no-resize"
+                                                                                                       style="width: 100%"
+                                                                                                       s></textarea>
+                                    </th>
+                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-center">{{element.created}}</th>
+                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-center">{{element.modified}}</th>
+                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-center">{{element.modifier}}</th>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </uib-accordion-group>
+                    </uib-accordion>
+                    <uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
+                        <uib-accordion-group is-open="vm.status.open">
+                            <uib-accordion-heading>
+                                <i class="fa {{vm.status.open?'fa-minus':'fa-plus'}}"></i>&nbsp;<span>{{i.shelvesName}}</span>
+                                <span style="margin-right: 20px;">SKU级别feed必要共通属性匹配情况</span>
+                            </uib-accordion-heading>
+                            <table class="table table-hover-new text-center">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">cfg_name</th>
+                                    <th class="text-center">备注</th>
+                                    <th class="text-center">cfg_vag1</th>
+                                    <th class="text-center">cfg_vag2</th>
+                                    <th class="text-center">cfg_vag3</th>
+                                    <th class="text-center">created</th>
+                                    <th class="text-center">modified</th>
+                                    <th class="text-center">modifier</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="element in ctrl.dataList" ng-if="ctrl.displaySku">
+                                    <th ng-if="element.cmsCfgNameLev=='2'" class="text-left">{{element.cmsCfgName}}</th>
+                                    <th ng-if="element.cmsCfgNameLev=='2'" class="text-left"><textarea
+                                            class="form-control"
+                                            ng-model="element.comment"></textarea>
+                                    </th>
+                                    <th ng-if="element.cmsCfgNameLev=='2'" class="text-left"><textarea
+                                            class="form-control"
+                                            ng-model="element.cfgVal1"
+                                            ng-disabled="element.cmsIsCfgVal1Display"></textarea>
+                                    </th>
+                                    <th ng-if="element.cmsCfgNameLev=='2'" class="text-left"><textarea
+                                            class="form-control"
+                                            ng-model="element.cfgVal2"
+                                            ng-disabled="element.cmsIsCfgVal2Display"></textarea>
+                                    </th>
+                                    <th ng-if="element.cmsCfgNameLev=='2'" class="text-left"><textarea
+                                            class="form-control"
+                                            ng-model="element.cfgVal3"
+                                            ng-disabled="element.cmsIsCfgVal3Display"></textarea>
+                                    </th>
+                                    <th ng-if="element.cmsCfgNameLev=='2'" class="text-center">{{element.created}}</th>
+                                    <th ng-if="element.cmsCfgNameLev=='2'" class="text-center">{{element.modified}}</th>
+                                    <th ng-if="element.cmsCfgNameLev=='2'" class="text-center">{{element.modifier}}</th>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </uib-accordion-group>
+                    </uib-accordion>
+                </div>
+                <sticky top-fix="90px" style="position: absolute; top: 250px; right: 10px;" drag>
+                    <nav class="sidebar">
+                        <h3>导航栏</h3>
+                        <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.refresh()">
+                            <i class="fa fa-refresh"></i>刷新
+                        </button>
+                        <br>
+                        <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.save(ctrl.dataList)">
+                            <i class="glyphicon glyphicon-floppy-disk"></i>保存
+                        </button>
+                    </nav>
+                </sticky>
+            </uib-tab>
+
+        </uib-tabset>
+    </div>
+</div>
