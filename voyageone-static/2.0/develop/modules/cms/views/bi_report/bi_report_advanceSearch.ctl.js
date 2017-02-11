@@ -5,7 +5,6 @@ define([
 
     function indexController($scope, alert, confirm, $translate, cActions, notify, $location, cRoutes, cookieService, biReportService) {
         $scope.datePicker = [];
-        $scope.exportStatus = ["正在生成", "完成", "失败"];
         $scope.vm =
         {
             downloadTaskList: [],
