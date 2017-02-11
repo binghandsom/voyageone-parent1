@@ -58,13 +58,39 @@ public class BiRepConsultService extends BaseService {
      */
     public Map<String,Object> dealTheFileCreateRequest(Map<String, Object> params)
     {
-//        String fileName=NameCreator.createName(params);
-//        params.put("fileName",fileName);
+        boolean b=true;
+        List<String> channelCodeList = (List<String>) params.get("channelCodeList");
+        if ( channelCodeList.size() == 1)
+        {
+            b=false;
+            params.put("channelCode",channelCodeList.get(0));
+        }
+        List<Object> oFileTypes =(List <Object>)params.get("fileTypes");
+        List<Integer> fileTypes =new ArrayList<>();
+
+        if(b) {
+            for (Object ob : oFileTypes) {
+                if ((ob instanceof Integer) && (Integer) ob <= 3) {
+                    fileTypes.add((Integer) ob);
+                }
+            }
+        }
+        else
+        {
+            for (Object ob:oFileTypes)
+            {
+                if (ob instanceof  Integer)
+                    fileTypes.add((Integer) ob);
+            }
+        }
+        params.put("fileTypes",fileTypes);
+        String fileName=NameCreator.createName(params);
+        params.put("fileName",fileName);
         Map<String,Object> resultMap=new HashedMap();
         BiReportDownloadTaskModel model=new BiReportDownloadTaskModel();
         model.setCreated((Date) params.get("createTime"));
 //        model.setFilePath(filePath);
-//        model.setFileName(fileName);
+        model.setFileName(fileName);
         model.setCreater((String)params.get("creatorName"));
         model.setCreater((String) params.get("creatorName"));
         model.setTaskStatus(ISheetInfo.SHEET.BASICINFO.SUBMITNOTSTART);
@@ -91,6 +117,11 @@ public class BiRepConsultService extends BaseService {
             if(ecd != null && "0".equals(ecd))
             {
               model.setTaskStatus(ISheetInfo.SHEET.BASICINFO.CREATING);
+                BiReportDownloadTaskModel temp = biReportDownloadTaskDao.select(model.getId());
+                if(temp.getTaskStatus() < model.getTaskStatus())
+                {
+                    biReportDownloadTaskDao.update(model);
+                }
             }
         }
         else

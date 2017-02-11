@@ -25,7 +25,7 @@ public class BiReportDownloadTaskModel extends BaseModel {
     protected String filePath;
 
     /**
-     * 任务状态 1为失败，2 位任务正在进行，3为成功完成
+     * 0 为申请成功但未开始创建，任务状态 1为失败，2 位任务正在进行，3为成功完成，4表示文件过期
      */
     protected Integer taskStatus;
 
@@ -38,6 +38,8 @@ public class BiReportDownloadTaskModel extends BaseModel {
      * 是否有效（1:有效；0：无效）
      */
     protected Boolean active;
+
+    protected String log;
 
     public String getFileName() {
         return fileName;
@@ -77,5 +79,13 @@ public class BiReportDownloadTaskModel extends BaseModel {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public String getLog() {
+        return log;
+    }
+
+    public void setLog(String log) {
+        this.log = log == null ? null : log.trim();
     }
 }

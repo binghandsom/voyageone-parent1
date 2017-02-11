@@ -10,13 +10,14 @@ define([
         {
             downloadTaskList: [],
             searchInfo: {
+                channels : [],
                 channelCodeList:[],
                 fileTypes: []
             },
             "message": "successfully!",
             status: {open: true}
         };
-        $scope.channels = [];
+        // $scope.channels = [];
         $scope.fileTypes = [
             {fileTypeCode: "1", fileTypeName: "商铺月报"},
             {fileTypeCode: "2", fileTypeName: "商铺周报"},
@@ -32,10 +33,14 @@ define([
             {fileTypeCode: "12", fileTypeName: "sku日报"}
         ];
         $scope.clear = function () {
-            $scope.searchInfo = {};
+            // $scope.searchInfo.channels =[];
+            //     $scope.searchInfo.channelCodeList=[];
+                $scope.vm.searchInfo={};
+                $scope.vm.searchInfo.channelCodeList=[];
+                // $scope.searchInfo.fileTypes= [];
         };
         $scope.initialize = function () {
-            $scope.vm.minDate = new Date(2017,1,1);
+            $scope.vm.minDate = new Date(2015,1,1);
             $scope.vm.maxDate = new Date();
             biReportService.init().then(function (res) {
                 $scope.search();
@@ -70,7 +75,7 @@ define([
         function getPageParameter() {
             var pageParameter = angular.copy($scope.vm.searchInfo);
             pageParameter.fileTypes = _.filter(pageParameter.fileTypes, function (subFileType) {
-                return null != subFileType;
+                return (null != subFileType || false != subFileType || true !=subFileType);
             });
             return pageParameter;
         }
@@ -123,26 +128,28 @@ define([
                 alert("请选择渠道");
                 return ;
             }
-            biReportService.createXlsFileTask(parameter).then(function (res) {
-                var ecd = res.data.ecd ;
-                switch (ecd)
-                {
-                    case "0":
-                        alert("正在生成！");
-                        break;
-                    case "4400":
-                        alert("无法找到文件路径！错误代码：" + res.data.ecd );
-                        break;
-                    case "4100":
-                        alert("无法连接远程API！错误代码："+ res.data.ecd );
-                        break;
-                    default:
-                        alert("生成文件失败，错误代码:" + res.data.ecd );
-                        break;
-                }
-                $scope.initialize();
+            confirm("确认生成此文件?").then(function () {
+                // var index = _.indexOf($scope.vm.promotionList, data);
+                biReportService.createXlsFileTask(parameter).then(function (res) {
+                    var ecd = res.data.ecd ;
+                    switch (ecd)
+                    {
+                        case "0":
+                            alert("文件正在生成！");
+                            break;
+                        case "4400":
+                            alert("无法找到文件路径！错误代码：" + res.data.ecd );
+                            break;
+                        case "4100":
+                            alert("无法连接远程API！错误代码："+ res.data.ecd );
+                            break;
+                        default:
+                            alert("生成文件失败，错误代码:" + res.data.ecd );
+                            break;
+                    }
+                    $scope.initialize();
+                });
             })
-
         };
         function validateDate(val) {
             var datePattern = /^(?:19|20)[0-9][0-9]-(?:(?:0[1-9])|(?:1[0-2]))-(?:(?:[0-2][1-9])|(?:[1-3][0-1]))$/;
@@ -150,30 +157,20 @@ define([
         }
 
         $scope.del = function (data) {
-            confirm("确认删除？ %s".replace("%s",data.fileName)).then(function () {
+            confirm("确认删除此文件？").then(function () {
                 // var index = _.indexOf($scope.vm.promotionList, data);
                 biReportService.deleteTask(data.id).then(function(res){
                     if(res.data.result) {
-                        alert(res.data.message);
+                        alert("删除成功！");
                         $scope.search();
                     }
                     else
                     {
-                        alert(res.data.message);
+                        alert("删除成功！");
                     }
                 });
             })
         };
-        $scope.deleteTask = function (item) {
-            biReportService.deleteTask(item.id).then(res)
-            {
-                if(res.data == 1)
-                {
-                    alert("删除成功！");
-                }
-            }
-        }
-
     }
 
     indexController.$inject = ['$scope',"alert", 'confirm', '$translate', 'cActions','notify','$location','cRoutes', 'cookieService','biReportService'];

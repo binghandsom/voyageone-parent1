@@ -6,6 +6,9 @@
                 <i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
             </uib-accordion-heading>
          <!--   主体-->
+            <pre>
+                {{ }}
+                </pre>
             <div class="container-fluid  m-t-sm">
                 <div class="col-sm-8 m-t-sm">
                     <label class="col-sm-2 text-right"> 渠道 </label>
@@ -71,7 +74,7 @@
                 </div>
                 <div class="col-sm-12 text-center m-t-md" ng-controller="popupCtrl">
                     <div class="col-sm-10 text-center m-t-md" >
-                        <button class="btn btn-default" ng-click="$parent.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
                         <!-- <button class="btn btn-vo" ng-click="biRepDownload()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>-->
                         <button class="btn btn-danger btn-xs" ng-click="createXlsFileTask()"><i class="fa fa-cloud-download"></i>生成文件</button>
                     </div>

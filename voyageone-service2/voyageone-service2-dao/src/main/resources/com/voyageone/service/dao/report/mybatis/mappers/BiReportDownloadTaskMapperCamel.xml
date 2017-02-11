@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.report.BiReportDownloadTaskModel" />
     <sql id="Base_Column_List" >
         `id`, `file_name`, `file_path`, `task_status`, `finish_time`, `active`, `created`, 
-        `creater`, `modified`, `modifier`
+        `creater`, `modified`, `modifier`, `log`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -47,6 +47,9 @@
             <if test="modifier != null" >
                 `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
+            <if test="log != null" >
+                `log` = #{log,jdbcType=VARCHAR},
+            </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
@@ -88,6 +91,9 @@
             <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
+            <if test="log != null" >
+                and `log` = #{log,jdbcType=VARCHAR}
+            </if>
         </where>
         limit 1
     </select>
@@ -124,6 +130,9 @@
             <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
+            <if test="log != null" >
+                and `log` = #{log,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -157,6 +166,9 @@
             <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
+            <if test="log != null" >
+                and `log` = #{log,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -188,6 +200,9 @@
             </if>
             <if test="modifier == null and creater != null" >
                 `modifier`,
+            </if>
+            <if test="log != null" >
+                `log`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -226,6 +241,9 @@
             </if>
             <if test="modifier == null and creater != null" >
                 #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="log != null" >
+                #{log,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
