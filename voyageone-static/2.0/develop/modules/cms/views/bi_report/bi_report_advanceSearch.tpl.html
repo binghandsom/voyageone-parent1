@@ -50,6 +50,7 @@
                 <div class="col-sm-8 m-t-sm">
                     <div >  <label class="col-sm-2 text-right">  文件类型：</label> &nbsp;
                         <button  class="btn  btn-xs"  ng-click="selectAllFileTypes()"><i class="glyphicon glyphicon-ok">全选</i></button>
+                        <button  class="btn  btn-xs"  ng-click="selectNoFileTypes()"><i class="fa fa-remove">全不选</i></button>
                     </div>
                     <div class="col-sm-10 text-center" ng-switch="vm.searchInfo.channelCodeList.length">
 
@@ -96,6 +97,7 @@
                     <th class="text-left"> 查询渠道</th>
                     <th class="text-left" >查询文件类型</th>
                     <th class="text-left"> 申请导出时间</th>
+                    <th class="text-left" >文件生成时间</th>
                     <th class="text-left"> 导出申请者</th>
                     <th class="text-left"> 文件状态</th>
                     <th class="text-left">操作</th>
@@ -109,7 +111,7 @@
                         </td>
                         <td class="text-left">{{item.fileName}}</td>
                         <td class="text-left">{{item.checkPeriod}}</td>
-                        <td class="text-left">{{item.checkChannelCodeList}}</td>
+                        <td class="text-left">{{item.checkChannels}}</td>
                         <td class="text-left">{{item.checkFileTypes}}</td>
                         <td class="text-left">{{item.created}}</td>
                         <td class="text-left">{{item.finishTime}}</td>

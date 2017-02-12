@@ -1,6 +1,11 @@
 package com.voyageone.web2.cms.views.biReport.consult;
 
 
+import org.apache.commons.collections.map.HashedMap;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by dell on 2017/1/22.
  */

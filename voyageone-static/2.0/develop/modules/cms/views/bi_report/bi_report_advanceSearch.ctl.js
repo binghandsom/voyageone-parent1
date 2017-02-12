@@ -168,7 +168,16 @@ define([
             })
         };
         $scope.selectAllFileTypes = function () {
-            $scope.vm.searchInfo.fileTypes=[1,2,3,4,5,6,7,8,9,10,11,12];
+            if( $scope.vm.searchInfo.channelCodeList.length <= 1)
+            {
+                $scope.vm.searchInfo.fileTypes=[1,2,3,4,5,6,7,8,9,10,11,12];
+            }
+            else {
+                $scope.vm.searchInfo.fileTypes=[1,2,3];
+            }
+        }
+        $scope.selectNoFileTypes = function () {
+            $scope.vm.searchInfo.fileTypes=[];
         }
     }
 
