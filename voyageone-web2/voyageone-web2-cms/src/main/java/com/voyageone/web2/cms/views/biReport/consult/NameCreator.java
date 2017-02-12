@@ -78,7 +78,7 @@ public class NameCreator {
         else {
             int Max = list.size() > 3 && list.size() > 1 ? 3 : list.size();
             for (int i = 0; i < Max; i++) {
-                channels.append(channelName.get(list.get(i)));
+                channels.append(channelName.get(list.get(i))+reg);
             }
             channels.append(suffix);
             channels.append(list.size());
