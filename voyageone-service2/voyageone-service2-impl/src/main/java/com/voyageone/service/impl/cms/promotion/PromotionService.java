@@ -4,13 +4,19 @@
 
 package com.voyageone.service.impl.cms.promotion;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.redis.CacheHelper;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsShelvesMonitorMQMessageBody;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.voyageone.base.exception.BusinessException;
@@ -44,7 +50,7 @@ import com.voyageone.service.model.util.MapModel;
 @Service
 public class PromotionService extends BaseService {
 
-@Autowired
+    @Autowired
     CmsBtPromotionDao dao;
     @Autowired
     CmsBtJmPromotionDao daoCmsBtJMPromotion;
@@ -62,6 +68,8 @@ public class PromotionService extends BaseService {
     private CmsBtPromotionDaoExtCamel daoExtCamelCmsBtPromotionDaoExtCamel;
     @Autowired
     private TagService serviceTag;
+    @Autowired
+    private RedisTemplate<Object, Object> redisTemplate;
     //分页 begin
     public List<MapModel> getPage(PageQueryParameters parameters) {
 
@@ -240,6 +248,17 @@ public class PromotionService extends BaseService {
         return cmsBtPromotionDaoExt.selectByCondition(params);
     }
 
+    public List<CmsBtPromotionBean> getByChannelIdCartId(String channelId, Integer cartId) {
+
+        if (CacheHelper.getValueOperation().get("Promotion_" + channelId + "-" + cartId) == null) {
+            List<CmsBtPromotionBean> promotions = cmsBtPromotionDaoExt.selectByChannelIdCartId(channelId, cartId);
+//            redisTemplate.se
+        }
+        redisTemplate.expire("Promotion_" + channelId + "-" + cartId, 1, TimeUnit.MINUTES);
+
+        return cmsBtPromotionDaoExt.selectByChannelIdCartId(channelId, cartId);
+    }
+
     /**
      * 根据channelId获取promotion列表
      */
@@ -414,5 +433,24 @@ public class PromotionService extends BaseService {
         map.put("cartId", CartEnums.Cart.JM.getValue());
         CmsBtPromotionModel promotion = promotionDao.selectOne(map);
         return promotion;
+    }
+
+    public List<Integer>  getDateRangePromotionIds(List<CmsBtPromotionBean> promotion, Date date, String rangeBef, String rangeAft){
+
+        Integer rangeB = StringUtil.isEmpty(rangeBef)?0:Integer.parseInt(rangeBef);
+        Integer rangeA = StringUtil.isEmpty(rangeBef)?0:Integer.parseInt(rangeAft);
+        String dateNow = DateTimeUtil.format(DateTimeUtil.addHours(date, 8), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+        String dateBef = DateTimeUtil.format(DateTimeUtil.addHours(date, 8 + rangeB * -24), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+        String dateAft = DateTimeUtil.format(DateTimeUtil.addHours(date, 8 + rangeA * 24), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+
+        List<Integer> promotionIds = promotion.stream().filter(cmsBtPromotionBean -> cmsBtPromotionBean.getIsAllPromotion() != 1 && (cmsBtPromotionBean.getActivityStart().compareTo(dateNow) >= 0 || cmsBtPromotionBean.getActivityStart().compareTo(dateAft) <= 0))
+                .map(CmsBtPromotionBean::getId)
+                .collect(Collectors.toList());
+
+        promotionIds.addAll(promotion.stream().filter(cmsBtPromotionBean -> cmsBtPromotionBean.getIsAllPromotion() != 1 && (cmsBtPromotionBean.getActivityStart().compareTo(dateBef) >= 0 || cmsBtPromotionBean.getActivityStart().compareTo(dateNow) <= 0))
+                .map(CmsBtPromotionBean::getId)
+                .collect(Collectors.toList()));
+
+        return promotionIds;
     }
 }

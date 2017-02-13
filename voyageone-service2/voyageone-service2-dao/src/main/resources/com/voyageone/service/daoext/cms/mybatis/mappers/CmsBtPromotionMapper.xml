@@ -62,6 +62,16 @@
         a.promotion_id,
     </sql>
 
+    <select id="select_cms_bt_promotion_by_channelId_cartId" resultMap="PromotionMap" parameterType="Map">
+        select
+        <include refid="promotion_fields"/>
+
+        from voyageone_cms2.cms_bt_promotion a
+        where a.channel_id = #{channelId}
+        and a.cart_id = #{cartId}
+        and a.active = 1
+    </select>
+
     <!-- 根据id查询单条记录 -->
     <select id="select_cms_bt_promotion_by_id" resultMap="PromotionMap" parameterType="Map">
         select
