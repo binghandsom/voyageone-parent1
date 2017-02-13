@@ -1994,6 +1994,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 commonSku.setClientSkuCode(sku.getClientSku()); // ClientSku
                 commonSku.setClientSize(sku.getSize()); // ClientSize
                 commonSku.setSize(sku.getSize()); // 尺码
+                commonSku.setQty(sku.getQty());
                 // 重量(单位：磅) 如果原始重量不是lb的,feed里已根据公式转成lb
                 if (!StringUtils.isEmpty(sku.getWeightCalc()))
                     commonSku.setWeight(NumberUtils.toDouble(sku.getWeightCalc()));
@@ -2470,6 +2471,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     sku.setClientSkuCode(feedSku.getClientSku());
                     sku.setClientSize(feedSku.getSize());
                     sku.setSize(feedSku.getSize());        // Add by desmond 2016/07/04 因为上新用的是这个字段
+                    sku.setQty(feedSku.getQty());
                     if (!StringUtils.isEmpty(feedSku.getWeightCalc()))
                         sku.setWeight(NumberUtils.toDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
 
