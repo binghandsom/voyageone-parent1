@@ -95,6 +95,8 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
         } else {
             prodCodeList = messageMap.getProdCodeList();
         }
+
+        $info("productCnt="+prodCodeList.size());
         //设置自由标签
         productTagService.setProdFreeTag(messageMap.getChannelId(), tagPathList, prodCodeList, orgDispTagList, messageMap.getSender());
     }
