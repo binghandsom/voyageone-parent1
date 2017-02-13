@@ -1,7 +1,6 @@
 package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.ExceptionUtil;
@@ -213,9 +212,8 @@ public class CmsBtJmPromotionExportTask3Service {
     /**
      *
      * @param jmPromotionExportMQMessageBody
-     * @throws MQMessageRuleException
      */
-    public void sendMessage(JmPromotionExportMQMessageBody jmPromotionExportMQMessageBody) throws MQMessageRuleException {
+    public void sendMessage(JmPromotionExportMQMessageBody jmPromotionExportMQMessageBody) {
         cmsMqSenderService.sendMessage(jmPromotionExportMQMessageBody);
     }
 

@@ -4,7 +4,6 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -15,7 +14,6 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.dao.cms.CmsBtJmProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
 import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
@@ -1861,29 +1859,16 @@ public class BackDoorController extends CmsController {
         List<Long> prodId = productList.stream().map(CmsBtProductModel::getProdId).collect(toList());
 
         if (prodId != null && prodId.size() > 0) {
-            /*Map<String,Object> newLog = new HashMap<>();*/
             for (Long id:prodId) {
-                /*newLog.clear();
-                newLog.put("cartId",cartId);
-                newLog.put("productId",id.intValue());
-                newLog.put("channelId",channelId);*/
                 ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
                 mqMessageBody.setChannelId(channelId);
                 mqMessageBody.setProdId(id);
                 mqMessageBody.setCartId(cartId);
                 mqMessageBody.setSender(getUser().getUserName());
-                try {
-                    cmsMqSenderService.sendMessage(mqMessageBody);
-                } catch (MQMessageRuleException e) {
-                    $error(String.format("商品价格更新MQ发送异常，cartId=%s,productId=%s,channelId=%s", cartId, id, channelId), e);
-                    throw new BusinessException(String.format("MQ发送异常,cartId=%d, productId=%d, channelId=%s,异常:%s", cartId, id, channelId, e.getMessage()));
-                }
+                cmsMqSenderService.sendMessage(mqMessageBody);
             }
 
         }
-        /*prodId.forEach(id-> {
-            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob,newLog);
-        });*/
         return "finish";
     }
     @RequestMapping(value = "updateErrorTranslateInfo", method = RequestMethod.GET)

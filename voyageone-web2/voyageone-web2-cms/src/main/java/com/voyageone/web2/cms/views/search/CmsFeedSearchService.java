@@ -12,7 +12,6 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
@@ -271,12 +270,7 @@ public class CmsFeedSearchService extends BaseViewService {
             FeedExportMQMessageBody feedExportMQMessageBody = new FeedExportMQMessageBody();
             feedExportMQMessageBody.setCmsBtExportTaskId(cmsBtExportTaskModel.getId());
             feedExportMQMessageBody.setSender(userName);
-            try {
-                cmsMqSenderService.sendMessage(feedExportMQMessageBody);
-            } catch (MQMessageRuleException e) {
-                $error(String.format("feed文件导出异常, channelId=%s, userName=%s", channelId, userName));
-                throw new BusinessException("MQ发送异常:" + e.getMessage());
-            }
+            cmsMqSenderService.sendMessage(feedExportMQMessageBody);
             return cmsBtExportTaskModel;
         } else {
             throw new BusinessException("你已经有一个任务还没有执行完毕。请稍后再导出");

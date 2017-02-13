@@ -1,7 +1,6 @@
 package com.voyageone.service.impl.cms.jumei;
 
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
@@ -48,7 +47,7 @@ public class CmsBtJmPromotionSkuService {
         return entity.getId();
     }
 
-    public void  senderJMRefreshPriceMQMessage(int jmPromotionId,String sender) throws MQMessageRuleException {
+    public void  senderJMRefreshPriceMQMessage(int jmPromotionId,String sender) {
         JMRefreshPriceMQMessageBody mqMessageBody = new JMRefreshPriceMQMessageBody();
         mqMessageBody.setCmsBtJmPromotionId(jmPromotionId);
         mqMessageBody.setSender(sender);

@@ -10,7 +10,6 @@ import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.excel.ExcelColumn;
 import com.voyageone.common.util.excel.ExcelImportUtil;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.jumei.ProductImportBean;
 import com.voyageone.service.bean.cms.jumei.ProductSaveInfo;
@@ -783,9 +782,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     /**
      * 发送 聚美导入文件消息
      * @param mqMessageBody 聚美导入文件 消息
-     * @throws MQMessageRuleException
      */
-    public void sendMessage(JmPromotionImportMQMessageBody mqMessageBody) throws MQMessageRuleException {
+    public void sendMessage(JmPromotionImportMQMessageBody mqMessageBody) {
         cmsMqSenderService.sendMessage(mqMessageBody);
     }
 }

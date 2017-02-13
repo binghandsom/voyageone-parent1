@@ -8,7 +8,6 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.ListUtils;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
@@ -84,12 +83,7 @@ class CmsShelvesDetailService extends BaseViewService {
                 messageMap.setShelvesId(shelvesId);
                 messageMap.setSender(userName);
                 CacheHelper.getValueOperation().set("ShelvesMonitor_" + shelvesId, shelvesId);
-                try {
-                    cmsMqSenderService.sendMessage(messageMap);
-                } catch (MQMessageRuleException e) {
-                    $error(e);
-                    e.printStackTrace();
-                }
+                cmsMqSenderService.sendMessage(messageMap);
             }
             redisTemplate.expire("ShelvesMonitor_" + shelvesId, 1, TimeUnit.MINUTES);
 

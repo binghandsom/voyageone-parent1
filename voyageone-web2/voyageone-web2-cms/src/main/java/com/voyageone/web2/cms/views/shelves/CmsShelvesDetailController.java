@@ -2,7 +2,6 @@ package com.voyageone.web2.cms.views.shelves;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.fields.cms.CmsBtShelvesModelActive;
 import com.voyageone.service.fields.cms.CmsBtShelvesProductHistoryModelStatus;
 import com.voyageone.service.fields.cms.CmsBtTagModelTagType;
@@ -203,7 +202,7 @@ public class CmsShelvesDetailController extends CmsController {
         try {
             cmsMqSenderService.sendMessage(param);
             return success(true);
-        } catch (MQMessageRuleException e) {
+        } catch (BusinessException e) {
             $error(e);
             e.printStackTrace();
             return success(false);

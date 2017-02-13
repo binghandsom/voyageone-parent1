@@ -23,21 +23,21 @@ public class CmsMqSenderService extends BaseService {
     @Autowired
     CmsBtOperationLogService cmsBtOperationLogService;
 
-    public void sendMessage(IMQMessageBody message) throws MQMessageRuleException {
+    public void sendMessage(IMQMessageBody message) throws BusinessException{
         try {
 
             mqSenderService.sendMessage(message);
         } catch (MQMessageRuleException ex) {
             String name = this.getClass().getName();
             cmsBtOperationLogService.log(name, name, message, OperationLog_Type.parameterException, ex);
-            throw ex;
+            throw new BusinessException("处理消息发送失败, 请稍后再试! 如有问题,请联系IT处理!", ex);
         } catch (Exception ex) {
             String name = this.getClass().getName();
             cmsBtOperationLogService.log(name, name, message, ex);
-            throw new BusinessException("消息发送失败",ex) ;
+            throw new BusinessException("处理消息发送失败, 请稍后再试! 如有问题,请联系IT处理!", ex);
         }
     }
-    public void sendMessage(BaseMQMessageBody message, int delaySecond) throws MQMessageRuleException {
+    public void sendMessage(BaseMQMessageBody message, int delaySecond) throws BusinessException {
             message.setDelaySecond(delaySecond);
             sendMessage(message);
     }

@@ -7,7 +7,6 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.JMPromotionProduct.UpdateRemarkParameter;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.*;
@@ -462,9 +461,8 @@ public class CmsBtJmPromotionProduct3Service {
      *
      * @param cmsBtJmPromotionId
      * @param sender
-     * @throws MQMessageRuleException
      */
-    public void sendMessage(int cmsBtJmPromotionId, String sender) throws MQMessageRuleException {
+    public void sendMessage(int cmsBtJmPromotionId, String sender) {
         JMProductUpdateMQMessageBody mqMessageBody = new JMProductUpdateMQMessageBody();
         mqMessageBody.setCmsBtJmPromotionId(cmsBtJmPromotionId);
         mqMessageBody.setSender(sender);
@@ -474,9 +472,8 @@ public class CmsBtJmPromotionProduct3Service {
 
     /** 库存同步
      * @param sender
-     * @throws MQMessageRuleException
      */
-    public void sendMessageJmPromotionProductStockSync(String sender) throws MQMessageRuleException {
+    public void sendMessageJmPromotionProductStockSync(String sender) {
         JmPromotionProductStockSyncMQMessageBody mqMessageBody = new JmPromotionProductStockSyncMQMessageBody();
         mqMessageBody.setSender(sender);
         cmsMqSenderService.sendMessage(mqMessageBody);

@@ -6,7 +6,6 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TypeChannelsService;
@@ -94,11 +93,7 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
         mqMessageBody.setComment("平台被迫下架的产品，自动上架");
         mqMessageBody.setProductCodes(productCodes);
         mqMessageBody.setSender("autoOnSale");
-        try {
-            cmsMqSenderService.sendMessage(mqMessageBody);
-        } catch (MQMessageRuleException e) {
-            $error(String.format("被下架商品自动上架MQ发送异常,channelId=%s,userName=%s", channelId, "autoOnSale"), e);
-        }
+        cmsMqSenderService.sendMessage(mqMessageBody);
 
     }
 }

@@ -2,7 +2,6 @@ package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
@@ -16,7 +15,6 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
@@ -483,12 +481,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
             advSearchExportMQMessageBody.setCmsBtExportTaskId(taskModel.getId());
             advSearchExportMQMessageBody.setSearchValue(searchValue);
             advSearchExportMQMessageBody.setSender(userInfo.getUserName());
-            try {
-                cmsMqSenderService.sendMessage(advSearchExportMQMessageBody);
-            } catch (MQMessageRuleException e) {
-                $error(String.format("高级检索文件导出消息发送异常, channelId=%s, userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()));
-                throw new BusinessException("MQ发送异常:" + e.getMessage());
-            }
+            cmsMqSenderService.sendMessage(advSearchExportMQMessageBody);
             return true;
         } else {
             return false;

@@ -14,9 +14,6 @@ public class MQMessageRuleException extends BusinessException {
         this.code = code;
     }
 
-//    public MQMessageRuleException() {
-//    }
-
     public MQMessageRuleException(String message, Throwable cause) {
         super(message, cause);
     }

@@ -4,7 +4,6 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
@@ -95,12 +94,7 @@ public class CmsBtPriceLogService extends BaseService {
                     mqMessageBody.setCartId(value.getCartId());
                     mqMessageBody.setProdId(Long.valueOf(String.valueOf(value.getProductId())));
                     mqMessageBody.setSender(this.getClass().getSimpleName());
-                    try {
-                        cmsMqSenderService.sendMessage(mqMessageBody);
-                    } catch (MQMessageRuleException e) {
-                        $error(String.format("价格同步MQ发送异常,cartId=%s,productId=%s,channelId=%s", value.getCartId(), value.getProductId(), value.getChannelId()), e);
-                    }
-
+                    cmsMqSenderService.sendMessage(mqMessageBody);
                 }
             }
         }
@@ -141,11 +135,7 @@ public class CmsBtPriceLogService extends BaseService {
         mqMessageBody.setCartId(cartId);
         mqMessageBody.setProdId(productId);
         mqMessageBody.setSender(username);
-        try {
-            cmsMqSenderService.sendMessage(mqMessageBody);
-        } catch (MQMessageRuleException e) {
-            $error(String.format("同步sku,code,group价格范围MQ发送异常,cartId=%s,productId=%s,channelId=%s", cartId, productId, channelId), e);
-        }
+        cmsMqSenderService.sendMessage(mqMessageBody);
 
     }
 
@@ -248,11 +238,7 @@ public class CmsBtPriceLogService extends BaseService {
                         mqMessageBody.setCartId(boxedCartId);
                         mqMessageBody.setProdId(productModel.getProdId());
                         mqMessageBody.setSender(username);
-                        try {
-                            cmsMqSenderService.sendMessage(mqMessageBody);
-                        } catch (MQMessageRuleException e) {
-                            $error(String.format("同步sku,code,group价格范围MQ发送异常,cartId=%s,productId=%s,channelId=%s", boxedCartId, productId, channelId), e);
-                        }
+                        cmsMqSenderService.sendMessage(mqMessageBody);
                     }
                 });
     }

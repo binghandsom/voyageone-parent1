@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.vomqjobservice;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
@@ -9,6 +8,7 @@ import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsProductFreeTagsUpdateMQMessageBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 
@@ -36,9 +36,8 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
      * @param tagPathList
      * @param orgDispTagList
      * @param sender
-     * @throws MQMessageRuleException
      */
-    public void sendMessage(String chanelId, CmsSearchInfoBean2 searchValue,List<String> tagPathList ,List<String> orgDispTagList, String sender) throws MQMessageRuleException {
+    public void sendMessage(String chanelId, CmsSearchInfoBean2 searchValue,List<String> tagPathList ,List<String> orgDispTagList, String sender) {
         CmsProductFreeTagsUpdateMQMessageBody mqMessageBody = new CmsProductFreeTagsUpdateMQMessageBody();
         mqMessageBody.setChannelId(chanelId);
         mqMessageBody.setIsSelAll(true);
@@ -57,9 +56,8 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
      * @param tagPathList
      * @param orgDispTagList
      * @param sender
-     * @throws MQMessageRuleException
      */
-    public void sendMessage(String chanelId, List<String> prodCodeList,List<String> tagPathList, List<String> orgDispTagList, String sender) throws MQMessageRuleException {
+    public void sendMessage(String chanelId, List<String> prodCodeList,List<String> tagPathList, List<String> orgDispTagList, String sender) {
         CmsProductFreeTagsUpdateMQMessageBody mqMessageBody = new CmsProductFreeTagsUpdateMQMessageBody();
         mqMessageBody.setChannelId(chanelId);
         mqMessageBody.setIsSelAll(false);

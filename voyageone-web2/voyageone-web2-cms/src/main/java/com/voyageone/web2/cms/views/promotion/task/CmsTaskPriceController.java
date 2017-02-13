@@ -1,13 +1,11 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
-import com.taobao.api.domain.PromotionDetail;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsTeJiaBaoDelMQMessageBody;
@@ -107,11 +105,7 @@ public class CmsTaskPriceController extends CmsController {
                     cmsTeJiaBaoDelMQMessageBody.setCartId(cmsBtPromotionModel.getCartId());
                     cmsTeJiaBaoDelMQMessageBody.setNumIId(numIids);
                     cmsTeJiaBaoDelMQMessageBody.setTejiabaoId(Long.parseLong(allPromtoion.getTejiabaoId()));
-                    try {
-                        cmsMqSenderService.sendMessage(cmsTeJiaBaoDelMQMessageBody);
-                    } catch (MQMessageRuleException e) {
-                        e.printStackTrace();
-                    }
+                    cmsMqSenderService.sendMessage(cmsTeJiaBaoDelMQMessageBody);
                 }
 
             }

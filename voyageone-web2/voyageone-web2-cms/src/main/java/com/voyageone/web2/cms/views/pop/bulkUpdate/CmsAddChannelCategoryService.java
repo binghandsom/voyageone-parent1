@@ -6,7 +6,6 @@ import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
@@ -215,12 +214,7 @@ public class CmsAddChannelCategoryService extends BaseViewService {
         SaveChannelCategoryMQMessageBody mqMessageBody = new SaveChannelCategoryMQMessageBody();
         mqMessageBody.setParams(params);
         mqMessageBody.setSender((String) params.get("userName"));
-        try {
-            cmsMqSenderService.sendMessage(mqMessageBody);
-        } catch (MQMessageRuleException e) {
-            $error(String.format("saveChannelCategory时MQ发送异常,userName=%s", (String) params.get("userName")), e);
-            throw new BusinessException("MQ发送异常:" + e.getMessage());
-        }
+        cmsMqSenderService.sendMessage(mqMessageBody);
 
         $info(JacksonUtil.bean2Json(params));
 
