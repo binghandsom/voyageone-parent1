@@ -51,10 +51,10 @@ public class NameCreator {
         StringBuffer fileName=new StringBuffer();
         String reg="_";
         String channelFix = "等渠道";
-        String fileTypeFix="等报告";
+        String fileTypeFix="等报表";
         String fileSuffix=".xlsx";
         String prefix=createPrefix(nameParameters);
-        fileName.append(prefix+" ");
+        fileName.append(prefix+"_");
         Integer MIN= 12;
         List<Integer> fileTypeList = (List<Integer>)nameParameters.get("fileTypes");
         List<String> channelCodeList= (List<String>) nameParameters.get("channelCodeList");
@@ -67,25 +67,36 @@ public class NameCreator {
         fileName.append(fileSuffix);
         return fileName.toString().trim();
     }
-    public static String getTheChannelTypeName(List<String> list) {
-        String reg = " ";
-        String suffix = "等";
-        StringBuffer channels = new StringBuffer();
-        if (null == list) {
+    /**
+     * channelsName 名称
+     * @param channelList
+     * @return
+     */
+    public static String getTheChannelTypeName(List<String> channelList)
+    {
+        String reg=",";
+        String suffix="等";
+        StringBuffer channels=new StringBuffer();
+        if(channelList ==null || channelList.size() == 0)
+            return null;
+        else
+        if(channelList.size() <= 3 )
+        {
+            for (int i = 0; i < channelList.size()-1; i++) {
+                channels.append(channelName.get(channelList.get(i).trim())+reg);
+            }
+            channels.append(channelName.get(channelList.get(channelList.size()-1).trim()));
             return channels.toString();
         }
-        if (list.size() == 0) return channels.append(list.get(0)).toString();
         else {
-            int Max = list.size() > 3 && list.size() > 1 ? 3 : list.size();
-            for (int i = 0; i < Max; i++) {
-                channels.append(channelName.get(list.get(i))+reg);
-            }
+            channels.append(channelName.get(channelList.get(0).trim()));
             channels.append(suffix);
-            channels.append(list.size());
+            channels.append(channelList.size());
             channels.append("个渠道");
             return channels.toString();
         }
     }
+
     /**
      * 获取filetypes 名称
      * @param list
@@ -93,27 +104,41 @@ public class NameCreator {
      */
     public static String getTheFileTypeName(List<Integer> list)
     {
-        String reg=" ";
+        String reg=",";
         String suffix="等";
         StringBuffer fileTypes=new StringBuffer();
-        if( null ==  list)
-        {
-            return fileTypes.toString();
-        }
-        if(list ==null)
+        if(list ==null || list.size() == 0)
             return null;
-        if(list.size() == 0) return fileTypes.append(list.get(0)).toString();
         else
-        {
-            int Max=list.size()>3&&list.size()>1? 3:list.size();
-            for(int i=0;i<Max;i++)
+            if(list.size() <= 3 )
             {
-                fileTypes.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[i]+reg);
+                for (int i = 0; i < list.size()-1; i++) {
+                    fileTypes.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[list.get(0)]+reg);
+                }
+                fileTypes.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[list.get(list.size()-1)]);
+                return fileTypes.toString();
             }
-            fileTypes.append(suffix);
-            fileTypes.append(list.size());
-            fileTypes.append("个文件类型");
-            return fileTypes.toString();
+            else {
+                    fileTypes.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[getTheMinOfFileTypeList(list)-1]);
+                    fileTypes.append(suffix);
+                    fileTypes.append(list.size());
+                    fileTypes.append("个文件报表");
+                    return fileTypes.toString();
+             }
+    }
+
+    /**
+     * get the min of the file type value
+     * @param list
+     * @return
+     */
+
+    public static int getTheMinOfFileTypeList(List<Integer> list)
+    {
+        int min = 12;
+        for (int i = 0; i < list.size(); i++) {
+            if (min > list.get(i)) min = list.get(i);
         }
+        return min;
     }
 }
