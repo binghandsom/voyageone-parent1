@@ -1015,6 +1015,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         int total = 0;
         List<CmsBtProductBean> products = new ArrayList<CmsBtProductBean>();
         Set<String> codes = new HashSet<String>();
+        Map<String, Set<String>> codesMap = new HashMap<>();
         for (CmsBtProductBean item:items) {
             if (item.getCommon() == null) {
                 continue;
@@ -1030,19 +1031,23 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 continue;
             }
             if (org.apache.commons.lang.StringUtils.isNotBlank(fields.getOriginalCode())) {
-                codes.add(fields.getOriginalCode());
+                codesMap.computeIfAbsent(item.getOrgChannelId(), k -> new HashSet<String>());
+                codesMap.get(item.getOrgChannelId()).add(fields.getOriginalCode());
             }
             products.add(item);
         }
-        Map<String, Integer> skuInventoryMap = new HashMap<String, Integer>();
-        if (codes.size() > 0) {
-            List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(channelId, new ArrayList<String>(codes));
-            if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
-                for (SkuInventoryForCmsBean skuInventory:inventoryForCmsBeanList) {
-                    skuInventoryMap.put(skuInventory.getChannelId()+skuInventory.getCode()+skuInventory.getSku(), skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
+        Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<>();
+        for (String channel : codesMap.keySet()) {
+            if (codesMap.get(channel).size() > 0) {
+                List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(channel, new ArrayList<String>(codesMap.get(channel)));
+                if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
+                    for (SkuInventoryForCmsBean skuInventory:inventoryForCmsBeanList) {
+                        skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
+                    }
                 }
             }
         }
+
 
         boolean isContinueOutput = true;
         CellStyle unlock = FileUtils.createUnLockStyle(book);
@@ -1074,9 +1079,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getModel()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getCode()));
-//                SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuItem.getSkuCode());
-                String key = item.getChannelId()+item.getCommonNotNull().getFieldsNotNull().getCode()+skuItem.getSkuCode();
-                FileUtils.cell(row, index++, unlock).setCellValue(skuInventoryMap.get(key) == null ? "0" : String.valueOf(skuInventoryMap.get(key)));
+                SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuItem.getSkuCode());
+                FileUtils.cell(row, index++, unlock).setCellValue(skuInventoryMap.get(temp) == null ? "0" : String.valueOf(skuInventoryMap.get(temp)));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getColor()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSize()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getSize()));
