@@ -204,7 +204,12 @@ public class JdWareService extends JdBase {
         // 商品id(必须)
         request.setWareId(jdProduct.getWareId());
         // 自定义店内分类 (非必须)
-        if (jdProduct.getShopCategory() != null)       request.setShopCategory(jdProduct.getShopCategory());
+//        if (jdProduct.getShopCategory() != null)       request.setShopCategory(jdProduct.getShopCategory());
+        if (StringUtils.isEmpty(jdProduct.getShopCategory())) {
+            request.setShopCategory("1"); // 如果是空的， 那就随便瞎设置一个， 否则曾经设置过的不会被清除掉
+        } else {
+            request.setShopCategory(jdProduct.getShopCategory());
+        }
         // 商品标题(必须)
         if (jdProduct.getTitle() != null)              request.setTitle(jdProduct.getTitle());
         // UPC编码(非必须)

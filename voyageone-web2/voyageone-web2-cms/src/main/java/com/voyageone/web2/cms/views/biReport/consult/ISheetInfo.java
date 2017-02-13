@@ -1,6 +1,11 @@
 package com.voyageone.web2.cms.views.biReport.consult;
 
 
+import org.apache.commons.collections.map.HashedMap;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by dell on 2017/1/22.
  */
@@ -9,7 +14,7 @@ public interface ISheetInfo {
     {
         interface BASICINFO
         {
-//            String PATH="E://bi_report//xlsxFile//";           /* E://bi_report//xlsxFile//*/
+//           String PATH="E://bi_report//xlsxFile//";           /* E://bi_report//xlsxFile//*/
             Integer SUBMITNOTSTART=0;
             Integer FAILED=1;
             Integer CREATING=2;

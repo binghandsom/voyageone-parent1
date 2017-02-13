@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.report.BiReportDownloadTaskModel" />
     <sql id="Base_Column_List" >
         `id`, `file_name`, `file_path`, `task_status`, `finish_time`, `active`, `created`, 
-        `creater`, `modified`, `modifier`, `log`
+        `creater`, `modified`, `modifier`, `log`, `check_period`, `check_channels`, `check_file_types`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -50,6 +50,15 @@
             <if test="log != null" >
                 `log` = #{log,jdbcType=VARCHAR},
             </if>
+            <if test="checkPeriod != null" >
+                `check_period` = #{checkPeriod,jdbcType=VARCHAR},
+            </if>
+            <if test="checkChannels != null" >
+                `check_channels` = #{checkChannels,jdbcType=VARCHAR},
+            </if>
+            <if test="checkFileTypes != null" >
+                `check_file_types` = #{checkFileTypes,jdbcType=VARCHAR},
+            </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
@@ -94,6 +103,15 @@
             <if test="log != null" >
                 and `log` = #{log,jdbcType=VARCHAR}
             </if>
+            <if test="checkPeriod != null" >
+                and `check_period` = #{checkPeriod,jdbcType=VARCHAR}
+            </if>
+            <if test="checkChannels != null" >
+                and `check_channels` = #{checkChannels,jdbcType=VARCHAR}
+            </if>
+            <if test="checkFileTypes != null" >
+                and `check_file_types` = #{checkFileTypes,jdbcType=VARCHAR}
+            </if>
         </where>
         limit 1
     </select>
@@ -133,6 +151,15 @@
             <if test="log != null" >
                 and `log` = #{log,jdbcType=VARCHAR}
             </if>
+            <if test="checkPeriod != null" >
+                and `check_period` = #{checkPeriod,jdbcType=VARCHAR}
+            </if>
+            <if test="checkChannels != null" >
+                and `check_channels` = #{checkChannels,jdbcType=VARCHAR}
+            </if>
+            <if test="checkFileTypes != null" >
+                and `check_file_types` = #{checkFileTypes,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -169,6 +196,15 @@
             <if test="log != null" >
                 and `log` = #{log,jdbcType=VARCHAR}
             </if>
+            <if test="checkPeriod != null" >
+                and `check_period` = #{checkPeriod,jdbcType=VARCHAR}
+            </if>
+            <if test="checkChannels != null" >
+                and `check_channels` = #{checkChannels,jdbcType=VARCHAR}
+            </if>
+            <if test="checkFileTypes != null" >
+                and `check_file_types` = #{checkFileTypes,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -203,6 +239,15 @@
             </if>
             <if test="log != null" >
                 `log`,
+            </if>
+            <if test="checkPeriod != null" >
+                `check_period`,
+            </if>
+            <if test="checkChannels != null" >
+                `check_channels`,
+            </if>
+            <if test="checkFileTypes != null" >
+                `check_file_types`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -244,6 +289,15 @@
             </if>
             <if test="log != null" >
                 #{log,jdbcType=VARCHAR},
+            </if>
+            <if test="checkPeriod != null" >
+                #{checkPeriod,jdbcType=VARCHAR},
+            </if>
+            <if test="checkChannels != null" >
+                #{checkChannels,jdbcType=VARCHAR},
+            </if>
+            <if test="checkFileTypes != null" >
+                #{checkFileTypes,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

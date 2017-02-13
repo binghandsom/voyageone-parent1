@@ -5,8 +5,6 @@ import com.voyageone.common.util.HttpExcuteUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.report.BiReportDownloadTaskDao;
-import com.voyageone.service.dao.report.BiReportSalesProduct010Dao;
-import com.voyageone.service.dao.report.BiReportSalesShop010Dao;
 import com.voyageone.service.daoext.report.BiReportDownloadTaskDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.report.BiReportDownloadTaskModel;
@@ -21,9 +19,10 @@ import java.util.*;
  */
 @Service
 public class BiRepConsultService extends BaseService {
-    private final String filePath="E://bi_report//xlsxFile//";
+    private static final String API_HOST = "http://openapi.voyageone.com.cn";
 
-    private static final String CREATE_XLS_FILE_TASK_URL = "http://localhost:8081/rest/report/createXlsFileTask";
+    private static final String CREATE_XLS_FILE_TASK_URL = "/bi/createXlsFileTask";
+
     @Autowired
     private BiReportDownloadTaskDaoExt  biReportDownloadTaskDaoExt;
     @Autowired
@@ -88,8 +87,10 @@ public class BiRepConsultService extends BaseService {
         params.put("fileName",fileName);
         Map<String,Object> resultMap=new HashedMap();
         BiReportDownloadTaskModel model=new BiReportDownloadTaskModel();
+        model.setCheckPeriod((String)params.get("staDate")+params.get("endDate"));
+        model.setCheckChannels(NameCreator.getTheChannelTypeName(channelCodeList));
+        model.setCheckFileTypes(NameCreator.getTheFileTypeName(fileTypes));
         model.setCreated((Date) params.get("createTime"));
-//        model.setFilePath(filePath);
         model.setFileName(fileName);
         model.setCreater((String)params.get("creatorName"));
         model.setCreater((String) params.get("creatorName"));
@@ -101,7 +102,7 @@ public class BiRepConsultService extends BaseService {
         biReportDownloadTaskDao.insert(model);
         int id=model.getId();
         params.put("taskId",id);
-        String url = CREATE_XLS_FILE_TASK_URL;
+        String url = API_HOST + CREATE_XLS_FILE_TASK_URL;
         String result = null;
         try {
             String request = JacksonUtil.bean2Json(params);
