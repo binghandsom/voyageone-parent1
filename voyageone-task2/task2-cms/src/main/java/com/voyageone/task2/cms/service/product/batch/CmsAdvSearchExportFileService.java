@@ -1039,7 +1039,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<>();
         for (String channel : codesMap.keySet()) {
             if (codesMap.get(channel).size() > 0) {
-                List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(channel, new ArrayList<String>(codes));
+                List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(channel, new ArrayList<String>(codesMap.get(channel)));
                 if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
                     for (SkuInventoryForCmsBean skuInventory:inventoryForCmsBeanList) {
                         skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
