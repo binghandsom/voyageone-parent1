@@ -546,6 +546,7 @@ public class CmsFieldEditService extends BaseViewService {
 
         //============================以下业务改造成MQ========================================
         AdvSearchProductApprovalMQMessageBody mqMessageBody = new AdvSearchProductApprovalMQMessageBody();
+        params.put("notChkPrice",1);
         mqMessageBody.setParams(params);
         mqMessageBody.setCmsSessionParams(JacksonUtil.bean2Map(cmsSession));
         mqMessageBody.setChannelId(userInfo.getSelChannelId());
