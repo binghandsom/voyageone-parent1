@@ -47,14 +47,21 @@ public class CmsAdvSearchQueryService extends BaseService {
      * 获取当前查询的product列表（查询条件从画面而来）<br>
      */
     public List<String> getProductCodeList(CmsSearchInfoBean2 searchValue, String channelId, Boolean isSort) {
+
+        return getProductCodeList(searchValue, channelId, isSort, false);
+    }
+
+    public List<String> getProductCodeList(CmsSearchInfoBean2 searchValue, String channelId, Boolean isSort, Boolean isAll) {
         JongoQuery queryObject = getSearchQuery(searchValue);
         queryObject.setProjection("{'common.fields.code':1,'_id':0}");
         if(isSort) {
             queryObject.setSort(getSortValue(searchValue));
         }
-        if (searchValue.getProductPageNum() > 0) {
-            queryObject.setSkip((searchValue.getProductPageNum() - 1) * searchValue.getProductPageSize());
-            queryObject.setLimit(searchValue.getProductPageSize());
+        if(!isAll) {
+            if (searchValue.getProductPageNum() > 0) {
+                queryObject.setSkip((searchValue.getProductPageNum() - 1) * searchValue.getProductPageSize());
+                queryObject.setLimit(searchValue.getProductPageSize());
+            }
         }
 
         if ($isDebugEnabled()) {

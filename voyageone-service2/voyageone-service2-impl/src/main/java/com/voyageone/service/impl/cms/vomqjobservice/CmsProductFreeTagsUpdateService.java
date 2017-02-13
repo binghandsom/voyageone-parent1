@@ -87,7 +87,7 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
         if (isSelAll) {
             // 从高级检索重新取得查询结果
             messageMap.getSearchValue().setProductPageNum(0);
-            prodCodeList = advSearchQueryService.getProductCodeList(messageMap.getSearchValue(), messageMap.getChannelId(), false);
+            prodCodeList = advSearchQueryService.getProductCodeList(messageMap.getSearchValue(), messageMap.getChannelId(), false, true);
             if (prodCodeList == null || prodCodeList.isEmpty()) {
                 $warn("CmsProductFreeTagsUpdateMQMessageBody 未查询到商品");
                 throw new BusinessException("全量检索 未查询到商品!");
