@@ -266,7 +266,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
             searchItemStr += ";";
         if (searchValue.getFileType() == 3) {
             // 要输出sku级信息
-            searchItemStr += "common.skus;common.fields.model;common.fields.color;feed.catPath;common.fields.origSizeType;";
+            searchItemStr += "common.skus;common.fields.model;common.fields.color;feed.catPath;common.fields.origSizeType;common.fields.originalCode;";
         } else if (searchValue.getFileType() == 2) {
             // 要输出group级信息
             searchItemStr += "common.fields.model;feed.catPath;common.fields.origSizeType;";
@@ -1015,6 +1015,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         int total = 0;
         List<CmsBtProductBean> products = new ArrayList<CmsBtProductBean>();
         Set<String> codes = new HashSet<String>();
+        Map<String, Set<String>> codesMap = new HashMap<>();
         for (CmsBtProductBean item:items) {
             if (item.getCommon() == null) {
                 continue;
@@ -1030,19 +1031,23 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 continue;
             }
             if (org.apache.commons.lang.StringUtils.isNotBlank(fields.getOriginalCode())) {
-                codes.add(fields.getOriginalCode());
+                codesMap.computeIfAbsent(item.getOrgChannelId(), k -> new HashSet<String>());
+                codesMap.get(item.getOrgChannelId()).add(fields.getOriginalCode());
             }
             products.add(item);
         }
-        Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<SkuInventoryForCmsBean, Integer>();
-        if (codes.size() > 0) {
-            List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(channelId, new ArrayList<String>(codes));
-            if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
-                for (SkuInventoryForCmsBean skuInventory:inventoryForCmsBeanList) {
-                    skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
+        Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<>();
+        for (String channel : codesMap.keySet()) {
+            if (codesMap.get(channel).size() > 0) {
+                List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(channel, new ArrayList<String>(codesMap.get(channel)));
+                if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
+                    for (SkuInventoryForCmsBean skuInventory:inventoryForCmsBeanList) {
+                        skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
+                    }
                 }
             }
         }
+
 
         boolean isContinueOutput = true;
         CellStyle unlock = FileUtils.createUnLockStyle(book);

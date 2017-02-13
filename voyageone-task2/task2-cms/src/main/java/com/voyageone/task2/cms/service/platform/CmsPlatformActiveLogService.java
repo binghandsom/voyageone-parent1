@@ -36,7 +36,6 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -155,7 +154,7 @@ public class CmsPlatformActiveLogService extends BaseService {
                     model.setModifier("");
 
                     WriteResult rs = platformActiveLogDao.insert(model);
-                    $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, code=%s platformActiveLog保存结果=%s", cartId, channelId, pCode, rs.toString());
+                    $info("CmsPlatformActiceLogService cartId=%d, channelId=%s, code=%s platformActiveLog保存结果=%s", cartId, channelId, pCode, rs.toString());
                 }
             }
         }
@@ -410,7 +409,7 @@ public class CmsPlatformActiveLogService extends BaseService {
                             }
                         }
                         if (!updRsFlg && org.apache.commons.lang.StringUtils.isBlank(errMsg)) {
-                            errMsg = "调用分销平台上架API失败";
+                            errMsg = "调用分销平台上架API失败:" + errMsg;
                         }
                     } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
                         // 下架
@@ -428,7 +427,7 @@ public class CmsPlatformActiveLogService extends BaseService {
                             }
                         }
                         if (!updRsFlg && org.apache.commons.lang.StringUtils.isBlank(errMsg)) {
-                            errMsg = "调用分销平台下架API失败";
+                            errMsg = "调用分销平台下架API失败" + errMsg;
                         }
                     }
 
@@ -441,7 +440,7 @@ public class CmsPlatformActiveLogService extends BaseService {
                     $error("CmsPlatformActiceLogService 不正确的平台 cartId=%d", cartId);
                 }
                 if (!updRsFlg) {
-                    $error("CmsPlatformActiceLogService API调用返回错误结果");
+                    $error("CmsPlatformActiceLogService API调用返回错误结果" + errMsg);
                 }
 
                 // 保存调用结果

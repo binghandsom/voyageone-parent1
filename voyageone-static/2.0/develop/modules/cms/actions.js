@@ -226,7 +226,8 @@ define(function () {
                     saveEditModel: "saveEditModel",
                     deleteByPromotionId: "deleteByPromotionId",
                     setPromotionStatus: "setPromotionStatus",
-                    getPromotionSimpleList: "getPromotionSimpleList"
+                    getPromotionSimpleList: "getPromotionSimpleList",
+                    test:"test"
                 },
                 "promotionDetailService": {
                     "root": "/cms/promotion/detail",
@@ -766,6 +767,18 @@ define(function () {
                 deleteShelves: "deleteShelves",
                 releaseImage: "releaseImage",
                 getShelvesHtml: "getShelvesHtml"
+            },
+            "biReportService": {
+                "root": "/cms/biReport/download/",
+                "init": "init",
+                getPage: "getPage",
+                getCount: "getCount",
+                biRepDownload:"biRepDownload",
+                createXlsFile:"createXlsFile",
+                getDownloadTaskList:"getDownloadTaskList",
+                createXlsFileTask:"createXlsFileTask",
+                get_channel_list:"get_channel_list",
+                deleteTask:"deleteTask"
             }
         }
     };
