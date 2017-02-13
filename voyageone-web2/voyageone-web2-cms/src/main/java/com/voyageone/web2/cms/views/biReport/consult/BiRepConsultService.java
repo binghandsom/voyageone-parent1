@@ -105,6 +105,7 @@ public class BiRepConsultService extends BaseService {
         int id=model.getId();
         params.put("taskId",id);
         String url = API_HOST + CREATE_XLS_FILE_TASK_URL;
+        logger.info("api url:" + url);
         String result = null;
         try {
             String request = JacksonUtil.bean2Json(params);
