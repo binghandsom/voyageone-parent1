@@ -86,7 +86,8 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
         List<String> prodCodeList = null;
         if (isSelAll) {
             // 从高级检索重新取得查询结果
-            prodCodeList = advSearchQueryService.getProductCodeList(messageMap.getSearchValue(), messageMap.getChannelId(), false);
+            messageMap.getSearchValue().setProductPageNum(0);
+            prodCodeList = advSearchQueryService.getProductCodeList(messageMap.getSearchValue(), messageMap.getChannelId(), false, true);
             if (prodCodeList == null || prodCodeList.isEmpty()) {
                 $warn("CmsProductFreeTagsUpdateMQMessageBody 未查询到商品");
                 throw new BusinessException("全量检索 未查询到商品!");
@@ -94,6 +95,8 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
         } else {
             prodCodeList = messageMap.getProdCodeList();
         }
+
+        $info("productCnt="+prodCodeList.size());
         //设置自由标签
         productTagService.setProdFreeTag(messageMap.getChannelId(), tagPathList, prodCodeList, orgDispTagList, messageMap.getSender());
     }

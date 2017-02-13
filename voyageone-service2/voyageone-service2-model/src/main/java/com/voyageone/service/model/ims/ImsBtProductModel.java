@@ -6,7 +6,7 @@ import com.voyageone.base.dao.mysql.BaseModel;
  * Created by morse.lu on 16/4/20.
  */
 public class ImsBtProductModel extends BaseModel {
-    private int seq;
+    private Long seq;
     private String channelId;
     private int cartId;
     private int productId;
@@ -33,11 +33,11 @@ public class ImsBtProductModel extends BaseModel {
     private String publishPromotionPriceStatus;
     private String promotionFaildComment;
 
-    public int getSeq() {
+    public Long getSeq() {
         return seq;
     }
 
-    public void setSeq(int seq) {
+    public void setSeq(Long seq) {
         this.seq = seq;
     }
 
