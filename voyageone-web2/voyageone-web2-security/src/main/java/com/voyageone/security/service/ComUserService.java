@@ -124,12 +124,7 @@ public class ComUserService {
         }
         model.setIp(clientIP);
 
-        try{
-            comLoginLogDao.insert(model);
-        }catch (Exception e){
-
-        }
-
+        comLoginLogDao.insert(model);
 
         return userModel;
     }
@@ -379,5 +374,14 @@ public class ComUserService {
         String newPassword = new SimpleHash("md5", model.getPassword(), ByteSource.Util.bytes(model.getUserAccount() + salt), 2).toHex();
         model.setPassword(newPassword);
     }
+
+
+    public List<Map<String, String>> selectChannelsByUser(String userAccount)
+    {
+        return comUserDaoExt.selectChannelsByUser(userAccount);
+    }
+
+
+
 
 }

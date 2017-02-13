@@ -18,6 +18,7 @@
     <import resource="classpath*:solr-config.xml"/>
     <import resource="classpath*:datasource-security-config.xml"/>
     <import resource="classpath*:datasource-admin-common-config.xml"/>
+    <import resource="classpath*:datasource-report-config.xml"/>
 
     <!-- online env -->
     <!--<import resource="file:/usr/web/spring-config/common-config.xml" />-->

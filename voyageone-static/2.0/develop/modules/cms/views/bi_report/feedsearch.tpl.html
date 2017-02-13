@@ -1,0 +1,512 @@
+<div class="wrapper-md" ng-init="initialize()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="fa fa-search"></i>&nbsp;Feed 检索</h4>
+                </div>
+                <div class="container-fluid m-t-xs m-b-xs">
+                    <div class="col-sm-12">
+                        <!-----------------------------------------第一列------------------------------------------->
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group" ng-if="vm.masterData.isminimall == 1">
+                                    <label class="col-sm-3 control-label" >{{'TXT_CHANNEL_WITH_COLON' | translate}}</label>
+                                    <div class="col-sm-8 form-inline" style="padding-left:0px">
+                                        <div class="col-sm-5">
+                                            <select class="form-control" style="margin-left:4px;width:150px" ng-model="vm.orgChaId" ng-change="init(vm.orgChaId)"
+                                                    ng-options="orgChaInfo.order_channel_id as orgChaInfo.full_name for orgChaInfo in vm.masterData.channelList">
+                                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row form-group" ng-controller="popupCtrl">
+                                    <div class="col-sm-3 text-right">
+                                        <button class="btn btn-pop btn-default ng-binding" ng-click="openFeedCategoryMapping(popCategoryMul)">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;Feed类目
+                                        </button>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <select  multiple chosen class="form-control m-r-xs" ng-model="vm.searchInfo.category"
+                                                 ng-options="cat as cat for cat in vm.searchInfo.category" ng-disabled="true"
+                                                 width="'100%'">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_BRAND"></label>
+                                    <div class="col-sm-8">
+                                        <select  multiple chosen class="form-control m-r-xs" ng-model="vm.searchInfo.brand"
+                                                ng-options="brand.value as brand.key for brand in vm.masterData.brandList"
+                                                width="'100%'">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!--<div class="row form-group">-->
+                                    <!--<label class="col-sm-3 control-label" translate="TXT_MASTER_BRAND"></label>-->
+                                    <!--<div class="col-sm-8">-->
+                                        <!--<select  multiple chosen class="form-control m-r-xs" ng-model="vm.searchInfo.masterBrand"-->
+                                                 <!--ng-options="brand.masterBrandEn as brand.masterBrandEn for brand in vm.masterData.masterBrandList"-->
+                                                 <!--width="'100%'">-->
+                                            <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
+                                        <!--</select>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_COLOR' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="vm.searchInfo.color">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_PRODUCT_TYPE' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control m-r-xs" ng-model="vm.searchInfo.productType" chosen  search-contains="true" width="'100%'"
+                                                ng-options="productType.value as productType.key for productType in vm.masterData.productType">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_TYPE' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control m-r-xs" ng-model="vm.searchInfo.sizeType" chosen  search-contains="true"  width="'100%'"
+                                                ng-options="sizeType.value as sizeType.key for sizeType in vm.masterData.sizeType">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_FUZZY_SEARCH' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="vm.searchInfo.fuzzySearch"/>
+                                        <div class="text-warnings">
+                                            <i class="icon fa fa-bell-o"></i>&nbsp;模糊查询,包括:Category,Name,Short Description
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
+                                    <div class="col-sm-8" style="padding-left:0px">
+                                        <div class="col-sm-6">
+                                            <select class="form-control m-r-xs" style="margin-left:4px" ng-model="vm.searchInfo.compareType"
+                                                    ng-options="compareType.value as compareType.name for compareType in vm.masterData.compareTypeList">
+                                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-6"><input type="number" class="form-control" ng-model="vm.searchInfo.inventory" ng-pattern="/^(\d+)$/"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-----------------------------------------第二列------------------------------------------->
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_PRICE' | translate }}</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control m-r-xs" ng-model="vm.searchInfo.priceType">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            <option value="priceClientMsrp" translate="TXT_CLIENT_MSRP_PRICE"></option>
+                                            <option value="priceClientRetail" translate="TXT_CLIENT_RETAIL_PRICE"></option>
+                                            <option value="priceNet" translate="TXT_CLIENT_NET_PRICE"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label"></label>
+                                    <div class="col-sm-8 form-inline">
+                                        <div class="input-group col-sm-4">
+                                            <input type="number" class="form-control" ng-maxvalue="vm.searchInfo.priceValueEnd" ng-checked="true" ng-model="vm.searchInfo.priceValueSta"></div>&nbsp;~&nbsp;
+                                        <div class="input-group col-sm-4"><input type="number" class="form-control" ng-maxvalue="vm.searchInfo.priceValueSta" ng-checked="true" ng-model="vm.searchInfo.priceValueEnd"></div>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_FEED_STATUS' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <div class="row">
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input  type="checkbox" ng-model="status[9]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_New' | translate}}
+                                            </label>&emsp;
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input  type="checkbox" ng-model="status[0]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_WaitingForImport' | translate}}
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input  type="checkbox"  ng-model="status[1]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_FinishImport' | translate}}
+                                            </label>
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input  type="checkbox" ng-model="status[2]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_Error' | translate}}
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input  type="checkbox"  ng-model="status[3]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_NotImport' | translate}}
+                                            </label>&emsp;
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input type="checkbox" ng-model="status[8]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_DateError' | translate}}
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input  type="checkbox"  ng-model="status[7]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_BrandBlock' | translate}}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_CREATE_TIME' | translate}}</label>
+                                    <div class="col-sm-8 form-inline">
+                                        <div class="col-sm-5 input-group" >
+                                            <input type="text" class="form-control" datepicker-popup ng-model="vm.searchInfo.createTimeSta" max-date="vm.searchInfo.createTimeEnd" date-model-format="yyyy-MM-dd" is-open="datePicker1" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                        </div>&nbsp;~&nbsp;
+                                        <div class="col-sm-5 input-group" >
+                                            <input type="text" class="form-control" datepicker-popup ng-model="vm.searchInfo.createTimeEnd" min-date="vm.searchInfo.createTimeSta" date-model-format="yyyy-MM-dd" is-open="datePicker2" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_UPDATE_TIME' | translate}}</label>
+                                    <div class="col-sm-8 form-inline">
+                                        <div class="col-sm-5 input-group" >
+                                            <input type="text" class="form-control" datepicker-popup ng-model="vm.searchInfo.updateTimeSta" max-date="vm.searchInfo.updateTimeEnd" date-model-format="yyyy-MM-dd" is-open="datePicker3" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                        </div>&nbsp;~&nbsp;
+                                        <div class="col-sm-5 input-group" >
+                                            <input type="text" class="form-control" datepicker-popup ng-model="vm.searchInfo.updateTimeEnd" min-date="vm.searchInfo.updateTimeSta" date-model-format="yyyy-MM-dd" is-open="datePicker4" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-----------------------------------------第三列------------------------------------------->
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="row form-group">
+                                    <label class="col-sm-4 control-label ng-scope">Model/Code/Sku</label>
+                                    <div class="col-sm-8">
+                                        <textarea class="form-control inherited" rows="4" ng-model="vm.searchInfo.codeList"></textarea>
+                                        <div class="text-warnings">
+                                            <i class="icon fa fa-bell-o"></i>&nbsp;多项查询,精确查询，包括:款号Model(多项换行分割),产品Code(多项换行分割),产品Sku(多项换行分割)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row form-group" style="margin-left: -67px;">
+                                    <label class="col-sm-4 control-label" translate="TXT_SORT_1"></label>
+                                    <div class="col-sm-8">
+                                        <div class="col-sm-5">
+                                            <select class="form-control" ng-change="vm.searchInfo.sortOneName && !vm.searchInfo.sortOneType?vm.searchInfo.sortOneType = -1:''" ng-model="vm.searchInfo.sortOneName"
+                                                    ng-options="sortOne.value as sortOne.name for sortOne in vm.masterData.sortList">
+                                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-3 text-right">
+                                            <label class="checkbox-inline c-radio">
+                                                <input name="sortOne" type="radio" value="1" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="checkbox-inline c-radio">
+                                                <input name="sortOne" type="radio" value="-1" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- TODO 暂时未实现 -->
+                                <div class="row form-group" style="margin-left: -67px;">
+                                    <label class="col-sm-4 control-label" translate="TXT_SORT_2"></label>
+                                    <div class="col-sm-8">
+                                        <div class="col-sm-5">
+                                            <select class="form-control" ng-change="vm.searchInfo.sortTwoName && !vm.searchInfo.sortTwoType?vm.searchInfo.sortTwoType = -1:''" ng-model="vm.searchInfo.sortTwoName"
+                                                    ng-options="sortTwo.value as sortTwo.name for sortTwo in vm.masterData.sortList">
+                                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-3 text-right">
+                                            <label class="checkbox-inline c-radio">
+                                                <input name="sortTwo" type="radio" value="1" ng-model="vm.searchInfo.sortTwoType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="checkbox-inline c-radio">
+                                                <input name="sortTwo" type="radio" value="-1" ng-model="vm.searchInfo.sortTwoType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- TODO 暂时未实现 -->
+                                <div class="row form-group" style="margin-left: -67px;">
+                                    <label class="col-sm-4 control-label" translate="TXT_SORT_3"></label>
+                                    <div class="col-sm-8">
+                                        <div class="col-sm-5">
+                                            <select class="form-control" ng-change="vm.searchInfo.sortThreeName && !vm.searchInfo.sortThreeType?vm.searchInfo.sortThreeType = -1:''" ng-model="vm.searchInfo.sortThreeName"
+                                                    ng-options="sortThree.value as sortThree.name for sortThree in vm.masterData.sortList">
+                                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-3 text-right">
+                                            <label class="checkbox-inline c-radio">
+                                                <input name="sortThree" type="radio" value="1" ng-model="vm.searchInfo.sortThreeType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="checkbox-inline c-radio">
+                                                <input name="sortThree" type="radio" value="-1" ng-model="vm.searchInfo.sortThreeType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!------------------------------------按钮组------------------------------------>
+                        <div class="col-sm-12 text-center m-b-xs" ng-controller="popupCtrl">
+                            <div class="form-horizontal form-inline">
+                                <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
+                                <button ng-disabled="vm.masterData.isminimall == 1 && !vm.orgChaId" class="btn btn-vo" ng-click="search(1,true)"><i class="fa fa-search"></i>&nbsp;搜索</button>
+                                <span class="text-warnings">
+                                    <i class="icon fa fa-bell-o"></i>&nbsp;Feed商品检索一览 , 检索对象为品牌方提供的所有商品
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!----------------------------------------------------- 显 示 表 格 ------------------------------------------------------->
+    <div>
+        <tabset class="tab-container vo_nav-tabs">
+            <tab ng-click="vm.currTab.group = true;vm.currTab.export = false" active ="vm.currTab.group" >
+                <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}</tab-heading>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl" style="padding-top: 6px;">
+                                        <input type="checkbox" ng-model="vm.searchInfo.isAll">
+                                        <span class="fa fa-check" style="vertical-align: middle;"></span>
+                                        <label class="label label-warning">检索结果全量</label>
+                                    </label>
+                                    &nbsp;
+                                    <div class="btn-group" uib-dropdown>
+                                        <button ng-disabled="!vm.feedPageOption.total || vm.feedPageOption.total == 0" type="button" class="btn btn-pop btn-default" uib-dropdown-toggle>
+                                            <i class="fa fa-exchange"></i>&nbsp;变更Feed产品状态&nbsp;<span class="caret"></span>
+                                        </button>
+                                        <ul uib-dropdown-menu>
+                                            <li>
+                                                <a href="javascript:void(0)" ng-click="updateFeedStatus(0)">等待导入</a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:void(0)" ng-click="updateFeedStatus(3)">不导入</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    &nbsp;
+                                    <div class="btn-group">
+                                        <button type="button" ng-disabled="!vm.feedPageOption.total|| vm.feedPageOption.total == 0" class="btn btn-pop btn-default"  ng-click="doExport()">
+                                            <i class="fa fa-cog"></i>&nbsp;Excel导出
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-7 text-right">
+<!--                                    <button class="btn btn-danger btn-pop" popover-placement="left"
+                                            popover-html="'<p class=\'text-left\'>将Feed产品状态变更为&nbsp;<等待导入> </p>
+                                                           <p class=\'text-left\'>例：预定售卖的产品等</p>
+                                                           <p class=\'text-left\'>将Feed产品状态变更为&nbsp;<不导入></p>
+                                                           <p class=\'text-left\'>例：品牌方禁止售卖/不适应中国市场/不适合跨境售卖 的产品等</p>'"
+                                            style="background:#ec971f;border: #ec971f">
+                                        <i class="fa fa-warning"></i>&nbsp;<strong>操作提示</strong>&nbsp;
+                                    </button>-->
+                                    <div class="text-warnings">
+                                        <i class="icon fa fa-bell-o"></i>&nbsp;将Feed产品状态变更为“等待导入” 例：预定售卖的产品等
+                                    </div>
+                                    <div class="text-warnings">
+                                        <i class="icon fa fa-bell-o"></i>&nbsp;将Feed产品状态变更为“不导入” 例：品牌方禁止售卖/不适应中国市场/不适合跨境售卖 的产品等
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive box box-body" style="overflow: auto">
+                            <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="min-width:2840px;table-layout: fixed;" ng-controller="popupCtrl">
+                                <thead>
+                                <tr><!--24-->
+                                    <th class="text-center mfb-x" style="width:66px;padding-left:0px">
+                                        <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
+                                            <input type="checkbox" ng-click="selectAll(vm.feedSelList)" ng-checked="isAllSelected(vm.feedSelList)" ng-disabled="!vm.feedList.length || !vm.feedSelList.currPageRows.length">
+                                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                                        </label>
+                                    </th>
+                                    <th class="text-center mfb-x" translate="TXT_IMAGE"></th>
+                                    <th class="text-left mfb-x"  ng-if="vm.masterData.isminimall == 1" translate="TXT_CHANNEL_WITH_COLON"></th>
+                                    <th class="text-left mfb-x" translate="TXT_CATEGORY"></th>
+                                    <th class="text-center mfb-x" translate="TXT_PRODUCT_CODE"></th>
+                                    <th class="text-left mfb-x" translate="TXT_NAME"></th>
+                                    <th class="text-left mfb-x" translate="TXT_MODEL"></th>
+                                    <th class="text-left mfb-x" translate="TXT_STATUS"></th>
+                                    <th class="text-center mfb-x" translate="TXT_INVENTORY"></th>
+                                    <th class="text-left mfb-x" translate="TXT_SHORT_DESCRIPTION"></th>
+                                    <th class="text-left mfb-x" translate="TXT_LONG_DESCRIPTION"></th>
+                                    <th class="text-left mfb-x" translate="TXT_COLOR"></th>
+                                    <th class="text-left mfb-x" translate="TXT_PRODUCTION_AREA"></th>
+                                    <th class="text-left mfb-x" translate="TXT_PRODUCT_TYPE"></th>
+                                    <th class="text-left mfb-x" translate="TXT_SIZE_TYPE"></th>
+                                    <th class="text-left mfb-x" translate="TXT_BRAND"></th>
+                                    <th class="text-right mfb-x" translate="TXT_CLIENT_MSRP_PRICE"></th>
+                                    <th class="text-right mfb-x" translate="TXT_CLIENT_RETAIL_PRICE"></th>
+                                    <th class="text-right mfb-x" translate="TXT_CLIENT_NET_PRICE"></th>
+                                    <th class="text-right mfb-x" translate="TXT_CHINA_MSRP_PRICE"></th>
+                                    <th class="text-right mfb-x" translate="TXT_CHINA_RETAIL_PRICE"></th>
+                                    <th class="text-center mfb-x" translate="TXT_SKU_COUNT"></th>
+                                    <th class="text-center mfb-xxt" translate="TXT_ERROR_MESSAGE"></th>
+                                    <th class="text-center mfb-xxt" translate="TXT_CREATE_TIME"></th>
+                                    <th class="text-center mfb-xxt" translate="TXT_UPDATE_TIME"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td if-no-rows="vm.feedList.length" colspan="24" style="padding: 0px"></td>
+                                </tr>
+                                <tr ng-if="vm.feedList.length > 0" ng-repeat="feedInfo in vm.feedList" ng-init="formatStrDate(feedInfo)">
+                                    <td class="text-center mfb-x">
+                                        <label class="checkbox-inline c-checkbox" ng-if="feedInfo.updFlg!=8">
+                                            <input ng-model="vm.feedSelList.selFlag[feedInfo._id]" type="checkbox" ng-controller="selectRowsCtrl"
+                                                   ng-click="selectOne(feedInfo._id, vm.feedSelList)">
+                                            <span class="fa fa-check"></span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center mfb-x" ng-controller="popupCtrl">
+                                        <a ng-if="feedInfo.hasImgFlg > 0"><img class="thumb-md m-b-xs" ng-src="{{feedInfo.image[0]}}" ng-click="openFeedImagedetail($index)"></a>
+                                    </td>
+                                    <td class="text-left mfb-x"  ng-if="vm.masterData.isminimall == 1" style="overflow: hidden;">{{vm.selChannelName}}</td>
+                                    <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.category}}</td>
+                                    <td class="text-center mfb-x" style="overflow: hidden;" ng-if="feedInfo.attsList.length > 0" ng-controller="popupCtrl"><a ng-click="openFeedCodeDetail($index)">{{feedInfo.code}}</a></td>
+                                    <td class="text-center mfb-x" style="overflow: hidden;" ng-if="feedInfo.attsList.length == 0">{{feedInfo.code}}</td>
+                                    <td class="text-left mfb-x">
+                                        <span ng-if="feedInfo.name.length > 50"><popover-text content="feedInfo.name" direct="left" size="50"></popover-text></span>
+                                        <span ng-if="feedInfo.name.length <= 50">{{feedInfo.name}}</span>
+                                    </td>
+                                    <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.model}}</td>
+                                    <td class="text-left mfb-x" style="overflow: hidden;"><key-value type="feedStatus" ng-model="feedInfo.updFlg"></key-value></td>
+                                    <td class="text-center mfb-x" style="overflow: hidden;">{{feedInfo.qty}}</td>
+                                    <td class="text-left mfb-x" style="overflow: hidden;">
+                                        <span ng-if="feedInfo.shortDescription.length > 50"><popover-text content="feedInfo.shortDescription" direct="left" size="50"></popover-text></span>
+                                        <span ng-if="feedInfo.shortDescription.length <= 50">{{feedInfo.shortDescription}}</span>
+                                    </td>
+                                    <td class="text-left mfb-x" style="overflow: hidden;">
+                                        <span ng-if="feedInfo.longDescription.length > 50"><popover-text content="feedInfo.longDescription" direct="left" size="50"></popover-text></span>
+                                        <span ng-if="feedInfo.longDescription.length <= 50">{{feedInfo.longDescription}}</span>
+                                    </td>
+                                    <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.color}}</td>
+                                    <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.origin}}</td>
+                                    <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.productType}}</td>
+                                    <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.sizeType}}</td>
+                                    <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.brand}}</td>
+                                    <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].priceClientMsrp | currency:'':2}}</td>
+                                    <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].priceClientRetail | currency:'':2}}</td>
+                                    <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].priceNet | currency:'':2}}</td>
+                                    <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].priceMsrp | currency:'':2}}</td>
+                                    <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].priceCurrent | currency:'':2}}</td>
+                                    <td class="text-center mfb-x" style="overflow: hidden;">
+                                        <small ng-controller="showPopoverCtrl" popover-html="showInfo(feedInfo._popSkuInfo)" popover-trigger="mouseenter" popover-placement="left" class="ng-scope">
+                                            <div class="table_main">
+                                                <ul>
+                                                    <li><button class="btn btn-default btn-xs">{{feedInfo.skusCnt}}</button></li>
+                                                </ul>
+                                            </div>
+                                        </small>
+                                    </td>
+                                    <td class="text-center mfb-xxt">
+                                        <span ng-if="feedInfo.updMessage.length > 50"><popover-text content="feedInfo.updMessage" direct="left" size="50"></popover-text></span>
+                                        <span ng-if="feedInfo.updMessage.length <= 50">{{feedInfo.updMessage}}</span>
+                                    </td>
+                                    <td class="text-center mfb-xxt">{{feedInfo.created}}</td>
+                                    <td class="text-center mfb-xxt">{{feedInfo.modified}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            <!--</div>-->
+                            <div class="col-sm-12 m-t-lg m-b-lg">
+                                <vpagination config="vm.feedPageOption"></vpagination>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </tab>
+            <tab ng-click = "vm.currTab.export = true;vm.currTab.group = false" active ="vm.currTab.export">
+                <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_EXPORT_LIST' | translate}}</tab-heading>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    &emsp;
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-pop btn-default"  ng-click="exportFresh()">
+                                            <i class="fa fa-refresh"></i>&nbsp;刷新
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive box box-body">
+                            <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main"  ng-controller="popupCtrl">
+                                <thead>
+                                <tr>
+                                    <th class="text-center mfb-xxt">No.</th>
+                                    <th class="text-left mfb-xxt" translate="TXT_EXPORT_FILE_NAME"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_EXPORT_REQUEST_TIME"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_EXPORT_CREATE_TIME"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_EXPORT_REQUESTER"></th>
+                                    <th class="text-center mfb-xxt" translate="TXT_ACTION"></th>
+                                </tr>
+                                </thead>
+                            </table>
+
+                            <div class="box-body" if-no-rows="vm.exportList.length">
+                                <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                                    <tbody>
+                                        <tr ng-if="vm.exportList.length > 0" ng-repeat="exportInfo in vm.exportList">
+                                            <td class="text-center mfb-xxt">{{$index + 1}}</td>
+                                            <td class="text-left mfb-xxt">
+                                                <a ng-repeat ="fileItem in exportInfo.fileName"  href="javascript:void(0)" ng-click="openOtherDownload(fileItem)">{{fileItem}}<br></a>
+                                            </td>
+                                            <td class="text-left mfb-xxt">{{exportInfo.created}}</td>
+                                            <td class="text-left mfb-xxt">{{exportInfo.fileName?exportInfo.modified:''}}</td>
+                                            <td class="text-left mfb-xxt">{{exportInfo.creater}}</td>
+                                            <td class="text-center mfb-xxt">{{exportStatus[exportInfo.status]}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 m-t-lg m-b-lg">
+                            <vpagination config="vm.exportPageOption"></vpagination>
+                        </div>
+                    </div>
+                </div>
+
+            </tab>
+        </tabset>
+    </div>
+
+</div>

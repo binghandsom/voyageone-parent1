@@ -16,7 +16,7 @@ import java.util.List;
 
 public class VoDaoGenerator {
     public static void main(String[] arg) throws InterruptedException, SQLException, InvalidConfigurationException, XMLParserException, IOException, URISyntaxException {
-        runWith("cmsGeneratorConfig.xml");
+        runWith("cmsBiReportGeneratorConfig.xml");
 //        runWith("vmsGeneratorConfig.xml");
     }
 

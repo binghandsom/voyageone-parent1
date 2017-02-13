@@ -2,9 +2,11 @@ package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
+import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TestBean;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
@@ -26,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +66,24 @@ public class CmsPromotionIndexService extends BaseViewService {
 
         return result;
     }
+
+    public Map<String, Object> test(PageQueryParameters parameters) {
+        String channel=parameters.getParameterValue("channelName");
+        String channelStart=parameters.getParameterValue("channelStart");
+        String channelEnd=parameters.getParameterValue("channelEnd");
+        Map<String, Object> result = new HashMap<>();
+        List<TestBean> testBeanList=new ArrayList<>();
+        for(int i=0;i<10;i++)
+        {
+            TestBean testBean=new TestBean("channel"+i,channel,channelStart+"11",channelEnd+"12");
+            testBeanList.add(testBean);
+        }
+        result.put("testBeanList",testBeanList);
+      /*  result.put("platformTypeList", TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
+        result.put("promotionStatus", TypeConfigEnums.MastType.promotionStatus.getList(language));*/
+
+        return result;
+    }
     public Map<String, Object> initByPromotionId(int PromotionId,String channelId, String language) {
         Map<String, Object> result = new HashMap<>();
         CmsBtPromotionModel model = promotionService.getByPromotionId(PromotionId);
@@ -90,6 +111,7 @@ public class CmsPromotionIndexService extends BaseViewService {
     public int delete(CmsBtPromotionBean cmsBtPromotionBean) {
         return promotionService.delete(cmsBtPromotionBean);
     }
+
 
 
     public byte[] getCodeExcelFile(Integer promotionId,String channelId) throws IOException, InvalidFormatException {
