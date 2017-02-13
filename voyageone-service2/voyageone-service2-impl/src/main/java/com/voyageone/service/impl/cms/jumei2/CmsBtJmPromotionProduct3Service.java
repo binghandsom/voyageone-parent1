@@ -16,15 +16,13 @@ import com.voyageone.service.bean.cms.jumei2.JmProduct;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionTagProductDao;
-import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.daoext.cms.*;
-import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JMProductUpdateMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JmPromotionProductStockSyncMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JMProductUpdateMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionProductStockSyncMQMessageBody;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,12 +45,8 @@ public class CmsBtJmPromotionProduct3Service {
     CmsBtJmProductDaoExt daoExtCmsBtJmProductDaoExt;
     @Autowired
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
-    //    @Autowired
-//    JuMeiProductPlatformService serviceJuMeiProductPlatform;
     @Autowired
     CmsMtJmConfigService serviceCmsMtJmConfig;
-    //    @Autowired
-//    JMShopBeanService serviceJMShopBean;
     @Autowired
     CmsBtJmPromotionDao daoCmsBtJmPromotion;
     @Autowired
@@ -68,17 +62,13 @@ public class CmsBtJmPromotionProduct3Service {
     @Autowired
     CmsBtJmPromotionTagProductService cmsBtJmPromotionTagProductService;
     @Autowired
-    private ProductService productService;
+    ProductService productService;
     @Autowired
-    private CmsBtJmPromotion3Service service3CmsBtJmPromotion;
+    CmsBtJmPromotion3Service service3CmsBtJmPromotion;
     @Autowired
-    private CmsBtPromotionGroupsDaoExtCamel daoExtCamelCmsBtPromotionGroups;
+    CmsBtPromotionGroupsDaoExtCamel daoExtCamelCmsBtPromotionGroups;
     @Autowired
-    private CmsBtPromotionSkusDaoExtCamel daoExtCamelCmsBtPromotionSkus;
-    @Autowired
-    private CmsMtChannelValuesService cmsMtChannelValuesService;
-    @Autowired
-    private CmsBtPromotionDao daoCmsBtPromotion;
+    CmsBtPromotionSkusDaoExtCamel daoExtCamelCmsBtPromotionSkus;
     @Autowired
     CmsMqSenderService cmsMqSenderService;
 

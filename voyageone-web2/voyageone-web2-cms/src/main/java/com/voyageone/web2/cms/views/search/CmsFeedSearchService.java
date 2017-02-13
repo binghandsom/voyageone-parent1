@@ -13,11 +13,11 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
-import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.FeedExportMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -54,7 +54,7 @@ public class CmsFeedSearchService extends BaseViewService {
     @Autowired
     private CmsMtChannelValuesService cmsMtChannelValuesService;
     @Autowired
-    private MqSenderService mqSenderService;
+    private CmsMqSenderService cmsMqSenderService;
 
     // 查询产品信息时的缺省输出列
     private final String searchItems = "{'category':1,'code':1,'name':1,'model':1,'color':1,'origin':1,'brand':1,'image':1,'productType':1,'sizeType':1,'shortDescription':1,'longDescription':1,'skus':1,'attribute':1,'updFlg':1,'qty':1,'updMessage':1,'created':1,'modified':1,'lastReceivedOn':1}";
@@ -272,7 +272,7 @@ public class CmsFeedSearchService extends BaseViewService {
             feedExportMQMessageBody.setCmsBtExportTaskId(cmsBtExportTaskModel.getId());
             feedExportMQMessageBody.setSender(userName);
             try {
-                mqSenderService.sendMessage(feedExportMQMessageBody);
+                cmsMqSenderService.sendMessage(feedExportMQMessageBody);
             } catch (MQMessageRuleException e) {
                 $error(String.format("feed文件导出异常, channelId=%s, userName=%s", channelId, userName));
                 throw new BusinessException("MQ发送异常:" + e.getMessage());

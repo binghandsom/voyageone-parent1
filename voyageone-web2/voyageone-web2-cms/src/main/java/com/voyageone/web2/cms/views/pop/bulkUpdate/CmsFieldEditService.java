@@ -8,8 +8,14 @@ import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.*;
-import com.voyageone.common.configs.beans.*;
+import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.Types;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.configs.beans.TypeBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.*;
@@ -21,18 +27,17 @@ import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
-import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.SizeChartService;
-import com.voyageone.service.impl.cms.product.*;
+import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.*;
 import com.voyageone.service.impl.com.cache.CommCacheService;
-import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
@@ -73,10 +78,6 @@ public class CmsFieldEditService extends BaseViewService {
     private SxProductService sxProductService;
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
-    @Autowired
-    private MqSender sender;
-    @Autowired
-    private CmsMqSenderService mqSenderService;
     @Autowired
     private CommCacheService commCacheService;
     @Autowired
@@ -313,14 +314,13 @@ public class CmsFieldEditService extends BaseViewService {
 
             ProductVoRateUpdateMQMessageBody mqMessageBody = new ProductVoRateUpdateMQMessageBody();
             mqMessageBody.setChannelId(userInfo.getSelChannelId());
-            mqMessageBody.setCreater(userInfo.getUserName());
             mqMessageBody.setVoRate(voRateVal);
             mqMessageBody.setSender(userInfo.getUserName());
             List<List<String>>productCodesList = CommonUtil.splitList(productCodes,100);
             for (List<String> codes:productCodesList) {
                 try {
                     mqMessageBody.setCodeList(codes);
-                    mqSenderService.sendMessage(mqMessageBody);
+                    cmsMqSenderService.sendMessage(mqMessageBody);
                 } catch (MQMessageRuleException e) {
                     $error(String.format("VO扣点值批量更新MQ发送异常,channelId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
                     throw new BusinessException("MQ发送异常:" + e.getMessage());
@@ -349,7 +349,7 @@ public class CmsFieldEditService extends BaseViewService {
             for (List<String> codes:productCodesList) {
                 try {
                     mqMessageBody.setProductCodes(codes);
-                    mqSenderService.sendMessage(mqMessageBody);
+                    cmsMqSenderService.sendMessage(mqMessageBody);
                 } catch (MQMessageRuleException e) {
                     $error(String.format("批量更新商品发送MQ异常,channleId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
                     throw new BusinessException("高级检索 批量更新失败!");
@@ -451,7 +451,7 @@ public class CmsFieldEditService extends BaseViewService {
         for (List<String> codes:productCodesList) {
             try {
                 mqMessageBody.setProductCodes(codes);
-                mqSenderService.sendMessage(mqMessageBody);
+                cmsMqSenderService.sendMessage(mqMessageBody);
             } catch (MQMessageRuleException e) {
                 $error(String.format("商品上下架MQ发送异常,channelId=%s,userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()), e);
                 throw new BusinessException("商品上下架MQ发送异常: " + e.getMessage());
@@ -519,7 +519,7 @@ public class CmsFieldEditService extends BaseViewService {
         for (List<String> codes:productCodesList) {
             try {
                 mqMessageBody.setProductCodes(codes);
-                mqSenderService.sendMessage(mqMessageBody);
+                cmsMqSenderService.sendMessage(mqMessageBody);
             } catch (MQMessageRuleException e) {
                 throw new BusinessException("MQ发送异常: " + e.getMessage());
             }
@@ -861,7 +861,7 @@ public class CmsFieldEditService extends BaseViewService {
         for (List<String> codes:productCodesList) {
             mqMessageBody.setProductCodes(codes);
             try {
-                mqSenderService.sendMessage(mqMessageBody);
+                cmsMqSenderService.sendMessage(mqMessageBody);
             } catch (MQMessageRuleException e) {
                 $error(String.format("修改商品中国最终上架MQ发送异常,channelId=%s,cartId=%s,userName=%s", userInfo.getSelChannelId(), cartId, userInfo.getUserName()), e);
                 throw new BusinessException(e.getMessage());
@@ -1302,7 +1302,7 @@ public class CmsFieldEditService extends BaseViewService {
                 List<List<String>> codesList = CommonUtil.splitList(productCodes,100);
                 codesList.forEach(codes->{
                     mqMessageBody.setCodeList(codes);
-                    mqSenderService.sendMessage(mqMessageBody);
+                    cmsMqSenderService.sendMessage(mqMessageBody);
                 });
             } else {
                 // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
@@ -1312,7 +1312,7 @@ public class CmsFieldEditService extends BaseViewService {
                 mqMessageBody.setCodeList(productCodes);
                 mqMessageBody.setUserName(userInfo.getUserName());
                 mqMessageBody.setSender(userInfo.getUserName());
-                mqSenderService.sendMessage(mqMessageBody);
+                cmsMqSenderService.sendMessage(mqMessageBody);
             }
         } catch (MQMessageRuleException e) {
             throw new BusinessException("MQ发送异常:" + e.getMessage());
@@ -1360,7 +1360,7 @@ public class CmsFieldEditService extends BaseViewService {
         List<List<String>> productCodesList = CommonUtil.splitList(productCodes, 500);
         productCodesList.forEach(codes -> {
             cmsPlatformCategoryUpdateMQMessageBody.setProductCodes(codes);
-            mqSenderService.sendMessage(cmsPlatformCategoryUpdateMQMessageBody);
+            cmsMqSenderService.sendMessage(cmsPlatformCategoryUpdateMQMessageBody);
         });
 
 //        List<BulkUpdateModel> bulkList = new ArrayList<>(productCodes.size());

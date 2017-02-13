@@ -17,7 +17,6 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
-import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
@@ -25,11 +24,11 @@ import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
 import com.voyageone.service.impl.cms.vomqjobservice.CmsProductFreeTagsUpdateService;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
@@ -74,13 +73,9 @@ public class CmsAdvanceSearchService extends BaseViewService {
     @Autowired
     private CmsAdvSearchOtherService advSearchOtherService;
     @Autowired
-    private ProductTagService productTagService;
-    @Autowired
     private CmsBtProductDao cmsBtProductDao;
-    //@Autowired
-    //private MqSender sender;
     @Autowired
-    private MqSenderService mqSenderService;
+    private CmsMqSenderService cmsMqSenderService;
     @Autowired
     private CmsBtExportTaskService cmsBtExportTaskService;
 
@@ -489,7 +484,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
             advSearchExportMQMessageBody.setSearchValue(searchValue);
             advSearchExportMQMessageBody.setSender(userInfo.getUserName());
             try {
-                mqSenderService.sendMessage(advSearchExportMQMessageBody);
+                cmsMqSenderService.sendMessage(advSearchExportMQMessageBody);
             } catch (MQMessageRuleException e) {
                 $error(String.format("高级检索文件导出消息发送异常, channelId=%s, userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()));
                 throw new BusinessException("MQ发送异常:" + e.getMessage());

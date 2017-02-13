@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms.vomq.vomessage.body.jm;
+package com.voyageone.service.impl.cms.vomq.vomessage.body;
 
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
@@ -6,16 +6,15 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 
-
 /**
- * JMRefreshPriceMQMessageBody   聚美刷新参考价
+ * JMProductUpdateMQMessageBody   聚美平台上传更新
  *
  * @author peitao 2016/12/30.
  * @version 2.0.0
  * @since 2.0.0
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_JM_PROMOTION_REFRESH_PRICE)
-public class JMRefreshPriceMQMessageBody extends BaseMQMessageBody {
+@VOMQQueue(value = CmsMqRoutingKey.CMS_JM_PROMOTION_PRODUCT_UPDATE)
+public class JMProductUpdateMQMessageBody extends BaseMQMessageBody {
 
     // 表cms_bt_jm_promotion的id
     private int cmsBtJmPromotionId;

@@ -9,7 +9,6 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -18,7 +17,6 @@ import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
@@ -32,7 +30,6 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
-import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.CmsBtPlatformNumiidModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
@@ -80,7 +77,7 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
 //    private TbItemService tbItemService;
 
     @Autowired
-    private CmsMqSenderService sender;
+    private CmsMqSenderService cmsMqSenderService;
 
     @Autowired
     private PlatformCategoryService platformCategoryService;
@@ -555,7 +552,7 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
             productPriceUpdateMQMessageBody.setCartId((Integer) product.get("cartId"));
             productPriceUpdateMQMessageBody.setSender(CmsMqRoutingKey.CMS_BATCH_TMFieldsImportCms2Job);
             try {
-                sender.sendMessage(productPriceUpdateMQMessageBody);
+                cmsMqSenderService.sendMessage(productPriceUpdateMQMessageBody);
             } catch (MQMessageRuleException e) {
                 $error("向Mq发送消息同步sku,code,group价格范围异常", e);
             }

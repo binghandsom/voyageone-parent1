@@ -3,7 +3,7 @@ package com.voyageone.task2.cms.mqjob.jm;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JmPromotionImportMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionImportMQMessageBody;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

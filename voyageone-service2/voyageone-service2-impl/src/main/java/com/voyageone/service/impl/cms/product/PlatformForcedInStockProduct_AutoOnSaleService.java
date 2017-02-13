@@ -7,21 +7,17 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
-import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TypeChannelsService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.PlatformActiveLogMQMessageBody;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -32,11 +28,8 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
     @Autowired
     CmsBtProductDao cmsBtProductDao;
 
-    /*@Autowired
-    MqSender sender;*/
-
     @Autowired
-    private MqSenderService mqSenderService;
+    private CmsMqSenderService cmsMqSenderService;
 
     @Autowired
     TypeChannelsService typeChannelsService;
@@ -102,7 +95,7 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
         mqMessageBody.setProductCodes(productCodes);
         mqMessageBody.setSender("autoOnSale");
         try {
-            mqSenderService.sendMessage(mqMessageBody);
+            cmsMqSenderService.sendMessage(mqMessageBody);
         } catch (MQMessageRuleException e) {
             $error(String.format("被下架商品自动上架MQ发送异常,channelId=%s,userName=%s", channelId, "autoOnSale"), e);
         }

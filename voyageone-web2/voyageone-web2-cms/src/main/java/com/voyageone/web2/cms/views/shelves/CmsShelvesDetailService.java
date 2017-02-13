@@ -17,8 +17,6 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsShelvesMonitorMQMessageBody;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import com.voyageone.service.model.cms.CmsBtShelvesTemplateModel;
@@ -36,7 +34,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -54,19 +53,19 @@ class CmsShelvesDetailService extends BaseViewService {
     private final CmsBtShelvesTemplateService cmsBtShelvesTemplateService;
     private final ProductService productService;
     private final ProductTagService productTagService;
-    private final CmsMqSenderService sender;
+    private final CmsMqSenderService cmsMqSenderService;
     private final RedisTemplate<Object, Object> redisTemplate;
 
     @Autowired
     public CmsShelvesDetailService(CmsBtShelvesProductService cmsBtShelvesProductService,
                                    CmsBtShelvesService cmsBtShelvesService,
                                    ProductService productService, RedisTemplate<Object, Object> redisTemplate,
-                                   CmsMqSenderService sender, CmsBtShelvesTemplateService cmsBtShelvesTemplateService, ProductTagService productTagService) {
+                                   CmsMqSenderService cmsMqSenderService, CmsBtShelvesTemplateService cmsBtShelvesTemplateService, ProductTagService productTagService) {
         this.cmsBtShelvesProductService = cmsBtShelvesProductService;
         this.cmsBtShelvesService = cmsBtShelvesService;
         this.productService = productService;
         this.redisTemplate = redisTemplate;
-        this.sender = sender;
+        this.cmsMqSenderService = cmsMqSenderService;
         this.cmsBtShelvesTemplateService = cmsBtShelvesTemplateService;
         this.productTagService = productTagService;
     }
@@ -86,7 +85,7 @@ class CmsShelvesDetailService extends BaseViewService {
                 messageMap.setSender(userName);
                 CacheHelper.getValueOperation().set("ShelvesMonitor_" + shelvesId, shelvesId);
                 try {
-                    sender.sendMessage(messageMap);
+                    cmsMqSenderService.sendMessage(messageMap);
                 } catch (MQMessageRuleException e) {
                     $error(e);
                     e.printStackTrace();

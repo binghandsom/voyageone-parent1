@@ -16,7 +16,6 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
-import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.dao.cms.CmsBtJmProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
 import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
@@ -35,6 +34,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
@@ -109,7 +109,7 @@ public class BackDoorController extends CmsController {
     /*@Autowired
     private MqSender sender;*/
     @Autowired
-    private MqSenderService mqSenderService;
+    private CmsMqSenderService cmsMqSenderService;
 
 
     /**
@@ -1873,7 +1873,7 @@ public class BackDoorController extends CmsController {
                 mqMessageBody.setCartId(cartId);
                 mqMessageBody.setSender(getUser().getUserName());
                 try {
-                    mqSenderService.sendMessage(mqMessageBody);
+                    cmsMqSenderService.sendMessage(mqMessageBody);
                 } catch (MQMessageRuleException e) {
                     $error(String.format("商品价格更新MQ发送异常，cartId=%s,productId=%s,channelId=%s", cartId, id, channelId), e);
                     throw new BusinessException(String.format("MQ发送异常,cartId=%d, productId=%d, channelId=%s,异常:%s", cartId, id, channelId, e.getMessage()));

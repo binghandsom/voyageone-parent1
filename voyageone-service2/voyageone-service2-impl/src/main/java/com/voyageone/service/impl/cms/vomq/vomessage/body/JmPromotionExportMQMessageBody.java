@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms.vomq.vomessage.body.jm;
+package com.voyageone.service.impl.cms.vomq.vomessage.body;
 
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;

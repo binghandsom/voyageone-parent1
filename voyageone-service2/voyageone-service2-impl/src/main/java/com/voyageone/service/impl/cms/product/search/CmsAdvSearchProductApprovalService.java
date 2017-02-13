@@ -14,6 +14,7 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -25,7 +26,6 @@ import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchProductApprov
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,7 +55,7 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
 
-    public void approval(AdvSearchProductApprovalMQMessageBody mqMessageBody) {
+    public Map<String, Object> approval(AdvSearchProductApprovalMQMessageBody mqMessageBody) {
         long threadNo =  Thread.currentThread().getId();
         $info(String.format("threadNo=%d 参数%s",threadNo, JacksonUtil.bean2Json(mqMessageBody)));
         Integer cartIdValue = mqMessageBody.getCartList().get(0);
@@ -269,9 +269,8 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
         productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdValue, EnumProductOperationType.ProductApproved, msg, userName);
             sta = System.currentTimeMillis();
             // 记录商品修改历史
-            productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdVal, EnumProductOperationType.ProductApproved, msg, userName);
+            productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdValue, EnumProductOperationType.ProductApproved, msg, userName);
             $info("批量修改属性 (商品审批) 记入状态历史表结束 耗时" + (System.currentTimeMillis() - sta));
-        }
 
         return errorCodeList;
     }

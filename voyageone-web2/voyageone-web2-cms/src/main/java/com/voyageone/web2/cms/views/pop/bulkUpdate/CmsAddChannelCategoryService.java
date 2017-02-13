@@ -7,12 +7,10 @@ import com.voyageone.common.configs.Codes;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
-import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.SaveChannelCategoryMQMessageBody;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
@@ -39,10 +37,8 @@ public class CmsAddChannelCategoryService extends BaseViewService {
     private SellerCatService sellerCatService;
     @Autowired
     private CmsAdvanceSearchService advanceSearchService;
-    /*@Autowired
-    private MqSender sender;*/
     @Autowired
-    private MqSenderService mqSenderService;
+    private CmsMqSenderService cmsMqSenderService;
 
     private static final String DEFAULT_SELLER_CAT_CNT = "10";
 
@@ -220,7 +216,7 @@ public class CmsAddChannelCategoryService extends BaseViewService {
         mqMessageBody.setParams(params);
         mqMessageBody.setSender((String) params.get("userName"));
         try {
-            mqSenderService.sendMessage(mqMessageBody);
+            cmsMqSenderService.sendMessage(mqMessageBody);
         } catch (MQMessageRuleException e) {
             $error(String.format("saveChannelCategory时MQ发送异常,userName=%s", (String) params.get("userName")), e);
             throw new BusinessException("MQ发送异常:" + e.getMessage());
