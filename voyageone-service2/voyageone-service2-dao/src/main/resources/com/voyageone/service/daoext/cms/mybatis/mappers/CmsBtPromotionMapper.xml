@@ -64,7 +64,26 @@
 
     <select id="select_cms_bt_promotion_by_channelId_cartId" resultMap="PromotionMap" parameterType="Map">
         select
-        <include refid="promotion_fields"/>
+        a.id,
+        a.channel_id,
+        a.cart_id,
+        a.promotion_status,
+        a.promotion_name,
+        a.pre_period_start,
+        a.pre_period_end,
+        a.pre_sale_start,
+        a.pre_sale_end,
+        a.activity_start,
+        a.activity_end,
+        a.tejiabao_id,
+        a.promotion_type,
+        a.active,
+        a.is_all_promotion,
+        a.ref_tag_id,
+        a.created,
+        a.creater,
+        a.modified,
+        a.modifier
 
         from voyageone_cms2.cms_bt_promotion a
         where a.channel_id = #{channelId}

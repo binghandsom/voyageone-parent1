@@ -250,13 +250,20 @@ public class PromotionService extends BaseService {
 
     public List<CmsBtPromotionBean> getByChannelIdCartId(String channelId, Integer cartId) {
 
-        if (CacheHelper.getValueOperation().get("Promotion_" + channelId + "-" + cartId) == null) {
-            List<CmsBtPromotionBean> promotions = cmsBtPromotionDaoExt.selectByChannelIdCartId(channelId, cartId);
-//            redisTemplate.se
+        List<CmsBtPromotionBean> promotions = null;
+        Object value = CacheHelper.getValueOperation().get("Promotion_" + channelId + "-" + cartId);
+        if (value == null) {
+            promotions = cmsBtPromotionDaoExt.selectByChannelIdCartId(channelId, cartId);
+            if(promotions != null){
+                redisTemplate.opsForValue().set("Promotion_" + channelId + "-" + cartId, promotions);
+                redisTemplate.expire("Promotion_" + channelId + "-" + cartId, 1, TimeUnit.MINUTES);
+            }
+        }else{
+            redisTemplate.expire("Promotion_" + channelId + "-" + cartId, 1, TimeUnit.MINUTES);
+            promotions = (List<CmsBtPromotionBean>) value;
         }
-        redisTemplate.expire("Promotion_" + channelId + "-" + cartId, 1, TimeUnit.MINUTES);
 
-        return cmsBtPromotionDaoExt.selectByChannelIdCartId(channelId, cartId);
+        return promotions;
     }
 
     /**
@@ -443,14 +450,22 @@ public class PromotionService extends BaseService {
         String dateBef = DateTimeUtil.format(DateTimeUtil.addHours(date, 8 + rangeB * -24), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
         String dateAft = DateTimeUtil.format(DateTimeUtil.addHours(date, 8 + rangeA * 24), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
 
-        List<Integer> promotionIds = promotion.stream().filter(cmsBtPromotionBean -> cmsBtPromotionBean.getIsAllPromotion() != 1 && (cmsBtPromotionBean.getActivityStart().compareTo(dateNow) >= 0 || cmsBtPromotionBean.getActivityStart().compareTo(dateAft) <= 0))
+        List<Integer> promotionIds = promotion.stream()
+                .filter(cmsBtPromotionBean -> {
+                            if (cmsBtPromotionBean.getIsAllPromotion() != 1) {
+                                if (cmsBtPromotionBean.getActivityStart().compareTo(dateNow) >= 0 && cmsBtPromotionBean.getActivityStart().compareTo(dateAft) <= 0) {
+                                    return true;
+                                } else if (cmsBtPromotionBean.getActivityEnd().compareTo(dateBef) >= 0 && cmsBtPromotionBean.getActivityEnd().compareTo(dateNow) <= 0) {
+                                    return true;
+                                } else if (cmsBtPromotionBean.getActivityStart().compareTo(dateNow) <= 0 && cmsBtPromotionBean.getActivityEnd().compareTo(dateNow) >= 0) {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }
+                )
                 .map(CmsBtPromotionBean::getId)
                 .collect(Collectors.toList());
-
-        promotionIds.addAll(promotion.stream().filter(cmsBtPromotionBean -> cmsBtPromotionBean.getIsAllPromotion() != 1 && (cmsBtPromotionBean.getActivityStart().compareTo(dateBef) >= 0 || cmsBtPromotionBean.getActivityStart().compareTo(dateNow) <= 0))
-                .map(CmsBtPromotionBean::getId)
-                .collect(Collectors.toList()));
-
         return promotionIds;
     }
 }

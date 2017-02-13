@@ -15,9 +15,13 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
+import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.prices.PriceService;
+import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
+import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchRefreshRetailPriceMQMessageBody;
@@ -56,6 +60,10 @@ public class CmsProductPriceUpdateService extends BaseService {
     private SxProductService sxProductService;
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
+    @Autowired
+    private PromotionService promotionService;
+    @Autowired
+    private PromotionCodeService promotionCodeService;
 
     /**
      * 更新product及group的价格
@@ -201,13 +209,13 @@ public class CmsProductPriceUpdateService extends BaseService {
      */
     public List<Map<String, String>> updateProductRetailPrice(AdvSearchRefreshRetailPriceMQMessageBody messageBody) {
         List<Map<String, String>> failList = new ArrayList<Map<String, String>>();
-        String channleId = StringUtils.trimToNull(messageBody.getChannelId());
+        String channelId = StringUtils.trimToNull(messageBody.getChannelId());
         String userName = StringUtils.trimToNull(messageBody.getUserName());
         List<String> codeList = messageBody.getCodeList();
         List<Integer> cartList = messageBody.getCartList();
 
         // 是否自动最终售价同步指导价格
-        CmsChannelConfigBean autoPriceCfg = CmsChannelConfigs.getConfigBeanNoCode(channleId, CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
+        CmsChannelConfigBean autoPriceCfg = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
         String msg = "高级检索 重新计算指导售价";
         if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
             // 自动同步
@@ -222,42 +230,54 @@ public class CmsProductPriceUpdateService extends BaseService {
 
         for (Integer cartId : cartList) {
             if(cartId == 928) continue;
-            ShopBean shopObj = Shops.getShop(channleId, cartId.toString());
+            CmsChannelConfigBean autoSyncPricePromotion = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_PROMOTION, cartId.toString());
+            if (autoSyncPricePromotion == null) {
+                autoSyncPricePromotion = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_PROMOTION);
+            }
+
+            if(autoSyncPricePromotion == null){
+                autoSyncPricePromotion = new CmsChannelConfigBean();
+                autoSyncPricePromotion.setConfigValue1("0");
+                autoSyncPricePromotion.setConfigValue2("0");
+                autoSyncPricePromotion.setConfigValue3("0");
+            }
+
+            ShopBean shopObj = Shops.getShop(channelId, cartId.toString());
             CartBean cartObj = Carts.getCart(cartId);
             if (shopObj == null) {
 
                 Map<String, String> failMap = new HashMap<String, String>();
-                failMap.put(String.format("channelId=%s,cartId=%s", channleId, cartId.toString()), String.format("未配置平台, channelId=%s, cartId=%s", channleId, cartId));
+                failMap.put(String.format("channelId=%s,cartId=%s", channelId, cartId.toString()), String.format("未配置平台, channelId=%s, cartId=%s", channelId, cartId));
                 failList.add(failMap);
 
-                $error("CmsProductPriceUpdateService.updateProductRetailPrice 未配置平台 channelId=%s, cartId=%s", channleId, cartId.toString());
+                $error("CmsProductPriceUpdateService.updateProductRetailPrice 未配置平台 channelId=%s, cartId=%s", channelId, cartId.toString());
                 continue;
             }
 
             for (String prodCode : codeList) {
                 try {
-                    $info("channleId=" + channleId + " cartId=" + cartId + " prodCode=" + prodCode);
+                    $info("channleId=" + channelId + " cartId=" + cartId + " prodCode=" + prodCode);
                     queryObj.setQuery("{'common.fields.code':#,'platforms.P#':{$exists:true}}");
                     queryObj.setParameters(prodCode, cartId);
                     queryObj.setProjectionExt("prodId", "channelId", "orgChannelId", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".skus", "common.fields", "common.skus");
-                    CmsBtProductModel prodObj = productService.getProductByCondition(channleId, queryObj);
+                    CmsBtProductModel prodObj = productService.getProductByCondition(channelId, queryObj);
                     if (prodObj == null) {
 
                         Map<String, String> failMap = new HashMap<String, String>();
-                        failMap.put(prodCode, String.format("产品不存在, channelId=%s, code=%s, cartId=%s", channleId, prodCode, cartId));
+                        failMap.put(prodCode, String.format("产品不存在, channelId=%s, code=%s, cartId=%s", channelId, prodCode, cartId));
                         failList.add(failMap);
 
-                        $warn("CmsProductPriceUpdateService.updateProductRetailPrice 产品不存在 channelId=%s, code=%s, cartId=%d", channleId, prodCode, cartId);
+                        $warn("CmsProductPriceUpdateService.updateProductRetailPrice 产品不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
                         continue;
                     }
                     List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
                     if (skuList == null || skuList.isEmpty()) {
 
                         Map<String, String> failMap = new HashMap<String, String>();
-                        failMap.put(prodCode, String.format("产品sku数据不存在, channelId=%s, code=%s, cartId=%s", channleId, prodCode, cartId));
+                        failMap.put(prodCode, String.format("产品sku数据不存在, channelId=%s, code=%s, cartId=%s", channelId, prodCode, cartId));
                         failList.add(failMap);
 
-                        $warn("CmsProductPriceUpdateService.updateProductRetailPrice 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channleId, prodCode, cartId);
+                        $warn("CmsProductPriceUpdateService.updateProductRetailPrice 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
                         continue;
                     }
 
@@ -277,10 +297,10 @@ public class CmsProductPriceUpdateService extends BaseService {
                     } catch (Exception exp) {
 
                         Map<String, String> failMap = new HashMap<String, String>();
-                        failMap.put(prodCode, String.format("调用共通函数priceService.setPrice计算指导价时出错, channelId=%s, code=%s, cartId=%s, errmsg=%s", channleId, prodCode, cartId, exp.getMessage()));
+                        failMap.put(prodCode, String.format("调用共通函数priceService.setPrice计算指导价时出错, channelId=%s, code=%s, cartId=%s, errmsg=%s", channelId, prodCode, cartId, exp.getMessage()));
                         failList.add(failMap);
 
-                        $error(String.format("CmsProductPriceUpdateService.updateProductRetailPrice 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channleId, prodCode, cartId, exp.getMessage()), exp);
+                        $error(String.format("CmsProductPriceUpdateService.updateProductRetailPrice 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channelId, prodCode, cartId, exp.getMessage()), exp);
                         continue;
                     }
 
@@ -289,7 +309,7 @@ public class CmsProductPriceUpdateService extends BaseService {
                     updObj.setQueryParameters(prodCode);
                     updObj.setUpdate("{$set:{'platforms.P#.skus':#}}");
                     updObj.setUpdateParameters(cartId, prodObj.getPlatform(cartId).getSkus());
-                    WriteResult rs = productService.updateFirstProduct(updObj, channleId);
+                    WriteResult rs = productService.updateFirstProduct(updObj, channelId);
                     $debug("CmsRefreshRetailPriceTask 保存计算结果 " + rs.toString());
 
                     // 记录价格变更履历/同步价格范围
@@ -297,7 +317,7 @@ public class CmsProductPriceUpdateService extends BaseService {
                     for (BaseMongoMap skuObj : skuList) {
                         String skuCode = (String) skuObj.getStringAttribute("skuCode");
                         CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
-                        cmsBtPriceLogModel.setChannelId(channleId);
+                        cmsBtPriceLogModel.setChannelId(channelId);
                         cmsBtPriceLogModel.setProductId(prodObj.getProdId().intValue());
                         cmsBtPriceLogModel.setCode(prodCode);
                         cmsBtPriceLogModel.setCartId(cartId);
@@ -331,21 +351,34 @@ public class CmsProductPriceUpdateService extends BaseService {
                         if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
                             // 天猫平台直接调用API
                             try {
-                                priceService.updateSkuPrice(channleId, cartId, prodObj);
+                                if("2".equals(autoSyncPricePromotion.getConfigValue1())){
+                                    //取得该channel cartId的所有的活动
+                                    List<CmsBtPromotionBean> promtions = promotionService.getByChannelIdCartId(channelId, cartId);
+                                    if(!ListUtils.isNull(promtions)) {
+                                        List<Integer> promotionIds = promotionService.getDateRangePromotionIds(promtions, new Date(), autoSyncPricePromotion.getConfigValue2(), autoSyncPricePromotion.getConfigValue3());
+                                        if(!ListUtils.isNull(promotionIds)) {
+                                            if (promotionCodeService.getCmsBtPromotionCodeInPromtionCnt(prodObj.getCommon().getFields().getCode(), promotionIds) >0){
+                                                continue;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                priceService.updateSkuPrice(channelId, cartId, prodObj);
                             } catch (Exception e) {
 
                                 Map<String, String> failMap = new HashMap<String, String>();
-                                failMap.put(prodCode, String.format("修改商品价格 调用天猫API失败, channelId=%s, code=%s, errmsg=%s", channleId, prodCode, e.getMessage()));
+                                failMap.put(prodCode, String.format("修改商品价格 调用天猫API失败, channelId=%s, code=%s, errmsg=%s", channelId, prodCode, e.getMessage()));
                                 failList.add(failMap);
 
-                                $error(String.format("CmsProductPriceUpdateService.updateProductRetailPrice 修改商品价格 调用天猫API失败 channelId=%s, cartId=%d msg=%s", channleId, cartId, e.getMessage()), e);
+                                $error(String.format("CmsProductPriceUpdateService.updateProductRetailPrice 修改商品价格 调用天猫API失败 channelId=%s, cartId=%d msg=%s", channelId, cartId, e.getMessage()), e);
                             }
                         }
                     }
                 }catch (Exception e){
 
                     Map<String, String> failMap = new HashMap<String, String>();
-                    failMap.put(prodCode, String.format("CmsProductPriceUpdateService.updateProductRetailPrice执行出错, channelId=%s, code=%s, cartId=%s, errmsg=%s", channleId, prodCode, cartId, e.getMessage()));
+                    failMap.put(prodCode, String.format("CmsProductPriceUpdateService.updateProductRetailPrice执行出错, channelId=%s, code=%s, cartId=%s, errmsg=%s", channelId, prodCode, cartId, e.getMessage()));
                     failList.add(failMap);
 
                     $error(e);
@@ -355,7 +388,7 @@ public class CmsProductPriceUpdateService extends BaseService {
             // 记录商品修改历史
             $debug("CmsRefreshRetailPriceTask 开始记入商品修改历史");
             long sta = System.currentTimeMillis();
-            productStatusHistoryService.insertList(channleId, codeList, cartId, EnumProductOperationType.BatchRefreshRetailPrice, msg, userName);
+            productStatusHistoryService.insertList(channelId, codeList, cartId, EnumProductOperationType.BatchRefreshRetailPrice, msg, userName);
             $debug("CmsRefreshRetailPriceTask 记入商品修改历史结束 耗时" + (System.currentTimeMillis() - sta));
 
             // 只有最终售价变化了，才需要上新
@@ -365,7 +398,7 @@ public class CmsProductPriceUpdateService extends BaseService {
                     // 插入上新程序
                     $debug("CmsRefreshRetailPriceTask 开始记入SxWorkLoad表");
                     sta = System.currentTimeMillis();
-                    sxProductService.insertSxWorkLoad(channleId, codeList, cartId, userName);
+                    sxProductService.insertSxWorkLoad(channelId, codeList, cartId, userName);
                     $debug("CmsRefreshRetailPriceTask 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
                 }
             }

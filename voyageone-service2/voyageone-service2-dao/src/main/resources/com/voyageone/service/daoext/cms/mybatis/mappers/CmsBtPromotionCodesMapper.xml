@@ -469,8 +469,8 @@
         where
            product_code = #{code,jdbcType=VARCHAR}
         and promotion_id in
-        <foreach collection="list" item="promotionIds" open="(" separator="," close=")">
-            #{list}
+        <foreach collection="promotionIds" item="item" open="(" separator="," close=")">
+            #{item}
         </foreach>
     </select>
 </mapper>
