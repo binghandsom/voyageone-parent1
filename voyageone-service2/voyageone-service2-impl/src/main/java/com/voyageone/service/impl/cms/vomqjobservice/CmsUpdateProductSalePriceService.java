@@ -352,6 +352,7 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                             List<Integer> promotionIds = promotionService.getDateRangePromotionIds(promtions, new Date(), autoSyncPricePromotion.getConfigValue2(), autoSyncPricePromotion.getConfigValue3());
                             if(!ListUtils.isNull(promotionIds)) {
                                 if (promotionCodeService.getCmsBtPromotionCodeInPromtionCnt(prodObj.getCommon().getFields().getCode(), promotionIds) >0){
+                                    $info(String.format("channel=%s code=%s cartId=%d 有活动保护期 不更新平台价格", channelId,prodObj.getCommon().getFields().getCode(), cartId));
                                     continue;
                                 }
                             }
