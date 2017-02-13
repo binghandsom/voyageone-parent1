@@ -1,6 +1,8 @@
-define(function (require) {
-    var _ = require('underscore');
-    require('cms').controller('PriceConfirmLogController', (function () {
+define([
+    'cms'
+],function (cms) {
+
+    cms.controller('PriceConfirmLogController', (function () {
         function PriceConfirmLogController($menuService, context, priceConfirmLogService) {
             var self = this;
             var skuList = _.map(context.skuList, function (skuObj) {
@@ -85,6 +87,9 @@ define(function (require) {
                 self.paging.total = result.count;
             });
         };
+
         return PriceConfirmLogController;
+
     })());
+
 });
