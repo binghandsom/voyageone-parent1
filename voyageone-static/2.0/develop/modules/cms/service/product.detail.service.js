@@ -252,7 +252,7 @@ define([
 
 			return defer.promise;
 		}
-		
+
 		// 取得SKU的库存信息
 		function getSkuStockInfo(req) {
 			var defer = $q.defer();
@@ -272,6 +272,7 @@ define([
          */
 		function changePlatformCategory(req){
 			var defer = $q.defer();
+
 			$productDetailService.changePlatformCategory(req)
 				.then (function (res) {
 					defer.resolve(res);

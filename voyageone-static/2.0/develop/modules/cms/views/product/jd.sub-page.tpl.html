@@ -136,12 +136,12 @@
                             <div class="row">
                                 <span class="text-warnings cur-p pull-right" ng-click="ctrl.showExt()"><i class="icon fa fa-question-circle text-md"></i>&nbsp;</span>
 
-                                <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Pending'" ng-hide="isPublishSucceed">
+                                <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Pending'" >
                                     <button class="btn btn-vo" ng-click="ctrl.saveProduct('ready')" ng-disabled="ctrl.vm.checkFlag.translate != 1 || ctrl.vm.checkFlag.tax != 1 ||
                                                                                             ctrl.vm.checkFlag.category != 1 || ctrl.vm.checkFlag.attribute == false">
                                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Ready</button>
                                 </div>
-                                <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Pending'" ng-hide="isPublishSucceed">
+                                <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Pending' || ctrl.vm.status == 'Ready'" >
                                     <button class="btn btn-vo" ng-click="ctrl.saveProduct('temporary')" ng-disabled="ctrl.vm.checkFlag.category != 1">
                                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
 
@@ -151,8 +151,8 @@
                                                                                             ctrl.vm.checkFlag.category != 1 || ctrl.vm.checkFlag.attribute == false">
                                         <i class="glyphicon glyphicon-floppy-disk"></i>Approved</button>
                                 </div>
-                                <div class="pull-right m-t-xs m-r-xs" ng-if="vm.publishEnabled">
-                                    <button class="btn btn-vo" ng-click="publishProduct()" ng-disabled="vm.checkFlag.tax != 1 || !vm.platform.pBrandName || vm.checkFlag.category != 1">
+                                <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.publishEnabled">
+                                    <button class="btn btn-vo" ng-click="publishProduct()" ng-disabled="vm.checkFlag.tax != 1 || !vm.platform.pBrandName">
                                         <i class="glyphicon glyphicon-floppy-disk"></i>智能上新
                                     </button>
                                 </div>
