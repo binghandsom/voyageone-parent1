@@ -59,6 +59,10 @@ public class PromotionSkuService extends BaseService {
         return cmsBtPromotionSkusDao.selectList(map);
     }
 
+    public int update(CmsBtPromotionSkusModel cmsBtPromotionSkusModel) {
+        return cmsBtPromotionSkusDao.update(cmsBtPromotionSkusModel);
+    }
+
     public CmsBtPromotionSkusModel get(int promotionId, String productCode, String productSku) {
         Map<String, Object> map = new HashedMap();
         map.put("promotionId", promotionId);

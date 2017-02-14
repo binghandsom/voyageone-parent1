@@ -19,6 +19,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
+import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
@@ -27,6 +28,8 @@ import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
+import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.UpdateProductSalePriceMQMessageBody;
 import com.voyageone.service.impl.com.cache.CommCacheService;
@@ -40,10 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 修改商品saleprice业务类
@@ -64,6 +64,13 @@ public class CmsUpdateProductSalePriceService extends BaseService {
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
+    @Autowired
+    private SxProductService sxProductService;
+    @Autowired
+    private PromotionService promotionService;
+    @Autowired
+    private PromotionCodeService promotionCodeService;
+
 
     public void process(UpdateProductSalePriceMQMessageBody mqMessageBody){
         long threadNo =  Thread.currentThread().getId();
@@ -76,19 +83,30 @@ public class CmsUpdateProductSalePriceService extends BaseService {
         Map<String, Object> params = mqMessageBody.getParams();
         // 检查商品价格 notChkPrice=1时表示忽略价格超过阈值
         Integer notChkPriceFlg = (Integer) params.get("notChkPrice");
-        if (notChkPriceFlg == null) {
-            notChkPriceFlg = 0;
+        Boolean synPrice = null;
+
+        CmsChannelConfigBean autoSyncPricePromotion = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_PROMOTION, cartId.toString());
+        if (autoSyncPricePromotion == null) {
+            autoSyncPricePromotion = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_PROMOTION);
         }
+
+        if(autoSyncPricePromotion == null){
+            autoSyncPricePromotion = new CmsChannelConfigBean();
+            autoSyncPricePromotion.setConfigValue1("0");
+            autoSyncPricePromotion.setConfigValue2("0");
+            autoSyncPricePromotion.setConfigValue3("0");
+        }
+
 
         String priceType = StringUtils.trimToNull((String) params.get("priceType"));
         String optionType = StringUtils.trimToNull((String) params.get("optionType"));
         String priceValue = StringUtils.trimToNull((String) params.get("priceValue"));
-        // 小数点向上取整:1    个位向下取整:2    个位向上取整:3    无特殊处理:4
+        // 无特殊处理:0  小数点向上取整:1    个位向下取整:2    个位向上取整:3
         Integer roundType = (Integer) params.get("roundType");
         if (roundType == null) {
             roundType = 0;
         }
-        // 商品内，SKU统一最高价:1 商品内，SKU统一最低价:2  商品内，SKU价格不统一:3
+        // 商品内，SKU价格不统一:0  商品内，SKU统一最高价:1 商品内，SKU统一最低价:2   黄金码:3
         Integer skuUpdType = (Integer) params.get("skuUpdType");
         if (skuUpdType == null) {
             skuUpdType = 0;
@@ -149,10 +167,36 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                             maxPriceSale = befPriceSale;
                         }
                     }
+                }else if(skuUpdType == 3){
+                    try {
+                        Map<String, String> goldSize  = null;
+                        Map<String, CmsBtProductModel_Sku> skuinfo = new HashMap();
+                        //找出黄金尺码
+                        prodObj.getCommonNotNull().getSkus().forEach(sku -> {
+                            skuinfo.put(sku.getSkuCode(), sku);
+                        });
+                        goldSize = sxProductService.getSizeMap(channelId, prodObj.getCommon().getFields().getBrand(), prodObj.getCommon().getFields().getProductType(), prodObj.getCommon().getFields().getSizeType());
+                        // 统一最低价
+                        for (BaseMongoMap skuObj : skuList) {
+                            if(skuObj.get("isSale") != null ){
+                                double befPriceSale = skuObj.getDoubleAttribute(priceType);
+                                CmsBtProductModel_Sku comSkuInfo = skuinfo.get((String) skuObj.get("skuCode"));
+                                if(comSkuInfo != null && comSkuInfo.getQty() > 0 && goldSize.containsKey(comSkuInfo.getSize())){
+                                    if(maxPriceSale == null || maxPriceSale < befPriceSale){
+                                        maxPriceSale = befPriceSale;
+                                    }
+                                }
+                            }
+                        }
+                        $debug("黄金尺码最大值"+ (maxPriceSale==null?"": maxPriceSale+""));
+                    }catch (BusinessException e){
+                        $warn(e.getMessage());
+                        throw e;
+                    }
                 }
             }
-
             try {
+                synPrice = null;
                 for (BaseMongoMap skuObj : skuList) {
                     skuCode = skuObj.getStringAttribute("skuCode");
                     if (StringUtils.isEmpty(skuCode)) {
@@ -199,7 +243,10 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                         // 修改前后价格相同
 //                        $info(String.format("setProductSalePrice: 修改前后价格相同 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
                         continue;
+                    }else if(rs < befPriceSale){
+                        synPrice = true;
                     }
+
 
                     Object priceRetail = skuObj.get("priceRetail");
                     if (priceRetail == null) {
@@ -279,10 +326,10 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                 }
 
                 try {
-                    priceService.setPrice(prodObj, cartId, false);
-                }catch (IllegalPriceConfigException | PriceCalculateException e) {
-                    $error(String.format("批量修改商品价格　调用PriceService.setPrice失败 channelId=%s, cartId=%s msg=%s", channelId, cartId.toString(), e.getMessage()), e);
-                    throw new BusinessException(prodCode, String.format("批量修改商品价格　调用PriceService.setPrice失败 channelId=%s, cartId=%s", channelId, cartId), e);
+                    priceService.unifySkuPriceMsrp(prodObj.getPlatform(cartId).getSkus(),channelId,cartId);
+                }catch (Exception e) {
+                    $error(String.format("批量修改商品价格　调用priceService.unifySkuPriceMsrp失败 channelId=%s, cartId=%s msg=%s", channelId, cartId.toString(), e.getMessage()), e);
+                    throw new BusinessException(prodCode, String.format("批量修改商品价格　调用priceService.unifySkuPriceMsrp失败 channelId=%s, cartId=%s", channelId, cartId), e);
                 }
                 // 更新产品的信息
                 JongoUpdate updObj = new JongoUpdate();
@@ -297,7 +344,23 @@ public class CmsUpdateProductSalePriceService extends BaseService {
 
                 // 是天猫平台时直接调用API更新sku价格(要求已上新)
                 try {
-                    priceService.updateSkuPrice(channelId, cartId, prodObj);
+                    // 价格降价 并且AUTO_SYNC_PRICE_PLATFORM = 2（根据活动前后时间判断是否同步平台售价）时
+                    if(synPrice && "2".equals(autoSyncPricePromotion.getConfigValue1())){
+                        //取得该channel cartId的所有的活动
+                        List<CmsBtPromotionBean> promtions = promotionService.getByChannelIdCartId(channelId, cartId);
+                        if(!ListUtils.isNull(promtions)) {
+                            List<Integer> promotionIds = promotionService.getDateRangePromotionIds(promtions, new Date(), autoSyncPricePromotion.getConfigValue2(), autoSyncPricePromotion.getConfigValue3());
+                            if(!ListUtils.isNull(promotionIds)) {
+                                if (promotionCodeService.getCmsBtPromotionCodeInPromtionCnt(prodObj.getCommon().getFields().getCode(), promotionIds) >0){
+                                    $info(String.format("channel=%s code=%s cartId=%d 有活动保护期 不更新平台价格", channelId,prodObj.getCommon().getFields().getCode(), cartId));
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                    if("1".equalsIgnoreCase(autoSyncPricePromotion.getConfigValue1())){
+                        priceService.updateSkuPrice(channelId, cartId, prodObj);
+                    }
                 } catch (Exception e) {
                     $error(String.format("批量修改商品价格　调用API失败 channelId=%s, cartId=%s msg=%s", channelId, cartId.toString(), e.getMessage()), e);
                     throw new BusinessException(prodCode, String.format("批量修改商品价格　调用API失败 channelId=%s, cartId=%s", channelId, cartId.toString()), e);

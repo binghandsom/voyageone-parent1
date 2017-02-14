@@ -22,18 +22,24 @@
        <select id="cms_batchSelectInventory" parameterType="java.util.Map" resultMap="SkuInventoryMap">
               select order_channel_id, code, sku, qty_china
               FROM wms_bt_inventory_center_logic
-              WHERE
-              <choose>
-                     <when test="order_channel_id=='928'">
-                            1=1
-                     </when>
-                     <otherwise>
-                            order_channel_id = #{order_channel_id}
-                     </otherwise>
-              </choose>
-              and code in
-              <foreach item="item" index="index" collection="codes" open="(" separator="," close=")">
-                     #{item}
-              </foreach>
+              <where>
+                     <choose>
+                            <when test="order_channel_id=='928'">
+                                   1=1
+                            </when>
+                            <otherwise>
+                                   order_channel_id = #{order_channel_id}
+                            </otherwise>
+                     </choose>
+                     <if test="codes != null">
+                            and code in
+                            <foreach item="item" index="index" collection="codes" open="(" separator="," close=")">
+                                   #{item}
+                            </foreach>
+                     </if>
+              </where>
+              <if test="offset != null">
+                LIMIT #{offset}, #{size}
+              </if>
        </select>
 </mapper>
