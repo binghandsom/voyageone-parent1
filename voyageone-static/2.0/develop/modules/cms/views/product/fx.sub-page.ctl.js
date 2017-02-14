@@ -575,7 +575,7 @@ define([
         });
     };
 
-    cms.directive('dgSubPage', function () {
+    cms.directive('fxSubPage', function () {
         return {
             restrict: 'E',
             controller: ['$scope', 'productDetailService', '$translate', 'notify', 'confirm', '$q', '$compile', 'alert', 'popups', '$fieldEditService', '$document', '$templateRequest', SpJdController],
@@ -584,7 +584,7 @@ define([
                 productInfo: "=productInfo",
                 cartInfo: "=cartInfo"
             },
-            templateUrl: 'views/product/dg.sub-page.tpl.html',
+            templateUrl: 'views/product/fx.sub-page.tpl.html',
             link: function ($scope, element) {
                 $scope.ctrl.init(element);
             }

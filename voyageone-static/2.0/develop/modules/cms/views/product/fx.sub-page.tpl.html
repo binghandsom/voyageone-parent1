@@ -59,31 +59,6 @@
                                     </button>
                                     <ul uib-dropdown-menu>
                                         <li>
-                                            <a href="javascript:void(0)" ng-click="ctrl.openOffLinePop('single')">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;单Code下线
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="ctrl.openOffLinePop('group')">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;全group下线
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="ctrl.openSwitchMainPop()">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;切换主商品
-                                            </a>
-                                        </li>
-                                        <li ng-if="ctrl.vm.mastData.isMain != true">
-                                            <a href="javascript:void(0)" ng-click="ctrl.copyMainProduct()">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;复制主商品
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="ctrl.moveToGroup()" target="_blank">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;移动到其他Group
-                                            </a>
-                                        </li>
-                                        <li>
                                             <a href="javascript:void(0)">
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;产品下架
                                             </a>
@@ -103,13 +78,6 @@
                                         <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.tax == 1"></i>
                                         <i class="fa fa-times" ng-if="ctrl.vm.checkFlag.tax != 1"></i>
                                     </span>
-                                </li>
-                                <!-----------------------------添加聚焦提示------------------------>
-                                <li ng-click="ctrl.focusError()" ng-style="{ cursor:!ctrl.validSchema() ? 'pointer' : 'default' }">
-                                        <span ng-class = "{tagFlag:!ctrl.validSchema()}">{{'TXT_ATTRIBUTE' | translate}}&emsp;
-                                            <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.attribute = ctrl.validSchema()"></i>
-                                            <i class="fa fa-times" ng-if="!ctrl.validSchema()"></i>
-                                        </span>
                                 </li>
                             </ul>
                             <div class="text-warnings no-master" style="padding-left:0px;" ng-if="ctrl.vm.noMaterMsg">
@@ -262,6 +230,18 @@
                                 <div class="col-md-8 m-l-35">
                                     <input class="form-control" ng-model="ctrl.vm.mastData.productName" readonly>
                                 </div>
+                            </div>
+                            <div class="row form-group">
+                                <button class="col-md-2 btn btn-default" ng-click="choseBrand()">
+                                    <span>{{cartInfo.name}}&nbsp;{{"TXT_BRAND" | translate}}</span>
+                                </button>
+                                <div class="col-md-1" style="width: 35px">
+                                    <span notice-direction="bottom" notice-content="如没有显示品牌，请先确认是否在{{cartInfo.name}}后台申请过相应品牌，点击左侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
+                                </div>
+                                <div class="col-md-8">
+                                    <input class="form-control" ng-model="ctrl.vm.platform.pBrandName" readonly>
+                                </div>
+
                             </div>
                         </div>
 
