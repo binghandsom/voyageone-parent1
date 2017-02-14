@@ -33,6 +33,7 @@
     <!--<import resource="file:/usr/web/spring-config/solr-config.xml"/>-->
     <!--<import resource="file:/usr/web/spring-config/datasource-security-config.xml"/>-->
     <!--<import resource="file:/usr/web/spring-config/datasource-admin-common-config.xml"/>-->
+    <!--<import resource="file:/usr/web/spring-config/datasource-report-config.xml"/>-->
 
 
 </beans>
