@@ -25,7 +25,9 @@ public class PriceServiceTest {
     @Test
     public void unifySkuPriceSale() throws Exception {
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode("928","10006255");
-        priceService.unifySkuPriceSale(cmsBtProductModel, cmsBtProductModel.getPlatform(28).getSkus(),"928", 28);
+        Integer chg = priceService.setPrice(cmsBtProductModel,false);
+//        priceService.unifySkuPriceSale(cmsBtProductModel, cmsBtProductModel.getPlatform(28).getSkus(),"928", 28);
+        System.out.println(chg);
         return;
     }
 

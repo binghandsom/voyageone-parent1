@@ -17,6 +17,7 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdSkuService;
 import com.voyageone.components.jumei.JumeiHtDealService;
@@ -29,6 +30,7 @@ import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.impl.cms.promotion.PromotionTejiabaoService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
@@ -39,6 +41,7 @@ import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -69,6 +72,7 @@ public class PriceService extends BaseService {
     private final ImsBtProductDao imsBtProductDao;
     private final TbItemService tbItemService;
     private final SxProductService sxProductService;
+    private final PromotionTejiabaoService promotionTejiabaoService;
 
     final
     JumeiHtMallService jumeiHtMallService;
@@ -82,7 +86,7 @@ public class PriceService extends BaseService {
     @Autowired
     public PriceService(CmsMtFeeShippingService feeShippingService, CmsMtFeeTaxService feeTaxService,
                         CmsMtFeeCommissionService feeCommissionService, CmsMtFeeExchangeService feeExchangeService,
-                        ProductSkuService productSkuService, ImsBtProductDao imsBtProductDao, TbItemService tbItemService, SxProductService sxProductService, JumeiHtMallService jumeiHtMallService, JdSkuService jdSkuService, JumeiHtDealService serviceJumeiHtDeal) {
+                        ProductSkuService productSkuService, ImsBtProductDao imsBtProductDao, TbItemService tbItemService, SxProductService sxProductService, JumeiHtMallService jumeiHtMallService, JdSkuService jdSkuService, JumeiHtDealService serviceJumeiHtDeal, PromotionTejiabaoService promotionTejiabaoService) {
         this.feeShippingService = feeShippingService;
         this.feeTaxService = feeTaxService;
         this.feeCommissionService = feeCommissionService;
@@ -94,6 +98,7 @@ public class PriceService extends BaseService {
         this.jumeiHtMallService = jumeiHtMallService;
         this.jdSkuService = jdSkuService;
         this.serviceJumeiHtDeal = serviceJumeiHtDeal;
+        this.promotionTejiabaoService = promotionTejiabaoService;
     }
 
     /**
@@ -107,9 +112,11 @@ public class PriceService extends BaseService {
      * @throws IllegalPriceConfigException 计算价格前, 依赖的配置读取错误
      * @throws PriceCalculateException     计算价格时, 计算过程错误或结果错误
      */
-    public void setPrice(CmsBtProductModel product, boolean synSalePriceFlg) throws IllegalPriceConfigException, PriceCalculateException {
+    public Integer setPrice(CmsBtProductModel product, boolean synSalePriceFlg) throws IllegalPriceConfigException, PriceCalculateException {
 
+        Integer chg = 0;
         Assert.notNull(product).elseThrowDefaultWithTitle("product");
+        CmsBtProductModel old = JacksonUtil.json2Bean(JacksonUtil.bean2Json(product),CmsBtProductModel.class);
 
         Map<String, CmsBtProductModel_Platform_Cart> platforms = product.getPlatforms();
 
@@ -125,8 +132,9 @@ public class PriceService extends BaseService {
                 continue;
 
             setPrice(product, cartId, synSalePriceFlg);
+            chg |= skuCompare(old, product, cartId);
         }
-
+        return chg;
     }
 
     /**
@@ -545,7 +553,7 @@ public class PriceService extends BaseService {
                 if (minRetail == null || minRetail > retailPrice) {
                     minRetail = retailPrice;
                 }
-                if (minRetail == null || maxRetail < retailPrice) {
+                if (maxRetail == null || maxRetail < retailPrice) {
                     maxRetail = retailPrice;
                 }
             }
@@ -1244,6 +1252,7 @@ public class PriceService extends BaseService {
         if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
             // 天猫平台直接调用API
             tmUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType, platObj.getpNumIId());
+            promotionTejiabaoService.updateTejiabaoPrice(channleId, cartId, productModel.getCommon().getFields().getCode(), productModel.getPlatform(cartId).getSkus(), "priceService");
 
         } else if (PlatFormEnums.PlatForm.JM.getId().equals(cartObj.getPlatform_id())) {
             // votodo -- PriceService  聚美平台 更新商品SKU的价格
@@ -1420,5 +1429,58 @@ public class PriceService extends BaseService {
                 jdSkuService.updateSkuPriceByOuterId(shopBean, f.getOuterId(), f.getPrice().toString());
             }
         });
+    }
+
+    public Integer skuCompare(CmsBtProductModel product1, CmsBtProductModel product2){
+
+        Map<String, CmsBtProductModel_Platform_Cart> platforms = product1.getPlatforms();
+
+        for (Map.Entry<String, CmsBtProductModel_Platform_Cart> cartEntry : platforms.entrySet()) {
+
+            CmsBtProductModel_Platform_Cart cart = cartEntry.getValue();
+
+            Integer cartId = cart.getCartId();
+
+            // 对特定平台进行跳过
+            // 不需要为这些平台计算价格
+            if (cartId < CmsConstants.ACTIVE_CARTID_MIN)
+                continue;
+
+            Integer ret = skuCompare(product1, product2, cartId);
+            if(ret != 0) return ret;
+        }
+        return 0;
+    }
+
+    /**
+     * 比较两个产品的价格和isSale有没有变化
+     * @param product1 产品1
+     * @param product2 产品2
+     * @param cartId  渠道
+     * @return 0：没有变化 1：isSale变化 2：价格变化  3：isSale和价格都有变化
+     */
+    public Integer skuCompare(CmsBtProductModel product1, CmsBtProductModel product2, Integer cartId){
+        Integer ret = 0;
+        if(cartId == null){
+            return ret;
+        }
+
+        CmsBtProductModel_Platform_Cart platform1 = product1.getPlatform(cartId);
+        CmsBtProductModel_Platform_Cart platform2 = product2.getPlatform(cartId);
+        for(BaseMongoMap<String, Object> sku1:platform1.getSkus()){
+            for(BaseMongoMap<String, Object> sku2:platform2.getSkus()){
+                if(sku1.getStringAttribute(Platform_SKU_COM.skuCode.name()).compareTo(sku2.getStringAttribute(Platform_SKU_COM.skuCode.name())) == 0){
+                    if(sku1.getAttribute(Platform_SKU_COM.isSale.name()) != sku2.getAttribute(Platform_SKU_COM.isSale.name())){
+                        ret |= 1;
+                    }
+
+                    if (Double.compare(sku1.getDoubleAttribute(Platform_SKU_COM.priceSale.name()), sku2.getDoubleAttribute(Platform_SKU_COM.priceSale.name())) != 0) {
+                        ret |= 2;
+                    }
+                    break;
+                }
+            }
+        }
+        return ret;
     }
 }
