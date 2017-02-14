@@ -19,7 +19,8 @@ define([
     './price.component.ctl',
     './dl.component.ctl',
     './inventory.component.ctl',
-    './jd.sub-page.ctl'
+    './jd.sub-page.ctl',
+    './jm.sub-page.ctl',
 ], function (cms) {
 
     return cms.controller('productDetailController', (function () {
@@ -72,7 +73,7 @@ define([
                     self.defaultCartId = _cartObj;
             }*/
 
-            self.defaultCartId = 26;
+            self.defaultCartId = 27;
 
         };
 

@@ -59,31 +59,6 @@
                                     </button>
                                     <ul uib-dropdown-menu>
                                         <li>
-                                            <a href="javascript:void(0)" ng-click="ctrl.openOffLinePop('single')">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;单Code下线
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="ctrl.openOffLinePop('group')">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;全group下线
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="ctrl.openSwitchMainPop()">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;切换主商品
-                                            </a>
-                                        </li>
-                                        <li ng-if="ctrl.vm.mastData.isMain != true">
-                                            <a href="javascript:void(0)" ng-click="ctrl.copyMainProduct()">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;复制主商品
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="ctrl.moveToGroup()" target="_blank">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;移动到其他Group
-                                            </a>
-                                        </li>
-                                        <li>
                                             <a href="javascript:void(0)">
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;产品下架
                                             </a>
@@ -168,10 +143,11 @@
                                     <platform-status data="ctrl.vm.platform" ng-if="ctrl.vm.platform"></platform-status>
                                 </label>
                                 <div class="col-md-8">
-                                    <span notice-direction="right" notice-content="【{{cartInfo.name}} NumIID】，红灯时为上新/更新失败状态，请及时修正；绿灯时为在售状态；黄灯时为在库状态；灰灯时为未发布状态。点击以上{{cartInfo.name}} NumIID进入{{cartInfo.name}}商品页面。" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
+                                    <span notice-direction="bottom" notice-content="聚美存在特殊情况，JM Origin HID为聚美上新用原始Deal的HashID，所有聚美正式销售所使用的HashID，请参照聚美活动一览内的记录。" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
+
                                     <span class="m-r-sm" ng-if="ctrl.vm.platform.pNumIId">&nbsp;
-                                        <a ng-href="{{ctrl.vm.productUrl}}{{ctrl.vm.platform.pNumIId}}" target="_blank">
-                                            {{ctrl.vm.platform.pNumIId}}
+                                        <a ng-href="{{ctrl.vm.productUrl}}{{ctrl.vm.platform.pPlatformMallId}}.html" target="_blank">
+                                            {{ctrl.vm.platform.pPlatformMallId}}
                                         </a>
                                     </span>&nbsp;
                                     <span class="m-r-sm" ng-if="ctrl.vm.platform.pStatus == 'Failed'" title="{{ctrl.vm.platform.pPublishMessage}}">&nbsp;
@@ -219,41 +195,19 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-
                                 <button class="col-md-2 btn btn-default" ng-click="ctrl.categoryMapping()" ng-disabled = "ctrl.vm.mastData.isMain!= true  "><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
                                 </button>
                                 <div class="col-md-1" style="width: 35px;">
-                                    <span notice-direction="right" notice-content="切换平台类目将影响整个Group中的所有商品，请慎重！" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
+                                    <span notice-direction="bottom" notice-content="切换平台类目将影响整个Group中的所有商品，请慎重！" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
                                 </div>
                                 <div class="col-md-8">
                                     <input class="form-control"  ng-model="ctrl.vm.platform.pCatPath" readonly>
                                 </div>
-
-                            </div>
-                            <div class="row form-group">
-                                <button class="col-md-2 btn btn-default ng-binding"  ng-click="ctrl.openSellerCat()"><span>{{cartInfo.name}}&nbsp;店铺内分类</span>
-                                </button>
-                                <div class="col-md-1" style="width: 35px;">
-                                    <span notice-direction="right" notice-content="切换平台店铺内分类将影响整个Group中的所有商品，请慎重！" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="panel panel-default">
-                                        <div class="panel-body">
-                                            <ul>
-                                                <li ng-repeat="item in ctrl.vm.sellerCats">
-                                                    <span class="label label-info" style="margin-left: 10px;">{{item.cName}}</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-                                </div>
-
                             </div>
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>model</strong></label>
-                                <div class="col-md-1" style="width: 35px">
-                                    <span notice-direction="right" notice-content="拆分Group 或 切换主商品，请点击以上Number ID，进入Group详情画面编辑" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
+                                <div class="col-md-1" style="width: 35px;">
+                                    <span notice-direction="bottom" notice-content="拆分Group 或 切换主商品，请点击以上Number ID，进入Group详情画面编辑" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
                                 </div>
                                 <div class="col-md-8">
                                     <span>
@@ -266,13 +220,9 @@
                             </div>
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>{{"TXT_PRODUCT_CODE"|translate}}</strong></label>
-                                <div class="col-md-1" style="width: 35px;">
-                                    <span notice-direction="right" notice-content="如果此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
-                                </div>
-                                <div class="col-md-8">
+                                <div class="col-md-8 m-l-35">
                                     <input class="form-control" ng-model="ctrl.vm.mastData.productCode" readonly>
                                 </div>
-
                             </div>
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>{{"TXT_PRODUCT_NAME"|translate}}</strong></label>
@@ -286,8 +236,8 @@
                                         ng-disabled="ctrl.vm.status == 'Approved' && ctrl.vm.platform.pBrandName">
                                     <span>{{cartInfo.name}}&nbsp;{{"TXT_BRAND" | translate}}</span>
                                 </button>
-                                <div class="col-md-1" style="width: 35px">
-                                    <span notice-direction="right" notice-content="如没有显示品牌，请先确认是否在{{cartInfo.name}}后台申请过相应品牌，点击左侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
+                                <div class="col-md-1" style="width: 35px;">
+                                    <span notice-direction="bottom" notice-content="如没有显示品牌，请先确认是否在{{cartInfo.name}}后台申请过相应品牌，点击左侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
                                 </div>
                                 <div class="col-md-8">
                                     <input class="form-control" ng-model="ctrl.vm.platform.pBrandName" readonly>
@@ -338,12 +288,13 @@
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-sm-5 col-md-offset-7 text-right">
+                                    <span notice-direction="left bottom" notice-content="更新价格按钮，只更新同步该平台的价格！" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-pop btn-info" ng-click="ctrl.refreshPrice()" ng-disabled="!ctrl.vm.platform.pNumIId">
                                             <i class="fa fa-refresh"></i>&nbsp;更新价格
                                         </button>
                                     </div>
-                                    <span notice-direction="left bottom" notice-content="更新价格按钮，只更新同步该平台的价格！" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
+
                                 </div>
                             </div>
                         </div>
@@ -365,6 +316,7 @@
                                             <th class="mfb-xxx text-center">{{"TXT_CHINA_MSRP_PRICE"|translate}}</th>
                                             <th class="text-center">{{"TXT_CHINA_RETAIL_PRICE"|translate}}</th>
                                             <th class="text-center">容量/尺码</th>
+                                            <th class="text-center">规格</th>
                                             <th class="mfb-xxx text-center">{{"TXT_FINAL_SALE_PRICE"|translate}}</th>
                                             <th class="text-center">{{"TXT_BAR_CODE"|translate}}</th>
                                         </tr>
@@ -389,6 +341,13 @@
                                             </td>
                                             <td class="text-center v-middle">{{entity.priceRetail}}</td>
                                             <td class="text-center v-middle"><input class="form-control" type="text" ng-model="entity.sizeNick" style="width: 100px;margin: 0px auto;"></td>
+                                            <td class="text-center v-middle">
+                                                <select ng-model="entity.property" class="form-control">
+                                                    <option value="OTHER">其他</option>
+                                                    <option value="FORMAL">正装</option>
+                                                    <option value="MS">中小样</option>
+                                                </select>
+                                            </td>
                                             <td class="mfb-xxx text-center v-middle">
                                                 <label class="col-sm-3 control-label vo_reqfield"></label>
                                                 <input class="form-control ng-number" type="number"  ng-model="entity.priceSale" ng-readonly="productInfo.autoApprovePrice.configValue1 == '1'"  scale="15,2" required></td>
