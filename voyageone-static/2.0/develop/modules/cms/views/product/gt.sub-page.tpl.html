@@ -99,29 +99,10 @@
                             <!----------------------------------check 状态------------------------------------------>
                             <ul class="nav nav-pills">
                                 <li>
-                                        <span ng-class = "{tagFlag:ctrl.vm.checkFlag.translate != 1}">{{'TXT_TRANSSTS_ATTRIBUTE' | translate}}&emsp;
-                                            <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.translate == 1"></i>
-                                            <i class="fa fa-times" ng-if="ctrl.vm.checkFlag.translate != 1"></i>
-                                        </span>
-                                </li>
-                                <li>
-                                        <span ng-class = "{tagFlag:ctrl.vm.checkFlag.tax != 1}">{{'TXT_HS_CODE_STATUS' | translate}}&emsp;
-                                            <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.tax == 1"></i>
-                                            <i class="fa fa-times" ng-if="ctrl.vm.checkFlag.tax != 1"></i>
-                                        </span>
-                                </li>
-                                <li>
-                                        <span ng-class = "{tagFlag:ctrl.vm.checkFlag.category != 1}">{{'TXT_PLATFORM_CATEGORY' | translate}}&emsp;
-                                            <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.category == 1"></i>
-                                            <i class="fa fa-times" ng-if="ctrl.vm.checkFlag.category != 1"></i>
-                                        </span>
-                                </li>
-                                <!-----------------------------添加聚焦提示------------------------>
-                                <li ng-click="ctrl.focusError()" ng-style="{ cursor:!ctrl.validSchema() ? 'pointer' : 'default' }">
-                                        <span ng-class = "{tagFlag:!ctrl.validSchema()}">{{'TXT_ATTRIBUTE' | translate}}&emsp;
-                                            <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.attribute = ctrl.validSchema()"></i>
-                                            <i class="fa fa-times" ng-if="!ctrl.validSchema()"></i>
-                                        </span>
+                                    <span ng-class = "{tagFlag:ctrl.vm.checkFlag.tax != 1}">{{'TXT_HS_CODE_STATUS' | translate}}&emsp;
+                                        <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.tax == 1"></i>
+                                        <i class="fa fa-times" ng-if="ctrl.vm.checkFlag.tax != 1"></i>
+                                    </span>
                                 </li>
                             </ul>
                             <div class="text-warnings no-master" style="padding-left:0px;" ng-if="ctrl.vm.noMaterMsg">
@@ -150,11 +131,6 @@
                                     <button class="btn btn-vo" ng-click="ctrl.saveProduct()" ng-disabled="ctrl.vm.checkFlag.translate != 1 || ctrl.vm.checkFlag.tax != 1 ||
                                                                                             ctrl.vm.checkFlag.category != 1 || ctrl.vm.checkFlag.attribute == false">
                                         <i class="glyphicon glyphicon-floppy-disk"></i>Approved</button>
-                                </div>
-                                <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.publishEnabled">
-                                    <button class="btn btn-vo" ng-click="publishProduct()" ng-disabled="vm.checkFlag.tax != 1 || !vm.platform.pBrandName">
-                                        <i class="glyphicon glyphicon-floppy-disk"></i>智能上新
-                                    </button>
                                 </div>
 
                             </div>
@@ -281,9 +257,7 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <button class="col-md-2 btn btn-default"
-                                        ng-click="choseBrand()"
-                                        ng-disabled="ctrl.vm.status == 'Approved' && ctrl.vm.platform.pBrandName">
+                                <button class="col-md-2 btn btn-default" ng-click="choseBrand()">
                                     <span>{{cartInfo.name}}&nbsp;{{"TXT_BRAND" | translate}}</span>
                                 </button>
                                 <div class="col-md-1" style="width: 35px">

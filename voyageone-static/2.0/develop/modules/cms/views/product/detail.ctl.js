@@ -1,7 +1,5 @@
 /**
- * @Description:
- *
- * @User: linanbin
+ * @Description: 产品详情页主入口
  * @Version: 2.0.0, 15/12/24
  */
 
@@ -9,18 +7,16 @@ define([
     'cms',
     'modules/cms/controller/popup.ctl',
     'modules/cms/service/product.detail.service',
-    './jd.component.ctl',
     './feed.component.ctl',
     './sku.component.ctl',
     './master.component.ctl',
-    './jgj.component.ctl',
-    './gw.component.ctl',
-    './dl.component.ctl',
     './price.component.ctl',
-    './dl.component.ctl',
     './inventory.component.ctl',
+    './tm.sub-page.ctl',
     './jd.sub-page.ctl',
     './jm.sub-page.ctl',
+    './gt.sub-page.ctl',
+    './dg.sub-page.ctl'
 ], function (cms) {
 
     return cms.controller('productDetailController', (function () {
@@ -63,7 +59,7 @@ define([
                 self.product.autoApprovePrice = resp.autoApprovePrice[0];
             });
 
-/*            if(_cartObj){
+            if(_cartObj){
                 var strArr = _cartObj.split("|");
 
                 if(strArr.length > 1){
@@ -71,26 +67,24 @@ define([
                     self.product.skuBlock = true;
                 }else
                     self.defaultCartId = _cartObj;
-            }*/
-
-            self.defaultCartId = 27;
+            }
 
         };
 
         /**锁定操作*/
         ProductDetailController.prototype.lockProduct = function (domId) {
-            var self = this,
+            var self = this,lock,notice,
                 message = self.product.lockStatus ? "您确定要锁定商品吗？" : "您确定要解锁商品吗？";
 
             this.confirm(message).then(function () {
 
-                var lock = self.product.lockStatus ? "1" : "0";
+                lock = self.product.lockStatus ? "1" : "0";
 
                 self.productDetailService.updateLock({
                     prodId: self.product.productId,
                     lock: lock
                 }).then(function () {
-                    var notice = self.product.lockStatus ? "商品已锁定" : "商品已接触锁定";
+                    notice = self.product.lockStatus ? "商品已锁定" : "商品已接触锁定";
                     $("#".concat(domId)).notify(notice, {className: "success", position: "right"});
                 });
 

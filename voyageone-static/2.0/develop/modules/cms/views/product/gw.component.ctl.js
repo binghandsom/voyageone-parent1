@@ -272,7 +272,6 @@ define([
                         return;
                     }
 
-
                     scope.vm.platform.pAttributeStatus = "1";
                     scope.vm.platform.status = mark == "temporary" ? "Pending" : scope.vm.status;
                     scope.vm.platform.sellerCats = scope.vm.sellerCats;
