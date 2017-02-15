@@ -19,8 +19,6 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbCategoryService;
 import com.voyageone.components.tmall.service.TbProductService;
-import com.voyageone.ims.rule_expression.RuleExpression;
-import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.bean.cms.product.SxData.SxDarwinSkuProps;
 import com.voyageone.service.dao.cms.CmsMtPlatformDictDao;
@@ -37,13 +35,11 @@ import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.task2.cms.dao.PlatformSkuInfoDao;
-import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmItemService;
 import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmProductService;
 import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmService;
 import com.voyageone.task2.cms.service.CmsPlatformProductImportTmFieldsService;
 //import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
-import com.voyageone.task2.cms.service.putaway.SkuFieldBuilderFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,9 +58,6 @@ import static java.text.DateFormat.getInstance;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class SxGetProductInfoTest {
-
-    @Autowired
-    private SkuFieldBuilderFactory skuFieldBuilderFactory;
 
     @Autowired
     private ProductService productService;
@@ -99,9 +92,6 @@ public class SxGetProductInfoTest {
 
     @Autowired
     TbCategoryService tbCategoryService;
-
-    @Autowired
-    private SxGetProductInfo sxGetProductInfo;
 
     @Autowired
     private ImsBtProductDao imsBtProductDao;
