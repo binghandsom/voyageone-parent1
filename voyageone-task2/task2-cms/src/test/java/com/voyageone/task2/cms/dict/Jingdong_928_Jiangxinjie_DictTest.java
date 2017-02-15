@@ -3,6 +3,9 @@ package com.voyageone.task2.cms.dict;
 import com.voyageone.ims.rule_expression.*;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 京东国际平台详情页描述JSON生成工具
  * (928) 匠心界
@@ -11,244 +14,284 @@ import org.junit.Test;
  * @version 2.1.0
  * @since 2.1.0
  */
-public class Jingdong_928_Jiangxinjie_DictTest {
-
-    String C_TEXT_BR = "<br />";
-    String C_TEMPLATE_IMG = "<img src=%s>";
-
-    String C_商品图片 = "PRODUCT_IMAGE";
-//    String C_包装图片 = "PACKAGE_IMAGE";
-//    String C_带角度图片 = "ANGLE_IMAGE";
-    String C_自定义图片 = "CUSTOM_IMAGE";
-
-    // -------------------------------------------------
+public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
 
     @Test
     public void startupTest() {
-
-        doCreateJson("京东详情页描述", false, doDict_详情页描述());
-
+        doCreateJson("京东详情页描述", false, doDict_京东详情页描述(1));
+        doCreateJson("京东详情页描述-重点商品", false, doDict_京东详情页描述(2));
+        doCreateJson("京东详情页描述-无属性图", false, doDict_京东详情页描述(3));
     }
 
-    /**
-     * 生成json
-     *
-     * @param title    字典名字
-     * @param isUrl    生成出来的内容是否是url(一般是图片的话就是true, 其他有文字的都是false)
-     * @param ruleRoot rule
-     */
-    private void doCreateJson(String title, boolean isUrl, RuleExpression ruleRoot) {
-
-        DictWord dictRoot = new DictWord();
-        dictRoot.setName(title);
-        dictRoot.setExpression(ruleRoot);
-        dictRoot.setIsUrl(isUrl);
-
-        RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-        String json = ruleJsonMapper.serializeRuleWord(dictRoot);
-
-        System.out.println("=====================================");
-        System.out.println("字典: " + title);
-        System.out.println(json);
-
-    }
-
-    private RuleExpression doDict_详情页描述() {
+    private RuleExpression doDict_京东详情页描述(int propType) {
         // 根字典
         RuleExpression ruleRoot = new RuleExpression();
 
-        // 匠心界详情页
-        // -------------------------------------------
-        // 1. 共通图片 - 店铺介绍图
-        // 2. 共通图片 - 品牌故事图
-        // 3. 产品展示标题图(固定图片)
-        // 4. 产品展示图 - (商品图片) - 模板()
-        // 5. 尺码指南标题(固定)
-        // 6. 微软雅黑， 中号字， 默认左对齐（短描述英文中文， 长描述英文中文）
-        // 7. 共通图片 - 尺码图
-        // 8. 共通图片 - 购物流程图
-        // -------------------------------------------
-
-        // 生成内容
         {
+            // 店铺介绍图 - 0
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("5"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression useOriUrl = null;
+
+            RuleExpression imageIndex = new RuleExpression();
+            imageIndex.addRuleWord(new TextWord("0"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+        {
+            // 店铺介绍图 - 1
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("5"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression useOriUrl = null;
+
+            RuleExpression imageIndex = new RuleExpression();
+            imageIndex.addRuleWord(new TextWord("1"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
+        {
+            // 固定图片 - 商品信息
+            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "http://img10.360buyimg.com/imgzone/jfs/t3115/318/6412780379/20393/c1ba43c5/58a26d60N588c7ae8.jpg")));
+        }
+
+        {
+            // 品牌故事图
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("3"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression useOriUrl = null;
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
+        if (propType == 1) {   // 参数图 - 普通商品
 
             {
-                // 店铺介绍图
-                RuleExpression htmlTemplate = new RuleExpression();
-                htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
-
-                RuleExpression imageType = new RuleExpression();
-                imageType.addRuleWord(new TextWord("5"));
-
-                RuleExpression viewType = new RuleExpression();
-                viewType.addRuleWord(new TextWord("1"));
-
-                RuleExpression useOriUrl = null;
-
-                CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
-                ruleRoot.addRuleWord(new CustomWord(word));
+                // 前缀
+                String html = "<img width=790px src=\"";
+                ruleRoot.addRuleWord(new TextWord(html));
             }
-//            {
-//                // 店铺介绍图 (临时写死两张图)
-//                {
-//                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2770/279/3106099073/166614/6b027351/5783655dN31d8f51f.jpg\">";
-//                    TextWord word = new TextWord(html);
-//                    ruleRoot.addRuleWord(word);
-//                }
-//                {
-//                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2839/256/3185848904/115544/e2eaca8e/5783655dN7befefb7.jpg\">";
-//                    TextWord word = new TextWord(html);
-//                    ruleRoot.addRuleWord(word);
-//                }
-//            }
 
             {
-                // 品牌故事图
-                RuleExpression htmlTemplate = new RuleExpression();
-                htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
-
-                RuleExpression imageType = new RuleExpression();
-                imageType.addRuleWord(new TextWord("3"));
-
-                RuleExpression viewType = new RuleExpression();
-                viewType.addRuleWord(new TextWord("1"));
-
-                RuleExpression useOriUrl = null;
-
-                CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
-                ruleRoot.addRuleWord(new CustomWord(word));
-            }
-
-            {
-                // 所有自定义图(getAllImages（注意参数里要设置使用原图）)
-                RuleExpression htmlTemplate = new RuleExpression();
-                htmlTemplate.addRuleWord(new TextWord("<img src=\"%s\" />"));
-
+                // imageTemplate
                 RuleExpression imageTemplate = new RuleExpression();
-                imageTemplate.addRuleWord(new TextWord(""));
+//                String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/likingtmall_790X200?$pc790X200$&$wenzi=%s";
+                String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/liking-18-790X260?$790X300$&$wenzi=%s";
+                imageTemplate.addRuleWord(new TextWord(htmlTemplate));
 
-                RuleExpression imageType = new RuleExpression();
-                imageType.addRuleWord(new TextWord(C_自定义图片));
+                // 参数imageParams
+                List<RuleExpression> imageParams = new ArrayList<>();
 
-                RuleExpression useOriUrl = new RuleExpression();
-                useOriUrl.addRuleWord(new TextWord("1")); // 使用原图
+                {
+                    // 第一个参数是描述
+                    RuleExpression ruleExpression = new RuleExpression();
+                    ruleExpression.addRuleWord(new MasterClrHtmlWord("usageEn")); // 英文使用方法
+                    imageParams.add(ruleExpression);
+                }
 
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, null);
+                CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
 
             {
-                {
-                    // 产品展示标题图
-                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2986/244/1446991714/7866/d2e26f50/5783655fN10ab7f3e.jpg\">";
-                    TextWord word = new TextWord(html);
-                    ruleRoot.addRuleWord(word);
-                }
-                {
-                    // 所有商品图(商品实拍图)
-                    RuleExpression htmlTemplate = new RuleExpression();
-                    htmlTemplate.addRuleWord(new TextWord("<img src=\"%s\" />"));
+                // 后缀
+                String html = "\">";
+                ruleRoot.addRuleWord(new TextWord(html));
+            }
+        }
 
-                    RuleExpression imageTemplate = new RuleExpression();
-                    // 模板url里面如果需要出力%，需要(% -> %%)，不然String.format()会报错
-                    // 错误信息(java.util.UnknownFormatConversionException: Conversion = 'i')
-                    imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/790X500%%2Dimg%%2DJXJ?$790%%5F500$&$img=%s"));
+        if (propType == 2) {   // 参数图 - 重点商品
 
-                    RuleExpression imageType = new RuleExpression();
-                    imageType.addRuleWord(new TextWord(C_商品图片));
-
-                    CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, null, null, null, null, null);
-                    ruleRoot.addRuleWord(new CustomWord(word));
-                }
+            {
+                // 前缀
+                String html = "<img width=790px src=\"";
+                ruleRoot.addRuleWord(new TextWord(html));
             }
 
             {
+                // imageTemplate
+                RuleExpression imageTemplate = new RuleExpression();
+                String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/liking790X373xinxi?$790X373$&$1=%s&$2=%s&$3=%s&$4=%s&$5=%s&$6=%s&$7=%s&$8=%s&$9=%s&$10=%s&$11=%s&$12=%s&$13=%s&$14=%s&$15=%s&$16=%s";
+                imageTemplate.addRuleWord(new TextWord(htmlTemplate));
+
+                // 参数imageParams
+                List<RuleExpression> imageParams = new ArrayList<>();
+
                 {
-                    // 尺码图的标题图
-                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2707/89/3170742214/8310/78cabe18/57836560N708b07e4.jpg\">";
-                    TextWord word = new TextWord(html);
-                    ruleRoot.addRuleWord(word);
+                    // 共7个属性
+                    for (int index = 0; index < 16; index++) {
+                        RuleExpression ruleExpression = new RuleExpression();
+                        ruleExpression.addRuleWord(new FeedCnWord(true, index));
+                        ruleExpression.addRuleWord(new TextWord("   "));
+                        ruleExpression.addRuleWord(new FeedCnWord(false, index));
+                        imageParams.add(ruleExpression);
+                    }
                 }
-                {
-                    // 回车
-                    ruleRoot.addRuleWord(new TextWord(C_TEXT_BR));
-                    // 微软雅黑， 中号字， 默认左对齐
-                    ruleRoot.addRuleWord(new TextWord("<div style=\"text-align: left; width:790px; margin:0 auto;\"><span style=\"font-family:Microsoft YaHei;font-size:medium;\">"));
 
-                    // 长描述 - 中文
-                    ruleRoot.addRuleWord(new MasterWord("longDesCn"));
-                    // 回车
-                    ruleRoot.addRuleWord(new TextWord(C_TEXT_BR + C_TEXT_BR));
-
-                    // 短描述 - 中文
-                    ruleRoot.addRuleWord(new MasterWord("shortDesCn"));
-                    // 回车
-                    ruleRoot.addRuleWord(new TextWord(C_TEXT_BR));
-
-                    ruleRoot.addRuleWord(new TextWord("</span></div>"));
-                }
-                {
-                    // 尺码图
-                    RuleExpression htmlTemplate = new RuleExpression();
-                    htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
-
-                    RuleExpression imageType = new RuleExpression();
-                    imageType.addRuleWord(new TextWord("2"));
-
-                    RuleExpression viewType = new RuleExpression();
-                    viewType.addRuleWord(new TextWord("1"));
-
-                    RuleExpression useOriUrl = null;
-
-                    CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
-                    ruleRoot.addRuleWord(new CustomWord(word));
-                }
-            }
-
-            {
-                // 购物流程图
-                RuleExpression htmlTemplate = new RuleExpression();
-                htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
-
-                RuleExpression imageType = new RuleExpression();
-                imageType.addRuleWord(new TextWord("4"));
-
-                RuleExpression viewType = new RuleExpression();
-                viewType.addRuleWord(new TextWord("1"));
-
-                RuleExpression useOriUrl = null;
-
-                CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+                CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
 
-//            {
-//                // 购物流程图 (临时写死四张图)
-//                {
-//                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2797/201/3143502543/55794/84ba32a3/57836561N0a46dd4c.jpg\">";  // 购物流程
-//                    TextWord word = new TextWord(html);
-//                    ruleRoot.addRuleWord(word);
-//                }
-//                {
-//                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2746/359/3200059128/86041/d0a17c52/57836561Neb557734.jpg\">";  // 温馨提示
-//                    TextWord word = new TextWord(html);
-//                    ruleRoot.addRuleWord(word);
-//                }
-//                {
-//                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2947/115/1468462332/115720/455a7c74/57836562N875ad314.jpg\">";  // 售后须知
-//                    TextWord word = new TextWord(html);
-//                    ruleRoot.addRuleWord(word);
-//                }
-//                {
-//                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2752/246/3115358048/201357/1cc619ee/57836562Ne0618ed2.jpg\">";  // 售后与质保范围
-//                    TextWord word = new TextWord(html);
-//                    ruleRoot.addRuleWord(word);
-//                }
-//            }
+            {
+                // 后缀
+                String html = "\">";
+                ruleRoot.addRuleWord(new TextWord(html));
+            }
+        }
 
+        // 自定义图
+        {
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageTemplate = null;
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord(C_自定义图片));
+
+            RuleExpression useOriUrl = new RuleExpression();
+            useOriUrl.addRuleWord(new TextWord("1")); // 使用原图
+
+            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, null);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
+        {
+            // 固定图片 - 商品展示
+            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "http://img10.360buyimg.com/imgzone/jfs/t4105/180/2050036540/25062/f941875f/58a26dc0Nc93421e8.jpg")));
+        }
+
+        {
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageTemplate = new RuleExpression();
+            imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/jinxinjie790X740show?$790X740$&$image=%s"));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord(C_商品图片));
+
+            RuleExpression useOriUrl = null;
+
+            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, null);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
+        {
+            // 尺码图 - 0
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("2"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression useOriUrl = null;
+
+            RuleExpression imageIndex = new RuleExpression();
+            imageIndex.addRuleWord(new TextWord("0"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+        {
+            // 尺码图 - 1
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("2"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression useOriUrl = null;
+
+            RuleExpression imageIndex = new RuleExpression();
+            imageIndex.addRuleWord(new TextWord("1"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
+        {
+            // 测量方式图 - 0
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("7"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression useOriUrl = null;
+
+            RuleExpression imageIndex = new RuleExpression();
+            imageIndex.addRuleWord(new TextWord("0"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
+        {
+            // 使用说明图
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("6"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, null, null);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
+        {
+            // 购物流程图
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("4"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, null, null);
+            ruleRoot.addRuleWord(new CustomWord(word));
         }
 
         return ruleRoot;
     }
+
 
 }
