@@ -99,11 +99,11 @@ define(['underscore'], function (_) {
         /**
          * Liking官网
          */
-        LCN: new Cart('LCN', 32, 'Liking官网', ''),
+        LCN: new Cart('LCN', 32, 'Liking官网', 'http://www.liking.com/'),
         /**
          * 分销
          */
-        DT: new Cart('DT', 33, '分销', ''),
+        DT: new Cart('DT', 33, '分销', 'http://fenxiao.voyageone.com.cn/prod-detail?channelId=928&id='),
 
 
         /**
