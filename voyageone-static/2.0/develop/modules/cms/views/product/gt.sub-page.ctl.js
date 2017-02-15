@@ -258,7 +258,7 @@ define([
 
         self.vm.preStatus = angular.copy(self.vm.status);
 
-        //判断页面头部4个状态
+        //判断页面头部状态
         self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
 
         //有效性判断

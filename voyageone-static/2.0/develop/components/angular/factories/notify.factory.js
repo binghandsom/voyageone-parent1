@@ -43,9 +43,10 @@ angular.module("voyageone.angular.factories").factory("notify", function ($filte
             classes: {
                 base: {
                     "min-width":'150px',
-                    "background-color": "#ededed",
+                    "background-color": "#ee903d",
                     "padding": "5px",
-                    "border":"1px solid #ededed"
+                    "color": "white",
+                    "border":"1px solid #ee903d"
                 },
                 superBlue: {
                     "color": "white",
