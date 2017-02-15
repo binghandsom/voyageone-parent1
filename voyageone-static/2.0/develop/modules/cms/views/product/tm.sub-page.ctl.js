@@ -96,9 +96,8 @@ define([
             if (vm.platform) {
                 vm.status = vm.platform.status == null ? vm.status : vm.platform.status;
                 vm.checkFlag.category = vm.platform.pCatPath == null ? 0 : 1;
-                vm.platform.pStatus = vm.platform.pStatus == null ? "WaitingPublish" : vm.platform.pStatus;
+                vm.platform.pStatus = vm.platform.pStatus == null ? "" : vm.platform.pStatus;
                 vm.sellerCats = vm.platform.sellerCats == null ? [] : vm.platform.sellerCats;
-                vm.platform.pStatus = vm.platform.pPublishMessage != null && vm.platform.pPublishMessage != "" ? "Failed" : vm.platform.pStatus;
             }
 
             _.each(vm.mastData.skus, function (mSku) {
@@ -135,11 +134,6 @@ define([
             productDetailService = self.productDetailService,
             $scope = self.$scope;
 
-        if (self.vm.status == 'Approved') {
-            self.alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
-            return;
-        }
-
         productDetailService.getPlatformCategories({cartId: $scope.cartInfo.value})
             .then(function (res) {
                 self.popups.popupNewCategory({
@@ -164,9 +158,6 @@ define([
                         self.vm.platform.pCatPath = context.selected.catPath;
                         self.vm.platform.pCatId = context.selected.catId;
                         self.vm.checkFlag.category = 1;
-                        self.vm.platform.pStatus == 'WaitingPublish';
-                        self.vm.status = "Pending";
-
                     });
                 });
 
@@ -197,26 +188,23 @@ define([
         });
     };
 
-    /**商品智能上新*/
-    SpJdController.prototype.publishProduct = function () {
-        var self = this,
-            $fieldEditService = self.$fieldEditService;
+    /**
+     *  商品品牌选择
+     */
+    SpJdController.prototype.choseBrand = function () {
 
-        self.vm.preStatus = angular.copy(self.vm.status);
+        var self = this, $scope = self.$scope,
+            platform = self.vm.platform;
 
-        self.callSave('intel').then(function (res) {
-
-            if (res) {
-                $fieldEditService.intelligentPublish({
-                    cartId: self.vm.platform.cartId,
-                    productIds: [self.vm.mastData.productCode],
-                    isSelectAll: 0
-                }).then(function () {
-                    self.isPublishSucceed = true;
-                    self.alert('已完成商品的智能上新！');
-                });
-            }
-
+        self.popups.openPlatformMappingSetting({
+            cartId: $scope.cartInfo.value,
+            cartName: $scope.cartInfo.name,
+            masterName: $scope.productInfo.masterField.brand,
+            pBrandId: platform.pBrandId ? platform.pBrandId : null
+        }).then(function (context) {
+            self.vm.platform.pBrandName = context.pBrand;
+            if (platform.schemaFields && platform.schemaFields.product)
+                self.initBrand(platform.schemaFields.product, context.brandId);
         });
 
     };
@@ -244,24 +232,24 @@ define([
     SpJdController.prototype.saveValid = function (mark) {
         var self = this, masterBrand;
 
-        if (mark == "ready") {
+        if (mark == "ready" || self.vm.status == "Ready" || self.vm.status == "Approved") {
             if (!self.validSchema()) {
                 self.alert("请输入必填属性，或者输入的属性格式不正确");
                 return false;
             }
-        }
 
-        if (self.vm.status == "Ready" && self.vm.platform.pBrandName == null && mark != "temporary") {
-            masterBrand = self.$scope.productInfo.masterField.brand;
-            self.vm.status = self.vm.preStatus;
-            self.alert("该商品的品牌【" + masterBrand + "】没有与平台品牌建立关联，点击左侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置");
-            return false;
-        }
+            if (self.vm.platform.pBrandName == null) {
+                masterBrand = self.$scope.productInfo.masterField.brand;
+                self.vm.status = self.vm.preStatus;
+                self.alert("该商品的品牌【" + masterBrand + "】没有与平台品牌建立关联，点击左侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置");
+                return false;
+            }
 
-        if ((self.vm.status == "Ready" || self.vm.status == "Approved") && !self.checkSkuSale() && mark != "temporary") {
-            self.vm.status = self.vm.preStatus;
-            self.alert("请至少选择一个sku进行发布");
-            return false;
+            if (!self.checkSkuSale()) {
+                self.vm.status = self.vm.preStatus;
+                self.alert("请至少选择一个sku进行发布");
+                return false;
+            }
         }
 
         return true;
@@ -274,19 +262,20 @@ define([
 
         self.vm.preStatus = angular.copy(self.vm.status);
 
-        //判断页面头部4个状态
-        self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
-
         //有效性判断
         if (!self.saveValid(mark))
             return;
+
+        //判断页面头部4个状态
+        if (mark != "temporary")
+            self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
 
         /**构造调用接口上行参数*/
         productDetailService.platformUpEntity({cartId: self.$scope.cartInfo.value, mark: mark}, self.vm);
 
         if (mark == "temporary") {
             //暂存状态都为 Pending
-            self.vm.status = "Pending";
+            self.vm.status = self.vm.platform.status;
             self.callSave("temporary");
             return;
         }
@@ -310,8 +299,6 @@ define([
         } else {
             return self.callSave();
         }
-
-
     };
 
     /**调用服务器接口*/
@@ -352,33 +339,13 @@ define([
                 });
             }, function () {
                 if (mark != 'temporary')
-                    self.vm.status = selfvm.preStatus;
+                    self.vm.status = self.vm.preStatus;
                 return false;
             });
         });
 
     };
 
-    /**
-     *  商品品牌选择
-     */
-    SpJdController.prototype.choseBrand = function () {
-
-        var self = this, $scope = self.$scope,
-            platform = self.vm.platform;
-
-        self.popups.openPlatformMappingSetting({
-            cartId: $scope.cartInfo.value,
-            cartName: $scope.cartInfo.name,
-            masterName: $scope.productInfo.masterField.brand,
-            pBrandId: platform.pBrandId ? platform.pBrandId : null
-        }).then(function (context) {
-            self.vm.platform.pBrandName = context.pBrand;
-            if (platform.schemaFields && platform.schemaFields.product)
-                self.initBrand(platform.schemaFields.product, context.brandId);
-        });
-
-    };
 
     /**sku价格刷新*/
     SpJdController.prototype.refreshPrice = function () {
@@ -497,12 +464,9 @@ define([
     /**当shema的品牌为空时，设置平台共通的品牌*/
     SpJdController.prototype.initBrand = function (product, brandId) {
 
-        var self = this, brandField;
+        var brandField;
 
         if (!product)
-            return;
-
-        if (self.$scope.cartInfo.value != 23)
             return;
 
         brandField = searchField("品牌", product);

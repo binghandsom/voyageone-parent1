@@ -832,8 +832,10 @@ define([
         this.platformUpEntity = function (statusEntity, vm) {
             var platform = vm.platform,
                 cartId = statusEntity.cartId;
+
             platform.pAttributeStatus = vm.checkFlag.attribute == 1 ? "1" : "0";
-            platform.status = statusEntity.mark == "temporary" ? "Pending" : vm.status;
+            platform.status = statusEntity.mark == "temporary" ? vm.preStatus : vm.status;
+            platform.pStatus = vm.status == "Approved" && platform.pStatus == "" ? "WaitingPublish" :platform.pStatus;
             platform.sellerCats = vm.sellerCats;
             platform.cartId = Number(cartId);
 

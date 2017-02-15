@@ -139,6 +139,11 @@
                         <div class="col-md-4">
                             <!--应运营要求，保存按钮跳过check，一直为pending状态，除了平台类目为必选-->
                             <div class="row">
+                                <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Ready' || ctrl.vm.status == 'Approved' || isPublishSucceed">
+                                    <button class="btn btn-vo" ng-click="ctrl.saveProduct()" ng-disabled="ctrl.vm.checkFlag.translate != 1 || ctrl.vm.checkFlag.tax != 1 ||
+                                                                                            ctrl.vm.checkFlag.category != 1 || ctrl.vm.checkFlag.attribute == false">
+                                        <i class="glyphicon glyphicon-floppy-disk"></i>Approved</button>
+                                </div>
                                 <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Pending'" >
                                     <button class="btn btn-vo" ng-click="ctrl.saveProduct('ready')" ng-disabled="ctrl.vm.checkFlag.translate != 1 || ctrl.vm.checkFlag.tax != 1 ||
                                                                                             ctrl.vm.checkFlag.category != 1 || ctrl.vm.checkFlag.attribute == false">
@@ -148,11 +153,6 @@
                                     <button class="btn btn-vo" ng-click="ctrl.saveProduct('temporary')" ng-disabled="ctrl.vm.checkFlag.category != 1">
                                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
 
-                                </div>
-                                <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Ready' || ctrl.vm.status == 'Approved' || isPublishSucceed">
-                                    <button class="btn btn-vo" ng-click="ctrl.saveProduct()" ng-disabled="ctrl.vm.checkFlag.translate != 1 || ctrl.vm.checkFlag.tax != 1 ||
-                                                                                            ctrl.vm.checkFlag.category != 1 || ctrl.vm.checkFlag.attribute == false">
-                                        <i class="glyphicon glyphicon-floppy-disk"></i>Approved</button>
                                 </div>
                                 <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.publishEnabled">
                                     <button class="btn btn-vo" ng-click="publishProduct()" ng-disabled="vm.checkFlag.tax != 1 || !vm.platform.pBrandName">
@@ -178,7 +178,7 @@
                                             {{ctrl.vm.platform.pNumIId}}
                                         </a>
                                     </span>&nbsp;
-                                    <span class="m-r-sm" ng-if="ctrl.vm.platform.pStatus == 'Failed'" title="{{ctrl.vm.platform.pPublishMessage}}">&nbsp;
+                                    <span class="m-r-sm" ng-if="ctrl.vm.platform.pPublishMessage" title="{{ctrl.vm.platform.pPublishMessage}}">&nbsp;
                                         {{ctrl.vm.platform.pPublishMessage | limitTo: 30}}{{ctrl.vm.platform.pPublishMessage.length > 30 ? '...' : ''}}
                                     </span>&nbsp;
 
@@ -286,7 +286,7 @@
                             </div>
                             <div class="row form-group">
                                 <button class="col-md-2 btn btn-default"
-                                        ng-click="choseBrand()"
+                                        ng-click="ctrl.choseBrand()"
                                         ng-disabled="ctrl.vm.status == 'Approved' && ctrl.vm.platform.pBrandName">
                                     <span>{{cartInfo.name}}&nbsp;{{"TXT_BRAND" | translate}}</span>
                                 </button>
