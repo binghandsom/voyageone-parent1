@@ -139,8 +139,6 @@
                         <div class="col-md-4">
                             <!--应运营要求，保存按钮跳过check，一直为pending状态，除了平台类目为必选-->
                             <div class="row">
-                                <span class="text-warnings cur-p pull-right" ng-click="ctrl.showExt()"><i class="icon fa fa-question-circle text-md"></i>&nbsp;</span>
-
                                 <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Pending'" >
                                     <button class="btn btn-vo" ng-click="ctrl.saveProduct('ready')" ng-disabled="ctrl.vm.checkFlag.translate != 1 || ctrl.vm.checkFlag.tax != 1 ||
                                                                                             ctrl.vm.checkFlag.category != 1 || ctrl.vm.checkFlag.attribute == false">
@@ -162,6 +160,7 @@
                                     </button>
                                 </div>
 
+                                <span class="text-warnings cur-p pull-right" ng-click="ctrl.showExt()"><i class="icon fa fa-question-circle text-md"></i>&emsp;</span>
                             </div>
 
                         </div>
