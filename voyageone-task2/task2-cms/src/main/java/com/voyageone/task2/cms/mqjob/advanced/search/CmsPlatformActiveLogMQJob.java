@@ -33,7 +33,7 @@ public class CmsPlatformActiveLogMQJob extends TBaseMQCmsService<PlatformActiveL
         params.put("channelId", messageBody.getChannelId());
         params.put("cartIdList", messageBody.getCartList());
         params.put("activeStatus", messageBody.getActiveStatus());
-        params.put("creator", messageBody.getUserName());
+        params.put("creator", messageBody.getSender());
         params.put("comment", messageBody.getComment());
         params.put("codeList", messageBody.getProductCodes());
         params.put("statusVal",messageBody.getStatusVal());

@@ -71,7 +71,6 @@ public class CmsUpdateProductSalePriceService extends BaseService {
         Integer cartId = mqMessageBody.getCartId();
         List<String> productCodes = mqMessageBody.getProductCodes();
         String userName = mqMessageBody.getSender();
-        Integer userId = mqMessageBody.getUserId();
         CartBean cartObj = Carts.getCart(cartId);
         Map<String, Object> params = mqMessageBody.getParams();
         // 检查商品价格 notChkPrice=1时表示忽略价格超过阈值

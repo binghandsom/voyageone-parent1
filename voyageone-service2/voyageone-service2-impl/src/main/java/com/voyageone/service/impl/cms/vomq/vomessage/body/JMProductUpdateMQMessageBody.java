@@ -17,23 +17,23 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 public class JMProductUpdateMQMessageBody extends BaseMQMessageBody {
 
     // 表cms_bt_jm_promotion的id
-    private int cmsBtJmPromotionId;
+    private Integer cmsBtJmPromotionId;
 
-    public int getCmsBtJmPromotionId() {
+    public Integer getCmsBtJmPromotionId() {
         return cmsBtJmPromotionId;
     }
 
-    public void setCmsBtJmPromotionId(int cmsBtJmPromotionId) {
+    public void setCmsBtJmPromotionId(Integer cmsBtJmPromotionId) {
         this.cmsBtJmPromotionId = cmsBtJmPromotionId;
     }
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (cmsBtJmPromotionId == 0) {
-            throw new MQMessageRuleException("cmsBtJmPromotionId不能等于0");
+        if (cmsBtJmPromotionId == null || cmsBtJmPromotionId == 0) {
+            throw new MQMessageRuleException("聚美活动-平台上传更新MQ发送异常, 参数cmsBtJmPromotionId为空或者0.");
         }
         if (StringUtils.isEmpty(getSender())) {
-            throw new MQMessageRuleException("sender(发送者)不能为空");
+            throw new MQMessageRuleException("聚美活动-平台上传更新MQ发送异常, 发送者为空.");
         }
     }
 }

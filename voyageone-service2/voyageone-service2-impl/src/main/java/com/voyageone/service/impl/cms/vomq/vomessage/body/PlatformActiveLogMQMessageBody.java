@@ -21,38 +21,11 @@ import java.util.List;
 public class PlatformActiveLogMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;
-    private String userName;
     private List<Integer> cartList;
     private String activeStatus;
     private List<String> productCodes;
     private String comment;
     private CmsConstants.PlatformActive statusVal;
-
-
-    @Override
-    public void check() throws MQMessageRuleException {
-        if (StringUtils.isBlank(channelId)) {
-            throw new MQMessageRuleException("上下架PlatformActiveLogMQ参数channelId为空.");
-        }
-        if (CollectionUtils.isEmpty(productCodes)) {
-            throw new MQMessageRuleException("上下架PlatformActiveLogMQ参数productCodes为空.");
-        }
-        if (CollectionUtils.isEmpty(cartList)) {
-            throw new MQMessageRuleException("上下架PlatformActiveLogMQ参数cartList为空.");
-        }
-        if (StringUtils.isBlank(activeStatus)) {
-            throw new MQMessageRuleException("上下架PlatformActiveLogMQ参数activeStatus为空.");
-        }
-        if (StringUtils.isBlank(userName)) {
-            throw new MQMessageRuleException("上下架PlatformActiveLogMQ参数userName为空.");
-        }
-        if (StringUtils.isBlank(getSender())) {
-            throw new MQMessageRuleException("sender(发送者)不能为空");
-        }
-        if (StringUtils.isBlank(String.valueOf(statusVal))) {
-            throw new MQMessageRuleException("上下架PlatformActiveLogMQ参数statusVal为空.");
-        }
-    }
 
     public String getChannelId() {
         return channelId;
@@ -60,14 +33,6 @@ public class PlatformActiveLogMQMessageBody extends BaseMQMessageBody {
 
     public void setChannelId(String channelId) {
         this.channelId = channelId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public List<Integer> getCartList() {
@@ -108,5 +73,27 @@ public class PlatformActiveLogMQMessageBody extends BaseMQMessageBody {
 
     public void setStatusVal(CmsConstants.PlatformActive statusVal) {
         this.statusVal = statusVal;
+    }
+
+    @Override
+    public void check() throws MQMessageRuleException {
+        if (StringUtils.isBlank(channelId)) {
+            throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数channelId为空.");
+        }
+        if (CollectionUtils.isEmpty(productCodes)) {
+            throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数productCodes为空.");
+        }
+        if (CollectionUtils.isEmpty(cartList)) {
+            throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数cartList为空.");
+        }
+        if (StringUtils.isBlank(activeStatus)) {
+            throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数activeStatus为空.");
+        }
+        if (StringUtils.isBlank(String.valueOf(statusVal))) {
+            throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数statusVal为空.");
+        }
+        if (StringUtils.isBlank(getSender())) {
+            throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 发送者为空.");
+        }
     }
 }

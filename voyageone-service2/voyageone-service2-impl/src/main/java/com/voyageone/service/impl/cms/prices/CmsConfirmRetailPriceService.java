@@ -42,7 +42,7 @@ public class CmsConfirmRetailPriceService extends VOAbsLoggable {
     public void confirmPlatformsRetailPrice(AdvSearchConfirmRetailPriceMQMessageBody messageBody) {
 
         String channelId = StringUtils.trimToNull(messageBody.getChannelId());
-        String userName = StringUtils.trimToNull(messageBody.getUserName());
+        String userName = StringUtils.trimToNull(messageBody.getSender());
         List<String> codeList = messageBody.getCodeList();
         List<Integer> cartList = messageBody.getCartList();
         JongoQuery qryObj = new JongoQuery();

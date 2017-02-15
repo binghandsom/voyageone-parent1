@@ -19,7 +19,7 @@ public class JmPromotionProductStockSyncMQMessageBody extends BaseMQMessageBody 
     public void check() throws MQMessageRuleException {
 
         if (StringUtils.isEmpty(getSender())) {
-            throw new MQMessageRuleException("sender(发送者)不能为空");
+            throw new MQMessageRuleException("聚美活动-活动商品文件导入MQ发送异常, 发送者为空.");
         }
     }
 

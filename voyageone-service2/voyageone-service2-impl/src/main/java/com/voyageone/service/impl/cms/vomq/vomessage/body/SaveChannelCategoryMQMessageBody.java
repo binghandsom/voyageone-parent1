@@ -31,10 +31,10 @@ public class SaveChannelCategoryMQMessageBody extends BaseMQMessageBody {
     @Override
     public void check() throws MQMessageRuleException {
         if (params == null || params.size() <= 0) {
-            throw new MQMessageRuleException("SaveChannelCategory MQ发送异常,参数为空");
+            throw new MQMessageRuleException("高级检索-批量设置店铺分类MQ发送异常, 参数params为空.");
         }
         if (StringUtils.isBlank(getSender())) {
-            throw new MQMessageRuleException("sender(发送者)不能为空");
+            throw new MQMessageRuleException("高级检索-批量设置店铺分类MQ发送异常, 发送者为空.");
         }
     }
 }

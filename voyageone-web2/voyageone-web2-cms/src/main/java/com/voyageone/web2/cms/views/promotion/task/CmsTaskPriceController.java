@@ -105,6 +105,7 @@ public class CmsTaskPriceController extends CmsController {
                     cmsTeJiaBaoDelMQMessageBody.setCartId(cmsBtPromotionModel.getCartId());
                     cmsTeJiaBaoDelMQMessageBody.setNumIId(numIids);
                     cmsTeJiaBaoDelMQMessageBody.setTejiabaoId(Long.parseLong(allPromtoion.getTejiabaoId()));
+                    cmsTeJiaBaoDelMQMessageBody.setSender(getUser().getUserName());
                     cmsMqSenderService.sendMessage(cmsTeJiaBaoDelMQMessageBody);
                 }
 

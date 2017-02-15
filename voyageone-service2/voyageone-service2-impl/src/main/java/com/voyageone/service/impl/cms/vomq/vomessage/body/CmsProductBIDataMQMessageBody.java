@@ -16,7 +16,7 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_BATCH_GET_PRODUCT_BI_DATA)
 public class CmsProductBIDataMQMessageBody extends BaseMQMessageBody {
     String channelId;
-    int cartId;
+    Integer cartId;
 
     public String getChannelId() {
         return channelId;
@@ -26,24 +26,24 @@ public class CmsProductBIDataMQMessageBody extends BaseMQMessageBody {
         this.channelId = channelId;
     }
 
-    public int getCartId() {
+    public Integer getCartId() {
         return cartId;
     }
 
-    public void setCartId(int cartId) {
+    public void setCartId(Integer cartId) {
         this.cartId = cartId;
     }
 
     @Override
     public void check() throws MQMessageRuleException {
         if (StringUtils.isEmpty(channelId)) {
-            throw new MQMessageRuleException("channelId不能为空");
+            throw new MQMessageRuleException("定时任务-取得产品的bi信息MQ发送异常, 参数channelId为空.");
         }
-        if (cartId==0) {
-            throw new MQMessageRuleException("cartId不能为0");
+        if (cartId == null || cartId == 0) {
+            throw new MQMessageRuleException("定时任务-取得产品的bi信息MQ发送异常, 参数cartId为空或者0.");
         }
         if (StringUtils.isEmpty(getSender())) {
-            throw new MQMessageRuleException("sender(发送者)不能为空");
+            throw new MQMessageRuleException("定时任务-取得产品的bi信息MQ发送异常, 发送者为空.");
         }
     }
 }

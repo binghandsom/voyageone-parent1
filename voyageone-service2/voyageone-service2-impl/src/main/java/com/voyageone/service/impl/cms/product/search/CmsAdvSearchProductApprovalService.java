@@ -60,7 +60,7 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
         $info(String.format("threadNo=%d 参数%s",threadNo, JacksonUtil.bean2Json(mqMessageBody)));
         Integer cartIdValue = mqMessageBody.getCartList().get(0);
         String channelId = mqMessageBody.getChannelId();
-        String userName = mqMessageBody.getUserName();
+        String userName = mqMessageBody.getSender();
         List<String> productCodes = mqMessageBody.getProductCodes();
         Map<String, Object> params = mqMessageBody.getParams();
         Map<String, Object> errorCodeList = new HashMap();

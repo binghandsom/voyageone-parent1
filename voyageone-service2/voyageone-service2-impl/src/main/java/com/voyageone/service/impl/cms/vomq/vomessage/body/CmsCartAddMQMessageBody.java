@@ -1,10 +1,10 @@
 package com.voyageone.service.impl.cms.vomq.vomessage.body;
 
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Created by james on 2017/1/3.
@@ -42,8 +42,11 @@ public class CmsCartAddMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
-        if(StringUtil.isEmpty(channelId) || cartId == null){
-            throw new MQMessageRuleException("参数不能为空");
+        if (StringUtils.isBlank(channelId)) {
+            throw new MQMessageRuleException("追加一个新cart自动添加product.platforms处理MQ发送异常, 参数channelId为空.");
+        }
+        if (cartId == null) {
+            throw new MQMessageRuleException("追加一个新cart自动添加product.platforms处理MQ发送异常, 参数cartId为空.");
         }
     }
 }

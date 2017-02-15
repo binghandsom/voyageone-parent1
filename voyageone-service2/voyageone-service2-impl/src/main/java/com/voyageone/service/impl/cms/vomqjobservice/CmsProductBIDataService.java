@@ -254,7 +254,7 @@ public class CmsProductBIDataService extends BaseService {
      * @param channelId
      * @param cartId
      */
-    public void sendMessage(String channelId, int cartId,String sender) {
+    public void sendMessage(String channelId, Integer cartId,String sender) {
         CmsProductBIDataMQMessageBody mqMessageBody = new CmsProductBIDataMQMessageBody();
         mqMessageBody.setChannelId(channelId);
         mqMessageBody.setCartId(cartId);

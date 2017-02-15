@@ -1,12 +1,11 @@
 package com.voyageone.service.impl.cms.vomq.vomessage.body;
 
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
-
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,6 @@ public class UpdateProductSalePriceMQMessageBody extends BaseMQMessageBody {
     private Integer cartId;
     private String channelId;
     private Map<String, Object> params;
-    private Integer userId;
 
     public List<String> getProductCodes() {
         return productCodes;
@@ -58,35 +56,22 @@ public class UpdateProductSalePriceMQMessageBody extends BaseMQMessageBody {
         this.params = params;
     }
 
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
     @Override
     public void check() throws MQMessageRuleException {
-        if (org.apache.commons.lang.StringUtils.isBlank(channelId)) {
-            throw new MQMessageRuleException("批量修改商品价格MQ发送异常,参数channelId为空.");
+        if (StringUtils.isBlank(channelId)) {
+            throw new MQMessageRuleException("高级检索-批量修改中国最终售价MQ发送异常, 参数channelId为空.");
         }
         if (cartId == null) {
-            throw new MQMessageRuleException("批量修改商品价格MQ发送异常,参数cartId为空.");
+            throw new MQMessageRuleException("高级检索-批量修改中国最终售价MQ发送异常, 参数cartId为空.");
         }
         if (CollectionUtils.isEmpty(productCodes)) {
-            throw new MQMessageRuleException("批量修改商品价格MQ发送异常,参数productCodes为空.");
+            throw new MQMessageRuleException("高级检索-批量修改中国最终售价MQ发送异常, 参数productCodes为空.");
         }
         if (params == null || params.size() <= 0) {
-            throw new MQMessageRuleException("批量修改商品价格MQ发送异常,修改参数为空.");
+            throw new MQMessageRuleException("高级检索-批量修改中国最终售价MQ发送异常, 参数params为空.");
         }
-
-        if (userId == null) {
-            throw new MQMessageRuleException("批量修改商品价格MQ发送异常,参数userId为空.");
-        }
-
         if (StringUtils.isEmpty(getSender())) {
-            throw new MQMessageRuleException("sender(发送者)不能为空");
+            throw new MQMessageRuleException("高级检索-批量修改中国最终售价MQ发送异常, 发送者为空.");
         }
     }
 }

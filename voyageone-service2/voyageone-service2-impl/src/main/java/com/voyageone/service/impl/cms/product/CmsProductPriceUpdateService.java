@@ -202,7 +202,7 @@ public class CmsProductPriceUpdateService extends BaseService {
     public List<Map<String, String>> updateProductRetailPrice(AdvSearchRefreshRetailPriceMQMessageBody messageBody) {
         List<Map<String, String>> failList = new ArrayList<Map<String, String>>();
         String channleId = StringUtils.trimToNull(messageBody.getChannelId());
-        String userName = StringUtils.trimToNull(messageBody.getUserName());
+        String userName = StringUtils.trimToNull(messageBody.getSender());
         List<String> codeList = messageBody.getCodeList();
         List<Integer> cartList = messageBody.getCartList();
 

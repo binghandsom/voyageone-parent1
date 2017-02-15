@@ -336,7 +336,6 @@ public class CmsFieldEditService extends BaseViewService {
 
             BatchUpdateProductMQMessageBody mqMessageBody = new BatchUpdateProductMQMessageBody();
             mqMessageBody.setChannelId(userInfo.getSelChannelId());
-
             mqMessageBody.setParams(params);
             mqMessageBody.setSender(userInfo.getUserName());
             List<List<String>>productCodesList = CommonUtil.splitList(productCodes,100);
@@ -428,7 +427,6 @@ public class CmsFieldEditService extends BaseViewService {
         mqMessageBody.setCartList(cartList);
         mqMessageBody.setStatusVal(statusVal);
         mqMessageBody.setActiveStatus(statusVal.name());
-        mqMessageBody.setUserName(userInfo.getUserName());
         mqMessageBody.setSender(userInfo.getUserName());
 
         if (cartId == null || cartId == 0) {
@@ -495,7 +493,6 @@ public class CmsFieldEditService extends BaseViewService {
         mqMessageBody.setParams(params);
         mqMessageBody.setCmsSessionParams(JacksonUtil.bean2Map(cmsSession));
         mqMessageBody.setChannelId(userInfo.getSelChannelId());
-        mqMessageBody.setUserName(userInfo.getUserName());
         mqMessageBody.setCartList(cartList);
         mqMessageBody.setSender(userInfo.getUserName());
 
@@ -836,7 +833,6 @@ public class CmsFieldEditService extends BaseViewService {
         mqMessageBody.setCartId(cartId);
         mqMessageBody.setChannelId(userInfo.getSelChannelId());
         mqMessageBody.setSender(userInfo.getUserName());
-        mqMessageBody.setUserId(userInfo.getUserId());
         mqMessageBody.setParams(params);
         for (List<String> codes:productCodesList) {
             mqMessageBody.setProductCodes(codes);
@@ -1264,7 +1260,6 @@ public class CmsFieldEditService extends BaseViewService {
             // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
             AdvSearchRefreshRetailPriceMQMessageBody mqMessageBody = new AdvSearchRefreshRetailPriceMQMessageBody();
             mqMessageBody.setCartList(cartList);
-            mqMessageBody.setUserName(userInfo.getUserName());
             mqMessageBody.setChannelId(userInfo.getSelChannelId());
             mqMessageBody.setSender(userInfo.getUserName());
             List<List<String>> codesList = CommonUtil.splitList(productCodes,100);
@@ -1278,7 +1273,6 @@ public class CmsFieldEditService extends BaseViewService {
             mqMessageBody.setChannelId(userInfo.getSelChannelId());
             mqMessageBody.setCartList(cartList);
             mqMessageBody.setCodeList(productCodes);
-            mqMessageBody.setUserName(userInfo.getUserName());
             mqMessageBody.setSender(userInfo.getUserName());
             cmsMqSenderService.sendMessage(mqMessageBody);
         }

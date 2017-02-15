@@ -6,8 +6,11 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
 import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.CmsBtOperationLogService;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.task2.base.TBaseMQAnnoService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
  * TBaseMQCmsService
@@ -70,30 +73,40 @@ public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> e
      *
      * @param messageBody       messageBody
      * @param operationLog_type operationLog_type
-     * @param msg               msg
+     * @param comment           comment
      */
-    public void cmsLog(TMQMessageBody messageBody, OperationLog_Type operationLog_type, String msg) {
-        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, operationLog_type, msg);
+    public void cmsLog(TMQMessageBody messageBody, OperationLog_Type operationLog_type, String comment) {
+        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, operationLog_type, comment);
     }
 
     /**
      * 写配置异常的日志
      *
      * @param messageBody messageBody
-     * @param msg         msg
+     * @param comment     comment
      */
-    public void cmsConfigExLog(TMQMessageBody messageBody, String msg) {
-        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.configException, msg);
+    public void cmsConfigExLog(TMQMessageBody messageBody, String comment) {
+        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.configException, comment);
     }
 
     /**
      * 写业务异常的日志
      *
      * @param messageBody messageBody
-     * @param msg         msg
+     * @param comment     comment
      */
-    public void cmsBusinessExLog(TMQMessageBody messageBody, String msg) {
-        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.businessException, msg);
+    public void cmsBusinessExLog(TMQMessageBody messageBody, String comment) {
+        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.businessException, comment);
+    }
+
+    /**
+     * 成功结束
+     *
+     * @param messageBody messageBody
+     * @param comment     comment
+     */
+    public void cmsSuccessLog(TMQMessageBody messageBody, String comment) {
+        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.success, comment);
     }
 
     /**
@@ -102,16 +115,7 @@ public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> e
      * @param messageBody messageBody
      * @param msg         msg
      */
-    public void cmsSuccessLog(TMQMessageBody messageBody, String msg) {
-        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.success, msg);
-    }
-    /**
-     * 成功结束
-     *
-     * @param messageBody messageBody
-     * @param msg         msg
-     */
-    public void cmsSuccessIncludeFailLog(TMQMessageBody messageBody, String msg) {
+    public void cmsSuccessIncludeFailLog(TMQMessageBody messageBody, List<CmsBtOperationLogModel_Msg> msg) {
         cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.successIncludeFail, msg);
     }
 }

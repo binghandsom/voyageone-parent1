@@ -89,7 +89,6 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
         mqMessageBody.setChannelId(channelId);
         mqMessageBody.setCartList(cartList);
         mqMessageBody.setActiveStatus(CmsConstants.PlatformActive.ToOnSale.name());
-        mqMessageBody.setUserName("autoOnSale");
         mqMessageBody.setComment("平台被迫下架的产品，自动上架");
         mqMessageBody.setProductCodes(productCodes);
         mqMessageBody.setSender("autoOnSale");

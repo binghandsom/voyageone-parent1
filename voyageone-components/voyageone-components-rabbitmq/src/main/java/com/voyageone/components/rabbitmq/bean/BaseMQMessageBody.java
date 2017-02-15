@@ -7,21 +7,23 @@ import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
  */
 public abstract class BaseMQMessageBody implements IMQMessageBody {
     //消费者重试次数
-    int consumerRetryTimes = 0;
+    private int consumerRetryTimes = 0;
+
     //消息体id
-    int mqId;
+    private int mqId;
 
     //延迟发送时间
-    int delaySecond;
+    private int delaySecond;
 
-    @Override
-    public int getDelaySecond() {
-        return delaySecond;
+    //发送者
+    private String sender;
+
+    public int getConsumerRetryTimes() {
+        return consumerRetryTimes;
     }
 
-
-    public void setDelaySecond(int delaySecond) {
-        this.delaySecond = delaySecond;
+    public void setConsumerRetryTimes(int consumerRetryTimes) {
+        this.consumerRetryTimes = consumerRetryTimes;
     }
 
     public int getMqId() {
@@ -31,9 +33,15 @@ public abstract class BaseMQMessageBody implements IMQMessageBody {
     public void setMqId(int mqId) {
         this.mqId = mqId;
     }
-    //发送者
-    
-    String sender;
+
+    @Override
+    public int getDelaySecond() {
+        return delaySecond;
+    }
+
+    public void setDelaySecond(int delaySecond) {
+        this.delaySecond = delaySecond;
+    }
 
     @Override
     public String getSender() {
@@ -44,16 +52,5 @@ public abstract class BaseMQMessageBody implements IMQMessageBody {
         this.sender = sender;
     }
 
-
-    public int getConsumerRetryTimes() {
-        return consumerRetryTimes;
-    }
-
-    public void setConsumerRetryTimes(int consumerRetryTimes) {
-        this.consumerRetryTimes = consumerRetryTimes;
-    }
-
     public abstract void check() throws MQMessageRuleException;
-
-
 }

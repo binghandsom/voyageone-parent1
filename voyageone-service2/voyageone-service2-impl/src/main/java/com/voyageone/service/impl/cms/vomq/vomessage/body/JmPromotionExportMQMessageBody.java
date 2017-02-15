@@ -17,23 +17,23 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 public class JmPromotionExportMQMessageBody extends BaseMQMessageBody {
 
     // 是cms_bt_jm_promotion_export_task的id
-    private int jmBtPromotionExportTaskId;
+    private Integer jmBtPromotionExportTaskId;
 
-    public int getJmBtPromotionExportTaskId() {
+    public Integer getJmBtPromotionExportTaskId() {
         return jmBtPromotionExportTaskId;
     }
 
-    public void setJmBtPromotionExportTaskId(int jmBtPromotionExportTaskId) {
+    public void setJmBtPromotionExportTaskId(Integer jmBtPromotionExportTaskId) {
         this.jmBtPromotionExportTaskId = jmBtPromotionExportTaskId;
     }
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (jmBtPromotionExportTaskId == 0) {
-            throw new MQMessageRuleException("jmBtPromotionExportTaskId不能等于0");
+        if (jmBtPromotionExportTaskId == null || jmBtPromotionExportTaskId == 0) {
+            throw new MQMessageRuleException("聚美活动-生成导出文件MQ发送异常, 参数jmBtPromotionExportTaskId为空或者0.");
         }
         if (StringUtils.isEmpty(getSender())) {
-            throw new MQMessageRuleException("sender(发送者)不能为空");
+            throw new MQMessageRuleException("聚美活动-生成导出文件MQ发送异常, 发送者为空.");
         }
     }
 }

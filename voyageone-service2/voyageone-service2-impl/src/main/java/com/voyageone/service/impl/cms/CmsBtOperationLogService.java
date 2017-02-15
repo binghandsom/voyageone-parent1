@@ -34,6 +34,23 @@ public class CmsBtOperationLogService {
      * @param jobName job名称
      * @param jobTitle job标题
      * @param messageBody 参数或者消息内容
+     * @param operationLog_type 类型
+     * @param comment comment
+     */
+    public void log(String jobName, String jobTitle, IMQMessageBody messageBody, OperationLog_Type operationLog_type, String comment) {
+        final VOMQQueue voQueue = AnnotationUtils.findAnnotation(messageBody.getClass(), VOMQQueue.class);
+
+        String stackTrace = "";
+        String msgBody = JsonUtil.bean2Json(messageBody);
+        comment = voQueue.value() + ":" + comment;
+        log(jobName, jobTitle, operationLog_type, msgBody, null, stackTrace, comment, messageBody.getSender());
+    }
+
+    /**
+     * 插入job/mq的执行履历
+     * @param jobName job名称
+     * @param jobTitle job标题
+     * @param messageBody 参数或者消息内容
      * @param ex Exception
      */
     public void log(String jobName, String jobTitle, IMQMessageBody messageBody, Exception ex) {

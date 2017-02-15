@@ -24,7 +24,7 @@ public class CmsRefreshProductsMQMessageBody extends BaseMQMessageBody  {
     @Override
     public void check() throws MQMessageRuleException {
         if(taskId == null){
-            throw new MQMessageRuleException("参数不对");
+            throw new MQMessageRuleException("平台属性默认设置-强制对某商品或某类目进行属性的重新计算赋值和上新MQ发送异常, 参数taskId为空.");
         }
     }
 }

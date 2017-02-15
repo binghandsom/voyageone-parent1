@@ -51,17 +51,16 @@ public class BatchUpdateProductMQMessageBody extends BaseMQMessageBody {
     @Override
     public void check() throws MQMessageRuleException {
         if (StringUtils.isBlank(channelId)) {
-            throw new MQMessageRuleException("BatchUpdateProduct参数channelId为空.");
+            throw new MQMessageRuleException("高级检索-批量更新共通属性MQ发送异常, 参数channelId为空.");
         }
         if (CollectionUtils.isEmpty(productCodes)) {
-            throw new MQMessageRuleException("BatchUpdateProduct参数productCodes为空.");
+            throw new MQMessageRuleException("高级检索-批量更新共通属性MQ发送异常, 参数productCodes为空.");
         }
-
         if (params == null || params.size() <= 0) {
-            throw new MQMessageRuleException("BatchUpdateProduct更新参数为空.");
+            throw new MQMessageRuleException("高级检索-批量更新共通属性MQ发送异常, 参数params为空.");
         }
-        if (StringUtils.isBlank(getSender())) {
-            throw new MQMessageRuleException("sender(发送者)不能为空");
+        if (StringUtils.isEmpty(getSender())) {
+            throw new MQMessageRuleException("高级检索-批量更新共通属性MQ发送异常, 发送者为空.");
         }
     }
 }

@@ -20,7 +20,6 @@ import java.util.List;
 public class AdvSearchRefreshRetailPriceMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;
-    private String userName;
     private List<String> codeList;
     private List<Integer> cartList;
 
@@ -30,14 +29,6 @@ public class AdvSearchRefreshRetailPriceMQMessageBody extends BaseMQMessageBody 
 
     public void setChannelId(String channelId) {
         this.channelId = channelId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public List<String> getCodeList() {
@@ -59,19 +50,16 @@ public class AdvSearchRefreshRetailPriceMQMessageBody extends BaseMQMessageBody 
     @Override
     public void check() throws MQMessageRuleException {
         if (StringUtils.isBlank(channelId)) {
-            throw new MQMessageRuleException(String.format("高级检索->重新计算指导价MQ发送异常, 参数channelId为空."));
+            throw new MQMessageRuleException("高级检索-批量重新计算中国指导价MQ发送异常, 参数channelId为空.");
         }
         if (CollectionUtils.isEmpty(codeList)) {
-            throw new MQMessageRuleException(String.format("高级检索->重新计算指导价MQ发送异常, 参数codeList为空."));
+            throw new MQMessageRuleException("高级检索-批量重新计算中国指导价MQ发送异常, 参数codeList为空.");
         }
         if (CollectionUtils.isEmpty(cartList)) {
-            throw new MQMessageRuleException(String.format("高级检索->重新计算指导价MQ发送异常, 参数cartList为空."));
+            throw new MQMessageRuleException("高级检索-批量重新计算中国指导价MQ发送异常, 参数cartList为空.");
         }
-        if (StringUtils.isBlank(userName)) {
-            throw new MQMessageRuleException(String.format("高级检索->重新计算指导价MQ发送异常, 参数userName为空."));
-        }
-        if (StringUtils.isBlank(getSender())) {
-            throw new MQMessageRuleException("sender(发送者)不能为空");
+        if (StringUtils.isEmpty(getSender())) {
+            throw new MQMessageRuleException("高级检索-批量重新计算中国指导价MQ发送异常, 发送者为空.");
         }
     }
 
