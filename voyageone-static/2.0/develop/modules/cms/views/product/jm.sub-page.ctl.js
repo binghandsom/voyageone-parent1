@@ -29,13 +29,12 @@ define([
         return result;
     }
 
-    function SpJdController($scope, productDetailService, $translate, notify, confirm, $q, $compile, alert, popups, $fieldEditService, $document, $templateRequest) {
+    function SpJdController($scope, productDetailService, $translate, notify, confirm, $compile, alert, popups, $fieldEditService, $document, $templateRequest) {
         this.$scope = $scope;
         this.productDetailService = productDetailService;
         this.$translate = $translate;
         this.notify = notify;
         this.confirm = confirm;
-        this.$q = $q;
         this.$compile = $compile;
         this.alert = alert;
         this.popups = popups;
@@ -59,8 +58,7 @@ define([
     }
 
     SpJdController.prototype.init = function (element) {
-        var self = this,
-            check = self.vm.checkFlag,
+        var self = this, check = self.vm.checkFlag,
             $scope = self.$scope;
 
         self.element = element;
@@ -82,8 +80,7 @@ define([
      */
     SpJdController.prototype.getPlatformData = function () {
 
-        var self = this,
-            $scope = self.$scope,
+        var self = this, $scope = self.$scope,
             vm = self.vm;
 
         self.productDetailService.getProductPlatform({
@@ -132,10 +129,8 @@ define([
      * @param popupNewCategory popup实例
      */
     SpJdController.prototype.categoryMapping = function () {
-        var self = this,
-            productDetailService = self.productDetailService,
-            $scope = self.$scope,
-            popups = self.popups;
+        var self = this, $scope = self.$scope,
+            productDetailService = self.productDetailService;
 
         if (self.vm.status == 'Approved') {
             self.alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
@@ -144,7 +139,7 @@ define([
 
         productDetailService.getPlatformCategories({cartId: $scope.cartInfo.value})
             .then(function (res) {
-                popups.popupNewCategory({
+                self.popups.popupNewCategory({
                     from: self.vm.platform == null ? "" : self.vm.platform.pCatPath,
                     categories: res.data,
                     divType: ">",
@@ -175,36 +170,9 @@ define([
             })
     };
 
-    /**
-     * @description 店铺内分类popup
-     * @param openAddChannelCategoryEdit
-     */
-    SpJdController.prototype.openSellerCat = function () {
-        var self = this,
-            popups = self.popups,
-            selectedIds = {};
-
-        self.vm.sellerCats.forEach(function (element) {
-            selectedIds[element.cId] = true;
-        });
-
-        popups.openAddChannelCategoryEdit([{
-            "code": self.vm.mastData.productCode,
-            "sellerCats": self.vm.sellerCats,
-            "cartId": self.$scope.cartInfo.value,
-            "selectedIds": selectedIds,
-            plateSchema: true
-        }]).then(function (context) {
-            /**清空原来店铺类分类*/
-            self.vm.sellerCats = [];
-            self.vm.sellerCats = context.sellerCats;
-        });
-    };
-
     /**商品智能上新*/
     SpJdController.prototype.publishProduct = function () {
-        var self = this,
-            $fieldEditService = self.$fieldEditService;
+        var self = this, $fieldEditService = self.$fieldEditService;
         //记录原先状态
         self.vm.preStatus = angular.copy(self.vm.status);
 
@@ -245,7 +213,7 @@ define([
      * @description 保存前判断数据的有效性
      * @param mark 标识字段
      */
-    SpJdController.prototype.saveValid = function(mark){
+    SpJdController.prototype.saveValid = function (mark) {
         var self = this;
 
         if (mark == "ready") {
@@ -273,7 +241,6 @@ define([
 
     SpJdController.prototype.saveProductAction = function (mark) {
         var self = this,
-            popups = self.popups,
             productDetailService = self.productDetailService;
 
         self.vm.preStatus = angular.copy(self.vm.status);
@@ -282,11 +249,11 @@ define([
         self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
 
         //有效性判断
-        if(!self.saveValid(mark))
+        if (!self.saveValid(mark))
             return;
 
         /**构造调用接口上行参数*/
-        productDetailService.platformUpEntity({cartId:self.$scope.cartInfo.value,mark:mark},self.vm);
+        productDetailService.platformUpEntity({cartId: self.$scope.cartInfo.value, mark: mark}, self.vm);
 
         if (mark == "temporary") {
             //暂存状态都为 Pending
@@ -297,7 +264,7 @@ define([
 
         if (self.vm.status == "Approved") {
 
-            popups.openApproveConfirm(self.vm.platform.skus).then(function (context) {
+            self.popups.openApproveConfirm(self.vm.platform.skus).then(function (context) {
                 if (context) {
                     _.map(self.vm.platform.skus, function (element) {
                         element.confPriceRetail = element.priceRetail;
@@ -319,8 +286,7 @@ define([
 
     /**调用服务器接口*/
     SpJdController.prototype.callSave = function (mark) {
-        var self = this,
-            notify = self.notify,
+        var self = this, notify = self.notify,
             confirm = self.confirm,
             productDetailService = self.productDetailService,
             $translate = self.$translate;
@@ -368,8 +334,7 @@ define([
      */
     SpJdController.prototype.choseBrand = function () {
 
-        var self = this,
-            $scope = self.$scope,
+        var self = this, $scope = self.$scope,
             popups = self.popups,
             platform = self.vm.platform;
 
@@ -402,8 +367,7 @@ define([
      * 刷新价格实际操作
      */
     SpJdController.prototype.updateSkuPrice = function () {
-        var self = this,
-            $scope = self.$scope;
+        var self = this, $scope = self.$scope;
 
         self.confirm("您是否确认要刷新sku价格").then(function () {
             self.productDetailService.updateSkuPrice({
@@ -433,8 +397,7 @@ define([
      * @returns {boolean}
      */
     SpJdController.prototype.checkPriceMsrp = function () {
-        var self = this,
-            priceMsrpCheckObj,
+        var self = this, priceMsrpCheckObj,
             priceMsrpCheck = true;
 
         if (self.autoSyncPriceMsrp == "2") {
@@ -483,10 +446,7 @@ define([
     SpJdController.prototype.allSkuSale = function () {
         var self = this;
 
-        if (!self.vm.platform)
-            return false;
-
-        if (!self.vm.platform.skus)
+        if (!self.vm.platform || !self.vm.platform.skus)
             return false;
 
         return self.vm.platform.skus.every(function (element) {
@@ -496,9 +456,8 @@ define([
 
     /**错误聚焦*/
     SpJdController.prototype.focusError = function () {
-        var self = this,
-            element = self.element,
-            firstError;
+        var self = this, firstError,
+            element = self.element;
 
         if (!self.validSchema()) {
             firstError = element.find("schema .ng-invalid:first");
@@ -554,10 +513,9 @@ define([
     };
 
     SpJdController.prototype.openSwitchMainPop = function () {
-        var self = this,
-            popups = self.popups;
+        var self = this;
 
-        popups.openSwitchMain({
+        self.popups.openSwitchMain({
             cartId: self.$scope.cartInfo.value,
             productCode: self.vm.mastData.productCode
         }).then(function () {
@@ -567,8 +525,7 @@ define([
     };
 
     SpJdController.prototype.copyMainProduct = function () {
-        var self = this,
-            $scope = self.$scope,
+        var self = this, $scope = self.$scope,
             productDetailService = self.productDetailService,
             template = _.template("您确定要复制Master数据到<%=cartName%>吗？");
 
@@ -584,10 +541,8 @@ define([
 
     SpJdController.prototype.moveToGroup = function () {
 
-        var self = this,
-            $scope = self.$scope,
+        var self = this, $scope = self.$scope,
             $translate = self.$translate,
-            productDetailService = self.productDetailService,
             template = $translate.instant('TXT_CONFIRM_MOVE_SKU', {'cartName': $scope.cartInfo.name});
 
         window.sessionStorage.setItem('moveCodeInfo', JSON.stringify({
@@ -599,7 +554,7 @@ define([
         self.confirm(template).then(function () {
             var newTab = window.open('about:blank');
 
-            productDetailService.moveCodeInitCheck({
+            self.productDetailService.moveCodeInitCheck({
                 cartId: $scope.cartInfo.value,
                 cartName: $scope.cartInfo.name,
                 prodId: $scope.productInfo.productId
@@ -612,10 +567,9 @@ define([
     };
 
     SpJdController.prototype.showExt = function () {
-        var self = this,
+        var self = this, modal, modalChildScope,
             body = self.$document[0].body,
             $compile = self.$compile,
-            modal, modalChildScope,
             $templateRequest = self.$templateRequest;
 
         $templateRequest('/modules/cms/views/product/approved-example.tpl.html').then(function (html) {
@@ -630,7 +584,7 @@ define([
     cms.directive('jmSubPage', function () {
         return {
             restrict: 'E',
-            controller: ['$scope', 'productDetailService', '$translate', 'notify', 'confirm', '$q', '$compile', 'alert', 'popups', '$fieldEditService', '$document', '$templateRequest', SpJdController],
+            controller: ['$scope', 'productDetailService', '$translate', 'notify', 'confirm', '$compile', 'alert', 'popups', '$fieldEditService', '$document', '$templateRequest', SpJdController],
             controllerAs: 'ctrl',
             scope: {
                 productInfo: "=productInfo",

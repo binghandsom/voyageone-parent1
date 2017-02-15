@@ -365,8 +365,7 @@ define([
      */
     SpJdController.prototype.choseBrand = function () {
 
-        var self = this,
-            $scope = self.$scope,
+        var self = this, $scope = self.$scope,
             platform = self.vm.platform;
 
         self.popups.openPlatformMappingSetting({
@@ -408,8 +407,7 @@ define([
      * @returns {boolean}
      */
     SpJdController.prototype.checkPriceMsrp = function () {
-        var self = this,
-            priceMsrpCheckObj,
+        var self = this, priceMsrpCheckObj,
             priceMsrpCheck = true;
 
         if (self.autoSyncPriceMsrp == "2") {
@@ -462,8 +460,7 @@ define([
      * @param speed 导航速度 ms为单位
      */
     SpJdController.prototype.pageAnchor = function (area, speed) {
-        var offsetTop = 0,
-            element = this.element;
+        var offsetTop = 0, element = this.element;
 
         if (area != 'master') {
             offsetTop = element.find("#" + area).offset().top;
@@ -478,10 +475,7 @@ define([
     SpJdController.prototype.allSkuSale = function () {
         var self = this;
 
-        if (!self.vm.platform)
-            return false;
-
-        if (!self.vm.platform.skus)
+        if (!self.vm.platform || !self.vm.platform.skus)
             return false;
 
         return self.vm.platform.skus.every(function (element) {
@@ -491,9 +485,8 @@ define([
 
     /**错误聚焦*/
     SpJdController.prototype.focusError = function () {
-        var self = this,
-            element = self.element,
-            firstError;
+        var self = this,firstError,
+            element = self.element;
 
         if (!self.validSchema()) {
             firstError = element.find("schema .ng-invalid:first");

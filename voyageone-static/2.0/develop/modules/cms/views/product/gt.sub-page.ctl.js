@@ -29,13 +29,12 @@ define([
         return result;
     }
 
-    function SpJdController($scope, productDetailService, $translate, notify, confirm, $q, $compile, alert, popups, $fieldEditService, $document, $templateRequest) {
+    function SpJdController($scope, productDetailService, $translate, notify, confirm, $compile, alert, popups, $fieldEditService, $document, $templateRequest) {
         this.$scope = $scope;
         this.productDetailService = productDetailService;
         this.$translate = $translate;
         this.notify = notify;
         this.confirm = confirm;
-        this.$q = $q;
         this.$compile = $compile;
         this.alert = alert;
         this.popups = popups;
@@ -130,9 +129,8 @@ define([
      * @param popupNewCategory popup实例
      */
     SpJdController.prototype.categoryMapping = function () {
-        var self = this,
-            productDetailService = self.productDetailService,
-            $scope = self.$scope;
+        var self = this, $scope = self.$scope,
+            productDetailService = self.productDetailService;
 
         if (self.vm.status == 'Approved') {
             self.alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
@@ -189,7 +187,6 @@ define([
             selectedIds: selectedIds,
             plateSchema: true
         }]).then(function (context) {
-            /**清空原来店铺类分类*/
             self.vm.sellerCats = [];
             self.vm.sellerCats = context.sellerCats;
         });
@@ -239,7 +236,7 @@ define([
      * @description 保存前判断数据的有效性
      * @param mark 标识字段
      */
-    SpJdController.prototype.saveValid = function(mark){
+    SpJdController.prototype.saveValid = function (mark) {
         var self = this;
 
         if ((self.vm.status == "Ready" || self.vm.status == "Approved") && !self.checkSkuSale()) {
@@ -262,11 +259,11 @@ define([
         self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
 
         //有效性判断
-        if(!self.saveValid(mark))
+        if (!self.saveValid(mark))
             return;
 
         /**构造调用接口上行参数*/
-        productDetailService.platformUpEntity({cartId:self.$scope.cartInfo.value,mark:mark},self.vm);
+        productDetailService.platformUpEntity({cartId: self.$scope.cartInfo.value, mark: mark}, self.vm);
 
         if (mark == "temporary") {
             //暂存状态都为 Pending
@@ -300,8 +297,7 @@ define([
 
     /**调用服务器接口*/
     SpJdController.prototype.callSave = function (mark) {
-        var self = this,
-            notify = self.notify,
+        var self = this, notify = self.notify,
             confirm = self.confirm,
             productDetailService = self.productDetailService,
             $translate = self.$translate;
@@ -349,8 +345,7 @@ define([
      */
     SpJdController.prototype.choseBrand = function () {
 
-        var self = this,
-            $scope = self.$scope,
+        var self = this, $scope = self.$scope,
             platform = self.vm.platform;
 
         self.popups.openPlatformMappingSetting({
@@ -392,8 +387,7 @@ define([
      * @returns {boolean}
      */
     SpJdController.prototype.checkPriceMsrp = function () {
-        var self = this,
-            priceMsrpCheckObj,
+        var self = this, priceMsrpCheckObj,
             priceMsrpCheck = true;
 
         if (self.autoSyncPriceMsrp == "2") {
@@ -410,8 +404,7 @@ define([
      * 刷新价格实际操作
      */
     SpJdController.prototype.updateSkuPrice = function () {
-        var self = this,
-            $scope = self.$scope;
+        var self = this, $scope = self.$scope;
 
         self.confirm("您是否确认要刷新sku价格").then(function () {
             self.productDetailService.updateSkuPrice({
@@ -446,8 +439,7 @@ define([
      * @param speed 导航速度 ms为单位
      */
     SpJdController.prototype.pageAnchor = function (area, speed) {
-        var offsetTop = 0,
-            element = this.element;
+        var offsetTop = 0, element = this.element;
 
         if (area != 'master') {
             offsetTop = element.find("#" + area).offset().top;
@@ -462,10 +454,7 @@ define([
     SpJdController.prototype.allSkuSale = function () {
         var self = this;
 
-        if (!self.vm.platform)
-            return false;
-
-        if (!self.vm.platform.skus)
+        if (!self.vm.platform || !self.vm.platform.skus)
             return false;
 
         return self.vm.platform.skus.every(function (element) {
@@ -475,9 +464,8 @@ define([
 
     /**错误聚焦*/
     SpJdController.prototype.focusError = function () {
-        var self = this,
-            element = self.element,
-            firstError;
+        var self = this, firstError,
+            element = self.element;
 
         if (!self.validSchema()) {
             firstError = element.find("schema .ng-invalid:first");
@@ -544,8 +532,7 @@ define([
     };
 
     SpJdController.prototype.copyMainProduct = function () {
-        var self = this,
-            $scope = self.$scope,
+        var self = this, $scope = self.$scope,
             productDetailService = self.productDetailService,
             template = _.template("您确定要复制Master数据到<%=cartName%>吗？");
 
@@ -561,8 +548,7 @@ define([
 
     SpJdController.prototype.moveToGroup = function () {
 
-        var self = this,
-            $scope = self.$scope,
+        var self = this, $scope = self.$scope,
             $translate = self.$translate,
             productDetailService = self.productDetailService,
             template = $translate.instant('TXT_CONFIRM_MOVE_SKU', {'cartName': $scope.cartInfo.name});
@@ -589,10 +575,9 @@ define([
     };
 
     SpJdController.prototype.showExt = function () {
-        var self = this,
+        var self = this,modal, modalChildScope,
             body = self.$document[0].body,
             $compile = self.$compile,
-            modal, modalChildScope,
             $templateRequest = self.$templateRequest;
 
         $templateRequest('/modules/cms/views/product/approved-example.tpl.html').then(function (html) {
@@ -607,7 +592,7 @@ define([
     cms.directive('gtSubPage', function () {
         return {
             restrict: 'E',
-            controller: ['$scope', 'productDetailService', '$translate', 'notify', 'confirm', '$q', '$compile', 'alert', 'popups', '$fieldEditService', '$document', '$templateRequest', SpJdController],
+            controller: ['$scope', 'productDetailService', '$translate', 'notify', 'confirm', '$compile', 'alert', 'popups', '$fieldEditService', '$document', '$templateRequest', SpJdController],
             controllerAs: 'ctrl',
             scope: {
                 productInfo: "=productInfo",
