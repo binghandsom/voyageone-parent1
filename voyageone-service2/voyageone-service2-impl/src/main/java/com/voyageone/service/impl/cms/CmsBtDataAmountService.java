@@ -9,6 +9,7 @@ import com.voyageone.service.dao.cms.CmsBtDataAmountDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtDataAmountDaoExt;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtDataAmountModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class CmsBtDataAmountService {
+public class CmsBtDataAmountService extends BaseService {
     @Autowired
     CmsBtFeedInfoDao daoCmsBtFeedInfo;
     @Autowired
@@ -92,7 +93,9 @@ public class CmsBtDataAmountService {
             } else {
                 strQuery = String.format(enumFeed.getStrQuery(), cartId);
             }
+            $info(String.format("channel=%s name = %s start",channelId, enumFeed.getAmountName()));
             long count = daoCmsBtProduct.countByQuery(strQuery, channelId);
+            $info(String.format("channel=%s name = %s count = %d end",channelId, enumFeed.getAmountName(), count));
             saveCmsBtDataAmount(channelId, cartId, enumFeed, count);
         }
     }
