@@ -67,7 +67,6 @@ define([
 
         //监控税号和翻译状态
         var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
-            check.translate = $scope.productInfo.translateStatus;
             check.tax = $scope.productInfo.hsCodeStatus;
         });
 
@@ -96,7 +95,6 @@ define([
 
             if (vm.platform) {
                 vm.status = vm.platform.status == null ? vm.status : vm.platform.status;
-                vm.checkFlag.category = vm.platform.pCatPath == null ? 0 : 1;
                 vm.platform.pStatus = vm.platform.pStatus == null ? "WaitingPublish" : vm.platform.pStatus;
                 vm.sellerCats = vm.platform.sellerCats == null ? [] : vm.platform.sellerCats;
                 vm.platform.pStatus = vm.platform.pPublishMessage != null && vm.platform.pPublishMessage != "" ? "Failed" : vm.platform.pStatus;
@@ -164,7 +162,6 @@ define([
                         self.vm.platform = resp.data.platform;
                         self.vm.platform.pCatPath = context.selected.catPath;
                         self.vm.platform.pCatId = context.selected.catId;
-                        self.vm.checkFlag.category = 1;
                         self.vm.platform.pStatus == 'WaitingPublish';
                         self.vm.status = "Pending";
 
