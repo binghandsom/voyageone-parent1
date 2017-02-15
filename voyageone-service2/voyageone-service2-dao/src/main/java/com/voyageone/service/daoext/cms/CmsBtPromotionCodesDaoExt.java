@@ -3,8 +3,10 @@ package com.voyageone.service.daoext.cms;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.dao.ServiceBaseDao;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,4 +64,11 @@ public class CmsBtPromotionCodesDaoExt extends ServiceBaseDao {
         }
         return promotionNames;
     }
+    public int selectCmsBtPromotionCodeInPromtionCnt(String code, List<Integer> promotionIds){
+        Map<String,Object> params = new HashMap();
+        params.put("code", code);
+        params.put("promotionIds", promotionIds);
+        return selectOne("select_cms_bt_promotion_code_in_promtion_cnt",params);
+    }
+
 }

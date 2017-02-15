@@ -59,6 +59,9 @@ public class CmsConstants {
         // 该店铺是否自动审批价格
         String AUTO_APPROVE_PRICE = "AUTO_APPROVE_PRICE";
 
+        String AUTO_SYNC_PRICE_PROMOTION = "AUTO_SYNC_PRICE_PROMOTION";
+
+
         // 该渠道是否自动同步 MSRP
         String AUTO_SYNC_PRICE_MSRP = "AUTO_SYNC_PRICE_MSRP";
         String AUTO_SYNC_PRICE_MSRP_NO = "0"; // 不联动

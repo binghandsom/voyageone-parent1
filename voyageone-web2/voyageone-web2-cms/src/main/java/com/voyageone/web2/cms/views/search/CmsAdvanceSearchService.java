@@ -196,12 +196,17 @@ public class CmsAdvanceSearchService extends BaseViewService {
         masterData.put("cartList", cartList);
 
         // 是否自动最终售价同步指导价格
-        CmsChannelConfigBean autoPriceCfg = CmsChannelConfigs.getConfigBeanNoCode(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
-        String autoApprovePrice = "0"; // 缺省不自动同步
-        if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
-             autoApprovePrice = "1"; // 自动同步
+        List<CmsChannelConfigBean> autoPriceCfg = CmsChannelConfigs.getConfigBeans(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
+//        String autoApprovePrice = "0"; // 缺省不自动同步
+//        if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
+//             autoApprovePrice = "1"; // 自动同步
+//        }
+//        ;
+        if(!ListUtils.isNull(autoPriceCfg)) {
+            masterData.put("autoApprovePrice", autoPriceCfg.stream().collect(Collectors.toMap(CmsChannelConfigBean::getConfigCode, o -> o)));
+        }else{
+            masterData.put("autoApprovePrice", new HashMap<>());
         }
-        masterData.put("autoApprovePrice", autoApprovePrice);
 
         // 是否是使用价格公式
         CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanNoCode(userInfo.getSelChannelId(), PRICE_CALCULATOR);

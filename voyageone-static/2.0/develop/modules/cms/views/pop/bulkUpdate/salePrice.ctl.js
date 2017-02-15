@@ -11,11 +11,17 @@ define([
             property: context.property,
             cartId: context.property.cartId.toString(),
             cartList: context.cartList,
+            config:context.config,
             _optStatus: false,
             priceTypeId: 0,
-            roundType: 1,
-            skuUpdType: 1
+            roundType: 0,
+            skuUpdType: 0
         };
+
+        if(context.config){
+            $scope.vm.roundType = context.config.configValue3 ? context.config.configValue3 + "" : 0;
+            $scope.vm.skuUpdType = context.config.configValue2 ? context.config.configValue2 + "" : 0;
+        }
 
         $scope.save = function () {
             // 检查输入
@@ -156,7 +162,7 @@ define([
         $scope.chkPriceType = function (priceTypeVal, typeTxt) {
             $scope.vm.priceTypeId = priceTypeVal;
             $scope.vm.priceValue = null;
-            $scope.vm.roundType = "1";
+            // $scope.vm.roundType = "1";
             if (priceTypeVal == 4) {
                 // 基准价格为None时只允许选等于号
                 $scope.vm._optStatus = true;
@@ -164,14 +170,14 @@ define([
                 $scope.vm._opeText = '';
                 $scope.vm._typeText = '';
                 $scope.vm.priceInputFlg = true;
-                $scope.vm.skuUpdType = "0";
+                // $scope.vm.skuUpdType = "0";
             } else {
                 $scope.vm._optStatus = false;
                 $scope.vm.optType = '';
                 $scope.vm._opeText = '';
                 $scope.vm._typeText = $translate.instant(typeTxt);
                 $scope.vm.priceInputFlg = false;
-                $scope.vm.skuUpdType = "1";
+                // $scope.vm.skuUpdType = "1";
             }
         };
     });

@@ -14,7 +14,6 @@ import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.CmsConstants;
-import com.voyageone.task2.cms.dao.BrandDao;
 import com.voyageone.task2.cms.model.PlatformCategoriesModel;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.components.tmall.service.TbCategoryService;
@@ -34,8 +33,6 @@ public class GetPlatformCategoryTreesService extends BaseCronTaskService {
 
     private final static String JOB_NAME = "getPlatformCategoryTreesTask";
 
-    @Autowired
-    private BrandDao brandDao;
     @Autowired
     private TbCategoryService tbCategoryService;
     @Autowired

@@ -91,6 +91,9 @@ public class CmsPlatformActiveLogServiceTest {
         logParams.put("creater", "will2");
         logParams.put("comment", "高级检索 批量上下架");
         logParams.put("codeList", new ArrayList(Arrays.asList("CRWNRG01LBO-10","CRWNRG01LBO-9","CRWNRG01LBO-8","CRWNRG01LBO-7","CRWNRG01LBO-6","CRWNRG01LBO-5")));
+
+        String json = "{\"channelId\":\"012\",\"userName\":\"edward\",\"cartList\":[27],\"activeStatus\":\"ToOnSale\",\"codeList\":[\"BBE1U688-Z5I\"],\"comment\":\"高级检索 批量上下架\",\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"edward\"}";
+
         try {
             targetService.setProductOnSaleOrInStock(logParams);
         } catch (Exception e) {

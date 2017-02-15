@@ -19,9 +19,11 @@ import java.util.*;
  */
 @Service
 public class BiRepConsultService extends BaseService {
-    private static final String API_HOST = "http://openapi.voyageone.com.cn";
+//    private static final String API_HOST = "http://openapi.voyageone.com.cn";
+//private static final String CREATE_XLS_FILE_TASK_URL = "/bi/createXlsFileTask";
 
-    private static final String CREATE_XLS_FILE_TASK_URL = "/bi/createXlsFileTask";
+    private static final String API_HOST = "http://10.0.0.95:3083";
+    private static final String CREATE_XLS_FILE_TASK_URL = "/rest/report/createXlsFileTask";
 
     @Autowired
     private BiReportDownloadTaskDaoExt  biReportDownloadTaskDaoExt;
@@ -103,6 +105,7 @@ public class BiRepConsultService extends BaseService {
         int id=model.getId();
         params.put("taskId",id);
         String url = API_HOST + CREATE_XLS_FILE_TASK_URL;
+        logger.info("api url:" + url);
         String result = null;
         try {
             String request = JacksonUtil.bean2Json(params);
