@@ -48,7 +48,7 @@ public class CmsRefreshProductCategoryMQServiceTest {
         // 单个产品code的主类目设置
 
         String channelId = "928";
-        String code = "1101820727";
+        String code = "366650_111";
         String userName = "testUser003";
 
         // 调用批量设置主类目

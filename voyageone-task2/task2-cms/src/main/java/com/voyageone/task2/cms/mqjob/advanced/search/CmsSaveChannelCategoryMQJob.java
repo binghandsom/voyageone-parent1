@@ -30,7 +30,7 @@ public class CmsSaveChannelCategoryMQJob extends TBaseMQCmsService<SaveChannelCa
         super.count = codeList.size();
         List<CmsBtOperationLogModel_Msg> failList = saveChannelCategoryService.onStartup(messageBody.getParams());
         if (failList.size() > 0) {
-            String comment = String.format("处理成功件数(%s), 处理失败件数(%s)", codeList.size(), failList.size());
+            String comment = String.format("处理总件数(%s), 处理失败件数(%s)", codeList.size(), failList.size());
             cmsSuccessIncludeFailLog(messageBody, comment, failList);
         }
     }

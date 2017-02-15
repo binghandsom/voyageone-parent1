@@ -40,7 +40,7 @@ public class CmsPlatformActiveLogMQJob extends TBaseMQCmsService<PlatformActiveL
 
         List<CmsBtOperationLogModel_Msg> failList = cmsPlatformActiveLogService.setProductOnSaleOrInStock(params);
         if (failList.size() > 0) {
-            String comment = String.format("处理成功件数(%s), 处理失败件数(%s)", messageBody.getProductCodes().size(), failList.size());
+            String comment = String.format("处理总件数(%s), 处理失败件数(%s)", messageBody.getProductCodes().size(), failList.size());
             cmsSuccessIncludeFailLog(messageBody, comment, failList);
         }
 
