@@ -27,8 +27,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import static com.voyageone.ims.enums.CmsFieldEnum.CmsModelEnum.model;
-
 /**
  * Created by james on 2016/10/18.
  */

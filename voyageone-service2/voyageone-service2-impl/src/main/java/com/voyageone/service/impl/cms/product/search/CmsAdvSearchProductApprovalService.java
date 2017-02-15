@@ -112,8 +112,8 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                         hsCodeList.add(field.getCode());
                     }
                 }
-
-                if (hsCodeList.size() > 0 && (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
+                //// TODO: 2017/2/15 edward 因为overstock进入liking店铺,需要不设置税号也能够上新,然后销售后再补税号
+                if (!"928".equals(channelId) && hsCodeList.size() > 0 && (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
                         || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId()))
                         || newcartList.contains(Integer.parseInt(CartEnums.Cart.DT.getId())))) {
                     throw new BusinessException("有商品商品没有设置税号, 无法审批, 请修改. codes=" + JacksonUtil.bean2Json(hsCodeList));

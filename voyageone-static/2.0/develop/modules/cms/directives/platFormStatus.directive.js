@@ -51,11 +51,13 @@ define([
             if (this.statusData.pPublishError)
                 this.statusData.approveError = true;
 
-            if (_numberId) {
-                if (_cartId != 27) {
-                    this.statusData.detailUrl = _cartInfo.pUrl + _numberId;
-                } else {
+            if (_numberId || _pPlatformMallId) {
+                if (_cartId == 27) {
                     this.statusData.detailUrl = _cartInfo.pUrl + _pPlatformMallId + ".html";
+                } else if (_cartId == 32) {
+                    this.statusData.detailUrl = _cartInfo.pUrl + _numberId + ".html";
+                } else {
+                    this.statusData.detailUrl = _cartInfo.pUrl + _numberId;
                 }
 
             }
