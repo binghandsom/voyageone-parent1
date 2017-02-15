@@ -316,8 +316,7 @@ define([
 
     /**调用服务器接口*/
     SpJdController.prototype.callSave = function (mark) {
-        var self = this,
-            notify = self.notify,
+        var self = this, notify = self.notify,
             confirm = self.confirm,
             productDetailService = self.productDetailService,
             $translate = self.$translate;
