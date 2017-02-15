@@ -25,24 +25,6 @@
                             </div>
                         </div>
                     </div>
-                    <!----------------------------------------右侧悬浮框-------------------------------------------->
-                    <div class="col-sm-2" style="float: right;">
-                        <nav class="bs-docs-sidebar feed-sidebar" drag>
-                            <h3 drag-handle>导航栏</h3>
-                            <ul class="nav bs-docs-sidenav">
-                                <li>
-                                    <a href="javascript:void(0)" ng-click="pageAnchor('attribute',1000)">{{'TXT_CUST_ATTRIBUTE' | translate}}</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)" ng-click="pageAnchor('complete',1000)">{{'TXT_COMPLETE' | translate}}</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)" ng-click="pageAnchor('incomplete',1000)">{{'TXT_INCOMPLETE' | translate}}</a>
-                                </li>
-                            </ul>
-                            <button type="button" class="btn btn-nav btn-nav-pop" ng-click="updateFeedInfo()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;保存</button>
-                        </nav>
-                    </div>
                 </div>
 
                 <div class="col-sm-12">
@@ -102,4 +84,23 @@
             </div>
         </div>
     </div>
+
+    <!-------------------------------- 导航栏 --------------------------------->
+    <sticky top-fix="-100" style="position: absolute; top: 280px; right: 47px;" drag>
+        <nav class="bs-docs-sidebar master-sidebar">
+            <h3 drag-handle>导航栏</h3>
+            <ul class="nav bs-docs-sidenav" style="margin-bottom: 0px">
+                <li>
+                    <a href="javascript:void(0)" ng-click="pageAnchor('attribute',1000)">{{'TXT_CUST_ATTRIBUTE' | translate}}</a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" ng-click="pageAnchor('complete',1000)">{{'TXT_COMPLETE' | translate}}</a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" ng-click="pageAnchor('incomplete',1000)">{{'TXT_INCOMPLETE' | translate}}</a>
+                </li>
+            </ul>
+            <button type="button" class="btn btn-nav btn-nav-pop" ng-click="updateFeedInfo()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;保存</button>
+        </nav>
+    </sticky>
 </div>
