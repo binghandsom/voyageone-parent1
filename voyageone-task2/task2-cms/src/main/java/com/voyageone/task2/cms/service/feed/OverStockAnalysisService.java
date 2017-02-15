@@ -113,7 +113,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         while (true) {
             pageIndex++;
             $info("取得第"+pageIndex+"页的数据");
-            request.setOffset(offset+((pageIndex-1) * 100));
+            request.setOffset((pageIndex-1) * 100);
             request.setLimit(100);
             String sku = "";
             try {
