@@ -29,14 +29,13 @@ public class CmsJmPromotionExportMQJob extends TBaseMQCmsService<JmPromotionExpo
         // 获取Mq的配置信息
         TaskControlBean taskControlBean = getTaskControlBean(taskControlList, "cms.jm.export.path");
         if (taskControlBean == null) {
-            this.cmsConfigExLog(messageBody, "请在tm_task_control中确认配置cms.jm.export.path");
+            cmsConfigExLog(messageBody, "请在tm_task_control中确认配置cms.jm.export.path");
             return;
         }
 
         // 生成excel文件
         String exportPath = taskControlBean.getCfg_val1();
         FileUtils.mkdirPath(exportPath);
-        int id = messageBody.getJmBtPromotionExportTaskId();
-        service.export(id, exportPath);
+        service.export(messageBody.getJmBtPromotionExportTaskId(), exportPath);
     }
 }

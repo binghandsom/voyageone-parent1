@@ -21,6 +21,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtSxCnProductSellercatModel;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +49,13 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
     @Autowired
     private CmsBtSxCnProductSellercatDaoExt cnProductSellercatDao;
 
-    // 返回值由void改为Map，存放因“产品数据不完整”跳过的产品code和对于的错误提示信息
-    public Map<String, String> onStartup(Map<String, Object> messageMap) {
-        Map<String, String> errorMap = new HashMap<>();
+    /**
+     * 返回值由void改为Map，存放因“产品数据不完整”跳过的产品code和对于的错误提示信息
+     * @param messageMap
+     * @return
+     */
+    public List<CmsBtOperationLogModel_Msg> onStartup(Map<String, Object> messageMap) {
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
         List<String> codeList = (List) messageMap.get("productIds");
         List<String> approvedCodeList = new ArrayList<>();
         if (codeList == null || codeList.isEmpty()) {
@@ -89,8 +94,6 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
 
         List<CmsBtProductModel> prodList = productService.getList(channelId, queryObject);
         if (prodList == null && prodList.size() == 0) {
-            /*$warn("查询不到产品 params=" + messageMap.toString());
-            return;*/
             throw new BusinessException(String.format("查询不到产品,params=%s"), JacksonUtil.bean2Json(messageMap));
         }
 
@@ -107,8 +110,12 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
             CmsBtProductModel_Platform_Cart platformObj = prodObj.getPlatform(cartId);
             if (platformObj == null) {
                 // 产品数据不完整的记录到日志中
-                errorMap.put(prodCode, String.format("产品数据不完整，缺少Platform，prodCode=%s，cartId=%s", prodCode, cartId));
                 $error("产品数据不完整，缺少Platform， prodCode=" + prodCode);
+
+                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                errorInfo.setSkuCode(prodCode);
+                errorInfo.setMsg(String.format("产品数据不完整，缺少Platform，cartId=%s", cartId));
+                failList.add(errorInfo);
                 continue;
             }
             // 变更前的分类选择
@@ -206,7 +213,7 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
             msg = "高级检索 批量设置[" + cartObj.getName() + "]店铺内分类" + catNameStr.toString();
         }
         productStatusHistoryService.insertList(channelId, codeList, cartId, EnumProductOperationType.BatchSetCats, msg, userName);
-        return errorMap;
+        return failList;
     }
 
     /**

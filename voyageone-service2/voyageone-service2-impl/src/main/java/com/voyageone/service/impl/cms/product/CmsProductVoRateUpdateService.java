@@ -13,6 +13,7 @@ import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductVoRateUpdateMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.apache.commons.lang3.StringUtils;
@@ -43,9 +44,12 @@ public class CmsProductVoRateUpdateService extends BaseService {
     @Autowired
     private SxProductService sxProductService;
 
-    public List<Map<String, String>> updateProductVoRate(ProductVoRateUpdateMQMessageBody messageBody) throws Exception {
-        List<Map<String, String>> failList = new ArrayList<Map<String, String>>();
+    public List<CmsBtOperationLogModel_Msg> updateProductVoRate(ProductVoRateUpdateMQMessageBody messageBody) throws Exception {
+
         $info("CmsProductVoRateUpdateService start");
+
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
+
         String channelId = StringUtils.trimToNull(messageBody.getChannelId());
         List<String> codeList = messageBody.getCodeList();
         String creator = StringUtils.trimToEmpty(messageBody.getSender());
@@ -71,21 +75,22 @@ public class CmsProductVoRateUpdateService extends BaseService {
                 CmsBtProductModel prodObj = productService.getProductByCondition(channelId, queryObj);
                 if (prodObj == null) {
 
-                    Map<String, String> failMap = new HashMap<String, String>();
-                    failMap.put(prodCode, String.format("CmsProductVoRateUpdateService 产品不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId));
-                    failList.add(failMap);
-
                     $warn("CmsProductVoRateUpdateService 产品不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
+
+                    CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                    errorInfo.setSkuCode(prodCode);
+                    errorInfo.setMsg("产品不存在");
+                    failList.add(errorInfo);
                     continue;
                 }
                 List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
                 if (skuList == null || skuList.isEmpty()) {
 
-                    Map<String, String> failMap = new HashMap<String, String>();
-                    failMap.put(prodCode, String.format("CmsProductVoRateUpdateService 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId));
-                    failList.add(failMap);
-
                     $warn("CmsProductVoRateUpdateService 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
+
+                    CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                    errorInfo.setSkuCode(prodCode);
+                    errorInfo.setMsg(String.format("产品sku数据不存在 cartId=%d", cartId));
                     continue;
                 }
 
@@ -94,11 +99,11 @@ public class CmsProductVoRateUpdateService extends BaseService {
                     priceService.setPrice(prodObj, cartId, false);
                 } catch (Exception exp) {
 
-                    Map<String, String> failMap = new HashMap<String, String>();
-                    failMap.put(prodCode, String.format("CmsProductVoRateUpdateService 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channelId, prodCode, cartId, exp.getMessage()));
-                    failList.add(failMap);
-
                     $error(String.format("CmsProductVoRateUpdateService 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channelId, prodCode, cartId, exp.getMessage()), exp);
+
+                    CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                    errorInfo.setSkuCode(prodCode);
+                    errorInfo.setMsg(String.format("调用共通函数计算指导价时出错 cartId=%d, errmsg=%s", cartId, exp.getMessage()));
                     continue;
                 }
 

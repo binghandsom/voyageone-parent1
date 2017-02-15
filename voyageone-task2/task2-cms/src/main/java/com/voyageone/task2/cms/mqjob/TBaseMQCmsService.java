@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
 import com.voyageone.service.enums.cms.OperationLog_Type;
@@ -10,6 +11,7 @@ import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.task2.base.TBaseMQAnnoService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,6 +24,8 @@ import java.util.List;
 public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> extends TBaseMQAnnoService<TMQMessageBody> {
     @Autowired
     CmsBtOperationLogService cmsBtOperationLogService;
+
+    public long count = 0;
 
     @Override
     public SubSystem getSubSystem() {
@@ -54,8 +58,12 @@ public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> e
     @Override
     public void startup(TMQMessageBody messageBody) throws Exception {
         try {
+            String begin = DateTimeUtil.format(new Date(), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
             $debug(this.getTaskName(), ":start->");
             onStartup(messageBody);
+            String end = DateTimeUtil.format(new Date(), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+            $debug(String.format("处理总件数总数(%s), 开始时间: %s, 结束时间: %s", count, begin, end));
+            cmsSuccessLog(messageBody, String.format("处理总件数总数(%s), 开始时间: %s, 结束时间: %s", count, begin, end));
         } catch (BusinessException ex) {
             cmsBusinessExLog(messageBody, ex.getMessage());
         } catch (Exception ex) {
@@ -113,9 +121,10 @@ public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> e
      * 成功结束
      *
      * @param messageBody messageBody
+     * @param comment     comment
      * @param msg         msg
      */
-    public void cmsSuccessIncludeFailLog(TMQMessageBody messageBody, List<CmsBtOperationLogModel_Msg> msg) {
-        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.successIncludeFail, msg);
+    public void cmsSuccessIncludeFailLog(TMQMessageBody messageBody, String comment, List<CmsBtOperationLogModel_Msg> msg) {
+        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.successIncludeFail, comment, msg);
     }
 }

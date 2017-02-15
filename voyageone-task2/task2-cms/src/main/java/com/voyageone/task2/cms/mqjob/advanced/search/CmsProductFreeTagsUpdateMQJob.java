@@ -26,6 +26,6 @@ public class CmsProductFreeTagsUpdateMQJob extends TBaseMQCmsService<CmsProductF
     @Override
     public void onStartup(CmsProductFreeTagsUpdateMQMessageBody messageBody) throws Exception {
         List<String> productCodeList =  service.setProductFreeTags(messageBody);
-        cmsSuccessLog(messageBody, String.format("Code总数(%s)", productCodeList.size()));
+        super.count = productCodeList.size();
     }
 }

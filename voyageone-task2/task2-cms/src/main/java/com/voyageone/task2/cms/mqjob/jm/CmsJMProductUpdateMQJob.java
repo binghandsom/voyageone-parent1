@@ -3,11 +3,13 @@ package com.voyageone.task2.cms.mqjob.jm;
 import com.voyageone.service.bean.cms.OperationResult;
 import com.voyageone.service.impl.cms.jumei2.JuMeiProductPlatform3Service;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.JMProductUpdateMQMessageBody;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,19 +27,24 @@ public class CmsJMProductUpdateMQJob extends TBaseMQCmsService<JMProductUpdateMQ
 
     @Override
     public void onStartup(JMProductUpdateMQMessageBody messageBody) {
-        int id = messageBody.getCmsBtJmPromotionId();
-        List<OperationResult> listResult = service.updateJmByPromotionId(id);
-        StringBuilder sb = new StringBuilder();
-        long errorCount = listResult.stream().filter(f -> !f.isResult()).count();
+
+        List<OperationResult> listResult = service.updateJmByPromotionId(messageBody.getCmsBtJmPromotionId());
+
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
         listResult.forEach(f -> {
             if (!f.isResult()) {
-                sb.append("code:").append(f.getCode()).append(":").append(f.getMsg()).append("errorId:").append(f.getId()).append("\\r\\n");
+                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                errorInfo.setSkuCode(f.getCode());
+
+                StringBuilder sb = new StringBuilder();
+                errorInfo.setMsg(sb.append(f.getMsg()).append("errorId:").append(f.getId()).toString());
+                failList.add(errorInfo);
             }
         });
-        if (errorCount > 0) {
-            cmsSuccessIncludeFailLog(messageBody, String.format("code总数(%s) 失败(%s) \\r\\n %s", listResult.size(), errorCount, sb.toString()));
-        } else {
-            cmsSuccessLog(messageBody, String.format("code总数(%s)", listResult.size()));
+
+        if (failList.size() > 0) {
+            String comment = String.format("处理成功件数(%s), 处理失败件数(%s)", listResult.size(), failList.size());
+            cmsSuccessIncludeFailLog(messageBody, comment, failList);
         }
     }
 }

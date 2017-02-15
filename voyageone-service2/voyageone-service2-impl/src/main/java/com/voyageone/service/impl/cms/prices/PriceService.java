@@ -1198,7 +1198,7 @@ public class PriceService extends BaseService {
      * 需要查询 voyageone_ims.ims_bt_product表，若对应的产品quantity_update_type为s：更新sku价格；为p：则更新商品价格(用最高一个sku的价格)
      * CmsBtProductModel中需要属性：common.fields.code, platforms.Pxx.pNumIId, platforms.Pxx.status, platforms.Pxx.skus.skuCode, platforms.Pxx.skus.priceSale,platforms.Pxx.skus.priceMsrp
      */
-    public void updateSkuPrice(String channleId, int cartId, CmsBtProductModel productModel, boolean isUpdateJmDealPrice) throws Exception {
+    public void updateSkuPrice(String channelId, int cartId, CmsBtProductModel productModel, boolean isUpdateJmDealPrice) throws Exception {
         logger.info("PriceService　更新商品SKU的价格 ");
         ShopBean shopObj = Shops.getShop(channelId, Integer.toString(cartId));
         CartBean cartObj = Carts.getCart(cartId);
@@ -1253,7 +1253,7 @@ public class PriceService extends BaseService {
             // 天猫平台直接调用API
             tmUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType, platObj.getpNumIId());
             // 全店特价宝价格更新
-            promotionTejiabaoService.updateTejiabaoPrice(channleId, cartId, productModel.getCommon().getFields().getCode(), productModel.getPlatform(cartId).getSkus(), "priceService");
+            promotionTejiabaoService.updateTejiabaoPrice(channelId, cartId, productModel.getCommon().getFields().getCode(), productModel.getPlatform(cartId).getSkus(), "priceService");
 
         } else if (PlatFormEnums.PlatForm.JM.getId().equals(cartObj.getPlatform_id())) {
             // votodo -- PriceService  聚美平台 更新商品SKU的价格
@@ -1484,4 +1484,5 @@ public class PriceService extends BaseService {
         }
         return ret;
     }
+
 }

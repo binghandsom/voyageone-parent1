@@ -4,12 +4,14 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.CmsConstants.PlatformStatus;
+import com.voyageone.common.masterdate.schema.utils.JsonUtil;
 import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsBrandBlockMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtBrandBlockModel;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.cms.service.platform.CmsPlatformActiveLogService;
@@ -46,15 +48,23 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
     }
 
     @Override
-    public void onStartup(CmsBrandBlockMQMessageBody messageMap) throws Exception {
+    public void onStartup(CmsBrandBlockMQMessageBody messageBody) throws Exception {
 
-        boolean blocking = messageMap.isBlocking();
-        CmsBtBrandBlockModel dataObject = messageMap.getData();
+        boolean blocking = messageBody.isBlocking();
+        CmsBtBrandBlockModel dataObject = messageBody.getData();
+
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
 
         if (blocking)
-            block(dataObject);
+            failList = block(dataObject);
         else
             unblock(dataObject);
+
+        if (failList.size() > 0) {
+            //写业务错误日志
+            String comment = String.format("处理失败件数(%s)",  failList.size());
+            cmsSuccessIncludeFailLog(messageBody, comment, failList);
+        }
     }
 
     private void unblock(CmsBtBrandBlockModel brandBlockModel) {
@@ -125,18 +135,21 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
         }
     }
 
-    private void block(CmsBtBrandBlockModel brandBlockModel) {
+    private List<CmsBtOperationLogModel_Msg> block(CmsBtBrandBlockModel brandBlockModel) {
+        List<CmsBtOperationLogModel_Msg> result = new ArrayList<>();
         switch (brandBlockModel.getType()) {
             case CmsBtBrandBlockService.BRAND_TYPE_FEED:
-                blockFeedBrand(brandBlockModel);
+                result = blockFeedBrand(brandBlockModel);
                 break;
             case CmsBtBrandBlockService.BRAND_TYPE_MASTER:
-                blockMasterBrand(brandBlockModel);
+                result = blockMasterBrand(brandBlockModel);
                 break;
             case CmsBtBrandBlockService.BRAND_TYPE_PLATFORM:
-                blockPlatformBrand(brandBlockModel);
+                result = blockPlatformBrand(brandBlockModel);
                 break;
         }
+
+        return result;
     }
 
     /**
@@ -144,15 +157,18 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
      *
      * @param brandBlockModel 屏蔽品牌的数据模型
      */
-    private void blockPlatformBrand(CmsBtBrandBlockModel brandBlockModel) {
+    private List<CmsBtOperationLogModel_Msg> blockPlatformBrand(CmsBtBrandBlockModel brandBlockModel) {
+
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
 
         String channelId = brandBlockModel.getChannelId();
 
         List<CmsBtProductModel> productModelList = productService.getList(channelId,
                 JongoQuery.simple("platforms.P" + brandBlockModel.getCartId() + ".pBrandId", brandBlockModel.getBrand()));
 
-        if (productModelList == null || productModelList.isEmpty())
-            return;
+        if (productModelList == null || productModelList.isEmpty()) {
+            return failList;
+        }
 
         OffShelfHelper offShelfHelper = new OffShelfHelper(channelId);
 
@@ -162,7 +178,13 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
             offShelfHelper.offThem();
         } catch (BlockBrandOffShelfFailException e) {
             logIssue(e.getCause());
+            CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+            errorInfo.setSkuCode(JsonUtil.bean2Json(offShelfHelper.getCodeList()));
+            errorInfo.setMsg(e.getMessage());
+            failList.add(errorInfo);
         }
+
+        return failList;
     }
 
     /**
@@ -170,14 +192,16 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
      *
      * @param brandBlockModel 屏蔽品牌的数据模型
      */
-    private void blockMasterBrand(CmsBtBrandBlockModel brandBlockModel) {
+    private List<CmsBtOperationLogModel_Msg> blockMasterBrand(CmsBtBrandBlockModel brandBlockModel) {
+
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
 
         String channelId = brandBlockModel.getChannelId();
 
         List<CmsBtProductModel> productModelList = productService.getList(channelId, JongoQuery.simple("common.fields.brand", brandBlockModel.getBrand()));
 
         if (productModelList == null || productModelList.isEmpty())
-            return;
+            return failList;
 
         for (CmsBtProductModel productModel : productModelList) {
             OffShelfHelper offShelfHelper = new OffShelfHelper(channelId);
@@ -186,12 +210,18 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
                 offShelfHelper.offThem();
             } catch (BlockBrandOffShelfFailException e) {
                 logIssue(e.getCause());
+                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                errorInfo.setSkuCode(JsonUtil.bean2Json(offShelfHelper.getCodeList()));
+                errorInfo.setMsg(e.getMessage());
+                failList.add(errorInfo);
                 continue;
             }
             // 在下架完成之后
             // 锁定商品
             lockProduct(productModel.getCommon().getFields().getCode(), channelId);
         }
+
+        return failList;
     }
 
     /**
@@ -199,14 +229,16 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
      *
      * @param brandBlockModel 屏蔽品牌的数据模型
      */
-    private void blockFeedBrand(CmsBtBrandBlockModel brandBlockModel) {
+    private List<CmsBtOperationLogModel_Msg> blockFeedBrand(CmsBtBrandBlockModel brandBlockModel) {
+
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
 
         String channelId = brandBlockModel.getChannelId();
 
         List<CmsBtFeedInfoModel> feedInfoModelList = feedInfoService.getList(channelId, JongoQuery.simple("brand", brandBlockModel.getBrand()));
 
         if (feedInfoModelList == null || feedInfoModelList.isEmpty())
-            return;
+            return failList;
 
         // 先更新所有的 feed upFlg 为 7，标记为黑名单商品
         // 之后，在过滤记录那些已经有 master 数据的商品 code
@@ -232,12 +264,18 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
                 // 下架失败
                 // 跳过锁定
                 logIssue(e.getCause());
+                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                errorInfo.setSkuCode(JsonUtil.bean2Json(offShelfHelper.getCodeList()));
+                errorInfo.setMsg(e.getMessage());
+                failList.add(errorInfo);
                 continue;
             }
             // 在下架完成之后
             // 锁定商品
             lockProduct(feedInfoModel.getCode(), channelId);
         }
+
+        return failList;
     }
 
     private void lockProduct(String code, String channelId) {
@@ -286,12 +324,20 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
             });
         }
 
+        Set<String> getCodeList() {
+            return codeList;
+        }
+
         void offThem() throws BlockBrandOffShelfFailException {
 
             if (cartIdList.isEmpty() || codeList.isEmpty())
                 return;
             try {
-                platformActiveLogService.setProductOnSaleOrInStock(mqParams);
+                for (Integer cartId : cartIdList) {
+                    mqParams.remove("cartIdList", cartIdList);
+                    mqParams.put("cartId", cartId);
+                    platformActiveLogService.setProductOnSaleOrInStock(mqParams);
+                }
             } catch (Exception e) {
                 throw new BlockBrandOffShelfFailException(e);
             }

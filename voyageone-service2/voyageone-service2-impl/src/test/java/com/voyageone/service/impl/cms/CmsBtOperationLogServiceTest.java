@@ -62,7 +62,7 @@ public class CmsBtOperationLogServiceTest {
 
     @Test
     public void testLog3() throws Exception {
-        cmsBtOperationLogService.log(jobName, jobTitle, messageBody, OperationLog_Type.unknownException, msgList);
+        cmsBtOperationLogService.log(jobName, jobTitle, messageBody, OperationLog_Type.unknownException,"comment", msgList);
     }
 
     @Test

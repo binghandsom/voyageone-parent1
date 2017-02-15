@@ -21,7 +21,7 @@ public class AdvSearchRefreshRetailPriceMQMessageBody extends BaseMQMessageBody 
 
     private String channelId;
     private List<String> codeList;
-    private List<Integer> cartList;
+    private Integer cartId;
 
     public String getChannelId() {
         return channelId;
@@ -39,12 +39,12 @@ public class AdvSearchRefreshRetailPriceMQMessageBody extends BaseMQMessageBody 
         this.codeList = codeList;
     }
 
-    public List<Integer> getCartList() {
-        return cartList;
+    public Integer getCartId() {
+        return cartId;
     }
 
-    public void setCartList(List<Integer> cartList) {
-        this.cartList = cartList;
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
     }
 
     @Override
@@ -55,8 +55,8 @@ public class AdvSearchRefreshRetailPriceMQMessageBody extends BaseMQMessageBody 
         if (CollectionUtils.isEmpty(codeList)) {
             throw new MQMessageRuleException("高级检索-批量重新计算中国指导价MQ发送异常, 参数codeList为空.");
         }
-        if (CollectionUtils.isEmpty(cartList)) {
-            throw new MQMessageRuleException("高级检索-批量重新计算中国指导价MQ发送异常, 参数cartList为空.");
+        if (cartId == null) {
+            throw new MQMessageRuleException("高级检索-批量重新计算中国指导价MQ发送异常, 参数cartId为空.");
         }
         if (StringUtils.isEmpty(getSender())) {
             throw new MQMessageRuleException("高级检索-批量重新计算中国指导价MQ发送异常, 发送者为空.");

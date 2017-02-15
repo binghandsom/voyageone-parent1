@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.dao.cms.CmsBtRefreshProductTaskDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.fields.cms.CmsBtRefreshProductTaskModelStatus;
@@ -57,25 +58,32 @@ public class CmsRefreshProductsMQJob extends TBaseMQCmsService<CmsRefreshProduct
         CmsBtRefreshProductTaskModel cmsBtRefreshProductTaskModel = cmsBtRefreshProductTaskDao.select(taskId);
 
         if (cmsBtRefreshProductTaskModel == null) {
-            cmsBusinessExLog(messageMap, "找不到CmsBtRefreshProductTaskModel, taskId" + taskId);
-            return;
+            throw new BusinessException("找不到CmsBtRefreshProductTaskModel, taskId=" + taskId);
         }
 
         // 取商品
         CmsBtRefreshProductTaskItemModel cmsBtRefreshProductTaskItemModel = platformMappingService.popRefreshProduct(cmsBtRefreshProductTaskModel);
 
+        Integer count = 0;
         while (cmsBtRefreshProductTaskItemModel != null) {
 
             refreshProduct(cmsBtRefreshProductTaskModel, cmsBtRefreshProductTaskItemModel);
 
             cmsBtRefreshProductTaskItemModel = platformMappingService.popRefreshProduct(cmsBtRefreshProductTaskModel);
+            count ++;
         }
+        super.count = count;
 
         cmsBtRefreshProductTaskModel.setStatus(CmsBtRefreshProductTaskModelStatus.COMPLETED);
         cmsBtRefreshProductTaskModel.setModifier("CmsRefreshProductsJobService");
         cmsBtRefreshProductTaskDao.update(cmsBtRefreshProductTaskModel);
     }
 
+    /**
+     *
+     * @param cmsBtRefreshProductTaskModel
+     * @param cmsBtRefreshProductTaskItemModel
+     */
     private void refreshProduct(CmsBtRefreshProductTaskModel cmsBtRefreshProductTaskModel, CmsBtRefreshProductTaskItemModel cmsBtRefreshProductTaskItemModel) {
         String channelId = cmsBtRefreshProductTaskModel.getChannelId();
         CmsBtProductModel product = productService.getProductById(channelId, cmsBtRefreshProductTaskItemModel.getProductId());

@@ -422,22 +422,24 @@ public class CmsFieldEditService extends BaseViewService {
         } else if ("0".equals(prop_id)) {
             statusVal = CmsConstants.PlatformActive.ToInStock;
         }
-        PlatformActiveLogMQMessageBody mqMessageBody = new PlatformActiveLogMQMessageBody();
-        mqMessageBody.setChannelId(userInfo.getSelChannelId());
-        mqMessageBody.setCartList(cartList);
-        mqMessageBody.setStatusVal(statusVal);
-        mqMessageBody.setActiveStatus(statusVal.name());
-        mqMessageBody.setSender(userInfo.getUserName());
+        for (Integer cart : cartList) {
+            PlatformActiveLogMQMessageBody mqMessageBody = new PlatformActiveLogMQMessageBody();
+            mqMessageBody.setChannelId(userInfo.getSelChannelId());
+            mqMessageBody.setCartId(cart);
+            mqMessageBody.setStatusVal(statusVal);
+            mqMessageBody.setActiveStatus(statusVal.name());
+            mqMessageBody.setSender(userInfo.getUserName());
 
-        if (cartId == null || cartId == 0) {
-            mqMessageBody.setComment("高级检索 批量上下架(全店铺操作)");
-        } else {
-            mqMessageBody.setComment("高级检索 批量上下架");
-        }
-        List<List<String>>productCodesList = CommonUtil.splitList(productCodes,100);
-        for (List<String> codes:productCodesList) {
-            mqMessageBody.setProductCodes(codes);
-            cmsMqSenderService.sendMessage(mqMessageBody);
+            if (cartId == null || cartId == 0) {
+                mqMessageBody.setComment("高级检索 批量上下架(全店铺操作)");
+            } else {
+                mqMessageBody.setComment("高级检索 批量上下架");
+            }
+            List<List<String>>productCodesList = CommonUtil.splitList(productCodes,100);
+            for (List<String> codes:productCodesList) {
+                mqMessageBody.setProductCodes(codes);
+                cmsMqSenderService.sendMessage(mqMessageBody);
+            }
         }
 
         rsMap.put("ecd", 0);
@@ -1218,9 +1220,74 @@ public class CmsFieldEditService extends BaseViewService {
     }
 
     /**
-     * 指导价变更批量确认 （与"重新计算指导售价"共用代码）
+     * 指导价变更批量确认
+     * @param params 检索条件
+     * @param userInfo 用户信息
+     * @param cmsSession cmsSession
+     * @return 处理结果
      */
     public Map<String, Object> confirmRetailPrice(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
+
+        List<String> productCodes = (ArrayList<String>) params.get("productIds");
+        Integer isSelAll = (Integer) params.get("isSelAll");
+        if (isSelAll == null) {
+            isSelAll = 0;
+        }
+
+        Map<String, Object> rsMap = new HashMap<>();
+        if (isSelAll == 1) {
+            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+        }
+
+        if (productCodes == null || productCodes.isEmpty()) {
+            $warn("没有满足条件的产品数据 params=" + params.toString());
+            rsMap.put("ecd", 1);
+            return rsMap;
+        }
+
+        Integer cartId = (Integer) params.get("cartId");
+        List<Integer> cartList = null;
+        if (cartId == null || cartId == 0) {
+            // 表示全平台更新
+            // 店铺(cart/平台)列表
+            List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
+            cartList = cartTypeList.stream().map((cartType) -> NumberUtils.toInt(cartType.getValue())).collect(Collectors.toList());
+            if (cartList == null || cartList.isEmpty()) {
+                $error("confirmRatailPrice 该店铺未设置平台 param=" + params.toString());
+                rsMap.put("ecd", 0);
+                return rsMap;
+            }
+        } else {
+            cartList = new ArrayList<>(1);
+            cartList.add(cartId);
+        }
+
+        for (Integer cart : cartList) {
+            if (cart == 928) continue;
+            AdvSearchConfirmRetailPriceMQMessageBody mqMessageBody = new AdvSearchConfirmRetailPriceMQMessageBody();
+            mqMessageBody.setChannelId(userInfo.getSelChannelId());
+            mqMessageBody.setCartId(cart);
+            mqMessageBody.setSender(userInfo.getUserName());
+            List<List<String>> codesList = CommonUtil.splitList(productCodes,1000);
+            codesList.forEach(codes->{
+                mqMessageBody.setCodeList(codes);
+                cmsMqSenderService.sendMessage(mqMessageBody);
+            });
+        }
+        rsMap.put("ecd", 0);
+        return rsMap;
+    }
+
+    /**
+     * 从新计算中国指导售价
+     * @param params 检索条件
+     * @param userInfo 用户信息
+     * @param cmsSession cmsSession
+     * @return 处理结果
+     */
+    public Map<String, Object> refreshRetailPrice(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
+
         List<String> productCodes = (ArrayList<String>) params.get("productIds");
         Integer isSelAll = (Integer) params.get("isSelAll");
         if (isSelAll == null) {
@@ -1256,25 +1323,18 @@ public class CmsFieldEditService extends BaseViewService {
         }
 
         $debug("指导价变更批量确认 开始批量处理");
-        if ("refreshRetailPrice".equalsIgnoreCase((String) params.get("_option"))) {
-            // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
+
+        for (Integer cart : cartList) {
+            if (cart == 928) continue;
             AdvSearchRefreshRetailPriceMQMessageBody mqMessageBody = new AdvSearchRefreshRetailPriceMQMessageBody();
-            mqMessageBody.setCartList(cartList);
             mqMessageBody.setChannelId(userInfo.getSelChannelId());
+            mqMessageBody.setCartId(cart);
             mqMessageBody.setSender(userInfo.getUserName());
             List<List<String>> codesList = CommonUtil.splitList(productCodes,100);
             codesList.forEach(codes->{
                 mqMessageBody.setCodeList(codes);
                 cmsMqSenderService.sendMessage(mqMessageBody);
             });
-        } else {
-            // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
-            AdvSearchConfirmRetailPriceMQMessageBody mqMessageBody = new AdvSearchConfirmRetailPriceMQMessageBody();
-            mqMessageBody.setChannelId(userInfo.getSelChannelId());
-            mqMessageBody.setCartList(cartList);
-            mqMessageBody.setCodeList(productCodes);
-            mqMessageBody.setSender(userInfo.getUserName());
-            cmsMqSenderService.sendMessage(mqMessageBody);
         }
         rsMap.put("ecd", 0);
         return rsMap;

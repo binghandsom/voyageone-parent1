@@ -64,30 +64,15 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
         List<CmsBtProductModel> prodList = cmsBtProductDao.select(queryObj, channelId);
         if (prodList.size() == 0) return;
 
-        //cartId
-        List<Integer> cartList = new ArrayList<>();
-        cartList.add(cartId);
-
         //productCodes
         List<String> productCodes = new ArrayList<>();
         prodList.forEach(f -> {
             productCodes.add(f.getCommon().getFields().getCode());
         });
 
-        //批量上架发MQ
-        /*Map<String, Object> logParams = new HashMap<>(6);
-        logParams.put("channelId", channelId);
-        logParams.put("cartIdList", cartList);
-        logParams.put("activeStatus", CmsConstants.PlatformActive.ToOnSale.name());
-        logParams.put("creater", "autoOnSale");
-        logParams.put("comment", "平台被迫下架的产品，自动上架");
-
-        logParams.put("codeList", productCodes);
-        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);*/
-
         PlatformActiveLogMQMessageBody mqMessageBody = new PlatformActiveLogMQMessageBody();
         mqMessageBody.setChannelId(channelId);
-        mqMessageBody.setCartList(cartList);
+        mqMessageBody.setCartId(cartId);
         mqMessageBody.setActiveStatus(CmsConstants.PlatformActive.ToOnSale.name());
         mqMessageBody.setComment("平台被迫下架的产品，自动上架");
         mqMessageBody.setProductCodes(productCodes);

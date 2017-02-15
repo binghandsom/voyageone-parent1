@@ -93,11 +93,12 @@ public class CmsBtOperationLogService {
      * @param jobTitle job标题
      * @param messageBody 参数或者消息内容
      * @param operationLog_type OperationLog_Type
+     * @param comment 备注
      * @param msg 错误信息列表
      */
-    public void log(String jobName, String jobTitle, IMQMessageBody messageBody, OperationLog_Type operationLog_type, List<CmsBtOperationLogModel_Msg> msg) {
+    public void log(String jobName, String jobTitle, IMQMessageBody messageBody, OperationLog_Type operationLog_type, String comment, List<CmsBtOperationLogModel_Msg> msg) {
         final VOMQQueue voQueue = AnnotationUtils.findAnnotation(messageBody.getClass(), VOMQQueue.class);
-        log(jobName, jobTitle, operationLog_type, JsonUtil.bean2Json(messageBody), msg, "", voQueue.value(), messageBody.getSender());
+        log(jobName, jobTitle, operationLog_type, JsonUtil.bean2Json(messageBody), msg, "", voQueue.value() + ":" + comment, messageBody.getSender());
     }
 
     /**

@@ -21,7 +21,7 @@ import java.util.List;
 public class PlatformActiveLogMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;
-    private List<Integer> cartList;
+    private Integer cartId;
     private String activeStatus;
     private List<String> productCodes;
     private String comment;
@@ -35,12 +35,12 @@ public class PlatformActiveLogMQMessageBody extends BaseMQMessageBody {
         this.channelId = channelId;
     }
 
-    public List<Integer> getCartList() {
-        return cartList;
+    public Integer getCartId() {
+        return cartId;
     }
 
-    public void setCartList(List<Integer> cartList) {
-        this.cartList = cartList;
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
     }
 
     public String getActiveStatus() {
@@ -83,8 +83,8 @@ public class PlatformActiveLogMQMessageBody extends BaseMQMessageBody {
         if (CollectionUtils.isEmpty(productCodes)) {
             throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数productCodes为空.");
         }
-        if (CollectionUtils.isEmpty(cartList)) {
-            throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数cartList为空.");
+        if (cartId == null) {
+            throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数cartId为空.");
         }
         if (StringUtils.isBlank(activeStatus)) {
             throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数activeStatus为空.");

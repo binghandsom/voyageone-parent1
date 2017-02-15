@@ -20,13 +20,13 @@ import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.BatchUpdateProductMQMessageBody;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,9 +47,10 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
 
-    public Map<String, String> updateProductComField(BatchUpdateProductMQMessageBody messageBody) {
+    public List<CmsBtOperationLogModel_Msg> updateProductComField(BatchUpdateProductMQMessageBody messageBody) {
         // 错误map，key-value分别对于产品code和错误信息
-        Map<String, String> failMap = new HashMap<String, String>();
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
+
         String channelId = StringUtils.trimToNull(messageBody.getChannelId());
         String userName = StringUtils.trimToNull(messageBody.getSender());
         List<String> codeList = messageBody.getProductCodes();
@@ -72,7 +73,7 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
             if (synPriceFlg == null) {
                 synPriceFlg = false;
             }
-            failMap = updateHsCode(prop_id, prop_name, hsCode, codeList, channelId, userName, synPriceFlg);
+            failList = updateHsCode(prop_id, prop_name, hsCode, codeList, channelId, userName, synPriceFlg);
         } else if ("translateStatus".equals(prop_id)) {
             // 翻译状态更新
             String stsCode = null;
@@ -84,7 +85,7 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
             }
             updateTranslateStatus(prop_name, stsCode, codeList, channelId, userName, priorDate);
         }
-        return failMap;
+        return failList;
     }
 
     /**
@@ -98,8 +99,8 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
      * @param synPriceFlg 价格是否同步Flg
      * @return 未处理错误数据列表
      */
-    private Map<String, String> updateHsCode(String propId, String propName, String propValue, List<String> codeList, String channelId, String userName, Boolean synPriceFlg) {
-        Map<String, String> failMap = new HashMap<String, String>();
+    private List<CmsBtOperationLogModel_Msg> updateHsCode(String propId, String propName, String propValue, List<String> codeList, String channelId, String userName, Boolean synPriceFlg) {
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
         String msg = "税号变更 " + propId + "=> " + propValue;
         // 未配置自动同步的店铺，显示同步状况
         if (synPriceFlg) {
@@ -169,26 +170,34 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
                 succesList.add(prodCode);
             } catch (PriceCalculateException e) {
 
-                failMap.put(prodCode, String.format("高级检索 批量更新 价格计算错误 channleid=%s, prodcode=%s", channelId, prodCode));
-
                 $error(String.format("高级检索 批量更新 价格计算错误 channleid=%s, prodcode=%s", channelId, prodCode), e);
+
+                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                errorInfo.setSkuCode(prodCode);
+                errorInfo.setMsg("高级检索 批量更新 价格计算错误");
+                failList.add(errorInfo);
                 continue;
             } catch (IllegalPriceConfigException e) {
 
-                failMap.put(prodCode, String.format("高级检索 批量更新 配置错误 channleid=%s, prodcode=%s", channelId, prodCode));
-
                 $error(String.format("高级检索 批量更新 配置错误 channleid=%s, prodcode=%s", channelId, prodCode), e);
+
+                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                errorInfo.setSkuCode(prodCode);
+                errorInfo.setMsg("高级检索 批量更新 配置错误");
+                failList.add(errorInfo);
                 continue;
             } catch (Throwable e) {
-
-                failMap.put(prodCode, String.format("高级检索 批量更新 未知错误 channleid=%s, prodcode=%s", channelId, prodCode));
-
                 $error(String.format("高级检索 批量更新 未知错误 channleid=%s, prodcode=%s", channelId, prodCode), e);
+
+                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                errorInfo.setSkuCode(prodCode);
+                errorInfo.setMsg("高级检索 批量更新 未知错误");
+                failList.add(errorInfo);
                 continue;
             }
         }
         productStatusHistoryService.insertList(channelId, succesList, -1, EnumProductOperationType.BatchUpdate, "高级检索 批量更新：" + propName + "设置--" + propValue, userName);
-        return failMap;
+        return failList;
     }
 
     /**

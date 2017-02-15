@@ -20,7 +20,7 @@ import java.util.List;
 public class AdvSearchConfirmRetailPriceMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;
-    private List<Integer> cartList;
+    private Integer cartId;
     private List<String> codeList;
 
     public String getChannelId() {
@@ -31,12 +31,12 @@ public class AdvSearchConfirmRetailPriceMQMessageBody extends BaseMQMessageBody 
         this.channelId = channelId;
     }
 
-    public List<Integer> getCartList() {
-        return cartList;
+    public Integer getCartId() {
+        return cartId;
     }
 
-    public void setCartList(List<Integer> cartList) {
-        this.cartList = cartList;
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
     }
 
     public List<String> getCodeList() {
@@ -52,7 +52,7 @@ public class AdvSearchConfirmRetailPriceMQMessageBody extends BaseMQMessageBody 
         if (StringUtils.isBlank(channelId)) {
             throw new MQMessageRuleException("高级检索-批量确认中国指导价变更MQ发送异常, 参数channelId为空.");
         }
-        if (CollectionUtils.isEmpty(cartList)) {
+        if (cartId == null) {
             throw new MQMessageRuleException("高级检索-批量确认中国指导价变更MQ发送异常, 参数cartList为空.");
         }
         if (CollectionUtils.isEmpty(codeList)) {

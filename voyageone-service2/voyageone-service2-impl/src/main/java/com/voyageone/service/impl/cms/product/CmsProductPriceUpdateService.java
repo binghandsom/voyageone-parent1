@@ -27,6 +27,7 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchRefreshRetailPriceMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -207,12 +208,12 @@ public class CmsProductPriceUpdateService extends BaseService {
      * 更新product的retailPrice
      * @param messageBody messageBody
      */
-    public List<Map<String, String>> updateProductRetailPrice(AdvSearchRefreshRetailPriceMQMessageBody messageBody) {
-        List<Map<String, String>> failList = new ArrayList<Map<String, String>>();
-        String channleId = StringUtils.trimToNull(messageBody.getChannelId());
+    public List<CmsBtOperationLogModel_Msg> updateProductRetailPrice(AdvSearchRefreshRetailPriceMQMessageBody messageBody) {
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
+        String channelId = StringUtils.trimToNull(messageBody.getChannelId());
         String userName = StringUtils.trimToNull(messageBody.getSender());
         List<String> codeList = messageBody.getCodeList();
-        List<Integer> cartList = messageBody.getCartList();
+        Integer cartId = messageBody.getCartId();
 
         // 是否自动最终售价同步指导价格
         CmsChannelConfigBean autoPriceCfg = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
@@ -228,179 +229,171 @@ public class CmsProductPriceUpdateService extends BaseService {
         JongoQuery queryObj = new JongoQuery();
         JongoUpdate updObj = new JongoUpdate();
 
-        for (Integer cartId : cartList) {
-            if(cartId == 928) continue;
-            CmsChannelConfigBean autoSyncPricePromotion = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_PROMOTION, cartId.toString());
-            if (autoSyncPricePromotion == null) {
-                autoSyncPricePromotion = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_PROMOTION);
-            }
+        CmsChannelConfigBean autoSyncPricePromotion = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_PROMOTION, cartId.toString());
+        if (autoSyncPricePromotion == null) {
+            autoSyncPricePromotion = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_PROMOTION);
+        }
 
-            if(autoSyncPricePromotion == null){
-                autoSyncPricePromotion = new CmsChannelConfigBean();
-                autoSyncPricePromotion.setConfigValue1("0");
-                autoSyncPricePromotion.setConfigValue2("0");
-                autoSyncPricePromotion.setConfigValue3("0");
-            }
+        if(autoSyncPricePromotion == null){
+            autoSyncPricePromotion = new CmsChannelConfigBean();
+            autoSyncPricePromotion.setConfigValue1("0");
+            autoSyncPricePromotion.setConfigValue2("0");
+            autoSyncPricePromotion.setConfigValue3("0");
+        }
 
-            ShopBean shopObj = Shops.getShop(channelId, cartId.toString());
-            CartBean cartObj = Carts.getCart(cartId);
-            if (shopObj == null) {
+        ShopBean shopObj = Shops.getShop(channelId, cartId.toString());
+        CartBean cartObj = Carts.getCart(cartId);
+        if (shopObj == null) {
+            throw new BusinessException(String.format("该店铺未配置对应的平台, channelId=%s, cartId=%s", channelId, cartId));
+        }
 
-                Map<String, String> failMap = new HashMap<String, String>();
-                failMap.put(String.format("channelId=%s,cartId=%s", channelId, cartId.toString()), String.format("未配置平台, channelId=%s, cartId=%s", channelId, cartId));
-                failList.add(failMap);
+        for (String prodCode : codeList) {
+            try {
+                $info("channleId=" + channelId + " cartId=" + cartId + " prodCode=" + prodCode);
+                queryObj.setQuery("{'common.fields.code':#,'platforms.P#':{$exists:true}}");
+                queryObj.setParameters(prodCode, cartId);
+                queryObj.setProjectionExt("prodId", "channelId", "orgChannelId", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".skus", "common.fields", "common.skus");
+                CmsBtProductModel prodObj = productService.getProductByCondition(channelId, queryObj);
+                if (prodObj == null) {
+                    CmsBtOperationLogModel_Msg failInfo = new CmsBtOperationLogModel_Msg();
+                    failInfo.setSkuCode(prodCode);
+                    failInfo.setMsg(String.format("产品不存在, channelId=%s, code=%s, cartId=%s", channelId, prodCode, cartId));
+                    failList.add(failInfo);
 
-                $error("CmsProductPriceUpdateService.updateProductRetailPrice 未配置平台 channelId=%s, cartId=%s", channelId, cartId.toString());
-                continue;
-            }
+                    $warn("CmsProductPriceUpdateService.updateProductRetailPrice 产品不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
+                    continue;
+                }
+                List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
+                if (skuList == null || skuList.isEmpty()) {
+                    CmsBtOperationLogModel_Msg failInfo = new CmsBtOperationLogModel_Msg();
+                    failInfo.setSkuCode(prodCode);
+                    failInfo.setMsg(String.format("产品sku数据不存在, channelId=%s, code=%s, cartId=%s", channelId, prodCode, cartId));
+                    failList.add(failInfo);
 
-            for (String prodCode : codeList) {
+                    $warn("CmsProductPriceUpdateService.updateProductRetailPrice 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
+                    continue;
+                }
+
+                // 计算指导价
                 try {
-                    $info("channleId=" + channelId + " cartId=" + cartId + " prodCode=" + prodCode);
-                    queryObj.setQuery("{'common.fields.code':#,'platforms.P#':{$exists:true}}");
-                    queryObj.setParameters(prodCode, cartId);
-                    queryObj.setProjectionExt("prodId", "channelId", "orgChannelId", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".skus", "common.fields", "common.skus");
-                    CmsBtProductModel prodObj = productService.getProductByCondition(channelId, queryObj);
-                    if (prodObj == null) {
-
-                        Map<String, String> failMap = new HashMap<String, String>();
-                        failMap.put(prodCode, String.format("产品不存在, channelId=%s, code=%s, cartId=%s", channelId, prodCode, cartId));
-                        failList.add(failMap);
-
-                        $warn("CmsProductPriceUpdateService.updateProductRetailPrice 产品不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
-                        continue;
-                    }
-                    List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
-                    if (skuList == null || skuList.isEmpty()) {
-
-                        Map<String, String> failMap = new HashMap<String, String>();
-                        failMap.put(prodCode, String.format("产品sku数据不存在, channelId=%s, code=%s, cartId=%s", channelId, prodCode, cartId));
-                        failList.add(failMap);
-
-                        $warn("CmsProductPriceUpdateService.updateProductRetailPrice 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
-                        continue;
-                    }
-
-                    // 计算指导价
-                    try {
-                        if ($isDebugEnabled()) {
-                            for (BaseMongoMap skuObj : skuList) {
-                                $debug("CmsProductPriceUpdateService.updateProductRetailPrice 计算前的sku价格 skuCode=%s, priceMsrp=%s, priceRetail=%s, priceSale=%s", skuObj.getStringAttribute("skuCode"), skuObj.getDoubleAttribute("priceMsrp"), skuObj.getDoubleAttribute("priceRetail"), skuObj.getDoubleAttribute("priceSale"));
-                            }
+                    if ($isDebugEnabled()) {
+                        for (BaseMongoMap skuObj : skuList) {
+                            $debug("CmsProductPriceUpdateService.updateProductRetailPrice 计算前的sku价格 skuCode=%s, priceMsrp=%s, priceRetail=%s, priceSale=%s", skuObj.getStringAttribute("skuCode"), skuObj.getDoubleAttribute("priceMsrp"), skuObj.getDoubleAttribute("priceRetail"), skuObj.getDoubleAttribute("priceSale"));
                         }
-                        priceService.setPrice(prodObj, cartId, false);
-                        if ($isDebugEnabled()) {
-                            for (BaseMongoMap skuObj : skuList) {
-                                $debug("CmsProductPriceUpdateService.updateProductRetailPrice 计算后的sku价格 skuCode=%s, priceMsrp=%s, priceRetail=%s, priceSale=%s", skuObj.getStringAttribute("skuCode"), skuObj.getDoubleAttribute("priceMsrp"), skuObj.getDoubleAttribute("priceRetail"), skuObj.getDoubleAttribute("priceSale"));
-                            }
-                        }
-                    } catch (Exception exp) {
-
-                        Map<String, String> failMap = new HashMap<String, String>();
-                        failMap.put(prodCode, String.format("调用共通函数priceService.setPrice计算指导价时出错, channelId=%s, code=%s, cartId=%s, errmsg=%s", channelId, prodCode, cartId, exp.getMessage()));
-                        failList.add(failMap);
-
-                        $error(String.format("CmsProductPriceUpdateService.updateProductRetailPrice 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channelId, prodCode, cartId, exp.getMessage()), exp);
-                        continue;
                     }
-
-                    // 保存计算结果
-                    updObj.setQuery("{'common.fields.code':#}");
-                    updObj.setQueryParameters(prodCode);
-                    updObj.setUpdate("{$set:{'platforms.P#.skus':#}}");
-                    updObj.setUpdateParameters(cartId, prodObj.getPlatform(cartId).getSkus());
-                    WriteResult rs = productService.updateFirstProduct(updObj, channelId);
-                    $debug("CmsRefreshRetailPriceTask 保存计算结果 " + rs.toString());
-
-                    // 记录价格变更履历/同步价格范围
-                    List<CmsBtPriceLogModel> logModelList = new ArrayList<>(1);
-                    for (BaseMongoMap skuObj : skuList) {
-                        String skuCode = skuObj.getStringAttribute("skuCode");
-                        CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
-                        cmsBtPriceLogModel.setChannelId(channelId);
-                        cmsBtPriceLogModel.setProductId(prodObj.getProdId().intValue());
-                        cmsBtPriceLogModel.setCode(prodCode);
-                        cmsBtPriceLogModel.setCartId(cartId);
-                        cmsBtPriceLogModel.setSku(skuCode);
-                        cmsBtPriceLogModel.setSalePrice(skuObj.getDoubleAttribute("priceSale"));
-                        cmsBtPriceLogModel.setMsrpPrice(skuObj.getDoubleAttribute("priceMsrp"));
-                        cmsBtPriceLogModel.setRetailPrice(skuObj.getDoubleAttribute("priceRetail"));
-                        CmsBtProductModel_Sku comSku = prodObj.getCommonNotNull().getSku(skuCode);
-                        if (comSku == null) {
-                            cmsBtPriceLogModel.setClientMsrpPrice(0d);
-                            cmsBtPriceLogModel.setClientRetailPrice(0d);
-                            cmsBtPriceLogModel.setClientNetPrice(0d);
-                        } else {
-                            cmsBtPriceLogModel.setClientMsrpPrice(comSku.getClientMsrpPrice());
-                            cmsBtPriceLogModel.setClientRetailPrice(comSku.getClientRetailPrice());
-                            cmsBtPriceLogModel.setClientNetPrice(comSku.getClientNetPrice());
+                    priceService.setPrice(prodObj, cartId, false);
+                    if ($isDebugEnabled()) {
+                        for (BaseMongoMap skuObj : skuList) {
+                            $debug("CmsProductPriceUpdateService.updateProductRetailPrice 计算后的sku价格 skuCode=%s, priceMsrp=%s, priceRetail=%s, priceSale=%s", skuObj.getStringAttribute("skuCode"), skuObj.getDoubleAttribute("priceMsrp"), skuObj.getDoubleAttribute("priceRetail"), skuObj.getDoubleAttribute("priceSale"));
                         }
-                        cmsBtPriceLogModel.setComment("高级检索-重新计算指导售价");
-                        cmsBtPriceLogModel.setCreated(new Date());
-                        cmsBtPriceLogModel.setCreater(userName);
-                        cmsBtPriceLogModel.setModified(new Date());
-                        cmsBtPriceLogModel.setModifier(userName);
-                        logModelList.add(cmsBtPriceLogModel);
                     }
-                    int cnt = cmsBtPriceLogService.addLogListAndCallSyncPriceJob(logModelList);
-                    $debug("CmsRefreshRetailPriceTask修改商品价格 记入价格变更履历结束 结果=" + cnt);
+                } catch (Exception exp) {
 
-                    // 只有最终售价变化了，才需要上新
-                    if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
-                        // 最终售价被自动同步
-                        if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
-                            // 天猫平台直接调用API
-                            try {
-                                if("2".equals(autoSyncPricePromotion.getConfigValue1())){
-                                    //取得该channel cartId的所有的活动
-                                    List<CmsBtPromotionBean> promtions = promotionService.getByChannelIdCartId(channelId, cartId);
-                                    if(!ListUtils.isNull(promtions)) {
-                                        List<Integer> promotionIds = promotionService.getDateRangePromotionIds(promtions, new Date(), autoSyncPricePromotion.getConfigValue2(), autoSyncPricePromotion.getConfigValue3());
-                                        if(!ListUtils.isNull(promotionIds)) {
-                                            if (promotionCodeService.getCmsBtPromotionCodeInPromtionCnt(prodObj.getCommon().getFields().getCode(), promotionIds) >0){
-                                                continue;
-                                            }
+                    CmsBtOperationLogModel_Msg failInfo = new CmsBtOperationLogModel_Msg();
+                    failInfo.setSkuCode(prodCode);
+                    failInfo.setMsg(String.format("调用共通函数priceService.setPrice计算指导价时出错, channelId=%s, code=%s, cartId=%s, errmsg=%s", channelId, prodCode, cartId, exp.getMessage()));
+                    failList.add(failInfo);
+
+                    $error(String.format("CmsProductPriceUpdateService.updateProductRetailPrice 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channelId, prodCode, cartId, exp.getMessage()), exp);
+                    continue;
+                }
+
+                // 保存计算结果
+                updObj.setQuery("{'common.fields.code':#}");
+                updObj.setQueryParameters(prodCode);
+                updObj.setUpdate("{$set:{'platforms.P#.skus':#}}");
+                updObj.setUpdateParameters(cartId, prodObj.getPlatform(cartId).getSkus());
+                WriteResult rs = productService.updateFirstProduct(updObj, channelId);
+                $debug("CmsRefreshRetailPriceTask 保存计算结果 " + rs.toString());
+
+                // 记录价格变更履历/同步价格范围
+                List<CmsBtPriceLogModel> logModelList = new ArrayList<>(1);
+                for (BaseMongoMap skuObj : skuList) {
+                    String skuCode = skuObj.getStringAttribute("skuCode");
+                    CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
+                    cmsBtPriceLogModel.setChannelId(channelId);
+                    cmsBtPriceLogModel.setProductId(prodObj.getProdId().intValue());
+                    cmsBtPriceLogModel.setCode(prodCode);
+                    cmsBtPriceLogModel.setCartId(cartId);
+                    cmsBtPriceLogModel.setSku(skuCode);
+                    cmsBtPriceLogModel.setSalePrice(skuObj.getDoubleAttribute("priceSale"));
+                    cmsBtPriceLogModel.setMsrpPrice(skuObj.getDoubleAttribute("priceMsrp"));
+                    cmsBtPriceLogModel.setRetailPrice(skuObj.getDoubleAttribute("priceRetail"));
+                    CmsBtProductModel_Sku comSku = prodObj.getCommonNotNull().getSku(skuCode);
+                    if (comSku == null) {
+                        cmsBtPriceLogModel.setClientMsrpPrice(0d);
+                        cmsBtPriceLogModel.setClientRetailPrice(0d);
+                        cmsBtPriceLogModel.setClientNetPrice(0d);
+                    } else {
+                        cmsBtPriceLogModel.setClientMsrpPrice(comSku.getClientMsrpPrice());
+                        cmsBtPriceLogModel.setClientRetailPrice(comSku.getClientRetailPrice());
+                        cmsBtPriceLogModel.setClientNetPrice(comSku.getClientNetPrice());
+                    }
+                    cmsBtPriceLogModel.setComment("高级检索-重新计算指导售价");
+                    cmsBtPriceLogModel.setCreated(new Date());
+                    cmsBtPriceLogModel.setCreater(userName);
+                    cmsBtPriceLogModel.setModified(new Date());
+                    cmsBtPriceLogModel.setModifier(userName);
+                    logModelList.add(cmsBtPriceLogModel);
+                }
+                int cnt = cmsBtPriceLogService.addLogListAndCallSyncPriceJob(logModelList);
+                $debug("CmsRefreshRetailPriceTask修改商品价格 记入价格变更履历结束 结果=" + cnt);
+
+                // 只有最终售价变化了，才需要上新
+                if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
+                    // 最终售价被自动同步
+                    if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
+                        // 天猫平台直接调用API
+                        try {
+                            if("2".equals(autoSyncPricePromotion.getConfigValue1())){
+                                //取得该channel cartId的所有的活动
+                                List<CmsBtPromotionBean> promtions = promotionService.getByChannelIdCartId(channelId, cartId);
+                                if(!ListUtils.isNull(promtions)) {
+                                    List<Integer> promotionIds = promotionService.getDateRangePromotionIds(promtions, new Date(), autoSyncPricePromotion.getConfigValue2(), autoSyncPricePromotion.getConfigValue3());
+                                    if(!ListUtils.isNull(promotionIds)) {
+                                        if (promotionCodeService.getCmsBtPromotionCodeInPromtionCnt(prodObj.getCommon().getFields().getCode(), promotionIds) >0){
+                                            continue;
                                         }
                                     }
                                 }
-
-                                priceService.updateSkuPrice(channelId, cartId, prodObj);
-                            } catch (Exception e) {
-
-                                Map<String, String> failMap = new HashMap<String, String>();
-                                failMap.put(prodCode, String.format("修改商品价格 调用天猫API失败, channelId=%s, code=%s, errmsg=%s", channelId, prodCode, e.getMessage()));
-                                failList.add(failMap);
-
-                                $error(String.format("CmsProductPriceUpdateService.updateProductRetailPrice 修改商品价格 调用天猫API失败 channelId=%s, cartId=%d msg=%s", channelId, cartId, e.getMessage()), e);
                             }
+
+                            priceService.updateSkuPrice(channelId, cartId, prodObj);
+                        } catch (Exception e) {
+                            CmsBtOperationLogModel_Msg failInfo = new CmsBtOperationLogModel_Msg();
+                            failInfo.setSkuCode(prodCode);
+                            failInfo.setMsg(String.format("修改商品价格 调用天猫API失败, channelId=%s, code=%s, errmsg=%s", channelId, prodCode, e.getMessage()));
+                            failList.add(failInfo);
+
+                            $error(String.format("CmsProductPriceUpdateService.updateProductRetailPrice 修改商品价格 调用天猫API失败 channelId=%s, cartId=%d msg=%s", channelId, cartId, e.getMessage()), e);
                         }
                     }
-                }catch (Exception e){
-
-                    Map<String, String> failMap = new HashMap<String, String>();
-                    failMap.put(prodCode, String.format("CmsProductPriceUpdateService.updateProductRetailPrice执行出错, channelId=%s, code=%s, cartId=%s, errmsg=%s", channelId, prodCode, cartId, e.getMessage()));
-                    failList.add(failMap);
-
-                    $error(e);
                 }
+            }catch (Exception e){
+                CmsBtOperationLogModel_Msg failInfo = new CmsBtOperationLogModel_Msg();
+                failInfo.setSkuCode(prodCode);
+                failInfo.setMsg(String.format("CmsProductPriceUpdateService.updateProductRetailPrice执行出错, channelId=%s, code=%s, cartId=%s, errmsg=%s", channelId, prodCode, cartId, e.getMessage()));
+                failList.add(failInfo);
+
+                $error(e);
             }
+        }
 
-            // 记录商品修改历史
-            $debug("CmsRefreshRetailPriceTask 开始记入商品修改历史");
-            long sta = System.currentTimeMillis();
-            productStatusHistoryService.insertList(channelId, codeList, cartId, EnumProductOperationType.BatchRefreshRetailPrice, msg, userName);
-            $debug("CmsRefreshRetailPriceTask 记入商品修改历史结束 耗时" + (System.currentTimeMillis() - sta));
+        // 记录商品修改历史
+        $debug("CmsRefreshRetailPriceTask 开始记入商品修改历史");
+        long sta = System.currentTimeMillis();
+        productStatusHistoryService.insertList(channelId, codeList, cartId, EnumProductOperationType.BatchRefreshRetailPrice, msg, userName);
+        $debug("CmsRefreshRetailPriceTask 记入商品修改历史结束 耗时" + (System.currentTimeMillis() - sta));
 
-            // 只有最终售价变化了，才需要上新
-            if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
-                // 最终售价被自动同步
-                if (!PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
-                    // 插入上新程序
-                    $debug("CmsRefreshRetailPriceTask 开始记入SxWorkLoad表");
-                    sta = System.currentTimeMillis();
-                    sxProductService.insertSxWorkLoad(channelId, codeList, cartId, userName);
-                    $debug("CmsRefreshRetailPriceTask 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
-                }
+        // 只有最终售价变化了，才需要上新
+        if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
+            // 最终售价被自动同步
+            if (!PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
+                // 插入上新程序
+                $debug("CmsRefreshRetailPriceTask 开始记入SxWorkLoad表");
+                sta = System.currentTimeMillis();
+                sxProductService.insertSxWorkLoad(channelId, codeList, cartId, userName);
+                $debug("CmsRefreshRetailPriceTask 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
             }
         }
         return failList;

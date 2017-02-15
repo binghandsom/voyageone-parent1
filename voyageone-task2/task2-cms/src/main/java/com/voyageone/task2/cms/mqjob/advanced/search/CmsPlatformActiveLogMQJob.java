@@ -1,9 +1,7 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.PlatformActiveLogMQMessageBody;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import com.voyageone.task2.cms.service.platform.CmsPlatformActiveLogService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -31,24 +29,19 @@ public class CmsPlatformActiveLogMQJob extends TBaseMQCmsService<PlatformActiveL
     public void onStartup(PlatformActiveLogMQMessageBody messageBody) throws Exception {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("channelId", messageBody.getChannelId());
-        params.put("cartIdList", messageBody.getCartList());
+        params.put("cartId", messageBody.getCartId());
         params.put("activeStatus", messageBody.getActiveStatus());
         params.put("creator", messageBody.getSender());
         params.put("comment", messageBody.getComment());
         params.put("codeList", messageBody.getProductCodes());
         params.put("statusVal",messageBody.getStatusVal());
 
-        try {
-            List<Map<String, String>> failList = cmsPlatformActiveLogService.setProductOnSaleOrInStock(params);
-            if (failList != null && failList.size() > 0) {
-                cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(failList));
-            }
-        } catch (Exception e) {
-            if (e instanceof BusinessException) {
-                cmsBusinessExLog(messageBody, e.getMessage());
-            } else {
-                cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
-            }
+        super.count = messageBody.getProductCodes().size();
+
+        List<CmsBtOperationLogModel_Msg> failList = cmsPlatformActiveLogService.setProductOnSaleOrInStock(params);
+        if (failList.size() > 0) {
+            String comment = String.format("处理成功件数(%s), 处理失败件数(%s)", messageBody.getProductCodes().size(), failList.size());
+            cmsSuccessIncludeFailLog(messageBody, comment, failList);
         }
 
     }

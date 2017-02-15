@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.mqjob;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -9,6 +10,7 @@ import com.voyageone.components.jumei.JumeiHtMallService;
 import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsJmMallPromotionPriceSyncMQMessageBody;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,14 +41,14 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
     public void onStartup(CmsJmMallPromotionPriceSyncMQMessageBody messageBody) throws Exception {
         Integer jmPid = messageBody.getJmPromotionId();
         List<String> productCodes = messageBody.getProductCodes();
-
+        super.count = productCodes.size();
 
         String channelId = messageBody.getChannelId();
         ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.JM.getId());
         if (shopBean == null) {
             $error("JmMallPromotionPriceSyncService 店铺及平台数据不存在！ channelId=%s", channelId);
-            cmsConfigExLog(messageBody,String.format("JmMallPromotionPriceSyncService 店铺及平台数据不存在！ channelId=%s", channelId));
-            return;
+
+            throw new BusinessException(String.format("JmMallPromotionPriceSyncService 店铺及平台数据不存在！ channelId=%s", channelId));
         }
 
         // 找到该活动下所有sku
@@ -63,18 +65,36 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
             }
         }
 
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
         List<List<HtMallSkuPriceUpdateInfo>> pageList = CommonUtil.splitList(list, 20);
         for (List<HtMallSkuPriceUpdateInfo> page : pageList) {
             StringBuffer sb = new StringBuffer();
             try {
                 if (!jumeiHtMallService.updateMallSkuPrice(shopBean, page, sb)) {
-                    cmsBusinessExLog(messageBody, sb.toString());
                     $error(sb.toString());
+
+                    CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                    StringBuffer sbSku = new StringBuffer();
+                    page.stream().forEach(skuInfo -> sbSku.append(skuInfo.getJumei_sku_no()).append(","));
+                    errorInfo.setSkuCode(sbSku.toString());
+                    errorInfo.setMsg(sb.toString());
+                    failList.add(errorInfo);
                 }
             } catch (Exception e) {
-                cmsBusinessExLog(messageBody, String.format("更新价格时异常 jmPromId=%d, errmsg=%s", jmPid, e.getMessage()));
                 $error(sb.toString());
+                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                StringBuffer sbSku = new StringBuffer();
+                page.stream().forEach(skuInfo -> sbSku.append(skuInfo.getJumei_sku_no()).append(","));
+                errorInfo.setSkuCode(sbSku.toString());
+                errorInfo.setMsg(String.format("更新价格时异常 jmPromId=%d, errmsg=%s", jmPid, e.getMessage()));
+                failList.add(errorInfo);
             }
+        }
+
+        if (failList.size() > 0) {
+            //写业务错误日志
+            String comment = String.format("处理成功件数(%s), 处理失败件数(%s)", productCodes.size(), failList.size());
+            cmsSuccessIncludeFailLog(messageBody, comment, failList);
         }
     }
 }
