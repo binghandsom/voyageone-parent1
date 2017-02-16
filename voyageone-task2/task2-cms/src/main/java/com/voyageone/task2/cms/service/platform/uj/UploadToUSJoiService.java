@@ -1862,7 +1862,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             // 适合人群(中文)
             if (!StringUtils.isEmpty(searchResult.getSizeTypeCn()))      prodCommonField.setSizeTypeCn(searchResult.getSizeTypeCn());
             // TODO 2016/12/30暂时这样更新，以后要改
-            if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter())) {
+            if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter()) || StringUtil.isEmpty(prodCommonField.getHsCodePrivate())) {
                 // 税号个人
                 if (!StringUtils.isEmpty(searchResult.getTaxPersonal())) {
                     prodCommonField.setHsCodePrivate(searchResult.getTaxPersonal());

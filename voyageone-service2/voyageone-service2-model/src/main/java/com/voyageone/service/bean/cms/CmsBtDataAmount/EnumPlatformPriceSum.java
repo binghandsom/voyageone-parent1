@@ -11,10 +11,18 @@ public enum EnumPlatformPriceSum implements IEnumDataAmountSum{
     //Retail_Price
     CMS_PLATFORM_Retail_Price_UP("CMS_PLATFORM_Retail_Price_UP", "{'platforms.P%s.skus.priceChgFlg':{$regex:\"^U\"}}", "/search/advanceSearch", "", "指导价涨价"),
     CMS_PLATFORM_Retail_Price_DOWN("CMS_PLATFORM_Retail_Price_DOWN", "{'platforms.P%s.skus.priceChgFlg':{$regex:\"^D\"}}", "/search/advanceSearch", "", "指导价降价"),
-    CMS_PLATFORM_PRICE_DOWN("CMS_PLATFORM_PRICE_DOWN", "{'platforms.P%s.skus.priceDiffFlg':'2'}", "/search/advanceSearch", "/search/advanceSearch", "比指导价低(未击穿)"),
-    CMS_PLATFORM_PRICE_UP("CMS_PLATFORM_PRICE_UP", "{'platforms.P%s.skus.priceDiffFlg':'3'}", "/search/advanceSearch", "/search/advanceSearch", "比指导价高(未击穿)"),
-    CMS_PLATFORM_PRICE_UP_BREAKDOWN("CMS_PLATFORM_PRICE_UP_BREAKDOWN", "{'platforms.P%s.skus.priceDiffFlg':'4'}", "/search/advanceSearch", "", "向上击穿警告"),
-    CMS_PLATFORM_PRICE_DOWN_BREAKDOWN("CMS_PLATFORM_PRICE_DOWN_BREAKDOWN", "{'platforms.P%s.skus.priceDiffFlg':'5'}", "/search/advanceSearch", "", "向下击穿警告"),
+    CMS_PLATFORM_PRICE_DOWN("CMS_PLATFORM_PRICE_DOWN", "{'platforms.P%s.cartId':'%s','platforms.P%s.skus.priceDiffFlg':'2'}", "/search/advanceSearch", "/search/advanceSearch", "比指导价低(未击穿)",(m)->{
+        return String.format(m.getQueryStr(),m.getCartId(),m.getCartId(),m.getCartId());
+    }),
+    CMS_PLATFORM_PRICE_UP("CMS_PLATFORM_PRICE_UP", "{'platforms.P%s.cartId':'%s','platforms.P%s.skus.priceDiffFlg':'3'}", "/search/advanceSearch", "/search/advanceSearch", "比指导价高(未击穿)",(m)->{
+        return String.format(m.getQueryStr(),m.getCartId(),m.getCartId(),m.getCartId());
+    }),
+    CMS_PLATFORM_PRICE_UP_BREAKDOWN("CMS_PLATFORM_PRICE_UP_BREAKDOWN", "{'platforms.P%s.cartId':'%s', 'platforms.P%s.skus.priceDiffFlg':'4'}", "/search/advanceSearch", "", "向上击穿警告",(m)->{
+        return String.format(m.getQueryStr(),m.getCartId(),m.getCartId(),m.getCartId());
+    }),
+    CMS_PLATFORM_PRICE_DOWN_BREAKDOWN("CMS_PLATFORM_PRICE_DOWN_BREAKDOWN", "{'platforms.P%s.cartId':'%s','platforms.P%s.skus.priceDiffFlg':'5'}", "/search/advanceSearch", "", "向下击穿警告",(m)->{
+        return String.format(m.getQueryStr(),m.getCartId(),m.getCartId(),m.getCartId());
+    }),
     CMS_PLATFORM_MSRP_LESS_THAN_RETAIL_PRICE("CMS_PLATFORM_MSRP_LESS_THAN_RETAIL_PRICE", "{'platforms.P%s.skus.priceMsrpFlg':'XU'}", "/search/advanceSearch", "", "比中国建议售价高"),
     CMS_PLATFORM_priceSale_Equal_minus1("CMS_PLATFORM_priceSale_Equal_minus1", "{platforms.P%s:{$exists:true},'platforms.P%s.skus.priceRetail':-1}", "/search/advanceSearch", "", "中国最终指导价格为-1",(m)->{
         return String.format(m.getQueryStr(),m.getCartId(),m.getCartId());

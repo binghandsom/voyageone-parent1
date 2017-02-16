@@ -43,6 +43,8 @@ public class OverStockAnalysisService extends BaseAnalysisService {
     @Autowired
     private OverstockProductService overstockProductService;
 
+    private Integer pageIndex = 488;
+
     @Override
     @Transactional
     protected void updateFull(List<String> itemIds) {
@@ -63,25 +65,33 @@ public class OverStockAnalysisService extends BaseAnalysisService {
     }
 
     @Override
+//    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+//
+//        init();
+//
+//        zzWorkClear();
+//        int cnt = 0;
+//        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
+//            cnt = fullCopyTemp();
+//        }else {
+//            $info("产品信息插入开始");
+//            cnt = superFeedImport();
+//        }
+//        $info("产品信息插入完成 共" + cnt + "条数据");
+//        if (cnt > 0) {
+//            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
+//                transformer.new Context(channel, this).transform();
+//            }
+//            postNewProduct();
+//        }
+//    }
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         init();
 
-        zzWorkClear();
-        int cnt = 0;
-        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
-            cnt = fullCopyTemp();
-        }else {
-            $info("产品信息插入开始");
-            cnt = superFeedImport();
-        }
-        $info("产品信息插入完成 共" + cnt + "条数据");
-        if (cnt > 0) {
-            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
-                transformer.new Context(channel, this).transform();
-            }
-            postNewProduct();
-        }
+
+         $info("产品信息插入开始");
+         superFeedImport();
     }
     @Override
     public int fullCopyTemp(){
@@ -101,7 +111,9 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         int offset = 0;
         List<SuperFeedOverStockBean> superfeed = new ArrayList<>();
         while (true) {
-            request.setOffset(offset);
+            pageIndex++;
+            $info("取得第"+pageIndex+"页的数据");
+            request.setOffset((pageIndex-1) * 100);
             request.setLimit(100);
             String sku = "";
             try {
@@ -114,6 +126,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                         $info("产品取得结束");
                         break;
                     } else {
+                        zzWorkClear();
                         for (ProductType product : productTypeList) {
                             //variations
                             List<VariationType> variationTypeList = product.getVariations().getVariation();
@@ -353,30 +366,33 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                     superfeed.add(superFeedverStockBean);
                                     count++;
                                     $info("SKU:" + count + "---" + sku);
-                                    if (superfeed.size() > 1000) {
-                                        transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
-                                        superfeed.clear();
-                                    }
+//                                    if (superfeed.size() > 1000) {
+//                                        transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
+//                                        superfeed.clear();
+//                                    }
                                 }
                             }
-
                         }
+                        transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
+                        superfeed.clear();
+                        transformer.new Context(channel, this).transform();
+                        postNewProduct();
                     }
                 } else {
                     $info("queryForMultipleProducts error; offset = " + offset + " statusCode = " + statusCode);
                     break;
                 }
-                offset = offset + 100;
+//                offset = offset + 100;
             } catch (Exception e) {
                 $info("OverStock产品文件读入失败");
                 logIssue("cms 数据导入处理", "OverStock产品文件读入失败 " + e.getMessage());
                 break;
             }
         }
-        if (superfeed.size() > 0) {
-            transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
-            superfeed.clear();
-        }
+//        if (superfeed.size() > 0) {
+//            transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
+//            superfeed.clear();
+//        }
         $info("OverStock产品api调用结束");
         $info("OverStock产品个数为:" + count);
         return count;
