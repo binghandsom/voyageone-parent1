@@ -101,6 +101,7 @@ public class CmsBatchEditPlatformFieldsMqJob extends TBaseMQCmsService<CmsBatchP
         if(failList.size()>0){
             String comment = String.format("处理总件数(%s), 处理失败件数(%s)", productCodes.size(), failList.size());
             cmsSuccessIncludeFailLog(messageBody, comment, failList);
+            super.isFailed = true;
         }
     }
 }

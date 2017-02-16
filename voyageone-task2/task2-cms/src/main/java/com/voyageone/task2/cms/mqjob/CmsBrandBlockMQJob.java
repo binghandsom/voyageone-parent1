@@ -64,6 +64,7 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
             //写业务错误日志
             String comment = String.format("处理失败件数(%s)",  failList.size());
             cmsSuccessIncludeFailLog(messageBody, comment, failList);
+            super.isFailed = true;
         }
     }
 

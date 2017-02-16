@@ -95,6 +95,7 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
             //写业务错误日志
             String comment = String.format("处理总件数(%s), 处理失败件数(%s)", productCodes.size(), failList.size());
             cmsSuccessIncludeFailLog(messageBody, comment, failList);
+            super.isFailed = true;
         }
     }
 }
