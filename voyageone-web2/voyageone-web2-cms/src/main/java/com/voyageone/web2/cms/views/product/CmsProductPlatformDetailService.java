@@ -332,8 +332,12 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getCommon().getFields().getCode(), cartId);
                 //updated by piao 不在页面做弹出
                 if (cmsBtProductGroup == null) {
+                    Map<String, Object> noMainResult = new HashedMap();
+                    noMainResult.put("noMain", true);
+                    noMainResult.put("cartId", cartId);
+                    noMainResult.put("mainCode", cmsBtProduct.getCommon().getFields().getCode());
+                    return noMainResult;
                     //throw new BusinessException(CartEnums.Cart.getValueByID(cartId + "") + "该商品的没有设置主商品，请先设置主商品：" + cmsBtProduct.getCommon().getFields().getCode());
-                    return null;
                 }
                 CmsBtProductModel mainProduct = productService.getProductByCode(channelId, cmsBtProductGroup.getMainProductCode());
                 CmsBtProductModel_Platform_Cart mainPlatform = mainProduct.getPlatform(cartId);
