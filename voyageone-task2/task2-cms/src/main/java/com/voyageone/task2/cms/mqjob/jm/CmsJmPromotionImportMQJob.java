@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.mqjob.jm;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
