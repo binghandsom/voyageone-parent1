@@ -2,7 +2,6 @@ package com.voyageone.components.sneakerhead;
 
 import com.voyageone.components.ComponentBase;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.web.client.RestTemplate;
 
 /**
