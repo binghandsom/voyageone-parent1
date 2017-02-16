@@ -199,7 +199,7 @@ public class UploadToUSJoiServiceTest {
         // 测试主类目匹配接口有没有问题
         String feedCategoryPath = "Accessories-Womens-Slgs-Passport holder";
 
-        StopWordCleaner cleaner = new StopWordCleaner();
+        StopWordCleaner cleaner = new StopWordCleaner(StopWordCleaner.STOPWORD_LIST);
         Tokenizer tokenizer = new Tokenizer(new ArrayList(){{add("-");}});
         FeedQuery query = new FeedQuery(feedCategoryPath, cleaner, tokenizer);
         query.setSizeType("feedSizeType1");

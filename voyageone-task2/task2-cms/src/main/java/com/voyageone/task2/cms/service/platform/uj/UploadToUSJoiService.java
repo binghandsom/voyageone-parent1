@@ -1947,7 +1947,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      */
     private FeedQuery getFeedQuery(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
         // 调用Feed到主数据的匹配程序匹配主类目
-        StopWordCleaner cleaner = new StopWordCleaner();
+        StopWordCleaner cleaner = new StopWordCleaner(StopWordCleaner.STOPWORD_LIST);
         // 子店feed类目path分隔符(由于导入feedInfo表时全部替换成用"-"来分隔了，所以这里写固定值就可以了)
         List<String> categoryPathSplit = new ArrayList<>();
         categoryPathSplit.add("-");
