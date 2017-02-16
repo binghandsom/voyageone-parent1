@@ -1494,51 +1494,53 @@ public class PriceService extends BaseService {
     }
 
     public void updatePlatFormPrice(String channelId, Integer chg, CmsBtProductModel cmsProduct, String modifier){
-        if((chg & 1) == 1){
-            $info("存在 isSale 变化 插入sxworkload表" );
-            CmsBtProductModel finalCmsProduct = cmsProduct;
-            cmsProduct.getPlatforms().forEach((cartId, platform) -> insertWorkload(finalCmsProduct, Integer.parseInt(cartId), modifier));
-            // 只是价格变化 调用平台刷价格
-        }else if((chg & 2) == 2){
-            $info("只是价格变化 直接更新平台价格");
-            for(String cartId : cmsProduct.getPlatforms().keySet()) {
-                if(CmsConstants.ProductStatus.Approved.name().equals(cmsProduct.getPlatform(Integer.parseInt(cartId)).getStatus())) {
-                    CmsChannelConfigBean autoSyncPricePromotion = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_PROMOTION, cartId);
-                    if (autoSyncPricePromotion == null) {
-                        autoSyncPricePromotion = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_PROMOTION);
-                    }
-
-                    if (autoSyncPricePromotion == null) {
-                        autoSyncPricePromotion = new CmsChannelConfigBean();
-                        autoSyncPricePromotion.setConfigValue1("0");
-                        autoSyncPricePromotion.setConfigValue2("0");
-                        autoSyncPricePromotion.setConfigValue3("0");
-                    }
-                    try {
-                        if ("2".equals(autoSyncPricePromotion.getConfigValue1())) {
-                            //取得该channel cartId的所有的活动
-                            List<CmsBtPromotionBean> promtions = promotionService.getByChannelIdCartId(channelId, Integer.parseInt(cartId));
-                            if (!ListUtils.isNull(promtions)) {
-                                List<Integer> promotionIds = promotionService.getDateRangePromotionIds(promtions, new Date(), autoSyncPricePromotion.getConfigValue2(), autoSyncPricePromotion.getConfigValue3());
-                                if (!ListUtils.isNull(promotionIds)) {
-                                    if (promotionCodeService.getCmsBtPromotionCodeInPromtionCnt(cmsProduct.getCommon().getFields().getCode(), promotionIds) > 0) {
-                                        $info(String.format("channel=%s code=%s cartId=%d 有活动保护期 不更新平台价格", channelId, cmsProduct.getCommon().getFields().getCode(), cartId));
-                                        continue;
-                                    }
-                                }
-                            }
-                        }
-                        // 更新平台价格
-                        updateSkuPrice(channelId, Integer.parseInt(cartId), cmsProduct);
-                    } catch (Exception e) {
-                        $warn("updateSkuPrices失败", e.getMessage());
-                        e.printStackTrace();
-                    }
-                }
-            };
+        for(String cartId : cmsProduct.getPlatforms().keySet()) {
+            updatePlatFormPrice(channelId, chg, cmsProduct, Integer.parseInt(cartId), modifier);
         }
     }
 
+    public void updatePlatFormPrice(String channelId, Integer chg, CmsBtProductModel cmsProduct, Integer cartId, String modifier){
+        if((chg & 1) == 1){
+            $info("存在 isSale 变化 插入sxworkload表" );
+            insertWorkload(cmsProduct, cartId, modifier);
+            // 只是价格变化 调用平台刷价格
+        }else if((chg & 2) == 2){
+            $info("只是价格变化 直接更新平台价格");
+            if(CmsConstants.ProductStatus.Approved.name().equals(cmsProduct.getPlatform(cartId).getStatus())) {
+                CmsChannelConfigBean autoSyncPricePromotion = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_PROMOTION, cartId.toString());
+                if (autoSyncPricePromotion == null) {
+                    autoSyncPricePromotion = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_PROMOTION);
+                }
+
+                if (autoSyncPricePromotion == null) {
+                    autoSyncPricePromotion = new CmsChannelConfigBean();
+                    autoSyncPricePromotion.setConfigValue1("0");
+                    autoSyncPricePromotion.setConfigValue2("0");
+                    autoSyncPricePromotion.setConfigValue3("0");
+                }
+                try {
+                    if ("2".equals(autoSyncPricePromotion.getConfigValue1())) {
+                        //取得该channel cartId的所有的活动
+                        List<CmsBtPromotionBean> promtions = promotionService.getByChannelIdCartId(channelId, cartId);
+                        if (!ListUtils.isNull(promtions)) {
+                            List<Integer> promotionIds = promotionService.getDateRangePromotionIds(promtions, new Date(), autoSyncPricePromotion.getConfigValue2(), autoSyncPricePromotion.getConfigValue3());
+                            if (!ListUtils.isNull(promotionIds)) {
+                                if (promotionCodeService.getCmsBtPromotionCodeInPromtionCnt(cmsProduct.getCommon().getFields().getCode(), promotionIds) > 0) {
+                                    $info(String.format("channel=%s code=%s cartId=%d 有活动保护期 不更新平台价格", channelId, cmsProduct.getCommon().getFields().getCode(), cartId));
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                    // 更新平台价格
+                    updateSkuPrice(channelId, cartId, cmsProduct);
+                } catch (Exception e) {
+                    $warn("updateSkuPrices失败", e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
     private void insertWorkload(CmsBtProductModel cmsProduct, Integer cartId, String modifier) {
 
         if(cartId > 0 && cartId < 900) {

@@ -274,6 +274,7 @@ public class CmsProductPriceUpdateService extends BaseService {
                     continue;
                 }
 
+                Integer chg = 0;
                 // 计算指导价
                 try {
                     if ($isDebugEnabled()) {
@@ -281,7 +282,11 @@ public class CmsProductPriceUpdateService extends BaseService {
                             $debug("CmsProductPriceUpdateService.updateProductRetailPrice 计算前的sku价格 skuCode=%s, priceMsrp=%s, priceRetail=%s, priceSale=%s", skuObj.getStringAttribute("skuCode"), skuObj.getDoubleAttribute("priceMsrp"), skuObj.getDoubleAttribute("priceRetail"), skuObj.getDoubleAttribute("priceSale"));
                         }
                     }
+                    CmsBtProductModel old = JacksonUtil.json2Bean(JacksonUtil.bean2Json(prodObj),CmsBtProductModel.class);
                     priceService.setPrice(prodObj, cartId, false);
+                    // 价格计算前后比较
+                    chg = priceService.skuCompare(old, prodObj, cartId);
+
                     if ($isDebugEnabled()) {
                         for (BaseMongoMap skuObj : skuList) {
                             $debug("CmsProductPriceUpdateService.updateProductRetailPrice 计算后的sku价格 skuCode=%s, priceMsrp=%s, priceRetail=%s, priceSale=%s", skuObj.getStringAttribute("skuCode"), skuObj.getDoubleAttribute("priceMsrp"), skuObj.getDoubleAttribute("priceRetail"), skuObj.getDoubleAttribute("priceSale"));
@@ -339,36 +344,38 @@ public class CmsProductPriceUpdateService extends BaseService {
                 int cnt = cmsBtPriceLogService.addLogListAndCallSyncPriceJob(logModelList);
                 $debug("CmsRefreshRetailPriceTask修改商品价格 记入价格变更履历结束 结果=" + cnt);
 
-                // 只有最终售价变化了，才需要上新
-                if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
-                    // 最终售价被自动同步
-                    if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
-                        // 天猫平台直接调用API
-                        try {
-                            if("2".equals(autoSyncPricePromotion.getConfigValue1())){
-                                //取得该channel cartId的所有的活动
-                                List<CmsBtPromotionBean> promtions = promotionService.getByChannelIdCartId(channelId, cartId);
-                                if(!ListUtils.isNull(promtions)) {
-                                    List<Integer> promotionIds = promotionService.getDateRangePromotionIds(promtions, new Date(), autoSyncPricePromotion.getConfigValue2(), autoSyncPricePromotion.getConfigValue3());
-                                    if(!ListUtils.isNull(promotionIds)) {
-                                        if (promotionCodeService.getCmsBtPromotionCodeInPromtionCnt(prodObj.getCommon().getFields().getCode(), promotionIds) >0){
-                                            continue;
-                                        }
-                                    }
-                                }
-                            }
 
-                            priceService.updateSkuPrice(channelId, cartId, prodObj);
-                        } catch (Exception e) {
-                            CmsBtOperationLogModel_Msg failInfo = new CmsBtOperationLogModel_Msg();
-                            failInfo.setSkuCode(prodCode);
-                            failInfo.setMsg(String.format("修改商品价格 调用天猫API失败, channelId=%s, code=%s, errmsg=%s", channelId, prodCode, e.getMessage()));
-                            failList.add(failInfo);
-
-                            $error(String.format("CmsProductPriceUpdateService.updateProductRetailPrice 修改商品价格 调用天猫API失败 channelId=%s, cartId=%d msg=%s", channelId, cartId, e.getMessage()), e);
-                        }
-                    }
-                }
+                priceService.updatePlatFormPrice(channelId, chg, prodObj, cartId, userName);
+//                // 只有最终售价变化了，才需要上新
+//                if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
+//                    // 最终售价被自动同步
+//                    if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
+//                        // 天猫平台直接调用API
+//                        try {
+//                            if("2".equals(autoSyncPricePromotion.getConfigValue1())){
+//                                //取得该channel cartId的所有的活动
+//                                List<CmsBtPromotionBean> promtions = promotionService.getByChannelIdCartId(channelId, cartId);
+//                                if(!ListUtils.isNull(promtions)) {
+//                                    List<Integer> promotionIds = promotionService.getDateRangePromotionIds(promtions, new Date(), autoSyncPricePromotion.getConfigValue2(), autoSyncPricePromotion.getConfigValue3());
+//                                    if(!ListUtils.isNull(promotionIds)) {
+//                                        if (promotionCodeService.getCmsBtPromotionCodeInPromtionCnt(prodObj.getCommon().getFields().getCode(), promotionIds) >0){
+//                                            continue;
+//                                        }
+//                                    }
+//                                }
+//                            }
+//
+//                            priceService.updateSkuPrice(channelId, cartId, prodObj);
+//                        } catch (Exception e) {
+//                            CmsBtOperationLogModel_Msg failInfo = new CmsBtOperationLogModel_Msg();
+//                            failInfo.setSkuCode(prodCode);
+//                            failInfo.setMsg(String.format("修改商品价格 调用天猫API失败, channelId=%s, code=%s, errmsg=%s", channelId, prodCode, e.getMessage()));
+//                            failList.add(failInfo);
+//
+//                            $error(String.format("CmsProductPriceUpdateService.updateProductRetailPrice 修改商品价格 调用天猫API失败 channelId=%s, cartId=%d msg=%s", channelId, cartId, e.getMessage()), e);
+//                        }
+//                    }
+//                }
             }catch (Exception e){
                 CmsBtOperationLogModel_Msg failInfo = new CmsBtOperationLogModel_Msg();
                 failInfo.setSkuCode(prodCode);
