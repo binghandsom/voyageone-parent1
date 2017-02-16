@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.voyageone.components.sneakerhead.SneakerHeadBase.DEFAULT_DOMAIN;
+
 /**
  * Created by vantis on 2016/11/28.
  * 闲舟江流夕照晚 =。=
@@ -59,7 +61,7 @@ public class CmsUsCategorySyncService extends BaseCronTaskService {
         try {
             $info("调用接口 获取 category...");
             // 获得 category
-            List<SneakerheadCategoryModel> categoryList = sneakerheadApiService.getCategory(true, "10.0.0.91:52233");
+            List<SneakerheadCategoryModel> categoryList = sneakerheadApiService.getCategory(true, DEFAULT_DOMAIN);
 
             $info("获取 category 完毕 拍平之...");
 
