@@ -19,6 +19,10 @@ import java.util.Map;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class CmsRefreshProductCategoryMQServiceTest {
+    @Test
+    public void onStartup() throws Exception {
+
+    }
 
     @Autowired
     private CmsRefreshProductCategoryMQService cmsRefreshProductCategoryMQService;
@@ -29,8 +33,7 @@ public class CmsRefreshProductCategoryMQServiceTest {
 
         String channelId = "928";
         List<String> codeList = new ArrayList<>();
-        codeList.add("022-EA3060501754");
-        codeList.add("022-EA3060538652");
+        codeList.add("028-ps7097564");
         String userName = "testUser001";
 
         Map<String, Object> messageMap = new HashMap<>();
