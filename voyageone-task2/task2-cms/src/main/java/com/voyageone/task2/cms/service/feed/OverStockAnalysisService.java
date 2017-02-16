@@ -8,6 +8,7 @@ import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.configs.beans.FeedBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.*;
 import com.voyageone.components.overstock.bean.OverstockMultipleRequest;
 import com.voyageone.components.overstock.service.OverstockProductService;
@@ -23,10 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -43,7 +41,9 @@ public class OverStockAnalysisService extends BaseAnalysisService {
     @Autowired
     private OverstockProductService overstockProductService;
 
-    private Integer pageIndex = 1990;
+    private Integer pageIndex = 0;
+
+    private long lastExecuteTime = 0;
 
     @Override
     @Transactional
@@ -89,9 +89,21 @@ public class OverStockAnalysisService extends BaseAnalysisService {
 
         init();
 
+        if(CacheHelper.getValueOperation().get("OverStockfeedPage") != null){
+            pageIndex = (Integer) CacheHelper.getValueOperation().get("OverStockfeedPage");
+        }
 
-         $info("产品信息插入开始");
-         superFeedImport();
+        if(CacheHelper.getValueOperation().get("OverStockFeedSynTime") != null){
+            lastExecuteTime = (Long) CacheHelper.getValueOperation().get("OverStockFeedSynTime");
+        }
+
+        if ((Calendar.getInstance().getTimeInMillis() - lastExecuteTime) > (24 * 3 * 60 * 60 * 1000L)) {
+            $info("产品信息插入开始");
+            superFeedImport();
+        }else{
+            $info("间隔时间未定不许要执行");
+        }
+
     }
     @Override
     public int fullCopyTemp(){
@@ -111,6 +123,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         int offset = 0;
         List<SuperFeedOverStockBean> superfeed = new ArrayList<>();
         while (true) {
+            CacheHelper.getValueOperation().set("OverStockfeedPage", pageIndex);
             pageIndex++;
             $info("取得第"+pageIndex+"页的数据");
             request.setOffset((pageIndex-1) * 100);
@@ -124,6 +137,8 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                 if (statusCode == 200) {
                     if (productTypeList.size() == 0) {
                         $info("产品取得结束");
+                        CacheHelper.getValueOperation().set("OverStockfeedPage", 0);
+                        CacheHelper.getValueOperation().set("OverStockFeedSynTime", Calendar.getInstance().getTimeInMillis());
                         break;
                     } else {
                         zzWorkClear();
