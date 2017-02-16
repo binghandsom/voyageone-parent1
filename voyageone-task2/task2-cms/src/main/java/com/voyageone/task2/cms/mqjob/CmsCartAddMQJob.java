@@ -70,7 +70,7 @@ public class CmsCartAddMQJob extends TBaseMQCmsService<CmsCartAddMQMessageBody> 
         }
         if (failList.size() > 0) {
             //写业务错误日志
-            String comment = String.format("处理成功件数(%s), 处理失败件数(%s)", sumCnt, failList.size());
+            String comment = String.format("处理总件数(%s), 处理失败件数(%s)", sumCnt, failList.size());
             cmsSuccessIncludeFailLog(messageBody, comment, failList);
         }
     }

@@ -30,6 +30,7 @@ public class CmsJMProductUpdateMQJob extends TBaseMQCmsService<JMProductUpdateMQ
 
         List<OperationResult> listResult = service.updateJmByPromotionId(messageBody.getCmsBtJmPromotionId());
 
+        super.count = 0;
         List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
         listResult.forEach(f -> {
             if (!f.isResult()) {
@@ -39,11 +40,13 @@ public class CmsJMProductUpdateMQJob extends TBaseMQCmsService<JMProductUpdateMQ
                 StringBuilder sb = new StringBuilder();
                 errorInfo.setMsg(sb.append(f.getMsg()).append("errorId:").append(f.getId()).toString());
                 failList.add(errorInfo);
+            } else {
+                super.count ++;
             }
         });
 
         if (failList.size() > 0) {
-            String comment = String.format("处理成功件数(%s), 处理失败件数(%s)", listResult.size(), failList.size());
+            String comment = String.format("处理总件数(%s), 处理失败件数(%s)", listResult.size(), failList.size());
             cmsSuccessIncludeFailLog(messageBody, comment, failList);
         }
     }

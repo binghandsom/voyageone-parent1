@@ -46,7 +46,7 @@ public class CmsTeJiaBaoDelMQJob extends TBaseMQCmsService<CmsTeJiaBaoDelMQMessa
 
         if (failList.size() > 0) {
             //写业务错误日志
-            String comment = String.format("处理成功件数(%s), 处理失败件数(%s)", messageBody.getNumIId().size(), failList.size());
+            String comment = String.format("处理总件数(%s), 处理失败件数(%s)", messageBody.getNumIId().size(), failList.size());
             cmsSuccessIncludeFailLog(messageBody, comment, failList);
         }
 

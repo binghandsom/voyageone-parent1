@@ -29,7 +29,7 @@ public class CmsAdvSearchRefreshRetailPriceMQJob extends TBaseMQCmsService<AdvSe
         super.count = messageBody.getCodeList().size();
         List<CmsBtOperationLogModel_Msg> failList = cmsProductPriceUpdateService.updateProductRetailPrice(messageBody);
         if (failList.size() > 0) {
-            String comment = String.format("处理成功件数(%s), 处理失败件数(%s)", messageBody.getCodeList().size(), failList.size());
+            String comment = String.format("处理总件数(%s), 处理失败件数(%s)", messageBody.getCodeList().size(), failList.size());
             cmsSuccessIncludeFailLog(messageBody, comment, failList);
         }
     }

@@ -4,7 +4,7 @@ package com.voyageone.task2.cms.mqjob.jm;
  * Created by dell on 2016/12/30.
  */
 
-import com.voyageone.common.configs.MQConfigInitTestUtil;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JMProductUpdateMQMessageBody;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +21,16 @@ public class CmsJMProductUpdateMQJobTest {
     @Test
     public void testOnStartup() throws Exception {
 
+        // {\"cmsBtJmPromotionId\":1060,\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"edward\"}
+        JMProductUpdateMQMessageBody messageBody = new JMProductUpdateMQMessageBody();
+        messageBody.setCmsBtJmPromotionId(1060);
+        messageBody.setConsumerRetryTimes(0);
+        messageBody.setMqId(0);
+        messageBody.setDelaySecond(0);
+        messageBody.setSender("edward");
 
         //service.onStartup(map2);
-        MQConfigInitTestUtil.startMQ(service);
+//        MQConfigInitTestUtil.startMQ(service);
+        service.onStartup(messageBody);
     }
 }
