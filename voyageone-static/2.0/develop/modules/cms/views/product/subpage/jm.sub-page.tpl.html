@@ -110,6 +110,12 @@
                             <!--应运营要求，保存按钮跳过check，一直为pending状态，除了平台类目为必选-->
                             <div class="row">
 
+                                <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Ready' || ctrl.vm.status == 'Approved' || isPublishSucceed">
+                                    <button class="btn btn-vo" ng-click="ctrl.saveProduct()" ng-disabled="ctrl.vm.checkFlag.translate != 1 || ctrl.vm.checkFlag.tax != 1 ||
+                                                                                            ctrl.vm.checkFlag.category != 1 || ctrl.vm.checkFlag.attribute == false">
+                                        <i class="glyphicon glyphicon-floppy-disk"></i>Approved</button>
+                                </div>
+
                                 <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Pending'" >
                                     <button class="btn btn-vo" ng-click="ctrl.saveProduct('ready')" ng-disabled="ctrl.vm.checkFlag.translate != 1 || ctrl.vm.checkFlag.tax != 1 ||
                                                                                             ctrl.vm.checkFlag.category != 1 || ctrl.vm.checkFlag.attribute == false">
@@ -120,11 +126,7 @@
                                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
 
                                 </div>
-                                <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Ready' || ctrl.vm.status == 'Approved' || isPublishSucceed">
-                                    <button class="btn btn-vo" ng-click="ctrl.saveProduct()" ng-disabled="ctrl.vm.checkFlag.translate != 1 || ctrl.vm.checkFlag.tax != 1 ||
-                                                                                            ctrl.vm.checkFlag.category != 1 || ctrl.vm.checkFlag.attribute == false">
-                                        <i class="glyphicon glyphicon-floppy-disk"></i>Approved</button>
-                                </div>
+
 
                                 <span class="text-warnings cur-p pull-right" ng-click="ctrl.showExt()"><i class="icon fa fa-question-circle text-md"></i>&emsp;</span>
 

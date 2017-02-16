@@ -166,8 +166,6 @@ define([
                         self.vm.platform = resp.data.platform;
                         self.vm.platform.pCatPath = context.selected.catPath;
                         self.vm.platform.pCatId = context.selected.catId;
-                        self.vm.status = "Pending";
-
                     });
                 });
 

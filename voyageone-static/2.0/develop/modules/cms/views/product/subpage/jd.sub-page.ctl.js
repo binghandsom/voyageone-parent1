@@ -172,7 +172,6 @@ define([
                         self.vm.platform.pCatPath = context.selected.catPath;
                         self.vm.platform.pCatId = context.selected.catId;
                         self.vm.checkFlag.category = 1;
-                        self.vm.status = "Pending";
 
                     });
                 });
