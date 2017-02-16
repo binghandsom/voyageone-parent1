@@ -1,3 +1,7 @@
+/**
+ * @description 独立官网详情页
+ * @author piao
+ */
 define([
     'cms',
     'modules/cms/enums/Carts',
@@ -48,7 +52,7 @@ define([
             platform: null,
             status: "Pending",
             skuTemp: {},
-            checkFlag: {translate: 0, tax: 0, category: 0, attribute: 0},
+            checkFlag: {tax: 0, attribute: 0},
             resultFlag: 0,
             sellerCats: [],
             productUrl: "",
@@ -65,7 +69,6 @@ define([
 
         //监控税号和翻译状态
         var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
-            check.translate = $scope.productInfo.translateStatus;
             check.tax = $scope.productInfo.hsCodeStatus;
         });
 
@@ -80,8 +83,8 @@ define([
      */
     SpJdController.prototype.getPlatformData = function () {
 
-        var self = this, $scope = self.$scope,
-            vm = self.vm;
+        var self = this, vm = self.vm,
+            $scope = self.$scope;
 
         self.productDetailService.getProductPlatform({
             cartId: $scope.cartInfo.value,
@@ -93,7 +96,6 @@ define([
 
             if (vm.platform) {
                 vm.status = vm.platform.status == null ? vm.status : vm.platform.status;
-                vm.checkFlag.category = vm.platform.pCatPath == null ? 0 : 1;
                 vm.platform.pStatus = vm.platform.pStatus == null ? "WaitingPublish" : vm.platform.pStatus;
                 vm.sellerCats = vm.platform.sellerCats == null ? [] : vm.platform.sellerCats;
             }
@@ -120,54 +122,27 @@ define([
 
 
     /**
-     @description 类目popup
-     * @param productInfo
-     * @param popupNewCategory popup实例
+     * @description 店铺内分类popup
+     * @param openAddChannelCategoryEdit
      */
-    SpJdController.prototype.categoryMapping = function () {
-        var self = this, $scope = self.$scope,
-            productDetailService = self.productDetailService;
+    SpJdController.prototype.openSellerCat = function () {
+        var self = this, selectedIds = {};
 
-        if (self.vm.status == 'Approved') {
-            self.alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
-            return;
-        }
+        self.vm.sellerCats.forEach(function (element) {
+            selectedIds[element.cId] = true;
+        });
 
-        productDetailService.getPlatformCategories({cartId: $scope.cartInfo.value})
-            .then(function (res) {
-                if (!res.data || !res.data.length) {
-                    self.notify.danger("数据还未准备完毕");
-                    return;
-                }
-
-                self.popups.popupNewCategory({
-                    from: self.vm.platform == null ? "" : self.vm.platform.pCatPath,
-                    categories: res.data,
-                    divType: ">",
-                    plateSchema: true
-                }).then(function (context) {
-
-                    if (self.vm.platform != null) {
-                        if (context.selected.catPath == self.vm.platform.pCatPath)
-                            return;
-                    }
-
-                    productDetailService.changePlatformCategory({
-                        cartId: $scope.cartInfo.value,
-                        prodId: $scope.productInfo.productId,
-                        catId: context.selected.catId,
-                        catPath: context.selected.catPath
-                    }).then(function (resp) {
-                        self.vm.platform = resp.data.platform;
-                        self.vm.platform.pCatPath = context.selected.catPath;
-                        self.vm.platform.pCatId = context.selected.catId;
-                        self.vm.checkFlag.category = 1;
-                        self.vm.status = "Pending";
-
-                    });
-                });
-
-            })
+        self.popups.openAddChannelCategoryEdit([{
+            code: self.vm.mastData.productCode,
+            sellerCats: self.vm.sellerCats,
+            cartId: self.$scope.cartInfo.value,
+            selectedIds: selectedIds,
+            plateSchema: true
+        }]).then(function (context) {
+            /**清空原来店铺类分类*/
+            self.vm.sellerCats = [];
+            self.vm.sellerCats = context.sellerCats;
+        });
     };
 
     /**
@@ -193,42 +168,42 @@ define([
     SpJdController.prototype.saveValid = function (mark) {
         var self = this, masterBrand;
 
-        if (mark == "ready" || self.vm.status == "Ready" || self.vm.status == "Approved") {
+        if (mark == "ready") {
             if (!self.validSchema()) {
                 self.alert("请输入必填属性，或者输入的属性格式不正确");
                 return false;
             }
+        }
 
-            if (self.vm.platform.pBrandName == null) {
-                masterBrand = self.$scope.productInfo.masterField.brand;
-                self.vm.status = self.vm.preStatus;
-                self.alert("该商品的品牌【" + masterBrand + "】没有与平台品牌建立关联，点击左侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置");
-                return false;
-            }
+        if (self.vm.status == "Ready" && self.vm.platform.pBrandName == null && mark != "temporary") {
+            masterBrand = self.$scope.productInfo.masterField.brand;
+            self.vm.status = self.vm.preStatus;
+            self.alert("该商品的品牌【" + masterBrand + "】没有与平台品牌建立关联，点击左侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置");
+            return false;
+        }
 
-            if (!self.checkSkuSale()) {
-                self.vm.status = self.vm.preStatus;
-                self.alert("请至少选择一个sku进行发布");
-                return false;
-            }
+        if ((self.vm.status == "Ready" || self.vm.status == "Approved") && !self.checkSkuSale() && mark != "temporary") {
+            self.vm.status = self.vm.preStatus;
+            self.alert("请至少选择一个sku进行发布");
+            return false;
         }
 
         return true;
     };
 
     SpJdController.prototype.saveProductAction = function (mark) {
-        var self = this,
+        var self = this, popups = self.popups,
             productDetailService = self.productDetailService;
 
         self.vm.preStatus = angular.copy(self.vm.status);
 
-        //判断页面头部4个状态
-        if (mark != "temporary")
-            self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
-
         //有效性判断
         if (!self.saveValid(mark))
             return;
+
+        //判断页面头部状态
+        if (mark != "temporary")
+            self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
 
         /**构造调用接口上行参数*/
         productDetailService.platformUpEntity({cartId: self.$scope.cartInfo.value, mark: mark}, self.vm);
@@ -242,7 +217,7 @@ define([
 
         if (self.vm.status == "Approved") {
 
-            self.popups.openApproveConfirm(self.vm.platform.skus).then(function (context) {
+            popups.openApproveConfirm(self.vm.platform.skus).then(function (context) {
                 if (context) {
                     _.map(self.vm.platform.skus, function (element) {
                         element.confPriceRetail = element.priceRetail;
@@ -260,6 +235,7 @@ define([
             return self.callSave();
         }
 
+
     };
 
     /**调用服务器接口*/
@@ -270,7 +246,7 @@ define([
             $translate = self.$translate;
 
         /**判断价格*/
-        return self.productDetailService.updateProductPlatformChk({
+        return productDetailService.updateProductPlatformChk({
             prodId: self.$scope.productInfo.productId,
             platform: self.vm.platform,
             isUpdate: mark !== 'intel' ? true : false
@@ -307,26 +283,6 @@ define([
 
     };
 
-    /**
-     *  商品品牌选择
-     */
-    SpJdController.prototype.choseBrand = function () {
-
-        var self = this, $scope = self.$scope,
-            popups = self.popups,
-            platform = self.vm.platform;
-
-        popups.openPlatformMappingSetting({
-            cartId: $scope.cartInfo.value,
-            cartName: $scope.cartInfo.name,
-            masterName: $scope.productInfo.masterField.brand,
-            pBrandId: platform.pBrandId ? platform.pBrandId : null
-        }).then(function (context) {
-            self.vm.platform.pBrandName = context.pBrand;
-        });
-
-    };
-
     /**sku价格刷新*/
     SpJdController.prototype.refreshPrice = function () {
         var self = this;
@@ -338,26 +294,6 @@ define([
             self.updateSkuPrice();
         }
     };
-
-    /**
-     * 刷新价格实际操作
-     */
-    SpJdController.prototype.updateSkuPrice = function () {
-        var self = this, $scope = self.$scope;
-
-        self.confirm("您是否确认要刷新sku价格").then(function () {
-            self.productDetailService.updateSkuPrice({
-                cartId: $scope.cartInfo.value,
-                prodId: $scope.productInfo.productId,
-                platform: $scope.vm.platform
-            }).then(function () {
-                self.alert("TXT_MSG_UPDATE_SUCCESS");
-            }, function (res) {
-                self.alert(res.message);
-            });
-        });
-    };
-
 
     /**
      * 判断是否一个都没选 true：有打钩    false：没有选择
@@ -386,6 +322,25 @@ define([
         return priceMsrpCheck;
     };
 
+    /**
+     * 刷新价格实际操作
+     */
+    SpJdController.prototype.updateSkuPrice = function () {
+        var self = this, $scope = self.$scope;
+
+        self.confirm("您是否确认要刷新sku价格").then(function () {
+            self.productDetailService.updateSkuPrice({
+                cartId: $scope.cartInfo.value,
+                prodId: $scope.productInfo.productId,
+                platform: $scope.vm.platform
+            }).then(function () {
+                self.alert("TXT_MSG_UPDATE_SUCCESS");
+            }, function (res) {
+                self.alert(res.message);
+            });
+        });
+    };
+
     SpJdController.prototype.validSchema = function () {
         return this.vm.platform == null || this.vm.platform.schemaFields == null ? false : this.schemaForm.$valid && this.skuForm.$valid;
     };
@@ -406,8 +361,7 @@ define([
      * @param speed 导航速度 ms为单位
      */
     SpJdController.prototype.pageAnchor = function (area, speed) {
-        var offsetTop = 0,
-            element = this.element;
+        var offsetTop = 0, element = this.element;
 
         if (area != 'master') {
             offsetTop = element.find("#" + area).offset().top;
@@ -498,6 +452,7 @@ define([
 
         var self = this, $scope = self.$scope,
             $translate = self.$translate,
+            productDetailService = self.productDetailService,
             template = $translate.instant('TXT_CONFIRM_MOVE_SKU', {'cartName': $scope.cartInfo.name});
 
         window.sessionStorage.setItem('moveCodeInfo', JSON.stringify({
@@ -509,7 +464,7 @@ define([
         self.confirm(template).then(function () {
             var newTab = window.open('about:blank');
 
-            self.productDetailService.moveCodeInitCheck({
+            productDetailService.moveCodeInitCheck({
                 cartId: $scope.cartInfo.value,
                 cartName: $scope.cartInfo.name,
                 prodId: $scope.productInfo.productId
@@ -522,12 +477,12 @@ define([
     };
 
     SpJdController.prototype.showExt = function () {
-        var self = this, modal, modalChildScope,
-            body = self.$document[0].body,
+        var self = this, body = self.$document[0].body,
             $compile = self.$compile,
+            modal, modalChildScope,
             $templateRequest = self.$templateRequest;
 
-        $templateRequest('/modules/cms/views/product/approved-example.tpl.html').then(function (html) {
+        $templateRequest('/modules/cms/views/product/subpage/approved-example.tpl.html').then(function (html) {
             modal = $(html);
             modalChildScope = self.$scope.$new();
 
@@ -536,7 +491,7 @@ define([
         });
     };
 
-    cms.directive('jmSubPage', function () {
+    cms.directive('dgSubPage', function () {
         return {
             restrict: 'E',
             controller: ['$scope', 'productDetailService', '$translate', 'notify', 'confirm', '$compile', 'alert', 'popups', '$fieldEditService', '$document', '$templateRequest', SpJdController],
@@ -545,7 +500,7 @@ define([
                 productInfo: "=productInfo",
                 cartInfo: "=cartInfo"
             },
-            templateUrl: 'views/product/jm.sub-page.tpl.html',
+            templateUrl: 'views/product/subpage/dg.sub-page.tpl.html',
             link: function ($scope, element) {
                 $scope.ctrl.init(element);
             }

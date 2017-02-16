@@ -1,3 +1,7 @@
+/**
+ * @description 上新按钮的图解
+ * @author piao
+ */
 define([
     'cms'
 ], function (cms) {

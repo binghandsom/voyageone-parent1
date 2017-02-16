@@ -12,12 +12,12 @@ define([
     './master.component.ctl',
     './price.component.ctl',
     './inventory.component.ctl',
-    './tm.sub-page.ctl',
-    './jd.sub-page.ctl',
-    './jm.sub-page.ctl',
-    './gt.sub-page.ctl',
-    './dg.sub-page.ctl',
-    './fx.sub-page.ctl'
+    './subpage/tm.sub-page.ctl',
+    './subpage/jd.sub-page.ctl',
+    './subpage/jm.sub-page.ctl',
+    './subpage/gt.sub-page.ctl',
+    './subpage/dg.sub-page.ctl',
+    './subpage/fx.sub-page.ctl'
 ], function (cms) {
 
     return cms.controller('productDetailController', (function () {
