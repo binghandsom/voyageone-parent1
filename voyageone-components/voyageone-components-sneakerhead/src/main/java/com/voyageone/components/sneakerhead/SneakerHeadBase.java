@@ -1,8 +1,11 @@
 package com.voyageone.components.sneakerhead;
 
+import com.voyageone.common.configs.Codes;
 import com.voyageone.components.ComponentBase;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Optional;
 
 /**
  * SneakerHeadBase
@@ -21,7 +24,14 @@ public class SneakerHeadBase extends ComponentBase {
 
     protected static final String CONTENT_TYPE = "application/json;charset=UTF-8";
 
-    public static final String DEFAULT_DOMAIN = "47.180.64.158:52233";
+    public static String DEFAULT_DOMAIN = "47.180.64.158:52233";
+
+    public static final String SNEAKERHEAD_US_SERVICE = "SNEAKERHEAD_US_SERVICE";
+
+    public SneakerHeadBase() {
+        DEFAULT_DOMAIN = Optional.ofNullable(Codes.getCode(SNEAKERHEAD_US_SERVICE, "url"))
+                .orElse("47.180.64.158:52233");
+    }
 
     protected RestTemplate getRestTemplate() {
         SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
