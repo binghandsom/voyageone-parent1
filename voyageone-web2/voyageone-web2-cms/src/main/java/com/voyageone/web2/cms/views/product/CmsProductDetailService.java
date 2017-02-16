@@ -1525,11 +1525,11 @@ public class CmsProductDetailService extends BaseViewService {
             if (platform.getCartId() != 0 && platform.getCartId() != CartEnums.Cart.USJGJ.getValue()) {
                 prices.get(platform.getCartId()).get(platform.getSkus().get(0).getStringAttribute("skuCode")).add(platform.getSkus().get(0).getDoubleAttribute("priceRetail"));
 
-                for (BaseMongoMap<String, Object> sku : platform.getSkus()) {
-                    if ("5".equalsIgnoreCase(sku.getStringAttribute("priceDiffFlg"))) {
-                        throw new BusinessException("税号修改后导致 中国最终售价低于指导价阀值请先修改最终销售价格！hscode调整后 指导价是：" + sku.getDoubleAttribute("priceRetail"));
-                    }
-                }
+//                for (BaseMongoMap<String, Object> sku : platform.getSkus()) {
+//                    if ("5".equalsIgnoreCase(sku.getStringAttribute("priceDiffFlg"))) {
+//                        throw new BusinessException("税号修改后导致 中国最终售价低于指导价阀值请先修改最终销售价格！hscode调整后 指导价是：" + sku.getDoubleAttribute("priceRetail"));
+//                    }
+//                }
             }
 
         });

@@ -66,7 +66,7 @@ public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> e
             String end = DateTimeUtil.format(new Date(), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
 
             $debug(String.format("处理总件数总数(%s), 开始时间: %s, 结束时间: %s", count, begin, end));
-            if (isFailed)
+            if (!isFailed)
                 cmsSuccessLog(messageBody, String.format("处理总件数总数(%s), 开始时间: %s, 结束时间: %s", count, begin, end));
         } catch (BusinessException ex) {
             cmsBusinessExLog(messageBody, ex.getMessage());
