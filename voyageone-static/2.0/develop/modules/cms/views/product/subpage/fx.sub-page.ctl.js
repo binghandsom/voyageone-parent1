@@ -123,58 +123,6 @@ define([
 
     };
 
-
-    /**
-     @description 类目popup
-     * @param productInfo
-     * @param popupNewCategory popup实例
-     */
-    SpJdController.prototype.categoryMapping = function () {
-        var self = this,
-            productDetailService = self.productDetailService,
-            $scope = self.$scope;
-
-        if (self.vm.status == 'Approved') {
-            self.alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
-            return;
-        }
-
-        productDetailService.getPlatformCategories({cartId: $scope.cartInfo.value})
-            .then(function (res) {
-                if (!res.data || !res.data.length) {
-                    self.notify.danger("数据还未准备完毕");
-                    return;
-                }
-
-                self.popups.popupNewCategory({
-                    from: self.vm.platform == null ? "" : self.vm.platform.pCatPath,
-                    categories: res.data,
-                    divType: ">",
-                    plateSchema: true
-                }).then(function (context) {
-
-                    if (self.vm.platform != null) {
-                        if (context.selected.catPath == self.vm.platform.pCatPath)
-                            return;
-                    }
-
-                    productDetailService.changePlatformCategory({
-                        cartId: $scope.cartInfo.value,
-                        prodId: $scope.productInfo.productId,
-                        catId: context.selected.catId,
-                        catPath: context.selected.catPath
-                    }).then(function (resp) {
-                        self.vm.platform = resp.data.platform;
-                        self.vm.platform.pCatPath = context.selected.catPath;
-                        self.vm.platform.pCatId = context.selected.catId;
-                        self.vm.status = "Pending";
-
-                    });
-                });
-
-            })
-    };
-
     /**
      * @description 店铺内分类popup
      * @param openAddChannelCategoryEdit
@@ -264,8 +212,7 @@ define([
         productDetailService.platformUpEntity({cartId: self.$scope.cartInfo.value, mark: mark}, self.vm);
 
         if (mark == "temporary") {
-            //暂存状态都为 Pending
-            self.vm.status = "Pending";
+            self.vm.status = self.vm.platform.status;
             self.callSave("temporary");
             return;
         }

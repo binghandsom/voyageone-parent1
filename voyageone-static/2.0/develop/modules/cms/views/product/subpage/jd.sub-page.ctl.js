@@ -290,8 +290,7 @@ define([
         productDetailService.platformUpEntity({cartId: self.$scope.cartInfo.value, mark: mark}, self.vm);
 
         if (mark == "temporary") {
-            //暂存状态都为 Pending
-            self.vm.status = "Pending";
+            self.vm.status = self.vm.platform.status;
             self.callSave("temporary");
             return;
         }

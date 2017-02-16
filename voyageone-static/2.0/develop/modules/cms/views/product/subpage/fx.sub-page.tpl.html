@@ -167,18 +167,6 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-
-                                <button class="col-md-2 btn btn-default" ng-click="ctrl.categoryMapping()" ng-disabled = "ctrl.vm.mastData.isMain!= true  "><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
-                                </button>
-                                <div class="col-md-1" style="width: 35px;">
-                                    <span notice-direction="bottom" notice-content="切换平台类目将影响整个Group中的所有商品，请慎重！" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
-                                </div>
-                                <div class="col-md-8">
-                                    <input class="form-control"  ng-model="ctrl.vm.platform.pCatPath" readonly>
-                                </div>
-
-                            </div>
-                            <div class="row form-group">
                                 <button class="col-md-2 btn btn-default ng-binding"  ng-click="ctrl.openSellerCat()"><span>{{cartInfo.name}}&nbsp;店铺内分类</span>
                                 </button>
                                 <div class="col-md-1" style="width: 35px;">
@@ -227,18 +215,6 @@
                                 <div class="col-md-8 m-l-35">
                                     <input class="form-control" ng-model="ctrl.vm.mastData.productName" readonly>
                                 </div>
-                            </div>
-                            <div class="row form-group">
-                                <button class="col-md-2 btn btn-default" ng-click="choseBrand()">
-                                    <span>{{cartInfo.name}}&nbsp;{{"TXT_BRAND" | translate}}</span>
-                                </button>
-                                <div class="col-md-1" style="width: 35px">
-                                    <span notice-direction="bottom" notice-content="如没有显示品牌，请先确认是否在{{cartInfo.name}}后台申请过相应品牌，点击左侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
-                                </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" ng-model="ctrl.vm.platform.pBrandName" readonly>
-                                </div>
-
                             </div>
                         </div>
 
