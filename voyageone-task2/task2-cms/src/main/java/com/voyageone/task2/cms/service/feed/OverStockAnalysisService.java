@@ -41,7 +41,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
     @Autowired
     private OverstockProductService overstockProductService;
 
-    private Integer pageIndex = 0;
+    private Integer pageIndex = 1990;
 
     private long lastExecuteTime = 0;
 
