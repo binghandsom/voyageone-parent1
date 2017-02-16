@@ -161,7 +161,6 @@ define([
                         self.vm.platform = resp.data.platform;
                         self.vm.platform.pCatPath = context.selected.catPath;
                         self.vm.platform.pCatId = context.selected.catId;
-                        self.vm.platform.pStatus == 'WaitingPublish';
                         self.vm.status = "Pending";
 
                     });
@@ -264,7 +263,8 @@ define([
             return;
 
         //判断页面头部状态
-        self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
+        if (mark != "temporary")
+            self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
 
         /**构造调用接口上行参数*/
         productDetailService.platformUpEntity({cartId: self.$scope.cartInfo.value, mark: mark}, self.vm);
@@ -557,7 +557,7 @@ define([
     };
 
     SpJdController.prototype.showExt = function () {
-        var self = this,modal, modalChildScope,
+        var self = this, modal, modalChildScope,
             body = self.$document[0].body,
             $compile = self.$compile,
             $templateRequest = self.$templateRequest;

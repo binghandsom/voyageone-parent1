@@ -162,36 +162,12 @@ define([
                         self.vm.platform.pCatPath = context.selected.catPath;
                         self.vm.platform.pCatId = context.selected.catId;
                         self.vm.checkFlag.category = 1;
-                        self.vm.platform.pStatus == 'WaitingPublish';
                         self.vm.status = "Pending";
 
                     });
                 });
 
             })
-    };
-
-    /**商品智能上新*/
-    SpJdController.prototype.publishProduct = function () {
-        var self = this, $fieldEditService = self.$fieldEditService;
-        //记录原先状态
-        self.vm.preStatus = angular.copy(self.vm.status);
-
-        self.callSave('intel').then(function (res) {
-
-            if (res) {
-                $fieldEditService.intelligentPublish({
-                    cartId: self.vm.platform.cartId,
-                    productIds: [self.vm.mastData.productCode],
-                    isSelectAll: 0
-                }).then(function () {
-                    self.isPublishSucceed = true;
-                    self.alert('已完成商品的智能上新！');
-                });
-            }
-
-        });
-
     };
 
     /**
@@ -247,7 +223,8 @@ define([
         self.vm.preStatus = angular.copy(self.vm.status);
 
         //判断页面头部4个状态
-        self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
+        if (mark != "temporary")
+            self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
 
         //有效性判断
         if (!self.saveValid(mark))

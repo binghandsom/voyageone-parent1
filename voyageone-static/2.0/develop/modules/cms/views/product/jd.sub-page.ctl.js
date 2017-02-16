@@ -165,7 +165,6 @@ define([
                         self.vm.platform.pCatPath = context.selected.catPath;
                         self.vm.platform.pCatId = context.selected.catId;
                         self.vm.checkFlag.category = 1;
-                        self.vm.platform.pStatus == 'WaitingPublish';
                         self.vm.status = "Pending";
 
                     });
@@ -276,7 +275,8 @@ define([
         self.vm.preStatus = angular.copy(self.vm.status);
 
         //判断页面头部4个状态
-        self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
+        if (mark != "temporary")
+            self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
 
         //有效性判断
         if (!self.saveValid(mark))
@@ -608,7 +608,7 @@ define([
     cms.directive('jdSubPage', function () {
         return {
             restrict: 'E',
-            controller: ['$scope', 'productDetailService', '$translate', 'notify', 'confirm',  '$compile', 'alert', 'popups', '$fieldEditService', '$document', '$templateRequest', SpJdController],
+            controller: ['$scope', 'productDetailService', '$translate', 'notify', 'confirm', '$compile', 'alert', 'popups', '$fieldEditService', '$document', '$templateRequest', SpJdController],
             controllerAs: 'ctrl',
             scope: {
                 productInfo: "=productInfo",

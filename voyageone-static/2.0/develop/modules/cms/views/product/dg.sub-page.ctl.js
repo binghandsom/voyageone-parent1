@@ -79,7 +79,7 @@ define([
      */
     SpJdController.prototype.getPlatformData = function () {
 
-        var self = this,vm = self.vm,
+        var self = this, vm = self.vm,
             $scope = self.$scope;
 
         self.productDetailService.getProductPlatform({
@@ -161,8 +161,8 @@ define([
      * @description 保存前判断数据的有效性
      * @param mark 标识字段
      */
-    SpJdController.prototype.saveValid = function(mark){
-        var self = this,masterBrand;
+    SpJdController.prototype.saveValid = function (mark) {
+        var self = this, masterBrand;
 
         if (mark == "ready") {
             if (!self.validSchema()) {
@@ -194,14 +194,15 @@ define([
         self.vm.preStatus = angular.copy(self.vm.status);
 
         //有效性判断
-        if(!self.saveValid(mark))
+        if (!self.saveValid(mark))
             return;
 
         //判断页面头部状态
-        self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
+        if (mark != "temporary")
+            self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
 
         /**构造调用接口上行参数*/
-        productDetailService.platformUpEntity({cartId:self.$scope.cartInfo.value,mark:mark},self.vm);
+        productDetailService.platformUpEntity({cartId: self.$scope.cartInfo.value, mark: mark}, self.vm);
 
         if (mark == "temporary") {
             //暂存状态都为 Pending
@@ -304,7 +305,7 @@ define([
      * @returns {boolean}
      */
     SpJdController.prototype.checkPriceMsrp = function () {
-        var self = this,priceMsrpCheckObj,
+        var self = this, priceMsrpCheckObj,
             priceMsrpCheck = true;
 
         if (self.autoSyncPriceMsrp == "2") {
@@ -381,7 +382,7 @@ define([
 
     /**错误聚焦*/
     SpJdController.prototype.focusError = function () {
-        var self = this,firstError,
+        var self = this, firstError,
             element = self.element;
 
         if (!self.validSchema()) {
@@ -472,7 +473,7 @@ define([
     };
 
     SpJdController.prototype.showExt = function () {
-        var self = this,  body = self.$document[0].body,
+        var self = this, body = self.$document[0].body,
             $compile = self.$compile,
             modal, modalChildScope,
             $templateRequest = self.$templateRequest;
