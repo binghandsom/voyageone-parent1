@@ -154,7 +154,7 @@
                                             {{ctrl.vm.platform.pNumIId}}
                                         </a>
                                     </span>&nbsp;
-                                    <span class="m-r-sm" ng-if="ctrl.vm.platform.pStatus == 'Failed'" title="{{ctrl.vm.platform.pPublishMessage}}">&nbsp;
+                                    <span class="m-r-sm" ng-if="ctrl.vm.platform.pPublishMessage" title="{{ctrl.vm.platform.pPublishMessage}}">&nbsp;
                                         {{ctrl.vm.platform.pPublishMessage | limitTo: 30}}{{ctrl.vm.platform.pPublishMessage.length > 30 ? '...' : ''}}
                                     </span>&nbsp;
 
@@ -197,18 +197,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row form-group">
-
-                                <button class="col-md-2 btn btn-default" ng-click="ctrl.categoryMapping()" ng-disabled = "ctrl.vm.mastData.isMain!= true  "><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
-                                </button>
-                                <div class="col-md-1" style="width: 35px;">
-                                    <span notice-direction="bottom" notice-content="切换平台类目将影响整个Group中的所有商品，请慎重！" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
-                                </div>
-                                <div class="col-md-8">
-                                    <input class="form-control"  ng-model="ctrl.vm.platform.pCatPath" readonly>
-                                </div>
-
                             </div>
                             <div class="row form-group">
                                 <button class="col-md-2 btn btn-default ng-binding"  ng-click="ctrl.openSellerCat()"><span>{{cartInfo.name}}&nbsp;店铺内分类</span>

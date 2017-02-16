@@ -150,7 +150,7 @@
                                             {{ctrl.vm.platform.pPlatformMallId}}
                                         </a>
                                     </span>&nbsp;
-                                    <span class="m-r-sm" ng-if="ctrl.vm.platform.pStatus == 'Failed'" title="{{ctrl.vm.platform.pPublishMessage}}">&nbsp;
+                                    <span class="m-r-sm" ng-if="ctrl.vm.platform.pPublishMessage" title="{{ctrl.vm.platform.pPublishMessage}}">&nbsp;
                                         {{ctrl.vm.platform.pPublishMessage | limitTo: 30}}{{ctrl.vm.platform.pPublishMessage.length > 30 ? '...' : ''}}
                                     </span>&nbsp;
 

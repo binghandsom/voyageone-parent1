@@ -136,6 +136,11 @@ define([
 
         productDetailService.getPlatformCategories({cartId: $scope.cartInfo.value})
             .then(function (res) {
+                if (!res.data || !res.data.length) {
+                    self.notify.danger("数据还未准备完毕");
+                    return;
+                }
+
                 self.popups.popupNewCategory({
                     from: self.vm.platform == null ? "" : self.vm.platform.pCatPath,
                     categories: res.data,
@@ -291,7 +296,21 @@ define([
                         productCode: self.$scope.productInfo.masterField.code,
                         platform: self.vm.platform
                     });
-                    self.callSave();
+
+                    productDetailService.checkCategory({
+                        cartId: self.$scope.vm.platform.cartId,
+                        pCatPath: self.$scope.vm.platform.pCatPath
+                    }).then(function (resp) {
+                        if (resp.data === false) {
+                            confirm("当前类目没有申请 是否还需要保存？如果选择[确定]，那么状态会返回[待编辑]。请联系IT人员处理平台类目").then(function () {
+                                self.vm.platform.status = self.vm.status = "Pending";
+                                self.callSave();
+                            });
+                        } else {
+                            self.callSave();
+                        }
+                    });
+
                 } else {
                     self.callSave();
                 }

@@ -94,15 +94,11 @@ define([
                 vm.status = vm.platform.status == null ? vm.status : vm.platform.status;
                 vm.platform.pStatus = vm.platform.pStatus == null ? "WaitingPublish" : vm.platform.pStatus;
                 vm.sellerCats = vm.platform.sellerCats == null ? [] : vm.platform.sellerCats;
-                vm.platform.pStatus = vm.platform.pPublishMessage != null && vm.platform.pPublishMessage != "" ? "Failed" : vm.platform.pStatus;
             }
 
             _.each(vm.mastData.skus, function (mSku) {
                 vm.skuTemp[mSku.skuCode] = mSku;
             });
-
-            if (vm.platform.schemaFields && vm.platform.schemaFields.product)
-                self.initBrand(vm.platform.schemaFields.product, vm.platform.pBrandId);
 
             if ($scope.productInfo.skuBlock) {
                 setTimeout(function () {
@@ -120,53 +116,6 @@ define([
 
     };
 
-
-    /**
-     @description 类目popup
-     * @param productInfo
-     * @param popupNewCategory popup实例
-     */
-    SpJdController.prototype.categoryMapping = function () {
-        var self = this,
-            productDetailService = self.productDetailService,
-            $scope = self.$scope;
-
-        if (self.vm.status == 'Approved') {
-            self.alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
-            return;
-        }
-
-        productDetailService.getPlatformCategories({cartId: $scope.cartInfo.value})
-            .then(function (res) {
-                self.popups.popupNewCategory({
-                    from: self.vm.platform == null ? "" : self.vm.platform.pCatPath,
-                    categories: res.data,
-                    divType: ">",
-                    plateSchema: true
-                }).then(function (context) {
-
-                    if (self.vm.platform != null) {
-                        if (context.selected.catPath == self.vm.platform.pCatPath)
-                            return;
-                    }
-
-                    productDetailService.changePlatformCategory({
-                        cartId: $scope.cartInfo.value,
-                        prodId: $scope.productInfo.productId,
-                        catId: context.selected.catId,
-                        catPath: context.selected.catPath
-                    }).then(function (resp) {
-                        self.vm.platform = resp.data.platform;
-                        self.vm.platform.pCatPath = context.selected.catPath;
-                        self.vm.platform.pCatId = context.selected.catId;
-                        self.vm.platform.pStatus == 'WaitingPublish';
-                        self.vm.status = "Pending";
-
-                    });
-                });
-
-            })
-    };
 
     /**
      * @description 店铺内分类popup
@@ -244,12 +193,12 @@ define([
 
         self.vm.preStatus = angular.copy(self.vm.status);
 
-        //判断页面头部状态
-        self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
-
         //有效性判断
         if(!self.saveValid(mark))
             return;
+
+        //判断页面头部状态
+        self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
 
         /**构造调用接口上行参数*/
         productDetailService.platformUpEntity({cartId:self.$scope.cartInfo.value,mark:mark},self.vm);
@@ -440,26 +389,6 @@ define([
             firstError.focus();
             firstError.addClass("focus-error");
         }
-    };
-
-    /**当shema的品牌为空时，设置平台共通的品牌*/
-    SpJdController.prototype.initBrand = function (product, brandId) {
-
-        var self = this, brandField;
-
-        if (!product)
-            return;
-
-        if (self.$scope.cartInfo.value != 23)
-            return;
-
-        brandField = searchField("品牌", product);
-
-        if (!brandField)
-            return;
-
-        if (!brandField.value.value)
-            brandField.value.value = brandId;
     };
 
     SpJdController.prototype.openOffLinePop = function (type) {

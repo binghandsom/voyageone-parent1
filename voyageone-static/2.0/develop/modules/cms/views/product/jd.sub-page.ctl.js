@@ -98,15 +98,11 @@ define([
                 vm.checkFlag.category = vm.platform.pCatPath == null ? 0 : 1;
                 vm.platform.pStatus = vm.platform.pStatus == null ? "WaitingPublish" : vm.platform.pStatus;
                 vm.sellerCats = vm.platform.sellerCats == null ? [] : vm.platform.sellerCats;
-                vm.platform.pStatus = vm.platform.pPublishMessage != null && vm.platform.pPublishMessage != "" ? "Failed" : vm.platform.pStatus;
             }
 
             _.each(vm.mastData.skus, function (mSku) {
                 vm.skuTemp[mSku.skuCode] = mSku;
             });
-
-            if (vm.platform.schemaFields && vm.platform.schemaFields.product)
-                self.initBrand(vm.platform.schemaFields.product, vm.platform.pBrandId);
 
             if ($scope.productInfo.skuBlock) {
                 setTimeout(function () {
@@ -142,6 +138,11 @@ define([
 
         productDetailService.getPlatformCategories({cartId: $scope.cartInfo.value})
             .then(function (res) {
+                if (!res.data || !res.data.length) {
+                    self.notify.danger("数据还未准备完毕");
+                    return;
+                }
+
                 self.popups.popupNewCategory({
                     from: self.vm.platform == null ? "" : self.vm.platform.pCatPath,
                     categories: res.data,
@@ -244,24 +245,24 @@ define([
     SpJdController.prototype.saveValid = function (mark) {
         var self = this, masterBrand;
 
-        if (mark == "ready") {
+        if (mark == "ready" || self.vm.status == "Ready" || self.vm.status == "Approved") {
             if (!self.validSchema()) {
                 self.alert("请输入必填属性，或者输入的属性格式不正确");
                 return false;
             }
-        }
 
-        if (self.vm.status == "Ready" && self.vm.platform.pBrandName == null && mark != "temporary") {
-            masterBrand = self.$scope.productInfo.masterField.brand;
-            self.vm.status = self.vm.preStatus;
-            self.alert("该商品的品牌【" + masterBrand + "】没有与平台品牌建立关联，点击左侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置");
-            return false;
-        }
+            if (self.vm.platform.pBrandName == null) {
+                masterBrand = self.$scope.productInfo.masterField.brand;
+                self.vm.status = self.vm.preStatus;
+                self.alert("该商品的品牌【" + masterBrand + "】没有与平台品牌建立关联，点击左侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置");
+                return false;
+            }
 
-        if ((self.vm.status == "Ready" || self.vm.status == "Approved") && !self.checkSkuSale() && mark != "temporary") {
-            self.vm.status = self.vm.preStatus;
-            self.alert("请至少选择一个sku进行发布");
-            return false;
+            if (!self.checkSkuSale()) {
+                self.vm.status = self.vm.preStatus;
+                self.alert("请至少选择一个sku进行发布");
+                return false;
+            }
         }
 
         return true;
@@ -302,7 +303,21 @@ define([
                         productCode: self.$scope.productInfo.masterField.code,
                         platform: self.vm.platform
                     });
-                    self.callSave();
+
+                    productDetailService.checkCategory({
+                        cartId: self.$scope.vm.platform.cartId,
+                        pCatPath: self.$scope.vm.platform.pCatPath
+                    }).then(function (resp) {
+                        if (resp.data === false) {
+                            confirm("当前类目没有申请 是否还需要保存？如果选择[确定]，那么状态会返回[待编辑]。请联系IT人员处理平台类目").then(function () {
+                                self.vm.platform.status = self.vm.status = "Pending";
+                                self.callSave();
+                            });
+                        } else {
+                            self.callSave();
+                        }
+                    });
+
                 } else {
                     self.callSave();
                 }
@@ -376,8 +391,6 @@ define([
             pBrandId: platform.pBrandId ? platform.pBrandId : null
         }).then(function (context) {
             self.vm.platform.pBrandName = context.pBrand;
-            if (platform.schemaFields && platform.schemaFields.product)
-                self.initBrand(platform.schemaFields.product, context.brandId);
         });
 
     };
@@ -495,26 +508,6 @@ define([
             firstError.focus();
             firstError.addClass("focus-error");
         }
-    };
-
-    /**当shema的品牌为空时，设置平台共通的品牌*/
-    SpJdController.prototype.initBrand = function (product, brandId) {
-
-        var self = this, brandField;
-
-        if (!product)
-            return;
-
-        if (self.$scope.cartInfo.value != 23)
-            return;
-
-        brandField = searchField("品牌", product);
-
-        if (!brandField)
-            return;
-
-        if (!brandField.value.value)
-            brandField.value.value = brandId;
     };
 
     SpJdController.prototype.openOffLinePop = function (type) {
