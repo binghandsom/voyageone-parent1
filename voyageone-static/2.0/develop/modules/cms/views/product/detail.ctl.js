@@ -50,6 +50,7 @@ define([
             var self = this,
                 _cartObj = self.routeParams.cartId;
 
+            // cartId:928【匠心界】,929【悦境】不显示
             self.menuService.getPlatformType().then(function (resp) {
                 self.platformTypes = _.filter(resp, function (element) {
                     return element.value >= 20 && element.value < 928;
