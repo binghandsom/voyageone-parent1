@@ -88,6 +88,18 @@ public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> e
      * @param comment           comment
      */
     public void cmsLog(TMQMessageBody messageBody, OperationLog_Type operationLog_type, String comment) {
+        switch (operationLog_type.getId()) {
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+                isFailed = true;
+                break;
+            default:
+                isFailed = false;
+                break;
+        }
         cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, operationLog_type, comment);
     }
 
@@ -98,6 +110,7 @@ public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> e
      * @param comment     comment
      */
     public void cmsConfigExLog(TMQMessageBody messageBody, String comment) {
+        isFailed = true;
         cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.configException, comment);
     }
 
@@ -108,6 +121,7 @@ public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> e
      * @param comment     comment
      */
     public void cmsBusinessExLog(TMQMessageBody messageBody, String comment) {
+        isFailed = true;
         cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.businessException, comment);
     }
 
@@ -129,6 +143,7 @@ public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> e
      * @param msg         msg
      */
     public void cmsSuccessIncludeFailLog(TMQMessageBody messageBody, String comment, List<CmsBtOperationLogModel_Msg> msg) {
+        isFailed = true;
         cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.successIncludeFail, comment, msg);
     }
 }

@@ -72,7 +72,6 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
             //写业务错误日志
             String comment = String.format("处理失败件数(%s)",  result.size());
             cmsSuccessIncludeFailLog(messageBody, comment, result);
-            super.isFailed = true;
         }
     }
 
@@ -255,7 +254,7 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
                     }
                 }
             }
-            List<List<CmsBtPromotionCodesModel>> allList = CommonUtil.splitList(promProdList, 1000);
+            List<List<CmsBtPromotionCodesModel>> allList = CommonUtil.splitList(promProdList, 200);
             for (List<CmsBtPromotionCodesModel> promList : allList) {
                 int rs = promotionCodesDaoExtCamel.updateProductStockInfo(promList);
                 $debug("PromotionProductStockSyncService 更新结果=%d, channelId=%s, cartId=%s", rs, channelId, cartIdStr);
