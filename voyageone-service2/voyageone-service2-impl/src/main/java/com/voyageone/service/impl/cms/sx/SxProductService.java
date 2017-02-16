@@ -76,6 +76,7 @@ import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -4571,9 +4572,18 @@ public class SxProductService extends BaseService {
         // 已处理过的group(防止同一个group多次被插入)
         List<Long> groupWorkList = new ArrayList<>();
 
-        for (String prodCode : codeList) {
+//        for (String prodCode : codeList) {
             // 根据商品code获取其所有group信息(所有平台)
-            List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + prodCode + "\"}", channelId);
+            JongoQuery jongoQuery = new JongoQuery();
+            Criteria criteria;
+            if(cartId != null){
+                criteria = new Criteria("productCodes").in(codeList).and("cartId").is(cartId);
+            }else{
+                criteria = new Criteria("productCodes").in(codeList);
+            }
+            jongoQuery.setQuery(criteria);
+            List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select(jongoQuery, channelId);
+//            List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + prodCode + "\"}", channelId);
             for (CmsBtProductGroupModel group : groups) {
                 if (groupWorkList.contains(group.getGroupId())) {
                     // 如果已经处理过了, 那么就跳过
@@ -4628,7 +4638,7 @@ public class SxProductService extends BaseService {
 
             }
 
-        }
+//        }
 
         // 插入上新表
         int iCnt = 0;
@@ -4654,9 +4664,11 @@ public class SxProductService extends BaseService {
             }
 
             // 逻辑删除cms_bt_business_log中以前的错误,即把status更新成1:已解决
+            long sta = System.currentTimeMillis();
             modelList.forEach(p -> {
                 clearBusinessLog(p.getChannelId(), p.getCartId(), p.getGroupId(), null, null, p.getModifier());
             });
+            $info("逻辑删除cms_bt_business_log中以前的错误 耗时" + (System.currentTimeMillis() - sta));
         }
         $debug("insertSxWorkLoad 新增SxWorkload结果 " + iCnt);
     }
