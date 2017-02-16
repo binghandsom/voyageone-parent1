@@ -436,23 +436,21 @@ public class OverStockAnalysisService extends BaseAnalysisService {
             $info("每棵树的信息取得开始" + categorPath);
             List<CmsBtFeedInfoModel> product;
             try{
-                while (true) {
-                    product = getFeedInfoByCategory(categorPath);
-                    if(ListUtils.isNull(product)) break;
-                    $info("每棵树的信息取得结束");
+                product = getFeedInfoByCategory(categorPath);
+                if(ListUtils.isNull(product)) break;
+                $info("每棵树的信息取得结束");
 
-                    String categorySplit = Feeds.getVal1(channel, FeedEnums.Name.category_split);
-                    if (!StringUtils.isEmpty(categorySplit)) {
-                        product.forEach(cmsBtFeedInfoModel -> {
-                            List<String> categors = java.util.Arrays.asList(cmsBtFeedInfoModel.getCategory().split(categorySplit));
-                            cmsBtFeedInfoModel.setCategory(categors.stream().map(s -> s.replace("-", "－")).collect(Collectors.joining("-")));
-                        });
-                    }
-                    productAll.addAll(product);
-                    if (productAll.size() > 0) {
-                        executeMongoDB(productAll, productSucceeList, productFailAllList);
-                    }
+                String categorySplit = Feeds.getVal1(channel, FeedEnums.Name.category_split);
+                if (!StringUtils.isEmpty(categorySplit)) {
+                    product.forEach(cmsBtFeedInfoModel -> {
+                        List<String> categors = java.util.Arrays.asList(cmsBtFeedInfoModel.getCategory().split(categorySplit));
+                        cmsBtFeedInfoModel.setCategory(categors.stream().map(s -> s.replace("-", "－")).collect(Collectors.joining("-")));
+                    });
                 }
+                productAll.addAll(product);
+//                if (productAll.size() > 0) {
+//                    executeMongoDB(productAll, productSucceeList, productFailAllList);
+//                }
             }catch (Exception e){
                 e.printStackTrace();
                 $error(e);
@@ -516,7 +514,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         }
 
         // 条件则根据类目筛选
-        String where = String.format("WHERE %s AND %s = '%s' limit 0,500", INSERT_FLG, colums.get("category").toString(),
+        String where = String.format("WHERE %s AND %s = '%s'", INSERT_FLG, colums.get("category").toString(),
                 categorPath.replace("'", "\\\'"));
 
         colums.put("keyword", where);
