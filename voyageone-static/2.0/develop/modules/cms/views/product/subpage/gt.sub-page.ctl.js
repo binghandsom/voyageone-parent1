@@ -101,7 +101,7 @@ define([
                     vm.noMaterMsg = "该商品的没有设置主商品，请先设置主商品：" + vm.platform.mainCode;
 
                 vm.status = vm.platform.status == null ? vm.status : vm.platform.status;
-                vm.platform.pStatus = vm.platform.pStatus == null ? "WaitingPublish" : vm.platform.pStatus;
+                vm.platform.pStatus = vm.platform.pStatus == null ? "" : vm.platform.pStatus;
                 vm.sellerCats = vm.platform.sellerCats == null ? [] : vm.platform.sellerCats;
             }
 

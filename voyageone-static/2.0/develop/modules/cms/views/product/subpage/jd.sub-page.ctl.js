@@ -348,9 +348,11 @@ define([
             platform: self.vm.platform,
             isUpdate: mark !== 'intel' ? true : false
         }).then(function (resp) {
-            self.vm.platform.modified = resp.data.modified;
-            if (mark !== 'intel')
+
+            if (mark !== 'intel'){
+                self.vm.platform.modified = resp.data.modified;
                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+            }
 
             return true;
 

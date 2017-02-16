@@ -53,7 +53,7 @@ define([
             platform: null,
             status: "Pending",
             skuTemp: {},
-            checkFlag: {tax: 0, attribute: 0},
+            checkFlag: {tax: 0},
             resultFlag: 0,
             sellerCats: [],
             productUrl: "",
@@ -102,7 +102,7 @@ define([
                     vm.noMaterMsg = "该商品的没有设置主商品，请先设置主商品：" + vm.platform.mainCode;
 
                 vm.status = vm.platform.status == null ? vm.status : vm.platform.status;
-                vm.platform.pStatus = vm.platform.pStatus == null ? "WaitingPublish" : vm.platform.pStatus;
+                vm.platform.pStatus = vm.platform.pStatus == null ? "" : vm.platform.pStatus;
                 vm.sellerCats = vm.platform.sellerCats == null ? [] : vm.platform.sellerCats;
             }
 
@@ -169,26 +169,15 @@ define([
      * @param mark 标识字段
      */
     SpJdController.prototype.saveValid = function (mark) {
-        var self = this, masterBrand;
+        var self = this;
 
-        if (mark == "ready") {
-            if (!self.validSchema()) {
-                self.alert("请输入必填属性，或者输入的属性格式不正确");
+        if (mark == "ready" || self.vm.status == "Ready" || self.vm.status == "Approved") {
+
+            if (!self.checkSkuSale()) {
+                self.vm.status = self.vm.preStatus;
+                self.alert("请至少选择一个sku进行发布");
                 return false;
             }
-        }
-
-        if (self.vm.status == "Ready" && self.vm.platform.pBrandName == null && mark != "temporary") {
-            masterBrand = self.$scope.productInfo.masterField.brand;
-            self.vm.status = self.vm.preStatus;
-            self.alert("该商品的品牌【" + masterBrand + "】没有与平台品牌建立关联，点击左侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置");
-            return false;
-        }
-
-        if ((self.vm.status == "Ready" || self.vm.status == "Approved") && !self.checkSkuSale() && mark != "temporary") {
-            self.vm.status = self.vm.preStatus;
-            self.alert("请至少选择一个sku进行发布");
-            return false;
         }
 
         return true;
@@ -280,7 +269,7 @@ define([
                 });
             }, function () {
                 if (mark != 'temporary')
-                    self.vm.status = selfvm.preStatus;
+                    self.vm.status = self.vm.preStatus;
                 return false;
             });
         });

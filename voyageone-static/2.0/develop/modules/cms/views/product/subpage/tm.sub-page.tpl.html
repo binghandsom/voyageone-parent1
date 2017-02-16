@@ -150,7 +150,7 @@
                                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Ready</button>
                                 </div>
                                 <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Pending' || ctrl.vm.status == 'Ready'" >
-                                    <button class="btn btn-vo" ng-click="ctrl.saveProduct('temporary')" ng-disabled="ctrl.vm.checkFlag.category != 1">
+                                    <button class="btn btn-vo" ng-click="ctrl.saveProduct('temporary')">
                                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
 
                                 </div>
@@ -224,7 +224,7 @@
                             </div>
                             <div class="row form-group">
 
-                                <button class="col-md-2 btn btn-default" ng-click="ctrl.categoryMapping()" ng-disabled = "ctrl.vm.mastData.isMain!= true  "><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
+                                <button class="col-md-2 btn btn-default" ng-click="ctrl.categoryMapping()" ng-disabled = "ctrl.vm.mastData.isMain!= true"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
                                 </button>
                                 <div class="col-md-1" style="width: 35px;">
                                     <span notice-direction="bottom" notice-content="切换平台类目将影响整个Group中的所有商品，请慎重！" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
