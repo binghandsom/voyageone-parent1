@@ -4664,11 +4664,14 @@ public class SxProductService extends BaseService {
             }
 
             // 逻辑删除cms_bt_business_log中以前的错误,即把status更新成1:已解决
-            long sta = System.currentTimeMillis();
-            modelList.forEach(p -> {
-                clearBusinessLog(p.getChannelId(), p.getCartId(), p.getGroupId(), null, null, p.getModifier());
-            });
-            $info("逻辑删除cms_bt_business_log中以前的错误 耗时" + (System.currentTimeMillis() - sta));
+
+            if(cartId != 33) {
+                long sta = System.currentTimeMillis();
+                modelList.forEach(p -> {
+                    clearBusinessLog(p.getChannelId(), p.getCartId(), p.getGroupId(), null, null, p.getModifier());
+                });
+                $info("逻辑删除cms_bt_business_log中以前的错误 耗时" + (System.currentTimeMillis() - sta));
+            }
         }
         $debug("insertSxWorkLoad 新增SxWorkload结果 " + iCnt);
     }
