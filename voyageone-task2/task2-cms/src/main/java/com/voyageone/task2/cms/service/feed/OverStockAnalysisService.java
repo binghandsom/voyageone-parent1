@@ -539,6 +539,8 @@ public class OverStockAnalysisService extends BaseAnalysisService {
             }
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(getChannel());
+            cmsBtFeedInfoModel.setProductType(StringUtil.isEmpty(cmsBtFeedInfoModel.getProductType())?"":cmsBtFeedInfoModel.getProductType().trim());
+            cmsBtFeedInfoModel.setSizeType(StringUtil.isEmpty(cmsBtFeedInfoModel.getSizeType())?"":cmsBtFeedInfoModel.getSizeType().trim());
             cmsBtFeedInfoModel.setAttribute(attribute);
 
             //设置重量
