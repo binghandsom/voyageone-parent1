@@ -18,6 +18,7 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdSkuService;
 import com.voyageone.components.jumei.JumeiHtDealService;
@@ -27,9 +28,12 @@ import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.components.jumei.reponse.HtDealUpdateDealPriceBatchResponse;
 import com.voyageone.components.jumei.request.HtDealUpdateDealPriceBatchRequest;
 import com.voyageone.components.tmall.service.TbItemService;
+import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
+import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.promotion.PromotionTejiabaoService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -73,6 +77,8 @@ public class PriceService extends BaseService {
     private final TbItemService tbItemService;
     private final SxProductService sxProductService;
     private final PromotionTejiabaoService promotionTejiabaoService;
+    private final PromotionService promotionService;
+    private final PromotionCodeService promotionCodeService;
 
     final
     JumeiHtMallService jumeiHtMallService;
@@ -86,7 +92,7 @@ public class PriceService extends BaseService {
     @Autowired
     public PriceService(CmsMtFeeShippingService feeShippingService, CmsMtFeeTaxService feeTaxService,
                         CmsMtFeeCommissionService feeCommissionService, CmsMtFeeExchangeService feeExchangeService,
-                        ProductSkuService productSkuService, ImsBtProductDao imsBtProductDao, TbItemService tbItemService, SxProductService sxProductService, JumeiHtMallService jumeiHtMallService, JdSkuService jdSkuService, JumeiHtDealService serviceJumeiHtDeal, PromotionTejiabaoService promotionTejiabaoService) {
+                        ProductSkuService productSkuService, ImsBtProductDao imsBtProductDao, TbItemService tbItemService, SxProductService sxProductService, JumeiHtMallService jumeiHtMallService, JdSkuService jdSkuService, JumeiHtDealService serviceJumeiHtDeal, PromotionTejiabaoService promotionTejiabaoService, PromotionService promotionService, PromotionCodeService promotionCodeService) {
         this.feeShippingService = feeShippingService;
         this.feeTaxService = feeTaxService;
         this.feeCommissionService = feeCommissionService;
@@ -99,6 +105,8 @@ public class PriceService extends BaseService {
         this.jdSkuService = jdSkuService;
         this.serviceJumeiHtDeal = serviceJumeiHtDeal;
         this.promotionTejiabaoService = promotionTejiabaoService;
+        this.promotionService = promotionService;
+        this.promotionCodeService = promotionCodeService;
     }
 
     /**
@@ -1485,4 +1493,71 @@ public class PriceService extends BaseService {
         return ret;
     }
 
+    public void updatePlatFormPrice(String channelId, Integer chg, CmsBtProductModel cmsProduct, String modifier){
+        if((chg & 1) == 1){
+            $info("存在 isSale 变化 插入sxworkload表" );
+            CmsBtProductModel finalCmsProduct = cmsProduct;
+            cmsProduct.getPlatforms().forEach((cartId, platform) -> insertWorkload(finalCmsProduct, Integer.parseInt(cartId), modifier));
+            // 只是价格变化 调用平台刷价格
+        }else if((chg & 2) == 2){
+            $info("只是价格变化 直接更新平台价格");
+            for(String cartId : cmsProduct.getPlatforms().keySet()) {
+                if(CmsConstants.ProductStatus.Approved.name().equals(cmsProduct.getPlatform(Integer.parseInt(cartId)).getStatus())) {
+                    CmsChannelConfigBean autoSyncPricePromotion = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_PROMOTION, cartId);
+                    if (autoSyncPricePromotion == null) {
+                        autoSyncPricePromotion = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_PROMOTION);
+                    }
+
+                    if (autoSyncPricePromotion == null) {
+                        autoSyncPricePromotion = new CmsChannelConfigBean();
+                        autoSyncPricePromotion.setConfigValue1("0");
+                        autoSyncPricePromotion.setConfigValue2("0");
+                        autoSyncPricePromotion.setConfigValue3("0");
+                    }
+                    try {
+                        if ("2".equals(autoSyncPricePromotion.getConfigValue1())) {
+                            //取得该channel cartId的所有的活动
+                            List<CmsBtPromotionBean> promtions = promotionService.getByChannelIdCartId(channelId, Integer.parseInt(cartId));
+                            if (!ListUtils.isNull(promtions)) {
+                                List<Integer> promotionIds = promotionService.getDateRangePromotionIds(promtions, new Date(), autoSyncPricePromotion.getConfigValue2(), autoSyncPricePromotion.getConfigValue3());
+                                if (!ListUtils.isNull(promotionIds)) {
+                                    if (promotionCodeService.getCmsBtPromotionCodeInPromtionCnt(cmsProduct.getCommon().getFields().getCode(), promotionIds) > 0) {
+                                        $info(String.format("channel=%s code=%s cartId=%d 有活动保护期 不更新平台价格", channelId, cmsProduct.getCommon().getFields().getCode(), cartId));
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
+                        // 更新平台价格
+                        updateSkuPrice(channelId, Integer.parseInt(cartId), cmsProduct);
+                    } catch (Exception e) {
+                        $warn("updateSkuPrices失败", e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+            };
+        }
+    }
+
+    private void insertWorkload(CmsBtProductModel cmsProduct, Integer cartId, String modifier) {
+
+        if(cartId > 0 && cartId < 900) {
+            // 读取配置
+            CmsChannelConfigBean channelConfigBean = CmsChannelConfigs.getConfigBean(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE, cartId.toString());
+            if (channelConfigBean == null) {
+                channelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
+            }
+
+            Integer configValue1 = 0;
+            if (channelConfigBean != null) {
+                if (!StringUtil.isEmpty(channelConfigBean.getConfigValue1())) {
+                    configValue1 = Integer.parseInt(channelConfigBean.getConfigValue1());
+                }
+            }
+            if (configValue1 != 0) {
+                sxProductService.insertSxWorkLoad(cmsProduct, Arrays.asList(cartId.toString()), modifier);
+            }
+        }
+
+    }
 }
