@@ -66,10 +66,10 @@ public class BiRepTest {
         biReportDownloadTaskDao.insert(model);
         System.out.println(" model id after insert : " + model.getId());*/
 //        System.out.println(biReportDownloadTaskDaoExt.softDel(4));
-        Integer[] list = {7};
-        String[]  channelList = {" 010 "};
-        System.out.println(NameCreator.getTheChannelTypeName(Arrays.asList(channelList)));
-//        System.out.println(NameCreator.getTheFileTypeName(Arrays.asList(list)));
+        Integer[] list = {2,3,4};
+//        String[]  channelList = {" 010 "};
+//        System.out.println(NameCreator.getTheChannelTypeName(Arrays.asList(channelList)));
+        System.out.println(NameCreator.getTheFileTypeName(Arrays.asList(list)));
 //        System.out.println(" 010 ".trim());
     }
 

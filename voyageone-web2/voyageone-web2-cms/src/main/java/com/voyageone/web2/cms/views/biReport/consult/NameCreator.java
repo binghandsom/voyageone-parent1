@@ -109,22 +109,23 @@ public class NameCreator {
         StringBuffer fileTypes=new StringBuffer();
         if(list ==null || list.size() == 0)
             return null;
-        else
-            if(list.size() <= 3 )
-            {
-                for (int i = 0; i < list.size()-1; i++) {
-                    fileTypes.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[list.get(0)]+reg);
-                }
-                fileTypes.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[list.get(list.size()-1)]);
-                return fileTypes.toString();
+        else if(list.size() ==1)
+        {
+            fileTypes.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[list.get(0) -1]);
+            return fileTypes.toString();
+        } else if (list.size() <= 3 && list.size() > 1) {
+            for (int i = 0; i < list.size() - 1; i++) {
+                fileTypes.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[list.get(i) - 1] + reg);
             }
-            else {
-                    fileTypes.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[getTheMinOfFileTypeList(list)-1]);
-                    fileTypes.append(suffix);
-                    fileTypes.append(list.size());
-                    fileTypes.append("个文件报表");
-                    return fileTypes.toString();
-             }
+            fileTypes.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[list.get(list.size() - 1)-1]);
+            return fileTypes.toString();
+        } else {
+            fileTypes.append(ISheetInfo.SHEET.SHEETNAME.SheetTitles[getTheMinOfFileTypeList(list) - 1]);
+            fileTypes.append(suffix);
+            fileTypes.append(list.size());
+            fileTypes.append("个文件报表");
+            return fileTypes.toString();
+        }
     }
 
     /**

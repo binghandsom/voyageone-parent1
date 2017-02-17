@@ -19,9 +19,9 @@ import java.util.*;
  */
 @Service
 public class BiRepConsultService extends BaseService {
-    private static final String API_HOST = "http://openapi.voyageone.com.cn";
+    private static final String API_HOST = "http://127.0.0.1:8081";
 
-    private static final String CREATE_XLS_FILE_TASK_URL = "/bi/createXlsFileTask";
+    private static final String CREATE_XLS_FILE_TASK_URL = "/bi/rest/report/createXlsFileTask";
 
     @Autowired
     private BiReportDownloadTaskDaoExt  biReportDownloadTaskDaoExt;
@@ -104,6 +104,7 @@ public class BiRepConsultService extends BaseService {
         params.put("taskId",id);
         String url = API_HOST + CREATE_XLS_FILE_TASK_URL;
         String result = null;
+        String ecd = null;
         try {
             String request = JacksonUtil.bean2Json(params);
             result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url , request);
@@ -113,8 +114,13 @@ public class BiRepConsultService extends BaseService {
         if(!StringUtils.isNullOrBlank2(result)) {
             Map mapResult =  JacksonUtil.jsonToMap(result);
             Map<String,Object> data = (Map<String, Object>) mapResult.get("data");
-            String ecd=(String)data.get("ecd");
-            resultMap.put("ecd",ecd);
+            if(null == data)
+            {
+                ecd = "4100";
+                resultMap.put("ecd",ecd);
+                return resultMap;
+            }
+            ecd = (String) data.get("ecd");
             if(ecd != null && "0".equals(ecd))
             {
               model.setTaskStatus(ISheetInfo.SHEET.BASICINFO.CREATING);
@@ -127,8 +133,9 @@ public class BiRepConsultService extends BaseService {
         }
         else
         {
-            resultMap.put("ecd","4100"); //远程连接api服务失败
+           ecd ="4100"; //远程连接api服务失败
         }
+        resultMap.put("ecd",ecd);
         return resultMap;
     }
 
