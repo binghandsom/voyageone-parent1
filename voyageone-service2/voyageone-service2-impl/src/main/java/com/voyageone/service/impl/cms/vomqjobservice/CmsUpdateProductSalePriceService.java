@@ -74,7 +74,7 @@ public class CmsUpdateProductSalePriceService extends BaseService {
         Map<String, Object> params = mqMessageBody.getParams();
         // 检查商品价格 notChkPrice=1时表示忽略价格超过阈值
         Integer notChkPriceFlg = (Integer) params.get("notChkPrice");
-        Boolean synPrice = null;
+        Boolean synPrice;
 
         CmsChannelConfigBean autoSyncPricePromotion = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_PROMOTION, cartId.toString());
         if (autoSyncPricePromotion == null) {
@@ -123,7 +123,7 @@ public class CmsUpdateProductSalePriceService extends BaseService {
         List<String> prodPriceDownList = new ArrayList<>();
         List<String> prodPriceDownExList = new ArrayList<>();
 
-        List<CmsBtOperationLogModel_Msg> errorInfos = new ArrayList<CmsBtOperationLogModel_Msg>();
+        List<CmsBtOperationLogModel_Msg> errorInfos = new ArrayList<>();
         List<CmsBtProductModel> prodObjList = productService.getList(channelId, qryObj);
         if(ListUtils.isNull(prodObjList)) return errorInfos;
         $debug("批量修改商品价格 开始批量处理");
@@ -187,7 +187,7 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                 }
             }
             try {
-                synPrice = null;
+                synPrice = false;
                 for (BaseMongoMap skuObj : skuList) {
                     skuCode = skuObj.getStringAttribute("skuCode");
                     if (StringUtils.isEmpty(skuCode)) {
@@ -349,7 +349,8 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                             }
                         }
                     }
-                    if("1".equalsIgnoreCase(autoSyncPricePromotion.getConfigValue1())){
+                    if("1".equalsIgnoreCase(autoSyncPricePromotion.getConfigValue1())
+                            || (synPrice && "2".equals(autoSyncPricePromotion.getConfigValue1()))){
                         priceService.updateSkuPrice(channelId, cartId, prodObj);
                     }
                 } catch (Exception e) {
