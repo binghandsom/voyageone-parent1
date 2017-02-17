@@ -5,6 +5,7 @@ define([
 
     function indexController($scope, alert, confirm, $translate, cActions, notify, $location, cRoutes, cookieService, biReportService) {
         $scope.datePicker = [];
+        $scope.selectFileButton="全选";
         $scope.vm =
         {
             downloadTaskList: [],
@@ -168,16 +169,22 @@ define([
             })
         };
         $scope.selectAllFileTypes = function () {
-            if( $scope.vm.searchInfo.channelCodeList.length <= 1)
+            if($scope.selectFileButton == "全选")
             {
-                $scope.vm.searchInfo.fileTypes=[1,2,3,4,5,6,7,8,9,10,11,12];
+                if( $scope.vm.searchInfo.channelCodeList.length <= 1)
+                {
+                    $scope.vm.searchInfo.fileTypes = [1,2,3,4,5,6,7,8,9,10,11,12];
+                }
+                else {
+                    $scope.vm.searchInfo.fileTypes = [1,2,3];
+                }
+                $scope.selectFileButton = "全不选";
             }
             else {
-                $scope.vm.searchInfo.fileTypes=[1,2,3];
+                $scope.vm.searchInfo.fileTypes = [];
+                $scope.selectFileButton = "全选";
             }
-        }
-        $scope.selectNoFileTypes = function () {
-            $scope.vm.searchInfo.fileTypes=[];
+
         }
     }
 

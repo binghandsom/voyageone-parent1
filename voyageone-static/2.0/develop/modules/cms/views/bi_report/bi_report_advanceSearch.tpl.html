@@ -49,8 +49,7 @@
                 </div>
                 <div class="col-sm-8 m-t-sm">
                     <div >  <label class="col-sm-2 text-right">  文件类型：</label> &nbsp;
-                        <button  class="btn  btn-xs"  ng-click="selectAllFileTypes()"><i class="glyphicon glyphicon-ok">全选</i></button>
-                        <button  class="btn  btn-xs"  ng-click="selectNoFileTypes()"><i class="fa fa-remove">全不选</i></button>
+                        <button  class="btn  btn-xs"  ng-click="selectAllFileTypes()"  ng-bind="selectFileButton" ></button>
                     </div>
                     <div class="col-sm-10 text-center" ng-switch="vm.searchInfo.channelCodeList.length">
 
@@ -76,7 +75,7 @@
                     <div class="col-sm-10 text-center m-t-md" >
                         <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
                         <!-- <button class="btn btn-vo" ng-click="biRepDownload()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>-->
-                        <button class="btn btn-danger btn-xs" ng-click="createXlsFileTask()"><i class="fa fa-cloud-download"></i>生成文件</button>
+                        <button class="btn  btn-default " ng-click="createXlsFileTask()"><i class="fa fa fa-mail-reply"></i>生成文件</button>
                     </div>
                 </div>
             </div>
@@ -90,7 +89,7 @@
             <table class="table table-hover-new text-center" >
                 <thead>
                 <tr>
-                    <th class="text-left "><Button type="button" class="btn btn-info btn-xs"  ng-click="search()"><i class="glyphicon glyphicon-repeat"></i></Button></th>
+                    <th class="text-left "><Button type="button" class="btn btn-pop btn-default"  ng-click="search()"><i class="fa fa-refresh"></i></Button></th>
                     <th class="text-left" >编号</th>
                     <th class="text-left">导出文件名称</th>
                     <th class="text-left" >查询时间段</th>

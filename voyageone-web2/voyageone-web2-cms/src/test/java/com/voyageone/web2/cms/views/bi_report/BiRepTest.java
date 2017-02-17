@@ -5,6 +5,7 @@ import com.voyageone.service.dao.report.BiReportDownloadTaskDao;
 import com.voyageone.service.daoext.report.BiReportDownloadTaskDaoExt;
 import com.voyageone.service.model.report.BiReportDownloadTaskModel;
 import com.voyageone.web2.cms.views.biReport.consult.BiRepConsultService;
+import com.voyageone.web2.cms.views.biReport.consult.NameCreator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by dell on 2017/1/11.
@@ -54,8 +57,7 @@ public class BiRepTest {
     }
 
     @Test
-    public void testDate()
-    {
+    public void testDate() {
     /*    BiReportDownloadTaskModel model=new BiReportDownloadTaskModel();
         model.setCreater("admin");
         model.setFilePath("E//hello//");
@@ -63,7 +65,13 @@ public class BiRepTest {
         System.out.println(" model id before insert : " +model.getId());
         biReportDownloadTaskDao.insert(model);
         System.out.println(" model id after insert : " + model.getId());*/
-        System.out.println(biReportDownloadTaskDaoExt.softDel(4));
+//        System.out.println(biReportDownloadTaskDaoExt.softDel(4));
+        Integer[] list = {2,3,4};
+//        String[]  channelList = {" 010 "};
+//        System.out.println(NameCreator.getTheChannelTypeName(Arrays.asList(channelList)));
+        System.out.println(NameCreator.getTheFileTypeName(Arrays.asList(list)));
+//        System.out.println(" 010 ".trim());
     }
+
    /* public void testSelect*/
 }
