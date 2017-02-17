@@ -24,7 +24,6 @@ import com.voyageone.common.util.*;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
-import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedMapping2Dao;
@@ -3766,9 +3765,9 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
             if(cartId > 0 && cartId < 900) {
                 // 读取配置
-                CmsChannelConfigBean channelConfigBean = CmsChannelConfigs.getConfigBean(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE, cartId.toString());
+                CmsChannelConfigBean channelConfigBean = CmsChannelConfigs.getConfigBean(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE, cartId.toString());
                 if (channelConfigBean == null) {
-                    channelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
+                    channelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE);
                 }
 
                 Integer configValue1 = 0;

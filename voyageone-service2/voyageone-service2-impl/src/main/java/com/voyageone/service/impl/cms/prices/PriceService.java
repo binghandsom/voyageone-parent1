@@ -568,9 +568,9 @@ public class PriceService extends BaseService {
         }
 
         // 读取配置
-        CmsChannelConfigBean channelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE, cartId.toString());
+        CmsChannelConfigBean channelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE, cartId.toString());
         if (channelConfigBean == null) {
-            channelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
+            channelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE);
         }
 
         Integer configValue1 = 0;
@@ -948,7 +948,7 @@ public class PriceService extends BaseService {
 
         boolean isAutoApprovePrice = false;
 
-        CmsChannelConfigBean autoApprovePrice = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
+        CmsChannelConfigBean autoApprovePrice = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE);
 
         if (autoApprovePrice != null && autoApprovePrice.getConfigValue1() != null && "1".equals(autoApprovePrice.getConfigValue1()))
             isAutoApprovePrice = true;
@@ -1547,9 +1547,9 @@ public class PriceService extends BaseService {
 
         if(cartId > 0 && cartId < 900) {
             // 读取配置
-            CmsChannelConfigBean channelConfigBean = CmsChannelConfigs.getConfigBean(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE, cartId.toString());
+            CmsChannelConfigBean channelConfigBean = CmsChannelConfigs.getConfigBean(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE, cartId.toString());
             if (channelConfigBean == null) {
-                channelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
+                channelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE);
             }
 
             Integer configValue1 = 0;

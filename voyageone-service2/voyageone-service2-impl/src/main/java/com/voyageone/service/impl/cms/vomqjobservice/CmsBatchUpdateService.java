@@ -106,7 +106,7 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
         if (synPriceFlg) {
             msg += " (同步价格)";
         } else {
-            CmsChannelConfigBean autoApprovePrice = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
+            CmsChannelConfigBean autoApprovePrice = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE);
             if (autoApprovePrice == null || !"1".equals(autoApprovePrice.getConfigValue1())) {
                 msg += " (未同步最终售价)";
             }

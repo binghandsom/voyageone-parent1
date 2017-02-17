@@ -15,8 +15,6 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.ListUtils;
-import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.prices.PriceService;
@@ -216,7 +214,7 @@ public class CmsProductPriceUpdateService extends BaseService {
         Integer cartId = messageBody.getCartId();
 
         // 是否自动最终售价同步指导价格
-        CmsChannelConfigBean autoPriceCfg = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
+        CmsChannelConfigBean autoPriceCfg = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE);
         String msg = "高级检索 重新计算指导售价";
         if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
             // 自动同步
