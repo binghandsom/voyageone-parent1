@@ -98,7 +98,7 @@ define([
             vm.publishEnabled = resp.data.channelConfig.publishEnabledChannels.length > 0;
 
             if (vm.platform) {
-                if(vm.platform.noMain)
+                if (vm.platform.noMain)
                     vm.noMaterMsg = "该商品的没有设置主商品，请先设置主商品：" + vm.platform.mainCode;
 
                 vm.status = vm.platform.status == null ? vm.status : vm.platform.status;
@@ -313,46 +313,33 @@ define([
     /**调用服务器接口*/
     SpJdController.prototype.callSave = function (mark) {
         var self = this,
-            notify = self.notify,
-            confirm = self.confirm,
             productDetailService = self.productDetailService,
-            $translate = self.$translate;
+            $translate = self.$translate,
+            updateInfo = {
+                prodId: self.$scope.productInfo.productId,
+                platform: self.vm.platform,
+                type: mark
+            };
 
-        /**判断价格*/
-        return productDetailService.updateProductPlatformChk({
-            prodId: self.$scope.productInfo.productId,
-            platform: self.vm.platform,
-            isUpdate: mark !== 'intel' ? true : false
-        }).then(function (resp) {
+        productDetailService.updateProductPlatformChk(updateInfo).then(function (resp) {
 
-            if (mark !== 'intel'){
-                self.vm.platform.modified = resp.data.modified;
-                notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-            }
-
-            return true;
+            self.vm.platform.modified = resp.data.modified;
+            self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
 
         }, function (resp) {
             if (resp.code != "4000091" && resp.code != "4000092") {
                 self.vm.status = self.vm.preStatus;
-                return false;
+                return;
             }
 
-            return confirm(resp.message + ",是否强制保存").then(function () {
-                return productDetailService.updateProductPlatform({
-                    prodId: self.$scope.productInfo.productId,
-                    platform: self.vm.platform
-                }).then(function (resp) {
+            self.confirm(resp.message + ",是否强制保存").then(function () {
+                productDetailService.updateProductPlatform(updateInfo).then(function (resp) {
                     self.vm.platform.modified = resp.data.modified;
                     self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                    return true;
-                }, function () {
-                    return false;
                 });
             }, function () {
                 if (mark != 'temporary')
-                    self.vm.status = selfvm.preStatus;
-                return false;
+                    self.vm.status = self.vm.preStatus;
             });
         });
 
@@ -361,23 +348,22 @@ define([
     /**商品智能上新*/
     SpJdController.prototype.publishProduct = function () {
         var self = this,
-            $fieldEditService = self.$fieldEditService;
+            platform = self.vm.platform,
+            cartId = self.vm.platform.cartId;
 
-        self.vm.preStatus = angular.copy(self.vm.status);
+        if ([28, 29].indexOf(cartId) < 0 && self.vm.checkFlag.category == 0) {
+            self.alert('请检查类目是否设置完毕！');
+            return;
+        }
 
-        self.callSave('intel').then(function (res) {
+        self.confirm('您是否确定要智能上新').then(function () {
 
-            if (res) {
-                $fieldEditService.intelligentPublish({
-                    cartId: self.vm.platform.cartId,
-                    productIds: [self.vm.mastData.productCode],
-                    isSelectAll: 0
-                }).then(function () {
-                    self.isPublishSucceed = true;
-                    self.alert('已完成商品的智能上新！');
-                });
-            }
+            self.vm.preStatus = angular.copy(self.vm.status);
+            //设置智能上新状态,如果pStatus已经存在则保留原来状态
+            platform.pStatus = platform.pStatus == "" ? "WaitingPublish" :platform.pStatus;
+            platform.status = self.vm.status = 'Approved';
 
+            self.callSave('intel');
         });
 
     };

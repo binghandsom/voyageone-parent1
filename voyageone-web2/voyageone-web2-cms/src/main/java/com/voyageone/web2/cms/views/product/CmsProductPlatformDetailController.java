@@ -109,32 +109,35 @@ public class CmsProductPlatformDetailController extends CmsController {
 
         Map<String, Object> platform = (Map<String, Object>) params.get("platform");
 
-        Boolean blnSmartSx = params.get("isUpdate") != null ? !Boolean.valueOf(String.valueOf(params.get("isUpdate"))) : false;
+        //插入workload表时，blnSmartSx标识是否为智能上新
+        Boolean blnSmartSx = params.get("type") != null ? String.valueOf(params.get("type")).equals("intel") : false;
 
         result.put("modified", cmsProductPlatformDetailService.updateProductPlatform(channelId, prodId, platform, getUser().getUserName(),blnSmartSx));
 
         return success(result);
     }
 
+    /**
+     * type:记录是否为ready状态,temporary:暂存
+     */
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_PRODUCT_PLATFORM_CHK)
     public AjaxResponse doUpdateProductPlatformChk(@RequestBody Map params) {
 
-        Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
-
-        Boolean isUpdate = params.get("isUpdate") != null ? Boolean.valueOf(String.valueOf(params.get("isUpdate"))) : true;
-
         String channelId = getUser().getSelChannelId();
-
-        Map<String, Object> result = new HashMap<>();
-
+        Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
+        String type = String.valueOf(params.get("type"));
         Map<String, Object> platform = (Map<String, Object>) params.get("platform");
-        String errcode = cmsProductPlatformDetailService.priceChk(channelId, prodId, platform);
+        String errcode = null;
 
-        if (errcode != null) {
+        if(!type.equals("temporary")){
+            errcode = cmsProductPlatformDetailService.priceChk(channelId, prodId, platform);
+        }
+
+        if (errcode != null)
             throw new BusinessException(errcode);
-        } else if (isUpdate){
-            return doUpdateProductPlatform(params);
-        } else return success(null);
+
+        return doUpdateProductPlatform(params);
+
     }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.CHECK_CATEGORY)

@@ -240,44 +240,35 @@ define([
 
     /**调用服务器接口*/
     SpJdController.prototype.callSave = function (mark) {
-        var self = this, notify = self.notify,
-            confirm = self.confirm,
+        var self = this,
             productDetailService = self.productDetailService,
-            $translate = self.$translate;
+            $translate = self.$translate,
+            updateInfo = {
+                prodId: self.$scope.productInfo.productId,
+                platform: self.vm.platform,
+                type: mark
+            };
 
         /**判断价格*/
-        return productDetailService.updateProductPlatformChk({
-            prodId: self.$scope.productInfo.productId,
-            platform: self.vm.platform,
-            isUpdate: mark !== 'intel' ? true : false
-        }).then(function (resp) {
+        productDetailService.updateProductPlatformChk(updateInfo).then(function (resp) {
             self.vm.platform.modified = resp.data.modified;
             if (mark !== 'intel')
-                notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-
-            return true;
+                self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
 
         }, function (resp) {
             if (resp.code != "4000091" && resp.code != "4000092") {
                 self.vm.status = self.vm.preStatus;
-                return false;
+                return;
             }
 
-            return confirm(resp.message + ",是否强制保存").then(function () {
-                return productDetailService.updateProductPlatform({
-                    prodId: self.$scope.productInfo.productId,
-                    platform: self.vm.platform
-                }).then(function (resp) {
+            self.confirm(resp.message + ",是否强制保存").then(function () {
+                productDetailService.updateProductPlatform(updateInfo).then(function (resp) {
                     self.vm.platform.modified = resp.data.modified;
                     self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                    return true;
-                }, function () {
-                    return false;
                 });
             }, function () {
                 if (mark != 'temporary')
                     self.vm.status = self.vm.preStatus;
-                return false;
             });
         });
 

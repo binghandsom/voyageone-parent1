@@ -521,9 +521,11 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             platform.remove("schemaFields");
         }
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
+
         if(platformModel.getCartId() == 27){
             blnSmartSx = false;
         }
+
         Boolean isCatPathChg = false;
         CmsBtProductModel cmsBtProductModel = null;
         if(platformModel.getCartId() == CartEnums.Cart.TG.getValue() || platformModel.getCartId() == CartEnums.Cart.TM.getValue()){
