@@ -300,7 +300,7 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
 
         OffShelfHelper(String channelId) {
             mqParams.put("channelId", channelId);
-            mqParams.put("creater", CmsMqRoutingKey.CMS_BRAND_BLOCK);
+            mqParams.put("creator", CmsMqRoutingKey.CMS_BRAND_BLOCK);
             mqParams.put("activeStatus", ToInStock.name());
             mqParams.put("cartIdList", cartIdList);
             mqParams.put("comment", "Feed 品牌黑名单下架");

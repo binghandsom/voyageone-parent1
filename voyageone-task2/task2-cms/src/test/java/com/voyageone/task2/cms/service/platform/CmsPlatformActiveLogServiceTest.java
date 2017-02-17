@@ -67,12 +67,12 @@ public class CmsPlatformActiveLogServiceTest {
     public void testTMPlatformToOnsale() {
         // 发送请求到MQ,插入操作历史记录
         Map<String, Object> logParams = new HashMap<>(6);
-        logParams.put("channelId", "010");
-        logParams.put("cartIdList", new ArrayList(Arrays.asList(23)));
-        logParams.put("activeStatus", "ToOnSale");
-        logParams.put("creater", "will2");
-        logParams.put("comment", "高级检索 批量上下架");
-        logParams.put("codeList", new ArrayList(Arrays.asList("CRWNRG01LBO-10","CRWNRG01LBO-9","CRWNRG01LBO-8","CRWNRG01LBO-7","CRWNRG01LBO-6","CRWNRG01LBO-5")));
+        logParams.put("channelId", "012");
+        logParams.put("cartId", 23);
+        logParams.put("activeStatus", "ToInStock");
+        logParams.put("creator", "VOCmsBrandBlockQueue");
+        logParams.put("comment", "Feed 品牌黑名单下架");
+        logParams.put("codeList", new ArrayList(Arrays.asList("NYC3PCB0-001")));
         try {
             targetService.setProductOnSaleOrInStock(logParams);
         } catch (Exception e) {
@@ -86,9 +86,9 @@ public class CmsPlatformActiveLogServiceTest {
         // 发送请求到MQ,插入操作历史记录
         Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", "010");
-        logParams.put("cartIdList", new ArrayList(Arrays.asList(23)));
+        logParams.put("cartId", 23);
         logParams.put("activeStatus", "ToInStock");
-        logParams.put("creater", "will2");
+        logParams.put("creator", "will2");
         logParams.put("comment", "高级检索 批量上下架");
         logParams.put("codeList", new ArrayList(Arrays.asList("CRWNRG01LBO-10","CRWNRG01LBO-9","CRWNRG01LBO-8","CRWNRG01LBO-7","CRWNRG01LBO-6","CRWNRG01LBO-5")));
 
@@ -107,9 +107,9 @@ public class CmsPlatformActiveLogServiceTest {
         // 发送请求到MQ,插入操作历史记录
         Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", "928");
-        logParams.put("cartIdList", new ArrayList(Arrays.asList(28)));
+        logParams.put("cartId", 23);
         logParams.put("activeStatus", "ToOnSale");
-        logParams.put("creater", "will2");
+        logParams.put("creator", "will2");
         logParams.put("comment", "高级检索 批量上下架");
         logParams.put("codeList", new ArrayList(Arrays.asList("VN-04OJJPV")));
         try {
@@ -125,9 +125,9 @@ public class CmsPlatformActiveLogServiceTest {
         // 发送请求到MQ,插入操作历史记录
         Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", "928");
-        logParams.put("cartIdList", new ArrayList(Arrays.asList(28)));
+        logParams.put("cartId", 23);
         logParams.put("activeStatus", "ToInStock");
-        logParams.put("creater", "will2");
+        logParams.put("creator", "will2");
         logParams.put("comment", "高级检索 批量上下架");
         logParams.put("codeList", new ArrayList(Arrays.asList("VN-04OJJPV")));
         try {
@@ -143,7 +143,7 @@ public class CmsPlatformActiveLogServiceTest {
         // 发送请求到MQ,插入操作历史记录
         Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", "010");
-        logParams.put("cartIdList", new ArrayList(Arrays.asList(23)));
+        logParams.put("cartId", 23);
         logParams.put("activeStatus", "ToOnSale");
         logParams.put("creator", "gump");
         logParams.put("comment", "高级检索 批量上下架");
@@ -166,9 +166,9 @@ public class CmsPlatformActiveLogServiceTest {
         // 发送请求到MQ,插入操作历史记录
         Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", "010");
-        logParams.put("cartIdList", new ArrayList(Arrays.asList(27)));
+        logParams.put("cartId", 23);
         logParams.put("activeStatus", "ToInStock");
-        logParams.put("creater", "will2");
+        logParams.put("creator", "will2");
         logParams.put("comment", "高级检索 批量上下架");
         logParams.put("codeList", new ArrayList(Arrays.asList("51A0HC13E1-00LCNB0")));
         try {
