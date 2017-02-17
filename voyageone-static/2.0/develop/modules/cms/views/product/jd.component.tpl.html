@@ -404,7 +404,7 @@
                                             </td>
                                             <td class="mfb-xxx text-center v-middle">
                                                 <label class="col-sm-3 control-label vo_reqfield"></label>
-                                                <input class="form-control ng-number" type="number"  ng-model="entity.priceSale" ng-readonly="productInfo.autoApprovePrice.configValue1 == '1'"  scale="15,2" required></td>
+                                                <input class="form-control ng-number" type="number"  ng-model="entity.priceSale" ng-readonly="autoSyncPriceSale=='1'"  scale="15,2" required></td>
                                             <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].barcode}}</td>
                                         </tr>
                                         </tbody>
