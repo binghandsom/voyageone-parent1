@@ -18,8 +18,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by james on 2017/2/8.
  */
@@ -66,7 +64,7 @@ public class CmsUpdateProductSalePriceServiceTest {
     CmsUpdateProductSalePriceService cmsUpdateProductSalePriceService;
     @Test
     public void process() throws Exception {
-        String json = "{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"james\",\"productCodes\":[\"10006255\"],\"cartId\":28,\"channelId\":\"928\",\"params\":{\"cartId\":29,\"_option\":\"saleprice\",\"productIds\":[\"10006255\"],\"isSelAll\":0,\"priceType\":\"priceSale\",\"optionType\":\"=\",\"priceValue\":null,\"roundType\":2,\"skuUpdType\":3},\"userId\":9}";
+        String json = "{\"productCodes\":[\"122287\"],\"cartId\":28,\"channelId\":\"928\",\"params\":{\"cartId\":28,\"_option\":\"saleprice\",\"productIds\":[\"CLK_69820\"],\"isSelAll\":0,\"priceType\":\"priceSale\",\"optionType\":\"+\",\"priceValue\":\"1\",\"roundType\":1,\"skuUpdType\":0},\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"edward\"}";
         UpdateProductSalePriceMQMessageBody model = JacksonUtil.json2Bean(json, UpdateProductSalePriceMQMessageBody.class);
         cmsUpdateProductSalePriceService.process(model);
     }
