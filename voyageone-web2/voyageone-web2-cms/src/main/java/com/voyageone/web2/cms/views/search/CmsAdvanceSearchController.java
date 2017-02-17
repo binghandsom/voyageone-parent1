@@ -14,9 +14,11 @@ import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.PlatformService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -56,6 +58,9 @@ public class CmsAdvanceSearchController extends CmsController {
 
     @Autowired
     private CmsProductSearchQueryService cmsProductSearchQueryService;
+
+    @Autowired
+    private ProductService productService;
 
     /**
      * 初始化,获取master数据
@@ -481,7 +486,12 @@ public class CmsAdvanceSearchController extends CmsController {
     @ResponseBody
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.GET_SKU_INVENTORY)
     public AjaxResponse getSkuInventoryList(@RequestBody String code) {
-    	return success(advSearchQueryService.getSkuInventoryList(getUser().getSelChannelId(), code));
+        CmsBtProductModel cmsBtProductModel = productService.getProductByCode(getUser().getSelChannelId(), code);
+        if(cmsBtProductModel != null){
+            return success(advSearchQueryService.getSkuInventoryList(cmsBtProductModel.getOrgChannelId(), code));
+        }else{
+            throw new BusinessException(code+"：该商品不存在");
+        }
     }
 
     /**
