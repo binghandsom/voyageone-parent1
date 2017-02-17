@@ -41,6 +41,9 @@ define([
         StatusController.prototype.init = function () {
             this.statusData = this.$scope.data;
             var _numberId = this.statusData.pNumIId,
+                _jdUrlEntity = _.find(this.statusData.skus, function (sku) {
+                    return sku.jdSkuId;
+                }),
                 _pPlatformMallId = this.statusData.pPlatformMallId,
                 _cartId = +this.statusData.cartId,
                 _cartInfo = carts.valueOf(_cartId);
@@ -51,8 +54,16 @@ define([
             if (this.statusData.pPublishError)
                 this.statusData.approveError = true;
 
-            if (_numberId || _pPlatformMallId) {
-                if (_cartId == 27) {
+            if (_numberId) {
+                if (_cartId != 27) {
+                    if (_cartId == 26 || _cartId == 28 || _cartId == 29) {
+                        if (_jdUrlEntity) {
+                            this.statusData.detailUrl = _cartInfo.pUrl + _jdUrlEntity.jdSkuId + ".html";
+                        }
+                    } else {
+                        this.statusData.detailUrl = _cartInfo.pUrl + _numberId;
+                    }
+                } else {
                     this.statusData.detailUrl = _cartInfo.pUrl + _pPlatformMallId + ".html";
                 } else if (_cartId == 32) {
                     this.statusData.detailUrl = _cartInfo.pUrl + _numberId + ".html";

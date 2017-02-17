@@ -4,7 +4,8 @@
  */
 define([
     'cms',
-    'modules/cms/enums/Carts'
+    'modules/cms/enums/Carts',
+    'modules/cms/directives/platFormStatus.directive'
 ], function (cms, carts) {
 
     var cntConfig = {
@@ -32,6 +33,7 @@ define([
                     resultFlag: 0,
                     sellerCats: [],
                     productUrl: "",
+                    detailUrl: "",
                     preStatus: null,
                     noMaterMsg: null
                 };
@@ -54,7 +56,6 @@ define([
                 scope.doResetTmProduct = doResetTmProduct;
                 scope.publishProduct = publishProduct;
                 scope.isPublishSucceed = false;
-
                 scope.autoSyncPriceMsrp = "";
                 scope.autoSyncPriceSale = "";
 
@@ -83,6 +84,7 @@ define([
                         prodId: scope.productInfo.productId
                     }).then(function (resp) {
                         var mastData,
+                            jdUrlEntity,
                             platform;
 
                         scope.vm.mastData = mastData = resp.data.mastData;
@@ -95,8 +97,21 @@ define([
                             scope.vm.platform.pStatus = platform.pStatus == null ? "WaitingPublish" : platform.pStatus;
                             scope.vm.sellerCats = platform.sellerCats == null ? [] : platform.sellerCats;
                             scope.vm.platform.pStatus = platform.pPublishMessage != null && platform.pPublishMessage != "" ? "Failed" : platform.pStatus;
+                            jdUrlEntity = _.find(platform.skus, function (sku) {
+                                return sku.jdSkuId;
+                            });
+                            if (scope.cartInfo.value != 27) {
+                                if (scope.cartInfo.value == 26 || scope.cartInfo.value == 28 || scope.cartInfo.value == 29) {
+                                    if (jdUrlEntity) {
+                                        scope.vm.detailUrl = scope.vm.productUrl + jdUrlEntity.jdSkuId + ".html";
+                                    }
+                                } else {
+                                    scope.vm.detailUrl = scope.vm.productUrl + scope.vm.platform.pNumIId;
+                                }
+                            } else {
+                                scope.vm.detailUrl = scope.vm.productUrl + scope.vm.platform.pPlatformMallId + ".html";
+                            }
                         }
-
                         _.each(mastData.skus, function (mSku) {
                             scope.vm.skuTemp[mSku.skuCode] = mSku;
                         });
@@ -152,10 +167,10 @@ define([
                         if (scope.vm.platform != null) {
                             if (context.selected.catPath == scope.vm.platform.pCatPath)
                                 return;
-                            if((scope.cartInfo.value == 23 || scope.cartInfo.value == 20) && scope.vm.status == 'Approved' && scope.vm.platform.pCatPath){
+                            if ((scope.cartInfo.value == 23 || scope.cartInfo.value == 20) && scope.vm.status == 'Approved' && scope.vm.platform.pCatPath) {
                                 var c1 = scope.vm.platform.pCatPath.split(">");
                                 var c2 = context.selected.catPath.split(">");
-                                if(c1[0] != c2[0]){
+                                if (c1[0] != c2[0]) {
                                     alert("商品可能已经上线，如果要修改类目一级类目必须与修改前的一样。");
                                     return;
                                 }
@@ -312,11 +327,11 @@ define([
                  * @param mark:记录是否为ready状态,temporary:暂存
                  */
                 function saveProduct(mark) {
-                    if(!checkPriceMsrp()) {
+                    if (!checkPriceMsrp()) {
                         confirm("建议售价不能低于指导价和最终售价，是否强制保存？").then(function () {
                             saveProductAction(mark)
                         });
-                    }else {
+                    } else {
                         saveProductAction(mark);
                     }
                 }
@@ -600,11 +615,11 @@ define([
 
                 /**sku价格刷新*/
                 function refreshPrice() {
-                    if(!checkPriceMsrp()) {
+                    if (!checkPriceMsrp()) {
                         confirm("建议售价不能低于指导价和最终售价，是否强制保存？").then(function () {
                             updateSkuPrice()
                         });
-                    }else {
+                    } else {
                         updateSkuPrice();
                     }
                 }
@@ -620,6 +635,7 @@ define([
                     }
                     return priceMsrpCheck;
                 }
+
                 // 刷新价格实际操作
                 function updateSkuPrice() {
                     confirm("您是否确认要刷新sku价格").then(function () {
