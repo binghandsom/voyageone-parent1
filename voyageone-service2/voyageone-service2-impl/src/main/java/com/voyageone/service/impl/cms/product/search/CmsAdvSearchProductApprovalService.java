@@ -98,20 +98,24 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                         continue;
                     }
                     CmsBtProductModel_Field field = prodObj.getCommon().getFields();
-                    if (field != null && field.getCode() != null) {
-                        CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
-                        errorInfo.setSkuCode(field.getCode());
-                        errorInfo.setMsg(String.format("有商品pending状态, 无法审批 cartIdValue:%s", cartIdValue));
-                        errorCodeList.add(errorInfo);
-                        productCodes.remove(field.getCode());
-                        continue;
-                    }
+
+                    // 判断该商品税号是否设置
                     if (field != null &&
                             ("0".equals(field.getHsCodeStatus())
                                     && !CartEnums.Cart.LTT.getId().equals(String.valueOf(cartIdValue)))) {
                         CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
                         errorInfo.setSkuCode(field.getCode());
                         errorInfo.setMsg(String.format("有商品商品没有设置税号, 无法审批 cartIdValue:%s", cartIdValue));
+                        errorCodeList.add(errorInfo);
+                        productCodes.remove(field.getCode());
+                        continue;
+                    }
+
+                    // 判断该商品的状态为Pending
+                    if (field != null && field.getCode() != null) {
+                        CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                        errorInfo.setSkuCode(field.getCode());
+                        errorInfo.setMsg(String.format("有商品pending状态, 无法审批 cartIdValue:%s", cartIdValue));
                         errorCodeList.add(errorInfo);
                         productCodes.remove(field.getCode());
                         continue;
