@@ -399,7 +399,8 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                 }
 //                offset = offset + 100;
             } catch (Exception e) {
-                $info("OverStock产品文件读入失败");
+                $error("OverStock产品文件读入失败", e);
+//                $info("OverStock产品文件读入失败"  + e.getMessage());
                 logIssue("cms 数据导入处理", "OverStock产品文件读入失败 " + e.getMessage());
                 break;
             }
