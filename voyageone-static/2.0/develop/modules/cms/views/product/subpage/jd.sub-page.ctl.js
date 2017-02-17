@@ -203,30 +203,6 @@ define([
         });
     };
 
-    /**商品智能上新*/
-    SpJdController.prototype.publishProduct = function () {
-        var self = this,
-            $fieldEditService = self.$fieldEditService;
-
-        self.vm.preStatus = angular.copy(self.vm.status);
-
-        self.callSave('intel').then(function (res) {
-
-            if (res) {
-                $fieldEditService.intelligentPublish({
-                    cartId: self.vm.platform.cartId,
-                    productIds: [self.vm.mastData.productCode],
-                    isSelectAll: 0
-                }).then(function () {
-                    self.isPublishSucceed = true;
-                    self.alert('已完成商品的智能上新！');
-                });
-            }
-
-        });
-
-    };
-
     /**
      * @description 更新操作
      * @param mark:记录是否为ready状态,temporary:暂存
@@ -378,6 +354,30 @@ define([
                     self.vm.status = selfvm.preStatus;
                 return false;
             });
+        });
+
+    };
+
+    /**商品智能上新*/
+    SpJdController.prototype.publishProduct = function () {
+        var self = this,
+            $fieldEditService = self.$fieldEditService;
+
+        self.vm.preStatus = angular.copy(self.vm.status);
+
+        self.callSave('intel').then(function (res) {
+
+            if (res) {
+                $fieldEditService.intelligentPublish({
+                    cartId: self.vm.platform.cartId,
+                    productIds: [self.vm.mastData.productCode],
+                    isSelectAll: 0
+                }).then(function () {
+                    self.isPublishSucceed = true;
+                    self.alert('已完成商品的智能上新！');
+                });
+            }
+
         });
 
     };
