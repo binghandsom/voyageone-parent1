@@ -124,7 +124,7 @@ define(['underscore'], function (_) {
         /**
          * 京东匠心界
          */
-        JGJ: new Cart('JGJ', 28, '京东匠心界', 'https://item.jd.hk/='),
+        JGJ: new Cart('JGJ', 28, '京东匠心界', 'https://item.jd.hk/'),
 
         /**
          * 京东悦境
