@@ -225,7 +225,10 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                 } else if (CmsConstants.ProductStatus.Approved.name().equals(prodStatus)) {
                     strList.add("'platforms.P" + cartIdValue + ".status':'Approved'");
                 } else if (CartEnums.Cart.TT.getId().equals(String.valueOf(cartIdValue))
-                        || CartEnums.Cart.LTT.getId().equals(String.valueOf(cartIdValue))) {
+                        || CartEnums.Cart.LTT.getId().equals(String.valueOf(cartIdValue))
+                        || CartEnums.Cart.CN.getId().equals(String.valueOf(cartIdValue))
+                        || CartEnums.Cart.LCN.getId().equals(String.valueOf(cartIdValue))
+                        || CartEnums.Cart.DT.getId().equals(String.valueOf(cartIdValue))) {
                     strList.add("'platforms.P" + cartIdValue + ".status':'Approved','platforms.P" + cartIdValue + ".pStatus':'WaitingPublish'");
                 }
             }
