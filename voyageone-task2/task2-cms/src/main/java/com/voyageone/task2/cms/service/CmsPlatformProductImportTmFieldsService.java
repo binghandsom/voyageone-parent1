@@ -426,37 +426,6 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
                             skuInfo.setAttribute("priceRetail", salePrice);
                         }
 
-                        // 统计code级别的价格
-                        Double pPriceMsrpSt = 0d;
-                        Double pPriceMsrpEd = 0d;
-                        Double pPriceRetailSt = 0d;
-                        Double pPriceRetailEd = 0d;
-                        Double pPriceSaleSt = 0d;
-                        Double pPriceSaleEd = 0d;
-                        for (BaseMongoMap<String, Object> sku: product.getPlatform(cartId).getSkus()) {
-
-                            if (pPriceMsrpSt == 0d || pPriceMsrpSt > sku.getDoubleAttribute("priceMsrp"))
-                                pPriceMsrpSt = sku.getDoubleAttribute("priceMsrp");
-                            if (pPriceMsrpSt == 0d || pPriceMsrpEd < sku.getDoubleAttribute("priceMsrp"))
-                                pPriceMsrpEd = sku.getDoubleAttribute("priceMsrp");
-
-                            if (pPriceRetailSt == 0d || pPriceRetailSt > sku.getDoubleAttribute("priceRetail"))
-                                pPriceRetailSt = sku.getDoubleAttribute("priceRetail");
-                            if (pPriceRetailEd == 0d || pPriceRetailEd < sku.getDoubleAttribute("priceRetail"))
-                                pPriceRetailEd = sku.getDoubleAttribute("priceRetail");
-
-                            if (pPriceSaleSt == 0d || pPriceSaleSt > sku.getDoubleAttribute("priceSale"))
-                                pPriceSaleSt = sku.getDoubleAttribute("priceSale");
-                            if (pPriceSaleEd == 0d || pPriceSaleEd < sku.getDoubleAttribute("priceSale"))
-                                pPriceSaleEd = sku.getDoubleAttribute("priceSale");
-                        }
-                        updateMap.put("platforms.P" + cartId + ".pPriceMsrpSt", pPriceMsrpSt);
-                        updateMap.put("platforms.P" + cartId + ".pPriceMsrpEd", pPriceMsrpEd);
-                        updateMap.put("platforms.P" + cartId + ".pPriceRetailSt", pPriceRetailSt);
-                        updateMap.put("platforms.P" + cartId + ".pPriceRetailEd", pPriceRetailEd);
-                        updateMap.put("platforms.P" + cartId + ".pPriceSaleSt", pPriceSaleSt);
-                        updateMap.put("platforms.P" + cartId + ".pPriceSaleEd", pPriceSaleEd);
-
                         updateMap.put("platforms.P" + cartId + ".skus", product.getPlatform(cartId).getSkus());
                     }
                 }
