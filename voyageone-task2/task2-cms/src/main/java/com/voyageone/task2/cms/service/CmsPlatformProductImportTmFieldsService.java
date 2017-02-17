@@ -27,6 +27,8 @@ import com.voyageone.service.daoext.cms.CmsBtPlatformNumiidDaoExt;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtPlatformNumiidModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
@@ -72,6 +74,9 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
 
     @Autowired
     private PlatformCategoryService platformCategoryService;
+
+    @Autowired
+    private CmsMqSenderService cmsMqSenderService;
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
@@ -502,14 +507,14 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
         // added by morse.lu 2017/01/05 start
         // 向Mq发送消息同步sku,code,group价格范围
         // edward 2017-02-16 价格范围范围计算交由各自的业务处理,不再通过mq发送方式处理
-//        listProducts.forEach(product -> {
-//            ProductPriceUpdateMQMessageBody productPriceUpdateMQMessageBody = new ProductPriceUpdateMQMessageBody();
-//            productPriceUpdateMQMessageBody.setChannelId(channelId);
-//            productPriceUpdateMQMessageBody.setProdId((Long) product.get("productId"));
-//            productPriceUpdateMQMessageBody.setCartId((Integer) product.get("cartId"));
-//            productPriceUpdateMQMessageBody.setSender(CmsMqRoutingKey.CMS_BATCH_TMFieldsImportCms2Job);
-//            cmsMqSenderService.sendMessage(productPriceUpdateMQMessageBody);
-//        });
+        listProducts.forEach(product -> {
+            ProductPriceUpdateMQMessageBody productPriceUpdateMQMessageBody = new ProductPriceUpdateMQMessageBody();
+            productPriceUpdateMQMessageBody.setChannelId(channelId);
+            productPriceUpdateMQMessageBody.setProdId((Long) product.get("productId"));
+            productPriceUpdateMQMessageBody.setCartId((Integer) product.get("cartId"));
+            productPriceUpdateMQMessageBody.setSender(CmsMqRoutingKey.CMS_BATCH_TMFieldsImportCms2Job);
+            cmsMqSenderService.sendMessage(productPriceUpdateMQMessageBody);
+        });
         // added by morse.lu 2017/01/05 end
     }
 

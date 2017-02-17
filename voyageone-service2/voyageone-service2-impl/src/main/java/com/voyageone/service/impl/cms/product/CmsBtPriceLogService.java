@@ -9,6 +9,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -86,16 +87,16 @@ public class CmsBtPriceLogService extends BaseService {
                     paramMap.put(key, cmsBtPriceLogModel);
                 }
             }
-//            if (paramMap.size() > 0) {
-//                for (CmsBtPriceLogModel value:paramMap.values()) {
-//                    ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
-//                    mqMessageBody.setChannelId(value.getChannelId());
-//                    mqMessageBody.setCartId(value.getCartId());
-//                    mqMessageBody.setProdId(Long.valueOf(String.valueOf(value.getProductId())));
-//                    mqMessageBody.setSender(this.getClass().getSimpleName());
-//                    cmsMqSenderService.sendMessage(mqMessageBody);
-//                }
-//            }
+            if (paramMap.size() > 0) {
+                for (CmsBtPriceLogModel value:paramMap.values()) {
+                    ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
+                    mqMessageBody.setChannelId(value.getChannelId());
+                    mqMessageBody.setCartId(value.getCartId());
+                    mqMessageBody.setProdId(Long.valueOf(String.valueOf(value.getProductId())));
+                    mqMessageBody.setSender(this.getClass().getSimpleName());
+                    cmsMqSenderService.sendMessage(mqMessageBody);
+                }
+            }
         }
         // 先做完所有价格范围同步的请求后，再开始处理是否记录未确认价格的操作
 //        for (CmsBtPriceLogModel newLog : paramList) {
@@ -129,12 +130,12 @@ public class CmsBtPriceLogService extends BaseService {
         newLog.put("productId",productId);
         newLog.put("channelId",channelId);*/
         // 向Mq发送消息同步sku,code,group价格范围
-//        ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
-//        mqMessageBody.setChannelId(channelId);
-//        mqMessageBody.setCartId(cartId);
-//        mqMessageBody.setProdId(productId);
-//        mqMessageBody.setSender(username);
-//        cmsMqSenderService.sendMessage(mqMessageBody);
+        ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
+        mqMessageBody.setChannelId(channelId);
+        mqMessageBody.setCartId(cartId);
+        mqMessageBody.setProdId(productId);
+        mqMessageBody.setSender(username);
+        cmsMqSenderService.sendMessage(mqMessageBody);
 
     }
 
@@ -232,12 +233,12 @@ public class CmsBtPriceLogService extends BaseService {
 
                         // 向Mq发送消息同步sku,code,group价格范围
                         // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
-//                        ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
-//                        mqMessageBody.setChannelId(channelId);
-//                        mqMessageBody.setCartId(boxedCartId);
-//                        mqMessageBody.setProdId(productModel.getProdId());
-//                        mqMessageBody.setSender(username);
-//                        cmsMqSenderService.sendMessage(mqMessageBody);
+                        ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
+                        mqMessageBody.setChannelId(channelId);
+                        mqMessageBody.setCartId(boxedCartId);
+                        mqMessageBody.setProdId(productModel.getProdId());
+                        mqMessageBody.setSender(username);
+                        cmsMqSenderService.sendMessage(mqMessageBody);
                     }
                 });
     }
