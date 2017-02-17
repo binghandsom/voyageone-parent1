@@ -947,6 +947,14 @@ public class SxProductService extends BaseService {
                     continue;
                 }
             }
+            // 所有渠道都不能上
+			if (sxData.getMainProduct().getOrgChannelId().equals("022")) {
+				String masterBrand = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getBrand();
+				if (masterBrand.equals("dior")) {
+					removeProductList.add(productModel);
+					continue;
+				}
+			}
             // 2017/02/17 tom Liking官网同购的场合， 禁止某些品牌上新 END
 
             // modified by morse.lu 2016/06/15 start
