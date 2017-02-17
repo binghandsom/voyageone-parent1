@@ -7,9 +7,6 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.components.issueLog.IssueLog;
-import com.voyageone.common.components.issueLog.enums.ErrorType;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
@@ -17,13 +14,10 @@ import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
-import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -32,12 +26,10 @@ import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.UpdateProductSalePriceMQMessageBody;
-import com.voyageone.service.impl.com.cache.CommCacheService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,7 +64,7 @@ public class CmsUpdateProductSalePriceService extends BaseService {
     private PromotionCodeService promotionCodeService;
 
 
-    public void process(UpdateProductSalePriceMQMessageBody mqMessageBody){
+    public List<CmsBtOperationLogModel_Msg> process(UpdateProductSalePriceMQMessageBody mqMessageBody){
         long threadNo =  Thread.currentThread().getId();
         String channelId = mqMessageBody.getChannelId();
         Integer cartId = mqMessageBody.getCartId();
@@ -131,9 +123,9 @@ public class CmsUpdateProductSalePriceService extends BaseService {
         List<String> prodPriceDownList = new ArrayList<>();
         List<String> prodPriceDownExList = new ArrayList<>();
 
-        List<ErrorInfo> errorInfos = new ArrayList<ErrorInfo>();
+        List<CmsBtOperationLogModel_Msg> errorInfos = new ArrayList<CmsBtOperationLogModel_Msg>();
         List<CmsBtProductModel> prodObjList = productService.getList(channelId, qryObj);
-        if(ListUtils.isNull(prodObjList)) return;
+        if(ListUtils.isNull(prodObjList)) return errorInfos;
         $debug("批量修改商品价格 开始批量处理");
         int i=0;
         for (CmsBtProductModel prodObj : prodObjList) {
@@ -365,17 +357,17 @@ public class CmsUpdateProductSalePriceService extends BaseService {
                     throw new BusinessException(prodCode, String.format("批量修改商品价格　调用API失败 channelId=%s, cartId=%s", channelId, cartId.toString()), e);
                 }
             } catch (BusinessException be) {
-                ErrorInfo errorInfo = new ErrorInfo();
-                errorInfo.setProductCode(be.getCode());
-                errorInfo.setMessage(be.getMessage());
+                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                errorInfo.setSkuCode(be.getCode());
+                errorInfo.setMsg(be.getMessage());
                 errorInfos.add(errorInfo);
             }
         }
-        if (CollectionUtils.isNotEmpty(errorInfos)) {
-
-            // 批量有错误，发邮件
-            issueLog.log("中国最终售价设置错误", JacksonUtil.bean2Json(errorInfos), ErrorType.BatchJob, SubSystem.CMS);
-        }
+//        if (CollectionUtils.isNotEmpty(errorInfos)) {
+//
+//            // 批量有错误，发邮件
+//            issueLog.log("中国最终售价设置错误", JacksonUtil.bean2Json(errorInfos), ErrorType.BatchJob, SubSystem.CMS);
+//        }
         BulkWriteResult rs = bulkList.execute();
         if (rs != null) {
             $debug(String.format("批量修改商品价格 channelId=%s 结果=%s", channelId, rs.toString()));
@@ -411,6 +403,8 @@ public class CmsUpdateProductSalePriceService extends BaseService {
 //            commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userId + "4", prodPriceDownExList);
 //        }
         // rsMap.put("unProcList", prodPriceUpList.size() + prodPriceDownList.size() + prodPriceDownExList.size());
+
+        return errorInfos;
     }
 
     private Double getFinalSalePrice(BigDecimal baseVal, String optionType, String priceValueStr, int roundType) {
@@ -463,28 +457,6 @@ public class CmsUpdateProductSalePriceService extends BaseService {
             } else {
                 return rs.setScale(2, BigDecimal.ROUND_CEILING).doubleValue();
             }
-        }
-    }
-
-
-    class ErrorInfo {
-        private String productCode;
-        private String message;
-
-        public String getProductCode() {
-            return productCode;
-        }
-
-        public void setProductCode(String productCode) {
-            this.productCode = productCode;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
         }
     }
 }
