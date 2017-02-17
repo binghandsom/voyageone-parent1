@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.mqjob;
+package com.voyageone.task2.cms.mqjob.jm;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -11,6 +11,7 @@ import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsJmMallPromotionPriceSyncMQMessageBody;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
+import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

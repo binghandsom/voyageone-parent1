@@ -53,7 +53,7 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
     private CmsBtPromotionCodesDaoExtCamel promotionCodesDaoExtCamel;
 
     @Override
-    public void onStartup(JmPromotionProductStockSyncMQMessageBody messageBody) throws Exception {
+    public void onStartup(JmPromotionProductStockSyncMQMessageBody messageBody) {
         // 取得所有店铺
         List<ShopBean> shopList = Shops.getShopList();
         if (shopList == null || shopList.isEmpty()) {
@@ -254,7 +254,7 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
                     }
                 }
             }
-            List<List<CmsBtPromotionCodesModel>> allList = CommonUtil.splitList(promProdList, 1000);
+            List<List<CmsBtPromotionCodesModel>> allList = CommonUtil.splitList(promProdList, 100);
             for (List<CmsBtPromotionCodesModel> promList : allList) {
                 int rs = promotionCodesDaoExtCamel.updateProductStockInfo(promList);
                 $debug("PromotionProductStockSyncService 更新结果=%d, channelId=%s, cartId=%s", rs, channelId, cartIdStr);
