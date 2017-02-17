@@ -107,7 +107,7 @@ public class CmsProductPriceUpdateService extends BaseService {
         CmsBtProductGroupModel grpObj = productGroupService.selectMainProductGroupByCode(channelId, mProdCode, cartId);
         if (grpObj == null) {
             $error("CmsProcductPriceUpdateService 产品对应的group不存在 参数=" + JacksonUtil.bean2Json(messageBody));
-            throw new BusinessException(String.format("产品对于的group不存在, mainProductCode=%s, channelId=%s, cartId=%d", mProdCode, channelId, cartId));
+//            throw new BusinessException(String.format("产品对于的group不存在, mainProductCode=%s, channelId=%s, cartId=%d", mProdCode, channelId, cartId));
         }
 
         // 先计算价格范围
@@ -142,64 +142,66 @@ public class CmsProductPriceUpdateService extends BaseService {
         WriteResult rs = productService.updateFirstProduct(updObj, channelId);
         $debug("CmsProcductPriceUpdateService 产品platforms价格范围更新结果 " + rs.toString());
 
-        // 然后更新group中的价格范围
-        // 先取得group中各code的价格范围
-        queryObj = new JongoQuery();
-        queryObj.setQuery("{'platforms.P#.mainProductCode':#}");
-        queryObj.setParameters(cartId, mProdCode);
-        queryObj.setProjectionExt("platforms.P" + cartId + ".pPriceMsrpSt", "platforms.P" + cartId + ".pPriceMsrpEd", "platforms.P" + cartId + ".pPriceRetailSt", "platforms.P" + cartId + ".pPriceRetailEd", "platforms.P" + cartId + ".pPriceSaleSt", "platforms.P" + cartId + ".pPriceSaleEd");
-        List<CmsBtProductModel> prodObjList = productService.getList(channelId, queryObj);
-        if (prodObj == null || prodObjList.isEmpty()) {
-            $error("CmsProcductPriceUpdateService 产品不存在 参数=" + queryObj.toString());
-            throw new BusinessException(String.format("产品不存在, params=%s", queryObj.toString()));
-        }
+        if(grpObj != null) {
+            // 然后更新group中的价格范围
+            // 先取得group中各code的价格范围
+            queryObj = new JongoQuery();
+            queryObj.setQuery("{'platforms.P#.mainProductCode':#}");
+            queryObj.setParameters(cartId, mProdCode);
+            queryObj.setProjectionExt("platforms.P" + cartId + ".pPriceMsrpSt", "platforms.P" + cartId + ".pPriceMsrpEd", "platforms.P" + cartId + ".pPriceRetailSt", "platforms.P" + cartId + ".pPriceRetailEd", "platforms.P" + cartId + ".pPriceSaleSt", "platforms.P" + cartId + ".pPriceSaleEd");
+            List<CmsBtProductModel> prodObjList = productService.getList(channelId, queryObj);
+            if (prodObj == null || prodObjList.isEmpty()) {
+                $error("CmsProcductPriceUpdateService 产品不存在 参数=" + queryObj.toString());
+                throw new BusinessException(String.format("产品不存在, params=%s", queryObj.toString()));
+            }
 
-        List<Double> priceMsrpStList = prodObjList.stream().map(prodObjItem -> prodObjItem.getPlatformNotNull(cartId).getDoubleAttribute("pPriceMsrpSt")).sorted().collect(Collectors.toList());
-        if (priceMsrpStList == null || priceMsrpStList.isEmpty()) {
-            $error("CmsProcductPriceUpdateService 产品数据pPriceMsrpSt不正确 参数=" + queryObj.toString());
-            throw new BusinessException(String.format("产品数据pPriceMsrpSt不正确, params=%s", queryObj.toString()));
-        }
-        List<Double> priceMsrpEdList = prodObjList.stream().map(prodObjItem -> prodObjItem.getPlatformNotNull(cartId).getDoubleAttribute("pPriceMsrpEd")).sorted().collect(Collectors.toList());
-        if (priceMsrpEdList == null || priceMsrpEdList.isEmpty()) {
-            $error("CmsProcductPriceUpdateService 产品数据pPriceMsrpEd不正确 参数=" + queryObj.toString());
-            throw new BusinessException(String.format("产品数据pPriceMsrpEd不正确, params=%s", queryObj.toString()));
-        }
-        List<Double> priceRetailStList = prodObjList.stream().map(prodObjItem -> prodObjItem.getPlatformNotNull(cartId).getDoubleAttribute("pPriceRetailSt")).sorted().collect(Collectors.toList());
-        if (priceRetailStList == null || priceRetailStList.isEmpty()) {
-            $error("CmsProcductPriceUpdateService 产品数据pPriceRetailSt不正确 参数=" + queryObj.toString());
-            throw new BusinessException(String.format("产品数据pPriceRetailSt不正确, params=%s", queryObj.toString()));
-        }
-        List<Double> priceRetailEdList = prodObjList.stream().map(prodObjItem -> prodObjItem.getPlatformNotNull(cartId).getDoubleAttribute("pPriceRetailEd")).sorted().collect(Collectors.toList());
-        if (priceRetailEdList == null || priceRetailEdList.isEmpty()) {
-            $error("CmsProcductPriceUpdateService 产品数据pPriceRetailEd不正确 参数=" + queryObj.toString());
-            throw new BusinessException(String.format("产品数据pPriceRetailEd不正确, params=%s", queryObj.toString()));
-        }
-        List<Double> priceSaleStList = prodObjList.stream().map(prodObjItem -> prodObjItem.getPlatformNotNull(cartId).getDoubleAttribute("pPriceSaleSt")).sorted().collect(Collectors.toList());
-        if (priceSaleStList == null || priceSaleStList.isEmpty()) {
-            $error("CmsProcductPriceUpdateService 产品数据pPriceSaleSt不正确 参数=" + queryObj.toString());
-            throw new BusinessException(String.format("产品数据pPriceSaleSt不正确, params=%s", queryObj.toString()));
-        }
-        List<Double> priceSaleEdList = prodObjList.stream().map(prodObjItem -> prodObjItem.getPlatformNotNull(cartId).getDoubleAttribute("pPriceSaleEd")).sorted().collect(Collectors.toList());
-        if (priceSaleEdList == null || priceSaleEdList.isEmpty()) {
-            $error("CmsProcductPriceUpdateService 产品数据pPriceSaleEd不正确 参数=" + queryObj.toString());
-            throw new BusinessException(String.format("产品数据pPriceSaleEd不正确, params=%s", queryObj.toString()));
-        }
-        newPriceMsrpSt = priceMsrpStList.get(0);
-        newPriceMsrpEd = priceMsrpEdList.get(priceMsrpEdList.size() - 1);
-        newPriceRetailSt = priceRetailStList.get(0);
-        newPriceRetailEd = priceRetailEdList.get(priceRetailEdList.size() - 1);
-        newPriceSaleSt = priceSaleStList.get(0);
-        newPriceSaleEd = priceSaleEdList.get(priceSaleEdList.size() - 1);
+            List<Double> priceMsrpStList = prodObjList.stream().map(prodObjItem -> prodObjItem.getPlatformNotNull(cartId).getDoubleAttribute("pPriceMsrpSt")).sorted().collect(Collectors.toList());
+            if (priceMsrpStList == null || priceMsrpStList.isEmpty()) {
+                $error("CmsProcductPriceUpdateService 产品数据pPriceMsrpSt不正确 参数=" + queryObj.toString());
+                throw new BusinessException(String.format("产品数据pPriceMsrpSt不正确, params=%s", queryObj.toString()));
+            }
+            List<Double> priceMsrpEdList = prodObjList.stream().map(prodObjItem -> prodObjItem.getPlatformNotNull(cartId).getDoubleAttribute("pPriceMsrpEd")).sorted().collect(Collectors.toList());
+            if (priceMsrpEdList == null || priceMsrpEdList.isEmpty()) {
+                $error("CmsProcductPriceUpdateService 产品数据pPriceMsrpEd不正确 参数=" + queryObj.toString());
+                throw new BusinessException(String.format("产品数据pPriceMsrpEd不正确, params=%s", queryObj.toString()));
+            }
+            List<Double> priceRetailStList = prodObjList.stream().map(prodObjItem -> prodObjItem.getPlatformNotNull(cartId).getDoubleAttribute("pPriceRetailSt")).sorted().collect(Collectors.toList());
+            if (priceRetailStList == null || priceRetailStList.isEmpty()) {
+                $error("CmsProcductPriceUpdateService 产品数据pPriceRetailSt不正确 参数=" + queryObj.toString());
+                throw new BusinessException(String.format("产品数据pPriceRetailSt不正确, params=%s", queryObj.toString()));
+            }
+            List<Double> priceRetailEdList = prodObjList.stream().map(prodObjItem -> prodObjItem.getPlatformNotNull(cartId).getDoubleAttribute("pPriceRetailEd")).sorted().collect(Collectors.toList());
+            if (priceRetailEdList == null || priceRetailEdList.isEmpty()) {
+                $error("CmsProcductPriceUpdateService 产品数据pPriceRetailEd不正确 参数=" + queryObj.toString());
+                throw new BusinessException(String.format("产品数据pPriceRetailEd不正确, params=%s", queryObj.toString()));
+            }
+            List<Double> priceSaleStList = prodObjList.stream().map(prodObjItem -> prodObjItem.getPlatformNotNull(cartId).getDoubleAttribute("pPriceSaleSt")).sorted().collect(Collectors.toList());
+            if (priceSaleStList == null || priceSaleStList.isEmpty()) {
+                $error("CmsProcductPriceUpdateService 产品数据pPriceSaleSt不正确 参数=" + queryObj.toString());
+                throw new BusinessException(String.format("产品数据pPriceSaleSt不正确, params=%s", queryObj.toString()));
+            }
+            List<Double> priceSaleEdList = prodObjList.stream().map(prodObjItem -> prodObjItem.getPlatformNotNull(cartId).getDoubleAttribute("pPriceSaleEd")).sorted().collect(Collectors.toList());
+            if (priceSaleEdList == null || priceSaleEdList.isEmpty()) {
+                $error("CmsProcductPriceUpdateService 产品数据pPriceSaleEd不正确 参数=" + queryObj.toString());
+                throw new BusinessException(String.format("产品数据pPriceSaleEd不正确, params=%s", queryObj.toString()));
+            }
+            newPriceMsrpSt = priceMsrpStList.get(0);
+            newPriceMsrpEd = priceMsrpEdList.get(priceMsrpEdList.size() - 1);
+            newPriceRetailSt = priceRetailStList.get(0);
+            newPriceRetailEd = priceRetailEdList.get(priceRetailEdList.size() - 1);
+            newPriceSaleSt = priceSaleStList.get(0);
+            newPriceSaleEd = priceSaleEdList.get(priceSaleEdList.size() - 1);
 
-        // 更新group中的价格范围
-        updObj = new JongoUpdate();
-        updObj.setQuery("{'mainProductCode':#,'cartId':#}");
-        updObj.setQueryParameters(mProdCode, cartId);
-        updObj.setUpdate("{$set:{'priceMsrpSt':#,'priceMsrpEd':#, 'priceRetailSt':#,'priceRetailEd':#, 'priceSaleSt':#,'priceSaleEd':#, 'modified':#,'modifier':#}}");
-        updObj.setUpdateParameters(newPriceMsrpSt, newPriceMsrpEd, newPriceRetailSt, newPriceRetailEd, newPriceSaleSt, newPriceSaleEd, DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_BATCH_COUNT_PRODUCT_PRICE);
+            // 更新group中的价格范围
+            updObj = new JongoUpdate();
+            updObj.setQuery("{'mainProductCode':#,'cartId':#}");
+            updObj.setQueryParameters(mProdCode, cartId);
+            updObj.setUpdate("{$set:{'priceMsrpSt':#,'priceMsrpEd':#, 'priceRetailSt':#,'priceRetailEd':#, 'priceSaleSt':#,'priceSaleEd':#, 'modified':#,'modifier':#}}");
+            updObj.setUpdateParameters(newPriceMsrpSt, newPriceMsrpEd, newPriceRetailSt, newPriceRetailEd, newPriceSaleSt, newPriceSaleEd, DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_BATCH_COUNT_PRODUCT_PRICE);
 
-        rs = productGroupService.updateFirst(updObj, messageBody.getChannelId());
-        $debug("CmsProcductPriceUpdateService 产品group价格范围更新结果 " + rs.toString());
+            rs = productGroupService.updateFirst(updObj, messageBody.getChannelId());
+            $debug("CmsProcductPriceUpdateService 产品group价格范围更新结果 " + rs.toString());
+        }
     }
 
     /**
