@@ -934,6 +934,21 @@ public class SxProductService extends BaseService {
             }
             // 2016/09/13 add desmond END
 
+            // 2017/02/17 tom Liking官网同购的场合， 禁止某些品牌上新 START
+            if (channelId.equals("928") && cartId == 31) {
+                String masterBrand = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getBrand();
+                if (masterBrand.equals("burberry")
+                        || masterBrand.equals("burberry london")
+                        || masterBrand.equals("burberry brit")
+                        || masterBrand.equals("burberry childrenswear")
+                        || masterBrand.equals("burberry prorsum")
+                        ) {
+                    removeProductList.add(productModel);
+                    continue;
+                }
+            }
+            // 2017/02/17 tom Liking官网同购的场合， 禁止某些品牌上新 END
+
             // modified by morse.lu 2016/06/15 start
             // TODO:{}1中的这段暂时不要，临时用{}2，以后恢复
             {
