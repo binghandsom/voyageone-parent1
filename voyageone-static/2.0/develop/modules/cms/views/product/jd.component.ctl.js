@@ -56,6 +56,7 @@ define([
                 scope.isPublishSucceed = false;
 
                 scope.autoSyncPriceMsrp = "";
+                scope.autoSyncPriceSale = "";
 
                 /**
                  * 获取京东页面初始化数据
@@ -110,6 +111,7 @@ define([
                         }
 
                         scope.autoSyncPriceMsrp = resp.data.autoSyncPriceMsrp;
+                        scope.autoSyncPriceSale = resp.data.autoSyncPriceSale;
 
                     }, function (resp) {
                         scope.vm.noMaterMsg = resp.message.indexOf("Server Exception") >= 0 ? null : resp.message;

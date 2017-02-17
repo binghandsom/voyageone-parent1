@@ -291,6 +291,17 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             autoSyncPriceMsrpOption = autoSyncPriceMsrp.getConfigValue1();
         return autoSyncPriceMsrpOption;
     }
+
+    public String getAutoSyncPriceSaleOption(String channelId, Integer cartId) {
+        String autoSyncPriceSaleOption = CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE; // 默认配置
+        CmsChannelConfigBean autoSyncPriceSale = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE, cartId + "");
+        if (autoSyncPriceSale == null){
+                autoSyncPriceSale = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE, 0 + "");
+        }
+        if (autoSyncPriceSale != null)
+            autoSyncPriceSaleOption = autoSyncPriceSale.getConfigValue1();
+        return autoSyncPriceSaleOption;
+    }
     /**
          * 获取产品平台信息
          *
