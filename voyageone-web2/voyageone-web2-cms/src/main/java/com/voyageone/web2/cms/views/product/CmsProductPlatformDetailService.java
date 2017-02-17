@@ -567,17 +567,19 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             cmsBtProductModel_skus.forEach(item -> comPrice.put(item.getStringAttribute("skuCode"), item.getDoubleAttribute("priceRetail")));
 
             for (Map stringObjectBaseMongoMap : (List<Map<String, Object>>) platform.get("skus")) {
-                String sku = (String) stringObjectBaseMongoMap.get("skuCode");
-                if (stringObjectBaseMongoMap.get("priceSale") == null || StringUtil.isEmpty(stringObjectBaseMongoMap.get("priceSale").toString())) {
-                    throw new BusinessException("价格不能为空");
-                }
-                Double newPriceSale = Double.parseDouble(stringObjectBaseMongoMap.get("priceSale").toString());
-                if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (newPriceSale / (2 - breakThreshold))).compareTo(comPrice.get(sku)) < 0) {
-                    throw new BusinessException("4000094", ((Double) Math.ceil(comPrice.get(sku) * (2 - breakThreshold))).intValue());
-                }
+                if(stringObjectBaseMongoMap.get("isSale") != null && (boolean)stringObjectBaseMongoMap.get("isSale")) {
+                    String sku = (String) stringObjectBaseMongoMap.get("skuCode");
+                    if (stringObjectBaseMongoMap.get("priceSale") == null || StringUtil.isEmpty(stringObjectBaseMongoMap.get("priceSale").toString())) {
+                        throw new BusinessException("价格不能为空");
+                    }
+                    Double newPriceSale = Double.parseDouble(stringObjectBaseMongoMap.get("priceSale").toString());
+                    if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (newPriceSale / (2 - breakThreshold))).compareTo(comPrice.get(sku)) < 0) {
+                        throw new BusinessException("4000094", ((Double) Math.ceil(comPrice.get(sku) * (2 - breakThreshold))).intValue());
+                    }
 
-                if (comPrice.containsKey(sku) && comPrice.get(sku).compareTo(newPriceSale) > 0) {
-                    throw new BusinessException("4000091");
+                    if (comPrice.containsKey(sku) && comPrice.get(sku).compareTo(newPriceSale) > 0) {
+                        throw new BusinessException("4000091");
+                    }
                 }
                 // DOC-161 价格向上击穿的阀值检查 取消
 //                if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (comPrice.get(sku) * breakThreshold)).compareTo(newPriceSale) < 0) {

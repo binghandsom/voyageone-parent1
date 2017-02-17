@@ -252,7 +252,7 @@ public class CmsProductPriceUpdateService extends BaseService {
                 $info("channleId=" + channelId + " cartId=" + cartId + " prodCode=" + prodCode);
                 queryObj.setQuery("{'common.fields.code':#,'platforms.P#':{$exists:true}}");
                 queryObj.setParameters(prodCode, cartId);
-                queryObj.setProjectionExt("prodId", "channelId", "orgChannelId", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".skus", "common.fields", "common.skus");
+//                queryObj.setProjectionExt("prodId", "channelId", "orgChannelId", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".skus", "common.fields", "common.skus");
                 CmsBtProductModel prodObj = productService.getProductByCondition(channelId, queryObj);
                 if (prodObj == null) {
                     CmsBtOperationLogModel_Msg failInfo = new CmsBtOperationLogModel_Msg();
@@ -284,7 +284,7 @@ public class CmsProductPriceUpdateService extends BaseService {
                     }
                     CmsBtProductModel old = JacksonUtil.json2Bean(JacksonUtil.bean2Json(prodObj),CmsBtProductModel.class);
                     priceService.setPrice(prodObj, cartId, false);
-                    // 价格计算前后比较
+                    // 价格计算前后比较300
                     chg = priceService.skuCompare(old, prodObj, cartId);
 
                     if ($isDebugEnabled()) {

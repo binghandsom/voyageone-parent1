@@ -1546,21 +1546,7 @@ public class PriceService extends BaseService {
     private void insertWorkload(CmsBtProductModel cmsProduct, Integer cartId, String modifier) {
 
         if(cartId > 0 && cartId < 900) {
-            // 读取配置
-            CmsChannelConfigBean channelConfigBean = CmsChannelConfigs.getConfigBean(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE, cartId.toString());
-            if (channelConfigBean == null) {
-                channelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE);
-            }
-
-            Integer configValue1 = 0;
-            if (channelConfigBean != null) {
-                if (!StringUtil.isEmpty(channelConfigBean.getConfigValue1())) {
-                    configValue1 = Integer.parseInt(channelConfigBean.getConfigValue1());
-                }
-            }
-            if (configValue1 != 0) {
-                sxProductService.insertSxWorkLoad(cmsProduct, Arrays.asList(cartId.toString()), modifier);
-            }
+            sxProductService.insertSxWorkLoad(cmsProduct, Arrays.asList(cartId.toString()), modifier);
         }
 
     }
