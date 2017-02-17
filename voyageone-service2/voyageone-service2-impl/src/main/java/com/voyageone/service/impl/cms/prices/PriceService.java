@@ -730,7 +730,7 @@ public class PriceService extends BaseService {
             // 如果没有配置，按平台设置默认值
             String cartIdVal = String.valueOf(cartId.intValue());
             if (CartEnums.Cart.TT.getId().equals(cartIdVal) || CartEnums.Cart.LTT.getId().equals(cartIdVal)
-                    || CartEnums.Cart.LIKING.getId().equals(cartIdVal) || CartEnums.Cart.CN.getId().equals(cartIdVal)
+                    || CartEnums.Cart.LCN.getId().equals(cartIdVal) || CartEnums.Cart.CN.getId().equals(cartIdVal)
                     || CartEnums.Cart.JM.getId().equals(cartIdVal)) {
                 commonSyncPriceMsrpVal = "1";
             } else {

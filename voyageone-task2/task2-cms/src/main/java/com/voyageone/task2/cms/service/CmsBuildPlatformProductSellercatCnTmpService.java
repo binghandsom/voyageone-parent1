@@ -72,9 +72,9 @@ public class CmsBuildPlatformProductSellercatCnTmpService extends BaseCronTaskSe
         if (channelIdList != null && channelIdList.size() > 0) {
             for (String channelId : channelIdList) {
                 {
-                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.LIKING.getId());
+                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.LCN.getId());
                     // 主处理
-                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.LIKING.getId()), shopBean);
+                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.LCN.getId()), shopBean);
                 }
             }
         }

@@ -1269,7 +1269,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             // 目前的USJOI有京东国际平台, 也有聚美平台(27)
             if (!CartEnums.Cart.JM.getId().equals(currentCartId)
                     && !CartEnums.Cart.CN.getId().equals(currentCartId)
-                    && !CartEnums.Cart.LIKING.getId().equals(currentCartId)
+                    && !CartEnums.Cart.LCN.getId().equals(currentCartId)
                     && !CartEnums.Cart.DT.getId().equals(currentCartId)) {
                 // 聚美和官网以外的平台，先取得product.model对应的group信息(根据model取得Product(没找到直接返回null),再根据productCode查找group信息)
                 // 由于可能存在2个子店的Product.model相同的情况，如果不加orgChannelId只用model去查product的话，会导致查出来别的店铺的product对应的group
