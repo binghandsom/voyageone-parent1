@@ -533,7 +533,7 @@ public class CmsPlatformActiveLogService extends BaseService {
         } else {
             String mainCode = StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getMainProductCode());
             String proNumIId = CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? prodObj.getPlatformNotNull(cartId).getpPlatformMallId() : prodObj.getPlatformNotNull(cartId).getpNumIId();
-            if (StringUtil.isEmpty(proNumIId.trim()) || proNumIId.trim().equals("0")) {
+            if (proNumIId == null || StringUtil.isEmpty(proNumIId.trim()) || proNumIId.trim().equals("0")) {
                 $warn("CmsPlatformActiveLogService numIId错误 channelId=%s, code=%s", channelId, prodCode);
                 failedComment = "NumIId为空";
             } else if (mainCode == null) {
