@@ -56,19 +56,18 @@ define([
 
             if (_numberId) {
                 if (_cartId != 27) {
-                    if (_cartId == 26 || _cartId == 28 || _cartId == 29) {
+                    if (_cartId == 24 || _cartId == 26 || _cartId == 28 || _cartId == 29) {
                         if (_jdUrlEntity) {
                             this.statusData.detailUrl = _cartInfo.pUrl + _jdUrlEntity.jdSkuId + ".html";
                         }
+                    } else if (_cartId == 32) {
+                        this.statusData.detailUrl = _cartInfo.pUrl + _numberId + ".html";
                     } else {
                         this.statusData.detailUrl = _cartInfo.pUrl + _numberId;
                     }
-                } else {
+                }
+                else {
                     this.statusData.detailUrl = _cartInfo.pUrl + _pPlatformMallId + ".html";
-                } else if (_cartId == 32) {
-                    this.statusData.detailUrl = _cartInfo.pUrl + _numberId + ".html";
-                } else {
-                    this.statusData.detailUrl = _cartInfo.pUrl + _numberId;
                 }
 
             }

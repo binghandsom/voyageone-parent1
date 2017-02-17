@@ -71,7 +71,7 @@ define(['underscore'], function (_) {
         /**
          * 京东
          */
-        JD: new Cart('JD', 24, '京东', ''),
+        JD: new Cart('JD', 24, '京东', 'https://item.jd.hk/'),
 
         /**
          * 独立域名
