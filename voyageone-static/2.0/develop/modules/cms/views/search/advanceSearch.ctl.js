@@ -1384,8 +1384,8 @@ define([
                     configValue1 = $scope.vm.masterData.autoApprovePrice[cartBean.value].configValue1;
                 }
 
-                if(!configValue1 && $scope.vm.masterData.autoApprovePrice["0"]){
-                    configValue1 = $scope.vm.masterData.autoApprovePrice["0"].configValue1;
+                if(!configValue1 && $scope.vm.masterData.autoApprovePrice[0]){
+                    configValue1 = $scope.vm.masterData.autoApprovePrice[0].configValue1;
                 }
 
                 if("1"==configValue1) return true;
