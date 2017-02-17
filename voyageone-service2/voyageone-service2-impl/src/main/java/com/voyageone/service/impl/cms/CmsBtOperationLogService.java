@@ -1,16 +1,20 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.common.util.*;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ExceptionUtil;
+import com.voyageone.common.util.JsonUtil;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
 import com.voyageone.service.dao.cms.mongo.CmsBtOperationLogDao;
 import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,76 +30,101 @@ public class CmsBtOperationLogService {
     MongoSequenceService mongoSequenceService;
 
     /**
-     * @param jobName
-     * @param jobTitle
-     * @param messageBody
-     * @param ex
+     * 插入job/mq的执行履历
+     * @param jobName job名称
+     * @param jobTitle job标题
+     * @param messageBody 参数或者消息内容
+     * @param operationLog_type 类型
+     * @param comment comment
+     */
+    public void log(String jobName, String jobTitle, IMQMessageBody messageBody, OperationLog_Type operationLog_type, String comment) {
+        final VOMQQueue voQueue = AnnotationUtils.findAnnotation(messageBody.getClass(), VOMQQueue.class);
+
+        String stackTrace = "";
+        String msgBody = JsonUtil.bean2Json(messageBody);
+        comment = voQueue.value() + ":" + comment;
+        log(jobName, jobTitle, operationLog_type, msgBody, null, stackTrace, comment, messageBody.getSender());
+    }
+
+    /**
+     * 插入job/mq的执行履历
+     * @param jobName job名称
+     * @param jobTitle job标题
+     * @param messageBody 参数或者消息内容
+     * @param ex Exception
      */
     public void log(String jobName, String jobTitle, IMQMessageBody messageBody, Exception ex) {
         final VOMQQueue voQueue = AnnotationUtils.findAnnotation(messageBody.getClass(), VOMQQueue.class);
-        String msg = "";
+
         String stackTrace = "";
+        String comment = "";
         String msgBody = JsonUtil.bean2Json(messageBody);
         if (ex != null) {
             stackTrace = ExceptionUtil.getStackTrace(ex);
-            msg = ex.getMessage();
+            comment = voQueue.value() + ":" + ex.getMessage();
         }
-        log(jobName, jobTitle, OperationLog_Type.unknownException, msgBody, msg, stackTrace, voQueue.value(), messageBody.getSender());
+        log(jobName, jobTitle, OperationLog_Type.unknownException, msgBody, null, stackTrace, comment, messageBody.getSender());
     }
 
     /**
-     * @param jobName
-     * @param jobTitle
-     * @param messageBody
-     * @param operationLog_type
-     * @param ex
+     * 插入job/mq的执行履历
+     * @param jobName job名称
+     * @param jobTitle job标题
+     * @param messageBody 参数或者消息内容
+     * @param operationLog_type OperationLog_Type
+     * @param ex Exception
      */
     public void log(String jobName, String jobTitle, IMQMessageBody messageBody, OperationLog_Type operationLog_type, Exception ex) {
         final VOMQQueue voQueue = AnnotationUtils.findAnnotation(messageBody.getClass(), VOMQQueue.class);
-        String msg = "";
+        List<Map<String, String>> msgList = new ArrayList<>();
         String stackTrace = "";
+        String comment = "";
         String msgBody = JsonUtil.bean2Json(messageBody);
         if (ex != null) {
             stackTrace = ExceptionUtil.getStackTrace(ex);
-            msg = ex.getMessage();
+            comment = voQueue.value() + ":" + ex.getMessage();
         }
-        log(jobName, jobTitle, operationLog_type, msgBody, msg, stackTrace, voQueue.value(), messageBody.getSender());
+        log(jobName, jobTitle, operationLog_type, msgBody, null, stackTrace, comment, messageBody.getSender());
     }
 
     /**
-     * @param jobName
-     * @param jobTitle
-     * @param messageBody
-     * @param operationLog_type
-     * @param msg
+     * 插入job/mq的执行履历
+     * @param jobName job名称
+     * @param jobTitle job标题
+     * @param messageBody 参数或者消息内容
+     * @param operationLog_type OperationLog_Type
+     * @param comment 备注
+     * @param msg 错误信息列表
      */
-    public void log(String jobName, String jobTitle, IMQMessageBody messageBody, OperationLog_Type operationLog_type, String msg) {
+    public void log(String jobName, String jobTitle, IMQMessageBody messageBody, OperationLog_Type operationLog_type, String comment, List<CmsBtOperationLogModel_Msg> msg) {
         final VOMQQueue voQueue = AnnotationUtils.findAnnotation(messageBody.getClass(), VOMQQueue.class);
-        log(jobName, jobTitle, operationLog_type, JsonUtil.bean2Json(messageBody), msg, "", voQueue.value(), messageBody.getSender());
+        log(jobName, jobTitle, operationLog_type, JsonUtil.bean2Json(messageBody), msg, "", voQueue.value() + ":" + comment, messageBody.getSender());
     }
 
     /**
-     * @param operationName
-     * @param title
-     * @param operationLog_type
-     * @param msg
-     * @param creator
+     * 插入job/mq的执行履历
+     * @param jobName job名称
+     * @param jobTitle job标题
+     * @param operationLog_type OperationLog_Type
+     * @param msg 错误信息列表
+     * @param creator 操作者
      */
-    public void log(String operationName, String title, OperationLog_Type operationLog_type, String msg, String creator) {
-        log(operationName, title, operationLog_type, "", msg, "", "", creator);
+    public void log(String jobName, String jobTitle, OperationLog_Type operationLog_type, List<CmsBtOperationLogModel_Msg> msg, String creator) {
+        log(jobName, jobTitle, operationLog_type, "", msg, "", "", creator);
     }
 
     /**
-     * @param name
-     * @param title
-     * @param operationLog_type
-     * @param messageBody
-     * @param msg
-     * @param stackTrace
-     * @param comment
-     * @param creater
+     * 插入job/mq的执行履历
+     * @param name 名称
+     * @param title 标题
+     * @param operationLog_type OperationLog_Type
+     * @param messageBody 消息内容
+     * @param msg 错误信息列表
+     * @param stackTrace 堆栈错误信息
+     * @param comment 备注
+     * @param creator 操作者
      */
-    private void log(String name, String title, OperationLog_Type operationLog_type, String messageBody, String msg, String stackTrace, String comment, String creater) {
+    private void log(String name, String title, OperationLog_Type operationLog_type, String messageBody, List<CmsBtOperationLogModel_Msg> msg, String stackTrace, String comment, String creator) {
         CmsBtOperationLogModel model = new CmsBtOperationLogModel();
         model.setName(name);
         model.setTitle(title);
@@ -104,9 +133,9 @@ public class CmsBtOperationLogService {
         model.setComment(comment);
         model.setStackTrace(stackTrace);
         model.setCreated(DateTimeUtil.getNow());
-        model.setCreater(creater);
+        model.setCreater(creator);
         model.setModified(DateTimeUtil.getNow());
-        model.setModifier(creater);
+        model.setModifier(creator);
         model.setType(operationLog_type.getId());
         dao.insert(model);
     }
@@ -117,9 +146,7 @@ public class CmsBtOperationLogService {
      * @param params
      */
     public List<CmsBtOperationLogModel> searchMqCmsBtOperationLogData(Map params) {
-        JongoQuery queryObject = new JongoQuery();
-        String parameter = getSearchQuery(params);
-        queryObject.setQuery(parameter);
+        JongoQuery queryObject = getSearchQuery(params);
         queryObject.setSort("{\"modified\": -1}");
         int pageNum = (Integer) params.get("curr");
         int pageSize = (Integer) params.get("size");
@@ -129,43 +156,36 @@ public class CmsBtOperationLogService {
     }
 
     /**
-     * 取得参数
-     */
-    private String getSearchQuery(Map params) {
-        StringBuilder sbQuery = new StringBuilder();
-        //title
-        String title = String.valueOf(params.get("title"));
-        if (!StringUtils.isEmpty(title)) {
-            sbQuery.append(MongoUtils.splicingValue("title", title, "$regex"));
-            sbQuery.append(",");
-        }
-        //name
-        String name = String.valueOf(params.get("name"));
-        if (!StringUtils.isEmpty(name)) {
-            sbQuery.append(MongoUtils.splicingValue("name", name, "$regex"));
-            sbQuery.append(",");
-        }
-        //type
-        List type = (List) params.get("typeValue");
-        if (type.size() > 0) {
-            sbQuery.append(MongoUtils.splicingValue("type", type.toArray(), "$in"));
-            sbQuery.append(",");
-        }
-        //type
-        String userName = String.valueOf(params.get("userName"));
-        if (!StringUtils.isEmpty(userName) && !"0".equals(userName)) {
-            sbQuery.append(MongoUtils.splicingValue("modifier", userName, "$regex"));
-            sbQuery.append(",");
-        }
-        return "{" + sbQuery.toString() + "}";
-    }
-
-    /**
      *
      * @param params
      */
     public long searchMqCmsBtOperationLogDataCnt(Map params) {
-        String parameter = getSearchQuery(params);
-        return dao.countByQuery(parameter);
+        JongoQuery parameter = getSearchQuery(params);
+        return dao.countByQuery(parameter.getQuery(), parameter.getParameters());
+    }
+
+    /**
+     * 取得参数
+     * @param params 参数
+     * @return 检索条件
+     */
+    private JongoQuery getSearchQuery(Map params) {
+        JongoQuery queryObject = new JongoQuery();
+
+        String title = params.get("title") != null ? String.valueOf(params.get("title")) : "";
+        String name = params.get("name") != null ? String.valueOf(params.get("name")) : "";
+        String userName = params.get("userName") != null ? String.valueOf(params.get("userName")) : "";
+        if ("0".equals(userName))
+            userName = "";
+
+        List type = (List) params.get("typeValue");
+        if (type != null && type.size() > 0) {
+            queryObject.setQuery("{\"name\": {$regex: #}, \"title\": {$regex: #}, \"modifier\": {$regex: #}, \"type\": {$in: #}}");
+            queryObject.setParameters(name, title, userName, type);
+        } else {
+            queryObject.setQuery("{\"name\": {$regex: #}, \"title\": {$regex: #}, \"modifier\": {$regex: #}}");
+            queryObject.setParameters(name, title, userName);
+        }
+        return queryObject;
     }
 }

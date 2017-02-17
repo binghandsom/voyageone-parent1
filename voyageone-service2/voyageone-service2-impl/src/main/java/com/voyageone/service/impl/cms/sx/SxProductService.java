@@ -1253,7 +1253,7 @@ public class SxProductService extends BaseService {
             // modified by morse.lu 2016/10/26 start
             // liking 不允许手动填写别名
 //            if (!StringUtils.isEmpty(sizeNick)) {
-            if (cartId != CartEnums.Cart.LIKING.getValue() && cartId != CartEnums.Cart.CN.getValue() && !StringUtils.isEmpty(sizeNick)) {
+            if (cartId != CartEnums.Cart.LCN.getValue() && cartId != CartEnums.Cart.CN.getValue() && !StringUtils.isEmpty(sizeNick)) {
                 // modified by morse.lu 2016/10/26 end
                 // 直接用Nick
                 sku.setStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name(), sizeNick);
@@ -1432,7 +1432,11 @@ public class SxProductService extends BaseService {
      * @param cartId cart id
      * @return 是否为智能上新
      */
-    public boolean isSmartSx(String channelId, int cartId) {
+    public boolean isSmartSx(String channelId, Integer cartId) {
+
+        if (cartId == null)
+            return false;
+
         // 目前只支持京东系的上新
         if (!CartEnums.Cart.isJdSeries(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) { return false; }
 
@@ -3528,8 +3532,8 @@ public class SxProductService extends BaseService {
 
         // 新官网 和 分销， 使用官网同购的素材图
         int cartIdTempSearch = cartId;
-        if (CartEnums.Cart.LIKING.getValue() == cartId || CartEnums.Cart.DT.getValue() == cartId) {
-            cartIdTempSearch = CartEnums.Cart.USTT.getValue();
+        if (CartEnums.Cart.LCN.getValue() == cartId || CartEnums.Cart.DT.getValue() == cartId) {
+            cartIdTempSearch = CartEnums.Cart.LTT.getValue();
         }
         List<CmsBtImageGroupModel> modelsAll = cmsBtImageGroupDao.selectListByKeysWithAll(channelId, cartIdTempSearch, imageType, viewType, paramBrandName, paramProductType, paramSizeType, 1);
         for (CmsBtImageGroupModel model : modelsAll) {

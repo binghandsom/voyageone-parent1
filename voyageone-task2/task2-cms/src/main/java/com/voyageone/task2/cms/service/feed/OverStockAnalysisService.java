@@ -124,17 +124,16 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         List<SuperFeedOverStockBean> superfeed = new ArrayList<>();
         while (true) {
             CacheHelper.getValueOperation().set("OverStockfeedPage", pageIndex);
-            pageIndex++;
-            $info("取得第"+pageIndex+"页的数据");
-            request.setOffset((pageIndex-1) * 100);
+            $info("取得第"+(pageIndex+1)+"页的数据");
+            request.setOffset((pageIndex) * 100);
             request.setLimit(100);
             String sku = "";
             try {
                 Result<ProductsType> result = overstockProductService.queryForMultipleProducts(request);
                 int statusCode = result.getStatusCode();
-                ProductsType productsType = result.getEntity();
-                List<ProductType> productTypeList = productsType.getProduct();
                 if (statusCode == 200) {
+                    ProductsType productsType = result.getEntity();
+                    List<ProductType> productTypeList = productsType.getProduct();
                     if (productTypeList.size() == 0) {
                         $info("产品取得结束");
                         CacheHelper.getValueOperation().set("OverStockfeedPage", 0);
@@ -392,6 +391,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                         superfeed.clear();
                         transformer.new Context(channel, this).transform();
                         postNewProduct();
+                        pageIndex++;
                     }
                 } else {
                     $info("queryForMultipleProducts error; offset = " + offset + " statusCode = " + statusCode);

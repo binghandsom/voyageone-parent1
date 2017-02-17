@@ -41,9 +41,11 @@
     <!-- 更新活动下的产品的库存数据 -->
     <update id="updateProductStockInfo">
         <foreach item="item" index="i" collection="promotionProductList" open="" close="" separator=";">
-            update cms_bt_promotion_codes
-            set quantity = #{item.quantity,jdbcType=INTEGER}
-            WHERE id = #{item.id}
+            <if test="item.id != null" >
+                update cms_bt_promotion_codes
+                set quantity = #{item.quantity,jdbcType=INTEGER}
+                WHERE id = #{item.id}
+            </if>
         </foreach>
     </update>
     

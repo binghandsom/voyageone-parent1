@@ -3,15 +3,12 @@ package com.voyageone.service.impl.cms.product;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
-import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -43,17 +40,17 @@ public class CmsBtPriceLogService extends BaseService {
     private final CmsBtPriceLogDaoExt priceLogDaoExt;
     private final CmsBtProductDao productDao;
     /*private final MqSender sender;*/
-    private MqSenderService mqSenderService;
+    private CmsMqSenderService cmsMqSenderService;
     private final CmsBtPriceConfirmLogService priceConfirmLogService;
 
     @Autowired
     public CmsBtPriceLogService(CmsBtPriceLogDao priceLogDao, CmsBtPriceLogDaoExt priceLogDaoExt,
-                                CmsBtProductDao productDao, MqSenderService mqSenderService,
+                                CmsBtProductDao productDao, CmsMqSenderService cmsMqSenderService,
                                 CmsBtPriceConfirmLogService priceConfirmLogService) {
         this.priceLogDao = priceLogDao;
         this.priceLogDaoExt = priceLogDaoExt;
         this.productDao = productDao;
-        this.mqSenderService = mqSenderService;
+        this.cmsMqSenderService = cmsMqSenderService;
         this.priceConfirmLogService = priceConfirmLogService;
     }
 
@@ -97,12 +94,7 @@ public class CmsBtPriceLogService extends BaseService {
                     mqMessageBody.setCartId(value.getCartId());
                     mqMessageBody.setProdId(Long.valueOf(String.valueOf(value.getProductId())));
                     mqMessageBody.setSender(this.getClass().getSimpleName());
-                    try {
-                        mqSenderService.sendMessage(mqMessageBody);
-                    } catch (MQMessageRuleException e) {
-                        $error(String.format("价格同步MQ发送异常,cartId=%s,productId=%s,channelId=%s", value.getCartId(), value.getProductId(), value.getChannelId()), e);
-                    }
-
+                    cmsMqSenderService.sendMessage(mqMessageBody);
                 }
             }
         }
@@ -143,11 +135,7 @@ public class CmsBtPriceLogService extends BaseService {
         mqMessageBody.setCartId(cartId);
         mqMessageBody.setProdId(productId);
         mqMessageBody.setSender(username);
-        try {
-            mqSenderService.sendMessage(mqMessageBody);
-        } catch (MQMessageRuleException e) {
-            $error(String.format("同步sku,code,group价格范围MQ发送异常,cartId=%s,productId=%s,channelId=%s", cartId, productId, channelId), e);
-        }
+        cmsMqSenderService.sendMessage(mqMessageBody);
 
     }
 
@@ -250,11 +238,7 @@ public class CmsBtPriceLogService extends BaseService {
                         mqMessageBody.setCartId(boxedCartId);
                         mqMessageBody.setProdId(productModel.getProdId());
                         mqMessageBody.setSender(username);
-                        try {
-                            mqSenderService.sendMessage(mqMessageBody);
-                        } catch (MQMessageRuleException e) {
-                            $error(String.format("同步sku,code,group价格范围MQ发送异常,cartId=%s,productId=%s,channelId=%s", boxedCartId, productId, channelId), e);
-                        }
+                        cmsMqSenderService.sendMessage(mqMessageBody);
                     }
                 });
     }

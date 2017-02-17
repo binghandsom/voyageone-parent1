@@ -21,34 +21,10 @@ import java.util.Map;
 public class AdvSearchProductApprovalMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;
-    private String userName;
     private List<Integer> cartList;
     private List<String> productCodes;
     private Map<String, Object> params;
     private Map<String, Object> cmsSessionParams;
-
-    @Override
-    public void check() throws MQMessageRuleException {
-        if (StringUtils.isBlank(channelId)) {
-            throw new MQMessageRuleException("高级检索-商品审批MQ发送异常, 参数channelId为空.");
-        }
-        if (StringUtils.isBlank(userName)) {
-            throw new MQMessageRuleException("高级检索-商品审批MQ发送异常, 参数userName为空.");
-        }
-        if (CollectionUtils.isEmpty(cartList)) {
-            throw new MQMessageRuleException("高级检索-商品审批MQ发送异常, 参数cartList为空.");
-        }
-        if (CollectionUtils.isEmpty(productCodes)) {
-            throw new MQMessageRuleException("高级检索-商品审批MQ发送异常, 参数productCodes为空.");
-        }
-        if (params == null || params.size() <= 0) {
-            throw new MQMessageRuleException("高级检索-商品审批MQ发送异常, 参数params为空.");
-        }
-
-        if (StringUtils.isEmpty(getSender())) {
-            throw new MQMessageRuleException("sender(发送者)不能为空");
-        }
-    }
 
     public String getChannelId() {
         return channelId;
@@ -56,14 +32,6 @@ public class AdvSearchProductApprovalMQMessageBody extends BaseMQMessageBody {
 
     public void setChannelId(String channelId) {
         this.channelId = channelId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public List<Integer> getCartList() {
@@ -96,5 +64,24 @@ public class AdvSearchProductApprovalMQMessageBody extends BaseMQMessageBody {
 
     public void setCmsSessionParams(Map<String, Object> cmsSessionParams) {
         this.cmsSessionParams = cmsSessionParams;
+    }
+
+    @Override
+    public void check() throws MQMessageRuleException {
+        if (StringUtils.isBlank(channelId)) {
+            throw new MQMessageRuleException("高级检索-批量审批商品平台状态MQ发送异常, 参数channelId为空.");
+        }
+        if (CollectionUtils.isEmpty(cartList)) {
+            throw new MQMessageRuleException("高级检索-批量审批商品平台状态MQ发送异常, 参数cartList为空.");
+        }
+        if (CollectionUtils.isEmpty(productCodes)) {
+            throw new MQMessageRuleException("高级检索-批量审批商品平台状态MQ发送异常, 参数productCodes为空.");
+        }
+        if (params == null || params.size() <= 0) {
+            throw new MQMessageRuleException("高级检索-批量审批商品平台状态MQ发送异常, 参数params为空.");
+        }
+        if (StringUtils.isEmpty(getSender())) {
+            throw new MQMessageRuleException("高级检索-商品审批MQ发送异常, 发送者为空.");
+        }
     }
 }

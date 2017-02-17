@@ -87,7 +87,7 @@ public class GetAllPlatformsInfoService extends BaseCronTaskService {
 
                 if (CartEnums.Cart.TM.getValue() == cartId || CartEnums.Cart.TG.getValue() == cartId
                         || CartEnums.Cart.TT.getValue() == cartId
-                        || CartEnums.Cart.USTT.getValue() == cartId) {
+                        || CartEnums.Cart.LTT.getValue() == cartId) {
                     // 天猫(包括天猫国际，天猫官网同购，Usjoi天猫国际官网同购)
                     doTmPlatformCategory(channelId, cartId, shopBean);
                 }

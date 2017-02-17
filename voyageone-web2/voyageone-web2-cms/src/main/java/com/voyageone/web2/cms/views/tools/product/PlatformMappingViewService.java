@@ -9,7 +9,6 @@ import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.dao.cms.CmsMtFeedCustomPropDao;
 import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
@@ -18,9 +17,6 @@ import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsRefreshProductsMQMessageBody;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
@@ -299,12 +295,7 @@ class PlatformMappingViewService extends BaseViewService {
         CmsRefreshProductsMQMessageBody map = new CmsRefreshProductsMQMessageBody();
         map.setTaskId(cmsBtRefreshProductTaskModel.getId());
         map.setSender(userName);
-        try {
-            mqSender.sendMessage(map);
-        } catch (MQMessageRuleException e) {
-            $error(e);
-            e.printStackTrace();
-        }
+        mqSender.sendMessage(map);
         return true;
     }
 

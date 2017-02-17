@@ -1,7 +1,5 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.product.CmsProductPriceUpdateService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
@@ -24,14 +22,8 @@ public class CmsProductPriceUpdateMQJob extends TBaseMQCmsService<ProductPriceUp
 
     @Override
     public void onStartup(ProductPriceUpdateMQMessageBody messageBody) throws Exception {
-        try {
-            cmsProductPriceUpdateService.updateProductAndGroupPrice(messageBody);
-        } catch (Exception e) {
-            if (e instanceof BusinessException) {
-                cmsBusinessExLog(messageBody, e.getMessage());
-            } else {
-                cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
-            }
-        }
+        
+        //// TODO: 2017/2/8 edward 这个job会废止掉,直接改成一个共通方法,只计算code级别的价格,而不是计算group级别的价格,不再发送mq 
+        cmsProductPriceUpdateService.updateProductAndGroupPrice(messageBody);
     }
 }

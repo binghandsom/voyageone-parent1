@@ -76,9 +76,9 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseCronTaskServi
                     doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()), shopBean);
                 }
                 {
-                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.LIKING.getId());
+                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.LCN.getId());
                     // 主处理
-                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.LIKING.getId()), shopBean);
+                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.LCN.getId()), shopBean);
                 }
             }
         }

@@ -10,7 +10,6 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
@@ -58,7 +57,7 @@ import java.util.stream.Collectors;
 public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService {
 
     // 新独立域名平台ID(32 Liking)
-    private static final int CART_ID_CNN = CartEnums.Cart.LIKING.getValue();
+    private static final int CART_ID_CNN = CartEnums.Cart.LCN.getValue();
     // 分隔符(,)
     private final static String Separtor_Coma = ",";
     // 线程数(synship.tm_task_control中设置的当前job的最大线程数"thread_count", 默认为3)

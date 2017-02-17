@@ -3,7 +3,6 @@ package com.voyageone.service.model.cms.mongo;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by dell on 2016/12/27.
@@ -31,11 +30,11 @@ public class CmsBtOperationLogModel extends BaseMongoModel {
      */
     String comment;
     /**
-     *
+     * 错误数据的消息, 一个商品/sku一条错误记录
      */
-    String msg;
+    List<CmsBtOperationLogModel_Msg> msg;
     /**
-     *
+     * 错误异常堆栈
      */
     String stackTrace;
 
@@ -55,14 +54,13 @@ public class CmsBtOperationLogModel extends BaseMongoModel {
         this.title = title;
     }
 
-    public String getMsg() {
+    public List<CmsBtOperationLogModel_Msg> getMsg() {
         return msg;
     }
 
-    public void setMsg(String msg) {
+    public void setMsg(List<CmsBtOperationLogModel_Msg> msg) {
         this.msg = msg;
     }
-
 
     public String getMessageBody() {
         return messageBody;

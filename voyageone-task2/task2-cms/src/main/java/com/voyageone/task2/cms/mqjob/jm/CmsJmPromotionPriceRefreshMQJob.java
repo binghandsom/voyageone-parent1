@@ -5,8 +5,9 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.idsnowflake.FactoryIdWorker;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionSkuService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JMRefreshPriceMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JMRefreshPriceMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -42,26 +44,28 @@ public class CmsJmPromotionPriceRefreshMQJob extends TBaseMQCmsService<JMRefresh
 
         Map<String, Object> param = new HashedMap();
         param.put("cmsBtJmPromotionId", jmPromotionId);
-        List<CmsBtJmPromotionSkuModel> skus = cmsBtJmPromotionSkuService.selectList(param);
-        skus.sort((o1, o2) -> o1.getProductCode().compareToIgnoreCase(o2.getProductCode()));
-        StringBuilder sbError = new StringBuilder();//错误信息
+        List<CmsBtJmPromotionSkuModel> skuList = cmsBtJmPromotionSkuService.selectList(param);
+        skuList.sort((o1, o2) -> o1.getProductCode().compareToIgnoreCase(o2.getProductCode()));
+
         CmsBtProductModel cacheProduct = null;
-        int errorCount = 0;
-        for (CmsBtJmPromotionSkuModel sku : skus) {
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
+
+        for (CmsBtJmPromotionSkuModel sku : skuList) {
             try {
                 cacheProduct = updateJMPromotionSkuPrice(jmPromotionId, cacheProduct, sku);
             } catch (Exception ex) {
-                errorCount++;
-                long errorId = FactoryIdWorker.nextId();
-                sbError.append("skuCode:").append(sku.getSkuCode()).append(":").append(ex.getMessage()).append("errorId:").append(errorId).append("\\r\\n");
-                $error(sku.getSkuCode() + ":" + errorId, ex);
+                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                errorInfo.setSkuCode(sku.getSkuCode());
+                StringBuilder sbError = new StringBuilder();//错误信息
+                errorInfo.setMsg(sbError.append(ex.getMessage()).append("errorId:").append(FactoryIdWorker.nextId()).toString());
+                failList.add(errorInfo);
+                $error(sku.getSkuCode() + ":" + FactoryIdWorker.nextId(), ex);
             }
         }
 
-        if (sbError.length() > 0) {
-            cmsSuccessIncludeFailLog(messageBody, String.format("skuCode总数(%s) 失败(%s) \\r\\n %s", skus.size(), errorCount, sbError.toString()));
-        } else {
-            cmsSuccessLog(messageBody, String.format("执行成功 skuCode总数(%s)", skus.size()));
+        if (failList.size() > 0) {
+            String comment = String.format("处理总件数(%s), 处理失败件数(%s)", skuList.size(), failList.size());
+            cmsSuccessIncludeFailLog(messageBody, comment, failList);
         }
     }
 

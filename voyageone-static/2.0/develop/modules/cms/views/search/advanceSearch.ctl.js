@@ -961,7 +961,12 @@ define([
                 var property = {'cartId': cartId, '_option': 'saleprice', 'productIds': productIds};
                 property.isSelAll = $scope.vm._selall ? 1 : 0;
 
-                openSalePriceFnc({'property': property, 'cartList': $scope.vm.cartList}).then(
+                var config = $scope.vm.masterData.autoApprovePrice["0"];
+                if($scope.vm.masterData.autoApprovePrice[cartId]){
+                    config = $scope.vm.masterData.autoApprovePrice[cartId];
+                }
+
+                openSalePriceFnc({'property': property, 'cartList': $scope.vm.cartList, 'config': config}).then(
                     function () {
                         $scope.search();
                     });
@@ -1370,6 +1375,25 @@ define([
 
 
         };
+
+        $scope.getAutoSyncPriceSale = function (cartBean) {
+
+            var configValue1=null;
+            if($scope.vm.masterData.autoApprovePrice){
+                if($scope.vm.masterData.autoApprovePrice[cartBean.value]){
+                    configValue1 = $scope.vm.masterData.autoApprovePrice[cartBean.value].configValue1;
+                }
+
+                if(!configValue1 && $scope.vm.masterData.autoApprovePrice[0]){
+                    configValue1 = $scope.vm.masterData.autoApprovePrice[0].configValue1;
+                }
+
+                if("1"==configValue1) return true;
+            }else{
+                return false;
+            }
+
+        }
 
 
     }

@@ -71,7 +71,7 @@ define(['underscore'], function (_) {
         /**
          * 京东
          */
-        JD: new Cart('JD', 24, '京东', ''),
+        JD: new Cart('JD', 24, '京东', 'https://item.jd.hk/'),
 
         /**
          * 独立域名
@@ -81,7 +81,7 @@ define(['underscore'], function (_) {
         /**
          * 京东国际
          */
-        JG: new Cart('JG', 26, '京东国际', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
+        JG: new Cart('JG', 26, '京东国际', 'https://item.jd.hk/'),
 
         /**
          * 聚美优品 (注意：聚美的产品url后缀要添加'.html')
@@ -124,12 +124,12 @@ define(['underscore'], function (_) {
         /**
          * 京东匠心界
          */
-        JGJ: new Cart('JGJ', 28, '京东匠心界', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
+        JGJ: new Cart('JGJ', 28, '京东匠心界', 'https://item.jd.hk/'),
 
         /**
          * 京东悦境
          */
-        JGY: new Cart('JGY', 29, '京东悦境', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
+        JGY: new Cart('JGY', 29, '京东悦境', 'https://item.jd.hk/'),
 
         /**
          * 测试USJOI

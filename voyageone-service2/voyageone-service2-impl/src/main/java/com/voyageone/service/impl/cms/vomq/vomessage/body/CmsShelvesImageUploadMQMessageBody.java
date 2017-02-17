@@ -24,7 +24,7 @@ public class CmsShelvesImageUploadMQMessageBody extends BaseMQMessageBody {
     @Override
     public void check() throws MQMessageRuleException {
         if(shelvesId == null || shelvesId == 0){
-            throw new MQMessageRuleException("shelvesId不能为空");
+            throw new MQMessageRuleException("货架管理-货架监控MQ发送异常, 参数shelvesId为空或者0.");
         }
     }
 }

@@ -1,11 +1,11 @@
 package com.voyageone.service.impl.cms.vomq.vomessage.body;
 
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
 
@@ -54,8 +54,17 @@ public class CmsTeJiaBaoDelMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
-        if(StringUtil.isEmpty(channelId) || tejiabaoId == null || cartId == null || ListUtils.isNull(numIId)){
-            throw new MQMessageRuleException("参数不对");
+        if (StringUtils.isEmpty(channelId)) {
+            throw new MQMessageRuleException("天猫活动-天猫特价宝刷新MQ发送异常, 参数channelId为空.");
+        }
+        if(tejiabaoId == null){
+            throw new MQMessageRuleException("天猫活动-天猫特价宝刷新MQ发送异常, 参数tejiabaoId为空.");
+        }
+        if(cartId == null){
+            throw new MQMessageRuleException("天猫活动-天猫特价宝刷新MQ发送异常, 参数cartId为空.");
+        }
+        if (CollectionUtils.isEmpty(numIId)) {
+            throw new MQMessageRuleException("天猫活动-天猫特价宝刷新MQ发送异常, 参数numIId为空.");
         }
     }
 }

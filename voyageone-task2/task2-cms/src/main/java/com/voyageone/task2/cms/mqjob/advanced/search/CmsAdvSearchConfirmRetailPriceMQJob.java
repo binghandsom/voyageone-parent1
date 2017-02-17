@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * 高级检索-确认指定价更新Job
+ * 高级检索-确认指导价更新Job
  *
  * @Author dell
  * @Create 2016-12-30 17:18
@@ -22,6 +22,7 @@ public class CmsAdvSearchConfirmRetailPriceMQJob extends TBaseMQCmsService<AdvSe
 
     @Override
     public void onStartup(AdvSearchConfirmRetailPriceMQMessageBody messageBody) {
+        super.count = messageBody.getCodeList().size();
         confirmRetailPriceService.confirmPlatformsRetailPrice(messageBody);
     }
 }

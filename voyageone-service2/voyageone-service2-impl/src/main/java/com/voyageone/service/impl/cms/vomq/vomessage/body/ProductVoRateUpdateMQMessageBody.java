@@ -20,25 +20,8 @@ import java.util.List;
 public class ProductVoRateUpdateMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;
-    private String creater;
     private List<String> codeList;
     private String voRate;
-
-    @Override
-    public void check() throws MQMessageRuleException {
-        if (StringUtils.isBlank(channelId)) {
-            throw new MQMessageRuleException("ProductVoRateUpdate参数channelId为空.");
-        }
-        if (CollectionUtils.isEmpty(codeList)) {
-            throw new MQMessageRuleException("ProductVoRateUpdate参数codeList为空.");
-        }
-        if (StringUtils.isBlank(creater)) {
-            throw new MQMessageRuleException("ProductVoRateUpdate参数creater为空.");
-        }
-        if (StringUtils.isBlank(getSender())) {
-            throw new MQMessageRuleException("sender(发送者)不能为空");
-        }
-    }
 
     public String getVoRate() {
         return voRate;
@@ -56,20 +39,25 @@ public class ProductVoRateUpdateMQMessageBody extends BaseMQMessageBody {
         this.channelId = channelId;
     }
 
-    public String getCreater() {
-        return creater;
-    }
-
-    public void setCreater(String creater) {
-        this.creater = creater;
-    }
-
     public List<String> getCodeList() {
         return codeList;
     }
 
     public void setCodeList(List<String> codeList) {
         this.codeList = codeList;
+    }
+
+    @Override
+    public void check() throws MQMessageRuleException {
+        if (StringUtils.isBlank(channelId)) {
+            throw new MQMessageRuleException("高级检索-批量更新商品vo扣点MQ发送异常, 参数channelId为空.");
+        }
+        if (CollectionUtils.isEmpty(codeList)) {
+            throw new MQMessageRuleException("高级检索-批量更新商品vo扣点MQ发送异常, 参数codeList为空.");
+        }
+        if (StringUtils.isBlank(getSender())) {
+            throw new MQMessageRuleException("高级检索-批量更新商品vo扣点MQ发送异常, 发送者为空.");
+        }
     }
 
 }

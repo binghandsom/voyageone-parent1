@@ -71,4 +71,8 @@ public class PromotionCodeService extends BaseService {
         parameter.setProductModel(productModel);
         return cmsBtPromotionCodesDao.selectList(parameter);
     }
+
+    public int getCmsBtPromotionCodeInPromtionCnt(String code, List<Integer> promotionIds){
+        return cmsBtPromotionCodesDaoExt.selectCmsBtPromotionCodeInPromtionCnt(code, promotionIds);
+    }
 }

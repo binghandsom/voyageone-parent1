@@ -460,4 +460,17 @@
             #{skuItem}
         </foreach>
     </select>
+
+    <select id="select_cms_bt_promotion_code_in_promtion_cnt" resultType="int" parameterType="HashMap">
+        SELECT
+        count(1)
+        FROM
+        voyageone_cms2.cms_bt_promotion_codes
+        where
+           product_code = #{code,jdbcType=VARCHAR}
+        and promotion_id in
+        <foreach collection="promotionIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
 </mapper>

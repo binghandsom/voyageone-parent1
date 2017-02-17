@@ -1,9 +1,9 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import com.voyageone.task2.cms.service.product.batch.CmsAdvSearchExportFileService;
 import org.apache.commons.collections.CollectionUtils;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 高级检索文件导出job
@@ -34,13 +33,14 @@ public class CmsAdvSearchExportMQJob extends TBaseMQCmsService<AdvSearchExportMQ
         Integer cmsBtExportTaskId = messageBody.getCmsBtExportTaskId();
         CmsBtExportTaskModel exportTaskModel = cmsBtExportTaskService.getExportById(cmsBtExportTaskId);
         if (exportTaskModel == null) {
-            cmsBusinessExLog(messageBody, String.format("cms.bt.export.task(id=%s)不存在", cmsBtExportTaskId));
+            cmsConfigExLog(messageBody, String.format("cms.bt.export.task(id=%s)不存在", cmsBtExportTaskId));
             return;
         }
 
-        List<Map<String, String>> failList = cmsAdvSearchExportFileService.export(messageBody);
+        List<CmsBtOperationLogModel_Msg> failList = cmsAdvSearchExportFileService.export(messageBody);
         if (CollectionUtils.isNotEmpty(failList)) {
-            cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(failList));
+            String comment = String.format("处理失败件数(%s)", failList.size());
+            cmsSuccessIncludeFailLog(messageBody, comment, failList);
         }
 
     }

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.report.BiReportDownloadTaskDaoExt">
+    <select id="selectTasksBycreatorName" parameterType="Map" resultType="com.voyageone.service.model.report.BiReportDownloadTaskModel"><![CDATA[
+      	select
+        task.*
+        FROM
+    	voyageone_bi_report.bi_report_download_task task
+        WHERE task.active=1
+        ]]>
+        <if test="creatorName != null and creatorName != '' ">
+            AND task.creater=#{creatorName}
+        </if>
+        <if test="fileName != null and fileName != '' ">
+            and task.file_name = #{fileName}
+        </if>
+        <if test="taskStatus != null and taskStatus != '' ">
+           <![CDATA[ and  task.task_status = #{taskStatus} ]]>
+        </if>
+        ORDER  BY task.id DESC
+    </select>
+
+
+    <select id="selectNoTasksBycreatorName" parameterType="Map" resultType="com.voyageone.service.model.report.BiReportDownloadTaskModel"><![CDATA[
+      	select
+        task.*
+        FROM
+    	voyageone_bi_report.bi_report_download_task task
+        WHERE 1 = 1
+        ]]>
+        <if test="creatorName != null and creatorName != '' ">
+          AND task.creater = #{creatorName}
+        </if>
+        <if test="fileName != null and fileName != '' ">
+            AND task.file_name = #{fileName}
+        </if>
+        <if test="taskStatus != null and taskStatus != '' ">
+            <![CDATA[ and  task.task_status <> #{taskStatus} ]]>
+        </if>
+        ORDER  BY task.id DESC
+    </select>
+
+    <select id="selectAmtDateToDate" parameterType="Map" resultType="BigDecimal">
+        select SUM(brss.amt)
+        from voyageone_bi_report.bi_report_sales_shop_010 brss
+        where brss.shop_id= #{shopId}
+        <if test="staDate != null and staDate != '' ">
+            <![CDATA[ and brss.date>= #{staDate} ]]>
+        </if>
+        <if test="endDate != null and endDate != '' ">
+            <![CDATA[ and brss.date <= #{endDate} ]]>
+        </if>
+    </select>
+
+    <select id="selectCount"  resultType="Long"><![CDATA[
+       SELECT
+        count(*)
+        FROM
+        voyageone_bi_report.bi_report_download_task task
+        WHERE  task.active=1
+        ]]>
+        <if test="creatorName != null  ">
+            AND task.creater = #{creatorName}
+        </if>
+        <if test="fileName != null  ">
+            AND task.file_name = #{fileName}
+        </if>
+        <if test="taskStatus != null ">
+            <![CDATA[ and  task.task_status <> #{taskStatus} ]]>
+        </if>
+    </select>
+
+
+    <select id="selectPage"  resultType="com.voyageone.service.model.report.BiReportDownloadTaskModel"><![CDATA[
+       SELECT
+        task.*
+        FROM
+        voyageone_bi_report.bi_report_download_task task
+        WHERE  task.active=1
+        ]]>
+        <if test="creatorName != null  ">
+            AND task.creater = #{creatorName}
+        </if>
+        <if test="fileName != null  ">
+            AND task.file_name = #{fileName}
+        </if>
+        <if test="taskStatus != null ">
+            <![CDATA[ and  task.task_status = #{taskStatus} ]]>
+        </if>
+        order by ${orderByColumn}  limit #{offset} , #{pageRowCount}
+    </select>
+
+    <update id="softDel"><![CDATA[
+      UPDATE voyageone_bi_report.bi_report_download_task task
+      SET task.active = 0
+       where task.id = #{id,jdbcType=INTEGER}
+        ]]>
+    </update>
+
+</mapper>

@@ -1,10 +1,10 @@
 package com.voyageone.service.impl.cms.vomq.vomessage.body;
 
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 
@@ -47,8 +47,14 @@ public class CmsJmMallPromotionPriceSyncMQMessageBody extends BaseMQMessageBody 
 
     @Override
     public void check() throws MQMessageRuleException {
-        if(StringUtil.isEmpty(this.channelId) || this.jmPromotionId == null || this.jmPromotionId <= 0){
-            throw new MQMessageRuleException("channelId 或 活动ID 不正确");
+        if (StringUtils.isBlank(channelId)) {
+            throw new MQMessageRuleException("聚美活动-聚美活动价格同步到聚美商城价格MQ发送异常, 参数channelId为空.");
+        }
+        if(jmPromotionId == null || jmPromotionId <= 0){
+            throw new MQMessageRuleException("聚美活动-聚美活动价格同步到聚美商城价格MQ发送异常, 参数jmPromotionId为空.");
+        }
+        if (StringUtils.isEmpty(getSender())) {
+            throw new MQMessageRuleException("聚美活动-聚美活动价格同步到聚美商城价格MQ发送异常, 发送者为空.");
         }
     }
 }

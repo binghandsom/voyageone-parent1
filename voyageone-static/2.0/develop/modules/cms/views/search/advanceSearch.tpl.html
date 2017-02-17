@@ -715,9 +715,9 @@
                                 <li>
                                     <a href="javascript:void(0)" ng-click="_openPutOnOff(openPutOnOff)">{{'TXT_ALL_PUT_ON|OFF'|translate}}</a>
                                 </li>
-                                <li>
-                                    <a href="javascript:void(0)" ng-click="openApproval(openUpdateApproval)">{{'TXT_ALL_CHANNEL_APPROVAL'|translate}}</a>
-                                </li>
+                                <!--<li> edward 2017.02.06 取消全店铺批量Approve,原因: 该功能基本不使用,而且如果开发该功能,在mq中返回哪些不能approve的商品处理的实现有点麻烦-->
+                                    <!--<a href="javascript:void(0)" ng-click="openApproval(openUpdateApproval)">{{'TXT_ALL_CHANNEL_APPROVAL'|translate}}</a>-->
+                                <!--</li>-->
                                 <li>
                                     <a href="javascript:void(0)" ng-click="refreshRetailPrice(null)">重新计算价格</a>
                                 </li>
@@ -747,7 +747,7 @@
                                 <li ng-if="cartBean.value!=27&&cartBean.cartType!=3">
                                     <a ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit,cartBean.value)">{{'TXT_TAG_STORE_CLASSIFY'|translate}}</a>
                                 </li>
-                                <li ng-if="vm.masterData.autoApprovePrice!=1">
+                                <li ng-if="getAutoSyncPriceSale(cartBean)!=true">
                                     <a href="javascript:void(0)" ng-click="toopenSalePrice(openSalePrice,cartBean.value)">{{'TXT_FINAL_SALE_PRICE_SETTING'|translate}}</a>
                                 </li>
 
@@ -892,8 +892,8 @@
 
                                             <!--Todo  显示商品numid  -->
                                             <span class="m-r-sm" ng-if="!!productInfo.groupBean.numIId&&!!vm.productUrl">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
-                                                <a ng-href="{{vm.productUrl}}{{productInfo.groupBean.numIId}}" target="_blank" ng-bind="productInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId!=27"></a>
-                                                <a ng-href="{{vm.productUrl}}{{productInfo.groupBean.platformMallId}}.html" target="_blank" ng-bind="productInfo.groupBean.platformMallId" ng-if="vm.searchInfo.cartId == 27"></a>
+                                                <a target="_blank" ng-bind="productInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId!=27"></a>
+                                                <a target="_blank" ng-bind="productInfo.groupBean.platformMallId" ng-if="vm.searchInfo.cartId == 27"></a>
                                             </span>
                                             <!-- Todo 商品平台状态-->
                                             <span class="label m-l-sm" ng-if="productInfo.platforms">
@@ -1086,8 +1086,8 @@
                                                 &nbsp;{{groupInfo.cartBean.platformStatus}}&nbsp;
                                             </span>
                                             <span class="m-r-sm" ng-if="!!groupInfo.groupBean.numIId&&!!vm.productUrl">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
-                                                <a ng-href="{{vm.productUrl}}{{groupInfo.groupBean.numIId}}" target="_blank" ng-bind="groupInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId!=27"></a>
-                                                <a ng-href="{{vm.productUrl}}{{groupInfo.groupBean.platformMallId}}.html" target="_blank" ng-bind="groupInfo.groupBean.platformMallId" ng-if="vm.searchInfo.cartId==27"></a>
+                                                <a target="_blank" ng-bind="groupInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId!=27"></a>
+                                                <a target="_blank" ng-bind="groupInfo.groupBean.platformMallId" ng-if="vm.searchInfo.cartId==27"></a>
                                             </span>&nbsp;
                                             <span>产品Code&nbsp;
                                                 <a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.common.fields.code" target="_blank"></a>
