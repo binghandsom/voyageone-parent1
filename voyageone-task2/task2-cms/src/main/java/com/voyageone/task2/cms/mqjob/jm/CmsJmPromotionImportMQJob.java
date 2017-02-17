@@ -3,7 +3,7 @@ package com.voyageone.task2.cms.mqjob.jm;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JmPromotionImportMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionImportMQMessageBody;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -27,12 +27,12 @@ public class CmsJmPromotionImportMQJob extends TBaseMQCmsService<JmPromotionImpo
     public void onStartup(JmPromotionImportMQMessageBody messageBody) {
         TaskControlBean taskControlBean = getTaskControlBean(taskControlList, "cms.jm.import.path");
         if (taskControlBean == null) {
-            this.cmsConfigExLog(messageBody, "请tm_task_control中配置cms.jm.import.path");
+            cmsConfigExLog(messageBody, "请tm_task_control中配置cms.jm.import.path");
             return;
         }
+
         String importPath = taskControlBean.getCfg_val1();
         FileUtils.mkdirPath(importPath);
-        int id = messageBody.getJmBtPromotionImportTaskId();
-        service.importFile(id, importPath);
+        service.importFile(messageBody.getJmBtPromotionImportTaskId(), importPath);
     }
 }

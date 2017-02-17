@@ -15,7 +15,6 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.jd.service.JdWareService;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.fields.cms.CmsBtShelvesProductModelStatus;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
@@ -23,12 +22,9 @@ import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsShelvesMonitorMQMessageBody;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.task2.base.BaseMQCmsService;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -214,12 +210,7 @@ public class CmsShelvesMonitorMQJob extends TBaseMQCmsService<CmsShelvesMonitorM
     private void sendMq(CmsShelvesMonitorMQMessageBody messageMap){
         Integer shelvesId = messageMap.getShelvesId();
         if(CacheHelper.getValueOperation().get("ShelvesMonitor_"+ shelvesId) != null){
-            try {
-                cmsMqSenderService.sendMessage(messageMap, 30);
-            } catch (MQMessageRuleException e) {
-                e.printStackTrace();
-            }
-//            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_ShelvesMonitorJob, messageMap, 30);
+            cmsMqSenderService.sendMessage(messageMap, 30);
         }
     }
 

@@ -11,7 +11,6 @@ import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.bi.BiVtSalesProductExt;
 import com.voyageone.service.impl.BaseService;
@@ -254,9 +253,8 @@ public class CmsProductBIDataService extends BaseService {
      *
      * @param channelId
      * @param cartId
-     * @throws MQMessageRuleException
      */
-    public void sendMessage(String channelId, int cartId,String sender) throws MQMessageRuleException {
+    public void sendMessage(String channelId, Integer cartId,String sender) {
         CmsProductBIDataMQMessageBody mqMessageBody = new CmsProductBIDataMQMessageBody();
         mqMessageBody.setChannelId(channelId);
         mqMessageBody.setCartId(cartId);

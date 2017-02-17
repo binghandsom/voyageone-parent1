@@ -17,9 +17,7 @@ import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.core.CoreUrlConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -167,7 +165,7 @@ public class CmsMenuController extends CmsController {
     public AjaxResponse getCmsConfig()
     {
         Map<String,Object> response = new HashMap<>();
-        response.put("autoApprovePrice",CmsChannelConfigs.getConfigBeans(getUser().getSelChannelId(), CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE));
+        response.put("autoApprovePrice",CmsChannelConfigs.getConfigBeans(getUser().getSelChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE));
         return success(response);
     }
 

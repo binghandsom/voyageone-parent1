@@ -2,7 +2,6 @@ package com.voyageone.web2.cms.views.shelves;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.fields.cms.CmsBtShelvesModelActive;
 import com.voyageone.service.fields.cms.CmsBtShelvesProductHistoryModelStatus;
 import com.voyageone.service.fields.cms.CmsBtTagModelTagType;
@@ -13,9 +12,6 @@ import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsShelvesImageUploadMQMessageBody;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
@@ -29,7 +25,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -49,20 +47,20 @@ public class CmsShelvesDetailController extends CmsController {
     private final CmsBtShelvesProductHistoryService cmsBtShelvesProductHistoryService;
     private final TagService tagService;
 
-    private final CmsMqSenderService mqSender;
+    private final CmsMqSenderService cmsMqSenderService;
 
     @Autowired
     public CmsShelvesDetailController(CmsShelvesDetailService cmsShelvesDetailService,
                                       CmsBtShelvesService cmsBtShelvesService,
                                       CmsAdvanceSearchService advanceSearchService,
                                       CmsBtShelvesProductService cmsBtShelvesProductService,
-                                      TagService tagService, CmsMqSenderService mqSender, ProductTagService productTagService, CmsBtShelvesProductHistoryService cmsBtShelvesProductHistoryService) {
+                                      TagService tagService, CmsMqSenderService cmsMqSenderService, ProductTagService productTagService, CmsBtShelvesProductHistoryService cmsBtShelvesProductHistoryService) {
         this.cmsShelvesDetailService = cmsShelvesDetailService;
         this.cmsBtShelvesService = cmsBtShelvesService;
         this.advanceSearchService = advanceSearchService;
         this.cmsBtShelvesProductService = cmsBtShelvesProductService;
         this.tagService = tagService;
-        this.mqSender = mqSender;
+        this.cmsMqSenderService = cmsMqSenderService;
         this.productTagService = productTagService;
         this.cmsBtShelvesProductHistoryService = cmsBtShelvesProductHistoryService;
     }
@@ -202,9 +200,9 @@ public class CmsShelvesDetailController extends CmsController {
         param.setShelvesId(shelvesId);
         param.setSender(getUser().getUserName());
         try {
-            mqSender.sendMessage(param);
+            cmsMqSenderService.sendMessage(param);
             return success(true);
-        } catch (MQMessageRuleException e) {
+        } catch (BusinessException e) {
             $error(e);
             e.printStackTrace();
             return success(false);

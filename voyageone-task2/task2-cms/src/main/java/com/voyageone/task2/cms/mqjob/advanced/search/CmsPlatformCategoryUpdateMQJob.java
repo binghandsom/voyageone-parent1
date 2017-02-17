@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
-import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsPlatformCategoryUpdateMQMessageBody;
@@ -27,6 +26,7 @@ public class CmsPlatformCategoryUpdateMQJob extends TBaseMQCmsService<CmsPlatfor
     public void onStartup(CmsPlatformCategoryUpdateMQMessageBody messageBody) throws Exception {
 
         List<String> productCodes = messageBody.getProductCodes();
+        super.count = productCodes.size();
         Integer cartId = messageBody.getCartId();
 
         List<BulkUpdateModel> bulkList = new ArrayList<>(productCodes.size());
@@ -46,7 +46,7 @@ public class CmsPlatformCategoryUpdateMQJob extends TBaseMQCmsService<CmsPlatfor
             bulkList.add(model);
         }
 
-        BulkWriteResult bulkWriteResult = productService.bulkUpdateWithMap(messageBody.getChannelId(), bulkList, messageBody.getSender(), "$set");
-        cmsSuccessLog(messageBody, "更新了"+bulkWriteResult.getModifiedCount()+"条");
+        productService.bulkUpdateWithMap(messageBody.getChannelId(), bulkList, messageBody.getSender(), "$set");
+
     }
 }

@@ -48,16 +48,16 @@ public class ProductPriceUpdateMQMessageBody extends BaseMQMessageBody {
     public void check() throws MQMessageRuleException {
 
         if (StringUtils.isBlank(channelId)) {
-            throw new MQMessageRuleException("product和group的价格刷新MQ发送异常, 参数channelId为空.");
+            throw new MQMessageRuleException("定时任务-同步产品sku的价格至code的group价格范围MQ发送异常, 参数channelId为空.");
         }
         if (prodId == null) {
-            throw new MQMessageRuleException("product和group的价格刷新MQ发送异常, 参数prodId为空.");
+            throw new MQMessageRuleException("定时任务-同步产品sku的价格至code的group价格范围MQ发送异常, 参数prodId为空.");
         }
         if (cartId == null) {
-            throw new MQMessageRuleException("product和group的价格刷新MQ发送异常, 参数cartId为空.");
+            throw new MQMessageRuleException("定时任务-同步产品sku的价格至code的group价格范围MQ发送异常, 参数cartId为空.");
         }
         if (StringUtils.isBlank(getSender())) {
-            throw new MQMessageRuleException("sender(发送者)不能为空");
+            throw new MQMessageRuleException("定时任务-同步产品sku的价格至code的group价格范围MQ发送异常, 发送者为空.");
         }
     }
 }

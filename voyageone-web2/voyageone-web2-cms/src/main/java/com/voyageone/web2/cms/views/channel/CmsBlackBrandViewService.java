@@ -4,7 +4,6 @@ import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.CmsMtPlatformBrandService;
@@ -19,7 +18,10 @@ import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -112,7 +114,7 @@ class CmsBlackBrandViewService extends BaseViewService {
         return result;
     }
 
-    boolean switchBrandBlock(CmsBlackBrandParamBean blackBrandParamBean, UserSessionBean user) throws IllegalAccessException, MQMessageRuleException {
+    boolean switchBrandBlock(CmsBlackBrandParamBean blackBrandParamBean, UserSessionBean user) throws IllegalAccessException {
 
         Boolean status = blackBrandParamBean.getStatus();
 
@@ -133,7 +135,7 @@ class CmsBlackBrandViewService extends BaseViewService {
         return true;
     }
 
-    private void switchBrandBlock(boolean blocked, String channelId, CmsBlackBrandViewBean blackBrandViewBean, String username) throws IllegalAccessException, MQMessageRuleException {
+    private void switchBrandBlock(boolean blocked, String channelId, CmsBlackBrandViewBean blackBrandViewBean, String username) throws IllegalAccessException {
         if (blocked)
             brandBlockService.block(channelId, blackBrandViewBean.getCartId(), blackBrandViewBean.getType(),
                     blackBrandViewBean.getBrand(), username);

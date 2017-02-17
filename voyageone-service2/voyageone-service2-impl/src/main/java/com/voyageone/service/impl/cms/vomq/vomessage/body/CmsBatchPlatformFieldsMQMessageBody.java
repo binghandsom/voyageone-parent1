@@ -4,6 +4,8 @@ import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 
@@ -70,6 +72,26 @@ public class CmsBatchPlatformFieldsMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
-
+        if (StringUtils.isBlank(channelId)) {
+            throw new MQMessageRuleException("高级检索-批量设置平台属性MQ发送异常, 参数channelId为空.");
+        }
+        if (CollectionUtils.isEmpty(productCodes)) {
+            throw new MQMessageRuleException("高级检索-批量设置平台属性MQ发送异常, 参数productCodes为空.");
+        }
+        if (cartId == null) {
+            throw new MQMessageRuleException("高级检索-批量设置平台属性MQ发送异常, 参数cartId为空.");
+        }
+        if (StringUtils.isBlank(fieldsId)) {
+            throw new MQMessageRuleException("高级检索-批量设置平台属性MQ发送异常, 参数fieldsId为空.");
+        }
+        if (StringUtils.isBlank(fieldsName)) {
+            throw new MQMessageRuleException("高级检索-批量设置平台属性MQ发送异常, 参数fieldsName为空.");
+        }
+        if (fieldsValue == null) {
+            throw new MQMessageRuleException("高级检索-批量设置平台属性MQ发送异常, 参数fieldsValue为空.");
+        }
+        if (StringUtils.isEmpty(getSender())) {
+            throw new MQMessageRuleException("高级检索-批量设置平台属性MQ发送异常, 发送者为空.");
+        }
     }
 }

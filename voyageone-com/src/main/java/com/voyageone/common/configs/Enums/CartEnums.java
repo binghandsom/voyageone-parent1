@@ -69,12 +69,12 @@ public class CartEnums {
         /**
          * Usjoi天猫国际官网同购
          */
-        USTT("31"),
+        LTT("31"),
 
         /**
          * Liking官网
          */
-        LIKING("32"),
+        LCN("32"),
 
         /**
          * 分销
@@ -132,9 +132,9 @@ public class CartEnums {
                 case "30":
                     return TT;
                 case "31":
-                    return USTT;
+                    return LTT;
                 case "32":
-                    return LIKING;
+                    return LCN;
                 case "33":
                     return DT;
                 case "928":
@@ -154,6 +154,17 @@ public class CartEnums {
         }
 
         /**
+         * 判断给定的店铺是否是天猫系
+         *
+         * @param cart 某店铺
+         * @return 是否是天猫系
+         * @since 2.6.0
+         */
+        public static boolean isOfficialSeries(Cart cart) {
+            return CN.equals(cart) || LCN.equals(cart);
+        }
+
+        /**
          * 判断给定的店铺是否是同购店
          *
          * @param cart 某店铺
@@ -161,7 +172,7 @@ public class CartEnums {
          * @since 2.6.0
          */
         public static boolean isSimple(Cart cart) {
-            return TT.equals(cart) || USTT.equals(cart);
+            return TT.equals(cart) || LTT.equals(cart);
         }
 
         /**
@@ -201,7 +212,7 @@ public class CartEnums {
          * @since 2.10.0
          */
         public static boolean isCommonCategorySchema(String cartId) {
-            return JM.getId().equals(cartId) || TT.getId().equals(cartId) || USTT.getId().equals(cartId) || CN.getId().equals(cartId) || LIKING.getId().equals(cartId);
+            return JM.getId().equals(cartId) || TT.getId().equals(cartId) || LTT.getId().equals(cartId) || CN.getId().equals(cartId) || LCN.getId().equals(cartId);
         }
 
     }

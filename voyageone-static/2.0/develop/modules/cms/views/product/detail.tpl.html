@@ -32,44 +32,36 @@
                 <tab-heading>Feed详情</tab-heading>
                 <feed-schema product-info="ctrl.product"></feed-schema>
             </uib-tab>
-
             <!---------------------------------------------------平台产品详情页面(不包含独立官网)---------------------------------->
             <uib-tab ng-repeat="platformType in ctrl.platformTypes"
                      ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="$active">
+               <tab-heading>{{platformType.name}}详情</tab-heading>
 
-                    <tab-heading>{{platformType.name}}详情</tab-heading>
-
-                    <!--聚美 & 京东 & 天猫国际-->
-                    <div ng-if="(platformType.value >= 20 && platformType.value < 30)  ">
-                        <jd-schema product-info="ctrl.product" cart-info="platformType"></jd-schema>
-                    </div>
-
-                    <!--官网同购-->
-                    <div ng-if="platformType.value >= 30 && platformType.value <= 31 || platformType.value == 33">
-                        <gw-schema product-info="ctrl.product" cart-info="platformType"></gw-schema>
-                    </div>
-
-                <tab-heading>{{platformType.name}}详情</tab-heading>
-                <div ng-if="platformType.value == 25 || platformType.value == 32 ">
-                    <dl-schema product-info="ctrl.product" cart-info="platformType"></dl-schema>
+                <div ng-if="platformType.value == 20 || platformType.value == 23">
+                    <tm-sub-page product-info="ctrl.product" cart-info="platformType"></tm-sub-page>
                 </div>
-                    <!--usjoi & 匠心界   相关子店价格check要去掉  -->
-<!--                    <div ng-if="platformType.value > 900">
-                        <jgj-schema product-info="ctrl.product" cart-info="platformType"></jgj-schema>
-                    </div>-->
+
+                <div ng-if="platformType.value == 24 || platformType.value == 26 || platformType.value == 28 || platformType.value == 29">
+                    <jd-sub-page product-info="ctrl.product" cart-info="platformType"></jd-sub-page>
+                </div>
+
+                <div ng-if="platformType.value == 27">
+                    <jm-sub-page product-info="ctrl.product" cart-info="platformType"></jm-sub-page>
+                </div>
+
+                <div ng-if="platformType.value == 30 || platformType.value == 31">
+                    <gt-sub-page product-info="ctrl.product" cart-info="platformType"></gt-sub-page>
+                </div>
+
+                <div ng-if="platformType.value == 25 || platformType.value == 32">
+                    <dg-sub-page product-info="ctrl.product" cart-info="platformType"></dg-sub-page>
+                </div>
+
+                <div ng-if="platformType.value == 33">
+                    <fx-sub-page product-info="ctrl.product" cart-info="platformType"></fx-sub-page>
+                </div>
 
             </uib-tab>
-
-            <!---------------------------------------------------独立官网详情页面-------------------------------------------------->
-            <!--<uib-tab ng-repeat="platformType in ctrl.platformTypes "-->
-                     <!--ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="$active">-->
-
-                <!--<tab-heading>{{platformType.name}}详情</tab-heading>-->
-                <!--<div ng-if="platformType.value == 25 || platformType.value == 32 ">-->
-                    <!--<dl-schema product-info="ctrl.product" cart-info="platformType"></dl-schema>-->
-                <!--</div>-->
-
-            <!--</uib-tab>-->
 
         </uib-tabset>
     </div>

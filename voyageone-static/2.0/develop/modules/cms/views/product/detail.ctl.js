@@ -1,7 +1,5 @@
 /**
- * @Description:
- *
- * @User: linanbin
+ * @Description: 产品详情页主入口
  * @Version: 2.0.0, 15/12/24
  */
 
@@ -9,16 +7,17 @@ define([
     'cms',
     'modules/cms/controller/popup.ctl',
     'modules/cms/service/product.detail.service',
-    './jd.component.ctl',
     './feed.component.ctl',
     './sku.component.ctl',
     './master.component.ctl',
-    './jgj.component.ctl',
-    './gw.component.ctl',
-    './dl.component.ctl',
     './price.component.ctl',
-    './dl.component.ctl',
-    './inventory.component.ctl'
+    './inventory.component.ctl',
+    './subpage/tm.sub-page.ctl',
+    './subpage/jd.sub-page.ctl',
+    './subpage/jm.sub-page.ctl',
+    './subpage/gt.sub-page.ctl',
+    './subpage/dg.sub-page.ctl',
+    './subpage/fx.sub-page.ctl'
 ], function (cms) {
 
     return cms.controller('productDetailController', (function () {
@@ -51,9 +50,10 @@ define([
             var self = this,
                 _cartObj = self.routeParams.cartId;
 
+            // cartId:928【匠心界】,929【悦境】不显示
             self.menuService.getPlatformType().then(function (resp) {
                 self.platformTypes = _.filter(resp, function (element) {
-                    return element.value >= 20;
+                    return element.value >= 20 && element.value < 928;
                 });
             });
 
@@ -75,18 +75,18 @@ define([
 
         /**锁定操作*/
         ProductDetailController.prototype.lockProduct = function (domId) {
-            var self = this,
+            var self = this,lock,notice,
                 message = self.product.lockStatus ? "您确定要锁定商品吗？" : "您确定要解锁商品吗？";
 
             this.confirm(message).then(function () {
 
-                var lock = self.product.lockStatus ? "1" : "0";
+                lock = self.product.lockStatus ? "1" : "0";
 
                 self.productDetailService.updateLock({
                     prodId: self.product.productId,
                     lock: lock
                 }).then(function () {
-                    var notice = self.product.lockStatus ? "商品已锁定" : "商品已接触锁定";
+                    notice = self.product.lockStatus ? "商品已锁定" : "商品已接触锁定";
                     $("#".concat(domId)).notify(notice, {className: "success", position: "right"});
                 });
 

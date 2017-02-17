@@ -21,6 +21,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtSxCnProductSellercatModel;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +49,13 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
     @Autowired
     private CmsBtSxCnProductSellercatDaoExt cnProductSellercatDao;
 
-    // 返回值由void改为Map，存放因“产品数据不完整”跳过的产品code和对于的错误提示信息
-    public Map<String, String> onStartup(Map<String, Object> messageMap) {
-        Map<String, String> errorMap = new HashMap<>();
+    /**
+     * 返回值由void改为Map，存放因“产品数据不完整”跳过的产品code和对于的错误提示信息
+     * @param messageMap
+     * @return
+     */
+    public List<CmsBtOperationLogModel_Msg> onStartup(Map<String, Object> messageMap) {
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
         List<String> codeList = (List) messageMap.get("productIds");
         List<String> approvedCodeList = new ArrayList<>();
         if (codeList == null || codeList.isEmpty()) {
@@ -89,8 +94,6 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
 
         List<CmsBtProductModel> prodList = productService.getList(channelId, queryObject);
         if (prodList == null && prodList.size() == 0) {
-            /*$warn("查询不到产品 params=" + messageMap.toString());
-            return;*/
             throw new BusinessException(String.format("查询不到产品,params=%s"), JacksonUtil.bean2Json(messageMap));
         }
 
@@ -107,8 +110,12 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
             CmsBtProductModel_Platform_Cart platformObj = prodObj.getPlatform(cartId);
             if (platformObj == null) {
                 // 产品数据不完整的记录到日志中
-                errorMap.put(prodCode, String.format("产品数据不完整，缺少Platform，prodCode=%s，cartId=%s", prodCode, cartId));
                 $error("产品数据不完整，缺少Platform， prodCode=" + prodCode);
+
+                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                errorInfo.setSkuCode(prodCode);
+                errorInfo.setMsg(String.format("产品数据不完整，缺少Platform，cartId=%s", cartId));
+                failList.add(errorInfo);
                 continue;
             }
             // 变更前的分类选择
@@ -180,36 +187,9 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
             $debug(String.format("批量设置店铺内分类 channelId=%s 结果=%s", channelId, rs.toString()));
         }
 
-        // 独立官网时，不做上新，只记录变更结果
-        if (CartEnums.Cart.CN.getValue() == cartId) {
-            // 记录分类的变更
-            List<CmsBtSxCnProductSellercatModel> updModelList = new ArrayList<>();
-            CmsBtSxCnProductSellercatModel model = new CmsBtSxCnProductSellercatModel();
-            model.setChannelId(channelId);
-            model.setUpdFlg("0");
-            model.setCreater(userName);
-
-            for (Map<String, Object> vatObj : updCatObjMap.values()) {
-                List<String> cIdList = (List<String>) vatObj.get("cIds");
-                if (cIdList == null || cIdList.isEmpty()) {
-                    continue;
-                }
-                for (String catId : cIdList) {
-                    if (isInList(updModelList, catId)) {
-                        continue;
-                    }
-                    model.setCatId(catId);
-                    updModelList.add(model);
-                }
-            }
-
-            int rsCnt = cnProductSellercatDao.insertByList(updModelList);
-            $debug(String.format("批量设置店铺内分类 记录变更结果=%d", rsCnt));
-        } else {
-            //取得approved的code插入
-            $debug("批量设置店铺内分类 开始记入SxWorkLoad表");
-            sxProductService.insertSxWorkLoad(channelId, approvedCodeList, cartId, userName);
-        }
+        //取得approved的code插入
+        $debug("批量设置店铺内分类 开始记入SxWorkLoad表");
+        sxProductService.insertSxWorkLoad(channelId, approvedCodeList, cartId, userName);
 
         // 记录商品修改历史
         TypeChannelBean cartObj = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, Integer.toString(cartId), "cn");
@@ -233,7 +213,7 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
             msg = "高级检索 批量设置[" + cartObj.getName() + "]店铺内分类" + catNameStr.toString();
         }
         productStatusHistoryService.insertList(channelId, codeList, cartId, EnumProductOperationType.BatchSetCats, msg, userName);
-        return errorMap;
+        return failList;
     }
 
     /**

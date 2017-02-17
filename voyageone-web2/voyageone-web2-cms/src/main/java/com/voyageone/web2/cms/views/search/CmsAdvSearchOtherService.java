@@ -236,7 +236,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             salseSumList.add(keySum30Map);
             
             Map<String, String> keySumYearMap = new HashMap<>(2);
-            keySumYearMap.put("name", cartName + "年销量");
+            keySumYearMap.put("name", cartName + "YTD销量");
             keySumYearMap.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_YEAR + "." + CmsBtProductModel_Sales.CARTID + cartId);
             salseSumList.add(keySumYearMap);
             

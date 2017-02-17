@@ -2,7 +2,6 @@ package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
@@ -16,8 +15,7 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
-import com.voyageone.components.rabbitmq.service.MqSenderService;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
@@ -25,11 +23,11 @@ import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
 import com.voyageone.service.impl.cms.vomqjobservice.CmsProductFreeTagsUpdateService;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
@@ -74,13 +72,9 @@ public class CmsAdvanceSearchService extends BaseViewService {
     @Autowired
     private CmsAdvSearchOtherService advSearchOtherService;
     @Autowired
-    private ProductTagService productTagService;
-    @Autowired
     private CmsBtProductDao cmsBtProductDao;
-    //@Autowired
-    //private MqSender sender;
     @Autowired
-    private MqSenderService mqSenderService;
+    private CmsMqSenderService cmsMqSenderService;
     @Autowired
     private CmsBtExportTaskService cmsBtExportTaskService;
 
@@ -203,12 +197,17 @@ public class CmsAdvanceSearchService extends BaseViewService {
         masterData.put("cartList", cartList);
 
         // 是否自动最终售价同步指导价格
-        CmsChannelConfigBean autoPriceCfg = CmsChannelConfigs.getConfigBeanNoCode(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
-        String autoApprovePrice = "0"; // 缺省不自动同步
-        if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
-             autoApprovePrice = "1"; // 自动同步
+        List<CmsChannelConfigBean> autoPriceCfg = CmsChannelConfigs.getConfigBeans(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE);
+//        String autoApprovePrice = "0"; // 缺省不自动同步
+//        if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
+//             autoApprovePrice = "1"; // 自动同步
+//        }
+//        ;
+        if(!ListUtils.isNull(autoPriceCfg)) {
+            masterData.put("autoApprovePrice", autoPriceCfg.stream().collect(Collectors.toMap(CmsChannelConfigBean::getConfigCode, o -> o)));
+        }else{
+            masterData.put("autoApprovePrice", new HashMap<>());
         }
-        masterData.put("autoApprovePrice", autoApprovePrice);
 
         // 是否是使用价格公式
         CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanNoCode(userInfo.getSelChannelId(), PRICE_CALCULATOR);
@@ -454,7 +453,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
     }
 
     /**
-     * 获取数据文件内容
+     * 获取数据文件内容,什么数据，从前端来的吗？
      */
     public boolean getCodeExcelFile(Map<String, Object> searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean, String language) {
         // 创建文件下载任务
@@ -488,12 +487,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
             advSearchExportMQMessageBody.setCmsBtExportTaskId(taskModel.getId());
             advSearchExportMQMessageBody.setSearchValue(searchValue);
             advSearchExportMQMessageBody.setSender(userInfo.getUserName());
-            try {
-                mqSenderService.sendMessage(advSearchExportMQMessageBody);
-            } catch (MQMessageRuleException e) {
-                $error(String.format("高级检索文件导出消息发送异常, channelId=%s, userName=%s", userInfo.getSelChannelId(), userInfo.getUserName()));
-                throw new BusinessException("MQ发送异常:" + e.getMessage());
-            }
+            cmsMqSenderService.sendMessage(advSearchExportMQMessageBody);
             return true;
         } else {
             return false;

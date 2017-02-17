@@ -41,6 +41,12 @@ public class CmsPromotionIndexController extends CmsController {
         this.cmsBtJmPromotionService = cmsBtJmPromotionService;
     }
 
+/*    @RequestMapping(PROMOTION.LIST.INDEX.TEST)
+    public AjaxResponse test(@RequestBody PageQueryParameters platform) {
+        return success(cmsPromotionService.test(platform));
+    }*/
+
+
     @RequestMapping(PROMOTION.LIST.INDEX.INIT)
     public AjaxResponse init() {
         return success(cmsPromotionService.init(getUser().getSelChannelId(), getLang()));

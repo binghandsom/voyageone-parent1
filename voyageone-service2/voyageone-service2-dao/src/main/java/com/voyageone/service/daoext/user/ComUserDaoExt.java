@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface ComUserDaoExt {
@@ -26,4 +27,7 @@ public interface ComUserDaoExt {
 
 
     List<String> selectChannels(Object map);
+
+
+    List<Map<String, String>> selectChannelsByUser (String userAccount);
 }

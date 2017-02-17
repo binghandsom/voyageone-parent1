@@ -1,17 +1,14 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.SaveChannelCategoryMQMessageBody;
 import com.voyageone.service.impl.cms.vomqjobservice.CmsSaveChannelCategoryService;
-
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * 保存店铺内分类Job
@@ -28,17 +25,13 @@ public class CmsSaveChannelCategoryMQJob extends TBaseMQCmsService<SaveChannelCa
 
     @Override
     public void onStartup(SaveChannelCategoryMQMessageBody messageBody) throws Exception {
-        try {
-            Map<String, String> errorMap = saveChannelCategoryService.onStartup(messageBody.getParams());
-            if (errorMap != null && errorMap.size() > 0) {
-                cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(errorMap));
-            }
-        } catch (Exception e) {
-            if (e instanceof BusinessException) {
-                cmsBusinessExLog(messageBody, e.getMessage());
-            } else {
-                cmsLog(messageBody, OperationLog_Type.unknownException, e.getMessage());
-            }
+
+        List<String> codeList = (List) messageBody.getParams().get("productIds");
+        super.count = codeList.size();
+        List<CmsBtOperationLogModel_Msg> failList = saveChannelCategoryService.onStartup(messageBody.getParams());
+        if (failList.size() > 0) {
+            String comment = String.format("处理总件数(%s), 处理失败件数(%s)", codeList.size(), failList.size());
+            cmsSuccessIncludeFailLog(messageBody, comment, failList);
         }
     }
 }

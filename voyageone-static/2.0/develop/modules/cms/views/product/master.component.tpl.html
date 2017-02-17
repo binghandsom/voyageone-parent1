@@ -131,36 +131,13 @@
                             </div>
 
                         </div>
-                        <!----------------------------------------右侧悬浮框-------------------------------------------->
-                        <div class="col-sm-2">
-                            <div  style="float: right;">
-                                <nav class="bs-docs-sidebar master-sidebar" drag>
-                                    <h3 drag-handle>导航栏</h3>
-                                    <ul class="nav bs-docs-sidenav">
-                                        <li class="">
-                                            <a href="javascript:void(0)" ng-click="pageAnchor('master',1000)">共通属性</a>
-                                        </li>
-                                        <li class="">
-                                            <a href="javascript:void(0)" ng-click="pageAnchor('product',1000)">产品属性</a>
-                                        </li>
-                                    </ul>
-                                    <button type="button" class="btn btn-nav btn-nav-pop" ng-controller="showPopoverCtrl"
-                                            popover-html="showInfo({value:'sas',isUseComplexTemplate:true,type:'1Columns'})"
-                                            uib-popover-template="dynamicPopover.templateUrl" type="button" popover-placement="left">
-                                        状态开关
-                                    </button>
-                                    <br>
-                                    <button type="button" class="btn btn-nav btn-nav-pop" ng-click="saveProduct(openHsCodeChange)" ng-controller="popupCtrl">
-                                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;保存
-                                    </button>
-                                </nav>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
 
-                <hr>
-                <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</span>
+                <div class="product-title">
+                    <h3><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</h3>
+                </div>
                 <!------------------------------------------------以下为产品schema------------------------------------------------------->
                 <div class="container-fluid" id="product">
 
@@ -472,6 +449,31 @@
            </div>
         </div>
     </div>
+
+    <!-------------------------------- 导航栏 --------------------------------->
+    <sticky top-fix="-100" style="position: absolute; top: 280px; right: 47px;" drag>
+        <nav class="bs-docs-sidebar master-sidebar">
+            <h3 drag-handle>导航栏</h3>
+            <ul class="nav bs-docs-sidenav" style="margin-bottom: 0px">
+                <li>
+                    <a href="javascript:void(0)" ng-click="pageAnchor('master',1000)">共通属性</a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" ng-click="pageAnchor('product',1000)">产品属性</a>
+                </li>
+            </ul>
+            <button type="button" class="btn btn-nav btn-nav-pop" ng-controller="showPopoverCtrl"
+                    popover-html="showInfo({value:'sas',isUseComplexTemplate:true,type:'1Columns'})"
+                    uib-popover-template="dynamicPopover.templateUrl" type="button" popover-placement="left">
+                状态开关
+            </button>
+            <br>
+            <button type="button" class="btn btn-nav btn-nav-pop" ng-click="saveProduct(openHsCodeChange)" ng-controller="popupCtrl">
+                <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;保存
+            </button>
+        </nav>
+    </sticky>
+
 </div>
 
 <script type="text/ng-template" id="dynamicPopoverTemplate.html">

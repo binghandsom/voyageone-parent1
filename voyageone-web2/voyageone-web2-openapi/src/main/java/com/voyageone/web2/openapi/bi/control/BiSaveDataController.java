@@ -1,7 +1,6 @@
 package com.voyageone.web2.openapi.bi.control;
 
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomqjobservice.CmsProductBIDataService;
 import com.voyageone.web2.openapi.OpenApiBaseController;
 import com.voyageone.web2.openapi.bi.constants.BiUrlConstants;
@@ -57,7 +56,7 @@ public class BiSaveDataController extends OpenApiBaseController {
     }
 
     @RequestMapping(BiUrlConstants.URL.LIST.SAVE_SHOP_FINISH)
-    public VoApiResponse saveShopFinish(@RequestBody Map<String, Object> params) throws MQMessageRuleException {
+    public VoApiResponse saveShopFinish(@RequestBody Map<String, Object> params) {
         logger.info(BiUrlConstants.URL.LIST.SAVE_SHOP_FINISH);
 
         if (params.get("shop_info") == null) {

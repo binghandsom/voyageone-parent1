@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.mqservice;
 
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomqjobservice.CmsProductBIDataService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +19,7 @@ public class CmsProcductBIDataServiceTest {
     CmsProductBIDataService service;
 
      @Test
-    public  void  test() throws MQMessageRuleException {
+    public  void  test() {
         service.sendMessage("010",23,"test");
     }
 }

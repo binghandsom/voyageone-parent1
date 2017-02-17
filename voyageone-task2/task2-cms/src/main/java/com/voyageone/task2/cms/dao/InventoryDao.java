@@ -47,5 +47,16 @@ public class InventoryDao extends BaseDao {
         return null;
     }
 
+    public List<SkuInventoryForCmsBean> batchSelectInventory (String order_channel_id, int offset, int size) {
+        if (StringUtils.isNotBlank(order_channel_id) ) {
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("order_channel_id", order_channel_id);
+            params.put("offset", offset);
+            params.put("size", size);
+            return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_batchSelectInventory", params);
+        }
+        return null;
+    }
+
 
 }

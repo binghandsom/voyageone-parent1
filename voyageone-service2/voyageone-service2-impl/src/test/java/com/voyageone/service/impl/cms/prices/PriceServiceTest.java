@@ -11,7 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.*;
 
 /**
- * Created by james on 2017/2/15.
+ * Created by james on 2017/2/7.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context-service2.xml")
@@ -19,15 +19,23 @@ public class PriceServiceTest {
 
     @Autowired
     PriceService priceService;
+
     @Autowired
     ProductService productService;
     @Test
-    public void setPrice() throws Exception {
+    public void unifySkuPriceSale() throws Exception {
+        CmsBtProductModel cmsBtProductModel = productService.getProductByCode("928","10006255");
+        Integer chg = priceService.setPrice(cmsBtProductModel,false);
+//        priceService.unifySkuPriceSale(cmsBtProductModel, cmsBtProductModel.getPlatform(28).getSkus(),"928", 28);
+        System.out.println(chg);
+        return;
+    }
 
-        CmsBtProductModel cmsBtProductModel = productService.getProductByCode("928","028-ps3833884");
-        priceService.setPrice(cmsBtProductModel, 32, false);
-
-
+    @Test
+    public void repeatSizeChk() {
+        CmsBtProductModel cmsBtProductModel = productService.getProductByCode("928","10006255");
+        priceService.repeatSizeChk(cmsBtProductModel, cmsBtProductModel.getPlatform(28).getSkus(),"928");
+        return;
     }
 
 }

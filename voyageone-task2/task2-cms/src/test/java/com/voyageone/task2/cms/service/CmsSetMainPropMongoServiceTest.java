@@ -22,6 +22,10 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class CmsSetMainPropMongoServiceTest {
+    @Test
+    public void onStartup() throws Exception {
+
+    }
 
     @Autowired
     private CmsSetMainPropMongoService cmsSetMainPropMongoService;
@@ -40,7 +44,7 @@ public class CmsSetMainPropMongoServiceTest {
         List<TaskControlBean> taskControlList = new ArrayList<>();
         TaskControlBean taskControlBean = new TaskControlBean();
         taskControlBean.setCfg_name("order_channel_id");
-        taskControlBean.setCfg_val1("001");
+        taskControlBean.setCfg_val1("028");
         taskControlList.add(taskControlBean);
 
 
