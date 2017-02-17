@@ -74,7 +74,7 @@ public class CartEnums {
         /**
          * Liking官网
          */
-        LIKING("32"),
+        LCN("32"),
 
         /**
          * 分销
@@ -134,7 +134,7 @@ public class CartEnums {
                 case "31":
                     return LTT;
                 case "32":
-                    return LIKING;
+                    return LCN;
                 case "33":
                     return DT;
                 case "928":
@@ -161,7 +161,7 @@ public class CartEnums {
          * @since 2.6.0
          */
         public static boolean isOfficialSeries(Cart cart) {
-            return CN.equals(cart) || LIKING.equals(cart);
+            return CN.equals(cart) || LCN.equals(cart);
         }
 
         /**
@@ -212,7 +212,7 @@ public class CartEnums {
          * @since 2.10.0
          */
         public static boolean isCommonCategorySchema(String cartId) {
-            return JM.getId().equals(cartId) || TT.getId().equals(cartId) || LTT.getId().equals(cartId) || CN.getId().equals(cartId) || LIKING.getId().equals(cartId);
+            return JM.getId().equals(cartId) || TT.getId().equals(cartId) || LTT.getId().equals(cartId) || CN.getId().equals(cartId) || LCN.getId().equals(cartId);
         }
 
     }
