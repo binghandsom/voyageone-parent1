@@ -79,7 +79,7 @@ public class CmsProductVoRateUpdateService extends BaseService {
 
                     CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
                     errorInfo.setSkuCode(prodCode);
-                    errorInfo.setMsg("产品不存在");
+                    errorInfo.setMsg("该产品对应的平台数据不存在, cartId:" + cartId);
                     failList.add(errorInfo);
                     continue;
                 }

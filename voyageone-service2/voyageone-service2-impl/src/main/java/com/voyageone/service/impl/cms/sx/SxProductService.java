@@ -1408,7 +1408,11 @@ public class SxProductService extends BaseService {
      * @param cartId cart id
      * @return 是否为智能上新
      */
-    public boolean isSmartSx(String channelId, int cartId) {
+    public boolean isSmartSx(String channelId, Integer cartId) {
+
+        if (cartId == null)
+            return false;
+
         // 目前只支持京东系的上新
         if (!CartEnums.Cart.isJdSeries(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) { return false; }
 
