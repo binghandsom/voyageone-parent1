@@ -1494,8 +1494,10 @@ public class PriceService extends BaseService {
     }
 
     public void updatePlatFormPrice(String channelId, Integer chg, CmsBtProductModel cmsProduct, String modifier){
-        for(String cartId : cmsProduct.getPlatforms().keySet()) {
-            updatePlatFormPrice(channelId, chg, cmsProduct, Integer.parseInt(cartId), modifier);
+        for(String key : cmsProduct.getPlatforms().keySet()) {
+            Integer cartId = cmsProduct.getPlatforms().get(key).getCartId();
+            if (cartId == null || cartId < CmsConstants.ACTIVE_CARTID_MIN) continue;
+            updatePlatFormPrice(channelId, chg, cmsProduct, cartId, modifier);
         }
     }
 
