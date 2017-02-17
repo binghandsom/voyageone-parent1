@@ -644,6 +644,9 @@ public class PriceService extends BaseService {
             }
         }
 
+        if(goldPrice == null){
+            goldPrice = maxRetail;
+        }
         // 设置黄金码价格
         if (configValue2 == 3 && goldPrice != null) {
             for (BaseMongoMap<String, Object> skuInPlatform : unifySkus) {
