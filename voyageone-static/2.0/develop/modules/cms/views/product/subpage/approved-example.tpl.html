@@ -1,0 +1,98 @@
+<div class="approved-example-modal" id="combined-product" ng-controller="approvedExpPopupController as ctrl" ng-init="ctrl.init()">
+
+    <div class="approved-example">
+
+        <div class="row">
+            <div class="col-md-2 text-center m-t">
+                <label class="label label-vo">暂存</label>
+            </div>
+
+            <div class="col-md-2">
+                <svg width="150" height="50">
+                    <line x1="0" y1="25" x2="57" y2="25"  stroke="#e67e22" stroke-width="2"/>
+                    <line x1="47" y1="30" x2="57" y2="25" stroke="#e67e22" stroke-width="2"/>
+                    <line x1="47" y1="20" x2="57" y2="25" stroke="#e67e22" stroke-width="2"/>
+                </svg>
+            </div>
+
+            <div class="col-md-8 alert alert-warning" role="alert" style="margin-bottom: 0px;">
+                数据临时保存；
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2 text-center" style="height: 30px">
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2 text-center m-t">
+                <label class="label label-vo">Ready</label>
+            </div>
+
+            <div class="col-md-2">
+                <svg width="150" height="50">
+                    <line x1="0" y1="25" x2="57" y2="25"  stroke="#e67e22" stroke-width="2"/>
+                    <line x1="47" y1="30" x2="57" y2="25" stroke="#e67e22" stroke-width="2"/>
+                    <line x1="47" y1="20" x2="57" y2="25" stroke="#e67e22" stroke-width="2"/>
+                </svg>
+            </div>
+
+            <div class="col-md-8 alert alert-info" role="alert" style="margin-bottom: 0px;">
+                数据保存,商品状态：待审核。
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2 text-center">
+                <svg width="150" height="30">
+                    <line x1="35" y1="0" x2="35" y2="20"  stroke="#e67e22" stroke-width="2"/>
+                    <line x1="30" y1="15" x2="35" y2="20"  stroke="#e67e22" stroke-width="2"/>
+                    <line x1="40" y1="15" x2="35" y2="20"  stroke="#e67e22" stroke-width="2"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2 text-center m-t">
+                <label class="label label-vo">Approve</label>
+            </div>
+            <div class="col-md-2 text-center">
+                <svg width="150" height="50">
+                    <line x1="0" y1="25" x2="57" y2="25"  stroke="#e67e22" stroke-width="2"/>
+                    <line x1="47" y1="30" x2="57" y2="25" stroke="#e67e22" stroke-width="2"/>
+                    <line x1="47" y1="20" x2="57" y2="25" stroke="#e67e22" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="col-md-8 alert alert-success" style="margin-bottom: 0px;">
+                数据保存，商品状态：已审核，商品平台状态：待上新。
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-2 text-center m-t">
+                <label class="label label-vo">智能上新</label>
+            </div>
+            <div class="col-md-10 text-center">
+                <svg width="350" height="50">
+                    <line x1="0" y1="25" x2="150" y2="25"  stroke="#e67e22"  stroke-width="2"/>
+                    <line x1="150" y1="25" x2="150" y2="5" stroke="#e67e22" stroke-width="2"/>
+                    <line x1="145" y1="15" x2="150" y2="5" stroke="#e67e22" stroke-width="2"/>
+                    <line x1="155" y1="15" x2="150" y2="5" stroke="#e67e22" stroke-width="2"/>
+                </svg>
+            </div>
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <div class="row">
+        <div class="col-sm-6 col-md-offset-6 text-right">
+            <button type="button" class="btn btn-danger btn-pop" ng-click="ctrl.destroy()">取消</button>
+        </div>
+    </div>
+</div>

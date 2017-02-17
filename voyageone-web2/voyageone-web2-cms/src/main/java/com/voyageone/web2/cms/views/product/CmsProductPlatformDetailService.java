@@ -341,8 +341,14 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             // 非主商品的平台类目跟这个主商品走
             if (platformCart.getpIsMain() != 1 && (cartId != CartEnums.Cart.JM.getValue() && !CartEnums.Cart.isSimple(CartEnums.Cart.getValueByID(cartId+"")))) {
                 CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getCommon().getFields().getCode(), cartId);
+                //updated by piao 不在页面做弹出
                 if (cmsBtProductGroup == null) {
-                    throw new BusinessException(CartEnums.Cart.getValueByID(cartId + "") + "该商品的没有设置主商品，请先设置主商品：" + cmsBtProduct.getCommon().getFields().getCode());
+                    Map<String, Object> noMainResult = new HashedMap();
+                    noMainResult.put("noMain", true);
+                    noMainResult.put("cartId", cartId);
+                    noMainResult.put("mainCode", cmsBtProduct.getCommon().getFields().getCode());
+                    return noMainResult;
+                    //throw new BusinessException(CartEnums.Cart.getValueByID(cartId + "") + "该商品的没有设置主商品，请先设置主商品：" + cmsBtProduct.getCommon().getFields().getCode());
                 }
                 CmsBtProductModel mainProduct = productService.getProductByCode(channelId, cmsBtProductGroup.getMainProductCode());
                 CmsBtProductModel_Platform_Cart mainPlatform = mainProduct.getPlatform(cartId);
@@ -526,9 +532,11 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             platform.remove("schemaFields");
         }
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
+
         if(platformModel.getCartId() == 27){
             blnSmartSx = false;
         }
+
         Boolean isCatPathChg = false;
         CmsBtProductModel cmsBtProductModel = null;
         // 天猫的场合如果平台类目发生变化 清空platforms.Pxx.pProductId    CMSDOC-262

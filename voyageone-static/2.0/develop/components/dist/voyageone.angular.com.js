@@ -2979,6 +2979,26 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
  * @Version: 2.0.0
  */
 angular.module("voyageone.angular.factories").factory("notify", function ($filter) {
+
+    var notifyStyle = {
+        'noticeTip':{
+            html: "<div><span data-notify-text/></div>",
+            classes: {
+                base: {
+                    "min-width":'150px',
+                    "background-color": "#ee903d",
+                    "padding": "5px",
+                    "color": "white",
+                    "border":"1px solid #ee903d"
+                },
+                superBlue: {
+                    "color": "white",
+                    "background-color": "blue"
+                }
+            }
+        }
+    };
+
     /**
      * @ngdoc function
      * @name voNotify
@@ -2998,6 +3018,16 @@ angular.module("voyageone.angular.factories").factory("notify", function ($filte
             options.message = options.message.id;
         }
         options.message = $filter("translate")(options.message, values);
+
+        if(options.type === 'noticeTip'){
+            $.notify.addStyle('noticeTip', notifyStyle.noticeTip);
+
+            options.style = 'noticeTip';
+            _.extend(options,options.opts);
+
+            return $.notify(options.jqObj,options.message, options);
+        }
+
         return $.notify(options.message, options);
     }
 
@@ -3019,6 +3049,16 @@ angular.module("voyageone.angular.factories").factory("notify", function ($filte
             className: "danger"
         });
     };
+
+    notify.noticeTip = function(jqObj,message,options){
+        return notify({
+            jqObj:jqObj,
+            type:'noticeTip',
+            message: message,
+            opts:options
+        });
+    };
+
     return notify;
 });
 

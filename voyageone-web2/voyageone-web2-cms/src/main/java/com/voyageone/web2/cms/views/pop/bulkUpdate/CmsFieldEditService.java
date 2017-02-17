@@ -165,10 +165,13 @@ public class CmsFieldEditService extends BaseViewService {
         JongoQuery queryObj = new JongoQuery();
         StringBuilder queryStr = new StringBuilder("{")
                 .append(" 'common.fields.code':{$in:#}")
-                .append(",'common.fields.hsCodeStatus': '1'")
-//        		.append(",'platforms.P").append(cartId).append(".pBrandId': {$nin:[null, '']}")
-                .append(",'platforms.P").append(cartId).append(".pCatId': {$nin:[null, '']}")
-                .append("}");
+                .append(",'common.fields.hsCodeStatus': '1'");
+
+        if (cartId != 28 || cartId != 29) {
+            queryStr.append(",'platforms.P").append(cartId).append(".pCatId': {$nin:[null, '']}");
+        }
+        queryStr.append("}");
+
         queryObj.setQuery(queryStr.toString());
         queryObj.setParameters(productCodes);
         queryObj.setProjection("{'common.fields.code':1,'_id':0}");
@@ -184,8 +187,15 @@ public class CmsFieldEditService extends BaseViewService {
             for (CmsBtProductModel product : products) {
                 productCode = product.getCommon().getFields().getCode();
                 StringBuffer updateStr = new StringBuffer("{$set:{")
-                        .append(" 'platforms.P").append(cartId).append(".status':'Approved'")
-                        .append(",'modified':#")
+                        .append(" 'platforms.P").append(cartId).append(".status':'Approved'");
+
+                if (product.getPlatform(cartId) == null
+                        || product.getPlatform(cartId).getpStatus() == null
+                        || StringUtils.isEmpty(product.getPlatform(cartId).getpStatus().name())) {
+                    updateStr.append(",'platforms.P").append(cartId).append(".pStatus':'WaitingPublish'");
+                }
+
+                updateStr.append(",'modified':#")
                         .append(",'modifier':#")
                         .append("}}");
                 // 更新商品状态
@@ -836,7 +846,7 @@ public class CmsFieldEditService extends BaseViewService {
         mqMessageBody.setChannelId(userInfo.getSelChannelId());
         mqMessageBody.setSender(userInfo.getUserName());
         mqMessageBody.setParams(params);
-        for (List<String> codes:productCodesList) {
+        for (List<String> codes : productCodesList) {
             mqMessageBody.setProductCodes(codes);
             cmsMqSenderService.sendMessage(mqMessageBody);
         }
