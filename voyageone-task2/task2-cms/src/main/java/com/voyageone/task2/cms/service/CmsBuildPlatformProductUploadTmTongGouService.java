@@ -464,44 +464,44 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 if (!updateWare) numIId = result;
             }
 
-            {
-                // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
-                // 获取skuId
-                List<Map<String, Object>> skuMapList = null;
-                TbItemSchema tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
-                if (tbItemSchema != null) {
-                    Map<String, Field> mapField = tbItemSchema.getFieldMap();
-                    if (mapField != null) {
-                        if (mapField.containsKey("skus")) {
-                            Field fieldSkus = mapField.get("skus");
-                            if (fieldSkus != null) {
-                                skuMapList = JacksonUtil.jsonToMapList(((InputField)tbItemSchema.getFieldMap().get("skus")).getDefaultValue());
-                            }
-                        }
-                    }
-                }
-
-                // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
-                // 关联货品
-                if (skuMapList != null) {
-                    for (Map<String, Object> skuMap : skuMapList) {
-//                        skuMap: outer_id, price, quantity, sku_id
-
-                        skuMap.put("scProductId",
-                                taobaoScItemService.doSetLikingScItem(
-                                        shopProp, sxData.getMainProduct().getOrgChannelId(),
-                                        Long.parseLong(numIId),
-                                        productInfoMap.get("title"), skuMap));
-                    }
-                }
-
-
-                // 回写数据库
-                // TODO: 目前这个channelId传入的是原始channelId， 2017年4月份左右新wms上新前， 要改为928自己的channelId
-//                saveCmsBtTmScItem_Liking(channelId, cartId, skuMapList);
-                // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
-                saveCmsBtTmScItem_Liking(sxData.getMainProduct().getOrgChannelId(), cartId, skuMapList);
-            }
+//            {
+//                // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
+//                // 获取skuId
+//                List<Map<String, Object>> skuMapList = null;
+//                TbItemSchema tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
+//                if (tbItemSchema != null) {
+//                    Map<String, Field> mapField = tbItemSchema.getFieldMap();
+//                    if (mapField != null) {
+//                        if (mapField.containsKey("skus")) {
+//                            Field fieldSkus = mapField.get("skus");
+//                            if (fieldSkus != null) {
+//                                skuMapList = JacksonUtil.jsonToMapList(((InputField)tbItemSchema.getFieldMap().get("skus")).getDefaultValue());
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
+//                // 关联货品
+//                if (skuMapList != null) {
+//                    for (Map<String, Object> skuMap : skuMapList) {
+////                        skuMap: outer_id, price, quantity, sku_id
+//
+//                        skuMap.put("scProductId",
+//                                taobaoScItemService.doSetLikingScItem(
+//                                        shopProp, sxData.getMainProduct().getOrgChannelId(),
+//                                        Long.parseLong(numIId),
+//                                        productInfoMap.get("title"), skuMap));
+//                    }
+//                }
+//
+//
+//                // 回写数据库
+//                // TODO: 目前这个channelId传入的是原始channelId， 2017年4月份左右新wms上新前， 要改为928自己的channelId
+////                saveCmsBtTmScItem_Liking(channelId, cartId, skuMapList);
+//                // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
+//                saveCmsBtTmScItem_Liking(sxData.getMainProduct().getOrgChannelId(), cartId, skuMapList);
+//            }
 
             // 调用淘宝商品上下架操作(新增的时候默认为下架，只有更新的时候才根据group里面platformActive调用上下架操作)
             // 回写用商品上下架状态(OnSale/InStock)
