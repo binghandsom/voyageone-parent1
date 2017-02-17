@@ -106,7 +106,9 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                         productCodes.remove(field.getCode());
                         continue;
                     }
-                    if (field != null && ("0".equals(field.getHsCodeStatus()) && !"928".equals(channelId))) {
+                    if (field != null &&
+                            ("0".equals(field.getHsCodeStatus())
+                                    && !CartEnums.Cart.LTT.getId().equals(String.valueOf(cartIdValue)))) {
                         CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
                         errorInfo.setSkuCode(field.getCode());
                         errorInfo.setMsg(String.format("有商品商品没有设置税号, 无法审批 cartIdValue:%s", cartIdValue));
