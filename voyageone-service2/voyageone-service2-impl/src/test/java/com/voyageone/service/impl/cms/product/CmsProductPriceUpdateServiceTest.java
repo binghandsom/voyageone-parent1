@@ -24,8 +24,8 @@ public class CmsProductPriceUpdateServiceTest {
     public void updateProductRetailPrice() throws Exception {
         AdvSearchRefreshRetailPriceMQMessageBody messageBody = new AdvSearchRefreshRetailPriceMQMessageBody();
         messageBody.setChannelId("928");
-        messageBody.setCartId(27);
-        messageBody.setCodeList(Arrays.asList("028-ps6457745"));
+        messageBody.setCartId(31);
+        messageBody.setCodeList(Arrays.asList("1143593872"));
         messageBody.setSender("test");
 
         cmsProductPriceUpdateService.updateProductRetailPrice(messageBody);
