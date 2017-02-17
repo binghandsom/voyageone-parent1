@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.jm;
 
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.JMPromotionProduct.UpdateRemarkParameter;
 import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo;
@@ -15,7 +14,6 @@ import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionSku3Service;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsJmMallPromotionPriceSyncMQMessageBody;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
@@ -23,7 +21,6 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -117,7 +114,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     ///cms/jmpromotion/detail/updateDealEndTimeAll
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateDealEndTimeAll)
     //延迟Deal结束时间  全量
-    public AjaxResponse updateDealEndTimeAll(@RequestBody ParameterUpdateDealEndTimeAll parameter) throws MQMessageRuleException {
+    public AjaxResponse updateDealEndTimeAll(@RequestBody ParameterUpdateDealEndTimeAll parameter) {
         //聚美专场结束时间都以59秒结尾。
         parameter.getDealEndTime().setSeconds(59);//聚美专场结束时间都以59秒结尾。
         CallResult result = service3.updateDealEndTimeAll(parameter);
@@ -139,7 +136,7 @@ public class CmsJmPromotionDetailController extends CmsController {
 
     //所有未上新商品上新
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.JmNewUpdateAll)
-    public AjaxResponse jmNewUpdateAll(@RequestBody int promotionId) throws MQMessageRuleException {
+    public AjaxResponse jmNewUpdateAll(@RequestBody int promotionId) {
         serviceCmsBtJmPromotionProduct.jmNewUpdateAll(promotionId);
         service3.sendMessage(promotionId,getUser().getUserName());
         CallResult result = new CallResult();
@@ -148,7 +145,7 @@ public class CmsJmPromotionDetailController extends CmsController {
 
     //部分商品上新
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.JmNewByProductIdListInfo)
-    public AjaxResponse jmNewByProductIdListInfo(@RequestBody ProductIdListInfo parameter) throws MQMessageRuleException {
+    public AjaxResponse jmNewByProductIdListInfo(@RequestBody ProductIdListInfo parameter) {
         serviceCmsBtJmPromotionProduct.jmNewByProductIdListInfo(parameter);
         service3.sendMessage(parameter.getPromotionId(),getUser().getUserName());
 
@@ -199,7 +196,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     }
     //批量同步商城价格
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchSynchMallPrice)
-    public AjaxResponse batchSyncMallPrice(@RequestBody CmsJmMallPromotionPriceSyncMQMessageBody parameter) throws MQMessageRuleException {
+    public AjaxResponse batchSyncMallPrice(@RequestBody CmsJmMallPromotionPriceSyncMQMessageBody parameter) {
         parameter.setChannelId(getUser().getSelChannelId());
         parameter.setSender(getUser().getUserName());
         cmsMqSenderService.sendMessage(parameter);
@@ -207,7 +204,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     }
     //批量同步价格
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchSynchPrice)
-    public AjaxResponse batchSyncPrice(@RequestBody BatchSynchPriceParameter parameter) throws MQMessageRuleException {
+    public AjaxResponse batchSyncPrice(@RequestBody BatchSynchPriceParameter parameter) {
         service3.batchSynchPrice(parameter);
         service3.sendMessage(parameter.getPromotionId(),getUser().getUserName());
         CallResult result = new CallResult();
@@ -215,7 +212,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.SynchAllPrice)
-    public AjaxResponse syncAllPrice(@RequestBody int promotionId) throws MQMessageRuleException {
+    public AjaxResponse syncAllPrice(@RequestBody int promotionId) {
         CallResult result = service3.synchAllPrice(promotionId);
         if (result.isResult()) {
             service3.sendMessage(promotionId,getUser().getUserName());
@@ -225,7 +222,7 @@ public class CmsJmPromotionDetailController extends CmsController {
 
     //批量再售
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchCopyDeal)
-    public AjaxResponse batchCopyDeal(@RequestBody BatchCopyDealParameter parameter) throws MQMessageRuleException {
+    public AjaxResponse batchCopyDeal(@RequestBody BatchCopyDealParameter parameter) {
         service3.batchCopyDeal(parameter);
         service3.sendMessage(parameter.getPromotionId(),getUser().getUserName());
         CallResult result = new CallResult();
@@ -234,7 +231,7 @@ public class CmsJmPromotionDetailController extends CmsController {
 
     //全量再售
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.CopyDealAll)
-    public AjaxResponse copyDealAll(@RequestBody int promotionId) throws MQMessageRuleException {
+    public AjaxResponse copyDealAll(@RequestBody int promotionId) {
         CallResult result = service3.copyDealAll(promotionId);
         if (result.isResult()) {
             service3.sendMessage(promotionId,getUser().getUserName());
@@ -306,7 +303,7 @@ public class CmsJmPromotionDetailController extends CmsController {
 
     //刷新参考价格
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.RefreshPrice)
-    public  AjaxResponse refreshPrice(@RequestBody int jmPromotionId) throws MQMessageRuleException {
+    public  AjaxResponse refreshPrice(@RequestBody int jmPromotionId) {
         cmsBtJmPromotionSkuService.senderJMRefreshPriceMQMessage(jmPromotionId, getUser().getUserName());
         return success(null);
     }

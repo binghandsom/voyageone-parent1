@@ -1,7 +1,6 @@
 package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.ExceptionUtil;
@@ -17,7 +16,7 @@ import com.voyageone.service.daoext.cms.CmsBtJmPromotionExportTaskDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JmPromotionExportMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionExportMQMessageBody;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionProductService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel;
 import com.voyageone.service.model.util.MapModel;
@@ -213,9 +212,8 @@ public class CmsBtJmPromotionExportTask3Service {
     /**
      *
      * @param jmPromotionExportMQMessageBody
-     * @throws MQMessageRuleException
      */
-    public void sendMessage(JmPromotionExportMQMessageBody jmPromotionExportMQMessageBody) throws MQMessageRuleException {
+    public void sendMessage(JmPromotionExportMQMessageBody jmPromotionExportMQMessageBody) {
         cmsMqSenderService.sendMessage(jmPromotionExportMQMessageBody);
     }
 

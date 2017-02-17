@@ -1,14 +1,14 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.BatchUpdateProductMQMessageBody;
 import com.voyageone.service.impl.cms.vomqjobservice.CmsBatchUpdateService;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * 批量更新商品Job
@@ -25,9 +25,12 @@ public class CmsBatchUpdateProductMQJob extends TBaseMQCmsService<BatchUpdatePro
 
     @Override
     public void onStartup(BatchUpdateProductMQMessageBody messageBody) {
-        Map<String, String> failMap = batchUpdateService.onStartup(messageBody);
-        if (failMap != null && failMap.size() > 0) {
-            this.cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(failMap));
+
+        super.count = messageBody.getProductCodes().size();
+        List<CmsBtOperationLogModel_Msg> failList = batchUpdateService.updateProductComField(messageBody);
+        if (failList.size() > 0) {
+            String comment = String.format("处理总件数(%s), 处理失败件数(%s)", messageBody.getProductCodes().size(), failList.size());
+            cmsSuccessIncludeFailLog(messageBody, comment, failList);
         }
     }
 }

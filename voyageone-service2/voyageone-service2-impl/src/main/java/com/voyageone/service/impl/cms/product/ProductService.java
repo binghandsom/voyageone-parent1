@@ -823,7 +823,7 @@ public class ProductService extends BaseService {
                         case TM:
                         case TB:
                         case TT:
-                        case USTT:
+                        case LTT:
                             numIid = grpObj != null && !StringUtils.isEmpty(grpObj.getNumIId())
                                     ? Constants.productForOtherSystemInfo.TMALL_NUM_IID + grpObj.getNumIId() : "";
                             break;
@@ -958,12 +958,14 @@ public class ProductService extends BaseService {
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         HashMap<String, Object> updateMap = new HashMap<>();
+
         platformModel.setModified(DateTimeUtil.getNowTimeStamp());
         updateMap.put("platforms.P" + platformModel.getCartId(), platformModel);
         BulkUpdateModel model = new BulkUpdateModel();
         model.setUpdateMap(updateMap);
         model.setQueryMap(queryMap);
         bulkList.add(model);
+
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
 
         if (CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(platformModel.getStatus())) {
@@ -1385,7 +1387,7 @@ public class ProductService extends BaseService {
                 case TM:
                 case TG:
                 case TT:
-                case USTT:
+                case LTT:
                     tbProductService.delItem(shopBean, numIid);
                     break;
                 case JD:

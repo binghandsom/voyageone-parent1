@@ -1229,7 +1229,7 @@ public class SxProductService extends BaseService {
             // modified by morse.lu 2016/10/26 start
             // liking 不允许手动填写别名
 //            if (!StringUtils.isEmpty(sizeNick)) {
-            if (cartId != CartEnums.Cart.LIKING.getValue() && cartId != CartEnums.Cart.CN.getValue() && !StringUtils.isEmpty(sizeNick)) {
+            if (cartId != CartEnums.Cart.LCN.getValue() && cartId != CartEnums.Cart.CN.getValue() && !StringUtils.isEmpty(sizeNick)) {
                 // modified by morse.lu 2016/10/26 end
                 // 直接用Nick
                 sku.setStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name(), sizeNick);
@@ -3504,8 +3504,8 @@ public class SxProductService extends BaseService {
 
         // 新官网 和 分销， 使用官网同购的素材图
         int cartIdTempSearch = cartId;
-        if (CartEnums.Cart.LIKING.getValue() == cartId || CartEnums.Cart.DT.getValue() == cartId) {
-            cartIdTempSearch = CartEnums.Cart.USTT.getValue();
+        if (CartEnums.Cart.LCN.getValue() == cartId || CartEnums.Cart.DT.getValue() == cartId) {
+            cartIdTempSearch = CartEnums.Cart.LTT.getValue();
         }
         List<CmsBtImageGroupModel> modelsAll = cmsBtImageGroupDao.selectListByKeysWithAll(channelId, cartIdTempSearch, imageType, viewType, paramBrandName, paramProductType, paramSizeType, 1);
         for (CmsBtImageGroupModel model : modelsAll) {

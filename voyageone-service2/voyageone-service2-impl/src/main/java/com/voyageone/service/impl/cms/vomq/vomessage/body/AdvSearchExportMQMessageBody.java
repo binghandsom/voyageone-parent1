@@ -39,13 +39,13 @@ public class AdvSearchExportMQMessageBody extends BaseMQMessageBody {
     @Override
     public void check() throws MQMessageRuleException {
         if (cmsBtExportTaskId == null) {
-            throw new MQMessageRuleException("高级检索导出MQ发送异常,参数cmsBtExportTaskId为空.");
+            throw new MQMessageRuleException("高级检索-异步生成文件MQ发送异常, 参数cmsBtExportTaskId为空.");
         }
         if (searchValue == null || searchValue.size() < 1) {
-            throw new MQMessageRuleException("高级检索导出MQ发送异常,缺少参数.");
+            throw new MQMessageRuleException("高级检索-异步生成文件MQ发送异常, 参数searchValue为空.");
         }
         if (StringUtils.isEmpty(getSender())) {
-            throw new MQMessageRuleException("sender(发送者)不能为空");
+            throw new MQMessageRuleException("高级检索-异步生成文件MQ发送异常, 发送者为空.");
         }
     }
 }

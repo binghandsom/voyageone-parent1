@@ -2,7 +2,7 @@ package com.voyageone.task2.cms.mqjob.jm;
 
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionExportTask3Service;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JmPromotionExportMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionExportMQMessageBody;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -29,14 +29,13 @@ public class CmsJmPromotionExportMQJob extends TBaseMQCmsService<JmPromotionExpo
         // 获取Mq的配置信息
         TaskControlBean taskControlBean = getTaskControlBean(taskControlList, "cms.jm.export.path");
         if (taskControlBean == null) {
-            this.cmsConfigExLog(messageBody, "请在tm_task_control中确认配置cms.jm.export.path");
+            cmsConfigExLog(messageBody, "请在tm_task_control中确认配置cms.jm.export.path");
             return;
         }
 
         // 生成excel文件
         String exportPath = taskControlBean.getCfg_val1();
         FileUtils.mkdirPath(exportPath);
-        int id = messageBody.getJmBtPromotionExportTaskId();
-        service.export(id, exportPath);
+        service.export(messageBody.getJmBtPromotionExportTaskId(), exportPath);
     }
 }

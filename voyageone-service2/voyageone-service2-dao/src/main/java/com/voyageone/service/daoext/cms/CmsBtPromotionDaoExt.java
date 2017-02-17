@@ -8,6 +8,7 @@ import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.bean.cms.CmsBtPromotionHistoryBean;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -117,5 +118,12 @@ public class CmsBtPromotionDaoExt extends ServiceBaseDao {
      */
     public List<CmsBtPromotionHistoryBean> selectUnduePromotion(Map<String, Object> param) {
         return updateTemplate.selectList("select_undue_promotion", param);
+    }
+
+    public List<CmsBtPromotionBean> selectByChannelIdCartId(String channelId, Integer cartId){
+        Map<String,Object>parm = new HashMap<>();
+        parm.put("channelId", channelId);
+        parm.put("cartId", cartId);
+        return selectList("select_cms_bt_promotion_by_channelId_cartId", parm);
     }
 }

@@ -10,6 +10,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsBatchPlatformFieldsMQMessageBody;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
@@ -45,9 +46,11 @@ public class CmsBatchEditPlatformFieldsMqJob extends TBaseMQCmsService<CmsBatchP
     @Override
     public void onStartup(CmsBatchPlatformFieldsMQMessageBody messageBody) throws Exception {
 
-        Map<String,String> failList = new HashMap<>();
+
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
 
         List<String> productCodes = messageBody.getProductCodes();
+        super.count = productCodes.size();
         String channelId = messageBody.getChannelId();
         Integer cartId = messageBody.getCartId();
         String fieldsId = messageBody.getFieldsId().replace(".","->");
@@ -81,17 +84,23 @@ public class CmsBatchEditPlatformFieldsMqJob extends TBaseMQCmsService<CmsBatchP
                     }
                     String insertMsg = "平台属性:" + messageBody.getFieldsName() + ": " + fieldsValue;
                     productStatusHistoryService.insert(channelId, code, cmsBtProductModel_platform_cart.getStatus(), cartId, EnumProductOperationType.BatchSetPlatformAttr, insertMsg, userName);
-                }else{
-                    failList.put(code, "没有 platform数据");
+                } else {
+                    CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                    errorInfo.setSkuCode(code);
+                    errorInfo.setMsg("没有 platform数据");
+                    failList.add(errorInfo);
                 }
-            }catch (Exception e){
-                failList.put(code, Arrays.toString(e.getStackTrace()));
+            } catch (Exception e){
+                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                errorInfo.setSkuCode(code);
+                errorInfo.setMsg(Arrays.toString(e.getStackTrace()));
+                failList.add(errorInfo);
             }
         });
+
         if(failList.size()>0){
-            cmsSuccessIncludeFailLog(messageBody, JacksonUtil.bean2Json(failList));
-        }else{
-            cmsSuccessLog(messageBody, "共处理了"+productCodes.size()+"个");
+            String comment = String.format("处理总件数(%s), 处理失败件数(%s)", productCodes.size(), failList.size());
+            cmsSuccessIncludeFailLog(messageBody, comment, failList);
         }
     }
 }

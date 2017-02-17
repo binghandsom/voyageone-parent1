@@ -197,16 +197,16 @@ public class UploadToUSJoiServiceTest {
     @Test
     public void testMtCategoryApi() throws Exception {
         // 测试主类目匹配接口有没有问题
-        String feedCategoryPath = "Accessories-Womens-Slgs-Passport holder";
+        String feedCategoryPath = "other";
 
         StopWordCleaner cleaner = new StopWordCleaner();
         Tokenizer tokenizer = new Tokenizer(new ArrayList(){{add("-");}});
         FeedQuery query = new FeedQuery(feedCategoryPath, cleaner, tokenizer);
-        query.setSizeType("feedSizeType1");
-        query.setProductName("productNameEn", "brand");
-        query.setProductType("feedProductType");
+        query.setSizeType("womens");
+        query.setProductName("Nike Women's Air Exceed Lea White/White Black/Mtllc Silver Training Shoe 6.5 Women US", "Nike");
+        query.setProductType("cross-trainer-shoes");
 
-        MatchResult result = searcher.search(query, false);
+        MatchResult result = searcher.search(query, true);
         System.out.println("ok");
     }
 

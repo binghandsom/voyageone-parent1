@@ -291,6 +291,17 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             autoSyncPriceMsrpOption = autoSyncPriceMsrp.getConfigValue1();
         return autoSyncPriceMsrpOption;
     }
+
+    public String getAutoSyncPriceSaleOption(String channelId, Integer cartId) {
+        String autoSyncPriceSaleOption = CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE; // 默认配置
+        CmsChannelConfigBean autoSyncPriceSale = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE, cartId + "");
+        if (autoSyncPriceSale == null){
+                autoSyncPriceSale = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE, 0 + "");
+        }
+        if (autoSyncPriceSale != null)
+            autoSyncPriceSaleOption = autoSyncPriceSale.getConfigValue1();
+        return autoSyncPriceSaleOption;
+    }
     /**
          * 获取产品平台信息
          *
@@ -330,8 +341,14 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             // 非主商品的平台类目跟这个主商品走
             if (platformCart.getpIsMain() != 1 && (cartId != CartEnums.Cart.JM.getValue() && !CartEnums.Cart.isSimple(CartEnums.Cart.getValueByID(cartId+"")))) {
                 CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getCommon().getFields().getCode(), cartId);
+                //updated by piao 不在页面做弹出
                 if (cmsBtProductGroup == null) {
-                    throw new BusinessException(CartEnums.Cart.getValueByID(cartId + "") + "该商品的没有设置主商品，请先设置主商品：" + cmsBtProduct.getCommon().getFields().getCode());
+                    Map<String, Object> noMainResult = new HashedMap();
+                    noMainResult.put("noMain", true);
+                    noMainResult.put("cartId", cartId);
+                    noMainResult.put("mainCode", cmsBtProduct.getCommon().getFields().getCode());
+                    return noMainResult;
+                    //throw new BusinessException(CartEnums.Cart.getValueByID(cartId + "") + "该商品的没有设置主商品，请先设置主商品：" + cmsBtProduct.getCommon().getFields().getCode());
                 }
                 CmsBtProductModel mainProduct = productService.getProductByCode(channelId, cmsBtProductGroup.getMainProductCode());
                 CmsBtProductModel_Platform_Cart mainPlatform = mainProduct.getPlatform(cartId);
@@ -515,9 +532,11 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             platform.remove("schemaFields");
         }
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
+
         if(platformModel.getCartId() == 27){
             blnSmartSx = false;
         }
+
         Boolean isCatPathChg = false;
         CmsBtProductModel cmsBtProductModel = null;
         // 天猫的场合如果平台类目发生变化 清空platforms.Pxx.pProductId    CMSDOC-262
@@ -556,17 +575,19 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             cmsBtProductModel_skus.forEach(item -> comPrice.put(item.getStringAttribute("skuCode"), item.getDoubleAttribute("priceRetail")));
 
             for (Map stringObjectBaseMongoMap : (List<Map<String, Object>>) platform.get("skus")) {
-                String sku = (String) stringObjectBaseMongoMap.get("skuCode");
-                if (stringObjectBaseMongoMap.get("priceSale") == null || StringUtil.isEmpty(stringObjectBaseMongoMap.get("priceSale").toString())) {
-                    throw new BusinessException("价格不能为空");
-                }
-                Double newPriceSale = Double.parseDouble(stringObjectBaseMongoMap.get("priceSale").toString());
-                if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (newPriceSale / (2 - breakThreshold))).compareTo(comPrice.get(sku)) < 0) {
-                    throw new BusinessException("4000094", ((Double) Math.ceil(comPrice.get(sku) * (2 - breakThreshold))).intValue());
-                }
+                if(stringObjectBaseMongoMap.get("isSale") != null && (boolean)stringObjectBaseMongoMap.get("isSale")) {
+                    String sku = (String) stringObjectBaseMongoMap.get("skuCode");
+                    if (stringObjectBaseMongoMap.get("priceSale") == null || StringUtil.isEmpty(stringObjectBaseMongoMap.get("priceSale").toString())) {
+                        throw new BusinessException("价格不能为空");
+                    }
+                    Double newPriceSale = Double.parseDouble(stringObjectBaseMongoMap.get("priceSale").toString());
+                    if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (newPriceSale / (2 - breakThreshold))).compareTo(comPrice.get(sku)) < 0) {
+                        throw new BusinessException("4000094", ((Double) Math.ceil(comPrice.get(sku) * (2 - breakThreshold))).intValue());
+                    }
 
-                if (comPrice.containsKey(sku) && comPrice.get(sku).compareTo(newPriceSale) > 0) {
-                    throw new BusinessException("4000091");
+                    if (comPrice.containsKey(sku) && comPrice.get(sku).compareTo(newPriceSale) > 0) {
+                        throw new BusinessException("4000091");
+                    }
                 }
                 // DOC-161 价格向上击穿的阀值检查 取消
 //                if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (comPrice.get(sku) * breakThreshold)).compareTo(newPriceSale) < 0) {

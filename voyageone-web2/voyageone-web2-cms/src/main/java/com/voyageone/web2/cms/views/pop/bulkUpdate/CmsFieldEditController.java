@@ -1,19 +1,5 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.google.common.base.Preconditions;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
@@ -22,6 +8,15 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author gubuchun 15/12/9
@@ -97,7 +92,7 @@ public class CmsFieldEditController extends CmsController {
                 return success(rs);
             } else if ("refreshRetailPrice".equals(prop)) { // 【高级检索】->【重新计算价格】
                 // 重新计算指导价
-                Map<String, Object> rs = fieldEditService.confirmRetailPrice(params, getUser(), cmsSession);
+                Map<String, Object> rs = fieldEditService.refreshRetailPrice(params, getUser(), cmsSession);
                 return success(rs);
             }
             return success(null);

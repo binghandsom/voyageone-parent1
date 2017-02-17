@@ -19,9 +19,11 @@ import java.util.*;
  */
 @Service
 public class BiRepConsultService extends BaseService {
-    private static final String API_HOST = "http://127.0.0.1:8081";
+//    private static final String API_HOST = "http://openapi.voyageone.com.cn";
+//private static final String CREATE_XLS_FILE_TASK_URL = "/bi/createXlsFileTask";
 
-    private static final String CREATE_XLS_FILE_TASK_URL = "/bi/rest/report/createXlsFileTask";
+    private static final String API_HOST = "http://10.0.0.95:3083";
+    private static final String CREATE_XLS_FILE_TASK_URL = "/rest/report/createXlsFileTask";
 
     @Autowired
     private BiReportDownloadTaskDaoExt  biReportDownloadTaskDaoExt;
@@ -87,7 +89,7 @@ public class BiRepConsultService extends BaseService {
         params.put("fileName",fileName);
         Map<String,Object> resultMap=new HashedMap();
         BiReportDownloadTaskModel model=new BiReportDownloadTaskModel();
-        model.setCheckPeriod(params.get("staDate")+" ~ "+params.get("endDate"));
+        model.setCheckPeriod((String)params.get("staDate")+params.get("endDate"));
         model.setCheckChannels(NameCreator.getTheChannelTypeName(channelCodeList));
         model.setCheckFileTypes(NameCreator.getTheFileTypeName(fileTypes));
         model.setCreated((Date) params.get("createTime"));
@@ -103,8 +105,8 @@ public class BiRepConsultService extends BaseService {
         int id=model.getId();
         params.put("taskId",id);
         String url = API_HOST + CREATE_XLS_FILE_TASK_URL;
+        logger.info("api url:" + url);
         String result = null;
-        String ecd = null;
         try {
             String request = JacksonUtil.bean2Json(params);
             result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url , request);
@@ -114,13 +116,8 @@ public class BiRepConsultService extends BaseService {
         if(!StringUtils.isNullOrBlank2(result)) {
             Map mapResult =  JacksonUtil.jsonToMap(result);
             Map<String,Object> data = (Map<String, Object>) mapResult.get("data");
-            if(null == data)
-            {
-                ecd = "4100";
-                resultMap.put("ecd",ecd);
-                return resultMap;
-            }
-            ecd = (String) data.get("ecd");
+            String ecd=(String)data.get("ecd");
+            resultMap.put("ecd",ecd);
             if(ecd != null && "0".equals(ecd))
             {
               model.setTaskStatus(ISheetInfo.SHEET.BASICINFO.CREATING);
@@ -133,9 +130,8 @@ public class BiRepConsultService extends BaseService {
         }
         else
         {
-           ecd ="4100"; //远程连接api服务失败
+            resultMap.put("ecd","4100"); //远程连接api服务失败
         }
-        resultMap.put("ecd",ecd);
         return resultMap;
     }
 

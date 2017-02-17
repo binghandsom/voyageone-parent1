@@ -2,12 +2,17 @@ package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
 import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.CmsBtOperationLogService;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.task2.base.TBaseMQAnnoService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * TBaseMQCmsService
@@ -19,6 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> extends TBaseMQAnnoService<TMQMessageBody> {
     @Autowired
     CmsBtOperationLogService cmsBtOperationLogService;
+
+    public long count = 0;
+
+    public boolean isFailed = false;
 
     @Override
     public SubSystem getSubSystem() {
@@ -51,8 +60,14 @@ public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> e
     @Override
     public void startup(TMQMessageBody messageBody) throws Exception {
         try {
+            String begin = DateTimeUtil.format(new Date(), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
             $debug(this.getTaskName(), ":start->");
             onStartup(messageBody);
+            String end = DateTimeUtil.format(new Date(), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+
+            $debug(String.format("处理总件数总数(%s), 开始时间: %s, 结束时间: %s", count, begin, end));
+            if (!isFailed)
+                cmsSuccessLog(messageBody, String.format("处理总件数总数(%s), 开始时间: %s, 结束时间: %s", count, begin, end));
         } catch (BusinessException ex) {
             cmsBusinessExLog(messageBody, ex.getMessage());
         } catch (Exception ex) {
@@ -70,48 +85,65 @@ public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> e
      *
      * @param messageBody       messageBody
      * @param operationLog_type operationLog_type
-     * @param msg               msg
+     * @param comment           comment
      */
-    public void cmsLog(TMQMessageBody messageBody, OperationLog_Type operationLog_type, String msg) {
-        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, operationLog_type, msg);
+    public void cmsLog(TMQMessageBody messageBody, OperationLog_Type operationLog_type, String comment) {
+        switch (operationLog_type.getId()) {
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+                isFailed = true;
+                break;
+            default:
+                isFailed = false;
+                break;
+        }
+        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, operationLog_type, comment);
     }
 
     /**
      * 写配置异常的日志
      *
      * @param messageBody messageBody
-     * @param msg         msg
+     * @param comment     comment
      */
-    public void cmsConfigExLog(TMQMessageBody messageBody, String msg) {
-        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.configException, msg);
+    public void cmsConfigExLog(TMQMessageBody messageBody, String comment) {
+        isFailed = true;
+        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.configException, comment);
     }
 
     /**
      * 写业务异常的日志
      *
      * @param messageBody messageBody
-     * @param msg         msg
+     * @param comment     comment
      */
-    public void cmsBusinessExLog(TMQMessageBody messageBody, String msg) {
-        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.businessException, msg);
+    public void cmsBusinessExLog(TMQMessageBody messageBody, String comment) {
+        isFailed = true;
+        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.businessException, comment);
     }
 
     /**
      * 成功结束
      *
      * @param messageBody messageBody
-     * @param msg         msg
+     * @param comment     comment
      */
-    public void cmsSuccessLog(TMQMessageBody messageBody, String msg) {
-        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.success, msg);
+    public void cmsSuccessLog(TMQMessageBody messageBody, String comment) {
+        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.success, comment);
     }
+
     /**
      * 成功结束
      *
      * @param messageBody messageBody
+     * @param comment     comment
      * @param msg         msg
      */
-    public void cmsSuccessIncludeFailLog(TMQMessageBody messageBody, String msg) {
-        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.successIncludeFail, msg);
+    public void cmsSuccessIncludeFailLog(TMQMessageBody messageBody, String comment, List<CmsBtOperationLogModel_Msg> msg) {
+        isFailed = true;
+        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.successIncludeFail, comment, msg);
     }
 }

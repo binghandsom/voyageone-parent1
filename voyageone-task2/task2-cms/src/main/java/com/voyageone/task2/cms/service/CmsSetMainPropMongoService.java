@@ -39,6 +39,8 @@ import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
+import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
@@ -140,6 +142,10 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
     CmsBtBrandBlockService cmsBtBrandBlockService;
     @Autowired
     CmsMasterBrandMappingService cmsMasterBrandMappingService;
+    @Autowired
+    PromotionService promotionService;
+    @Autowired
+    PromotionCodeService promotionCodeService;
 
     @Autowired
     private MqSender sender;
@@ -1005,7 +1011,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         }
 
                         // 更新价格相关项目
-                        cmsProduct = doSetPrice(channelId, feed, cmsProduct);
+                        doSetPrice(channelId, feed, cmsProduct);
 
                         // 更新产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
                         int updCnt = productService.updateProductFeedToMaster(channelId, cmsProduct, getTaskName(), strProcName);
@@ -1095,7 +1101,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //                    requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
 
                     // 更新价格相关项目
-                    cmsProduct = doSetPrice(channelId, feed, cmsProduct);
+                    Integer chg = doSetPrice(channelId, feed, cmsProduct);
 
                     // 设置店铺共通的店铺内分类信息
                     setSellerCats(feed, cmsProduct);
@@ -1113,33 +1119,10 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         String errMsg = "feed->master导入:更新:编辑商品的时候排他错误:" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
                         $error(errMsg);
                         throw new BusinessException(errMsg);
-//                        $error(getTaskName() + "更新::编辑商品的时候排他错误:" + originalFeed.getChannelId() + ":" + originalFeed.getCode());
-//                        return;
                     }
-                    // productService.updateProductCommon(channelId, cmsProduct.getProdId(), cmsProduct.getCommon());
 
-                    // TODO: 梁兄啊, batchField的更新没有放到product更新里, 暂时自己写一个用
-                    // TODO: 等改好后下面这段内容就可以删掉了
-                    // delete desmon 2016/07/01 start
-                    // 已经没有batchField这个项目了，所以不用回写这个字段了
-//                    {
-//                        List<BulkUpdateModel> bulkList = new ArrayList<>();
-//
-//                        HashMap<String, Object> updateMap = new HashMap<>();
-//                        updateMap.put("batchField.switchCategory", 0);
-//
-//                        HashMap<String, Object> queryMap = new HashMap<>();
-//                        queryMap.put("prodId", cmsProduct.getProdId());
-//
-//                        BulkUpdateModel model = new BulkUpdateModel();
-//                        model.setUpdateMap(updateMap);
-//                        model.setQueryMap(queryMap);
-//                        bulkList.add(model);
-//
-//                        BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
-//
-//                    }
-                    // delete desmon 2016/07/01 end
+                    // 判断是否更新平台价格 如果要更新直接更新
+                    priceService.updatePlatFormPrice(channelId, chg, cmsProduct, getTaskName());
 
                 } else {
                     // 生成productGroup数据
@@ -1192,7 +1175,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
                     platFromAttributeCopyFromMainProduct(cmsProduct);
                     // 更新价格相关项目
-                    cmsProduct = doSetPrice(channelId, feed, cmsProduct);
+                    doSetPrice(channelId, feed, cmsProduct);
                     $debug("doSetPrice:" + (System.currentTimeMillis() - startTime));
                     // 设置店铺共通的店铺内分类信息
                     setSellerCats(feed, cmsProduct);
@@ -1224,6 +1207,8 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
                 // 插入尺码表
                 insertCmsBtFeedImportSize(channelId, cmsProduct);
+
+                insertWorkload(cmsProduct);
 //                $info("insertCmsBtFeedImportSize:" + (System.currentTimeMillis() - startTime));
                 // jeff 2016/04 change start
                 // 生成更新前的价格履历Bean
@@ -1236,8 +1221,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
                 // Update desmond 2016/09/06 start
                 // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log
-                insertWorkload(cmsProduct);
-                $info("insertWorkload:" + (System.currentTimeMillis() - startTime));
+
 //                if ("1".equals(sxFlg) && !"1".equals(cmsProduct.getLock())) {
 //                    // 遍历主数据product里的sku,看看有没有
 //                    for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : cmsProduct.getPlatforms().entrySet()) {
@@ -1994,6 +1978,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 commonSku.setClientSkuCode(sku.getClientSku()); // ClientSku
                 commonSku.setClientSize(sku.getSize()); // ClientSize
                 commonSku.setSize(sku.getSize()); // 尺码
+                commonSku.setQty(sku.getQty());
                 // 重量(单位：磅) 如果原始重量不是lb的,feed里已根据公式转成lb
                 if (!StringUtils.isEmpty(sku.getWeightCalc()))
                     commonSku.setWeight(NumberUtils.toDouble(sku.getWeightCalc()));
@@ -2470,6 +2455,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     sku.setClientSkuCode(feedSku.getClientSku());
                     sku.setClientSize(feedSku.getSize());
                     sku.setSize(feedSku.getSize());        // Add by desmond 2016/07/04 因为上新用的是这个字段
+                    sku.setQty(feedSku.getQty());
                     if (!StringUtils.isEmpty(feedSku.getWeightCalc()))
                         sku.setWeight(NumberUtils.toDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
 
@@ -3490,9 +3476,10 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
         // jeff 2016/04 change start
         // private void doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
 //        private CmsBtProductModel doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
-        private CmsBtProductModel doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
+        private Integer doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
 
             List<CmsBtProductModel_Sku> commonSkuList = cmsProduct.getCommon().getSkus();
+
             double maxClientMsrpPrice = 0;
             double minClientMsrpPrice = 0;
             double maxClientNetPrice = 0;
@@ -3576,7 +3563,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
             // 设置platform.PXX.skus里面的价格
             try {
-                priceService.setPrice(cmsProduct, false);
+                return priceService.setPrice(cmsProduct, false);
             } catch (IllegalPriceConfigException ie) {
                 // 渠道级别价格计算配置错误, 停止后面的feed->master导入，避免报几百条一样的错误信息
                 String errMsg = String.format("feed->master导入:共通配置异常终止:发现渠道级别的价格计算配置错误，后面的feed导入不做了，" +
@@ -3593,351 +3580,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
-
-//            Map<String, CmsBtProductModel_Platform_Cart> platforms = cmsProduct.getPlatforms();
-//            List<CmsBtProductModel_Sku> commonSkus = cmsProduct.getCommon().getSkus();
-//
-//            // jeff 2016/04 change end
-//            // 查看配置表, 看看是否要自动审批价格
-//            CmsChannelConfigBean autoApprovePrice = CmsChannelConfigs.getConfigBeanNoCode(channelId
-//                    , CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
-//            boolean blnAutoApproveFlg = false;
-//            if (autoApprovePrice != null && autoApprovePrice.getConfigValue1() != null && "1".equals(autoApprovePrice.getConfigValue1())) {
-//                // 自动审批价格配置成1的场合，自动审批价格
-//                blnAutoApproveFlg = true;
-//            }
-////            if (autoApprovePrice == null || autoApprovePrice.getConfigValue1() == null || "0".equals(autoApprovePrice.getConfigValue1())) {
-////                // 没有配置过, 或者 配置为空, 或者 配置了0 的场合
-////                // 认为不自动审批价格 (注意: 即使不自动审批, 但如果价格击穿了, 仍然自动更新salePrice)
-////                blnAutoApproveFlg = false;
-////            } else {
-////                // 其他的场合, 自动审批价格
-////                blnAutoApproveFlg = true;
-////            }
-//
-//            // delete desmond 2016/07/01 start
-////            ProductPriceBean model = new ProductPriceBean();
-////            ProductSkuPriceBean skuPriceModel;
-////
-////            model.setProductId(cmsProduct.getProdId());
-////
-////            // jeff 2016/04 add start
-////            model.setProductCode(cmsProduct.getCommon().getFields().getCode());
-//            // delete desmond 2016/07/01 end
-//
-//            // 店铺级别MSRP价格计算公式
-//            String priceMsrpCalcFormula = "";
-//            // update by desmond 2016/07/19 start
-////            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.PRICE_MSRP_CALC_FORMULA);
-//            CmsChannelConfigBean cmsChannelConfigBean = null;
-//            // 有3个渠道('020','025','026')要根据类目税率不一样，要根据类目(config_code字段)取得价格计算公式
-//            if (isCategoryFormula(channelId)) {
-//                cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.PRICE_MSRP_CALC_FORMULA, feed.getCategory());
-//
-//                // 如果没有取到feed类目对应的价格计算公式，则中止feed导入，抛出异常
-//                if (cmsChannelConfigBean == null || StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
-//                    throwNotFoundPriceFormulaException(channelId, feed.getCategory(), CmsConstants.ChannelConfig.PRICE_MSRP_CALC_FORMULA, feed.getModel());
-//                }
-//            } else {
-//                cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.PRICE_MSRP_CALC_FORMULA);
-//
-//                // 如果没有取到channel对应的价格计算公式，则中止feed导入，抛出异常
-//                if (cmsChannelConfigBean == null || StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
-//                    throwNotFoundPriceFormulaException(channelId, null, CmsConstants.ChannelConfig.PRICE_MSRP_CALC_FORMULA, feed.getModel());
-//                }
-//            }
-//            // update by desmond 2016/07/19 end
-//            if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
-//                priceMsrpCalcFormula = cmsChannelConfigBean.getConfigValue1();
-//            }
-//
-//            // 店铺级别指导价格计算公式
-//            String priceRetailCalcFormula = "";
-//            // update by desmond 2016/07/19 start
-////            cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.PRICE_RETAIL_CALC_FORMULA);
-//            cmsChannelConfigBean = null;
-//            // 有3个渠道('020','025','026')要根据类目税率不一样，要根据类目(config_code字段)取得价格计算公式
-//            if (isCategoryFormula(channelId)) {
-//                cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.PRICE_RETAIL_CALC_FORMULA, feed.getCategory());
-//
-//                // 如果没有取到feed类目对应的价格计算公式，则中止feed导入，抛出异常
-//                if (cmsChannelConfigBean == null || StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
-//                    throwNotFoundPriceFormulaException(channelId, feed.getCategory(), CmsConstants.ChannelConfig.PRICE_RETAIL_CALC_FORMULA, feed.getModel());
-//                }
-//
-//            } else {
-//                cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.PRICE_RETAIL_CALC_FORMULA);
-//
-//                // 如果没有取到channel对应的价格计算公式，则中止feed导入，抛出异常
-//                if (cmsChannelConfigBean == null || StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
-//                    throwNotFoundPriceFormulaException(channelId, null, CmsConstants.ChannelConfig.PRICE_RETAIL_CALC_FORMULA, feed.getModel());
-//                }
-//            }
-//            // update by desmond 2016/07/19 end
-//            if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
-//                priceRetailCalcFormula = cmsChannelConfigBean.getConfigValue1();
-//            }
-//
-//            // 价格自动同步间隔天数
-////            String day = "0";
-////            cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId
-////                    , CmsConstants.ChannelConfig.AUTO_SYN_DAY);
-////            if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
-////                // 如果没有设定则相当于间隔天数为0
-////                day = cmsChannelConfigBean.getConfigValue1();
-////            }
-//
-//            // delete desmond 2016/07/07 start
-////            // 强制击穿阈值
-////            String threshold = "";
-////            cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId
-////                    , CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
-////            if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
-////                threshold = cmsChannelConfigBean.getConfigValue1();
-////            }
-//            // delete desmond 2016/07/07 end
-//            // 如果强制击穿阈值没有设定的话，那么只要指导价高于原来最终售价就击穿
-////            if (StringUtils.isEmpty(threshold)) {
-////                threshold = "0";
-////            }
-//            // 是否同步
-////            boolean synFlg = true;
-////            try {
-////                synFlg = DateTimeUtil.addDays(DateTimeUtil.parse(this.priceBreakTime), Integer.parseInt(day)).before(DateTimeUtil.getDate());
-////            } catch (Exception ex) {
-////            }
-//            // jeff 2016/04 add end
-//
-//            for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
-//                CmsBtProductModel_Sku commonSku = null;
-//                if (commonSkus != null) {
-//                    for (CmsBtProductModel_Sku commonSkuTemp : commonSkus) {
-//                        if (sku.getSku().equals(commonSkuTemp.getSkuCode())) {
-//                            commonSku = commonSkuTemp;
-//                            break;
-//                        }
-//                    }
-//                }
-//                // delete desmond 2016/07/01 start
-//                // product.skus被删除了
-////                skuPriceModel = new ProductSkuPriceBean();
-////
-////                skuPriceModel.setSkuCode(sku.getSku());
-////                // jeff 2016/04 change start
-////                // skuPriceModel.setPriceMsrp(sku.getPrice_msrp());
-////                // skuPriceModel.setPriceRetail(sku.getPrice_current());
-////                skuPriceModel.setPriceMsrp(calculatePriceByFormula(sku, priceMsrpCalcFormula));
-////                skuPriceModel.setPriceRetail(calculatePriceByFormula(sku, priceRetailCalcFormula));
-////                // jeff 2016/04 change end
-////
-////                skuPriceModel.setClientMsrpPrice(sku.getPriceClientMsrp());
-////                skuPriceModel.setClientRetailPrice(sku.getPriceClientRetail());
-////                skuPriceModel.setClientNetPrice(sku.getPriceNet());
-//                // delete desmond 2016/07/01 end
-//
-//                if (commonSku != null) {
-//                    // add by desmond 2016/08/04 start
-//                    // 从cms_mt_channel_config表从取得该channel的价格是否要向上取整flg
-//                    String priceRoundUpFlg = "1";  // 默认为向上取整
-//                    CmsChannelConfigBean sizeTypeChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(this.channel.getOrder_channel_id(),
-//                            CmsConstants.ChannelConfig.PRICE_ROUND_UP_FLG);
-//                    if (sizeTypeChannelConfigBean != null && "0".equals(sizeTypeChannelConfigBean.getConfigValue1())) {
-//                        priceRoundUpFlg = "0";          // 0:不向上取整
-//                    }
-//                    // add by desmond 2016/08/04 start
-//                    commonSku.setPriceMsrp(calculatePriceByFormula(sku, priceMsrpCalcFormula, channelId, feed.getCategory(), priceRoundUpFlg));
-//                    commonSku.setPriceRetail(calculatePriceByFormula(sku, priceRetailCalcFormula, channelId, feed.getCategory(), priceRoundUpFlg));
-//                    commonSku.setClientMsrpPrice(sku.getPriceClientMsrp());
-//                    commonSku.setClientRetailPrice(sku.getPriceClientRetail());
-//                    commonSku.setClientNetPrice(sku.getPriceNet());
-//                    for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : platforms.entrySet()) {
-//                        CmsBtProductModel_Platform_Cart platform = entry.getValue();
-//                        // add desmond 2016/07/05 start
-//                        // P0（主数据）平台不用设置sku
-//                        if (platform == null || platform.getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
-//                            continue;
-//                        }
-//                        // add desmond 2016/07/05 end
-//                        List<BaseMongoMap<String, Object>> platformSkus = platform.getSkus();
-//                        if (platformSkus != null && platformSkus.size() > 0) {
-//                            for (BaseMongoMap<String, Object> platformSku : platformSkus) {
-//                                // 找到platform下面的sku
-//                                if (sku.getSku().equals(platformSku.get(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))) {
-//                                    // 设定平台的Msrp
-//                                    platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name(), commonSku.getPriceMsrp());
-//
-//                                    // update desmond 2016/07/07 start
-//                                    // 设定平台的RetailPrice(销售指导价)
-//                                    if (platformSku.get(CmsBtProductConstants.Platform_SKU_COM.priceRetail.name()) != null) {
-//                                        Double oldRetailPrice = Double.parseDouble(String.valueOf(platformSku.get(CmsBtProductConstants.Platform_SKU_COM.priceRetail.name())));
-//                                        platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceRetail.name(), commonSku.getPriceRetail());
-//                                        Double newRetailPrice = Double.parseDouble(String.valueOf(platformSku.get(CmsBtProductConstants.Platform_SKU_COM.priceRetail.name())));
-//
-//                                        // 设置priceChgFlg(指导售价变化状态（U/D） 这里是指导售价价格本身变化,与priceSale无关)
-//                                        if (oldRetailPrice < newRetailPrice) {
-//                                            // 指导售价升高的时候
-//                                            if (oldRetailPrice == 0.00) {
-//                                                platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceChgFlg.name(), "U100%");
-//                                            } else {
-//                                                platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceChgFlg.name(), "U" + Math.round(((newRetailPrice - oldRetailPrice) / oldRetailPrice) * 100) + "%");
-//                                            }
-//                                        } else if (oldRetailPrice > newRetailPrice) {
-//                                            // 指导售价降低的时候
-//                                            platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceChgFlg.name(), "D" + Math.round(((oldRetailPrice - newRetailPrice) / oldRetailPrice) * 100) + "%");
-//                                        } else {
-//                                            // 指导售价不变的时候
-//                                            platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceChgFlg.name(), "");
-//                                        }
-//                                    } else {
-//                                        // 平台销售指导价为null的情况下属于新建
-//                                        platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceRetail.name(), commonSku.getPriceRetail());
-//                                        platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceChgFlg.name(), "");
-//                                    }
-//
-//                                    // 设定平台的最终价格(priceChgFlg与priceSale没有关系了，所以下面代码删除)
-//                                    if (platformSku.get(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()) != null) {
-////                                        Double newPrice = Double.parseDouble(String.valueOf(platformSku.get("priceRetail")));
-////                                        Double oldPrice = Double.parseDouble(String.valueOf(platformSku.get("priceSale")));
-//
-//                                        // 是否自动同步最终售价
-//                                        if (blnAutoApproveFlg) {
-//                                            platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceSale.name(), commonSku.getPriceRetail());
-////                                            platformSku.put("priceChgFlg", "");
-//                                        } //else {
-////                                            // 不设置最终售价
-////                                            // 指导价高于原来最终售价的阈值(例：10%)时，强制击穿
-////                                            if (!StringUtils.isEmpty(threshold) && StringUtils.isDigit(threshold)) {
-////                                                if (newPrice > oldPrice * (1.0 + Double.parseDouble(threshold) / 100.0)) {
-////                                                    if (oldPrice == 0.0) {
-////                                                        platformSku.put("priceChgFlg", "XU100");
-////                                                    } else {
-////                                                        platformSku.put("priceChgFlg", "XU" + Math.round(((newPrice / oldPrice) - 1) * 100));
-////                                                    }
-////                                                } else if (newPrice <= oldPrice * (1.0 + Double.parseDouble(threshold) / 100.0) && newPrice > oldPrice) {
-////                                                    platformSku.put("priceChgFlg", "U" + Math.round(((newPrice / oldPrice) - 1) * 100));
-////                                                } else if (oldPrice * (1.0 - Double.parseDouble(threshold) / 100.0) > newPrice) {
-////                                                    if (newPrice == 0.0) {
-////                                                        platformSku.put("priceChgFlg", "XD100");
-////                                                    } else {
-////                                                        platformSku.put("priceChgFlg", "XD" + Math.round(((oldPrice / newPrice) - 1) * 100));
-////                                                    }
-////                                                } else if (oldPrice * (1.0 - Double.parseDouble(threshold) / 100.0) <= newPrice && oldPrice > newPrice) {
-////                                                    platformSku.put("priceChgFlg", "D" + Math.round(((oldPrice / newPrice) - 1) * 100));
-////                                                }
-////                                            } else {
-////                                                if (newPrice > oldPrice) {
-////                                                    if (oldPrice == 0.0) {
-////                                                        platformSku.put("priceChgFlg", "U100");
-////                                                    } else {
-////                                                        platformSku.put("priceChgFlg", "U" + Math.round(((newPrice / oldPrice) - 1) * 100));
-////                                                    }
-////                                                } else if (newPrice < oldPrice) {
-////                                                    if (newPrice == 0.0) {
-////                                                        platformSku.put("priceChgFlg", "D100");
-////                                                    } else {
-////                                                        platformSku.put("priceChgFlg", "D" + Math.round(((oldPrice / newPrice) - 1) * 100));
-////                                                    }
-////                                                }
-////                                            }
-////                                        }
-//
-//                                    } else {
-//                                        // 平台最终价格为null的情况下属于新建，那么设定最终价格 = RetailPrice
-//                                        platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceSale.name(), commonSku.getPriceRetail());
-////                                        platformSku.put("priceChgFlg", "");
-//                                    }
-//                                    // update desmond 2016/07/07 end
-//                                }
-//                                // add by desmond 2016/07/05 start
-//                                // 设置最终售价变化状态,这里表示最终售价(priceSale)与销售指导价(priceRetail)的比较结果
-//                                // （比指导价低:2，比指导价高:3，等于指导价:1，向上击穿警告:4，向下击穿警告:5）
-//                                String priceDiffFlg = productSkuService.getPriceDiffFlg(channelId, platformSku);
-//                                platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceDiffFlg.name(), priceDiffFlg);
-//                                // add by desmond 2016/07/05 end
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-            // delete by desmond 2016/07/01 start
-//                // product.fields,product.skus被删除了，改成product.common.fields,product.common.skus
-//                // jeff 2016/04 change start
-//                // 如果是新的SKU, 那么: PriceRetail -> priceSale
-//                if (cmsProduct.getCommon().getSku(sku.getSku()) == null) {
-//                    skuPriceModel.setPriceSale(skuPriceModel.getPriceRetail());
-//                    skuPriceModel.setPriceChgFlg("");
-//                } else if (cmsProduct.getCommon().getSku(sku.getSku()).getPriceSale() == null || cmsProduct.getCommon().getSku(sku.getSku()).getPriceSale() == 0d) {
-//                    skuPriceModel.setPriceSale(skuPriceModel.getPriceRetail());
-//                    skuPriceModel.setPriceChgFlg("");
-//                } else {
-//                    // 之前有价格的场合, 判断是否需要把价格更新掉
-//
-//                    // 旧sku
-//                    CmsBtProductModel_Sku oldSku = cmsProduct.getCommon().getSku(sku.getSku());
-//
-//                    // 旧价格取得
-//                    Double oldPriceSale = oldSku.getPriceSale();
-//
-//                    // 新的的指导价
-//                    Double newPriceSale = skuPriceModel.getPriceRetail();
-//
-//                    // 是否自动同步最终售价
-//                    if (blnAutoApproveFlg) {
-//                        if (newPriceSale > oldPriceSale) {
-//                            // skuPriceModel.setPriceChgFlg("U" + (newPriceSale - oldPriceSale));
-//                            skuPriceModel.setPriceSale(newPriceSale);
-//                        } else if (newPriceSale < oldPriceSale) {
-//                            // skuPriceModel.setPriceChgFlg("D" + Math.abs(newPriceSale - oldPriceSale));
-//                            skuPriceModel.setPriceSale(newPriceSale);
-//                        }
-//                    } else {
-//
-//                        // 同步的场合
-//                        if (!StringUtils.isEmpty(threshold) && StringUtils.isDigit(threshold)) {
-//                            // 指导价高于原来最终售价的阈值(例：10%)时，强制击穿
-//                            if (newPriceSale > oldPriceSale * (1.0 + Double.parseDouble(threshold) / 100.0)) {
-//                                // skuPriceModel.setPriceChgFlg("X" + (newPriceSale - oldPriceSale));
-//                                skuPriceModel.setPriceSale(newPriceSale);
-//                            } else {
-//                                // 为了之后计算PriceSaleSt和PriceSaleEd，也需要赋上旧值
-//                                skuPriceModel.setPriceSale(oldSku.getPriceSale());
-//                            }
-//                        } else {
-//                            // 为了之后计算PriceSaleSt和PriceSaleEd，也需要赋上旧值
-//                            skuPriceModel.setPriceSale(oldSku.getPriceSale());
-//                        }
-//                    }
-//                }
-//                // jeff 2016/04 change end
-//
-//                model.addSkuPrice(skuPriceModel);
-//            }
-//
-//            List<ProductPriceBean> productPrices = new ArrayList<>();
-//            productPrices.add(model);
-//
-//            productSkuService.updatePrices(channelId, productPrices, getTaskName());
-            // delete by desmond 2016/07/01 end
-            // 不需要自己同步价格区间，后面设置价格变更履历时会自动发MQ消息同步价格区间的
-//            productSkuService.updatePricesNew(channelId, cmsProduct, getTaskName());
-            // jeff 2016/04 add start
-            // 如果发生价格强制击穿的话，更新价格强制击穿时间
-//            if (synFlg) {
-//                TaskControlBean param = new TaskControlBean();
-//                param.setTask_id(getTaskName());
-//                param.setCfg_name(TaskControlEnums.Name.order_channel_id.toString());
-//                param.setCfg_val1(channelId);
-//
-//                // 价格强制击穿时间
-//                if (StringUtils.isEmpty(this.priceBreakTime)) {
-//                    param.setEnd_time(DateTimeUtil.getNow());
-//                } else {
-//                    param.setEnd_time(DateTimeUtil.format(DateTimeUtil.addDays(DateTimeUtil.parse(this.priceBreakTime), Integer.parseInt(day)), null));
-//                }
-//                taskDao.updateTaskControl(param);
-//            }
-
-            return cmsProduct;
             // jeff 2016/04 add end
         }
 
@@ -4107,6 +3749,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //        }
 
         private void insertWorkload(CmsBtProductModel cmsProduct) {
+
             // 变更自动同步到全部平台("ALL")或者自动同步到指定平台(用逗号分隔 如:"28,29"),没有配置时不插入workload表
             // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log
             if ("ALL".equalsIgnoreCase(ccAutoSyncCarts)) {
@@ -4118,6 +3761,27 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             }
         }
 
+        private void insertWorkload(CmsBtProductModel cmsProduct, Integer cartId) {
+
+            if(cartId > 0 && cartId < 900) {
+                // 读取配置
+                CmsChannelConfigBean channelConfigBean = CmsChannelConfigs.getConfigBean(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE, cartId.toString());
+                if (channelConfigBean == null) {
+                    channelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE);
+                }
+
+                Integer configValue1 = 0;
+                if (channelConfigBean != null) {
+                    if (!StringUtil.isEmpty(channelConfigBean.getConfigValue1())) {
+                        configValue1 = Integer.parseInt(channelConfigBean.getConfigValue1());
+                    }
+                }
+                if (configValue1 != 0) {
+                    sxProductService.insertSxWorkLoad(cmsProduct, Arrays.asList(cartId.toString()), getTaskName());
+                }
+            }
+
+        }
 
     }
 

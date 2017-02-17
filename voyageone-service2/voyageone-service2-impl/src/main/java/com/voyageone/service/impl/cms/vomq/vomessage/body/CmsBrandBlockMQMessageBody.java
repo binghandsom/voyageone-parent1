@@ -38,11 +38,11 @@ public class CmsBrandBlockMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isEmpty(getSender())) {
-            throw new MQMessageRuleException("sender(发送者)不能为空");
-        }
         if (data == null) {
-            throw new MQMessageRuleException("data不能为空");
+            throw new MQMessageRuleException("变更黑名单操作MQ发送异常, 参数data为空.");
+        }
+        if (StringUtils.isEmpty(getSender())) {
+            throw new MQMessageRuleException("变更黑名单操作MQ发送异常, 发送者为空.");
         }
     }
 }

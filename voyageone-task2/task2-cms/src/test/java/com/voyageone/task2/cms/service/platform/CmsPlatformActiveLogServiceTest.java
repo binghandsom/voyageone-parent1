@@ -1,13 +1,7 @@
 package com.voyageone.task2.cms.service.platform;
 
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
-import com.voyageone.common.configs.Shops;
-import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.util.JacksonUtil;
-
-import net.sf.json.JSON;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,14 +67,14 @@ public class CmsPlatformActiveLogServiceTest {
     public void testTMPlatformToOnsale() {
         // 发送请求到MQ,插入操作历史记录
         Map<String, Object> logParams = new HashMap<>(6);
-        logParams.put("channelId", "010");
-        logParams.put("cartIdList", new ArrayList(Arrays.asList(23)));
-        logParams.put("activeStatus", "ToOnSale");
-        logParams.put("creater", "will2");
-        logParams.put("comment", "高级检索 批量上下架");
-        logParams.put("codeList", new ArrayList(Arrays.asList("CRWNRG01LBO-10","CRWNRG01LBO-9","CRWNRG01LBO-8","CRWNRG01LBO-7","CRWNRG01LBO-6","CRWNRG01LBO-5")));
+        logParams.put("channelId", "012");
+        logParams.put("cartId", 23);
+        logParams.put("activeStatus", "ToInStock");
+        logParams.put("creator", "VOCmsBrandBlockQueue");
+        logParams.put("comment", "Feed 品牌黑名单下架");
+        logParams.put("codeList", new ArrayList(Arrays.asList("NYC3PCB0-001")));
         try {
-            targetService.onStartup(logParams);
+            targetService.setProductOnSaleOrInStock(logParams);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -92,13 +86,16 @@ public class CmsPlatformActiveLogServiceTest {
         // 发送请求到MQ,插入操作历史记录
         Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", "010");
-        logParams.put("cartIdList", new ArrayList(Arrays.asList(23)));
+        logParams.put("cartId", 23);
         logParams.put("activeStatus", "ToInStock");
-        logParams.put("creater", "will2");
+        logParams.put("creator", "will2");
         logParams.put("comment", "高级检索 批量上下架");
         logParams.put("codeList", new ArrayList(Arrays.asList("CRWNRG01LBO-10","CRWNRG01LBO-9","CRWNRG01LBO-8","CRWNRG01LBO-7","CRWNRG01LBO-6","CRWNRG01LBO-5")));
+
+        String json = "{\"channelId\":\"012\",\"userName\":\"edward\",\"cartList\":[27],\"activeStatus\":\"ToOnSale\",\"codeList\":[\"BBE1U688-Z5I\"],\"comment\":\"高级检索 批量上下架\",\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"edward\"}";
+
         try {
-            targetService.onStartup(logParams);
+            targetService.setProductOnSaleOrInStock(logParams);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -110,13 +107,13 @@ public class CmsPlatformActiveLogServiceTest {
         // 发送请求到MQ,插入操作历史记录
         Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", "928");
-        logParams.put("cartIdList", new ArrayList(Arrays.asList(28)));
+        logParams.put("cartId", 23);
         logParams.put("activeStatus", "ToOnSale");
-        logParams.put("creater", "will2");
+        logParams.put("creator", "will2");
         logParams.put("comment", "高级检索 批量上下架");
         logParams.put("codeList", new ArrayList(Arrays.asList("VN-04OJJPV")));
         try {
-            targetService.onStartup(logParams);
+            targetService.setProductOnSaleOrInStock(logParams);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -128,13 +125,13 @@ public class CmsPlatformActiveLogServiceTest {
         // 发送请求到MQ,插入操作历史记录
         Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", "928");
-        logParams.put("cartIdList", new ArrayList(Arrays.asList(28)));
+        logParams.put("cartId", 23);
         logParams.put("activeStatus", "ToInStock");
-        logParams.put("creater", "will2");
+        logParams.put("creator", "will2");
         logParams.put("comment", "高级检索 批量上下架");
         logParams.put("codeList", new ArrayList(Arrays.asList("VN-04OJJPV")));
         try {
-            targetService.onStartup(logParams);
+            targetService.setProductOnSaleOrInStock(logParams);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -146,13 +143,18 @@ public class CmsPlatformActiveLogServiceTest {
         // 发送请求到MQ,插入操作历史记录
         Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", "010");
-        logParams.put("cartIdList", new ArrayList(Arrays.asList(27)));
+        logParams.put("cartId", 23);
         logParams.put("activeStatus", "ToOnSale");
-        logParams.put("creater", "will2");
+        logParams.put("creator", "gump");
         logParams.put("comment", "高级检索 批量上下架");
-        logParams.put("codeList", new ArrayList(Arrays.asList("51A0HC13E1-00LCNB0")));
+        logParams.put("codeList", new ArrayList(Arrays.asList("00341",
+                "00395",
+                "00772YAK7",
+                "01411YAA",
+                "01614YAC")));
+        logParams.put("statusVal", CmsConstants.PlatformActive.ToInStock);
         try {
-            targetService.onStartup(logParams);
+            targetService.setProductOnSaleOrInStock(logParams);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -164,13 +166,13 @@ public class CmsPlatformActiveLogServiceTest {
         // 发送请求到MQ,插入操作历史记录
         Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", "010");
-        logParams.put("cartIdList", new ArrayList(Arrays.asList(27)));
+        logParams.put("cartId", 23);
         logParams.put("activeStatus", "ToInStock");
-        logParams.put("creater", "will2");
+        logParams.put("creator", "will2");
         logParams.put("comment", "高级检索 批量上下架");
         logParams.put("codeList", new ArrayList(Arrays.asList("51A0HC13E1-00LCNB0")));
         try {
-            targetService.onStartup(logParams);
+            targetService.setProductOnSaleOrInStock(logParams);
         } catch (Exception e) {
             e.printStackTrace();
         }

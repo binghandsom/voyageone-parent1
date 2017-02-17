@@ -470,7 +470,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     productModel.getPlatforms().put("P0", p0);
 
                     // 更新价格相关项目(根据主店配置的税号，公式等计算主店产品的SKU人民币价格)
-                    productModel = doSetPrice(productModel);
+                    doSetPrice(productModel);
 
                     productService.createProduct(usJoiChannelId, productModel, sxWorkLoadBean.getModifier());
 
@@ -1037,7 +1037,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                         }
 
                         // 更新价格相关项目(根据主店配置的税号，公式等计算主店产品的SKU人民币价格)
-                        pr = doSetPrice(pr);
+                        Integer chg = doSetPrice(pr);
 
                         // 更新产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
                         // productService.updateProduct(channelId, requestModel);
@@ -1049,6 +1049,8 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             $error(errMsg);
                             throw new BusinessException(errMsg);
                         }
+                        // 判断是否更新平台价格 如果要更新直接更新
+                        priceService.updatePlatFormPrice(usJoiChannelId, chg, pr, getTaskName());
 
                         // 将USJOI店的产品加入更新对象产品列表中（取得USJOI店的品牌，产品分类和适用人群）
                         targetProductList.add(pr);
@@ -1057,11 +1059,14 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     // 更新拆分后的产品的价格相关项目,并更新mongoDB的Product表
                     if (ListUtils.notNull(originalCodeProductList)) {
                         originalCodeProductList.forEach(p -> {
-                            // 更新拆分后的产品的价格相关项目
-                            p = doSetPrice(p);
+                            // 更新拆分后的产品的价格相关项目p
+                            Integer chg =  doSetPrice(p);
 
                             // 更新拆分后的产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
                             productService.updateProductFeedToMaster(usJoiChannelId, p, getTaskName(), "子店->USJOI主店导入:更新拆分后的产品:");
+
+                            // 判断是否更新平台价格 如果要更新直接更新
+                            priceService.updatePlatFormPrice(usJoiChannelId, chg, p, getTaskName());
                         });
                     }
 
@@ -1264,7 +1269,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             // 目前的USJOI有京东国际平台, 也有聚美平台(27)
             if (!CartEnums.Cart.JM.getId().equals(currentCartId)
                     && !CartEnums.Cart.CN.getId().equals(currentCartId)
-                    && !CartEnums.Cart.LIKING.getId().equals(currentCartId)
+                    && !CartEnums.Cart.LCN.getId().equals(currentCartId)
                     && !CartEnums.Cart.DT.getId().equals(currentCartId)) {
                 // 聚美和官网以外的平台，先取得product.model对应的group信息(根据model取得Product(没找到直接返回null),再根据productCode查找group信息)
                 // 由于可能存在2个子店的Product.model相同的情况，如果不加orgChannelId只用model去查product的话，会导致查出来别的店铺的product对应的group
@@ -1522,11 +1527,12 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      * @param usjoiCmsProduct usjoi cms product信息
      * @return CmsBtProductModel 以后计算价格直接用ProductModel
      */
-    private CmsBtProductModel doSetPrice(CmsBtProductModel usjoiCmsProduct) {
+    private Integer doSetPrice(CmsBtProductModel usjoiCmsProduct) {
 
+        Integer chg = 0;
         // 设置platform.PXX.skus里面的价格
         try {
-            priceService.setPrice(usjoiCmsProduct, false);
+            chg = priceService.setPrice(usjoiCmsProduct, false);
         } catch (IllegalPriceConfigException ie) {
             // 渠道级别价格计算配置错误, 停止后面的子店->USJOI主店产品导入，避免报几百条一样的错误信息
             String errMsg = String.format("子店->USJOI主店产品导入:共通配置异常终止:发现渠道级别的价格计算配置错误，后面的feed导入不做了，" +
@@ -1544,7 +1550,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             throw new BusinessException(errMsg);
         }
 
-        return usjoiCmsProduct;
+        return chg;
     }
 
     private void insertWorkload(CmsBtProductModel cmsProduct, String ccAutoSyncCarts, List<String> ccAutoSyncCartList) {

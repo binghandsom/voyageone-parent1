@@ -5,7 +5,6 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Carts;
@@ -24,10 +23,10 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchProductApprovalMQMessageBody;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,36 +56,32 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
 
-    public void approval(AdvSearchProductApprovalMQMessageBody mqMessageBody) {
+    public List<CmsBtOperationLogModel_Msg> approval(AdvSearchProductApprovalMQMessageBody mqMessageBody) {
         long threadNo =  Thread.currentThread().getId();
-        List<Integer> cartList = mqMessageBody.getCartList();
+        $info(String.format("threadNo=%d 参数%s",threadNo, JacksonUtil.bean2Json(mqMessageBody)));
+        Integer cartIdValue = mqMessageBody.getCartList().get(0);
         String channelId = mqMessageBody.getChannelId();
-        String userName = mqMessageBody.getUserName();
+        String userName = mqMessageBody.getSender();
         List<String> productCodes = mqMessageBody.getProductCodes();
         Map<String, Object> params = mqMessageBody.getParams();
+        List<CmsBtOperationLogModel_Msg> errorCodeList = new ArrayList<>();
 
-        $info(String.format("threadNo=%d productCodes 数 %d",threadNo, productCodes.size()));
-
-        // 先判断是否是ready状态（minimall店铺不验证）
-        List<Integer> newcartList = new ArrayList<>();
-        for (Integer cartIdVal : cartList) {
-            TypeChannelBean cartType = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, cartIdVal.toString(), "en");
-            if (!"3".equals(cartType.getCartType())) {
-                newcartList.add(cartIdVal);
-            }
-        }
-        if (newcartList.size() > 0) {
+        // 先判断是否是ready状态（miNiMall店铺不验证）
+        TypeChannelBean cartType = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, cartIdValue.toString(), "en");
+        if (!"3".equals(cartType.getCartType())) {
             JongoQuery queryObject = new JongoQuery();
             StringBuilder qryStr = new StringBuilder();
             qryStr.append("{'common.fields.code':{$in:#},$or:[");
-            for (Integer cartIdVal : newcartList) {
-                if (!CartEnums.Cart.TT.getId().equals(String.valueOf(cartIdVal))
-                        && !CartEnums.Cart.USTT.getId().equals(String.valueOf(cartIdVal))
-                        && !CartEnums.Cart.DT.getId().equals(String.valueOf(cartIdVal)))
-                    qryStr.append("{'platforms.P" + cartIdVal + ".status':{$nin:['Ready','Approved']}},");
-                else
-                    qryStr.append("{'common.fields.hsCodeStatus': '0'},");
-            }
+            if (!CartEnums.Cart.TT.getId().equals(String.valueOf(cartIdValue))
+                    && !CartEnums.Cart.LTT.getId().equals(String.valueOf(cartIdValue))
+                    && !CartEnums.Cart.CN.getId().equals(String.valueOf(cartIdValue))
+                    && !CartEnums.Cart.LCN.getId().equals(String.valueOf(cartIdValue))
+                    && !CartEnums.Cart.DT.getId().equals(String.valueOf(cartIdValue)))
+                qryStr.append("{'platforms.P" + cartIdValue + ".status':{$nin:['Ready','Approved']}},");
+            else if (!CartEnums.Cart.LTT.getId().equals(String.valueOf(cartIdValue)))
+                qryStr.append("{'common.fields.hsCodeStatus': '0'},");
+            else
+                qryStr.append("{'prodId':{$exists:false}},");
             qryStr.deleteCharAt(qryStr.length() - 1);
             qryStr.append("]}");
             queryObject.setQuery(qryStr.toString());
@@ -96,29 +91,37 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
             List<CmsBtProductModel> prodList = productService.getList(channelId, queryObject);
             if (prodList != null && prodList.size() > 0) {
                 // 存在未ready状态
-                List<String> codeList = new ArrayList<>(prodList.size());
-                List<String> hsCodeList = new ArrayList<>();
-
                 for (CmsBtProductModel prodObj : prodList) {
                     if (prodObj.getCommon() == null) {
+                        CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                        errorInfo.setSkuCode(prodObj.getProdId().toString());
+                        errorInfo.setMsg(String.format("有商品的common为空, 无法审批 cartIdValue:%s", cartIdValue));
+                        errorCodeList.add(errorInfo);
                         continue;
                     }
                     CmsBtProductModel_Field field = prodObj.getCommon().getFields();
+
+                    // 判断该商品税号是否设置
+                    if (field != null &&
+                            ("0".equals(field.getHsCodeStatus())
+                                    && !CartEnums.Cart.LTT.getId().equals(String.valueOf(cartIdValue)))) {
+                        CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                        errorInfo.setSkuCode(field.getCode());
+                        errorInfo.setMsg(String.format("有商品商品没有设置税号, 无法审批 cartIdValue:%s", cartIdValue));
+                        errorCodeList.add(errorInfo);
+                        productCodes.remove(field.getCode());
+                        continue;
+                    }
+
+                    // 判断该商品的状态为Pending
                     if (field != null && field.getCode() != null) {
-                        codeList.add(field.getCode());
+                        CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                        errorInfo.setSkuCode(field.getCode());
+                        errorInfo.setMsg(String.format("有商品pending状态, 无法审批 cartIdValue:%s", cartIdValue));
+                        errorCodeList.add(errorInfo);
+                        productCodes.remove(field.getCode());
+                        continue;
                     }
-
-                    if(field != null && "0".equals(field.getHsCodeStatus())){
-                        hsCodeList.add(field.getCode());
-                    }
-                }
-
-                if (hsCodeList.size() > 0 && (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId()))
-                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.DT.getId())))) {
-                    throw new BusinessException("有商品商品没有设置税号, 无法审批, 请修改. codes=" + JacksonUtil.bean2Json(hsCodeList));
-                }else{
-                    throw new BusinessException("有商品pending状态, 无法审批, 请修改. codes=" + JacksonUtil.bean2Json(codeList));
                 }
             }
         }
@@ -142,7 +145,6 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                 breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D + 1.0;
             }
 
-            Map<String, Object> rsMap = new HashMap<>();
             int idx = 0;
             for (String code : productCodes) {
                 if (idx < startIdx) {
@@ -155,46 +157,43 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                 List<Map<String, Object>> prodInfoList = new ArrayList<>();
                 double priceLimit = 0;
 
-                for (Integer cartIdVal : cartList) {
-                    CmsBtProductModel_Platform_Cart ptmObj = productModel.getPlatform(cartIdVal);
-                    if (ptmObj == null) {
-                        continue;
+                CmsBtProductModel_Platform_Cart ptmObj = productModel.getPlatform(cartIdValue);
+                if (ptmObj == null) {
+                    continue;
+                }
+                String cartName = Carts.getCart(cartIdValue).getName();
+                List<BaseMongoMap<String, Object>> skuObjList = ptmObj.getSkus();
+                if (skuObjList == null) {
+                    continue;
+                }
+                for (BaseMongoMap<String, Object> skuObj : skuObjList) {
+                    double priceSale = skuObj.getDoubleAttribute("priceSale");
+                    double priceRetail = skuObj.getDoubleAttribute("priceRetail");
+                    Map<String, Object> priceInfo = new HashMap<>();
+                    if (priceSale < priceRetail) {
+                        priceInfo.put("priceRetail", priceRetail);
                     }
-                    String cartName = Carts.getCart(cartIdVal).getName();
-                    List<BaseMongoMap<String, Object>> skuObjList = ptmObj.getSkus();
-                    if (skuObjList == null) {
-                        continue;
+                    if (breakThreshold != null) {
+                        priceLimit = priceRetail * breakThreshold;
                     }
-                    for (BaseMongoMap<String, Object> skuObj : skuObjList) {
-                        double priceSale = skuObj.getDoubleAttribute("priceSale");
-                        double priceRetail = skuObj.getDoubleAttribute("priceRetail");
-                        Map<String, Object> priceInfo = new HashMap<>();
-                        if (priceSale < priceRetail) {
-                            priceInfo.put("priceRetail", priceRetail);
-                        }
-                        if (breakThreshold != null) {
-                            priceLimit = priceRetail * breakThreshold;
-                        }
-                        if (breakThreshold != null && priceSale > priceLimit) {
-                            priceInfo.put("priceLimit", priceLimit);
-                        }
-                        if (priceSale < priceRetail || (breakThreshold != null && priceSale > priceLimit)) {
-                            priceInfo.put("priceSale", priceSale);
-                            priceInfo.put("skuCode", skuObj.get("skuCode"));
-                            priceInfo.put("cartName", cartName);
-                            prodInfoList.add(priceInfo);
-                        }
+                    if (breakThreshold != null && priceSale > priceLimit) {
+                        priceInfo.put("priceLimit", priceLimit);
+                    }
+                    if (priceSale < priceRetail || (breakThreshold != null && priceSale > priceLimit)) {
+                        priceInfo.put("priceSale", priceSale);
+                        priceInfo.put("skuCode", skuObj.get("skuCode"));
+                        priceInfo.put("cartName", cartName);
+                        prodInfoList.add(priceInfo);
                     }
                 }
+
                 if (prodInfoList.size() > 0) {
-                    rsMap.put("startIdx", idx);
-                    rsMap.put("code", code);
-                    rsMap.put("infoList", prodInfoList);
-                    break;
+                    CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                    errorInfo.setSkuCode(code);
+                    errorInfo.setMsg(String.format("商品价格有问题, 无法审批 cartIdValue:%s, startIdx:%s, infoList:%s", cartIdValue, idx, prodInfoList));
+                    errorCodeList.add(errorInfo);
+                    productCodes.remove(code);
                 }
-            }
-            if (rsMap.size() > 0) {
-               throw new BusinessException("商品价格有问题, msg=" + JacksonUtil.bean2Json(rsMap));
             }
         }
 
@@ -207,35 +206,48 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
             // 获取产品的信息
             CmsBtProductModel productModel = productService.getProductByCode(channelId, code);
             if (productModel.getCommon() == null) {
+                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                errorInfo.setSkuCode(code);
+                errorInfo.setMsg(String.format("有商品的common为空, 无法审批 cartIdValue:%s", cartIdValue));
+                errorCodeList.add(errorInfo);
                 continue;
             }
             CmsBtProductModel_Field field = productModel.getCommon().getFields();
             if (field == null) {
+                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                errorInfo.setSkuCode(code);
+                errorInfo.setMsg(String.format("有商品的common.fields为空, 无法审批 cartIdValue:%s", cartIdValue));
+                errorCodeList.add(errorInfo);
                 continue;
             }
 
             List<String> strList = new ArrayList<>();
-            for (Integer cartIdVal : cartList) {
-                // 如果该产品以前就是approved,则不更新pStatus
-                String prodStatus = productModel.getPlatformNotNull(cartIdVal).getStatus();
-                TypeChannelBean cartType = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, cartIdVal.toString(), "en");
-                if ("3".equals(cartType.getCartType())) {
-                    strList.add("'platforms.P" + cartIdVal + ".status':'Approved','platforms.P" + cartIdVal + ".pStatus':'WaitingPublish'");
-                } else {
-                    if (CmsConstants.ProductStatus.Ready.name().equals(prodStatus)) {
-                        strList.add("'platforms.P" + cartIdVal + ".status':'Approved','platforms.P" + cartIdVal + ".pStatus':'WaitingPublish'");
-                    } else if (CmsConstants.ProductStatus.Approved.name().equals(prodStatus)) {
-                        strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
-                    } else if (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.USTT.getId()))
-                            || newcartList.contains(Integer.parseInt(CartEnums.Cart.DT.getId()))) {
-                        strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
-                    }
+
+            // 如果该产品以前就是approved,则不更新pStatus
+            String prodStatus = productModel.getPlatformNotNull(cartIdValue).getStatus();
+            if ("3".equals(cartType.getCartType())) {
+                strList.add("'platforms.P" + cartIdValue + ".status':'Approved','platforms.P" + cartIdValue + ".pStatus':'WaitingPublish'");
+            } else {
+                if (CmsConstants.ProductStatus.Ready.name().equals(prodStatus)) {
+                    strList.add("'platforms.P" + cartIdValue + ".status':'Approved','platforms.P" + cartIdValue + ".pStatus':'WaitingPublish'");
+                } else if (CmsConstants.ProductStatus.Approved.name().equals(prodStatus)) {
+                    strList.add("'platforms.P" + cartIdValue + ".status':'Approved'");
+                } else if (CartEnums.Cart.TT.getId().equals(String.valueOf(cartIdValue))
+                        || CartEnums.Cart.LTT.getId().equals(String.valueOf(cartIdValue))
+                        || CartEnums.Cart.CN.getId().equals(String.valueOf(cartIdValue))
+                        || CartEnums.Cart.LCN.getId().equals(String.valueOf(cartIdValue))
+                        || CartEnums.Cart.DT.getId().equals(String.valueOf(cartIdValue))) {
+                    strList.add("'platforms.P" + cartIdValue + ".status':'Approved','platforms.P" + cartIdValue + ".pStatus':'WaitingPublish'");
                 }
             }
 
+
             if (strList.isEmpty()) {
                 $debug("产品未更新 code=" + code);
+                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                errorInfo.setSkuCode(code);
+                errorInfo.setMsg(String.format("产品未更新, 无法审批 cartIdValue:%s", cartIdValue));
+                errorCodeList.add(errorInfo);
                 continue;
             }
             newProdCodeList.add(code);
@@ -253,11 +265,10 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
             if (rs != null) {
                 $debug(String.format("商品审批(product表) channelId=%s 执行结果=%s", channelId, rs.toString()));
             }
-
             // 更新group表的platformStatus
             JongoUpdate grpUpdObj = new JongoUpdate();
-            grpUpdObj.setQuery("{'productCodes':#,'channelId':#,'cartId':{$in:#},'platformStatus':{$in:[null,'']}}");
-            grpUpdObj.setQueryParameters(code, channelId, cartList);
+            grpUpdObj.setQuery("{'productCodes':#,'channelId':#,'cartId':#,'platformStatus':{$in:[null,'']}}");
+            grpUpdObj.setQueryParameters(code, channelId, cartIdValue);
             grpUpdObj.setUpdate("{$set:{'platformStatus':'WaitingPublish','modified':#,'modifier':#}}");
             grpUpdObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userName);
 
@@ -277,25 +288,26 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
         }
 
         String msg;
-        Integer cartId = (Integer) params.get("cartId");
-        if (cartId == null || cartId == 0) {
+        if (cartIdValue == null || cartIdValue == 0) {
             msg = "高级检索 商品审批(全平台)";
         } else {
             msg = "高级检索 商品审批";
         }
-        for (Integer cartIdVal : cartList) {
-            // 插入上新程序
-            $info("批量修改属性 (商品审批) 开始记入SxWorkLoad表");
-            long sta = System.currentTimeMillis();
-            sxProductService.insertSxWorkLoad(channelId, newProdCodeList, cartIdVal, userName, false);
-            $info("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
 
+        // 插入上新程序
+        $debug("批量修改属性 (商品审批) 开始记入SxWorkLoad表");
+        long sta = System.currentTimeMillis();
+        sxProductService.insertSxWorkLoad(channelId, newProdCodeList, cartIdValue, userName, false);
+        $debug("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
+
+        // 记录商品修改历史
+        productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdValue, EnumProductOperationType.ProductApproved, msg, userName);
             sta = System.currentTimeMillis();
             // 记录商品修改历史
-            productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdVal, EnumProductOperationType.ProductApproved, msg, userName);
+            productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdValue, EnumProductOperationType.ProductApproved, msg, userName);
             $info("批量修改属性 (商品审批) 记入状态历史表结束 耗时" + (System.currentTimeMillis() - sta));
-        }
 
+        return errorCodeList;
     }
 
 }

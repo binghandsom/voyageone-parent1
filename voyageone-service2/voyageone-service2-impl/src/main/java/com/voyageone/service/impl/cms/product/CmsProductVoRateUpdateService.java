@@ -7,13 +7,13 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductVoRateUpdateMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.apache.commons.lang3.StringUtils;
@@ -21,11 +21,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 当产品的vo扣点变更时的处理，计算指导价，记录价格变更履历/记录商品修改历史/同步价格范围/插入上新程序
@@ -48,16 +44,18 @@ public class CmsProductVoRateUpdateService extends BaseService {
     @Autowired
     private SxProductService sxProductService;
 
-    public List<Map<String, String>> updateProductVoRate(ProductVoRateUpdateMQMessageBody messageBody) throws Exception {
-        List<Map<String, String>> failList = new ArrayList<Map<String, String>>();
+    public List<CmsBtOperationLogModel_Msg> updateProductVoRate(ProductVoRateUpdateMQMessageBody messageBody) throws Exception {
+
         $info("CmsProductVoRateUpdateService start");
-        $info("参数" + JacksonUtil.bean2Json(messageBody));
+
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
+
         String channelId = StringUtils.trimToNull(messageBody.getChannelId());
         List<String> codeList = messageBody.getCodeList();
-        String creater = StringUtils.trimToEmpty(messageBody.getCreater());
+        String creator = StringUtils.trimToEmpty(messageBody.getSender());
 
         String voRate = messageBody.getVoRate();
-        String msg = null;
+        String msg;
         if (voRate == null) {
             msg = "高价检索 批量更新VO扣点 清空";
         } else {
@@ -77,21 +75,22 @@ public class CmsProductVoRateUpdateService extends BaseService {
                 CmsBtProductModel prodObj = productService.getProductByCondition(channelId, queryObj);
                 if (prodObj == null) {
 
-                    Map<String, String> failMap = new HashMap<String, String>();
-                    failMap.put(prodCode, String.format("CmsProductVoRateUpdateService 产品不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId));
-                    failList.add(failMap);
-
                     $warn("CmsProductVoRateUpdateService 产品不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
+
+                    CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                    errorInfo.setSkuCode(prodCode);
+                    errorInfo.setMsg("产品不存在");
+                    failList.add(errorInfo);
                     continue;
                 }
                 List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
                 if (skuList == null || skuList.isEmpty()) {
 
-                    Map<String, String> failMap = new HashMap<String, String>();
-                    failMap.put(prodCode, String.format("CmsProductVoRateUpdateService 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId));
-                    failList.add(failMap);
-
                     $warn("CmsProductVoRateUpdateService 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
+
+                    CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                    errorInfo.setSkuCode(prodCode);
+                    errorInfo.setMsg(String.format("产品sku数据不存在 cartId=%d", cartId));
                     continue;
                 }
 
@@ -100,11 +99,11 @@ public class CmsProductVoRateUpdateService extends BaseService {
                     priceService.setPrice(prodObj, cartId, false);
                 } catch (Exception exp) {
 
-                    Map<String, String> failMap = new HashMap<String, String>();
-                    failMap.put(prodCode, String.format("CmsProductVoRateUpdateService 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channelId, prodCode, cartId, exp.getMessage()));
-                    failList.add(failMap);
-
                     $error(String.format("CmsProductVoRateUpdateService 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channelId, prodCode, cartId, exp.getMessage()), exp);
+
+                    CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                    errorInfo.setSkuCode(prodCode);
+                    errorInfo.setMsg(String.format("调用共通函数计算指导价时出错 cartId=%d, errmsg=%s", cartId, exp.getMessage()));
                     continue;
                 }
 
@@ -119,7 +118,7 @@ public class CmsProductVoRateUpdateService extends BaseService {
                 // 记录价格变更履历/同步价格范围
                 List<CmsBtPriceLogModel> logModelList = new ArrayList<>(1);
                 for (BaseMongoMap skuObj : skuList) {
-                    String skuCode = (String) skuObj.getStringAttribute("skuCode");
+                    String skuCode = skuObj.getStringAttribute("skuCode");
                     CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
                     cmsBtPriceLogModel.setChannelId(channelId);
                     cmsBtPriceLogModel.setProductId(prodObj.getProdId().intValue());
@@ -141,9 +140,9 @@ public class CmsProductVoRateUpdateService extends BaseService {
                     }
                     cmsBtPriceLogModel.setComment("高级检索批量更新VO扣点");
                     cmsBtPriceLogModel.setCreated(new Date());
-                    cmsBtPriceLogModel.setCreater(creater);
+                    cmsBtPriceLogModel.setCreater(creator);
                     cmsBtPriceLogModel.setModified(new Date());
-                    cmsBtPriceLogModel.setModifier(creater);
+                    cmsBtPriceLogModel.setModifier(creator);
                     logModelList.add(cmsBtPriceLogModel);
                 }
                 int cnt = cmsBtPriceLogService.addLogListAndCallSyncPriceJob(logModelList);
@@ -154,13 +153,13 @@ public class CmsProductVoRateUpdateService extends BaseService {
         // 记录商品修改历史
         $debug("CmsProductVoRateUpdateService 开始记入价格变更履历");
         long sta = System.currentTimeMillis();
-        productStatusHistoryService.insertList(channelId, codeList, -1, EnumProductOperationType.BatchUpdate, msg, creater);
+        productStatusHistoryService.insertList(channelId, codeList, -1, EnumProductOperationType.BatchUpdate, msg, creator);
         $debug("CmsProductVoRateUpdateService 记入价格变更履历结束 耗时" + (System.currentTimeMillis() - sta));
 
         // 插入上新程序
         $debug("CmsProductVoRateUpdateService 开始记入SxWorkLoad表");
         sta = System.currentTimeMillis();
-        sxProductService.insertSxWorkLoad(channelId, codeList, null, creater);
+        sxProductService.insertSxWorkLoad(channelId, codeList, null, creator);
         $debug("CmsProductVoRateUpdateService 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
         return failList;
     }

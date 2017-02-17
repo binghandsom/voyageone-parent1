@@ -1,13 +1,12 @@
 package com.voyageone.web2.cms.views.jm;
 
 import com.voyageone.common.configs.Properties;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionExportTask3Service;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.jm.JmPromotionExportMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionExportMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -63,7 +62,7 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.CmsBtJmPromotionExportTask.LIST.INDEX.ADDEXPORT)
     @ResponseBody
-    public AjaxResponse addExport(@RequestBody CmsBtJmPromotionExportTaskModel model) throws MQMessageRuleException {
+    public AjaxResponse addExport(@RequestBody CmsBtJmPromotionExportTaskModel model) {
         CallResult result = new CallResult();
         model.setCreater(getUser().getUserName());
         model.setCreated(new java.util.Date());

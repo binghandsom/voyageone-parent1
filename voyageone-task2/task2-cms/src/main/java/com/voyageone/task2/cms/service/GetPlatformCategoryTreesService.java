@@ -14,7 +14,6 @@ import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.CmsConstants;
-import com.voyageone.task2.cms.dao.BrandDao;
 import com.voyageone.task2.cms.model.PlatformCategoriesModel;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.components.tmall.service.TbCategoryService;
@@ -34,8 +33,6 @@ public class GetPlatformCategoryTreesService extends BaseCronTaskService {
 
     private final static String JOB_NAME = "getPlatformCategoryTreesTask";
 
-    @Autowired
-    private BrandDao brandDao;
     @Autowired
     private TbCategoryService tbCategoryService;
     @Autowired
@@ -61,7 +58,7 @@ public class GetPlatformCategoryTreesService extends BaseCronTaskService {
         cartList.add(CartEnums.Cart.TT.getValue());
         cartList.add(CartEnums.Cart.TM.getValue());
         cartList.add(CartEnums.Cart.TG.getValue());
-        cartList.add(CartEnums.Cart.USTT.getValue());
+        cartList.add(CartEnums.Cart.LTT.getValue());
 
         // 获取该任务可以运行的销售渠道
         int idxChannel = 1;

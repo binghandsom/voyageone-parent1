@@ -23,6 +23,7 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -198,7 +199,7 @@ public class VmsOrderInfoService extends BaseService {
         sxssfWorkbook.setCompressTempFiles(true); // 防止缓存文件过大 采用压缩方式处理
 
         // 页脚
-        Sheet sheet = sxssfWorkbook.createSheet("PickingList");
+        SXSSFSheet sheet = sxssfWorkbook.createSheet("PickingList");
         Footer footer = sheet.getFooter();
         footer.setCenter("Page " + HeaderFooter.page() + " of " + HeaderFooter.numPages());
 
@@ -286,6 +287,7 @@ public class VmsOrderInfoService extends BaseService {
         }
 
         // 整理宽度
+        sheet.trackAllColumnsForAutoSizing();
         sheet.autoSizeColumn(skuCellNumber);
         sheet.autoSizeColumn(descriptionCellNumber);
         sheet.autoSizeColumn(orderIdCellNumber);

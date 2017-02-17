@@ -216,7 +216,7 @@ public class SellerCatService extends BaseService {
             cId = jdShopService.addShopCategory(shopBean, cName, parentCId);
         } else if (isTMPlatform(shopCartId)) {
             cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
-        } else if (shopCartId.equals(CartEnums.Cart.LIKING.getId()) || shopCartId.equals(CartEnums.Cart.CN.getId())) {
+        } else if (shopCartId.equals(CartEnums.Cart.LCN.getId()) || shopCartId.equals(CartEnums.Cart.CN.getId())) {
             ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
             int size = getBrotherSize(sellerCats, parentCId); // 2016-12-07 新增节点时默认设置index为当前层级节点的最后一位
             Map<String, String> resultMap = cnSellerCatService.addSellerCat(channelId, parentCId, cName, urlKey, shopBean, size + 1);
@@ -254,7 +254,7 @@ public class SellerCatService extends BaseService {
         } else if (isTMPlatform(shopCartId)) {
             tbSellerCatService.updateSellerCat(shopBean, cId, cName);
         /*}else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {*/
-        } else if (shopCartId.equals(CartEnums.Cart.LIKING.getId()) || shopCartId.equals(CartEnums.Cart.CN.getId())) {
+        } else if (shopCartId.equals(CartEnums.Cart.LCN.getId()) || shopCartId.equals(CartEnums.Cart.CN.getId())) {
             ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
             int index = this.indexOfCurrentCat(sellerCats, currentNode.getParentCatId(), cId);
             if (index == -1) {
@@ -416,7 +416,7 @@ public class SellerCatService extends BaseService {
                 }
             }
 //        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
-        }else if (shopCartId.equals(CartEnums.Cart.LIKING.getId()) || shopCartId.equals(CartEnums.Cart.CN.getId())) {
+        }else if (shopCartId.equals(CartEnums.Cart.LCN.getId()) || shopCartId.equals(CartEnums.Cart.CN.getId())) {
             List<CmsBtSellerCatModel>  sellercats = getSellerCatsByChannelCart(channelId, cartId, false);
             CmsBtSellerCatModel currentNode = sellercats.stream().filter(w ->w.getCatId().equals(cId)).findFirst().get();
             cnSellerCatService.deleteSellerCat(currentNode,shopBean);
@@ -579,7 +579,7 @@ public class SellerCatService extends BaseService {
         // 获取店铺内分类的列表
         List<CmsBtSellerCatModel> sellerCatList = getSellerCatsByChannelCart(channelId, cartId);
 
-        if(cartId == CartEnums.Cart.LIKING.getValue()){
+        if(cartId == CartEnums.Cart.LCN.getValue()){
             cnSellerCatService.resetAllCatalog(sellerCatList, shopBean);
             return true;
         }
@@ -610,7 +610,7 @@ public class SellerCatService extends BaseService {
                 // 京东API不支持， 以后京东如果支持之后再做
             } else if (isTMPlatform(shopCartId)) {
                 tbSellerCatService.updateSellerCatSortOrder(shopBean, subSellerCat.getCatId(), i + 1);
-            } else if (shopCartId.equals(CartEnums.Cart.LIKING.getId())) {
+            } else if (shopCartId.equals(CartEnums.Cart.LCN.getId())) {
                 ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
 //                cnSellerCatService.updateSellerCat(channelId, subSellerCat.getCatId(), shopBean);
             }
@@ -756,7 +756,7 @@ public class SellerCatService extends BaseService {
     private boolean isTMPlatform(String shopCartId) {
         if (shopCartId.equals(CartEnums.Cart.TM.getId()) || shopCartId.equals(CartEnums.Cart.TB.getId()) ||
                 shopCartId.equals(CartEnums.Cart.TG.getId()) || shopCartId.equals(CartEnums.Cart.TT.getId())
-                || shopCartId.equals(CartEnums.Cart.USTT.getId())) {
+                || shopCartId.equals(CartEnums.Cart.LTT.getId())) {
             return true;
         }
         return false;
@@ -811,7 +811,7 @@ public class SellerCatService extends BaseService {
         // doResetPlatformSellerCatIndex(channelId, cartId);
         ShopBean shopBean = Shops.getShop(channelId, cartId);
         /*if (shopBean != null && CartEnums.Cart.LIKING.getId().equals(shopBean.getCart_id())) {*/
-        if (shopBean != null && (CartEnums.Cart.LIKING.getId().equals(shopBean.getCart_id()) || CartEnums.Cart.CN.getId().equals(shopBean.getCart_id()))) {
+        if (shopBean != null && (CartEnums.Cart.LCN.getId().equals(shopBean.getCart_id()) || CartEnums.Cart.CN.getId().equals(shopBean.getCart_id()))) {
             cnSellerCatService.resetAllCatalog(sellerCatList, shopBean);
 //            cnCategoryService.uploadAllCnCategory(channelId, cartId, shopBean);
         }

@@ -19,7 +19,6 @@ import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
-import com.voyageone.task2.cms.dao.BrandDao;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,9 +37,6 @@ public class GetPlatformCategorySchemaService extends BaseCronTaskService {
 
     // Active有效
     private final static int Active_1 = 1;
-
-    @Autowired
-    private BrandDao brandDao;
 
     @Autowired
     private TbCategoryService tbCategoryService;
@@ -75,7 +71,7 @@ public class GetPlatformCategorySchemaService extends BaseCronTaskService {
         cartList.add(CartEnums.Cart.TM.getValue());
         cartList.add(CartEnums.Cart.TG.getValue());
         cartList.add(CartEnums.Cart.TT.getValue());
-        cartList.add(CartEnums.Cart.USTT.getValue());
+        cartList.add(CartEnums.Cart.LTT.getValue());
 
         // 获取该任务可以运行的销售渠道
         int idxChannel = 1;

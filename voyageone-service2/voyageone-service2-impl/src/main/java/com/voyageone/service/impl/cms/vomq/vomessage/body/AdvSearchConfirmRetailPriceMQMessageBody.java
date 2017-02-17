@@ -20,9 +20,8 @@ import java.util.List;
 public class AdvSearchConfirmRetailPriceMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;
-    private List<Integer> cartList;
+    private Integer cartId;
     private List<String> codeList;
-    private String userName;
 
     public String getChannelId() {
         return channelId;
@@ -32,12 +31,12 @@ public class AdvSearchConfirmRetailPriceMQMessageBody extends BaseMQMessageBody 
         this.channelId = channelId;
     }
 
-    public List<Integer> getCartList() {
-        return cartList;
+    public Integer getCartId() {
+        return cartId;
     }
 
-    public void setCartList(List<Integer> cartList) {
-        this.cartList = cartList;
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
     }
 
     public List<String> getCodeList() {
@@ -48,30 +47,19 @@ public class AdvSearchConfirmRetailPriceMQMessageBody extends BaseMQMessageBody 
         this.codeList = codeList;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     @Override
     public void check() throws MQMessageRuleException {
         if (StringUtils.isBlank(channelId)) {
-            throw new MQMessageRuleException("高级检索-确认指导价变更MQ发送异常, 参数channelId为空.");
+            throw new MQMessageRuleException("高级检索-批量确认中国指导价变更MQ发送异常, 参数channelId为空.");
         }
-        if (CollectionUtils.isEmpty(cartList)) {
-            throw new MQMessageRuleException("高级检索-确认指导价变更MQ发送异常, 参数cartList为空.");
+        if (cartId == null) {
+            throw new MQMessageRuleException("高级检索-批量确认中国指导价变更MQ发送异常, 参数cartList为空.");
         }
         if (CollectionUtils.isEmpty(codeList)) {
-            throw new MQMessageRuleException("高级检索-确认指导价变更MQ发送异常, 参数codeList为空.");
+            throw new MQMessageRuleException("高级检索-批量确认中国指导价变更MQ发送异常, 参数codeList为空.");
         }
-        if (StringUtils.isBlank(userName)) {
-            throw new MQMessageRuleException("高级检索-确认指导价变更MQ发送异常, 参数userName为空.");
-        }
-        if (StringUtils.isBlank(getSender())) {
-            throw new MQMessageRuleException("sender(发送者)不能为空");
+        if (StringUtils.isEmpty(getSender())) {
+            throw new MQMessageRuleException("高级检索-批量确认中国指导价变更MQ发送异常, 发送者为空.");
         }
     }
 }

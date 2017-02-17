@@ -2,17 +2,15 @@ package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
-import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsCartAddMQMessageBody;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 给一个channel生成新的platform
@@ -48,42 +44,38 @@ public class CmsCartAddMQJob extends TBaseMQCmsService<CmsCartAddMQMessageBody> 
     }
 
     @Override
-    public void onStartup(CmsCartAddMQMessageBody messageMap) {
-        String channelId = messageMap.getChannelId();
-        Integer cartId =  messageMap.getCartId();
-        Boolean isSingle = messageMap.getSingle() == null ? false : messageMap.getSingle();
+    public void onStartup(CmsCartAddMQMessageBody messageBody) {
+        String channelId = messageBody.getChannelId();
+        Integer cartId =  messageBody.getCartId();
+        Boolean isSingle = messageBody.getSingle() == null ? false : messageBody.getSingle();
 
         Assert.isTrue(channelId != null && cartId != null, "参数错误!");
 
         long sumCnt = productService.countByQuery("{}", null, channelId);
+        super.count = sumCnt;
 
         long pageCnt = sumCnt / pageSize + (sumCnt % pageSize > 0 ? 1 : 0);
-        Map<String, String> failMap = new HashMap<String, String>();
-        try {
-            for (int pageNum = 1; pageNum <= pageCnt; pageNum++) {
-                JongoQuery jongoQuery = new JongoQuery();
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
 
-                jongoQuery.setSkip((pageNum - 1) * pageSize);
-                jongoQuery.setLimit(pageSize);
-                List<CmsBtProductModel> cmsBtProductModels = productService.getList(channelId, jongoQuery);
-                for (int i = 0; i < cmsBtProductModels.size(); i++) {
-                    $info(String.format("%d/%d  code:%s", (pageNum - 1) * pageSize + i + 1, sumCnt, cmsBtProductModels.get(i).getCommon().getFields().getCode()));
-                    createPlatform(cmsBtProductModels.get(i), cartId, isSingle, failMap);
-                }
+        for (int pageNum = 1; pageNum <= pageCnt; pageNum++) {
+            JongoQuery jongoQuery = new JongoQuery();
+
+            jongoQuery.setSkip((pageNum - 1) * pageSize);
+            jongoQuery.setLimit(pageSize);
+            List<CmsBtProductModel> cmsBtProductModels = productService.getList(channelId, jongoQuery);
+            for (int i = 0; i < cmsBtProductModels.size(); i++) {
+                $info(String.format("%d/%d  code:%s", (pageNum - 1) * pageSize + i + 1, sumCnt, cmsBtProductModels.get(i).getCommon().getFields().getCode()));
+                createPlatform(cmsBtProductModels.get(i), cartId, isSingle, failList);
             }
-            if (failMap.size() > 0) {
-                cmsSuccessIncludeFailLog(messageMap, JacksonUtil.bean2Json(failMap));
-            }
-        } catch (Exception e) {
-            if (e instanceof BusinessException) {
-                cmsBusinessExLog(messageMap, e.getMessage());
-            } else {
-                cmsLog(messageMap, OperationLog_Type.unknownException, e.getMessage());
-            }
+        }
+        if (failList.size() > 0) {
+            //写业务错误日志
+            String comment = String.format("处理总件数(%s), 处理失败件数(%s)", sumCnt, failList.size());
+            cmsSuccessIncludeFailLog(messageBody, comment, failList);
         }
     }
 
-    private void createPlatform(CmsBtProductModel cmsBtProductModel, Integer cartId, Boolean isSingle, Map<String, String> failMap) {
+    private void createPlatform(CmsBtProductModel cmsBtProductModel, Integer cartId, Boolean isSingle, List<CmsBtOperationLogModel_Msg> failMap) {
 
         if (cmsBtProductModel.getPlatform(cartId) != null) return;
 
@@ -142,7 +134,10 @@ public class CmsCartAddMQJob extends TBaseMQCmsService<CmsCartAddMQMessageBody> 
             priceService.setPrice(cmsBtProductModel, cartId, true);
         } catch (IllegalPriceConfigException | PriceCalculateException e) {
             $error(e);
-            failMap.put(code, String.format("调用PriceService.setPrice异常, channelId=%s, code=%s, cartId=%d, errmsg=%s", cmsBtProductModel.getChannelId(), code, cartId, e.getMessage()));
+            CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+            errorInfo.setSkuCode(code);
+            errorInfo.setMsg(String.format("调用PriceService.setPrice异常, code=%s, cartId=%d, errmsg=%s", code, cartId, e.getMessage()));
+            failMap.add(errorInfo);
         }
         productGroupService.update(group);
         productService.updateProductPlatform(cmsBtProductModel.getChannelId(), cmsBtProductModel.getProdId(), platform, getTaskName(), false, EnumProductOperationType.CreateNewCart, EnumProductOperationType.CreateNewCart.getName(), false);

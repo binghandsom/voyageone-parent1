@@ -7,10 +7,10 @@ package com.voyageone.service.impl.cms.vomq;
  */
 public class CmsMqRoutingKey {
 
-    // 聚美活动 - 导出文件生成
+    // 聚美活动 - 生成导出文件
     public static final String CMS_JM_PROMOTION_EXPORT = "VOCmsJmPromotionExportQueue";
 
-    // 聚美活动 - 文件导入
+    // 聚美活动 - 活动商品文件导入
     public static final String CMS_JM_PROMOTION_IMPORT = "VOCmsJmPromotionImportQueue";
 
     // 聚美活动 - 活动产品的库存同步
@@ -52,16 +52,16 @@ public class CmsMqRoutingKey {
     // 高级检索 - 批量设置商品上下架
     public static final String CMS_UPDATE_PRODUCT_PLATFORM_PSTATUS_OFF_OR_ON = "VOCmsUpdateProductPlatformPStatusOffOrOnQueue";
 
-    // 高级检索 - 批量更新商品
+    // 高级检索 - 批量更新共通属性
     public static final String CMS_UPDATE_PRODUCT_FIELDS = "VOCmsUpdateProductFieldsQueue";
 
     // 高级检索 - 异步生成文件
     public static final String CMS_EXPORT_PRODUCT_INFO = "VOCmsExportProductInfoQueue";
 
-    // Feed检索 - Feed文件导出
+    // Feed检索 - 异步生成Feed导出文件
     public static final String CMS_EXPORT_FEED_INFO = "VOCmsExportFeedInfoQueue";
 
-    // 黑名单 - 指定品牌加入到黑名单或指定品牌从黑名单中移除
+    // 黑名单 - 变更黑名单操作
     public static final String CMS_BRAND_BLOCK = "VOCmsBrandBlockQueue";
 
     // 货架管理 - 获取货架里的商品信息

@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.vomq.vomessage.body;
 
+import com.voyageone.common.CmsConstants;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
@@ -20,33 +21,11 @@ import java.util.List;
 public class PlatformActiveLogMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;
-    private String userName;
-    private List<Integer> cartList;
+    private Integer cartId;
     private String activeStatus;
     private List<String> productCodes;
     private String comment;
-
-    @Override
-    public void check() throws MQMessageRuleException {
-        if (StringUtils.isBlank(channelId)) {
-            throw new MQMessageRuleException("上下架PlatformActiveLogMQ参数channelId为空.");
-        }
-        if (CollectionUtils.isEmpty(productCodes)) {
-            throw new MQMessageRuleException("上下架PlatformActiveLogMQ参数productCodes为空.");
-        }
-        if (CollectionUtils.isEmpty(cartList)) {
-            throw new MQMessageRuleException("上下架PlatformActiveLogMQ参数cartList为空.");
-        }
-        if (StringUtils.isBlank(activeStatus)) {
-            throw new MQMessageRuleException("上下架PlatformActiveLogMQ参数activeStatus为空.");
-        }
-        if (StringUtils.isBlank(userName)) {
-            throw new MQMessageRuleException("上下架PlatformActiveLogMQ参数userName为空.");
-        }
-        if (StringUtils.isBlank(getSender())) {
-            throw new MQMessageRuleException("sender(发送者)不能为空");
-        }
-    }
+    private CmsConstants.PlatformActive statusVal;
 
     public String getChannelId() {
         return channelId;
@@ -56,20 +35,12 @@ public class PlatformActiveLogMQMessageBody extends BaseMQMessageBody {
         this.channelId = channelId;
     }
 
-    public String getUserName() {
-        return userName;
+    public Integer getCartId() {
+        return cartId;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public List<Integer> getCartList() {
-        return cartList;
-    }
-
-    public void setCartList(List<Integer> cartList) {
-        this.cartList = cartList;
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
     }
 
     public String getActiveStatus() {
@@ -96,4 +67,33 @@ public class PlatformActiveLogMQMessageBody extends BaseMQMessageBody {
         this.comment = comment;
     }
 
+    public CmsConstants.PlatformActive getStatusVal() {
+        return statusVal;
+    }
+
+    public void setStatusVal(CmsConstants.PlatformActive statusVal) {
+        this.statusVal = statusVal;
+    }
+
+    @Override
+    public void check() throws MQMessageRuleException {
+        if (StringUtils.isBlank(channelId)) {
+            throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数channelId为空.");
+        }
+        if (CollectionUtils.isEmpty(productCodes)) {
+            throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数productCodes为空.");
+        }
+        if (cartId == null) {
+            throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数cartId为空.");
+        }
+        if (StringUtils.isBlank(activeStatus)) {
+            throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数activeStatus为空.");
+        }
+        if (StringUtils.isBlank(String.valueOf(statusVal))) {
+            throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数statusVal为空.");
+        }
+        if (StringUtils.isBlank(getSender())) {
+            throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 发送者为空.");
+        }
+    }
 }
