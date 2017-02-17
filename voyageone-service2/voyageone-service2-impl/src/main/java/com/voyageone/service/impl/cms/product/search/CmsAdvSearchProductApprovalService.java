@@ -81,7 +81,7 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
             else if (!CartEnums.Cart.LTT.getId().equals(String.valueOf(cartIdValue)))
                 qryStr.append("{'common.fields.hsCodeStatus': '0'},");
 
-            qryStr.append("{'prodId':{$exists:true}}");
+            qryStr.append("{'prodId':{$exists:true}},");
             qryStr.deleteCharAt(qryStr.length() - 1);
             qryStr.append("]}");
             queryObject.setQuery(qryStr.toString());
