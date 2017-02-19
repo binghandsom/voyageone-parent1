@@ -129,7 +129,14 @@ public class OverStockAnalysisService extends BaseAnalysisService {
             request.setLimit(100);
             String sku = "";
             try {
-                Result<ProductsType> result = overstockProductService.queryForMultipleProducts(request);
+                pageIndex++;
+                Result<ProductsType> result;
+                try {
+                    result = overstockProductService.queryForMultipleProducts(request);
+                }catch (Exception e){
+                    $error(e);
+                    continue;
+                }
                 int statusCode = result.getStatusCode();
                 if (statusCode == 200) {
                     ProductsType productsType = result.getEntity();
@@ -391,7 +398,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                         superfeed.clear();
                         transformer.new Context(channel, this).transform();
                         postNewProduct();
-                        pageIndex++;
+
                     }
                 } else {
                     $info("queryForMultipleProducts error; offset = " + offset + " statusCode = " + statusCode);
