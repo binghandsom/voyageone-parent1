@@ -392,17 +392,18 @@ public class CmsProductPriceUpdateService extends BaseService {
         productStatusHistoryService.insertList(channelId, codeList, cartId, EnumProductOperationType.BatchRefreshRetailPrice, msg, userName);
         $debug("CmsRefreshRetailPriceTask 记入商品修改历史结束 耗时" + (System.currentTimeMillis() - sta));
 
-        // 只有最终售价变化了，才需要上新
-        if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
-            // 最终售价被自动同步
-            if (!PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
-                // 插入上新程序
-                $debug("CmsRefreshRetailPriceTask 开始记入SxWorkLoad表");
-                sta = System.currentTimeMillis();
-                sxProductService.insertSxWorkLoad(channelId, codeList, cartId, userName);
-                $debug("CmsRefreshRetailPriceTask 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
-            }
-        }
+//        // 只有最终售价变化了，才需要上新
+//        if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
+//            // 最终售价被自动同步
+//            if (!PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
+//                // 插入上新程序
+//                $debug("CmsRefreshRetailPriceTask 开始记入SxWorkLoad表");
+//                sta = System.currentTimeMillis();
+//                sxProductService.insertSxWorkLoad(cmsProduct, Arrays.asList(cartId.toString()), modifier);
+//                sxProductService.insertSxWorkLoad(channelId, codeList, cartId, userName);
+//                $debug("CmsRefreshRetailPriceTask 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
+//            }
+//        }
         return failList;
     }
 
