@@ -15,9 +15,10 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.components.cnn.enums.CnnConstants;
+import com.voyageone.components.cnn.service.CnnWareService;
 import com.voyageone.components.dt.enums.DtConstants;
 import com.voyageone.components.dt.service.DtWareService;
 import com.voyageone.components.jd.service.JdSaleService;
@@ -36,12 +37,13 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -64,12 +66,14 @@ public class CmsPlatformActiveLogService extends BaseService {
     private final MongoSequenceService sequenceService;
     private final SxProductService sxProductService;
     private final DtWareService dtWareService;
+    private final CnnWareService cnnWareService;
 
     @Autowired
     public CmsPlatformActiveLogService(CmsBtProductGroupDao cmsBtProductGroupDao, JumeiSaleService jmSaleService,
                                        TbSaleService tbSaleService, JdSaleService jdSaleService,
                                        MongoSequenceService sequenceService, CmsBtPlatformActiveLogDao platformActiveLogDao,
-                                       CmsBtProductDao cmsBtProductDao, SxProductService sxProductService, DtWareService dtWareService) {
+                                       CmsBtProductDao cmsBtProductDao, SxProductService sxProductService, DtWareService dtWareService,
+                                       CnnWareService cnnWareService) {
         this.cmsBtProductGroupDao = cmsBtProductGroupDao;
         this.jmSaleService = jmSaleService;
         this.tbSaleService = tbSaleService;
@@ -79,6 +83,7 @@ public class CmsPlatformActiveLogService extends BaseService {
         this.cmsBtProductDao = cmsBtProductDao;
         this.sxProductService = sxProductService;
         this.dtWareService = dtWareService;
+        this.cnnWareService = cnnWareService;
     }
 
     /**
@@ -96,7 +101,6 @@ public class CmsPlatformActiveLogService extends BaseService {
         String userName = ((String) messageMap.get("creator"));
         String comment = (String) messageMap.get("comment");
         Collection<String> codeList = (Collection<String>) messageMap.get("codeList");
-        CmsConstants.PlatformActive statusVal = (CmsConstants.PlatformActive) messageMap.get("statusVal");
 
         // 判断是否缺少参数
         checkParameters(channelId, codeList, activeStatus, userName, cartId, messageMap);
@@ -142,7 +146,7 @@ public class CmsPlatformActiveLogService extends BaseService {
                     // 上架
                     ItemUpdateListingResponse response = tbSaleService.doWareUpdateListing(shopProp, numIId);
                     if (response == null) {
-                        errMsg = "调用淘宝商品上架API失败";
+                        errMsg = "调用天猫系商品上架API失败";
                     } else {
                         if (StringUtils.isEmpty(response.getErrorCode())) {
                             updRsFlg = true;
@@ -150,12 +154,11 @@ public class CmsPlatformActiveLogService extends BaseService {
                             errMsg = response.getBody();
                         }
                     }
-
                 } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
                     // 下架
                     ItemUpdateDelistingResponse response = tbSaleService.doWareUpdateDelisting(shopProp, numIId);
                     if (response == null) {
-                        errMsg = "调用淘宝商品下架API失败";
+                        errMsg = "调用天猫系商品下架API失败";
                     } else {
                         if (StringUtils.isEmpty(response.getErrorCode())) {
                             updRsFlg = true;
@@ -164,8 +167,8 @@ public class CmsPlatformActiveLogService extends BaseService {
                         }
                     }
                 }
-
             }
+
             // 京东国际上下架
             else if (PlatFormEnums.PlatForm.JD.getId().equals(shopProp.getPlatform_id())) {
 
@@ -181,7 +184,6 @@ public class CmsPlatformActiveLogService extends BaseService {
                             errMsg = response.getMsg();
                         }
                     }
-
                 } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
                     // 下架
                     WareUpdateDelistingResponse response = jdSaleService.doWareUpdateDelisting(shopProp, numIId);
@@ -195,81 +197,75 @@ public class CmsPlatformActiveLogService extends BaseService {
                         }
                     }
                 }
-
             }
+
             // 聚美上下架
             else if (PlatFormEnums.PlatForm.JM.getId().equals(shopProp.getPlatform_id())) {
 
+                HtMallStatusUpdateBatchResponse response = null;
                 if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
                     // 上架
-                    HtMallStatusUpdateBatchResponse response = jmSaleService.doWareUpdateListing(shopProp, numIId);
-                    if (response == null) {
-                        errMsg = "调用聚美商品上架API失败";
-                    } else {
-                        if (response.isSuccess()) {
-                            updRsFlg = true;
-                        } else {
-                            errMsg = response.getErrorMsg();
-                        }
-                    }
-
+                    response = jmSaleService.doWareUpdateListing(shopProp, numIId);
                 } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
                     // 下架
-                    HtMallStatusUpdateBatchResponse response = jmSaleService.doWareUpdateDelisting(shopProp, numIId);
-                    if (response == null) {
-                        errMsg = "调用聚美商品下架API失败";
+                    response = jmSaleService.doWareUpdateDelisting(shopProp, numIId);
+                }
+                if (response == null) {
+                    errMsg = String.format("调用聚美商品上架/下架(%s)API失败", activeStatus);
+                } else {
+                    if (response.isSuccess()) {
+                        updRsFlg = true;
                     } else {
-                        if (response.isSuccess()) {
-                            updRsFlg = true;
-                        } else {
-                            errMsg = response.getErrorMsg();
-                        }
+                        errMsg = response.getErrorMsg();
                     }
                 }
-
             }
 
             // 分销上下架
             else if (PlatFormEnums.PlatForm.DT.getId().equals(shopProp.getPlatform_id())) { // 分销平台
 
+                String result = "";
                 if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
                     // 上架
-                    String result = dtWareService.onShelfProduct(shopProp, numIId);
-                    $info(String.format("调用分销平台上架API,channelId=%s,cartId=%s,numIId=%s结果=%s", shopProp.getOrder_channel_id(), shopProp.getCart_id(), numIId, result));
-                    if (StringUtils.isNotBlank(result)) {
-                        Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
-                        if (responseMap != null && responseMap.containsKey("data") && responseMap.get("data") != null) {
-                            Map<String, Object> resultMap = (Map<String, Object>) responseMap.get("data");
-                            if (DtConstants.C_DT_RETURN_SUCCESS_OK.equals(resultMap.get("result"))) {
-                                updRsFlg = true;
-                            } else {
-                                errMsg = (String) resultMap.get("reason");
-                            }
-                        }
-                    }
-                    if (!updRsFlg && StringUtils.isBlank(errMsg)) {
-                        errMsg = "调用分销平台上架API失败";
-                    }
+                    result = dtWareService.onShelfProduct(shopProp, numIId);
                 } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
                     // 下架
-                    String result = dtWareService.offShelfProduct(shopProp, numIId);
-                    $info(String.format("调用分销平台下架API,channelId=%s,cartId=%s,numIId=%s结果=%s", shopProp.getOrder_channel_id(), shopProp.getCart_id(), numIId, result));
-                    if (StringUtils.isNotBlank(result)) {
-                        Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
-                        if (responseMap != null && responseMap.containsKey("data") && responseMap.get("data") != null) {
-                            Map<String, Object> resultMap = (Map<String, Object>) responseMap.get("data");
-                            if (DtConstants.C_DT_RETURN_SUCCESS_OK.equals(resultMap.get("result"))) {
-                                updRsFlg = true;
-                            } else {
-                                errMsg = (String) resultMap.get("reason");
-                            }
+                    result = dtWareService.offShelfProduct(shopProp, numIId);
+                }
+                if (StringUtils.isNotBlank(result)) {
+                    Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
+                    if (responseMap != null && responseMap.containsKey("data") && responseMap.get("data") != null) {
+                        Map<String, Object> resultMap = (Map<String, Object>) responseMap.get("data");
+                        if (DtConstants.C_DT_RETURN_SUCCESS_OK.equals(resultMap.get("result"))) {
+                            updRsFlg = true;
+                        } else {
+                            errMsg = (String) resultMap.get("reason");
                         }
                     }
-                    if (!updRsFlg && StringUtils.isBlank(errMsg)) {
-                        errMsg = "调用分销平台下架API失败";
+                }
+            }
+
+            // 独立官网
+            else if (PlatFormEnums.PlatForm.CNN.getId().equals(shopProp.getPlatform_id())) {
+
+                String result = "";
+                if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
+                    // 上架
+                    result = cnnWareService.doWareUpdateListing(shopProp, Long.valueOf(numIId));
+                } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
+                    // 下架
+                    result = cnnWareService.doWareUpdateDelisting(shopProp, Long.valueOf(numIId));
+                }
+                if (!com.voyageone.common.util.StringUtils.isEmpty(result)) {
+                    Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
+                    if (responseMap != null && responseMap.containsKey("code") && responseMap.get("code") != null) {
+                        if (CnnConstants.C_CNN_RETURN_SUCCESS_0 == (int) responseMap.get("code")) {
+                            updRsFlg = true;
+                        } else {
+                            errMsg = String.format("[errMsg=%s]", responseMap.get("msg"));
+                        }
                     }
                 }
-
             }
 
             // 其他平台
@@ -283,15 +279,14 @@ public class CmsPlatformActiveLogService extends BaseService {
                 failList.add(errorInfo);
             }
 
-            if (!updRsFlg) {
+            if (!updRsFlg && StringUtils.isBlank(errMsg)) {
 
                 errorInfo = new CmsBtOperationLogModel_Msg();
-                errorInfo.setSkuCode("numberIid:" + cmsBtProductGroupModel.getNumIId());
-                errorInfo.setMsg(String.format("调用分销平台(%d)下架API失败: %s", cartId, errMsg));
+                errorInfo.setSkuCode("numberId:" + cmsBtProductGroupModel.getNumIId());
+                errorInfo.setMsg(String.format("调用平台%s商品上架/下架(%s)API失败: %s", cartId, activeStatus, errMsg));
                 failList.add(errorInfo);
             }
 
-            boolean isUpdateCmsBtProductGroup = true;
             // 保存调用结果
             for (String prodCode : pcdList) {
 
@@ -300,23 +295,18 @@ public class CmsPlatformActiveLogService extends BaseService {
                 CmsBtProductModel prodObj = getCmsBtProductModelInfo(cartId, prodCode, channelId, queryObj);
 
                 //根据group的code判断cms_bt_product表是否有异常信息数据
+                String result;
                 failedComment = failedComment(failedComment, prodObj, cartId, prodCode, channelId);
-
                 if (failedComment != null) {
-                    String result = "3";
-                    //插入表cms_bt_platform_active_log数据
-                    insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, channelId, activeStatus, comment, cmsBtProductGroupModel, userName, result, failedComment);
-                    isUpdateCmsBtProductGroup = false;
+                    result = "3";
                 } else {
                     if (updRsFlg) {
-                        String result = "1";
+                        result = "1";
                         //插入ms_bt_platform_active_log表
-                        insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, channelId, activeStatus, comment, cmsBtProductGroupModel, userName, result, failedComment);
+                        insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, channelId, activeStatus, comment, cmsBtProductGroupModel, userName, "1", null);
                     } else {
-                        String result = "2";
+                        result = "2";
                         failedComment = "调用API失败";
-                        //插入cms_bt_platform_active_log表
-                        insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, channelId, activeStatus, comment, cmsBtProductGroupModel, userName, result, failedComment);
                     }
                     // 更新cms_bt_product表
                     rs = bulkList3.addBulkJongo(updateCmsBtProductInfo(cartId, activeStatus, userName, prodCode, updRsFlg, errMsg));
@@ -324,10 +314,13 @@ public class CmsPlatformActiveLogService extends BaseService {
                         $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s, code=%s cmsBtProduct更新结果=%s", cartId, channelId, prodCode, rs.toString());
                     }
                 }
+                //插入cms_bt_platform_active_log表
+                insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, channelId, activeStatus, comment, cmsBtProductGroupModel, userName, result, failedComment);
             }
-            if (updRsFlg && isUpdateCmsBtProductGroup) {
+
+            if (updRsFlg) {
                 //更新cms_bt_product_group表
-                rs = bulkList2.addBulkJongo(updateCmsBtProductGroupInfo(cartId, numIId, statusVal, activeStatus, userName));
+                rs = bulkList2.addBulkJongo(updateCmsBtProductGroupInfo(cartId, numIId, activeStatus, userName));
                 if (rs != null) {
                     $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s, numIId=%s cmsBtProductGroup更新结果=%s", cartId, channelId, numIId, rs.toString());
                 }
@@ -423,7 +416,7 @@ public class CmsPlatformActiveLogService extends BaseService {
      */
     private List<CmsBtProductGroupModel> getCmsBtProductGroupModelInfo(Collection<String> codeList, Integer cartId, String channelId) {
         JongoQuery queryObj = new JongoQuery();
-        queryObj.setQuery("{'productCodes':{$in:#},'cartId':#}");
+        queryObj.setQuery("{'productCodes':{$in:#},'cartId':#, \"numIId\": {$nin: [\"\", null]}}");
         queryObj.setParameters(codeList, cartId);
         queryObj.setProjectionExt("mainProductCode", "productCodes", "groupId", "numIId", "platformMallId");
         return cmsBtProductGroupDao.select(queryObj, channelId);
@@ -532,22 +525,19 @@ public class CmsPlatformActiveLogService extends BaseService {
             failedComment = "商品不存在";
         } else {
             String mainCode = StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getMainProductCode());
-            String proNumIId = CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? prodObj.getPlatformNotNull(cartId).getpPlatformMallId() : prodObj.getPlatformNotNull(cartId).getpNumIId();
-            if (proNumIId == null || StringUtil.isEmpty(proNumIId.trim()) || proNumIId.trim().equals("0")) {
-                $warn("CmsPlatformActiveLogService numIId错误 channelId=%s, code=%s", channelId, prodCode);
-                failedComment = "NumIId为空";
-            } else if (mainCode == null) {
-                $warn("CmsPlatformActiveLogService 产品数据错误(没有MainProductCode数据) channelId=%s, code=%s", channelId, prodCode);
-                failedComment = "未设置主商品";
-            } else if ("1".equals(StringUtils.trimToNull(prodObj.getLock()))) {
-                $warn("CmsPlatformActiveLogService 商品lock channelId=%s, code=%s", channelId, prodCode);
-                failedComment = "商品已锁定";
-            } else if (!CmsConstants.ProductStatus.Approved.name().equals(StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getStatus()))) {
-                $warn("CmsPlatformActiveLogService 商品未审批 channelId=%s, code=%s", channelId, prodCode);
-                failedComment = "商品未审批";
-            } else if (!CmsConstants.PlatformStatus.OnSale.equals(prodObj.getPlatformNotNull(cartId).getpStatus()) && !CmsConstants.PlatformStatus.InStock.equals(prodObj.getPlatformNotNull(cartId).getpStatus())) {
-                $warn("CmsPlatformActiveLogService 商品还未上下架 channelId=%s, code=%s", channelId, prodCode);
-                failedComment = "商品平台状态不是\"在售\"或\"在库\"";
+            String proNumIId = CartEnums.Cart.JM.getId().equals(String.valueOf(cartId))
+                    ? prodObj.getPlatformNotNull(cartId).getpPlatformMallId()
+                    : prodObj.getPlatformNotNull(cartId).getpNumIId();
+            if (proNumIId != null && StringUtils.isNotEmpty(proNumIId.trim()) && !"0".equals(proNumIId.trim())) {
+                if (mainCode == null) {
+                    $warn("CmsPlatformActiveLogService 产品数据错误(没有MainProductCode数据) channelId=%s, code=%s", channelId, prodCode);
+                    failedComment = "未设置主商品, 上下架操作无效";
+                } else if ("1".equals(StringUtils.trimToNull(prodObj.getLock()))) {
+                    $warn("CmsPlatformActiveLogService 商品lock channelId=%s, code=%s", channelId, prodCode);
+                    failedComment = "商品已锁定, 上下架操作无效";
+                }
+            } else {
+                failedComment = "商品未上新, 上下架操作无效";
             }
         }
         return failedComment;
@@ -568,8 +558,11 @@ public class CmsPlatformActiveLogService extends BaseService {
         updObj.setQuery("{'common.fields.code':#}");
         updObj.setQueryParameters(prodCode);
         if (updRsFlg) {
+            String platformStatus = CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)
+                    ? CmsConstants.PlatformStatus.InStock.name()
+                    : CmsConstants.PlatformStatus.OnSale.name();
             updObj.setUpdate("{$set:{'platforms.P#.pStatus':#,'platforms.P#.pReallyStatus':#,'platforms.P#.pPublishError':'','platforms.P#.pPublishMessage':'','modified':#,'modifier':#}}");
-            updObj.setUpdateParameters(cartId, activeStatus, cartId, activeStatus, cartId, cartId, DateTimeUtil.getNowTimeStamp(), userName);
+            updObj.setUpdateParameters(cartId, platformStatus, cartId, platformStatus, cartId, cartId, DateTimeUtil.getNowTimeStamp(), userName);
         } else {
             updObj.setUpdate("{$set:{'platforms.P#.pPublishError':'Error','platforms.P#.pPublishMessage':#,'modified':#,'modifier':#}}");
             updObj.setUpdateParameters(cartId, cartId, errMsg, DateTimeUtil.getNowTimeStamp(), userName);
@@ -581,12 +574,11 @@ public class CmsPlatformActiveLogService extends BaseService {
      * 更新cms_bt_product_group表
      * @param cartId
      * @param numIId
-     * @param statusVal
      * @param activeStatus
      * @param userName
      * @return
      */
-    private JongoUpdate updateCmsBtProductGroupInfo(Integer cartId, String numIId, CmsConstants.PlatformActive statusVal, String activeStatus, String userName) {
+    private JongoUpdate updateCmsBtProductGroupInfo(Integer cartId, String numIId, String activeStatus, String userName) {
         // 在group表更新相关状态
         JongoUpdate updObj = new JongoUpdate();
         updObj.setQuery("{'cartId':#,'numIId':#}");
@@ -594,11 +586,11 @@ public class CmsPlatformActiveLogService extends BaseService {
         if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
             // 上架
             updObj.setUpdate("{$set:{'platformActive':#,'platformStatus':#,'onSaleTime':#,'modified':#,'modifier':#}}");
-            updObj.setUpdateParameters(statusVal, activeStatus, DateTimeUtil.getNow(), DateTimeUtil.getNowTimeStamp(), userName);
+            updObj.setUpdateParameters(activeStatus, CmsConstants.PlatformStatus.OnSale.name(), DateTimeUtil.getNow(), DateTimeUtil.getNowTimeStamp(), userName);
         } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
             // 下架
             updObj.setUpdate("{$set:{'platformActive':#,'platformStatus':#,'inStockTime':#,'modified':#,'modifier':#}}");
-            updObj.setUpdateParameters(statusVal, activeStatus, DateTimeUtil.getNow(), DateTimeUtil.getNowTimeStamp(), userName);
+            updObj.setUpdateParameters(activeStatus, CmsConstants.PlatformStatus.InStock.name(), DateTimeUtil.getNow(), DateTimeUtil.getNowTimeStamp(), userName);
         }
         return updObj;
     }
