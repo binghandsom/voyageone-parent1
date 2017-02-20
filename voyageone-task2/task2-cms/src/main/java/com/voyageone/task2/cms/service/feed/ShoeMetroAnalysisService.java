@@ -138,7 +138,7 @@ public class ShoeMetroAnalysisService extends BaseAnalysisService {
         } catch (Exception ex) {
             ex.printStackTrace();
             $info("ShoeMetro产品文件读入失败");
-            logIssue("cms 数据导入处理", "YogaDemocracy产品文件读入失败 " + ex.getMessage());
+            logIssue("cms 数据导入处理", "ShoeMetro产品文件读入失败 " + ex.getMessage());
         }
         return cnt;
     }
