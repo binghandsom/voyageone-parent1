@@ -133,11 +133,6 @@ define([
         var self = this, $scope = self.$scope,
             productDetailService = self.productDetailService;
 
-        if (self.vm.status == 'Approved') {
-            self.alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
-            return;
-        }
-
         productDetailService.getPlatformCategories({cartId: $scope.cartInfo.value})
             .then(function (res) {
                 if (!res.data || !res.data.length) {
