@@ -124,7 +124,12 @@ public class ComUserService {
         }
         model.setIp(clientIP);
 
-        comLoginLogDao.insert(model);
+        try {
+            comLoginLogDao.insert(model);
+        }catch (Exception e){
+
+        }
+
 
         return userModel;
     }
