@@ -15,7 +15,6 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.cnn.enums.CnnConstants;
@@ -531,7 +530,7 @@ public class CmsPlatformActiveLogService extends BaseService {
             String mainCode = StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getMainProductCode());
             String proNumIId = CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? prodObj.getPlatformNotNull(cartId).getpPlatformMallId() : prodObj.getPlatformNotNull(cartId).getpNumIId();
 
-            if (proNumIId != null &&  !StringUtils.isBlank(proNumIId.trim()) && !"0".equals(proNumIId.trim())) {
+            if (proNumIId != null && StringUtils.isNotEmpty(proNumIId.trim()) && !"0".equals(proNumIId.trim())) {
                 if (mainCode == null) {
                     $warn("CmsPlatformActiveLogService 产品数据错误(没有MainProductCode数据) channelId=%s, code=%s", channelId, prodCode);
                     failedComment = "未设置主商品";
