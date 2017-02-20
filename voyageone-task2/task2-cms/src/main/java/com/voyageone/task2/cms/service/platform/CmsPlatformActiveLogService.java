@@ -302,8 +302,6 @@ public class CmsPlatformActiveLogService extends BaseService {
                 } else {
                     if (updRsFlg) {
                         result = "1";
-                        //插入ms_bt_platform_active_log表
-                        insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, channelId, activeStatus, comment, cmsBtProductGroupModel, userName, "1", null);
                     } else {
                         result = "2";
                         failedComment = "调用API失败";
