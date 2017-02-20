@@ -121,6 +121,7 @@ public class ShoeMetroAnalysisService extends BaseAnalysisService {
                 superFeedShoeMetroBean.setCategory(reader.get(i++));
                 superfeed.add(superFeedShoeMetroBean);
                 cnt++;
+                $info("-------------------Sku"+superFeedShoeMetroBean.getSku()+"数量"+cnt);
                 if (superfeed.size() > 1000) {
                     transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
                     superfeed.clear();

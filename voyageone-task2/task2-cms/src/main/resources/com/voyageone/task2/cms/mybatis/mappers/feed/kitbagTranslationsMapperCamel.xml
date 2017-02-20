@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.task2.cms.dao.feed.KitBagFeedTranslationsDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.task2.cms.bean.SuperFeedKitBagTranslationsBean" >
+        <id column="ProductId" property="productid" jdbcType="VARCHAR" />
+        <result column="SiteName" property="sitename" jdbcType="VARCHAR" />
+        <result column="SiteId" property="siteid" jdbcType="VARCHAR" />
+        <result column="Territory" property="territory" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.voyageone.task2.cms.bean.SuperFeedKitBagTranslationsBean" extends="BaseResultMap" >
+        <result column="Title" property="title" jdbcType="LONGVARCHAR" />
+        <result column="DetailedDescription" property="detaileddescription" jdbcType="LONGVARCHAR" />
+        <result column="Gender" property="gender" jdbcType="LONGVARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        ProductId, SiteName, SiteId, Territory
+    </sql>
+    <sql id="Blob_Column_List" >
+        "Title", "DetailedDescription", "Gender"
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+        select
+        <include refid="Base_Column_List" />
+        ,
+        <include refid="Blob_Column_List" />
+        from cms_zz_feed_kitbag_translations_file
+        where ProductId = #{productid,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from cms_zz_feed_kitbag_translations_file
+        where "ProductId" = #{productid,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insert" parameterType="com.voyageone.task2.cms.bean.SuperFeedKitBagTranslationsBean" >
+        insert into cms_zz_feed_kitbag_translations_file (ProductId, SiteName, SiteId,Territory, Title,
+        DetailedDescription,Gender)
+        values (#{productid,jdbcType=VARCHAR}, #{sitename,jdbcType=VARCHAR}, #{siteid,jdbcType=VARCHAR},
+        #{territory,jdbcType=VARCHAR}, #{title,jdbcType=LONGVARCHAR}, #{detaileddescription,jdbcType=LONGVARCHAR},
+        #{gender,jdbcType=LONGVARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedKitBagTranslationsBean" >
+        insert into cms_zz_feed_kitbag_translations_file
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="productid != null" >
+                ProductId,
+            </if>
+            <if test="sitename != null" >
+                SiteName,
+            </if>
+            <if test="siteid != null" >
+                SiteId,
+            </if>
+            <if test="territory != null" >
+                Territory,
+            </if>
+            <if test="title != null" >
+                Title,
+            </if>
+            <if test="detaileddescription != null" >
+                DetailedDescription,
+            </if>
+            <if test="gender != null" >
+                Gender,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="productid != null" >
+                #{productid,jdbcType=VARCHAR},
+            </if>
+            <if test="sitename != null" >
+                #{sitename,jdbcType=VARCHAR},
+            </if>
+            <if test="siteid != null" >
+                #{siteid,jdbcType=VARCHAR},
+            </if>
+            <if test="territory != null" >
+                #{territory,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null" >
+                #{title,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="detaileddescription != null" >
+                #{detaileddescription,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="gender != null" >
+                #{gender,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedKitBagTranslationsBean" >
+        update cms_zz_feed_kitbag_translations_file
+        <set >
+            <if test="sitename != null" >
+                SiteName = #{sitename,jdbcType=VARCHAR},
+            </if>
+            <if test="siteid != null" >
+                SiteId = #{siteid,jdbcType=VARCHAR},
+            </if>
+            <if test="territory != null" >
+                Territory = #{territory,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null" >
+                Title = #{title,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="detaileddescription != null" >
+                DetailedDescription = #{detaileddescription,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="gender != null" >
+                Gender = #{gender,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where ProductId = #{productid,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.voyageone.task2.cms.bean.SuperFeedKitBagTranslationsBean" >
+        update cms_zz_feed_kitbag_translations_file
+        set SiteName = #{sitename,jdbcType=VARCHAR},
+        SiteId = #{siteid,jdbcType=VARCHAR},
+        Territory = #{territory,jdbcType=VARCHAR},
+        Title = #{title,jdbcType=LONGVARCHAR},
+        DetailedDescription = #{detaileddescription,jdbcType=LONGVARCHAR},
+        Gender = #{gender,jdbcType=LONGVARCHAR}
+        where ProductId = #{productid,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperFeedKitBagTranslationsBean" >
+        update cms_zz_feed_kitbag_translations_file
+        set SiteName = #{sitename,jdbcType=VARCHAR},
+        SiteId = #{siteid,jdbcType=VARCHAR},
+        Territory= #{territory,jdbcType=VARCHAR}
+        where ProductId = #{productid,jdbcType=VARCHAR}
+    </update>
+</mapper>

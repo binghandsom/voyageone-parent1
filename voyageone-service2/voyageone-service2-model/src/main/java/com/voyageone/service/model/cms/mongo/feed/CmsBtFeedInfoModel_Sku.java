@@ -25,6 +25,7 @@ public class CmsBtFeedInfoModel_Sku {
     private String weightOrgUnit;
     private String weightCalc;
     private Integer isSale;
+    private String mainVid;
 
     public int getIsSale() {
         return isSale == null?1:isSale;
@@ -180,5 +181,13 @@ public class CmsBtFeedInfoModel_Sku {
 
     public void setErrInfo(String errInfo) {
         this.errInfo = errInfo;
+    }
+
+    public String getMainVid() {
+        return mainVid;
+    }
+
+    public void setMainVid(String mainVid) {
+        this.mainVid = mainVid;
     }
 }
