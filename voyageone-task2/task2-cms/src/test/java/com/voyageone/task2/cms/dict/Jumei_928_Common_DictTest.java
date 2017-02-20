@@ -171,7 +171,7 @@ public class Jumei_928_Common_DictTest {
 
                 {
                     // 前缀
-                    String html = "<img width=790px src=\"";
+                    String html = "<img src=\"";
                     ruleRoot.addRuleWord(new TextWord(html));
                 }
 
@@ -206,7 +206,7 @@ public class Jumei_928_Common_DictTest {
 
                 {
                     // 前缀
-                    String html = "<img width=790px src=\"";
+                    String html = "<img src=\"";
                     ruleRoot.addRuleWord(new TextWord(html));
                 }
 
