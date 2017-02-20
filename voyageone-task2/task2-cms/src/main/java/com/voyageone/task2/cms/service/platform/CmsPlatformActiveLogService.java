@@ -30,7 +30,6 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
-import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtPlatformActiveLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -64,7 +63,6 @@ public class CmsPlatformActiveLogService extends BaseService {
     private final JdSaleService jdSaleService;
     private final JumeiSaleService jmSaleService;
     private final MongoSequenceService sequenceService;
-    private final SxProductService sxProductService;
     private final DtWareService dtWareService;
     private final CnnWareService cnnWareService;
 
@@ -72,7 +70,7 @@ public class CmsPlatformActiveLogService extends BaseService {
     public CmsPlatformActiveLogService(CmsBtProductGroupDao cmsBtProductGroupDao, JumeiSaleService jmSaleService,
                                        TbSaleService tbSaleService, JdSaleService jdSaleService,
                                        MongoSequenceService sequenceService, CmsBtPlatformActiveLogDao platformActiveLogDao,
-                                       CmsBtProductDao cmsBtProductDao, SxProductService sxProductService, DtWareService dtWareService,
+                                       CmsBtProductDao cmsBtProductDao, DtWareService dtWareService,
                                        CnnWareService cnnWareService) {
         this.cmsBtProductGroupDao = cmsBtProductGroupDao;
         this.jmSaleService = jmSaleService;
@@ -81,7 +79,6 @@ public class CmsPlatformActiveLogService extends BaseService {
         this.sequenceService = sequenceService;
         this.platformActiveLogDao = platformActiveLogDao;
         this.cmsBtProductDao = cmsBtProductDao;
-        this.sxProductService = sxProductService;
         this.dtWareService = dtWareService;
         this.cnnWareService = cnnWareService;
     }
