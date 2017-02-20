@@ -1,4 +1,4 @@
-<div class="product-shema-detail" id="skuPrice">
+<div class="product-shema-detail" id="skuPrice" ng-init = "ctrl.init()">
     <div class="form-horizontal">
         <div class="container-fluid">
             <div class="row">
@@ -26,8 +26,7 @@
                     <div class="vo_prodGallery" style="border-bottom: 1px solid #ddd;">
                         <div class="imageContainer">
                             <div class="imageWrapper">
-                                <img class="imageWrapper"
-                                     ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{vm.model.image1}}">
+                                <img class="imageWrapper" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrl.vm.model.image1}}">
                             </div>
                         </div>
                     </div>
@@ -37,13 +36,13 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Product Name</label>
                             <div class="col-sm-6">
-                                <input class="form-control" readonly value="{{vm.model.productNameEn}}"  />
+                                <input type="text" class="form-control" ng-model="ctrl.vm.model.productNameEn" readonly/>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Brand</label>
                             <div class="col-sm-6">
-                                <input class="form-control" readonly  value="{{vm.model.brand}}" />
+                                <input type="text" class="form-control" ng-model="ctrl.vm.model.brand" readonly/>
                             </div>
                         </div>
                     </form>
@@ -56,14 +55,14 @@
                         <div class="col-sm-4 col-md-offset-8">
                             <div class="row">
                                 <div class="col-md-3 text-right">
-                                    <button type="button" class="btn btn-default btn-pop"  ng-click="calculateCartMsrpClick()"  >原始MSRP</button>
+                                    <button type="button" class="btn btn-default btn-pop"  ng-click="ctrl.calculateCartMsrpClick()">原始MSRP</button>
                                 </div>
                                 <div class="col-md-9">
                                     <label class="col-md-4 control-label">
                                         Sales/销量&emsp;
                                     </label>
                                     <div class="col-md-7">
-                                        <select class="form-control" ng-change="selectSalesOnChange()"  ng-model="vm.selectSales">
+                                        <select class="form-control" ng-change="ctrl.selectSalesOnChange()"  ng-model="ctrl.vm.selectSales">
                                             <option value="codeSumAll">Total</option>
                                             <option value="codeSum7">7&nbsp;Days</option>
                                             <option value="codeSum30">30&nbsp;Days</option>
@@ -96,12 +95,12 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr  ng-repeat="item in vm.productPriceList" >
+                            <tr  ng-repeat="item in ctrl.vm.productPriceList" >
                                 <td class="mfb-xt text-left">
                                     <input style="margin: 0" type="checkbox"
                                            ui-indeterminate="item.checked == 1"
                                            ng-checked="item.checked == 2"
-                                           ng-model="item.isSale"  ng-change="isSaleOnChange(item)" />
+                                           ng-model="item.isSale"  ng-change="ctrl.isSaleOnChange(item)" />
                                 </td>
                                 <td class="mfb-xxt text-center">
                                     <a href="#/product/detail/{{productInfo.productId}}/{{item.cartId}}|skuModule" target="_blank">
@@ -118,30 +117,24 @@
                                 <td class="mfb-xxt text-right">{{item.clientMsrpPrice}}</td>
                                 <td class="mfb-xxt text-right">{{item.clientNetPrice}}</td>
                                 <td class="mfb-xxt text-right">
-                                    {{item.priceMsrpSt}}
-                                    ~
-                                    {{item.priceMsrpEd}}
+                                    <price prices = "[item.priceMsrpSt,item.priceMsrpEd]"></price>
                                 </td>
                                 <td class="mfb-xxt text-right">
-                                    {{item.priceRetailSt}}
-                                    ~
-                                    {{item.priceRetailEd}}
+                                    <price prices = "[item.priceRetailSt,item.priceRetailEd]"></price>
                                 </td>
                                 <td class="mfb-xxt text-right">
-                                    {{item.priceSaleSt}}
-                                    ~
-                                    {{item.priceSaleEd}}
+                                    <price prices = "[item.priceSaleSt,item.priceSaleEd]"></price>
                                 </td>
                                 <td class="mfb-xxt text-center">
-                                    <input type="number" class="form-control text-right" ng-disabled="item.autoSyncPriceMsrp == 1"  ng-model="item.priceMsrp"  placeholder="中国建议售价" scale="15,2"  />
+                                    <input type="number" class="form-control text-right" ng-disabled="item.autoSyncPriceMsrp == 1"  ng-model="item.priceMsrp"  placeholder="中国建议售价" scale="15,2"/>
                                 </td>
                                 <td class="mfb-xxt text-center">
-                                    <input type="number" class="form-control text-right"  ng-model="item.priceSale" placeholder="中国最终售价" scale="15,2"  />
+                                    <input type="number" class="form-control text-right"  ng-model="item.priceSale" placeholder="中国最终售价" scale="15,2"/>
                                 </td>
                                 <td class="mfb-xt text-center">
-                                    <button class="btn btn-success btn-pop" ng-disabled="!(item.priceMsrp||item.priceSale)||(item.priceMsrp<=0&&item.priceSale<=0)"  ng-click="saveCartSkuPriceClick(item)">价格保存</button>
+                                    <button class="btn btn-success btn-pop" ng-disabled="!(item.priceMsrp||item.priceSale)||(item.priceMsrp<=0&&item.priceSale<=0)"  ng-click="ctrl.saveCartSkuPriceClick(item)">价格保存</button>
                                 </td>
-                                <td class="mfb-xt  text-right">{{vm.model.quantity}}</td>
+                                <td class="mfb-xt  text-right">{{ctrl.vm.model.quantity}}</td>
                                 <td class="mfb-xxt text-right">{{item.saleQty}}</td>
                             </tr>
                             </tbody>
