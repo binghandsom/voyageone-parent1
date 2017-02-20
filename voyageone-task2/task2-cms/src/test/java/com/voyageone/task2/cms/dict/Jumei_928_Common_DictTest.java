@@ -277,30 +277,30 @@ public class Jumei_928_Common_DictTest {
         RuleExpression ruleRoot = new RuleExpression();
 
         // 生成内容
-        {
-            // 详情描述 - 中文
-            // 注意：<br> 替换成 <br />，并删除所有*号。
-            MasterHtmlWord word = new MasterHtmlWord("longDesCn");
-            ruleRoot.addRuleWord(word);
-        }
-
-        {
-            // 回车一个
-            TextWord word = new TextWord(C_TEXT_BR);
-            ruleRoot.addRuleWord(word);
-        }
-
-        {
-            // 材质 - 中文
-            MasterHtmlWord masterWordmaterialCn = new MasterHtmlWord("materialCn");
-            ruleRoot.addRuleWord(masterWordmaterialCn);
-        }
-
-        {
-            // 回车
-            TextWord textWord = new TextWord("<br />");
-            ruleRoot.addRuleWord(textWord);
-        }
+//        {
+//            // 详情描述 - 中文
+//            // 注意：<br> 替换成 <br />，并删除所有*号。
+//            MasterHtmlWord word = new MasterHtmlWord("longDesCn");
+//            ruleRoot.addRuleWord(word);
+//        }
+//
+//        {
+//            // 回车一个
+//            TextWord word = new TextWord(C_TEXT_BR);
+//            ruleRoot.addRuleWord(word);
+//        }
+//
+//        {
+//            // 材质 - 中文
+//            MasterHtmlWord masterWordmaterialCn = new MasterHtmlWord("materialCn");
+//            ruleRoot.addRuleWord(masterWordmaterialCn);
+//        }
+//
+//        {
+//            // 回车
+//            TextWord textWord = new TextWord("<br />");
+//            ruleRoot.addRuleWord(textWord);
+//        }
 
         {
             // 尺码图
@@ -334,6 +334,12 @@ public class Jumei_928_Common_DictTest {
 
             CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
             ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
+        {
+            // 回车
+            TextWord textWord = new TextWord("<br />");
+            ruleRoot.addRuleWord(textWord);
         }
 
         return ruleRoot;
