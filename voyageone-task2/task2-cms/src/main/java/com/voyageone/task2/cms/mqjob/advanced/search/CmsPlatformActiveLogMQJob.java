@@ -34,7 +34,6 @@ public class CmsPlatformActiveLogMQJob extends TBaseMQCmsService<PlatformActiveL
         params.put("creator", messageBody.getSender());
         params.put("comment", messageBody.getComment());
         params.put("codeList", messageBody.getProductCodes());
-        params.put("statusVal",messageBody.getStatusVal());
 
         super.count = messageBody.getProductCodes().size();
 

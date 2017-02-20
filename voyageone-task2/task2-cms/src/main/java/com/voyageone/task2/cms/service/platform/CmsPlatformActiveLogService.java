@@ -101,7 +101,6 @@ public class CmsPlatformActiveLogService extends BaseService {
         String userName = ((String) messageMap.get("creator"));
         String comment = (String) messageMap.get("comment");
         Collection<String> codeList = (Collection<String>) messageMap.get("codeList");
-        CmsConstants.PlatformActive statusVal = (CmsConstants.PlatformActive) messageMap.get("statusVal");
 
         // 判断是否缺少参数
         checkParameters(channelId, codeList, activeStatus, userName, cartId, messageMap);
@@ -288,7 +287,6 @@ public class CmsPlatformActiveLogService extends BaseService {
                 failList.add(errorInfo);
             }
 
-            boolean isUpdateCmsBtProductGroup = true;
             // 保存调用结果
             for (String prodCode : pcdList) {
 
@@ -297,21 +295,18 @@ public class CmsPlatformActiveLogService extends BaseService {
                 CmsBtProductModel prodObj = getCmsBtProductModelInfo(cartId, prodCode, channelId, queryObj);
 
                 //根据group的code判断cms_bt_product表是否有异常信息数据
+                String result;
                 failedComment = failedComment(failedComment, prodObj, cartId, prodCode, channelId);
                 if (failedComment != null) {
-                    String result = "3";
-                    //插入表cms_bt_platform_active_log数据
-                    insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, channelId, activeStatus, comment, cmsBtProductGroupModel, userName, result, failedComment);
-                    isUpdateCmsBtProductGroup = false;
+                    result = "3";
                 } else {
                     if (updRsFlg) {
-                        String result = "1";
+                        result = "1";
                         //插入ms_bt_platform_active_log表
-                        insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, channelId, activeStatus, comment, cmsBtProductGroupModel, userName, result, null);
+                        insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, channelId, activeStatus, comment, cmsBtProductGroupModel, userName, "1", null);
                     } else {
-                        String result = "2";
-                        //插入cms_bt_platform_active_log表
-                        insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, channelId, activeStatus, comment, cmsBtProductGroupModel, userName, result, "调用API失败");
+                        result = "2";
+                        failedComment = "调用API失败";
                     }
                     // 更新cms_bt_product表
                     rs = bulkList3.addBulkJongo(updateCmsBtProductInfo(cartId, activeStatus, userName, prodCode, updRsFlg, errMsg));
@@ -319,11 +314,13 @@ public class CmsPlatformActiveLogService extends BaseService {
                         $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s, code=%s cmsBtProduct更新结果=%s", cartId, channelId, prodCode, rs.toString());
                     }
                 }
+                //插入cms_bt_platform_active_log表
+                insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, channelId, activeStatus, comment, cmsBtProductGroupModel, userName, result, failedComment);
             }
 
-            if (updRsFlg && isUpdateCmsBtProductGroup) {
+            if (updRsFlg) {
                 //更新cms_bt_product_group表
-                rs = bulkList2.addBulkJongo(updateCmsBtProductGroupInfo(cartId, numIId, statusVal, activeStatus, userName));
+                rs = bulkList2.addBulkJongo(updateCmsBtProductGroupInfo(cartId, numIId, activeStatus, userName));
                 if (rs != null) {
                     $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s, numIId=%s cmsBtProductGroup更新结果=%s", cartId, channelId, numIId, rs.toString());
                 }
@@ -528,15 +525,16 @@ public class CmsPlatformActiveLogService extends BaseService {
             failedComment = "商品不存在";
         } else {
             String mainCode = StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getMainProductCode());
-            String proNumIId = CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? prodObj.getPlatformNotNull(cartId).getpPlatformMallId() : prodObj.getPlatformNotNull(cartId).getpNumIId();
-
+            String proNumIId = CartEnums.Cart.JM.getId().equals(String.valueOf(cartId))
+                    ? prodObj.getPlatformNotNull(cartId).getpPlatformMallId()
+                    : prodObj.getPlatformNotNull(cartId).getpNumIId();
             if (proNumIId != null && StringUtils.isNotEmpty(proNumIId.trim()) && !"0".equals(proNumIId.trim())) {
                 if (mainCode == null) {
                     $warn("CmsPlatformActiveLogService 产品数据错误(没有MainProductCode数据) channelId=%s, code=%s", channelId, prodCode);
-                    failedComment = "未设置主商品";
+                    failedComment = "未设置主商品, 上下架操作无效";
                 } else if ("1".equals(StringUtils.trimToNull(prodObj.getLock()))) {
                     $warn("CmsPlatformActiveLogService 商品lock channelId=%s, code=%s", channelId, prodCode);
-                    failedComment = "商品已锁定";
+                    failedComment = "商品已锁定, 上下架操作无效";
                 }
             } else {
                 failedComment = "商品未上新, 上下架操作无效";
@@ -560,8 +558,11 @@ public class CmsPlatformActiveLogService extends BaseService {
         updObj.setQuery("{'common.fields.code':#}");
         updObj.setQueryParameters(prodCode);
         if (updRsFlg) {
+            String platformStatus = CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)
+                    ? CmsConstants.PlatformStatus.InStock.name()
+                    : CmsConstants.PlatformStatus.OnSale.name();
             updObj.setUpdate("{$set:{'platforms.P#.pStatus':#,'platforms.P#.pReallyStatus':#,'platforms.P#.pPublishError':'','platforms.P#.pPublishMessage':'','modified':#,'modifier':#}}");
-            updObj.setUpdateParameters(cartId, activeStatus, cartId, activeStatus, cartId, cartId, DateTimeUtil.getNowTimeStamp(), userName);
+            updObj.setUpdateParameters(cartId, platformStatus, cartId, platformStatus, cartId, cartId, DateTimeUtil.getNowTimeStamp(), userName);
         } else {
             updObj.setUpdate("{$set:{'platforms.P#.pPublishError':'Error','platforms.P#.pPublishMessage':#,'modified':#,'modifier':#}}");
             updObj.setUpdateParameters(cartId, cartId, errMsg, DateTimeUtil.getNowTimeStamp(), userName);
@@ -573,12 +574,11 @@ public class CmsPlatformActiveLogService extends BaseService {
      * 更新cms_bt_product_group表
      * @param cartId
      * @param numIId
-     * @param statusVal
      * @param activeStatus
      * @param userName
      * @return
      */
-    private JongoUpdate updateCmsBtProductGroupInfo(Integer cartId, String numIId, CmsConstants.PlatformActive statusVal, String activeStatus, String userName) {
+    private JongoUpdate updateCmsBtProductGroupInfo(Integer cartId, String numIId, String activeStatus, String userName) {
         // 在group表更新相关状态
         JongoUpdate updObj = new JongoUpdate();
         updObj.setQuery("{'cartId':#,'numIId':#}");
@@ -586,11 +586,11 @@ public class CmsPlatformActiveLogService extends BaseService {
         if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
             // 上架
             updObj.setUpdate("{$set:{'platformActive':#,'platformStatus':#,'onSaleTime':#,'modified':#,'modifier':#}}");
-            updObj.setUpdateParameters(statusVal, activeStatus, DateTimeUtil.getNow(), DateTimeUtil.getNowTimeStamp(), userName);
+            updObj.setUpdateParameters(activeStatus, CmsConstants.PlatformStatus.OnSale.name(), DateTimeUtil.getNow(), DateTimeUtil.getNowTimeStamp(), userName);
         } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
             // 下架
             updObj.setUpdate("{$set:{'platformActive':#,'platformStatus':#,'inStockTime':#,'modified':#,'modifier':#}}");
-            updObj.setUpdateParameters(statusVal, activeStatus, DateTimeUtil.getNow(), DateTimeUtil.getNowTimeStamp(), userName);
+            updObj.setUpdateParameters(activeStatus, CmsConstants.PlatformStatus.InStock.name(), DateTimeUtil.getNow(), DateTimeUtil.getNowTimeStamp(), userName);
         }
         return updObj;
     }
