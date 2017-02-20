@@ -419,11 +419,27 @@ public class PriceService extends BaseService {
 
         Double minRetail = null;
         Double maxRetail = null;
+
+        CmsChannelConfigBean channelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE, cartId.toString());
+        if (channelConfigBean == null) {
+            channelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE);
+        }
+
+        Integer configValue1 = 0;
+        if (channelConfigBean != null) {
+            if (!StringUtil.isEmpty(channelConfigBean.getConfigValue1())) {
+                configValue1 = Integer.parseInt(channelConfigBean.getConfigValue1());
+            }
+        }
+
         // 对 sku 进行匹配
         // 获取重量进行运费计算
         for (BaseMongoMap<String, Object> platformSku : platformSkus) {
 
             String skuCodeValue = platformSku.getStringAttribute("skuCode");
+            if(configValue1 == 1){
+                platformSku.setAttribute("isSale",true);
+            }
 
             if (!commonSkuMap.containsKey(skuCodeValue))
                 continue;

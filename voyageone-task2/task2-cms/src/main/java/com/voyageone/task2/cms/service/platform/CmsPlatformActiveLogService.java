@@ -531,7 +531,7 @@ public class CmsPlatformActiveLogService extends BaseService {
             String mainCode = StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getMainProductCode());
             String proNumIId = CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? prodObj.getPlatformNotNull(cartId).getpPlatformMallId() : prodObj.getPlatformNotNull(cartId).getpNumIId();
 
-            if (!StringUtil.isEmpty(proNumIId.trim()) && !proNumIId.trim().equals("0")) {
+            if (proNumIId != null &&  !StringUtils.isBlank(proNumIId.trim()) && !"0".equals(proNumIId.trim())) {
                 if (mainCode == null) {
                     $warn("CmsPlatformActiveLogService 产品数据错误(没有MainProductCode数据) channelId=%s, code=%s", channelId, prodCode);
                     failedComment = "未设置主商品";

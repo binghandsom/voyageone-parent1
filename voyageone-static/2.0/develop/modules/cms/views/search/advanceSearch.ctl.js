@@ -1378,14 +1378,14 @@ define([
 
         $scope.getAutoSyncPriceSale = function (cartBean) {
 
-            var configValue1="0";
+            var configValue1=null;
             if($scope.vm.masterData.autoApprovePrice){
                 if($scope.vm.masterData.autoApprovePrice[cartBean.value]){
                     configValue1 = $scope.vm.masterData.autoApprovePrice[cartBean.value].configValue1;
                 }
 
-                if(!configValue1 && $scope.vm.masterData.autoApprovePrice["0"]){
-                    configValue1 = $scope.vm.masterData.autoApprovePrice["0"].configValue1;
+                if(!configValue1 && $scope.vm.masterData.autoApprovePrice[0]){
+                    configValue1 = $scope.vm.masterData.autoApprovePrice[0].configValue1;
                 }
 
                 if("1"==configValue1) return true;

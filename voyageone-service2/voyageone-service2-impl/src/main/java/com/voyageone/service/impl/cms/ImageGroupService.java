@@ -452,6 +452,7 @@ public class ImageGroupService extends BaseService {
                 }
             }
             model.setModifier(userName);
+            model.setActive(1);
             cmsBtImageGroupDao.update(model);
         } else {
             throw new RuntimeException();

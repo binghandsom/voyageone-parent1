@@ -819,14 +819,28 @@ public class SxProductService extends BaseService {
         // modified by morse.lu 2016/06/13 end
         List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "}", channelId);
         List<CmsBtProductModel> removeProductList = new ArrayList<>(); // product删除对象(如果该product下没有允许在该平台上上架的sku，删除)
+
+        // 预设主商品
+        for (CmsBtProductModel productModel : productModelList) {
+            if (mainProductCode.equals(productModel.getCommon().getFields().getCode())) {
+                // 主商品
+                sxData.setMainProduct(productModel);
+            }
+        }
+        if (sxData.getMainProduct() == null) {
+            // 主商品未设置
+            String errorMsg = "取得上新数据(SxData)失败! 该group未设置主商品， 不能执行上新程序。groupId(" + groupId + ")";
+            $error(errorMsg);
+            sxData.setErrorMessage(errorMsg);
+            return sxData;
+        }
+
         for (CmsBtProductModel productModel : productModelList) {
             // modified by morse.lu 2016/06/28 start
             // product表结构变化
 //            if (mainProductCode.equals(productModel.getFields().getCode())) {
             if (mainProductCode.equals(productModel.getCommon().getFields().getCode())) {
                 // modified by morse.lu 2016/06/28 end
-                // 主商品
-                sxData.setMainProduct(productModel);
                 // modified by morse.lu 2016/06/07 start
 //                CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, productModel.getFields().getCode());
                 String orgChannelId = productModel.getOrgChannelId(); // feed信息要从org里获取
@@ -876,7 +890,10 @@ public class SxProductService extends BaseService {
                 if (customIdsOld != null && !customIdsOld.isEmpty() && customIdsCnOld != null && !customIdsCnOld.isEmpty()) {
                     // 获取排序顺序
 //                    customPropService.doInit(channelId);
-                    String feedCatPath = sxData.getCmsBtFeedInfoModel().getCategory();
+                    String feedCatPath = "";
+                    if (sxData.getCmsBtFeedInfoModel() != null) {
+                        feedCatPath = sxData.getCmsBtFeedInfoModel().getCategory();
+                    }
                     if (feedCatPath == null) feedCatPath = "";
                     List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedCatPath);
 
@@ -947,6 +964,14 @@ public class SxProductService extends BaseService {
                     continue;
                 }
             }
+            // 所有渠道都不能上
+			if (sxData.getMainProduct().getOrgChannelId().equals("022")) {
+				String masterBrand = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getBrand();
+				if (masterBrand.equals("dior")) {
+					removeProductList.add(productModel);
+					continue;
+				}
+			}
             // 2017/02/17 tom Liking官网同购的场合， 禁止某些品牌上新 END
 
             // modified by morse.lu 2016/06/15 start
@@ -3301,7 +3326,7 @@ public class SxProductService extends BaseService {
      */
     public String generateStyleCode(SxData sxData) throws Exception {
         boolean isDarwin = sxData.isDarwin();
-        if (!isDarwin) {
+        if (!isDarwin || !sxData.getChannelId().equals("001")) {
             // 不是达尔文
             // modified by morse.lu 2016/10/09 start
             // 画面上可以填了,没填的话还是用model
