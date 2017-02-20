@@ -137,16 +137,20 @@
                                     <platform-status data="ctrl.vm.platform" ng-if="ctrl.vm.platform"></platform-status>
                                 </label>
                                 <div class="col-md-8">
-                                    <span notice-direction="bottom" notice-content="聚美存在特殊情况，JM Origin HID为聚美上新用原始Deal的HashID，所有聚美正式销售所使用的HashID，请参照聚美活动一览内的记录。" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
+                                    <label class="col-md-1" style="width: 35px">
+                                        <span notice-direction="bottom" notice-content="聚美存在特殊情况，JM Origin HID为聚美上新用原始Deal的HashID，所有聚美正式销售所使用的HashID，请参照聚美活动一览内的记录。" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
+                                    </label>
 
-                                    <span class="m-r-sm" ng-if="ctrl.vm.platform.pNumIId">&nbsp;
-                                        <a ng-href="{{ctrl.vm.productUrl}}{{ctrl.vm.platform.pPlatformMallId}}.html" target="_blank">
-                                            {{ctrl.vm.platform.pPlatformMallId}}
-                                        </a>
-                                    </span>&nbsp;
-                                    <span class="m-r-sm" ng-if="ctrl.vm.platform.pPublishMessage" title="{{ctrl.vm.platform.pPublishMessage}}">&nbsp;
-                                        {{ctrl.vm.platform.pPublishMessage | limitTo: 30}}{{ctrl.vm.platform.pPublishMessage.length > 30 ? '...' : ''}}
-                                    </span>&nbsp;
+                                    <label class="col-md-8 m-r-sm" ng-if="ctrl.vm.platform.pNumIId">&nbsp;
+                                        <span>
+                                            <a ng-href="{{ctrl.vm.productUrl}}{{ctrl.vm.platform.pNumIId}}" target="_blank">{{ctrl.vm.platform.pNumIId}} </a>
+                                        </span>
+                                    </label>&nbsp;
+                                    <label class="col-md-8 m-r-sm" ng-if="ctrl.vm.platform.pPublishMessage" title="{{ctrl.vm.platform.pPublishMessage}}">&nbsp;
+                                        <span uib-popover-template="'approvedError.html'" popover-title="错误信息"  class="cur-p" popover-placement="bottom" style="color: #fd0001">
+                                            {{ctrl.vm.platform.pPublishMessage | limitTo: 30}}{{ctrl.vm.platform.pPublishMessage.length > 30 ? '...' : ''}}
+                                        </span>
+                                    </label>&nbsp;
 
                                 </div>
                             </div>
@@ -384,4 +388,10 @@
     </sticky>
 </div>
 
+
+<script type="text/ng-template" id="approvedError.html">
+    <p style="color: #fd0001">
+        {{ctrl.vm.platform.pPublishMessage}}
+    </p>
+</script>
 
