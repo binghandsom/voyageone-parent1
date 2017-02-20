@@ -852,6 +852,9 @@ public class SxProductService extends BaseService {
                 if (prodOrgCode == null) prodOrgCode = productModel.getCommon().getFields().getCode();
                 // modified by morse.lu 2016/06/28 end
                 CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(orgChannelId, prodOrgCode);
+                if (feedInfo == null) {
+                    feedInfo = cmsBtFeedInfoDao.selectProductByCode(orgChannelId, productModel.getCommon().getFields().getCode());
+                }
                 // Add by desmond 2016/06/12 start
                 if (feedInfo == null) {
                     // 该商品对应的feed信息不存在时，暂时的做法就是跳过当前记录， 这个group就不上了
@@ -3326,7 +3329,7 @@ public class SxProductService extends BaseService {
      */
     public String generateStyleCode(SxData sxData) throws Exception {
         boolean isDarwin = sxData.isDarwin();
-        if (!isDarwin) {
+        if (!isDarwin || !sxData.getChannelId().equals("001")) {
             // 不是达尔文
             // modified by morse.lu 2016/10/09 start
             // 画面上可以填了,没填的话还是用model
