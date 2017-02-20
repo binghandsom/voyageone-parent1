@@ -34,25 +34,31 @@ define([
     }
 
     function SpJdController($scope, productDetailService, $translate, notify, confirm, $compile, alert, popups, $fieldEditService, $document, $templateRequest) {
-        this.$scope = $scope;
-        this.productDetailService = productDetailService;
-        this.$translate = $translate;
-        this.notify = notify;
-        this.confirm = confirm;
-        this.$compile = $compile;
-        this.alert = alert;
-        this.popups = popups;
-        this.$fieldEditService = $fieldEditService;
-        this.$document = $document;
-        this.$templateRequest = $templateRequest;
-        this.vm = {
+        var self = this;
+        self.$scope = $scope;
+        self.productDetailService = productDetailService;
+        self.$translate = $translate;
+        self.notify = notify;
+        self.confirm = confirm;
+        self.$compile = $compile;
+        self.alert = alert;
+        self.popups = popups;
+        self.$fieldEditService = $fieldEditService;
+        self.$document = $document;
+        self.$templateRequest = $templateRequest;
+        self.vm = {
             productDetails: null,
             productCode: "",
             mastData: null,
             platform: null,
             status: "Pending",
             skuTemp: {},
-            checkFlag: {translate: 0, tax: 0, category: 0, attribute: 0},
+            checkFlag: self.$scope.cartInfo.value == 20 ? {translate: 0, category: 0, attribute: 0} : {
+                    translate: 0,
+                    tax: 0,
+                    category: 0,
+                    attribute: 0
+                },
             resultFlag: 0,
             sellerCats: [],
             productUrl: "",
@@ -71,7 +77,8 @@ define([
         //监控税号和翻译状态
         var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
             check.translate = $scope.productInfo.translateStatus;
-            check.tax = $scope.productInfo.hsCodeStatus;
+            if($scope.cartInfo.value != 20)
+                check.tax = $scope.productInfo.hsCodeStatus;
         });
 
         //监控主类目
@@ -98,7 +105,7 @@ define([
             vm.publishEnabled = resp.data.channelConfig.publishEnabledChannels.length > 0;
 
             if (vm.platform) {
-                if(vm.platform.noMain)
+                if (vm.platform.noMain)
                     vm.noMaterMsg = "该商品的没有设置主商品，请先设置主商品：" + vm.platform.mainCode;
 
                 vm.status = vm.platform.status == null ? vm.status : vm.platform.status;
@@ -132,7 +139,6 @@ define([
     /**
      @description 类目popup
      * @param productInfo
-     * @param popupNewCategory popup实例
      */
     SpJdController.prototype.categoryMapping = function () {
         var self = this,
@@ -176,7 +182,6 @@ define([
 
     /**
      * @description 店铺内分类popup
-     * @param openAddChannelCategoryEdit
      */
     SpJdController.prototype.openSellerCat = function () {
         var self = this, selectedIds = {};
@@ -276,7 +281,7 @@ define([
         if (!self.saveValid(mark))
             return;
 
-        //判断页面头部4个状态
+        //判断页面头部状态
         if (mark != "temporary")
             self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
 
@@ -466,7 +471,7 @@ define([
 
     /**错误聚焦*/
     SpJdController.prototype.focusError = function () {
-        var self = this,firstError,
+        var self = this, firstError,
             element = self.element;
 
         if (!self.validSchema()) {
@@ -611,6 +616,15 @@ define([
 
             modal.appendTo(body);
             $compile(modal)(modalChildScope);
+        });
+    };
+
+    /**
+     * @description 判断Ready和Approved的button激活状态
+     */
+    SpJdController.prototype.btnDisabled = function () {
+        return _.every(this.vm.checkFlag, function (ele) {
+            return ele == true ? 1 : 0;
         });
     };
 
