@@ -3326,7 +3326,7 @@ public class SxProductService extends BaseService {
      */
     public String generateStyleCode(SxData sxData) throws Exception {
         boolean isDarwin = sxData.isDarwin();
-        if (!isDarwin || sxData.getChannelId().equals("001")) {
+        if (!isDarwin || !sxData.getChannelId().equals("001")) {
             // 不是达尔文
             // modified by morse.lu 2016/10/09 start
             // 画面上可以填了,没填的话还是用model
