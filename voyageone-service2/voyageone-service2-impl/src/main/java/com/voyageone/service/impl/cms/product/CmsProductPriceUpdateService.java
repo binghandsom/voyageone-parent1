@@ -8,7 +8,6 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -18,9 +17,6 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.prices.PriceService;
-import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
-import com.voyageone.service.impl.cms.promotion.PromotionService;
-import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchRefreshRetailPriceMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
@@ -34,7 +30,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -56,13 +54,7 @@ public class CmsProductPriceUpdateService extends BaseService {
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
     @Autowired
-    private SxProductService sxProductService;
-    @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
-    @Autowired
-    private PromotionService promotionService;
-    @Autowired
-    private PromotionCodeService promotionCodeService;
 
     /**
      * 更新product及group的价格
@@ -81,7 +73,7 @@ public class CmsProductPriceUpdateService extends BaseService {
         JongoQuery queryObj = new JongoQuery();
         queryObj.setQuery("{'prodId':#,'platforms.P#.skus':{$exists:true}}");
         queryObj.setParameters(prodId, cartId);
-        queryObj.setProjectionExt("platforms.P" + cartId + ".mainProductCode", "platforms.P" + cartId + ".skus.priceMsrp", "platforms.P" + cartId + ".skus.priceRetail", "platforms.P" + cartId + ".skus.priceSale");
+        queryObj.setProjectionExt("platforms.P" + cartId + ".mainProductCode", "platforms.P" + cartId + ".skus.priceMsrp", "platforms.P" + cartId + ".skus.priceRetail", "platforms.P" + cartId + ".skus.priceSale", "platforms.P" + cartId + ".skus.isSale");
         CmsBtProductModel prodObj = productService.getProductByCondition(channelId, queryObj);
         if (prodObj == null) {
             $error("CmsProcductPriceUpdateService 产品不存在 参数=" + JacksonUtil.bean2Json(messageBody));
@@ -111,17 +103,23 @@ public class CmsProductPriceUpdateService extends BaseService {
         }
 
         // 先计算价格范围
-        List<Double> priceMsrpList = skuList.stream().map(skuObj -> skuObj.getDoubleAttribute("priceMsrp")).sorted().collect(Collectors.toList());
+        List<Double> priceMsrpList = skuList.stream()
+                .filter(skuObj -> skuObj.getAttribute("isSale") != null && (boolean)skuObj.getAttribute("isSale"))
+                .map(skuObj -> skuObj.getDoubleAttribute("priceMsrp")).sorted().collect(Collectors.toList());
         if (priceMsrpList == null || priceMsrpList.isEmpty()) {
             $error("CmsProcductPriceUpdateService 产品数据sku priceMsrp不正确 参数=" + JacksonUtil.bean2Json(messageBody));
             throw new BusinessException(String.format("产品数据sku priceMsrp不正确, params=%s", JacksonUtil.bean2Json(messageBody)));
         }
-        List<Double> priceRetailList = skuList.stream().map(skuObj -> skuObj.getDoubleAttribute("priceRetail")).sorted().collect(Collectors.toList());
+        List<Double> priceRetailList = skuList.stream()
+                .filter(skuObj -> skuObj.getAttribute("isSale") != null && (boolean)skuObj.getAttribute("isSale"))
+                .map(skuObj -> skuObj.getDoubleAttribute("priceRetail")).sorted().collect(Collectors.toList());
         if (priceRetailList == null || priceRetailList.isEmpty()) {
             $error("CmsProcductPriceUpdateService 产品数据sku priceRetail不正确 参数=" + JacksonUtil.bean2Json(messageBody));
             throw new BusinessException(String.format("产品数据sku priceRetail不正确, params=%s", JacksonUtil.bean2Json(messageBody)));
         }
-        List<Double> priceSaleList = skuList.stream().map(skuObj -> skuObj.getDoubleAttribute("priceSale")).sorted().collect(Collectors.toList());
+        List<Double> priceSaleList = skuList.stream()
+                .filter(skuObj -> skuObj.getAttribute("isSale") != null && (boolean)skuObj.getAttribute("isSale"))
+                .map(skuObj -> skuObj.getDoubleAttribute("priceSale")).sorted().collect(Collectors.toList());
         if (priceSaleList == null || priceSaleList.isEmpty()) {
             $error("CmsProcductPriceUpdateService 产品数据sku priceSale不正确 参数=" + JacksonUtil.bean2Json(messageBody));
             throw new BusinessException(String.format("产品数据sku priceSale不正确, params=%s", JacksonUtil.bean2Json(messageBody)));

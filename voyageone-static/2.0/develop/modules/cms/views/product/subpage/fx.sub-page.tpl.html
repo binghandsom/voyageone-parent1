@@ -112,15 +112,19 @@
                                     <platform-status data="ctrl.vm.platform" ng-if="ctrl.vm.platform"></platform-status>
                                 </label>
                                 <div class="col-md-8">
-                                    <span notice-direction="bottom" notice-content="【{{cartInfo.name}} NumIID】，红灯时为上新/更新失败状态，请及时修正；绿灯时为在售状态；黄灯时为在库状态；灰灯时为未发布状态。点击以上{{cartInfo.name}} NumIID进入{{cartInfo.name}}商品页面。" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
-                                    <span class="m-r-sm" ng-if="ctrl.vm.platform.pNumIId">&nbsp;
-                                        <a ng-href="{{ctrl.vm.productUrl}}{{ctrl.vm.platform.pNumIId}}" target="_blank">
-                                            {{ctrl.vm.platform.pNumIId}}
-                                        </a>
-                                    </span>&nbsp;
-                                    <span class="m-r-sm" ng-if="ctrl.vm.platform.pPublishMessage" title="{{ctrl.vm.platform.pPublishMessage}}">&nbsp;
-                                        {{ctrl.vm.platform.pPublishMessage | limitTo: 30}}{{ctrl.vm.platform.pPublishMessage.length > 30 ? '...' : ''}}
-                                    </span>&nbsp;
+                                    <label class="col-md-1" style="width: 35px">
+                                        <span notice-direction="bottom" notice-content="【{{cartInfo.name}} NumIID】，红灯时为上新/更新失败状态，请及时修正；绿灯时为在售状态；黄灯时为在库状态；灰灯时为未发布状态。点击以上{{cartInfo.name}} NumIID进入{{cartInfo.name}}商品页面。" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
+                                    </label>
+                                    <label class="col-md-8 m-r-sm" ng-if="ctrl.vm.platform.pNumIId">&nbsp;
+                                        <span>
+                                            <a ng-href="{{ctrl.vm.productUrl}}{{ctrl.vm.platform.pNumIId}}" target="_blank">{{ctrl.vm.platform.pNumIId}}</a>
+                                        </span>
+                                    </label>&nbsp;
+                                    <label class="col-md-8 m-r-sm" ng-if="ctrl.vm.platform.pPublishMessage" title="{{ctrl.vm.platform.pPublishMessage}}">&nbsp;
+                                        <span uib-popover-template="'approvedError.html'" popover-title="错误信息"  class="cur-p" popover-placement="bottom" style="color: #fd0001">
+                                            {{ctrl.vm.platform.pPublishMessage | limitTo: 30}}{{ctrl.vm.platform.pPublishMessage.length > 30 ? '...' : ''}}
+                                        </span>
+                                    </label>&nbsp;
 
                                 </div>
                             </div>
@@ -352,4 +356,9 @@
     </sticky>
 </div>
 
+<script type="text/ng-template" id="approvedError.html">
+    <p style="color: #fd0001">
+        {{ctrl.vm.platform.pPublishMessage}}
+    </p>
+</script>
 
