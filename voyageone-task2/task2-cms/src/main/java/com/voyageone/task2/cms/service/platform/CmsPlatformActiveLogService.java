@@ -199,13 +199,15 @@ public class CmsPlatformActiveLogService extends BaseService {
             // 聚美上下架
             else if (PlatFormEnums.PlatForm.JM.getId().equals(shopProp.getPlatform_id())) {
 
+                String mallId = cmsBtProductGroupModel.getPlatformMallId();
+
                 HtMallStatusUpdateBatchResponse response = null;
                 if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
                     // 上架
-                    response = jmSaleService.doWareUpdateListing(shopProp, numIId);
+                    response = jmSaleService.doWareUpdateListing(shopProp, mallId);
                 } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
                     // 下架
-                    response = jmSaleService.doWareUpdateDelisting(shopProp, numIId);
+                    response = jmSaleService.doWareUpdateDelisting(shopProp, mallId);
                 }
                 if (response == null) {
                     errMsg = String.format("调用聚美商品上架/下架(%s)API失败", activeStatus);
@@ -276,7 +278,7 @@ public class CmsPlatformActiveLogService extends BaseService {
                 failList.add(errorInfo);
             }
 
-            if (!updRsFlg && StringUtils.isBlank(errMsg)) {
+            if (!updRsFlg) {
 
                 errorInfo = new CmsBtOperationLogModel_Msg();
                 errorInfo.setSkuCode("numberId:" + cmsBtProductGroupModel.getNumIId());
@@ -315,7 +317,7 @@ public class CmsPlatformActiveLogService extends BaseService {
 
             if (updRsFlg) {
                 //更新cms_bt_product_group表
-                rs = bulkList2.addBulkJongo(updateCmsBtProductGroupInfo(cartId, numIId, activeStatus, userName));
+                rs = bulkList2.addBulkJongo(updateCmsBtProductGroupInfo(cartId, cmsBtProductGroupModel.getGroupId(), activeStatus, userName));
                 if (rs != null) {
                     $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s, numIId=%s cmsBtProductGroup更新结果=%s", cartId, channelId, numIId, rs.toString());
                 }
@@ -357,9 +359,9 @@ public class CmsPlatformActiveLogService extends BaseService {
     private void isNullGrpObjList(List<CmsBtProductGroupModel> grpObjList, Collection<String> codeList, Integer cartId, String channelId) {
         if (grpObjList == null || grpObjList.isEmpty()) {
 
-            $error("CmsPlatformActiveLogService 产品对应的group不存在 cartId=%d, channelId=%s, codes=%s", cartId, channelId, codeList.toString());
+            $error(String.format("CmsPlatformActiveLogService 产品对应的group不存在 cartId=%d, channelId=%s, codes=%s", cartId, channelId, codeList.toString()));
 
-            throw new BusinessException("CmsPlatformActiveLogService 产品对应的group不存在 cartId=%d, channelId=%s, codes=%s", cartId, channelId, codeList.toString());
+            throw new BusinessException(String.format("产品对应的group不存在 cartId=%d, channelId=%s, codes=%s", cartId, channelId, codeList.toString()));
         }
     }
 
@@ -397,7 +399,7 @@ public class CmsPlatformActiveLogService extends BaseService {
         if (StringUtils.isBlank(channelId) || CollectionUtils.isEmpty(codeList) || StringUtils.isBlank(activeStatus)
                 || StringUtils.isBlank(userName) || cartId == null) {
             $error("CmsPlatformActiveLogService 缺少参数");
-            throw new BusinessException(String.format("CmsPlatformActiveLogService 缺少channelId/userName/activeStatus/codeList/cartId参数, params=%s"
+            throw new BusinessException(String.format("缺少channelId/userName/activeStatus/codeList/cartId参数, params=%s"
                     , JacksonUtil.bean2Json(messageMap)));
         }
     }
@@ -568,16 +570,16 @@ public class CmsPlatformActiveLogService extends BaseService {
     /**
      * 更新cms_bt_product_group表
      * @param cartId
-     * @param numIId
+     * @param groupId
      * @param activeStatus
      * @param userName
      * @return
      */
-    private JongoUpdate updateCmsBtProductGroupInfo(Integer cartId, String numIId, String activeStatus, String userName) {
+    private JongoUpdate updateCmsBtProductGroupInfo(Integer cartId, Long groupId, String activeStatus, String userName) {
         // 在group表更新相关状态
         JongoUpdate updObj = new JongoUpdate();
-        updObj.setQuery("{'cartId':#,'numIId':#}");
-        updObj.setQueryParameters(cartId, numIId);
+        updObj.setQuery("{'cartId':#,'groupId':#}");
+        updObj.setQueryParameters(cartId, groupId);
         if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
             // 上架
             updObj.setUpdate("{$set:{'platformActive':#,'platformStatus':#,'onSaleTime':#,'modified':#,'modifier':#}}");
