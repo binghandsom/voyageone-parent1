@@ -462,8 +462,15 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
 
         List<Field> fieldList;
         try {
-            // 调用天猫API获取产品发布规则（tmall.product.add.schema.get）
-//            String strXml = tbProductService.getAddProductSchema(platformCategoryId, brandCode, shopBean);
+            try {
+                // 调用天猫API获取产品发布规则（tmall.product.add.schema.get）
+                String strXml = tbProductService.getAddProductSchema(platformCategoryId, brandCode, shopBean);
+                if (!StringUtils.isEmpty(strXml)) {
+                    productSchema = strXml;
+                }
+            } catch (ApiException e) {
+                e.printStackTrace();
+            }
 //            $debug("调用天猫API获取的产品发布规则 strXml:" + strXml);
             $debug("productSchema:" + productSchema);
             // added by morse.lu 2016/06/06 start

@@ -1346,7 +1346,20 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         deal.setShipping_system_id(NumberUtils.toInt(shippingId));
 
 
-        String jmDetailTemplate = getTemplate("聚美详情", expressionParser, shopProp);
+        // 判断一下聚美详情， 用哪套模板
+        String strJumeiDetailTemplateName = "聚美详情";
+        if (product.getChannelId().equals("928")) {
+            if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
+                String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
+
+                if (detailName.equals("天猫同购描述-重点商品")) {
+                    strJumeiDetailTemplateName = "聚美详情-重点商品";
+                } else if (detailName.equals("天猫同购描述-无属性图")) {
+                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                }
+            }
+        }
+        String jmDetailTemplate = getTemplate(strJumeiDetailTemplateName, expressionParser, shopProp);
         deal.setDescription_properties(jmDetailTemplate);
         String jmProductTemplate = getTemplate("聚美实拍", expressionParser, shopProp);
         deal.setDescription_images(jmProductTemplate);
@@ -1830,7 +1843,20 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 // 自定义搜索词
                 updateDataInfo.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
                 // 本单详情
-                updateDataInfo.setDescription_properties(getTemplate("聚美详情", expressionParser, shopBean));
+                // 判断一下聚美详情， 用哪套模板
+                String strJumeiDetailTemplateName = "聚美详情";
+                if (product.getChannelId().equals("928")) {
+                    if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
+                        String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
+
+                        if (detailName.equals("天猫同购描述-重点商品")) {
+                            strJumeiDetailTemplateName = "聚美详情-重点商品";
+                        } else if (detailName.equals("天猫同购描述-无属性图")) {
+                            strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                        }
+                    }
+                }
+                updateDataInfo.setDescription_properties(getTemplate(strJumeiDetailTemplateName, expressionParser, shopBean));
                 // 使用方法
                 updateDataInfo.setDescription_usage(getTemplate("聚美使用方法", expressionParser, shopBean));
                 // 商品实拍
