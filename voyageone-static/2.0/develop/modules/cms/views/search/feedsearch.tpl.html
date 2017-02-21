@@ -425,13 +425,12 @@
                                     <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].priceMsrp | currency:'':2}}</td>
                                     <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].priceCurrent | currency:'':2}}</td>
                                     <td class="text-center mfb-x" style="overflow: hidden;">
-                                        <small ng-controller="showPopoverCtrl" popover-html="showInfo(feedInfo._popSkuInfo)" popover-trigger="mouseenter" popover-placement="left" class="ng-scope">
-                                            <div class="table_main">
-                                                <ul>
-                                                    <li><button class="btn btn-default btn-xs">{{feedInfo.skusCnt}}</button></li>
-                                                </ul>
-                                            </div>
-                                        </small>
+                                        <button ng-controller="showPopoverCtrl"
+                                                popover-html="showInfo(feedInfo._popSkuInfo)"
+                                                popover-title="{{'TXT_PRICE' | translate}}" type="button"
+                                                popover-placement="left" class="btn btn-default btn-xs">
+                                            {{feedInfo.skusCnt}}
+                                        </button>
                                     </td>
                                     <td class="text-center mfb-xxt">
                                         <span ng-if="feedInfo.updMessage.length > 50"><popover-text content="feedInfo.updMessage" direct="left" size="50"></popover-text></span>

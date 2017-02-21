@@ -1058,7 +1058,20 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 //        dealInfo.setAttribute(jmFields.getStringAttribute("attribute"));
         dealInfo.setUser_purchase_limit(jmFields.getIntAttribute("userPurchaseLimit"));
 
-        String jmDetailTemplate = getTemplate("聚美详情", expressionParser, shopProp);
+        // 判断一下聚美详情， 用哪套模板
+        String strJumeiDetailTemplateName = "聚美详情";
+        if (product.getChannelId().equals("928")) {
+            if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
+                String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
+
+                if (detailName.equals("天猫同购描述-重点商品")) {
+                    strJumeiDetailTemplateName = "聚美详情-重点商品";
+                } else if (detailName.equals("天猫同购描述-无属性图")) {
+                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                }
+            }
+        }
+        String jmDetailTemplate = getTemplate(strJumeiDetailTemplateName, expressionParser, shopProp);
         dealInfo.setDescription_properties(jmDetailTemplate);
         String jmProductTemplate = getTemplate("聚美实拍", expressionParser, shopProp);
         dealInfo.setDescription_images(jmProductTemplate);
