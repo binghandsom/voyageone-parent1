@@ -32,6 +32,12 @@ public class CmsBtCustomPropService extends BaseService {
         cmsBtCustomPropDao.update(cmsBtCustomPropModel);
     }
 
+    /**
+     * 根据类目和channel 获取第三放属性 带继承关系的
+     * @param channelId
+     * @param cat
+     * @return
+     */
     public CmsBtCustomPropModel getCustomPropByCatChannelExtend(String channelId, String cat){
         List<CmsBtCustomPropModel> cmsBtCustomPropModels = new ArrayList<>();
         CmsBtCustomPropModel cmsBtCustomProp = null;
@@ -59,7 +65,9 @@ public class CmsBtCustomPropService extends BaseService {
 
     private CmsBtCustomPropModel merge(CmsBtCustomPropModel prop1, CmsBtCustomPropModel prop2){
         for(CmsBtCustomPropModel.Entity entity: prop2.getEntitys()){
-            CmsBtCustomPropModel.Entity temp = prop1.getEntitys().stream().filter(entity1 -> entity.getNameEn().equalsIgnoreCase(entity1.getNameEn())).findFirst().orElse(null);
+            CmsBtCustomPropModel.Entity temp = prop1.getEntitys().stream()
+                    .filter(entity1 -> entity.getNameEn().equalsIgnoreCase(entity1.getNameEn()))
+                    .findFirst().orElse(null);
             if(temp == null){
                 prop1.getEntitys().add(entity);
             }else{

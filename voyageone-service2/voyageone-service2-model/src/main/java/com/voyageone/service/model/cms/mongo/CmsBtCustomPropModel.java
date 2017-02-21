@@ -61,7 +61,7 @@ public class CmsBtCustomPropModel extends BaseMongoModel {
             return getAttribute("type");
         }
         public void setType(Integer type){
-            setAttribute("nameEn", type);
+            setAttribute("type", type);
         }
 
         public Boolean getChecked(){
