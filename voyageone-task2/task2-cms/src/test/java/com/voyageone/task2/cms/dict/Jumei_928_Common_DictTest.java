@@ -46,7 +46,9 @@ public class Jumei_928_Common_DictTest {
     public void startupTest() {
 
         // 聚美详情
-        doCreateJson("聚美详情", false, doDict_聚美详情());
+        doCreateJson("聚美详情", false, doDict_聚美详情(1));
+        doCreateJson("聚美详情-重点商品", false, doDict_聚美详情(2));
+        doCreateJson("聚美详情-无属性图", false, doDict_聚美详情(3));
 
         // 聚美使用方法
         doCreateJson("聚美使用方法", false, doDict_聚美使用方法());
@@ -141,7 +143,7 @@ public class Jumei_928_Common_DictTest {
      * 1. 品牌故事图
      * 2. pc端自定义图
      */
-    private RuleExpression doDict_聚美详情() {
+    private RuleExpression doDict_聚美详情(int propType) {
 
         // 根字典
         RuleExpression ruleRoot = new RuleExpression();
@@ -163,6 +165,80 @@ public class Jumei_928_Common_DictTest {
 
                 CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
+            }
+
+            if (propType == 1) {   // 参数图 - 普通商品
+
+                {
+                    // 前缀
+                    String html = "<img src=\"";
+                    ruleRoot.addRuleWord(new TextWord(html));
+                }
+
+                {
+                    // imageTemplate
+                    RuleExpression imageTemplate = new RuleExpression();
+                    String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/jumei790X300wenzi?$790X300$&$wenzi=%s";
+                    imageTemplate.addRuleWord(new TextWord(htmlTemplate));
+
+                    // 参数imageParams
+                    List<RuleExpression> imageParams = new ArrayList<>();
+
+                    {
+                        // 第一个参数是描述
+                        RuleExpression ruleExpression = new RuleExpression();
+                        ruleExpression.addRuleWord(new MasterClrHtmlWord("usageEn")); // 英文使用方法
+                        imageParams.add(ruleExpression);
+                    }
+
+                    CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
+                    ruleRoot.addRuleWord(new CustomWord(word));
+                }
+
+                {
+                    // 后缀
+                    String html = "\">";
+                    ruleRoot.addRuleWord(new TextWord(html));
+                }
+            }
+
+            if (propType == 2) {   // 参数图 - 重点商品
+
+                {
+                    // 前缀
+                    String html = "<img src=\"";
+                    ruleRoot.addRuleWord(new TextWord(html));
+                }
+
+                {
+                    // imageTemplate
+                    RuleExpression imageTemplate = new RuleExpression();
+                    String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/likingjumei790X373?$790X373$&$1=%s&$2=%s&$3=%s&$4=%s&$5=%s&$6=%s&$7=%s&$8=%s&$9=%s&$10=%s&$11=%s&$12=%s&$13=%s&$14=%s&$15=%s&$16=%s";
+                    imageTemplate.addRuleWord(new TextWord(htmlTemplate));
+
+                    // 参数imageParams
+                    List<RuleExpression> imageParams = new ArrayList<>();
+
+                    {
+                        // 共7个属性
+                        for (int index = 0; index < 16; index++) {
+                            RuleExpression ruleExpression = new RuleExpression();
+                            ruleExpression.addRuleWord(new FeedCnWord(true, index));
+                            ruleExpression.addRuleWord(new TextWord("   "));
+                            ruleExpression.addRuleWord(new FeedCnWord(false, index));
+                            imageParams.add(ruleExpression);
+                        }
+                    }
+
+                    CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
+                    ruleRoot.addRuleWord(new CustomWord(word));
+                }
+
+                {
+                    // 后缀
+                    String html = "\">";
+                    ruleRoot.addRuleWord(new TextWord(html));
+                }
             }
 
             {
@@ -201,30 +277,30 @@ public class Jumei_928_Common_DictTest {
         RuleExpression ruleRoot = new RuleExpression();
 
         // 生成内容
-        {
-            // 详情描述 - 中文
-            // 注意：<br> 替换成 <br />，并删除所有*号。
-            MasterHtmlWord word = new MasterHtmlWord("longDesCn");
-            ruleRoot.addRuleWord(word);
-        }
-
-        {
-            // 回车一个
-            TextWord word = new TextWord(C_TEXT_BR);
-            ruleRoot.addRuleWord(word);
-        }
-
-        {
-            // 材质 - 中文
-            MasterHtmlWord masterWordmaterialCn = new MasterHtmlWord("materialCn");
-            ruleRoot.addRuleWord(masterWordmaterialCn);
-        }
-
-        {
-            // 回车
-            TextWord textWord = new TextWord("<br />");
-            ruleRoot.addRuleWord(textWord);
-        }
+//        {
+//            // 详情描述 - 中文
+//            // 注意：<br> 替换成 <br />，并删除所有*号。
+//            MasterHtmlWord word = new MasterHtmlWord("longDesCn");
+//            ruleRoot.addRuleWord(word);
+//        }
+//
+//        {
+//            // 回车一个
+//            TextWord word = new TextWord(C_TEXT_BR);
+//            ruleRoot.addRuleWord(word);
+//        }
+//
+//        {
+//            // 材质 - 中文
+//            MasterHtmlWord masterWordmaterialCn = new MasterHtmlWord("materialCn");
+//            ruleRoot.addRuleWord(masterWordmaterialCn);
+//        }
+//
+//        {
+//            // 回车
+//            TextWord textWord = new TextWord("<br />");
+//            ruleRoot.addRuleWord(textWord);
+//        }
 
         {
             // 尺码图
@@ -241,6 +317,29 @@ public class Jumei_928_Common_DictTest {
 
             CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
             ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
+        {
+            // 测量方式图
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("7"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression useOriUrl = null;
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
+        {
+            // 回车
+            TextWord textWord = new TextWord("<br />");
+            ruleRoot.addRuleWord(textWord);
         }
 
         return ruleRoot;
@@ -275,6 +374,23 @@ public class Jumei_928_Common_DictTest {
                 CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
+        }
+
+        {
+            // 使用说明图
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("6"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression useOriUrl = null;
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+            ruleRoot.addRuleWord(new CustomWord(word));
         }
 
         {
