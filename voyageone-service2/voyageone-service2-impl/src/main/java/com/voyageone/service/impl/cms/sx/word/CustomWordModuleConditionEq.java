@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.sx.word;
 
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamConditionEq;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueConditionEq;
@@ -35,20 +36,32 @@ public class CustomWordModuleConditionEq extends CustomWordModule {
 
         RuleExpression firstParamExpression = customModuleUserParamConditionEq.getFirstParam();
         RuleExpression secondParamExpression = customModuleUserParamConditionEq.getSecondParam();
+        RuleExpression ignoreCaseFlgExpression = customModuleUserParamConditionEq.getIgnoreCaseFlg();
 
         String firsetParam = expressionParser.parse(firstParamExpression, shopBean, user, extParameter);
         String secondParam = expressionParser.parse(secondParamExpression, shopBean, user, extParameter);
+        String ignoreCaseFlg = expressionParser.parse(ignoreCaseFlgExpression, shopBean, user, extParameter);
+        boolean blnIgnoreCaseFlg = false;
+        if (!StringUtils.isEmpty(ignoreCaseFlg) && ignoreCaseFlg.equals("1")) {
+            blnIgnoreCaseFlg = true;
+        }
 
         if (firsetParam == null && secondParam == null) {
             return String.valueOf(true);
         } else if (firsetParam == null || secondParam == null) {
             return String.valueOf(false);
         } else {
-            if (firsetParam.trim().equals(secondParam.trim())) {
-                return String.valueOf(true);
+            if (blnIgnoreCaseFlg) {
+                if (firsetParam.trim().toLowerCase().equals(secondParam.trim().toLowerCase())) {
+                    return String.valueOf(true);
+                }
             } else {
-                return String.valueOf(false);
+                if (firsetParam.trim().equals(secondParam.trim())) {
+                    return String.valueOf(true);
+                }
             }
+
+            return String.valueOf(false);
         }
     }
 }
