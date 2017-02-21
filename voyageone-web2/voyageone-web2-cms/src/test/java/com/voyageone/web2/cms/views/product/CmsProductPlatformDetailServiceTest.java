@@ -78,4 +78,11 @@ public class CmsProductPlatformDetailServiceTest {
         a.get(0).put("8652","bbb");
         cmsProductPlatformDetailService.updateProductPlatform("010", 5924L, platform,"",false);
     }
+
+    @Test
+    public void testCopyPropertyFromMainProduct() throws Exception {
+//        public Map<String, Object> copyPropertyFromMainProduct(String channelId, Long prodId, Integer cartId, String language)
+        Map<String, Object> result = cmsProductPlatformDetailService.copyPropertyFromMainProduct("007", 3630165L, 23, "en");
+        System.out.print(result);
+    }
 }
