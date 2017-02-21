@@ -276,7 +276,7 @@ public class CmsPlatformActiveLogService extends BaseService {
                 failList.add(errorInfo);
             }
 
-            if (!updRsFlg && StringUtils.isBlank(errMsg)) {
+            if (!updRsFlg) {
 
                 errorInfo = new CmsBtOperationLogModel_Msg();
                 errorInfo.setSkuCode("numberId:" + cmsBtProductGroupModel.getNumIId());
@@ -357,9 +357,9 @@ public class CmsPlatformActiveLogService extends BaseService {
     private void isNullGrpObjList(List<CmsBtProductGroupModel> grpObjList, Collection<String> codeList, Integer cartId, String channelId) {
         if (grpObjList == null || grpObjList.isEmpty()) {
 
-            $error("CmsPlatformActiveLogService 产品对应的group不存在 cartId=%d, channelId=%s, codes=%s", cartId, channelId, codeList.toString());
+            $error(String.format("CmsPlatformActiveLogService 产品对应的group不存在 cartId=%d, channelId=%s, codes=%s", cartId, channelId, codeList.toString()));
 
-            throw new BusinessException("CmsPlatformActiveLogService 产品对应的group不存在 cartId=%d, channelId=%s, codes=%s", cartId, channelId, codeList.toString());
+            throw new BusinessException(String.format("产品对应的group不存在 cartId=%d, channelId=%s, codes=%s", cartId, channelId, codeList.toString()));
         }
     }
 
@@ -397,7 +397,7 @@ public class CmsPlatformActiveLogService extends BaseService {
         if (StringUtils.isBlank(channelId) || CollectionUtils.isEmpty(codeList) || StringUtils.isBlank(activeStatus)
                 || StringUtils.isBlank(userName) || cartId == null) {
             $error("CmsPlatformActiveLogService 缺少参数");
-            throw new BusinessException(String.format("CmsPlatformActiveLogService 缺少channelId/userName/activeStatus/codeList/cartId参数, params=%s"
+            throw new BusinessException(String.format("缺少channelId/userName/activeStatus/codeList/cartId参数, params=%s"
                     , JacksonUtil.bean2Json(messageMap)));
         }
     }
