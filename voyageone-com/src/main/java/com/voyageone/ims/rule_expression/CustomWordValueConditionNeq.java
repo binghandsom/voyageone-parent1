@@ -13,8 +13,8 @@ public class CustomWordValueConditionNeq extends CustomWordValue{
     public CustomWordValueConditionNeq() {
     }
 
-    public CustomWordValueConditionNeq(RuleExpression firstParam, RuleExpression secondParam) {
-        this.userParam = new CustomModuleUserParamConditionNeq(firstParam, secondParam);
+    public CustomWordValueConditionNeq(RuleExpression firstParam, RuleExpression secondParam, RuleExpression ignoreCaseFlg) {
+        this.userParam = new CustomModuleUserParamConditionNeq(firstParam, secondParam, ignoreCaseFlg);
     }
 
     public CustomModuleUserParamConditionNeq getUserParam() {
