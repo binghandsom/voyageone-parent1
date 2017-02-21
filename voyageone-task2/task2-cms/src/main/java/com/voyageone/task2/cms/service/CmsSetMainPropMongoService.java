@@ -585,18 +585,19 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                                 HttpHeaders httpHeaders = new HttpHeaders();
                                 httpHeaders.setContentType(MediaType.parseMediaType("application/json;charset=UTF-8"));
                                 ObjectMapper objectMapper = new ObjectMapper();
-                                HashMap feedInfo  = new HashMap();
+                                HashMap<String, Object> feedInfo  = new HashMap<>();
                                 feedInfo.put("orderChannelId",channelId);
                                 feedInfo.put("clientSku",cmsBtFeedInfoModel_Sku.getSku());
                                 feedInfo.put("mainClientSku",cmsBtFeedInfoModel_Sku.getMainVid());
-                                String json = objectMapper.writeValueAsString(feedInfo);
+                                List<HashMap<String, Object>> requestList = Arrays.asList(feedInfo);
+                                String json = objectMapper.writeValueAsString(requestList);
                                 httpHeaders.set("Authorization", "Basic " + MD5.getMD5(json + System.currentTimeMillis() / TimeUnit.MINUTES.toMillis(30)));
                                 HttpEntity<String> httpEntity = new HttpEntity<>(json, httpHeaders);
                                 SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
                                 simpleClientHttpRequestFactory.setConnectTimeout(6000);
                                 simpleClientHttpRequestFactory.setReadTimeout(6000);
                                 RestTemplate restTemplate = new RestTemplate(simpleClientHttpRequestFactory);
-                                restTemplate.exchange("http://open.synship.net/wms/prdouctMapping/import", HttpMethod.POST, httpEntity, String.class);
+                                ResponseEntity<String> exchange = restTemplate.exchange("http://open.synship.net/wms/prdouctMapping/import", HttpMethod.POST, httpEntity, String.class);
                             }
                         }
                     } catch (CommonConfigNotFoundException ce) {
