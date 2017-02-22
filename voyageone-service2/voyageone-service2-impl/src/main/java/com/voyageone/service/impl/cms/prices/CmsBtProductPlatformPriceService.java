@@ -633,6 +633,7 @@ public class CmsBtProductPlatformPriceService extends VOAbsLoggable {
                     }
 
                     // 要更新最终售价变化状态
+                    skuObj.setAttribute("priceSale", rs);
                     String diffFlg = priceService.getPriceDiffFlg(channelId, skuObj, cartId);
                     if ("2".equals(diffFlg) && "0".equals(mandatoryBreakThresholdConfig.getConfigValue1())) {
                         $info(String.format("setProductSalePrice: 输入的最终售价低于指导价，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
@@ -643,7 +644,6 @@ public class CmsBtProductPlatformPriceService extends VOAbsLoggable {
                         prodPriceDownExList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t " + (result * (1 - breakThreshold)) + "\t " + rs);
                         throw new BusinessException(String.format("setProductSalePrice: 输入的最终售价低于下限阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
                     }
-                    skuObj.setAttribute("priceSale", rs);
                     skuObj.setAttribute("priceDiffFlg", diffFlg);
 
                     CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
@@ -987,19 +987,19 @@ public class CmsBtProductPlatformPriceService extends VOAbsLoggable {
 
         List<CmsBtPriceLogModel> logModelList = new ArrayList<>();
         CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
-//        cmsBtPriceLogModel.setChannelId(channelId);
-//        cmsBtPriceLogModel.setProductId(prodObj.getProdId().intValue());
+        cmsBtPriceLogModel.setChannelId("000");
+        cmsBtPriceLogModel.setProductId(0);
         cmsBtPriceLogModel.setCode(pNumIId);
         cmsBtPriceLogModel.setCartId(Integer.valueOf(CartId));
-//        cmsBtPriceLogModel.setSku(skuCode);
-//        cmsBtPriceLogModel.setSalePrice(skuObj.getDoubleAttribute("priceSale"));
-//        cmsBtPriceLogModel.setMsrpPrice(skuObj.getDoubleAttribute("priceMsrp"));
-//        cmsBtPriceLogModel.setRetailPrice(skuObj.getDoubleAttribute("priceRetail"));
+        cmsBtPriceLogModel.setSku("");
+        cmsBtPriceLogModel.setSalePrice(0.0);
+        cmsBtPriceLogModel.setMsrpPrice(0.0);
+        cmsBtPriceLogModel.setRetailPrice(0.0);
 //        CmsBtProductModel_Sku comSku = prodObj.getCommonNotNull().getSku(skuCode);
 //        if (comSku == null) {
-//            cmsBtPriceLogModel.setClientMsrpPrice(0d);
-//            cmsBtPriceLogModel.setClientRetailPrice(0d);
-//            cmsBtPriceLogModel.setClientNetPrice(0d);
+            cmsBtPriceLogModel.setClientMsrpPrice(0d);
+            cmsBtPriceLogModel.setClientRetailPrice(0d);
+            cmsBtPriceLogModel.setClientNetPrice(0d);
 //        } else {
 //            cmsBtPriceLogModel.setClientMsrpPrice(comSku.getClientMsrpPrice());
 //            cmsBtPriceLogModel.setClientRetailPrice(comSku.getClientRetailPrice());

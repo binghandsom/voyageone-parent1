@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +43,7 @@ public class CmsSetMainPropMongoServiceTest {
         List<TaskControlBean> taskControlList = new ArrayList<>();
         TaskControlBean taskControlBean = new TaskControlBean();
         taskControlBean.setCfg_name("order_channel_id");
-        taskControlBean.setCfg_val1("028");
+        taskControlBean.setCfg_val1("010");
         taskControlList.add(taskControlBean);
 
 

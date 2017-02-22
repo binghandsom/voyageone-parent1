@@ -218,8 +218,8 @@ public class PriceService extends BaseService {
                     || CartEnums.Cart.JM.getId().equals(cartIdVal)) {
                 commonSyncPriceMsrpVal = "1";
             }
+            autoSyncPriceMsrp = new CmsChannelConfigBean(channelId, AUTO_SYNC_PRICE_MSRP, cartId.toString(),"0", commonSyncPriceMsrpVal, "0", "SYSTEM");
         }
-        autoSyncPriceMsrp = new CmsChannelConfigBean(channelId, AUTO_SYNC_PRICE_MSRP, cartId.toString(),"0", commonSyncPriceMsrpVal, "0", "SYSTEM");
 
         return autoSyncPriceMsrp;
     }
@@ -248,9 +248,9 @@ public class PriceService extends BaseService {
                     || CartEnums.Cart.JM.getId().equals(cartIdVal)) {
                 commonSyncPriceSaleVal = "1";
             }
-        }
 
-        autoSyncPriceSale = new CmsChannelConfigBean(channelId, AUTO_SYNC_PRICE_SALE, cartId.toString(),"0", commonSyncPriceSaleVal, "0", "SYSTEM");
+            autoSyncPriceSale = new CmsChannelConfigBean(channelId, AUTO_SYNC_PRICE_SALE, cartId.toString(),"0", commonSyncPriceSaleVal, "0", "SYSTEM");
+        }
         return autoSyncPriceSale;
     }
 
@@ -319,7 +319,8 @@ public class PriceService extends BaseService {
                 && !Lists.newArrayList("0", "1", "2").contains(autoSyncPricePromotion.getConfigValue1())) {
             throw new BusinessException("活动期间价格同步规则获取错误: %s, %s", channelId, autoSyncPricePromotion.getConfigValue1());
         }
-        autoSyncPricePromotion = new CmsChannelConfigBean(channelId, AUTO_SYNC_PRICE_PROMOTION, cartId.toString(),"0", "", "", "SYSTEM");
+        if (autoSyncPricePromotion == null)
+            autoSyncPricePromotion = new CmsChannelConfigBean(channelId, AUTO_SYNC_PRICE_PROMOTION, cartId.toString(),"0", "", "", "SYSTEM");
 
         return autoSyncPricePromotion;
     }
@@ -795,6 +796,10 @@ public class PriceService extends BaseService {
                     }
                 }
             }
+
+            //
+            if (priceSale <= 0 && configValue2 != 3)
+                skuInPlatform.put(Platform_SKU_COM.priceSale.name(), retailPrice);
         }
 
         if(goldPrice == null){
@@ -827,6 +832,10 @@ public class PriceService extends BaseService {
                         skuInPlatform.setAttribute(isSale.name(), false);
                     }
                 }
+
+                //
+                if (sale <= 0)
+                    skuInPlatform.put(Platform_SKU_COM.priceSale.name(), retailPrice);
 
                 // 保存击穿标识
                 String priceDiffFlgValue = getPriceDiffFlg(channelId, skuInPlatform, cartId);
