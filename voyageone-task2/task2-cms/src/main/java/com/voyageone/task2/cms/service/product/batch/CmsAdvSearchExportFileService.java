@@ -404,7 +404,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
         }
         FileUtils.cell(row1, index++, style1).setCellValue("Images");
         FileUtils.cell(row1, index++, style1).setCellValue("Lock");
-
         if (commonProps != null) {
             for (Map<String, String> prop : commonProps) {
                 if (ArrayUtils.contains(_prodCol, prop.get("propId"))) {
@@ -429,7 +428,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row1, index++, style1).setCellValue(prop.get("name"));
             }
         }
-
+        FileUtils.cell(row1, index++, style1).setCellValue("supplier");
         // 固定列长度
         index = size;
         for (TypeChannelBean cartObj : cartList) {
@@ -446,7 +445,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
         FileUtils.cell(row2, index++, style2).setCellValue("商品原图地址");
         FileUtils.cell(row2, index++, style2).setCellValue("是否被锁定");
-
         if (commonProps != null) {
             for (Map<String, String> prop : commonProps) {
                 if (ArrayUtils.contains(_prodCol, prop.get("propId"))) {
@@ -471,6 +469,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
             }
         }
+        FileUtils.cell(row2, index++, style2).setCellValue("供应商");
     }
 
     /**
@@ -503,7 +502,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 }
             }
         }
-
+        FileUtils.cell(row1, index++, style1).setCellValue("supplier");
         index = size;
         for (TypeChannelBean cartObj : cartList) {
             if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
@@ -516,6 +515,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 }
             }
         }
+        FileUtils.cell(row1, index++, style1).setCellValue("供应商");
+
     }
 
     /**
@@ -554,7 +555,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
         }
         FileUtils.cell(row1, index++, style1).setCellValue("Lock");
-
+        FileUtils.cell(row1, index++, style1).setCellValue("supplier");
         index = size;
         for (TypeChannelBean cartObj : cartList) {
             if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
@@ -573,6 +574,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
         }
         FileUtils.cell(row2, index++, style2).setCellValue("是否被锁定");
+        FileUtils.cell(row2, index++, style2).setCellValue("供应商");
     }
 
     /**
