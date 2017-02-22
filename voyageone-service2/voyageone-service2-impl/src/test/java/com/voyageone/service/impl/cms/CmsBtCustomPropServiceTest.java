@@ -23,6 +23,9 @@ public class CmsBtCustomPropServiceTest {
     @Test
     public void rearrange() throws Exception {
         CmsBtCustomPropModel aa = cmsBtCustomPropService.getCustomPropByCatChannel("010","010","aaa>bbb>ccc");
+        aa.getSort().add("Brand");
+        aa.getSort().add("Metal Stamp");
+//        CmsBtCustomPropModel bb = rearrange(aa,aa);
 
 
     }
