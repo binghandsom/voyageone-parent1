@@ -854,11 +854,38 @@ public class PriceService extends BaseService {
         CmsChannelConfigBean autoSyncPriceMsrpConfig = getAutoSyncPriceMsrpOption(channelId, cartId);
         String autoSyncPriceMsrp = autoSyncPriceMsrpConfig.getConfigValue1();
 
-        List<Double> skuMsrpList = new ArrayList<Double>();
-        List<Double> skuSaleList = new ArrayList<Double>();
+        List<Double> skuMsrpList = new ArrayList<>();
+        List<Double> skuSaleList = new ArrayList<>();
         for (BaseMongoMap<String, Object> platformSku : platformSkus) {
-            skuMsrpList.add(platformSku.getDoubleAttribute(priceMsrp.name()));
-            skuSaleList.add(platformSku.getDoubleAttribute(priceSale.name()));
+
+            Double originalPriceMsrp = platformSku.getDoubleAttribute(Platform_SKU_COM.originalPriceMsrp.name());
+            Double priceMsrp = platformSku.getDoubleAttribute(Platform_SKU_COM.priceMsrp.name()); // 当前中国建议售价
+            Double priceSale = platformSku.getDoubleAttribute(Platform_SKU_COM.priceSale.name()); // 最新中国最终售价
+            Double priceRetail = platformSku.getDoubleAttribute(Platform_SKU_COM.priceRetail.name()); // 最新中国指导售价
+
+            // 直接联动
+            if ("1".equals(autoSyncPriceMsrp)) {
+                platformSku.put(Platform_SKU_COM.priceMsrp.name(), originalPriceMsrp);
+            }
+            // 自动联动
+            else if ("2".equals(autoSyncPriceMsrp)) {
+                // 当前中国建议售价<中国最终售价或当前中国建议售价<中国指导售价时，自动联动
+
+                if (priceMsrp < priceSale || priceMsrp < priceRetail) {
+                    double msrp = originalPriceMsrp;
+                    if (msrp < priceSale) msrp = priceSale;
+                    if (msrp < priceRetail) msrp = priceRetail;
+                    platformSku.put(Platform_SKU_COM.priceMsrp.name(), msrp);
+                }
+            }
+            else {
+                // 如果不强制同步的话, 要看看是否原本是合法价格
+                // 如果原本不是合法价格的话, 就同步设置
+                resetPriceIfInvalid(platformSku, Platform_SKU_COM.priceMsrp, originalPriceMsrp);
+            }
+
+            skuMsrpList.add(platformSku.getDoubleAttribute(Platform_SKU_COM.priceMsrp.name()));
+            skuSaleList.add(platformSku.getDoubleAttribute(Platform_SKU_COM.priceSale.name()));
         }
 
         Collections.sort(skuSaleList);
@@ -869,31 +896,7 @@ public class PriceService extends BaseService {
             Collections.sort(skuMsrpList);
             for (BaseMongoMap<String, Object> platformSku : platformSkus) {
 
-                Double originalPriceMsrp = platformSku.getDoubleAttribute(Platform_SKU_COM.originalPriceMsrp.name());
-                Double priceMsrp = platformSku.getDoubleAttribute(Platform_SKU_COM.priceMsrp.name()); // 当前中国建议售价
-                Double priceSale = platformSku.getDoubleAttribute(Platform_SKU_COM.priceSale.name()); // 最新中国最终售价
                 Double priceRetail = platformSku.getDoubleAttribute(Platform_SKU_COM.priceRetail.name()); // 最新中国指导售价
-
-                // 直接联动
-                if ("1".equals(autoSyncPriceMsrp)) {
-                    platformSku.put(Platform_SKU_COM.priceMsrp.name(), originalPriceMsrp);
-                }
-                // 自动联动
-                else if ("2".equals(autoSyncPriceMsrp)) {
-                    // 当前中国建议售价<中国最终售价或当前中国建议售价<中国指导售价时，自动联动
-
-                    if (priceMsrp < priceSale || priceMsrp < priceRetail) {
-                        double msrp = originalPriceMsrp;
-                        if (msrp < priceSale) msrp = priceSale;
-                        if (msrp < priceRetail) msrp = priceRetail;
-                        platformSku.put(Platform_SKU_COM.priceMsrp.name(), msrp);
-                    }
-                }
-                else {
-                    // 如果不强制同步的话, 要看看是否原本是合法价格
-                    // 如果原本不是合法价格的话, 就同步设置
-                    resetPriceIfInvalid(platformSku, Platform_SKU_COM.priceMsrp, originalPriceMsrp);
-                }
 
                 // 中国建议售价 = 按中国建议售价最高价统一
                 if ("1".equals(autoSyncPriceMsrpConfig.getConfigValue2())) {

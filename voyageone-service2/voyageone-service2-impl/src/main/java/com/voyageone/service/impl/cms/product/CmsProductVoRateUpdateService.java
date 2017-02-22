@@ -128,7 +128,7 @@ public class CmsProductVoRateUpdateService extends BaseService {
                             cmsBtPriceLogModel.setClientRetailPrice(comSku.getClientRetailPrice());
                             cmsBtPriceLogModel.setClientNetPrice(comSku.getClientNetPrice());
                         }
-                        cmsBtPriceLogModel.setComment("高级检索批量更新VO扣点");
+                        cmsBtPriceLogModel.setComment(msg);
                         cmsBtPriceLogModel.setCreated(new Date());
                         cmsBtPriceLogModel.setCreater(userName);
                         cmsBtPriceLogModel.setModified(new Date());

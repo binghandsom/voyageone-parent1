@@ -113,7 +113,7 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
      */
     private List<CmsBtOperationLogModel_Msg> updateHsCode(String propId, String propName, String propValue, List<String> codeList, String channelId, String userName, Boolean synPriceFlg) {
         List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
-        String msg = "税号变更 " + propId + "=> " + propValue;
+        String msg = "高级检索批量 税号变更 " + propName + "=> " + propValue;
         // 未配置自动同步的店铺，显示同步状况
         if (synPriceFlg) {
             msg += " (同步价格)";
@@ -194,7 +194,7 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
                             cmsBtPriceLogModel.setClientRetailPrice(comSku.getClientRetailPrice());
                             cmsBtPriceLogModel.setClientNetPrice(comSku.getClientNetPrice());
                         }
-                        cmsBtPriceLogModel.setComment("高级检索批量更新VO扣点");
+                        cmsBtPriceLogModel.setComment("高级检索批量 税号变更 " + propName + "=> " + propValue);
                         cmsBtPriceLogModel.setCreated(new Date());
                         cmsBtPriceLogModel.setCreater(userName);
                         cmsBtPriceLogModel.setModified(new Date());
@@ -236,7 +236,7 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
 
             successList.add(prodCode);
         }
-        productStatusHistoryService.insertList(channelId, successList, -1, EnumProductOperationType.BatchUpdate, "高级检索 批量更新：" + msg, userName);
+        productStatusHistoryService.insertList(channelId, successList, -1, EnumProductOperationType.BatchUpdate, msg, userName);
         return failList;
     }
 
