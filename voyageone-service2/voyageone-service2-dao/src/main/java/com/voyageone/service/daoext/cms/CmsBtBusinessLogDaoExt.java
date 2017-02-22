@@ -56,8 +56,4 @@ public class CmsBtBusinessLogDaoExt extends ServiceBaseDao {
         return update("update_business_log_status_finish_by_condition", conditionParams);
     }
 
-    public int updateStatusFinishByCondition2(Map<?, ?> conditionParams) {
-        return update("update_business_log_status_finish_by_condition2", conditionParams);
-    }
-
 }

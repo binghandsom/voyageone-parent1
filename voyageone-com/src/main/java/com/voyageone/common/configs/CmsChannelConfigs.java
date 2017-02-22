@@ -91,4 +91,20 @@ public class CmsChannelConfigs {
         Collections.sort(keyList);
         return CacheHelper.getBeans(KEY, keyList, selfClass);
     }
+
+    /**
+     * get one ConfigBean by cartId, if ConfigBean is null, get one ConfigBean by default(0)
+     * @param channelId channel Id
+     * @param configKey config Key
+     * @param configCode config Code
+     * @return CmsChannelConfigBean
+     */
+    public static CmsChannelConfigBean getConfigBeanWithDefault(String channelId, String configKey, String configCode) {
+        CmsChannelConfigBean cmsChannelConfigBean = CacheHelper.getBean(KEY, buildKey(channelId, configKey, configCode), selfClass);
+
+        if (cmsChannelConfigBean == null) {
+            cmsChannelConfigBean =  CacheHelper.getBean(KEY, buildKey(channelId, configKey, "0"), selfClass);
+        }
+        return cmsChannelConfigBean;
+    }
 }

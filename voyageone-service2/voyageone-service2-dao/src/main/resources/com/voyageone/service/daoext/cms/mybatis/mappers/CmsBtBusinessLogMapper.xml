@@ -143,22 +143,4 @@
         </if>
     </update>
 
-    <update id="update_business_log_status_finish_by_condition2" parameterType="Map">
-        update voyageone_cms2.cms_bt_business_log
-        set  status = 1
-        ,modified = now()
-        <if test="modifier != null and modifier != ''">
-            ,modifier = #{modifier}
-        </if>
-        where status = 0
-        <if test="channelId != null and channelId != ''">
-            and channel_id = #{channelId}
-        </if>
-        <if test="cartId != null">
-            and cart_id = #{cartId}
-        </if>
-        <if test="groupId != null">
-            and group_id = #{groupId}
-        </if>
-    </update>
 </mapper>

@@ -22,6 +22,7 @@ import com.voyageone.service.bean.cms.product.DelistingParameter;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
+import com.voyageone.service.impl.cms.prices.CmsBtProductPlatformPriceService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
@@ -64,6 +65,8 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     private  CmsProductDetailService cmsProductDetailService;
     @Autowired
     PriceService priceService;
+    @Autowired
+    private CmsBtProductPlatformPriceService cmsBtProductPlatformPriceService;
 
     //设置isSale
     public  void  setCartSkuIsSale(SetCartSkuIsSaleParameter parameter,String channelId,String userName) {
@@ -146,7 +149,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             else
             {
                 //有NumIID，则价格变更API
-                priceService.updateSkuPrice(channelId,parameter.getCartId(), cmsBtProduct,true);
+                cmsBtProductPlatformPriceService.updateSkuPrice(channelId, parameter.getCartId(), cmsBtProduct,true, userName);
 
             }
         }
@@ -277,19 +280,6 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             }
         }
         return null;
-    }
-    public String getAutoSyncPriceMsrpOption(String channelId, Integer cartId) {
-        String autoSyncPriceMsrpOption = CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO; // 默认配置
-        CmsChannelConfigBean autoSyncPriceMsrp = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP, cartId + "");
-        if (autoSyncPriceMsrp != null
-                && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_NO.equals(autoSyncPriceMsrp.getConfigValue1())
-                && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_DIRECT.equals(autoSyncPriceMsrp.getConfigValue1())
-                && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO.equals(autoSyncPriceMsrp.getConfigValue1())) {
-            throw new BusinessException("中国建议售价联动配置选项值错误: %s, %s", channelId, autoSyncPriceMsrp.getConfigValue1());
-        }
-        if (autoSyncPriceMsrp != null)
-            autoSyncPriceMsrpOption = autoSyncPriceMsrp.getConfigValue1();
-        return autoSyncPriceMsrpOption;
     }
 
     public String getAutoSyncPriceSaleOption(String channelId, Integer cartId) {

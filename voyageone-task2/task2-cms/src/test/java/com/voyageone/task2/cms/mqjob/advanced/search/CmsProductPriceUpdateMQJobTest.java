@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
-import com.voyageone.common.configs.MQConfigInitTestUtil;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +20,12 @@ public class CmsProductPriceUpdateMQJobTest {
 
     @Test
     public void testOnStartup() throws Exception {
-        MQConfigInitTestUtil.startMQ(cmsProductPriceUpdateMQJob);
+
+        ProductPriceUpdateMQMessageBody mqMessageBody = new ProductPriceUpdateMQMessageBody();
+        mqMessageBody.setChannelId("012");
+        mqMessageBody.setCartId(31);
+        mqMessageBody.setProdId(3127746L);
+        mqMessageBody.setSender("edward");
+        cmsProductPriceUpdateMQJob.onStartup(mqMessageBody);
     }
 }

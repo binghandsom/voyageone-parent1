@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
-import com.voyageone.service.impl.cms.product.CmsProductPriceUpdateService;
+import com.voyageone.service.impl.cms.prices.CmsBtProductPlatformPriceService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchRefreshRetailPriceMQMessageBody;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
@@ -21,7 +21,7 @@ import java.util.List;
 public class CmsAdvSearchRefreshRetailPriceMQJob extends TBaseMQCmsService<AdvSearchRefreshRetailPriceMQMessageBody> {
 
     @Autowired
-    private CmsProductPriceUpdateService cmsProductPriceUpdateService;
+    private CmsBtProductPlatformPriceService cmsProductPriceUpdateService;
 
     @Override
     public void onStartup(AdvSearchRefreshRetailPriceMQMessageBody messageBody) throws Exception {

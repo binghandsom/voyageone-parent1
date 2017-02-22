@@ -289,7 +289,8 @@ public class ProductSkuService extends BaseService {
             } else {
                 diffFlg = "5"; // 最终售价向下击穿警告
             }
-        } else if (priceSale > priceRetail) {
+        }
+        else if (priceSale > priceRetail) {
             if (priceSale <= priceRetail * (breakThreshold + 1) || breakThreshold == 0) {
                 diffFlg = "3"; // 最终售价比指导价高
             } else {
