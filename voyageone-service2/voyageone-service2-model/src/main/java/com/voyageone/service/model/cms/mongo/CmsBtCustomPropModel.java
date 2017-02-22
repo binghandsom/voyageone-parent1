@@ -12,8 +12,10 @@ import java.util.List;
  */
 public class CmsBtCustomPropModel extends BaseMongoModel {
     private String cat;
-    private String channelId = "";
+    private String channelId;
+    private String orgChannelId="";
     private List<Entity> entitys;
+    private List<String> sort;
 
     public String getCat() {
         return cat;
@@ -31,6 +33,14 @@ public class CmsBtCustomPropModel extends BaseMongoModel {
         this.channelId = channelId;
     }
 
+    public String getOrgChannelId() {
+        return orgChannelId;
+    }
+
+    public void setOrgChannelId(String orgChannelId) {
+        this.orgChannelId = orgChannelId;
+    }
+
     public List<Entity> getEntitys() {
         if(entitys == null) entitys = new ArrayList<>();
         return entitys;
@@ -38,6 +48,15 @@ public class CmsBtCustomPropModel extends BaseMongoModel {
 
     public void setEntitys(List<Entity> entitys) {
         this.entitys = entitys;
+    }
+
+    public List<String> getSort() {
+        if(sort == null) sort = new ArrayList<>();
+        return sort;
+    }
+
+    public void setSort(List<String> sort) {
+        this.sort = sort;
     }
 
     public static class Entity extends BaseMongoMap<String,Object> {
@@ -70,6 +89,13 @@ public class CmsBtCustomPropModel extends BaseMongoModel {
 
         public void setChecked (Boolean checked){
             setAttribute("checked", checked);
+        }
+
+        public String getValue(){
+            return getStringAttribute("value");
+        }
+        public void setValue(String value){
+            setStringAttribute("value", value);
         }
     }
 

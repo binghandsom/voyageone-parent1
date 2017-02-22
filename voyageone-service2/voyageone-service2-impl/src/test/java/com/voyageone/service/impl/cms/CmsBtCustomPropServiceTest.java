@@ -20,13 +20,19 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context-service2.xml")
 public class CmsBtCustomPropServiceTest {
+    @Test
+    public void rearrange() throws Exception {
+        CmsBtCustomPropModel aa = cmsBtCustomPropService.getCustomPropByCatChannel("010","010","aaa>bbb>ccc");
+
+
+    }
 
     @Autowired
     CmsBtCustomPropService cmsBtCustomPropService;
     @Test
     public void getCustomPropByCatChannelExtend() throws Exception {
 
-        CmsBtCustomPropModel aa = cmsBtCustomPropService.getCustomPropByCatChannelExtend("010","aaa>bbb>ccc");
+        CmsBtCustomPropModel aa = cmsBtCustomPropService.getCustomPropByCatChannelExtend("010","010","aaa>bbb>ccc");
         System.out.println(JacksonUtil.bean2Json(aa));
     }
 
@@ -35,6 +41,7 @@ public class CmsBtCustomPropServiceTest {
         CmsBtCustomPropModel cmsBtCustomPropModel = new CmsBtCustomPropModel();
         cmsBtCustomPropModel.setCat("aaa>bbb");
         cmsBtCustomPropModel.setChannelId("010");
+        cmsBtCustomPropModel.setOrgChannelId("010");
         List<CmsBtCustomPropModel.Entity> entities = new ArrayList<>();
         CmsBtCustomPropModel.Entity entity = new CmsBtCustomPropModel.Entity();
         entity.setNameCn("产品材质");
@@ -49,19 +56,27 @@ public class CmsBtCustomPropServiceTest {
         entity.setType(CmsBtCustomPropModel.CustomPropType.Common.getValue());
         entities.add(entity);
         entity = new CmsBtCustomPropModel.Entity();
-        entity.setNameCn("Stone");
-        entity.setNameEn("产品宝石");
+        entity.setNameEn("Stone");
+        entity.setNameCn("产品宝石");
         entity.setChecked(false);
         entity.setType(CmsBtCustomPropModel.CustomPropType.Common.getValue());
         entities.add(entity);
         entity = new CmsBtCustomPropModel.Entity();
-        entity.setNameCn("Description Measure");
-        entity.setNameEn("产品尺寸");
+        entity.setNameEn("Description Measure");
+        entity.setNameCn("产品尺寸");
         entity.setChecked(false);
         entity.setType(CmsBtCustomPropModel.CustomPropType.Common.getValue());
         entities.add(entity);
         cmsBtCustomPropModel.setEntitys(entities);
         cmsBtCustomPropService.update(cmsBtCustomPropModel);
+        cmsBtCustomPropModel.set_id(null);
+        cmsBtCustomPropModel.setCat("aaa>bbb>ccc");
+        cmsBtCustomPropService.update(cmsBtCustomPropModel);
+        cmsBtCustomPropModel.set_id(null);
+        cmsBtCustomPropModel.setCat("aaa");
+        cmsBtCustomPropService.update(cmsBtCustomPropModel);
+
+
     }
 
 }
