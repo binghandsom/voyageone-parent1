@@ -511,7 +511,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 				allowDoScitemNumIIdList.add("544731591602");allowDoScitemNumIIdList.add("544713066788");
 				allowDoScitemNumIIdList.add("544732759231");allowDoScitemNumIIdList.add("544678004561");
 				allowDoScitemNumIIdList.add("544736591709");allowDoScitemNumIIdList.add("544713697278");
-				allowDoScitemNumIIdList.add("544725110169");allowDoScitemNumIIdList.add("544726738039");
+				allowDoScitemNumIIdList.add("544725110169"); // allowDoScitemNumIIdList.add("544726738039");
 				allowDoScitemNumIIdList.add("544867692832");
 				if (allowDoScitemNumIIdList.contains(numIId)) {
 					blnDoScitemMap = true;
