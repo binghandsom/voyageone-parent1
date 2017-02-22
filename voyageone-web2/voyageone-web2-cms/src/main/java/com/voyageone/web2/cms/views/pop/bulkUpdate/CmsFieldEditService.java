@@ -314,13 +314,6 @@ public class CmsFieldEditService extends BaseViewService {
             WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
             $debug("VO扣点值批量更新结果 " + rs.toString());
 
-            // 调用批处理程序 记录价格变更履历/记录商品修改历史/同步价格范围/插入上新程序
-            /*Map<String, Object> logParams = new HashMap<>(3);
-            logParams.put("channelId", userInfo.getSelChannelId());
-            logParams.put("creater", userInfo.getUserName());
-            logParams.put("codeList", productCodes);
-            logParams.put("voRate", voRateVal);*/
-
             ProductVoRateUpdateMQMessageBody mqMessageBody = new ProductVoRateUpdateMQMessageBody();
             mqMessageBody.setChannelId(userInfo.getSelChannelId());
             mqMessageBody.setVoRate(voRateVal);

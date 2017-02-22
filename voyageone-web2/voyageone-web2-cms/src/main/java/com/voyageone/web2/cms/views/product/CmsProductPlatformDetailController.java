@@ -6,6 +6,7 @@ import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SetCartSkuIsSaleP
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceConfirmLogService;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -44,6 +45,9 @@ public class CmsProductPlatformDetailController extends CmsController {
     @Autowired
     private CmsAdvanceSearchService cmsAdvanceSearchService;
 
+    @Autowired
+    private PriceService priceService;
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SaveCartSkuPrice)
     public  AjaxResponse  saveCartSkuPrice(@RequestBody SaveCartSkuPriceParameter parameter) throws Exception {
         UserSessionBean userSessionBean = getUser();
@@ -72,13 +76,13 @@ public class CmsProductPlatformDetailController extends CmsController {
         Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
 
         String channelId = getUser().getSelChannelId();
-        int cartId = Integer.parseInt(String.valueOf(params.get("cartId")));
+        Integer cartId = Integer.parseInt(String.valueOf(params.get("cartId")));
         Map<String, Object> result = new HashMap<>();
 
         result.put("mastData", cmsProductPlatformDetailService.getProductMastData(channelId, prodId, cartId));
         result.put("platform", cmsProductPlatformDetailService.getProductPlatform(channelId, prodId, cartId, getLang()));
         result.put("channelConfig", cmsAdvanceSearchService.getChannelConfig(channelId, cartId, getLang()));
-        result.put("autoSyncPriceMsrp", cmsProductPlatformDetailService.getAutoSyncPriceMsrpOption(channelId, cartId));
+        result.put("autoSyncPriceMsrp", priceService.getAutoSyncPriceMsrpOption(channelId, cartId).getConfigValue1());
         result.put("autoSyncPriceSale", cmsProductPlatformDetailService.getAutoSyncPriceSaleOption(channelId, cartId));
 
         return success(result);

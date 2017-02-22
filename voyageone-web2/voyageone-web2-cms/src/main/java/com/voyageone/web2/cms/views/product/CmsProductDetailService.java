@@ -34,6 +34,7 @@ import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.impl.cms.prices.CmsBtProductPlatformPriceService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
@@ -111,6 +112,8 @@ public class CmsProductDetailService extends BaseViewService {
     private InventoryCenterLogicService inventoryCenterLogicService;
     @Autowired
     private MqSender sender;
+    @Autowired
+    private CmsBtProductPlatformPriceService cmsBtProductPlatformPriceService;
 
     /**
      * 获取类目以及类目属性信息.
@@ -1600,10 +1603,9 @@ public class CmsProductDetailService extends BaseViewService {
         platform.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
         cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, prodId, cartId, userName, "sku价格刷新");
 
-
         //刷新价格
         CmsBtProductModel productInfo = productService.getProductById(channelId, prodId);
-        priceService.updateSkuPrice(channelId, cartId, productInfo,isUpdateJmDealPrice);
+        cmsBtProductPlatformPriceService.updateSkuPrice(channelId, cartId, productInfo,isUpdateJmDealPrice, userName);
 
     }
 

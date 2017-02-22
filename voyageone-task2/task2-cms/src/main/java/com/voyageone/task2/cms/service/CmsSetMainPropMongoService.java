@@ -35,6 +35,7 @@ import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.CmsBtFeedImportSizeService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.impl.cms.prices.CmsBtProductPlatformPriceService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
@@ -45,9 +46,9 @@ import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
@@ -71,10 +72,6 @@ import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -84,11 +81,8 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -157,6 +151,8 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
     PromotionService promotionService;
     @Autowired
     PromotionCodeService promotionCodeService;
+    @Autowired
+    private CmsBtProductPlatformPriceService platformPriceService;
 
     @Autowired
     private MqSender sender;
@@ -242,34 +238,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
                 .forEach(p -> $info(p.getValue()));
         $info("=================feed->master导入  主线程结束====================");
-
-        // 线程
-//        List<Runnable> threads = new ArrayList<>();
-
-//        // 根据渠道运行
-//        for (final String orderChannelID : orderChannelIdList) {
-//
-//            threads.add(new Runnable() {
-//                @Override
-//                public void run() {
-//                    // 获取是否跳过mapping check
-//                    String skip_mapping_check = TaskControlUtils.getVal2(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
-//                    boolean bln_skip_mapping_check = true;
-//                    if (StringUtils.isEmpty(skip_mapping_check) || "0".equals(skip_mapping_check)) {
-//                        bln_skip_mapping_check = false;
-//                    }
-//                    // jeff 2016/04 change start
-//                    // 获取前一次的价格强制击穿时间
-//                    String priceBreakTime = TaskControlUtils.getEndTime(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
-//                    // 主逻辑
-//                    // new setMainProp(orderChannelID, bln_skip_mapping_check).doRun();
-//                    new setMainProp(orderChannelID, bln_skip_mapping_check, priceBreakTime).doRun();
-//                    // jeff 2016/04 change end
-//                }
-//            });
-//        }
-//
-//        runWithThreadPool(threads, taskControlList);
     }
 
     /**
@@ -1154,7 +1122,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     }
 
                     // 判断是否更新平台价格 如果要更新直接更新
-                    priceService.updatePlatFormPrice(channelId, chg, cmsProduct, getTaskName());
+                    platformPriceService.updatePlatFormPrice(channelId, chg, cmsProduct, getTaskName());
 
                 } else {
                     // 生成productGroup数据
@@ -3574,9 +3542,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     else if (commonSku.getClientNetPrice() < minClientNetPrice) {
                         minClientNetPrice = commonSku.getClientNetPrice();
                     }
-
                 }
-
             }
 
             if(minClientMsrpPrice==maxClientMsrpPrice) {
@@ -3922,13 +3888,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
      */
     private void updateFeedInfo(CmsBtFeedInfoModel feed, Integer updFlg, String errMsg, String isFeedReImport) {
         if (feed == null) return;
-//
-//        feed.setUpdFlg(updFlg);  // 1:feed->master导入失败   2:feed->master导入失败
-//        feed.setUpdMessage(errMsg);
-//        if (!StringUtils.isEmpty(isFeedReImport))
-//            feed.setIsFeedReImport(isFeedReImport);
-//        feed.setModifier(getTaskName());
-//        feedInfoService.updateFeedInfo(feed);
+
         Map<String, Object> paraMap = new HashedMap();
         paraMap.put("code", feed.getCode());
 
