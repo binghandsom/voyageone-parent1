@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.task2.cms.dao.feed.KitBagFeedDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.task2.cms.bean.SuperFeedKitBagBean" >
+        <id column="VariationSku" property="variationsku" jdbcType="VARCHAR" />
+        <result column="MultiVariationGroupId" property="multivariationgroupid" jdbcType="VARCHAR" />
+        <result column="Weight" property="weight" jdbcType="VARCHAR" />
+        <result column="Width" property="width" jdbcType="VARCHAR" />
+        <result column="Length" property="length" jdbcType="VARCHAR" />
+        <result column="Categories" property="categories" jdbcType="VARCHAR" />
+        <result column="Quantity" property="quantity" jdbcType="VARCHAR" />
+        <result column="md5" property="md5" jdbcType="VARCHAR" />
+        <result column="updateFlag" property="updateflag" jdbcType="INTEGER" />
+        <result column="Price" property="price" jdbcType="VARCHAR" />
+        <result column="PriceWas" property="pricewas" jdbcType="VARCHAR" />
+        <result column="Currency" property="currency" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.voyageone.task2.cms.bean.SuperFeedKitBagBean" extends="BaseResultMap" >
+        <result column="ProductId" property="productid" jdbcType="LONGVARCHAR" />
+        <result column="VariationId" property="variationid" jdbcType="LONGVARCHAR" />
+        <result column="MainVID" property="mainvid" jdbcType="LONGVARCHAR" />
+        <result column="SiteName" property="sitename" jdbcType="LONGVARCHAR" />
+        <result column="SiteId" property="siteid" jdbcType="LONGVARCHAR" />
+        <result column="Territories" property="territories" jdbcType="LONGVARCHAR" />
+        <result column="EAN" property="ean" jdbcType="LONGVARCHAR" />
+        <result column="Title" property="title" jdbcType="LONGVARCHAR" />
+        <result column="DetailedDescription" property="detaileddescription" jdbcType="LONGVARCHAR" />
+        <result column="ProductSku" property="productsku" jdbcType="LONGVARCHAR" />
+        <result column="Gender" property="gender" jdbcType="LONGVARCHAR" />
+        <result column="Size" property="size" jdbcType="LONGVARCHAR" />
+        <result column="Depth" property="depth" jdbcType="LONGVARCHAR" />
+        <result column="ItemBrand" property="itembrand" jdbcType="LONGVARCHAR" />
+        <result column="Colour" property="colour" jdbcType="LONGVARCHAR" />
+        <result column="Images" property="images" jdbcType="LONGVARCHAR" />
+        <result column="CommodityCode" property="commoditycode" jdbcType="LONGVARCHAR" />
+        <result column="CountryOfOrigin" property="countryoforigin" jdbcType="LONGVARCHAR" />
+        <result column="Composition" property="composition" jdbcType="LONGVARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        VariationSku, MultiVariationGroupId, Weight, Width, Length, Categories,
+        Quantity, md5, updateFlag, Price, PriceWas, Currency
+    </sql>
+    <sql id="Blob_Column_List" >
+        ProductId, VariationId, MainVID, SiteName, SiteId, Territories, EAN,
+        Title, DetailedDescription, ProductSku, Gender, Size, Depth, ItemBrand,
+        Colour, Images, CommodityCode, CountryOfOrigin, Composition
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+        select
+        <include refid="Base_Column_List" />
+        ,
+        <include refid="Blob_Column_List" />
+        from cms_zz_feed_kitbag_product_temp
+        where VariationSku = #{variationsku,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from cms_zz_feed_kitbag_product_temp
+        where "VariationSku" = #{variationsku,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insert" parameterType="com.voyageone.task2.cms.bean.SuperFeedKitBagBean" >
+        insert into cms_zz_feed_kitbag_product_temp (VariationSku, MultiVariationGroupId,
+        Weight, Width, Length,
+        Categories, Quantity, md5,
+        updateFlag, Price, PriceWas,
+        Currency, ProductId, VariationId,
+        MainVID, SiteName, SiteId,
+        Territories, EAN, Title,
+        DetailedDescription, ProductSku,
+        Gender, Size, Depth,
+        ItemBrand, Colour, Images,
+        CommodityCode, CountryOfOrigin,
+        Composition)
+        values (#{variationsku,jdbcType=VARCHAR}, #{multivariationgroupid,jdbcType=VARCHAR},
+        #{weight,jdbcType=VARCHAR}, #{width,jdbcType=VARCHAR}, #{length,jdbcType=VARCHAR},
+        #{categories,jdbcType=VARCHAR}, #{quantity,jdbcType=VARCHAR}, #{md5,jdbcType=VARCHAR},
+        #{updateflag,jdbcType=INTEGER}, #{price,jdbcType=VARCHAR}, #{pricewas,jdbcType=VARCHAR},
+        #{currency,jdbcType=VARCHAR}, #{productid,jdbcType=LONGVARCHAR}, #{variationid,jdbcType=LONGVARCHAR},
+        #{mainvid,jdbcType=LONGVARCHAR}, #{sitename,jdbcType=LONGVARCHAR}, #{siteid,jdbcType=LONGVARCHAR},
+        #{territories,jdbcType=LONGVARCHAR}, #{ean,jdbcType=LONGVARCHAR}, #{title,jdbcType=LONGVARCHAR},
+        #{detaileddescription,jdbcType=LONGVARCHAR}, #{productsku,jdbcType=LONGVARCHAR},
+        #{gender,jdbcType=LONGVARCHAR}, #{size,jdbcType=LONGVARCHAR}, #{depth,jdbcType=LONGVARCHAR},
+        #{itembrand,jdbcType=LONGVARCHAR}, #{colour,jdbcType=LONGVARCHAR}, #{images,jdbcType=LONGVARCHAR},
+        #{commoditycode,jdbcType=LONGVARCHAR}, #{countryoforigin,jdbcType=LONGVARCHAR},
+        #{composition,jdbcType=LONGVARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedKitBagBean" >
+        insert  IGNORE into cms_zz_feed_kitbag_product_temp
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="variationsku != null" >
+                VariationSku,
+            </if>
+            <if test="multivariationgroupid != null" >
+                MultiVariationGroupId,
+            </if>
+            <if test="weight != null" >
+                Weight,
+            </if>
+            <if test="width != null" >
+                Width,
+            </if>
+            <if test="length != null" >
+                Length,
+            </if>
+            <if test="categories != null" >
+                Categories,
+            </if>
+            <if test="quantity != null" >
+                Quantity,
+            </if>
+            <if test="md5 != null" >
+                md5,
+            </if>
+            <if test="updateflag != null" >
+                updateFlag,
+            </if>
+            <if test="price != null" >
+                Price,
+            </if>
+            <if test="pricewas != null" >
+                PriceWas,
+            </if>
+            <if test="currency != null" >
+                Currency,
+            </if>
+            <if test="productid != null" >
+                ProductId,
+            </if>
+            <if test="variationid != null" >
+                VariationId,
+            </if>
+            <if test="mainvid != null" >
+                MainVID,
+            </if>
+            <if test="sitename != null" >
+                SiteName,
+            </if>
+            <if test="siteid != null" >
+                SiteId,
+            </if>
+            <if test="territories != null" >
+                Territories,
+            </if>
+            <if test="ean != null" >
+                EAN,
+            </if>
+            <if test="title != null" >
+                Title,
+            </if>
+            <if test="detaileddescription != null" >
+                DetailedDescription,
+            </if>
+            <if test="productsku != null" >
+                ProductSku,
+            </if>
+            <if test="gender != null" >
+                Gender,
+            </if>
+            <if test="size != null" >
+                Size,
+            </if>
+            <if test="depth != null" >
+                Depth,
+            </if>
+            <if test="itembrand != null" >
+                ItemBrand,
+            </if>
+            <if test="colour != null" >
+                Colour,
+            </if>
+            <if test="images != null" >
+                Images,
+            </if>
+            <if test="commoditycode != null" >
+                CommodityCode,
+            </if>
+            <if test="countryoforigin != null" >
+                CountryOfOrigin,
+            </if>
+            <if test="composition != null" >
+                Composition,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="variationsku != null" >
+                #{variationsku,jdbcType=VARCHAR},
+            </if>
+            <if test="multivariationgroupid != null" >
+                #{multivariationgroupid,jdbcType=VARCHAR},
+            </if>
+            <if test="weight != null" >
+                #{weight,jdbcType=VARCHAR},
+            </if>
+            <if test="width != null" >
+                #{width,jdbcType=VARCHAR},
+            </if>
+            <if test="length != null" >
+                #{length,jdbcType=VARCHAR},
+            </if>
+            <if test="categories != null" >
+                #{categories,jdbcType=VARCHAR},
+            </if>
+            <if test="quantity != null" >
+                #{quantity,jdbcType=VARCHAR},
+            </if>
+            <if test="md5 != null" >
+                #{md5,jdbcType=VARCHAR},
+            </if>
+            <if test="updateflag != null" >
+                #{updateflag,jdbcType=INTEGER},
+            </if>
+            <if test="price != null" >
+                #{price,jdbcType=VARCHAR},
+            </if>
+            <if test="pricewas != null" >
+                #{pricewas,jdbcType=VARCHAR},
+            </if>
+            <if test="currency != null" >
+                #{currency,jdbcType=VARCHAR},
+            </if>
+            <if test="productid != null" >
+                #{productid,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variationid != null" >
+                #{variationid,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="mainvid != null" >
+                #{mainvid,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="sitename != null" >
+                #{sitename,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="siteid != null" >
+                #{siteid,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="territories != null" >
+                #{territories,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="ean != null" >
+                #{ean,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="title != null" >
+                #{title,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="detaileddescription != null" >
+                #{detaileddescription,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="productsku != null" >
+                #{productsku,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="gender != null" >
+                #{gender,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="size != null" >
+                #{size,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="depth != null" >
+                #{depth,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="itembrand != null" >
+                #{itembrand,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="colour != null" >
+                #{colour,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="images != null" >
+                #{images,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="commoditycode != null" >
+                #{commoditycode,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="countryoforigin != null" >
+                #{countryoforigin,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="composition != null" >
+                #{composition,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedKitBagBean" >
+        update cms_zz_feed_kitbag_product_temp
+        <set >
+            <if test="multivariationgroupid != null" >
+                MultiVariationGroupId = #{multivariationgroupid,jdbcType=VARCHAR},
+            </if>
+            <if test="weight != null" >
+                Weight = #{weight,jdbcType=VARCHAR},
+            </if>
+            <if test="width != null" >
+                Width = #{width,jdbcType=VARCHAR},
+            </if>
+            <if test="length != null" >
+                Length = #{length,jdbcType=VARCHAR},
+            </if>
+            <if test="categories != null" >
+                Categories = #{categories,jdbcType=VARCHAR},
+            </if>
+            <if test="quantity != null" >
+                Quantity = #{quantity,jdbcType=VARCHAR},
+            </if>
+            <if test="md5 != null" >
+                md5 = #{md5,jdbcType=VARCHAR},
+            </if>
+            <if test="updateflag != null" >
+                updateFlag = #{updateflag,jdbcType=INTEGER},
+            </if>
+            <if test="price != null" >
+                Price = #{price,jdbcType=VARCHAR},
+            </if>
+            <if test="pricewas != null" >
+                PriceWas = #{pricewas,jdbcType=VARCHAR},
+            </if>
+            <if test="currency != null" >
+                Currency = #{currency,jdbcType=VARCHAR},
+            </if>
+            <if test="productid != null" >
+                ProductId = #{productid,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variationid != null" >
+                VariationId = #{variationid,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="mainvid != null" >
+                MainVID = #{mainvid,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="sitename != null" >
+                SiteName = #{sitename,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="siteid != null" >
+                SiteId = #{siteid,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="territories != null" >
+                Territories = #{territories,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="ean != null" >
+                EAN = #{ean,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="title != null" >
+                Title = #{title,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="detaileddescription != null" >
+                DetailedDescription = #{detaileddescription,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="productsku != null" >
+                ProductSku = #{productsku,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="gender != null" >
+                "Gender" = #{gender,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="size != null" >
+                Size = #{size,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="depth != null" >
+                Depth = #{depth,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="itembrand != null" >
+                ItemBrand = #{itembrand,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="colour != null" >
+                Colour = #{colour,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="images != null" >
+                Images = #{images,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="commoditycode != null" >
+                CommodityCode = #{commoditycode,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="countryoforigin != null" >
+                CountryOfOrigin = #{countryoforigin,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="composition != null" >
+                Composition = #{composition,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where VariationSku= #{variationsku,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.voyageone.task2.cms.bean.SuperFeedKitBagBean" >
+        update cms_zz_feed_kitbag_product_temp
+        set MultiVariationGroupId = #{multivariationgroupid,jdbcType=VARCHAR},
+        Weight = #{weight,jdbcType=VARCHAR},
+        s = #{width,jdbcType=VARCHAR},
+        Length = #{length,jdbcType=VARCHAR},
+        Categories = #{categories,jdbcType=VARCHAR},
+        Quantity = #{quantity,jdbcType=VARCHAR},
+        md5 = #{md5,jdbcType=VARCHAR},
+        updateFlag = #{updateflag,jdbcType=INTEGER},
+        Price = #{price,jdbcType=VARCHAR},
+        PriceWas = #{pricewas,jdbcType=VARCHAR},
+        Currency = #{currency,jdbcType=VARCHAR},
+        ProductId = #{productid,jdbcType=LONGVARCHAR},
+        VariationId = #{variationid,jdbcType=LONGVARCHAR},
+        MainVID = #{mainvid,jdbcType=LONGVARCHAR},
+        SiteName = #{sitename,jdbcType=LONGVARCHAR},
+        SiteId = #{siteid,jdbcType=LONGVARCHAR},
+        Territories = #{territories,jdbcType=LONGVARCHAR},
+        EAN = #{ean,jdbcType=LONGVARCHAR},
+        Title = #{title,jdbcType=LONGVARCHAR},
+        DetailedDescription = #{detaileddescription,jdbcType=LONGVARCHAR},
+        ProductSku = #{productsku,jdbcType=LONGVARCHAR},
+        Gender = #{gender,jdbcType=LONGVARCHAR},
+        Size = #{size,jdbcType=LONGVARCHAR},
+        Depth = #{depth,jdbcType=LONGVARCHAR},
+        ItemBrand = #{itembrand,jdbcType=LONGVARCHAR},
+        Colour = #{colour,jdbcType=LONGVARCHAR},
+        Images = #{images,jdbcType=LONGVARCHAR},
+        CommodityCode = #{commoditycode,jdbcType=LONGVARCHAR},
+        CountryOfOrigin = #{countryoforigin,jdbcType=LONGVARCHAR},
+        Composition = #{composition,jdbcType=LONGVARCHAR}
+        where VariationSku = #{variationsku,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperFeedKitBagBean" >
+    update cms_zz_feed_kitbag_product_temp
+    set MultiVariationGroupId = #{multivariationgroupid,jdbcType=VARCHAR},
+      Weight = #{weight,jdbcType=VARCHAR},
+      Width = #{width,jdbcType=VARCHAR},
+      Length = #{length,jdbcType=VARCHAR},
+      Categories = #{categories,jdbcType=VARCHAR},
+      Quantity = #{quantity,jdbcType=VARCHAR},
+      md5 = #{md5,jdbcType=VARCHAR},
+      updateFlag = #{updateflag,jdbcType=INTEGER},
+      Price = #{price,jdbcType=VARCHAR},
+      PriceWas = #{pricewas,jdbcType=VARCHAR},
+      Currency = #{currency,jdbcType=VARCHAR}
+    where VariationSku = #{variationsku,jdbcType=VARCHAR}
+  </update>
+
+
+
+
+
+    <delete id="delete">
+        delete from voyageone_cms2.cms_zz_feed_kitbag_product_temp
+    </delete>
+
+    <resultMap id="resultMap_feed" type="com.voyageone.task2.cms.model.CmsBtFeedInfoKitBagModel" autoMapping="true">
+        <result column="category" property="category" />
+        <result column="channel_id" property="channelId" />
+        <result column="m_brand" property="brand" />
+        <result column="m_model" property="model" />
+        <result column="p_name" property="name" />
+        <result column="pe_short_description" property="shortDescription" />
+        <result column="pe_long_description" property="longDescription" />
+        <result column="m_size_type" property="sizeType" />
+        <result column="m_weight" property="weight" />
+        <result column="p_code" property="code" />
+        <result column="p_color" property="color" />
+        <result column="p_made_in_country" property="origin" />
+        <result column="client_product_url" property="clientProductURL"/>
+        <result column="product_type" property="productType"/>
+        <result column="material" property="material"/>
+        <result column="usage_en" property="usageEn"/>
+        <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
+            <result column="i_sku" property="sku" />
+            <result column="i_size" property="size" />
+            <result column="i_barcode" property="barcode" />
+            <result column="i_client_sku" property="clientSku" />
+            <result column="price_msrp" property="priceMsrp" />
+            <result column="price_current" property="priceCurrent" />
+            <result column="price_net" property="priceNet" />
+            <result column="price_client_retail" property="priceClientRetail" />
+            <result column="price_client_msrp" property="priceClientMsrp" />
+            <result column="quantity" property="qty" />
+            <result column="weight_org" property="weightOrg" />
+            <result column="weight_org_unit" property="weightOrgUnit" />
+        </collection>
+        <collection property="image" javaType="ArrayList" ofType="String" >
+            <result column="image" property="image" />
+        </collection>
+    </resultMap>
+    <select id="selectSuperFeedModel" resultMap="resultMap_feed" parameterType="HashMap">
+        select
+        ${category} as category
+        ,#{channel_id} as channel_id
+        ,${m_brand} as m_brand
+        ,${m_model} as m_model
+        ,${m_size_type} as m_size_type
+        ,${m_weight} as m_weight
+        ,${p_code} as p_code
+        ,${p_name} as p_name
+        ,${p_color} as p_color
+        ,${p_made_in_country} as p_made_in_country
+        ,${pe_short_description} as pe_short_description
+        ,${pe_long_description} as pe_long_description
+        ,${price_client_msrp} as price_client_msrp
+        ,${price_client_retail}  as price_client_retail
+        ,${price_net}  as price_net
+        ,${price_current}  as price_current
+        ,${price_msrp}  as price_msrp
+        ,${i_sku} as i_sku
+        ,${i_size} as i_size
+        ,${i_barcode} as i_barcode
+        ,${i_client_sku} as i_client_sku
+        ,1 as i_active
+        ,${image} as image
+        ,${client_product_url} as client_product_url
+        ,${product_type} as product_type
+        ,${quantity} as quantity
+        ,${material} as material
+        ,${usage_en} as usageEn
+        ,${weight_org} as weight_org
+        ,${weight_org_unit} as weight_org_unit
+        ,${weight_calc} as weightCalc
+        <if test="attr != null">
+            ,${attr}
+        </if>
+        from
+        ${tableName}
+        ${keyword}
+    </select>
+    <update id="updateFlagBySku"  parameterType="java.util.List">
+        UPDATE voyageone_cms2.cms_zz_feed_kitbag_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `VariationSku` in (
+        <foreach collection="list" item="itemIds" index="index" separator=",">
+            #{itemIds}
+        </foreach>
+        )
+    </update>
+
+    <insert id="insertFullBySku"  parameterType="java.util.List">
+        INSERT INTO voyageone_cms2.cms_zz_feed_kitbag_product_full SELECT * from
+        voyageone_cms2.cms_zz_feed_kitbag_product_temp where `VariationSku` in
+        (
+        <foreach collection="list" item="itemIds" index="index" separator=",">
+            #{itemIds}
+        </foreach>
+        )
+    </insert>
+
+    <delete id="delFullBySku" parameterType="java.util.List">
+        DELETE
+        FROM
+        voyageone_cms2.cms_zz_feed_kitbag_product_full
+        where `VariationSku` in (
+        <foreach collection="list" item="itemIds" index="index" separator=",">
+            #{itemIds}
+        </foreach>
+        )
+    </delete>
+</mapper>

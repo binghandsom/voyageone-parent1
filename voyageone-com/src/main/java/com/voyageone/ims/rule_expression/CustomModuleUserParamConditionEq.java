@@ -6,13 +6,15 @@ package com.voyageone.ims.rule_expression;
 public class CustomModuleUserParamConditionEq extends CustomModuleUserParam {
     private RuleExpression firstParam;
     private RuleExpression secondParam;
+    private RuleExpression ignoreCaseFlg;
 
     public CustomModuleUserParamConditionEq() {
     }
 
-    public CustomModuleUserParamConditionEq(RuleExpression firstParam, RuleExpression secondParam) {
+    public CustomModuleUserParamConditionEq(RuleExpression firstParam, RuleExpression secondParam, RuleExpression ignoreCaseFlg) {
         this.firstParam = firstParam;
         this.secondParam = secondParam;
+        this.ignoreCaseFlg = ignoreCaseFlg;
     }
 
     public RuleExpression getFirstParam() {
@@ -29,5 +31,13 @@ public class CustomModuleUserParamConditionEq extends CustomModuleUserParam {
 
     public void setSecondParam(RuleExpression secondParam) {
         this.secondParam = secondParam;
+    }
+
+    public RuleExpression getIgnoreCaseFlg() {
+        return ignoreCaseFlg;
+    }
+
+    public void setIgnoreCaseFlg(RuleExpression ignoreCaseFlg) {
+        this.ignoreCaseFlg = ignoreCaseFlg;
     }
 }

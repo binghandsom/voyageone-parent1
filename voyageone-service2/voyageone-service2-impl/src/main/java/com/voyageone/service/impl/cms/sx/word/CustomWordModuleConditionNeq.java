@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.sx.word;
 
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamConditionNeq;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueConditionNeq;
@@ -35,20 +36,31 @@ public class CustomWordModuleConditionNeq extends CustomWordModule {
 
         RuleExpression firstParamExpression = customModuleUserParamConditionNeq.getFirstParam();
         RuleExpression secondParamExpression = customModuleUserParamConditionNeq.getSecondParam();
+        RuleExpression ignoreCaseFlgExpression = customModuleUserParamConditionNeq.getIgnoreCaseFlg();
 
         String firsetParam = expressionParser.parse(firstParamExpression, shopBean, user, extParameter);
         String secondParam = expressionParser.parse(secondParamExpression, shopBean, user, extParameter);
+        String ignoreCaseFlg = expressionParser.parse(ignoreCaseFlgExpression, shopBean, user, extParameter);
+        boolean blnIgnoreCaseFlg = false;
+        if (!StringUtils.isEmpty(ignoreCaseFlg) && ignoreCaseFlg.equals("1")) {
+            blnIgnoreCaseFlg = true;
+        }
 
         if (firsetParam == null && secondParam == null) {
             return String.valueOf(false);
         } else if (firsetParam == null || secondParam == null) {
             return String.valueOf(true);
         } else {
-            if (firsetParam.trim().equals(secondParam.trim())) {
-                return String.valueOf(false);
+            if (blnIgnoreCaseFlg) {
+                if (firsetParam.trim().toLowerCase().equals(secondParam.trim().toLowerCase())) {
+                    return String.valueOf(false);
+                }
             } else {
-                return String.valueOf(true);
+                if (firsetParam.trim().equals(secondParam.trim())) {
+                    return String.valueOf(false);
+                }
             }
+            return String.valueOf(true);
         }
     }
 }

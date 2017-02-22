@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -70,14 +71,24 @@ import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -575,6 +586,26 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         feed.setSkus(skus);
                         // feed->master导入主处理
                         doSaveProductMainProp(feed, channelId, categoryTreeAllList);
+                        for( CmsBtFeedInfoModel_Sku cmsBtFeedInfoModel_Sku: feed.getSkus()){
+                            if(!StringUtils.isEmpty(cmsBtFeedInfoModel_Sku.getMainVid())){
+                                HttpHeaders httpHeaders = new HttpHeaders();
+                                httpHeaders.setContentType(MediaType.parseMediaType("application/json;charset=UTF-8"));
+                                ObjectMapper objectMapper = new ObjectMapper();
+                                HashMap<String, Object> feedInfo  = new HashMap<>();
+                                feedInfo.put("orderChannelId",channelId);
+                                feedInfo.put("clientSku",cmsBtFeedInfoModel_Sku.getSku());
+                                feedInfo.put("mainClientSku",cmsBtFeedInfoModel_Sku.getMainVid());
+                                List<HashMap<String, Object>> requestList = Arrays.asList(feedInfo);
+                                String json = objectMapper.writeValueAsString(requestList);
+                                httpHeaders.set("Authorization", "Basic " + MD5.getMD5(json + System.currentTimeMillis() / TimeUnit.MINUTES.toMillis(30)));
+                                HttpEntity<String> httpEntity = new HttpEntity<>(json, httpHeaders);
+                                SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+                                simpleClientHttpRequestFactory.setConnectTimeout(6000);
+                                simpleClientHttpRequestFactory.setReadTimeout(6000);
+                                RestTemplate restTemplate = new RestTemplate(simpleClientHttpRequestFactory);
+                                ResponseEntity<String> exchange = restTemplate.exchange("http://open.synship.net/wms/prdouctMapping/import", HttpMethod.POST, httpEntity, String.class);
+                            }
+                        }
                     } catch (CommonConfigNotFoundException ce) {
                         errCnt++;
                         // 如果是共通配置没有或者价格计算时抛出整个Channel的配置没有的错误时，后面的feed导入就不用做了，免得报出几百条同样的错误

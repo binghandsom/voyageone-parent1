@@ -91,12 +91,16 @@ public class BaseSellerCidsDictTest {
 
 	}
 
-	protected RuleExpression doCreateSimpleIf_Feed_Text(CompareType compareType, String ruleWordLeft, String ruleWordRight, SellerCids value) {
-		return doCreateSimpleIf(compareType, new FeedOrgWord(ruleWordLeft), new TextWord(ruleWordRight), value);
+	protected RuleExpression doCreateSimpleIf_Feed_Text(CompareType compareType, String ignoreCaseFlg, String ruleWordLeft, String ruleWordRight, SellerCids value) {
+		if (StringUtils.isEmpty(ignoreCaseFlg)) {
+			return doCreateSimpleIf(compareType, null, new FeedOrgWord(ruleWordLeft), new TextWord(ruleWordRight), value);
+		} else {
+			return doCreateSimpleIf(compareType, new TextWord(ignoreCaseFlg), new FeedOrgWord(ruleWordLeft), new TextWord(ruleWordRight), value);
+		}
 	}
 
 
-	protected RuleExpression doCreateSimpleIf(CompareType compareType, RuleWord ruleWordLeft, RuleWord ruleWordRight, SellerCids value) {
+	protected RuleExpression doCreateSimpleIf(CompareType compareType, RuleWord ignoreCaseFlg, RuleWord ruleWordLeft, RuleWord ruleWordRight, SellerCids value) {
 		// 根字典
 		RuleExpression ruleRoot = new RuleExpression();
 
@@ -121,6 +125,13 @@ public class BaseSellerCidsDictTest {
 				conditionParamEq.setSecondParam(param);
 			}
 
+			// 是否忽略大小写
+			if (ignoreCaseFlg != null) {
+				RuleExpression param = new RuleExpression();
+				param.addRuleWord(ignoreCaseFlg);
+				conditionParamEq.setIgnoreCaseFlg(param);
+			}
+
 			CustomWordValueConditionEq conditionEq = new CustomWordValueConditionEq();
 			conditionEq.setUserParam(conditionParamEq);
 
@@ -141,6 +152,13 @@ public class BaseSellerCidsDictTest {
 				RuleExpression param = new RuleExpression();
 				param.addRuleWord(ruleWordRight);
 				conditionParamNeq.setSecondParam(param);
+			}
+
+			// 是否忽略大小写
+			if (ignoreCaseFlg != null) {
+				RuleExpression param = new RuleExpression();
+				param.addRuleWord(ignoreCaseFlg);
+				conditionParamNeq.setIgnoreCaseFlg(param);
 			}
 
 			CustomWordValueConditionNeq conditionNeq = new CustomWordValueConditionNeq();

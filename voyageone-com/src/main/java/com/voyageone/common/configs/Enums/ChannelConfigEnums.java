@@ -609,7 +609,7 @@ public class ChannelConfigEnums {
         /**
          * Kitbag
          */
-        Kitbag("033"),
+        KitBag("033"),
 
         /**
          * Coty
@@ -729,7 +729,7 @@ public class ChannelConfigEnums {
                 case "030": return Wella;
                 case "031": return Woodland;
                 case "032": return Frye;
-                case "033": return Kitbag;
+                case "033": return KitBag;
                 case "034": return Coty;
                 case "035": return LikingBuyer;
                 case "088": return TestChannel088;

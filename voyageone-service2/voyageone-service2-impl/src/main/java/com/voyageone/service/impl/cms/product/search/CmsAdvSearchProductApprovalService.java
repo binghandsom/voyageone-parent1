@@ -58,7 +58,7 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
 
     public List<CmsBtOperationLogModel_Msg> approval(AdvSearchProductApprovalMQMessageBody mqMessageBody) {
         long threadNo =  Thread.currentThread().getId();
-        $info(String.format("threadNo=%d 参数%s",threadNo, JacksonUtil.bean2Json(mqMessageBody)));
+        $info(String.format("threadNo=%d 开始 ",threadNo, JacksonUtil.bean2Json(mqMessageBody)));
         Integer cartIdValue = mqMessageBody.getCartList().get(0);
         String channelId = mqMessageBody.getChannelId();
         String userName = mqMessageBody.getSender();
@@ -66,6 +66,7 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
         Map<String, Object> params = mqMessageBody.getParams();
         List<CmsBtOperationLogModel_Msg> errorCodeList = new ArrayList<>();
 
+        long sta = System.currentTimeMillis();
         // 先判断是否是ready状态（miNiMall店铺不验证）
         TypeChannelBean cartType = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, cartIdValue.toString(), "en");
         if (!"3".equals(cartType.getCartType())) {
@@ -125,7 +126,7 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                 }
             }
         }
-
+        $info("检查产品检查时间" + (System.currentTimeMillis() - sta));
         //###############################################################################################################
         // 检查商品价格 notChkPrice=1时表示忽略价格问题
         Integer notChkPriceFlg = (Integer) params.get("notChkPrice");
@@ -198,7 +199,7 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
         }
 
         // ############################################################################################################
-
+        sta = System.currentTimeMillis();
         BulkJongoUpdateList prodBulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
         BulkJongoUpdateList grpBulkList = new BulkJongoUpdateList(1000, cmsBtProductGroupDao, channelId);
         List<String> newProdCodeList = new ArrayList<>();
@@ -287,6 +288,8 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
             $debug(String.format("商品审批(group表) channelId=%s 结果=%s", channelId, rs.toString()));
         }
 
+        $info("更新产品状态 耗时" + (System.currentTimeMillis() - sta));
+
         String msg;
         if (cartIdValue == null || cartIdValue == 0) {
             msg = "高级检索 商品审批(全平台)";
@@ -296,15 +299,15 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
 
         // 插入上新程序
         $debug("批量修改属性 (商品审批) 开始记入SxWorkLoad表");
-        long sta = System.currentTimeMillis();
+        sta = System.currentTimeMillis();
         sxProductService.insertSxWorkLoad(channelId, newProdCodeList, cartIdValue, userName, false);
-        $debug("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
+        $info("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
 
         // 记录商品修改历史
-        productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdValue, EnumProductOperationType.ProductApproved, msg, userName);
+        sta = System.currentTimeMillis();
+            productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdValue, EnumProductOperationType.ProductApproved, msg, userName);
             sta = System.currentTimeMillis();
             // 记录商品修改历史
-            productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdValue, EnumProductOperationType.ProductApproved, msg, userName);
             $info("批量修改属性 (商品审批) 记入状态历史表结束 耗时" + (System.currentTimeMillis() - sta));
 
         return errorCodeList;

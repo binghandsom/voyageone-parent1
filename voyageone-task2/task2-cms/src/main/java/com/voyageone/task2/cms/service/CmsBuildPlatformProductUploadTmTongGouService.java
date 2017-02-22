@@ -464,97 +464,97 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 if (!updateWare) numIId = result;
             }
 
-            // 这些Liking的商品， 仍然需要绑定货品
-			boolean blnDoScitemMap = false;
-            if (channelId.equals("928") && cartId == 31) {
-				List<String> allowDoScitemNumIIdList = new ArrayList<>();
-				allowDoScitemNumIIdList.add("544342030946");allowDoScitemNumIIdList.add("544333633529");
-				allowDoScitemNumIIdList.add("544343354326");allowDoScitemNumIIdList.add("544309896081");
-				allowDoScitemNumIIdList.add("544344586861");allowDoScitemNumIIdList.add("544344538928");
-				allowDoScitemNumIIdList.add("544336748554");allowDoScitemNumIIdList.add("544363981461");
-				allowDoScitemNumIIdList.add("544338864090");allowDoScitemNumIIdList.add("544345292489");
-				allowDoScitemNumIIdList.add("544362496881");allowDoScitemNumIIdList.add("544362596746");
-				allowDoScitemNumIIdList.add("544417499407");allowDoScitemNumIIdList.add("544418555388");
-				allowDoScitemNumIIdList.add("544419007438");allowDoScitemNumIIdList.add("544402062832");
-				allowDoScitemNumIIdList.add("544403094363");allowDoScitemNumIIdList.add("544396981402");
-				allowDoScitemNumIIdList.add("544409262197");allowDoScitemNumIIdList.add("544399409951");
-				allowDoScitemNumIIdList.add("544409666167");allowDoScitemNumIIdList.add("544373780524");
-				allowDoScitemNumIIdList.add("544429243103");allowDoScitemNumIIdList.add("544432587723");
-				allowDoScitemNumIIdList.add("544406761330");allowDoScitemNumIIdList.add("544380568866");
-				allowDoScitemNumIIdList.add("544384908810");allowDoScitemNumIIdList.add("544440231827");
-				allowDoScitemNumIIdList.add("544422638918");allowDoScitemNumIIdList.add("544423610086");
-				allowDoScitemNumIIdList.add("544424226511");allowDoScitemNumIIdList.add("544429353036");
-				allowDoScitemNumIIdList.add("544438418181");allowDoScitemNumIIdList.add("544442870033");
-				allowDoScitemNumIIdList.add("544464583860");allowDoScitemNumIIdList.add("544449646056");
-				allowDoScitemNumIIdList.add("544459488076");allowDoScitemNumIIdList.add("544498205483");
-				allowDoScitemNumIIdList.add("544499721489");allowDoScitemNumIIdList.add("544530591413");
-				allowDoScitemNumIIdList.add("544526766496");allowDoScitemNumIIdList.add("544490984273");
-				allowDoScitemNumIIdList.add("544516749956");allowDoScitemNumIIdList.add("544545263613");
-				allowDoScitemNumIIdList.add("544547539056");allowDoScitemNumIIdList.add("544531850678");
-				allowDoScitemNumIIdList.add("544542006694");allowDoScitemNumIIdList.add("544531677203");
-				allowDoScitemNumIIdList.add("544560023247");allowDoScitemNumIIdList.add("544542454180");
-				allowDoScitemNumIIdList.add("544542546179");allowDoScitemNumIIdList.add("544531945199");
-				allowDoScitemNumIIdList.add("544505868390");allowDoScitemNumIIdList.add("544506288120");
-				allowDoScitemNumIIdList.add("544560543554");allowDoScitemNumIIdList.add("544569375028");
-				allowDoScitemNumIIdList.add("544683050054");allowDoScitemNumIIdList.add("544677773993");
-				allowDoScitemNumIIdList.add("544681609113");allowDoScitemNumIIdList.add("544708931758");
-				allowDoScitemNumIIdList.add("544653812912");allowDoScitemNumIIdList.add("544711099181");
-				allowDoScitemNumIIdList.add("544688209035");allowDoScitemNumIIdList.add("544696382979");
-				allowDoScitemNumIIdList.add("544660628133");allowDoScitemNumIIdList.add("544428181455");
-				allowDoScitemNumIIdList.add("544661060394");allowDoScitemNumIIdList.add("544689865870");
-				allowDoScitemNumIIdList.add("544690037926");allowDoScitemNumIIdList.add("544717543505");
-				allowDoScitemNumIIdList.add("544662420101");allowDoScitemNumIIdList.add("544700742175");
-				allowDoScitemNumIIdList.add("544701330314");allowDoScitemNumIIdList.add("544720919359");
-				allowDoScitemNumIIdList.add("544666292926");allowDoScitemNumIIdList.add("544667600008");
-				allowDoScitemNumIIdList.add("544668324179");allowDoScitemNumIIdList.add("544670352317");
-				allowDoScitemNumIIdList.add("544674264636");allowDoScitemNumIIdList.add("544730523887");
-				allowDoScitemNumIIdList.add("544731591602");allowDoScitemNumIIdList.add("544713066788");
-				allowDoScitemNumIIdList.add("544732759231");allowDoScitemNumIIdList.add("544678004561");
-				allowDoScitemNumIIdList.add("544736591709");allowDoScitemNumIIdList.add("544713697278");
-				allowDoScitemNumIIdList.add("544725110169");allowDoScitemNumIIdList.add("544726738039");
-				allowDoScitemNumIIdList.add("544867692832");
-				if (allowDoScitemNumIIdList.contains(numIId)) {
-					blnDoScitemMap = true;
-				}
-			}
-            if (blnDoScitemMap) {
-                // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
-                // 获取skuId
-                List<Map<String, Object>> skuMapList = null;
-                TbItemSchema tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
-                if (tbItemSchema != null) {
-                    Map<String, Field> mapField = tbItemSchema.getFieldMap();
-                    if (mapField != null) {
-                        if (mapField.containsKey("skus")) {
-                            Field fieldSkus = mapField.get("skus");
-                            if (fieldSkus != null) {
-                                skuMapList = JacksonUtil.jsonToMapList(((InputField)tbItemSchema.getFieldMap().get("skus")).getDefaultValue());
-                            }
-                        }
-                    }
-                }
-
-                // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
-                // 关联货品
-                if (skuMapList != null) {
-                    for (Map<String, Object> skuMap : skuMapList) {
-//                        skuMap: outer_id, price, quantity, sku_id
-
-                        skuMap.put("scProductId",
-                                taobaoScItemService.doSetLikingScItem(
-                                        shopProp, sxData.getMainProduct().getOrgChannelId(),
-                                        Long.parseLong(numIId),
-                                        productInfoMap.get("title"), skuMap));
-                    }
-                }
-
-
-                // 回写数据库
-                // TODO: 目前这个channelId传入的是原始channelId， 2017年4月份左右新wms上新前， 要改为928自己的channelId
-//                saveCmsBtTmScItem_Liking(channelId, cartId, skuMapList);
-                // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
-                saveCmsBtTmScItem_Liking(sxData.getMainProduct().getOrgChannelId(), cartId, skuMapList);
-            }
+//            // 这些Liking的商品， 仍然需要绑定货品
+//			boolean blnDoScitemMap = false;
+//            if (channelId.equals("928") && cartId == 31) {
+//				List<String> allowDoScitemNumIIdList = new ArrayList<>();
+//				allowDoScitemNumIIdList.add("544342030946");allowDoScitemNumIIdList.add("544333633529");
+//				allowDoScitemNumIIdList.add("544343354326");allowDoScitemNumIIdList.add("544309896081");
+//				allowDoScitemNumIIdList.add("544344586861");allowDoScitemNumIIdList.add("544344538928");
+//				allowDoScitemNumIIdList.add("544336748554");allowDoScitemNumIIdList.add("544363981461");
+//				allowDoScitemNumIIdList.add("544338864090");allowDoScitemNumIIdList.add("544345292489");
+//				allowDoScitemNumIIdList.add("544362496881");allowDoScitemNumIIdList.add("544362596746");
+//				allowDoScitemNumIIdList.add("544417499407");allowDoScitemNumIIdList.add("544418555388");
+//				allowDoScitemNumIIdList.add("544419007438");allowDoScitemNumIIdList.add("544402062832");
+//				allowDoScitemNumIIdList.add("544403094363");allowDoScitemNumIIdList.add("544396981402");
+//				allowDoScitemNumIIdList.add("544409262197");allowDoScitemNumIIdList.add("544399409951");
+//				allowDoScitemNumIIdList.add("544409666167");allowDoScitemNumIIdList.add("544373780524");
+//				allowDoScitemNumIIdList.add("544429243103");allowDoScitemNumIIdList.add("544432587723");
+//				allowDoScitemNumIIdList.add("544406761330");allowDoScitemNumIIdList.add("544380568866");
+//				allowDoScitemNumIIdList.add("544384908810");allowDoScitemNumIIdList.add("544440231827");
+//				allowDoScitemNumIIdList.add("544422638918");allowDoScitemNumIIdList.add("544423610086");
+//				allowDoScitemNumIIdList.add("544424226511");allowDoScitemNumIIdList.add("544429353036");
+//				allowDoScitemNumIIdList.add("544438418181");allowDoScitemNumIIdList.add("544442870033");
+//				allowDoScitemNumIIdList.add("544464583860");allowDoScitemNumIIdList.add("544449646056");
+//				allowDoScitemNumIIdList.add("544459488076");allowDoScitemNumIIdList.add("544498205483");
+//				allowDoScitemNumIIdList.add("544499721489");allowDoScitemNumIIdList.add("544530591413");
+//				allowDoScitemNumIIdList.add("544526766496");allowDoScitemNumIIdList.add("544490984273");
+//				allowDoScitemNumIIdList.add("544516749956");allowDoScitemNumIIdList.add("544545263613");
+//				allowDoScitemNumIIdList.add("544547539056");allowDoScitemNumIIdList.add("544531850678");
+//				allowDoScitemNumIIdList.add("544542006694");allowDoScitemNumIIdList.add("544531677203");
+//				allowDoScitemNumIIdList.add("544560023247");allowDoScitemNumIIdList.add("544542454180");
+//				allowDoScitemNumIIdList.add("544542546179");allowDoScitemNumIIdList.add("544531945199");
+//				allowDoScitemNumIIdList.add("544505868390");allowDoScitemNumIIdList.add("544506288120");
+//				allowDoScitemNumIIdList.add("544560543554");allowDoScitemNumIIdList.add("544569375028");
+//				allowDoScitemNumIIdList.add("544683050054");allowDoScitemNumIIdList.add("544677773993");
+//				allowDoScitemNumIIdList.add("544681609113");allowDoScitemNumIIdList.add("544708931758");
+//				allowDoScitemNumIIdList.add("544653812912");allowDoScitemNumIIdList.add("544711099181");
+//				allowDoScitemNumIIdList.add("544688209035");allowDoScitemNumIIdList.add("544696382979");
+//				allowDoScitemNumIIdList.add("544660628133");allowDoScitemNumIIdList.add("544428181455");
+//				allowDoScitemNumIIdList.add("544661060394");allowDoScitemNumIIdList.add("544689865870");
+//				allowDoScitemNumIIdList.add("544690037926");allowDoScitemNumIIdList.add("544717543505");
+//				allowDoScitemNumIIdList.add("544662420101");allowDoScitemNumIIdList.add("544700742175");
+//				allowDoScitemNumIIdList.add("544701330314");allowDoScitemNumIIdList.add("544720919359");
+//				allowDoScitemNumIIdList.add("544666292926");allowDoScitemNumIIdList.add("544667600008");
+//				allowDoScitemNumIIdList.add("544668324179");allowDoScitemNumIIdList.add("544670352317");
+//				allowDoScitemNumIIdList.add("544674264636");allowDoScitemNumIIdList.add("544730523887");
+//				allowDoScitemNumIIdList.add("544731591602");allowDoScitemNumIIdList.add("544713066788");
+//				allowDoScitemNumIIdList.add("544732759231");allowDoScitemNumIIdList.add("544678004561");
+//				allowDoScitemNumIIdList.add("544736591709");allowDoScitemNumIIdList.add("544713697278");
+//				allowDoScitemNumIIdList.add("544725110169"); // allowDoScitemNumIIdList.add("544726738039");
+//				allowDoScitemNumIIdList.add("544867692832");
+//				if (allowDoScitemNumIIdList.contains(numIId)) {
+//					blnDoScitemMap = true;
+//				}
+//			}
+//            if (blnDoScitemMap) {
+//                // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
+//                // 获取skuId
+//                List<Map<String, Object>> skuMapList = null;
+//                TbItemSchema tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
+//                if (tbItemSchema != null) {
+//                    Map<String, Field> mapField = tbItemSchema.getFieldMap();
+//                    if (mapField != null) {
+//                        if (mapField.containsKey("skus")) {
+//                            Field fieldSkus = mapField.get("skus");
+//                            if (fieldSkus != null) {
+//                                skuMapList = JacksonUtil.jsonToMapList(((InputField)tbItemSchema.getFieldMap().get("skus")).getDefaultValue());
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
+//                // 关联货品
+//                if (skuMapList != null) {
+//                    for (Map<String, Object> skuMap : skuMapList) {
+////                        skuMap: outer_id, price, quantity, sku_id
+//
+//                        skuMap.put("scProductId",
+//                                taobaoScItemService.doSetLikingScItem(
+//                                        shopProp, sxData.getMainProduct().getOrgChannelId(),
+//                                        Long.parseLong(numIId),
+//                                        productInfoMap.get("title"), skuMap));
+//                    }
+//                }
+//
+//
+//                // 回写数据库
+//                // TODO: 目前这个channelId传入的是原始channelId， 2017年4月份左右新wms上新前， 要改为928自己的channelId
+////                saveCmsBtTmScItem_Liking(channelId, cartId, skuMapList);
+//                // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
+//                saveCmsBtTmScItem_Liking(sxData.getMainProduct().getOrgChannelId(), cartId, skuMapList);
+//            }
 
             // 调用淘宝商品上下架操作(新增的时候默认为下架，只有更新的时候才根据group里面platformActive调用上下架操作)
             // 回写用商品上下架状态(OnSale/InStock)

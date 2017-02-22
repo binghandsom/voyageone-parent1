@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Codes;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.SellerCatService;
@@ -189,7 +190,7 @@ public class CmsAddChannelCategoryService extends BaseViewService {
             //channelId
             String channelId = (String) params.get("channelId");
             codeList = advanceSearchService.getProductCodeList(channelId, cmsSession);
-            params.put("productIds", codeList);
+//            params.put("productIds", codeList);
         }
         if (codeList == null || codeList.isEmpty()) {
             $warn("没有code条件 params=" + params.toString());
@@ -212,10 +213,14 @@ public class CmsAddChannelCategoryService extends BaseViewService {
         // sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
 
         SaveChannelCategoryMQMessageBody mqMessageBody = new SaveChannelCategoryMQMessageBody();
-        mqMessageBody.setParams(params);
-        mqMessageBody.setSender((String) params.get("userName"));
-        cmsMqSenderService.sendMessage(mqMessageBody);
 
+        List<List<String>>productCodesList = CommonUtil.splitList(codeList,100);
+        for (List<String> codes:productCodesList) {
+            params.put("productIds",codes);
+            mqMessageBody.setParams(params);
+            mqMessageBody.setSender((String) params.get("userName"));
+            cmsMqSenderService.sendMessage(mqMessageBody);
+        }
         $info(JacksonUtil.bean2Json(params));
 
     }
