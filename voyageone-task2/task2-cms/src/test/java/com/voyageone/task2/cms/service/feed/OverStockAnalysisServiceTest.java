@@ -24,8 +24,8 @@ public class OverStockAnalysisServiceTest {
         overStockAnalysisService.onStartup(new ArrayList<TaskControlBean>());
     }
 
-    @Test
-    public void testOnStartup2() throws Exception {
-        overStockAnalysisService.getEventProduct();
-    }
+//    @Test
+//    public void testOnStartup2() throws Exception {
+//        overStockAnalysisService.getEventProduct();
+//    }
 }
