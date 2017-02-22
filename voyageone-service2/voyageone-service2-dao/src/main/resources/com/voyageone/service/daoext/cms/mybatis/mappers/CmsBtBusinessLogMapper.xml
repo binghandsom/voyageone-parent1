@@ -154,7 +154,6 @@
         <if test="channelId != null and channelId != ''">
             and channel_id = #{channelId}
         </if>
-        and (
         <if test="cartId != null">
             and cart_id = #{cartId}
         </if>
