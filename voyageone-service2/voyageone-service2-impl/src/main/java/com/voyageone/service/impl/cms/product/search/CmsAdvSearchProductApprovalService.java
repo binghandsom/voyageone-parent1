@@ -301,9 +301,10 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
         $debug("批量修改属性 (商品审批) 开始记入SxWorkLoad表");
         sta = System.currentTimeMillis();
         sxProductService.insertSxWorkLoad(channelId, newProdCodeList, cartIdValue, userName, false);
-        $debug("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
+        $info("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
 
         // 记录商品修改历史
+        sta = System.currentTimeMillis();
             productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdValue, EnumProductOperationType.ProductApproved, msg, userName);
             sta = System.currentTimeMillis();
             // 记录商品修改历史
