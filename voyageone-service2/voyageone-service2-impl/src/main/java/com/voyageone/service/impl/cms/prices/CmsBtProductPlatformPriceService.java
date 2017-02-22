@@ -466,8 +466,8 @@ public class CmsBtProductPlatformPriceService extends VOAbsLoggable {
 
         List<CmsBtPriceLogModel> priceLogList = new ArrayList<>();
         BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
-        List<String> prodPriceDownList = new ArrayList<>();
-        List<String> prodPriceDownExList = new ArrayList<>();
+//        List<String> prodPriceDownList = new ArrayList<>();
+//        List<String> prodPriceDownExList = new ArrayList<>();
         List<CmsBtOperationLogModel_Msg> errorInfos = new ArrayList<>();
 
 
@@ -478,10 +478,7 @@ public class CmsBtProductPlatformPriceService extends VOAbsLoggable {
 
         // 阀值
         CmsChannelConfigBean mandatoryBreakThresholdConfig = priceService.getMandatoryBreakThresholdOption(channelId, cartId);
-        double breakThreshold = 0;
-        if (mandatoryBreakThresholdConfig != null) {
-            breakThreshold = Double.parseDouble(mandatoryBreakThresholdConfig.getConfigValue2()) / 100D;
-        }
+//        double breakThreshold = Double.parseDouble(mandatoryBreakThresholdConfig.getConfigValue2()) / 100D;
 
 
 
@@ -635,13 +632,14 @@ public class CmsBtProductPlatformPriceService extends VOAbsLoggable {
                     // 要更新最终售价变化状态
                     skuObj.setAttribute("priceSale", rs);
                     String diffFlg = priceService.getPriceDiffFlg(channelId, skuObj, cartId);
-                    if ("2".equals(diffFlg) && "0".equals(mandatoryBreakThresholdConfig.getConfigValue1())) {
-                        $info(String.format("setProductSalePrice: 输入的最终售价低于指导价，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                        prodPriceDownList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t\t " + rs);
-                        throw new BusinessException(String.format("setProductSalePrice: 输入的最终售价低于指导价，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                    } else if ("5".equals(diffFlg) && "1".equals(mandatoryBreakThresholdConfig.getConfigValue1())) {
+//                    if ("2".equals(diffFlg) && "1".equals(mandatoryBreakThresholdConfig.getConfigValue1())) {
+//                        $info(String.format("setProductSalePrice: 输入的最终售价低于指导价，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+////                        prodPriceDownList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t\t " + rs);
+//                        throw new BusinessException(String.format("setProductSalePrice: 输入的最终售价低于指导价，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+//                    } else
+                    if ("5".equals(diffFlg) && "1".equals(mandatoryBreakThresholdConfig.getConfigValue1())) {
                         $info(String.format("setProductSalePrice: 输入的最终售价低于下限阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                        prodPriceDownExList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t " + (result * (1 - breakThreshold)) + "\t " + rs);
+//                        prodPriceDownExList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t " + (result * (1 - breakThreshold)) + "\t " + rs);
                         throw new BusinessException(String.format("setProductSalePrice: 输入的最终售价低于下限阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
                     }
                     skuObj.setAttribute("priceDiffFlg", diffFlg);
@@ -696,7 +694,7 @@ public class CmsBtProductPlatformPriceService extends VOAbsLoggable {
                 updatePlatFormPrice(channelId, 2, prodObj, cartId, userName);
             } catch (BusinessException be) {
                 CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
-                errorInfo.setSkuCode(be.getCode());
+                errorInfo.setSkuCode(prodCode);
                 errorInfo.setMsg(be.getMessage());
                 errorInfos.add(errorInfo);
             }

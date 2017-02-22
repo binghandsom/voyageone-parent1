@@ -391,10 +391,7 @@ public class PriceService extends BaseService {
     public String getPriceDiffFlg(String channelId, BaseMongoMap<String, Object> sku, Integer cartId) {
         // 阀值
         CmsChannelConfigBean cmsChannelConfigBean = getMandatoryBreakThresholdOption(channelId, cartId);
-        Double breakThreshold = 0.00;
-        if (cmsChannelConfigBean != null) {
-            breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D ;
-        }
+        Double breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue2()) / 100D ;
 
         return getPriceDiffFlg(breakThreshold, sku.getDoubleAttribute(priceSale.name()), sku.getDoubleAttribute(priceRetail.name()));
     }
@@ -969,7 +966,7 @@ public class PriceService extends BaseService {
             return "";
         }
         if (priceSale < priceRetail) {
-            if (priceRetail * (1 - breakThreshold) <= priceSale || breakThreshold == 0) {
+            if (priceRetail * (1 - breakThreshold) <= priceSale) {
                 diffFlg = "2"; // 最终售价比指导价低
             } else {
                 diffFlg = "5"; // 最终售价向下击穿警告
