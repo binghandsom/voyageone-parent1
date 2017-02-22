@@ -129,6 +129,38 @@ public class CmsBtCustomPropService extends BaseService {
         return getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
     }
 
+    public CmsBtCustomPropModel updateEntity(String channelId, String orgChannelId, String cat, CmsBtCustomPropModel.Entity entity) {
+        CmsBtCustomPropModel cmsBtCustomPropExtend = getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
+        CmsBtCustomPropModel cmsBtCustomPropModel = getCustomPropByCatChannel(channelId, orgChannelId, cat);
+        if (cmsBtCustomPropModel == null) {
+            cmsBtCustomPropModel = new CmsBtCustomPropModel();
+            cmsBtCustomPropModel.setCat(cat);
+            cmsBtCustomPropModel.setChannelId(channelId);
+            cmsBtCustomPropModel.setOrgChannelId(orgChannelId);
+        }
+        CmsBtCustomPropModel.Entity item = cmsBtCustomPropModel.getEntitys().stream()
+                .filter(entity1 -> entity1.getNameEn().equalsIgnoreCase(entity.getNameEn()) && entity.getType() == entity1.getType())
+                .findFirst().orElse(null);
+        if (item == null) {
+            item = new CmsBtCustomPropModel.Entity();
+            item.setNameCn(entity.getNameCn());
+            item.setNameEn(entity.getNameEn());
+            item.setType(entity.getType());
+            item.setChecked(entity.getChecked());
+            cmsBtCustomPropModel.getEntitys().add(item);
+        } else {
+            item.setChecked(entity.getChecked());
+        }
+        cmsBtCustomPropModel.setSort(cmsBtCustomPropExtend.getSort());
+        if (entity.getChecked()) {
+            cmsBtCustomPropModel.getSort().add(entity.getNameEn());
+        } else {
+            cmsBtCustomPropModel.getSort().remove(entity.getNameEn());
+        }
+        update(cmsBtCustomPropModel);
+        return getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
+    }
+
     private CmsBtCustomPropModel merge(CmsBtCustomPropModel prop1, CmsBtCustomPropModel prop2) {
         for (CmsBtCustomPropModel.Entity entity : prop2.getEntitys()) {
             CmsBtCustomPropModel.Entity temp = prop1.getEntitys().stream()
@@ -150,7 +182,7 @@ public class CmsBtCustomPropService extends BaseService {
         cmsBtCustomPropModel.getEntitys().sort((o1, o2) -> {
             Boolean b1 = o1.getChecked() == null?false:o1.getChecked();
             Boolean b2 = o2.getChecked() == null?false:o2.getChecked();
-            return b1.compareTo(b2);
+            return b1.compareTo(b2)*-1;
         });
 
         if (!ListUtils.isNull(cmsBtCustomPropModel.getSort())) {
@@ -168,6 +200,5 @@ public class CmsBtCustomPropService extends BaseService {
                 return b1.compareTo(b2);
             });
         }
-        return;
     }
 }

@@ -25,7 +25,8 @@ public class CmsBtCustomPropServiceTest {
         CmsBtCustomPropModel aa = cmsBtCustomPropService.getCustomPropByCatChannel("010","010","aaa>bbb>ccc");
         aa.getSort().add("Brand");
         aa.getSort().add("Metal Stamp");
-//        CmsBtCustomPropModel bb = rearrange(aa,aa);
+        cmsBtCustomPropService.rearrange(aa);
+        System.out.println(JacksonUtil.bean2Json(aa));
 
 
     }
