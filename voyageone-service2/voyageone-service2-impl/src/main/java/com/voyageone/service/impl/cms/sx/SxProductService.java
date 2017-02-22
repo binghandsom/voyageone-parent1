@@ -1588,8 +1588,11 @@ public class SxProductService extends BaseService {
                             String hscodePropName = hscodeConfig.getConfigValue1(); // 目前配置的是code或者color或者codeDiff
                             if (!StringUtils.isEmpty(hscodePropName)) {
                                 String val = sxData.getMainProduct().getCommon().getFields().getStringAttribute(hscodePropName);
+                                // 既然有配置过了税号， 不管有没有填过值， 那么就都要从这个属性里获取
                                 if (!StringUtils.isEmpty(val)) {
                                     propValue = val;
+                                } else {
+                                    propValue = "";
                                 }
                             }
                         }
