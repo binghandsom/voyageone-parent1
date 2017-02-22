@@ -9,7 +9,7 @@ define([
     'modules/cms/enums/MappingTypes'
 ], function (cms, _, MappingTypes) {
 
-    angular.module('com.voyageone.popups',[]).constant('popActions', {
+    angular.module('com.voyageone.popups', []).constant('popActions', {
         "modifyPass": {
             "templateUrl": "views/pop/modifyPass/modifyPass.tpl.html",
             "controllerUrl": "modules/cms/views/pop/modifyPass/modifyPass.ctl",
@@ -585,32 +585,38 @@ define([
                 "controller": 'MoveResultController as ctrl',
                 "size": 'sm'
             },
-            "combinedProductNew" : {
+            "combinedProductNew": {
                 "templateUrl": "views/pop/product/combined-product-new.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/combined-product-new.ctl",
                 "controller": 'CombinedProductNewController as ctrl',
                 "size": 'lg'
             },
-            "combinedProductEdit" : {
+            "combinedProductEdit": {
                 "templateUrl": "views/pop/product/combined-product-edit.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/combined-product-edit.ctl",
                 "controller": 'CombinedProductEditController as ctrl',
                 "size": 'lg'
             },
-            "combinedProductLogs" : {
+            "combinedProductLogs": {
                 "templateUrl": "views/pop/product/combined-product-logs.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/combined-product-logs.ctl",
                 "controller": 'CombinedProductLogsController as ctrl',
                 "size": 'lg'
+            },
+            "uploadImages": {
+                "templateUrl": "views/pop/product/upload-images.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/upload-images.ctl",
+                "controller": 'uploadImagesController as ctrl',
+                "size": 'lg'
             }
         },
-        "shelves" : {
-            "shelvesTemplateAdd" : {
+        "shelves": {
+            "shelvesTemplateAdd": {
                 "templateUrl": "views/pop/shelves/shelves-template-add.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/shelves/shelves-template-add.ctl",
                 "controller": 'ShelvesTemplateAddController as ctrl'
             },
-            "shelvesTemplateEdit" : {
+            "shelvesTemplateEdit": {
                 "templateUrl": "views/pop/shelves/shelves-template-edit.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/shelves/shelves-template-edit.ctl",
                 "controller": 'ShelvesTemplateEditController as ctrl'
@@ -633,10 +639,10 @@ define([
         function openModal(config, context, contextIsResolve) {
 
             config.resolve = contextIsResolve ? context : {
-                context: function () {
-                    return context;
-                }
-            };
+                    context: function () {
+                        return context;
+                    }
+                };
 
             var defer = $q.defer();
             require([config.controllerUrl], function () {
@@ -1275,11 +1281,11 @@ define([
             });
         };
 
-        $scope.openJmPromotionEncore = function openJmPromotionEncore(context, fnInitial,ctrl) {
+        $scope.openJmPromotionEncore = function openJmPromotionEncore(context, fnInitial, ctrl) {
             popActions.jumei.jmPromotionDetail.encore.size = 'lg';
             openModal(popActions.jumei.jmPromotionDetail.encore, context).then(function (res) {
                 if (fnInitial) {
-                    fnInitial(res,ctrl);
+                    fnInitial(res, ctrl);
                 }
             });
         };
@@ -1401,10 +1407,12 @@ define([
         $scope.openMoveResult = function openMoveResult(context) {
             return openModal(popActions.product.moveResult, context);
         };
+
         /**新增店铺配置(channelconfig)*/
         $scope.newChannelConfig = function newChannelConfig(context) {
             return openModal(popActions.channel.newChannelConfig, context);
         };
+
         /**编辑店铺配置*/
         $scope.editChannelConfig = function editChannelConfig(context) {
             return openModal(popActions.channel.editChannelConfig, context);
@@ -1426,6 +1434,7 @@ define([
         $scope.shelvesTemplateAdd = function (context) {
             return openModal(popActions.shelves.shelvesTemplateAdd, context)
         };
+
         $scope.shelvesTemplateEdit = function (context) {
             return openModal(popActions.shelves.shelvesTemplateEdit, context)
         };
@@ -1433,31 +1442,42 @@ define([
         $scope.popNewShelves = function popNewShelves(context) {
             return openModal(popActions.shelves.newShelves, context)
         };
+
         /**移动SKU确认*/
         $scope.openSKUMoveConfirm = function openSKUMoveConfirm(context) {
             return openModal(popActions.product.skuMoveConfirm, context);
         };
+
         /**移动SKU的结果确认*/
         $scope.openMoveResult = function openMoveResult(context) {
             return openModal(popActions.product.moveResult, context);
-        }
+        };
 
         /**组合商品*/
         $scope.popNewCombinedProduct = function (context) {
             return openModal(popActions.product.combinedProductNew, context)
         };
+
         $scope.popEditCombinedProduct = function (context) {
             return openModal(popActions.product.combinedProductEdit, context)
         };
+
         $scope.popCombinedProductLogs = function (context) {
-            return openModal(popActions.product.combinedProductLogs, context)
+            return openModal(popActions.product.combinedProductLogs, context);
         };
+
         /**
          * 打开新建权限配置页面
          */
-        $scope.openModifyPass= function openModifyPass(context) {
+        $scope.openModifyPass = function openModifyPass(context) {
             return openModal(popActions.modifyPass, context);
+        };
+
+        /**产品详情页图片上传*/
+        $scope.openUploadImages = function openUploadImages(context) {
+            return openModal(popActions.product.uploadImages, context);
         }
+
     }).factory('popups', function ($controller, $rootScope) {
 
         var popupScope = $rootScope.$new();

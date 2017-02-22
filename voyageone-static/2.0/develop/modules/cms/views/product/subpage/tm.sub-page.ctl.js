@@ -64,7 +64,8 @@ define([
             productUrl: "",
             preStatus: null,
             noMaterMsg: null
-        }
+        };
+        self.panelShow = true;
     }
 
     SpJdController.prototype.init = function (element) {
@@ -625,6 +626,18 @@ define([
     SpJdController.prototype.btnDisabled = function () {
         return _.every(this.vm.checkFlag, function (ele) {
             return ele == true ? 1 : 0;
+        });
+    };
+
+    /**
+     * 操作区域图片上传按钮
+     */
+    SpJdController.prototype.popUploadImg = function(){
+        var self = this,
+            popup = self.popups;
+
+        popup.openUploadImages({}).then(function(){
+
         });
     };
 
