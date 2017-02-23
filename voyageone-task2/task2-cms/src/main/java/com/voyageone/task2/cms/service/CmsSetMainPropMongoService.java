@@ -1223,18 +1223,17 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     productService.createProduct(channelId, cmsProduct, getTaskName());
                     $debug("createProduct:" + (System.currentTimeMillis() - startTime));
 
-                    Long prodId = cmsProduct.getProdId();
-                    cmsProduct.getPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> {
-                        if(cmsBtProductModel_platform_cart.getCartId() >= 20 &&  cmsBtProductModel_platform_cart.getCartId() < 900){
-                            ProductPriceUpdateMQMessageBody productPriceUpdateMQMessageBody = new ProductPriceUpdateMQMessageBody();
-                            productPriceUpdateMQMessageBody.setChannelId(channelId);
-                            productPriceUpdateMQMessageBody.setProdId(prodId);
-                            productPriceUpdateMQMessageBody.setCartId(cmsBtProductModel_platform_cart.getCartId());
-                            productPriceUpdateMQMessageBody.setSender(getTaskName());
-                            sender.sendMessage(productPriceUpdateMQMessageBody);
-                        }
-
-                    });
+//                    Long prodId = cmsProduct.getProdId();
+//                    cmsProduct.getPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> {
+//                        if(cmsBtProductModel_platform_cart.getCartId() >= 20 &&  cmsBtProductModel_platform_cart.getCartId() < 900){
+//                            ProductPriceUpdateMQMessageBody productPriceUpdateMQMessageBody = new ProductPriceUpdateMQMessageBody();
+//                            productPriceUpdateMQMessageBody.setChannelId(channelId);
+//                            productPriceUpdateMQMessageBody.setProdId(prodId);
+//                            productPriceUpdateMQMessageBody.setCartId(cmsBtProductModel_platform_cart.getCartId());
+//                            productPriceUpdateMQMessageBody.setSender(getTaskName());
+//                            sender.sendMessage(productPriceUpdateMQMessageBody);
+//                        }
+//                    });
                 }
 
                 // 插入尺码表
