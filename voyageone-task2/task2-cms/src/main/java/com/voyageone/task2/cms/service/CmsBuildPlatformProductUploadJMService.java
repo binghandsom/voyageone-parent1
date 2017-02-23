@@ -696,7 +696,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                             //更新Spu失败
                             else
                             {
-                                String msg = String.format("更新Spu失败！[ProductId:%s], [Message:%s]", product.getProdId(), htSpuUpdateResponse.getErrorMsg());
+                                String msg = String.format("更新Spu失败！[ProductId:%s] [JmSpuNo:%s] [Message:%s]", product.getProdId(), jmSpuNo, htSpuUpdateResponse.getErrorMsg());
                                 $error(msg);
                                 throw  new BusinessException(msg);
                             }
@@ -758,8 +758,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                 // 更新商品时,向Deal中增加Sku失败
                                 else
                                 {
-                                    String msg = String.format("更新商品时,向Deal中增加Sku失败！[hashId:%s] [ProductId:%s], [Message:%s]",
-                                            originHashId, product.getProdId(), htSkuAddResponse.getErrorMsg());
+                                    String msg = String.format("更新商品时,向Deal中增加Sku失败！[hashId:%s] [ProductId:%s] [skuCode:%s] [Message:%s]",
+                                            originHashId, product.getProdId(), skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()),
+                                            htSkuAddResponse.getErrorMsg());
                                     $error(msg);
                                     throw  new BusinessException(msg);
                                 }
