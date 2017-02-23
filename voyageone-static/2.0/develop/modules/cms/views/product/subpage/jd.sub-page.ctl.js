@@ -118,6 +118,7 @@ define([
             }
 
             self.autoSyncPriceMsrp = resp.data.autoSyncPriceMsrp;
+            self.autoSyncPriceSale = resp.data.autoSyncPriceSale;
 
         }, function (resp) {
             vm.noMaterMsg = resp.message.indexOf("Server Exception") >= 0 ? null : resp.message;
@@ -439,9 +440,9 @@ define([
             self.productDetailService.updateSkuPrice({
                 cartId: $scope.cartInfo.value,
                 prodId: $scope.productInfo.productId,
-                platform: $scope.vm.platform
+                platform: self.vm.platform
             }).then(function () {
-                self.alert("TXT_MSG_UPDATE_SUCCESS");
+                self.notify.success("TXT_MSG_UPDATE_SUCCESS");
             }, function (res) {
                 self.alert(res.message);
             });

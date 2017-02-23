@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.product;
 
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CmsProductPriceUpdateServiceTest {
 
     @Autowired
-    CmsProductPriceUpdateService cmsProductPriceUpdateService;
+    PlatformPriceService platformPriceService;
     @Test
     public void updateProductRetailPrice() throws Exception {
         ProductPriceUpdateMQMessageBody messageBody = new ProductPriceUpdateMQMessageBody();
@@ -24,7 +25,7 @@ public class CmsProductPriceUpdateServiceTest {
         messageBody.setProdId(3032063L);
         messageBody.setSender("test");
 
-        cmsProductPriceUpdateService.updateProductAndGroupPrice(messageBody);
+        platformPriceService.updateProductAndGroupPrice(messageBody);
     }
 
 }

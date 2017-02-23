@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 public class CmsProductCodeChangeGroupService {
 
     @Autowired
-    private ProductService productService;
-    @Autowired
     private ProductGroupService productGroupService;
+    @Autowired
+    private ProductPlatformService productPlatformService;
 
     /**
      * 移动Code-从一个Group到另外一个Group
@@ -52,7 +52,7 @@ public class CmsProductCodeChangeGroupService {
         productGroupService.update(destGroupModel);
 
         // 设定移动Code的Product信息的相关平台下pIsMain=0
-        productService.updateProductPlatformIsMain(destGroupModel.getMainProductCode(), channelId, code, cartId, modifier);
+        productPlatformService.updateProductPlatformIsMain(destGroupModel.getMainProductCode(), channelId, code, cartId, modifier);
 
         // 处理源Group
         saveSourceGroup(channelId, cartId, code, sourceGroupModel, modifier);
@@ -74,7 +74,7 @@ public class CmsProductCodeChangeGroupService {
         productGroupService.insert(destGroupModel);
 
         // 设定移动Code的Product信息的相关平台下pIsMain=1
-        productService.updateProductPlatformIsMain(code, channelId, code, cartId, modifier);
+        productPlatformService.updateProductPlatformIsMain(code, channelId, code, cartId, modifier);
 
         // 处理源Group
         saveSourceGroup(channelId, cartId, code, sourceGroupModel, modifier);
@@ -101,7 +101,7 @@ public class CmsProductCodeChangeGroupService {
 
                 sourceGroupModel.getProductCodes().forEach(productCode -> {
                     // 设定Code的Product信息的相关平台下pIsMain
-                    productService.updateProductPlatformIsMain(productCode, channelId, productCode, cartId, modifier);
+                    productPlatformService.updateProductPlatformIsMain(productCode, channelId, productCode, cartId, modifier);
                 });
             }
             productGroupService.calculatePriceRange(sourceGroupModel);

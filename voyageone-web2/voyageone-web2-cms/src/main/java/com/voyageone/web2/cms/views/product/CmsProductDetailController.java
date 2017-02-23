@@ -11,6 +11,7 @@ import com.voyageone.service.bean.cms.product.DelistingParameter;
 import com.voyageone.service.bean.cms.product.GetChangeMastProductInfoParameter;
 import com.voyageone.service.bean.cms.product.SetMastProductParameter;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -46,6 +47,9 @@ public class CmsProductDetailController extends CmsController {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    PriceService priceService;
 
     @Autowired
     CmsProductPlatformDetailService cmsProductPlatformDetailService;
@@ -170,7 +174,7 @@ public class CmsProductDetailController extends CmsController {
 
         Map<String, Object> productComm = (Map<String, Object>) requestMap.get("productComm");
 
-        return success(productPropsEditService.updateCommonProductinfo(channelId, prodId, productComm, getUser().getUserName()));
+        return success(productPropsEditService.updateCommonProductInfo(channelId, prodId, productComm, getUser().getUserName()));
 
     }
 
@@ -278,7 +282,7 @@ public class CmsProductDetailController extends CmsController {
         String channelId = getUser().getSelChannelId();
         Assert.notNull(channelId).elseThrowDefaultWithTitle("channelId");
 
-        int cartId = Integer.parseInt(String.valueOf(params.get("cartId")));
+        Integer cartId = Integer.parseInt(String.valueOf(params.get("cartId")));
         Assert.notNull(cartId).elseThrowDefaultWithTitle("cartId");
 
         Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
@@ -288,9 +292,11 @@ public class CmsProductDetailController extends CmsController {
         Assert.notNull(platform).elseThrowDefaultWithTitle("platform");
 
 
-        cmsProductPlatformDetailService.priceChk(channelId, prodId, platform);
+//        CmsBtProductModel productModel = productService.getProductById(channelId, prodId);
+//        productModel.setPlatform(cartId, );
+        priceService.priceChk(channelId, new CmsBtProductModel_Platform_Cart(platform), cartId);
 
-        productPropsEditService.updateSkuPrice(channelId, cartId, prodId, getUser().getUserName(), new CmsBtProductModel_Platform_Cart(platform),true);
+        productPropsEditService.updateSkuPrice(channelId, cartId, prodId, getUser().getUserName(), new CmsBtProductModel_Platform_Cart(platform));
 
         return success(null);
     }

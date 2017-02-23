@@ -19,7 +19,7 @@ public class AdvSearchExportMQMessageBody extends BaseMQMessageBody {
 
     private Integer cmsBtExportTaskId;
     private Map<String, Object> searchValue;
-
+    private Map<String, String> channelIdMap;
     public Integer getCmsBtExportTaskId() {
         return cmsBtExportTaskId;
     }
@@ -36,6 +36,14 @@ public class AdvSearchExportMQMessageBody extends BaseMQMessageBody {
         this.searchValue = searchValue;
     }
 
+    public Map<String, String> getChannelIdMap() {
+        return channelIdMap;
+    }
+
+    public void setChannelIdMap(Map<String, String> channelIdMap) {
+        this.channelIdMap = channelIdMap;
+    }
+
     @Override
     public void check() throws MQMessageRuleException {
         if (cmsBtExportTaskId == null) {
@@ -44,6 +52,10 @@ public class AdvSearchExportMQMessageBody extends BaseMQMessageBody {
         if (searchValue == null || searchValue.size() < 1) {
             throw new MQMessageRuleException("高级检索-异步生成文件MQ发送异常, 参数searchValue为空.");
         }
+        if (channelIdMap == null || channelIdMap.size() < 1) {
+            throw new MQMessageRuleException("高级检索-异步生成文件MQ发送异常, 参数channelIdMap为空.");
+        }
+
         if (StringUtils.isEmpty(getSender())) {
             throw new MQMessageRuleException("高级检索-异步生成文件MQ发送异常, 发送者为空.");
         }

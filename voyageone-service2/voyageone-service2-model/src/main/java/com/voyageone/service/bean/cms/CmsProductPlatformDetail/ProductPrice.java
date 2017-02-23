@@ -31,7 +31,8 @@ public class ProductPrice {
     //客户成本价
     String clientNetPrice;
     int checked;//0:未选中 1半选中   2选中
-    private String autoSyncPriceMsrp; // channelId and cartId 配置的选项值
+    private String autoSyncPriceMsrp; // channelId and cartId 中国建议售价配置的选项值
+    private String autoSyncPriceSale; // channelId and cartId 中国最终售价配置的选项值
 
     public String getClientMsrpPrice() {
         return clientMsrpPrice;
@@ -176,5 +177,13 @@ public class ProductPrice {
 
     public void setAutoSyncPriceMsrp(String autoSyncPriceMsrp) {
         this.autoSyncPriceMsrp = autoSyncPriceMsrp;
+    }
+
+    public String getAutoSyncPriceSale() {
+        return autoSyncPriceSale;
+    }
+
+    public void setAutoSyncPriceSale(String autoSyncPriceSale) {
+        this.autoSyncPriceSale = autoSyncPriceSale;
     }
 }

@@ -37,6 +37,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 import static com.voyageone.common.CmsConstants.ChannelConfig.*;
@@ -159,6 +160,81 @@ public class PriceService extends BaseService {
     }
 
     /**
+     * check输入的价格是否符合要求
+     * @param channelId
+     * @param cmsBtProduct
+     * @param cartId
+     * @return
+     */
+    public void priceChk(String channelId, CmsBtProductModel_Platform_Cart platform, Integer cartId) {
+
+        // 获取中国建议售价的配置信息
+        CmsChannelConfigBean autoSyncPriceMsrpConfig = getAutoSyncPriceMsrpOption(channelId, cartId);
+
+        // 阀值
+        CmsChannelConfigBean mandatoryBreakThresholdConfig = getMandatoryBreakThresholdOption(channelId, cartId);
+
+        List<BaseMongoMap<String, Object>> cmsBtProductModel_skus = platform.getSkus();
+
+        if (cmsBtProductModel_skus != null) {
+            cmsBtProductModel_skus.forEach(sku -> {
+                priceCheck(sku, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
+            });
+        }
+    }
+
+    /**
+     * check输入的价格是否符合要求
+     * @param channelId
+     * @param cmsBtProduct
+     * @param cartId
+     * @return
+     */
+    public void priceChk(String channelId, CmsBtProductModel cmsBtProduct, Integer cartId) {
+
+        // 获取中国建议售价的配置信息
+        CmsChannelConfigBean autoSyncPriceMsrpConfig = getAutoSyncPriceMsrpOption(channelId, cartId);
+
+        // 阀值
+        CmsChannelConfigBean mandatoryBreakThresholdConfig = getMandatoryBreakThresholdOption(channelId, cartId);
+
+        List<BaseMongoMap<String, Object>> cmsBtProductModel_skus = cmsBtProduct.getPlatform(cartId).getSkus();
+
+        if (cmsBtProductModel_skus != null) {
+            cmsBtProductModel_skus.forEach(sku -> {
+                priceCheck(sku, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
+            });
+        }
+    }
+
+    /**
+     * check单个sku的价格是否合法
+     * @param skuInfo
+     * @param autoSyncPriceMsrpConfig
+     * @param mandatoryBreakThresholdConfig
+     */
+    public void priceCheck (BaseMongoMap<String, Object> skuInfo, CmsChannelConfigBean autoSyncPriceMsrpConfig, CmsChannelConfigBean mandatoryBreakThresholdConfig) {
+
+        String isAutoPriceMsrp = autoSyncPriceMsrpConfig.getConfigValue1();
+        final Boolean isCheckMandatory = "1".equals(mandatoryBreakThresholdConfig.getConfigValue1()) ? true : false;
+        final Double breakThreshold = Double.parseDouble(mandatoryBreakThresholdConfig.getConfigValue2()) / 100D;
+
+        Double priceMsrp = skuInfo.getDoubleAttribute("priceMsrp");
+        Double minPriceRetail = Math.ceil(skuInfo.getDoubleAttribute("priceRetail") * (1 - breakThreshold));
+        Double priceSale = skuInfo.getDoubleAttribute("priceSale");
+        Boolean isSale = Boolean.valueOf(skuInfo.getStringAttribute("isSale"));
+        if (isSale) {
+            if (priceSale == 0.0D || ( "0".equals(isAutoPriceMsrp) && priceMsrp == 0.0D))
+                throw new BusinessException("中国最终售价或者中国建议售价(可输入)不能为空");
+            if (!"1".equals(autoSyncPriceMsrpConfig.getConfigValue1())
+                    && priceMsrp.compareTo(priceSale) < 0)
+                throw new BusinessException("中国建议售价(可输入)不能低于中国最终售价");
+            if (isCheckMandatory && minPriceRetail.compareTo(priceSale) > 0)
+                throw new BusinessException("4000094", minPriceRetail);
+        }
+    }
+
+    /**
      * 为商品在指定平台计算并保存价格
      *
      * @param product         需要计算价格的商品
@@ -218,8 +294,8 @@ public class PriceService extends BaseService {
                     || CartEnums.Cart.JM.getId().equals(cartIdVal)) {
                 commonSyncPriceMsrpVal = "1";
             }
+            autoSyncPriceMsrp = new CmsChannelConfigBean(channelId, AUTO_SYNC_PRICE_MSRP, cartId.toString(),"0", commonSyncPriceMsrpVal, "0", "SYSTEM");
         }
-        autoSyncPriceMsrp = new CmsChannelConfigBean(channelId, AUTO_SYNC_PRICE_MSRP, cartId.toString(),"0", commonSyncPriceMsrpVal, "0", "SYSTEM");
 
         return autoSyncPriceMsrp;
     }
@@ -248,9 +324,9 @@ public class PriceService extends BaseService {
                     || CartEnums.Cart.JM.getId().equals(cartIdVal)) {
                 commonSyncPriceSaleVal = "1";
             }
-        }
 
-        autoSyncPriceSale = new CmsChannelConfigBean(channelId, AUTO_SYNC_PRICE_SALE, cartId.toString(),"0", commonSyncPriceSaleVal, "0", "SYSTEM");
+            autoSyncPriceSale = new CmsChannelConfigBean(channelId, AUTO_SYNC_PRICE_SALE, cartId.toString(),"0", commonSyncPriceSaleVal, "0", "SYSTEM");
+        }
         return autoSyncPriceSale;
     }
 
@@ -319,7 +395,8 @@ public class PriceService extends BaseService {
                 && !Lists.newArrayList("0", "1", "2").contains(autoSyncPricePromotion.getConfigValue1())) {
             throw new BusinessException("活动期间价格同步规则获取错误: %s, %s", channelId, autoSyncPricePromotion.getConfigValue1());
         }
-        autoSyncPricePromotion = new CmsChannelConfigBean(channelId, AUTO_SYNC_PRICE_PROMOTION, cartId.toString(),"0", "", "", "SYSTEM");
+        if (autoSyncPricePromotion == null)
+            autoSyncPricePromotion = new CmsChannelConfigBean(channelId, AUTO_SYNC_PRICE_PROMOTION, cartId.toString(),"0", "", "", "SYSTEM");
 
         return autoSyncPricePromotion;
     }
@@ -390,10 +467,7 @@ public class PriceService extends BaseService {
     public String getPriceDiffFlg(String channelId, BaseMongoMap<String, Object> sku, Integer cartId) {
         // 阀值
         CmsChannelConfigBean cmsChannelConfigBean = getMandatoryBreakThresholdOption(channelId, cartId);
-        Double breakThreshold = 0.00;
-        if (cmsChannelConfigBean != null) {
-            breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D ;
-        }
+        Double breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue2()) / 100D ;
 
         return getPriceDiffFlg(breakThreshold, sku.getDoubleAttribute(priceSale.name()), sku.getDoubleAttribute(priceRetail.name()));
     }
@@ -610,7 +684,7 @@ public class PriceService extends BaseService {
         String channelId = product.getChannelId();
 
         // 获取价格计算公式
-        String msrpFormula = getPriceMsrpCalcFormulaOption(product, cartId);
+        String msrpFormula = getPriceMsrpCalcFormulaOption(product, cartId);;
         String retailFormula = getMPriceRetailCalcFormulaOption(product, cartId);
 
         // 获取价格处理逻辑规则
@@ -795,6 +869,10 @@ public class PriceService extends BaseService {
                     }
                 }
             }
+
+            //
+            if (priceSale <= 0 && configValue2 != 3)
+                skuInPlatform.put(Platform_SKU_COM.priceSale.name(), retailPrice);
         }
 
         if(goldPrice == null){
@@ -828,6 +906,10 @@ public class PriceService extends BaseService {
                     }
                 }
 
+                //
+                if (sale <= 0)
+                    skuInPlatform.put(Platform_SKU_COM.priceSale.name(), retailPrice);
+
                 // 保存击穿标识
                 String priceDiffFlgValue = getPriceDiffFlg(channelId, skuInPlatform, cartId);
                 // 最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，向下击穿警告:5）
@@ -848,11 +930,38 @@ public class PriceService extends BaseService {
         CmsChannelConfigBean autoSyncPriceMsrpConfig = getAutoSyncPriceMsrpOption(channelId, cartId);
         String autoSyncPriceMsrp = autoSyncPriceMsrpConfig.getConfigValue1();
 
-        List<Double> skuMsrpList = new ArrayList<Double>();
-        List<Double> skuSaleList = new ArrayList<Double>();
+        List<Double> skuMsrpList = new ArrayList<>();
+        List<Double> skuSaleList = new ArrayList<>();
         for (BaseMongoMap<String, Object> platformSku : platformSkus) {
-            skuMsrpList.add(platformSku.getDoubleAttribute(priceMsrp.name()));
-            skuSaleList.add(platformSku.getDoubleAttribute(priceSale.name()));
+
+            Double originalPriceMsrp = platformSku.getDoubleAttribute(Platform_SKU_COM.originalPriceMsrp.name());
+            Double priceMsrp = platformSku.getDoubleAttribute(Platform_SKU_COM.priceMsrp.name()); // 当前中国建议售价
+            Double priceSale = platformSku.getDoubleAttribute(Platform_SKU_COM.priceSale.name()); // 最新中国最终售价
+            Double priceRetail = platformSku.getDoubleAttribute(Platform_SKU_COM.priceRetail.name()); // 最新中国指导售价
+
+            // 直接联动
+            if ("1".equals(autoSyncPriceMsrp)) {
+                platformSku.put(Platform_SKU_COM.priceMsrp.name(), originalPriceMsrp);
+            }
+            // 自动联动
+            else if ("2".equals(autoSyncPriceMsrp)) {
+                // 当前中国建议售价<中国最终售价或当前中国建议售价<中国指导售价时，自动联动
+
+                if (priceMsrp < priceSale || priceMsrp < priceRetail) {
+                    double msrp = originalPriceMsrp;
+                    if (msrp < priceSale) msrp = priceSale;
+                    if (msrp < priceRetail) msrp = priceRetail;
+                    platformSku.put(Platform_SKU_COM.priceMsrp.name(), msrp);
+                }
+            }
+            else {
+                // 如果不强制同步的话, 要看看是否原本是合法价格
+                // 如果原本不是合法价格的话, 就同步设置
+                resetPriceIfInvalid(platformSku, Platform_SKU_COM.priceMsrp, originalPriceMsrp);
+            }
+
+            skuMsrpList.add(platformSku.getDoubleAttribute(Platform_SKU_COM.priceMsrp.name()));
+            skuSaleList.add(platformSku.getDoubleAttribute(Platform_SKU_COM.priceSale.name()));
         }
 
         Collections.sort(skuSaleList);
@@ -863,31 +972,7 @@ public class PriceService extends BaseService {
             Collections.sort(skuMsrpList);
             for (BaseMongoMap<String, Object> platformSku : platformSkus) {
 
-                Double originalPriceMsrp = platformSku.getDoubleAttribute(Platform_SKU_COM.originalPriceMsrp.name());
-                Double priceMsrp = platformSku.getDoubleAttribute(Platform_SKU_COM.priceMsrp.name()); // 当前中国建议售价
-                Double priceSale = platformSku.getDoubleAttribute(Platform_SKU_COM.priceSale.name()); // 最新中国最终售价
                 Double priceRetail = platformSku.getDoubleAttribute(Platform_SKU_COM.priceRetail.name()); // 最新中国指导售价
-
-                // 直接联动
-                if ("1".equals(autoSyncPriceMsrp)) {
-                    platformSku.put(Platform_SKU_COM.priceMsrp.name(), originalPriceMsrp);
-                }
-                // 自动联动
-                else if ("2".equals(autoSyncPriceMsrp)) {
-                    // 当前中国建议售价<中国最终售价或当前中国建议售价<中国指导售价时，自动联动
-
-                    if (priceMsrp < priceSale || priceMsrp < priceRetail) {
-                        double msrp = originalPriceMsrp;
-                        if (msrp < priceSale) msrp = priceSale;
-                        if (msrp < priceRetail) msrp = priceRetail;
-                        platformSku.put(Platform_SKU_COM.priceMsrp.name(), msrp);
-                    }
-                }
-                else {
-                    // 如果不强制同步的话, 要看看是否原本是合法价格
-                    // 如果原本不是合法价格的话, 就同步设置
-                    resetPriceIfInvalid(platformSku, Platform_SKU_COM.priceMsrp, originalPriceMsrp);
-                }
 
                 // 中国建议售价 = 按中国建议售价最高价统一
                 if ("1".equals(autoSyncPriceMsrpConfig.getConfigValue2())) {
@@ -960,7 +1045,7 @@ public class PriceService extends BaseService {
             return "";
         }
         if (priceSale < priceRetail) {
-            if (priceRetail * (1 - breakThreshold) <= priceSale || breakThreshold == 0) {
+            if (priceRetail * (1 - breakThreshold) <= priceSale) {
                 diffFlg = "2"; // 最终售价比指导价低
             } else {
                 diffFlg = "5"; // 最终售价向下击穿警告
@@ -1154,7 +1239,7 @@ public class PriceService extends BaseService {
         }
         // 无特殊处理
         else {
-            return price.doubleValue();
+            return price.setScale(2, RoundingMode.UP).doubleValue();
         }
     }
 

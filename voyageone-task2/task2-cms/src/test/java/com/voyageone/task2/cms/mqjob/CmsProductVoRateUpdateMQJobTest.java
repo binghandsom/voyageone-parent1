@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.mqjob;
 
-import com.voyageone.common.configs.MQConfigInitTestUtil;
-
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductVoRateUpdateMQMessageBody;
 import com.voyageone.task2.cms.mqjob.advanced.search.CmsProductVoRateUpdateMQJob;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +21,10 @@ public class CmsProductVoRateUpdateMQJobTest {
 
     @Test
     public void onStartup() throws Exception {
-        MQConfigInitTestUtil.startMQ(cmsProductVoRateUpdateMQJob);
+        String temp = "{\"channelId\":\"928\",\"codeList\":[\"144196\"],\"voRate\":\"20\",\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"edward\"}";
+        ProductVoRateUpdateMQMessageBody messageBody = JacksonUtil.json2Bean(temp, ProductVoRateUpdateMQMessageBody.class);
+        cmsProductVoRateUpdateMQJob.onStartup(messageBody);
+//        MQConfigInitTestUtil.startMQ(cmsProductVoRateUpdateMQJob);
     }
 
 }
