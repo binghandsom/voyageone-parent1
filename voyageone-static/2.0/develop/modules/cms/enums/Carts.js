@@ -99,7 +99,7 @@ define(['underscore'], function (_) {
         /**
          * Liking官网
          */
-        LCN: new Cart('LCN', 32, 'Liking官网', 'http://www.liking.com/'),
+        LCN: new Cart('LCN', 32, 'Liking官网', 'http://blc.liking.com/prod_'),
         /**
          * 分销
          */
