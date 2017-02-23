@@ -40,10 +40,7 @@ import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.promotion.PromotionTejiabaoService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchConfirmRetailPriceMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchRefreshRetailPriceMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.UpdateProductSalePriceMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.*;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -58,6 +55,9 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR;
+import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA;
 
 /**
  * 指导价变更批量确认
@@ -181,8 +181,8 @@ public class PlatformPriceService extends VOAbsLoggable {
 
         Integer chg = priceService.setPrice(newProduct, cartId, synSalePriceFlg);
 
-        // 判断是否更新平台价格 如果要更新直接更新
-        publishPlatFormPrice(channelId, chg, newProduct, cartId, userName);
+        // 判断是否更新平台价格 如果要更新直接更新(因为无法判断涨幅,默认价格下跌)
+        publishPlatFormPrice(channelId, chg, newProduct, cartId, userName, true);
 
         // 记录价格变更履历/同步价格范围
         List<CmsBtPriceLogModel> logModelList = new ArrayList<>(1);
@@ -227,11 +227,11 @@ public class PlatformPriceService extends VOAbsLoggable {
      * @param cmsProduct
      * @param modifier
      */
-    public void publishPlatFormPrice(String channelId, Integer chg, CmsBtProductModel cmsProduct, String modifier){
+    public void publishPlatFormPrice(String channelId, Integer chg, CmsBtProductModel cmsProduct, String modifier, Boolean priceIsDown){
         for(String key : cmsProduct.getPlatforms().keySet()) {
             Integer cartId = cmsProduct.getPlatforms().get(key).getCartId();
             if (cartId == null || cartId < CmsConstants.ACTIVE_CARTID_MIN) continue;
-            publishPlatFormPrice(channelId, chg, cmsProduct, cartId, modifier);
+            publishPlatFormPrice(channelId, chg, cmsProduct, cartId, modifier, priceIsDown);
         }
     }
 
@@ -242,8 +242,9 @@ public class PlatformPriceService extends VOAbsLoggable {
      * @param cmsProduct
      * @param cartId
      * @param modifier
+     * @param priceIsDown
      */
-    public void publishPlatFormPrice(String channelId, Integer chg, CmsBtProductModel cmsProduct, Integer cartId, String modifier){
+    public void publishPlatFormPrice(String channelId, Integer chg, CmsBtProductModel cmsProduct, Integer cartId, String modifier, Boolean priceIsDown){
 
         // 如果存在销售的sku变化,则通过上新来处理
         if((chg & 1) == 1
@@ -261,7 +262,7 @@ public class PlatformPriceService extends VOAbsLoggable {
 
                 try {
                     // 根据活动前后时间判断是否同步平台售价
-                    if ("2".equals(autoSyncPricePromotion.getConfigValue1())) {
+                    if (priceIsDown && "2".equals(autoSyncPricePromotion.getConfigValue1())) {
                         //取得该channel cartId的所有的活动
                         List<CmsBtPromotionBean> promtions = promotionService.getByChannelIdCartId(channelId, cartId);
                         if (!ListUtils.isNull(promtions)) {
@@ -377,7 +378,6 @@ public class PlatformPriceService extends VOAbsLoggable {
             sxProductService.insertSxWorkLoad(channelId, productModel.getCommon().getFields().getCode(), cartId, userName);
         }
     }
-
 
     /**
      * 更新product及group的价格
@@ -526,6 +526,88 @@ public class PlatformPriceService extends VOAbsLoggable {
     }
 
     /**
+     * updateProductVoRate
+     * @param messageBody
+     * @return
+     * @throws Exception
+     */
+    public List<CmsBtOperationLogModel_Msg> updateProductVoRate(ProductVoRateUpdateMQMessageBody messageBody) throws Exception {
+
+        $info("CmsProductVoRateUpdateService start");
+
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
+
+        String channelId = org.apache.commons.lang3.StringUtils.trimToNull(messageBody.getChannelId());
+        List<String> codeList = messageBody.getCodeList();
+        String userName = org.apache.commons.lang3.StringUtils.trimToEmpty(messageBody.getSender());
+
+        String voRate = messageBody.getVoRate();
+        String msg;
+        if (voRate == null) {
+            msg = "高价检索 批量更新VO扣点 清空";
+        } else {
+            msg = "高价检索 批量更新VO扣点 " + voRate;
+        }
+
+        JongoQuery queryObj = new JongoQuery();
+        queryObj.setQuery("{'common.fields.code': {$in: #}}");
+        queryObj.setParameters(codeList);
+//        queryObj.setProjectionExt("prodId", "channelId", "orgChannelId", "platforms", "common.fields", "common.skus");
+        List<CmsBtProductModel> prodObj = productService.getList(channelId, queryObj);
+
+        List<String> successList = new ArrayList<>();
+        for (CmsBtProductModel productModel : prodObj) {
+
+            String code = productModel.getCommon().getFields().getCode();
+
+            productModel.getPlatforms().forEach((s, platform) -> {
+                Integer cartId = platform.getCartId();
+
+                if (cartId < CmsConstants.ACTIVE_CARTID_MIN)
+                    return;
+
+                // 如果该平台使用的FORMULA计算价格,则跳过通过voRate的价格计算处理
+                CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanWithDefault(channelId, PRICE_CALCULATOR, cartId.toString());
+                if (priceCalculatorConfig == null || PRICE_CALCULATOR_FORMULA.equals(priceCalculatorConfig.getConfigValue1()))
+                    return;
+
+                try {
+
+                    // 保存计算结果
+                    JongoUpdate updObj = new JongoUpdate();
+                    updObj.setQuery("{'common.fields.code':#}");
+                    updObj.setQueryParameters(code);
+                    updObj.setUpdate("{$set:{'platforms.P#.skus':#}}");
+                    updObj.setUpdateParameters(cartId, productModel.getPlatform(cartId).getSkus());
+                    WriteResult rs = productService.updateFirstProduct(updObj, channelId);
+                    $debug("CmsProductVoRateUpdateService 保存计算结果 " + rs.toString());
+
+
+                    updateProductPlatformPrice(productModel, cartId, false, userName, msg);
+                } catch (Exception exp) {
+
+                    $error(String.format("CmsProductVoRateUpdateService 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channelId, code, cartId, exp.getMessage()), exp);
+
+                    CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                    errorInfo.setSkuCode(code);
+                    errorInfo.setMsg(String.format("调用共通函数计算指导价时出错 cartId=%d, errmsg=%s", cartId, exp.getMessage()));
+                    return;
+                }
+            });
+
+            successList.add(code);
+        }
+
+        // 记录商品修改历史
+        $debug("CmsProductVoRateUpdateService 开始记入价格变更履历");
+        long sta = System.currentTimeMillis();
+        productStatusHistoryService.insertList(channelId, successList, -1, EnumProductOperationType.BatchUpdate, msg, userName);
+        $debug("CmsProductVoRateUpdateService 记入价格变更履历结束 耗时" + (System.currentTimeMillis() - sta));
+
+        return failList;
+    }
+
+    /**
      * 更新product的retailPrice
      * @param messageBody messageBody
      */
@@ -581,7 +663,7 @@ public class PlatformPriceService extends VOAbsLoggable {
                 Integer chg = priceService.setPrice(prodObj, cartId, false);
 
                 // 判断是否更新平台价格 如果要更新直接更新
-                publishPlatFormPrice(channelId, chg, prodObj, cartId, userName);
+                publishPlatFormPrice(channelId, chg, prodObj, cartId, userName, true);
 
                 // 保存计算结果
                 JongoUpdate updObj = new JongoUpdate();
@@ -678,23 +760,13 @@ public class PlatformPriceService extends VOAbsLoggable {
 
         List<CmsBtPriceLogModel> priceLogList = new ArrayList<>();
         BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
-//        List<String> prodPriceDownList = new ArrayList<>();
-//        List<String> prodPriceDownExList = new ArrayList<>();
         List<CmsBtOperationLogModel_Msg> errorInfos = new ArrayList<>();
 
-
-
-        Boolean synPrice;
-
-        CmsChannelConfigBean autoSyncPricePromotionConfig = priceService.getAutoSyncPricePromotionOption(channelId, cartId);
+        //
+        CmsChannelConfigBean autoSyncPriceMsrpConfig = priceService.getAutoSyncPriceMsrpOption(channelId, cartId);
 
         // 阀值
         CmsChannelConfigBean mandatoryBreakThresholdConfig = priceService.getMandatoryBreakThresholdOption(channelId, cartId);
-//        double breakThreshold = Double.parseDouble(mandatoryBreakThresholdConfig.getConfigValue2()) / 100D;
-
-
-
-
 
         // 获取产品的信息
         JongoQuery qryObj = new JongoQuery();
@@ -716,6 +788,7 @@ public class PlatformPriceService extends VOAbsLoggable {
 
             // 先取出最高价/最低价
             Double maxPriceSale = null;
+
             if (priceType != null) {
                 if (skuUpdType == 1) {
                     // 统一最高价
@@ -771,7 +844,7 @@ public class PlatformPriceService extends VOAbsLoggable {
             }
 
             try {
-                synPrice = false;
+                Boolean synPrice = false;
                 for (BaseMongoMap skuObj : skuList) {
 
                     String skuCode = skuObj.getStringAttribute("skuCode");
@@ -819,7 +892,7 @@ public class PlatformPriceService extends VOAbsLoggable {
                         // 修改前后价格相同
 //                        $info(String.format("setProductSalePrice: 修改前后价格相同 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
                         continue;
-                    }else if(rs < befPriceSale){
+                    } else if(rs < befPriceSale){
                         synPrice = true;
                     }
 
@@ -844,17 +917,10 @@ public class PlatformPriceService extends VOAbsLoggable {
                     // 要更新最终售价变化状态
                     skuObj.setAttribute("priceSale", rs);
                     String diffFlg = priceService.getPriceDiffFlg(channelId, skuObj, cartId);
-//                    if ("2".equals(diffFlg) && "1".equals(mandatoryBreakThresholdConfig.getConfigValue1())) {
-//                        $info(String.format("setProductSalePrice: 输入的最终售价低于指导价，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-////                        prodPriceDownList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t\t " + rs);
-//                        throw new BusinessException(String.format("setProductSalePrice: 输入的最终售价低于指导价，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-//                    } else
-                    if ("5".equals(diffFlg) && "1".equals(mandatoryBreakThresholdConfig.getConfigValue1())) {
-                        $info(String.format("setProductSalePrice: 输入的最终售价低于下限阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-//                        prodPriceDownExList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t " + (result * (1 - breakThreshold)) + "\t " + rs);
-                        throw new BusinessException(String.format("setProductSalePrice: 输入的最终售价低于下限阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                    }
                     skuObj.setAttribute("priceDiffFlg", diffFlg);
+
+                    // 价格变更check
+                    priceService.priceCheck(skuObj, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
 
                     CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
                     cmsBtPriceLogModel.setChannelId(channelId);
@@ -903,7 +969,7 @@ public class PlatformPriceService extends VOAbsLoggable {
                 }
 
                 // 更新平台价格(因为批量修改价格,不存在修改sku的isSale的情况,默认调用API刷新价格)
-                publishPlatFormPrice(channelId, 2, prodObj, cartId, userName);
+                publishPlatFormPrice(channelId, 2, prodObj, cartId, userName, synPrice);
             } catch (BusinessException be) {
                 CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
                 errorInfo.setSkuCode(prodCode);
