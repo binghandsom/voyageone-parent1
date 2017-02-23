@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.prices;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.taobao.api.request.TmallItemPriceUpdateRequest;
+import com.taobao.api.response.TmallItemPriceUpdateResponse;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -1039,11 +1040,10 @@ public class PlatformPriceService extends VOAbsLoggable {
             // 更新商品价格
             list2 = null;
         }
-//        TmallItemPriceUpdateResponse response = tbItemService.updateSkuPrice(shopBean, pNumIId, maxPrice, list2);
-//        if (response != null) {
-//            logger.info("PriceService　更新商品SKU的价格 " + response.getBody());
-//        }
-        testLot(shopBean.getCart_id(), pNumIId, "天猫平台价格更新" + JacksonUtil.bean2Json(list2));
+        TmallItemPriceUpdateResponse response = tbItemService.updateSkuPrice(shopBean, pNumIId, maxPrice, list2);
+        if (response != null) {
+            logger.info("PriceService　更新商品SKU的价格 " + response.getBody());
+        }
     }
 
     /**
@@ -1080,15 +1080,14 @@ public class PlatformPriceService extends VOAbsLoggable {
         List<List<HtDeal_UpdateDealPriceBatch_UpdateData>> pageList = CommonUtil.splitList(list, 10);
         for (List<HtDeal_UpdateDealPriceBatch_UpdateData> page : pageList) {
             request.setUpdate_data(page);
-//            HtDealUpdateDealPriceBatchResponse response = serviceJumeiHtDeal.updateDealPriceBatch(shopBean, request);
-//            if (!response.is_Success()) {
-//                //是否抛出错误
-//                boolean isThrowError = isThrowError(response);
-//                if (isThrowError) {
-//                    errorMsg += response.getErrorMsg();
-//                }
-//            }
-            testLot(shopBean.getCart_id(), pNumIId, "聚美平台Deal价格更新" + JacksonUtil.bean2Json(request));
+            HtDealUpdateDealPriceBatchResponse response = serviceJumeiHtDeal.updateDealPriceBatch(shopBean, request);
+            if (!response.is_Success()) {
+                //是否抛出错误
+                boolean isThrowError = isThrowError(response);
+                if (isThrowError) {
+                    errorMsg += response.getErrorMsg();
+                }
+            }
         }
         if (!StringUtils.isEmpty(errorMsg)) {
             throw new BusinessException("jm_UpdateDealPriceBatch:" + errorMsg);
@@ -1128,10 +1127,9 @@ public class PlatformPriceService extends VOAbsLoggable {
         List<List<HtMallSkuPriceUpdateInfo>> pageList = CommonUtil.splitList(list, 10);
         for (List<HtMallSkuPriceUpdateInfo> page : pageList) {
             StringBuffer sb = new StringBuffer();
-//            if (!jumeiHtMallService.updateMallSkuPrice(shopBean, page, sb)) {
-//                errorMsg += sb.toString();
-//            }
-            testLot(shopBean.getCart_id(), "", "聚美平台mall价格更新" + JacksonUtil.bean2Json(page));
+            if (!jumeiHtMallService.updateMallSkuPrice(shopBean, page, sb)) {
+                errorMsg += sb.toString();
+            }
         }
         if (!StringUtils.isEmpty(errorMsg)) {
             throw new BusinessException("updateMallSkuPrice:" + errorMsg);
@@ -1173,8 +1171,7 @@ public class PlatformPriceService extends VOAbsLoggable {
 
         list.forEach(f -> {
             if (!StringUtils.isEmpty(f.getOuterId())) {
-//                jdSkuService.updateSkuPriceByOuterId(shopBean, f.getOuterId(), f.getPrice().toString());
-                testLot(shopBean.getCart_id(), f.getOuterId(), "京东平台价格更新" + f.getPrice().toString());
+                jdSkuService.updateSkuPriceByOuterId(shopBean, f.getOuterId(), f.getPrice().toString());
             }
         });
     }
@@ -1259,36 +1256,5 @@ public class PlatformPriceService extends VOAbsLoggable {
                 return rs.setScale(2, BigDecimal.ROUND_CEILING).doubleValue();
             }
         }
-    }
-
-    private void testLot (String CartId, String pNumIId, String comment) {
-
-        List<CmsBtPriceLogModel> logModelList = new ArrayList<>();
-        CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
-        cmsBtPriceLogModel.setChannelId("000");
-        cmsBtPriceLogModel.setProductId(0);
-        cmsBtPriceLogModel.setCode(pNumIId);
-        cmsBtPriceLogModel.setCartId(Integer.valueOf(CartId));
-        cmsBtPriceLogModel.setSku("");
-        cmsBtPriceLogModel.setSalePrice(0.0);
-        cmsBtPriceLogModel.setMsrpPrice(0.0);
-        cmsBtPriceLogModel.setRetailPrice(0.0);
-//        CmsBtProductModel_Sku comSku = prodObj.getCommonNotNull().getSku(skuCode);
-//        if (comSku == null) {
-            cmsBtPriceLogModel.setClientMsrpPrice(0d);
-            cmsBtPriceLogModel.setClientRetailPrice(0d);
-            cmsBtPriceLogModel.setClientNetPrice(0d);
-//        } else {
-//            cmsBtPriceLogModel.setClientMsrpPrice(comSku.getClientMsrpPrice());
-//            cmsBtPriceLogModel.setClientRetailPrice(comSku.getClientRetailPrice());
-//            cmsBtPriceLogModel.setClientNetPrice(comSku.getClientNetPrice());
-//        }
-        cmsBtPriceLogModel.setComment("测试时使用用于更新平台价格测试:" + comment);
-        cmsBtPriceLogModel.setCreated(new Date());
-        cmsBtPriceLogModel.setCreater("edward.lin");
-        cmsBtPriceLogModel.setModified(new Date());
-        cmsBtPriceLogModel.setModifier("edward.lin");
-        logModelList.add(cmsBtPriceLogModel);
-        int cnt = cmsBtPriceLogService.addLogListAndCallSyncPriceJob(logModelList);
     }
 }
