@@ -87,7 +87,7 @@ public class CmsProductPlatformDetailController extends CmsController {
         result.put("platform", cmsProductPlatformDetailService.getProductPlatform(channelId, prodId, cartId, getLang()));
         result.put("channelConfig", cmsAdvanceSearchService.getChannelConfig(channelId, cartId, getLang()));
         result.put("autoSyncPriceMsrp", priceService.getAutoSyncPriceMsrpOption(channelId, cartId).getConfigValue1());
-        result.put("autoSyncPriceSale", priceService.getAutoSyncPriceSaleOption(channelId, cartId));
+        result.put("autoSyncPriceSale", priceService.getAutoSyncPriceSaleOption(channelId, cartId).getConfigValue1());
 
         return success(result);
     }

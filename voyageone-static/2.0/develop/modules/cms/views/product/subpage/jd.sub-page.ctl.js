@@ -118,6 +118,7 @@ define([
             }
 
             self.autoSyncPriceMsrp = resp.data.autoSyncPriceMsrp;
+            self.autoSyncPriceSale = resp.data.autoSyncPriceSale;
 
         }, function (resp) {
             vm.noMaterMsg = resp.message.indexOf("Server Exception") >= 0 ? null : resp.message;

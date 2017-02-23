@@ -114,6 +114,7 @@ define([
             }
 
             self.autoSyncPriceMsrp = resp.data.autoSyncPriceMsrp;
+            self.autoSyncPriceSale = resp.data.autoSyncPriceSale;
 
         });
 

@@ -333,7 +333,7 @@
                                             <td class="text-right  v-middle">{{ctrl.vm.skuTemp[entity.skuCode].clientNetPrice}}</td>
                                             <td class="mfb-xxx text-center v-middle">
                                                 <label class="col-sm-3 control-label vo_reqfield"></label>
-                                                <input class="form-control ng-number" type="number" ng-disabled="autoSyncPriceMsrp=='1'" ng-model="entity.priceMsrp" scale="15,2" required>
+                                                <input class="form-control ng-number" type="number" ng-readonly="ctrl.autoSyncPriceMsrp=='1'" ng-model="entity.priceMsrp" scale="15,2" required>
                                             </td>
                                             <td class="text-center v-middle">{{entity.priceRetail}}</td>
                                             <td class="text-center v-middle"><input class="form-control" type="text" ng-model="entity.sizeNick" style="width: 100px;margin: 0px auto;"></td>
@@ -346,7 +346,7 @@
                                             </td>
                                             <td class="mfb-xxx text-center v-middle">
                                                 <label class="col-sm-3 control-label vo_reqfield"></label>
-                                                <input class="form-control ng-number" type="number"  ng-model="entity.priceSale" ng-readonly="productInfo.autoApprovePrice.configValue1 == '1'"  scale="15,2" required></td>
+                                                <input class="form-control ng-number" type="number"  ng-model="entity.priceSale" ng-readonly="ctrl.autoSyncPriceSale == '1'"  scale="15,2" required></td>
                                             <td class="text-center v-middle">{{ctrl.vm.skuTemp[entity.skuCode].barcode}}</td>
                                         </tr>
                                         </tbody>
