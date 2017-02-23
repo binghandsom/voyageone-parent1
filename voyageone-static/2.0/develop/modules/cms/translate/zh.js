@@ -937,6 +937,8 @@ define(function () {
         "TXT_BI_DOWNLOAD_LIST_CREATE_FAIL" : "生成失败",
         "TXT_BI_DOWNLOAD_LIST_CREATING" : "生成中",
         "TXT_BI_DOWNLOAD_LIST_CREATED" : "已完成",
-        "TXT_BI_DOWNLOAD_LIST_NOT_START" : "未生成"
+        "TXT_BI_DOWNLOAD_LIST_NOT_START" : "未生成",
+        "TXT_BI_DOWNLOAD_LIST_FILE_OUT_TIME" : "文件过期",
+        "TXT_BI_DOWNLOAD_LIST_UNKNOWN_ERROR":"未知错误"
     };
 });
