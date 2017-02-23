@@ -887,9 +887,9 @@ public interface CmsUrlConstants {
         interface CUSTOM {
             String ROOT = "/cms/channel/custProp";
             String SEARCH = "search";
-            String SAVE ="save";
-            String EXPORT ="export";
-            String IMPORT ="import";
+            String SET_CUSTOMSH_IS_DISPPLAY ="doSetCustomshIsDispPlay";
+            String UPDATE_ENTITY ="doUpdateEntity";
+            String SET_SORT ="doSetSort";
             String DELETE = "delete";
             String SAVE_FEED ="saveFeed";
             String CREATE_FEED ="createFeed";

@@ -161,6 +161,27 @@ public class CmsBtCustomPropService extends BaseService {
         return getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
     }
 
+    /**
+     * 更新顺序
+     * @param channelId channelId
+     * @param orgChannelId  orgChannelId
+     * @param cat 类目
+     * @param sort 顺序
+     * @return CmsBtCustomPropModel
+     */
+    public CmsBtCustomPropModel setSort(String channelId, String orgChannelId, String cat, List<String> sort) {
+        CmsBtCustomPropModel cmsBtCustomPropModel = getCustomPropByCatChannel(channelId, orgChannelId, cat);
+        if (cmsBtCustomPropModel == null) {
+            cmsBtCustomPropModel = new CmsBtCustomPropModel();
+            cmsBtCustomPropModel.setCat(cat);
+            cmsBtCustomPropModel.setChannelId(channelId);
+            cmsBtCustomPropModel.setOrgChannelId(orgChannelId);
+        }
+        cmsBtCustomPropModel.setSort(sort);
+        update(cmsBtCustomPropModel);
+        return getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
+    }
+
     private List<CmsBtCustomPropModel> getCustomPropByCatPath(String channelId, String orgChannelId, String cat) {
         List<CmsBtCustomPropModel> cmsBtCustomPropModels = new ArrayList<>();
         String cats[] = cat.split(">");
