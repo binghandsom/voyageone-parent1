@@ -418,6 +418,15 @@ public class SxProductService extends BaseService {
                 effectCnt, channelId, cartId, LongUtils.toString(groupId), code);
     }
 
+    public void clearBusinessLog2(String channelId, Integer cartId, Long groupId,
+                                  String modifier) {
+        // 逻辑删除cms_bt_business_log表以前的错误信息
+        int effectCnt = businessLogService.updateFinishStatusByCondition2(channelId, cartId,
+                LongUtils.toString(groupId), modifier);
+        $debug("cms_bt_business_log表以前的错误信息逻辑删除件数：%d件 [ChannelId:%s] [CatId:%d] [GroupId:%s] ",
+                effectCnt, channelId, cartId, LongUtils.toString(groupId));
+    }
+
     /**
      * 回写ims_bt_product表
      *
@@ -1025,9 +1034,14 @@ public class SxProductService extends BaseService {
                     List<String> notFoundSkuCodes = new ArrayList<>();
                     if (productPlatformSku != null) {
                         productPlatformSku.forEach(sku -> {
-                            // 聚美以外的平台需要看PXX.skus.isSale是否等于true(该sku是否在当前平台销售),聚美不用过滤掉isSale=false的sku(聚美上新的时候false时会把它更新成隐藏)
-                            if ((!CartEnums.Cart.JM.getId().equals(cartId.toString()) && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name())))
-                                    || CartEnums.Cart.JM.getId().equals(cartId.toString())) {
+                            // update by desmond 2017/02/22 start
+//                            // 聚美以外的平台需要看PXX.skus.isSale是否等于true(该sku是否在当前平台销售),聚美不用过滤掉isSale=false的sku(聚美上新的时候false时会把它更新成隐藏)
+//                            if ((!CartEnums.Cart.JM.getId().equals(cartId.toString()) && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name())))
+//                                    || CartEnums.Cart.JM.getId().equals(cartId.toString())) {
+                            // 根据小汤需求，聚美平台也跟其他平台一样，只有选择的sku(PXX.skus.isSale=true)才往平台上上新
+                            if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                            // update by desmond 2017/02/22 end
+
                                 // modified by morse.lu 2016/06/15 start
 //                            skus.add(sku);
                                 // 外面skus的共通属性 + 从各个平台下面的skus(platform.skus)那里取得的属性
@@ -4718,7 +4732,7 @@ public class SxProductService extends BaseService {
             if(cartId != 33) {
                 long sta = System.currentTimeMillis();
                 modelList.forEach(p -> {
-                    clearBusinessLog(p.getChannelId(), p.getCartId(), p.getGroupId(), null, null, p.getModifier());
+                    clearBusinessLog2(p.getChannelId(), p.getCartId(), p.getGroupId(),  p.getModifier());
                 });
                 $info("逻辑删除cms_bt_business_log中以前的错误 耗时" + (System.currentTimeMillis() - sta));
             }

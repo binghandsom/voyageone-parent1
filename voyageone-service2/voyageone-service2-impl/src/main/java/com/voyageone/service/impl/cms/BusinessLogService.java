@@ -76,4 +76,15 @@ public class BusinessLogService extends BaseService {
 
         return cmsBtBusinessLogDaoExt.updateStatusFinishByCondition(updateConditionMap);
     }
+
+    public int updateFinishStatusByCondition2(String channelId, Integer cartId, String groupId,
+                                            String modifier) {
+        Map<String, Object> updateConditionMap = new HashMap<>();
+        updateConditionMap.put("channelId", channelId);
+        updateConditionMap.put("cartId", cartId);
+        updateConditionMap.put("groupId", groupId);
+        updateConditionMap.put("modifier", modifier);
+
+        return cmsBtBusinessLogDaoExt.updateStatusFinishByCondition2(updateConditionMap);
+    }
 }
