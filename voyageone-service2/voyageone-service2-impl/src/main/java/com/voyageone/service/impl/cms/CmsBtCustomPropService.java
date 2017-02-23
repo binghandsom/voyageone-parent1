@@ -1,9 +1,11 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtCustomPropDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.feed.FeedCategoryAttributeService;
 import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by james on 2017/2/21.
@@ -20,9 +23,15 @@ public class CmsBtCustomPropService extends BaseService {
 
     private final CmsBtCustomPropDao cmsBtCustomPropDao;
 
+    final
+    FeedCategoryAttributeService feedCategoryAttributeService;
+
+
+
     @Autowired
-    public CmsBtCustomPropService(CmsBtCustomPropDao cmsBtCustomPropDao) {
+    public CmsBtCustomPropService(CmsBtCustomPropDao cmsBtCustomPropDao, FeedCategoryAttributeService feedCategoryAttributeService) {
         this.cmsBtCustomPropDao = cmsBtCustomPropDao;
+        this.feedCategoryAttributeService = feedCategoryAttributeService;
     }
 
     public CmsBtCustomPropModel getCustomPropByCatChannel(String channelId, String orgChannelId, String cat) {
@@ -173,7 +182,15 @@ public class CmsBtCustomPropService extends BaseService {
     }
 
     public List<String> getFeedAttributeName(String orgChannelId){
-
+        List<String> feedAttributeList = (List<String>) CacheHelper.getHashOperation().get("feedAttribute",orgChannelId);
+        if(feedAttributeList == null){
+            feedAttributeList = feedCategoryAttributeService.getAttributeNameByChannelId(orgChannelId);
+            if(!ListUtils.isNull(feedAttributeList)){
+                CacheHelper.getHashOperation().put("feedAttribute",orgChannelId, feedAttributeList);
+                CacheHelper.getCacheTemplate().expire("feedAttribute", 1, TimeUnit.DAYS);
+            }
+        }
+        return  feedAttributeList;
     }
     private CmsBtCustomPropModel merge(CmsBtCustomPropModel prop1, CmsBtCustomPropModel prop2) {
         for (CmsBtCustomPropModel.Entity entity : prop2.getEntitys()) {

@@ -21,6 +21,12 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = "classpath:test-context-service2.xml")
 public class CmsBtCustomPropServiceTest {
     @Test
+    public void getFeedAttributeName() throws Exception {
+        List<String> aa = cmsBtCustomPropService.getFeedAttributeName("015");
+        System.out.println(JacksonUtil.bean2Json(aa));
+    }
+
+    @Test
     public void rearrange() throws Exception {
         CmsBtCustomPropModel aa = cmsBtCustomPropService.getCustomPropByCatChannel("010","010","aaa>bbb>ccc");
         aa.getSort().add("Brand");
