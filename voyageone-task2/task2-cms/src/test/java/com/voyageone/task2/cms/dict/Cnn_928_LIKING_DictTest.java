@@ -7,26 +7,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 京东国际平台详情页描述JSON生成工具
- * (928) 匠心界
- *
- * @author tom on 2016/7/6.
- * @version 2.1.0
- * @since 2.1.0
+ * Created by dell on 2016/12/23.
  */
-public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration("classpath:context-cms-test.xml")
+public class Cnn_928_LIKING_DictTest extends BaseDictTest{
+
+    // ***********************************************************************************
+    // ****** 注意： http://s7d5.scene7.com/ 改成 http://image.voyageone.com.cn/
+    // ***********************************************************************************
 
     @Test
     public void startupTest() {
-        doCreateJson("京东详情页描述", false, doDict_京东详情页描述(1));
-        doCreateJson("京东详情页描述-重点商品", false, doDict_京东详情页描述(2));
-        doCreateJson("京东详情页描述-无属性图", false, doDict_京东详情页描述(3));
-        doCreateJson("京东详情页描述-非重点之英文长描述", false, doDict_京东详情页描述(4));
-        doCreateJson("京东详情页描述-非重点之中文长描述", false, doDict_京东详情页描述(5));
-        doCreateJson("京东详情页描述-非重点之中文使用说明", false, doDict_京东详情页描述(6));
+        doCreateJson("新独立域名Liking详情页描述", false, doDict_新独立域名Liking详情页描述(1));
+        doCreateJson("新独立域名Liking详情页描述-重点商品", false, doDict_新独立域名Liking详情页描述(2));
+        doCreateJson("新独立域名Liking详情页描述-无属性图", false, doDict_新独立域名Liking详情页描述(3));
+        doCreateJson("新独立域名Liking详情页描述-非重点之英文长描述", false, doDict_新独立域名Liking详情页描述(4));
+        doCreateJson("新独立域名Liking详情页描述-非重点之中文长描述", false, doDict_新独立域名Liking详情页描述(5));
+        doCreateJson("新独立域名Liking详情页描述-非重点之中文使用说明", false, doDict_新独立域名Liking详情页描述(6));
     }
 
-    private RuleExpression doDict_京东详情页描述(int propType) {
+    private RuleExpression doDict_新独立域名Liking详情页描述(int propType) {
         // 根字典
         RuleExpression ruleRoot = new RuleExpression();
 
@@ -71,7 +72,7 @@ public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
 
         {
             // 固定图片 - 商品信息
-            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "http://img10.360buyimg.com/imgzone/jfs/t3115/318/6412780379/20393/c1ba43c5/58a26d60N588c7ae8.jpg")));
+            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "http://file.liking.com/product_tmp/product_info.jpg")));
         }
 
         {
@@ -106,7 +107,7 @@ public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
             {
                 // imageTemplate
                 RuleExpression imageTemplate = new RuleExpression();
-                String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/liking-18-790X260?$790X300$&$wenzi=%s";
+                String htmlTemplate = " http://image.voyageone.com.cn/is/image/sneakerhead/liking-18-790X260?$790X300$&$wenzi=%s";
                 imageTemplate.addRuleWord(new TextWord(htmlTemplate));
 
                 // 参数imageParams
@@ -154,7 +155,7 @@ public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
             {
                 // imageTemplate
                 RuleExpression imageTemplate = new RuleExpression();
-                String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/liking790X373xinxi?$790X373$&$1=%s&$2=%s&$3=%s&$4=%s&$5=%s&$6=%s&$7=%s&$8=%s&$9=%s&$10=%s&$11=%s&$12=%s&$13=%s&$14=%s&$15=%s&$16=%s";
+                String htmlTemplate = " http://image.voyageone.com.cn/is/image/sneakerhead/liking790X373xinxi?$790X373$&$1=%s&$2=%s&$3=%s&$4=%s&$5=%s&$6=%s&$7=%s&$8=%s&$9=%s&$10=%s&$11=%s&$12=%s&$13=%s&$14=%s&$15=%s&$16=%s";
                 imageTemplate.addRuleWord(new TextWord(htmlTemplate));
 
                 // 参数imageParams
@@ -201,7 +202,7 @@ public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
 
         {
             // 固定图片 - 商品展示
-            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "http://img10.360buyimg.com/imgzone/jfs/t4105/180/2050036540/25062/f941875f/58a26dc0Nc93421e8.jpg")));
+            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "http://file.liking.com/product_tmp/product_display.jpg")));
         }
 
         {
@@ -209,7 +210,7 @@ public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
             htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
 
             RuleExpression imageTemplate = new RuleExpression();
-            imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/jinxinjie790X740show?$790X740$&$image=%s"));
+            imageTemplate.addRuleWord(new TextWord(" http://image.voyageone.com.cn/is/image/sneakerhead/likingtmall790X740?$790X740$&$image=%s"));
 
             RuleExpression imageType = new RuleExpression();
             imageType.addRuleWord(new TextWord(C_商品图片));
@@ -295,22 +296,13 @@ public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
         }
 
         {
-            // 购物流程图
-            RuleExpression htmlTemplate = new RuleExpression();
-            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
-
-            RuleExpression imageType = new RuleExpression();
-            imageType.addRuleWord(new TextWord("4"));
-
-            RuleExpression viewType = new RuleExpression();
-            viewType.addRuleWord(new TextWord("1"));
-
-            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, null, null);
-            ruleRoot.addRuleWord(new CustomWord(word));
+            // 固定图片 - 底部
+            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "http://file.liking.com/product_tmp/sku_bottom.jpg")));
         }
 
         return ruleRoot;
     }
+
 
 
 }

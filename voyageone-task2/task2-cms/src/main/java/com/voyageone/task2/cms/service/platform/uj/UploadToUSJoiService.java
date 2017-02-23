@@ -661,9 +661,14 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             }
 
                             // 颜色/口味/香型等(common.fields.color)
-                            if (StringUtil.isEmpty(prCommonFields.getColor())
-                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getColor())) {
-                                prCommonFields.setColor(productModel.getCommonNotNull().getFieldsNotNull().getColor());
+                            if (StringUtil.isEmpty(prCommonFields.getColor())) {
+                                if (!StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getColor())) {
+                                    // 优先使用子店的color字段
+                                    prCommonFields.setColor(productModel.getCommonNotNull().getFieldsNotNull().getColor());
+                                } else if (!StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff())) {
+                                    // 如果子店的color字段没有值，而codeDiff(feed中原始的color)字段有值，就用codeDiff的值
+                                    prCommonFields.setColor(productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff());
+                                }
                             }
 
                             // 产地(common.fields.origin)

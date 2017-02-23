@@ -110,6 +110,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
         try {
             $info("SneakerHead取得full表里最新的时间");
             final Date getFeedDate = lastExecuteTime == null ? new Date(0) : new Date(lastExecuteTime);
+            $info("最新的时间" + getFeedDate.getTime());
             //取得sneakerHead的Feed的总数
             int anInt = sneakerheadApiService.getFeedCount(getFeedDate, DEFAULT_DOMAIN);
             int pageCnt = anInt / pageSize + (anInt % pageSize > 0 ? 1 : 0);
