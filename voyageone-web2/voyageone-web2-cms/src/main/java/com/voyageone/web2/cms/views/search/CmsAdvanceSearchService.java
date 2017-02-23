@@ -149,7 +149,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
 
             // 是否是使用价格公式
             CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanWithDefault(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.PRICE_CALCULATOR, cartBean.getValue());
-            if (priceCalculatorConfig != null) {
+            if (priceCalculatorConfig == null) {
                 priceCalculatorConfig = new CmsChannelConfigBean(CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA, "0", "0");
             }
             confirmPrice.put(cartBean.getValue(), priceCalculatorConfig.getConfigValue2());
@@ -219,7 +219,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
         // 是否是使用价格公式
         CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanNoCode(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.PRICE_CALCULATOR);
 //        String isPriceFormula = "0";
-        if (priceCalculatorConfig != null) {
+        if (priceCalculatorConfig == null) {
             priceCalculatorConfig = new CmsChannelConfigBean(CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA, "0", "0");
         }
         masterData.put("isPriceFormula", priceCalculatorConfig);
