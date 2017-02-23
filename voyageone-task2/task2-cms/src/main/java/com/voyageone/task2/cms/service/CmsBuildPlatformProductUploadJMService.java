@@ -1064,6 +1064,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                 String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
+                if (StringUtils.isEmpty(detailName)) detailName = "";
                 if (detailName.equals("天猫同购描述-重点商品")) {
                     strJumeiDetailTemplateName = "聚美详情-重点商品";
                 } else if (detailName.equals("天猫同购描述-无属性图")) {
@@ -1358,6 +1359,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                 String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
+                if (StringUtils.isEmpty(detailName)) detailName = "";
                 if (detailName.equals("天猫同购描述-重点商品")) {
                     strJumeiDetailTemplateName = "聚美详情-重点商品";
                 } else if (detailName.equals("天猫同购描述-无属性图")) {
@@ -1861,6 +1863,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                     if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                         String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
+                        if (StringUtils.isEmpty(detailName)) detailName = "";
                         if (detailName.equals("天猫同购描述-重点商品")) {
                             strJumeiDetailTemplateName = "聚美详情-重点商品";
                         } else if (detailName.equals("天猫同购描述-无属性图")) {
