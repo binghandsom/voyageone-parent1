@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.product;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SaveCartSkuPriceParameter;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SetCartSkuIsSaleParameter;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
@@ -133,13 +132,11 @@ public class CmsProductPlatformDetailController extends CmsController {
         String type = String.valueOf(params.get("type"));
         Map<String, Object> platform = (Map<String, Object>) params.get("platform");
         String errcode = null;
+        Integer cartId = Integer.valueOf(platform.get("cartId").toString());
 
         if(!type.equals("temporary")){
-            errcode = cmsProductPlatformDetailService.priceChk(channelId, prodId, platform);
+            cmsProductPlatformDetailService.priceChk(channelId, prodId, platform, cartId);
         }
-
-        if (errcode != null)
-            throw new BusinessException(errcode);
 
         return doUpdateProductPlatform(params);
 

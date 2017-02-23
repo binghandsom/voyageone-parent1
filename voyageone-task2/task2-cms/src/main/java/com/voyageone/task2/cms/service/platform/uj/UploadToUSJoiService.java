@@ -29,7 +29,7 @@ import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.CmsBtFeedImportSizeService;
-import com.voyageone.service.impl.cms.prices.CmsBtProductPlatformPriceService;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -109,7 +109,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
     private CmsBtFeedImportSizeService cmsBtFeedImportSizeService;
 
     @Autowired
-    private CmsBtProductPlatformPriceService cmsBtProductPlatformPriceService;
+    private PlatformPriceService platformPriceService;
 
     // 每个channel的子店->USJOI主店导入最大件数
     private final static int UPLOAD_TO_USJOI_MAX_500 = 500;
@@ -1054,7 +1054,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             throw new BusinessException(errMsg);
                         }
                         // 判断是否更新平台价格 如果要更新直接更新
-                        cmsBtProductPlatformPriceService.updatePlatFormPrice(usJoiChannelId, chg, pr, getTaskName());
+                        platformPriceService.publishPlatFormPrice(usJoiChannelId, chg, pr, getTaskName());
 
                         // 将USJOI店的产品加入更新对象产品列表中（取得USJOI店的品牌，产品分类和适用人群）
                         targetProductList.add(pr);
@@ -1070,7 +1070,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             productService.updateProductFeedToMaster(usJoiChannelId, p, getTaskName(), "子店->USJOI主店导入:更新拆分后的产品:");
 
                             // 判断是否更新平台价格 如果要更新直接更新
-                            cmsBtProductPlatformPriceService.updatePlatFormPrice(usJoiChannelId, chg, p, getTaskName());
+                            platformPriceService.publishPlatFormPrice(usJoiChannelId, chg, p, getTaskName());
                         });
                     }
 

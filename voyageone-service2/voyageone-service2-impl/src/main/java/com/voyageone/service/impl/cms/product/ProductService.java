@@ -38,6 +38,8 @@ import com.voyageone.service.impl.cms.CmsMtEtkHsCodeService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.wms.InventoryCenterLogicService;
 import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
@@ -123,6 +125,12 @@ public class ProductService extends BaseService {
 
     @Autowired
     private InventoryCenterLogicService inventoryCenterLogicService;
+
+    @Autowired
+    private PriceService priceService;
+
+    @Autowired
+    private PlatformPriceService platformPriceService;
 
     /**
      * 获取商品 根据ID获
@@ -920,6 +928,8 @@ public class ProductService extends BaseService {
 
     public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk, EnumProductOperationType opeType, String comment, boolean blnSmartSx) {
         CmsBtProductModel oldProduct = getProductById(channelId, prodId);
+
+        // 判断是否执行修改check
         if (isModifiedChk) {
             CmsBtProductModel_Platform_Cart cmsBtProductModel_platform_cart = oldProduct.getPlatform(platformModel.getCartId());
             String oldModified = null;
@@ -934,18 +944,13 @@ public class ProductService extends BaseService {
                 throw new BusinessException("200011");
             }
         }
-        platformModel.getSkus().forEach(sku -> {
-            sku.setAttribute("priceDiffFlg", productSkuService.getPriceDiffFlg(channelId, sku));
-            Double msrp = sku.getDoubleAttribute("priceMsrp");
-            Double priceRetail = sku.getDoubleAttribute("priceRetail");
-            if (msrp.compareTo(priceRetail) > 0) {
-                sku.setAttribute("priceMsrpFlg", "XD");
-            } else if (msrp.compareTo(priceRetail) < 0) {
-                sku.setAttribute("priceMsrpFlg", "XU");
-            } else {
-                sku.setAttribute("priceMsrpFlg", "");
-            }
-        });
+
+        // 根据中国最终售价来判断 中国建议售价是否需要自动提高价格
+        try {
+            priceService.unifySkuPriceMsrp(platformModel.getSkus(), channelId, platformModel.getCartId());
+        }catch (Exception e) {
+            throw new BusinessException(String.format("产品编辑页面-价格一览,修改商品价格　调用priceService.unifySkuPriceMsrp失败 channelId=%s, cartId=%s", channelId, platformModel.getCartId()), e);
+        }
 
         // 设定类目状态
         if (!StringUtil.isEmpty(platformModel.getpCatId()) && !StringUtil.isEmpty(platformModel.getpCatPath())) {
@@ -968,10 +973,9 @@ public class ProductService extends BaseService {
 
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
 
-        if (CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(platformModel.getStatus())) {
-            sxProductService.insertSxWorkLoad(channelId, new ArrayList<String>(Arrays.asList(oldProduct.getCommon().getFields().getCode())), platformModel.getCartId(), modifier, blnSmartSx);
-        }
-        insertProductHistory(channelId, prodId);
+        // 更新平台价格(因为批量修改价格,不存在修改sku的isSale的情况,默认调用API刷新价格)
+        CmsBtProductModel newProduct = getProductById(channelId, prodId);
+        platformPriceService.publishPlatFormPrice(channelId, 2, newProduct, platformModel.getCartId(), modifier);
 
         List<String> skus = new ArrayList<>();
         platformModel.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
@@ -1671,5 +1675,26 @@ public class ProductService extends BaseService {
         }
 
         return rs;
+    }
+
+    /**
+     * 判断两税号是否一样
+     * @param hsCode1
+     * @param hsCode2
+     * @return
+     */
+    public Boolean compareHsCode(String hsCode1, String hsCode2) {
+        String hs1 = "";
+        String hs2 = "";
+        if (hsCode1 != null) {
+            String[] temp = hsCode1.split(",");
+            if (temp.length > 1) hs1 = temp[0];
+        }
+
+        if (hsCode2 != null) {
+            String[] temp = hsCode2.split(",");
+            if (temp.length > 1) hs2 = temp[0];
+        }
+        return hs1.equalsIgnoreCase(hs2);
     }
 }

@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
-import com.voyageone.service.impl.cms.prices.CmsBtProductPlatformPriceService;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchConfirmRetailPriceMQMessageBody;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class CmsAdvSearchConfirmRetailPriceMQJob extends TBaseMQCmsService<AdvSearchConfirmRetailPriceMQMessageBody> {
 
     @Autowired
-    private CmsBtProductPlatformPriceService confirmRetailPriceService;
+    private PlatformPriceService confirmRetailPriceService;
 
     @Override
     public void onStartup(AdvSearchConfirmRetailPriceMQMessageBody messageBody) {

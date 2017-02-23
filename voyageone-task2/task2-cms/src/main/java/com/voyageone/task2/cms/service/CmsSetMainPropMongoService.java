@@ -35,7 +35,7 @@ import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.CmsBtFeedImportSizeService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
-import com.voyageone.service.impl.cms.prices.CmsBtProductPlatformPriceService;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
@@ -152,7 +152,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
     @Autowired
     PromotionCodeService promotionCodeService;
     @Autowired
-    private CmsBtProductPlatformPriceService platformPriceService;
+    private PlatformPriceService platformPriceService;
 
     @Autowired
     private MqSender sender;
@@ -1122,7 +1122,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     }
 
                     // 判断是否更新平台价格 如果要更新直接更新
-                    platformPriceService.updatePlatFormPrice(channelId, chg, cmsProduct, getTaskName());
+                    platformPriceService.publishPlatFormPrice(channelId, chg, cmsProduct, getTaskName());
 
                 } else {
                     // 生成productGroup数据

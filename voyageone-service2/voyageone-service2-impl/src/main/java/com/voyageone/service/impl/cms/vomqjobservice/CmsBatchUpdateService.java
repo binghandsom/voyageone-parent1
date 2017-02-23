@@ -3,7 +3,6 @@ package com.voyageone.service.impl.cms.vomqjobservice;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -14,7 +13,7 @@ import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
-import com.voyageone.service.impl.cms.prices.CmsBtProductPlatformPriceService;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
@@ -22,16 +21,13 @@ import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.BatchUpdateProductMQMessageBody;
-import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -55,7 +51,7 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
     @Autowired
-    private CmsBtProductPlatformPriceService platformPriceService;
+    private PlatformPriceService platformPriceService;
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
 
@@ -137,7 +133,7 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
             // 获取原始税号
             String oldHsCode = StringUtils.trimToNull((String) newProduct.getCommonNotNull().getFieldsNotNull().get(propId));
 
-            if (compareHsCode(oldHsCode, propValue))
+            if (productService.compareHsCode(oldHsCode, propValue))
                 continue;
 
             // 设置新税号
@@ -157,10 +153,6 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
 
                 // 计算指导价
                 try {
-                    Integer chg = priceService.setPrice(newProduct, cartId, false);
-
-                    // 判断是否更新平台价格 如果要更新直接更新
-                    platformPriceService.updatePlatFormPrice(channelId, chg, newProduct, cartId, userName);
 
                     // 保存计算结果
                     JongoUpdate updObj = new JongoUpdate();
@@ -171,40 +163,8 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
                     WriteResult rs = productService.updateFirstProduct(updObj, channelId);
                     $debug("CmsProductVoRateUpdateService 保存计算结果 " + rs.toString());
 
-                    // 记录价格变更履历/同步价格范围
-                    List<CmsBtPriceLogModel> logModelList = new ArrayList<>(1);
-                    for (BaseMongoMap skuObj : newProduct.getPlatform(cartId).getSkus()) {
-                        String skuCode = skuObj.getStringAttribute("skuCode");
-                        CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
-                        cmsBtPriceLogModel.setChannelId(channelId);
-                        cmsBtPriceLogModel.setProductId(newProduct.getProdId().intValue());
-                        cmsBtPriceLogModel.setCode(prodCode);
-                        cmsBtPriceLogModel.setCartId(cartId);
-                        cmsBtPriceLogModel.setSku(skuCode);
-                        cmsBtPriceLogModel.setSalePrice(skuObj.getDoubleAttribute("priceSale"));
-                        cmsBtPriceLogModel.setMsrpPrice(skuObj.getDoubleAttribute("priceMsrp"));
-                        cmsBtPriceLogModel.setRetailPrice(skuObj.getDoubleAttribute("priceRetail"));
-                        CmsBtProductModel_Sku comSku = newProduct.getCommonNotNull().getSku(skuCode);
-                        if (comSku == null) {
-                            cmsBtPriceLogModel.setClientMsrpPrice(0d);
-                            cmsBtPriceLogModel.setClientRetailPrice(0d);
-                            cmsBtPriceLogModel.setClientNetPrice(0d);
-                        } else {
-                            cmsBtPriceLogModel.setClientMsrpPrice(comSku.getClientMsrpPrice());
-                            cmsBtPriceLogModel.setClientRetailPrice(comSku.getClientRetailPrice());
-                            cmsBtPriceLogModel.setClientNetPrice(comSku.getClientNetPrice());
-                        }
-                        cmsBtPriceLogModel.setComment("高级检索批量 税号变更 " + propName + "=> " + propValue);
-                        cmsBtPriceLogModel.setCreated(new Date());
-                        cmsBtPriceLogModel.setCreater(userName);
-                        cmsBtPriceLogModel.setModified(new Date());
-                        cmsBtPriceLogModel.setModifier(userName);
-                        logModelList.add(cmsBtPriceLogModel);
-                    }
+                    platformPriceService.updateProductPlatformPrice(newProduct, cartId, false, userName, "高级检索批量 税号变更 " + propName + "=> " + propValue);
 
-                    // 插入价格变更履历
-                    int cnt = cmsBtPriceLogService.addLogListAndCallSyncPriceJob(logModelList);
-                    $debug("CmsProductVoRateUpdateService修改商品价格 记入价格变更履历结束 结果=" + cnt);
                 } catch (PriceCalculateException e) {
 
                     $error(String.format("高级检索 批量更新 价格计算错误 channleid=%s, prodcode=%s", channelId, prodCode), e);
@@ -288,27 +248,6 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
         // 记录商品修改历史
         propValue = Types.getTypeName(TypeConfigEnums.MastType.translationStatus.getId(), "cn", propValue);
         productStatusHistoryService.insertList(channelId, codeList, -1, EnumProductOperationType.BatchUpdate, "高级检索 批量更新：" + propName +"--" + propValue, userName);
-    }
-
-    /**
-     * 判断税号是否一致
-     * @param hsCode1
-     * @param hsCode2
-     * @return
-     */
-    private Boolean compareHsCode(String hsCode1, String hsCode2) {
-        String hs1 = "";
-        String hs2 = "";
-        if (hsCode1 != null) {
-            String[] temp = hsCode1.split(",");
-            if (temp.length > 1) hs1 = temp[0];
-        }
-
-        if (hsCode2 != null) {
-            String[] temp = hsCode2.split(",");
-            if (temp.length > 1) hs2 = temp[0];
-        }
-        return hs1.equalsIgnoreCase(hs2);
     }
 
 }

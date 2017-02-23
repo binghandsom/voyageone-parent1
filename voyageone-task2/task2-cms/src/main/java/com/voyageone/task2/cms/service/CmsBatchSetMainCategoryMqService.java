@@ -151,7 +151,7 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
                         model.setQueryMap(queryMap);
                         bulkList.add(model);
                         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
-                        if(!compareHsCode(hscodeName8, cmsBtProductModel.getCommon().getFields().getHsCodePrivate())) {
+                        if(!productService.compareHsCode(hscodeName8, cmsBtProductModel.getCommon().getFields().getHsCodePrivate())) {
                             try{
                                 CmsBtProductModel newProduct = productService.getProductByCode(channelId, code);
                                 // 税号从无到有的场后同步最终售价
@@ -213,21 +213,6 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
 //            }
 //
 //        }
-    }
-
-    private Boolean compareHsCode(String hsCode1, String hsCode2) {
-        String hs1 = "";
-        String hs2 = "";
-        if (hsCode1 != null) {
-            String[] temp = hsCode1.split(",");
-            if (temp.length > 1) hs1 = temp[0];
-        }
-
-        if (hsCode2 != null) {
-            String[] temp = hsCode2.split(",");
-            if (temp.length > 1) hs2 = temp[0];
-        }
-        return hs1.equalsIgnoreCase(hs2);
     }
 
     private String getString(String str){

@@ -9,7 +9,7 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.prices.CmsBtProductPlatformPriceService;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductVoRateUpdateMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
@@ -46,7 +46,7 @@ public class CmsProductVoRateUpdateService extends BaseService {
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
     @Autowired
-    private CmsBtProductPlatformPriceService platformPriceService;
+    private PlatformPriceService platformPriceService;
 
     public List<CmsBtOperationLogModel_Msg> updateProductVoRate(ProductVoRateUpdateMQMessageBody messageBody) throws Exception {
 
@@ -94,7 +94,7 @@ public class CmsProductVoRateUpdateService extends BaseService {
                     Integer chg = priceService.setPrice(productModel, cartId, false);
 
                     // 判断是否更新平台价格 如果要更新直接更新
-                    platformPriceService.updatePlatFormPrice(channelId, chg, productModel, cartId, userName);
+                    platformPriceService.publishPlatFormPrice(channelId, chg, productModel, cartId, userName);
 
                     // 保存计算结果
                     JongoUpdate updObj = new JongoUpdate();

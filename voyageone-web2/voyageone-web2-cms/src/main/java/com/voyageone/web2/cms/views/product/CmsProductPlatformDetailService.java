@@ -22,10 +22,11 @@ import com.voyageone.service.bean.cms.product.DelistingParameter;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
-import com.voyageone.service.impl.cms.prices.CmsBtProductPlatformPriceService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
+import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -66,7 +67,9 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     @Autowired
     PriceService priceService;
     @Autowired
-    private CmsBtProductPlatformPriceService cmsBtProductPlatformPriceService;
+    private PlatformPriceService platformPriceService;
+    @Autowired
+    private CmsBtPriceLogService cmsBtPriceLogService;
 
     //设置isSale
     public  void  setCartSkuIsSale(SetCartSkuIsSaleParameter parameter,String channelId,String userName) {
@@ -124,10 +127,20 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         }
     }
-    // 保存价格
+
+    /**
+     * 产品编辑一览页面, 修改价格后保存
+     * @param parameter
+     * @param channelId
+     * @param userName
+     * @throws Exception
+     */
     public  void  saveCartSkuPrice(SaveCartSkuPriceParameter parameter,String channelId,String userName) throws Exception {
-        CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, parameter.getProdId());
-        CmsBtProductModel_Platform_Cart platform = cmsBtProduct.getPlatform(parameter.getCartId());
+        Long productId = parameter.getProdId();
+        Integer cartId = parameter.getCartId();
+        CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, productId);
+
+        CmsBtProductModel_Platform_Cart platform = cmsBtProduct.getPlatform(cartId);
         if(parameter.getPriceMsrp()>0) {
             platform.setpPriceMsrpSt(parameter.getPriceMsrp());
             platform.setpPriceMsrpEd(parameter.getPriceMsrp());
@@ -137,31 +150,30 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             platform.setpPriceSaleEd(parameter.getPriceSale());
         }
 
-        if("Approved".equals(platform.getStatus())) {
-            if(StringUtils.isEmpty(platform.getpNumIId()))
-            {
-                //已经approve但是无NumIID，则插入上新work表,
-                List<String> cartIdList = new ArrayList<>();
-                cartIdList.add(Integer.toString(parameter.getCartId()));
-                //则插入上新work表
-                sxProductService.insertSxWorkLoad(cmsBtProduct, cartIdList, userName);
-            }
-            else
-            {
-                //有NumIID，则价格变更API
-                cmsBtProductPlatformPriceService.updateSkuPrice(channelId, parameter.getCartId(), cmsBtProduct,true, userName);
+        // 获取中国建议售价的配置信息
+        CmsChannelConfigBean autoSyncPriceMsrpConfig = priceService.getAutoSyncPriceMsrpOption(channelId, cartId);
 
-            }
-        }
-        platform.getSkus().forEach(f -> {
+        // 阀值
+        CmsChannelConfigBean mandatoryBreakThresholdConfig = priceService.getMandatoryBreakThresholdOption(channelId, cartId);
+
+        // 价格只影响isSale=true的商品
+        platform.getSkus().stream().filter(sku -> Boolean.valueOf(sku.getStringAttribute("isSale"))).forEach(f -> {
+
             if(parameter.getPriceMsrp()>0) {
                 f.setAttribute("priceMsrp", parameter.getPriceMsrp());
             }
             if(parameter.getPriceSale()>0) {
                 f.setAttribute("priceSale", parameter.getPriceSale());
+
+                String diffFlg = priceService.getPriceDiffFlg(channelId, f, parameter.getCartId());
+                f.setAttribute("priceDiffFlg", diffFlg);
+                priceCheck(f, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
             }
         });
-        productService.updateProductPlatform(channelId, parameter.getProdId(), platform, userName);
+
+        // 只更新产品表价格,同时触发价格上新和履历插入
+//        productService.updateProductPlatform(channelId, parameter.getProdId(), platform, userName);
+        cmsProductDetailService.updateSkuPrice(channelId, cartId, parameter.getProdId(), userName, platform) ;
     }
 
     //返回计算后的Msrp价格
@@ -546,46 +558,58 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
     }
 
-    public String priceChk(String channelId, Long prodId, Map<String, Object> platform) {
+    /**
+     * check输入的价格是否符合要求
+     * @param channelId
+     * @param prodId
+     * @param platform
+     * @param cartId
+     * @return
+     */
+    public String priceChk(String channelId, Long prodId, Map<String, Object> platform, Integer cartId) {
+
+        // 获取中国建议售价的配置信息
+        CmsChannelConfigBean autoSyncPriceMsrpConfig = priceService.getAutoSyncPriceMsrpOption(channelId, cartId);
 
         // 阀值
-        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId
-                , CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
-
-        Double breakThreshold = null;
-        if (cmsChannelConfigBean != null) {
-            breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D + 1.0;
-        }
+        CmsChannelConfigBean mandatoryBreakThresholdConfig = priceService.getMandatoryBreakThresholdOption(channelId, cartId);
 
         if (platform.get("skus") != null) {
             CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
-            List<BaseMongoMap<String, Object>> cmsBtProductModel_skus = cmsBtProduct.getPlatform((int) platform.get("cartId")).getSkus();
+            List<BaseMongoMap<String, Object>> cmsBtProductModel_skus = cmsBtProduct.getPlatform(cartId).getSkus();
 
-            Map<String, Double> comPrice = new HashMap<>();
-            cmsBtProductModel_skus.forEach(item -> comPrice.put(item.getStringAttribute("skuCode"), item.getDoubleAttribute("priceRetail")));
-
-            for (Map stringObjectBaseMongoMap : (List<Map<String, Object>>) platform.get("skus")) {
-                if(stringObjectBaseMongoMap.get("isSale") != null && (boolean)stringObjectBaseMongoMap.get("isSale")) {
-                    String sku = (String) stringObjectBaseMongoMap.get("skuCode");
-                    if (stringObjectBaseMongoMap.get("priceSale") == null || StringUtil.isEmpty(stringObjectBaseMongoMap.get("priceSale").toString())) {
-                        throw new BusinessException("价格不能为空");
-                    }
-                    Double newPriceSale = Double.parseDouble(stringObjectBaseMongoMap.get("priceSale").toString());
-                    if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (newPriceSale / (2 - breakThreshold))).compareTo(comPrice.get(sku)) < 0) {
-                        throw new BusinessException("4000094", ((Double) Math.ceil(comPrice.get(sku) * (2 - breakThreshold))).intValue());
-                    }
-
-                    if (comPrice.containsKey(sku) && comPrice.get(sku).compareTo(newPriceSale) > 0) {
-                        throw new BusinessException("4000091");
-                    }
-                }
-                // DOC-161 价格向上击穿的阀值检查 取消
-//                if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (comPrice.get(sku) * breakThreshold)).compareTo(newPriceSale) < 0) {
-//                    throw new BusinessException("4000092");
-//                }
-            }
+            cmsBtProductModel_skus.forEach(sku -> {
+                priceCheck(sku, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
+            });
         }
         return null;
+    }
+
+    /**
+     * check单个sku的价格是否合法
+     * @param skuInfo
+     * @param autoSyncPriceMsrpConfig
+     * @param mandatoryBreakThresholdConfig
+     */
+    public void priceCheck (BaseMongoMap<String, Object> skuInfo, CmsChannelConfigBean autoSyncPriceMsrpConfig, CmsChannelConfigBean mandatoryBreakThresholdConfig) {
+
+        String isAutoPriceMsrp = autoSyncPriceMsrpConfig.getConfigValue1();
+        final Boolean isCheckMandatory = "1".equals(mandatoryBreakThresholdConfig.getConfigValue1()) ? true : false;
+        final Double breakThreshold = Double.parseDouble(mandatoryBreakThresholdConfig.getConfigValue2()) / 100D;
+
+        Double priceMsrp = skuInfo.getDoubleAttribute("priceMsrp");
+        Double minPriceRetail = Math.ceil(skuInfo.getDoubleAttribute("priceRetail") * (1 - breakThreshold));
+        Double priceSale = skuInfo.getDoubleAttribute("priceSale");
+        Boolean isSale = Boolean.valueOf(skuInfo.getStringAttribute("isSale"));
+        if (isSale) {
+            if (priceSale == 0.0D || ( "0".equals(isAutoPriceMsrp) && priceMsrp == 0.0D))
+                throw new BusinessException("中国最终售价或者中国建议售价(可输入)不能为空");
+            if ("1".equals(autoSyncPriceMsrpConfig.getConfigValue1())
+                    && priceMsrp.compareTo(priceSale) < 0)
+                throw new BusinessException("中国建议售价(可输入)不能低于中国最终售价");
+            if (isCheckMandatory && minPriceRetail.compareTo(priceSale) > 0)
+                throw new BusinessException("4000094", minPriceRetail);
+        }
     }
 
     /**
