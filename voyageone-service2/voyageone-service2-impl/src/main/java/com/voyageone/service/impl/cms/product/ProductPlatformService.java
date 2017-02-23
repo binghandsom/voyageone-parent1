@@ -10,17 +10,9 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.components.jd.service.JdProductService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
-import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
-import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
-import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.ImageTemplateService;
-import com.voyageone.service.impl.cms.MongoSequenceService;
-import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -171,7 +163,7 @@ public class ProductPlatformService extends BaseService {
 
         // 更新平台价格(因为批量修改价格,不存在修改sku的isSale的情况,默认调用API刷新价格)
         CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
-        platformPriceService.publishPlatFormPrice(channelId, 2, newProduct, platformModel.getCartId(), modifier);
+        platformPriceService.publishPlatFormPrice(channelId, 2, newProduct, platformModel.getCartId(), modifier, true);
 
         List<String> skus = new ArrayList<>();
         platformModel.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));

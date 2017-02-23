@@ -1651,7 +1651,7 @@ public class CmsProductDetailService extends BaseViewService {
 
         // 刷新平台价格
         CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
-        platformPriceService.publishPlatFormPrice(channelId, 2, newProduct, cartId, userName);
+        platformPriceService.publishPlatFormPrice(channelId, 2, newProduct, cartId, userName, true);
 
         //更新价格履历
         List<String> skus = new ArrayList<>();

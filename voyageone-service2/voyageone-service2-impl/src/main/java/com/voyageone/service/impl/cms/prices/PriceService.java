@@ -159,6 +159,57 @@ public class PriceService extends BaseService {
     }
 
     /**
+     * check输入的价格是否符合要求
+     * @param channelId
+     * @param cmsBtProduct
+     * @param cartId
+     * @return
+     */
+    public void priceChk(String channelId, CmsBtProductModel cmsBtProduct, Integer cartId) {
+
+        // 获取中国建议售价的配置信息
+        CmsChannelConfigBean autoSyncPriceMsrpConfig = getAutoSyncPriceMsrpOption(channelId, cartId);
+
+        // 阀值
+        CmsChannelConfigBean mandatoryBreakThresholdConfig = getMandatoryBreakThresholdOption(channelId, cartId);
+
+        List<BaseMongoMap<String, Object>> cmsBtProductModel_skus = cmsBtProduct.getPlatform(cartId).getSkus();
+
+        if (cmsBtProductModel_skus != null) {
+            cmsBtProductModel_skus.forEach(sku -> {
+                priceCheck(sku, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
+            });
+        }
+    }
+
+    /**
+     * check单个sku的价格是否合法
+     * @param skuInfo
+     * @param autoSyncPriceMsrpConfig
+     * @param mandatoryBreakThresholdConfig
+     */
+    public void priceCheck (BaseMongoMap<String, Object> skuInfo, CmsChannelConfigBean autoSyncPriceMsrpConfig, CmsChannelConfigBean mandatoryBreakThresholdConfig) {
+
+        String isAutoPriceMsrp = autoSyncPriceMsrpConfig.getConfigValue1();
+        final Boolean isCheckMandatory = "1".equals(mandatoryBreakThresholdConfig.getConfigValue1()) ? true : false;
+        final Double breakThreshold = Double.parseDouble(mandatoryBreakThresholdConfig.getConfigValue2()) / 100D;
+
+        Double priceMsrp = skuInfo.getDoubleAttribute("priceMsrp");
+        Double minPriceRetail = Math.ceil(skuInfo.getDoubleAttribute("priceRetail") * (1 - breakThreshold));
+        Double priceSale = skuInfo.getDoubleAttribute("priceSale");
+        Boolean isSale = Boolean.valueOf(skuInfo.getStringAttribute("isSale"));
+        if (isSale) {
+            if (priceSale == 0.0D || ( "0".equals(isAutoPriceMsrp) && priceMsrp == 0.0D))
+                throw new BusinessException("中国最终售价或者中国建议售价(可输入)不能为空");
+            if ("1".equals(autoSyncPriceMsrpConfig.getConfigValue1())
+                    && priceMsrp.compareTo(priceSale) < 0)
+                throw new BusinessException("中国建议售价(可输入)不能低于中国最终售价");
+            if (isCheckMandatory && minPriceRetail.compareTo(priceSale) > 0)
+                throw new BusinessException("4000094", minPriceRetail);
+        }
+    }
+
+    /**
      * 为商品在指定平台计算并保存价格
      *
      * @param product         需要计算价格的商品
@@ -608,7 +659,7 @@ public class PriceService extends BaseService {
         String channelId = product.getChannelId();
 
         // 获取价格计算公式
-        String msrpFormula = getPriceMsrpCalcFormulaOption(product, cartId);
+        String msrpFormula = getPriceMsrpCalcFormulaOption(product, cartId);;
         String retailFormula = getMPriceRetailCalcFormulaOption(product, cartId);
 
         // 获取价格处理逻辑规则

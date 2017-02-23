@@ -1054,7 +1054,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             throw new BusinessException(errMsg);
                         }
                         // 判断是否更新平台价格 如果要更新直接更新
-                        platformPriceService.publishPlatFormPrice(usJoiChannelId, chg, pr, getTaskName());
+                        platformPriceService.publishPlatFormPrice(usJoiChannelId, chg, pr, getTaskName(), true);
 
                         // 将USJOI店的产品加入更新对象产品列表中（取得USJOI店的品牌，产品分类和适用人群）
                         targetProductList.add(pr);
@@ -1070,7 +1070,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             productService.updateProductFeedToMaster(usJoiChannelId, p, getTaskName(), "子店->USJOI主店导入:更新拆分后的产品:");
 
                             // 判断是否更新平台价格 如果要更新直接更新
-                            platformPriceService.publishPlatFormPrice(usJoiChannelId, chg, p, getTaskName());
+                            platformPriceService.publishPlatFormPrice(usJoiChannelId, chg, p, getTaskName(), true);
                         });
                     }
 

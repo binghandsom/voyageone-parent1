@@ -3,7 +3,6 @@ package com.voyageone.web2.cms.views.product;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -164,7 +163,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
                 String diffFlg = priceService.getPriceDiffFlg(channelId, f, parameter.getCartId());
                 f.setAttribute("priceDiffFlg", diffFlg);
-                priceCheck(f, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
+                priceService.priceCheck(f, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
             }
         });
 
@@ -291,16 +290,6 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         return null;
     }
 
-    public String getAutoSyncPriceSaleOption(String channelId, Integer cartId) {
-        String autoSyncPriceSaleOption = CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE; // 默认配置
-        CmsChannelConfigBean autoSyncPriceSale = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE, cartId + "");
-        if (autoSyncPriceSale == null){
-                autoSyncPriceSale = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE, 0 + "");
-        }
-        if (autoSyncPriceSale != null)
-            autoSyncPriceSaleOption = autoSyncPriceSale.getConfigValue1();
-        return autoSyncPriceSaleOption;
-    }
     /**
          * 获取产品平台信息
          *
@@ -553,60 +542,6 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         }
         return modified;
 
-    }
-
-    /**
-     * check输入的价格是否符合要求
-     * @param channelId
-     * @param prodId
-     * @param platform
-     * @param cartId
-     * @return
-     */
-    public String priceChk(String channelId, Long prodId, Map<String, Object> platform, Integer cartId) {
-
-        // 获取中国建议售价的配置信息
-        CmsChannelConfigBean autoSyncPriceMsrpConfig = priceService.getAutoSyncPriceMsrpOption(channelId, cartId);
-
-        // 阀值
-        CmsChannelConfigBean mandatoryBreakThresholdConfig = priceService.getMandatoryBreakThresholdOption(channelId, cartId);
-
-        if (platform.get("skus") != null) {
-            CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
-            List<BaseMongoMap<String, Object>> cmsBtProductModel_skus = cmsBtProduct.getPlatform(cartId).getSkus();
-
-            cmsBtProductModel_skus.forEach(sku -> {
-                priceCheck(sku, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
-            });
-        }
-        return null;
-    }
-
-    /**
-     * check单个sku的价格是否合法
-     * @param skuInfo
-     * @param autoSyncPriceMsrpConfig
-     * @param mandatoryBreakThresholdConfig
-     */
-    public void priceCheck (BaseMongoMap<String, Object> skuInfo, CmsChannelConfigBean autoSyncPriceMsrpConfig, CmsChannelConfigBean mandatoryBreakThresholdConfig) {
-
-        String isAutoPriceMsrp = autoSyncPriceMsrpConfig.getConfigValue1();
-        final Boolean isCheckMandatory = "1".equals(mandatoryBreakThresholdConfig.getConfigValue1()) ? true : false;
-        final Double breakThreshold = Double.parseDouble(mandatoryBreakThresholdConfig.getConfigValue2()) / 100D;
-
-        Double priceMsrp = skuInfo.getDoubleAttribute("priceMsrp");
-        Double minPriceRetail = Math.ceil(skuInfo.getDoubleAttribute("priceRetail") * (1 - breakThreshold));
-        Double priceSale = skuInfo.getDoubleAttribute("priceSale");
-        Boolean isSale = Boolean.valueOf(skuInfo.getStringAttribute("isSale"));
-        if (isSale) {
-            if (priceSale == 0.0D || ( "0".equals(isAutoPriceMsrp) && priceMsrp == 0.0D))
-                throw new BusinessException("中国最终售价或者中国建议售价(可输入)不能为空");
-            if ("1".equals(autoSyncPriceMsrpConfig.getConfigValue1())
-                    && priceMsrp.compareTo(priceSale) < 0)
-                throw new BusinessException("中国建议售价(可输入)不能低于中国最终售价");
-            if (isCheckMandatory && minPriceRetail.compareTo(priceSale) > 0)
-                throw new BusinessException("4000094", minPriceRetail);
-        }
     }
 
     /**
