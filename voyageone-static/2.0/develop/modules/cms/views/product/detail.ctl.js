@@ -53,7 +53,7 @@ define([
             // cartId:928【匠心界】,929【悦境】不显示
             self.menuService.getPlatformType().then(function (resp) {
                 self.platformTypes = _.filter(resp, function (element) {
-                    return element.value >= 20 && element.value < 928;
+                    return element.value != 21 && element.value >= 20 && element.value < 928;
                 });
             });
 
