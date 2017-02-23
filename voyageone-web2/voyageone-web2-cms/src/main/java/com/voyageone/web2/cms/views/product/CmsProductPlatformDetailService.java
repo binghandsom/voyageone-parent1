@@ -23,11 +23,10 @@ import com.voyageone.service.impl.cms.CmsMtBrandService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
-import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
-import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.product.ProductPlatformService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
@@ -67,9 +66,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     @Autowired
     PriceService priceService;
     @Autowired
-    private PlatformPriceService platformPriceService;
-    @Autowired
-    private CmsBtPriceLogService cmsBtPriceLogService;
+    private ProductPlatformService productPlatformService;
 
     //设置isSale
     public  void  setCartSkuIsSale(SetCartSkuIsSaleParameter parameter,String channelId,String userName) {
@@ -92,7 +89,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         platform.getSkus().forEach(f -> {
             f.setAttribute("isSale", parameter.getIsSale());
         });
-        productService.updateProductPlatform(channelId, parameter.getProdId(), platform, userName);
+        productPlatformService.updateProductPlatform(channelId, parameter.getProdId(), platform, userName);
 
     }
 
@@ -550,7 +547,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             }
         }
 
-        String modified  = productService.updateProductPlatform(channelId, prodId, platformModel, modifier, true, blnSmartSx);
+        String modified  = productPlatformService.updateProductPlatform(channelId, prodId, platformModel, modifier, true, blnSmartSx);
         if(isCatPathChg){
             productService.resetProductAndGroupPlatformPid(channelId, platformModel.getCartId(), cmsBtProductModel.getCommon().getFields().getCode());
         }

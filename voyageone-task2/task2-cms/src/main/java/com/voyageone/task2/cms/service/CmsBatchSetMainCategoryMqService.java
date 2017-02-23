@@ -7,6 +7,7 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.prices.PriceService;
+import com.voyageone.service.impl.cms.product.ProductPlatformService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
@@ -17,7 +18,10 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -32,25 +36,25 @@ import java.util.*;
 @RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_CmsBatchSetMainCategoryJob)
 public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
 
-    final
-    ProductService productService;
+    final ProductService productService;
 
-    final
-    CmsBtProductDao cmsBtProductDao;
+    final CmsBtProductDao cmsBtProductDao;
 
-    private final
-    ProductStatusHistoryService productStatusHistoryService;
+    private final ProductStatusHistoryService productStatusHistoryService;
 
-    private final
-    PriceService priceService;
+    private final PriceService priceService;
+
+    private final ProductPlatformService productPlatformService;
+
 
 
     @Autowired
-    public CmsBatchSetMainCategoryMqService(ProductService productService, CmsBtProductDao cmsBtProductDao, ProductStatusHistoryService productStatusHistoryService, PriceService priceService) {
+    public CmsBatchSetMainCategoryMqService(ProductService productService, CmsBtProductDao cmsBtProductDao, ProductStatusHistoryService productStatusHistoryService, PriceService priceService, ProductPlatformService productPlatformService) {
         this.productService = productService;
         this.cmsBtProductDao = cmsBtProductDao;
         this.productStatusHistoryService = productStatusHistoryService;
         this.priceService = priceService;
+        this.productPlatformService = productPlatformService;
     }
 
 //    if 主类目人工设置FLG（common.catConf = 1 ）
@@ -162,7 +166,7 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
                                 }
                                 newProduct.getPlatforms().forEach((s, platform) -> {
                                     if (platform.getCartId() != 0) {
-                                        productService.updateProductPlatform(channelId, newProduct.getProdId(), platform, userName, false, EnumProductOperationType.changeMainCategory, "批量修改主类目税号变更", true);
+                                        productPlatformService.updateProductPlatform(channelId, newProduct.getProdId(), platform, userName, false, EnumProductOperationType.changeMainCategory, "批量修改主类目税号变更", true);
                                     }
                                 });
                             }catch (Exception e){
