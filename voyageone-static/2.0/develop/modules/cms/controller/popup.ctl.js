@@ -606,8 +606,7 @@ define([
             "uploadImages": {
                 "templateUrl": "views/pop/product/upload-images.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/upload-images.ctl",
-                "controller": 'uploadImagesController as ctrl',
-                "size": 'lg'
+                "controller": 'uploadImagesController as ctrl'
             }
         },
         "shelves": {

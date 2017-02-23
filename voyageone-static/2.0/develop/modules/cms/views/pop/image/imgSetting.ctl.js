@@ -99,9 +99,11 @@ define([
 
 					self.blockUI.start("图片上传中。。。请耐心等待！");
 
+					//平台级产品图片上传才会有cartId
 					var data = [{
-						"productId": self.context.productId,
-						"imageType": self.context.imageType
+						productId: self.context.productId,
+						imageType: self.context.imageType,
+                        cartId:self.context.cartId ? self.context.cartId : null
 					}];
 
 					angular.forEach(self.uploader.queue , function(item,index){

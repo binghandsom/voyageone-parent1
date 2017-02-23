@@ -78,7 +78,7 @@ define([
         //监控税号和翻译状态
         var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
             check.translate = $scope.productInfo.translateStatus;
-            if($scope.cartInfo.value != 20)
+            if ($scope.cartInfo.value != 20)
                 check.tax = $scope.productInfo.hsCodeStatus;
         });
 
@@ -632,12 +632,16 @@ define([
     /**
      * 操作区域图片上传按钮
      */
-    SpJdController.prototype.popUploadImg = function(){
+    SpJdController.prototype.popUploadImg = function () {
         var self = this,
             popup = self.popups;
 
-        popup.openUploadImages({}).then(function(){
-
+        popup.openUploadImages({
+            cartId: self.$scope.cartInfo.value,
+            productId: self.$scope.productInfo.productId,
+            platform: self.vm.platform
+        }).then(function (context) {
+            console.log('图片上传后：', context);
         });
     };
 

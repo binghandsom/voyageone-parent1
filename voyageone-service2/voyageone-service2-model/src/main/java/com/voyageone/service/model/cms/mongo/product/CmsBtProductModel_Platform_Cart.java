@@ -13,30 +13,30 @@ import java.util.Map;
  * 各平台的产品数据
  *
  * @author linanbin on 6/29/2016
- * @version 2.2.0
  * @author james.li on 2016/6/1.
  * @version 2.0.0
  */
-public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>{
+public class CmsBtProductModel_Platform_Cart extends CmsBtProductModel_Images {
 
     public final static String FIELDS = "fields";
     public final static String SKUS = "skus";
     public final static String SELLER_CATS = "sellerCats";
     public final static String MQQ = "mqq";
 
-    public CmsBtProductModel_Platform_Cart(){
+    public CmsBtProductModel_Platform_Cart() {
 
     }
 
-    public CmsBtProductModel_Platform_Cart(Map<String,Object> map){
+    public CmsBtProductModel_Platform_Cart(Map<String, Object> map) {
         this.putAll(map);
     }
 
     //modified
-    public String getModified(){
+    public String getModified() {
         return getStringAttribute("modified");
     }
-    public void setModified(String modified){
+
+    public void setModified(String modified) {
         setStringAttribute("modified", modified);
     }
 
@@ -44,6 +44,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public Integer getCartId() {
         return getIntAttribute("cartId");
     }
+
     public void setCartId(Integer cartId) {
         setAttribute("cartId", cartId);
     }
@@ -52,9 +53,11 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getStatus() {
         return getStringAttribute("status");
     }
+
     public void setStatus(String status) {
         setStringAttribute("status", status);
     }
+
     public void setStatus(CmsConstants.ProductStatus status) {
         String value = null;
         if (status != null) {
@@ -67,6 +70,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpCatId() {
         return getStringAttribute("pCatId");
     }
+
     public void setpCatId(String pCatId) {
         setStringAttribute("pCatId", pCatId);
     }
@@ -75,6 +79,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpCatPath() {
         return getStringAttribute("pCatPath");
     }
+
     public void setpCatPath(String pCatPath) {
         setStringAttribute("pCatPath", pCatPath);
     }
@@ -84,6 +89,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         String pCatStatus = getStringAttribute("pCatStatus");
         return StringUtils.isEmpty(pCatStatus) ? "0" : pCatStatus;
     }
+
     public void setpCatStatus(String pCatStatus) {
         setStringAttribute("pCatStatus", StringUtils.isEmpty(pCatStatus) ? "0" : pCatStatus);
     }
@@ -92,6 +98,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public Integer getpIsMain() {
         return getIntAttribute("pIsMain");
     }
+
     public void setpIsMain(Integer pIsMain) {
         setAttribute("pIsMain", pIsMain == null ? 0 : pIsMain);
     }
@@ -100,6 +107,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getMainProductCode() {
         return getStringAttribute("mainProductCode");
     }
+
     public void setMainProductCode(String mainProductCode) {
         setStringAttribute("mainProductCode", mainProductCode);
     }
@@ -108,6 +116,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpProductId() {
         return getStringAttribute("pProductId");
     }
+
     public void setpProductId(String pProductId) {
         setStringAttribute("pProductId", pProductId);
     }
@@ -116,6 +125,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpNumIId() {
         return getStringAttribute("pNumIId");
     }
+
     public void setpNumIId(String pNumIId) {
         setStringAttribute("pNumIId", pNumIId);
     }
@@ -124,6 +134,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpPlatformMallId() {
         return getStringAttribute("pPlatformMallId");
     }
+
     public void setpPlatformMallId(String pPlatformMallId) {
         setStringAttribute("pPlatformMallId", pPlatformMallId);
     }
@@ -138,6 +149,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         }
         return rs;
     }
+
     public void setpStatus(CmsConstants.PlatformStatus pStatus) {
         setAttribute("pStatus", pStatus.name());
     }
@@ -146,6 +158,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpPublishError() {
         return getStringAttribute("pPublishError");
     }
+
     public void setpPublishError(String pPublishError) {
         setStringAttribute("pPublishError", pPublishError);
     }
@@ -154,6 +167,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpBrandId() {
         return getStringAttribute("pBrandId");
     }
+
     public void setpBrandId(String pBrandId) {
         setStringAttribute("pBrandId", pBrandId);
     }
@@ -162,6 +176,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpBrandName() {
         return getStringAttribute("pBrandName");
     }
+
     public void setpBrandName(String pBrandName) {
         setStringAttribute("pBrandName", pBrandName);
     }
@@ -170,6 +185,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpPublishTime() {
         return getStringAttribute("pPublishTime");
     }
+
     public void setpPublishTime(String pPublishTime) {
         setStringAttribute("pPublishTime", pPublishTime);
     }
@@ -179,6 +195,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         String pAttributeStatus = getStringAttribute("pAttributeStatus");
         return StringUtils.isEmpty(pAttributeStatus) ? "0" : pAttributeStatus;
     }
+
     public void setpAttributeStatus(String pAttributeStatus) {
         setStringAttribute("pAttributeStatus", StringUtils.isEmpty(pAttributeStatus) ? "0" : pAttributeStatus);
     }
@@ -187,6 +204,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpAttributeSetter() {
         return getStringAttribute("pAttributeSetter");
     }
+
     public void setpAttributeSetter(String pAttributeSetter) {
         setStringAttribute("pAttributeSetter", pAttributeSetter);
     }
@@ -195,6 +213,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpAttributeSetTime() {
         return getStringAttribute("pAttributeSetTime");
     }
+
     public void setpAttributeSetTime(String pAttributeSetTime) {
         setStringAttribute("pAttributeSetTime", pAttributeSetTime);
     }
@@ -203,12 +222,15 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public Double getpPriceMsrpSt() {
         return getDoubleAttribute("pPriceMsrpSt");
     }
+
     public void setpPriceMsrpSt(Double pPriceMsrpSt) {
         setAttribute("pPriceMsrpSt", pPriceMsrpSt);
     }
+
     public Double getpPriceMsrpEd() {
         return getDoubleAttribute("pPriceMsrpEd");
     }
+
     public void setpPriceMsrpEd(Double pPriceMsrpEd) {
         setAttribute("pPriceMsrpEd", pPriceMsrpEd);
     }
@@ -217,12 +239,15 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public Double getpPriceRetailSt() {
         return getDoubleAttribute("pPriceRetailSt");
     }
+
     public void setpPriceRetailSt(Double priceRetailSt) {
         setAttribute("pPriceRetailSt", priceRetailSt);
     }
+
     public Double getpPriceRetailEd() {
         return getDoubleAttribute("pPriceRetailEd");
     }
+
     public void setpPriceRetailEd(Double priceRetailEd) {
         setAttribute("pPriceRetailEd", priceRetailEd);
     }
@@ -231,12 +256,15 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public Double getpPriceSaleSt() {
         return getDoubleAttribute("pPriceSaleSt");
     }
+
     public void setpPriceSaleSt(Double priceSaleSt) {
         setAttribute("pPriceSaleSt", priceSaleSt);
     }
+
     public Double getpPriceSaleEd() {
         return getDoubleAttribute("pPriceSaleEd");
     }
+
     public void setpPriceSaleEd(Double priceSaleEd) {
         setAttribute("pPriceSaleEd", priceSaleEd);
     }
@@ -245,10 +273,11 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public BaseMongoMap<String, Object> getFields() {
         return getAttribute(FIELDS);
     }
+
     /**
      * 返回非空BaseMongoMap对象
      */
-    public BaseMongoMap getFieldsNotNull()  {
+    public BaseMongoMap getFieldsNotNull() {
         BaseMongoMap obj = getAttribute(FIELDS);
         if (obj == null) {
             return new BaseMongoMap();
@@ -261,23 +290,27 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     }
 
     //skus
-    public List<BaseMongoMap<String, Object>> getSkus(){
+    public List<BaseMongoMap<String, Object>> getSkus() {
         return getAttribute(SKUS);
     }
-    public void setSkus(List<BaseMongoMap<String, Object>> skus){
-        setAttribute(SKUS,skus);
+
+    public void setSkus(List<BaseMongoMap<String, Object>> skus) {
+        setAttribute(SKUS, skus);
     }
 
     //sellerCats
     public List<CmsBtProductModel_SellerCat> getSellerCats() {
         return getAttribute(SELLER_CATS);
     }
+
     public void setSellerCats(List<CmsBtProductModel_SellerCat> sellerCats) {
         setAttribute(SELLER_CATS, sellerCats);
     }
+
     public List<Map<String, Object>> getSellerCatsByMap() {
         return getAttribute(SELLER_CATS);
     }
+
     public void setSellerCatsByMap(List<Map<String, Object>> sellerCats) {
         setAttribute(SELLER_CATS, sellerCats);
     }
@@ -286,6 +319,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public List<ProductMqqBean> getMqq() {
         return getAttribute(MQQ);
     }
+
     public void setMqq(List<ProductMqqBean> mqq) {
         setAttribute(MQQ, mqq);
     }
@@ -293,12 +327,19 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpReallyStatus() {
         return getStringAttribute("pReallyStatus");
     }
+
     public void setpReallyStatus(String pReallyStatus) {
-        setStringAttribute("pReallyStatus",pReallyStatus);
+        setStringAttribute("pReallyStatus", pReallyStatus);
     }
 
-    public String getIsNewSku(){ return  getStringAttribute("isNewSku"); }
-    public void setIsNewSku(String isNewSku){setStringAttribute("isNewSku", isNewSku);}
+    public String getIsNewSku() {
+        return getStringAttribute("isNewSku");
+    }
+
+    public void setIsNewSku(String isNewSku) {
+        setStringAttribute("isNewSku", isNewSku);
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public Object put(String key, Object value) {

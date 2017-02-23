@@ -30,8 +30,8 @@
                                     <div class="tab-content" style="border-top: 1px solid #d4cfcf;">
                                         <div class="tab-pane active">
 
-                                            <div class="row sortable-container" sv-root sv-part="vm.productComm.fields.images1" sv-on-sort="sortImg('images1',$event)">
-                                                <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images1" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image1)">
+                                            <div class="row sortable-container" sv-root sv-part="ctrl.platform.images1" sv-on-sort="sortImg('images1',$event)">
+                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images1" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image1)">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image1}" style="height: 88px">
                                                         <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image1)}}">
@@ -49,8 +49,8 @@
                                     </tab-heading>
                                     <div class="tab-content" style="border-top: 1px solid #d4cfcf;">
                                         <div class="tab-pane active">
-                                            <div class="row" sv-root sv-part="vm.productComm.fields.images6" sv-on-sort="sortImg('images6',$event)">
-                                                <div class="col-md-3"  ng-repeat="image in vm.productComm.fields.images6 | filter : {image6:''}" sv-element="{containment:'#img-fix'}"
+                                            <div class="row" sv-root sv-part="ctrl.platform.images6" sv-on-sort="sortImg('images6',$event)">
+                                                <div class="col-md-3"  ng-repeat="image in ctrl.platform.images6 | filter : {image6:''}" sv-element="{containment:'#img-fix'}"
                                                      ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image6)">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image6}" style="height: 88px">
@@ -60,7 +60,7 @@
                                                     </a>
                                                 </div>
                                                 <div class="col-md-3 text-center m-t-md">
-                                                    <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image6',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
+                                                    <button  class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.openProImageSetting('image6')"><i class="glyphicon glyphicon-plus"></i></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -73,8 +73,8 @@
                                     <div class="tab-content" style="border-top: 1px solid #d4cfcf;">
                                         <div class="tab-pane active">
 
-                                            <div class="row" sv-root sv-part="vm.productComm.fields.images7" sv-on-sort="sortImg('images7',$event)">
-                                                <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images7 | filter : {image7:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image7)">
+                                            <div class="row" sv-root sv-part="ctrl.platform.images7" sv-on-sort="sortImg('images7',$event)">
+                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images7 | filter : {image7:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image7)">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image7}" style="height: 88px">
                                                         <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image7)}}">
@@ -83,7 +83,7 @@
                                                     </a>
                                                 </div>
                                                 <div class="col-md-3 text-center m-t-md">
-                                                    <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image7',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
+                                                    <button  class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.openProImageSetting('image7')"><i class="glyphicon glyphicon-plus"></i></button>
                                                 </div>
                                             </div>
 
@@ -97,8 +97,8 @@
                                     <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
                                         <div class="tab-pane active">
 
-                                            <div class="row" sv-root sv-part="vm.productComm.fields.images2" sv-on-sort="sortImg('images2',$event)">
-                                                <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images2 | filter : {image2:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image2)">
+                                            <div class="row" sv-root sv-part="ctrl.platform.images2" sv-on-sort="sortImg('images2',$event)">
+                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images2 | filter : {image2:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image2)">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image2}" style="height: 88px">
                                                         <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image2)}}">
@@ -107,7 +107,7 @@
                                                     </a>
                                                 </div>
                                                 <div class="col-md-3 text-center m-t-md">
-                                                    <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image2',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
+                                                    <button  class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.openProImageSetting('image2')"><i class="glyphicon glyphicon-plus"></i></button>
                                                 </div>
                                             </div>
 
@@ -121,8 +121,8 @@
                                     <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
                                         <div class="tab-pane active">
 
-                                            <div class="row" sv-root sv-part="vm.productComm.fields.images3" sv-on-sort="sortImg('images3',$event)">
-                                                <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images3 | filter : {image3:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image3)">
+                                            <div class="row" sv-root sv-part="ctrl.platform.images3" sv-on-sort="sortImg('images3',$event)">
+                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images3 | filter : {image3:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image3)">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image3}" style="height: 88px">
                                                         <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image3)}}">
@@ -131,7 +131,7 @@
                                                     </a>
                                                 </div>
                                                 <div class="col-md-3 text-center m-t-md">
-                                                    <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image3',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
+                                                    <button  class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.openProImageSetting('image3')"><i class="glyphicon glyphicon-plus"></i></button>
                                                 </div>
                                             </div>
 
@@ -145,8 +145,8 @@
                                     <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
                                         <div class="tab-pane active">
 
-                                            <div class="row" sv-root sv-part="vm.productComm.fields.images4" sv-on-sort="sortImg('images4',$event)">
-                                                <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images4 | filter : {image4:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image4)">
+                                            <div class="row" sv-root sv-part="ctrl.platform.images4" sv-on-sort="sortImg('images4',$event)">
+                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images4 | filter : {image4:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image4)">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image4}" style="height: 88px">
                                                         <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image4)}}">
@@ -155,7 +155,7 @@
                                                     </a>
                                                 </div>
                                                 <div class="col-md-3 text-center m-t-md">
-                                                    <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image4',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
+                                                    <button  class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.openProImageSetting('image4')"><i class="glyphicon glyphicon-plus"></i></button>
                                                 </div>
                                             </div>
 
@@ -169,8 +169,8 @@
                                     <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
                                         <div class="tab-pane active">
 
-                                            <div class="row" sv-root sv-part="vm.productComm.fields.images5" sv-on-sort="sortImg('images5',$event)">
-                                                <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images5 | filter : {image5:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image5)">
+                                            <div class="row" sv-root sv-part="ctrl.platform.images5" sv-on-sort="sortImg('images5',$event)">
+                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images5 | filter : {image5:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image5)">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image5}" style="height: 88px">
                                                         <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image5)}}">
@@ -179,7 +179,7 @@
                                                     </a>
                                                 </div>
                                                 <div class="col-md-3 text-center m-t-md">
-                                                    <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image5',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
+                                                    <button  class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.openProImageSetting('image5')"><i class="glyphicon glyphicon-plus"></i></button>
                                                 </div>
                                             </div>
 
@@ -193,8 +193,8 @@
                                     <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
                                         <div class="tab-pane active">
 
-                                            <div class="row" sv-root sv-part="vm.productComm.fields.images8" sv-on-sort="sortImg('images8',$event)">
-                                                <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images8 | filter : {image8:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image8)">
+                                            <div class="row" sv-root sv-part="ctrl.platform.images8" sv-on-sort="sortImg('images8',$event)">
+                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images8 | filter : {image8:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image8)">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image8}" style="height: 88px">
                                                         <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image8)}}">
@@ -203,7 +203,7 @@
                                                     </a>
                                                 </div>
                                                 <div class="col-md-3 text-center m-t-md">
-                                                    <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image8',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
+                                                    <button  class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.openProImageSetting('image8')"><i class="glyphicon glyphicon-plus"></i></button>
                                                 </div>
                                             </div>
 
@@ -217,8 +217,8 @@
                                     <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
                                         <div class="tab-pane active">
 
-                                            <div class="row" sv-root sv-part="vm.productComm.fields.images9" sv-on-sort="sortImg('images9',$event)">
-                                                <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images9 | filter : {image9:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image9)">
+                                            <div class="row" sv-root sv-part="ctrl.platform.images9" sv-on-sort="sortImg('images9',$event)">
+                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images9 | filter : {image9:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image9)">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image9}" style="height: 88px">
                                                         <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image9)}}">
@@ -227,7 +227,7 @@
                                                     </a>
                                                 </div>
                                                 <div class="col-md-3 text-center m-t-md">
-                                                    <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image9',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
+                                                    <button  class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.openProImageSetting('image9')"><i class="glyphicon glyphicon-plus"></i></button>
                                                 </div>
                                             </div>
 
@@ -241,7 +241,6 @@
                 </div>
             </div>
         </div>
-
 
 
     </div>
