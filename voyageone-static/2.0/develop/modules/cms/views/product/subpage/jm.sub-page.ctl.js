@@ -340,9 +340,9 @@ define([
             self.productDetailService.updateSkuPrice({
                 cartId: $scope.cartInfo.value,
                 prodId: $scope.productInfo.productId,
-                platform: $scope.vm.platform
+                platform: self.vm.platform
             }).then(function () {
-                self.alert("TXT_MSG_UPDATE_SUCCESS");
+                self.notify.success("TXT_MSG_UPDATE_SUCCESS");
             }, function (res) {
                 self.alert(res.message);
             });
