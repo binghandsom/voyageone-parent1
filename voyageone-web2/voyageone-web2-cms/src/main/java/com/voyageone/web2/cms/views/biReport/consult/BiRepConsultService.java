@@ -87,7 +87,7 @@ public class BiRepConsultService extends BaseService {
         params.put("fileName",fileName);
         Map<String,Object> resultMap=new HashedMap();
         BiReportDownloadTaskModel model=new BiReportDownloadTaskModel();
-        model.setCheckPeriod((String)params.get("staDate")+params.get("endDate"));
+        model.setCheckPeriod(params.get("staDate")+"~"+params.get("endDate"));
         model.setCheckChannels(NameCreator.getTheChannelTypeName(channelCodeList));
         model.setCheckFileTypes(NameCreator.getTheFileTypeName(fileTypes));
         model.setCreated((Date) params.get("createTime"));
