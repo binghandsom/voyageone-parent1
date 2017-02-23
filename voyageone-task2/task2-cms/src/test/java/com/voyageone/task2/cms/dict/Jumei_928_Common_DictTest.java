@@ -49,6 +49,9 @@ public class Jumei_928_Common_DictTest {
         doCreateJson("聚美详情", false, doDict_聚美详情(1));
         doCreateJson("聚美详情-重点商品", false, doDict_聚美详情(2));
         doCreateJson("聚美详情-无属性图", false, doDict_聚美详情(3));
+        doCreateJson("聚美详情-非重点之英文长描述", false, doDict_聚美详情(4));
+        doCreateJson("聚美详情-非重点之中文长描述", false, doDict_聚美详情(5));
+        doCreateJson("聚美详情-非重点之中文使用说明", false, doDict_聚美详情(6));
 
         // 聚美使用方法
         doCreateJson("聚美使用方法", false, doDict_聚美使用方法());
@@ -167,7 +170,11 @@ public class Jumei_928_Common_DictTest {
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
 
-            if (propType == 1) {   // 参数图 - 普通商品
+            if (propType == 1 // 参数图 - 普通商品（非重点之英文使用说明）
+                    || propType == 4 // 参数图 - 非重点之英文长描述
+                    || propType == 5 // 参数图 - 非重点之中文长描述
+                    || propType == 6 // 参数图 - 非重点之中文使用说明
+                    ) {
 
                 {
                     // 前缀
@@ -187,7 +194,20 @@ public class Jumei_928_Common_DictTest {
                     {
                         // 第一个参数是描述
                         RuleExpression ruleExpression = new RuleExpression();
-                        ruleExpression.addRuleWord(new MasterClrHtmlWord("usageEn")); // 英文使用方法
+                        switch (propType) {
+                            case 1:
+                                ruleExpression.addRuleWord(new MasterClrHtmlWord("usageEn")); // 英文使用方法
+                                break;
+                            case 4:
+                                ruleExpression.addRuleWord(new MasterClrHtmlWord("longDesEn")); // 英文长描述
+                                break;
+                            case 5:
+                                ruleExpression.addRuleWord(new MasterClrHtmlWord("longDesCn")); // 中文长描述
+                                break;
+                            case 6:
+                                ruleExpression.addRuleWord(new MasterClrHtmlWord("usageCn")); // 非重点之中文使用说明
+                                break;
+                        }
                         imageParams.add(ruleExpression);
                     }
 

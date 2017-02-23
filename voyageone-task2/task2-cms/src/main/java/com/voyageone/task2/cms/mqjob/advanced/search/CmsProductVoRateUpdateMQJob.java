@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
-import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductVoRateUpdateMQMessageBody;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
@@ -21,13 +21,13 @@ import java.util.List;
 public class CmsProductVoRateUpdateMQJob extends TBaseMQCmsService<ProductVoRateUpdateMQMessageBody> {
 
     @Autowired
-    private ProductService productService;
+    private PlatformPriceService platformPriceService;
 
     @Override
     public void onStartup(ProductVoRateUpdateMQMessageBody messageBody) throws Exception {
 
         super.count = messageBody.getCodeList().size();
-        List<CmsBtOperationLogModel_Msg> failList = productService.updateProductVoRate(messageBody);
+        List<CmsBtOperationLogModel_Msg> failList = platformPriceService.updateProductVoRate(messageBody);
         if (failList.size() > 0) {
             String comment = String.format("处理总件数(%s), 处理失败件数(%s)", messageBody.getCodeList().size(), failList.size());
             cmsSuccessIncludeFailLog(messageBody, comment, failList);
