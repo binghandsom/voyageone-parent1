@@ -134,6 +134,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
         // 按cart获取promotion list，只加载有效的活动(活动期内/未关闭/有标签)
         Map<String, List> promotionMap = new HashMap<>();
         Map<String, List> shelvesMap = new HashMap<>();
+        Map<String, String> confirmPrice = new HashMap<>();
         param = new HashMap<>();
         for (TypeChannelBean cartBean : cartList) {
             if (CartEnums.Cart.JM.getId().equals(cartBean.getValue())) {
@@ -145,10 +146,19 @@ public class CmsAdvanceSearchService extends BaseViewService {
             }
 
             shelvesMap.put(cartBean.getValue(),cmsBtShelvesService.selectByChannelIdCart(userInfo.getSelChannelId(), Integer.parseInt(cartBean.getValue())));
+
+            // 是否是使用价格公式
+            CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanWithDefault(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.PRICE_CALCULATOR, cartBean.getValue());
+            if (priceCalculatorConfig != null) {
+                priceCalculatorConfig = new CmsChannelConfigBean(CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA, "0", "0");
+            }
+            confirmPrice.put(cartBean.getValue(), priceCalculatorConfig.getConfigValue2());
         }
         masterData.put("promotionMap", promotionMap);
 
         masterData.put("shelvesMap", shelvesMap);
+
+        masterData.put("confirmPrice", confirmPrice);
 
         // 获取自定义查询用的属性
         masterData.put("custAttsList", cmsSession.getAttribute("_adv_search_props_custAttsQueryList"));
@@ -208,11 +218,11 @@ public class CmsAdvanceSearchService extends BaseViewService {
 
         // 是否是使用价格公式
         CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanNoCode(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.PRICE_CALCULATOR);
-        String isPriceFormula = "0";
-        if (priceCalculatorConfig != null && CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA.equals(priceCalculatorConfig.getConfigValue1())) {
-            isPriceFormula = "1";
+//        String isPriceFormula = "0";
+        if (priceCalculatorConfig != null) {
+            priceCalculatorConfig = new CmsChannelConfigBean(CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA, "0", "0");
         }
-        masterData.put("isPriceFormula", isPriceFormula);
+        masterData.put("isPriceFormula", priceCalculatorConfig);
         
         // 取得渠道的通用配置，动态按钮或配置可以直接在此外添加。
         masterData.put("channelConfig", getChannelConfig(userInfo.getSelChannelId(), cartList, language));

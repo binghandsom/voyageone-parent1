@@ -709,7 +709,7 @@
                                 <li>
                                     <a href="javascript:void(0)" ng-click="$parent.openBulkUpdate(openFieldEdit)"> {{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}</a>
                                 </li>
-                                <li>
+                                <li ng-if="vm.masterData.isPriceFormula.configValue2 == 0">
                                     <a href="javascript:void(0)" ng-click="cfmRetailPrice(null)">全店铺指导价变更确认</a>
                                 </li>
                                 <li>
@@ -757,7 +757,7 @@
                                 <li >
                                     <a href="javascript:void(0)" ng-click="editPlatformAttribute(cartBean.value)">修改平台共同属性</a>
                                 </li>
-                                <li>
+                                <li ng-if="vm.masterData.confirmPrice[cartBean.value] == 0">
                                     <a href="javascript:void(0)" ng-click="cfmRetailPrice(cartBean)">指导价变更确认</a>
                                 </li>
                                 <li ng-if="cartBean.cartType!=3">
