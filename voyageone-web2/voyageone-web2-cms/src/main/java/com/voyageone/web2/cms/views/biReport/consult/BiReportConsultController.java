@@ -57,6 +57,7 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
     public AjaxResponse getPage(@RequestBody PageQueryParameters parameters) {
 //        parameters.put("channelId", getUser().getSelChannelId());
         parameters.put("creatorId",getUser().getUserId());
+        parameters.put("creatorName",getUser().getUserName());
         System.out.println("getUserId"+getUser().getUserId());
         return success(biRepConsultService.getPage(parameters));
     }
