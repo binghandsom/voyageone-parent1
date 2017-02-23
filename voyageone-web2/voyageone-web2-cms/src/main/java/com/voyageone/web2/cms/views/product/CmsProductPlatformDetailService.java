@@ -163,8 +163,8 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
                 String diffFlg = priceService.getPriceDiffFlg(channelId, f, parameter.getCartId());
                 f.setAttribute("priceDiffFlg", diffFlg);
-                priceService.priceCheck(f, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
             }
+            priceService.priceCheck(f, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
         });
 
         // 只更新产品表价格,同时触发价格上新和履历插入

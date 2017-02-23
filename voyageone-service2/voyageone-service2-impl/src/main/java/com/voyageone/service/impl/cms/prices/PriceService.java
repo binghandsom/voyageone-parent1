@@ -226,7 +226,7 @@ public class PriceService extends BaseService {
         if (isSale) {
             if (priceSale == 0.0D || ( "0".equals(isAutoPriceMsrp) && priceMsrp == 0.0D))
                 throw new BusinessException("中国最终售价或者中国建议售价(可输入)不能为空");
-            if ("1".equals(autoSyncPriceMsrpConfig.getConfigValue1())
+            if (!"1".equals(autoSyncPriceMsrpConfig.getConfigValue1())
                     && priceMsrp.compareTo(priceSale) < 0)
                 throw new BusinessException("中国建议售价(可输入)不能低于中国最终售价");
             if (isCheckMandatory && minPriceRetail.compareTo(priceSale) > 0)
