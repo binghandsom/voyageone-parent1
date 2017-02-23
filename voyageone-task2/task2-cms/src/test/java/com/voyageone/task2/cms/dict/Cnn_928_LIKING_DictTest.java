@@ -72,7 +72,7 @@ public class Cnn_928_LIKING_DictTest extends BaseDictTest{
 
         {
             // 固定图片 - 商品信息
-            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "https://img.alicdn.com/imgextra/i1/3081276392/TB2nbvndHlmpuFjSZFlXXbdQXXa_!!3081276392.jpg")));
+            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "http://file.liking.com/product_tmp/product_info.jpg")));
         }
 
         {
@@ -202,7 +202,7 @@ public class Cnn_928_LIKING_DictTest extends BaseDictTest{
 
         {
             // 固定图片 - 商品展示
-            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "https://img.alicdn.com/imgextra/i3/3081276392/TB2MVjBc9tkpuFjy0FhXXXQzFXa_!!3081276392.jpg")));
+            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "http://file.liking.com/product_tmp/product_display.jpg")));
         }
 
         {
