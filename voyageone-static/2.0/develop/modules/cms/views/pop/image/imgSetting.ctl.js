@@ -103,7 +103,7 @@ define([
 					var data = [{
 						productId: self.context.productId,
 						imageType: self.context.imageType,
-                        cartId:self.context.cartId ? self.context.cartId : null
+                        cartId:self.context.cartId ? self.context.cartId : 0
 					}];
 
 					angular.forEach(self.uploader.queue , function(item,index){

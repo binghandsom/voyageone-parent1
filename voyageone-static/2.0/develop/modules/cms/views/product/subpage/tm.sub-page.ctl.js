@@ -636,12 +636,15 @@ define([
         var self = this,
             popup = self.popups;
 
+        self.vm.platform['images1'] = self.$scope.productInfo.masterField['images1'];
+
         popup.openUploadImages({
             cartId: self.$scope.cartInfo.value,
             productId: self.$scope.productInfo.productId,
-            platform: self.vm.platform
-        }).then(function (context) {
-            console.log('图片上传后：', context);
+            platform: self.vm.platform,
+            showArr:['image1','image6','image7','image2','image3','image4','image5']
+        }).then(function (platform) {
+            self.vm.platform = platform;
         });
     };
 

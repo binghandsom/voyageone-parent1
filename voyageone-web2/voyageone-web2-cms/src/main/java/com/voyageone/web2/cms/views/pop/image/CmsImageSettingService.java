@@ -23,6 +23,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.web2.base.BaseViewService;
+import com.voyageone.web2.cms.views.product.CmsProductPlatformDetailService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +55,8 @@ public class CmsImageSettingService extends BaseViewService {
     ImagesService imagesService;
     @Autowired
     private CommonSchemaService commonSchemaService;
+    @Autowired
+    private CmsProductPlatformDetailService cmsProductPlatformDetailService;
 
     public Map<String, Object> uploadImage(MultipartFile file, Long productId, String imageType, UserSessionBean user, String imageExtend) throws Exception {
 
@@ -99,7 +103,8 @@ public class CmsImageSettingService extends BaseViewService {
 
     }
 
-    public Map<String, Object> uploadPlatformImage(MultipartFile file, Long productId, String imageType, UserSessionBean user, String imageExtend, Integer cartId) throws IOException {
+    public Map<String, Object> uploadPlatformImage(MultipartFile file, Long productId, String imageType,
+                                                   UserSessionBean user, String imageExtend, Integer cartId) throws IOException {
         Map<String, Object> response = new HashMap<>();
 
         String orderChannelId = user.getSelChannelId();
@@ -129,13 +134,12 @@ public class CmsImageSettingService extends BaseViewService {
         newModel.setUpdFlg(1);
         newModel.setCreater(user.getUserName());
         newModel.setImgName(imageName);
+
         imagesService.insert(newModel);
 
-        // 更新产品平台数据
-        String timeStamp = productService.updateProductPlatform(user.getSelChannelId(), productId, cmsBtProductModel.getPlatform(cartId), DateTimeUtil.getNowTimeStamp());
-
         response.put("imageName", imageName);
-        response.put("updateTime", timeStamp);
+        response.put("updateTime", productService.updateProductPlatform(user.getSelChannelId(), productId, cmsBtProductModel.getPlatform(cartId), DateTimeUtil.getNowTimeStamp()));
+
         return response;
     }
 
@@ -231,11 +235,22 @@ public class CmsImageSettingService extends BaseViewService {
 
         if (cartId != null) {
             images = cmsBtProductModel.getPlatform(cartId).getImages(fieldImageType);
+            List<CmsBtProductModel_Field_Image> _imageFields =new ArrayList<CmsBtProductModel_Field_Image>();
+            for(Object item:images){
+                if(item instanceof CmsBtProductModel_Field_Image){
+                    _imageFields.add((CmsBtProductModel_Field_Image) item);
+                }else{
+                    _imageFields.add(new CmsBtProductModel_Field_Image((Map) item));
+                }
+            }
+            images = _imageFields;
         } else {
             images = cmsBtProductModel.getCommon().getFields().getImages(fieldImageType);
         }
 
-        images = images.stream().filter(cmsBtProductModel_field_image -> cmsBtProductModel_field_image.size() > 0).filter(cmsBtProductModel_field_image1 -> !StringUtils.isEmpty(cmsBtProductModel_field_image1.getName())).collect(Collectors.toList());
+        images = images.stream().filter(cmsBtProductModel_field_image -> cmsBtProductModel_field_image.size() > 0)
+                .filter(cmsBtProductModel_field_image1 -> !StringUtils.isEmpty(cmsBtProductModel_field_image1.getName()))
+                .collect(Collectors.toList());
 
         String imageName = String.format("%s-%s-%s-%s",
                 user.getSelChannelId(), DateTimeUtil.getLocalTime(8, "yyyyMMddHHmmss"),

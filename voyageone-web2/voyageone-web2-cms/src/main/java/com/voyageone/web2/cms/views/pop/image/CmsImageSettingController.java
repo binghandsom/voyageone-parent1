@@ -35,7 +35,7 @@ public class CmsImageSettingController extends CmsController {
     CmsProductDetailService productPropsEditService;
 
     // 允许上传的默认图片文件的后缀名
-    private List<String> imageExtends = new ArrayList<String>(){{
+    private List<String> imageExtends = new ArrayList<String>() {{
         add(".jpg");
         add(".JPG");
         add(".png");
@@ -43,25 +43,25 @@ public class CmsImageSettingController extends CmsController {
     }};
 
     @RequestMapping(CmsUrlConstants.POP.IMAGE_SETTING.UPLOAD_IMAGE)
-    public AjaxResponse uploadImage(HttpServletRequest request, @RequestParam Long productId,@RequestParam String imageType) throws Exception {
+    public AjaxResponse uploadImage(HttpServletRequest request, @RequestParam Long productId, @RequestParam String imageType) throws Exception {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         MultipartFile file = multipartRequest.getFile("file");
-        Integer cartId =  Integer.valueOf(multipartRequest.getParameter("cartId"));
+        Integer cartId = Integer.valueOf(multipartRequest.getParameter("cartId"));
 
         if (!imageExtends.contains(ImgUtils.getImageExtend(file.getOriginalFilename())))
             throw new BusinessException("上传的图片后缀名不正确,请上传正确的图片, eg: jpg, JPG, png, PNG");
 
         InputStream input = file.getInputStream();
 
-        Map<String,Object> response;
+        Map<String, Object> response;
 
-        if(cartId != null && cartId != 0){
-            response = cmsImageSettingService.uploadPlatformImage(file, productId, imageType, getUser(), ImgUtils.getImageExtend(file.getOriginalFilename()),cartId);
-        }else{
+        if (cartId != null && cartId != 0) {
+            response = cmsImageSettingService.uploadPlatformImage(file, productId, imageType, getUser(), ImgUtils.getImageExtend(file.getOriginalFilename()), cartId);
+        } else {
             response = cmsImageSettingService.uploadImage(file, productId, imageType, getUser(), ImgUtils.getImageExtend(file.getOriginalFilename()));
         }
 
-        if(response == null){
+        if (response == null) {
             throw new BusinessException("图片上传失败");
         }
 
@@ -72,7 +72,7 @@ public class CmsImageSettingController extends CmsController {
     }
 
     @RequestMapping(CmsUrlConstants.POP.IMAGE_SETTING.UPLOAD_IMAGES)
-    public AjaxResponse uploadImages(HttpServletRequest request, @RequestParam Long productId,@RequestParam String imageType) throws Exception {
-        return uploadImage(request,productId,imageType);
+    public AjaxResponse uploadImages(HttpServletRequest request, @RequestParam Long productId, @RequestParam String imageType) throws Exception {
+        return uploadImage(request, productId, imageType);
     }
 }

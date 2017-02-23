@@ -1633,4 +1633,32 @@ public class CmsProductDetailService extends BaseViewService {
 
         return modified;
     }
+
+    /**
+     * 修改产品PlateForm属性中的图片
+     * @param cartId      平台类型
+     * @param imageType   图片类型
+     * @param images      图片集合
+     * @return 系统当前时间
+     */
+    public String restorePlatformImg(String channelId, Long prodId, String imageType,List<String> images,String modifier,Integer cartId){
+
+        String modified = DateTimeUtil.getNowTimeStamp();
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", prodId);
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put(String.format("platforms.P%s.images%s",cartId,imageType.substring(imageType.length()-1,imageType.length())), images);
+        updateMap.put("common.modifier", modifier);
+
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+
+        return modified;
+    }
 }
