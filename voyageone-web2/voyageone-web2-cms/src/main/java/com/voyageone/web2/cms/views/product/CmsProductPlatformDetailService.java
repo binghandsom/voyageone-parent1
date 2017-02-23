@@ -131,7 +131,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
      * @param userName
      * @throws Exception
      */
-    public  void  saveCartSkuPrice(SaveCartSkuPriceParameter parameter,String channelId,String userName) throws Exception {
+    public  void  saveCartSkuPrice(SaveCartSkuPriceParameter parameter,String channelId,String userName) throws BusinessException{
         Long productId = parameter.getProdId();
         Integer cartId = parameter.getCartId();
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, productId);

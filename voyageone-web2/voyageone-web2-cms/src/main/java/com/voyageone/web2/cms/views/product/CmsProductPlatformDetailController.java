@@ -53,7 +53,7 @@ public class CmsProductPlatformDetailController extends CmsController {
     private ProductService productService;
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SaveCartSkuPrice)
-    public  AjaxResponse  saveCartSkuPrice(@RequestBody SaveCartSkuPriceParameter parameter) throws Exception {
+    public  AjaxResponse  saveCartSkuPrice(@RequestBody SaveCartSkuPriceParameter parameter) {
         UserSessionBean userSessionBean = getUser();
         cmsProductPlatformDetailService.saveCartSkuPrice(parameter, userSessionBean.getSelChannelId(), userSessionBean.getUserName());
         return success(null);

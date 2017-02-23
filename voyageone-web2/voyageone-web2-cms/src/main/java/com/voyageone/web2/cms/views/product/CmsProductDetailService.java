@@ -1625,7 +1625,7 @@ public class CmsProductDetailService extends BaseViewService {
      * @param platform
      * @throws Exception
      */
-    public void updateSkuPrice(String channelId, Integer cartId, Long prodId, String userName,CmsBtProductModel_Platform_Cart platform) throws Exception {
+    public void updateSkuPrice(String channelId, Integer cartId, Long prodId, String userName,CmsBtProductModel_Platform_Cart platform) throws BusinessException {
 
         // 根据中国最终售价来判断 中国建议售价是否需要自动提高价格
         try {

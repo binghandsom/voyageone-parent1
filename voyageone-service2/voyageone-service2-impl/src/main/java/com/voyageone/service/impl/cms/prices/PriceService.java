@@ -37,6 +37,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 import static com.voyageone.common.CmsConstants.ChannelConfig.*;
@@ -1214,7 +1215,7 @@ public class PriceService extends BaseService {
         }
         // 无特殊处理
         else {
-            return price.doubleValue();
+            return price.setScale(2, RoundingMode.UP).doubleValue();
         }
     }
 
