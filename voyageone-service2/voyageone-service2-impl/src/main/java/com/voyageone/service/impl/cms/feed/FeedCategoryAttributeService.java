@@ -7,6 +7,9 @@ import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author james.li on 2016/4/19.
  * @version 2.0.0
@@ -26,6 +29,17 @@ public class FeedCategoryAttributeService extends BaseService {
      */
     public CmsMtFeedAttributesModel getCategoryAttributeByCatId(String channelId, String catId) {
         return cmsBtFeedCategoryAttributeDao.selectCategoryAttributeByCatId(channelId, catId);
+    }
+
+    public List<String> getAttributeNameByChannelId(String channelId) {
+        List<CmsMtFeedAttributesModel> cmsMtFeedAttributesModels = cmsBtFeedCategoryAttributeDao.selectCategoryAttributeByChannelId(channelId);
+        List<String> attributesName = new ArrayList<>();
+        cmsMtFeedAttributesModels.forEach(cmsMtFeedAttributesModel -> {
+            cmsMtFeedAttributesModel.getAttribute().forEach((s, strings) -> {
+                if(!attributesName.contains(s)) attributesName.add(s);
+            });
+        });
+        return attributesName;
     }
 
     /**

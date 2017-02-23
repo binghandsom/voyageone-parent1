@@ -41,7 +41,6 @@ public class CmsBtCustomPropService extends BaseService {
                 cmsBtCustomPropDao.update(cmsBtCustomPropModel);
             }
         }
-
     }
 
     /**
@@ -97,7 +96,15 @@ public class CmsBtCustomPropService extends BaseService {
         return cmsBtCustomPropModels;
     }
 
-    public CmsBtCustomPropModel setCustomDispPlay(String channelId, String orgChannelId, String cat, CmsBtCustomPropModel.Entity entity) {
+    /**
+     * 设置属性是否打勾
+     * @param channelId
+     * @param orgChannelId
+     * @param cat
+     * @param entity
+     * @return
+     */
+    public CmsBtCustomPropModel setCustomshIsDispPlay(String channelId, String orgChannelId, String cat, CmsBtCustomPropModel.Entity entity) {
         CmsBtCustomPropModel cmsBtCustomPropExtend = getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
         CmsBtCustomPropModel cmsBtCustomPropModel = getCustomPropByCatChannel(channelId, orgChannelId, cat);
         if (cmsBtCustomPropModel == null) {
@@ -129,6 +136,14 @@ public class CmsBtCustomPropService extends BaseService {
         return getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
     }
 
+    /**
+     * 更新属性的设置
+     * @param channelId
+     * @param orgChannelId
+     * @param cat
+     * @param entity
+     * @return
+     */
     public CmsBtCustomPropModel updateEntity(String channelId, String orgChannelId, String cat, CmsBtCustomPropModel.Entity entity) {
         CmsBtCustomPropModel cmsBtCustomPropExtend = getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
         CmsBtCustomPropModel cmsBtCustomPropModel = getCustomPropByCatChannel(channelId, orgChannelId, cat);
@@ -146,21 +161,20 @@ public class CmsBtCustomPropService extends BaseService {
             item.setNameCn(entity.getNameCn());
             item.setNameEn(entity.getNameEn());
             item.setType(entity.getType());
-            item.setChecked(entity.getChecked());
+            item.setValue(entity.getValue());
             cmsBtCustomPropModel.getEntitys().add(item);
         } else {
-            item.setChecked(entity.getChecked());
-        }
-        cmsBtCustomPropModel.setSort(cmsBtCustomPropExtend.getSort());
-        if (entity.getChecked()) {
-            cmsBtCustomPropModel.getSort().add(entity.getNameEn());
-        } else {
-            cmsBtCustomPropModel.getSort().remove(entity.getNameEn());
+            item.setNameCn(entity.getNameCn());
+            item.setType(entity.getType());
+            item.setValue(entity.getValue());
         }
         update(cmsBtCustomPropModel);
         return getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
     }
 
+    public List<String> getFeedAttributeName(String orgChannelId){
+
+    }
     private CmsBtCustomPropModel merge(CmsBtCustomPropModel prop1, CmsBtCustomPropModel prop2) {
         for (CmsBtCustomPropModel.Entity entity : prop2.getEntitys()) {
             CmsBtCustomPropModel.Entity temp = prop1.getEntitys().stream()
