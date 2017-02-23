@@ -34,6 +34,7 @@ import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
@@ -66,7 +67,7 @@ import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR_F
  * @version 2.0.0
  */
 @Service
-public class PlatformPriceService extends VOAbsLoggable {
+public class PlatformPriceService extends BaseService {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;

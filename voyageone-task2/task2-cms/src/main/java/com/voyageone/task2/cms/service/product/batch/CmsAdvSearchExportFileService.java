@@ -18,7 +18,6 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
@@ -71,8 +70,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private CmsBtExportTaskService cmsBtExportTaskService;
     @Autowired
     private InventoryDao inventoryDao;
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
 
     // excel cell的内容长度限制
     private final static int CELL_LENGTH_LIMIT = 2000;
@@ -80,45 +77,45 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private final static int SELECT_PAGE_SIZE = 100;
 
     /*group级导出时和平台无关的固定列：英文和中文列头名称*/
-    private final static String[] _GROUP_STATIC_COLS = {"model", "brand", "category", "productNameEn", "originalTitleCn", "mainCode","feeCatPath","origSizeType"};
-    private final static String[] _GROUP_STATIC_COLS_ZN = {"款号", "品牌", "主类目", "产品名称英语", "产品名称中文", "主商品编码","feed分类","原始尺码类型"};
+    private final static String[] _GROUP_STATIC_COLS = {"model", "brand","supplier", "category", "productNameEn", "originalTitleCn", "mainCode", "feeCatPath", "origSizeType"};
+    private final static String[] _GROUP_STATIC_COLS_ZN = {"款号", "品牌","供应商", "主类目", "产品名称英语", "产品名称中文", "主商品编码", "feed分类", "原始尺码类型"};
     //common.fields.origSizeType
     /*code级导出时和平台无关的固定列：英文和中文列头名称*/
-    private final static String[] _CODE_STATIC_COLS = {"code", "brand", "category", "productNameEn", "originalTitleCn", "model", "quantity", "color","feeCatPath","origSizeType"};
-    private final static String[] _CODE_STATIC_COLS_ZN = {"商品编码", "品牌", "主类目", "产品名称英语", "产品名称中文", "款号", "库存", "颜色/口味/香型等","feed分类","原始尺码类型"};
+    private final static String[] _CODE_STATIC_COLS = {"code", "brand", "supplier","category", "productNameEn", "originalTitleCn", "model", "quantity", "color", "feeCatPath", "origSizeType"};
+    private final static String[] _CODE_STATIC_COLS_ZN = {"商品编码", "品牌","供应商", "主类目", "产品名称英语", "产品名称中文", "款号", "库存", "颜色/口味/香型等", "feed分类", "原始尺码类型"};
 
     /*sku级导出时和平台无关的固定列：英文和中文列头名称*/
     private final static String[] _SKU_STATIC_COLS = {
-            "code", "barcode", "clientSKU", "brand", "category", "productNameEn",
+            "code", "barcode", "clientSKU", "brand", "supplier","category", "productNameEn",
             "originalTitleCn", "model", "code", "inventory", "color", "clientSize",
-            "size", "clientPriceMsrp", "clientPriceRetail", "clientPriceCost", "weightCalc","feeCatPath","origSizeType"};
+            "size", "clientPriceMsrp", "clientPriceRetail", "clientPriceCost", "weightCalc", "feeCatPath", "origSizeType"};
     private final static String[] _SKU_STATIC_COLS_ZN = {
-            "sku", "条形码", "客户原始SKU", "品牌", "主类目", "产品名称英语",
+            "sku", "条形码", "客户原始SKU", "品牌","供应商", "主类目", "产品名称英语",
             "产品名称中文", "款号", "商品编码", "库存", "颜色/口味/香型等", "客户原始Size",
-            "转换后Size", "客户建议售价", "客户指导价", "客户成本价", "重量（lb）","feed分类","原始尺码类型"};
+            "转换后Size", "客户建议售价", "客户指导价", "客户成本价", "重量（lb）", "feed分类", "原始尺码类型"};
 
 
     // 各平台固定输出列
-    private final static String[] _DynColGroup = { "URL", "Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice" };
-    private final static String[] _DynColCNGroup = { "URL", "Numiid", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)" };
-    private final static String[] _DynColJMGroup = { "MallURL", "MallId", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice" };
-    private final static String[] _DynColCNJMGroup = { "MallURL", "MallId", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)" };
+    private final static String[] _DynColGroup = {"URL", "Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice"};
+    private final static String[] _DynColCNGroup = {"URL", "Numiid", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)"};
+    private final static String[] _DynColJMGroup = {"MallURL", "MallId", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice"};
+    private final static String[] _DynColCNJMGroup = {"MallURL", "MallId", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)"};
 
-    private final static String[] _DynCol = { "URL", "Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify" };
-    private final static String[] _DynColCN = { "URL", "Numiid", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类" };
-    private final static String[] _DynColJM = { "MallURL", "MallId", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify" };
-    private final static String[] _DynColCNJM = { "MallURL", "MallId", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类" };
+    private final static String[] _DynCol = {"URL", "Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify","Live"};
+    private final static String[] _DynColCN = {"URL", "Numiid", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类","是否可售"};
+    private final static String[] _DynColJM = {"MallURL", "MallId", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify"};
+    private final static String[] _DynColCNJM = {"MallURL", "MallId", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类"};
 
     // 京东SKU级动态输出列
-    private final static String[] _DynColJDSKU = { "URL", "Numiid", "Name", "Category", "JdSkuNo", "MSRP", "RetailPrice", "SalePrice", "StoreClassify" };
-    private final static String[] _DynColCNJDSKU = { "URL", "Numiid", "商品名称", "类目", "JdSkuNo", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类" };
+    private final static String[] _DynColJDSKU = {"URL", "Numiid", "Name", "Category", "JdSkuNo", "MSRP", "RetailPrice", "SalePrice", "StoreClassify","Live"};
+    private final static String[] _DynColCNJDSKU = {"URL", "Numiid", "商品名称", "类目", "JdSkuNo", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类","是否可售"};
 
     // 聚美SKU级动态输出列
-    private final static String[] _DynColJMSKU = { "MallURL", "MallId", "SkuNo", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify" };
-    private final static String[] _DynColCNJMSKU = { "MallURL", "MallId", "SkuNo", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类" };
+    private final static String[] _DynColJMSKU = {"MallURL", "MallId", "SkuNo", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify","Live"};
+    private final static String[] _DynColCNJMSKU = {"MallURL", "MallId", "SkuNo", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类","是否可售"};
 
     // 产品数据（code级）固定输出列，用于过滤自定义显示列中相同项目
-    private final static String[] _prodCol = { "code", "brand", "category", "productNameEn", "originalTitleCn", "mainCode", "model", "quantity", "color" };
+    private final static String[] _prodCol = {"code", "brand", "category", "productNameEn", "originalTitleCn", "mainCode", "model", "quantity", "color"};
 
     /*聚美上新SKU导出列*/
     private final static String[] _shoemetroColJMSKU = {"Child SKU", "Brand", "Parent SKU", "Color", "Size", "VO Price", "Final RMB Price", "URL Link", "Inventory"};
@@ -130,6 +127,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         $debug("高级检索 文件下载任务 param=" + JacksonUtil.bean2Json(messageBody));
         CmsBtExportTaskModel taskModel = cmsBtExportTaskService.getExportById(messageBody.getCmsBtExportTaskId());
         Map<String, Object> messageMap = messageBody.getSearchValue();
+        Map<String, String> channelIdMap = messageBody.getChannelIdMap();
         CmsSearchInfoBean2 searchValue;
         try {
             searchValue = JacksonUtil.json2Bean(JacksonUtil.bean2Json(messageMap), CmsSearchInfoBean2.class);
@@ -160,9 +158,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
         }
 
         // 不满足条件而未导出的记录，key-value分别对应 code/skuCode/group-未提出提示信息
-        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<CmsBtOperationLogModel_Msg>();
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
         try {
-            String fileName = createExcelFile(searchValue, (List<String>) messageMap.get("_selCodeList"), channleId, sessionBean, userName, language, failList);
+            String fileName = createExcelFile(searchValue, (List<String>) messageMap.get("_selCodeList"), channleId, sessionBean, userName, language, failList, channelIdMap);
             taskModel.setFileName(fileName);
             taskModel.setStatus(1); // 成功
         } catch (Throwable exp) {
@@ -182,7 +180,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
     /**
      * 获取数据文件内容
      */
-    private String createExcelFile(CmsSearchInfoBean2 searchValue, List<String> codeList, String channelId, Map<String, Object> cmsSessionBean, String userName, String language, List<CmsBtOperationLogModel_Msg> failList)
+    private String createExcelFile(CmsSearchInfoBean2 searchValue, List<String> codeList, String channelId, Map<String
+            , Object> cmsSessionBean, String userName, String language, List<CmsBtOperationLogModel_Msg> failList
+            , Map<String, String> channelIdMap)
             throws IOException, InvalidFormatException {
         String fileName = null;
         if (searchValue.getFileType() == 1) {
@@ -208,7 +208,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         }
 
         // 获取product列表
-        List<String> prodCodeList = null;
+        List<String> prodCodeList;
         if (searchValue.getFileType() == 2) {
             if (codeList == null || codeList.isEmpty()) {
                 prodCodeList = advSearchQueryService.getGroupCodeList(searchValue, channelId);
@@ -298,12 +298,12 @@ public class CmsAdvSearchExportFileService extends BaseService {
             } else if (searchValue.getFileType() == 5) {
                 writeFilingHead(book);
             }
-            Map<String,TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId, "cn");
-            Map<String,TypeChannelBean> sizeTypes  = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId, "cn");
+            Map<String, TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId, "cn");
+            Map<String, TypeChannelBean> sizeTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId, "cn");
 
             int offset = 0; // SKU导出时，startRowIndex可能行数会增加，因为一个code可有有多个sku
             for (int i = 0; i < pageCount; i++) {
-                $info(String.format("%d/%d",i+1,pageCount));
+                $info(String.format("%d/%d", i + 1, pageCount));
                 queryObject.setSkip(i * SELECT_PAGE_SIZE);
                 queryObject.setLimit(SELECT_PAGE_SIZE);
                 List<CmsBtProductBean> items = productService.getBeanList(channelId, queryObject);
@@ -311,32 +311,31 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     break;
                 }
                 items.forEach(cmsBtProductBean -> {
-                    String productType =cmsBtProductBean.getCommon().getFields().getProductType();
-                    if(!StringUtil.isEmpty(productType)){
+                    String productType = cmsBtProductBean.getCommon().getFields().getProductType();
+                    if (!StringUtil.isEmpty(productType)) {
                         TypeChannelBean temp = productTypes.get(productType);
-                        if(temp != null){
+                        if (temp != null) {
                             cmsBtProductBean.getCommon().getFields().setProductTypeCn(temp.getName());
                         }
                     }
 
-                    String sizeType =cmsBtProductBean.getCommon().getFields().getSizeType();
-                    if(!StringUtil.isEmpty(sizeType)){
+                    String sizeType = cmsBtProductBean.getCommon().getFields().getSizeType();
+                    if (!StringUtil.isEmpty(sizeType)) {
                         TypeChannelBean temp = sizeTypes.get(sizeType);
-                        if(temp != null){
+                        if (temp != null) {
                             cmsBtProductBean.getCommon().getFields().setSizeTypeCn(temp.getName());
                         }
                     }
                 });
                 // 每页开始行
                 int startRowIndex = i * SELECT_PAGE_SIZE + ((searchValue.getFileType() == 4 || searchValue.getFileType() == 5) ? 1 : 2);
-                boolean isContinueOutput = false;
                 if (searchValue.getFileType() == 1) {
-                    isContinueOutput = writeRecordToFile(book, items, cmsSessionBean, channelId, cartList, startRowIndex);
+                   writeRecordToFile(book, items, cmsSessionBean, channelId, cartList, startRowIndex, channelIdMap);
                 } else if (searchValue.getFileType() == 2) {
-                    isContinueOutput = writeRecordToGroupFile(book, items, channelId, cartList, startRowIndex);
+                    writeRecordToGroupFile(book, items, channelId, cartList, startRowIndex, channelIdMap);
                 } else if (searchValue.getFileType() == 3) {
                     /*isContinueOutput暂时无用*/
-                    offset += writeRecordToSkuFile(book, items, cartList, startRowIndex + offset);
+                    offset += writeRecordToSkuFile(book, items, cartList, startRowIndex + offset, channelIdMap);
                 } else if (searchValue.getFileType() == 4) {
                     /*isContinueOutput暂时无用*/
                     offset += writePublishJMSkuFile(book, items, startRowIndex + offset, failList);
@@ -359,9 +358,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
             } finally {
                 outputStream.close();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             $error(e);
-        } finally{
+        } finally {
             book.close();
         }
         return fileName;
@@ -404,7 +403,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
         }
         FileUtils.cell(row1, index++, style1).setCellValue("Images");
         FileUtils.cell(row1, index++, style1).setCellValue("Lock");
-
         if (commonProps != null) {
             for (Map<String, String> prop : commonProps) {
                 if (ArrayUtils.contains(_prodCol, prop.get("propId"))) {
@@ -429,7 +427,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row1, index++, style1).setCellValue(prop.get("name"));
             }
         }
-
         // 固定列长度
         index = size;
         for (TypeChannelBean cartObj : cartList) {
@@ -446,7 +443,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
         FileUtils.cell(row2, index++, style2).setCellValue("商品原图地址");
         FileUtils.cell(row2, index++, style2).setCellValue("是否被锁定");
-
         if (commonProps != null) {
             for (Map<String, String> prop : commonProps) {
                 if (ArrayUtils.contains(_prodCol, prop.get("propId"))) {
@@ -503,7 +499,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 }
             }
         }
-
         index = size;
         for (TypeChannelBean cartObj : cartList) {
             if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
@@ -516,6 +511,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 }
             }
         }
+
     }
 
     /**
@@ -554,7 +550,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
         }
         FileUtils.cell(row1, index++, style1).setCellValue("Lock");
-
         index = size;
         for (TypeChannelBean cartObj : cartList) {
             if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
@@ -577,6 +572,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
     /**
      * 聚美上新SKU数据导出
+     *
      * @param book
      */
     private void writePublishJMSkuHead(Workbook book) {
@@ -593,6 +589,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
     /**
      * 生成报备文件文档头部
+     *
      * @param workbook
      */
     public void writeFilingHead(Workbook workbook) {
@@ -601,7 +598,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         Row row = FileUtils.row(sheet, 0);
         CellStyle style = workbook.createCellStyle();
         this.setHeadCellStyle(style, "en");
-        int size  = _filingSkuCol.length;
+        int size = _filingSkuCol.length;
         for (int i = 0; i < size; i++) {
             FileUtils.cell(row, i, style).setCellValue(_filingSkuCol[i]);
         }
@@ -640,9 +637,10 @@ public class CmsAdvSearchExportFileService extends BaseService {
      * @param items         待输出DB数据
      * @param cmsSession    cmsSessionBean
      * @param startRowIndex 开始
+     * @param channelIdMap
      * @return boolean 是否终止输出
      */
-    private boolean writeRecordToFile(Workbook book, List<CmsBtProductBean> items, Map cmsSession, String channelId, List<TypeChannelBean> cartList, int startRowIndex) {
+    private boolean writeRecordToFile(Workbook book, List<CmsBtProductBean> items, Map cmsSession, String channelId, List<TypeChannelBean> cartList, int startRowIndex, Map<String, String> channelIdMap) {
         boolean isContinueOutput = true;
         List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.get("_adv_search_customProps");
         List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.get("_adv_search_commonProps");
@@ -711,6 +709,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
             // 内容输出
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getCode()));
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getBrand()));
+            FileUtils.cell(row, index++, unlock).setCellValue(channelIdMap.get(item.getOrgChannelId()));
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommon().getCatPath()));
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getProductNameEn()));
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getOriginalTitleCn()));
@@ -823,9 +822,11 @@ public class CmsAdvSearchExportFileService extends BaseService {
             if (customProps != null) {
                 for (Map<String, String> prop : customProps) {
                     Object value = item.getFeed().getCnAtts().getAttribute(prop.get("feed_prop_original"));
-                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
+                    FileUtils.cell(row, index++, unlock)
+                            .setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
                     value = item.getFeed().getOrgAtts().getAttribute(prop.get("feed_prop_original"));
-                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
+                    FileUtils.cell(row, index++, unlock)
+                            .setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
                 }
             }
             if (salesProps != null) {
@@ -836,7 +837,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     key = key.substring(6);
                     Integer salesVal = null;
                     if (salesData.getSubNode(key.split("\\.")) instanceof Double)
-                        salesVal = ((Double)salesData.getSubNode(key.split("\\."))).intValue();
+                        salesVal = ((Double) salesData.getSubNode(key.split("\\."))).intValue();
                     else
                         salesVal = (Integer) salesData.getSubNode(key.split("\\."));
 
@@ -861,8 +862,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 }
             }
         }
-//        sheet.autoSizeColumn(nowIdx);
-
         return isContinueOutput;
     }
 
@@ -872,28 +871,27 @@ public class CmsAdvSearchExportFileService extends BaseService {
      * @param book          输出Excel文件对象
      * @param items         待输出DB数据
      * @param startRowIndex 开始
+     * @param channelIdMap
      * @return boolean 是否终止输出
      */
-    private boolean writeRecordToGroupFile(Workbook book, List<CmsBtProductBean> items, String channelId, List<TypeChannelBean> cartList, int startRowIndex) {
+    private boolean writeRecordToGroupFile(Workbook book, List<CmsBtProductBean> items, String channelId, List<TypeChannelBean> cartList, int startRowIndex, Map<String, String> channelIdMap) {
         boolean isContinueOutput = true;
         CellStyle unlock = FileUtils.createUnLockStyle(book);
 
-        // 先取得各产品grooup信息
+        // 先取得各产品group信息
         List<String> codeList = new ArrayList<>();
         for (CmsBtProductBean item : items) {
             if (item.getCommon() == null) {
                 continue;
             }
-            CmsBtProductModel_Field fields = item.getCommon().getFields();
-            if (fields == null) {
+            if (item.getCommon().getFields() == null) {
                 continue;
             }
-            codeList.add(fields.getCode());
+            codeList.add(item.getCommon().getFields().getCode());
         }
-        List<Integer> cartIdList = new ArrayList<>();
-        for (TypeChannelBean cartObj : cartList) {
-            cartIdList.add(NumberUtils.toInt(cartObj.getValue()));
-        }
+        List<Integer> cartIdList = cartList.stream()
+                .map(cartObj -> NumberUtils.toInt(cartObj.getValue()))
+                .collect(Collectors.toList());
 
         JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{'channelId':#,'mainProductCode':{$in:#},'cartId':{$in:#}}");
@@ -923,6 +921,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
             // 内容输出
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getModel()));
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getBrand()));
+            FileUtils.cell(row, index++, unlock).setCellValue(channelIdMap.get(item.getOrgChannelId()));
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommon().getCatPath()));
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getProductNameEn()));
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getOriginalTitleCn()));
@@ -1002,13 +1001,14 @@ public class CmsAdvSearchExportFileService extends BaseService {
      * @param items         待输出DB数据
      * @param cartList      cartId列表
      * @param startRowIndex 开始
+     * @param channelIdMap
      * @return 行数偏移量
      */
-    private int writeRecordToSkuFile(Workbook book, List<CmsBtProductBean> items, List<TypeChannelBean> cartList, int startRowIndex) {
+    private int writeRecordToSkuFile(Workbook book, List<CmsBtProductBean> items, List<TypeChannelBean> cartList, int startRowIndex, Map<String, String> channelIdMap) {
         int total = 0;
         List<CmsBtProductBean> products = new ArrayList<CmsBtProductBean>();
         Map<String, Set<String>> codesMap = new HashMap<>();
-        for (CmsBtProductBean item:items) {
+        for (CmsBtProductBean item : items) {
             if (item.getCommon() == null) {
                 continue;
             }
@@ -1018,12 +1018,12 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
             List<CmsBtProductModel_Sku> skuList = item.getCommon().getSkus();
             if (skuList == null || skuList.isEmpty()) {
-                Map<String, String> failMap = new HashMap<String, String>();
+                Map<String, String> failMap = new HashMap<>();
                 failMap.put(fields.getCode(), String.format("商品common.skus为空, code=%s", fields.getCode()));
                 continue;
             }
             if (org.apache.commons.lang.StringUtils.isNotBlank(fields.getOriginalCode())) {
-                codesMap.computeIfAbsent(item.getOrgChannelId(), k -> new HashSet<String>());
+                codesMap.computeIfAbsent(item.getOrgChannelId(), k -> new HashSet<>());
                 codesMap.get(item.getOrgChannelId()).add(fields.getOriginalCode());
             }
             products.add(item);
@@ -1031,9 +1031,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
         Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<>();
         for (String channel : codesMap.keySet()) {
             if (codesMap.get(channel).size() > 0) {
-                List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(channel, new ArrayList<String>(codesMap.get(channel)));
+                List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(channel, new ArrayList<>(codesMap.get(channel)));
                 if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
-                    for (SkuInventoryForCmsBean skuInventory:inventoryForCmsBeanList) {
+                    for (SkuInventoryForCmsBean skuInventory : inventoryForCmsBeanList) {
                         skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
                     }
                 }
@@ -1057,6 +1057,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getBarcode()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSkuCode()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getBrand()));
+                FileUtils.cell(row, index++, unlock).setCellValue(channelIdMap.get(item.getOrgChannelId()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommon().getCatPath()));
                 // 2016-12-09
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommonNotNull().getFieldsNotNull().getProductNameEn()));
@@ -1166,7 +1167,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             List<CmsBtProductModel_SellerCat> sellerCats = ptfObj.getSellerCats();
                             if (CollectionUtils.isNotEmpty(sellerCats)) {
                                 int count = 0;
-                                for (CmsBtProductModel_SellerCat sellerCat:sellerCats) {
+                                for (CmsBtProductModel_SellerCat sellerCat : sellerCats) {
                                     if (count != 0) {
                                         sellerCatVal.append(" , ");
                                     }
@@ -1175,6 +1176,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                                 }
                             }
                             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(sellerCatVal.toString()));
+                            FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(prop.getStringAttribute("isSale")));
                         }
                     }
                 }
@@ -1197,7 +1199,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         int total = 0;
         List<CmsBtProductBean> products = new ArrayList<CmsBtProductBean>();
         Set<String> codes = new HashSet<String>();
-        for (CmsBtProductBean item:items) {
+        for (CmsBtProductBean item : items) {
             CmsBtProductModel_Common common = null;
             CmsBtProductModel_Field fields = null;
             CmsBtProductModel_Platform_Cart cart = null;
@@ -1234,7 +1236,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         if (!codes.isEmpty()) {
             List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(ChannelConfigEnums.Channel.ShoeMetro.getId(), new ArrayList<String>(codes));
             if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
-                for (SkuInventoryForCmsBean skuInventory:inventoryForCmsBeanList) {
+                for (SkuInventoryForCmsBean skuInventory : inventoryForCmsBeanList) {
                     skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
                 }
             }
@@ -1261,7 +1263,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 // Size 循环common.skus
                 String size = "";
                 Double voPrice = null;
-                for (CmsBtProductModel_Sku sku: skus) {
+                for (CmsBtProductModel_Sku sku : skus) {
                     if (skuCode.equals(sku.getSkuCode())) {
                         size = org.apache.commons.lang3.StringUtils.trimToEmpty(sku.getSize());
                         voPrice = sku.getClientNetPrice();
@@ -1284,17 +1286,18 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
     /**
      * 报备文件导出
+     *
      * @param workbook
      * @param items
      * @param startRowIndex
      * @param failList
      */
-    private int  writeFilingToFile(Workbook workbook, List<CmsBtProductBean> items, int startRowIndex, List<CmsBtOperationLogModel_Msg> failList) {
+    private int writeFilingToFile(Workbook workbook, List<CmsBtProductBean> items, int startRowIndex, List<CmsBtOperationLogModel_Msg> failList) {
         int total = 0;
         List<CmsBtProductBean> products = new ArrayList<CmsBtProductBean>();
         List<String> codes = new ArrayList<>();
         // 过滤选择的商品
-        for (CmsBtProductBean item:items) {
+        for (CmsBtProductBean item : items) {
             CmsBtProductModel_Common common = item.getCommon();
             if (common == null || CollectionUtils.isEmpty(common.getSkus()))
                 continue;
@@ -1375,7 +1378,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
                         break;
                     }
                 }
-                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(String.valueOf(priceSale)));
+                FileUtils.cell(row, index++, unlock)
+                        .setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(String.valueOf(priceSale)));
                 total++;
             }
         }
