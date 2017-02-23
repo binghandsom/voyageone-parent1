@@ -295,6 +295,11 @@ public class Cnn_928_LIKING_DictTest extends BaseDictTest{
             ruleRoot.addRuleWord(new CustomWord(word));
         }
 
+        {
+            // 固定图片 - 底部
+            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "http://file.liking.com/product_tmp/sku_bottom.jpg")));
+        }
+
         return ruleRoot;
     }
 
