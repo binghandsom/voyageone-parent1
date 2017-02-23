@@ -13,9 +13,11 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
+ *
  * Created by james on 2017/2/21.
  */
 @Service
@@ -23,7 +25,7 @@ public class CmsBtCustomPropService extends BaseService {
 
     private final CmsBtCustomPropDao cmsBtCustomPropDao;
 
-    final
+    private final
     FeedCategoryAttributeService feedCategoryAttributeService;
 
 
@@ -55,11 +57,12 @@ public class CmsBtCustomPropService extends BaseService {
     /**
      * 根据类目和channel 获取第三放属性 带继承关系的
      *
-     * @param channelId
-     * @param cat
-     * @return
+     * @param channelId  channelId
+     * @param cat  类目
+     * @return CmsBtCustomPropModel
      */
     public CmsBtCustomPropModel getCustomPropByCatChannelExtend(String channelId, String orgChannelId, String cat) {
+        cat = StringUtil.isEmpty(cat)?"all":cat;
         List<CmsBtCustomPropModel> cmsBtCustomPropModels = new ArrayList<>();
         CmsBtCustomPropModel cmsBtCustomProp = null;
         String cats[] = cat.split(">");
@@ -68,7 +71,6 @@ public class CmsBtCustomPropService extends BaseService {
         if (!StringUtil.isEmpty(orgChannelId)) {
             cmsBtCustomPropModels.addAll(getCustomPropByCatPath(channelId, "", cat));
         }
-
         cmsBtCustomPropModels.addAll(getCustomPropByCatPath(channelId, orgChannelId, cat));
 
         if (cmsBtCustomPropModels.size() > 0) {
@@ -81,37 +83,16 @@ public class CmsBtCustomPropService extends BaseService {
             }
         }
 
-
+        rearrange(cmsBtCustomProp);
         return cmsBtCustomProp;
     }
-
-    public List<CmsBtCustomPropModel> getCustomPropByCatPath(String channelId, String orgChannelId, String cat) {
-        List<CmsBtCustomPropModel> cmsBtCustomPropModels = new ArrayList<>();
-        String cats[] = cat.split(">");
-        String catPath = "";
-        CmsBtCustomPropModel item = getCustomPropByCatChannel(channelId, orgChannelId, "all");
-        if (item != null) {
-            cmsBtCustomPropModels.add(item);
-        }
-        // 先找以下不带orgChannelId设置
-        for (int i = 0; i < cats.length; i++) {
-            catPath += cats[i];
-            item = getCustomPropByCatChannel(channelId, orgChannelId, catPath);
-            if (item != null) {
-                cmsBtCustomPropModels.add(item);
-            }
-            catPath += ">";
-        }
-        return cmsBtCustomPropModels;
-    }
-
     /**
      * 设置属性是否打勾
-     * @param channelId
-     * @param orgChannelId
-     * @param cat
-     * @param entity
-     * @return
+     * @param channelId channelId
+     * @param orgChannelId  orgChannelId
+     * @param cat 类目
+     * @param entity entity
+     * @return CmsBtCustomPropModel
      */
     public CmsBtCustomPropModel setCustomshIsDispPlay(String channelId, String orgChannelId, String cat, CmsBtCustomPropModel.Entity entity) {
         CmsBtCustomPropModel cmsBtCustomPropExtend = getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
@@ -123,7 +104,7 @@ public class CmsBtCustomPropService extends BaseService {
             cmsBtCustomPropModel.setOrgChannelId(orgChannelId);
         }
         CmsBtCustomPropModel.Entity item = cmsBtCustomPropModel.getEntitys().stream()
-                .filter(entity1 -> entity1.getNameEn().equalsIgnoreCase(entity.getNameEn()) && entity.getType() == entity1.getType())
+                .filter(entity1 -> entity1.getNameEn().equalsIgnoreCase(entity.getNameEn()) && Objects.equals(entity.getType(), entity1.getType()))
                 .findFirst().orElse(null);
         if (item == null) {
             item = new CmsBtCustomPropModel.Entity();
@@ -147,14 +128,13 @@ public class CmsBtCustomPropService extends BaseService {
 
     /**
      * 更新属性的设置
-     * @param channelId
-     * @param orgChannelId
-     * @param cat
-     * @param entity
-     * @return
+     * @param channelId channelId
+     * @param orgChannelId  orgChannelId
+     * @param cat 类目
+     * @param entity entity
+     * @return CmsBtCustomPropModel
      */
     public CmsBtCustomPropModel updateEntity(String channelId, String orgChannelId, String cat, CmsBtCustomPropModel.Entity entity) {
-        CmsBtCustomPropModel cmsBtCustomPropExtend = getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
         CmsBtCustomPropModel cmsBtCustomPropModel = getCustomPropByCatChannel(channelId, orgChannelId, cat);
         if (cmsBtCustomPropModel == null) {
             cmsBtCustomPropModel = new CmsBtCustomPropModel();
@@ -163,7 +143,7 @@ public class CmsBtCustomPropService extends BaseService {
             cmsBtCustomPropModel.setOrgChannelId(orgChannelId);
         }
         CmsBtCustomPropModel.Entity item = cmsBtCustomPropModel.getEntitys().stream()
-                .filter(entity1 -> entity1.getNameEn().equalsIgnoreCase(entity.getNameEn()) && entity.getType() == entity1.getType())
+                .filter(entity1 -> entity1.getNameEn().equalsIgnoreCase(entity.getNameEn()) && Objects.equals(entity.getType(), entity1.getType()))
                 .findFirst().orElse(null);
         if (item == null) {
             item = new CmsBtCustomPropModel.Entity();
@@ -181,7 +161,41 @@ public class CmsBtCustomPropService extends BaseService {
         return getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
     }
 
-    public List<String> getFeedAttributeName(String orgChannelId){
+    private List<CmsBtCustomPropModel> getCustomPropByCatPath(String channelId, String orgChannelId, String cat) {
+        List<CmsBtCustomPropModel> cmsBtCustomPropModels = new ArrayList<>();
+        String cats[] = cat.split(">");
+        String catPath = "";
+        CmsBtCustomPropModel item = null;
+
+        // 先去第三方的feed属性一览
+        if(!StringUtil.isEmpty(orgChannelId)){
+            item = getFeedAttributeName(orgChannelId);
+        }
+        if (item != null) {
+            cmsBtCustomPropModels.add(item);
+        }
+
+        // 再去全类目的属性一栏
+        item = getCustomPropByCatChannel(channelId, orgChannelId, "all");
+        if (item != null) {
+            cmsBtCustomPropModels.add(item);
+        }
+
+        // 取得类目的属性类目的属性
+        for (String cat1 : cats) {
+            catPath += cat1;
+            item = getCustomPropByCatChannel(channelId, orgChannelId, catPath);
+            if (item != null) {
+                cmsBtCustomPropModels.add(item);
+            }
+            catPath += ">";
+        }
+        return cmsBtCustomPropModels;
+    }
+
+
+
+    private CmsBtCustomPropModel getFeedAttributeName(String orgChannelId){
         List<String> feedAttributeList = (List<String>) CacheHelper.getHashOperation().get("feedAttribute",orgChannelId);
         if(feedAttributeList == null){
             feedAttributeList = feedCategoryAttributeService.getAttributeNameByChannelId(orgChannelId);
@@ -190,7 +204,14 @@ public class CmsBtCustomPropService extends BaseService {
                 CacheHelper.getCacheTemplate().expire("feedAttribute", 1, TimeUnit.DAYS);
             }
         }
-        return  feedAttributeList;
+        CmsBtCustomPropModel feedCustomProp = new CmsBtCustomPropModel();
+        feedAttributeList.forEach(s -> {
+            CmsBtCustomPropModel.Entity entity = new CmsBtCustomPropModel.Entity();
+            entity.setNameEn(s);
+            entity.setType(CmsBtCustomPropModel.CustomPropType.Feed.getValue());
+            feedCustomProp.getEntitys().add(entity);
+        });
+        return  feedCustomProp;
     }
     private CmsBtCustomPropModel merge(CmsBtCustomPropModel prop1, CmsBtCustomPropModel prop2) {
         for (CmsBtCustomPropModel.Entity entity : prop2.getEntitys()) {
@@ -209,7 +230,7 @@ public class CmsBtCustomPropService extends BaseService {
         return prop1;
     }
 
-    public void rearrange(CmsBtCustomPropModel cmsBtCustomPropModel) {
+    private void rearrange(CmsBtCustomPropModel cmsBtCustomPropModel) {
         cmsBtCustomPropModel.getEntitys().sort((o1, o2) -> {
             Boolean b1 = o1.getChecked() == null?false:o1.getChecked();
             Boolean b2 = o2.getChecked() == null?false:o2.getChecked();
@@ -221,7 +242,7 @@ public class CmsBtCustomPropService extends BaseService {
             for(Integer i=0;i<cmsBtCustomPropModel.getSort().size();i++){
                 String key = cmsBtCustomPropModel.getSort().get(i);
                 CmsBtCustomPropModel.Entity item = cmsBtCustomPropModel.getEntitys().stream().filter(entity -> entity.getNameEn().equalsIgnoreCase(key)).findFirst().orElse(null);
-                if(item != null && true == item.getChecked()){
+                if(item != null && item.getChecked() != null && item.getChecked()){
                     item.put("dispOrder",i);
                 }
             }

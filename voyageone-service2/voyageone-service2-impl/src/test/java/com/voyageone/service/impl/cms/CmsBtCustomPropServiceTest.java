@@ -22,8 +22,8 @@ import static org.junit.Assert.*;
 public class CmsBtCustomPropServiceTest {
     @Test
     public void getFeedAttributeName() throws Exception {
-        List<String> aa = cmsBtCustomPropService.getFeedAttributeName("015");
-        System.out.println(JacksonUtil.bean2Json(aa));
+//        CmsBtCustomPropModel aa = cmsBtCustomPropService.getFeedAttributeName("015");
+//        System.out.println(JacksonUtil.bean2Json(aa));
     }
 
     @Test
@@ -31,7 +31,7 @@ public class CmsBtCustomPropServiceTest {
         CmsBtCustomPropModel aa = cmsBtCustomPropService.getCustomPropByCatChannel("010","010","aaa>bbb>ccc");
         aa.getSort().add("Brand");
         aa.getSort().add("Metal Stamp");
-        cmsBtCustomPropService.rearrange(aa);
+//        cmsBtCustomPropService.rearrange(aa);
         System.out.println(JacksonUtil.bean2Json(aa));
 
 
@@ -42,7 +42,7 @@ public class CmsBtCustomPropServiceTest {
     @Test
     public void getCustomPropByCatChannelExtend() throws Exception {
 
-        CmsBtCustomPropModel aa = cmsBtCustomPropService.getCustomPropByCatChannelExtend("010","010","aaa>bbb>ccc");
+        CmsBtCustomPropModel aa = cmsBtCustomPropService.getCustomPropByCatChannelExtend("010","010","");
         System.out.println(JacksonUtil.bean2Json(aa));
     }
 

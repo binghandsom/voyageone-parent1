@@ -884,6 +884,16 @@ public interface CmsUrlConstants {
             String SAVE_FEED ="saveFeed";
             String CREATE_FEED ="createFeed";
         }
+        interface CUSTOM {
+            String ROOT = "/cms/channel/custProp";
+            String SEARCH = "search";
+            String SAVE ="save";
+            String EXPORT ="export";
+            String IMPORT ="import";
+            String DELETE = "delete";
+            String SAVE_FEED ="saveFeed";
+            String CREATE_FEED ="createFeed";
+        }
     }
 
     interface ImageCreate {
