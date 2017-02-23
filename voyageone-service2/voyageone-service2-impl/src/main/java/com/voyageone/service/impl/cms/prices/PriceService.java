@@ -166,6 +166,30 @@ public class PriceService extends BaseService {
      * @param cartId
      * @return
      */
+    public void priceChk(String channelId, CmsBtProductModel_Platform_Cart platform, Integer cartId) {
+
+        // 获取中国建议售价的配置信息
+        CmsChannelConfigBean autoSyncPriceMsrpConfig = getAutoSyncPriceMsrpOption(channelId, cartId);
+
+        // 阀值
+        CmsChannelConfigBean mandatoryBreakThresholdConfig = getMandatoryBreakThresholdOption(channelId, cartId);
+
+        List<BaseMongoMap<String, Object>> cmsBtProductModel_skus = platform.getSkus();
+
+        if (cmsBtProductModel_skus != null) {
+            cmsBtProductModel_skus.forEach(sku -> {
+                priceCheck(sku, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
+            });
+        }
+    }
+
+    /**
+     * check输入的价格是否符合要求
+     * @param channelId
+     * @param cmsBtProduct
+     * @param cartId
+     * @return
+     */
     public void priceChk(String channelId, CmsBtProductModel cmsBtProduct, Integer cartId) {
 
         // 获取中国建议售价的配置信息

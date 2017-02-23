@@ -9,7 +9,6 @@ import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceConfirmLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -139,8 +138,9 @@ public class CmsProductPlatformDetailController extends CmsController {
         Integer cartId = Integer.valueOf(platform.get("cartId").toString());
 
         if(!type.equals("temporary")){
-            CmsBtProductModel productModel = productService.getProductById(channelId, prodId);
-            priceService.priceChk(channelId, productModel, cartId);
+//            CmsBtProductModel productModel = productService.getProductById(channelId, prodId);
+//            productModel.setPlatform(cartId, );
+            priceService.priceChk(channelId, new CmsBtProductModel_Platform_Cart(platform), cartId);
         }
 
         return doUpdateProductPlatform(params);
