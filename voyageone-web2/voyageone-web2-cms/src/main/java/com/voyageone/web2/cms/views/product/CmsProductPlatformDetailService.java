@@ -218,9 +218,9 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             CmsChannelConfigBean autoSyncPriceSaleOption = priceService.getAutoSyncPriceSaleOption(channelId, f.getCartId());
 
             ProductPrice productPrice = getProductPrice(f);
-            productPrice.setAutoSyncPriceMsrp(autoSyncPriceMsrpOption.getConfigValue1());
-            productPrice.setAutoSyncPriceSale(autoSyncPriceSaleOption.getConfigValue1());
             if (productPrice != null) {
+                productPrice.setAutoSyncPriceMsrp(autoSyncPriceMsrpOption.getConfigValue1());
+                productPrice.setAutoSyncPriceSale(autoSyncPriceSaleOption.getConfigValue1());
                 productPrice.setClientMsrpPrice(cmsBtProduct.getCommon().getFields().getClientMsrpPrice());
                 productPrice.setClientNetPrice(cmsBtProduct.getCommon().getFields().getClientNetPrice());
                 productPriceList.add(productPrice);
