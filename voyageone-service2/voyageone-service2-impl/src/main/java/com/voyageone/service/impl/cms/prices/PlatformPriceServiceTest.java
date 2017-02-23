@@ -66,7 +66,7 @@ import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR_F
  * @version 2.0.0
  */
 @Service
-public class PlatformPriceService extends BaseService {
+public class PlatformPriceServiceTest extends BaseService {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
@@ -315,7 +315,7 @@ public class PlatformPriceService extends BaseService {
             throw new BusinessException("该店铺未配置销售平台！");
         }
 
-        String prodCode = org.apache.commons.lang3.StringUtils.trimToNull(productModel.getCommonNotNull().getFieldsNotNull().getCode());
+        String prodCode = StringUtils.trimToNull(productModel.getCommonNotNull().getFieldsNotNull().getCode());
         if (prodCode == null) {
             $error("PriceService 产品数据不全 缺少code channelId=%s, cartId=%d, prod=%s", channelId, cartId, productModel.toString());
             throw new BusinessException("产品数据不全,缺少code！");
@@ -343,7 +343,7 @@ public class PlatformPriceService extends BaseService {
                 $error("PriceService 产品数据不全 未配置ims_bt_product表 channelId=%s, cartId=%d, prod=%s", channelId, cartId, productModel.toString());
                 throw new BusinessException("产品数据不全,未配置ims_bt_product表！");
             }
-            updType = org.apache.commons.lang3.StringUtils.trimToNull(imsBtProductModel.getQuantityUpdateType());
+            updType = StringUtils.trimToNull(imsBtProductModel.getQuantityUpdateType());
             if (updType == null || (!"s".equals(updType) && !"p".equals(updType))) {
                 $error("PriceService 产品数据不全 未配置ims_bt_product表quantity_update_type channelId=%s, cartId=%d, prod=%s", channelId, cartId, productModel.toString());
                 throw new BusinessException("产品数据不全,未配置ims_bt_product表quantity_update_type！");
@@ -355,7 +355,7 @@ public class PlatformPriceService extends BaseService {
         String priceConfigValue = null;
         if (priceConfig != null) {
             // 取得价格对应的configValue名
-            priceConfigValue = org.apache.commons.lang3.StringUtils.trimToNull(priceConfig.getConfigValue1());
+            priceConfigValue = StringUtils.trimToNull(priceConfig.getConfigValue1());
         }
         if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
             // 天猫平台直接调用API
@@ -537,9 +537,9 @@ public class PlatformPriceService extends BaseService {
 
         List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
 
-        String channelId = org.apache.commons.lang3.StringUtils.trimToNull(messageBody.getChannelId());
+        String channelId = StringUtils.trimToNull(messageBody.getChannelId());
         List<String> codeList = messageBody.getCodeList();
-        String userName = org.apache.commons.lang3.StringUtils.trimToEmpty(messageBody.getSender());
+        String userName = StringUtils.trimToEmpty(messageBody.getSender());
 
         String voRate = messageBody.getVoRate();
         String msg;
