@@ -466,7 +466,7 @@ public class KitBagAnalysisService extends BaseAnalysisService {
 
     @Override
     protected String getTaskName() {
-        return "KitBagAnalysisJob";
+        return "CmsKitBagAnalysisJob";
     }
 
     @Override
