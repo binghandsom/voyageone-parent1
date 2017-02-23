@@ -180,6 +180,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                     UPLOAD_NAME, totalCnt, addOkCnt, addNgCnt, updOkCnt, updNgCnt);
             $info(strResult);
         }
+        resultMap.clear();
         $info("=================" + UPLOAD_NAME + "上新  主线程结束 [总耗时:" + (System.currentTimeMillis() - totalStartTime) + "]====================");
     }
 

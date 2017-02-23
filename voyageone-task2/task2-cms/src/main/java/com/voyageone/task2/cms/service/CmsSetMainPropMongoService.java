@@ -45,6 +45,8 @@ import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
@@ -159,7 +161,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
     PromotionCodeService promotionCodeService;
 
     @Autowired
-    private MqSender sender;
+    private CmsMqSenderService sender;
     // 每个channel的feed->master导入默认最大件数
     private final static int FEED_IMPORT_MAX_500 = 500;
 
@@ -1221,17 +1223,15 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     productService.createProduct(channelId, cmsProduct, getTaskName());
                     $debug("createProduct:" + (System.currentTimeMillis() - startTime));
 
-                    Integer prodId = cmsProduct.getProdId().intValue();
+                    Long prodId = cmsProduct.getProdId();
                     cmsProduct.getPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> {
                         if(cmsBtProductModel_platform_cart.getCartId() >= 20 &&  cmsBtProductModel_platform_cart.getCartId() < 900){
-                            CmsBtPriceLogModel newLog = new CmsBtPriceLogModel();
-                            newLog.setCartId(cmsBtProductModel_platform_cart.getCartId() );
-                            newLog.setProductId(prodId);
-                            newLog.setChannelId(channelId);
-
-                            // 向Mq发送消息同步sku,code,group价格范围
-                            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_COUNT_PRODUCT_PRICE,
-                                    JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
+                            ProductPriceUpdateMQMessageBody productPriceUpdateMQMessageBody = new ProductPriceUpdateMQMessageBody();
+                            productPriceUpdateMQMessageBody.setChannelId(channelId);
+                            productPriceUpdateMQMessageBody.setProdId(prodId);
+                            productPriceUpdateMQMessageBody.setCartId(cmsBtProductModel_platform_cart.getCartId());
+                            productPriceUpdateMQMessageBody.setSender(getTaskName());
+                            sender.sendMessage(productPriceUpdateMQMessageBody);
                         }
 
                     });
