@@ -66,7 +66,7 @@ import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR_F
  * @version 2.0.0
  */
 @Service
-public class PlatformPriceServiceTest extends BaseService {
+public class PlatformPriceService extends BaseService {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
