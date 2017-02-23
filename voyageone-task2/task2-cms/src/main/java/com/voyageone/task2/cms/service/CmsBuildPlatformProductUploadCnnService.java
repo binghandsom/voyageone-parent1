@@ -611,19 +611,41 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
         String strNotes = "";
         try {
             // 取得描述
-            RuleExpression ruleDetails = new RuleExpression();
-            MasterWord masterWord = new MasterWord("details");
-            ruleDetails.addRuleWord(masterWord);
-            String details = expressionParser.parse(ruleDetails, shop, getTaskName(), null);
-            if (!StringUtils.isEmpty(details)) {
-                strNotes = sxProductService.resolveDict(details, expressionParser, shop, getTaskName(), null);
-                if (StringUtils.isEmpty(strNotes)) {
-                    throw new BusinessException(String.format("详情页描述[%s]在dict表里未设定!", details));
+//            RuleExpression ruleDetails = new RuleExpression();
+//            MasterWord masterWord = new MasterWord("details");
+//            ruleDetails.addRuleWord(masterWord);
+//            String details = expressionParser.parse(ruleDetails, shop, getTaskName(), null);
+//            if (!StringUtils.isEmpty(details)) {
+//                strNotes = sxProductService.resolveDict(details, expressionParser, shop, getTaskName(), null);
+//                if (StringUtils.isEmpty(strNotes)) {
+//                    throw new BusinessException(String.format("详情页描述[%s]在dict表里未设定!", details));
+//                }
+//            } else {
+//                // 解析cms_mt_platform_dict表中配置的"新独立域名详情页描述"
+//                strNotes = sxProductService.resolveDict(UPLOAD_NAME + "详情页描述", expressionParser, shop, getTaskName(), null);
+//            }
+
+            String strCnnDetailTemplateName = "新独立域名Liking详情页描述";
+            if (mainProduct.getChannelId().equals("928")) {
+                if (mainProduct.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
+                    String detailName = mainProduct.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
+
+                    if (StringUtils.isEmpty(detailName)) detailName = "";
+                    if (detailName.equals("天猫同购描述-重点商品")) {
+                        strCnnDetailTemplateName = "新独立域名Liking详情页描述-重点商品";
+                    } else if (detailName.equals("天猫同购描述-无属性图")) {
+                        strCnnDetailTemplateName = "新独立域名Liking详情页描述-无属性图";
+                    } else if (detailName.equals("天猫同购描述-非重点之英文长描述")) {
+                        strCnnDetailTemplateName = "新独立域名Liking详情页描述-非重点之英文长描述";
+                    } else if (detailName.equals("天猫同购描述-非重点之中文长描述")) {
+                        strCnnDetailTemplateName = "新独立域名Liking详情页描述-非重点之中文长描述";
+                    } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
+                        strCnnDetailTemplateName = "新独立域名Liking详情页描述-非重点之中文使用说明";
+                    }
                 }
-            } else {
-                // 解析cms_mt_platform_dict表中配置的"新独立域名详情页描述"
-                strNotes = sxProductService.resolveDict(UPLOAD_NAME + "详情页描述", expressionParser, shop, getTaskName(), null);
             }
+            strNotes = sxProductService.resolveDict(strCnnDetailTemplateName, expressionParser, shop, getTaskName(), null);
+
         } catch (Exception ex) {
             throw new BusinessException(String.format("%s取得详情页描述信息失败！[errMsg:%s]", UPLOAD_NAME, ex.getMessage()));
         }
