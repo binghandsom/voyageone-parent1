@@ -7,7 +7,9 @@ import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceConfirmLogService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -47,6 +49,9 @@ public class CmsProductPlatformDetailController extends CmsController {
     @Autowired
     private PriceService priceService;
 
+    @Autowired
+    private ProductService productService;
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SaveCartSkuPrice)
     public  AjaxResponse  saveCartSkuPrice(@RequestBody SaveCartSkuPriceParameter parameter) throws Exception {
         UserSessionBean userSessionBean = getUser();
@@ -82,7 +87,7 @@ public class CmsProductPlatformDetailController extends CmsController {
         result.put("platform", cmsProductPlatformDetailService.getProductPlatform(channelId, prodId, cartId, getLang()));
         result.put("channelConfig", cmsAdvanceSearchService.getChannelConfig(channelId, cartId, getLang()));
         result.put("autoSyncPriceMsrp", priceService.getAutoSyncPriceMsrpOption(channelId, cartId).getConfigValue1());
-        result.put("autoSyncPriceSale", cmsProductPlatformDetailService.getAutoSyncPriceSaleOption(channelId, cartId));
+        result.put("autoSyncPriceSale", priceService.getAutoSyncPriceSaleOption(channelId, cartId));
 
         return success(result);
     }
@@ -131,11 +136,11 @@ public class CmsProductPlatformDetailController extends CmsController {
         Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
         String type = String.valueOf(params.get("type"));
         Map<String, Object> platform = (Map<String, Object>) params.get("platform");
-        String errcode = null;
         Integer cartId = Integer.valueOf(platform.get("cartId").toString());
 
         if(!type.equals("temporary")){
-            cmsProductPlatformDetailService.priceChk(channelId, prodId, platform, cartId);
+            CmsBtProductModel productModel = productService.getProductById(channelId, prodId);
+            priceService.priceChk(channelId, productModel, cartId);
         }
 
         return doUpdateProductPlatform(params);

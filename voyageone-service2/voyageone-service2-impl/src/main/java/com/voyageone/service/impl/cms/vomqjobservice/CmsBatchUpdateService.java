@@ -109,16 +109,7 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
      */
     private List<CmsBtOperationLogModel_Msg> updateHsCode(String propId, String propName, String propValue, List<String> codeList, String channelId, String userName, Boolean synPriceFlg) {
         List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
-        String msg = "高级检索批量 税号变更 " + propName + "=> " + propValue;
-        // 未配置自动同步的店铺，显示同步状况
-        if (synPriceFlg) {
-            msg += " (同步价格)";
-        } else {
-            CmsChannelConfigBean autoApprovePrice = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE);
-            if (autoApprovePrice == null || "0".equals(autoApprovePrice.getConfigValue1())) {
-                msg += " (未同步最终售价)";
-            }
-        }
+        final String msg = "高级检索批量 税号变更 " + propName + "=> " + propValue + " (根据配置判断同步最终售价)";
         List<String> successList = new ArrayList<>();
 
         // 获取所有的产品信息
@@ -163,7 +154,7 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
                     WriteResult rs = productService.updateFirstProduct(updObj, channelId);
                     $debug("CmsProductVoRateUpdateService 保存计算结果 " + rs.toString());
 
-                    platformPriceService.updateProductPlatformPrice(newProduct, cartId, false, userName, "高级检索批量 税号变更 " + propName + "=> " + propValue);
+                    platformPriceService.updateProductPlatformPrice(newProduct, cartId, false, userName, msg);
 
                 } catch (PriceCalculateException e) {
 

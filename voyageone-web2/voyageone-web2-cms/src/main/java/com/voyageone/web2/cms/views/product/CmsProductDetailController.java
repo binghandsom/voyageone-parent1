@@ -11,8 +11,10 @@ import com.voyageone.service.bean.cms.product.DelistingParameter;
 import com.voyageone.service.bean.cms.product.GetChangeMastProductInfoParameter;
 import com.voyageone.service.bean.cms.product.SetMastProductParameter;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -46,6 +48,9 @@ public class CmsProductDetailController extends CmsController {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    PriceService priceService;
 
     @Autowired
     CmsProductPlatformDetailService cmsProductPlatformDetailService;
@@ -288,7 +293,8 @@ public class CmsProductDetailController extends CmsController {
         Assert.notNull(platform).elseThrowDefaultWithTitle("platform");
 
 
-        cmsProductPlatformDetailService.priceChk(channelId, prodId, platform, cartId);
+        CmsBtProductModel productModel = productService.getProductById(channelId, prodId);
+        priceService.priceChk(channelId, productModel, cartId);
 
         productPropsEditService.updateSkuPrice(channelId, cartId, prodId, getUser().getUserName(), new CmsBtProductModel_Platform_Cart(platform));
 
