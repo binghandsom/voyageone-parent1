@@ -42,12 +42,7 @@ define([
         };
 
         UploadImagesCtl.prototype.getPlatForm = function (upEntity) {
-            var self = this,
-                context = self.context;
-            return self.productDetailService.getProductPlatform({
-                cartId: context.cartId,
-                prodId: context.productId
-            })
+            return this.productDetailService.getProductPlatform(upEntity);
         };
 
         /**
@@ -56,7 +51,6 @@ define([
          */
         UploadImagesCtl.prototype.openProImageSetting = function (imageType) {
             var self = this,
-                productDetailService = self.productDetailService,
                 context = self.context,
                 popups = self.popups;
 
@@ -139,6 +133,46 @@ define([
                 return;
 
             window.open(mConfig.bigImageUrl.replace("✓", args[args.length - 1]));
+        };
+
+        UploadImagesCtl.prototype.sortImg = function(imagesType){
+            var self = this,context = self.context,
+                imgSource = self.platform[imagesType];
+
+            if (!imagesType || imgSource.length < 2)
+                return;
+
+            self.productDetailService.restorePlatFromImg({
+                cartId: context.cartId,
+                prodId: context.productId,
+                imagesType: imagesType,
+                images: imgSource
+            }).then(function () {
+                self.getPlatForm({
+                    cartId: context.cartId,
+                    prodId: context.productId
+                }).then(function (res) {
+                    self.platform = res.data.platform;
+                    self.notify.success("排序成功！");
+                });
+            });
+
+        };
+
+        UploadImagesCtl.prototype.simpleImgDown = function(imgName, $event){
+
+            var jq = angular.element,
+                _aTag;
+
+            imgName = mConfig.bigImageUrl.replace("✓", imgName);
+            _aTag = jq('<a download>').attr({'href': imgName});
+
+            jq('body').append(_aTag);
+            _aTag[0].click();
+            _aTag.remove();
+
+            $event.stopPropagation();
+
         };
 
         return UploadImagesCtl;
