@@ -412,15 +412,40 @@ public class PriceService extends BaseService {
 
         String channelId = product.getChannelId();
         // 尝试获取类目级别的价格计算公式
-        CmsChannelConfigBean formulaConfig = CmsChannelConfigs.getConfigBean(channelId, PRICE_MSRP_CALC_FORMULA, String.valueOf(cartId));
+        // 根据主类目获取价格公式
+        CmsChannelConfigBean formulaConfig = CmsChannelConfigs.getConfigBeanByValue1(channelId, PRICE_MSRP_CALC_FORMULA, String.valueOf(cartId), product.getCommon().getCatPathEn());
 
+        // 根据feed类目获取价格公式
         if (formulaConfig == null)
-            // 尝试获取 Model 级别的价格计算公式
-            formulaConfig = CmsChannelConfigs.getConfigBean(channelId, PRICE_MSRP_CALC_FORMULA, product.getCommon().getFields().getModel());
+            formulaConfig = CmsChannelConfigs.getConfigBeanByValue1(channelId, PRICE_MSRP_CALC_FORMULA, String.valueOf(cartId), product.getFeed().getCatPath());
+
+        // 尝试获取 Model 级别的价格计算公式
+        if (formulaConfig == null)
+            formulaConfig = CmsChannelConfigs.getConfigBeanByValue1(channelId, PRICE_MSRP_CALC_FORMULA, String.valueOf(cartId), product.getCommon().getFields().getModel());
+
+        // 根据平台+0来获取价格公式
+        if (formulaConfig == null)
+            formulaConfig = CmsChannelConfigs.getConfigBeanByValue1(channelId, PRICE_MSRP_CALC_FORMULA, String.valueOf(cartId), "0");
 
         if (formulaConfig == null)
             // 最终, 尝试获取无限制渠道级别计算公式
             formulaConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, PRICE_MSRP_CALC_FORMULA);
+
+        if (formulaConfig == null)
+        // 根据主类目获取价格公式
+        formulaConfig = CmsChannelConfigs.getConfigBeanByValue1(channelId, PRICE_MSRP_CALC_FORMULA, "0", product.getCommon().getCatPathEn());
+
+        // 根据feed类目获取价格公式
+        if (formulaConfig == null)
+            formulaConfig = CmsChannelConfigs.getConfigBeanByValue1(channelId, PRICE_MSRP_CALC_FORMULA, "0", product.getFeed().getCatPath());
+
+        // 尝试获取 Model 级别的价格计算公式
+        if (formulaConfig == null)
+            formulaConfig = CmsChannelConfigs.getConfigBeanByValue1(channelId, PRICE_MSRP_CALC_FORMULA, "0", product.getCommon().getFields().getModel());
+
+        // 根据平台+0来获取价格公式
+        if (formulaConfig == null)
+            formulaConfig = CmsChannelConfigs.getConfigBeanByValue1(channelId, PRICE_MSRP_CALC_FORMULA, "0", "0");
 
         if (formulaConfig == null || StringUtils.isEmpty(formulaConfig.getConfigValue2()))
             throw new IllegalPriceConfigException("无法获取价格计算公式配置: %s, %s", channelId, PRICE_MSRP_CALC_FORMULA);
@@ -439,15 +464,40 @@ public class PriceService extends BaseService {
 
         String channelId = product.getChannelId();
         // 尝试获取类目级别的价格计算公式
-        CmsChannelConfigBean formulaConfig = CmsChannelConfigs.getConfigBean(channelId, PRICE_RETAIL_CALC_FORMULA, String.valueOf(cartId));
+        // 根据主类目获取价格公式
+        CmsChannelConfigBean formulaConfig = CmsChannelConfigs.getConfigBeanByValue1(channelId, PRICE_RETAIL_CALC_FORMULA, String.valueOf(cartId), product.getCommon().getCatPathEn());
 
+        // 根据feed类目获取价格公式
         if (formulaConfig == null)
-            // 尝试获取 Model 级别的价格计算公式
-            formulaConfig = CmsChannelConfigs.getConfigBean(channelId, PRICE_RETAIL_CALC_FORMULA, product.getCommon().getFields().getModel());
+            formulaConfig = CmsChannelConfigs.getConfigBeanByValue1(channelId, PRICE_RETAIL_CALC_FORMULA, String.valueOf(cartId), product.getFeed().getCatPath());
+
+        // 尝试获取 Model 级别的价格计算公式
+        if (formulaConfig == null)
+            formulaConfig = CmsChannelConfigs.getConfigBeanByValue1(channelId, PRICE_RETAIL_CALC_FORMULA, String.valueOf(cartId), product.getCommon().getFields().getModel());
+
+        // 根据平台+0来获取价格公式
+        if (formulaConfig == null)
+            formulaConfig = CmsChannelConfigs.getConfigBeanByValue1(channelId, PRICE_RETAIL_CALC_FORMULA, String.valueOf(cartId), "0");
 
         if (formulaConfig == null)
             // 最终, 尝试获取无限制渠道级别计算公式
             formulaConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, PRICE_RETAIL_CALC_FORMULA);
+
+        if (formulaConfig == null)
+            // 根据主类目获取价格公式
+            formulaConfig = CmsChannelConfigs.getConfigBeanByValue1(channelId, PRICE_RETAIL_CALC_FORMULA, "0", product.getCommon().getCatPathEn());
+
+        // 根据feed类目获取价格公式
+        if (formulaConfig == null)
+            formulaConfig = CmsChannelConfigs.getConfigBeanByValue1(channelId, PRICE_RETAIL_CALC_FORMULA, "0", product.getFeed().getCatPath());
+
+        // 尝试获取 Model 级别的价格计算公式
+        if (formulaConfig == null)
+            formulaConfig = CmsChannelConfigs.getConfigBeanByValue1(channelId, PRICE_RETAIL_CALC_FORMULA, "0", product.getCommon().getFields().getModel());
+
+        // 根据平台+0来获取价格公式
+        if (formulaConfig == null)
+            formulaConfig = CmsChannelConfigs.getConfigBeanByValue1(channelId, PRICE_RETAIL_CALC_FORMULA, "0", "0");
 
         if (formulaConfig == null || StringUtils.isEmpty(formulaConfig.getConfigValue2()))
             throw new IllegalPriceConfigException("无法获取价格计算公式配置: %s, %s", channelId, PRICE_RETAIL_CALC_FORMULA);

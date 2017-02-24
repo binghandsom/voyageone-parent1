@@ -32,11 +32,21 @@ public class CmsChannelConfigs {
         CmsChannelConfigDao cmsChannelConfigDao = ConfigDaoFactory.getCmsChannelConfigDao();
         Map<String, CmsChannelConfigBean> cmsChannelConfigBeanMap = new HashMap<>();
         cmsChannelConfigDao.selectALl()
-                .forEach(bean ->
-                            cmsChannelConfigBeanMap.put(
-                                buildKey(bean.getChannelId(), bean.getConfigKey(), bean.getConfigCode()),
-                                bean
-                            )
+                .forEach(bean -> {
+                            if (bean.getConfigKey().equals("PRICE_MSRP_CALC_FORMULA")
+                                    || bean.getConfigKey().equals("PRICE_RETAIL_CALC_FORMULA"))
+
+                                cmsChannelConfigBeanMap.put(
+                                        buildKey(bean.getChannelId(), bean.getConfigKey(), bean.getConfigCode(), bean.getConfigValue1()),
+                                        bean
+                                );
+                            else
+                                cmsChannelConfigBeanMap.put(
+                                        buildKey(bean.getChannelId(), bean.getConfigKey(), bean.getConfigCode()),
+                                        bean
+                                );
+
+                    }
                 );
         CacheHelper.reFreshSSB(KEY, cmsChannelConfigBeanMap);
         logger.info("cmsChannelConfig 读取数量: " + CacheHelper.getSize(KEY));
@@ -49,6 +59,15 @@ public class CmsChannelConfigs {
      */
     private static String buildKey(String channelId, String configKey, String configCode) {
         return channelId + CacheKeyEnums.SKIP + configKey + CacheKeyEnums.SKIP + configCode;
+    }
+
+    /**
+     * build redis hash Key
+     *
+     * @return key
+     */
+    private static String buildKey(String channelId, String configKey, String configCode, String value1) {
+        return channelId + CacheKeyEnums.SKIP + configKey + CacheKeyEnums.SKIP + configCode + CacheKeyEnums.SKIP + value1;
     }
 
     /**
@@ -105,6 +124,18 @@ public class CmsChannelConfigs {
         if (cmsChannelConfigBean == null) {
             cmsChannelConfigBean =  CacheHelper.getBean(KEY, buildKey(channelId, configKey, "0"), selfClass);
         }
+        return cmsChannelConfigBean;
+    }
+
+    /**
+     * get one ConfigBean by cartId, if ConfigBean is null, get one ConfigBean by default(0)
+     * @param channelId channel Id
+     * @param configKey config Key
+     * @param configCode config Code
+     * @return CmsChannelConfigBean
+     */
+    public static CmsChannelConfigBean getConfigBeanByValue1(String channelId, String configKey, String configCode, String value1) {
+        CmsChannelConfigBean cmsChannelConfigBean = CacheHelper.getBean(KEY, buildKey(channelId, configKey, configCode, value1), selfClass);
         return cmsChannelConfigBean;
     }
 }

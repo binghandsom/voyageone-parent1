@@ -107,6 +107,10 @@ define([
                 vm.sellerCats = vm.platform.sellerCats == null ? [] : vm.platform.sellerCats;
             }
 
+            vm.tempSkuNo = _.find(vm.platform.skus, function (mSku) {
+                return mSku.jdSkuId != "" && mSku.isSale
+            }).jdSkuId;
+
             _.each(vm.mastData.skus, function (mSku) {
                 vm.skuTemp[mSku.skuCode] = mSku;
             });
