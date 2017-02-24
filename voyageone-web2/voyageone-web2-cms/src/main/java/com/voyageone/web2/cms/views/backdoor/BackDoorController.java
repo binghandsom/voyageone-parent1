@@ -28,7 +28,9 @@ import com.voyageone.service.impl.cms.CmsMtBrandService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.jumei2.JmBtDealImportService;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.product.ProductPlatformService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -103,6 +105,10 @@ public class BackDoorController extends CmsController {
     private CmsBtJmProductDao cmsBtJmProductDao;
     @Autowired
     private SxProductService sxProductService;
+    @Autowired
+    private PriceService priceService;
+    @Autowired
+    private ProductPlatformService productPlatformService;
 
     /*@Autowired
     private MqSender sender;*/
@@ -571,7 +577,7 @@ public class BackDoorController extends CmsController {
                                 breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D;
                             }
 
-                            String diffFlg = productSkuSerivice.getPriceDiffFlg(breakThreshold, sku.getPriceSale(), sku.getPriceRetail());
+                            String diffFlg = priceService.getPriceDiffFlg(channelId, newSku, Integer.valueOf(channelBean.getValue()));
                             newSku.put("priceDiffFlg", diffFlg);
 
                             if (!skuInfo.contains(newSku))
@@ -1790,7 +1796,7 @@ public class BackDoorController extends CmsController {
 
                 });
 
-                productService.updateProductPlatform(channelId, productInfo.getProdId(), productInfo.getPlatform(cartId), "updateSkuUpcToUnique");
+                productPlatformService.updateProductPlatform(channelId, productInfo.getProdId(), productInfo.getPlatform(cartId), "updateSkuUpcToUnique");
             }
         });
 

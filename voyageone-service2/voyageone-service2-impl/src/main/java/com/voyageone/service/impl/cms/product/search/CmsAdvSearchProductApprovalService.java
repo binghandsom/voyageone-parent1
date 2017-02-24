@@ -5,10 +5,10 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Carts;
-import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -19,6 +19,7 @@ import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -32,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,10 +55,12 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
     private SxProductService sxProductService;
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
+    @Autowired
+    private PriceService priceService;
 
     public List<CmsBtOperationLogModel_Msg> approval(AdvSearchProductApprovalMQMessageBody mqMessageBody) {
         long threadNo =  Thread.currentThread().getId();
-        $info(String.format("threadNo=%d 开始 ",threadNo, JacksonUtil.bean2Json(mqMessageBody)));
+        $info(String.format("threadNo=%d 参数%s",threadNo, JacksonUtil.bean2Json(mqMessageBody)));
         Integer cartIdValue = mqMessageBody.getCartList().get(0);
         String channelId = mqMessageBody.getChannelId();
         String userName = mqMessageBody.getSender();
@@ -66,7 +68,6 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
         Map<String, Object> params = mqMessageBody.getParams();
         List<CmsBtOperationLogModel_Msg> errorCodeList = new ArrayList<>();
 
-        long sta = System.currentTimeMillis();
         // 先判断是否是ready状态（miNiMall店铺不验证）
         TypeChannelBean cartType = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, cartIdValue.toString(), "en");
         if (!"3".equals(cartType.getCartType())) {
@@ -126,7 +127,7 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                 }
             }
         }
-        $info("检查产品检查时间" + (System.currentTimeMillis() - sta));
+
         //###############################################################################################################
         // 检查商品价格 notChkPrice=1时表示忽略价格问题
         Integer notChkPriceFlg = (Integer) params.get("notChkPrice");
@@ -140,11 +141,8 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
             }
 
             // 阀值
-            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
-            Double breakThreshold = null;
-            if (cmsChannelConfigBean != null) {
-                breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D + 1.0;
-            }
+            CmsChannelConfigBean cmsChannelConfigBean = priceService.getMandatoryBreakThresholdOption(channelId, cartIdValue);
+            Double breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D + 1.0;
 
             int idx = 0;
             for (String code : productCodes) {
@@ -167,31 +165,13 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                 if (skuObjList == null) {
                     continue;
                 }
-                for (BaseMongoMap<String, Object> skuObj : skuObjList) {
-                    double priceSale = skuObj.getDoubleAttribute("priceSale");
-                    double priceRetail = skuObj.getDoubleAttribute("priceRetail");
-                    Map<String, Object> priceInfo = new HashMap<>();
-                    if (priceSale < priceRetail) {
-                        priceInfo.put("priceRetail", priceRetail);
-                    }
-                    if (breakThreshold != null) {
-                        priceLimit = priceRetail * breakThreshold;
-                    }
-                    if (breakThreshold != null && priceSale > priceLimit) {
-                        priceInfo.put("priceLimit", priceLimit);
-                    }
-                    if (priceSale < priceRetail || (breakThreshold != null && priceSale > priceLimit)) {
-                        priceInfo.put("priceSale", priceSale);
-                        priceInfo.put("skuCode", skuObj.get("skuCode"));
-                        priceInfo.put("cartName", cartName);
-                        prodInfoList.add(priceInfo);
-                    }
-                }
 
-                if (prodInfoList.size() > 0) {
+                try {
+                    priceService.priceChk(channelId, productModel, cartIdValue);
+                } catch (BusinessException ex) {
                     CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
                     errorInfo.setSkuCode(code);
-                    errorInfo.setMsg(String.format("商品价格有问题, 无法审批 cartIdValue:%s, startIdx:%s, infoList:%s", cartIdValue, idx, prodInfoList));
+                    errorInfo.setMsg(ex.getMessage());
                     errorCodeList.add(errorInfo);
                     productCodes.remove(code);
                 }
@@ -199,7 +179,7 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
         }
 
         // ############################################################################################################
-        sta = System.currentTimeMillis();
+
         BulkJongoUpdateList prodBulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
         BulkJongoUpdateList grpBulkList = new BulkJongoUpdateList(1000, cmsBtProductGroupDao, channelId);
         List<String> newProdCodeList = new ArrayList<>();
@@ -288,8 +268,6 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
             $debug(String.format("商品审批(group表) channelId=%s 结果=%s", channelId, rs.toString()));
         }
 
-        $info("更新产品状态 耗时" + (System.currentTimeMillis() - sta));
-
         String msg;
         if (cartIdValue == null || cartIdValue == 0) {
             msg = "高级检索 商品审批(全平台)";
@@ -299,15 +277,15 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
 
         // 插入上新程序
         $debug("批量修改属性 (商品审批) 开始记入SxWorkLoad表");
-        sta = System.currentTimeMillis();
+        long sta = System.currentTimeMillis();
         sxProductService.insertSxWorkLoad(channelId, newProdCodeList, cartIdValue, userName, false);
-        $info("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
+        $debug("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
 
         // 记录商品修改历史
-        sta = System.currentTimeMillis();
-            productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdValue, EnumProductOperationType.ProductApproved, msg, userName);
+        productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdValue, EnumProductOperationType.ProductApproved, msg, userName);
             sta = System.currentTimeMillis();
             // 记录商品修改历史
+            productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdValue, EnumProductOperationType.ProductApproved, msg, userName);
             $info("批量修改属性 (商品审批) 记入状态历史表结束 耗时" + (System.currentTimeMillis() - sta));
 
         return errorCodeList;

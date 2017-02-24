@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
-import com.voyageone.service.impl.cms.product.CmsProductPriceUpdateService;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -18,12 +18,12 @@ import org.springframework.stereotype.Service;
 public class CmsProductPriceUpdateMQJob extends TBaseMQCmsService<ProductPriceUpdateMQMessageBody> {
 
     @Autowired
-    private CmsProductPriceUpdateService cmsProductPriceUpdateService;
+    private PlatformPriceService platformPriceService;
 
     @Override
     public void onStartup(ProductPriceUpdateMQMessageBody messageBody) throws Exception {
         
         //// TODO: 2017/2/8 edward 这个job会废止掉,直接改成一个共通方法,只计算code级别的价格,而不是计算group级别的价格,不再发送mq 
-        cmsProductPriceUpdateService.updateProductAndGroupPrice(messageBody);
+        platformPriceService.updateProductAndGroupPrice(messageBody);
     }
 }

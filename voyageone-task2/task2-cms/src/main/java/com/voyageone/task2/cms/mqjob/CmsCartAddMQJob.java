@@ -8,6 +8,7 @@ import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.product.ProductPlatformService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsCartAddMQMessageBody;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
@@ -34,13 +35,16 @@ public class CmsCartAddMQJob extends TBaseMQCmsService<CmsCartAddMQMessageBody> 
 
     private final PriceService priceService;
 
+    private final ProductPlatformService productPlatformService;
+
     private final static int pageSize = 200;
 
     @Autowired
-    public CmsCartAddMQJob(ProductService productService, ProductGroupService productGroupService, PriceService priceService) {
+    public CmsCartAddMQJob(ProductService productService, ProductGroupService productGroupService, PriceService priceService, ProductPlatformService productPlatformService) {
         this.productService = productService;
         this.productGroupService = productGroupService;
         this.priceService = priceService;
+        this.productPlatformService = productPlatformService;
     }
 
     @Override
@@ -140,6 +144,6 @@ public class CmsCartAddMQJob extends TBaseMQCmsService<CmsCartAddMQMessageBody> 
             failMap.add(errorInfo);
         }
         productGroupService.update(group);
-        productService.updateProductPlatform(cmsBtProductModel.getChannelId(), cmsBtProductModel.getProdId(), platform, getTaskName(), false, EnumProductOperationType.CreateNewCart, EnumProductOperationType.CreateNewCart.getName(), false);
+        productPlatformService.updateProductPlatform(cmsBtProductModel.getChannelId(), cmsBtProductModel.getProdId(), platform, getTaskName(), false, EnumProductOperationType.CreateNewCart, EnumProductOperationType.CreateNewCart.getName(), false);
     }
 }

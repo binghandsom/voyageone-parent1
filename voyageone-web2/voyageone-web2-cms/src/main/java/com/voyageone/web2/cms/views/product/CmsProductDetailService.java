@@ -5,12 +5,10 @@ import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Carts;
-import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.*;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.Types;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -34,6 +32,7 @@ import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
@@ -64,8 +63,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM.confPriceRetail;
-import static com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM.priceRetail;
+import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR;
+import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA;
 
 /**
  * Created by lewis on 15-12-16.
@@ -111,6 +110,10 @@ public class CmsProductDetailService extends BaseViewService {
     private InventoryCenterLogicService inventoryCenterLogicService;
     @Autowired
     private MqSender sender;
+    @Autowired
+    private PlatformPriceService platformPriceService;
+    @Autowired
+    private ProductPlatformService productPlatformService;
 
     /**
      * 获取类目以及类目属性信息.
@@ -741,7 +744,15 @@ public class CmsProductDetailService extends BaseViewService {
         return result;
     }
 
-    public Map<String, Object> updateCommonProductinfo(String channelId, Long prodId, Map<String, Object> commInfo, String modifier) {
+    /**
+     * 更新产品共通属性
+     * @param channelId
+     * @param prodId
+     * @param commInfo
+     * @param modifier
+     * @return
+     */
+    public Map<String, Object> updateCommonProductInfo(String channelId, Long prodId, Map<String, Object> commInfo, String modifier) {
 
         List<Field> masterFields = buildMasterFields((List<Map<String, Object>>) commInfo.get("schemaFields"));
 
@@ -770,56 +781,83 @@ public class CmsProductDetailService extends BaseViewService {
             commonModel.getFields().setTranslateTime(DateTimeUtil.getNowTimeStamp());
         }
 
+        // 更新产品的共通属性
         Map<String, Object> result = productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
 
         CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
-        if (!compareHsCode(commonModel.getFields().getHsCodePrivate(), oldProduct.getCommon().getFields().getHsCodePrivate())) {
-            try {
-                // 税号从无到有的场后同步最终售价
-                if(StringUtil.isEmpty(oldProduct.getCommon().getFields().getHsCodePrivate())){
-                    priceService.setPrice(newProduct, true);
-                }else{
-                    priceService.setPrice(newProduct, false);
-                }
 
-            } catch (PriceCalculateException e) {
-                throw new BusinessException("价格计算错误" + e.getMessage());
-            } catch (IllegalPriceConfigException e) {
-                // TODO 当捕获配置错误异常时, 需要停止渠道级别的计算
-                e.printStackTrace();
-            }
+        String newHsCodePrivate = commonModel.getFields().getHsCodePrivate();
+        String newHsCodeCross = commonModel.getFields().getHsCodeCross();
+        String oldHsCodePrivate = oldProduct.getCommon().getFields().getHsCodePrivate();
+        String oldHsCodeCross = oldProduct.getCommon().getFields().getHsCodeCross();
+
+        // 如果税号发生变化,更新各平台价格
+        if (!productService.compareHsCode(newHsCodePrivate, oldHsCodePrivate)
+                || !productService.compareHsCode(newHsCodeCross, oldHsCodeCross)) {
+
+            // 处理各平台价格
             newProduct.getPlatforms().forEach((s, platform) -> {
-                if (platform.getCartId() != 0) {
+                Integer cartId = platform.getCartId();
 
-                    if (platform.getSkus() != null && platform.getSkus().size() > 0 && !platform.getSkus().get(0).getStringAttribute("priceRetail").equalsIgnoreCase(platform.getSkus().get(0).getStringAttribute("confPriceRetail"))) {
-                        platform.getSkus().forEach(sku -> {
-                            sku.setAttribute(confPriceRetail.name(), sku.getDoubleAttribute(priceRetail.name()));
-                        });
-                        cmsBtPriceConfirmLogService.addConfirmed(channelId, newProduct.getCommon().getFields().getCode(), platform, modifier);
-                    }
-                    productService.updateProductPlatform(channelId, prodId, platform, modifier, false, EnumProductOperationType.WebEdit, "税号变更",true);
+                if (cartId < CmsConstants.ACTIVE_CARTID_MIN)
+                    return;
+
+                // 如果该平台使用的FORMULA计算价格,则跳过通过voRate的价格计算处理
+                CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanWithDefault(channelId, PRICE_CALCULATOR, cartId.toString());
+                if (priceCalculatorConfig == null || PRICE_CALCULATOR_FORMULA.equals(priceCalculatorConfig.getConfigValue1()))
+                    return;
+
+                // 计算指导价
+                try {
+                    String msg = String.format("产品编辑页面-税号变更.变更前: %s, %s;变更后:%s,%s", oldHsCodePrivate, oldHsCodeCross, newHsCodePrivate, newHsCodeCross);
+                    platformPriceService.updateProductPlatformPrice(newProduct, cartId, false, modifier, msg);
+                } catch (PriceCalculateException e) {
+                    throw new BusinessException("价格计算错误,cartId:" + cartId + e.getMessage());
+                } catch (IllegalPriceConfigException e) {
+                    throw new BusinessException("价格公式配置错误,价格计算失败cartId:" + cartId + e.getMessage());
+                } catch (Throwable e) {
+                    throw new BusinessException("各平台价格更新失败cartId:" + cartId + e.getMessage());
                 }
             });
 
         }
 
-
+//        if (!productService.compareHsCode(commonModel.getFields().getHsCodePrivate(), oldProduct.getCommon().getFields().getHsCodePrivate())
+//                || !productService.compareHsCode(commonModel.getFields().getHsCodeCross(), oldProduct.getCommon().getFields().getHsCodeCross())) {
+//            try {
+//                // 税号从无到有的场后同步最终售价
+//                if (StringUtil.isEmpty(oldProduct.getCommon().getFields().getHsCodePrivate())
+//                        || StringUtil.isEmpty(oldProduct.getCommon().getFields().getHsCodeCross())){
+//                    priceService.setPrice(newProduct, true);
+//                } else{
+//                    priceService.setPrice(newProduct, false);
+//                }
+//            } catch (PriceCalculateException e) {
+//                throw new BusinessException("价格计算错误" + e.getMessage());
+//            } catch (IllegalPriceConfigException e) {
+//                // TODO 当捕获配置错误异常时, 需要停止渠道级别的计算
+//                e.printStackTrace();
+//                throw new BusinessException("价格公式配置错误,价格计算失败" + e.getMessage());
+//            }
+//
+//            // 更新各平台的价格属性
+//            newProduct.getPlatforms().forEach((s, platform) -> {
+//                if (platform.getCartId() != 0) {
+//
+//                    if (platform.getSkus() != null
+//                            && platform.getSkus().size() > 0
+//                            && !platform.getSkus().get(0).getStringAttribute(priceRetail.name()).equalsIgnoreCase(platform.getSkus().get(0).getStringAttribute(confPriceRetail.name()))) {
+//                        platform.getSkus().forEach(sku -> {
+//                            sku.setAttribute(confPriceRetail.name(), sku.getDoubleAttribute(priceRetail.name()));
+//                        });
+//                        cmsBtPriceConfirmLogService.addConfirmed(channelId, newProduct.getCommon().getFields().getCode(), platform, modifier);
+//                    }
+//                    productService.updateProductPlatform(channelId, prodId, platform, modifier, false, EnumProductOperationType.WebEdit, "税号变更",true);
+//                }
+//            });
+//
+//        }
         return result;
-    }
-
-    private Boolean compareHsCode(String hsCode1, String hsCode2) {
-        String hs1 = "";
-        String hs2 = "";
-        if (hsCode1 != null) {
-            String[] temp = hsCode1.split(",");
-            if (temp.length > 1) hs1 = temp[0];
-        }
-
-        if (hsCode2 != null) {
-            String[] temp = hsCode2.split(",");
-            if (temp.length > 1) hs2 = temp[0];
-        }
-        return hs1.equalsIgnoreCase(hs2);
     }
 
     private void changeMastCategory(CmsBtProductModel_Common commonModel, CmsBtProductModel oldProduct, String modifier) {
@@ -834,7 +872,7 @@ public class CmsProductDetailService extends BaseViewService {
                 if (temp != null && temp.size() > 0 && !StringUtil.isEmpty(temp.get(0).getCatId())) {
                     platform.setpCatId(temp.get(0).getCatId());
                     platform.setpCatPath(temp.get(0).getCatPath());
-                    productService.updateProductPlatform(oldProduct.getChannelId(), oldProduct.getProdId(), platform, modifier);
+                    productPlatformService.updateProductPlatform(oldProduct.getChannelId(), oldProduct.getProdId(), platform, modifier);
                 }
             }
         });
@@ -1374,14 +1412,14 @@ public class CmsProductDetailService extends BaseViewService {
         cmsBtProductGroup.setMainProductCode(parameter.getProductCode());//把group表中的mainProduct替换成productCode
         cmsBtProductGroup.setModifier(modifier);
         cmsBtProductGroup.setModified(DateTimeUtil.getNowTimeStamp());
-        productService.updateProductPlatform(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
-        productService.updateProductPlatform(parameter.getChannelId(), newCmsBtProductModel.getProdId(), newPlatForm, modifier);
+        productPlatformService.updateProductPlatform(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
+        productPlatformService.updateProductPlatform(parameter.getChannelId(), newCmsBtProductModel.getProdId(), newPlatForm, modifier);
 
         codes.forEach(code -> {
             CmsBtProductModel product = productService.getProductByCode(parameter.getChannelId(), code);
             CmsBtProductModel_Platform_Cart pform = product.getPlatform(parameter.getCartId());
             pform.setMainProductCode(parameter.getProductCode());
-            productService.updateProductPlatform(parameter.getChannelId(), product.getProdId(), pform, modifier);
+            productPlatformService.updateProductPlatform(parameter.getChannelId(), product.getProdId(), pform, modifier);
             String comment = "主商品发生变化 主商品：" + parameter.getProductCode();
             productStatusHistoryService.insert(parameter.getChannelId(), product.getCommon().getFields().getCode(), pform.getStatus(), parameter.getCartId(), EnumProductOperationType.ChangeMastProduct, comment, modifier);
 
@@ -1426,7 +1464,7 @@ public class CmsProductDetailService extends BaseViewService {
         platForm.setpNumIId("");
         // platForm.setpStatus(CmsConstants.PlatformStatus.);
         platForm.remove("pStatus");
-        productService.updateProductPlatform(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
+        productPlatformService.updateProductPlatform(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
         sxProductService.insertSxWorkLoad(parameter.getChannelId(), new ArrayList<String>(Arrays.asList(parameter.getProductCode())), parameter.getCartId(), modifier);
         String comment = parameter.getComment();
         productStatusHistoryService.insert(parameter.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), parameter.getCartId(), EnumProductOperationType.Delisting, comment, modifier);
@@ -1455,7 +1493,7 @@ public class CmsProductDetailService extends BaseViewService {
             return;
         }
         // 3.2 调用平台的删除商品的API
-        productService.delPlatfromProduct(paramr.getChannelId(), paramr.getCartId(), numIID);
+        productPlatformService.delPlatfromProduct(paramr.getChannelId(), paramr.getCartId(), numIID);
         //3.4 遍历group中的productCodes中的所有的code
         List<String> codes = cmsBtProductGroup.getProductCodes();
         codes.forEach(code -> {
@@ -1485,7 +1523,7 @@ public class CmsProductDetailService extends BaseViewService {
             platForm.setpProductId("");
             platForm.setpNumIId("");
             platForm.remove("pStatus");
-            productService.updateProductPlatform(paramr.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
+            productPlatformService.updateProductPlatform(paramr.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
             String comment = paramr.getComment();
             productStatusHistoryService.insert(paramr.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), paramr.getCartId(), EnumProductOperationType.DelistinGroup, comment, modifier);
             ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(paramr.getChannelId(), paramr.getCartId(), code);
@@ -1578,7 +1616,23 @@ public class CmsProductDetailService extends BaseViewService {
         return common;
     }
 
-    public void updateSkuPrice(String channelId, int cartId, Long prodId, String userName,CmsBtProductModel_Platform_Cart platform,boolean isUpdateJmDealPrice) throws Exception {
+    /**
+     * 只更新平台价格,触发平台价格刷新.
+     * @param channelId
+     * @param cartId
+     * @param prodId
+     * @param userName
+     * @param platform
+     * @throws Exception
+     */
+    public void updateSkuPrice(String channelId, Integer cartId, Long prodId, String userName,CmsBtProductModel_Platform_Cart platform) throws BusinessException {
+
+        // 根据中国最终售价来判断 中国建议售价是否需要自动提高价格
+        try {
+            priceService.unifySkuPriceMsrp(platform.getSkus(), channelId, platform.getCartId());
+        }catch (Exception e) {
+            throw new BusinessException(String.format("修改平台商品价格　调用priceService.unifySkuPriceMsrp失败 channelId=%s, cartId=%s", channelId, platform.getCartId()), e);
+        }
 
         //更新mongo数据
         HashMap<String, Object> queryMap = new HashMap<>();
@@ -1595,16 +1649,14 @@ public class CmsProductDetailService extends BaseViewService {
         bulkList.add(model);
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
 
+        // 刷新平台价格
+        CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
+        platformPriceService.publishPlatFormPrice(channelId, 2, newProduct, cartId, userName, true, false);
+
         //更新价格履历
         List<String> skus = new ArrayList<>();
         platform.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
-        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, prodId, cartId, userName, "sku价格刷新");
-
-
-        //刷新价格
-        CmsBtProductModel productInfo = productService.getProductById(channelId, prodId);
-        priceService.updateSkuPrice(channelId, cartId, productInfo,isUpdateJmDealPrice);
-
+        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, prodId, cartId, userName, "产品编辑页面,手动修改价格");
     }
 
     /**

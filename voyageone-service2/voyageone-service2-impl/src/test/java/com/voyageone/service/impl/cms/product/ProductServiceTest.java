@@ -32,6 +32,8 @@ public class ProductServiceTest {
 
     @Autowired
     ProductService productService;
+    @Autowired
+    ProductPlatformService productPlatformService;
 
     @Test
     public void testUpdateProductPlatform() throws Exception {
@@ -108,7 +110,7 @@ public class ProductServiceTest {
 
         platformCart.setSellerCats(sellerCats);
 
-        productService.updateProductPlatform("010", 2522623L, platformCart,"test");
+        productPlatformService.updateProductPlatform("010", 2522623L, platformCart,"test");
 
 
 

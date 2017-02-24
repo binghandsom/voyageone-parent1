@@ -47,9 +47,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR;
-import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA;
-
 /**
  * @author Edward
  * @version 2.0.0, 15/12/14
@@ -111,12 +108,12 @@ public class CmsAdvanceSearchService extends BaseViewService {
 
         // 获取brand list
         masterData.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
-        
+
         // 取得产品类型
         masterData.put("productTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), language));
         // 取得尺寸类型
         masterData.put("sizeTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), language));
-        
+
         // 取得销量类型
         List<Map<String, String>> salesTypeList = advSearchOtherService.getSalesTypeList(userInfo.getSelChannelId(), language, null);
         List<Map<String, String>> allSortList = new ArrayList<>(salesTypeList);
@@ -137,6 +134,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
         // 按cart获取promotion list，只加载有效的活动(活动期内/未关闭/有标签)
         Map<String, List> promotionMap = new HashMap<>();
         Map<String, List> shelvesMap = new HashMap<>();
+        Map<String, String> confirmPrice = new HashMap<>();
         param = new HashMap<>();
         for (TypeChannelBean cartBean : cartList) {
             if (CartEnums.Cart.JM.getId().equals(cartBean.getValue())) {
@@ -148,10 +146,19 @@ public class CmsAdvanceSearchService extends BaseViewService {
             }
 
             shelvesMap.put(cartBean.getValue(),cmsBtShelvesService.selectByChannelIdCart(userInfo.getSelChannelId(), Integer.parseInt(cartBean.getValue())));
+
+            // 是否是使用价格公式
+            CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanWithDefault(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.PRICE_CALCULATOR, cartBean.getValue());
+            if (priceCalculatorConfig == null) {
+                priceCalculatorConfig = new CmsChannelConfigBean(CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA, "0", "0");
+            }
+            confirmPrice.put(cartBean.getValue(), priceCalculatorConfig.getConfigValue2());
         }
         masterData.put("promotionMap", promotionMap);
 
         masterData.put("shelvesMap", shelvesMap);
+
+        masterData.put("confirmPrice", confirmPrice);
 
         // 获取自定义查询用的属性
         masterData.put("custAttsList", cmsSession.getAttribute("_adv_search_props_custAttsQueryList"));
@@ -203,53 +210,53 @@ public class CmsAdvanceSearchService extends BaseViewService {
 //             autoApprovePrice = "1"; // 自动同步
 //        }
 //        ;
-        if(!ListUtils.isNull(autoPriceCfg)) {
+        if (!ListUtils.isNull(autoPriceCfg)) {
             masterData.put("autoApprovePrice", autoPriceCfg.stream().collect(Collectors.toMap(CmsChannelConfigBean::getConfigCode, o -> o)));
-        }else{
+        } else {
             masterData.put("autoApprovePrice", new HashMap<>());
         }
 
         // 是否是使用价格公式
-        CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanNoCode(userInfo.getSelChannelId(), PRICE_CALCULATOR);
-        String isPriceFormula = "0";
-        if (priceCalculatorConfig != null && PRICE_CALCULATOR_FORMULA.equals(priceCalculatorConfig.getConfigValue1())) {
-            isPriceFormula = "1";
+        CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanNoCode(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.PRICE_CALCULATOR);
+//        String isPriceFormula = "0";
+        if (priceCalculatorConfig == null) {
+            priceCalculatorConfig = new CmsChannelConfigBean(CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA, "0", "0");
         }
-        masterData.put("isPriceFormula", isPriceFormula);
+        masterData.put("isPriceFormula", priceCalculatorConfig);
         
         // 取得渠道的通用配置，动态按钮或配置可以直接在此外添加。
         masterData.put("channelConfig", getChannelConfig(userInfo.getSelChannelId(), cartList, language));
 
         return masterData;
     }
-    
+
     /**
      * 取得平台店铺的配置（目前控制智能上新的显示与隐藏）
      */
     public Map<String, Object> getChannelConfig(String channelId, Integer cartId, String langId) {
-    	TypeChannelBean channelConfig = new TypeChannelBean();
-    	channelConfig.setValue(String.valueOf(cartId));
-    	return getChannelConfig(channelId, Arrays.asList(channelConfig), langId);
+        TypeChannelBean channelConfig = new TypeChannelBean();
+        channelConfig.setValue(String.valueOf(cartId));
+        return getChannelConfig(channelId, Arrays.asList(channelConfig), langId);
     }
-    
+
     /**
      * 取得平台店铺的配置（目前控制智能上新的显示与隐藏）
      */
     public Map<String, Object> getChannelConfig(String channelId, List<TypeChannelBean> cartList, String langId) {
         // 取得渠道的通用配置，动态按钮或配置可以直接在此外添加。
-        Map<String, Object> configMap = new HashMap<String, Object>();
+        Map<String, Object> configMap = new HashMap<>();
         if (CollectionUtils.isEmpty(cartList)) {
-        	configMap.put("publishEnabledChannels", "");
+            configMap.put("publishEnabledChannels", "");
         } else {
-        	List<String> publishEnabledChannels = new ArrayList<String>();
-        	cartList.forEach(cart -> {
-        		if (sxProductService.isSmartSx(channelId, Integer.valueOf(cart.getValue()))) {
-        			publishEnabledChannels.add(cart.getValue());
-        		}
-        	});
-        	configMap.put("publishEnabledChannels", publishEnabledChannels);
+            List<String> publishEnabledChannels = new ArrayList<>();
+            cartList.forEach(cart -> {
+                if (sxProductService.isSmartSx(channelId, Integer.valueOf(cart.getValue()))) {
+                    publishEnabledChannels.add(cart.getValue());
+                }
+            });
+            configMap.put("publishEnabledChannels", publishEnabledChannels);
         }
-        
+
         return configMap;
     }
 
@@ -290,6 +297,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
         List<String> codeList = prodObjList.stream().map(prodObj -> prodObj.getCommonNotNull().getFieldsNotNull().getCode()).filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).collect(Collectors.toList());
         return codeList;
     }
+
     /**
      * 获取当前查询的product id列表（查询条件从session而来）
      */
@@ -445,10 +453,10 @@ public class CmsAdvanceSearchService extends BaseViewService {
         List<String> prodCodeList;
         if (isSelAll == 1) {
             CmsSearchInfoBean2 searchValue = (CmsSearchInfoBean2) cmsSession.getAttribute("_adv_search_params");
-            cmsProductFreeTagsUpdateService.sendMessage(channelId,searchValue,tagPathList,orgDispTagList,modifier);
+            cmsProductFreeTagsUpdateService.sendMessage(channelId, searchValue, tagPathList, orgDispTagList, modifier);
         } else {
             prodCodeList = (List<String>) params.get("prodIdList");
-            cmsProductFreeTagsUpdateService.sendMessage(channelId,prodCodeList,tagPathList,orgDispTagList,modifier);
+            cmsProductFreeTagsUpdateService.sendMessage(channelId, prodCodeList, tagPathList, orgDispTagList, modifier);
         }
     }
 
@@ -458,11 +466,22 @@ public class CmsAdvanceSearchService extends BaseViewService {
     public boolean getCodeExcelFile(Map<String, Object> searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean, String language) {
         // 创建文件下载任务
         if (cmsBtExportTaskService.checkExportTaskByUser(userInfo.getSelChannelId(), CmsBtExportTaskService.ADV_SEARCH, userInfo.getUserName()) == 0) {
+            HashMap<String, String> channelIdMap = new HashMap<>();
+            List<OrderChannelBean> orderChannelList = Channels.getChannelList();
+            if (orderChannelList.size() > 0) {
+                for (OrderChannelBean bean : orderChannelList) {
+                    if (StringUtils.isEmpty(bean.getOrder_channel_id()) || StringUtils.isEmpty(bean.getFull_name()))
+                        continue;
+                    channelIdMap.put(bean.getOrder_channel_id(), bean.getFull_name());
+                }
+            }
+
             CmsBtExportTaskModel taskModel = new CmsBtExportTaskModel();
             taskModel.setStatus(0);
             taskModel.setChannelId(userInfo.getSelChannelId());
             taskModel.setTaskType(CmsBtExportTaskService.ADV_SEARCH);
-            taskModel.setParameter(JacksonUtil.bean2Json(searchValue)); // 目前此值只是保存仅供查看，批处理中不用此参数，而是直接用传过去的"searchValue"
+            // 目前此值只是保存仅供查看，批处理中不用此参数，而是直接用传过去的"searchValue"
+            taskModel.setParameter(JacksonUtil.bean2Json(searchValue));
             taskModel.setCreater(userInfo.getUserName());
             taskModel.setCreated(new Date());
             taskModel.setModifier(userInfo.getUserName());
@@ -471,10 +490,10 @@ public class CmsAdvanceSearchService extends BaseViewService {
             $debug("高级检索 创建文件下载任务 结果=%d", rs);
 
             // 发送MQ消息
-            searchValue.put("_channleId",  userInfo.getSelChannelId());
-            searchValue.put("_userName",  userInfo.getUserName());
-            searchValue.put("_language",  language);
-            searchValue.put("_taskId",  taskModel.getId());
+            searchValue.put("_channleId", userInfo.getSelChannelId());
+            searchValue.put("_userName", userInfo.getUserName());
+            searchValue.put("_language", language);
+            searchValue.put("_taskId", taskModel.getId());
 
             Map<String, Object> sessionBean = new HashMap<>();
             sessionBean.put("_adv_search_props_searchItems", cmsSessionBean.getAttribute("_adv_search_props_searchItems"));
@@ -486,6 +505,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
             AdvSearchExportMQMessageBody advSearchExportMQMessageBody = new AdvSearchExportMQMessageBody();
             advSearchExportMQMessageBody.setCmsBtExportTaskId(taskModel.getId());
             advSearchExportMQMessageBody.setSearchValue(searchValue);
+            advSearchExportMQMessageBody.setChannelIdMap(channelIdMap);
             advSearchExportMQMessageBody.setSender(userInfo.getUserName());
             cmsMqSenderService.sendMessage(advSearchExportMQMessageBody);
             return true;
