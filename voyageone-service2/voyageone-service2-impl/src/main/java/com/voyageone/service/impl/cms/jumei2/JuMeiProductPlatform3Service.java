@@ -76,6 +76,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
     ProductPlatformService productPlatformService;
     @Autowired
     WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
+    private List<String> newJmDealSkuNoList = new ArrayList<>();
 
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductPlatform3Service.class);
 
@@ -105,6 +106,23 @@ public class JuMeiProductPlatform3Service extends BaseService {
         Map<String, List<jmHtDealCopyDealSkusData>> productSkus = new HashMap<>();
         productMongos.forEach((product) -> {
 
+//            List<String> newJmDealSkuNoList = new ArrayList<>();
+            try {
+                HtDealGetDealByHashIDRequest getDealByHashIDRequest = new HtDealGetDealByHashIDRequest();
+                getDealByHashIDRequest.setJumei_hash_id(product.getPlatform(27).getpNumIId());
+                getDealByHashIDRequest.setFields("start_time,end_time,deal_status,product_id,sku_list");
+                HtDealGetDealByHashIDResponse getDealByHashIDResponse = serviceJumeiHtDeal.getDealByHashID(shopBean, getDealByHashIDRequest);
+                newJmDealSkuNoList = getDealByHashIDResponse.getSkuList().stream().map( (skuInfo) -> skuInfo.get("sku_no").toString()).collect(Collectors.toList());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                OperationResult result=new OperationResult();
+                result.setMsg(ex.getMessage());
+                result.setCode(product.getCommon().getFields().getCode());
+                result.setResult(false);
+                //加入错误列表
+                listOperationResult.add(result);
+            }
+
             // 取得逻辑库存
             Map<String, String> queryMap = new HashMap<>();
             queryMap.put("channelId", product.getOrgChannelId());
@@ -129,7 +147,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
                             if (!StringUtil.isEmpty(promotionSkuMap.get("jmSkuNo"))) {
 
                                 inventoryList.forEach(inventoryInfo -> {
-                                    if (inventoryInfo.getSku().equals(skuCode) && inventoryInfo.getQtyOrgin() > 0) {
+                                    if (inventoryInfo.getSku().equals(skuCode)
+                                            && inventoryInfo.getQtyOrgin() > 0
+                                            && newJmDealSkuNoList.contains(String.valueOf(promotionSkuMap.get("jmSkuNo")))) {
                                         jmHtDealCopyDealSkusData dealCopyDealSkuData = new jmHtDealCopyDealSkusData();
                                         dealCopyDealSkuData.setStocks(String.valueOf(inventoryInfo.getQtyOrgin()));
                                         dealCopyDealSkuData.setSku_no(String.valueOf(promotionSkuMap.get("jmSkuNo")));
