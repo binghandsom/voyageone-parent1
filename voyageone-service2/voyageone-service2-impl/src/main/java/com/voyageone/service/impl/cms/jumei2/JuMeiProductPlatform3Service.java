@@ -148,10 +148,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
 
                                 inventoryList.forEach(inventoryInfo -> {
                                     if (inventoryInfo.getSku().equals(skuCode)
-                                            && inventoryInfo.getQtyOrgin() > 0
+                                            && inventoryInfo.getQtyChina() > 0
                                             && newJmDealSkuNoList.contains(String.valueOf(promotionSkuMap.get("jmSkuNo")))) {
                                         jmHtDealCopyDealSkusData dealCopyDealSkuData = new jmHtDealCopyDealSkusData();
-                                        dealCopyDealSkuData.setStocks(String.valueOf(inventoryInfo.getQtyOrgin()));
+                                        dealCopyDealSkuData.setStocks(String.valueOf(inventoryInfo.getQtyChina()));
                                         dealCopyDealSkuData.setSku_no(String.valueOf(promotionSkuMap.get("jmSkuNo")));
                                         dealCopyDealSkuData.setDeal_price(String.valueOf(promotionSkuMap.get("dealPrice")));
                                         dealCopyDealSkuData.setMarket_price(String.valueOf(promotionSkuMap.get("marketPrice")));
