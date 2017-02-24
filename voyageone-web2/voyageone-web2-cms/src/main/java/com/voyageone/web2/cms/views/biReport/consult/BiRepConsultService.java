@@ -90,7 +90,7 @@ public class BiRepConsultService extends BaseService {
         model.setCheckPeriod(params.get("staDate")+"~"+params.get("endDate"));
         model.setCheckChannels(NameCreator.getTheChannelTypeName(channelCodeList));
         model.setCheckFileTypes(NameCreator.getTheFileTypeName(fileTypes));
-        model.setCreated((Date) params.get("createTime"));
+        model.setCreated(new Date());
         model.setFileName(fileName);
         model.setCreater((String)params.get("creatorName"));
         model.setCreater((String) params.get("creatorName"));

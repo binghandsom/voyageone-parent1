@@ -3,40 +3,50 @@
         <uib-accordion-group is-open="vm.status.open">
             <uib-accordion-heading>
                 <i class="glyphicon glyphicon-star"></i>&nbsp;{{'TXT_BI_DOWNLOAD_LIST_TITLE'|translate}}
-                <i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
+                <i class="pull-right glyphicon glyphicon-menu-down"
+                   ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
             </uib-accordion-heading>
-         <!--   主体-->
+            <!--   主体-->
             <div class="container-fluid  m-t-sm">
                 <div class="col-sm-8 m-t-sm" style="line-height: 27px">
-                    <label class="col-sm-2 text-right control-label"> {{'TXT_BI_DOWNLOAD_LIST_CHANNEL'|translate}} </label>
+                    <label class="col-sm-2 text-right control-label">
+                        {{'TXT_BI_DOWNLOAD_LIST_CHANNEL'|translate}} </label>
                     <div class="col-sm-10">
                         <div class="col-sm-6">
-                            <select multiple chosen width="'55%'" class=" text-left m-t-sm form-control" ng-model="vm.searchInfo.channelCodeList"
+                            <select multiple chosen width="'55%'" class=" text-left m-t-sm form-control"
+                                    ng-model="vm.searchInfo.channelCodeList"
                                     ng-options="brand.channel_id as brand.channel_name for brand in channels">
                             </select>
                         </div>
                         <div class="col-sm-6">
-                            <label class="col-sm-4 text-right control-label" >{{'TXT_BI_DOWNLOAD_LIST_CHECK_PERIOD'|translate}}</label>
+                            <label class="col-sm-4 text-right control-label">{{'TXT_BI_DOWNLOAD_LIST_CHECK_PERIOD'|translate}}</label>
                             <div class="col-sm-8 form-inline">
                                 <div class="col-sm-5 input-group">
-                                    <input type="text" class="form-control" uib-datepicker-popup ng-model="vm.searchInfo.staDate"
-                                           min-date ="vm.minDate"
-                                           max-date = "vm.searchInfo.endDate"
-                                           date-model-format = "yyyy-MM-dd"
-                                           is-open = "datePicker3" ng-required="true"
-                                           close-text="Close" />
+                                    <input type="text" class="form-control" uib-datepicker-popup
+                                           ng-model="vm.searchInfo.staDate"
+                                           min-date="vm.minDate"
+                                           max-date="vm.searchInfo.endDate"
+                                           date-model-format="yyyy-MM-dd"
+                                           is-open="datePicker3" ng-required="true"
+                                           close-text="Close"/>
                                     <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default"
+                                                        ng-click="datePicker3 = !datePicker3"><i
+                                                        class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
-                                </div>&nbsp;~&nbsp;
+                                </div>
+                                &nbsp;~&nbsp;
                                 <div class="col-sm-5 input-group">
                                     <input type="text" class="form-control" uib-datepicker-popup
                                            ng-model="vm.searchInfo.endDate"
                                            min-date="vm.searchInfo.staDate"
                                            max-date=" vm.maxDate "
-                                           date-model-format="yyyy-MM-dd" is-open="datePicker4" ng-required="true" close-text="Close" />
+                                           date-model-format="yyyy-MM-dd" is-open="datePicker4" ng-required="true"
+                                           close-text="Close"/>
                                     <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default"
+                                                        ng-click="datePicker4 = !datePicker4"><i
+                                                        class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                 </div>
                             </div>
@@ -44,37 +54,46 @@
                     </div>
                 </div>
                 <div class="col-sm-8 m-t-sm">
-                    <div >  <label class="col-sm-2 text-right">  {{'TXT_BI_DOWNLOAD_LIST_FILE_TYPE'|translate}}</label> &nbsp;
-                        <button  class="btn btn-success btn-xs"  ng-click="selectAllFileTypes()"  ng-bind="selectFileButton" ></button>
+                    <div><label class="col-sm-2 text-right"> {{'TXT_BI_DOWNLOAD_LIST_FILE_TYPE'|translate}}</label>
+                        &nbsp;
+                        <button class="btn btn-success btn-xs" ng-click="selectAllFileTypes()"
+                                ng-bind="selectFileButton"></button>
                     </div>
                     <div class="col-sm-10 text-center" ng-switch="vm.searchInfo.channelCodeList.length">
-
-                        <div class="col-sm-4" ng-switch-when= "0" ng-repeat="item in fileTypes">
+                        <div class="col-sm-4" ng-switch-when="0" ng-repeat="item in fileTypes">
                             <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox" ng-true-value="{{item.fileTypeCode}}" style="margin: 0" ng-false-value="false" ng-model="vm.searchInfo.fileTypes[$index]" >
+                                <input type="checkbox" ng-true-value="{{item.fileTypeCode}}" style="margin: 0"
+                                       ng-false-value="false" ng-model="vm.searchInfo.fileTypes[$index]">
                                 <span class="fa fa-check"></span> &nbsp;{{item.fileTypeName}}
                             </label>
                         </div>
-                        <div class="col-sm-4" ng-switch-when= "1" ng-repeat="item in fileTypes">
+                        <div class="col-sm-4" ng-switch-when="1" ng-repeat="item in fileTypes">
                             <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox" ng-true-value="{{item.fileTypeCode}}" style="margin: 0" ng-false-value="false" ng-model="vm.searchInfo.fileTypes[$index]" >
+                                <input type="checkbox" ng-true-value="{{item.fileTypeCode}}" style="margin: 0"
+                                       ng-false-value="false" ng-model="vm.searchInfo.fileTypes[$index]">
                                 <span class="fa fa-check"></span> &nbsp;{{item.fileTypeName}}
                             </label>
                         </div>
-                        <div class="col-sm-4" ng-switch-default  ng-repeat="item in fileTypes">
-                            <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox" ng-true-value="{{item.fileTypeCode}}" style="margin: 0" ng-false-value="false" ng-model="vm.searchInfo.fileTypes[$index]" >
+                        <div class="col-sm-4" ng-switch-default ng-repeat="item in fileTypes">
+                            <label class="checkbox-inline c-checkbox" ng-if="item.fileTypeCode <=3">
+                                <input type="checkbox" ng-true-value="{{item.fileTypeCode}}" style="margin: 0"
+                                       ng-false-value="false" ng-model="vm.searchInfo.fileTypes[$index]">
                                 <span class="fa fa-check"></span> &nbsp;{{item.fileTypeName}}
                             </label>
                         </div>
                     </div><!-- .form-inline -->
-                <br />
+                    <br/>
                 </div>
                 <div class="col-sm-12 text-center m-t-md" ng-controller="popupCtrl">
-                    <div class="col-sm-10 text-center m-t-md" >
-                        <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button> &nbsp; &nbsp;
+                    <div class="col-sm-10 text-center m-t-md">
+                        <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'
+                            | translate}}
+                        </button>
+                        &nbsp; &nbsp;
                         <!-- <button class="btn btn-vo" ng-click="biRepDownload()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>-->
-                        <button class="btn  btn-default " ng-click="createXlsFileTask()"><i class="fa fa fa-mail-reply"></i>{{'TXT_BI_DOWNLOAD_LIST_CREATE_FILE'|translate}}</button>
+                        <button class="btn  btn-default " ng-click="createXlsFileTask()"><i
+                                class="fa fa fa-mail-reply"></i>{{'TXT_BI_DOWNLOAD_LIST_CREATE_FILE'|translate}}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -85,52 +104,60 @@
 
     <div class="box">
         <div class="box-body-new">
-            <table class="table table-hover-new text-center" >
+            <table class="table table-hover-new text-center">
                 <thead>
                 <tr>
-                    <th class="text-left "><Button type="button" class="btn btn-pop btn-default"  ng-click="search()"><i class="fa fa-refresh"></i></Button></th>
-                    <th class="text-left" >{{'TXT_BI_DOWNLOAD_LIST_CODE'|translate}}</th>
+                    <th class="text-left ">
+                        <Button type="button" class="btn btn-pop btn-default" ng-click="search()"><i
+                                class="fa fa-refresh"></i></Button>
+                    </th>
+                    <th class="text-left">{{'TXT_BI_DOWNLOAD_LIST_CODE'|translate}}</th>
                     <th class="text-left">{{'TXT_BI_DOWNLOAD_LIST_FILE_NAME'|translate}}</th>
-                    <th class="text-left" >{{'TXT_BI_DOWNLOAD_LIST_CHECK_PERIOD'|translate}}</th>
+                    <th class="text-left">{{'TXT_BI_DOWNLOAD_LIST_CHECK_PERIOD'|translate}}</th>
                     <th class="text-left"> {{'TXT_BI_DOWNLOAD_LIST_CHANNEL'|translate}}</th>
-                    <th class="text-left" >{{'TXT_BI_DOWNLOAD_LIST_CHECK_FILE_TYPES'|translate}}</th>
+                    <th class="text-left">{{'TXT_BI_DOWNLOAD_LIST_CHECK_FILE_TYPES'|translate}}</th>
                     <th class="text-left"> {{'TXT_BI_DOWNLOAD_LIST_EXPORT_TIME'|translate}}</th>
-                    <th class="text-left" >{{'TXT_BI_DOWNLOAD_LIST_FINISH_TIME'|translate}}</th>
+                    <th class="text-left">{{'TXT_BI_DOWNLOAD_LIST_FINISH_TIME'|translate}}</th>
                     <th class="text-left"> {{'TXT_BI_DOWNLOAD_LIST_SUBMITTER'|translate}}</th>
                     <th class="text-left"> {{'TXT_BI_DOWNLOAD_LIST_FILE_STATUS'|translate}}</th>
                     <th class="text-left">{{'TXT_BI_DOWNLOAD_LIST_OPERATE'|translate}}</th>
                 </tr>
                 </thead>
-                <tbody  ng-if="vm.downloadTaskList.length" ng-controller="popupCtrl" >
-                    <tr ng-repeat="item in vm.downloadTaskList">
-                        <td class="text-left"></td>
-                        <td class="text-left">
-                            {{ item.id }}
-                        </td>
-                        <td class="text-left">{{item.fileName}}</td>
-                        <td class="text-left">{{item.checkPeriod}}</td>
-                        <td class="text-left">{{item.checkChannels}}</td>
-                        <td class="text-left">{{item.checkFileTypes}}</td>
-                        <td class="text-left">{{item.created}}</td>
-                        <td class="text-left">{{item.finishTime}}</td>
-                        <td calss="text-left">{{item.creater}}</td>
-                        <td class="text-left" ng-switch = "item.taskStatus">
-                            <span ng-switch-when="1">{{'TXT_BI_DOWNLOAD_LIST_CREATE_FAIL'|translate}}</span>
-                            <span ng-switch-when="2">{{'TXT_BI_DOWNLOAD_LIST_CREATING'|translate}}</span>
-                            <span ng-switch-when="3">{{'TXT_BI_DOWNLOAD_LIST_CREATED'|translate}}</span>
-                            <span ng-switch-when="0">{{'TXT_BI_DOWNLOAD_LIST_NOT_START'|translate}}</span>
-                            <span ng-switch-when="4">{{'TXT_BI_DOWNLOAD_LIST_FILE_OUT_TIME'|translate}}</span>
-                            <span ng-switch-default>{{'TXT_BI_DOWNLOAD_LIST_UNKNOWN_ERROR'|translate}}</span>
-                        </td>
-                       <!-- <td class="text-left"><button class="btn btn-danger btn-xs" ng-click="test2()"><i class="fa fa-cloud-download"></i>文件下载</button></td>　-->　　<!--downloadExcel(item)-->
-                        <td class="text-right" ng-controller="popupCtrl">
-                            <button ng-if = "item.taskStatus != '2' "  title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"  ng-click="del(item)"><i class="fa  fa-trash-o"></i></button>
-                            <button ng-if = "item.taskStatus == '3' " title="{{'BTN_DOWNLOAD' | translate}}" class="btn btn-danger btn-xs" ng-click="openOtherDownload(item)"><i class="fa fa-cloud-download"></i></button>
-                        </td>
-                    </tr>
+                <tbody ng-if="vm.downloadTaskList.length" ng-controller="popupCtrl">
+                <tr ng-repeat="item in vm.downloadTaskList">
+                    <td class="text-left"></td>
+                    <td class="text-left">
+                        {{ item.id }}
+                    </td>
+                    <td class="text-left">{{item.fileName}}</td>
+                    <td class="text-left">{{item.checkPeriod}}</td>
+                    <td class="text-left">{{item.checkChannels}}</td>
+                    <td class="text-left">{{item.checkFileTypes}}</td>
+                    <td class="text-left">{{item.created}}</td>
+                    <td class="text-left">{{item.finishTime}}</td>
+                    <td calss="text-left">{{item.creater}}</td>
+                    <td class="text-left" ng-switch="item.taskStatus">
+                        <span ng-switch-when="1">{{'TXT_BI_DOWNLOAD_LIST_CREATE_FAIL'|translate}}</span>
+                        <span ng-switch-when="2">{{'TXT_BI_DOWNLOAD_LIST_CREATING'|translate}}</span>
+                        <span ng-switch-when="3">{{'TXT_BI_DOWNLOAD_LIST_CREATED'|translate}}</span>
+                        <span ng-switch-when="0">{{'TXT_BI_DOWNLOAD_LIST_NOT_START'|translate}}</span>
+                        <span ng-switch-when="4">{{'TXT_BI_DOWNLOAD_LIST_FILE_OUT_TIME'|translate}}</span>
+                        <span ng-switch-default>{{'TXT_BI_DOWNLOAD_LIST_UNKNOWN_ERROR'|translate}}</span>
+                    </td>
+                    <!-- <td class="text-left"><button class="btn btn-danger btn-xs" ng-click="test2()"><i class="fa fa-cloud-download"></i>文件下载</button></td>　-->
+                    　　<!--downloadExcel(item)-->
+                    <td class="text-right" ng-controller="popupCtrl">
+                        <button ng-if="item.taskStatus != '2' " title="{{'BTN_DELETE' | translate}}"
+                                class="btn btn-danger btn-xs" ng-click="del(item)"><i class="fa  fa-trash-o"></i>
+                        </button>
+                        <button ng-if="item.taskStatus == '3' " title="{{'BTN_DOWNLOAD' | translate}}"
+                                class="btn btn-danger btn-xs" ng-click="openOtherDownload(item)"><i
+                                class="fa fa-cloud-download"></i></button>
+                    </td>
+                </tr>
                 </tbody>
             </table>
-            <div  if-no-rows="vm.promotionList.length"></div>
+            <div if-no-rows="vm.promotionList.length"></div>
         </div><!-- /.box-body -->
         <div class="col-sm-12 m-t-lg m-b-lg">
             <vpagination config="dataPageOption"></vpagination>
