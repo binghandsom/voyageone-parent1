@@ -1,4 +1,6 @@
 package com.voyageone.service.impl.cms.jumei2;
+
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -6,10 +8,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
 import com.voyageone.components.jumei.JumeiHtDealService;
 import com.voyageone.components.jumei.JumeiHtMallService;
-import com.voyageone.components.jumei.bean.HtDealUpdate_DealInfo;
-import com.voyageone.components.jumei.bean.HtDeal_UpdateDealPriceBatch_UpdateData;
-import com.voyageone.components.jumei.bean.HtDeal_UpdateDealStockBatch_UpdateData;
-import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
+import com.voyageone.components.jumei.bean.*;
 import com.voyageone.components.jumei.reponse.*;
 import com.voyageone.components.jumei.request.*;
 import com.voyageone.service.bean.cms.OperationResult;
@@ -17,6 +16,7 @@ import com.voyageone.service.bean.cms.jumei.SkuPriceBean;
 import com.voyageone.service.bean.cms.jumei.UpdateJmParameter;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
+import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
@@ -30,11 +30,13 @@ import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -73,6 +75,8 @@ public class JuMeiProductPlatform3Service extends BaseService {
     JumeiHtMallService jumeiHtMallService;
     @Autowired
     ProductPlatformService productPlatformService;
+    @Autowired
+    WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
 
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductPlatform3Service.class);
 
@@ -86,9 +90,67 @@ public class JuMeiProductPlatform3Service extends BaseService {
         $info(promotionId + " 聚美上新开始");
         List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = daoExtCmsBtJmPromotionProduct.selectJMCopyList(promotionId);
 
+        List<String> productCodes = listCmsBtJmPromotionProductModel.stream().map((productModel) -> String.valueOf(productModel.getProductCode())).collect(Collectors.toList());
+
+        // 获取产品信息
+        JongoQuery query = new JongoQuery();
+        query.setQuery("{\"common.fields.code\": {$in: #}}");
+        query.setParameters(productCodes);
+        query.setProjection("{\"orgChannelId\": 1,\"common.fields.code\": 1, \"platforms.P27\": 1}");
+        List<CmsBtProductModel> productMongos = productService.getList(modelCmsBtJmPromotion.getChannelId(), query);
+
+        // 获取活动中sku列表
+        List<Map<String, Object>> listSku = daoExtCmsBtJmPromotionSku.selectExportListByPromotionId(promotionId, productCodes);
+
+        // 获取product中目前有效销售的sku
+        Map<String, List<jmHtDealCopyDealSkusData>> productSkus = new HashMap<>();
+        productMongos.forEach((product) -> {
+
+            // 取得逻辑库存
+            Map<String, String> queryMap = new HashMap<>();
+            queryMap.put("channelId", product.getOrgChannelId());
+            queryMap.put("code", product.getCommon().getFields().getCode());
+            List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailByCode(queryMap);
+
+            List<jmHtDealCopyDealSkusData> skuList = new ArrayList<>();
+            product.getPlatform(27).getSkus()
+                    .forEach((skuInfo) -> {
+                        if (Boolean.valueOf(skuInfo.getStringAttribute("isSale"))) {
+                            String skuCode = skuInfo.getStringAttribute("skuCode");
+
+                            List<Object> promotionSkuList = listSku.stream()
+                                    .filter((promotionSku) -> skuCode.equals(String.valueOf(promotionSku.get("skuCode"))))
+                                    .collect(Collectors.toList());
+
+                            if (promotionSkuList.size() <= 0)
+                                return;
+
+                            Map<String, String> promotionSkuMap = (Map<String, String>)promotionSkuList.get(0);
+
+                            if (!StringUtil.isEmpty(promotionSkuMap.get("jmSkuNo"))) {
+
+                                inventoryList.forEach(inventoryInfo -> {
+                                    if (inventoryInfo.getSku().equals(skuCode) && inventoryInfo.getQtyOrgin() > 0) {
+                                        jmHtDealCopyDealSkusData dealCopyDealSkuData = new jmHtDealCopyDealSkusData();
+                                        dealCopyDealSkuData.setStocks(inventoryInfo.getQtyOrgin());
+                                        dealCopyDealSkuData.setSku_no(Integer.valueOf(promotionSkuMap.get("jmSkuNo")));
+                                        dealCopyDealSkuData.setDeal_price(new BigDecimal(String.valueOf(promotionSkuMap.get("dealPrice"))));
+                                        dealCopyDealSkuData.setMarket_price(new BigDecimal(String.valueOf(promotionSkuMap.get("marketPrice"))));
+                                        skuList.add(dealCopyDealSkuData);
+                                    }
+                                });
+
+                            }
+                        }
+                    });
+            if (skuList.size() > 0)
+                productSkus.put(product.getCommon().getFields().getCode(), skuList);
+        });
+
         for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
+
             $debug(promotionId + " code:" + model.getProductCode() + "上新begin");
-            OperationResult result = updateJm(modelCmsBtJmPromotion, model, shopBean, mapMasterBrand, isBegin);
+            OperationResult result = updateJm(modelCmsBtJmPromotion, model, shopBean, mapMasterBrand, isBegin, productSkus.get(model.getProductCode()));
             $debug(promotionId + " code:" + model.getProductCode() + "上新end");
             //if(!result.isResult()) {
             //加入错误列表
@@ -112,7 +174,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
        if(parameter.platform==null){throw new  BusinessException("CmsBtProduct商品聚美信息不存在.");}
        return parameter;
    }
-    public OperationResult updateJm(CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel, ShopBean shopBean, HashMap<String,Boolean> mapMasterBrand, boolean isBegin) {
+    public OperationResult updateJm(CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel, ShopBean shopBean, HashMap<String,Boolean> mapMasterBrand, boolean isBegin, List<jmHtDealCopyDealSkusData> dealSkuList) {
         OperationResult result=new OperationResult();
         try {
             UpdateJmParameter parameter = getUpdateJmParameter(modelCmsBtJmPromotion, cmsBtJmPromotionProductModel, shopBean);
@@ -124,7 +186,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
                     //6.1.1再售接口前check   copyDeal_beforeCheck(4.1)
                    // copyDeal_beforeCheck(parameter);
                     //6.1.2调用再售接口  copyDeal
-                    copyDeal(parameter);
+                    copyDeal(parameter, dealSkuList);
                     //6.1.3再售接口后check   在方法copyDeal内部调用copyDeal_afterCheck(4.2)
                 } else {
                     parameter.cmsBtJmPromotionProductModel.setStockStatus(1);//库存设置待更新
@@ -310,12 +372,12 @@ public class JuMeiProductPlatform3Service extends BaseService {
         daoCmsBtJmPromotionProduct.update(model);
     }
     //再售
-    private void copyDeal( UpdateJmParameter parameter) throws Exception {
+    private void copyDeal( UpdateJmParameter parameter, List<jmHtDealCopyDealSkusData> dealSkuList) throws Exception {
         CmsBtJmPromotionModel modelCmsBtJmPromotion = parameter.cmsBtJmPromotionModel;
         CmsBtJmPromotionProductModel model = parameter.cmsBtJmPromotionProductModel;
         ShopBean shopBean = parameter.shopBean;
        // CmsBtJmProductModel modelJmProduct = daoExtCmsBtJmProduct.selectByProductCodeChannelId(model.getProductCode(), model.getChannelId());
-        jmHtDealCopy(parameter,parameter.platform.getpNumIId());//再售
+        jmHtDealCopy(parameter,parameter.platform.getpNumIId(), dealSkuList);//再售
         model.setActivityStart(modelCmsBtJmPromotion.getActivityStart());
         model.setActivityEnd(modelCmsBtJmPromotion.getActivityEnd());
         model.setSynchStatus(2);
@@ -339,11 +401,12 @@ public class JuMeiProductPlatform3Service extends BaseService {
     }
 
     //再售
-    private void jmHtDealCopy(UpdateJmParameter parameter, String originJmHashId) throws Exception {
+    private void jmHtDealCopy(UpdateJmParameter parameter, String originJmHashId, List<jmHtDealCopyDealSkusData> dealSkuList) throws Exception {
         HtDealCopyDealRequest request = new HtDealCopyDealRequest();
         request.setStart_time(parameter.cmsBtJmPromotionModel.getActivityStart());
         request.setEnd_time(parameter.cmsBtJmPromotionModel.getActivityEnd());
         request.setJumei_hash_id(originJmHashId);//原始jmHashId
+        request.setSkus_data(dealSkuList);
         try {
             HtDealCopyDealResponse response = serviceJumeiHtDeal.copyDeal(parameter.shopBean, request);
             if (response.is_Success()) {
