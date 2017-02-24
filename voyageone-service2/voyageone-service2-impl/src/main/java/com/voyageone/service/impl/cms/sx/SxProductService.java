@@ -5586,6 +5586,7 @@ public class SxProductService extends BaseService {
 
             cnt++;
         }
+        resultMap.clear();
         $info("=================" + uploadName + "  主线程结束====================");
     }
 

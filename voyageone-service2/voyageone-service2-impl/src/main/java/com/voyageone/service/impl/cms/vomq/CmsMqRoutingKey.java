@@ -74,7 +74,7 @@ public class CmsMqRoutingKey {
     public static final String CMS_TM_TE_JIA_BAO_DEL = "VOCmsTmTeJiaBaoDelQueue";
 
     // 定时任务 - 取得产品的bi信息
-    public static final String CMS_BATCH_GET_PRODUCT_BI_DATA = "VOCMSBatchGetProductBIDataQueue";
+    public static final String CMS_BATCH_GET_PRODUCT_BI_DATA = "VOCmsBatchGetProductBIDataQueue";
 
     // 定时任务 - 同步产品sku的价格至code的group价格范围
     public static final String CMS_BATCH_COUNT_PRODUCT_PRICE = "VOCmsBatchCountProductPriceQueue";

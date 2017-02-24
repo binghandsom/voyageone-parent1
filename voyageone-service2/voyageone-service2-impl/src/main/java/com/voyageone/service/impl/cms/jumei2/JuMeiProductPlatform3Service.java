@@ -24,6 +24,7 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.jumei.JMShopBeanService;
+import com.voyageone.service.impl.cms.product.ProductPlatformService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
@@ -70,6 +71,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
     CmsBtBrandBlockService CmsBtBrandBlockService;
     @Autowired
     JumeiHtMallService jumeiHtMallService;
+    @Autowired
+    ProductPlatformService productPlatformService;
+
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductPlatform3Service.class);
 
     public  List<OperationResult> updateJmByPromotionId(int promotionId) {
@@ -157,7 +161,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
     {
         //todo  逻辑待定最新jmHashId(取该商品的最新jmHashId,这样最靠谱)
         parameter.platform.setpNumIId(parameter.cmsBtJmPromotionProductModel.getJmHashId());
-        productService.updateProductPlatform(parameter.cmsBtProductModel.getChannelId(), parameter.cmsBtProductModel.getProdId(), parameter.platform, parameter.cmsBtJmPromotionProductModel.getModifier());
+        productPlatformService.updateProductPlatform(parameter.cmsBtProductModel.getChannelId(), parameter.cmsBtProductModel.getProdId(), parameter.platform, parameter.cmsBtJmPromotionProductModel.getModifier());
     }
     //所有api调用前check
     public void api_beforeCheck(UpdateJmParameter parameter, HashMap<String,Boolean> mapMasterBrand) {

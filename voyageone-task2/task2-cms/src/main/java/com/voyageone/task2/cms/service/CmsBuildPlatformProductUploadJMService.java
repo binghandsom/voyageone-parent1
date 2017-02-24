@@ -1064,10 +1064,17 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                 String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
+                if (StringUtils.isEmpty(detailName)) detailName = "";
                 if (detailName.equals("天猫同购描述-重点商品")) {
                     strJumeiDetailTemplateName = "聚美详情-重点商品";
                 } else if (detailName.equals("天猫同购描述-无属性图")) {
                     strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                } else if (detailName.equals("天猫同购描述-非重点之英文长描述")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点之英文长描述";
+                } else if (detailName.equals("天猫同购描述-非重点之中文长描述")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点之中文长描述";
+                } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点之中文使用说明";
                 }
             }
         }
@@ -1352,10 +1359,17 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                 String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
+                if (StringUtils.isEmpty(detailName)) detailName = "";
                 if (detailName.equals("天猫同购描述-重点商品")) {
                     strJumeiDetailTemplateName = "聚美详情-重点商品";
                 } else if (detailName.equals("天猫同购描述-无属性图")) {
                     strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                } else if (detailName.equals("天猫同购描述-非重点之英文长描述")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点之英文长描述";
+                } else if (detailName.equals("天猫同购描述-非重点之中文长描述")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点之中文长描述";
+                } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点之中文使用说明";
                 }
             }
         }
@@ -1849,10 +1863,17 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                     if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                         String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
+                        if (StringUtils.isEmpty(detailName)) detailName = "";
                         if (detailName.equals("天猫同购描述-重点商品")) {
                             strJumeiDetailTemplateName = "聚美详情-重点商品";
                         } else if (detailName.equals("天猫同购描述-无属性图")) {
                             strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                        } else if (detailName.equals("天猫同购描述-非重点之英文长描述")) {
+                            strJumeiDetailTemplateName = "聚美详情-非重点之英文长描述";
+                        } else if (detailName.equals("天猫同购描述-非重点之中文长描述")) {
+                            strJumeiDetailTemplateName = "聚美详情-非重点之中文长描述";
+                        } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
+                            strJumeiDetailTemplateName = "聚美详情-非重点之中文使用说明";
                         }
                     }
                 }

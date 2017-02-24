@@ -213,32 +213,32 @@ public class PromotionDetailService extends BaseService {
             CmsBtPromotionSkuBean cmsBtPromotionSkuModelBean = new CmsBtPromotionSkuBean(productInfo, groupModel, promotionId, modifier, sku.getSkuCode(), 0);
             cmsBtPromotionSkuModelBean.setNumIid(numIId);
             cmsBtPromotionSkuModelBean.setSize(sku.getSize());
-            if (mapSkuPlatform != null) {
+            if (mapSkuPlatform != null && Boolean.valueOf(mapSkuPlatform.getStringAttribute("isSale"))) {
                 Double priceMsrp = mapSkuPlatform.getDoubleAttribute("priceMsrp");
                 Double priceRetail = mapSkuPlatform.getDoubleAttribute("priceRetail");
                 Double priceSale = mapSkuPlatform.getDoubleAttribute("priceSale");
                 cmsBtPromotionSkuModelBean.setMsrpRmb(new BigDecimal(priceMsrp));
                 cmsBtPromotionSkuModelBean.setRetailPrice(new BigDecimal(priceRetail));
                 cmsBtPromotionSkuModelBean.setSalePrice(new BigDecimal(priceSale));
-            }
-            if (sku != null) {
-                cmsBtPromotionSkuModelBean.setMsrpUsd(new BigDecimal(sku.getClientMsrpPrice()));
-            }
-            if (bean.getPromotionPrice() != null && bean.getPromotionPrice().containsKey(cmsBtPromotionSkuModelBean.getProductSku())) {
-                cmsBtPromotionSkuModelBean.setPromotionPrice(new BigDecimal(bean.getPromotionPrice().get(cmsBtPromotionSkuModelBean.getProductSku())));
-            } else {
-                if (!isUpdatePromotionPrice)//不更新活动价格 还原价格
-                {
-                    CmsBtPromotionSkusModel cmsBtPromotionSkusModel = promotionSkuService.get(promotionId, productInfo.getCommon().getFields().getCode(), sku.getSkuCode());
-                    if (cmsBtPromotionSkusModel != null) {
-                        cmsBtPromotionSkuModelBean.setPromotionPrice(cmsBtPromotionSkusModel.getPromotionPrice());
+                if (sku != null) {
+                    cmsBtPromotionSkuModelBean.setMsrpUsd(new BigDecimal(sku.getClientMsrpPrice()));
+                }
+                if (bean.getPromotionPrice() != null && bean.getPromotionPrice().containsKey(cmsBtPromotionSkuModelBean.getProductSku())) {
+                    cmsBtPromotionSkuModelBean.setPromotionPrice(new BigDecimal(bean.getPromotionPrice().get(cmsBtPromotionSkuModelBean.getProductSku())));
+                } else {
+                    if (!isUpdatePromotionPrice)//不更新活动价格 还原价格
+                    {
+                        CmsBtPromotionSkusModel cmsBtPromotionSkusModel = promotionSkuService.get(promotionId, productInfo.getCommon().getFields().getCode(), sku.getSkuCode());
+                        if (cmsBtPromotionSkusModel != null) {
+                            cmsBtPromotionSkuModelBean.setPromotionPrice(cmsBtPromotionSkusModel.getPromotionPrice());
+                        }
                     }
                 }
+                if (cmsBtPromotionSkuModelBean.getPromotionPrice() == null) {
+                    cmsBtPromotionSkuModelBean.setPromotionPrice(new BigDecimal(0));
+                }
+                listPromotionSku.add(cmsBtPromotionSkuModelBean);
             }
-            if (cmsBtPromotionSkuModelBean.getPromotionPrice() == null) {
-                cmsBtPromotionSkuModelBean.setPromotionPrice(new BigDecimal(0));
-            }
-            listPromotionSku.add(cmsBtPromotionSkuModelBean);
         });
         return  listPromotionSku;
     }

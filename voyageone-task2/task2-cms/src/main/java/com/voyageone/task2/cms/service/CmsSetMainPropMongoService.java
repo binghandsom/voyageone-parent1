@@ -21,7 +21,10 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.*;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.MD5;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
@@ -35,8 +38,8 @@ import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.CmsBtFeedImportSizeService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
-import com.voyageone.service.impl.cms.prices.CmsBtProductPlatformPriceService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -46,13 +49,12 @@ import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
-import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
-import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -152,10 +154,10 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
     @Autowired
     PromotionCodeService promotionCodeService;
     @Autowired
-    private CmsBtProductPlatformPriceService platformPriceService;
+    private PlatformPriceService platformPriceService;
 
     @Autowired
-    private MqSender sender;
+    private CmsMqSenderService sender;
     // 每个channel的feed->master导入默认最大件数
     private final static int FEED_IMPORT_MAX_500 = 500;
 
@@ -1122,7 +1124,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     }
 
                     // 判断是否更新平台价格 如果要更新直接更新
-                    platformPriceService.updatePlatFormPrice(channelId, chg, cmsProduct, getTaskName());
+                    platformPriceService.publishPlatFormPrice(channelId, chg, cmsProduct, getTaskName(), true);
 
                 } else {
                     // 生成productGroup数据
@@ -1189,17 +1191,15 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     productService.createProduct(channelId, cmsProduct, getTaskName());
                     $debug("createProduct:" + (System.currentTimeMillis() - startTime));
 
-                    Integer prodId = cmsProduct.getProdId().intValue();
+                    Long prodId = cmsProduct.getProdId();
                     cmsProduct.getPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> {
                         if(cmsBtProductModel_platform_cart.getCartId() >= 20 &&  cmsBtProductModel_platform_cart.getCartId() < 900){
-                            CmsBtPriceLogModel newLog = new CmsBtPriceLogModel();
-                            newLog.setCartId(cmsBtProductModel_platform_cart.getCartId() );
-                            newLog.setProductId(prodId);
-                            newLog.setChannelId(channelId);
-
-                            // 向Mq发送消息同步sku,code,group价格范围
-                            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_COUNT_PRODUCT_PRICE,
-                                    JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
+                            ProductPriceUpdateMQMessageBody productPriceUpdateMQMessageBody = new ProductPriceUpdateMQMessageBody();
+                            productPriceUpdateMQMessageBody.setChannelId(channelId);
+                            productPriceUpdateMQMessageBody.setProdId(prodId);
+                            productPriceUpdateMQMessageBody.setCartId(cmsBtProductModel_platform_cart.getCartId());
+                            productPriceUpdateMQMessageBody.setSender(getTaskName());
+                            sender.sendMessage(productPriceUpdateMQMessageBody);
                         }
 
                     });
@@ -3758,29 +3758,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 sxProductService.insertSxWorkLoad(cmsProduct, ccAutoSyncCartList, getTaskName());
             }
         }
-
-        private void insertWorkload(CmsBtProductModel cmsProduct, Integer cartId) {
-
-            if(cartId > 0 && cartId < 900) {
-                // 读取配置
-                CmsChannelConfigBean channelConfigBean = CmsChannelConfigs.getConfigBean(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE, cartId.toString());
-                if (channelConfigBean == null) {
-                    channelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE);
-                }
-
-                Integer configValue1 = 0;
-                if (channelConfigBean != null) {
-                    if (!StringUtil.isEmpty(channelConfigBean.getConfigValue1())) {
-                        configValue1 = Integer.parseInt(channelConfigBean.getConfigValue1());
-                    }
-                }
-                if (configValue1 != 0) {
-                    sxProductService.insertSxWorkLoad(cmsProduct, Arrays.asList(cartId.toString()), getTaskName());
-                }
-            }
-
-        }
-
     }
 
     private void weightCalculate(CmsBtProductModel cmsProduct) {

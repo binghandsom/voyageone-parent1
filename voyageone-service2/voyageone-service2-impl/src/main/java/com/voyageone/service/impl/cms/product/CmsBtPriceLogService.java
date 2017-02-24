@@ -39,8 +39,7 @@ public class CmsBtPriceLogService extends BaseService {
     private final CmsBtPriceLogDao priceLogDao;
     private final CmsBtPriceLogDaoExt priceLogDaoExt;
     private final CmsBtProductDao productDao;
-    /*private final MqSender sender;*/
-    private CmsMqSenderService cmsMqSenderService;
+    private final CmsMqSenderService cmsMqSenderService;
     private final CmsBtPriceConfirmLogService priceConfirmLogService;
 
     @Autowired
@@ -391,30 +390,6 @@ public class CmsBtPriceLogService extends BaseService {
 
     private Double tryGetPrice(Double fromPrice) {
         return fromPrice == null ? 0d : fromPrice;
-    }
-
-    /**
-     * db.getCollection('cms_bt_product_c010').find({"platforms.P23.skus.skuCode": "DMC015700"}, {"platforms.P23.skus.$": 1})
-     */
-    private BaseMongoMap<String, Object> getSinglePlatformSku(String sku, int cartId, String channelId) {
-
-        // 理论上该方法获取数据时，都应该获取到数据
-        // 所以查询之后的获取，统统断言不检查 null
-
-        String query = String.format("{\"platforms.P%s.skus.skuCode\": #}", cartId);
-        String projection = String.format("{\"platforms.P%s.skus.$\": 1}", cartId);
-
-        List<CmsBtProductModel> productModelList = productDao.select(new JongoQuery()
-                        .setQuery(query)
-                        .setProjection(projection)
-                        .addParameters(sku),
-                channelId);
-
-        CmsBtProductModel productModel = productModelList.get(0);
-
-        CmsBtProductModel_Platform_Cart platform_cart = productModel.getPlatform(cartId);
-
-        return platform_cart.getSkus().get(0);
     }
 
     private CmsBtProductModel getProduct(String sku, String channelId) {
