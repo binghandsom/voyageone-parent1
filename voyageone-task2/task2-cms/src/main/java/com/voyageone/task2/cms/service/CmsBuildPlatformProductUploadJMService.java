@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.service;
 import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -695,7 +696,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                             //更新Spu失败
                             else
                             {
-                                String msg = String.format("更新Spu失败！[ProductId:%s], [Message:%s]", product.getProdId(), htSpuUpdateResponse.getErrorMsg());
+                                String msg = String.format("更新Spu失败！[ProductId:%s] [JmSpuNo:%s] [Message:%s]", product.getProdId(), jmSpuNo, htSpuUpdateResponse.getErrorMsg());
                                 $error(msg);
                                 throw  new BusinessException(msg);
                             }
@@ -757,8 +758,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                 // 更新商品时,向Deal中增加Sku失败
                                 else
                                 {
-                                    String msg = String.format("更新商品时,向Deal中增加Sku失败！[hashId:%s] [ProductId:%s], [Message:%s]",
-                                            originHashId, product.getProdId(), htSkuAddResponse.getErrorMsg());
+                                    String msg = String.format("更新商品时,向Deal中增加Sku失败！[hashId:%s] [ProductId:%s] [skuCode:%s] [Message:%s]",
+                                            originHashId, product.getProdId(), skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()),
+                                            htSkuAddResponse.getErrorMsg());
                                     $error(msg);
                                     throw  new BusinessException(msg);
                                 }
@@ -1145,26 +1147,26 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 //
         // 由于product的分平台skus中merge很多上新用字段比如(sizeSx,barCode等)，这里只把P27.skus需要更新的字段挑选出来
         List<BaseMongoMap<String, Object>>   jmSkus  = product.getPlatform(CART_ID).getSkus();
-        List<BaseMongoMap<String, Object>>   newJmSkus =  new ArrayList<>();
-        for (BaseMongoMap<String, Object> sku : jmSkus)
-        {
-            BaseMongoMap<String, Object> newSku = new  BaseMongoMap<String, Object>();
-            newSku.setStringAttribute("skuCode", sku.getStringAttribute("skuCode"));
-            newSku.setAttribute("priceMsrp", sku.getDoubleAttribute("priceMsrp"));
-            newSku.setAttribute("priceRetail", sku.getDoubleAttribute("priceRetail"));
-            newSku.setAttribute("priceSale", sku.getDoubleAttribute("priceSale"));
-            newSku.setStringAttribute("priceChgFlg", sku.getStringAttribute("priceChgFlg"));
-            newSku.setStringAttribute("priceDiffFlg", sku.getStringAttribute("priceDiffFlg"));
-            newSku.setAttribute("isSale", sku.getAttribute("isSale"));
-            newSku.setStringAttribute("jmSpuNo", sku.getStringAttribute("jmSpuNo"));
-            newSku.setStringAttribute("jmSkuNo", sku.getStringAttribute("jmSkuNo"));
-            newSku.setStringAttribute("property", sku.getStringAttribute("property"));
-            newSku.setAttribute("originalPriceMsrp", sku.getDoubleAttribute("originalPriceMsrp"));
-            newSku.setStringAttribute("priceMsrpFlg", sku.getStringAttribute("priceMsrpFlg"));
-            newSku.setAttribute("confPriceRetail", sku.getDoubleAttribute("confPriceRetail"));
-            newSku.setStringAttribute("sizeNick", sku.getStringAttribute("sizeNick"));
-            newJmSkus.add(newSku);
-        }
+//        List<BaseMongoMap<String, Object>>   newJmSkus =  new ArrayList<>();
+//        for (BaseMongoMap<String, Object> sku : jmSkus)
+//        {
+//            BaseMongoMap<String, Object> newSku = new  BaseMongoMap<String, Object>();
+//            newSku.setStringAttribute("skuCode", sku.getStringAttribute("skuCode"));
+//            newSku.setAttribute("priceMsrp", sku.getDoubleAttribute("priceMsrp"));
+//            newSku.setAttribute("priceRetail", sku.getDoubleAttribute("priceRetail"));
+//            newSku.setAttribute("priceSale", sku.getDoubleAttribute("priceSale"));
+//            newSku.setStringAttribute("priceChgFlg", sku.getStringAttribute("priceChgFlg"));
+//            newSku.setStringAttribute("priceDiffFlg", sku.getStringAttribute("priceDiffFlg"));
+//            newSku.setAttribute("isSale", sku.getAttribute("isSale"));
+//            newSku.setStringAttribute("jmSpuNo", sku.getStringAttribute("jmSpuNo"));
+//            newSku.setStringAttribute("jmSkuNo", sku.getStringAttribute("jmSkuNo"));
+//            newSku.setStringAttribute("property", sku.getStringAttribute("property"));
+//            newSku.setAttribute("originalPriceMsrp", sku.getDoubleAttribute("originalPriceMsrp"));
+//            newSku.setStringAttribute("priceMsrpFlg", sku.getStringAttribute("priceMsrpFlg"));
+//            newSku.setAttribute("confPriceRetail", sku.getDoubleAttribute("confPriceRetail"));
+//            newSku.setStringAttribute("sizeNick", sku.getStringAttribute("sizeNick"));
+//            newJmSkus.add(newSku);
+//        }
 //
 //        Map<String, Object> queryMap = new HashMap<>();
 //        queryMap.put("prodId", product.getProdId());
@@ -1187,14 +1189,50 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         updateProductQuery.setQueryParameters(product.getCommon().getFields().getCode());
 
         updateProductQuery.setUpdate("{$set:{" +
-                "\"platforms.P"+ CART_ID +".skus\": #, " +
+//                "\"platforms.P"+ CART_ID +".skus\": #, " +     // skus在后面单独更新
                 "\"platforms.P"+ CART_ID +".pProductId\": #, " +
-                "\"platforms.P"+ CART_ID +".pNumIId\": #}}");
-        updateProductQuery.setUpdateParameters(newJmSkus,
+                "\"platforms.P"+ CART_ID +".pNumIId\": #, " +
+                "\"platforms.P"+ CART_ID +".modified\": #, " +
+                "\"platforms.P"+ CART_ID +".modifier\": #}}");
+        updateProductQuery.setUpdateParameters(
                 product.getPlatform(CART_ID).getpProductId(),
-                product.getPlatform(CART_ID).getpNumIId());
+                product.getPlatform(CART_ID).getpNumIId(),
+                DateTimeUtil.getNowTimeStamp(), getTaskName());
 
         productService.updateFirstProduct(updateProductQuery, channelId);
+
+        // 前面先更新共通信息，下面更新P27平台下面的skus属性
+        // jmSkus里面只有画面上勾选的sku，没有没选的sku
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        for (BaseMongoMap<String, Object> sku : jmSkus) {
+            // 更新条件
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("platforms.P" + CART_ID + ".skus.skuCode", sku.getStringAttribute("skuCode"));
+            // 更新内容
+            HashMap<String, Object> updateMap = new HashMap<>();
+            // 这里面的属性，应该只有jmSpuNo和jmSkuNo才需要回写
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.priceMsrp", sku.getDoubleAttribute("priceMsrp"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.priceRetail", sku.getDoubleAttribute("priceRetail"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.priceSale", sku.getDoubleAttribute("priceSale"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.priceChgFlg", sku.getStringAttribute("priceChgFlg"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.priceDiffFlg", sku.getStringAttribute("priceDiffFlg"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.isSale", sku.getAttribute("isSale"));
+            updateMap.put("platforms.P" + CART_ID + ".skus.$.jmSpuNo", sku.getStringAttribute("jmSpuNo"));
+            updateMap.put("platforms.P" + CART_ID + ".skus.$.jmSkuNo", sku.getStringAttribute("jmSkuNo"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.property", sku.getStringAttribute("property"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.originalPriceMsrp", sku.getDoubleAttribute("originalPriceMsrp"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.priceMsrpFlg", sku.getStringAttribute("priceMsrpFlg"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.confPriceRetail", sku.getDoubleAttribute("confPriceRetail"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.sizeNick", sku.getDoubleAttribute("sizeNick"));
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setUpdateMap(updateMap);
+            model.setQueryMap(queryMap);
+            bulkList.add(model);
+        }
+        if (ListUtils.notNull(bulkList)) {
+            // 批量更新P27.skus里面的属性
+            productService.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
+        }
         // -------------------------
         // add by desmond 2016/10/28 end
         $info("保存product成功！[ProductId:%s], [ChannelId:%s], [CartId:%s]", product.getProdId(), channelId, CART_ID);

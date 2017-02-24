@@ -51,6 +51,7 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
@@ -1191,18 +1192,17 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     productService.createProduct(channelId, cmsProduct, getTaskName());
                     $debug("createProduct:" + (System.currentTimeMillis() - startTime));
 
-                    Long prodId = cmsProduct.getProdId();
-                    cmsProduct.getPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> {
-                        if(cmsBtProductModel_platform_cart.getCartId() >= 20 &&  cmsBtProductModel_platform_cart.getCartId() < 900){
-                            ProductPriceUpdateMQMessageBody productPriceUpdateMQMessageBody = new ProductPriceUpdateMQMessageBody();
-                            productPriceUpdateMQMessageBody.setChannelId(channelId);
-                            productPriceUpdateMQMessageBody.setProdId(prodId);
-                            productPriceUpdateMQMessageBody.setCartId(cmsBtProductModel_platform_cart.getCartId());
-                            productPriceUpdateMQMessageBody.setSender(getTaskName());
-                            sender.sendMessage(productPriceUpdateMQMessageBody);
-                        }
-
-                    });
+//                    Long prodId = cmsProduct.getProdId();
+//                    cmsProduct.getPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> {
+//                        if(cmsBtProductModel_platform_cart.getCartId() >= 20 &&  cmsBtProductModel_platform_cart.getCartId() < 900){
+//                            ProductPriceUpdateMQMessageBody productPriceUpdateMQMessageBody = new ProductPriceUpdateMQMessageBody();
+//                            productPriceUpdateMQMessageBody.setChannelId(channelId);
+//                            productPriceUpdateMQMessageBody.setProdId(prodId);
+//                            productPriceUpdateMQMessageBody.setCartId(cmsBtProductModel_platform_cart.getCartId());
+//                            productPriceUpdateMQMessageBody.setSender(getTaskName());
+//                            sender.sendMessage(productPriceUpdateMQMessageBody);
+//                        }
+//                    });
                 }
 
                 // 插入尺码表
