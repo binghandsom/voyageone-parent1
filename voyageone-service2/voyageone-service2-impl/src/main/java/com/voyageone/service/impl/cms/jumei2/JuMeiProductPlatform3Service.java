@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -132,10 +131,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
                                 inventoryList.forEach(inventoryInfo -> {
                                     if (inventoryInfo.getSku().equals(skuCode) && inventoryInfo.getQtyOrgin() > 0) {
                                         jmHtDealCopyDealSkusData dealCopyDealSkuData = new jmHtDealCopyDealSkusData();
-                                        dealCopyDealSkuData.setStocks(inventoryInfo.getQtyOrgin());
-                                        dealCopyDealSkuData.setSku_no(Integer.valueOf(promotionSkuMap.get("jmSkuNo")));
-                                        dealCopyDealSkuData.setDeal_price(new BigDecimal(String.valueOf(promotionSkuMap.get("dealPrice"))));
-                                        dealCopyDealSkuData.setMarket_price(new BigDecimal(String.valueOf(promotionSkuMap.get("marketPrice"))));
+                                        dealCopyDealSkuData.setStocks(String.valueOf(inventoryInfo.getQtyOrgin()));
+                                        dealCopyDealSkuData.setSku_no(String.valueOf(promotionSkuMap.get("jmSkuNo")));
+                                        dealCopyDealSkuData.setDeal_price(String.valueOf(promotionSkuMap.get("dealPrice")));
+                                        dealCopyDealSkuData.setMarket_price(String.valueOf(promotionSkuMap.get("marketPrice")));
                                         skuList.add(dealCopyDealSkuData);
                                     }
                                 });
