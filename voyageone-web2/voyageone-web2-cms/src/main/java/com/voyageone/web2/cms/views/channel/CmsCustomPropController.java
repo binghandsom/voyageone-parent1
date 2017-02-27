@@ -81,6 +81,7 @@ public class CmsCustomPropController extends CmsController {
         return success(cmsBtCustomPropModel);
     }
 
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM.DELETE)
     public AjaxResponse doRemoveEntity(@RequestBody Map param){
         String orgChannelId = (String) param.get("orgChannelId");
         String cat = (String) param.get("cat");
