@@ -13,30 +13,30 @@ import java.util.Map;
  * 各平台的产品数据
  *
  * @author linanbin on 6/29/2016
- * @version 2.2.0
  * @author james.li on 2016/6/1.
  * @version 2.0.0
  */
-public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>{
+public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String, Object> {
 
     public final static String FIELDS = "fields";
     public final static String SKUS = "skus";
     public final static String SELLER_CATS = "sellerCats";
     public final static String MQQ = "mqq";
 
-    public CmsBtProductModel_Platform_Cart(){
+    public CmsBtProductModel_Platform_Cart() {
 
     }
 
-    public CmsBtProductModel_Platform_Cart(Map<String,Object> map){
+    public CmsBtProductModel_Platform_Cart(Map<String, Object> map) {
         this.putAll(map);
     }
 
     //modified
-    public String getModified(){
+    public String getModified() {
         return getStringAttribute("modified");
     }
-    public void setModified(String modified){
+
+    public void setModified(String modified) {
         setStringAttribute("modified", modified);
     }
 
@@ -44,6 +44,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public Integer getCartId() {
         return getIntAttribute("cartId");
     }
+
     public void setCartId(Integer cartId) {
         setAttribute("cartId", cartId);
     }
@@ -52,9 +53,11 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getStatus() {
         return getStringAttribute("status");
     }
+
     public void setStatus(String status) {
         setStringAttribute("status", status);
     }
+
     public void setStatus(CmsConstants.ProductStatus status) {
         String value = null;
         if (status != null) {
@@ -67,6 +70,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpCatId() {
         return getStringAttribute("pCatId");
     }
+
     public void setpCatId(String pCatId) {
         setStringAttribute("pCatId", pCatId);
     }
@@ -75,6 +79,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpCatPath() {
         return getStringAttribute("pCatPath");
     }
+
     public void setpCatPath(String pCatPath) {
         setStringAttribute("pCatPath", pCatPath);
     }
@@ -84,6 +89,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         String pCatStatus = getStringAttribute("pCatStatus");
         return StringUtils.isEmpty(pCatStatus) ? "0" : pCatStatus;
     }
+
     public void setpCatStatus(String pCatStatus) {
         setStringAttribute("pCatStatus", StringUtils.isEmpty(pCatStatus) ? "0" : pCatStatus);
     }
@@ -92,6 +98,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public Integer getpIsMain() {
         return getIntAttribute("pIsMain");
     }
+
     public void setpIsMain(Integer pIsMain) {
         setAttribute("pIsMain", pIsMain == null ? 0 : pIsMain);
     }
@@ -100,6 +107,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getMainProductCode() {
         return getStringAttribute("mainProductCode");
     }
+
     public void setMainProductCode(String mainProductCode) {
         setStringAttribute("mainProductCode", mainProductCode);
     }
@@ -108,6 +116,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpProductId() {
         return getStringAttribute("pProductId");
     }
+
     public void setpProductId(String pProductId) {
         setStringAttribute("pProductId", pProductId);
     }
@@ -116,6 +125,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpNumIId() {
         return getStringAttribute("pNumIId");
     }
+
     public void setpNumIId(String pNumIId) {
         setStringAttribute("pNumIId", pNumIId);
     }
@@ -124,6 +134,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpPlatformMallId() {
         return getStringAttribute("pPlatformMallId");
     }
+
     public void setpPlatformMallId(String pPlatformMallId) {
         setStringAttribute("pPlatformMallId", pPlatformMallId);
     }
@@ -138,6 +149,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         }
         return rs;
     }
+
     public void setpStatus(CmsConstants.PlatformStatus pStatus) {
         setAttribute("pStatus", pStatus.name());
     }
@@ -146,6 +158,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpPublishError() {
         return getStringAttribute("pPublishError");
     }
+
     public void setpPublishError(String pPublishError) {
         setStringAttribute("pPublishError", pPublishError);
     }
@@ -154,6 +167,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpBrandId() {
         return getStringAttribute("pBrandId");
     }
+
     public void setpBrandId(String pBrandId) {
         setStringAttribute("pBrandId", pBrandId);
     }
@@ -162,6 +176,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpBrandName() {
         return getStringAttribute("pBrandName");
     }
+
     public void setpBrandName(String pBrandName) {
         setStringAttribute("pBrandName", pBrandName);
     }
@@ -170,6 +185,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpPublishTime() {
         return getStringAttribute("pPublishTime");
     }
+
     public void setpPublishTime(String pPublishTime) {
         setStringAttribute("pPublishTime", pPublishTime);
     }
@@ -179,6 +195,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         String pAttributeStatus = getStringAttribute("pAttributeStatus");
         return StringUtils.isEmpty(pAttributeStatus) ? "0" : pAttributeStatus;
     }
+
     public void setpAttributeStatus(String pAttributeStatus) {
         setStringAttribute("pAttributeStatus", StringUtils.isEmpty(pAttributeStatus) ? "0" : pAttributeStatus);
     }
@@ -187,6 +204,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpAttributeSetter() {
         return getStringAttribute("pAttributeSetter");
     }
+
     public void setpAttributeSetter(String pAttributeSetter) {
         setStringAttribute("pAttributeSetter", pAttributeSetter);
     }
@@ -195,6 +213,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpAttributeSetTime() {
         return getStringAttribute("pAttributeSetTime");
     }
+
     public void setpAttributeSetTime(String pAttributeSetTime) {
         setStringAttribute("pAttributeSetTime", pAttributeSetTime);
     }
@@ -203,12 +222,15 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public Double getpPriceMsrpSt() {
         return getDoubleAttribute("pPriceMsrpSt");
     }
+
     public void setpPriceMsrpSt(Double pPriceMsrpSt) {
         setAttribute("pPriceMsrpSt", pPriceMsrpSt);
     }
+
     public Double getpPriceMsrpEd() {
         return getDoubleAttribute("pPriceMsrpEd");
     }
+
     public void setpPriceMsrpEd(Double pPriceMsrpEd) {
         setAttribute("pPriceMsrpEd", pPriceMsrpEd);
     }
@@ -217,12 +239,15 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public Double getpPriceRetailSt() {
         return getDoubleAttribute("pPriceRetailSt");
     }
+
     public void setpPriceRetailSt(Double priceRetailSt) {
         setAttribute("pPriceRetailSt", priceRetailSt);
     }
+
     public Double getpPriceRetailEd() {
         return getDoubleAttribute("pPriceRetailEd");
     }
+
     public void setpPriceRetailEd(Double priceRetailEd) {
         setAttribute("pPriceRetailEd", priceRetailEd);
     }
@@ -231,12 +256,15 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public Double getpPriceSaleSt() {
         return getDoubleAttribute("pPriceSaleSt");
     }
+
     public void setpPriceSaleSt(Double priceSaleSt) {
         setAttribute("pPriceSaleSt", priceSaleSt);
     }
+
     public Double getpPriceSaleEd() {
         return getDoubleAttribute("pPriceSaleEd");
     }
+
     public void setpPriceSaleEd(Double priceSaleEd) {
         setAttribute("pPriceSaleEd", priceSaleEd);
     }
@@ -245,10 +273,11 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public BaseMongoMap<String, Object> getFields() {
         return getAttribute(FIELDS);
     }
+
     /**
      * 返回非空BaseMongoMap对象
      */
-    public BaseMongoMap getFieldsNotNull()  {
+    public BaseMongoMap getFieldsNotNull() {
         BaseMongoMap obj = getAttribute(FIELDS);
         if (obj == null) {
             return new BaseMongoMap();
@@ -261,23 +290,27 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     }
 
     //skus
-    public List<BaseMongoMap<String, Object>> getSkus(){
+    public List<BaseMongoMap<String, Object>> getSkus() {
         return getAttribute(SKUS);
     }
-    public void setSkus(List<BaseMongoMap<String, Object>> skus){
-        setAttribute(SKUS,skus);
+
+    public void setSkus(List<BaseMongoMap<String, Object>> skus) {
+        setAttribute(SKUS, skus);
     }
 
     //sellerCats
     public List<CmsBtProductModel_SellerCat> getSellerCats() {
         return getAttribute(SELLER_CATS);
     }
+
     public void setSellerCats(List<CmsBtProductModel_SellerCat> sellerCats) {
         setAttribute(SELLER_CATS, sellerCats);
     }
+
     public List<Map<String, Object>> getSellerCatsByMap() {
         return getAttribute(SELLER_CATS);
     }
+
     public void setSellerCatsByMap(List<Map<String, Object>> sellerCats) {
         setAttribute(SELLER_CATS, sellerCats);
     }
@@ -286,6 +319,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public List<ProductMqqBean> getMqq() {
         return getAttribute(MQQ);
     }
+
     public void setMqq(List<ProductMqqBean> mqq) {
         setAttribute(MQQ, mqq);
     }
@@ -293,12 +327,212 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpReallyStatus() {
         return getStringAttribute("pReallyStatus");
     }
+
     public void setpReallyStatus(String pReallyStatus) {
-        setStringAttribute("pReallyStatus",pReallyStatus);
+        setStringAttribute("pReallyStatus", pReallyStatus);
     }
 
-    public String getIsNewSku(){ return  getStringAttribute("isNewSku"); }
-    public void setIsNewSku(String isNewSku){setStringAttribute("isNewSku", isNewSku);}
+    public String getIsNewSku() {
+        return getStringAttribute("isNewSku");
+    }
+
+    public void setIsNewSku(String isNewSku) {
+        setStringAttribute("isNewSku", isNewSku);
+    }
+
+    public List<CmsBtProductModel_Field_Image> getImages(CmsBtProductConstants.FieldImageType imageType) {
+        List<CmsBtProductModel_Field_Image> result = null;
+        if (imageType != null) {
+            switch (imageType) {
+                case PRODUCT_IMAGE:
+                    result = getImages1();
+                    break;
+                case PACKAGE_IMAGE:
+                    result = getImages2();
+                    break;
+                case ANGLE_IMAGE:
+                    result = getImages3();
+                    break;
+                case CUSTOM_IMAGE:
+                    result = getImages4();
+                    break;
+                case MOBILE_CUSTOM_IMAGE:
+                    result = getImages5();
+                    break;
+                case CUSTOM_PRODUCT_IMAGE:
+                    result = getImages6();
+                    break;
+                case M_CUSTOM_PRODUCT_IMAGE:
+                    result = getImages7();
+                    break;
+                case HANG_TAG_IMAGE:
+                    result = getImages8();
+                    break;
+                case DURABILITY_TAG_IMAGE:
+                    result = getImages9();
+                    break;
+            }
+        }
+        return result;
+    }
+
+    public void setImages(CmsBtProductConstants.FieldImageType imageType, List<CmsBtProductModel_Field_Image> images) {
+        if (imageType != null) {
+            switch (imageType) {
+                case PRODUCT_IMAGE:
+                    setImages1(images);
+                    break;
+                case PACKAGE_IMAGE:
+                    setImages2(images);
+                    break;
+                case ANGLE_IMAGE:
+                    setImages3(images);
+                    break;
+                case CUSTOM_IMAGE:
+                    setImages4(images);
+                    break;
+                case MOBILE_CUSTOM_IMAGE:
+                    setImages5(images);
+                    break;
+                case CUSTOM_PRODUCT_IMAGE:
+                    setImages6(images);
+                    break;
+                case M_CUSTOM_PRODUCT_IMAGE:
+                    setImages7(images);
+                    break;
+                case HANG_TAG_IMAGE:
+                    setImages8(images);
+                    break;
+                case DURABILITY_TAG_IMAGE:
+                    setImages9(images);
+                    break;
+            }
+        }
+    }
+
+    /**
+     * 商品图片
+     */
+    public List<CmsBtProductModel_Field_Image> getImages1() {
+        if (!this.containsKey("images1") || getStringAttribute("images1") == null) {
+            setAttribute("images1", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return getAttribute("images1");
+    }
+
+    public void setImages1(List<CmsBtProductModel_Field_Image> images1) {
+        setAttribute("images1", images1);
+    }
+
+    /**
+     * 包装图片
+     */
+    public List<CmsBtProductModel_Field_Image> getImages2() {
+        if (!this.containsKey("images2") || getStringAttribute("images2") == null) {
+            setAttribute("images2", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return getAttribute("images2");
+    }
+
+    public void setImages2(List<CmsBtProductModel_Field_Image> images2) {
+        setAttribute("images2", images2);
+    }
+
+    /**
+     * 带角度图片
+     */
+    public List<CmsBtProductModel_Field_Image> getImages3() {
+        if (!this.containsKey("images3") || getStringAttribute("images3") == null) {
+            setAttribute("images3", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return getAttribute("images3");
+    }
+
+    public void setImages3(List<CmsBtProductModel_Field_Image> images3) {
+        setAttribute("images3", images3);
+    }
+
+    /**
+     * 自定义图片
+     */
+    public List<CmsBtProductModel_Field_Image> getImages4() {
+        if (!this.containsKey("images4") || getStringAttribute("images4") == null) {
+            setAttribute("images4", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return getAttribute("images4");
+    }
+
+    public void setImages4(List<CmsBtProductModel_Field_Image> images4) {
+        setAttribute("images4", images4);
+    }
+
+    /**
+     * 手机端自定义图片
+     */
+    public List<CmsBtProductModel_Field_Image> getImages5() {
+        if (!this.containsKey("images5") || getStringAttribute("images5") == null) {
+            setAttribute("images5", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return getAttribute("images5");
+    }
+
+    public void setImages5(List<CmsBtProductModel_Field_Image> images5) {
+        setAttribute("images5", images5);
+    }
+
+    /**
+     * 商品自定义图片
+     */
+    public List<CmsBtProductModel_Field_Image> getImages6() {
+        if (!this.containsKey("images6") || getStringAttribute("images6") == null) {
+            setAttribute("images6", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return getAttribute("images6");
+    }
+
+    public void setImages6(List<CmsBtProductModel_Field_Image> images6) {
+        setAttribute("images6", images6);
+    }
+
+    /**
+     * 商品自定义M_CUSTOM_PRODUCT_IMAGE
+     */
+    public List<CmsBtProductModel_Field_Image> getImages7() {
+        if (!this.containsKey("images7") || getStringAttribute("images7") == null) {
+            setAttribute("images7", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return getAttribute("images7");
+    }
+
+    public void setImages7(List<CmsBtProductModel_Field_Image> images7) {
+        setAttribute("images7", images7);
+    }
+
+    /**
+     * 商品自定义HANG_TAG_IMAGE
+     */
+    public List<CmsBtProductModel_Field_Image> getImages8() {
+        if (!this.containsKey("images8") || getStringAttribute("images8") == null) {
+            setAttribute("images8", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return getAttribute("images8");
+    }
+
+    public void setImages8(List<CmsBtProductModel_Field_Image> images8) {
+        setAttribute("images8", images8);
+    }
+
+    public List<CmsBtProductModel_Field_Image> getImages9() {
+        if (!this.containsKey("images9") || getStringAttribute("images9") == null) {
+            setAttribute("images9", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return getAttribute("images9");
+    }
+
+    public void setImages9(List<CmsBtProductModel_Field_Image> images9) {
+        setAttribute("images9", images9);
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public Object put(String key, Object value) {

@@ -64,7 +64,8 @@ define([
             productUrl: "",
             preStatus: null,
             noMaterMsg: null
-        }
+        };
+        self.panelShow = true;
     }
 
     SpJdController.prototype.init = function (element) {
@@ -77,7 +78,7 @@ define([
         //监控税号和翻译状态
         var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
             check.translate = $scope.productInfo.translateStatus;
-            if($scope.cartInfo.value != 20)
+            if ($scope.cartInfo.value != 20)
                 check.tax = $scope.productInfo.hsCodeStatus;
         });
 
@@ -626,6 +627,25 @@ define([
     SpJdController.prototype.btnDisabled = function () {
         return _.every(this.vm.checkFlag, function (ele) {
             return ele == true ? 1 : 0;
+        });
+    };
+
+    /**
+     * 操作区域图片上传按钮
+     */
+    SpJdController.prototype.popUploadImg = function () {
+        var self = this,
+            popup = self.popups;
+
+        self.vm.platform['images1'] = self.$scope.productInfo.masterField['images1'];
+
+        popup.openUploadImages({
+            cartId: self.$scope.cartInfo.value,
+            productId: self.$scope.productInfo.productId,
+            platform: self.vm.platform,
+            showArr:['image1','image6','image7','image2','image3','image4','image5']
+        }).then(function (platform) {
+            self.vm.platform = platform;
         });
     };
 
