@@ -13,8 +13,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by james on 2017/2/21.
  *
@@ -28,7 +26,7 @@ public class CmsBtCustomPropServiceTest {
     @Test
     public void getProductCustomProp() throws Exception {
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode("010","RF1119MLPN-D");
-        cmsBtCustomPropService.getProductCustomProp(cmsBtProductModel);
+        cmsBtCustomPropService.setProductCustomProp(cmsBtProductModel);
         System.out.println(JacksonUtil.bean2Json(cmsBtProductModel.getFeed()));
 
     }

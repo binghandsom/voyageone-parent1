@@ -66,4 +66,12 @@ public class CmsCustomPropController extends CmsController {
         CmsBtCustomPropModel cmsBtCustomPropModel = cmsBtCustomPropService.setSort(getUser().getSelChannelId(),orgChannelId,cat, sort);
         return success(cmsBtCustomPropModel);
     }
+
+    public AjaxResponse doRemoveEntity(@RequestBody Map param){
+        String orgChannelId = (String) param.get("orgChannelId");
+        String cat = (String) param.get("cat");
+        CmsBtCustomPropModel.Entity entity = new CmsBtCustomPropModel.Entity((Map) param.get("entity")) ;
+        CmsBtCustomPropModel cmsBtCustomPropModel = cmsBtCustomPropService.removeEntity(getUser().getSelChannelId(),orgChannelId,cat, entity);
+        return success(cmsBtCustomPropModel);
+    }
 }

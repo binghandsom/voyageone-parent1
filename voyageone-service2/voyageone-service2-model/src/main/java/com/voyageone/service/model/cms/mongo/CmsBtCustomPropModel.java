@@ -113,6 +113,15 @@ public class CmsBtCustomPropModel extends BaseMongoModel {
         public void setValue(String value){
             setStringAttribute("value", value);
         }
+
+        public Integer getActive(){
+            return getIntAttribute("active");
+        }
+
+        public void setActive (Integer active){
+            setAttribute("active", active);
+        }
+
     }
 
     public enum CustomPropType{

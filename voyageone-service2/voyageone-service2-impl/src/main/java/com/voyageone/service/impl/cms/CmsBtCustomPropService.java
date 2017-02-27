@@ -96,6 +96,7 @@ public class CmsBtCustomPropService extends BaseService {
         }
 
         rearrange(cmsBtCustomProp);
+        cmsBtCustomProp.setEntitys(cmsBtCustomProp.getEntitys().stream().filter(entity -> 0 != entity.getActive()).collect(Collectors.toList()));
         return cmsBtCustomProp;
     }
 
@@ -126,9 +127,11 @@ public class CmsBtCustomPropService extends BaseService {
             item.setNameEn(entity.getNameEn());
             item.setType(entity.getType());
             item.setChecked(entity.getChecked());
+            item.setActive(entity.getActive());
             cmsBtCustomPropModel.getEntitys().add(item);
         } else {
             item.setChecked(entity.getChecked());
+            item.setActive(entity.getActive());
         }
         cmsBtCustomPropModel.setSort(cmsBtCustomPropExtend.getSort());
         if (entity.getChecked()) {
@@ -166,16 +169,42 @@ public class CmsBtCustomPropService extends BaseService {
             item.setNameEn(entity.getNameEn());
             item.setType(entity.getType());
             item.setValue(entity.getValue());
+            item.setActive(entity.getActive());
             cmsBtCustomPropModel.getEntitys().add(item);
         } else {
             item.setNameCn(entity.getNameCn());
             item.setType(entity.getType());
             item.setValue(entity.getValue());
+            item.setActive(entity.getActive());
         }
         update(cmsBtCustomPropModel);
         return getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
     }
 
+    public CmsBtCustomPropModel removeEntity(String channelId, String orgChannelId, String cat, CmsBtCustomPropModel.Entity entity) {
+        CmsBtCustomPropModel cmsBtCustomPropModel = getCustomPropByCatChannel(channelId, orgChannelId, cat);
+        if (cmsBtCustomPropModel == null) {
+            cmsBtCustomPropModel = new CmsBtCustomPropModel();
+            cmsBtCustomPropModel.setCat(cat);
+            cmsBtCustomPropModel.setChannelId(channelId);
+            cmsBtCustomPropModel.setOrgChannelId(orgChannelId);
+        }
+        CmsBtCustomPropModel.Entity item = cmsBtCustomPropModel.getEntitys().stream()
+                .filter(entity1 -> entity1.getNameEn().equalsIgnoreCase(entity.getNameEn()) && Objects.equals(entity.getType(), entity1.getType()))
+                .findFirst().orElse(null);
+        if (item == null) {
+            item = new CmsBtCustomPropModel.Entity();
+            item.setNameCn(entity.getNameCn());
+            item.setNameEn(entity.getNameEn());
+            item.setActive(entity.getActive());
+            cmsBtCustomPropModel.getEntitys().add(item);
+        } else {
+            item.setNameCn(entity.getNameCn());
+            item.setActive(entity.getActive());
+        }
+        update(cmsBtCustomPropModel);
+        return getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
+    }
     /**
      * 更新顺序
      *
@@ -198,7 +227,7 @@ public class CmsBtCustomPropService extends BaseService {
         return getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
     }
 
-    public void getProductCustomProp(CmsBtProductModel product) {
+    public void setProductCustomProp(CmsBtProductModel product) {
 
         CmsBtCustomPropModel cmsBtCustomPropModel = getCustomPropByCatChannelExtend(product.getChannelId(), product.getOrgChannelId(), product.getCommon().getCatPath());
 
@@ -224,7 +253,7 @@ public class CmsBtCustomPropService extends BaseService {
         List<String> cnCustom = new ArrayList<>();
         cmsBtCustomPropModel.getEntitys().stream().filter(entity -> entity.getChecked() != null && entity.getChecked()).forEach(entity -> {
             enCustom.add(entity.getNameEn());
-            cnCustom.add(StringUtil.isEmpty(entity.getNameCn())?entity.getNameEn():entity.getNameCn());
+            cnCustom.add(StringUtil.isEmpty(entity.getNameCn()) ? entity.getNameEn() : entity.getNameCn());
         });
 
         product.getFeed().setCustomIds(enCustom);
@@ -236,13 +265,13 @@ public class CmsBtCustomPropService extends BaseService {
             case 1:
                 if (!StringUtil.isEmpty(entity.getValue())) {
                     String value = "";
-                    if(entity.getType() == CmsBtCustomPropModel.CustomPropType.Feed.getValue()){
-                        List<String>values = feedInfo.getAttribute().get(entity.getValue());
-                        if(!ListUtils.isNull(values)){
+                    if (entity.getType() == CmsBtCustomPropModel.CustomPropType.Feed.getValue()) {
+                        List<String> values = feedInfo.getAttribute().get(entity.getValue());
+                        if (!ListUtils.isNull(values)) {
                             value = values.get(0);
                         }
-                    }else{
-                        if(!StringUtil.isEmpty(cmsBtProduct.getCommonNotNull().getFieldsNotNull().getStringAttribute(entity.getValue()))){
+                    } else {
+                        if (!StringUtil.isEmpty(cmsBtProduct.getCommonNotNull().getFieldsNotNull().getStringAttribute(entity.getValue()))) {
                             value = cmsBtProduct.getCommonNotNull().getFieldsNotNull().getStringAttribute(entity.getValue());
                         }
                     }
@@ -255,7 +284,7 @@ public class CmsBtCustomPropService extends BaseService {
                         return cmsBtTranslateModel.getValueCn();
                     } else {
                         String valueCn = "";
-                        if(value.length() < 50) {
+                        if (value.length() < 50) {
                             try {
                                 valueCn = BaiduTranslateUtil.translate(value);
                             } catch (Exception e) {
