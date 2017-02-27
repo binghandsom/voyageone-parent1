@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.feed;
 import com.mongodb.WriteResult;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedCategoryAttributeDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,15 +32,23 @@ public class FeedCategoryAttributeService extends BaseService {
         return cmsBtFeedCategoryAttributeDao.selectCategoryAttributeByCatId(channelId, catId);
     }
 
-    public List<String> getAttributeNameByChannelId(String channelId) {
+    public List<CmsBtCustomPropModel.Entity> getAttributeNameByChannelId(String channelId) {
         List<CmsMtFeedAttributesModel> cmsMtFeedAttributesModels = cmsBtFeedCategoryAttributeDao.selectCategoryAttributeByChannelId(channelId);
         List<String> attributesName = new ArrayList<>();
+        List<CmsBtCustomPropModel.Entity> entities = new ArrayList<>();
         cmsMtFeedAttributesModels.forEach(cmsMtFeedAttributesModel -> {
             cmsMtFeedAttributesModel.getAttribute().forEach((s, strings) -> {
-                if(!attributesName.contains(s)) attributesName.add(s);
+                String key = s.trim().replace(" ","");
+                if(!attributesName.contains(key)){
+                    CmsBtCustomPropModel.Entity entity = new CmsBtCustomPropModel.Entity();
+                    entity.setNameEn(key);
+                    entity.setType(CmsBtCustomPropModel.CustomPropType.Feed.getValue());
+                    entity.setValue(s);
+                    entities.add(entity);
+                }
             });
         });
-        return attributesName;
+        return entities;
     }
 
     /**

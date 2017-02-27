@@ -13,14 +13,35 @@ import org.springframework.stereotype.Service;
 @Service
 public class CmsBtTranslateService extends BaseService {
 
-    @Autowired
-    private CmsBtTranslateDao cmsBtTranslateDao;
+    private final CmsBtTranslateDao cmsBtTranslateDao;
 
-    public CmsBtTranslateModel get(String channelId, Integer customPropType, String name){
-        return cmsBtTranslateDao.get(channelId,customPropType,name);
+    @Autowired
+    public CmsBtTranslateService(CmsBtTranslateDao cmsBtTranslateDao) {
+        this.cmsBtTranslateDao = cmsBtTranslateDao;
     }
 
-    public void insertOrUpdate(CmsBtTranslateModel cmsBtTranslateModel){
-        cmsBtTranslateDao.
+    public CmsBtTranslateModel get(String channelId, Integer customPropType, String name, String valueEn){
+        return cmsBtTranslateDao.get(channelId,customPropType,name,valueEn);
+    }
+
+    public void insertOrUpdate(CmsBtTranslateModel model){
+        CmsBtTranslateModel cmsBtTranslateModel = cmsBtTranslateDao.get(model.getChannelId(),model.getType(), model.getName(), model.getValueEn());
+        if(cmsBtTranslateModel == null){
+            model.set_id(null);
+            cmsBtTranslateDao.insert(model);
+        }else{
+            model.set_id(cmsBtTranslateModel.get_id());
+            cmsBtTranslateDao.save(model);
+        }
+    }
+
+    public void create(String channelId, Integer customPropType, String name, String valueEn, String valueCn){
+        CmsBtTranslateModel cmsBtTranslateModel = new CmsBtTranslateModel();
+        cmsBtTranslateModel.setChannelId(channelId);
+        cmsBtTranslateModel.setType(customPropType);
+        cmsBtTranslateModel.setName(name);
+        cmsBtTranslateModel.setValueEn(valueEn);
+        cmsBtTranslateModel.setValueCn(valueCn);
+        cmsBtTranslateDao.insert(cmsBtTranslateModel);
     }
 }

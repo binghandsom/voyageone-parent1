@@ -1,7 +1,9 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,17 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context-service2.xml")
 public class CmsBtCustomPropServiceTest {
+
+    @Autowired
+    ProductService productService;
+    @Test
+    public void getProductCustomProp() throws Exception {
+        CmsBtProductModel cmsBtProductModel = productService.getProductByCode("010","RF1119MLPN-D");
+        cmsBtCustomPropService.getProductCustomProp(cmsBtProductModel);
+        System.out.println(JacksonUtil.bean2Json(cmsBtProductModel.getFeed()));
+
+    }
+
     @Test
     public void getFeedAttributeName() throws Exception {
 //        CmsBtCustomPropModel aa = cmsBtCustomPropService.getFeedAttributeName("015");

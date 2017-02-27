@@ -3,15 +3,13 @@ package com.voyageone.common.util.baidu.translate;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MD5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by jacky on 2015/11/19.
@@ -124,4 +122,11 @@ public class BaiduTranslateUtil {
 
     }
 
+    public static String translate(String query) throws Exception {
+        List<String> strings = translate(Arrays.asList(query));
+        if(!ListUtils.isNull(strings)){
+            return strings.get(0);
+        }
+        return "";
+    }
 }

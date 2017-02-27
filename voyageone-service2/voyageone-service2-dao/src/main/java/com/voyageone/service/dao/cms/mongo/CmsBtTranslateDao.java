@@ -14,9 +14,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CmsBtTranslateDao extends BaseMongoDao<CmsBtTranslateModel> {
 
-    public CmsBtTranslateModel get(String channelId, Integer customPropType, String name){
+    public CmsBtTranslateModel get(String channelId, Integer customPropType, String name, String valueEn){
         JongoQuery jongoQuery = new JongoQuery();
-        jongoQuery.setQuery(new Criteria("channelId").is(channelId).and("type").is(customPropType).and("name").is(name));
+        jongoQuery.setQuery(new Criteria("channelId").is(channelId).and("type").is(customPropType).and("name").is(name).and("valueEn").is(valueEn));
         return selectOneWithQuery(jongoQuery);
+    }
+
+    public void save(CmsBtTranslateModel cmsBtTranslateModel){
+        mongoTemplate.save(cmsBtTranslateModel);
     }
 }
