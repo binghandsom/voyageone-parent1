@@ -506,7 +506,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
 
                         // added by morse.lu 2016/08/30 start
-                        uploadMall(product, shop, expressionParser, null, null);
+                        if (!StringUtils.isEmpty(originHashId)) {
+                            uploadMall(product, shop, expressionParser, null, null);
+                        }
                         // added by morse.lu 2016/08/30 end
                     }
                     else
@@ -648,6 +650,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         if (remoteSpus.stream().filter(w -> w.getUpc_code().equals(addVoToBarcode(skuMap.getStringAttribute("barcode"), channelId, skuCode))).count() > 0) {
 //                            JmGetProductInfo_Spus oldSku = remoteSpus.stream().filter(w -> w.getBusinessman_code().equals(skuCode)).findFirst().get();
                             JmGetProductInfo_Spus oldSku = remoteSpus.stream().filter(w -> w.getUpc_code().equals(addVoToBarcode(skuMap.getStringAttribute("barcode"), channelId, skuCode))).findFirst().get();
+                            String isSale = skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name());
+                            if ("false".equals(isSale)) {
+                                // 下架， 并且后面的事情不用再做了
+                                updateSkuIsEnableDeal(shop, originHashId, oldSku.getSku_no(), "0");
+
+                                continue;
+                            }
                             String jmSpuNo = oldSku.getSpu_no();
                             HtSpuUpdateRequest htSpuUpdateRequest = new HtSpuUpdateRequest();
                             htSpuUpdateRequest.setJumei_spu_no(jmSpuNo);
@@ -700,10 +709,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                 $error(msg);
                                 throw  new BusinessException(msg);
                             }
-                            //检查Remote SPU是否有sku属性，如果没有，则添加SKU
-                            if(StringUtils.isNullOrBlank2(oldSku.getSku_no()))
+                            //检查Remote SPU是否有sku属性，如果没有，且SKU库存>0,则添加SKU
+							Integer skuQty = skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+							if (skuQty == null) { skuQty = 0; }
+							if(StringUtils.isNullOrBlank2(oldSku.getSku_no()) && skuQty > 0)
                             {
-								addSkuList.add(skuCode);
+
 
                                 // 需要增加SKU信息到聚美deal(sku的增加顺序一定要先加deal再加mall,顺序反了会报错)
                                 HtSkuAddRequest htSkuAddRequest = new HtSkuAddRequest();
@@ -736,6 +747,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                 HtSkuAddResponse htSkuAddResponse = jumeiHtSkuService.add(shop, htSkuAddRequest);
                                 if (htSkuAddResponse != null && htSkuAddResponse.is_Success()) {
                                     $info("更新商品时,向Deal中增加Sku成功！[hashId:%s] [skuCode:%s]", originHashId, skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+									 addSkuList.add(skuCode);
                                     if(skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).count() > 0)
                                     {
                                         CmsBtJmSkuModel mySku = skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).findFirst().get();
@@ -773,6 +785,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         }
                         //新SPU需要增加
                         else {
+                            String isSale = skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name());
+							Integer newSkuQty = skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+							if (newSkuQty == null) { newSkuQty = 0; }
+							if ("false".equals(isSale) || newSkuQty == 0) {
+                                // 不需要增加了
+                                continue;
+                            }
                             HtSpuAddRequest htSpuAddRequest = new HtSpuAddRequest();
                             htSpuAddRequest.setUpc_code(addVoToBarcode(skuMap.getStringAttribute("barcode"), channelId, skuCode));
                             // update by desmond 2016/07/08 start
@@ -796,10 +815,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
                                 // deleted by morse.lu 2016/09/01 start
                                 // 为了聚美商城能够追加sku，暂时删除，以后聚美结构会改，还会恢复
-                                // added by morse.lu 2016/09/01 start
-                                // 追加成功时才加进list
-                                addSkuList.add(skuCode);
-                                // added by morse.lu 2016/09/01 end
                                 // 需要增加SKU信息到聚美deal(sku的增加顺序一定要先加deal再加mall,顺序反了会报错)
                                 HtSkuAddRequest htSkuAddRequest = new HtSkuAddRequest();
                                 // 聚美Spu_No
@@ -831,6 +846,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                 HtSkuAddResponse htSkuAddResponse = jumeiHtSkuService.add(shop, htSkuAddRequest);
                                 if (htSkuAddResponse != null && htSkuAddResponse.is_Success()) {
                                     $info("更新商品时，新增Spu成功之后再向deal中增加Sku成功！[skuCode:%s]", skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+
+
+                                    // added by morse.lu 2016/09/01 start
+                                    // 追加成功时才加进list
+                                    addSkuList.add(skuCode);
+                                    // added by morse.lu 2016/09/01 end
 
                                     CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
                                     cmsBtJmSkuModel.setJmSpuNo(htSpuAddResponse.getJumei_spu_no());
@@ -930,7 +951,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
                 // add by desmond 2016/09/29 start
                 // 批量修改deal市场价(为了后面uploadMall时不报商城市场价与团购市场价不一致的错误，即使异常也继续uploadMall)
-                updateDealPriceBatch(shop, product, true, false);
+                // 20170224 聚美号称特卖和商城两边的市场价，改动一边即可。所以，暂时注释掉。 START
+                // updateDealPriceBatch(shop, product, true, false);
+				// 20170224 聚美号称特卖和商城两边的市场价，改动一边即可。所以，暂时注释掉。 END
                 // add by desmond 2016/09/29 end
                 // 取得最新聚美平台上的spu信息
                 List<JmGetProductInfo_Spus> currentRemoteSpus = getRemoteSpus(shop, jmCart, productCode);
