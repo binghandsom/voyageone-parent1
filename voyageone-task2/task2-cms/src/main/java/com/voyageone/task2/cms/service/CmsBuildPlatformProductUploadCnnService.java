@@ -705,11 +705,9 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             String colorAlias = null;
             if ("color".equalsIgnoreCase(colorAliasItemName)) {
                 colorAlias = objProduct.getCommonNotNull().getFieldsNotNull().getColor();
-            } else {
+            }
+            if (StringUtils.isEmpty(colorAlias)) {
                 colorAlias = objProduct.getCommonNotNull().getFieldsNotNull().getCode();
-//                if (colorAlias.length() > 25) {
-//                    colorAlias = objProduct.getCommon().getFields().getColor();
-//                }
             }
 
             if (ListUtils.isNull(objProduct.getCommonNotNull().getFieldsNotNull().getImages1())
