@@ -91,6 +91,13 @@ public class CmsBtCustomPropModel extends BaseMongoModel {
             setAttribute("checked", checked);
         }
 
+        public Integer getAttributeType(){
+            return getIntAttribute("attributeType");
+        }
+        public void setAttributeType(Integer attributeType){
+            setAttribute("attributeType", attributeType);
+        }
+
         public String getValue(){
             return getStringAttribute("value");
         }

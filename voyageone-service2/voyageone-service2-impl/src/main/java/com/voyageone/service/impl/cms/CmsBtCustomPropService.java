@@ -3,10 +3,12 @@ package com.voyageone.service.impl.cms;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.ListUtils;
+import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtCustomPropDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.feed.FeedCategoryAttributeService;
 import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -182,6 +184,31 @@ public class CmsBtCustomPropService extends BaseService {
         return getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
     }
 
+    public List<CustomPropBean> getProductCustomProp(CmsBtProductModel product){
+
+        CmsBtCustomPropModel cmsBtCustomPropModel = getCustomPropByCatChannelExtend(product.getChannelId(), product.getOrgChannelId(), product.getCommon().getCatPath());
+
+        product.getFeed().getOrgAtts()
+
+        for(CmsBtCustomPropModel.Entity entity :cmsBtCustomPropModel.getEntitys()){
+            String value = (String) product.getFeed().getOrgAtts().get(entity.getNameEn());
+            if(StringUtil.isEmpty(value)){
+                entity.getNameEn()
+            }
+
+        }
+    }
+
+    private String getEntityValue(CmsBtCustomPropModel.Entity entity){
+        switch (entity.getAttributeType()){
+            case 1:
+
+                break;
+            case 2:
+                break;
+            case 3:
+        }
+    }
     private List<CmsBtCustomPropModel> getCustomPropByCatPath(String channelId, String orgChannelId, String cat) {
         List<CmsBtCustomPropModel> cmsBtCustomPropModels = new ArrayList<>();
         String cats[] = cat.split(">");
