@@ -38,6 +38,7 @@ define([
 
             self.currentImage = self.$rootScope.imageUrl.replace('%s', self.context.platform.images1[0].image1);
 
+            self.images1 = self.context.platform.images1;
             self.platform = self.context.platform;
         };
 

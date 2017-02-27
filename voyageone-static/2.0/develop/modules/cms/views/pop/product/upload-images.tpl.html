@@ -30,8 +30,8 @@
                                     <div class="tab-content" style="border-top: 1px solid #d4cfcf;">
                                         <div class="tab-pane active">
 
-                                            <div class="row" sv-root sv-part="ctrl.platform.images1" sv-on-sort="ctrl.sortImg('images1')">
-                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images1" sv-element ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image1)">
+                                            <div class="row" sv-root sv-part="ctrl.images1" sv-on-sort="ctrl.sortImg('images1')">
+                                                <div class="col-md-3" ng-repeat="image in ctrl.images1" sv-element ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image1)">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image1}" style="height: 88px">
                                                         <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image1)}}">
