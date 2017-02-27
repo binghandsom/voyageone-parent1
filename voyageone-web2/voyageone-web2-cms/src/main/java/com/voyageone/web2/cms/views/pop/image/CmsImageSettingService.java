@@ -138,7 +138,7 @@ public class CmsImageSettingService extends BaseViewService {
         imagesService.insert(newModel);
 
         response.put("imageName", imageName);
-        response.put("updateTime", productService.updateProductPlatform(user.getSelChannelId(), productId, cmsBtProductModel.getPlatform(cartId), DateTimeUtil.getNowTimeStamp()));
+        response.put("updateTime", cmsProductPlatformDetailService.updateProductPlatform(user.getSelChannelId(), productId, cmsBtProductModel.getPlatform(cartId), DateTimeUtil.getNowTimeStamp(), false));
 
         return response;
     }
