@@ -940,7 +940,13 @@
                                             {{productInfo.common.fields.brand}}
                                         </td>
                                         <td class="text-center">
-                                            {{productInfo.common.fields.quantity || 0}}
+                                            <button ng-controller="showPopoverCtrl"
+                                                    popover-html="getCartQty(productInfo.common.fields.code,vm.codeMap)"
+                                                    uib-popover-template="'qty.html'"
+                                                    popover-title="库存" type="button"
+                                                    popover-placement="right" class="btn btn-vo btn-xs">
+                                                {{productInfo.common.fields.quantity || 0}}
+                                            </button>
                                         </td>
                                         <td class="text-center">
                                             <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceMsrp.length>0"
@@ -1290,5 +1296,12 @@
             </tr>
             </tbody>
         </table>
+    </div>
+</script>
+<script type="text/ng-template" id="qty.html">
+    <div>
+        <ul class="col-sm-12 list-unstyled">
+            <li ng-repeat="(x, y) in codeCartQty">{{x}}:{{y}}</li>
+        </ul>
     </div>
 </script>
