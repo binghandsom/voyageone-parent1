@@ -4,31 +4,19 @@
 
 package com.voyageone.service.impl.cms.promotion;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsShelvesMonitorMQMessageBody;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
-
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.redis.CacheHelper;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CallResult;
+import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
+import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionHistoryBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
-import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
-import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
@@ -41,6 +29,14 @@ import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.util.MapModel;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -442,10 +438,18 @@ public class PromotionService extends BaseService {
         return promotion;
     }
 
+    /**
+     * 判断当前日期是否存在有效活动(正处于活动中, 活动结束多少天内, 多少天以后活动才开始)
+     * @param promotion 活动列表
+     * @param date      判断日期
+     * @param rangeBef  判断日期前多少天以内有活动刚结束
+     * @param rangeAft  判断日期后托少天以内有活动未开始
+     * @return List<Integer>
+     */
     public List<Integer>  getDateRangePromotionIds(List<CmsBtPromotionBean> promotion, Date date, String rangeBef, String rangeAft){
 
-        Integer rangeB = StringUtil.isEmpty(rangeBef)?0:Integer.parseInt(rangeBef);
-        Integer rangeA = StringUtil.isEmpty(rangeBef)?0:Integer.parseInt(rangeAft);
+        Integer rangeA = StringUtil.isEmpty(rangeBef)?0:Integer.parseInt(rangeBef);
+        Integer rangeB = StringUtil.isEmpty(rangeAft)?0:Integer.parseInt(rangeAft);
         String dateNow = DateTimeUtil.format(DateTimeUtil.addHours(date, 8), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
         String dateBef = DateTimeUtil.format(DateTimeUtil.addHours(date, 8 + rangeB * -24), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
         String dateAft = DateTimeUtil.format(DateTimeUtil.addHours(date, 8 + rangeA * 24), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
@@ -460,6 +464,33 @@ public class PromotionService extends BaseService {
                                 } else if (cmsBtPromotionBean.getActivityStart().compareTo(dateNow) <= 0 && cmsBtPromotionBean.getActivityEnd().compareTo(dateNow) >= 0) {
                                     return true;
                                 }
+                            }
+                            return false;
+                        }
+                )
+                .map(CmsBtPromotionBean::getId)
+                .collect(Collectors.toList());
+        return promotionIds;
+    }
+
+    /**
+     * 判断当前日期是否存在有效活动(正处于活动中, 活动还未开始)
+     * @param promotion 活动列表
+     * @param date 判断日期
+     * @return List<Integer>
+     */
+    public List<Integer>  getDateRangePromotionIds(List<CmsBtPromotionBean> promotion, Date date){
+
+        String dateNow = DateTimeUtil.format(DateTimeUtil.addHours(date, 8), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+
+        List<Integer> promotionIds = promotion.stream()
+                .filter(cmsBtPromotionBean -> {
+                            // 活动有效,并且未开始, 或者 当前有活动
+                            if (cmsBtPromotionBean.getIsAllPromotion() != 1
+                                    && (cmsBtPromotionBean.getActivityStart().compareTo(dateNow) >= 0
+                                        || (cmsBtPromotionBean.getActivityStart().compareTo(dateNow) <= 0
+                                            && cmsBtPromotionBean.getActivityEnd().compareTo(dateNow) >= 0))) {
+                                return true;
                             }
                             return false;
                         }

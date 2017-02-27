@@ -25,6 +25,7 @@ public class Cnn_928_LIKING_DictTest extends BaseDictTest{
         doCreateJson("新独立域名Liking详情页描述-非重点之英文长描述", false, doDict_新独立域名Liking详情页描述(4));
         doCreateJson("新独立域名Liking详情页描述-非重点之中文长描述", false, doDict_新独立域名Liking详情页描述(5));
         doCreateJson("新独立域名Liking详情页描述-非重点之中文使用说明", false, doDict_新独立域名Liking详情页描述(6));
+        doCreateJson("新独立域名Liking详情页描述-爆款商品", false, doDict_新独立域名Liking详情页描述(7));
     }
 
     private RuleExpression doDict_新独立域名Liking详情页描述(int propType) {
@@ -75,7 +76,7 @@ public class Cnn_928_LIKING_DictTest extends BaseDictTest{
             ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "http://file.liking.com/product_tmp/product_info.jpg")));
         }
 
-        {
+        if (propType != 7) { // 爆款商品之外的都需要
             // 品牌故事图
             RuleExpression htmlTemplate = new RuleExpression();
             htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
@@ -200,12 +201,12 @@ public class Cnn_928_LIKING_DictTest extends BaseDictTest{
             ruleRoot.addRuleWord(new CustomWord(word));
         }
 
-        {
-            // 固定图片 - 商品展示
-            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "http://file.liking.com/product_tmp/product_display.jpg")));
-        }
+        if (propType != 7) { // 爆款商品之外的都需要
+            {
+                // 固定图片 - 商品展示
+                ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "http://file.liking.com/product_tmp/product_display.jpg")));
+            }
 
-        {
             RuleExpression htmlTemplate = new RuleExpression();
             htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
 
@@ -255,6 +256,25 @@ public class Cnn_928_LIKING_DictTest extends BaseDictTest{
 
             RuleExpression imageIndex = new RuleExpression();
             imageIndex.addRuleWord(new TextWord("1"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+        {
+            // 尺码图 - 2
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("2"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression useOriUrl = null;
+
+            RuleExpression imageIndex = new RuleExpression();
+            imageIndex.addRuleWord(new TextWord("2"));
 
             CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
             ruleRoot.addRuleWord(new CustomWord(word));

@@ -262,12 +262,22 @@ public class PlatformPriceService extends VOAbsLoggable {
                 CmsChannelConfigBean autoSyncPricePromotion = priceService.getAutoSyncPricePromotionOption(channelId, cartId);
 
                 try {
+
+                    // 价格下跌, 为0,只要有活动就不同步, 为2,的时候判断活动是否在范围内
                     // 根据活动前后时间判断是否同步平台售价
-                    if (priceIsDown && "2".equals(autoSyncPricePromotion.getConfigValue1())) {
+                    if (priceIsDown && ("2".equals(autoSyncPricePromotion.getConfigValue1())
+                            || "0".equals(autoSyncPricePromotion.getConfigValue1()))) {
+
                         //取得该channel cartId的所有的活动
                         List<CmsBtPromotionBean> promtions = promotionService.getByChannelIdCartId(channelId, cartId);
                         if (!ListUtils.isNull(promtions)) {
-                            List<Integer> promotionIds = promotionService.getDateRangePromotionIds(promtions, new Date(), autoSyncPricePromotion.getConfigValue2(), autoSyncPricePromotion.getConfigValue3());
+                            // 当前时间内有有效活动,就不同步
+                            List<Integer> promotionIds;
+                            if ("0".equals(autoSyncPricePromotion.getConfigValue1()))
+                                promotionIds = promotionService.getDateRangePromotionIds(promtions, new Date());
+                            else
+                                promotionIds = promotionService.getDateRangePromotionIds(promtions, new Date(), autoSyncPricePromotion.getConfigValue2(), autoSyncPricePromotion.getConfigValue3());
+
                             if (!ListUtils.isNull(promotionIds)) {
                                 if (promotionCodeService.getCmsBtPromotionCodeInPromtionCnt(cmsProduct.getCommon().getFields().getCode(), promotionIds) > 0) {
                                     $info(String.format("channel=%s code=%s cartId=%d 有活动保护期 不更新平台价格", channelId, cmsProduct.getCommon().getFields().getCode(), cartId));
@@ -276,10 +286,7 @@ public class PlatformPriceService extends VOAbsLoggable {
                             }
                         }
                     }
-                    // 不同步平台售价
-                    else if ("0".equals(autoSyncPricePromotion.getConfigValue1())) {
-                        return;
-                    }
+
                     // 更新平台价格
                     updateSkuPrice(channelId, cartId, cmsProduct, modifier);
                 } catch (Exception e) {

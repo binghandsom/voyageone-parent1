@@ -641,6 +641,8 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                         strCnnDetailTemplateName = "新独立域名Liking详情页描述-非重点之中文长描述";
                     } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
                         strCnnDetailTemplateName = "新独立域名Liking详情页描述-非重点之中文使用说明";
+                    } else if (detailName.equals("天猫同购描述-爆款商品")) {
+                        strCnnDetailTemplateName = "新独立域名Liking详情页描述-爆款商品";
                     }
                 }
             }
@@ -703,11 +705,9 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             String colorAlias = null;
             if ("color".equalsIgnoreCase(colorAliasItemName)) {
                 colorAlias = objProduct.getCommonNotNull().getFieldsNotNull().getColor();
-            } else {
+            }
+            if (StringUtils.isEmpty(colorAlias)) {
                 colorAlias = objProduct.getCommonNotNull().getFieldsNotNull().getCode();
-//                if (colorAlias.length() > 25) {
-//                    colorAlias = objProduct.getCommon().getFields().getColor();
-//                }
             }
 
             if (ListUtils.isNull(objProduct.getCommonNotNull().getFieldsNotNull().getImages1())
