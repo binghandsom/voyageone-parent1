@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.biReport.consult;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.util.HttpExcuteUtils;
 import com.voyageone.common.util.JacksonUtil;
@@ -19,8 +20,8 @@ import java.util.*;
  */
 @Service
 public class BiRepConsultService extends BaseService {
-    private static final String API_HOST = "http://openapi.voyageone.com.cn";
-//    private static final String API_HOST = "http://127.0.0.1:8081";
+//    private static final String API_HOST = "http://openapi.voyageone.com.cn";
+    private static final String API_HOST = "http://127.0.0.1:8081";
     private static final String CREATE_XLS_FILE_TASK_URL = "/bi/rest/report/createXlsFileTask";
 
     @Autowired
@@ -112,7 +113,13 @@ public class BiRepConsultService extends BaseService {
             $error(e.getMessage());
         }
         if(!StringUtils.isNullOrBlank2(result)) {
-            Map mapResult =  JacksonUtil.jsonToMap(result);
+            $info("api result" + result);
+            Map mapResult = null;
+            try {
+                mapResult = JacksonUtil.jsonToMap(result);
+            } catch (BusinessException e) {
+                e.printStackTrace();
+            }
             Map<String,Object> data = (Map<String, Object>) mapResult.get("data");
             String ecd=(String)data.get("ecd");
             resultMap.put("ecd",ecd);
