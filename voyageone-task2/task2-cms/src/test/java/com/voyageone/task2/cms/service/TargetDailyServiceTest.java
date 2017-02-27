@@ -7,10 +7,7 @@ import com.taobao.api.request.TmallItemUpdateSchemaGetRequest;
 import com.taobao.api.response.ItemSkuGetResponse;
 import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.vomqjobservice.CmsUpdateProductSalePriceService;
-import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,8 +18,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * @author james.li on 2016/9/26.

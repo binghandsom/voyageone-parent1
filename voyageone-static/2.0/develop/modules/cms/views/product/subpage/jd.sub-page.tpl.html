@@ -173,9 +173,9 @@
                                         <span notice-direction="bottom" notice-content="【{{cartInfo.name}} NumIID】，红灯时为上新/更新失败状态，请及时修正；绿灯时为在售状态；黄灯时为在库状态；灰灯时为未发布状态。点击以上{{cartInfo.name}} NumIID进入{{cartInfo.name}}商品页面。" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>
                                     </label>
 
-                                    <label class="col-md-8 m-r-sm" ng-if="ctrl.vm.platform.pNumIId">&nbsp;
+                                    <label class="col-md-8 m-r-sm" ng-if="ctrl.vm.tempSkuNo">&nbsp;
                                         <span>
-                                            <a ng-href="{{ctrl.vm.productUrl}}{{ctrl.vm.platform.pNumIId}}" target="_blank">{{ctrl.vm.platform.pNumIId}} </a>
+                                            <a ng-href="{{ctrl.vm.productUrl}}{{ctrl.vm.tempSkuNo}}.html" target="_blank">{{ctrl.vm.platform.pNumIId}} </a>
                                         </span>
                                     </label>&nbsp;
                                     <label class="col-md-8 m-r-sm" ng-if="ctrl.vm.platform.pPublishMessage" title="{{ctrl.vm.platform.pPublishMessage}}">&nbsp;
@@ -390,13 +390,13 @@
                                             <td class="text-right  v-middle">{{ctrl.vm.skuTemp[entity.skuCode].clientNetPrice}}</td>
                                             <td class="mfb-xxx text-center v-middle">
                                                 <label class="col-sm-3 control-label vo_reqfield"></label>
-                                                <input class="form-control ng-number" type="number" ng-disabled="autoSyncPriceMsrp=='1'" ng-model="entity.priceMsrp" scale="15,2" required>
+                                                <input class="form-control ng-number" type="number" ng-readonly="ctrl.autoSyncPriceMsrp=='1'" ng-model="entity.priceMsrp" scale="15,2" required>
                                             </td>
                                             <td class="text-center v-middle">{{entity.priceRetail}}</td>
                                             <td class="text-center v-middle"><input class="form-control" type="text" ng-model="entity.sizeNick" style="width: 100px;margin: 0px auto;"></td>
                                             <td class="mfb-xxx text-center v-middle">
                                                 <label class="col-sm-3 control-label vo_reqfield"></label>
-                                                <input class="form-control ng-number" type="number"  ng-model="entity.priceSale" ng-readonly="productInfo.autoApprovePrice.configValue1 == '1'"  scale="15,2" required></td>
+                                                <input class="form-control ng-number" type="number"  ng-model="entity.priceSale" ng-readonly="ctrl.autoSyncPriceSale == '1'"  scale="15,2" required></td>
                                             <td class="text-center v-middle">{{ctrl.vm.skuTemp[entity.skuCode].barcode}}</td>
                                         </tr>
                                         </tbody>

@@ -10,6 +10,9 @@ public class FeedEnums {
      */
     public enum Name {
         file_id,
+        file_price_id,
+        file_stock_id,
+        file_translations_id,
         table_id,
         folder,
         file_split,

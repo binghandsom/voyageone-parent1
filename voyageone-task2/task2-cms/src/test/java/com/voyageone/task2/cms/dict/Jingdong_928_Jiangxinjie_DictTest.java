@@ -21,6 +21,9 @@ public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
         doCreateJson("京东详情页描述", false, doDict_京东详情页描述(1));
         doCreateJson("京东详情页描述-重点商品", false, doDict_京东详情页描述(2));
         doCreateJson("京东详情页描述-无属性图", false, doDict_京东详情页描述(3));
+        doCreateJson("京东详情页描述-非重点之英文长描述", false, doDict_京东详情页描述(4));
+        doCreateJson("京东详情页描述-非重点之中文长描述", false, doDict_京东详情页描述(5));
+        doCreateJson("京东详情页描述-非重点之中文使用说明", false, doDict_京东详情页描述(6));
     }
 
     private RuleExpression doDict_京东详情页描述(int propType) {
@@ -88,7 +91,11 @@ public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
             ruleRoot.addRuleWord(new CustomWord(word));
         }
 
-        if (propType == 1) {   // 参数图 - 普通商品
+        if (propType == 1 // 参数图 - 普通商品（非重点之英文使用说明）
+                || propType == 4 // 参数图 - 非重点之英文长描述
+                || propType == 5 // 参数图 - 非重点之中文长描述
+                || propType == 6 // 参数图 - 非重点之中文使用说明
+                ) {
 
             {
                 // 前缀
@@ -99,7 +106,6 @@ public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
             {
                 // imageTemplate
                 RuleExpression imageTemplate = new RuleExpression();
-//                String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/likingtmall_790X200?$pc790X200$&$wenzi=%s";
                 String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/liking-18-790X260?$790X300$&$wenzi=%s";
                 imageTemplate.addRuleWord(new TextWord(htmlTemplate));
 
@@ -109,7 +115,20 @@ public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
                 {
                     // 第一个参数是描述
                     RuleExpression ruleExpression = new RuleExpression();
-                    ruleExpression.addRuleWord(new MasterClrHtmlWord("usageEn")); // 英文使用方法
+                    switch (propType) {
+                        case 1:
+                            ruleExpression.addRuleWord(new MasterClrHtmlWord("usageEn")); // 英文使用方法
+                            break;
+                        case 4:
+                            ruleExpression.addRuleWord(new MasterClrHtmlWord("longDesEn")); // 英文长描述
+                            break;
+                        case 5:
+                            ruleExpression.addRuleWord(new MasterClrHtmlWord("longDesCn")); // 中文长描述
+                            break;
+                        case 6:
+                            ruleExpression.addRuleWord(new MasterClrHtmlWord("usageCn")); // 非重点之中文使用说明
+                            break;
+                    }
                     imageParams.add(ruleExpression);
                 }
 

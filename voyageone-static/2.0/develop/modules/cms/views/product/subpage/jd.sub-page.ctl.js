@@ -107,6 +107,10 @@ define([
                 vm.sellerCats = vm.platform.sellerCats == null ? [] : vm.platform.sellerCats;
             }
 
+            vm.tempSkuNo = _.find(vm.platform.skus, function (mSku) {
+                return mSku.jdSkuId != "" && mSku.isSale
+            }).jdSkuId;
+
             _.each(vm.mastData.skus, function (mSku) {
                 vm.skuTemp[mSku.skuCode] = mSku;
             });
@@ -118,6 +122,7 @@ define([
             }
 
             self.autoSyncPriceMsrp = resp.data.autoSyncPriceMsrp;
+            self.autoSyncPriceSale = resp.data.autoSyncPriceSale;
 
         }, function (resp) {
             vm.noMaterMsg = resp.message.indexOf("Server Exception") >= 0 ? null : resp.message;
@@ -439,9 +444,9 @@ define([
             self.productDetailService.updateSkuPrice({
                 cartId: $scope.cartInfo.value,
                 prodId: $scope.productInfo.productId,
-                platform: $scope.vm.platform
+                platform: self.vm.platform
             }).then(function () {
-                self.alert("TXT_MSG_UPDATE_SUCCESS");
+                self.notify.success("TXT_MSG_UPDATE_SUCCESS");
             }, function (res) {
                 self.alert(res.message);
             });

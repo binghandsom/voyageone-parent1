@@ -478,6 +478,11 @@ define([
                 "templateUrl": "views/pop/system/channelList.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
                 "controller": 'popChannelListCtl'
+            },
+            "mqErrorList": {
+                "templateUrl": "views/pop/system/mqErrorList.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/mqErrorList.ctl",
+                "controller": 'popMqErrorListCtl'
             }
         },
         "maintain": {

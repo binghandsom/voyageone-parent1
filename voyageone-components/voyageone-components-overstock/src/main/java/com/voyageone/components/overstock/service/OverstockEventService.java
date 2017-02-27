@@ -1,6 +1,8 @@
 package com.voyageone.components.overstock.service;
 
+import com.overstock.mp.mpc.externalclient.api.ErrorDetails;
 import com.overstock.mp.mpc.externalclient.api.Result;
+import com.overstock.mp.mpc.externalclient.model.EventStatusType;
 import com.overstock.mp.mpc.externalclient.model.EventType;
 import com.overstock.mp.mpc.externalclient.model.EventTypeType;
 import com.overstock.mp.mpc.externalclient.model.EventsType;
@@ -8,6 +10,8 @@ import com.voyageone.components.overstock.OverstockBase;
 import com.voyageone.components.overstock.bean.event.OverstockEventTypeUpdateRequest;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author aooer 2016/6/8.
@@ -103,6 +107,12 @@ public class OverstockEventService extends OverstockBase {
         return queryingForNewEvents(EventTypeType.VARIATION_NEW);
     }
 
+    @Retryable
+    public Result<EventsType> queryingForNewProductNew() throws Exception {
+        return queryingForNewEvents(EventTypeType.PRODUCT);
+    }
+
+
     /**
      * 获取价格变化信息
      *
@@ -134,6 +144,31 @@ public class OverstockEventService extends OverstockBase {
     @Retryable
     public Result<EventsType> queryingForNewReturn() throws Exception {
         return queryingForNewEvents(EventTypeType.RETURN);
+    }
+
+    /**
+     * @description OverStock Event 状态更新
+     */
+    public boolean updateHandledEvents(List<EventType> eventTypeList) throws Exception {
+        boolean ret = true;
+
+        OverstockEventTypeUpdateRequest request = new OverstockEventTypeUpdateRequest();
+
+        for (int i = 0; i < eventTypeList.size(); i++) {
+            request.setEventId(String.valueOf(eventTypeList.get(i).getId()));
+            request.setEventStatusType(EventStatusType.ACKNOWLEDGED);
+            Result<EventType> result = updatingEventStatus(request);
+
+            int statusCode = result.getStatusCode();
+            ErrorDetails errMsg = result.getErrorDetails();
+
+            if (statusCode != 200) {
+                ret = false;
+                logger.warn("OverStock updatingEventStatus 调用异常 event_id = " + eventTypeList.get(i).getId() + " statusCode = " + statusCode + " msg = " + errMsg.getErrorMessage());
+            }
+        }
+
+        return ret;
     }
 
 

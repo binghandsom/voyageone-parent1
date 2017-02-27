@@ -57,17 +57,16 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
     public AjaxResponse getPage(@RequestBody PageQueryParameters parameters) {
 //        parameters.put("channelId", getUser().getSelChannelId());
         parameters.put("creatorId",getUser().getUserId());
-        System.out.println("getUserId"+getUser().getUserId());
+        parameters.put("creatorName",getUser().getUserName());
         return success(biRepConsultService.getPage(parameters));
     }
 
     //获取数量
     @RequestMapping(BIREPORT.LIST.DOWNLOAD.GETCOUNT)
     public AjaxResponse getCount() {
-//        parameters.put("channelId", getUser().getSelChannelId());
         PageQueryParameters parameters=new PageQueryParameters();
         parameters.put("creatorId",getUser().getUserId());
-        System.out.println("getUserId"+getUser().getUserId() +"getUserName"+getUser().getUserName());
+        parameters.put("creatorName",getUser().getUserName());
         return success(biRepConsultService.getCount(parameters));
     }
     /**

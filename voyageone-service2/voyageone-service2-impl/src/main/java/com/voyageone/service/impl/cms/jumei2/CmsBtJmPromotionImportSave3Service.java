@@ -33,6 +33,8 @@ public class CmsBtJmPromotionImportSave3Service {
     CmsBtJmPromotionProductDaoExt daoExtCmsBtJmPromotionProduct;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private CmsBtJmPromotionSku3Service cmsBtJmPromotionSku3Service;
 
     @VOTransactional
     public void saveProductSaveInfo(ProductSaveInfo info) {
@@ -46,9 +48,9 @@ public class CmsBtJmPromotionImportSave3Service {
         for (CmsBtJmPromotionSkuModel sku : info.jmSkuList) {
             sku.setCmsBtJmPromotionProductId(info.jmProductModel.getId());
             if (sku.getId() == null || sku.getId() == 0) {
-                daoCmsBtJmPromotionSku.insert(sku);
+                cmsBtJmPromotionSku3Service.insert(sku);
             } else {
-                daoCmsBtJmPromotionSku.update(sku);
+                cmsBtJmPromotionSku3Service.update(sku);
             }
         }
         //CmsBtJmPromotionTagProduct
