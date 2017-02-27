@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.search;
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Properties;
@@ -18,15 +17,12 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryService;
-import com.voyageone.service.model.cms.SkuInventoryForCmsBean;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -146,41 +142,41 @@ public class CmsAdvanceSearchController extends CmsController {
 
             //sku取得库存
             Map<String, Set<String>> codesMap = new HashMap<>();
-            Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<>();
-            if (StringUtils.isNotBlank(cmsBtProductBean.getCommon().getFields().getOriginalCode())) {
-                codesMap.computeIfAbsent(cmsBtProductBean.getOrgChannelId(), k -> new HashSet<>());
-                codesMap.get(cmsBtProductBean.getOrgChannelId()).add(cmsBtProductBean.getCommon().getFields().getOriginalCode());
-            }
-            codesMap.keySet().stream()
-                    .filter(channel -> codesMap.get(channel).size() > 0)
-                    .forEach(channel -> {
-                        List<SkuInventoryForCmsBean> inventoryForCmsBeanList = cmsBtExportTaskService.batchSelectInventory(channel, new ArrayList<>(codesMap.get(channel)));
-                        if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
-                            for (SkuInventoryForCmsBean skuInventory : inventoryForCmsBeanList) {
-                                skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
-                            }
-                        }
-                    });
-            Map<String, Integer> cartIdMap = new HashMap();
-            for (TypeChannelBean cartObj : cartList) {
-                CmsBtProductModel_Platform_Cart ptfObj = cmsBtProductBean.getPlatform(Integer.parseInt(cartObj.getValue()));
-                int qty = 0;
-                for (BaseMongoMap<String, Object> map : ptfObj.getSkus()) {
-                    String sku = (String) map.get("skuCode");
-                    Boolean isSale = (Boolean) map.get("isSale");
-                    if (isSale) {
-                        SkuInventoryForCmsBean skuBeanObj = skuInventoryMap.keySet().stream().filter(skuBean -> sku.equalsIgnoreCase(skuBean.getSku())).findFirst().orElse(null);
-                        if (skuBeanObj != null) {
-                            if (skuInventoryMap.get(skuBeanObj) != null) {
-                                qty = qty + skuInventoryMap.get(skuBeanObj);
-                            }
-                        }
-                    }
-                }
-                cartIdMap.put(cartObj.getAdd_name2(), qty);
-            }
+//            Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<>();
+//            if (StringUtils.isNotBlank(cmsBtProductBean.getCommon().getFields().getOriginalCode())) {
+//                codesMap.computeIfAbsent(cmsBtProductBean.getOrgChannelId(), k -> new HashSet<>());
+//                codesMap.get(cmsBtProductBean.getOrgChannelId()).add(cmsBtProductBean.getCommon().getFields().getOriginalCode());
+//            }
+//            codesMap.keySet().stream()
+//                    .filter(channel -> codesMap.get(channel).size() > 0)
+//                    .forEach(channel -> {
+//                        List<SkuInventoryForCmsBean> inventoryForCmsBeanList = cmsBtExportTaskService.batchSelectInventory(channel, new ArrayList<>(codesMap.get(channel)));
+//                        if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
+//                            for (SkuInventoryForCmsBean skuInventory : inventoryForCmsBeanList) {
+//                                skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
+//                            }
+//                        }
+//                    });
+//            Map<String, Integer> cartIdMap = new HashMap();
+//            for (TypeChannelBean cartObj : cartList) {
+//                CmsBtProductModel_Platform_Cart ptfObj = cmsBtProductBean.getPlatform(Integer.parseInt(cartObj.getValue()));
+//                int qty = 0;
+//                for (BaseMongoMap<String, Object> map : ptfObj.getSkus()) {
+//                    String sku = (String) map.get("skuCode");
+//                    Boolean isSale = (Boolean) map.get("isSale");
+//                    if (isSale) {
+//                        SkuInventoryForCmsBean skuBeanObj = skuInventoryMap.keySet().stream().filter(skuBean -> sku.equalsIgnoreCase(skuBean.getSku())).findFirst().orElse(null);
+//                        if (skuBeanObj != null) {
+//                            if (skuInventoryMap.get(skuBeanObj) != null) {
+//                                qty = qty + skuInventoryMap.get(skuBeanObj);
+//                            }
+//                        }
+//                    }
+//                }
+//                cartIdMap.put(cartObj.getAdd_name2(), qty);
+//            }
 
-            codeMap.put(cmsBtProductBean.getCommon().getFields().getCode(), cartIdMap);
+//            codeMap.put(cmsBtProductBean.getCommon().getFields().getCode(), cartIdMap);
         });
         searchIndexService.checkProcStatus(prodInfoList, getLang());
         resultBean.put("codeMap", codeMap);

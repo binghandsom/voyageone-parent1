@@ -1,4 +1,4 @@
-package com.voyageone.service.model.cms;
+package com.voyageone.service.bean.cms.product;
 
 /**
  * Created by rex on 2016/12/13.

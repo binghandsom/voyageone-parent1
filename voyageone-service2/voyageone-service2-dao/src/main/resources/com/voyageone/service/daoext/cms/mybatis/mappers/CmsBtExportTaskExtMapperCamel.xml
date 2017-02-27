@@ -286,35 +286,4 @@
         </if>
     </select>
 
-    <resultMap id="SkuInventoryMap" type="com.voyageone.service.model.cms.SkuInventoryForCmsBean">
-        <result column="order_channel_id" property="channelId" javaType="String" jdbcType="VARCHAR"></result>
-        <result column="code" property="code" javaType="String" jdbcType="VARCHAR"></result>
-        <result column="sku" property="sku" javaType="String" jdbcType="VARCHAR"></result>
-        <result column="qty_china" property="qty" javaType="Integer" jdbcType="INTEGER"></result>
-    </resultMap>
-
-    <select id="getInventory" parameterType="java.util.Map" resultMap="SkuInventoryMap">
-        select order_channel_id, code, sku, qty_china
-        FROM wms_bt_inventory_center_logic
-        <where>
-            <choose>
-                <when test="order_channel_id=='928'">
-                    1=1
-                </when>
-                <otherwise>
-                    order_channel_id = #{order_channel_id}
-                </otherwise>
-            </choose>
-            <if test="codes != null">
-                and code in
-                <foreach item="item" index="index" collection="codes" open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-            </if>
-        </where>
-        <if test="offset != null">
-            LIMIT #{offset}, #{size}
-        </if>
-    </select>
-
 </mapper>
