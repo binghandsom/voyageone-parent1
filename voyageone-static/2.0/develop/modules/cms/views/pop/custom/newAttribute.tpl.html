@@ -23,11 +23,60 @@
                 <div class="col-sm-6">
                     <input class="form-control" ng-model="vm.prop_translation"/>
                 </div>
-            </div><!-- .form-group -->
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">属性值</label>
+                <div class="col-sm-6">
+                    <div class="row">
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1">
+                            <input type="radio">
+                        </div>
+                        <div class="col-md-11">
+                            <label>自动翻译（内容大于100字，不翻译）</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1">
+                            <input type="radio">
+                        </div>
+                        <div class="col-md-11">
+                            <label>属性值共通翻译（运营统筹）</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1">
+                            <input type="radio">
+                        </div>
+                        <div class="col-md-11">
+                            <label>匹配Master详情内属性</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-11 col-md-offset-1">
+                            <select class="form-control">
+                                <option value="">1</option>
+                                <option value="">1</option>
+                                <option value="">1</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5"><label>固定值</label></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-11 col-md-offset-1">
+                            <textarea class="form-control no-resize" rows="5"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
         <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
     </div>
-</div><!-- .vo_modal -->
+</div>

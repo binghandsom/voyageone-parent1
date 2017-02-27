@@ -206,7 +206,8 @@ define(function () {
             "url": "/marketing_setting/common_custom_attribute_list/",
             "hash": "/marketing_setting/common_custom_attribute_list/:catPath",
             "templateUrl": "views/channel/custom/attribute.tpl.html",
-            "controllerUrl": "modules/cms/views/channel/custom/attribute.ctl"
+            "controllerUrl": "modules/cms/views/channel/custom/attribute.ctl",
+            "controller": "attributeController as ctrl"
         },
         "marketing_setting_common_custom_value_list": {
             "url": "/marketing_setting/common_custom_value_list/",
