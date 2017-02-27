@@ -9,35 +9,42 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    cms.controller('popAddAttributeValueCtl', function ($scope, $modalInstance, context, alert, popups) {
+    function AttrEntity(nameEn, nameCn, type, checked) {
+        if (!arguments || arguments.length < 4)
+            throw new Error('没有填写正确参数！');
+        this.nameEn = nameEn;
+        this.nameCn = nameCn;
+        this.type = type;
+        this.checked = checked;
+    }
+
+    cms.controller('popAddAttributeValueCtl', function ($scope, $modalInstance, context, attributeService2, alert) {
 
         $scope.vm = {
             prop_original: "",
             prop_translation: "",
-            type:context.type
+            type: context.type
         };
 
+        $scope.changeType = function () {
+            var vm = $scope.vm;
+
+            if (vm.attrType > 1)
+                vm.prop_master_value = vm.prop_fix_value = null;
+        };
 
         /**
          * 提交属性追加
+         * $modalInstance.close($scope.vm);
          */
         $scope.ok = function () {
-            var checkResult = true;
-            if ($scope.vm.prop_original == "") {
-                alert("请输入属性名");
-                checkResult = false;
-            } else {
-                _.each(context.from, function (value) {
-                    if (_.isEqual(value.prop_original, $scope.vm.prop_original)) {
-                        alert("该属性已经存在");
-                        checkResult = false;
-                    }
-                });
-            }
 
-            if (checkResult) {
-                $modalInstance.close($scope.vm);
-            }
+            var entity = new AttrEntity();
+
+            attributeService2.doUpdateEntity({}).then(function () {
+                alert('添加成功！');
+                $modalInstance.dismiss();
+            });
         };
     });
 

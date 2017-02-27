@@ -96,7 +96,7 @@ public class CmsBtCustomPropService extends BaseService {
         }
 
         rearrange(cmsBtCustomProp);
-        cmsBtCustomProp.setEntitys(cmsBtCustomProp.getEntitys().stream().filter(entity -> 0 != entity.getActive()).collect(Collectors.toList()));
+        cmsBtCustomProp.setEntitys(cmsBtCustomProp.getEntitys().stream().filter(entity -> entity.getActive() == null || 1 == entity.getActive()).collect(Collectors.toList()));
         return cmsBtCustomProp;
     }
 
@@ -110,6 +110,7 @@ public class CmsBtCustomPropService extends BaseService {
      * @return CmsBtCustomPropModel
      */
     public CmsBtCustomPropModel setCustomshIsDispPlay(String channelId, String orgChannelId, String cat, CmsBtCustomPropModel.Entity entity) {
+        cat = StringUtil.isEmpty(cat) ? "all" : cat;
         CmsBtCustomPropModel cmsBtCustomPropExtend = getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
         CmsBtCustomPropModel cmsBtCustomPropModel = getCustomPropByCatChannel(channelId, orgChannelId, cat);
         if (cmsBtCustomPropModel == null) {
@@ -153,6 +154,7 @@ public class CmsBtCustomPropService extends BaseService {
      * @return CmsBtCustomPropModel
      */
     public CmsBtCustomPropModel updateEntity(String channelId, String orgChannelId, String cat, CmsBtCustomPropModel.Entity entity) {
+        cat = StringUtil.isEmpty(cat) ? "all" : cat;
         CmsBtCustomPropModel cmsBtCustomPropModel = getCustomPropByCatChannel(channelId, orgChannelId, cat);
         if (cmsBtCustomPropModel == null) {
             cmsBtCustomPropModel = new CmsBtCustomPropModel();

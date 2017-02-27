@@ -115,7 +115,7 @@ public class CmsBtCustomPropModel extends BaseMongoModel {
         }
 
         public Integer getActive(){
-            return getIntAttribute("active");
+            return getAttribute("active");
         }
 
         public void setActive (Integer active){
