@@ -43,7 +43,7 @@ public class CmsCustomPropController extends CmsController {
     public AjaxResponse doSetCustomshIsDispPlay(@RequestBody Map param){
         String orgChannelId = (String) param.get("orgChannelId");
         String cat = (String) param.get("cat");
-        CmsBtCustomPropModel.Entity entity = (CmsBtCustomPropModel.Entity) param.get("entity");
+        CmsBtCustomPropModel.Entity entity = new CmsBtCustomPropModel.Entity((Map) param.get("entity")) ;
         CmsBtCustomPropModel cmsBtCustomPropModel = cmsBtCustomPropService.setCustomshIsDispPlay(getUser().getSelChannelId(),orgChannelId,cat, entity);
         return success(cmsBtCustomPropModel);
     }
@@ -53,7 +53,7 @@ public class CmsCustomPropController extends CmsController {
     public AjaxResponse doUpdateEntity(@RequestBody Map param){
         String orgChannelId = (String) param.get("orgChannelId");
         String cat = (String) param.get("cat");
-        CmsBtCustomPropModel.Entity entity = (CmsBtCustomPropModel.Entity) param.get("entity");
+        CmsBtCustomPropModel.Entity entity = new CmsBtCustomPropModel.Entity((Map) param.get("entity")) ;
         CmsBtCustomPropModel cmsBtCustomPropModel = cmsBtCustomPropService.updateEntity(getUser().getSelChannelId(),orgChannelId,cat, entity);
         return success(cmsBtCustomPropModel);
     }

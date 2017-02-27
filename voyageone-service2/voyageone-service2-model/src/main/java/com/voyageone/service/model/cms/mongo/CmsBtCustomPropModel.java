@@ -6,6 +6,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by james on 2017/2/21.
@@ -60,6 +61,14 @@ public class CmsBtCustomPropModel extends BaseMongoModel {
     }
 
     public static class Entity extends BaseMongoMap<String,Object> {
+
+        public Entity(Map map){
+            putAll(map);
+        }
+
+        public Entity(){
+
+        }
 
 
         public String getNameEn(){

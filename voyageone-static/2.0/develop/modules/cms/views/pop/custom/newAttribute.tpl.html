@@ -25,22 +25,19 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">属性值</label>
+                <label class="col-sm-3 control-label">属性值&emsp;</label>
                 <div class="col-sm-6">
-                    <div class="row">
-
-                    </div>
-                    <div class="row">
+                    <div class="row" ng-if="vm.type != 'add'">
                         <div class="col-md-1">
-                            <input type="radio">
+                            <input type="radio" name="attrValue" value="auto">
                         </div>
                         <div class="col-md-11">
                             <label>自动翻译（内容大于100字，不翻译）</label>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" ng-if="vm.type != 'add'">
                         <div class="col-md-1">
-                            <input type="radio">
+                            <input type="radio" name="attrValue" value="common">
                         </div>
                         <div class="col-md-11">
                             <label>属性值共通翻译（运营统筹）</label>
@@ -48,7 +45,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-1">
-                            <input type="radio">
+                            <input type="radio" name="attrValue">
                         </div>
                         <div class="col-md-11">
                             <label>匹配Master详情内属性</label>
@@ -56,27 +53,36 @@
                     </div>
                     <div class="row">
                         <div class="col-md-11 col-md-offset-1">
-                            <select class="form-control">
-                                <option value="">1</option>
-                                <option value="">1</option>
-                                <option value="">1</option>
+                            <select class="form-control" name="prop_value" ng-model="vm.prop_master_value" ng-required = "!vm.prop_master_value || !vm.prop_fix_value">
+                                <option>null</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
                             </select>
                         </div>
                     </div>
                     <div class="row">
+                        <div class="col-md-1">
+                            <input type="radio" name="attrValue">
+                        </div>
                         <div class="col-md-5"><label>固定值</label></div>
                     </div>
                     <div class="row">
                         <div class="col-md-11 col-md-offset-1">
-                            <textarea class="form-control no-resize" rows="5"></textarea>
+                            <textarea class="form-control no-resize" rows="5"  ng-model="vm.prop_fix_value" ng-required = "!vm.prop_master_value || !vm.prop_fix_value"></textarea>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6 col-sm-offset-3">
+                    <vo-message target="customAttributeForm.prop_value"></vo-message>
                 </div>
             </div>
         </form>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+        <button class="btn btn-vo" ng-click="ok()" ng-disabled="customAttributeForm.$"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
     </div>
 </div>
