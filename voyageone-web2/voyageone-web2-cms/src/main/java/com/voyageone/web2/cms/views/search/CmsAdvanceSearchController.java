@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Properties;
@@ -10,6 +11,7 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.PlatformService;
@@ -18,6 +20,8 @@ import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -60,6 +64,9 @@ public class CmsAdvanceSearchController extends CmsController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
 
     /**
      * 初始化,获取master数据
@@ -136,47 +143,7 @@ public class CmsAdvanceSearchController extends CmsController {
                     cmsBtProductBean.getCommon().getFields().setSizeTypeCn(temp.getName());
                 }
             }
-
-            // 店铺(cart/平台)列表
-            List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, getLang());
-
-            //sku取得库存
-            Map<String, Set<String>> codesMap = new HashMap<>();
-//            Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<>();
-//            if (StringUtils.isNotBlank(cmsBtProductBean.getCommon().getFields().getOriginalCode())) {
-//                codesMap.computeIfAbsent(cmsBtProductBean.getOrgChannelId(), k -> new HashSet<>());
-//                codesMap.get(cmsBtProductBean.getOrgChannelId()).add(cmsBtProductBean.getCommon().getFields().getOriginalCode());
-//            }
-//            codesMap.keySet().stream()
-//                    .filter(channel -> codesMap.get(channel).size() > 0)
-//                    .forEach(channel -> {
-//                        List<SkuInventoryForCmsBean> inventoryForCmsBeanList = cmsBtExportTaskService.batchSelectInventory(channel, new ArrayList<>(codesMap.get(channel)));
-//                        if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
-//                            for (SkuInventoryForCmsBean skuInventory : inventoryForCmsBeanList) {
-//                                skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
-//                            }
-//                        }
-//                    });
-//            Map<String, Integer> cartIdMap = new HashMap();
-//            for (TypeChannelBean cartObj : cartList) {
-//                CmsBtProductModel_Platform_Cart ptfObj = cmsBtProductBean.getPlatform(Integer.parseInt(cartObj.getValue()));
-//                int qty = 0;
-//                for (BaseMongoMap<String, Object> map : ptfObj.getSkus()) {
-//                    String sku = (String) map.get("skuCode");
-//                    Boolean isSale = (Boolean) map.get("isSale");
-//                    if (isSale) {
-//                        SkuInventoryForCmsBean skuBeanObj = skuInventoryMap.keySet().stream().filter(skuBean -> sku.equalsIgnoreCase(skuBean.getSku())).findFirst().orElse(null);
-//                        if (skuBeanObj != null) {
-//                            if (skuInventoryMap.get(skuBeanObj) != null) {
-//                                qty = qty + skuInventoryMap.get(skuBeanObj);
-//                            }
-//                        }
-//                    }
-//                }
-//                cartIdMap.put(cartObj.getAdd_name2(), qty);
-//            }
-
-//            codeMap.put(cmsBtProductBean.getCommon().getFields().getCode(), cartIdMap);
+            codeMap.putAll(getCodeQty(cmsBtProductBean, userInfo));
         });
         searchIndexService.checkProcStatus(prodInfoList, getLang());
         resultBean.put("codeMap", codeMap);
@@ -282,7 +249,7 @@ public class CmsAdvanceSearchController extends CmsController {
         // 获取product列表
         List<String> currCodeList = advSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), true);
         List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
-
+        Map<String, Map<String, Integer>> codeMap = new HashMap<>();
         Map<String, TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), "cn");
         Map<String, TypeChannelBean> sizeTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), "cn");
         prodInfoList.forEach(cmsBtProductBean -> {
@@ -301,8 +268,10 @@ public class CmsAdvanceSearchController extends CmsController {
                     cmsBtProductBean.getCommon().getFields().setSizeTypeCn(temp.getName());
                 }
             }
+            codeMap.putAll(getCodeQty(cmsBtProductBean, userInfo));
         });
         searchIndexService.checkProcStatus(prodInfoList, getLang());
+        resultBean.put("codeMap", codeMap);
         resultBean.put("productList", prodInfoList);
         resultBean.put("productListTotal", productListTotal);
 
@@ -313,6 +282,46 @@ public class CmsAdvanceSearchController extends CmsController {
 
         // 返回用户信息
         return success(resultBean);
+    }
+
+    public Map<String, Map<String, Integer>> getCodeQty(CmsBtProductBean cmsBtProductBean, UserSessionBean userInfo) {
+        Map<String, Map<String, Integer>> codeMap = new HashMap<>();
+        // 店铺(cart/平台)列表
+        List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, getLang());
+
+        //sku取得库存
+        Map<String, String> codesMap = new HashMap<>();
+        if (StringUtils.isNotBlank(cmsBtProductBean.getCommon().getFields().getOriginalCode())) {
+            codesMap.put("channelId", cmsBtProductBean.getOrgChannelId());
+            codesMap.put("code", cmsBtProductBean.getCommon().getFields().getOriginalCode());
+        }
+        List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailByCode(codesMap);
+        //code取得库存
+        int codeQty = 0;
+        for (WmsBtInventoryCenterLogicModel inventoryInfo : inventoryList) {
+            codeQty = codeQty + inventoryInfo.getQtyChina();
+            cmsBtProductBean.getCommon().getFields().setQuantity(codeQty);
+        }
+
+        Map<String, Integer> cartIdMap = new HashMap();
+        for (TypeChannelBean cartObj : cartList) {
+            CmsBtProductModel_Platform_Cart ptfObj = cmsBtProductBean.getPlatform(Integer.parseInt(cartObj.getValue()));
+            int qty = 0;
+            for (BaseMongoMap<String, Object> map : ptfObj.getSkus()) {
+                String sku = (String) map.get("skuCode");
+                Boolean isSale = (Boolean) map.get("isSale");
+                if (isSale) {
+                    for (WmsBtInventoryCenterLogicModel inventoryInfo : inventoryList) {
+                        if (inventoryInfo.getSku().equals(sku)) {
+                            qty = qty + inventoryInfo.getQtyChina();
+                        }
+                    }
+                }
+            }
+            cartIdMap.put(cartObj.getAdd_name2(), qty);
+        }
+        codeMap.put(cmsBtProductBean.getCommon().getFields().getCode(), cartIdMap);
+        return codeMap;
     }
 
     /**

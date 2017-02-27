@@ -383,6 +383,7 @@ define([
             searchAdvanceService2.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType, $scope.vm.selBiDataList)
                 .then(function (res) {
                     $scope.vm.productList = res.data.productList == null ? [] : res.data.productList;
+                    $scope.vm.codeMap = res.data.codeMap;
                     $scope.vm.productPageOption.total = res.data.productListTotal;
                     $scope.vm.productSelList = res.data.productSelList;
                     $scope.vm._selall = false;
