@@ -10,6 +10,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CamelUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadCodeModel;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadFeedInfoRequest;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadSkuModel;
@@ -48,9 +49,8 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
 
     private static Boolean isErr;
     private static Integer sumCnt;
-
     private static final int pageSize = 200;
-
+    private Long lastExecuteTime = 0L;
 
     @Override
     protected void updateFull(List<String> itemIds) {
@@ -73,23 +73,34 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         init();
+        zzWorkClear();
+        int cnt;
+        Long nowDate = Calendar.getInstance().getTimeInMillis();
+        //取得上次Job上次执行的时间
+        TaskControlBean taskControlBean =  TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.run_flg).get(0);
+        if (!StringUtils.isEmpty(taskControlBean.getEnd_time())) {
+            lastExecuteTime = Long.parseLong(taskControlBean.getEnd_time());
+        }
 
-//        zzWorkClear();
-//        int cnt = 0;
-//        if ("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
-//            cnt = fullCopyTemp();
-//        } else {
-//            $info("产品信息插入开始");
-//            cnt = superFeedImport();
-//        }
-//        $info("产品信息插入完成 共" + cnt + "条数据");
-//        if (cnt > 0) {
-//            if (!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
-//                transformer.new Context(channel, this).transform();
-//            }
+        if ("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
+            cnt = fullCopyTemp();
+        } else {
+            $info("产品信息插入开始");
+            cnt = superFeedImport();
+        }
+        $info("产品信息插入完成 共" + cnt + "条数据");
+        if (cnt > 0) {
+            if (!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
+                transformer.new Context(channel, this).transform();
+            }
             postNewProduct();
-//        }
+            //Job执行结束时间设置
+            taskControlBean.setEnd_time(nowDate.toString());
+            taskDao.updateTaskControl(taskControlBean);
+        }
     }
+
+
 
     @Override
     protected int superFeedImport() {
@@ -98,10 +109,10 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
         sumCnt = 0;
         try {
             $info("SneakerHead取得full表里最新的时间");
-            Date getFeedDate = sneakerHeadFeedDao.selectSuperFeedModelDate();
-            final Date lastDate = getFeedDate == null ? new Date(0) : getFeedDate;
+            final Date getFeedDate = lastExecuteTime == null ? new Date(0) : new Date(lastExecuteTime);
+            $info("最新的时间" + getFeedDate.getTime());
             //取得sneakerHead的Feed的总数
-            int anInt = sneakerheadApiService.getFeedCount(lastDate, DEFAULT_DOMAIN);
+            int anInt = sneakerheadApiService.getFeedCount(getFeedDate, DEFAULT_DOMAIN);
             int pageCnt = anInt / pageSize + (anInt % pageSize > 0 ? 1 : 0);
             $info("共" + pageCnt + "页");
             //根据feed取得总数取得对应的SKU并进行解析
@@ -110,7 +121,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
                 for (int i = 1; i <= pageCnt; i++) {
                     int finalI = i;
                     es.execute(() ->
-                            getSku(finalI, lastDate)
+                            getSku(finalI, getFeedDate)
                     );
                 }
                 es.shutdown();

@@ -30,33 +30,33 @@ public class Tmall_007_Champion_SellerCids_DictTest extends BaseSellerCidsDictTe
 
 	@Test
 	public void startupTest() {
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "shortDescription", "REVERSE WEAVE", new SellerCids("1280718146", "1280718147", "CASUAL", "Reverse Weave")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "shortDescription", "Basic", new SellerCids("1280718146", "1280718148", "CASUAL", "Basic")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "shortDescription", "Rochester", new SellerCids("1280718146", "1280718150", "CASUAL", "Rochester")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "shortDescription", "Campus", new SellerCids("1280718146", "1280718151", "CASUAL", "Campus")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "shortDescription", "ACTION STYLE", new SellerCids("1280718146", "1280718149", "CASUAL", "Action Style")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "shortDescription", "MADE IN USA", new SellerCids("1280718146", "1280718152", "CASUAL", "Made in USA")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "shortDescription", "Sports", new SellerCids("1280695619", "1280695620", "SPORTS", "Training")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "shortDescription", "WOMEN’S", new SellerCids("1280718146", "1280718153", "CASUAL", "Women's")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "shortDescription", "MEN’S BASIC PERFORMANCE", new SellerCids("1280695619", "1280695620", "SPORTS", "Training")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "shortDescription", "ACCESSORIES", new SellerCids("", "1280959563", "", "配饰")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "shortDescription", "BASIC ATHLETIC", new SellerCids("1280718146", "1280718148", "CASUAL", "Basic")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "shortDescription", "E-MOTION", new SellerCids("1280695619", "1280695621", "SPORTS", "Basketball")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "shortDescription", "GAGERS", new SellerCids("1280695619", "1280695621", "SPORTS", "Basketball")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "shortDescription", "SMART ATHLETIC", new SellerCids("1280695619", "1280695620", "SPORTS", "Training")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "shortDescription", "PLAYGROUND", new SellerCids("1280695619", "1280695621", "SPORTS", "Basketball")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "shortDescription", "70's VINTAGE", new SellerCids("1280718146", "1280718150", "CASUAL", "Rochester")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "shortDescription", "CAGERS", new SellerCids("1280695619", "1280695621", "SPORTS", "Basketball")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, "category", "T恤", new SellerCids("", "1280959560", "", "T恤")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, "category", "卫衣", new SellerCids("", "1280959558", "", "卫衣")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, "category", "卫裤", new SellerCids("", "1280959559", "", "卫裤")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, "category", "外套", new SellerCids("", "1280959562", "", "外套")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, "category", "短裤", new SellerCids("", "1280959561", "", "短裤")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, "category", "衬衫", new SellerCids("", "1294093088", "", "衬衫")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, "category", "运动裤", new SellerCids("", "1294098952", "", "运动裤")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, "category", "衬衫", new SellerCids("", "1294093088", "", "衬衫")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "sizeType", "Women", new SellerCids("", "1280959564", "", "女装")));
-		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "sizeType", "NoSize", new SellerCids("", "1280959563", "", "配饰")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "shortDescription", "REVERSE WEAVE", new SellerCids("1280718146", "1280718147", "CASUAL", "Reverse Weave")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "shortDescription", "Basic", new SellerCids("1280718146", "1280718148", "CASUAL", "Basic")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "shortDescription", "Rochester", new SellerCids("1280718146", "1280718150", "CASUAL", "Rochester")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "shortDescription", "Campus", new SellerCids("1280718146", "1280718151", "CASUAL", "Campus")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "shortDescription", "ACTION STYLE", new SellerCids("1280718146", "1280718149", "CASUAL", "Action Style")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "shortDescription", "MADE IN USA", new SellerCids("1280718146", "1280718152", "CASUAL", "Made in USA")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "shortDescription", "Sports", new SellerCids("1280695619", "1280695620", "SPORTS", "Training")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "shortDescription", "WOMEN’S", new SellerCids("1280718146", "1280718153", "CASUAL", "Women's")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "shortDescription", "MEN’S BASIC PERFORMANCE", new SellerCids("1280695619", "1280695620", "SPORTS", "Training")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "shortDescription", "ACCESSORIES", new SellerCids("", "1280959563", "", "配饰")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "shortDescription", "BASIC ATHLETIC", new SellerCids("1280718146", "1280718148", "CASUAL", "Basic")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "shortDescription", "E-MOTION", new SellerCids("1280695619", "1280695621", "SPORTS", "Basketball")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "shortDescription", "GAGERS", new SellerCids("1280695619", "1280695621", "SPORTS", "Basketball")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "shortDescription", "SMART ATHLETIC", new SellerCids("1280695619", "1280695620", "SPORTS", "Training")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "shortDescription", "PLAYGROUND", new SellerCids("1280695619", "1280695621", "SPORTS", "Basketball")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "shortDescription", "70's VINTAGE", new SellerCids("1280718146", "1280718150", "CASUAL", "Rochester")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "shortDescription", "CAGERS", new SellerCids("1280695619", "1280695621", "SPORTS", "Basketball")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, null, "category", "T恤", new SellerCids("", "1280959560", "", "T恤")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, null, "category", "卫衣", new SellerCids("", "1280959558", "", "卫衣")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, null, "category", "卫裤", new SellerCids("", "1280959559", "", "卫裤")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, null, "category", "外套", new SellerCids("", "1280959562", "", "外套")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, null, "category", "短裤", new SellerCids("", "1280959561", "", "短裤")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, null, "category", "衬衫", new SellerCids("", "1294093088", "", "衬衫")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, null, "category", "运动裤", new SellerCids("", "1294098952", "", "运动裤")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Like, null, "category", "衬衫", new SellerCids("", "1294093088", "", "衬衫")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "sizeType", "Women", new SellerCids("", "1280959564", "", "女装")));
+		doCreateJson(doCreateSimpleIf_Feed_Text(CompareType.Eq, "1", "sizeType", "NoSize", new SellerCids("", "1280959563", "", "配饰")));
 	}
 
 

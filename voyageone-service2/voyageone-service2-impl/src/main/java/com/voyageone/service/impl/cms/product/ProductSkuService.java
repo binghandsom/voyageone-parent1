@@ -6,9 +6,6 @@ import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.common.CmsConstants;
-import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -175,128 +172,6 @@ public class ProductSkuService extends BaseService {
         }
 
         return result;
-    }
-
-    /**
-     * update Prices
-     */
-    public void updatePricesNew(String channelId, CmsBtProductModel cmsProduct, String modifier) {
-        HashMap<String, Object> queryMap = new HashMap<>();
-        queryMap.put("prodId", cmsProduct.getProdId());
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
-        HashMap<String, Object> updateMap = new HashMap<>();
-        // 更新commonSkus的Msrp和RetailPrice
-        if (cmsProduct.getCommon().getSkus() != null) {
-            updateMap.put("common.skus", cmsProduct.getCommon().getSkus());
-        }
-
-        // 更新platforms.Pxx.skus的RetailPrice和SalePrice
-        // 更新platforms.Pxx的RetailPrice和SalePrice的价格区间
-        if (cmsProduct.getPlatforms() != null) {
-            for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : cmsProduct.getPlatforms().entrySet()) {
-                // add desmond 2016/07/06 start
-                // P0（主数据）平台不用设置sku（不加这个条件会加一个P0.skus=null）
-                if (entry.getValue().getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
-                    continue;
-                }
-                // add desmond 2016/07/06 end
-                updateMap.put("platforms.P" + entry.getValue().getCartId() + ".skus", entry.getValue().getSkus());
-                if (entry.getValue().getSkus() != null) {
-                    Map<String, Double> result = getPlatformPriceScope(entry.getValue().getSkus());
-                    entry.getValue().setpPriceMsrpSt(result.get("pPriceMsrpSt"));
-                    entry.getValue().setpPriceMsrpEd(result.get("pPriceMsrpEd"));
-                    entry.getValue().setpPriceRetailSt(result.get("pPriceRetailSt"));
-                    entry.getValue().setpPriceRetailEd(result.get("pPriceRetailEd"));
-                    entry.getValue().setpPriceSaleSt(result.get("pPriceSaleSt"));
-                    entry.getValue().setpPriceSaleEd(result.get("pPriceSaleEd"));
-
-                    updateMap.put("platforms.P" + entry.getValue().getCartId() + ".pPriceMsrpSt", entry.getValue().getpPriceMsrpSt());
-                    updateMap.put("platforms.P" + entry.getValue().getCartId() + ".pPriceMsrpEd", entry.getValue().getpPriceMsrpEd());
-                    updateMap.put("platforms.P" + entry.getValue().getCartId() + ".pPriceRetailSt", entry.getValue().getpPriceRetailSt());
-                    updateMap.put("platforms.P" + entry.getValue().getCartId() + ".pPriceRetailEd", entry.getValue().getpPriceRetailEd());
-                    updateMap.put("platforms.P" + entry.getValue().getCartId() + ".pPriceSaleSt", entry.getValue().getpPriceSaleSt());
-                    updateMap.put("platforms.P" + entry.getValue().getCartId() + ".pPriceSaleEd", entry.getValue().getpPriceSaleEd());
-                }
-            }
-        }
-
-        // 更新commonField的Msrp和RetailPrice的价格区间
-        if (cmsProduct.getCommon().getFields() != null) {
-            if (cmsProduct.getCommon().getSkus() != null) {
-                Map<String, Double> result = getPriceScope(cmsProduct.getCommon().getSkus());
-                cmsProduct.getCommon().getFields().setPriceMsrpSt(result.get("priceMsrpSt"));
-                cmsProduct.getCommon().getFields().setPriceMsrpEd(result.get("priceMsrpEd"));
-                cmsProduct.getCommon().getFields().setPriceRetailSt(result.get("priceRetailSt"));
-                cmsProduct.getCommon().getFields().setPriceRetailEd(result.get("priceRetailEd"));
-
-                updateMap.put("common.fields.priceMsrpSt", cmsProduct.getCommon().getFields().getPriceMsrpSt());
-                updateMap.put("common.fields.priceMsrpEd", cmsProduct.getCommon().getFields().getPriceMsrpEd());
-                updateMap.put("common.fields.priceRetailSt", cmsProduct.getCommon().getFields().getPriceRetailSt());
-                updateMap.put("common.fields.priceRetailEd", cmsProduct.getCommon().getFields().getPriceRetailEd());
-            }
-        }
-
-        updateMap.put("modifier", modifier);
-        updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
-        BulkUpdateModel model = new BulkUpdateModel();
-        model.setUpdateMap(updateMap);
-        model.setQueryMap(queryMap);
-        bulkList.add(model);
-        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
-
-        updateNewGroupPrice(channelId, cmsProduct.getProdId(), modifier);
-
-    }
-
-    /**
-     * sku共同属性PriceDiffFlg计算方法
-     * 最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，比指导价高:3，向上击穿警告:4，向下击穿警告:5）
-     *
-     * @param channelId 渠道Id
-     * @param sku sku数据
-     * @return 判断结果
-     */
-    public String getPriceDiffFlg(String channelId, BaseMongoMap<String, Object> sku) {
-        // 阀值
-        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId , CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
-        Double breakThreshold = 0.00;
-        if (cmsChannelConfigBean != null) {
-            breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D ;
-        }
-
-        return getPriceDiffFlg(breakThreshold, sku.getDoubleAttribute("priceSale"), sku.getDoubleAttribute("priceRetail"));
-    }
-
-    /**
-     * sku共同属性PriceDiffFlg计算方法(没有设置阀值时，则不与阀值比较)
-     * 最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，比指导价高:3，向上击穿警告:4，向下击穿警告:5）
-     *
-     * @param breakThreshold 价格计算阀值
-     * @param priceSale 中国最终售价
-     * @param priceRetail 中国指导售价
-     * @return 判断结果
-     */
-    public String getPriceDiffFlg(double breakThreshold, double priceSale, double priceRetail) {
-        String diffFlg = "1";  // 最终售价与指导价相等
-        // 如果价格计算有问题(-1)的时候，清空priceDiffFlg,防止高级检索画面查出来
-        if (priceSale < 0.00d || priceRetail < 0.00d) {
-            diffFlg = "";
-            return diffFlg;
-        }
-        if (priceSale < priceRetail) {
-            if (priceRetail * (1 - breakThreshold) <= priceSale || breakThreshold == 0) {
-                diffFlg = "2"; // 最终售价比指导价低
-            } else {
-                diffFlg = "5"; // 最终售价向下击穿警告
-            }
-        } else if (priceSale > priceRetail) {
-            if (priceSale <= priceRetail * (breakThreshold + 1) || breakThreshold == 0) {
-                diffFlg = "3"; // 最终售价比指导价高
-            } else {
-                diffFlg = "4"; // 最终售价向上击穿警告
-            }
-        }
-        return diffFlg;
     }
 
     /**

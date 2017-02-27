@@ -1,15 +1,12 @@
 package com.voyageone.service.impl.cms.product;
 
-import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchRefreshRetailPriceMQMessageBody;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.Arrays;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by james on 2017/2/17.
@@ -19,16 +16,16 @@ import static org.junit.Assert.*;
 public class CmsProductPriceUpdateServiceTest {
 
     @Autowired
-    CmsProductPriceUpdateService cmsProductPriceUpdateService;
+    PlatformPriceService platformPriceService;
     @Test
     public void updateProductRetailPrice() throws Exception {
-        AdvSearchRefreshRetailPriceMQMessageBody messageBody = new AdvSearchRefreshRetailPriceMQMessageBody();
+        ProductPriceUpdateMQMessageBody messageBody = new ProductPriceUpdateMQMessageBody();
         messageBody.setChannelId("928");
         messageBody.setCartId(31);
-        messageBody.setCodeList(Arrays.asList("1143593872"));
+        messageBody.setProdId(3032063L);
         messageBody.setSender("test");
 
-        cmsProductPriceUpdateService.updateProductRetailPrice(messageBody);
+        platformPriceService.updateProductAndGroupPrice(messageBody);
     }
 
 }

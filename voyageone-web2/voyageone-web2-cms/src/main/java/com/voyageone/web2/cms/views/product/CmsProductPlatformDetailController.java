@@ -1,12 +1,13 @@
 package com.voyageone.web2.cms.views.product;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SaveCartSkuPriceParameter;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SetCartSkuIsSaleParameter;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceConfirmLogService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -44,8 +45,14 @@ public class CmsProductPlatformDetailController extends CmsController {
     @Autowired
     private CmsAdvanceSearchService cmsAdvanceSearchService;
 
+    @Autowired
+    private PriceService priceService;
+
+    @Autowired
+    private ProductService productService;
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SaveCartSkuPrice)
-    public  AjaxResponse  saveCartSkuPrice(@RequestBody SaveCartSkuPriceParameter parameter) throws Exception {
+    public  AjaxResponse  saveCartSkuPrice(@RequestBody SaveCartSkuPriceParameter parameter) {
         UserSessionBean userSessionBean = getUser();
         cmsProductPlatformDetailService.saveCartSkuPrice(parameter, userSessionBean.getSelChannelId(), userSessionBean.getUserName());
         return success(null);
@@ -72,14 +79,14 @@ public class CmsProductPlatformDetailController extends CmsController {
         Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
 
         String channelId = getUser().getSelChannelId();
-        int cartId = Integer.parseInt(String.valueOf(params.get("cartId")));
+        Integer cartId = Integer.parseInt(String.valueOf(params.get("cartId")));
         Map<String, Object> result = new HashMap<>();
 
         result.put("mastData", cmsProductPlatformDetailService.getProductMastData(channelId, prodId, cartId));
         result.put("platform", cmsProductPlatformDetailService.getProductPlatform(channelId, prodId, cartId, getLang()));
         result.put("channelConfig", cmsAdvanceSearchService.getChannelConfig(channelId, cartId, getLang()));
-        result.put("autoSyncPriceMsrp", cmsProductPlatformDetailService.getAutoSyncPriceMsrpOption(channelId, cartId));
-        result.put("autoSyncPriceSale", cmsProductPlatformDetailService.getAutoSyncPriceSaleOption(channelId, cartId));
+        result.put("autoSyncPriceMsrp", priceService.getAutoSyncPriceMsrpOption(channelId, cartId).getConfigValue1());
+        result.put("autoSyncPriceSale", priceService.getAutoSyncPriceSaleOption(channelId, cartId).getConfigValue1());
 
         return success(result);
     }
@@ -128,14 +135,13 @@ public class CmsProductPlatformDetailController extends CmsController {
         Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
         String type = String.valueOf(params.get("type"));
         Map<String, Object> platform = (Map<String, Object>) params.get("platform");
-        String errcode = null;
+        Integer cartId = Integer.valueOf(platform.get("cartId").toString());
 
         if(!type.equals("temporary")){
-            errcode = cmsProductPlatformDetailService.priceChk(channelId, prodId, platform);
+//            CmsBtProductModel productModel = productService.getProductById(channelId, prodId);
+//            productModel.setPlatform(cartId, );
+            priceService.priceChk(channelId, new CmsBtProductModel_Platform_Cart(platform), cartId);
         }
-
-        if (errcode != null)
-            throw new BusinessException(errcode);
 
         return doUpdateProductPlatform(params);
 

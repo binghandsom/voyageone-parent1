@@ -462,10 +462,9 @@ define(function () {
         },
         "bi_report":
         {
-           // "url": "/bi_report/download",    //url:what is this used for
             "hash": "/bi_report/download",
-            "templateUrl": "views/bi_report/bi_report_advanceSearch.tpl.html",
-            "controllerUrl": "modules/cms/views/bi_report/bi_report_advanceSearch.ctl"
+            "templateUrl": "views/bi_report/bi_report_list.tpl.html",
+            "controllerUrl": "modules/cms/views/bi_report/bi_report_list.ctl"
         }
     };
 });

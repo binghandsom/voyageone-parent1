@@ -27,6 +27,12 @@ public class CmsChannelConfigBean extends BaseModel {
     public CmsChannelConfigBean(){
     }
 
+    public CmsChannelConfigBean(String configValue1, String configValue2, String configValue3){
+        this.configValue1 = configValue1;
+        this.configValue2 = configValue2;
+        this.configValue3 = configValue3;
+    }
+
     public CmsChannelConfigBean(String channelId,
                                 String configKey,
                                 String configCode,

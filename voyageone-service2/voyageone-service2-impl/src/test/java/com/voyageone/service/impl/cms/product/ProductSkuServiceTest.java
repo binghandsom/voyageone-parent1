@@ -19,12 +19,4 @@ public class ProductSkuServiceTest {
 
     @Autowired
     ProductSkuService productSkuService;
-    @Test
-    public void testGetPriceDiffFlg() throws Exception {
-        BaseMongoMap<String, Object> sku = new BaseMongoMap<>();
-        sku.put("priceSale",95.0);
-        sku.put("priceRetail",90.0);
-        String priceDiffFlg = productSkuService.getPriceDiffFlg("010", sku);
-        System.out.println(priceDiffFlg);
-    }
 }

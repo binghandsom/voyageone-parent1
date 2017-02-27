@@ -1,10 +1,12 @@
 package com.voyageone.service.impl.cms.promotion;
-import com.sun.tools.javac.util.ArrayUtils;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.util.*;
+import com.voyageone.common.util.BigDecimalUtil;
+import com.voyageone.common.util.ConvertUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.AddProductSaveParameter;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.InitParameter;
@@ -27,7 +29,6 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.service.model.util.MapModel;
-import org.apache.avro.generic.GenericData;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -278,35 +279,34 @@ public class JMPromotionDetailService extends BaseService {
             Double priceSale = 0d;
             Double msrpUsd = 9d;
             BaseMongoMap<String, Object> mapSkuPlatform = getJMPlatformSkuMongo(listSkuMongo, sku.getSkuCode());
-            if (mapSkuPlatform != null) {
+            if (mapSkuPlatform != null && Boolean.valueOf(mapSkuPlatform.getStringAttribute("isSale"))) {
                 priceMsrp = mapSkuPlatform.getDoubleAttribute("priceMsrp");
                 priceRetail = mapSkuPlatform.getDoubleAttribute("priceRetail");
                 priceSale = mapSkuPlatform.getDoubleAttribute("priceSale");
-            }
-            CmsBtProductModel_Sku cmsBtProductModel_sku = productInfo.getCommon().getSku(sku.getSkuCode());
-            if (cmsBtProductModel_sku != null) {
-                msrpUsd = cmsBtProductModel_sku.getClientMsrpPrice();
-            }
-            CmsBtJmPromotionSkuModel skuModel = null;
-            if (jmProductModel.getId() != null && jmProductModel.getId() > 0) {
-                skuModel = daoExtCmsBtJmPromotionSku.selectBySkuCode(sku.getSkuCode(), jmProductModel.getId(), jmProductModel.getCmsBtJmPromotionId());
-            }
-            if (skuModel == null) {
-                skuModel = new CmsBtJmPromotionSkuModel();
-                skuModel.setSynchStatus(0);
-                skuModel.setUpdateState(0);
-                skuModel.setCmsBtJmPromotionId(jmProductModel.getCmsBtJmPromotionId());
-                skuModel.setChannelId(jmProductModel.getChannelId());
-                skuModel.setSkuCode(sku.getSkuCode());
-                skuModel.setCreated(new Date());
-                skuModel.setCreater(modifier);
-                skuModel.setProductCode(jmProductModel.getProductCode());
-                skuModel.setErrorMsg("");
-                if (jmProductModel.getSynchStatus() == 2) {
-                    skuModel.setUpdateState(1);//已变更
-                    jmProductModel.setUpdateStatus(1);//已变更     新增了一个sku
+                CmsBtProductModel_Sku cmsBtProductModel_sku = productInfo.getCommon().getSku(sku.getSkuCode());
+                if (cmsBtProductModel_sku != null) {
+                    msrpUsd = cmsBtProductModel_sku.getClientMsrpPrice();
                 }
-            }
+                CmsBtJmPromotionSkuModel skuModel = null;
+                if (jmProductModel.getId() != null && jmProductModel.getId() > 0) {
+                    skuModel = daoExtCmsBtJmPromotionSku.selectBySkuCode(sku.getSkuCode(), jmProductModel.getId(), jmProductModel.getCmsBtJmPromotionId());
+                }
+                if (skuModel == null) {
+                    skuModel = new CmsBtJmPromotionSkuModel();
+                    skuModel.setSynchStatus(0);
+                    skuModel.setUpdateState(0);
+                    skuModel.setCmsBtJmPromotionId(jmProductModel.getCmsBtJmPromotionId());
+                    skuModel.setChannelId(jmProductModel.getChannelId());
+                    skuModel.setSkuCode(sku.getSkuCode());
+                    skuModel.setCreated(new Date());
+                    skuModel.setCreater(modifier);
+                    skuModel.setProductCode(jmProductModel.getProductCode());
+                    skuModel.setErrorMsg("");
+                    if (jmProductModel.getSynchStatus() == 2) {
+                        skuModel.setUpdateState(1);//已变更
+                        jmProductModel.setUpdateStatus(1);//已变更     新增了一个sku
+                    }
+                }
 //            if (jmProductModel.getSynchStatus() == 2) {
 //                if (skuModel.getDealPrice().doubleValue() != skuImportBean.getDealPrice()) {
 //                    skuModel.setUpdateState(1);//已变更
@@ -318,17 +318,18 @@ public class JMPromotionDetailService extends BaseService {
 //                }
 //            }
 
-            skuModel.setMsrpRmb(new BigDecimal(priceMsrp));
-            skuModel.setRetailPrice(new BigDecimal(priceRetail));
-            skuModel.setSalePrice(new BigDecimal(priceSale));
-            skuModel.setMsrpUsd(new BigDecimal(msrpUsd));
+                skuModel.setMsrpRmb(new BigDecimal(priceMsrp));
+                skuModel.setRetailPrice(new BigDecimal(priceRetail));
+                skuModel.setSalePrice(new BigDecimal(priceSale));
+                skuModel.setMsrpUsd(new BigDecimal(msrpUsd));
 
-            skuModel.setDealPrice(new BigDecimal(0));
-            skuModel.setMarketPrice(new BigDecimal(priceMsrp));
-            skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(), skuModel.getMarketPrice(), 2));//折扣
-            skuModel.setModified(new Date());
-            skuModel.setModifier(modifier);
-            listPromotionSku.add(skuModel);
+                skuModel.setDealPrice(new BigDecimal(0));
+                skuModel.setMarketPrice(new BigDecimal(priceMsrp));
+                skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(), skuModel.getMarketPrice(), 2));//折扣
+                skuModel.setModified(new Date());
+                skuModel.setModifier(modifier);
+                listPromotionSku.add(skuModel);
+            }
         });
         return listPromotionSku;
     }

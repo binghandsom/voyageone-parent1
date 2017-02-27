@@ -60,13 +60,4 @@ public class CmsUpdateProductSalePriceServiceTest {
         }
     }
 
-    @Autowired
-    CmsUpdateProductSalePriceService cmsUpdateProductSalePriceService;
-    @Test
-    public void process() throws Exception {
-        String json = "{\"productCodes\":[\"122287\"],\"cartId\":28,\"channelId\":\"928\",\"params\":{\"cartId\":28,\"_option\":\"saleprice\",\"productIds\":[\"CLK_69820\"],\"isSelAll\":0,\"priceType\":\"priceSale\",\"optionType\":\"+\",\"priceValue\":\"1\",\"roundType\":1,\"skuUpdType\":0},\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"edward\"}";
-        UpdateProductSalePriceMQMessageBody model = JacksonUtil.json2Bean(json, UpdateProductSalePriceMQMessageBody.class);
-        cmsUpdateProductSalePriceService.process(model);
-    }
-
 }

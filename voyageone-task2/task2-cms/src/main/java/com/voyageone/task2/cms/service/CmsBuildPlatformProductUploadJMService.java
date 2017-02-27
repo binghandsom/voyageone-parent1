@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.service;
 import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -505,7 +506,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
 
                         // added by morse.lu 2016/08/30 start
-                        uploadMall(product, shop, expressionParser, null, null);
+                        if (!StringUtils.isEmpty(originHashId)) {
+                            uploadMall(product, shop, expressionParser, null, null);
+                        }
                         // added by morse.lu 2016/08/30 end
                     }
                     else
@@ -647,6 +650,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         if (remoteSpus.stream().filter(w -> w.getUpc_code().equals(addVoToBarcode(skuMap.getStringAttribute("barcode"), channelId, skuCode))).count() > 0) {
 //                            JmGetProductInfo_Spus oldSku = remoteSpus.stream().filter(w -> w.getBusinessman_code().equals(skuCode)).findFirst().get();
                             JmGetProductInfo_Spus oldSku = remoteSpus.stream().filter(w -> w.getUpc_code().equals(addVoToBarcode(skuMap.getStringAttribute("barcode"), channelId, skuCode))).findFirst().get();
+                            String isSale = skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name());
+                            if ("false".equals(isSale)) {
+                                // 下架， 并且后面的事情不用再做了
+                                updateSkuIsEnableDeal(shop, originHashId, oldSku.getSku_no(), "0");
+
+                                continue;
+                            }
                             String jmSpuNo = oldSku.getSpu_no();
                             HtSpuUpdateRequest htSpuUpdateRequest = new HtSpuUpdateRequest();
                             htSpuUpdateRequest.setJumei_spu_no(jmSpuNo);
@@ -695,14 +705,16 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                             //更新Spu失败
                             else
                             {
-                                String msg = String.format("更新Spu失败！[ProductId:%s], [Message:%s]", product.getProdId(), htSpuUpdateResponse.getErrorMsg());
+                                String msg = String.format("更新Spu失败！[ProductId:%s] [JmSpuNo:%s] [Message:%s]", product.getProdId(), jmSpuNo, htSpuUpdateResponse.getErrorMsg());
                                 $error(msg);
                                 throw  new BusinessException(msg);
                             }
-                            //检查Remote SPU是否有sku属性，如果没有，则添加SKU
-                            if(StringUtils.isNullOrBlank2(oldSku.getSku_no()))
+                            //检查Remote SPU是否有sku属性，如果没有，且SKU库存>0,则添加SKU
+							Integer skuQty = skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+							if (skuQty == null) { skuQty = 0; }
+							if(StringUtils.isNullOrBlank2(oldSku.getSku_no()) && skuQty > 0)
                             {
-								addSkuList.add(skuCode);
+
 
                                 // 需要增加SKU信息到聚美deal(sku的增加顺序一定要先加deal再加mall,顺序反了会报错)
                                 HtSkuAddRequest htSkuAddRequest = new HtSkuAddRequest();
@@ -735,6 +747,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                 HtSkuAddResponse htSkuAddResponse = jumeiHtSkuService.add(shop, htSkuAddRequest);
                                 if (htSkuAddResponse != null && htSkuAddResponse.is_Success()) {
                                     $info("更新商品时,向Deal中增加Sku成功！[hashId:%s] [skuCode:%s]", originHashId, skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+									 addSkuList.add(skuCode);
                                     if(skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).count() > 0)
                                     {
                                         CmsBtJmSkuModel mySku = skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).findFirst().get();
@@ -757,8 +770,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                 // 更新商品时,向Deal中增加Sku失败
                                 else
                                 {
-                                    String msg = String.format("更新商品时,向Deal中增加Sku失败！[hashId:%s] [ProductId:%s], [Message:%s]",
-                                            originHashId, product.getProdId(), htSkuAddResponse.getErrorMsg());
+                                    String msg = String.format("更新商品时,向Deal中增加Sku失败！[hashId:%s] [ProductId:%s] [skuCode:%s] [Message:%s]",
+                                            originHashId, product.getProdId(), skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()),
+                                            htSkuAddResponse.getErrorMsg());
                                     $error(msg);
                                     throw  new BusinessException(msg);
                                 }
@@ -771,6 +785,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         }
                         //新SPU需要增加
                         else {
+                            String isSale = skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name());
+							Integer newSkuQty = skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+							if (newSkuQty == null) { newSkuQty = 0; }
+							if ("false".equals(isSale) || newSkuQty == 0) {
+                                // 不需要增加了
+                                continue;
+                            }
                             HtSpuAddRequest htSpuAddRequest = new HtSpuAddRequest();
                             htSpuAddRequest.setUpc_code(addVoToBarcode(skuMap.getStringAttribute("barcode"), channelId, skuCode));
                             // update by desmond 2016/07/08 start
@@ -794,10 +815,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
                                 // deleted by morse.lu 2016/09/01 start
                                 // 为了聚美商城能够追加sku，暂时删除，以后聚美结构会改，还会恢复
-                                // added by morse.lu 2016/09/01 start
-                                // 追加成功时才加进list
-                                addSkuList.add(skuCode);
-                                // added by morse.lu 2016/09/01 end
                                 // 需要增加SKU信息到聚美deal(sku的增加顺序一定要先加deal再加mall,顺序反了会报错)
                                 HtSkuAddRequest htSkuAddRequest = new HtSkuAddRequest();
                                 // 聚美Spu_No
@@ -829,6 +846,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                 HtSkuAddResponse htSkuAddResponse = jumeiHtSkuService.add(shop, htSkuAddRequest);
                                 if (htSkuAddResponse != null && htSkuAddResponse.is_Success()) {
                                     $info("更新商品时，新增Spu成功之后再向deal中增加Sku成功！[skuCode:%s]", skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+
+
+                                    // added by morse.lu 2016/09/01 start
+                                    // 追加成功时才加进list
+                                    addSkuList.add(skuCode);
+                                    // added by morse.lu 2016/09/01 end
 
                                     CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
                                     cmsBtJmSkuModel.setJmSpuNo(htSpuAddResponse.getJumei_spu_no());
@@ -928,7 +951,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
                 // add by desmond 2016/09/29 start
                 // 批量修改deal市场价(为了后面uploadMall时不报商城市场价与团购市场价不一致的错误，即使异常也继续uploadMall)
-                updateDealPriceBatch(shop, product, true, false);
+                // 20170224 聚美号称特卖和商城两边的市场价，改动一边即可。所以，暂时注释掉。 START
+                // updateDealPriceBatch(shop, product, true, false);
+				// 20170224 聚美号称特卖和商城两边的市场价，改动一边即可。所以，暂时注释掉。 END
                 // add by desmond 2016/09/29 end
                 // 取得最新聚美平台上的spu信息
                 List<JmGetProductInfo_Spus> currentRemoteSpus = getRemoteSpus(shop, jmCart, productCode);
@@ -1064,9 +1089,18 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                 String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
+                if (StringUtils.isEmpty(detailName)) detailName = "";
                 if (detailName.equals("天猫同购描述-重点商品")) {
                     strJumeiDetailTemplateName = "聚美详情-重点商品";
                 } else if (detailName.equals("天猫同购描述-无属性图")) {
+                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                } else if (detailName.equals("天猫同购描述-非重点之英文长描述")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点之英文长描述";
+                } else if (detailName.equals("天猫同购描述-非重点之中文长描述")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点之中文长描述";
+                } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点之中文使用说明";
+                } else if (detailName.equals("天猫同购描述-爆款商品")) {
                     strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
                 }
             }
@@ -1138,26 +1172,26 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 //
         // 由于product的分平台skus中merge很多上新用字段比如(sizeSx,barCode等)，这里只把P27.skus需要更新的字段挑选出来
         List<BaseMongoMap<String, Object>>   jmSkus  = product.getPlatform(CART_ID).getSkus();
-        List<BaseMongoMap<String, Object>>   newJmSkus =  new ArrayList<>();
-        for (BaseMongoMap<String, Object> sku : jmSkus)
-        {
-            BaseMongoMap<String, Object> newSku = new  BaseMongoMap<String, Object>();
-            newSku.setStringAttribute("skuCode", sku.getStringAttribute("skuCode"));
-            newSku.setAttribute("priceMsrp", sku.getDoubleAttribute("priceMsrp"));
-            newSku.setAttribute("priceRetail", sku.getDoubleAttribute("priceRetail"));
-            newSku.setAttribute("priceSale", sku.getDoubleAttribute("priceSale"));
-            newSku.setStringAttribute("priceChgFlg", sku.getStringAttribute("priceChgFlg"));
-            newSku.setStringAttribute("priceDiffFlg", sku.getStringAttribute("priceDiffFlg"));
-            newSku.setAttribute("isSale", sku.getAttribute("isSale"));
-            newSku.setStringAttribute("jmSpuNo", sku.getStringAttribute("jmSpuNo"));
-            newSku.setStringAttribute("jmSkuNo", sku.getStringAttribute("jmSkuNo"));
-            newSku.setStringAttribute("property", sku.getStringAttribute("property"));
-            newSku.setAttribute("originalPriceMsrp", sku.getDoubleAttribute("originalPriceMsrp"));
-            newSku.setStringAttribute("priceMsrpFlg", sku.getStringAttribute("priceMsrpFlg"));
-            newSku.setAttribute("confPriceRetail", sku.getDoubleAttribute("confPriceRetail"));
-            newSku.setStringAttribute("sizeNick", sku.getStringAttribute("sizeNick"));
-            newJmSkus.add(newSku);
-        }
+//        List<BaseMongoMap<String, Object>>   newJmSkus =  new ArrayList<>();
+//        for (BaseMongoMap<String, Object> sku : jmSkus)
+//        {
+//            BaseMongoMap<String, Object> newSku = new  BaseMongoMap<String, Object>();
+//            newSku.setStringAttribute("skuCode", sku.getStringAttribute("skuCode"));
+//            newSku.setAttribute("priceMsrp", sku.getDoubleAttribute("priceMsrp"));
+//            newSku.setAttribute("priceRetail", sku.getDoubleAttribute("priceRetail"));
+//            newSku.setAttribute("priceSale", sku.getDoubleAttribute("priceSale"));
+//            newSku.setStringAttribute("priceChgFlg", sku.getStringAttribute("priceChgFlg"));
+//            newSku.setStringAttribute("priceDiffFlg", sku.getStringAttribute("priceDiffFlg"));
+//            newSku.setAttribute("isSale", sku.getAttribute("isSale"));
+//            newSku.setStringAttribute("jmSpuNo", sku.getStringAttribute("jmSpuNo"));
+//            newSku.setStringAttribute("jmSkuNo", sku.getStringAttribute("jmSkuNo"));
+//            newSku.setStringAttribute("property", sku.getStringAttribute("property"));
+//            newSku.setAttribute("originalPriceMsrp", sku.getDoubleAttribute("originalPriceMsrp"));
+//            newSku.setStringAttribute("priceMsrpFlg", sku.getStringAttribute("priceMsrpFlg"));
+//            newSku.setAttribute("confPriceRetail", sku.getDoubleAttribute("confPriceRetail"));
+//            newSku.setStringAttribute("sizeNick", sku.getStringAttribute("sizeNick"));
+//            newJmSkus.add(newSku);
+//        }
 //
 //        Map<String, Object> queryMap = new HashMap<>();
 //        queryMap.put("prodId", product.getProdId());
@@ -1180,14 +1214,50 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         updateProductQuery.setQueryParameters(product.getCommon().getFields().getCode());
 
         updateProductQuery.setUpdate("{$set:{" +
-                "\"platforms.P"+ CART_ID +".skus\": #, " +
+//                "\"platforms.P"+ CART_ID +".skus\": #, " +     // skus在后面单独更新
                 "\"platforms.P"+ CART_ID +".pProductId\": #, " +
-                "\"platforms.P"+ CART_ID +".pNumIId\": #}}");
-        updateProductQuery.setUpdateParameters(newJmSkus,
+                "\"platforms.P"+ CART_ID +".pNumIId\": #, " +
+                "\"platforms.P"+ CART_ID +".modified\": #, " +
+                "\"platforms.P"+ CART_ID +".modifier\": #}}");
+        updateProductQuery.setUpdateParameters(
                 product.getPlatform(CART_ID).getpProductId(),
-                product.getPlatform(CART_ID).getpNumIId());
+                product.getPlatform(CART_ID).getpNumIId(),
+                DateTimeUtil.getNowTimeStamp(), getTaskName());
 
         productService.updateFirstProduct(updateProductQuery, channelId);
+
+        // 前面先更新共通信息，下面更新P27平台下面的skus属性
+        // jmSkus里面只有画面上勾选的sku，没有没选的sku
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        for (BaseMongoMap<String, Object> sku : jmSkus) {
+            // 更新条件
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("platforms.P" + CART_ID + ".skus.skuCode", sku.getStringAttribute("skuCode"));
+            // 更新内容
+            HashMap<String, Object> updateMap = new HashMap<>();
+            // 这里面的属性，应该只有jmSpuNo和jmSkuNo才需要回写
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.priceMsrp", sku.getDoubleAttribute("priceMsrp"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.priceRetail", sku.getDoubleAttribute("priceRetail"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.priceSale", sku.getDoubleAttribute("priceSale"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.priceChgFlg", sku.getStringAttribute("priceChgFlg"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.priceDiffFlg", sku.getStringAttribute("priceDiffFlg"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.isSale", sku.getAttribute("isSale"));
+            updateMap.put("platforms.P" + CART_ID + ".skus.$.jmSpuNo", sku.getStringAttribute("jmSpuNo"));
+            updateMap.put("platforms.P" + CART_ID + ".skus.$.jmSkuNo", sku.getStringAttribute("jmSkuNo"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.property", sku.getStringAttribute("property"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.originalPriceMsrp", sku.getDoubleAttribute("originalPriceMsrp"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.priceMsrpFlg", sku.getStringAttribute("priceMsrpFlg"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.confPriceRetail", sku.getDoubleAttribute("confPriceRetail"));
+//            updateMap.put("platforms.P" + CART_ID + ".skus.$.sizeNick", sku.getDoubleAttribute("sizeNick"));
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setUpdateMap(updateMap);
+            model.setQueryMap(queryMap);
+            bulkList.add(model);
+        }
+        if (ListUtils.notNull(bulkList)) {
+            // 批量更新P27.skus里面的属性
+            productService.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
+        }
         // -------------------------
         // add by desmond 2016/10/28 end
         $info("保存product成功！[ProductId:%s], [ChannelId:%s], [CartId:%s]", product.getProdId(), channelId, CART_ID);
@@ -1346,7 +1416,29 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         deal.setShipping_system_id(NumberUtils.toInt(shippingId));
 
 
-        String jmDetailTemplate = getTemplate("聚美详情", expressionParser, shopProp);
+        // 判断一下聚美详情， 用哪套模板
+        String strJumeiDetailTemplateName = "聚美详情";
+        if (product.getChannelId().equals("928")) {
+            if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
+                String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
+
+                if (StringUtils.isEmpty(detailName)) detailName = "";
+                if (detailName.equals("天猫同购描述-重点商品")) {
+                    strJumeiDetailTemplateName = "聚美详情-重点商品";
+                } else if (detailName.equals("天猫同购描述-无属性图")) {
+                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                } else if (detailName.equals("天猫同购描述-非重点之英文长描述")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点之英文长描述";
+                } else if (detailName.equals("天猫同购描述-非重点之中文长描述")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点之中文长描述";
+                } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点之中文使用说明";
+                } else if (detailName.equals("天猫同购描述-爆款商品")) {
+                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                }
+            }
+        }
+        String jmDetailTemplate = getTemplate(strJumeiDetailTemplateName, expressionParser, shopProp);
         deal.setDescription_properties(jmDetailTemplate);
         String jmProductTemplate = getTemplate("聚美实拍", expressionParser, shopProp);
         deal.setDescription_images(jmProductTemplate);
@@ -1830,7 +1922,29 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 // 自定义搜索词
                 updateDataInfo.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
                 // 本单详情
-                updateDataInfo.setDescription_properties(getTemplate("聚美详情", expressionParser, shopBean));
+                // 判断一下聚美详情， 用哪套模板
+                String strJumeiDetailTemplateName = "聚美详情";
+                if (product.getChannelId().equals("928")) {
+                    if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
+                        String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
+
+                        if (StringUtils.isEmpty(detailName)) detailName = "";
+                        if (detailName.equals("天猫同购描述-重点商品")) {
+                            strJumeiDetailTemplateName = "聚美详情-重点商品";
+                        } else if (detailName.equals("天猫同购描述-无属性图")) {
+                            strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                        } else if (detailName.equals("天猫同购描述-非重点之英文长描述")) {
+                            strJumeiDetailTemplateName = "聚美详情-非重点之英文长描述";
+                        } else if (detailName.equals("天猫同购描述-非重点之中文长描述")) {
+                            strJumeiDetailTemplateName = "聚美详情-非重点之中文长描述";
+                        } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
+                            strJumeiDetailTemplateName = "聚美详情-非重点之中文使用说明";
+                        } else if (detailName.equals("天猫同购描述-爆款商品")) {
+                            strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                        }
+                    }
+                }
+                updateDataInfo.setDescription_properties(getTemplate(strJumeiDetailTemplateName, expressionParser, shopBean));
                 // 使用方法
                 updateDataInfo.setDescription_usage(getTemplate("聚美使用方法", expressionParser, shopBean));
                 // 商品实拍

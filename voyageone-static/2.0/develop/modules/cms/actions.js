@@ -144,6 +144,7 @@ define(function () {
                     moveSku: "moveSku",
                     getSkuStockInfo: 'getSkuStockInfo',
                     restoreImg: "restoreImg",
+                    restorePlatFromImg: "restorePlatformImg",
                     doAppSwitch: "doAppSwitch",
                     doTranslateStatus: "doTranslateStatus",
                     getProductIdByCode: "getProductIdByCode"

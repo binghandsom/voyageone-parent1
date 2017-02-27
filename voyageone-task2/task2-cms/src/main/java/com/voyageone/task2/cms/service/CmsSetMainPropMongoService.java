@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -20,7 +21,10 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.*;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.MD5;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
@@ -35,6 +39,7 @@ import com.voyageone.service.impl.cms.feed.CmsBtFeedImportSizeService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -44,13 +49,13 @@ import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
-import com.voyageone.service.impl.com.ComMtValueChannelService;
-import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
-import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -74,7 +79,10 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -146,9 +154,11 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
     PromotionService promotionService;
     @Autowired
     PromotionCodeService promotionCodeService;
+    @Autowired
+    private PlatformPriceService platformPriceService;
 
     @Autowired
-    private MqSender sender;
+    private CmsMqSenderService sender;
     // 每个channel的feed->master导入默认最大件数
     private final static int FEED_IMPORT_MAX_500 = 500;
 
@@ -231,34 +241,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
                 .forEach(p -> $info(p.getValue()));
         $info("=================feed->master导入  主线程结束====================");
-
-        // 线程
-//        List<Runnable> threads = new ArrayList<>();
-
-//        // 根据渠道运行
-//        for (final String orderChannelID : orderChannelIdList) {
-//
-//            threads.add(new Runnable() {
-//                @Override
-//                public void run() {
-//                    // 获取是否跳过mapping check
-//                    String skip_mapping_check = TaskControlUtils.getVal2(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
-//                    boolean bln_skip_mapping_check = true;
-//                    if (StringUtils.isEmpty(skip_mapping_check) || "0".equals(skip_mapping_check)) {
-//                        bln_skip_mapping_check = false;
-//                    }
-//                    // jeff 2016/04 change start
-//                    // 获取前一次的价格强制击穿时间
-//                    String priceBreakTime = TaskControlUtils.getEndTime(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
-//                    // 主逻辑
-//                    // new setMainProp(orderChannelID, bln_skip_mapping_check).doRun();
-//                    new setMainProp(orderChannelID, bln_skip_mapping_check, priceBreakTime).doRun();
-//                    // jeff 2016/04 change end
-//                }
-//            });
-//        }
-//
-//        runWithThreadPool(threads, taskControlList);
     }
 
     /**
@@ -575,6 +557,26 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         feed.setSkus(skus);
                         // feed->master导入主处理
                         doSaveProductMainProp(feed, channelId, categoryTreeAllList);
+                        for( CmsBtFeedInfoModel_Sku cmsBtFeedInfoModel_Sku: feed.getSkus()){
+                            if(!StringUtils.isEmpty(cmsBtFeedInfoModel_Sku.getMainVid())){
+                                HttpHeaders httpHeaders = new HttpHeaders();
+                                httpHeaders.setContentType(MediaType.parseMediaType("application/json;charset=UTF-8"));
+                                ObjectMapper objectMapper = new ObjectMapper();
+                                HashMap<String, Object> feedInfo  = new HashMap<>();
+                                feedInfo.put("orderChannelId",channelId);
+                                feedInfo.put("clientSku",cmsBtFeedInfoModel_Sku.getSku());
+                                feedInfo.put("mainClientSku",cmsBtFeedInfoModel_Sku.getMainVid());
+                                List<HashMap<String, Object>> requestList = Arrays.asList(feedInfo);
+                                String json = objectMapper.writeValueAsString(requestList);
+                                httpHeaders.set("Authorization", "Basic " + MD5.getMD5(json + System.currentTimeMillis() / TimeUnit.MINUTES.toMillis(30)));
+                                HttpEntity<String> httpEntity = new HttpEntity<>(json, httpHeaders);
+                                SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+                                simpleClientHttpRequestFactory.setConnectTimeout(6000);
+                                simpleClientHttpRequestFactory.setReadTimeout(6000);
+                                RestTemplate restTemplate = new RestTemplate(simpleClientHttpRequestFactory);
+                                ResponseEntity<String> exchange = restTemplate.exchange("http://open.synship.net/wms/prdouctMapping/import", HttpMethod.POST, httpEntity, String.class);
+                            }
+                        }
                     } catch (CommonConfigNotFoundException ce) {
                         errCnt++;
                         // 如果是共通配置没有或者价格计算时抛出整个Channel的配置没有的错误时，后面的feed导入就不用做了，免得报出几百条同样的错误
@@ -1123,7 +1125,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     }
 
                     // 判断是否更新平台价格 如果要更新直接更新
-                    priceService.updatePlatFormPrice(channelId, chg, cmsProduct, getTaskName());
+                    platformPriceService.publishPlatFormPrice(channelId, chg, cmsProduct, getTaskName(), true);
 
                 } else {
                     // 生成productGroup数据
@@ -1190,20 +1192,17 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     productService.createProduct(channelId, cmsProduct, getTaskName());
                     $debug("createProduct:" + (System.currentTimeMillis() - startTime));
 
-                    Integer prodId = cmsProduct.getProdId().intValue();
-                    cmsProduct.getPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> {
-                        if(cmsBtProductModel_platform_cart.getCartId() >= 20 &&  cmsBtProductModel_platform_cart.getCartId() < 900){
-                            CmsBtPriceLogModel newLog = new CmsBtPriceLogModel();
-                            newLog.setCartId(cmsBtProductModel_platform_cart.getCartId() );
-                            newLog.setProductId(prodId);
-                            newLog.setChannelId(channelId);
-
-                            // 向Mq发送消息同步sku,code,group价格范围
-                            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_COUNT_PRODUCT_PRICE,
-                                    JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
-                        }
-
-                    });
+//                    Long prodId = cmsProduct.getProdId();
+//                    cmsProduct.getPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> {
+//                        if(cmsBtProductModel_platform_cart.getCartId() >= 20 &&  cmsBtProductModel_platform_cart.getCartId() < 900){
+//                            ProductPriceUpdateMQMessageBody productPriceUpdateMQMessageBody = new ProductPriceUpdateMQMessageBody();
+//                            productPriceUpdateMQMessageBody.setChannelId(channelId);
+//                            productPriceUpdateMQMessageBody.setProdId(prodId);
+//                            productPriceUpdateMQMessageBody.setCartId(cmsBtProductModel_platform_cart.getCartId());
+//                            productPriceUpdateMQMessageBody.setSender(getTaskName());
+//                            sender.sendMessage(productPriceUpdateMQMessageBody);
+//                        }
+//                    });
                 }
 
                 // 插入尺码表
@@ -3543,9 +3542,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     else if (commonSku.getClientNetPrice() < minClientNetPrice) {
                         minClientNetPrice = commonSku.getClientNetPrice();
                     }
-
                 }
-
             }
 
             if(minClientMsrpPrice==maxClientMsrpPrice) {
@@ -3761,29 +3758,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 sxProductService.insertSxWorkLoad(cmsProduct, ccAutoSyncCartList, getTaskName());
             }
         }
-
-        private void insertWorkload(CmsBtProductModel cmsProduct, Integer cartId) {
-
-            if(cartId > 0 && cartId < 900) {
-                // 读取配置
-                CmsChannelConfigBean channelConfigBean = CmsChannelConfigs.getConfigBean(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE, cartId.toString());
-                if (channelConfigBean == null) {
-                    channelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(cmsProduct.getChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE);
-                }
-
-                Integer configValue1 = 0;
-                if (channelConfigBean != null) {
-                    if (!StringUtil.isEmpty(channelConfigBean.getConfigValue1())) {
-                        configValue1 = Integer.parseInt(channelConfigBean.getConfigValue1());
-                    }
-                }
-                if (configValue1 != 0) {
-                    sxProductService.insertSxWorkLoad(cmsProduct, Arrays.asList(cartId.toString()), getTaskName());
-                }
-            }
-
-        }
-
     }
 
     private void weightCalculate(CmsBtProductModel cmsProduct) {
@@ -3891,13 +3865,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
      */
     private void updateFeedInfo(CmsBtFeedInfoModel feed, Integer updFlg, String errMsg, String isFeedReImport) {
         if (feed == null) return;
-//
-//        feed.setUpdFlg(updFlg);  // 1:feed->master导入失败   2:feed->master导入失败
-//        feed.setUpdMessage(errMsg);
-//        if (!StringUtils.isEmpty(isFeedReImport))
-//            feed.setIsFeedReImport(isFeedReImport);
-//        feed.setModifier(getTaskName());
-//        feedInfoService.updateFeedInfo(feed);
+
         Map<String, Object> paraMap = new HashedMap();
         paraMap.put("code", feed.getCode());
 

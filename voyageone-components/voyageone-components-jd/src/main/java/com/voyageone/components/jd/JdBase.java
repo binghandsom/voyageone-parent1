@@ -8,6 +8,9 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.ComponentBase;
 import com.voyageone.components.ComponentConstants;
+import com.voyageone.service.dao.com.ComBtJingdongApiLogDao;
+import com.voyageone.service.model.com.ComBtJingdongApiLogModel;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 京东调用基础类
@@ -15,6 +18,9 @@ import com.voyageone.components.ComponentConstants;
  * Created by jonas on 15/6/5.
  */
 public abstract class JdBase extends ComponentBase {
+
+	@Autowired
+	private ComBtJingdongApiLogDao apiLogDao;
 
     /**
      * 获取京东API连接
@@ -64,7 +70,12 @@ public abstract class JdBase extends ComponentBase {
         // 按给定的次数，进行多次的尝试
         for (int intApiErrorCount = 0; intApiErrorCount < maxTryCount; intApiErrorCount++) {
 
-        	try {
+			try {
+				apiLogDao.insert(new ComBtJingdongApiLogModel(request.getApiMethod(), shopBean));
+			} catch (Exception ignored) {
+			}
+
+			try {
 	            JdClient client = getDefaultClient(shopBean, ComponentConstants.C_CONNECT_TIMEOUT, ComponentConstants.C_READ_TIMEOUT);
 	
 	            T response = client.execute(request);
