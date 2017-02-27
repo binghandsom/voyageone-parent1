@@ -790,4 +790,5 @@ public class CmsAdvSearchQueryService extends BaseService {
 		return wmsBtInventoryDaoExt.selectSkuInventoryList(channelId, code);
 	}
 
+
 }

@@ -8,6 +8,7 @@
 package com.voyageone.service.daoext.cms;
 
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
+import com.voyageone.service.model.cms.SkuInventoryForCmsBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -32,4 +33,8 @@ public interface CmsBtExportTaskDaoExt {
     int checkTaskByUser(Map<String, Object> map);
 
     List<CmsBtExportTaskModel> queryFileDeleting(Map<String, Object> map);
+
+    List<SkuInventoryForCmsBean> getInventory(Map<String, Object> map);
+
+
 }

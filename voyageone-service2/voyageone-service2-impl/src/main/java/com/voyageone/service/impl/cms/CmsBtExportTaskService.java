@@ -3,6 +3,9 @@ package com.voyageone.service.impl.cms;
 import com.voyageone.service.daoext.cms.CmsBtExportTaskDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
+import com.voyageone.service.model.cms.SkuInventoryForCmsBean;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -77,5 +80,21 @@ public class CmsBtExportTaskService extends BaseService {
         param.put("taskType",taskType);
         param.put("creater",user);
         return cmsBtExportTaskDao.selectCnt(param);
+    }
+
+    /**
+     * 批量查询sku级别库存
+     * @param order_channel_id
+     * @param codes
+     * @return
+     */
+    public List<SkuInventoryForCmsBean> batchSelectInventory (String order_channel_id, List<String> codes) {
+        if (StringUtils.isNotBlank(order_channel_id) && CollectionUtils.isNotEmpty(codes)) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("order_channel_id", order_channel_id);
+            params.put("codes", codes);
+            return cmsBtExportTaskDao.getInventory(params);
+        }
+        return null;
     }
 }

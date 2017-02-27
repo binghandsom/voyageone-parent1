@@ -35,6 +35,7 @@ define([
             exportPageOption: {curr: 1, size: 10, total: 0, fetch: exportSearch},
             groupList: [],
             productList: [],
+            codeMap:[],
             currTab: "product",
             status: {open: true},
             groupSelList: {selList: []},
@@ -275,6 +276,8 @@ define([
                 $scope.vm.groupPageOption.total = res.data.groupListTotal;
                 $scope.vm.groupSelList = res.data.groupSelList;
                 $scope.vm.productList = res.data.productList;
+                $scope.vm.codeMap = res.data.codeMap;
+                $scope.vm.qtyList = res.data.qtyList;
                 $scope.vm.productPageOption.total = res.data.productListTotal;
                 $scope.vm.productSelList = res.data.productSelList;
                 for (idx in res.data.freeTagsList) {
