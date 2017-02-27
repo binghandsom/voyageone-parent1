@@ -32,7 +32,7 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
         doCreateJson("天猫同购无线描述-非重点之英文长描述", false, doDict_天猫同购无线描述(4));
         doCreateJson("天猫同购无线描述-非重点之中文长描述", false, doDict_天猫同购无线描述(5));
         doCreateJson("天猫同购无线描述-非重点之中文使用说明", false, doDict_天猫同购无线描述(6));
-        doCreateJson("天猫同购描述-爆款商品", false, doDict_天猫同购无线描述(7));
+        doCreateJson("天猫同购无线描述-爆款商品", false, doDict_天猫同购无线描述(7));
     }
 
     private RuleExpression doDict_天猫同购描述(int propType) {
