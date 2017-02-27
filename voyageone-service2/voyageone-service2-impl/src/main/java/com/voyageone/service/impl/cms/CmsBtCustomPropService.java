@@ -1,17 +1,15 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
-import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtCustomPropDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.feed.FeedCategoryAttributeService;
-import com.voyageone.service.impl.cms.feed.FeedInfoLogService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
-import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel.Entity;
 import com.voyageone.service.model.cms.mongo.CmsBtTranslateModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -23,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
+ *
  * Created by james on 2017/2/21.
  */
 @Service
@@ -47,6 +46,7 @@ public class CmsBtCustomPropService extends BaseService {
         this.cmsBtTranslateService = cmsBtTranslateService;
         this.feedInfoService = feedInfoService;
     }
+
 
     public CmsBtCustomPropModel getCustomPropByCatChannel(String channelId, String orgChannelId, String cat) {
         return cmsBtCustomPropDao.getCustomPropByCatChannel(channelId, orgChannelId, cat);

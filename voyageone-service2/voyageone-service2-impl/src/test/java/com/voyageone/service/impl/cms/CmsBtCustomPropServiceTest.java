@@ -1,9 +1,11 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import org.apache.commons.collections.map.HashedMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by james on 2017/2/21.
@@ -23,8 +27,21 @@ public class CmsBtCustomPropServiceTest {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    CommonSchemaService commonSchemaService;
     @Test
     public void getProductCustomProp() throws Exception {
+
+        List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
+        List<Map<String,Object>> Master = new ArrayList<>();
+        cmsMtCommonFields.forEach(field -> {
+            Map<String,Object> item = new HashMap();
+            item.put("id",field.getId());
+            item.put("name",field.getName());
+            Master.add(item);
+        });
+
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode("010","RF1119MLPN-D");
         cmsBtCustomPropService.setProductCustomProp(cmsBtProductModel);
         System.out.println(JacksonUtil.bean2Json(cmsBtProductModel.getFeed()));

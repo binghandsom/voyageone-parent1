@@ -2,16 +2,19 @@ package com.voyageone.web2.cms.views.channel;
 
 import com.voyageone.service.bean.cms.CmsMtFeedConfigBean;
 import com.voyageone.service.impl.cms.CmsBtCustomPropService;
+import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,9 +28,20 @@ public class CmsCustomPropController extends CmsController {
     final
     CmsBtCustomPropService cmsBtCustomPropService;
 
+    final
+    CommonSchemaService commonSchemaService;
+
     @Autowired
-    public CmsCustomPropController(CmsBtCustomPropService cmsBtCustomPropService) {
+    public CmsCustomPropController(CmsBtCustomPropService cmsBtCustomPropService, CommonSchemaService commonSchemaService) {
         this.cmsBtCustomPropService = cmsBtCustomPropService;
+        this.commonSchemaService = commonSchemaService;
+    }
+
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM.INIT)
+    public AjaxResponse init(){
+        Map<String, Object> map = new HashMap();
+        map.put("commonFields",commonSchemaService.getCommonFields());
+        return success(map);
     }
 
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM.SEARCH)

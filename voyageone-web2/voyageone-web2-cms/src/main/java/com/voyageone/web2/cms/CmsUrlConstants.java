@@ -891,7 +891,7 @@ public interface CmsUrlConstants {
             String UPDATE_ENTITY ="doUpdateEntity";
             String SET_SORT ="doSetSort";
             String DELETE = "delete";
-            String SAVE_FEED ="saveFeed";
+            String INIT ="init";
             String CREATE_FEED ="createFeed";
         }
     }
