@@ -184,6 +184,8 @@ public class SxProductService extends BaseService {
     private MongoSequenceService sequenceService;
     @Autowired
     private CmsBtPlatformActiveLogDao platformActiveLogDao;
+    @Autowired
+    private CmsBtCustomPropService cmsBtCustomPropService;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -887,43 +889,47 @@ public class SxProductService extends BaseService {
             // 20160606 tom 增加对feed属性(feed.customIds, feed.customIdsCn)的排序 START
             CmsBtProductModel mainProductModel = sxData.getMainProduct();
             if (mainProductModel != null) {
-                List<String> customIdsOld = mainProductModel.getFeed().getCustomIds();
-                List<String> customIdsCnOld = mainProductModel.getFeed().getCustomIdsCn();
+                // 20170228 tom 直接调用共通函数 START
+//                List<String> customIdsOld = mainProductModel.getFeed().getCustomIds();
+//                List<String> customIdsCnOld = mainProductModel.getFeed().getCustomIdsCn();
+//
+//                if (customIdsOld != null && !customIdsOld.isEmpty() && customIdsCnOld != null && !customIdsCnOld.isEmpty()) {
+//                    // 获取排序顺序
+////                    customPropService.doInit(channelId);
+//                    String feedCatPath = "";
+//                    if (sxData.getCmsBtFeedInfoModel() != null) {
+//                        feedCatPath = sxData.getCmsBtFeedInfoModel().getCategory();
+//                    }
+//                    if (feedCatPath == null) feedCatPath = "";
+//                    List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedCatPath);
+//
+//                    // 重新排序
+//                    List<String> customIdsNew = new ArrayList<>();
+//                    List<String> customIdsCnNew = new ArrayList<>();
+//                    for (FeedCustomPropWithValueBean feedCustomPropWithValueBean : feedCustomPropList) {
+//                        String customIdsSort = feedCustomPropWithValueBean.getFeed_prop_original();
+//
+//                        for (int i = 0; i < customIdsOld.size(); i++) {
+//                            if (customIdsSort.equals(customIdsOld.get(i))) {
+//                                // 设置到新的里
+//                                customIdsNew.add(customIdsOld.get(i));
+//                                customIdsCnNew.add(customIdsCnOld.get(i));
+//
+//                                // 删掉一下, 用来小小地提升下速度
+//                                customIdsOld.remove(i);
+//                                customIdsCnOld.remove(i);
+//                                break;
+//                            }
+//                        }
+//                    }
+//
+//                    // 设置回去
+//                    mainProductModel.getFeed().setCustomIds(customIdsNew);
+//                    mainProductModel.getFeed().setCustomIdsCn(customIdsCnNew);
+//                }
 
-                if (customIdsOld != null && !customIdsOld.isEmpty() && customIdsCnOld != null && !customIdsCnOld.isEmpty()) {
-                    // 获取排序顺序
-//                    customPropService.doInit(channelId);
-                    String feedCatPath = "";
-                    if (sxData.getCmsBtFeedInfoModel() != null) {
-                        feedCatPath = sxData.getCmsBtFeedInfoModel().getCategory();
-                    }
-                    if (feedCatPath == null) feedCatPath = "";
-                    List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedCatPath);
-
-                    // 重新排序
-                    List<String> customIdsNew = new ArrayList<>();
-                    List<String> customIdsCnNew = new ArrayList<>();
-                    for (FeedCustomPropWithValueBean feedCustomPropWithValueBean : feedCustomPropList) {
-                        String customIdsSort = feedCustomPropWithValueBean.getFeed_prop_original();
-
-                        for (int i = 0; i < customIdsOld.size(); i++) {
-                            if (customIdsSort.equals(customIdsOld.get(i))) {
-                                // 设置到新的里
-                                customIdsNew.add(customIdsOld.get(i));
-                                customIdsCnNew.add(customIdsCnOld.get(i));
-
-                                // 删掉一下, 用来小小地提升下速度
-                                customIdsOld.remove(i);
-                                customIdsCnOld.remove(i);
-                                break;
-                            }
-                        }
-                    }
-
-                    // 设置回去
-                    mainProductModel.getFeed().setCustomIds(customIdsNew);
-                    mainProductModel.getFeed().setCustomIdsCn(customIdsCnNew);
-                }
+                cmsBtCustomPropService.setProductCustomProp(mainProductModel);
+                // 20170228 tom 直接调用共通函数 END
             }
             // 20160606 tom 增加对feed属性(feed.customIds, feed.customIdsCn)的排序 END
 
