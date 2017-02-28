@@ -116,6 +116,7 @@ define([
                     entity:entity
                 }).then(function () {
                     self.notify.success('删除成功！');
+                    self.search();
                 });
             });
         };
@@ -183,11 +184,11 @@ define([
 
 
             //调用排序接口
-/*            self.callSort({
+            self.callSort({
                 orgChannelId: channelInfo.channel,
                 cat: catPath,
                 sort:_.pluck(angular.copy(Attributes), 'nameEn')
-            });*/
+            });
         };
 
         CustomAttributeCtl.prototype.callSort = function (upEntity) {
