@@ -9,7 +9,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,7 +28,7 @@ public class SneakerHeadAnalysisServiceTest {
         taskControlBean.setTask_id("CmsSneakerHeadAnalysisJob");
         taskControlBean.setCfg_name("run_flg");
         taskControlBean.setCfg_val1("1");
-        taskControlBean.setEnd_time("1464163223766");
+//        taskControlBean.setEnd_time("1464163223766");
         List<TaskControlBean> taskControlBeans = new ArrayList<TaskControlBean>();
         taskControlBeans.add(taskControlBean);
         sneakerHeadAnalysisService.onStartup(taskControlBeans);

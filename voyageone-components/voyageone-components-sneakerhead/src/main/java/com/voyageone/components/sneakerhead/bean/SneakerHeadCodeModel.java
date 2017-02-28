@@ -1,5 +1,6 @@
 package com.voyageone.components.sneakerhead.bean;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,8 +18,8 @@ public class SneakerHeadCodeModel {
     private String relationshipType;
     private String variationTheme;
     private String title;
-    private String price;
-    private String msrp;
+    private BigDecimal price;
+    private BigDecimal msrp;
     private String weight;
     private String images;
     private String description;
@@ -46,6 +47,8 @@ public class SneakerHeadCodeModel {
     private String approvedDescriptions;
     private String urlKey;
     private Date lastReceivedOn;
+    private BigDecimal cnRetailPrice;
+    private BigDecimal cnMsrp;
 
     public List<SneakerHeadSkuModel> getSkus() {
         return skus;
@@ -87,20 +90,36 @@ public class SneakerHeadCodeModel {
         this.title = title;
     }
 
-    public String getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public String getMsrp() {
+    public BigDecimal getMsrp() {
         return msrp;
     }
 
-    public void setMsrp(String msrp) {
+    public void setMsrp(BigDecimal msrp) {
         this.msrp = msrp;
+    }
+
+    public BigDecimal getCnRetailPrice() {
+        return cnRetailPrice;
+    }
+
+    public void setCnRetailPrice(BigDecimal cnRetailPrice) {
+        this.cnRetailPrice = cnRetailPrice;
+    }
+
+    public BigDecimal getCnMsrp() {
+        return cnMsrp;
+    }
+
+    public void setCnMsrp(BigDecimal cnMsrp) {
+        this.cnMsrp = cnMsrp;
     }
 
     public String getWeight() {
