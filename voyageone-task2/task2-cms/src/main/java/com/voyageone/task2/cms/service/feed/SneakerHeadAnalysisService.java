@@ -182,6 +182,8 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
                     superFeedSneakerHeadBean.setBarcode(skuModel.getBarcode());
                     superFeedSneakerHeadBean.setPrice(model.getPrice());
                     superFeedSneakerHeadBean.setMsrp(model.getMsrp());
+                    superFeedSneakerHeadBean.setCnMsrp(model.getCnMsrp());
+                    superFeedSneakerHeadBean.setCnRetailPrice(model.getCnRetailPrice());
                     superFeedSneakerHeadBean.setQuantity(skuModel.getQuantity());
                     superFeedSneakerHeadBean.setWeight(model.getWeight());
                     superFeedSneakerHeadBean.setImages(model.getImages());
