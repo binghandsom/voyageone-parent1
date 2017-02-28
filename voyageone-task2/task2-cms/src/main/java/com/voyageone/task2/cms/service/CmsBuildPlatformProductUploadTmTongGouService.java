@@ -1451,7 +1451,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 skuMap.put("quantity", skuLogicQtyMap.get(skuCode));
                 // 与颜色尺寸这个销售属性关联的图片
                 String imageTemplate = getValueByDict("属性图片模板", expressionParser, shopProp);
-                String propImage = expressionParser.getSxProductService().getProductImages(product, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
+                String propImage = expressionParser.getSxProductService().getProductImages(product, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE, cartId).get(0).getName();
                 String srcImage = String.format(imageTemplate, propImage);
                 Set<String> url = new HashSet<>();
                 url.add(srcImage);

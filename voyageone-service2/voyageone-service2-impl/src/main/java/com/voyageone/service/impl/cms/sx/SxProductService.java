@@ -3899,29 +3899,26 @@ public class SxProductService extends BaseService {
     }
     // 20160513 tom 图片服务器切换 END
 
-    public List<CmsBtProductModel_Field_Image> getProductImages(CmsBtProductModel product, CmsBtProductConstants.FieldImageType imageType) {
+    public List<CmsBtProductModel_Field_Image> getProductImages(CmsBtProductModel product, CmsBtProductConstants.FieldImageType imageType, int cartId) {
+        // 最优先看platforms.Pxx.图片， 如果不存在的场合， 再去看common.fields.图片
         // 如果是PRODUCT，先看看image6有没有值，只要image6有一条，那么都从image6里取,否则还是去取image1
-//        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBeanNoCode(product.getChannelId(), CmsConstants.ChannelConfig.PRODUCT_IMAGE_RULE);
         List<CmsBtProductModel_Field_Image> productImages;
         if (CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE == imageType) {
-            // modified by morse.lu 2016/06/27 start
-            // 表结构变化，改从common下的fields里去取
-//            productImages = product.getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
-            productImages = product.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
-            // modified by morse.lu 2016/06/27 end
+            productImages = product.getPlatform(cartId).getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
+
             if (productImages == null || productImages.isEmpty() || StringUtils.isEmpty(productImages.get(0).getName())) {
-                // modified by morse.lu 2016/06/27 start
-                // 表结构变化，改从common下的fields里去取
-//                productImages = product.getFields().getImages(imageType);
+                productImages = product.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
+            }
+
+            if (productImages == null || productImages.isEmpty() || StringUtils.isEmpty(productImages.get(0).getName())) {
                 productImages = product.getCommon().getFields().getImages(imageType);
-                // modified by morse.lu 2016/06/27 end
             }
         } else {
-            // modified by morse.lu 2016/06/27 start
-            // 表结构变化，改从common下的fields里去取
-//            productImages = product.getFields().getImages(imageType);
-            productImages = product.getCommon().getFields().getImages(imageType);
-            // modified by morse.lu 2016/06/27 end
+            productImages = product.getPlatform(cartId).getImages(imageType);
+
+            if (productImages == null || productImages.isEmpty() || StringUtils.isEmpty(productImages.get(0).getName())) {
+                productImages = product.getCommon().getFields().getImages(imageType);
+            }
         }
         return productImages;
     }
