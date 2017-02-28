@@ -49,11 +49,8 @@
                     <div class="row">
                         <div class="col-md-11 col-md-offset-1">
                             <select class="form-control" name="prop_value" ng-model="ctrl.vm.prop_master_value" ng-disabled="ctrl.vm.attrType != 2"
+                                    ng-options="field.id as field.name for field in ctrl.masterFields" chosen
                                     ng-required="!ctrl.vm.prop_master_value && !ctrl.vm.prop_fix_value">
-                                <option>null</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
                             </select>
                         </div>
                     </div>

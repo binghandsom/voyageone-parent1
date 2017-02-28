@@ -561,7 +561,8 @@ define(function () {
                         doSetSort: "doSetSort",
                         delete: "delete",
                         saveFeed: "saveFeed",
-                        createFeed: "createFeed"
+                        createFeed: "createFeed",
+                        init: 'init'
                     }
                 },
                 "value": {

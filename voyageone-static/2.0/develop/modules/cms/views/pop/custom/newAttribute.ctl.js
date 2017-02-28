@@ -46,6 +46,10 @@ define([
                 else
                     self.vm.prop_fix_value = context.entity.value;
             }
+
+            self.attributeService2.init().then(function(res){
+                self.masterFields = res.data.commonFields;
+            });
         };
 
         AttributeValueCtl.prototype.changeType = function () {

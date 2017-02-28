@@ -8,10 +8,10 @@ define([
 
     cms.controller('attributeController', (function () {
 
-        function CustomAttributeCtl($routeParams, $localStorage, popups, attributeService, attributeService2, notify, confirm) {
+        function CustomAttributeCtl($routeParams, $localStorage, popups, systemCategoryService, attributeService2, notify, confirm) {
             this.$routeParams = $routeParams;
             this.popups = popups;
-            this.attributeService = attributeService;
+            this.systemCategoryService = systemCategoryService;
             this.attributeService2 = attributeService2;
             this.channelInfo = $localStorage.user;
             this.notify = notify;
@@ -20,6 +20,19 @@ define([
                 catPath: $routeParams.catPath || $routeParams.catPath == 0 ? '' : $routeParams.catPath
             };
         }
+
+        CustomAttributeCtl.prototype.TYPE = {
+            1: '自动翻译',
+            2: '匹配Master详情内属性',
+            3: '固定值'
+        };
+
+        CustomAttributeCtl.prototype.ATTRIBUTETYPE = {
+            1: '共通属性',
+            2: '主类目属性',
+            3: '供货商属性',
+            4: '自定义属性'
+        };
 
         CustomAttributeCtl.prototype.init = function () {
             var self = this;
@@ -56,14 +69,14 @@ define([
         CustomAttributeCtl.prototype.popCategoryMapping = function () {
             var self = this, popups = self.popups;
 
-            self.attributeService.getCatTree().then(function (res) {
-                if (!res.data.categoryTree || !res.data.categoryTree.length) {
+            self.systemCategoryService.getNewsCategoryList().then(function (res) {
+                if (!res.data || !res.data.length) {
                     self.notify.danger("数据还未准备完毕");
                     return;
                 }
 
-                popups.popupNewCategory({
-                    categories: res.data.categoryTree,
+                popups.popupCategoryNew({
+                    categories: res.data,
                     from: self.vm.catPath == null ? "" : self.vm.catPath
                 }).then(function (context) {
                     self.vm.catPath = context.selected.catPath;
@@ -84,6 +97,8 @@ define([
                 type: 'add',
                 orgChannelId: channelInfo.channel,
                 cat: catPath
+            }).then(function () {
+                self.search();
             });
         };
 
@@ -100,6 +115,8 @@ define([
                 entity: entity,
                 orgChannelId: channelInfo.channel,
                 cat: catPath
+            }).then(function () {
+                self.search();
             });
         };
 
@@ -113,7 +130,7 @@ define([
                 self.attributeService2.delete({
                     orgChannelId: channelInfo.channel,
                     cat: catPath,
-                    entity:entity
+                    entity: entity
                 }).then(function () {
                     self.notify.success('删除成功！');
                     self.search();
@@ -187,7 +204,7 @@ define([
             self.callSort({
                 orgChannelId: channelInfo.channel,
                 cat: catPath,
-                sort:_.pluck(angular.copy(Attributes), 'nameEn')
+                sort: _.pluck(angular.copy(Attributes), 'nameEn')
             });
         };
 
