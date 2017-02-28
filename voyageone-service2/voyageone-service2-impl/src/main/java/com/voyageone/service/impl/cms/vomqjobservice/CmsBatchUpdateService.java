@@ -131,7 +131,7 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
             JongoUpdate updObj = new JongoUpdate();
             updObj.setQuery("{'common.fields.code':#}");
             updObj.setQueryParameters(prodCode);
-            updObj.setUpdate("{$set:{'common.catConf':'1','common.fields.\"" + propId + "\"':#,'common.fields.hsCodeStatus':'1','common.fields.hsCodeSetter':#,'common.fields.hsCodeSetTime':#}}}");
+            updObj.setUpdate("{$set:{'common.catConf':'1','common.fields." + propId + "':#,'common.fields.hsCodeStatus':'1','common.fields.hsCodeSetter':#,'common.fields.hsCodeSetTime':#}}}");
             updObj.setUpdateParameters(propValue, userName, DateTimeUtil.getNow());
             WriteResult rs = productService.updateFirstProduct(updObj, channelId);
             $debug("CmsProductVoRateUpdateService 保存计算结果 " + rs.toString());

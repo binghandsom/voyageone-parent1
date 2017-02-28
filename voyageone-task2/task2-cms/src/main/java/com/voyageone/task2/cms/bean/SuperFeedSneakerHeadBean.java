@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.bean;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,9 +13,13 @@ public class SuperFeedSneakerHeadBean extends SuperFeedBean{
 
     private String code;
 
-    private String price;
+    private BigDecimal  price;
 
-    private String msrp;
+    private BigDecimal msrp;
+
+    private BigDecimal cnRetailPrice;
+
+    private BigDecimal cnMsrp;
 
     private String quantity;
 
@@ -102,20 +107,36 @@ public class SuperFeedSneakerHeadBean extends SuperFeedBean{
         this.code = code == null ? null : code.trim();
     }
 
-    public String getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
-        this.price = price == null ? null : price.trim();
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
-    public String getMsrp() {
+    public BigDecimal getMsrp() {
         return msrp;
     }
 
-    public void setMsrp(String msrp) {
-        this.msrp = msrp == null ? null : msrp.trim();
+    public void setMsrp(BigDecimal msrp) {
+        this.msrp = msrp;
+    }
+
+    public BigDecimal getCnRetailPrice() {
+        return cnRetailPrice;
+    }
+
+    public void setCnRetailPrice(BigDecimal cnRetailPrice) {
+        this.cnRetailPrice = cnRetailPrice;
+    }
+
+    public BigDecimal getCnMsrp() {
+        return cnMsrp;
+    }
+
+    public void setCnMsrp(BigDecimal cnMsrp) {
+        this.cnMsrp = cnMsrp;
     }
 
     public String getQuantity() {
