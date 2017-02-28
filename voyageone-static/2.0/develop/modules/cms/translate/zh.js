@@ -918,6 +918,27 @@ define(function () {
         "TXT_COMBINED_NUM_ID" : "商品编码（numID）",
         "TXT_COMBINED_PRODUCT_EDIT" : "编辑组合套装",
         "TXT_CHANGE_PASS": "修改密码",
-        "TXT_TRANSLATION_DATE": "翻译时间"
+        "TXT_TRANSLATION_DATE": "翻译时间",
+
+        /**bi_download_list*/
+        "TXT_BI_DOWNLOAD_LIST_TITLE" : "BI报表下载",
+        "TXT_BI_DOWNLOAD_LIST_FILE_TYPE" : "文件类型",
+        "TXT_BI_DOWNLOAD_LIST_CHANNEL" : "渠道",
+        "TXT_BI_DOWNLOAD_LIST_CHECK_PERIOD" : "查询时间段",
+        "TXT_BI_DOWNLOAD_LIST_CREATE_FILE" : "生成文件",
+        "TXT_BI_DOWNLOAD_LIST_CODE" : "编号",
+        "TXT_BI_DOWNLOAD_LIST_FILE_NAME" : "导出文件名称",
+        "TXT_BI_DOWNLOAD_LIST_CHECK_FILE_TYPES" : "查询文件类型",
+        "TXT_BI_DOWNLOAD_LIST_EXPORT_TIME" : "申请导出时间",
+        "TXT_BI_DOWNLOAD_LIST_FINISH_TIME" : "文件生成时间",
+        "TXT_BI_DOWNLOAD_LIST_SUBMITTER" : "导出申请者",
+        "TXT_BI_DOWNLOAD_LIST_FILE_STATUS" : "文件状态",
+        "TXT_BI_DOWNLOAD_LIST_OPERATE" : "操作",
+        "TXT_BI_DOWNLOAD_LIST_CREATE_FAIL" : "生成失败",
+        "TXT_BI_DOWNLOAD_LIST_CREATING" : "生成中",
+        "TXT_BI_DOWNLOAD_LIST_CREATED" : "已完成",
+        "TXT_BI_DOWNLOAD_LIST_NOT_START" : "未生成",
+        "TXT_BI_DOWNLOAD_LIST_FILE_OUT_TIME" : "文件过期",
+        "TXT_BI_DOWNLOAD_LIST_UNKNOWN_ERROR":"未知错误"
     };
 });

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.task2.cms.dao.feed.KitBagFeedStockDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.task2.cms.bean.SuperFeedKitBagStockBean" >
+        <id column="VariationId" property="variationid" jdbcType="VARCHAR" />
+        <result column="ProductId" property="productid" jdbcType="VARCHAR" />
+        <result column="Quantity" property="quantity" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        VariationId, ProductId, Quantity
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select
+        <include refid="Base_Column_List" />
+        from cms_zz_feed_kitbag_stock_file
+        where VariationId = #{variationid,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from cms_zz_feed_kitbag_stock_file
+        where "VariationId" = #{variationid,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insert" parameterType="com.voyageone.task2.cms.bean.SuperFeedKitBagStockBean" >
+        insert into cms_zz_feed_kitbag_stock_file (VariationId, ProductId, Quantity
+        )
+        values (#{variationid,jdbcType=VARCHAR}, #{productid,jdbcType=VARCHAR}, #{quantity,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedKitBagStockBean" >
+        insert into cms_zz_feed_kitbag_stock_file
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="variationid != null" >
+                VariationId,
+            </if>
+            <if test="productid != null" >
+                ProductId,
+            </if>
+            <if test="quantity != null" >
+                Quantity,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="variationid != null" >
+                #{variationid,jdbcType=VARCHAR},
+            </if>
+            <if test="productid != null" >
+                #{productid,jdbcType=VARCHAR},
+            </if>
+            <if test="quantity != null" >
+                #{quantity,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedKitBagStockBean" >
+        update cms_zz_feed_kitbag_stock_file
+        <set >
+            <if test="productid != null" >
+                ProductId = #{productid,jdbcType=VARCHAR},
+            </if>
+            <if test="quantity != null" >
+                Quantity = #{quantity,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where VariationId = #{variationid,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperFeedKitBagStockBean" >
+        update cms_zz_feed_kitbag_stock_file
+        set ProductId = #{productid,jdbcType=VARCHAR},
+        Quantity = #{quantity,jdbcType=VARCHAR}
+        where VariationId = #{variationid,jdbcType=VARCHAR}
+    </update>
+</mapper>

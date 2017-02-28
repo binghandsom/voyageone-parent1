@@ -26,7 +26,7 @@ public class CmsConstants {
         WaitingPublish,		// 等待上新
         OnSale, 			// 在售
         InStock,			// 在库,
-        Violation             // 违规下架
+        Violation           // 违规下架
     }
 
 
@@ -39,37 +39,41 @@ public class CmsConstants {
         ToInStock 		// 在库
     }
 
-    /**
-     * workload type
-     */
-    // TODO: 16/4/28 无人使用就删除了
-    public enum WorkloadType {
-        Sx,             // 上新 / 全属性更新
-        UpdProdImage,   // 更新商品图片
-        UpdDesc,        // 更新商品描述
-        SetOnSale,      // 上架
-        SetInStock      // 下架
-    }
-
     public interface ChannelConfig {
 
         // 全店统一属性结构
         String SAME_ATTR = "SAME_ATTR";
 
-        // 该店铺是否自动审批价格
+        /** 价格相关配置 start **/
+        // 调用价格计算时, 指定渠道使用什么方式计算价格
+        String PRICE_CALCULATOR = "PRICE_CALCULATOR";
+        // 使用的配置项, 指示计算商品价格时, 使用体系计算价格
+        String PRICE_CALCULATOR_SYSTEM = "SYSTEM";
+        // 使用的配置项, 指示计算商品价格时, 使用配置表中配置的固定公式计算价格
+        String PRICE_CALCULATOR_FORMULA = "FORMULA";
+
+        // 价格计算公式使用, 该店铺是否自动同步MSRP价格
+        String AUTO_SYNC_PRICE_MSRP = "AUTO_SYNC_PRICE_MSRP";
+
+        // 价格计算公式使用, 该店铺是否自动同步价格
         String AUTO_SYNC_PRICE_SALE = "AUTO_SYNC_PRICE_SALE";
 
+        // 价格是否同步到各平台活动
         String AUTO_SYNC_PRICE_PROMOTION = "AUTO_SYNC_PRICE_PROMOTION";
 
+        // 强制击穿阈值(例如: 10 表示的是10%)
+        String MANDATORY_BREAK_THRESHOLD = "MANDATORY_BREAK_THRESHOLD";
 
-        // 该渠道是否自动同步 MSRP
-        String AUTO_SYNC_PRICE_MSRP = "AUTO_SYNC_PRICE_MSRP";
-        String AUTO_SYNC_PRICE_MSRP_NO = "0"; // 不联动
-        String AUTO_SYNC_PRICE_MSRP_DIRECT = "1"; // 直接联动
-        String AUTO_SYNC_PRICE_MSRP_AUTO = "2"; // 自动联动
+        // 发货方式
+        String SHIPPING_TYPE = "SHIPPING_TYPE";
 
-        // MSRP统一配置
-        String UNIFY_SKU_PRICE_MSRP = "UNIFY_SKU_PRICE_MSRP";
+        // 店铺级别MSRP价格计算公式
+        String PRICE_MSRP_CALC_FORMULA = "PRICE_MSRP_CALC_FORMULA";
+
+        // 店铺级别指导价格计算公式
+        String PRICE_RETAIL_CALC_FORMULA = "PRICE_RETAIL_CALC_FORMULA";
+
+        /** 价格相关配置 end **/
 
         // 第三方原始价格单位
         String CLIENT_PRICE_UNIT = "CLIENT_PRICE_UNIT";
@@ -77,23 +81,11 @@ public class CmsConstants {
         // 特价宝id
         String TEJIABAO_ID = "TEJIABAO_ID";
 
-        // 翻译用到的长度check
-        String TRANS_LEN_SET = "TRANS_LEN_SET";
-
         // 各个平台渠道导入master数据的PlatformActive初始值
         String PLATFORM_ACTIVE = "PLATFORM_ACTIVE";
 
-        // 强制击穿阈值(例如: 10 表示的是10%)
-        String MANDATORY_BREAK_THRESHOLD = "MANDATORY_BREAK_THRESHOLD";
-
         // Feed导入Master时变更需要自动同步的平台列表
         String AUTO_SYNC_CARTS = "AUTO_SYNC_CARTS";
-
-        // 店铺级别MSRP价格计算公式
-        String PRICE_MSRP_CALC_FORMULA = "PRICE_MSRP_CALC_FORMULA";
-
-        // 店铺级别指导价格计算公式
-        String PRICE_RETAIL_CALC_FORMULA = "PRICE_RETAIL_CALC_FORMULA";
 
         // 全店操作配置最小间隔时间
         String STORE_OPERATION_INTERVAL_TIME = "STORE_OPERATION_INTERVAL_TIME";
@@ -108,26 +100,6 @@ public class CmsConstants {
 
         //橱窗图片本地保存位置
         String SHELVES_IMAGE_PATH = "SHELVES_IMAGE_PATH";
-        /**
-         * 调用价格计算时, 指定渠道使用什么方式计算价格
-         * <p>
-         * 使用体系 {@code PRICE_CALCULATOR_SYSTEM} 计算, 还是固定 {@code PRICE_CALCULATOR_FORMULA} 计算
-         */
-        String PRICE_CALCULATOR = "PRICE_CALCULATOR";
-
-        /**
-         * {@code PRICE_CALCULATOR} 使用的配置项, 指示计算商品价格时, 使用体系计算价格
-         */
-        String PRICE_CALCULATOR_SYSTEM = "SYSTEM";
-
-        /**
-         * {@code PRICE_CALCULATOR} 使用的配置项, 指示计算商品价格时, 使用配置表中配置的固定公式计算价格
-         */
-        String PRICE_CALCULATOR_FORMULA = "FORMULA";
-
-
-        // 价格相关
-       // String PRICE = "PRICE";
 
         String PRICE_SX_KEY="PRICE_SX";
         String PRICE_SALE_KEY="PRICE_SALE";
@@ -158,8 +130,6 @@ public class CmsConstants {
         // 2:以总店的数据为准。只要总店有数据，那么总店为准。如果总店没有，子店有，那么子店的数据复制到总店)
         String LIKING_IMAGE_COPY_FLG = "LIKING_IMAGE_COPY_FLG";
 
-        String FEED_SEARCH_SORT = "FEED_SEARCH_SORT";
-
         // App端启用开关(用于控制所有平台的)
         String APP_SWITCH = "APP_SWITCH";
 
@@ -170,17 +140,11 @@ public class CmsConstants {
         String HSCODE = "HSCODE";
         String SX_HSCODE = ".sx_hscode";
 
-        // 发货方式
-        String SHIPPING_TYPE = "SHIPPING_TYPE";
-
         // 产品分类是否从feed导入(1：从feed导入，0：不从feed导入运营手动添加)
         String PRODUCT_TYPE_FROM_FEED_FLG = "PRODUCT_TYPE_FROM_FEED_FLG";
 
         // 适用人群是否从feed导入(1：从feed导入，0：不从feed导入运营手动添加)
         String SIZE_TYPE_FROM_FEED_FLG = "SIZE_TYPE_FROM_FEED_FLG";
-
-        // 价格是否向上取整(1：向上取整，0：不向上取整)
-        String PRICE_ROUND_UP_FLG = "PRICE_ROUND_UP_FLG";
 
         // 新建product时是否自动设置PC端自拍商品图images6(1:自动设置  空，0:不设置)
         String AUTO_SET_IMAGES6_FLG = "AUTO_SET_IMAGES6_FLG";
@@ -196,11 +160,6 @@ public class CmsConstants {
 
         // 该店铺是否自动审批价格
         String PLATFORM_IMAGE_DIRECTORY_ID = "PLATFORM_IMAGE_DIRECTORY_ID";
-
-        // 商品默认包装重量
-        String DEFAULT_PACKAGE_WEIGHT = "DEFAULT_PACKAGE_WEIGHT";
-        // 如无默认包装重量，则统一设置包装重量0.5
-        double DEFAULT_PACKAGE_WEIGHT_VAL = 0.5;
 
         //feed的code按不同季度拆分
         String SPLIT_QUARTER_BY_CODE = "SPLIT_QUARTER_BY_CODE";
@@ -218,11 +177,6 @@ public class CmsConstants {
         String TMALL_WIRELESS_COMMON_MODULE_BY_USER = "TMALL_WIRELESS_COMMON_MODULE_BY_USER";
     }
 
-    public interface DataAmount {
-        String FEED_TO_MASTER_INSERT = "FEED_TO_MASTER_INSERT";
-        String FEED_TO_MASTER_UPDATE = "FEED_TO_MASTER_UPDATE";
-    }
-
     public interface ImageUploadStatus {
         String NOT_UPLOAD = "1";
         String WAITING_UPLOAD = "2";
@@ -238,16 +192,8 @@ public class CmsConstants {
     }
 
     public interface StoreOperationType {
-        String REPUBLISH = "1";
         String REIMPORT_FEED_CLEAR_COMMON_PROPERTY = "2";
         String REIMPORT_FEED_NOT_CLEAR_COMMON_PROPERTY = "3";
-        String PRICE_SYNCHRONIZATION = "4";
-    }
-
-    public interface JmMasterPlatCode {
-        String BRND = "0";
-        String PRICE_UNIT = "1";
-        String STOCK = "2";
     }
 
     public interface OptionConfigType {
@@ -303,7 +249,6 @@ public class CmsConstants {
         int initNum = 0;        // 上新对象
         int okNum = 1;          // 上新成功
         int errorNum = 2;       // 上新失败
-//        int uploadingNum = 3;   // 上新中(上新完成后回写状态的时候用)
         int smartSx = 3;        // 智能上新
         int review = 4;         // 达尔文产品审核中
         int waitCnUpload = 5;  // 独立域名等待xml上传

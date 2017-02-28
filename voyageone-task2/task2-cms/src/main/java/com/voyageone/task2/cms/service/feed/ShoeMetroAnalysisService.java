@@ -121,6 +121,7 @@ public class ShoeMetroAnalysisService extends BaseAnalysisService {
                 superFeedShoeMetroBean.setCategory(reader.get(i++));
                 superfeed.add(superFeedShoeMetroBean);
                 cnt++;
+                $info("-------------------Sku"+superFeedShoeMetroBean.getSku()+"数量"+cnt);
                 if (superfeed.size() > 1000) {
                     transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
                     superfeed.clear();
@@ -137,7 +138,7 @@ public class ShoeMetroAnalysisService extends BaseAnalysisService {
         } catch (Exception ex) {
             ex.printStackTrace();
             $info("ShoeMetro产品文件读入失败");
-            logIssue("cms 数据导入处理", "YogaDemocracy产品文件读入失败 " + ex.getMessage());
+            logIssue("cms 数据导入处理", "ShoeMetro产品文件读入失败 " + ex.getMessage());
         }
         return cnt;
     }

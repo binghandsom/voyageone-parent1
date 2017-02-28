@@ -10,6 +10,7 @@ import java.util.Map;
 
 /**
  * 的商品Model Fields
+ *
  * @author edward.lin 2016/06/29
  * @version 2.2.0
  */
@@ -19,8 +20,9 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getModel() {
         return getStringAttribute("model");
     }
+
     public void setModel(String model) {
-        setStringAttribute("model",model);
+        setStringAttribute("model", model);
     }
 
     public String getLastReceivedOn() {
@@ -28,13 +30,14 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     }
 
     public void setLastReceivedOn(String lastReceivedOn) {
-        setStringAttribute("lastReceivedOn",lastReceivedOn);
+        setStringAttribute("lastReceivedOn", lastReceivedOn);
     }
 
     //code 产品code
     public String getCode() {
         return getStringAttribute("code");
     }
+
     public void setCode(String code) {
         setStringAttribute("code", code);
     }
@@ -43,6 +46,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getOriginalCode() {
         return getStringAttribute("originalCode");
     }
+
     public void setOriginalCode(String originalCode) {
         setStringAttribute("originalCode", originalCode);
     }
@@ -51,6 +55,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getBrand() {
         return getStringAttribute("brand");
     }
+
     public void setBrand(String brand) {
         setStringAttribute("brand", brand);
     }
@@ -59,6 +64,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public Integer getIsMasterMain() {
         return getIntAttribute("isMasterMain");
     }
+
     public void setIsMasterMain(Integer isMasterMain) {
         setAttribute("isMasterMain", isMasterMain == null ? 0 : isMasterMain);
     }
@@ -76,6 +82,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getProductNameEn() {
         return getStringAttribute("productNameEn");
     }
+
     public void setProductNameEn(String productNameEn) {
         setStringAttribute("productNameEn", productNameEn);
     }
@@ -84,6 +91,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getOriginalTitleCn() {
         return getStringAttribute("originalTitleCn");
     }
+
     public void setOriginalTitleCn(String originalTitleCn) {
         setStringAttribute("originalTitleCn", originalTitleCn);
     }
@@ -92,6 +100,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getShortDesEn() {
         return getStringAttribute("shortDesEn");
     }
+
     public void setShortDesEn(String shortDesEn) {
         setStringAttribute("shortDesEn", shortDesEn);
     }
@@ -100,6 +109,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getShortDesCn() {
         return getStringAttribute("shortDesCn");
     }
+
     public void setShortDesCn(String shortDesCn) {
         setStringAttribute("shortDesCn", shortDesCn);
     }
@@ -108,6 +118,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getLongDesEn() {
         return getStringAttribute("longDesEn");
     }
+
     public void setLongDesEn(String longDesEn) {
         setStringAttribute("longDesEn", longDesEn);
     }
@@ -116,6 +127,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getLongDesCn() {
         return getStringAttribute("longDesCn");
     }
+
     public void setLongDesCn(String longDesCn) {
         setStringAttribute("longDesCn", longDesCn);
     }
@@ -124,6 +136,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getMaterialEn() {
         return getStringAttribute("materialEn");
     }
+
     public void setMaterialEn(String materialEn) {
         setStringAttribute("materialEn", materialEn);
     }
@@ -132,6 +145,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getMaterialCn() {
         return getStringAttribute("materialCn");
     }
+
     public void setMaterialCn(String materialCn) {
         setStringAttribute("materialCn", materialCn);
     }
@@ -140,6 +154,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getColor() {
         return getStringAttribute("color");
     }
+
     public void setColor(String color) {
         setStringAttribute("color", color);
     }
@@ -148,6 +163,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getOrigin() {
         return getStringAttribute("origin");
     }
+
     public void setOrigin(String origin) {
         setStringAttribute("origin", origin);
     }
@@ -156,6 +172,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getProductType() {
         return getStringAttribute("productType");
     }
+
     public void setProductType(String productType) {
         setStringAttribute("productType", productType);
     }
@@ -164,6 +181,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getProductTypeCn() {
         return getStringAttribute("productTypeCn");
     }
+
     public void setProductTypeCn(String productTypeCn) {
         setStringAttribute("productTypeCn", productTypeCn);
     }
@@ -172,6 +190,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getOrigProductType() {
         return getStringAttribute("origProductType");
     }
+
     public void setOrigProductType(String origProductType) {
         setStringAttribute("origProductType", origProductType);
     }
@@ -180,6 +199,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getSizeType() {
         return getStringAttribute("sizeType");
     }
+
     public void setSizeType(String sizeType) {
         setStringAttribute("sizeType", sizeType);
     }
@@ -188,6 +208,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getSizeTypeCn() {
         return getStringAttribute("sizeTypeCn");
     }
+
     public void setSizeTypeCn(String sizeTypeCn) {
         setStringAttribute("sizeTypeCn", sizeTypeCn);
     }
@@ -196,6 +217,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getOrigSizeType() {
         return getStringAttribute("origSizeType");
     }
+
     public void setOrigSizeType(String origSizeType) {
         setStringAttribute("origSizeType", origSizeType);
     }
@@ -204,6 +226,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getHsCodeCrop() {
         return getStringAttribute("hsCodeCrop");
     }
+
     public void setHsCodeCrop(String hsCodeCrop) {
         setStringAttribute("hsCodeCrop", hsCodeCrop);
     }
@@ -212,6 +235,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getHsCodePrivate() {
         return getStringAttribute("hsCodePrivate");
     }
+
     public void setHsCodePrivate(String hsCodePrivate) {
         setStringAttribute("hsCodePrivate", hsCodePrivate);
     }
@@ -220,6 +244,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getHsCodeCross() {
         return getStringAttribute("hsCodeCross");
     }
+
     public void setHsCodeCross(String hsCodeCross) {
         setStringAttribute("hsCodeCross", hsCodeCross);
     }
@@ -228,6 +253,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public Integer getQuantity() {
         return getIntAttribute("quantity");
     }
+
     public void setQuantity(Integer quantity) {
         setAttribute("quantity", quantity == null ? 0 : quantity);
     }
@@ -236,21 +262,24 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getClientProductUrl() {
         return getStringAttribute("clientProductUrl");
     }
+
     public void setClientProductUrl(String clientProductUrl) {
         setStringAttribute("clientProductUrl", clientProductUrl);
     }
 
-    public Integer getSkuCnt(){
+    public Integer getSkuCnt() {
         return getIntAttribute("skuCnt");
     }
-    public void setSkuCnt(Integer skuCnt){
-        setAttribute("skuCnt",skuCnt == null ? 0:skuCnt);
+
+    public void setSkuCnt(Integer skuCnt) {
+        setAttribute("skuCnt", skuCnt == null ? 0 : skuCnt);
     }
+
     //商品图片
     public List<CmsBtProductModel_Field_Image> getImages(CmsBtProductConstants.FieldImageType imageType) {
         List<CmsBtProductModel_Field_Image> result = null;
         if (imageType != null) {
-            switch(imageType) {
+            switch (imageType) {
                 case PRODUCT_IMAGE:
                     result = getImages1();
                     break;
@@ -282,9 +311,10 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         }
         return result;
     }
+
     public void setImages(CmsBtProductConstants.FieldImageType imageType, List<CmsBtProductModel_Field_Image> images) {
         if (imageType != null) {
-            switch(imageType) {
+            switch (imageType) {
                 case PRODUCT_IMAGE:
                     setImages1(images);
                     break;
@@ -323,6 +353,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         }
         return getAttribute("images1");
     }
+
     public void setImages1(List<CmsBtProductModel_Field_Image> images1) {
         setAttribute("images1", images1);
     }
@@ -334,6 +365,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         }
         return getAttribute("images2");
     }
+
     public void setImages2(List<CmsBtProductModel_Field_Image> images2) {
         setAttribute("images2", images2);
     }
@@ -345,6 +377,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         }
         return getAttribute("images3");
     }
+
     public void setImages3(List<CmsBtProductModel_Field_Image> images3) {
         setAttribute("images3", images3);
     }
@@ -356,6 +389,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         }
         return getAttribute("images4");
     }
+
     public void setImages4(List<CmsBtProductModel_Field_Image> images4) {
         setAttribute("images4", images4);
     }
@@ -367,6 +401,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         }
         return getAttribute("images5");
     }
+
     public void setImages5(List<CmsBtProductModel_Field_Image> images5) {
         setAttribute("images5", images5);
     }
@@ -378,6 +413,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         }
         return getAttribute("images6");
     }
+
     public void setImages6(List<CmsBtProductModel_Field_Image> images6) {
         setAttribute("images6", images6);
     }
@@ -389,6 +425,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         }
         return getAttribute("images7");
     }
+
     public void setImages7(List<CmsBtProductModel_Field_Image> images7) {
         setAttribute("images7", images7);
     }
@@ -400,15 +437,18 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         }
         return getAttribute("images8");
     }
+
     public void setImages8(List<CmsBtProductModel_Field_Image> images8) {
         setAttribute("images8", images8);
     }
+
     public List<CmsBtProductModel_Field_Image> getImages9() {
         if (!this.containsKey("images9") || getStringAttribute("images9") == null) {
             setAttribute("images9", new ArrayList<CmsBtProductModel_Field_Image>());
         }
         return getAttribute("images9");
     }
+
     public void setImages9(List<CmsBtProductModel_Field_Image> images9) {
         setAttribute("images9", images9);
     }
@@ -417,12 +457,15 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public Double getPriceMsrpSt() {
         return getDoubleAttribute("priceMsrpSt");
     }
+
     public void setPriceMsrpSt(Double priceMsrpSt) {
         setAttribute("priceMsrpSt", priceMsrpSt);
     }
+
     public Double getPriceMsrpEd() {
         return getDoubleAttribute("priceMsrpEd");
     }
+
     public void setPriceMsrpEd(Double priceMsrpEd) {
         setAttribute("priceMsrpEd", priceMsrpEd);
     }
@@ -431,12 +474,15 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public Double getPriceRetailSt() {
         return getDoubleAttribute("priceRetailSt");
     }
+
     public void setPriceRetailSt(Double priceRetailSt) {
         setAttribute("priceRetailSt", priceRetailSt);
     }
+
     public Double getPriceRetailEd() {
         return getDoubleAttribute("priceRetailEd");
     }
+
     public void setPriceRetailEd(Double priceRetailEd) {
         setAttribute("priceRetailEd", priceRetailEd);
     }
@@ -446,6 +492,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         String categoryStatus = getStringAttribute("categoryStatus");
         return StringUtils.isEmpty(categoryStatus) ? "0" : categoryStatus;
     }
+
     public void setCategoryStatus(String categoryStatus) {
         setStringAttribute("categoryStatus", StringUtils.isEmpty(categoryStatus) ? "0" : categoryStatus);
     }
@@ -454,6 +501,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getCategorySetter() {
         return getStringAttribute("categorySetter");
     }
+
     public void setCategorySetter(String categorySetter) {
         setStringAttribute("categorySetter", categorySetter);
     }
@@ -462,6 +510,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getCategorySetTime() {
         return getStringAttribute("categorySetTime");
     }
+
     public void setCategorySetTime(String categorySetTime) {
         setStringAttribute("categorySetTime", categorySetTime);
     }
@@ -471,6 +520,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         String translateStatus = getStringAttribute("translateStatus");
         return StringUtils.isEmpty(translateStatus) ? "0" : translateStatus;
     }
+
     public void setTranslateStatus(String translateStatus) {
         setStringAttribute("translateStatus", StringUtils.isEmpty(translateStatus) ? "0" : translateStatus);
     }
@@ -479,6 +529,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getTranslator() {
         return getStringAttribute("translator");
     }
+
     public void setTranslator(String translator) {
         setStringAttribute("translator", translator);
     }
@@ -487,6 +538,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getTranslateTime() {
         return getStringAttribute("translateTime");
     }
+
     public void setTranslateTime(String translateTime) {
         setStringAttribute("translateTime", translateTime);
     }
@@ -496,6 +548,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         String hsCodeStatus = getStringAttribute("hsCodeStatus");
         return StringUtils.isEmpty(hsCodeStatus) ? "0" : hsCodeStatus;
     }
+
     public void setHsCodeStatus(String hsCodeStatus) {
         setStringAttribute("hsCodeStatus", StringUtils.isEmpty(hsCodeStatus) ? "0" : hsCodeStatus);
     }
@@ -504,6 +557,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getHsCodeSetter() {
         return getStringAttribute("hsCodeSetter");
     }
+
     public void setHsCodeSetter(String hsCodeSetter) {
         setStringAttribute("hsCodeSetter", hsCodeSetter);
     }
@@ -512,6 +566,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getHsCodeSetTime() {
         return getStringAttribute("hsCodeSetTime");
     }
+
     public void setHsCodeSetTime(String hsCodeSetTime) {
         setStringAttribute("hsCodeSetTime", hsCodeSetTime);
     }
@@ -520,6 +575,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getCodeDiff() {
         return getStringAttribute("codeDiff");
     }
+
     public void setCodeDiff(String codeDiff) {
         setStringAttribute("codeDiff", codeDiff);
     }
@@ -528,6 +584,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getUsageEn() {
         return getStringAttribute("usageEn");
     }
+
     public void setUsageEn(String usageEn) {
         setStringAttribute("usageEn", usageEn);
     }
@@ -536,6 +593,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getUsageCn() {
         return getStringAttribute("usageCn");
     }
+
     public void setUsageCn(String usageCn) {
         setStringAttribute("usageCn", usageCn);
     }
@@ -544,6 +602,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public Integer getAppSwitch() {
         return getIntAttribute("appSwitch");
     }
+
     public void setAppSwitch(Integer appSwitch) {
         setAttribute("appSwitch", appSwitch == null ? 0 : appSwitch);
     }
@@ -552,12 +611,16 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public Double getCommissionRate() {
         return getDoubleAttribute("commissionRate");
     }
+
     public void setCommissionRate(Double commissionRate) {
         setAttribute("commissionRate", commissionRate);
     }
 
     //磅
-    public Double getWeightLb() { return getDoubleAttribute("weightLB"); }
+    public Double getWeightLb() {
+        return getDoubleAttribute("weightLB");
+    }
+
     public void setWeightLb(Double weightLB) {
         setAttribute("weightLB", weightLB == null ? 0.0 : weightLB);
     }
@@ -566,6 +629,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public Integer getWeightG() {
         return getIntAttribute("weightG");
     }
+
     public void setWeightG(Integer weightG) {
         setAttribute("weightG", weightG == null ? 0 : weightG);
     }
@@ -574,6 +638,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public Double getWeightKG() {
         return getDoubleAttribute("weightKG");
     }
+
     public void setWeightKG(Double weightKG) {
         setAttribute("weightKG", weightKG == null ? 0.0 : weightKG);
     }
@@ -586,6 +651,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public void setClientMsrpPrice(String clientMsrpPrice) {
         setAttribute("clientMsrpPrice", clientMsrpPrice);
     }
+
     //->客户成本价(double)
     public String getClientNetPrice() {
         return getStringAttribute("clientNetPrice");
@@ -594,7 +660,6 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public void setClientNetPrice(String clientNetPrice) {
         setAttribute("clientNetPrice", clientNetPrice);
     }
-
 
     @Override
     public Object put(String key, Object value) {
@@ -611,6 +676,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
                 value = images;
             }
         }
+
         return super.put(key, value);
     }
 }

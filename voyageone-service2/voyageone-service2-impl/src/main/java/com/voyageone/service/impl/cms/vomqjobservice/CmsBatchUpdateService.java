@@ -3,7 +3,6 @@ package com.voyageone.service.impl.cms.vomqjobservice;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -14,9 +13,11 @@ import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
+import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.BatchUpdateProductMQMessageBody;
@@ -30,6 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR;
+import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA;
 
 /**
  * 高级检索业务的批量更新
@@ -46,6 +50,10 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
     private PriceService priceService;
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
+    @Autowired
+    private PlatformPriceService platformPriceService;
+    @Autowired
+    private CmsBtPriceLogService cmsBtPriceLogService;
 
     public List<CmsBtOperationLogModel_Msg> updateProductComField(BatchUpdateProductMQMessageBody messageBody) {
         // 错误map，key-value分别对于产品code和错误信息
@@ -89,7 +97,7 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
     }
 
     /**
-     * 税号变更
+     * 税号变更处理逻辑
      * @param propId 属性Id
      * @param propName 属性名称
      * @param propValue 属性值
@@ -101,102 +109,85 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
      */
     private List<CmsBtOperationLogModel_Msg> updateHsCode(String propId, String propName, String propValue, List<String> codeList, String channelId, String userName, Boolean synPriceFlg) {
         List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
-        String msg = "税号变更 " + propId + "=> " + propValue;
-        // 未配置自动同步的店铺，显示同步状况
-        if (synPriceFlg) {
-            msg += " (同步价格)";
-        } else {
-            CmsChannelConfigBean autoApprovePrice = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE);
-            if (autoApprovePrice == null || !"1".equals(autoApprovePrice.getConfigValue1())) {
-                msg += " (未同步最终售价)";
+        final String msg = "高级检索批量 税号变更 " + propName + "=> " + propValue + " (根据配置判断同步最终售价)";
+        List<String> successList = new ArrayList<>();
+
+        // 获取所有的产品信息
+        JongoQuery queryObj = new JongoQuery();
+        queryObj.setQuery("{'common.fields.code': {$in: #}}");
+        queryObj.setParameters(codeList);
+        List<CmsBtProductModel> prodObj = productService.getList(channelId, queryObj);
+
+        for (CmsBtProductModel newProduct : prodObj) {
+
+            String prodCode = newProduct.getCommonNotNull().getFieldsNotNull().getCode();
+            // 获取原始税号
+            String oldHsCode = StringUtils.trimToNull((String) newProduct.getCommonNotNull().getFieldsNotNull().get(propId));
+
+            // 设置新税号
+            newProduct.getCommon().getFields().setAttribute(propId, propValue);
+
+            // 保存税号设置
+            JongoUpdate updObj = new JongoUpdate();
+            updObj.setQuery("{'common.fields.code':#}");
+            updObj.setQueryParameters(prodCode);
+            updObj.setUpdate("{$set:{'common.catConf':'1','common.fields." + propId + "':#,'common.fields.hsCodeStatus':'1','common.fields.hsCodeSetter':#,'common.fields.hsCodeSetTime':#}}}");
+            updObj.setUpdateParameters(propValue, userName, DateTimeUtil.getNow());
+            WriteResult rs = productService.updateFirstProduct(updObj, channelId);
+            $debug("CmsProductVoRateUpdateService 保存计算结果 " + rs.toString());
+
+            if (productService.compareHsCode(oldHsCode, propValue)) {
+                successList.add(prodCode);
+                continue;
             }
-        }
 
-        String msgTxt = msg;
-        boolean isUpdFlg = false;
-        JongoUpdate updObj = new JongoUpdate();
-        WriteResult rs = null;
+            // 处理各平台价格
+            newProduct.getPlatforms().forEach((s, platform) -> {
+                Integer cartId = platform.getCartId();
 
-        List<String> succesList = new ArrayList<>();
-        for (String prodCode : codeList) {
-            try {
-                CmsBtProductModel newProduct = productService.getProductByCode(channelId, prodCode);
-                String oldHsCode = StringUtils.trimToNull((String) newProduct.getCommonNotNull().getFieldsNotNull().get(propId));
+                if (cartId < CmsConstants.ACTIVE_CARTID_MIN)
+                    return;
 
-                updObj.setQuery("{'common.fields.code':#}");
-                updObj.setQueryParameters(prodCode);
-                updObj.setUpdate("{$set:{'common.catConf':'1','common.fields." + propId + "':#,'common.fields.hsCodeStatus':'1','common.fields.hsCodeSetter':#,'common.fields.hsCodeSetTime':#}}");
-                updObj.setUpdateParameters(propValue, userName, DateTimeUtil.getNow());
-                rs = productService.updateFirstProduct(updObj, channelId);
-                $debug("高级检索 批量更新 更新税号结果 " + rs.toString());
+                // 如果该平台使用的FORMULA计算价格,则跳过通过voRate的价格计算处理
+                CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanWithDefault(channelId, PRICE_CALCULATOR, cartId.toString());
+                if (priceCalculatorConfig == null || PRICE_CALCULATOR_FORMULA.equals(priceCalculatorConfig.getConfigValue1()))
+                    return;
 
-                // 重新计算并保存价格
-                priceService.setPrice(newProduct, synPriceFlg || oldHsCode == null);
-                newProduct.getPlatforms().forEach((s, platform) -> {
-                    if (platform.getCartId() != 0) {
-                        productService.updateProductPlatform(channelId, newProduct.getProdId(), platform, userName, false, EnumProductOperationType.BatchUpdate, msgTxt, true);
-                    }
-                });
+                // 计算指导价
+                try {
+                    platformPriceService.updateProductPlatformPrice(newProduct, cartId, false, userName, msg);
+                } catch (PriceCalculateException e) {
 
-                // 确认指导价变更
-                List<Integer> cartList = newProduct.getCartIdList();
-                for (Integer cartVal : cartList) {
-                    isUpdFlg = false;
-                    List<BaseMongoMap<String, Object>> skuList = newProduct.getPlatform(cartVal).getSkus();
-                    for (BaseMongoMap skuObj : skuList) {
-                        Boolean isSaleFlg = (Boolean) skuObj.get("isSale");
-                        String chgFlg = StringUtils.trimToEmpty(skuObj.getStringAttribute("priceChgFlg"));
-                        if ((chgFlg.startsWith("U") || chgFlg.startsWith("D")) && isSaleFlg) {
-                            // 指导价有变更
-                            skuObj.put("priceChgFlg", "0");
-                            skuObj.put("confPriceRetail", skuObj.getDoubleAttribute("priceRetail"));
-                            isUpdFlg = true;
-                        }
-                    }
+                    $error(String.format("高级检索 批量更新 价格计算错误 channleid=%s, prodcode=%s", channelId, prodCode), e);
 
-                    // 更新产品的信息
-                    if (isUpdFlg) {
-                        updObj.setQuery("{'common.fields.code':#}");
-                        updObj.setQueryParameters(prodCode);
-                        updObj.setUpdate("{$set:{'platforms.P" + cartVal + ".skus':#,'modified':#,'modifier':#}}");
-                        updObj.setUpdateParameters(skuList, DateTimeUtil.getNowTimeStamp(), userName);
+                    CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                    errorInfo.setSkuCode(prodCode);
+                    errorInfo.setMsg("高级检索 批量更新 价格计算错误");
+                    failList.add(errorInfo);
+                    return;
+                } catch (IllegalPriceConfigException e) {
 
-                        rs = productService.updateFirstProduct(updObj, channelId);
-                        if (rs != null) {
-                            $debug("高级检索 批量更新 指导价变更批量确认 code=%s, channelId=%s 执行结果=%s", prodCode, channelId, rs.toString());
-                        }
-                    }
+                    $error(String.format("高级检索 批量更新 配置错误 channleid=%s, prodcode=%s", channelId, prodCode), e);
+
+                    CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                    errorInfo.setSkuCode(prodCode);
+                    errorInfo.setMsg("高级检索 批量更新 配置错误");
+                    failList.add(errorInfo);
+                    return;
+                } catch (Throwable e) {
+                    $error(String.format("高级检索 批量更新 未知错误 channleid=%s, prodcode=%s", channelId, prodCode), e);
+
+                    CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                    errorInfo.setSkuCode(prodCode);
+                    errorInfo.setMsg("高级检索 批量更新 未知错误");
+                    failList.add(errorInfo);
+                    return;
                 }
-                succesList.add(prodCode);
-            } catch (PriceCalculateException e) {
+            });
 
-                $error(String.format("高级检索 批量更新 价格计算错误 channleid=%s, prodcode=%s", channelId, prodCode), e);
-
-                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
-                errorInfo.setSkuCode(prodCode);
-                errorInfo.setMsg("高级检索 批量更新 价格计算错误");
-                failList.add(errorInfo);
-                continue;
-            } catch (IllegalPriceConfigException e) {
-
-                $error(String.format("高级检索 批量更新 配置错误 channleid=%s, prodcode=%s", channelId, prodCode), e);
-
-                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
-                errorInfo.setSkuCode(prodCode);
-                errorInfo.setMsg("高级检索 批量更新 配置错误");
-                failList.add(errorInfo);
-                continue;
-            } catch (Throwable e) {
-                $error(String.format("高级检索 批量更新 未知错误 channleid=%s, prodcode=%s", channelId, prodCode), e);
-
-                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
-                errorInfo.setSkuCode(prodCode);
-                errorInfo.setMsg("高级检索 批量更新 未知错误");
-                failList.add(errorInfo);
-                continue;
-            }
+            successList.add(prodCode);
         }
-        productStatusHistoryService.insertList(channelId, succesList, -1, EnumProductOperationType.BatchUpdate, "高级检索 批量更新：" + propName + "设置--" + propValue, userName);
+        productStatusHistoryService.insertList(channelId, successList, -1, EnumProductOperationType.BatchUpdate, msg, userName);
         return failList;
     }
 

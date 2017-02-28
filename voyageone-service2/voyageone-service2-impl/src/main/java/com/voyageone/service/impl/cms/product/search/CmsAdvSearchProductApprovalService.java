@@ -5,10 +5,10 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Carts;
-import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -19,6 +19,7 @@ import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -32,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +55,8 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
     private SxProductService sxProductService;
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
+    @Autowired
+    private PriceService priceService;
 
     public List<CmsBtOperationLogModel_Msg> approval(AdvSearchProductApprovalMQMessageBody mqMessageBody) {
         long threadNo =  Thread.currentThread().getId();
@@ -139,11 +141,8 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
             }
 
             // 阀值
-            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
-            Double breakThreshold = null;
-            if (cmsChannelConfigBean != null) {
-                breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D + 1.0;
-            }
+            CmsChannelConfigBean cmsChannelConfigBean = priceService.getMandatoryBreakThresholdOption(channelId, cartIdValue);
+            Double breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D + 1.0;
 
             int idx = 0;
             for (String code : productCodes) {
@@ -166,31 +165,13 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                 if (skuObjList == null) {
                     continue;
                 }
-                for (BaseMongoMap<String, Object> skuObj : skuObjList) {
-                    double priceSale = skuObj.getDoubleAttribute("priceSale");
-                    double priceRetail = skuObj.getDoubleAttribute("priceRetail");
-                    Map<String, Object> priceInfo = new HashMap<>();
-                    if (priceSale < priceRetail) {
-                        priceInfo.put("priceRetail", priceRetail);
-                    }
-                    if (breakThreshold != null) {
-                        priceLimit = priceRetail * breakThreshold;
-                    }
-                    if (breakThreshold != null && priceSale > priceLimit) {
-                        priceInfo.put("priceLimit", priceLimit);
-                    }
-                    if (priceSale < priceRetail || (breakThreshold != null && priceSale > priceLimit)) {
-                        priceInfo.put("priceSale", priceSale);
-                        priceInfo.put("skuCode", skuObj.get("skuCode"));
-                        priceInfo.put("cartName", cartName);
-                        prodInfoList.add(priceInfo);
-                    }
-                }
 
-                if (prodInfoList.size() > 0) {
+                try {
+                    priceService.priceChk(channelId, productModel, cartIdValue);
+                } catch (BusinessException ex) {
                     CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
                     errorInfo.setSkuCode(code);
-                    errorInfo.setMsg(String.format("商品价格有问题, 无法审批 cartIdValue:%s, startIdx:%s, infoList:%s", cartIdValue, idx, prodInfoList));
+                    errorInfo.setMsg(ex.getMessage());
                     errorCodeList.add(errorInfo);
                     productCodes.remove(code);
                 }

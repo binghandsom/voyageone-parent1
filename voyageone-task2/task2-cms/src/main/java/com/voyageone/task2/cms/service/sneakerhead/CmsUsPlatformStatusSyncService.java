@@ -8,6 +8,7 @@ import com.voyageone.components.sneakerhead.SneakerHeadBase;
 import com.voyageone.components.sneakerhead.bean.platformstatus.usPlatformModel.CodeUsPlatformModel;
 import com.voyageone.components.sneakerhead.bean.platformstatus.usPlatformModel.UsPlatformStatusModel;
 import com.voyageone.components.sneakerhead.service.SneakerheadApiService;
+import com.voyageone.service.impl.cms.product.ProductPlatformService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_UsPlatform_Cart;
@@ -32,15 +33,18 @@ public class CmsUsPlatformStatusSyncService extends BaseCronTaskService {
 
     private final SneakerheadApiService sneakerheadApiService;
     private final ProductService productService;
+    private final ProductPlatformService productPlatformService;
 
     private static final Integer DEFAULT_THREAD_COUNT = 10;
     private static final Integer DEFAULT_ATOM_COUNT = 100;
 
     @Autowired
     public CmsUsPlatformStatusSyncService(SneakerheadApiService sneakerheadApiService,
-                                          ProductService productService) {
+                                          ProductService productService,
+                                          ProductPlatformService productPlatformService) {
         this.sneakerheadApiService = sneakerheadApiService;
         this.productService = productService;
+        this.productPlatformService = productPlatformService;
     }
 
     @Override
@@ -130,7 +134,7 @@ public class CmsUsPlatformStatusSyncService extends BaseCronTaskService {
                     }).collect(Collectors.toMap(
                             cmsBtProductModel_usPlatform_cart -> "P" + cmsBtProductModel_usPlatform_cart.getCartId(),
                             cmsBtProductModel_usPlatform_cart -> cmsBtProductModel_usPlatform_cart));
-            productService.updateUsPlatforms(
+            productPlatformService.updateUsPlatforms(
                     ChannelConfigEnums.Channel.SN.getId(),
                     usPlatformStatus.getCode(), usPlatforms, this.getClass().getSimpleName());
         });

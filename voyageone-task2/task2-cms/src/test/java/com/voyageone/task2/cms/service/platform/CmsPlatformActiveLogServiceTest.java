@@ -68,11 +68,11 @@ public class CmsPlatformActiveLogServiceTest {
         // 发送请求到MQ,插入操作历史记录
         Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", "012");
-        logParams.put("cartId", 23);
-        logParams.put("activeStatus", "ToInStock");
-        logParams.put("creator", "VOCmsBrandBlockQueue");
-        logParams.put("comment", "Feed 品牌黑名单下架");
-        logParams.put("codeList", new ArrayList(Arrays.asList("NYC3PCB0-001")));
+        logParams.put("cartId", 27);
+        logParams.put("activeStatus", "ToOnSale");
+        logParams.put("creator", "edward");
+        logParams.put("comment", "高级检索 批量上下架");
+        logParams.put("codeList", new ArrayList(Arrays.asList("BCH60F46-6R3")));
         try {
             targetService.setProductOnSaleOrInStock(logParams);
         } catch (Exception e) {

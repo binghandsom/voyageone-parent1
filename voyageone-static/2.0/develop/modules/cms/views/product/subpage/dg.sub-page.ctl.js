@@ -58,7 +58,8 @@ define([
             productUrl: "",
             preStatus: null,
             noMaterMsg: null
-        }
+        };
+        this.panelShow = true;
     }
 
     SpJdController.prototype.init = function (element) {
@@ -114,6 +115,7 @@ define([
             }
 
             self.autoSyncPriceMsrp = resp.data.autoSyncPriceMsrp;
+            self.autoSyncPriceSale = resp.data.autoSyncPriceSale;
 
         });
 
@@ -323,9 +325,9 @@ define([
             self.productDetailService.updateSkuPrice({
                 cartId: $scope.cartInfo.value,
                 prodId: $scope.productInfo.productId,
-                platform: $scope.vm.platform
+                platform: self.vm.platform
             }).then(function () {
-                self.alert("TXT_MSG_UPDATE_SUCCESS");
+                self.notify.success("TXT_MSG_UPDATE_SUCCESS");
             }, function (res) {
                 self.alert(res.message);
             });
@@ -479,6 +481,25 @@ define([
 
             modal.appendTo(body);
             $compile(modal)(modalChildScope);
+        });
+    };
+
+    /**
+     * 操作区域图片上传按钮
+     */
+    SpJdController.prototype.popUploadImg = function () {
+        var self = this,
+            popup = self.popups;
+
+        self.vm.platform['images1'] = self.$scope.productInfo.masterField['images1'];
+
+        popup.openUploadImages({
+            cartId: self.$scope.cartInfo.value,
+            productId: self.$scope.productInfo.productId,
+            platform: self.vm.platform,
+            showArr:['image1','image6','image7','image4','image5']
+        }).then(function (platform) {
+            self.vm.platform = platform;
         });
     };
 

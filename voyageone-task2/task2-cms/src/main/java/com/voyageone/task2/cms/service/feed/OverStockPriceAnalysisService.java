@@ -10,6 +10,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.daoext.cms.CmsZzFeedOverstockPriceDaoExt;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.impl.cms.product.ProductPlatformService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsZzFeedOverstockPriceModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -47,6 +48,9 @@ public class OverStockPriceAnalysisService extends BaseCronTaskService {
 
     @Autowired
     private FeedInfoService feedInfoService;
+
+    @Autowired
+    private ProductPlatformService productPlatformService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -155,7 +159,7 @@ public class OverStockPriceAnalysisService extends BaseCronTaskService {
                                 if(!StringUtils.isEmpty(cmsZzFeedOverstockPriceModel.getMsrpPrice())){
                                     sku.setAttribute("priceMsrp", Double.parseDouble(cmsZzFeedOverstockPriceModel.getMsrpPrice()));
                                 }
-                                productService.updateProductPlatform(OverStock.getId(), cmsBtProductModel.getProdId(), cart, getTaskName(), false);
+                                productPlatformService.updateProductPlatform(OverStock.getId(), cmsBtProductModel.getProdId(), cart, getTaskName(), false);
                                 break;
                             }
                         }

@@ -19,7 +19,7 @@
                                                 <label class="col-sm-3 control-label" translate="TXT_BRAND"></label>
                                                 <div class="col-sm-8">
                                                     <label class="checkbox-inline c-radio">
-                                                        <input type="radio" name="brandSelOperation" value="1" ng-model="vm.searchInfo.brandSelType"><span class="fa fa-check"></span> 包含
+                                                        <input type="radio" name="brandSelOperation" value="1" ng-model="vm.searchInfo.brandSelType"><span class="fa fa-check" ></span> 包含
                                                     </label>
                                                     <label class="checkbox-inline c-radio">
                                                         <input type="radio" name="brandSelOperation" value="2" ng-model="vm.searchInfo.brandSelType"><span class="fa fa-check"></span> 不包含
@@ -709,7 +709,7 @@
                                 <li>
                                     <a href="javascript:void(0)" ng-click="$parent.openBulkUpdate(openFieldEdit)"> {{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}</a>
                                 </li>
-                                <li>
+                                <li ng-if="vm.masterData.isPriceFormula.configValue2 == 0">
                                     <a href="javascript:void(0)" ng-click="cfmRetailPrice(null)">全店铺指导价变更确认</a>
                                 </li>
                                 <li>
@@ -757,7 +757,7 @@
                                 <li >
                                     <a href="javascript:void(0)" ng-click="editPlatformAttribute(cartBean.value)">修改平台共同属性</a>
                                 </li>
-                                <li>
+                                <li ng-if="vm.masterData.confirmPrice[cartBean.value] == 0">
                                     <a href="javascript:void(0)" ng-click="cfmRetailPrice(cartBean)">指导价变更确认</a>
                                 </li>
                                 <li ng-if="cartBean.cartType!=3">
@@ -940,7 +940,13 @@
                                             {{productInfo.common.fields.brand}}
                                         </td>
                                         <td class="text-center">
-                                            {{productInfo.common.fields.quantity || 0}}
+                                            <button ng-controller="showPopoverCtrl"
+                                                    popover-html="getCartQty(productInfo.common.fields.code,vm.codeMap)"
+                                                    uib-popover-template="'qty.html'"
+                                                    popover-title="库存" type="button"
+                                                    popover-placement="right" class="btn btn-vo btn-xs">
+                                                {{productInfo.common.fields.quantity || 0}}
+                                            </button>
                                         </td>
                                         <td class="text-center">
                                             <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceMsrp.length>0"
@@ -1290,5 +1296,12 @@
             </tr>
             </tbody>
         </table>
+    </div>
+</script>
+<script type="text/ng-template" id="qty.html">
+    <div>
+        <ul class="col-sm-12 list-unstyled">
+            <li ng-repeat="(x, y) in codeCartQty">{{x}}:{{y}}</li>
+        </ul>
     </div>
 </script>
