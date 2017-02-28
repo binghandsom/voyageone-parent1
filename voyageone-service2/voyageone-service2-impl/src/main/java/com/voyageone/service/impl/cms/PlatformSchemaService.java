@@ -152,20 +152,20 @@ public class PlatformSchemaService extends BaseService {
         String schemaProduct = platformCatSchemaModel.getPropsProduct();
 
         // 正式环境， 需要这段代码， release环境， 不需要这段代码 START
-//        if (CartEnums.Cart.isTmSeries(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) {
-//            if (platformBrandId != null) {
-//                // 如果传入的平台品牌id不是空的， 那么就从天猫上去获取一下
-//                ShopBean shopBean = Shops.getShop(channelId, cartId);
-//                try {
-//                    String schema = tbProductService.getAddProductSchema(Long.parseLong(catId), Long.parseLong(platformBrandId), shopBean);
-//                    if (!StringUtils.isEmpty(schema)) {
-//                        schemaProduct = schema;
-//                    }
-//                } catch (Exception e) {
-//
-//                }
-//            }
-//        }
+        if (CartEnums.Cart.isTmSeries(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) {
+            if (platformBrandId != null) {
+                // 如果传入的平台品牌id不是空的， 那么就从天猫上去获取一下
+                ShopBean shopBean = Shops.getShop(channelId, cartId);
+                try {
+                    String schema = tbProductService.getAddProductSchema(Long.parseLong(catId), Long.parseLong(platformBrandId), shopBean);
+                    if (!StringUtils.isEmpty(schema)) {
+                        schemaProduct = schema;
+                    }
+                } catch (Exception e) {
+
+                }
+            }
+        }
         // 正式环境， 需要这段代码， release环境， 不需要这段代码 END
 
 //        if (CartEnums.Cart.JG.getValue() == cartId || CartEnums.Cart.JGJ.getValue() == cartId || CartEnums.Cart.JGY.getValue() == cartId) {
