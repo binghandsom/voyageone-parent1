@@ -47,9 +47,9 @@ define([
                     self.vm.prop_fix_value = context.entity.value;
             }
 
-            self.attributeService2.init().then(function(res){
-                self.masterFields = res.data.commonFields;
-            });
+            //匹配Master详情内属性
+            self.masterFields = context.commonFields;
+
         };
 
         AttributeValueCtl.prototype.changeType = function () {

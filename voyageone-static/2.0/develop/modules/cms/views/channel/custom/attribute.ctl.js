@@ -39,6 +39,7 @@ define([
 
             self.attributeService2.init().then(function(res){
                 self.channelList = res.data.channelList;
+                self.commonFields = res.data.commonFields;
             });
 
             self.search();
@@ -100,7 +101,8 @@ define([
             popups.openAddAttribute({
                 type: 'add',
                 orgChannelId: channelInfo.channel,
-                cat: catPath
+                cat: catPath,
+                commonFields:self.commonFields
             }).then(function () {
                 self.search();
             });
@@ -118,7 +120,8 @@ define([
                 type: 'edit',
                 entity: entity,
                 orgChannelId: channelInfo.channel,
-                cat: catPath
+                cat: catPath,
+                commonFields:self.commonFields
             }).then(function () {
                 self.search();
             });
