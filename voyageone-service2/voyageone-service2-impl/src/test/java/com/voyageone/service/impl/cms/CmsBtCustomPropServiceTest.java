@@ -2,7 +2,9 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.daoext.cms.CmsMtFeedCustomPropDaoExt;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.collections.map.HashedMap;
@@ -29,20 +31,57 @@ public class CmsBtCustomPropServiceTest {
     ProductService productService;
 
     @Autowired
+    CmsMtFeedCustomPropDaoExt cmsMtFeedCustomPropDaoExt;
+
+    @Autowired
     CommonSchemaService commonSchemaService;
+
+    @Autowired
+    CmsBtTranslateService cmsBtTranslateService;
+
+    @Autowired
+    CmsBtCustomPropService cmsBtCustomPropService;
+
+    @Test
+    public void translateDataInit(){
+        String channelId = "010";
+        Map<String,Object> sqlPara = new HashMap();
+        sqlPara.put("channelId", channelId);
+        List<Map<String,Object>> ret = cmsMtFeedCustomPropDaoExt.selectPropValue(sqlPara);
+        ret.forEach(item ->translate(channelId,item));
+
+        sqlPara.put("feedCatPath", 0);
+        List<CmsMtFeedCustomPropModel>cmsMtFeedCustomPropModels = cmsMtFeedCustomPropDaoExt.selectWithCategory(sqlPara);
+        init(channelId, cmsMtFeedCustomPropModels);
+
+    }
+
+    private void translate(String channelId, Map<String,Object> item){
+        cmsBtTranslateService.create(channelId, 3, (String) item.get("prop_original"),(String) item.get("value_original"),(String) item.get("value_translation"));
+    }
+
+    private void init(String channelId, List<CmsMtFeedCustomPropModel> items){
+        CmsBtCustomPropModel cmsBtCustomPropModel = new CmsBtCustomPropModel();
+        cmsBtCustomPropModel.setCat("all");
+        cmsBtCustomPropModel.setOrgChannelId(channelId);
+        cmsBtCustomPropModel.setChannelId(channelId);
+        items.forEach(item->{
+            CmsBtCustomPropModel.Entity entity = new CmsBtCustomPropModel.Entity();
+            entity.setActive(1);
+            entity.setNameEn(item.getFeedPropOriginal());
+            entity.setNameCn(item.getFeedPropTranslation());
+            entity.setType(3);
+            entity.setChecked(true);
+            entity.setAttributeType(1);
+            cmsBtCustomPropModel.getEntitys().add(entity);
+        });
+        cmsBtCustomPropService.update(cmsBtCustomPropModel);
+    }
+
     @Test
     public void getProductCustomProp() throws Exception {
 
-        List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
-        List<Map<String,Object>> Master = new ArrayList<>();
-        cmsMtCommonFields.forEach(field -> {
-            Map<String,Object> item = new HashMap();
-            item.put("id",field.getId());
-            item.put("name",field.getName());
-            Master.add(item);
-        });
-
-        CmsBtProductModel cmsBtProductModel = productService.getProductByCode("010","RF1119MLPN-D");
+        CmsBtProductModel cmsBtProductModel = productService.getProductByCode("010","15344:SZ7");
         cmsBtCustomPropService.setProductCustomProp(cmsBtProductModel);
         System.out.println(JacksonUtil.bean2Json(cmsBtProductModel.getFeed()));
 
@@ -65,8 +104,7 @@ public class CmsBtCustomPropServiceTest {
 
     }
 
-    @Autowired
-    CmsBtCustomPropService cmsBtCustomPropService;
+
     @Test
     public void getCustomPropByCatChannelExtend() throws Exception {
 
