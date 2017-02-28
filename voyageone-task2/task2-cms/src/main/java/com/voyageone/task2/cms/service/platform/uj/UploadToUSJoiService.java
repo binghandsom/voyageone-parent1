@@ -15,6 +15,7 @@ import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
@@ -513,6 +514,19 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                         if (prCommonFields != null && productModel.getCommon().getFields() != null) {
                             // 更新common.fields.images1(品牌方商品图)
                             prCommonFields.setImages1(productModel.getCommon().getFields().getImages1());
+
+
+                            if(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId().equalsIgnoreCase(pr.getOrgChannelId())) {
+                                for (CmsBtProductConstants.FieldImageType imageType : CmsBtProductConstants.FieldImageType.values()) {
+                                    if (imageType != CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE) {
+                                        List<CmsBtProductModel_Field_Image> images = prCommonFields.getImages(imageType);
+                                        if (ListUtils.isNull(images) || images.get(0).size() == 0 || StringUtil.isEmpty((String) images.get(0).get(imageType.getName()))) {
+                                            prCommonFields.setImages(imageType, productModel.getCommonNotNull().getFieldsNotNull().getImages(imageType));
+                                        }
+                                    }
+                                }
+                            }
+
 
                             // add by desmond 2016/10/27 start
                             // 从子店产品中复制图片到总店产品的common.fields.images2~images9的图片
