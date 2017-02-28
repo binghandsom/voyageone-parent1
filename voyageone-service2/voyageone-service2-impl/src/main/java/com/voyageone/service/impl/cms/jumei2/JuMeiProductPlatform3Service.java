@@ -76,6 +76,8 @@ public class JuMeiProductPlatform3Service extends BaseService {
     ProductPlatformService productPlatformService;
     @Autowired
     WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
+
+
     private List<String> newJmDealSkuNoList = new ArrayList<>();
 
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductPlatform3Service.class);
@@ -129,11 +131,12 @@ public class JuMeiProductPlatform3Service extends BaseService {
             queryMap.put("code", product.getCommon().getFields().getCode());
             List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailByCode(queryMap);
 
+            List<String> isNotSaleSkuList = new ArrayList<String>();
             List<jmHtDealCopyDealSkusData> skuList = new ArrayList<>();
             product.getPlatform(27).getSkus()
                     .forEach((skuInfo) -> {
+                        String skuCode = skuInfo.getStringAttribute("skuCode");
                         if (Boolean.valueOf(skuInfo.getStringAttribute("isSale"))) {
-                            String skuCode = skuInfo.getStringAttribute("skuCode");
 
                             List<Object> promotionSkuList = listSku.stream()
                                     .filter((promotionSku) -> skuCode.equals(String.valueOf(promotionSku.get("skuCode"))))
@@ -156,17 +159,28 @@ public class JuMeiProductPlatform3Service extends BaseService {
                                         dealCopyDealSkuData.setDeal_price(String.valueOf(promotionSkuMap.get("dealPrice")));
                                         dealCopyDealSkuData.setMarket_price(String.valueOf(promotionSkuMap.get("marketPrice")));
                                         skuList.add(dealCopyDealSkuData);
+
+                                        // 去掉正常的jmSkuNo
+                                        newJmDealSkuNoList.remove(String.valueOf(promotionSkuMap.get("jmSkuNo")));
                                     }
                                 });
 
                             }
                         }
                     });
+
             if (skuList.size() > 0)
                 productSkus.put(product.getCommon().getFields().getCode(), skuList);
+
+            for (String s : newJmDealSkuNoList) {
+                OperationResult result = updateSkuIsEnableDeal(shopBean, product.getPlatform(27).getpNumIId(), s, product.getCommon().getFields().getCode());
+                if (!StringUtils.isEmpty(result.getMsg()))
+                    listOperationResult.add(result);
+            }
         });
 
         for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
+
 
             $debug(promotionId + " code:" + model.getProductCode() + "上新begin");
             OperationResult result = updateJm(modelCmsBtJmPromotion, model, shopBean, mapMasterBrand, isBegin, productSkus.get(model.getProductCode()));
@@ -791,5 +805,43 @@ public class JuMeiProductPlatform3Service extends BaseService {
             model.setStockStatus(3);
             throw  ex;
         }
+    }
+
+    /**
+     * 修改聚美下架Deal关联的Sku(下架)
+     * 聚美平台上商品如果只剩下一个skuCode,下架时会报异常（每个商品至少要有一个sku），这里直接抛出异常，另外处理
+     */
+    private OperationResult updateSkuIsEnableDeal(ShopBean shop, String jumeiHashId, String jumeiSkuNo, String code) {
+
+        OperationResult result = new OperationResult();
+
+        HtDealUpdateSkuIsEnableRequest request = new HtDealUpdateSkuIsEnableRequest();
+        request.setJumei_hash_id(jumeiHashId);
+        request.setJumei_sku_no(jumeiSkuNo);
+        request.setIs_enable("0");
+
+        try {
+            HtDealUpdateSkuIsEnableResponse response = serviceJumeiHtDeal.updateSkuIsEnable(shop, request);
+            if (response != null) {
+                $info("聚美上新修改聚美Deal关联的Sku下架 " + response.getBody());
+                if (!response.is_Success()) {
+                    if (!StringUtils.isEmpty(response.getError_code())
+                            && !"100013".equals(response.getError_code())) {
+                        $warn("聚美上新修改聚美Deal关联的Sku下架失败! msg=%s", response.getErrorMsg());
+
+                        result.setMsg(String.format("聚美上新修改聚美Deal关联的Sku下架失败! msg=%s", response.getErrorMsg()));
+                        result.setCode(code);
+                        result.setResult(false);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            $error(String.format("聚美上新修改聚美Deal关联的Sku下架 调用聚美API失败 channelId=%s, " + "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
+            result.setMsg(String.format("聚美上新修改聚美Deal关联的Sku下架 调用聚美API失败 channelId=%s, " + "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()));
+            result.setCode(code);
+            result.setResult(false);
+        }
+
+        return result;
     }
 }
