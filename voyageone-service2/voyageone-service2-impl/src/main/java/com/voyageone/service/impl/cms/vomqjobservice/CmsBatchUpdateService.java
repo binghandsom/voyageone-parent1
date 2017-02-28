@@ -124,9 +124,6 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
             // 获取原始税号
             String oldHsCode = StringUtils.trimToNull((String) newProduct.getCommonNotNull().getFieldsNotNull().get(propId));
 
-            if (productService.compareHsCode(oldHsCode, propValue))
-                continue;
-
             // 设置新税号
             newProduct.getCommon().getFields().setAttribute(propId, propValue);
 
@@ -138,6 +135,11 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
             updObj.setUpdateParameters(propValue, userName, DateTimeUtil.getNow());
             WriteResult rs = productService.updateFirstProduct(updObj, channelId);
             $debug("CmsProductVoRateUpdateService 保存计算结果 " + rs.toString());
+
+            if (productService.compareHsCode(oldHsCode, propValue)) {
+                successList.add(prodCode);
+                continue;
+            }
 
             // 处理各平台价格
             newProduct.getPlatforms().forEach((s, platform) -> {
