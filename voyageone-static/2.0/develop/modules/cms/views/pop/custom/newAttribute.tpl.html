@@ -1,4 +1,4 @@
-<div class="vo_modal" ng-init="initialize()">
+<div class="vo_modal" ng-init="ctrl.init()">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
@@ -9,7 +9,8 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label vo_reqfield">属性名（EN）</label>
                 <div class="col-sm-6">
-                    <input id="attributeEn" name="attributeEn" class="form-control" ng-model="vm.prop_original" required=""/>
+                    <input id="attributeEn" name="attributeEn" class="form-control" ng-model="ctrl.vm.prop_original"
+                           ng-disabled="ctrl.vm.type == 'edit'" required/>
                 </div>
                 <!--<label class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>-->
             </div>
@@ -21,15 +22,16 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">属性名（CN）</label>
                 <div class="col-sm-6">
-                    <input class="form-control" ng-model="vm.prop_translation"/>
+                    <input class="form-control" ng-model="ctrl.vm.prop_translation"/>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label">属性值&emsp;</label>
                 <div class="col-sm-6">
-                    <div class="row" ng-if="vm.type != 'add'">
+                    <div class="row" ng-if="ctrl.vm.type != 'add'">
                         <div class="col-md-1">
-                            <input type="radio" name="attrType" ng-model="vm.attrType" value="1" ng-click="changeType()">
+                            <input type="radio" name="attrType" ng-model="ctrl.vm.attrType" value="1"
+                                   ng-click="ctrl.changeType()" ng-disabled="ctrl.vm.type == 'edit'">
                         </div>
                         <div class="col-md-11">
                             <label>自动翻译/属性值共通翻译（运营统筹）（内容大于100字，不翻译）</label>
@@ -37,7 +39,8 @@
                     </div>
                     <div class="row">
                         <div class="col-md-1">
-                            <input type="radio" name="attrType"  ng-model="vm.attrType" value="2" ng-click="changeType()">
+                            <input type="radio" name="attrType" ng-model="ctrl.vm.attrType" value="2"
+                                   ng-click="ctrl.changeType()" ng-disabled="ctrl.vm.type == 'edit'">
                         </div>
                         <div class="col-md-11">
                             <label>匹配Master详情内属性</label>
@@ -45,7 +48,8 @@
                     </div>
                     <div class="row">
                         <div class="col-md-11 col-md-offset-1">
-                            <select class="form-control" name="prop_value" ng-model="vm.prop_master_value" ng-required = "!vm.prop_master_value && !vm.prop_fix_value">
+                            <select class="form-control" name="prop_value" ng-model="ctrl.vm.prop_master_value" ng-disabled="ctrl.vm.attrType != 2"
+                                    ng-required="!ctrl.vm.prop_master_value && !ctrl.vm.prop_fix_value">
                                 <option>null</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -55,18 +59,20 @@
                     </div>
                     <div class="row">
                         <div class="col-md-1">
-                            <input type="radio" name="attrType"  ng-model="vm.attrType" value="3" ng-click="changeType()">
+                            <input type="radio" name="attrType" ng-model="ctrl.vm.attrType" value="3"
+                                   ng-click="ctrl.changeType()" ng-disabled="ctrl.vm.type == 'edit'">
                         </div>
                         <div class="col-md-5"><label>固定值</label></div>
                     </div>
                     <div class="row">
                         <div class="col-md-11 col-md-offset-1">
-                            <textarea class="form-control no-resize" rows="5"  ng-model="vm.prop_fix_value" ng-required = "!vm.prop_master_value && !vm.prop_fix_value"></textarea>
+                            <textarea class="form-control no-resize" rows="5" ng-model="ctrl.vm.prop_fix_value" ng-disabled="ctrl.vm.attrType != 3"
+                                      ng-required="!ctrl.vm.prop_master_value && !ctrl.vm.prop_fix_value"></textarea>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" ng-if="ctrl.vm.type != 'edit'">
                 <div class="col-sm-6 col-sm-offset-3">
                     <vo-message target="customAttributeForm.prop_value"></vo-message>
                 </div>
@@ -75,6 +81,9 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo" ng-click="ok()" ng-disabled="customAttributeForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+        <button class="btn btn-vo" ng-click="ctrl.ok()"
+                ng-disabled="customAttributeForm.$invalid && ctrl.vm.type != 'edit'">
+            <i class="glyphicon glyphicon-floppy-disk"></i> 保存
+        </button>
     </div>
 </div>

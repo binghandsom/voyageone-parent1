@@ -172,7 +172,6 @@ define([
                 "templateUrl": "views/pop/custom/newAttribute.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/custom/newAttribute.ctl",
                 "controller": 'popAddAttributeValueCtl as ctrl',
-                "backdrop": 'static',
                 "size": 'md'
             },
             "newValue": {

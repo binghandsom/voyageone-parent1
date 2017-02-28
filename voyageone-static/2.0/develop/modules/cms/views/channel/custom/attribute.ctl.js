@@ -17,20 +17,38 @@ define([
             this.notify = notify;
             this.confirm = confirm;
             this.vm = {
-                catPath: $routeParams.catPath
+                catPath: $routeParams.catPath || $routeParams.catPath == 0 ? '' : $routeParams.catPath
             };
         }
 
         CustomAttributeCtl.prototype.init = function () {
+            var self = this;
+
+            self.search();
+        };
+
+        CustomAttributeCtl.prototype.clear = function () {
+            var self = this;
+
+            self.vm.catPath = '';
+        };
+
+        CustomAttributeCtl.prototype.search = function () {
             var self = this,
                 channelInfo = self.channelInfo,
-                catPath = self.vm.catPath ? self.vm.catPath : '';
+                catPath = self.vm.catPath;
 
             self.attributeService2.search({
                 orgChannelId: channelInfo.channel,
                 cat: catPath
             }).then(function (res) {
-                self.Attributes = res.data.entitys;
+                self.attributes = res.data.entitys;
+                self.attributesTrue = _.filter(self.attributes, function (element) {
+                    return element.checked
+                });
+                self.attributesFalse = _.filter(self.attributes, function (element) {
+                    return !element.checked
+                });
             });
 
         };
@@ -48,30 +66,57 @@ define([
                     categories: res.data.categoryTree,
                     from: self.vm.catPath == null ? "" : self.vm.catPath
                 }).then(function (context) {
-
-
+                    self.vm.catPath = context.selected.catPath;
+                    self.search();
                 });
             });
         };
 
+        /**
+         * 添加
+         */
         CustomAttributeCtl.prototype.popAddAttribute = function () {
-            var self = this, popups = self.popups;
+            var self = this, popups = self.popups,
+                channelInfo = self.channelInfo,
+                catPath = self.vm.catPath;
 
             popups.openAddAttribute({
-                type: 'add'
+                type: 'add',
+                orgChannelId: channelInfo.channel,
+                cat: catPath
             });
         };
 
-        CustomAttributeCtl.prototype.delete = function () {
-            var self = this;
+        /**
+         * 修改
+         */
+        CustomAttributeCtl.prototype.popEditAttribute = function (entity) {
+            var self = this, popups = self.popups,
+                channelInfo = self.channelInfo,
+                catPath = self.vm.catPath;
+
+            popups.openAddAttribute({
+                type: 'edit',
+                entity: entity,
+                orgChannelId: channelInfo.channel,
+                cat: catPath
+            });
+        };
+
+        CustomAttributeCtl.prototype.delete = function (entity) {
+            var self = this,
+                channelInfo = self.channelInfo,
+                catPath = self.vm.catPath;
 
             self.confirm('您确定要删除该属性？').then(function () {
-                alert('delete');
-                /*                self.attributeService2({
 
-                 }).then(function(){
-                 self.notify('删除成功！');
-                 });*/
+                self.attributeService2.delete({
+                    orgChannelId: channelInfo.channel,
+                    cat: catPath,
+                    entity:entity
+                }).then(function () {
+                    self.notify.success('删除成功！');
+                });
             });
         };
 
@@ -82,25 +127,75 @@ define([
         CustomAttributeCtl.prototype.updateEntity = function (entity) {
             var self = this,
                 channelInfo = self.channelInfo,
-                catPath = self.vm.catPath || self.vm.catPath == 0 ? '':self.vm.catPath;
+                catPath = self.vm.catPath;
 
             self.attributeService2.doSetCustomshIsDispPlay({
                 orgChannelId: channelInfo.channel,
                 cat: catPath,
                 entity: entity
-            }).then(function (res) {
-                console.log(res);
+            }).then(function () {
                 self.notify.success('更新成功！');
+                self.search();
             });
         };
 
-        CustomAttributeCtl.prototype.sort = function (entity) {
-            var self = this,
-                sortArr = [];
+        CustomAttributeCtl.prototype.moveKeys = {
+            up: 'up',
+            toTop: 'toTop',
+            down: 'down',
+            toDown: 'toDown'
+        };
 
-            sortArr = self.en
+        CustomAttributeCtl.prototype.moveAttr = function (index, moveKey) {
+            var self = this, moveKeys = self.moveKeys,
+                channelInfo = self.channelInfo,
+                catPath = self.vm.catPath,
+                Attributes = self.attributesTrue, temp;
 
-            self.attributeService2.doSetSort({}).then(function (res) {
+            switch (moveKey) {
+                case moveKeys.up:
+                    if (index === 0)
+                        return;
+                    temp = Attributes[index];
+                    Attributes[index] = Attributes[index - 1];
+                    Attributes[index - 1] = temp;
+                    break;
+                case moveKeys.toTop:
+                    if (index === 0)
+                        return;
+                    temp = Attributes.splice(index, 1);
+                    Attributes.splice(0, 0, temp[0]);
+                    break;
+                case moveKeys.down:
+                    if (index === Attributes.length - 1)
+                        return;
+                    temp = Attributes[index];
+                    Attributes[index] = Attributes[index + 1];
+                    Attributes[index + 1] = temp;
+                    break;
+                case moveKeys.toDown:
+                    if (index === Attributes.length - 1)
+                        return;
+                    temp = Attributes.splice(index, 1);
+                    Attributes.push(temp[0]);
+                    break;
+            }
+
+
+            //调用排序接口
+/*            self.callSort({
+                orgChannelId: channelInfo.channel,
+                cat: catPath,
+                sort:_.pluck(angular.copy(Attributes), 'nameEn')
+            });*/
+        };
+
+        CustomAttributeCtl.prototype.callSort = function (upEntity) {
+            var self = this;
+
+            self.attributeService2.doSetSort(upEntity).then(function () {
+                self.notify.success('排序完毕！');
+                self.search();
             });
         };
 
