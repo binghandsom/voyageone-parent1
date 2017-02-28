@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- *
  * Created by james on 2017/2/21.
  */
 @Service
@@ -48,10 +47,23 @@ public class CmsBtCustomPropService extends BaseService {
     }
 
 
+    /**
+     * 检索 自定义属性（不带继承）
+     *
+     * @param channelId    channelId 渠道
+     * @param orgChannelId 子渠道的channel  旗舰店的场合 等于 channelId
+     * @param cat          类目路径
+     * @return 自定义属性
+     */
     public CmsBtCustomPropModel getCustomPropByCatChannel(String channelId, String orgChannelId, String cat) {
         return cmsBtCustomPropDao.getCustomPropByCatChannel(channelId, orgChannelId, cat);
     }
 
+    /**
+     * 更新/新建 cmsBtCustomProp 数据
+     *
+     * @param cmsBtCustomPropModel cmsBtCustomProp
+     */
     public void update(CmsBtCustomPropModel cmsBtCustomPropModel) {
         if (cmsBtCustomPropModel.get_id() != null) {
             cmsBtCustomPropDao.update(cmsBtCustomPropModel);
@@ -76,7 +88,7 @@ public class CmsBtCustomPropService extends BaseService {
     public CmsBtCustomPropModel getCustomPropByCatChannelExtend(String channelId, String orgChannelId, String cat) {
         cat = StringUtil.isEmpty(cat) ? "all" : cat;
         List<CmsBtCustomPropModel> cmsBtCustomPropModels = new ArrayList<>();
-        CmsBtCustomPropModel cmsBtCustomProp = null;
+        CmsBtCustomPropModel cmsBtCustomProp = new CmsBtCustomPropModel();
         String cats[] = cat.split(">");
         String catPath = "";
         // 先找以下不带orgChannelId设置
@@ -183,6 +195,15 @@ public class CmsBtCustomPropService extends BaseService {
         return getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
     }
 
+    /**
+     * 删除指定的类目下的某一个属性
+     *
+     * @param channelId    channelId
+     * @param orgChannelId orgChannelId
+     * @param cat          类目
+     * @param entity       entity
+     * @return 新的结果
+     */
     public CmsBtCustomPropModel removeEntity(String channelId, String orgChannelId, String cat, CmsBtCustomPropModel.Entity entity) {
         CmsBtCustomPropModel cmsBtCustomPropModel = getCustomPropByCatChannel(channelId, orgChannelId, cat);
         if (cmsBtCustomPropModel == null) {
@@ -207,6 +228,7 @@ public class CmsBtCustomPropService extends BaseService {
         update(cmsBtCustomPropModel);
         return getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
     }
+
     /**
      * 更新顺序
      *
@@ -229,6 +251,11 @@ public class CmsBtCustomPropService extends BaseService {
         return getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
     }
 
+    /**
+     * 给产品数据设置feed数据
+     *
+     * @param product 产品model
+     */
     public void setProductCustomProp(CmsBtProductModel product) {
 
         CmsBtCustomPropModel cmsBtCustomPropModel = getCustomPropByCatChannelExtend(product.getChannelId(), product.getOrgChannelId(), product.getCommon().getCatPath());
@@ -383,19 +410,23 @@ public class CmsBtCustomPropService extends BaseService {
         });
 
         if (!ListUtils.isNull(cmsBtCustomPropModel.getSort())) {
-            List<CmsBtCustomPropModel.Entity> newEntity = new ArrayList<>();
-            for (Integer i = 0; i < cmsBtCustomPropModel.getSort().size(); i++) {
-                String key = cmsBtCustomPropModel.getSort().get(i);
-                CmsBtCustomPropModel.Entity item = cmsBtCustomPropModel.getEntitys().stream().filter(entity -> entity.getNameEn().equalsIgnoreCase(key)).findFirst().orElse(null);
-                if (item != null && item.getChecked() != null && item.getChecked()) {
-                    item.put("dispOrder", i);
-                }
-            }
+//            List<CmsBtCustomPropModel.Entity> newEntity = new ArrayList<>();
+//            for (Integer i = 0; i < cmsBtCustomPropModel.getSort().size(); i++) {
+//                String key = cmsBtCustomPropModel.getSort().get(i);
+//                CmsBtCustomPropModel.Entity item = cmsBtCustomPropModel.getEntitys().stream().filter(entity -> entity.getNameEn().equalsIgnoreCase(key)).findFirst().orElse(null);
+//                if (item != null && item.getChecked() != null && item.getChecked()) {
+//                    item.put("dispOrder", i);
+//                }
+//            }
             cmsBtCustomPropModel.getEntitys().sort((o1, o2) -> {
-                Integer b1 = o1.getAttribute("dispOrder") == null ? 9999 : o1.getAttribute("dispOrder");
-                Integer b2 = o2.getAttribute("dispOrder") == null ? 9999 : o2.getAttribute("dispOrder");
+                Integer b1 = cmsBtCustomPropModel.getSort().indexOf(o1.getNameEn()) == -1 ? Integer.MAX_VALUE : cmsBtCustomPropModel.getSort().indexOf(o1.getNameEn());
+                Integer b2 = cmsBtCustomPropModel.getSort().indexOf(o2.getNameEn()) == -1 ? Integer.MAX_VALUE : cmsBtCustomPropModel.getSort().indexOf(o2.getNameEn());
+//                Integer b1 = o1.getAttribute("dispOrder") == null ? 9999 : o1.getAttribute("dispOrder");
+//                Integer b2 = o2.getAttribute("dispOrder") == null ? 9999 : o2.getAttribute("dispOrder");
                 return b1.compareTo(b2);
             });
         }
     }
+
+
 }

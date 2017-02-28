@@ -70,7 +70,7 @@ public class CmsBtCustomPropServiceTest {
     @Test
     public void getCustomPropByCatChannelExtend() throws Exception {
 
-        CmsBtCustomPropModel aa = cmsBtCustomPropService.getCustomPropByCatChannelExtend("010","010","");
+        CmsBtCustomPropModel aa = cmsBtCustomPropService.getCustomPropByCatChannelExtend("010","010","aaa>bbb>ccc");
         System.out.println(JacksonUtil.bean2Json(aa));
     }
 
