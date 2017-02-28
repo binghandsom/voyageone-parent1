@@ -130,6 +130,15 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
             // 设置新税号
             newProduct.getCommon().getFields().setAttribute(propId, propValue);
 
+            // 保存税号设置
+            JongoUpdate updObj = new JongoUpdate();
+            updObj.setQuery("{'common.fields.code':#}");
+            updObj.setQueryParameters(prodCode);
+            updObj.setUpdate("{$set:{'common.catConf':'1','common.fields.\"" + propId + "\"':#,'common.fields.hsCodeStatus':'1','common.fields.hsCodeSetter':#,'common.fields.hsCodeSetTime':#}}}");
+            updObj.setUpdateParameters(propValue, userName, DateTimeUtil.getNow());
+            WriteResult rs = productService.updateFirstProduct(updObj, channelId);
+            $debug("CmsProductVoRateUpdateService 保存计算结果 " + rs.toString());
+
             // 处理各平台价格
             newProduct.getPlatforms().forEach((s, platform) -> {
                 Integer cartId = platform.getCartId();
@@ -144,18 +153,7 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
 
                 // 计算指导价
                 try {
-
-                    // 保存计算结果
-                    JongoUpdate updObj = new JongoUpdate();
-                    updObj.setQuery("{'common.fields.code':#}");
-                    updObj.setQueryParameters(prodCode);
-                    updObj.setUpdate("{$set:{'platforms.P#.skus':#, 'common.catConf':'1','common.fields.\" + propId + \"':#,'common.fields.hsCodeStatus':'1','common.fields.hsCodeSetter':#,'common.fields.hsCodeSetTime':#}}}");
-                    updObj.setUpdateParameters(cartId, newProduct.getPlatform(cartId).getSkus(), propValue, userName, DateTimeUtil.getNow());
-                    WriteResult rs = productService.updateFirstProduct(updObj, channelId);
-                    $debug("CmsProductVoRateUpdateService 保存计算结果 " + rs.toString());
-
                     platformPriceService.updateProductPlatformPrice(newProduct, cartId, false, userName, msg);
-
                 } catch (PriceCalculateException e) {
 
                     $error(String.format("高级检索 批量更新 价格计算错误 channleid=%s, prodcode=%s", channelId, prodCode), e);
