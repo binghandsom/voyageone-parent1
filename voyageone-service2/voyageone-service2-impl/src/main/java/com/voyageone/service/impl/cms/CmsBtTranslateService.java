@@ -21,11 +21,11 @@ public class CmsBtTranslateService extends BaseService {
     }
 
     public CmsBtTranslateModel get(String channelId, Integer customPropType, String name, String valueEn){
-        return cmsBtTranslateDao.get(channelId,customPropType,name,valueEn);
+        return cmsBtTranslateDao.get(channelId,customPropType,name,valueEn.toLowerCase());
     }
 
     public void insertOrUpdate(CmsBtTranslateModel model){
-        CmsBtTranslateModel cmsBtTranslateModel = cmsBtTranslateDao.get(model.getChannelId(),model.getType(), model.getName(), model.getValueEn());
+        CmsBtTranslateModel cmsBtTranslateModel = cmsBtTranslateDao.get(model.getChannelId(),model.getType(), model.getName(), model.getValueEn().toLowerCase());
         if(cmsBtTranslateModel == null){
             model.set_id(null);
             cmsBtTranslateDao.insert(model);
@@ -36,12 +36,15 @@ public class CmsBtTranslateService extends BaseService {
     }
 
     public void create(String channelId, Integer customPropType, String name, String valueEn, String valueCn){
-        CmsBtTranslateModel cmsBtTranslateModel = new CmsBtTranslateModel();
+        CmsBtTranslateModel cmsBtTranslateModel = get(channelId, customPropType, name, valueEn);
+        if(cmsBtTranslateModel == null) {
+            cmsBtTranslateModel = new CmsBtTranslateModel();
+        }
         cmsBtTranslateModel.setChannelId(channelId);
         cmsBtTranslateModel.setType(customPropType);
         cmsBtTranslateModel.setName(name);
-        cmsBtTranslateModel.setValueEn(valueEn);
+        cmsBtTranslateModel.setValueEn(valueEn.toLowerCase());
         cmsBtTranslateModel.setValueCn(valueCn);
-        cmsBtTranslateDao.insert(cmsBtTranslateModel);
+        insertOrUpdate(cmsBtTranslateModel);
     }
 }

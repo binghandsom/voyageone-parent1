@@ -56,6 +56,7 @@ public class CmsBtCustomPropService extends BaseService {
      * @return 自定义属性
      */
     public CmsBtCustomPropModel getCustomPropByCatChannel(String channelId, String orgChannelId, String cat) {
+        cat = StringUtil.isEmpty(cat) ? "all" : cat;
         return cmsBtCustomPropDao.getCustomPropByCatChannel(channelId, orgChannelId, cat);
     }
 
@@ -99,7 +100,7 @@ public class CmsBtCustomPropService extends BaseService {
 
         if (cmsBtCustomPropModels.size() > 0) {
             Collections.reverse(cmsBtCustomPropModels);
-            if (cmsBtCustomPropModels.size() > 1) {
+            if (cmsBtCustomPropModels.size() > 0) {
                 cmsBtCustomProp = cmsBtCustomPropModels.get(0);
                 for (int i = 1; i < cmsBtCustomPropModels.size(); i++) {
                     merge(cmsBtCustomProp, cmsBtCustomPropModels.get(i));
@@ -240,6 +241,7 @@ public class CmsBtCustomPropService extends BaseService {
      * @return CmsBtCustomPropModel
      */
     public CmsBtCustomPropModel setSort(String channelId, String orgChannelId, String cat, List<String> sort) {
+        cat = StringUtil.isEmpty(cat) ? "all" : cat;
         CmsBtCustomPropModel cmsBtCustomPropModel = getCustomPropByCatChannel(channelId, orgChannelId, cat);
         if (cmsBtCustomPropModel == null) {
             cmsBtCustomPropModel = new CmsBtCustomPropModel();
@@ -266,15 +268,17 @@ public class CmsBtCustomPropService extends BaseService {
         for (CmsBtCustomPropModel.Entity entity : cmsBtCustomPropModel.getEntitys()) {
             if (entity.getAttributeType() != null) {
                 String value = (String) product.getFeed().getOrgAtts().get(entity.getNameEn());
+                String valueEn="";
                 if (StringUtil.isEmpty(value)) {
-                    value = getEntityValue(product.getChannelId(), entity, product, cmsBtFeedInfoModel, false);
-                    product.getFeed().getOrgAtts().put(entity.getNameEn(), value);
+                    valueEn = getEntityEnValue(product.getChannelId(), entity, product, cmsBtFeedInfoModel);
+                    product.getFeed().getOrgAtts().put(entity.getNameEn(), valueEn);
                 }
 
                 value = (String) product.getFeed().getCnAtts().get(entity.getNameEn());
+                String valueCn="";
                 if (StringUtil.isEmpty(value)) {
-                    value = getEntityValue(product.getChannelId(), entity, product, cmsBtFeedInfoModel, true);
-                    product.getFeed().getCnAtts().put(entity.getNameEn(), value);
+                    valueCn = getEntityCnValue(product.getChannelId(), entity, valueEn);
+                    product.getFeed().getCnAtts().put(entity.getNameEn(), valueCn);
                 }
             }
         }
@@ -289,52 +293,58 @@ public class CmsBtCustomPropService extends BaseService {
         product.getFeed().setCustomIds(enCustom);
         product.getFeed().setCustomIdsCn(cnCustom);
     }
-
-    private String getEntityValue(String channelId, CmsBtCustomPropModel.Entity entity, CmsBtProductModel cmsBtProduct, CmsBtFeedInfoModel feedInfo, boolean isTranslate) {
-        switch (entity.getAttributeType()) {
+    private String getEntityEnValue(String channelId, CmsBtCustomPropModel.Entity entity, CmsBtProductModel cmsBtProduct, CmsBtFeedInfoModel feedInfo) {
+        String valueEn = "";
+        switch (entity.getType()) {
             case 1:
-                if (!StringUtil.isEmpty(entity.getValue())) {
-                    String value = "";
-                    if (entity.getType() == CmsBtCustomPropModel.CustomPropType.Feed.getValue()) {
-                        List<String> values = feedInfo.getAttribute().get(entity.getValue());
-                        if (!ListUtils.isNull(values)) {
-                            value = values.get(0);
-                        }
-                    } else {
-                        if (!StringUtil.isEmpty(cmsBtProduct.getCommonNotNull().getFieldsNotNull().getStringAttribute(entity.getValue()))) {
-                            value = cmsBtProduct.getCommonNotNull().getFieldsNotNull().getStringAttribute(entity.getValue());
-                        }
-                    }
-                    if (!isTranslate || StringUtil.isEmpty(value)) {
-                        return value;
-                    }
-                    CmsBtTranslateModel cmsBtTranslateModel = cmsBtTranslateService.get(channelId, entity.getType(), entity.getNameEn(), value);
-
-                    if (cmsBtTranslateModel != null && !StringUtil.isEmpty(cmsBtTranslateModel.getValueCn())) {
-                        return cmsBtTranslateModel.getValueCn();
-                    } else {
-                        String valueCn = "";
-                        if (value.length() < 50) {
-                            try {
-                                valueCn = BaiduTranslateUtil.translate(value);
-                            } catch (Exception e) {
-                                $warn(Arrays.toString(e.getStackTrace()));
-                            }
-                            if (!StringUtil.isEmpty(valueCn)) {
-                                cmsBtTranslateService.create(channelId, entity.getType(), entity.getNameEn(), value, valueCn);
-                            }
-                        }
-                        return valueCn;
-                    }
-                }
-                break;
             case 2:
                 if (!StringUtil.isEmpty(entity.getValue())) {
-                    return cmsBtProduct.getCommonNotNull().getFieldsNotNull().getStringAttribute(entity.getValue());
+                    valueEn = cmsBtProduct.getCommonNotNull().getFieldsNotNull().getStringAttribute(entity.getValue());
                 }
                 break;
             case 3:
-                return entity.getValue();
+                List<String> values = feedInfo.getAttribute().get(entity.getValue());
+                if (!ListUtils.isNull(values)) {
+                    valueEn = values.get(0);
+                }
+                break;
+            case 4:
+                if(entity.getAttributeType() == 2){
+                    if (!StringUtil.isEmpty(entity.getValue())) {
+                        valueEn =  cmsBtProduct.getCommonNotNull().getFieldsNotNull().getStringAttribute(entity.getValue());
+                    }
+                    break;
+                }else if(entity.getAttributeType() == 3){
+                    valueEn =  entity.getValue();
+                }
+                break;
+        }
+        return valueEn;
+    }
+    private String getEntityCnValue(String channelId, CmsBtCustomPropModel.Entity entity, String value) {
+        if(value == null) return "";
+        switch (entity.getAttributeType()) {
+            case 1:
+                CmsBtTranslateModel cmsBtTranslateModel = cmsBtTranslateService.get(channelId, entity.getType(), entity.getNameEn(), value);
+                if (cmsBtTranslateModel != null && !StringUtil.isEmpty(cmsBtTranslateModel.getValueCn())) {
+                    return cmsBtTranslateModel.getValueCn();
+                } else {
+                    String valueCn = "";
+                    if (value.length() < 50) {
+                        try {
+                            valueCn = BaiduTranslateUtil.translate(value);
+                        } catch (Exception e) {
+                            $warn(Arrays.toString(e.getStackTrace()));
+                        }
+                        if (!StringUtil.isEmpty(valueCn)) {
+                            cmsBtTranslateService.create(channelId, entity.getType(), entity.getNameEn(), value, valueCn);
+                        }
+                    }
+                    return valueCn;
+                }
+            case 2:
+            case 3:
+                    return value;
         }
         return "";
     }
