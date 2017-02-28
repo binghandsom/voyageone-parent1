@@ -13,7 +13,7 @@ define([
             this.popups = popups;
             this.systemCategoryService = systemCategoryService;
             this.attributeService2 = attributeService2;
-            this.channelInfo = $localStorage.user;
+            this.channelInfo = angular.copy($localStorage.user);
             this.notify = notify;
             this.confirm = confirm;
             this.vm = {
@@ -36,6 +36,10 @@ define([
 
         CustomAttributeCtl.prototype.init = function () {
             var self = this;
+
+            self.attributeService2.init().then(function(res){
+                self.channelList = res.data.channelList;
+            });
 
             self.search();
         };

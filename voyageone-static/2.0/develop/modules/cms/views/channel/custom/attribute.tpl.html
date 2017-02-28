@@ -11,11 +11,16 @@
                 <div class="col-md-3">
                     <input type="text" class="form-control" ng-model="ctrl.vm.catPath" readonly>
                 </div>
-                <div class="col-md-1">
-                    <button type="button" class="btn btn-default pull-right" ng-disabled="true"><i class="fa fa-arrow-circle-right"></i>&nbsp;供应商</button>
+                <div class="col-md-1 text-right m-t-xs">
+                    <!--<button type="button" class="btn btn-default pull-right" ng-disabled="true"><i class="fa fa-arrow-circle-right"></i>&nbsp;供应商</button>-->
+                    <label class="text-base"><strong>供应商</strong>&emsp;</label>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3" ng-if="!ctrl.channelList">
                     <input type="text" class="form-control" ng-model="ctrl.channelInfo.channelName" readonly>
+                </div>
+                <div class="col-md-3" ng-if="ctrl.channelList">
+                    <select class="form-control" ng-model="ctrl.channelInfo.channel"
+                            ng-options="channel.order_channel_id as channel.full_name for channel in ctrl.channelList" chosen></select>
                 </div>
             </div>
             <div class="row m-t-sm">

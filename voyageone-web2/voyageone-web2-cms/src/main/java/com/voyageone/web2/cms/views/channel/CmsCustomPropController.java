@@ -1,5 +1,11 @@
 package com.voyageone.web2.cms.views.channel;
 
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.OrderChannelBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.bean.cms.CmsMtFeedConfigBean;
 import com.voyageone.service.impl.cms.CmsBtCustomPropService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
@@ -14,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,9 +46,25 @@ public class CmsCustomPropController extends CmsController {
 
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM.INIT)
     public AjaxResponse init(){
-        Map<String, Object> map = new HashMap();
-        map.put("commonFields",commonSchemaService.getCommonFields());
-        return success(map);
+        Map<String, Object> resultMap = new HashMap();
+        resultMap.put("commonFields",commonSchemaService.getCommonFields());
+
+        if(getUser().getSelChannelId().equals(ChannelConfigEnums.Channel.USJGJ.getId())){
+            List<TypeChannelBean> typeChannelBeenList = TypeChannels.getTypeChannelBeansByTypeValueLang(Constants.comMtTypeChannel.SKU_CARTS_53, getUser().getSelChannelId(), "cn");
+
+            List<OrderChannelBean> channelList = new ArrayList<>();
+
+            for (TypeChannelBean typeBean : typeChannelBeenList) {
+                OrderChannelBean channelBean = Channels.getChannel(typeBean.getChannel_id());
+                if (channelBean != null) {
+                    channelList.add(channelBean);
+                }
+            }
+
+            resultMap.put("channelList", channelList);
+        }
+
+        return success(resultMap);
     }
 
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM.SEARCH)
