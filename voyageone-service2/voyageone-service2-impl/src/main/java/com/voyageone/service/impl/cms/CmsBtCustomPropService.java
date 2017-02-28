@@ -205,6 +205,7 @@ public class CmsBtCustomPropService extends BaseService {
      * @return 新的结果
      */
     public CmsBtCustomPropModel removeEntity(String channelId, String orgChannelId, String cat, CmsBtCustomPropModel.Entity entity) {
+        cat = StringUtil.isEmpty(cat) ? "all" : cat;
         CmsBtCustomPropModel cmsBtCustomPropModel = getCustomPropByCatChannel(channelId, orgChannelId, cat);
         if (cmsBtCustomPropModel == null) {
             cmsBtCustomPropModel = new CmsBtCustomPropModel();
@@ -219,11 +220,11 @@ public class CmsBtCustomPropService extends BaseService {
             item = new CmsBtCustomPropModel.Entity();
             item.setNameCn(entity.getNameCn());
             item.setNameEn(entity.getNameEn());
-            item.setActive(entity.getActive());
+            item.setActive(0);
             cmsBtCustomPropModel.getEntitys().add(item);
         } else {
             item.setNameCn(entity.getNameCn());
-            item.setActive(entity.getActive());
+            item.setActive(0);
         }
         update(cmsBtCustomPropModel);
         return getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
