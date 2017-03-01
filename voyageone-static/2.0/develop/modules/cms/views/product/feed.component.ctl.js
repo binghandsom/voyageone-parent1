@@ -21,15 +21,9 @@ define([
                 productDetailService = self.productDetailService,
                 $scope = self.$scope;
 
-            if ($scope.feedFrom.$invalid) {
-                self.alert("保存失败，请查看已匹配属性是否填写正确！");
-                self.focusError();
-                return;
-            }
-
             productDetailService.updateProductAtts({
-                prodId: self.scope.productInfo.productId,
-                feedInfo: self.scope.productInfo.feedInfo
+                prodId: $scope.productInfo.productId,
+                feedInfo: $scope.productInfo.feedInfo
             }).then(function () {
                 self.notify.success("更新成功!");
             }, function () {
@@ -43,14 +37,16 @@ define([
          * @param speed 导航速度 ms为单位
          */
         feedComponentCtl.prototype.pageAnchor = function (area, speed) {
-            var offsetTop = 0;
+            var offsetTop = 0,
+                element = this.$element;
+
             if (area != "attribute")
                 offsetTop = element.find("#" + area).offset().top;
             $("body").animate({scrollTop: offsetTop - 70}, speed);
         };
 
         feedComponentCtl.prototype.focusError = function () {
-            var firstError = element.find("input.ng-invalid:first");
+            var firstError = this.$element.find("input.ng-invalid:first");
             firstError.focus();
             firstError.addClass("focus-error");
         };
