@@ -79,7 +79,7 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
         File pathFileObj = new File(exportPath);
         Boolean b=pathFileObj.exists();
         if (!b) {
-            $info("高级检索 文件下载任务 文件目录不存在 " + exportPath);
+            $info("BI报表下载 文件下载任务 文件目录不存在 " + exportPath);
             if(!pathFileObj.mkdirs())
             {
                 $info("创建目录 "+ exportPath + "失败！");
@@ -89,7 +89,7 @@ public class BiReportConsultController extends CmsAdvanceSearchController {
         exportPath += fileName;
         pathFileObj = new File(exportPath);
         if (!pathFileObj.exists()) {
-            $info("高级检索 文件下载任务 文件不存在 " + exportPath);
+            $info("BI报表下载 文件下载任务 文件不存在 " + exportPath);
             biRepConsultService.outTimeTask(taskId);
             throw new BusinessException("4004");
         }

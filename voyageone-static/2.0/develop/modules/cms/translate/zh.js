@@ -939,6 +939,16 @@ define(function () {
         "TXT_BI_DOWNLOAD_LIST_CREATED" : "已完成",
         "TXT_BI_DOWNLOAD_LIST_NOT_START" : "未生成",
         "TXT_BI_DOWNLOAD_LIST_FILE_OUT_TIME" : "文件过期",
-        "TXT_BI_DOWNLOAD_LIST_UNKNOWN_ERROR":"未知错误"
+        "TXT_BI_DOWNLOAD_LIST_UNKNOWN_ERROR":"未知错误",
+        "TXT_BI_DOWNLOAD_LIST_FILE_TOO_BIG":"文件过大导致失败，请减少生成文件类型或者时间！",
+        "TXT_BI_DOWNLOAD_LIST_CONTACT_MANAGER":"系统异常，请联系系统管理人员！",
+        "TXT_BI_DOWNLOAD_LIST_FILE_MAYBE_TOO_BIG_CONTINUE":"提示：因为生成文件可能过大导致失败，只能选择店铺报表类型文件，如果想生成其他类型文件，" +
+        "请选择单个渠道并将时间限制在三个月内",
+        "TXT_BI_DOWNLOAD_LIST_FILE_MAYBE_TOO_SURE_TO_CREATE":"确定生成此文件？",
+        "TXT_BI_DOWNLOAD_LIST_SURE_TO_DELETE":"确定删除此记录吗？",
+        "TXT_BI_DOWNLOAD_LIST_FILE_CREATING":"文件正在生成！",
+        "TXT_BI_DOWNLOAD_LIST_NO_FILEPATH":"无法找到文件路径！错误代码：",
+        "TXT_BI_DOWNLOAD_LIST_NO_CONNECTION":"无法连接远程API！错误代码：",
+        "TXT_BI_DOWNLOAD_LIST_ERROR_CODE":"生成文件失败，错误代码:"
     };
 });

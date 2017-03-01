@@ -300,8 +300,8 @@ public class CmsAdvanceSearchController extends CmsController {
         int codeQty = 0;
         for (WmsBtInventoryCenterLogicModel inventoryInfo : inventoryList) {
             codeQty = codeQty + inventoryInfo.getQtyChina();
-            cmsBtProductBean.getCommon().getFields().setQuantity(codeQty);
         }
+        cmsBtProductBean.getCommon().getFields().setQuantity(codeQty);
 
         Map<String, Integer> cartIdMap = new HashMap();
         for (TypeChannelBean cartObj : cartList) {
