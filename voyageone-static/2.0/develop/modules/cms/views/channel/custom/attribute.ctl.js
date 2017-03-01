@@ -206,7 +206,6 @@ define([
                     break;
             }
 
-
             //调用排序接口
             self.callSort({
                 orgChannelId: channelInfo.channel,
