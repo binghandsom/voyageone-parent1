@@ -44,15 +44,32 @@ public class CmsBtCustomPropServiceTest {
 
     @Test
     public void translateDataInit(){
-        String channelId = "010";
-        Map<String,Object> sqlPara = new HashMap();
-        sqlPara.put("channelId", channelId);
-        List<Map<String,Object>> ret = cmsMtFeedCustomPropDaoExt.selectPropValue(sqlPara);
-        ret.forEach(item ->translate(channelId,item));
+        String []channelIds = {"007",
+                "009",
+                "010",
+                "012",
+                "014",
+                "015",
+                "017",
+                "018",
+                "019",
+                "021",
+                "022",
+                "023",
+                "024",
+                "028",
+                "029",
+                "928"};
+        for(String channelId : channelIds){
+            Map<String,Object> sqlPara = new HashMap();
+            sqlPara.put("channelId", channelId);
+            List<Map<String,Object>> ret = cmsMtFeedCustomPropDaoExt.selectPropValue(sqlPara);
+            ret.forEach(item ->translate(channelId,item));
 
-        sqlPara.put("feedCatPath", 0);
-        List<CmsMtFeedCustomPropModel>cmsMtFeedCustomPropModels = cmsMtFeedCustomPropDaoExt.selectWithCategory(sqlPara);
-        init(channelId, cmsMtFeedCustomPropModels);
+            sqlPara.put("feedCatPath", 0);
+            List<CmsMtFeedCustomPropModel>cmsMtFeedCustomPropModels = cmsMtFeedCustomPropDaoExt.selectWithCategory(sqlPara);
+            init(channelId, cmsMtFeedCustomPropModels);
+        }
 
     }
 

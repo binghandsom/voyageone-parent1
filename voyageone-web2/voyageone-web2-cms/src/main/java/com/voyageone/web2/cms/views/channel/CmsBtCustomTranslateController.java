@@ -27,9 +27,6 @@ import java.util.Map;
 public class CmsBtCustomTranslateController extends CmsController {
 
     @Autowired
-    private CmsFeedCustPropService cmsFeedCustPropService;
-
-    @Autowired
     private CmsBtTranslateService cmsBtTranslateService;
 
 
