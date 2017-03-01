@@ -31,8 +31,6 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsMtEtkHsCodeService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
-import com.voyageone.service.impl.cms.prices.PlatformPriceService;
-import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.wms.InventoryCenterLogicService;
 import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
@@ -96,15 +94,6 @@ public class ProductService extends BaseService {
 
     @Autowired
     private InventoryCenterLogicService inventoryCenterLogicService;
-
-    @Autowired
-    private ProductStatusHistoryService productStatusHistoryService;
-
-    @Autowired
-    private PriceService priceService;
-
-    @Autowired
-    private PlatformPriceService platformPriceService;
 
     /**
      * 获取商品 根据ID获
