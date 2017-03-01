@@ -8,13 +8,15 @@ define([
 
     cms.controller('attributeController', (function () {
 
-        function CustomAttributeCtl($routeParams, $localStorage, popups, systemCategoryService, attributeService2, notify, confirm, $location, cRoutes) {
+        function CustomAttributeCtl($routeParams, $localStorage, popups, notify,alert, confirm, $location, cRoutes,
+                                    systemCategoryService, attributeService2) {
             this.$routeParams = $routeParams;
             this.popups = popups;
             this.systemCategoryService = systemCategoryService;
             this.attributeService2 = attributeService2;
             this.channelInfo = angular.copy($localStorage.user);
             this.notify = notify;
+            this.alert = alert;
             this.confirm = confirm;
             this.$location = $location;
             this.cRoutes = cRoutes;
@@ -153,6 +155,12 @@ define([
             var self = this,
                 channelInfo = self.channelInfo,
                 catPath = self.vm.catPath;
+
+            if(!entity.nameCn){
+                self.alert('该属性没有中文名称，请编辑中文属性！');
+                entity.checked = !entity.checked;
+                return;
+            }
 
             self.attributeService2.doSetCustomshIsDispPlay({
                 orgChannelId: channelInfo.channel,

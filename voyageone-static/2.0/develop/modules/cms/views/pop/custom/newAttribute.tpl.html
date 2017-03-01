@@ -12,19 +12,27 @@
                     <input id="attributeEn" name="attributeEn" class="form-control" ng-model="ctrl.vm.prop_original"
                            ng-disabled="ctrl.vm.prop_original" required/>
                 </div>
-                <!--<label class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>-->
             </div>
+
             <div class="form-group">
                 <div class="col-sm-6 col-sm-offset-3">
                     <vo-message target="customAttributeForm.attributeEn"></vo-message>
                 </div>
             </div>
+
             <div class="form-group">
                 <label class="col-sm-3 control-label">属性名（CN）</label>
                 <div class="col-sm-6">
-                    <input class="form-control" ng-model="ctrl.vm.prop_translation"/>
+                    <input class="form-control" name="attributeCn" ng-model="ctrl.vm.prop_translation" required/>
                 </div>
             </div>
+
+            <div class="form-group">
+                <div class="col-sm-6 col-sm-offset-3">
+                    <vo-message target="customAttributeForm.attributeCn"></vo-message>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label class="col-sm-3 control-label">属性值&emsp;</label>
                 <div class="col-sm-6">
