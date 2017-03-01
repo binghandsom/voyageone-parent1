@@ -142,6 +142,7 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
     $scope.showInfo = showInfo;
     $scope.popoverAdvanceSku = popoverAdvanceSku;
     $scope.popoverPromotionDetail = popoverPromotionDetail;
+    $scope.getCartQty = getCartQty;
 
     function showInfo(values) {
         if (values == undefined || values == '') {
@@ -219,6 +220,14 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
             $scope.promotionDetail = resp.data;
         });
 
+    }
+
+    function getCartQty(code, codeCartQty){
+        _.forEach(codeCartQty, function(value,key) {
+            if (code == key) {
+                $scope.codeCartQty = value;
+            }
+        });
     }
 });
 

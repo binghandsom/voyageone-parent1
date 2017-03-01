@@ -58,7 +58,8 @@ define([
             productUrl: "",
             preStatus: null,
             noMaterMsg: null
-        }
+        };
+        this.panelShow = true;
     }
 
     SpJdController.prototype.init = function (element) {
@@ -106,6 +107,10 @@ define([
                 vm.platform.pStatus = vm.platform.pStatus == null ? "" : vm.platform.pStatus;
                 vm.sellerCats = vm.platform.sellerCats == null ? [] : vm.platform.sellerCats;
             }
+
+            vm.tempSkuNo = _.find(vm.platform.skus, function (mSku) {
+                return mSku.jdSkuId != "" && mSku.isSale
+            }).jdSkuId;
 
             _.each(vm.mastData.skus, function (mSku) {
                 vm.skuTemp[mSku.skuCode] = mSku;
@@ -596,6 +601,25 @@ define([
 
             modal.appendTo(body);
             $compile(modal)(modalChildScope);
+        });
+    };
+
+    /**
+     * 操作区域图片上传按钮
+     */
+    SpJdController.prototype.popUploadImg = function () {
+        var self = this,
+            popup = self.popups;
+
+        self.vm.platform['images1'] = self.$scope.productInfo.masterField['images1'];
+
+        popup.openUploadImages({
+            cartId: self.$scope.cartInfo.value,
+            productId: self.$scope.productInfo.productId,
+            platform: self.vm.platform,
+            showArr:['image1','image6','image7','image4','image5']
+        }).then(function (platform) {
+            self.vm.platform = platform;
         });
     };
 

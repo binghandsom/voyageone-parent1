@@ -12,16 +12,7 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.jd.service.JdSkuService;
-import com.voyageone.components.jumei.JumeiHtDealService;
-import com.voyageone.components.jumei.JumeiHtMallService;
-import com.voyageone.components.tmall.service.TbItemService;
-import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.product.ProductSkuService;
-import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
-import com.voyageone.service.impl.cms.promotion.PromotionService;
-import com.voyageone.service.impl.cms.promotion.PromotionTejiabaoService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -61,41 +52,17 @@ public class PriceService extends BaseService {
     private final CmsMtFeeExchangeService feeExchangeService;
     private final CmsMtFeeTaxService feeTaxService;
     private final CmsMtFeeShippingService feeShippingService;
-    private final ProductSkuService productSkuService;
-    private final ImsBtProductDao imsBtProductDao;
-    private final TbItemService tbItemService;
     private final SxProductService sxProductService;
-    private final PromotionTejiabaoService promotionTejiabaoService;
-    private final PromotionService promotionService;
-    private final PromotionCodeService promotionCodeService;
-
-    final
-    JumeiHtMallService jumeiHtMallService;
-
-    final
-    JdSkuService jdSkuService;
-
-    final
-    JumeiHtDealService serviceJumeiHtDeal;
 
     @Autowired
     public PriceService(CmsMtFeeShippingService feeShippingService, CmsMtFeeTaxService feeTaxService,
                         CmsMtFeeCommissionService feeCommissionService, CmsMtFeeExchangeService feeExchangeService,
-                        ProductSkuService productSkuService, ImsBtProductDao imsBtProductDao, TbItemService tbItemService, SxProductService sxProductService, JumeiHtMallService jumeiHtMallService, JdSkuService jdSkuService, JumeiHtDealService serviceJumeiHtDeal, PromotionTejiabaoService promotionTejiabaoService, PromotionService promotionService, PromotionCodeService promotionCodeService) {
+                        SxProductService sxProductService) {
         this.feeShippingService = feeShippingService;
         this.feeTaxService = feeTaxService;
         this.feeCommissionService = feeCommissionService;
         this.feeExchangeService = feeExchangeService;
-        this.productSkuService = productSkuService;
-        this.imsBtProductDao = imsBtProductDao;
-        this.tbItemService = tbItemService;
         this.sxProductService = sxProductService;
-        this.jumeiHtMallService = jumeiHtMallService;
-        this.jdSkuService = jdSkuService;
-        this.serviceJumeiHtDeal = serviceJumeiHtDeal;
-        this.promotionTejiabaoService = promotionTejiabaoService;
-        this.promotionService = promotionService;
-        this.promotionCodeService = promotionCodeService;
     }
 
     /**
@@ -162,7 +129,7 @@ public class PriceService extends BaseService {
     /**
      * check输入的价格是否符合要求
      * @param channelId
-     * @param cmsBtProduct
+     * @param platform
      * @param cartId
      * @return
      */
@@ -412,15 +379,18 @@ public class PriceService extends BaseService {
 
         String channelId = product.getChannelId();
         // 尝试获取类目级别的价格计算公式
-        CmsChannelConfigBean formulaConfig = CmsChannelConfigs.getConfigBean(channelId, PRICE_MSRP_CALC_FORMULA, String.valueOf(cartId));
+        // 根据主类目获取价格公式
+        List<CmsChannelConfigBean> formulaConfigs = CmsChannelConfigs.getConfigBeans(channelId, PRICE_MSRP_CALC_FORMULA, String.valueOf(cartId));
 
-        if (formulaConfig == null)
-            // 尝试获取 Model 级别的价格计算公式
-            formulaConfig = CmsChannelConfigs.getConfigBean(channelId, PRICE_MSRP_CALC_FORMULA, product.getCommon().getFields().getModel());
+        // 返回平台级配置
+        CmsChannelConfigBean formulaConfig = getPriceConfig(product, formulaConfigs);
 
-        if (formulaConfig == null)
-            // 最终, 尝试获取无限制渠道级别计算公式
-            formulaConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, PRICE_MSRP_CALC_FORMULA);
+        if (formulaConfig == null) {
+            formulaConfigs = CmsChannelConfigs.getConfigBeans(channelId, PRICE_MSRP_CALC_FORMULA, "0");
+
+            // 返回平台级配置
+            formulaConfig = getPriceConfig(product, formulaConfigs);
+        }
 
         if (formulaConfig == null || StringUtils.isEmpty(formulaConfig.getConfigValue2()))
             throw new IllegalPriceConfigException("无法获取价格计算公式配置: %s, %s", channelId, PRICE_MSRP_CALC_FORMULA);
@@ -439,15 +409,18 @@ public class PriceService extends BaseService {
 
         String channelId = product.getChannelId();
         // 尝试获取类目级别的价格计算公式
-        CmsChannelConfigBean formulaConfig = CmsChannelConfigs.getConfigBean(channelId, PRICE_RETAIL_CALC_FORMULA, String.valueOf(cartId));
+        // 根据主类目获取价格公式
+        List<CmsChannelConfigBean> formulaConfigs = CmsChannelConfigs.getConfigBeans(channelId, PRICE_RETAIL_CALC_FORMULA, String.valueOf(cartId));
 
-        if (formulaConfig == null)
-            // 尝试获取 Model 级别的价格计算公式
-            formulaConfig = CmsChannelConfigs.getConfigBean(channelId, PRICE_RETAIL_CALC_FORMULA, product.getCommon().getFields().getModel());
+        // 返回平台级配置
+        CmsChannelConfigBean formulaConfig = getPriceConfig(product, formulaConfigs);
 
-        if (formulaConfig == null)
-            // 最终, 尝试获取无限制渠道级别计算公式
-            formulaConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, PRICE_RETAIL_CALC_FORMULA);
+        if (formulaConfig == null) {
+            formulaConfigs = CmsChannelConfigs.getConfigBeans(channelId, PRICE_RETAIL_CALC_FORMULA, "0");
+
+            // 返回平台级配置
+            formulaConfig = getPriceConfig(product, formulaConfigs);
+        }
 
         if (formulaConfig == null || StringUtils.isEmpty(formulaConfig.getConfigValue2()))
             throw new IllegalPriceConfigException("无法获取价格计算公式配置: %s, %s", channelId, PRICE_RETAIL_CALC_FORMULA);
@@ -1398,5 +1371,64 @@ public class PriceService extends BaseService {
 
             return price;
         }
+    }
+
+    /**
+     * 获取价格公式
+     * @param product 产品信息
+     * @param formulaConfigs 价格公式列表
+     * @return
+     */
+    private CmsChannelConfigBean getPriceConfig(CmsBtProductModel product, List<CmsChannelConfigBean> formulaConfigs) {
+
+        // 查找主类目
+        formulaConfigs.sort((o1, o2) -> o1.getConfigValue1().compareTo(o2.getConfigValue1()) * -1);
+        CmsChannelConfigBean formulaConfig = null;
+        for (CmsChannelConfigBean config : formulaConfigs) {
+            if (!StringUtils.isEmpty(product.getCommon().getCatPathEn())
+                    && product.getCommon().getCatPathEn().indexOf(config.getConfigValue1()) == 0) {
+                formulaConfig = config;
+                break;
+            }
+        }
+
+        // 查找feed类目
+        if (formulaConfig == null) {
+            for (CmsChannelConfigBean config : formulaConfigs) {
+                if (!StringUtils.isEmpty(product.getFeed().getCatPath())
+                        && product.getFeed().getCatPath().indexOf(config.getConfigValue1()) == 0) {
+                    formulaConfig = config;
+                    break;
+                }
+            }
+        }
+
+        // 查找feed类目
+        if (formulaConfig == null) {
+            for (CmsChannelConfigBean config : formulaConfigs) {
+                if (!StringUtils.isEmpty(product.getCommon().getFields().getModel())
+                        && product.getCommon().getFields().getModel().indexOf(config.getConfigValue1()) == 0) {
+                    formulaConfig = config;
+                    break;
+                }
+            }
+        }
+
+        // 查找默认为0的
+        if (formulaConfig == null) {
+            for (CmsChannelConfigBean config : formulaConfigs) {
+                if ("0".equals(config.getConfigValue1())) {
+                    formulaConfig = config;
+                    break;
+                }
+            }
+        }
+
+        // 返回第一个
+        if (formulaConfig == null && formulaConfigs.size() > 0) {
+            formulaConfig = formulaConfigs.get(0);
+        }
+
+        return formulaConfig;
     }
 }

@@ -1,97 +1,148 @@
 <div class="product-shema-detail">
+    <div class="panel-group" id="accordion">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a href="javascript:void(0)" ng-click="ctrl.panelShow = true" ng-if="!ctrl.panelShow">
+                        <i class="fa fa-caret-right"></i>&nbsp;&nbsp;<strong>展开</strong>
+                    </a>
+                    <a href="javascript:void(0)" ng-click="ctrl.panelShow = false" ng-if="ctrl.panelShow">
+                        <i class="fa fa-caret-down"></i>&nbsp;&nbsp;<strong>收起</strong>
+                    </a>
+                </h4>
+            </div>
+            <div class="panel-body" ng-if="ctrl.panelShow">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <label class="col-sm-1 control-label">
+                                <strong>Lock开关</strong>
+                            </label>
+                            <div class="col-sm-1" style="width: 35px">
+                                <span notice-direction="bottom" notice-content="一旦锁定商品，CMS将不会同步最新状态至各个平台。仅仅同步库存。"
+                                      notice-tip class="text-warnings cur-p"><i
+                                        class="icon fa fa-question-circle text-md"></i></span>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox"
+                                           ng-model="vm.lockStatus.onOffSwitch3"
+                                           ng-click="lockProduct('onOffSwitch3')"
+                                           id="onOffSwitch3">
+                                    <label class="onoffswitch-label" for="onOffSwitch3">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row m-t-xs">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="btn-group m-l-xs" uib-dropdown ng-controller="popupCtrl">
+                                <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
+                                    &nbsp;历史记录&nbsp;<span class="caret"></span>
+                                </button>
+                                <ul uib-dropdown-menu>
+                                    <li>
+                                        <a href="javascript:void(0)" ng-click="openHistoryPrice(ctrl.vm.mastData.productCode,ctrl.vm.platform.skus,null,ctrl.$scope.cartInfo.value)">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;价格历史
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)" ng-click="openHistoryPriceConfirm(ctrl.vm.mastData.productCode,ctrl.vm.platform.skus,null,ctrl.$scope.cartInfo.value)">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;价格确认历史
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)" ng-click="openHistoryPromotion('lg', ctrl.vm.mastData.productCode,ctrl.$scope.cartInfo.value)">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;活动历史
+                                        </a>
+                                    </li>
+                                    <li ng-if="false">
+                                        <a href="javascript:void(0)">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;SKU追加历史
+                                        </a>
+                                    </li>
+                                    <li ng-if="false">
+                                        <a href="javascript:void(0)">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;关键共通属性-Feed关联变更历史
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)" ng-click="openProductStatusHistory(ctrl.vm.mastData.productCode,ctrl.$scope.cartInfo.value)">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;商品修改历史
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)" ng-click="openHistoryPutOnOff(ctrl.vm.mastData.productCode,ctrl.$scope.cartInfo.value)">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;上下架历史
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </div>&emsp;
+                            <div class="btn-group" uib-dropdown>
+                                <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
+                                    &nbsp;平台操作&nbsp;<span class="caret"></span>
+                                </button>
+                                <ul uib-dropdown-menu>
+                                    <li>
+                                        <a href="javascript:void(0)" ng-click="ctrl.openOffLinePop('single')">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;单Code下线
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)" ng-click="ctrl.openOffLinePop('group')">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;全group下线
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)" ng-click="ctrl.openSwitchMainPop()">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;切换主商品
+                                        </a>
+                                    </li>
+                                    <li ng-if="ctrl.vm.mastData.isMain != true">
+                                        <a href="javascript:void(0)" ng-click="ctrl.copyMainProduct()">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;复制主商品
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)" ng-click="ctrl.moveToGroup()" target="_blank">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;移动到其他Group
+                                        </a>
+                                    </li>
+                                    <!--                                        <li>
+                                                                                <a href="javascript:void(0)">
+                                                                                    <i class="fa fa-arrow-circle-right"></i>&nbsp;产品下架
+                                                                                </a>
+                                                                            </li>
+                                                                            <li>
+                                                                                <a href="javascript:void(0)">
+                                                                                    <i class="fa fa-arrow-circle-right"></i>&nbsp;产品上架
+                                                                                </a>
+                                                                            </li>-->
+                                </ul>
+                            </div>&emsp;
+                            <div class="btn-group">
+                                <button class="btn btn-info btn-pop" ng-click="ctrl.popUploadImg()"><i
+                                        class="fa fa-upload"></i>&nbsp;&nbsp;图片上传
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <form class="form-horizontal" name="productFieldForm" novalidate>
         <div class="panel vo_panel tab_panel">
             <div class="wrapper">
                 <div class="container-fluid"  id="common">
                     <div class="row">
                         <div class="col-md-8 form-group">
-                            <div class="form-group">
-                                <div class="btn-group m-l-xs" uib-dropdown ng-controller="popupCtrl">
-                                    <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
-                                        &nbsp;历史记录&nbsp;<span class="caret"></span>
-                                    </button>
-                                    <ul uib-dropdown-menu>
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="openHistoryPrice(ctrl.vm.mastData.productCode,ctrl.vm.platform.skus,null,ctrl.$scope.cartInfo.value)">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;价格历史
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="openHistoryPriceConfirm(ctrl.vm.mastData.productCode,ctrl.vm.platform.skus,null,ctrl.$scope.cartInfo.value)">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;价格确认历史
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="openHistoryPromotion('lg', ctrl.vm.mastData.productCode,ctrl.$scope.cartInfo.value)">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;活动历史
-                                            </a>
-                                        </li>
-                                        <li ng-if="false">
-                                            <a href="javascript:void(0)">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;SKU追加历史
-                                            </a>
-                                        </li>
-                                        <li ng-if="false">
-                                            <a href="javascript:void(0)">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;关键共通属性-Feed关联变更历史
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="openProductStatusHistory(ctrl.vm.mastData.productCode,ctrl.$scope.cartInfo.value)">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;商品修改历史
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="openHistoryPutOnOff(ctrl.vm.mastData.productCode,ctrl.$scope.cartInfo.value)">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;上下架历史
-                                            </a>
-                                        </li>
-
-                                    </ul>
-                                </div>&nbsp;&nbsp;
-                                <div class="btn-group" uib-dropdown>
-                                    <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
-                                        &nbsp;平台操作&nbsp;<span class="caret"></span>
-                                    </button>
-                                    <ul uib-dropdown-menu>
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="ctrl.openOffLinePop('single')">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;单Code下线
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="ctrl.openOffLinePop('group')">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;全group下线
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="ctrl.openSwitchMainPop()">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;切换主商品
-                                            </a>
-                                        </li>
-                                        <li ng-if="ctrl.vm.mastData.isMain != true">
-                                            <a href="javascript:void(0)" ng-click="ctrl.copyMainProduct()">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;复制主商品
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="ctrl.moveToGroup()" target="_blank">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;移动到其他Group
-                                            </a>
-                                        </li>
-<!--                                        <li>
-                                            <a href="javascript:void(0)">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;产品下架
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;产品上架
-                                            </a>
-                                        </li>-->
-                                    </ul>
-                                </div>
-                            </div>
                             <!----------------------------------check 状态------------------------------------------>
                             <ul class="nav nav-pills">
                                 <li>
@@ -149,7 +200,7 @@
                                     </label>
                                     <label class="col-md-8 m-r-sm" ng-if="ctrl.vm.platform.pNumIId">&nbsp;
                                         <span>
-                                            <a ng-href="{{ctrl.vm.productUrl}}{{ctrl.vm.platform.pNumIId}}" target="_blank">{{ctrl.vm.platform.pNumIId}} </a>
+                                            <a ng-href="{{ctrl.vm.productUrl}}{{ctrl.vm.platform.pNumIId}}.html" target="_blank">{{ctrl.vm.platform.pNumIId}} </a>
                                         </span>
                                     </label>&nbsp;
                                     <label class="col-md-8 m-r-sm" ng-if="ctrl.vm.platform.pPublishMessage" title="{{ctrl.vm.platform.pPublishMessage}}">&nbsp;

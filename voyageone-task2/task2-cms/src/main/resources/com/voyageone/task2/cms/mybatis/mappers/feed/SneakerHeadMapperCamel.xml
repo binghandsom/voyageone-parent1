@@ -4,8 +4,10 @@
     <resultMap id="BaseResultMap" type="com.voyageone.task2.cms.bean.SuperFeedSneakerHeadBean" >
         <id column="sku" property="sku" jdbcType="VARCHAR" />
         <result column="code" property="code" jdbcType="VARCHAR" />
-        <result column="price" property="price" jdbcType="VARCHAR" />
-        <result column="msrp" property="msrp" jdbcType="VARCHAR" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="msrp" property="msrp" jdbcType="DECIMAL" />
+        <result column="cnRetailPrice" property="cnRetailPrice" jdbcType="DECIMAL" />
+        <result column="cnMsrp" property="cnMsrp" jdbcType="DECIMAL" />
         <result column="quantity" property="quantity" jdbcType="VARCHAR" />
         <result column="category" property="category" jdbcType="VARCHAR" />
         <result column="created" property="created" jdbcType="TIMESTAMP" />
@@ -45,7 +47,7 @@
         <result column="urlKey" property="urlkey" jdbcType="LONGVARCHAR" />
     </resultMap>
     <sql id="Base_Column_List" >
-        "sku", "code", "price", "msrp", "quantity", "category", "created", "md5", "updateFlag",
+        "sku", "code", "price", "msrp", "cnRetailPrice", "cnMsrp", "quantity", "category", "created", "md5", "updateFlag",
         "lastReceivedOn"
     </sql>
     <sql id="Blob_Column_List" >
@@ -69,7 +71,7 @@
     </delete>
     <insert id="insert" parameterType="com.voyageone.task2.cms.bean.SuperFeedSneakerHeadBean" >
         insert into cms_zz_feed_sneakerhead_product_temp ("sku", "code", "price",
-        "msrp", "quantity", "category",
+        "msrp", "cnRetailPrice", "cnMsrp", "quantity", "category",
         "created", "md5", "updateFlag",
         "lastReceivedOn",
         "relationshipType", "variationTheme",
@@ -83,8 +85,9 @@
         "blogUrl", "isRewardEligible", "isDiscountEligible",
         "orderLimitCount", "approvedDescriptions",
         "urlKey")
-        values (#{sku,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{price,jdbcType=VARCHAR},
-        #{msrp,jdbcType=VARCHAR}, #{quantity,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR},
+        values (#{sku,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL},
+        #{msrp,jdbcType=DECIMAL}, #{cnRetailPrice,jdbcType=DECIMAL}, #{cnMsrp,jdbcType=DECIMAL},
+        #{quantity,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR},
         #{created,jdbcType=TIMESTAMP}, #{md5,jdbcType=VARCHAR}, #{updateflag,jdbcType=INTEGER},
         #{lastReceivedOn,jdbcType=TIMESTAMP},
         #{relationshiptype,jdbcType=LONGVARCHAR}, #{variationtheme,jdbcType=LONGVARCHAR},
@@ -113,6 +116,12 @@
             </if>
             <if test="msrp != null" >
                 msrp,
+            </if>
+            <if test="cnRetailPrice != null" >
+                cnRetailPrice,
+            </if>
+            <if test="cnMsrp != null" >
+                cnMsrp,
             </if>
             <if test="quantity != null" >
                 quantity,
@@ -228,10 +237,16 @@
                 #{code,jdbcType=VARCHAR},
             </if>
             <if test="price != null" >
-                #{price,jdbcType=VARCHAR},
+                #{price,jdbcType=DECIMAL},
             </if>
             <if test="msrp != null" >
-                #{msrp,jdbcType=VARCHAR},
+                #{msrp,jdbcType=DECIMAL},
+            </if>
+            <if test="cnRetailPrice != null" >
+                #{cnRetailPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="cnMsrp != null" >
+                #{cnMsrp,jdbcType=DECIMAL},
             </if>
             <if test="quantity != null" >
                 #{quantity,jdbcType=VARCHAR},
@@ -347,10 +362,16 @@
                 "code" = #{code,jdbcType=VARCHAR},
             </if>
             <if test="price != null" >
-                "price" = #{price,jdbcType=VARCHAR},
+                "price" = #{price,jdbcType=DECIMAL},
             </if>
             <if test="msrp != null" >
-                "msrp" = #{msrp,jdbcType=VARCHAR},
+                "msrp" = #{msrp,jdbcType=DECIMAL},
+            </if>
+            <if test="cnRetailPrice != null" >
+                "cnRetailPrice" = #{cnRetailPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="cnMsrp != null" >
+                "cnMsrp" = #{cnMsrp,jdbcType=DECIMAL},
             </if>
             <if test="quantity != null" >
                 "quantity" = #{quantity,jdbcType=VARCHAR},
@@ -463,8 +484,10 @@
     <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.voyageone.task2.cms.bean.SuperFeedSneakerHeadBean" >
         update cms_zz_feed_sneakerhead_product_temp
         set "code" = #{code,jdbcType=VARCHAR},
-        "price" = #{price,jdbcType=VARCHAR},
-        "msrp" = #{msrp,jdbcType=VARCHAR},
+        "price" = #{price,jdbcType=DECIMAL},
+        "msrp" = #{msrp,jdbcType=DECIMAL},
+        "cnRetailPrice" = #{cnRetailPrice,jdbcType=DECIMAL},
+        "cnMsrp" = #{cnMsrp,jdbcType=DECIMAL},
         "quantity" = #{quantity,jdbcType=VARCHAR},
         "category" = #{category,jdbcType=VARCHAR},
         "created" = #{created,jdbcType=TIMESTAMP},
@@ -505,8 +528,10 @@
     <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperFeedSneakerHeadBean" >
         update cms_zz_feed_sneakerhead_product_temp
         set "code" = #{code,jdbcType=VARCHAR},
-        "price" = #{price,jdbcType=VARCHAR},
-        "msrp" = #{msrp,jdbcType=VARCHAR},
+        "price" = #{price,jdbcType=DECIMAL},
+        "msrp" = #{msrp,jdbcType=DECIMAL},
+         "cnRetailPrice" = #{cnRetailPrice,jdbcType=DECIMAL},
+         "cnMsrp" = #{cnMsrp,jdbcType=DECIMAL},
         "quantity" = #{quantity,jdbcType=VARCHAR},
         "category" = #{category,jdbcType=VARCHAR},
         "created" = #{created,jdbcType=TIMESTAMP},
