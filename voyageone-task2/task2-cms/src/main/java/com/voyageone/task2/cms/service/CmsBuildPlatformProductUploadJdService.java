@@ -999,6 +999,22 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         }
         // 商品标题(必须)
         jdProductBean.setTitle(jdCommonInfoMap.get("productTitle"));
+        if (StringUtils.isEmpty(jdProductBean.getTitle()) || jdProductBean.getTitle().length() > 45) {
+            String tmpBrand = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getBrand();
+            String tmpSizeType = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getSizeTypeCn();
+            if (StringUtils.isEmpty(tmpSizeType)) {
+                tmpSizeType = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getSizeType();
+            }
+            String tmpProductType = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getProductTypeCn();
+            if (StringUtils.isEmpty(tmpProductType)) {
+                tmpProductType = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getProductType();
+            }
+            jdProductBean.setTitle(tmpBrand + " " + tmpSizeType + " " + tmpProductType);
+
+            if (StringUtils.isEmpty(jdProductBean.getTitle()) || jdProductBean.getTitle().length() > 45) {
+                jdProductBean.setTitle(tmpBrand + " " + tmpProductType);
+            }
+        }
         // 7天无理由退货 1为支持，0为不支持 (非必须,不设置京东会默认为"支持")
         jdProductBean.setIs7ToReturn(jdCommonInfoMap.get("productIs7ToReturn"));
         // UPC编码(非必须)
@@ -1061,10 +1077,14 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 //        if (objfieldItemValue != null && objfieldItemValue instanceof String) {
 //            strWeight = String.valueOf(objfieldItemValue);
 //        }
+
         jdProductBean.setWeight(jdCommonInfoMap.get("productWeightKg"));
-        if (StringUtils.isEmpty(jdProductBean.getWeight())) {
+        if (jdProductBean.getWeight() == null || "".equals(jdProductBean.getWeight()) || "0".equals(jdProductBean.getWeight())) {
             InputField f = (InputField) productSchemaFields.get("productWeightKg");
             jdProductBean.setWeight(f.getDefaultValue());
+        }
+        if (jdProductBean.getWeight() == null || "".equals(jdProductBean.getWeight()) || "0".equals(jdProductBean.getWeight())) {
+            jdProductBean.setWeight("1");
         }
         // 进货价,精确到2位小数，单位:元(非必须)
 //        jdProductBean.setCostPrice(String.valueOf(jdPrice));     // 不使用

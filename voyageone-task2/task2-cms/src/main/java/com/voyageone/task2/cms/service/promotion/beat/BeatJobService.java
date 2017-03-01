@@ -374,7 +374,7 @@ public class BeatJobService extends BaseCronTaskService {
         private String getTaobaoImageUrl(String imageUrl, String imageName, CmsMtImageCategoryModel categoryModel, boolean withPrice)
                 throws IOException, ApiException {
 
-            Objects.requireNonNull(categoryModel, "图片目录数据没有配置");
+            Objects.requireNonNull(categoryModel, "图片目录未配置");
 
             // 首先尝试获取之前存在图片
             // 如果之前使用过, 则直接删除, 如果没有或者出现了任何错误, 都无视。

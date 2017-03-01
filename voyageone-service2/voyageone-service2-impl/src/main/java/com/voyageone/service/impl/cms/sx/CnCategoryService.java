@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.sx;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
@@ -13,6 +14,7 @@ import com.voyageone.service.dao.cms.CmsBtSxCnProductSellercatDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
 import com.voyageone.service.daoext.cms.CmsBtSxCnProductSellercatDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.model.cms.CmsBtSxCnProductSellercatModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +33,74 @@ public class CnCategoryService extends BaseService {
 
     @Autowired
     private CnSchemaService cnSchemaService;
-
+    @Autowired
+    private MongoSequenceService mongoSequenceService;
     @Autowired
     private CmsBtSxCnProductSellercatDao cmsBtSxCnProductSellercatDao;
     @Autowired
     private CmsBtSxCnProductSellercatDaoExt cmsBtSxCnProductSellercatDaoExt;
     @Autowired
     private CmsBtSellerCatDao cmsBtSellerCatDao;
+
+    /**
+     * Sneakerhead独立官网添加店铺内分类
+     * @param channelId
+     * @param parentCId
+     * @param catName
+     * @param shopBean
+     * @return
+     */
+    public String addSnSellerCat(String channelId, String parentCId, String catName, ShopBean shopBean) {
+        String catId = Long.toString(mongoSequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_CnShopCategory_ID));
+        String catFullId = "";
+        if (!StringUtils.isEmpty(parentCId)) {
+            CmsBtSellerCatModel parentCurrentNode = cmsBtSellerCatDao.selectByCatId(channelId, parentCId);
+            if (parentCurrentNode != null) {
+                catFullId = parentCurrentNode.getFullCatId();
+            }
+        }
+        if (StringUtils.isEmpty(catFullId)) {
+            catFullId = catId;
+        } else {
+            catFullId = catFullId + "-" + catId;
+        }
+        CnCategoryBean cnCategoryBean = createCnCategoryBean(catFullId, "-", catName, catName, null);
+        boolean ret = uploadCnCategory(cnCategoryBean, false, shopBean);
+        if (!ret) {
+            throw new BusinessException("创建类目失败， 请再尝试一下。");
+        }
+
+        return catId;
+    }
+
+    /**
+     * 重载上面的方法，独立官网修改单个类目的名称后，调用单个独立官网的类目更新接口时，需要传入该类目的index给类目
+     * @param shopBean
+     * @param index
+     */
+    public void  updateSnSellerCat(CmsBtSellerCatModel currentNode, ShopBean shopBean, int index)
+    {
+        CnCategoryBean cnCategoryBean= createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), currentNode.getCatName(), currentNode.getUrlKey());
+        cnCategoryBean.setDisplayOrder(index);
+        boolean ret = uploadCnCategory(cnCategoryBean,false,shopBean);
+        if (!ret) {
+            throw new BusinessException("创建类目失败， 请再尝试一下。");
+        }
+    }
+
+    /**
+     * 删除某个店铺内分类
+     * @param currentNode
+     * @param shopBean
+     */
+    public void  deleteSnSellerCat(CmsBtSellerCatModel currentNode, ShopBean shopBean)
+    {
+        CnCategoryBean cnCategoryBean= createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), currentNode.getCatName(), currentNode.getUrlKey());
+        boolean ret = uploadCnCategory(cnCategoryBean,true,shopBean);
+        if (!ret) {
+            throw new BusinessException("创建类目失败， 请再尝试一下。");
+        }
+    }
 
     /**
      * 创建CnCategoryBean(要推送的属性)
@@ -48,7 +111,7 @@ public class CnCategoryService extends BaseService {
      * @param description 类目描述(画面上显示内容)
      * @return
      */
-    public CnCategoryBean createCnCategoryBean(String catFullId, String separator, String name, String description, String urlKey) {
+    private CnCategoryBean createCnCategoryBean(String catFullId, String separator, String name, String description, String urlKey) {
         CnCategoryBean bean = new CnCategoryBean();
 
         String[] catIds = catFullId.split(separator);
@@ -95,7 +158,7 @@ public class CnCategoryService extends BaseService {
     /**
      * 全店店铺内分类更新(主要是为了刷类目顺序)
      */
-    public void uploadAllCnCategory(String channelId, int cartId, ShopBean shopBean) {
+    public void resetCnAllCatalog(String channelId, int cartId, ShopBean shopBean) {
         List<CnCategoryBean> listBean = new ArrayList<>();
         List<CmsBtSellerCatModel> sellerCatModels = cmsBtSellerCatDao.selectByChannelCart(channelId, cartId);
         int childDisplayOrder = 1;
@@ -110,6 +173,78 @@ public class CnCategoryService extends BaseService {
         uploadCnCategory(listBean, false, shopBean);
     }
 
+    /**
+     * 批量更新cms_bt_sx_cn_product_sellercat，用于之后上传类目下code以及排序
+     * 找到更新，找不到插入
+     *
+     * @param channelId 渠道id
+     * @param listCatId 类目id列表
+     * @return 更新件数
+     */
+    public int updateProductSellercatForUpload(String channelId, int cartId, Set<String> listCatId, String modifier) {
+        int updateCnt = 0;
+
+        Map<String, Object> searchParam = new HashMap<>();
+        searchParam.put("channelId", channelId);
+
+        List<CmsBtSxCnProductSellercatModel> listInsertData = new ArrayList<>();
+        List<String> listUpdateData = new ArrayList<>();
+        for (String catId : listCatId) {
+            searchParam.put("catId", catId);
+            CmsBtSxCnProductSellercatModel findModel = cmsBtSxCnProductSellercatDao.selectOne(searchParam);
+            if (findModel == null) {
+                // insert
+                CmsBtSxCnProductSellercatModel model = new CmsBtSxCnProductSellercatModel();
+                model.setChannelId(channelId);
+                model.setCartId(cartId);
+                model.setCatId(catId);
+                model.setCreater(modifier);
+                listInsertData.add(model);
+            } else {
+                listUpdateData.add(catId);
+            }
+        }
+
+        if (!listInsertData.isEmpty()) {
+            updateCnt += cmsBtSxCnProductSellercatDaoExt.insertByList(listInsertData);
+        }
+        if (!listUpdateData.isEmpty()) {
+            updateCnt += updateProductSellercatUpdFlg(channelId, cartId, listUpdateData, "0", modifier);
+        }
+
+        $info("cms_bt_sx_cn_product_sellercat更新了%d件!", updateCnt);
+        return updateCnt;
+    }
+
+    /**
+     * 批量更新cms_bt_sx_cn_product_sellercat状态
+     *
+     * @param channelId 渠道id
+     * @param listCatId 类目id列表
+     * @param updFlg 更新成的状态  0:未处理, 1:已处理
+     * @return 更新件数
+     */
+    public int updateProductSellercatUpdFlg(String channelId, int cartId, List<String> listCatId, String updFlg, String modifier) {
+        int updateCnt = cmsBtSxCnProductSellercatDaoExt.updateFlgByCatIds(channelId, cartId, updFlg, modifier, listCatId);
+        $info("cms_bt_sx_cn_product_sellercat状态更新了%d件!", updateCnt);
+        return updateCnt;
+    }
+
+    /**
+     * 检索等待上传的类目列表
+     *
+     * @param channelId 渠道id
+     */
+    public List<String> selectListWaitingUpload(String channelId, int cartId) {
+        return cmsBtSxCnProductSellercatDaoExt.selectListWaitingUpload(channelId, cartId);
+    }
+
+    /**
+     * 添加一个店铺内分类
+     * @param listBean
+     * @param sellerCatModel
+     * @param displayOrder
+     */
     private void addCnCategoryBean(List<CnCategoryBean> listBean, CmsBtSellerCatModel sellerCatModel, int displayOrder) {
         CnCategoryBean bean = createCnCategoryBean(sellerCatModel.getFullCatId(), "-", sellerCatModel.getCatName(), sellerCatModel.getCatName(), sellerCatModel.getUrlKey());
         bean.setDisplayOrder(displayOrder);
@@ -129,7 +264,7 @@ public class CnCategoryService extends BaseService {
      * @param isDelete
      * @return
      */
-    public boolean uploadCnCategory(CnCategoryBean bean, boolean isDelete, ShopBean shopBean) {
+    private boolean uploadCnCategory(CnCategoryBean bean, boolean isDelete, ShopBean shopBean) {
         return uploadCnCategory(new ArrayList<CnCategoryBean>(){{this.add(bean);}}, isDelete, shopBean);
     }
 
@@ -140,7 +275,7 @@ public class CnCategoryService extends BaseService {
      * @param isDelete
      * @return
      */
-    public boolean uploadCnCategory(List<CnCategoryBean> listBean, boolean isDelete, ShopBean shopBean) {
+    private boolean uploadCnCategory(List<CnCategoryBean> listBean, boolean isDelete, ShopBean shopBean) {
         for (CnCategoryBean bean : listBean) {
             if (isDelete) {
                 bean.setIsPublished("0");
@@ -160,7 +295,7 @@ public class CnCategoryService extends BaseService {
      * @param listBean
      * @return
      */
-    public boolean uploadCnCategory(List<CnCategoryBean> listBean, ShopBean shopBean) {
+    private boolean uploadCnCategory(List<CnCategoryBean> listBean, ShopBean shopBean) {
         boolean isSuccess = false;
 
         // Default Category
@@ -265,71 +400,5 @@ public class CnCategoryService extends BaseService {
         }
 
         return updateCnt;
-    }
-
-    /**
-     * 批量更新cms_bt_sx_cn_product_sellercat，用于之后上传类目下code以及排序
-     * 找到更新，找不到插入
-     *
-     * @param channelId 渠道id
-     * @param listCatId 类目id列表
-     * @return 更新件数
-     */
-    public int updateProductSellercatForUpload(String channelId, int cartId, Set<String> listCatId, String modifier) {
-        int updateCnt = 0;
-
-        Map<String, Object> searchParam = new HashMap<>();
-        searchParam.put("channelId", channelId);
-
-        List<CmsBtSxCnProductSellercatModel> listInsertData = new ArrayList<>();
-        List<String> listUpdateData = new ArrayList<>();
-        for (String catId : listCatId) {
-            searchParam.put("catId", catId);
-            CmsBtSxCnProductSellercatModel findModel = cmsBtSxCnProductSellercatDao.selectOne(searchParam);
-            if (findModel == null) {
-                // insert
-                CmsBtSxCnProductSellercatModel model = new CmsBtSxCnProductSellercatModel();
-                model.setChannelId(channelId);
-                model.setCartId(cartId);
-                model.setCatId(catId);
-                model.setCreater(modifier);
-                listInsertData.add(model);
-            } else {
-                listUpdateData.add(catId);
-            }
-        }
-
-        if (!listInsertData.isEmpty()) {
-            updateCnt += cmsBtSxCnProductSellercatDaoExt.insertByList(listInsertData);
-        }
-        if (!listUpdateData.isEmpty()) {
-            updateCnt += updateProductSellercatUpdFlg(channelId, cartId, listUpdateData, "0", modifier);
-        }
-
-        $info("cms_bt_sx_cn_product_sellercat更新了%d件!", updateCnt);
-        return updateCnt;
-    }
-
-    /**
-     * 批量更新cms_bt_sx_cn_product_sellercat状态
-     *
-     * @param channelId 渠道id
-     * @param listCatId 类目id列表
-     * @param updFlg 更新成的状态  0:未处理, 1:已处理
-     * @return 更新件数
-     */
-    public int updateProductSellercatUpdFlg(String channelId, int cartId, List<String> listCatId, String updFlg, String modifier) {
-        int updateCnt = cmsBtSxCnProductSellercatDaoExt.updateFlgByCatIds(channelId, cartId, updFlg, modifier, listCatId);
-        $info("cms_bt_sx_cn_product_sellercat状态更新了%d件!", updateCnt);
-        return updateCnt;
-    }
-
-    /**
-     * 检索等待上传的类目列表
-     *
-     * @param channelId 渠道id
-     */
-    public List<String> selectListWaitingUpload(String channelId, int cartId) {
-        return cmsBtSxCnProductSellercatDaoExt.selectListWaitingUpload(channelId, cartId);
     }
 }
