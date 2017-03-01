@@ -222,12 +222,13 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
 
     }
 
-    function getCartQty(code, codeCartQty){
-        _.forEach(codeCartQty, function(value,key) {
-            if (code == key) {
-                $scope.codeCartQty = value;
-            }
-        });
+    /**
+     * code对应平台的库存
+     * @param code
+     * @param codeCartQty
+     */
+    function getCartQty(codeCartQty){
+        $scope.codeCartQty = codeCartQty;
     }
 });
 
