@@ -44,6 +44,7 @@ public class CmsBtCustomTranslateController extends CmsController {
     public AjaxResponse addFeedCustPropValue(@RequestBody CmsBtTranslateModel params) {
         params.setCreater(getUser().getUserName());
         params.setModifier(getUser().getUserName());
+        params.setChannelId(getUser().getSelChannelId());
         cmsBtTranslateService.insertOrUpdate(params);
         return success(true);
     }
