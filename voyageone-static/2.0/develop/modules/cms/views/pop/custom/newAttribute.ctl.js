@@ -43,7 +43,7 @@ define([
                 self.vm.attrType = context.entity.attributeType;
                 self.vm.type = context.entity.type;
 
-                if (context.entity.type == 2)
+                if (context.entity.attributeType == 2)
                     self.vm.prop_master_value = context.entity.value;
                 else
                     self.vm.prop_fix_value = context.entity.value;
@@ -81,7 +81,7 @@ define([
                     break;
             }
 
-            if (vm.type === 'edit') {
+            if (self.context.entity) {
                 entity = angular.copy(self.context.entity);
                 entity.nameCn = vm.prop_translation;
                 entity.value = attrValue;
