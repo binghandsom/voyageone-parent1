@@ -204,7 +204,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
         masterData.put("cartList", cartList);
 
         // 是否自动最终售价同步指导价格
-        List<CmsChannelConfigBean> autoPriceCfg = CmsChannelConfigs.getConfigBeans(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE);
+        List<CmsChannelConfigBean> autoPriceCfg = CmsChannelConfigs.getConfigBeans(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE, "");
 //        String autoApprovePrice = "0"; // 缺省不自动同步
 //        if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
 //             autoApprovePrice = "1"; // 自动同步

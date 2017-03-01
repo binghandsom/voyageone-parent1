@@ -165,7 +165,7 @@ public class CmsMenuController extends CmsController {
     public AjaxResponse getCmsConfig()
     {
         Map<String,Object> response = new HashMap<>();
-        response.put("autoApprovePrice",CmsChannelConfigs.getConfigBeans(getUser().getSelChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE));
+        response.put("autoApprovePrice",CmsChannelConfigs.getConfigBeans(getUser().getSelChannelId(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_SALE, ""));
         return success(response);
     }
 
