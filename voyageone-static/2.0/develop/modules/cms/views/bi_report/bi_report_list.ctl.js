@@ -71,9 +71,6 @@ define([
             $scope.vm.searchInfo.channelCodeList = [];
         };
         $scope.initialize = function () {
-            $scope.AllfileShow = true;
-            $scope.vm.minDate = new Date(2015, 1, 1);
-            $scope.vm.maxDate = new Date();
             biReportService.init().then(function () {
                 $scope.search();
             });
@@ -190,7 +187,7 @@ define([
                             alert($translate.instant('TXT_BI_DOWNLOAD_LIST_ERROR_CODE') + res.data.ecd);
                             break;
                     }
-                    $scope.initialize();
+                    $scope.search();
                 });
             })
         };
