@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.channel;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.impl.cms.CmsBtTranslateService;
 import com.voyageone.service.model.cms.mongo.CmsBtTranslateModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -41,6 +42,8 @@ public class CmsBtCustomTranslateController extends CmsController {
 
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_TRANSLATE.ADD)
     public AjaxResponse addFeedCustPropValue(@RequestBody CmsBtTranslateModel params) {
+        params.setCreater(getUser().getUserName());
+        params.setModifier(getUser().getUserName());
         cmsBtTranslateService.insertOrUpdate(params);
         return success(true);
     }
@@ -48,7 +51,8 @@ public class CmsBtCustomTranslateController extends CmsController {
 
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_TRANSLATE.SAVE)
     public AjaxResponse saveFeedCustPropValue(@RequestBody CmsBtTranslateModel params) {
-        params.setCreater(getUser().getUserName());
+        params.setModifier(getUser().getUserName());
+        params.setModified(DateTimeUtil.getNow());
         cmsBtTranslateService.insertOrUpdate(params);
         return success(true);
     }

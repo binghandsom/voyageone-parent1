@@ -24,7 +24,10 @@ public class CmsBtTranslateServiceTest {
     @Test
     public void select() throws Exception {
         List<CmsBtTranslateModel> ret= cmsBtTranslateService.select("010",3,"MetalStamp",null, 1,10);
-        JacksonUtil.bean2Json(ret);
+        System.out.println(JacksonUtil.bean2Json(ret));
+
+        ret.get(0).setValueCn(ret.get(0).getValueCn()+"+++");
+        cmsBtTranslateService.insertOrUpdate(ret.get(0));
     }
 
 }
