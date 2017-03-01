@@ -562,12 +562,31 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 saveCmsBtTmScItem_Liking(sxData.getMainProduct().getOrgChannelId(), cartId, skuMapList);
             }
 
+            // 看看总库存
+            int qty = 0;
+            List<CmsBtProductModel> productModelList = sxData.getProductList();
+            for (CmsBtProductModel productModel : productModelList) {
+                List<BaseMongoMap<String, Object>> productPlatformSku = productModel.getPlatformNotNull(sxData.getCartId()).getSkus();
+
+                if (productPlatformSku != null) {
+                    for (BaseMongoMap<String, Object> sku : productPlatformSku) {
+                        if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                            String skucode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+                            if (skuLogicQtyMap.containsKey(skucode)) {
+                                qty = qty + skuLogicQtyMap.get(skucode);
+                            }
+                        }
+                    }
+                }
+            }
+
             // 调用淘宝商品上下架操作(新增的时候默认为下架，只有更新的时候才根据group里面platformActive调用上下架操作)
             // 回写用商品上下架状态(OnSale/InStock)
             CmsConstants.PlatformStatus platformStatus = null;
             CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
             // 更新商品并且PlatformActive=ToOnSale时,执行商品上架；新增商品或PlatformActive=ToInStock时，执行下架功能
-            if (updateWare && platformActive == CmsConstants.PlatformActive.ToOnSale) {
+            // 库存大于0才能上架， 否则自动设为在库
+            if (updateWare && platformActive == CmsConstants.PlatformActive.ToOnSale && qty > 0) {
                 platformStatus = CmsConstants.PlatformStatus.OnSale;   // 上架
             } else {
                 platformStatus = CmsConstants.PlatformStatus.InStock;   // 在库
@@ -1143,10 +1162,29 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             productInfoMap.put("wireless_desc", valWirelessDetails);
         }
 
+        // 看看总库存
+        int qty = 0;
+        List<CmsBtProductModel> productModelList = sxData.getProductList();
+        for (CmsBtProductModel productModel : productModelList) {
+            List<BaseMongoMap<String, Object>> productPlatformSku = productModel.getPlatformNotNull(sxData.getCartId()).getSkus();
+
+            if (productPlatformSku != null) {
+                for (BaseMongoMap<String, Object> sku : productPlatformSku) {
+                    if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                        String skucode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+                        if (skuLogicQtyMap.containsKey(skucode)) {
+                            qty = qty + skuLogicQtyMap.get(skucode);
+                        }
+                    }
+                }
+            }
+        }
+
         // 商品上下架
         CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
         // 更新商品并且PlatformActive=ToOnSale时,执行商品上架；新增商品或PlatformActive=ToInStock时，执行下架功能
-        if (updateWare && platformActive == CmsConstants.PlatformActive.ToOnSale) {
+        // 库存大于0才能上架， 否则自动设为在库
+        if (updateWare && platformActive == CmsConstants.PlatformActive.ToOnSale && qty > 0) {
             productInfoMap.put("status", "0");   // 商品上架
         } else {
             productInfoMap.put("status", "2");   // 商品在库
