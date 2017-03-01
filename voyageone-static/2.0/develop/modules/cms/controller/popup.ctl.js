@@ -181,6 +181,11 @@ define([
                 "backdrop": 'static',
                 "size": 'md'
             },
+            "addValue":{
+                "templateUrl": "views/pop/custom/addValue.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/custom/addValue.ctl",
+                "controller": 'popAddValueCtl as ctrl'
+            },
             "column": {
                 "templateUrl": "views/pop/custom/column.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/custom/column.ctl",
@@ -823,6 +828,10 @@ define([
          */
         $scope.openAddNewValue = function openAddNewValue(context) {
             return openModal(popActions.custom.newValue, context);
+        };
+
+        $scope.openAddAttrValue = function openAddNewValue(context) {
+            return openModal(popActions.custom.addValue, context);
         };
 
         /**

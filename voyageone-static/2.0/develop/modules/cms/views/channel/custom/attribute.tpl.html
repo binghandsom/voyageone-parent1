@@ -80,7 +80,7 @@
                         <td class="text-center">{{entity.nameEn}}</td>
                         <td class="text-center">{{entity.nameCn}}</td>
                         <td class="text-center">
-                            <button class="btn btn-default" ng-click="ctrl.linkValue()"
+                            <button class="btn btn-default" ng-click="ctrl.linkValue(entity)"
                                     ng-if="entity.attributeType == 1">
                                 <i class="fa fa-arrow-right"></i>&nbsp;{{ctrl.ATTRIBUTETYPE[entity.attributeType]}}
                             </button>
@@ -129,7 +129,7 @@
                         <td class="text-center">{{entity.nameEn}}</td>
                         <td class="text-center">{{entity.nameCn}}</td>
                         <td class="text-center">
-                            <button class="btn btn-default" ng-click="ctrl.linkValue()"
+                            <button class="btn btn-default" ng-click="ctrl.linkValue(entity)"
                                     ng-if="entity.attributeType == 1">
                                 <i class="fa fa-arrow-right"></i>&nbsp;{{ctrl.ATTRIBUTETYPE[entity.attributeType]}}
                             </button>

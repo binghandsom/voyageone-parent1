@@ -1,0 +1,59 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i> 新增自定义属性值</h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal" name="customValueForm" novalidate>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">种类</label>
+                <div class="col-sm-6">
+                    <select required name="catPath" class="form-control" chosen ng-model="vm.cat_path" width="'100%'"
+                            ng-options="category.catPath as category.catPath for category in categoryList | filter:{isParent:0}" ng-change="valueChange(vm.cat_path)">
+                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                    </select>
+                </div>
+            </div><!-- .form-group -->
+            <div class="form-group">
+                <div class="col-sm-6 col-sm-offset-4">
+                    <vo-message target="customValueForm.catPath"></vo-message>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">属性名（EN）</label>
+                <div class="col-sm-6">
+                    <select name="attributeEn" required class="form-control" ng-model="vm.prop_id" ng-options="propInfo.prop_id as propInfo.prop_original for propInfo in valList">
+                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6 col-sm-offset-4">
+                    <vo-message target="customValueForm.attributeEn"></vo-message>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">属性值（EN）</label>
+                <div class="col-sm-6">
+                    <input name="valueEn" class="form-control" ng-required="true" ng-model="vm.value_original">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6 col-sm-offset-4">
+                    <vo-message target="customValueForm.valueEn"></vo-message>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">属性值（CN）</label>
+                <div class="col-sm-6">
+                    <input class="form-control" ng-model="vm.value_translation">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
+        <button class="btn btn-vo" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+    </div>
+</div><!-- .vo_modal -->

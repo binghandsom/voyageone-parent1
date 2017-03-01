@@ -563,6 +563,12 @@ define(function () {
                         saveFeed: "saveFeed",
                         createFeed: "createFeed",
                         init: 'init'
+                    },
+                    "attrTranslateService":{
+                        root: "/cms/channel/customTranslate/value",
+                        init:"init",
+                        create:"create",
+                        update:"update"
                     }
                 },
                 "value": {

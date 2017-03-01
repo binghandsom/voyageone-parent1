@@ -231,9 +231,15 @@ define([
             });
         };
 
-        CustomAttributeCtl.prototype.linkValue = function () {
+        CustomAttributeCtl.prototype.linkValue = function (entity) {
             var self = this;
-            self.$location.path(self.cRoutes.marketing_setting_common_custom_value_list.url + "0");
+
+            sessionStorage.setItem(entity.nameEn,angular.toJson({
+                catPath:self.vm.catPath,
+                entity:entity
+            }));
+
+            self.$location.path(self.cRoutes.marketing_setting_common_custom_translate_list.url + entity.nameEn);
         };
 
         return CustomAttributeCtl;

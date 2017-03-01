@@ -781,7 +781,7 @@ public interface CmsUrlConstants {
 
             String ROOT = "/cms/channel/customTranslate/value";
 
-            String INIT = "get";
+            String INIT = "init";
 
             String ADD = "create";
 
