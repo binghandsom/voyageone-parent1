@@ -1061,10 +1061,14 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 //        if (objfieldItemValue != null && objfieldItemValue instanceof String) {
 //            strWeight = String.valueOf(objfieldItemValue);
 //        }
+
         jdProductBean.setWeight(jdCommonInfoMap.get("productWeightKg"));
-        if (StringUtils.isEmpty(jdProductBean.getWeight())) {
+        if (jdProductBean.getWeight() == null || "".equals(jdProductBean.getWeight()) || "0".equals(jdProductBean.getWeight())) {
             InputField f = (InputField) productSchemaFields.get("productWeightKg");
             jdProductBean.setWeight(f.getDefaultValue());
+        }
+        if (jdProductBean.getWeight() == null || "".equals(jdProductBean.getWeight()) || "0".equals(jdProductBean.getWeight())) {
+            jdProductBean.setWeight("1");
         }
         // 进货价,精确到2位小数，单位:元(非必须)
 //        jdProductBean.setCostPrice(String.valueOf(jdPrice));     // 不使用
