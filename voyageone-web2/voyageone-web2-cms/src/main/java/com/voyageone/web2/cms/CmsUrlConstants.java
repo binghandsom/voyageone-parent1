@@ -777,6 +777,17 @@ public interface CmsUrlConstants {
             String SAVE = "update";
         }
 
+        interface CUSTOM_TRANSLATE {
+
+            String ROOT = "/cms/channel/customTranslate/value";
+
+            String INIT = "get";
+
+            String ADD = "create";
+
+            String SAVE = "update";
+        }
+
         interface CHANNEL_TAG {
             String ROOT = "/cms/channel/tag";
             String INIT_CHANNEL_TAG = "init";

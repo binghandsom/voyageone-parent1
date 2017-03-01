@@ -7,6 +7,8 @@ import com.voyageone.service.model.cms.mongo.CmsBtTranslateModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by james on 2017/2/27.
  */
@@ -46,5 +48,13 @@ public class CmsBtTranslateService extends BaseService {
         cmsBtTranslateModel.setValueEn(valueEn.toLowerCase());
         cmsBtTranslateModel.setValueCn(valueCn);
         insertOrUpdate(cmsBtTranslateModel);
+    }
+
+    public List<CmsBtTranslateModel> select(String channelId, Integer customPropType, String name, String valueEn, Integer skip, Integer limit){
+        return cmsBtTranslateDao.select(channelId,customPropType,name,valueEn.toLowerCase(),skip,limit);
+    }
+
+    public Long selectCnt(String channelId, Integer customPropType, String name, String valueEn){
+        return cmsBtTranslateDao.selectCnt(channelId,customPropType,name,valueEn.toLowerCase());
     }
 }
