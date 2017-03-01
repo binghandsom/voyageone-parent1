@@ -23,6 +23,7 @@ public class CmsBtTranslateService extends BaseService {
     }
 
     public CmsBtTranslateModel get(String channelId, Integer customPropType, String name, String valueEn){
+        valueEn = valueEn == null?"":valueEn.toLowerCase();
         return cmsBtTranslateDao.get(channelId,customPropType,name,valueEn.toLowerCase());
     }
 
@@ -38,6 +39,7 @@ public class CmsBtTranslateService extends BaseService {
     }
 
     public void create(String channelId, Integer customPropType, String name, String valueEn, String valueCn){
+        valueEn = valueEn == null?"":valueEn.toLowerCase();
         CmsBtTranslateModel cmsBtTranslateModel = get(channelId, customPropType, name, valueEn);
         if(cmsBtTranslateModel == null) {
             cmsBtTranslateModel = new CmsBtTranslateModel();
@@ -51,10 +53,12 @@ public class CmsBtTranslateService extends BaseService {
     }
 
     public List<CmsBtTranslateModel> select(String channelId, Integer customPropType, String name, String valueEn, Integer skip, Integer limit){
+        valueEn = valueEn == null?"":valueEn.toLowerCase();
         return cmsBtTranslateDao.select(channelId,customPropType,name,valueEn.toLowerCase(),skip,limit);
     }
 
     public Long selectCnt(String channelId, Integer customPropType, String name, String valueEn){
+        valueEn = valueEn == null?"":valueEn.toLowerCase();
         return cmsBtTranslateDao.selectCnt(channelId,customPropType,name,valueEn.toLowerCase());
     }
 }
