@@ -265,7 +265,7 @@ public class CmsBtCustomPropService extends BaseService {
         for (CmsBtCustomPropModel.Entity entity : cmsBtCustomPropModel.getEntitys()) {
             if (entity.getAttributeType() != null) {
                 String value = (String) product.getFeed().getOrgAtts().get(entity.getNameEn());
-                String valueEn="";
+                String valueEn = value;
                 if (StringUtil.isEmpty(value)) {
                     valueEn = getEntityEnValue(product.getChannelId(), entity, product, cmsBtFeedInfoModel);
                     product.getFeed().getOrgAtts().put(entity.getNameEn(), valueEn);
@@ -283,7 +283,7 @@ public class CmsBtCustomPropService extends BaseService {
         List<String> enCustom = new ArrayList<>();
         List<String> cnCustom = new ArrayList<>();
         Map<String, String> attsName = new HashMap<>();
-        cmsBtCustomPropModel.getEntitys().stream().filter(entity -> entity.getChecked() != null && entity.getChecked()).forEach(entity -> {
+        cmsBtCustomPropModel.getEntitys().stream().filter(entity -> entity.getChecked() != null && entity.getChecked() && !StringUtil.isEmpty((String) product.getFeed().getCnAtts().get(entity.getNameEn()))).forEach(entity -> {
             enCustom.add(entity.getNameEn());
             cnCustom.add(StringUtil.isEmpty(entity.getNameCn()) ? entity.getNameEn() : entity.getNameCn());
         });
