@@ -1007,7 +1007,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             }
             String tmpProductType = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getProductTypeCn();
             if (StringUtils.isEmpty(tmpProductType)) {
-                tmpProductType = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getProductTypeCn();
+                tmpProductType = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getProductType();
             }
             jdProductBean.setTitle(tmpBrand + " " + tmpSizeType + " " + tmpProductType);
 
