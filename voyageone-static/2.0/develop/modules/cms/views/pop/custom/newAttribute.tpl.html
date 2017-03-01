@@ -10,7 +10,7 @@
                 <label class="col-sm-3 control-label vo_reqfield">属性名（EN）</label>
                 <div class="col-sm-6">
                     <input id="attributeEn" name="attributeEn" class="form-control" ng-model="ctrl.vm.prop_original"
-                           ng-disabled="ctrl.vm.type == 'edit'" required/>
+                           ng-disabled="ctrl.vm.prop_original" required/>
                 </div>
                 <!--<label class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>-->
             </div>
@@ -28,25 +28,25 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">属性值&emsp;</label>
                 <div class="col-sm-6">
-                    <div class="row" ng-if="ctrl.vm.type != 'add'">
+                    <div class="row" ng-if="ctrl.vm.type != 4">
                         <div class="col-md-1">
                             <input type="radio" name="attrType" ng-model="ctrl.vm.attrType" value="1"
-                                   ng-click="ctrl.changeType()" ng-disabled="ctrl.vm.type == 'edit'">
+                                   ng-click="ctrl.changeType()">
                         </div>
                         <div class="col-md-11">
                             <label>自动翻译/属性值共通翻译（运营统筹）（内容大于100字，不翻译）</label>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" ng-if="ctrl.vm.type == 4">
                         <div class="col-md-1">
                             <input type="radio" name="attrType" ng-model="ctrl.vm.attrType" value="2"
-                                   ng-click="ctrl.changeType()" ng-disabled="ctrl.vm.type == 'edit'">
+                                   ng-click="ctrl.changeType()">
                         </div>
                         <div class="col-md-11">
                             <label>匹配Master详情内属性</label>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row"  ng-if="ctrl.vm.type == 4">
                         <div class="col-md-11 col-md-offset-1">
                             <select class="form-control" name="prop_value" ng-model="ctrl.vm.prop_master_value" ng-disabled="ctrl.vm.attrType != 2"
                                     ng-options="field.id as field.name for field in ctrl.masterFields" chosen
@@ -54,14 +54,14 @@
                             </select>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row"  ng-if="ctrl.vm.type == 4">
                         <div class="col-md-1">
                             <input type="radio" name="attrType" ng-model="ctrl.vm.attrType" value="3"
-                                   ng-click="ctrl.changeType()" ng-disabled="ctrl.vm.type == 'edit'">
+                                   ng-click="ctrl.changeType()">
                         </div>
                         <div class="col-md-5"><label>固定值</label></div>
                     </div>
-                    <div class="row">
+                    <div class="row"  ng-if="ctrl.vm.type == 4">
                         <div class="col-md-11 col-md-offset-1">
                             <textarea class="form-control no-resize" rows="5" ng-model="ctrl.vm.prop_fix_value" ng-disabled="ctrl.vm.attrType != 3"
                                       ng-required="!ctrl.vm.prop_master_value && !ctrl.vm.prop_fix_value"></textarea>
@@ -69,7 +69,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group" ng-if="ctrl.vm.type != 'edit'">
+            <div class="form-group" ng-if="ctrl.vm.type == 4">
                 <div class="col-sm-6 col-sm-offset-3">
                     <vo-message target="customAttributeForm.prop_value"></vo-message>
                 </div>
@@ -79,7 +79,7 @@
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
         <button class="btn btn-vo" ng-click="ctrl.ok()"
-                ng-disabled="customAttributeForm.$invalid && ctrl.vm.type != 'edit'">
+                ng-disabled="customAttributeForm.$invalid">
             <i class="glyphicon glyphicon-floppy-disk"></i> 保存
         </button>
     </div>

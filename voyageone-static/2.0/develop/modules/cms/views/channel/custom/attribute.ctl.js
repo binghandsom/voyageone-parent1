@@ -8,7 +8,7 @@ define([
 
     cms.controller('attributeController', (function () {
 
-        function CustomAttributeCtl($routeParams, $localStorage, popups, systemCategoryService, attributeService2, notify, confirm) {
+        function CustomAttributeCtl($routeParams, $localStorage, popups, systemCategoryService, attributeService2, notify, confirm, $location, cRoutes) {
             this.$routeParams = $routeParams;
             this.popups = popups;
             this.systemCategoryService = systemCategoryService;
@@ -16,28 +16,30 @@ define([
             this.channelInfo = angular.copy($localStorage.user);
             this.notify = notify;
             this.confirm = confirm;
+            this.$location = $location;
+            this.cRoutes = cRoutes;
             this.vm = {
                 catPath: $routeParams.catPath || $routeParams.catPath == 0 ? '' : $routeParams.catPath
             };
         }
 
         CustomAttributeCtl.prototype.TYPE = {
-            1: '自动翻译',
-            2: '匹配Master详情内属性',
-            3: '固定值'
-        };
-
-        CustomAttributeCtl.prototype.ATTRIBUTETYPE = {
             1: '共通属性',
             2: '主类目属性',
             3: '供货商属性',
             4: '自定义属性'
         };
 
+        CustomAttributeCtl.prototype.ATTRIBUTETYPE = {
+            1: '自动翻译',
+            2: '匹配Master详情内属性',
+            3: '固定值'
+        };
+
         CustomAttributeCtl.prototype.init = function () {
             var self = this;
 
-            self.attributeService2.init().then(function(res){
+            self.attributeService2.init().then(function (res) {
                 self.channelList = res.data.channelList;
                 self.commonFields = res.data.commonFields;
             });
@@ -99,10 +101,9 @@ define([
                 catPath = self.vm.catPath;
 
             popups.openAddAttribute({
-                type: 'add',
                 orgChannelId: channelInfo.channel,
                 cat: catPath,
-                commonFields:self.commonFields
+                commonFields: self.commonFields
             }).then(function () {
                 self.search();
             });
@@ -117,11 +118,10 @@ define([
                 catPath = self.vm.catPath;
 
             popups.openAddAttribute({
-                type: 'edit',
                 entity: entity,
                 orgChannelId: channelInfo.channel,
                 cat: catPath,
-                commonFields:self.commonFields
+                commonFields: self.commonFields
             }).then(function () {
                 self.search();
             });
@@ -221,6 +221,11 @@ define([
                 self.notify.success('排序完毕！');
                 self.search();
             });
+        };
+
+        CustomAttributeCtl.prototype.linkValue = function () {
+            var self = this;
+            self.$location.path(self.cRoutes.marketing_setting_common_custom_value_list.url + "0");
         };
 
         return CustomAttributeCtl;

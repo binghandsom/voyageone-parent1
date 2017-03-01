@@ -9,12 +9,13 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    function AttrEntity(nameEn, nameCn, type, value) {
+    function AttrEntity(nameEn, nameCn, attributeType, value) {
         if (!arguments || arguments.length < 4)
             throw new Error('没有填写正确参数！');
         this.nameEn = nameEn;
         this.nameCn = nameCn;
-        this.type = type;
+        this.type = 4;
+        this.attributeType = attributeType;
         this.value = value;
     }
 
@@ -29,7 +30,7 @@ define([
                 prop_original: "",
                 prop_translation: "",
                 attrType: '',
-                type: context.type
+                type: 4
             };
         }
 
@@ -39,8 +40,9 @@ define([
             if (context.entity) {
                 self.vm.prop_original = context.entity.nameEn;
                 self.vm.prop_translation = context.entity.nameCn;
-                self.vm.attrType = context.entity.type;
-                //  self.vm.prop_translation = context.entity.
+                self.vm.attrType = context.entity.attributeType;
+                self.vm.type = context.entity.type;
+
                 if (context.entity.type == 2)
                     self.vm.prop_master_value = context.entity.value;
                 else
@@ -65,8 +67,19 @@ define([
          */
         AttributeValueCtl.prototype.ok = function () {
             var self = this, entity,
-                vm = self.vm,
-                attrValue = vm.attrType == 2 ? vm.prop_master_value : vm.prop_fix_value;
+                vm = self.vm, attrValue;
+
+            switch (Number(vm.attrType)) {
+                case 1:
+                    attrValue = '';
+                    break;
+                case 2:
+                    attrValue = vm.prop_master_value;
+                    break;
+                case 3:
+                    attrValue = vm.prop_fix_value;
+                    break;
+            }
 
             if (vm.type === 'edit') {
                 entity = angular.copy(self.context.entity);
@@ -82,7 +95,7 @@ define([
                 entity: entity
             }).then(function () {
                 self.notify.success('添加成功！');
-                self.$modalInstance.dismiss();
+                self.$modalInstance.close();
             });
         };
 
