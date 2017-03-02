@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.product;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteResult;
@@ -20,7 +19,6 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
-import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -32,12 +30,12 @@ import com.voyageone.service.impl.cms.CmsBtCustomPropService;
 import com.voyageone.service.impl.cms.CmsMtEtkHsCodeService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.wms.InventoryCenterLogicService;
 import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
 import com.voyageone.service.model.cms.CmsMtEtkHsCodeModel;
-import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.apache.commons.collections.CollectionUtils;
@@ -74,16 +72,10 @@ public class ProductService extends BaseService {
     private ProductSkuService productSkuService;
 
     @Autowired
-    private CmsBtFeedInfoDao cmsBtFeedInfoDao;
-
-    @Autowired
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
 
     @Autowired
     private ImageTemplateService imageTemplateService;
-
-    @Autowired
-    private FeedCustomPropService customPropService;
 
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
@@ -96,15 +88,6 @@ public class ProductService extends BaseService {
 
     @Autowired
     private InventoryCenterLogicService inventoryCenterLogicService;
-
-    @Autowired
-    private ProductStatusHistoryService productStatusHistoryService;
-
-    @Autowired
-    private PriceService priceService;
-
-    @Autowired
-    private PlatformPriceService platformPriceService;
 
     @Autowired
     private CmsBtCustomPropService cmsBtCustomPropService;
