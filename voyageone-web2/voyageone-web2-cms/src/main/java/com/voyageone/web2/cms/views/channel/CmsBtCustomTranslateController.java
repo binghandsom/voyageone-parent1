@@ -1,16 +1,11 @@
 package com.voyageone.web2.cms.views.channel;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.impl.cms.CmsBtTranslateService;
 import com.voyageone.service.model.cms.mongo.CmsBtTranslateModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,8 +29,13 @@ public class CmsBtCustomTranslateController extends CmsController {
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_TRANSLATE.INIT)
     public AjaxResponse getFeedCustPropValueList(@RequestBody Map<String, Object> params) {
         Map<String, Object> ret = new HashMap();
-        ret.put("resultData",cmsBtTranslateService.select(getUser().getSelChannelId(), (Integer) params.get("type"),(String) params.get("propName"),(String) params.get("propValue"),(Integer) params.get("skip"),(Integer) params.get("limit")));
-        ret.put("total",cmsBtTranslateService.selectCnt(getUser().getSelChannelId(), (Integer) params.get("type"),(String) params.get("propName"),(String) params.get("propValue")));
+
+        //前端组建中预定义好的分页属性名curr、size
+        Integer skip = (Integer) params.get("curr"),
+                limit = (Integer) params.get("size");
+
+        ret.put("resultData", cmsBtTranslateService.select(getUser().getSelChannelId(), (Integer) params.get("type"), (String) params.get("propName"), (String) params.get("propValue"), skip, limit));
+        ret.put("total", cmsBtTranslateService.selectCnt(getUser().getSelChannelId(), (Integer) params.get("type"), (String) params.get("propName"), (String) params.get("propValue")));
         return success(ret);
     }
 

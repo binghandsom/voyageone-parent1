@@ -8,7 +8,7 @@ define([
 
     cms.controller('attributeController', (function () {
 
-        function CustomAttributeCtl($routeParams, $localStorage, popups, notify,alert, confirm, $location, cRoutes,
+        function CustomAttributeCtl($routeParams, $localStorage, popups, notify, alert, confirm, $location, cRoutes,
                                     systemCategoryService, attributeService2) {
             this.$routeParams = $routeParams;
             this.popups = popups;
@@ -103,6 +103,7 @@ define([
                 catPath = self.vm.catPath;
 
             popups.openAddAttribute({
+                nameEnArr: _.pluck(self.attributes, 'nameEn'),
                 orgChannelId: channelInfo.channel,
                 cat: catPath,
                 commonFields: self.commonFields
@@ -156,7 +157,7 @@ define([
                 channelInfo = self.channelInfo,
                 catPath = self.vm.catPath;
 
-            if(!entity.nameCn){
+            if (!entity.nameCn) {
                 self.alert('该属性没有中文名称，请编辑中文属性！');
                 entity.checked = !entity.checked;
                 return;
@@ -234,9 +235,10 @@ define([
         CustomAttributeCtl.prototype.linkValue = function (entity) {
             var self = this;
 
-            sessionStorage.setItem(entity.nameEn,angular.toJson({
-                catPath:self.vm.catPath,
-                entity:entity
+            sessionStorage.setItem(entity.nameEn, angular.toJson({
+                catPath: self.vm.catPath,
+                entity: entity,
+                nameEnArr: _.pluck(self.attributes, 'nameEn')
             }));
 
             self.$location.path(self.cRoutes.marketing_setting_common_custom_translate_list.url + entity.nameEn);

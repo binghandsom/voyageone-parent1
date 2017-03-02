@@ -21,11 +21,12 @@ define([
 
     cms.controller('popAddAttributeValueCtl', (function () {
 
-        function AttributeValueCtl($modalInstance, context, attributeService2, notify) {
+        function AttributeValueCtl($modalInstance, context, attributeService2, notify, alert) {
             this.$modalInstance = $modalInstance;
             this.context = context;
             this.attributeService2 = attributeService2;
             this.notify = notify;
+            this.alert = alert;
             this.vm = {
                 prop_original: "",
                 prop_translation: "",
@@ -86,6 +87,15 @@ define([
                 entity.nameCn = vm.prop_translation;
                 entity.value = attrValue;
             } else {
+                var repeat = _.some(self.context.nameEnArr, function (item) {
+                    return item === vm.prop_original
+                });
+
+                if (repeat) {
+                    self.alert('属性名重复！请重新编辑！');
+                    return;
+                }
+
                 entity = new AttrEntity(vm.prop_original, vm.prop_translation, Number(vm.attrType), attrValue)
             }
 
