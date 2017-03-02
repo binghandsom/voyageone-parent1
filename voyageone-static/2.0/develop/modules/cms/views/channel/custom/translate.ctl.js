@@ -88,17 +88,21 @@ define([
 
             if (!_preValue || _preValue == '') {
                 self.confirm('属性中文值为空，是否还要保存').then(function () {
-
-                    self.attrTranslateService.update(entity).then(function (res) {
-                        console.log(res);
-                        self.notify.success('更新成功！');
-                    });
-
+                    self.callSave(entity);
                 }, function () {
                     self.search();
                 });
+            }else{
+                self.callSave(entity);
             }
 
+        };
+
+        TranslateCtl.prototype.callSave = function(upEntity){
+            var self = this;
+            self.attrTranslateService.update(upEntity).then(function (res) {
+                self.notify.success('更新成功！');
+            });
         };
 
         return TranslateCtl;
