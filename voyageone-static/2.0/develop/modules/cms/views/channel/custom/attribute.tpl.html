@@ -21,7 +21,7 @@
                     <input type="text" class="form-control" ng-model="ctrl.channelInfo.channelName" readonly>
                 </div>
                 <div class="col-md-3" ng-if="ctrl.channelList">
-                    <select class="form-control" ng-model="ctrl.channelInfo.channel"
+                    <select class="form-control" ng-model="ctrl.channelInfo.channel" ng-change="ctrl.changeChannel()"
                             ng-options="channel.order_channel_id as channel.full_name for channel in ctrl.channelList"
                             chosen></select>
                 </div>

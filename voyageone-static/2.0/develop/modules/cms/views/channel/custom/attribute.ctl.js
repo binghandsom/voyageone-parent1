@@ -60,6 +60,10 @@ define([
                 channelInfo = self.channelInfo,
                 catPath = self.vm.catPath;
 
+            //liking旗舰店
+            if(channelInfo.channel == 928)
+                channelInfo.channel = '';
+
             self.attributeService2.search({
                 orgChannelId: channelInfo.channel,
                 cat: catPath
@@ -242,6 +246,12 @@ define([
             }));
 
             self.$location.path(self.cRoutes.marketing_setting_common_custom_translate_list.url + entity.nameEn);
+        };
+
+        CustomAttributeCtl.prototype.changeChannel = function(){
+            var self = this;
+
+            self.search();
         };
 
         return CustomAttributeCtl;

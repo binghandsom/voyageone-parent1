@@ -85,6 +85,7 @@ define([
             if (self.context.entity) {
                 entity = angular.copy(self.context.entity);
                 entity.nameCn = vm.prop_translation;
+                entity.attributeType = Number(vm.attrType);
                 entity.value = attrValue;
             } else {
                 var repeat = _.some(self.context.nameEnArr, function (item) {

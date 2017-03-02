@@ -12,7 +12,8 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">属性种类</label>
                                     <div class="col-sm-6">
-                                        <select class="form-control" ng-model = "ctrl.searchInfo.type" width="'100%'" chosen
+                                        <select class="form-control" ng-model="ctrl.searchInfo.type" width="'100%'"
+                                                chosen
                                                 ng-options="_option.value as _option.name for _option in ctrl.typeOption">
                                         </select>
                                     </div>
@@ -38,8 +39,12 @@
                         </div>
                         <div class="col-sm-12 text-center m-b-sm">
                             <div class="form-inline">
-                                <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
-                                <button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+                                <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'
+                                    | translate}}
+                                </button>
+                                <button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH'
+                                    | translate}}
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -47,15 +52,26 @@
             </div>
         </div>
     </div>
-    <div class="custom_ts" style="background:#fff">
-        <div class="pull-right m-t-xs m-r-xs" ng-controller="popupCtrl">
-            <button type="submit" class="btn btn-info btn-pop" ng-click="ctrl.openAddAttributeValue()"><i class="glyphicon glyphicon-plus"></i>&nbsp;新增</button>
+    <div class="alert alert-info" style="background: #fff;border-color: #e67e22;">
+        <div class="row">
+            <div class="col-md-3">
+                <label class="label label-primary">当前类目：</label>&emsp;
+                {{ctrl.datasource.catPath == '' ? '全类目' : ctrl.datasource.catPath}}
+            </div>
         </div>
     </div>
-    <div class="box">
-        <tabset class="tab-container vo_nav-tabs">
-            <tab>
-                <tab-heading>&nbsp;Customize Property</tab-heading>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.openAddAttributeValue()"><i class="glyphicon glyphicon-plus"></i>&nbsp;新增 </button>
+                </div>
+            </div>
+
+        </div>
+        <div class="panel-body">
+            <div class="box">
                 <div class="table-responsive">
                     <table class="table table-hover-new table-hover">
                         <thead>
@@ -78,7 +94,8 @@
                                 <input class="form-control" ng-model="element.valueCn"/>
                             </td>
                             <td class="text-center">
-                                <button title="保存" ng-click="ctrl.save(element)" class="btn btn-success btn-pop"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                                <button title="保存" ng-click="ctrl.save(element)" class="btn btn-success btn-pop"><i
+                                        class="glyphicon glyphicon-floppy-disk"></i></button>
                             </td>
                         </tr>
                         </tbody>
@@ -87,7 +104,8 @@
                         <vpagination config="ctrl.paging"></vpagination>
                     </div>
                 </div>
-            </tab>
-        </tabset>
+            </div>
+        </div>
     </div>
+
 </div>
