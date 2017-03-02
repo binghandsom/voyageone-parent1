@@ -245,7 +245,7 @@ public class PlatformPriceService extends VOAbsLoggable {
      * @param modifier
      * @param priceIsDown
      */
-    public void publishPlatFormPrice(String channelId, Integer chg, CmsBtProductModel cmsProduct, Integer cartId, String modifier, Boolean priceIsDown, Boolean isSmSx){
+    public void publishPlatFormPrice(String channelId, Integer chg, CmsBtProductModel cmsProduct, Integer cartId, String modifier, boolean priceIsDown, boolean isSmSx){
 
         // 如果存在销售的sku变化,则通过上新来处理
         if((chg & 1) == 1

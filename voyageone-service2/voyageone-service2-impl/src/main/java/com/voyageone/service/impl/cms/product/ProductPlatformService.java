@@ -62,45 +62,128 @@ public class ProductPlatformService extends BaseService {
     @Autowired
     private ProductService productService;
 
-
     /**
-     * updateProductPlatform
+     * 更新平台产品信息,并且不做上新也不触发价格变更
      * @param channelId
      * @param prodId
      * @param platformModel
      * @param modifier
-     * @return
-     */
-    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier) {
-        return updateProductPlatform(channelId, prodId, platformModel, modifier, false);
-    }
-
-    /**
-     * updateProductPlatform
-     * @param channelId
-     * @param prodId
-     * @param platformModel
-     * @param modifier
+     * @param Comment
      * @param isModifiedChk
      * @return
      */
-    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk) {
-        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.WebEdit, "页面编辑", true);
+    public String updateProductPlatformNoSx(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, String Comment, boolean isModifiedChk) {
+        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.WebEdit, Comment, false, 3);
     }
 
     /**
-     * updateProductPlatform
+     * 更新平台产品信息,并且智能上新
      * @param channelId
      * @param prodId
      * @param platformModel
      * @param modifier
+     * @param Comment
      * @param isModifiedChk
-     * @param blnSmartSx
      * @return
      */
-    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk, boolean blnSmartSx) {
-        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.WebEdit, "页面编辑", blnSmartSx);
+    public String updateProductPlatformWithSmartSx(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, String Comment, boolean isModifiedChk) {
+        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.WebEdit, Comment, true, 1);
     }
+
+    /**
+     * 更新平台产品信息,并且强制上新
+     * @param channelId
+     * @param prodId
+     * @param platformModel
+     * @param modifier
+     * @param Comment
+     * @param isModifiedChk
+     * @return
+     */
+    public String updateProductPlatformWithSx(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, String Comment, boolean isModifiedChk) {
+        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.WebEdit, Comment, false, 1);
+    }
+
+    /**
+     * 更新平台产品信息,更新是正常上新,还是走价格更新
+     * @param channelId
+     * @param prodId
+     * @param platformModel
+     * @param modifier
+     * @param Comment
+     * @param isModifiedChk
+     * @return
+     */
+    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, String Comment, boolean isModifiedChk) {
+        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.WebEdit, Comment, false, 2);
+    }
+
+//
+//    /**
+//     * 单纯更新平台属性内容,不触发任何上新和价格刷新
+//     * @param channelId
+//     * @param prodId
+//     * @param platformModel
+//     * @param modifier
+//     * @return
+//     */
+//    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, String Comment) {
+//        return updateProductPlatform(channelId, prodId, platformModel, modifier, false, EnumProductOperationType.BatchSetPlatformAttr, Comment, false, false);
+//    }
+//
+//    /**
+//     * 不做变更check,根据isSx来决定是否强制上新
+//     * @param channelId
+//     * @param prodId
+//     * @param platformModel
+//     * @param modifier
+//     * @return
+//     */
+//    public String updateProductPlatformNoCheck(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, boolean isSx) {
+//        return updateProductPlatform(channelId, prodId, platformModel, modifier, false, EnumProductOperationType.WebEdit, "页面编辑", false, isSx);
+//    }
+//
+//    /**
+//     * 产品编辑页面属性发生变更,调用approve
+//     * @param channelId
+//     * @param prodId
+//     * @param platformModel
+//     * @param modifier
+//     * @param isModifiedChk
+//     * @return
+//     */
+//    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk) {
+//        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.WebEdit, "页面编辑", true, true);
+//    }
+//
+//    /**
+//     * updateProductPlatform
+//     * @param channelId
+//     * @param prodId
+//     * @param platformModel
+//     * @param modifier
+//     * @param isModifiedChk
+//     * @param blnSmartSx
+//     * @return
+//     */
+//    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk, boolean blnSmartSx) {
+//        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.WebEdit, "页面编辑", blnSmartSx, true);
+//    }
+//
+//    /**
+//     *
+//     * @param channelId
+//     * @param prodId
+//     * @param platformModel
+//     * @param modifier
+//     * @param isModifiedChk
+//     * @param blnSmartSx
+//     * @return
+//     */
+//    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel
+//            , String modifier, Boolean isModifiedChk, EnumProductOperationType opeType, String comment, boolean blnSmartSx, Integer isSx) {
+//        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, opeType, comment, blnSmartSx, isSx);
+//    }
 
     /**
      * updateProductPlatform
@@ -114,7 +197,9 @@ public class ProductPlatformService extends BaseService {
      * @param blnSmartSx
      * @return
      */
-    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk, EnumProductOperationType opeType, String comment, boolean blnSmartSx) {
+    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel
+            , String modifier, Boolean isModifiedChk, EnumProductOperationType opeType, String comment
+            , boolean blnSmartSx, Integer isSx) {
         CmsBtProductModel oldProduct = productService.getProductById(channelId, prodId);
 
         // 判断是否执行修改check
@@ -159,11 +244,13 @@ public class ProductPlatformService extends BaseService {
         model.setQueryMap(queryMap);
         bulkList.add(model);
 
-        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
+//        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
 
         // 更新平台价格(因为批量修改价格,不存在修改sku的isSale的情况,默认调用API刷新价格)
         CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
-        platformPriceService.publishPlatFormPrice(channelId, 2, newProduct, platformModel.getCartId(), modifier, true, blnSmartSx);
+        // (isSx : 1: 强制上新, 2: 调用价格上新,如果未上新成功的,调用上新, 3: 不上新也不修改价格)
+        platformPriceService.publishPlatFormPrice(channelId, isSx, newProduct, platformModel.getCartId(), modifier, true, blnSmartSx);
+
 
         List<String> skus = new ArrayList<>();
         platformModel.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));

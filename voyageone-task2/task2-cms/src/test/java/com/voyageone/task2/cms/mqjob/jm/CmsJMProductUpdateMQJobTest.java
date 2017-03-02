@@ -12,7 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:context-cms-test.xml")
+@ContextConfiguration("classpath:voyageone-config.xml")
 public class CmsJMProductUpdateMQJobTest {
 
     @Autowired
@@ -23,7 +23,7 @@ public class CmsJMProductUpdateMQJobTest {
 
         // {\"cmsBtJmPromotionId\":1060,\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"edward\"}
         JMProductUpdateMQMessageBody messageBody = new JMProductUpdateMQMessageBody();
-        messageBody.setCmsBtJmPromotionId(1060);
+        messageBody.setCmsBtJmPromotionId(1308);
         messageBody.setConsumerRetryTimes(0);
         messageBody.setMqId(0);
         messageBody.setDelaySecond(0);

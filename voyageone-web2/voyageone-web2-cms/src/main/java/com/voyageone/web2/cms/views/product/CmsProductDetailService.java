@@ -872,7 +872,7 @@ public class CmsProductDetailService extends BaseViewService {
                 if (temp != null && temp.size() > 0 && !StringUtil.isEmpty(temp.get(0).getCatId())) {
                     platform.setpCatId(temp.get(0).getCatId());
                     platform.setpCatPath(temp.get(0).getCatPath());
-                    productPlatformService.updateProductPlatform(oldProduct.getChannelId(), oldProduct.getProdId(), platform, modifier);
+                    productPlatformService.updateProductPlatformWithSx(oldProduct.getChannelId(), oldProduct.getProdId(), platform, modifier, "变更主类目-关联平台类目变更", false);
                 }
             }
         });
@@ -1412,14 +1412,14 @@ public class CmsProductDetailService extends BaseViewService {
         cmsBtProductGroup.setMainProductCode(parameter.getProductCode());//把group表中的mainProduct替换成productCode
         cmsBtProductGroup.setModifier(modifier);
         cmsBtProductGroup.setModified(DateTimeUtil.getNowTimeStamp());
-        productPlatformService.updateProductPlatform(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
-        productPlatformService.updateProductPlatform(parameter.getChannelId(), newCmsBtProductModel.getProdId(), newPlatForm, modifier);
+        productPlatformService.updateProductPlatformWithSx(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier, "切换主商品", false);
+        productPlatformService.updateProductPlatformWithSx(parameter.getChannelId(), newCmsBtProductModel.getProdId(), newPlatForm, modifier, "切换主商品", false);
 
         codes.forEach(code -> {
             CmsBtProductModel product = productService.getProductByCode(parameter.getChannelId(), code);
             CmsBtProductModel_Platform_Cart pform = product.getPlatform(parameter.getCartId());
             pform.setMainProductCode(parameter.getProductCode());
-            productPlatformService.updateProductPlatform(parameter.getChannelId(), product.getProdId(), pform, modifier);
+            productPlatformService.updateProductPlatformWithSx(parameter.getChannelId(), product.getProdId(), pform, modifier, "切换主商品", false);
             String comment = "主商品发生变化 主商品：" + parameter.getProductCode();
             productStatusHistoryService.insert(parameter.getChannelId(), product.getCommon().getFields().getCode(), pform.getStatus(), parameter.getCartId(), EnumProductOperationType.ChangeMastProduct, comment, modifier);
 
@@ -1464,8 +1464,7 @@ public class CmsProductDetailService extends BaseViewService {
         platForm.setpNumIId("");
         // platForm.setpStatus(CmsConstants.PlatformStatus.);
         platForm.remove("pStatus");
-        productPlatformService.updateProductPlatform(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
-        sxProductService.insertSxWorkLoad(parameter.getChannelId(), new ArrayList<String>(Arrays.asList(parameter.getProductCode())), parameter.getCartId(), modifier);
+        productPlatformService.updateProductPlatformWithSx(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier, "单品下线",false);
         String comment = parameter.getComment();
         productStatusHistoryService.insert(parameter.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), parameter.getCartId(), EnumProductOperationType.Delisting, comment, modifier);
 
@@ -1523,7 +1522,7 @@ public class CmsProductDetailService extends BaseViewService {
             platForm.setpProductId("");
             platForm.setpNumIId("");
             platForm.remove("pStatus");
-            productPlatformService.updateProductPlatform(paramr.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
+            productPlatformService.updateProductPlatformWithSx(paramr.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier, "group下线", false);
             String comment = paramr.getComment();
             productStatusHistoryService.insert(paramr.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), paramr.getCartId(), EnumProductOperationType.DelistinGroup, comment, modifier);
             ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(paramr.getChannelId(), paramr.getCartId(), code);
