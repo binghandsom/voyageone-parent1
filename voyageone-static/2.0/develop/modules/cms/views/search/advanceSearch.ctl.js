@@ -1,11 +1,12 @@
 define([
     'underscore',
+    'modules/cms/enums/Carts',
     'modules/cms/controller/popup.ctl',
     'modules/cms/directives/keyValue.directive',
     'modules/cms/service/search.advance2.service',
     'modules/cms/service/product.detail.service',
     './advance.search.append.ctl'
-], function (_) {
+], function (_,carts) {
 
     function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions, popups, $q, shelvesService) {
 
@@ -292,10 +293,36 @@ define([
                     $scope.$feedActive = false;
 
                 $scope.vm.fstShowGrpFlg = true;
+
+                contructQty($scope.vm.productList,$scope.vm.codeMap);
+
                 // 计算表格宽度
                 $scope.vm.tblWidth = ($scope.vm.commonProps.length * 170 + $scope.vm.sumCustomProps.length * 100 + $scope.vm.selSalesType.length * 150 + $scope.vm.selBiDataList.length * 150 + 400) + 'px';
                 $scope.vm.tblWidth2 = ($scope.vm.commonProps.length * 170 + $scope.vm.sumCustomProps.length * 100 + $scope.vm.selSalesType.length * 150 + $scope.vm.selBiDataList.length * 180 + 960) + 'px';
             })
+        }
+
+        function contructQty(productList,codeMap){
+            _.map(productList,function(element){
+                element.saleQty = (function(){
+                    var qtyArr = codeMap[element.common.fields.code],
+                        _cartId = $scope.vm.searchInfo.cartId,
+                        result1 = [],result2 = [];
+
+                    _.each(qtyArr,function(value,key){
+
+                        if(_cartId && key == carts.valueOf($scope.vm.searchInfo.cartId).name)
+                            result1.push(key + ":" + value);
+
+                        result2.push(key + ":" + value);
+                    });
+
+                    if(_cartId)
+                        return result1.concat(result2);
+                    else
+                        return result2;
+                })();
+            });
         }
 
         /**
@@ -391,6 +418,7 @@ define([
                         var prodObj = $scope.vm.productList[idx];
                         prodObj._freeTagsInfo = res.data.freeTagsList[idx];
                     }
+                    contructQty($scope.vm.productList,$scope.vm.codeMap);
                 });
         }
 
