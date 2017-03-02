@@ -668,7 +668,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             failCause.setLength(0);
             String result = tbProductService.updateProduct(Long.parseLong(platformProductId), xmlData, shopBean, failCause);
             if (StringUtils.isEmpty(result)) {
-                sxData.setErrorMessage(failCause.toString());
+                sxData.setErrorMessage("请登录后台检查产品信息：https://product.tmall.com/product/spu_detail.htm?spu_id=" + platformProductId + "， 错误信息是：" + failCause.toString());
                 throw new BusinessException(failCause.toString());
             }
         } catch (TopSchemaException | ApiException e) {

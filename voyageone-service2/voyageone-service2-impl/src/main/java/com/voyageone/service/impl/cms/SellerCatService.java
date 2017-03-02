@@ -141,43 +141,6 @@ public class SellerCatService extends BaseService {
     }
 
     /**
-     * clone 一个CmsBtSellerCatModel对象
-     */
-    private CmsBtSellerCatModel copyCmsBtSellerCatModel(CmsBtSellerCatModel node) {
-        CmsBtSellerCatModel copyRoot = new CmsBtSellerCatModel();
-        copyRoot.setCatId(node.getCatId());
-        copyRoot.setCatName(node.getCatName());
-        copyRoot.setUrlKey(node.getUrlKey());
-        copyRoot.setParentCatId(node.getParentCatId());
-        copyRoot.setIsParent(node.getIsParent());
-        copyRoot.setChannelId(node.getChannelId());
-        copyRoot.setCartId(node.getCartId());
-        copyRoot.setCreated(node.getCreated());
-        copyRoot.setModified(node.getModified());
-        copyRoot.setCreater(node.getCreater());
-        copyRoot.setModifier(node.getModifier());
-        copyRoot.setFullCatId(node.getFullCatId());
-        copyRoot.setCatPath(node.getCatPath());
-        copyRoot.setChildren(new ArrayList<>());
-        return copyRoot;
-    }
-
-    /**
-     * 找出所有孩子节点
-     */
-    private List<CmsBtSellerCatModel> findAllChildren(CmsBtSellerCatModel root) {
-        List<CmsBtSellerCatModel> result = new ArrayList<>();
-
-        for (CmsBtSellerCatModel model : root.getChildren()) {
-
-            CmsBtSellerCatModel cmsBtSellerCatModel = copyCmsBtSellerCatModel(model);
-            result.add(cmsBtSellerCatModel);
-            result.addAll(findAllChildren(model));
-        }
-        return result;
-    }
-
-    /**
      * 保存整组分类树
      */
     public void save(List<CmsBtSellerCatModel> allCats) {
@@ -216,12 +179,18 @@ public class SellerCatService extends BaseService {
             cId = jdShopService.addShopCategory(shopBean, cName, parentCId);
         } else if (isTMPlatform(shopCartId)) {
             cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
-        } else if (shopCartId.equals(CartEnums.Cart.LCN.getId()) || shopCartId.equals(CartEnums.Cart.CN.getId())) {
+        }
+        // Liking店独立官网创建店铺内分类
+        else if (shopCartId.equals(CartEnums.Cart.LCN.getId())) {
             ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
             int size = getBrotherSize(sellerCats, parentCId); // 2016-12-07 新增节点时默认设置index为当前层级节点的最后一位
             Map<String, String> resultMap = cnSellerCatService.addSellerCat(channelId, parentCId, cName, urlKey, shopBean, size + 1);
             cId = resultMap.get("catId");
             urlKey = resultMap.get("urlKey"); // 如果url传入为空，新增时向官网新增时生成urlKey，所以此处再次取值
+        }
+        // sneakerhead旗舰店创建店铺内分类
+        else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+            cId = cnCategoryService.addSnSellerCat(channelId, parentCId, cName, shopBean);
         }
         if (!StringUtils.isNullOrBlank2(cId)) {
             // 2016-12-08 传入参数新增urlKey
@@ -254,7 +223,7 @@ public class SellerCatService extends BaseService {
         } else if (isTMPlatform(shopCartId)) {
             tbSellerCatService.updateSellerCat(shopBean, cId, cName);
         /*}else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {*/
-        } else if (shopCartId.equals(CartEnums.Cart.LCN.getId()) || shopCartId.equals(CartEnums.Cart.CN.getId())) {
+        } else if (shopCartId.equals(CartEnums.Cart.LCN.getId())) {
             ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
             int index = this.indexOfCurrentCat(sellerCats, currentNode.getParentCatId(), cId);
             if (index == -1) {
@@ -262,6 +231,14 @@ public class SellerCatService extends BaseService {
             }
             currentNode.setCatName(cName);
             cnSellerCatService.updateSellerCat(currentNode, shopBean, index + 1);
+        } else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+            ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
+            int index = this.indexOfCurrentCat(sellerCats, currentNode.getParentCatId(), cId);
+            if (index == -1) {
+                throw new BusinessException("从树形目录中获取序号错误！");
+            }
+            currentNode.setCatName(cName);
+            cnCategoryService.updateSnSellerCat(currentNode, shopBean, index + 1);
         }
 
         List<CmsBtSellerCatModel> changedList = cmsBtSellerCatDao.update(channelId, cartId, cName, cId, modifier);
@@ -272,129 +249,6 @@ public class SellerCatService extends BaseService {
             //插入上新表
             insert2SxWorkload(channelId, cartId, modifier, list);
         }
-    }
-
-    /**
-     * 根据cId从属性目录中寻找当前节点
-     * @param nodes
-     * @param cId
-     * @return
-     */
-    private CmsBtSellerCatModel getCurrentNode(List<CmsBtSellerCatModel> nodes, String cId) {
-        if (CollectionUtils.isNotEmpty(nodes)) {
-            for (CmsBtSellerCatModel node:nodes) {
-                if (node.getCatId().equals(cId)) {
-                    return node;
-                }
-                CmsBtSellerCatModel tempNode = getCurrentNode(node.getChildren(), cId);
-                if (tempNode != null) {
-                    return tempNode;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 遍历属性结构，判断名称是否被占用
-     * @param sellercats
-     * @param cName
-     * @param parentCatId
-     * @param cId
-     * @return
-     */
-    private boolean isDuplicateNodeTree(List<CmsBtSellerCatModel> sellercats, String cName, String parentCatId, String cId) {
-        if (CollectionUtils.isNotEmpty(sellercats)) {
-            if (StringUtil.isEmpty(cId)) {
-                for (CmsBtSellerCatModel node:sellercats) {
-                    if (node.getParentCatId().equals(parentCatId) && node.getCatName().equals(cName)) {
-                        return true;
-                    }
-                    boolean tempResult = isDuplicateNodeTree(node.getChildren(), cName, parentCatId, cId);
-                    if (tempResult) {
-                        return tempResult;
-                    }
-                }
-            }else {
-                for (CmsBtSellerCatModel node:sellercats) {
-                    if (node.getParentCatId().equals(parentCatId) && node.getCatName().equals(cName) && !node.getCatId().equalsIgnoreCase(cId)) {
-                        return true;
-                    }
-                    boolean tempResult = isDuplicateNodeTree(node.getChildren(), cName, parentCatId, cId);
-                    if (tempResult) {
-                        return tempResult;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * 树形目录中判断某个节点在同级目录的序号
-     * @param sellerCats
-     * @param parentCid
-     * @param cId
-     * @return
-     */
-    private int indexOfCurrentCat (List<CmsBtSellerCatModel> sellerCats, String parentCid, String cId) {
-        int index = -1;
-        if (CollectionUtils.isNotEmpty(sellerCats)) {
-            for (CmsBtSellerCatModel node : sellerCats) {
-                index++;
-                if (node.getParentCatId().equalsIgnoreCase(parentCid) && node.getCatId().equalsIgnoreCase(cId)) {
-                    return index;
-                }
-                int temp = indexOfCurrentCat(node.getChildren(), node.getCatId(), cId);
-                if (temp != -1) {
-                    return temp;
-                }
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * 判断当前层级目录节点个数
-     * @param sellerCats
-     * @param cId
-     * @return
-     */
-    private int getBrotherSize(List<CmsBtSellerCatModel> sellerCats, String cId) {
-        if (CollectionUtils.isNotEmpty(sellerCats)) {
-            for (CmsBtSellerCatModel node:sellerCats) {
-                if (node.getParentCatId().equalsIgnoreCase(cId)) {
-                    return sellerCats.size();
-                }
-                int tempSize = getBrotherSize(node.getChildren(), cId);
-                if (tempSize != 0) {
-                    return tempSize;
-                }
-            }
-        }
-        return 0;
-    }
-
-    /**
-     * 判断urlKey是否在属性目录中存在
-     * @param sellerCats
-     * @param urlKey
-     * @return
-     */
-    private boolean isDuplicateUrlKey (List<CmsBtSellerCatModel> sellerCats, String urlKey) {
-        if (CollectionUtils.isEmpty(sellerCats) || org.apache.commons.lang.StringUtils.isBlank(urlKey)) {
-            return false;
-        }
-        for (CmsBtSellerCatModel node:sellerCats) {
-            if (urlKey.equalsIgnoreCase(node.getUrlKey())) {
-                return true;
-            }
-            boolean temp = isDuplicateUrlKey(node.getChildren(), urlKey);
-            if (temp) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -416,10 +270,14 @@ public class SellerCatService extends BaseService {
                 }
             }
 //        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
-        }else if (shopCartId.equals(CartEnums.Cart.LCN.getId()) || shopCartId.equals(CartEnums.Cart.CN.getId())) {
+        }else if (shopCartId.equals(CartEnums.Cart.LCN.getId())) {
             List<CmsBtSellerCatModel>  sellercats = getSellerCatsByChannelCart(channelId, cartId, false);
             CmsBtSellerCatModel currentNode = sellercats.stream().filter(w ->w.getCatId().equals(cId)).findFirst().get();
             cnSellerCatService.deleteSellerCat(currentNode,shopBean);
+        } else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+            List<CmsBtSellerCatModel>  sellercats = getSellerCatsByChannelCart(channelId, cartId, false);
+            CmsBtSellerCatModel currentNode = sellercats.stream().filter(w ->w.getCatId().equals(cId)).findFirst().get();
+            cnCategoryService.deleteSnSellerCat(currentNode,shopBean);
         }
 
 
@@ -431,36 +289,6 @@ public class SellerCatService extends BaseService {
             insert2SxWorkload(channelId, cartId, modifier, list);
             // 商品目录删除，新增履历 add by rex.wu 2016-12-06
             insertProductStatusHistory(channelId, cartId, modifier, list);
-        }
-    }
-
-    /**
-     * 商品所属分类被删除，插入履历
-     * @param channelId
-     * @param cartId
-     * @param modifier
-     * @param list
-     */
-    private void insertProductStatusHistory(String channelId, int cartId, String modifier, List<CmsBtProductModel> list) {
-        /*insertList(String channelId, List<String> codes, int cartId, EnumProductOperationType operationType, String comment, String modifier)*/
-        List<String> codes = new ArrayList<String>();
-        if (CollectionUtils.isNotEmpty(list)) {
-            list.forEach(productModel -> {
-                codes.add(productModel.getCommonNotNull().getFieldsNotNull().getCode());
-            });
-            productStatusHistoryService.insertList(channelId, codes, cartId, EnumProductOperationType.CotegoryDeleted, "商品分类被删除", modifier);
-        }
-    }
-
-
-    /**
-     * 插入上新表
-     */
-    private void insert2SxWorkload(String channelId, int cartId, String modifier, List<CmsBtProductModel> list) {
-        if (list != null) {
-            for (CmsBtProductModel product : list) {
-                sxProductService.insertSxWorkLoad(channelId, product.getCommon().getFields().getCode(), cartId, modifier);
-            }
         }
     }
 
@@ -588,6 +416,129 @@ public class SellerCatService extends BaseService {
     }
 
     /**
+     * 判断是否是重复的节点，同一层的节点名不能重复
+     *
+     * @param sellerCats
+     * @param name
+     * @param parentCId
+     * @return
+     */
+    public boolean isDuplicateNode(List<CmsBtSellerCatModel> sellerCats, String name, String parentCId, String cId) {
+        if (sellerCats != null && sellerCats.size() > 0) {
+            if (sellerCats.stream().filter(w -> {
+                if (StringUtil.isEmpty(cId)) {
+                    return w.getParentCatId().equals(parentCId) && w.getCatName().equals(name);
+                } else {
+                    return w.getParentCatId().equals(parentCId) && w.getCatName().equals(name) && !w.getCatId().equalsIgnoreCase(cId);
+                }
+            }).count() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 保存整组分类树
+     *
+     * @param allCats
+     * @param channelId
+     * @param cartId
+     */
+    public void saveSortableCat(List<Map> allCats, String channelId, Integer cartId) {
+        //根据channelId和cartId去删除数据库对应的树
+        cmsBtSellerCatDao.deleteSortableCat(cartId, channelId);
+
+        List<CmsBtSellerCatModel> sellerCatList = new ArrayList<>();
+        //保存整组分类树
+        for (Map model : allCats) {
+            CmsBtSellerCatModel modelCat = new CmsBtSellerCatModel();
+            //将树转换成CmsBtSellerCatModel
+            BeanUtils.copyProperties(model, modelCat);
+            //将整组树插入数据库
+            cmsBtSellerCatDao.insert(modelCat);
+            sellerCatList.add(modelCat);
+        }
+        //重新设置店铺内分类的顺序
+        // doResetPlatformSellerCatIndex(channelId, cartId);
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
+        /*if (shopBean != null && CartEnums.Cart.LIKING.getId().equals(shopBean.getCart_id())) {*/
+        if (shopBean != null && (CartEnums.Cart.LCN.getId().equals(shopBean.getCart_id()))) {
+            cnSellerCatService.resetAllCatalog(sellerCatList, shopBean);
+//            cnCategoryService.uploadAllCnCategory(channelId, cartId, shopBean);
+        } else if (shopBean != null && (CartEnums.Cart.CN.getId().equals(shopBean.getCart_id()))) {
+            cnCategoryService.resetCnAllCatalog(channelId, cartId, shopBean);
+        }
+
+    }
+
+    /**
+     * 商品所属分类被删除，插入履历
+     * @param channelId
+     * @param cartId
+     * @param modifier
+     * @param list
+     */
+    private void insertProductStatusHistory(String channelId, int cartId, String modifier, List<CmsBtProductModel> list) {
+        /*insertList(String channelId, List<String> codes, int cartId, EnumProductOperationType operationType, String comment, String modifier)*/
+        List<String> codes = new ArrayList<String>();
+        if (CollectionUtils.isNotEmpty(list)) {
+            list.forEach(productModel -> {
+                codes.add(productModel.getCommonNotNull().getFieldsNotNull().getCode());
+            });
+            productStatusHistoryService.insertList(channelId, codes, cartId, EnumProductOperationType.CotegoryDeleted, "商品分类被删除", modifier);
+        }
+    }
+
+    /**
+     * clone 一个CmsBtSellerCatModel对象
+     */
+    private CmsBtSellerCatModel copyCmsBtSellerCatModel(CmsBtSellerCatModel node) {
+        CmsBtSellerCatModel copyRoot = new CmsBtSellerCatModel();
+        copyRoot.setCatId(node.getCatId());
+        copyRoot.setCatName(node.getCatName());
+        copyRoot.setUrlKey(node.getUrlKey());
+        copyRoot.setParentCatId(node.getParentCatId());
+        copyRoot.setIsParent(node.getIsParent());
+        copyRoot.setChannelId(node.getChannelId());
+        copyRoot.setCartId(node.getCartId());
+        copyRoot.setCreated(node.getCreated());
+        copyRoot.setModified(node.getModified());
+        copyRoot.setCreater(node.getCreater());
+        copyRoot.setModifier(node.getModifier());
+        copyRoot.setFullCatId(node.getFullCatId());
+        copyRoot.setCatPath(node.getCatPath());
+        copyRoot.setChildren(new ArrayList<>());
+        return copyRoot;
+    }
+
+    /**
+     * 找出所有孩子节点
+     */
+    private List<CmsBtSellerCatModel> findAllChildren(CmsBtSellerCatModel root) {
+        List<CmsBtSellerCatModel> result = new ArrayList<>();
+
+        for (CmsBtSellerCatModel model : root.getChildren()) {
+
+            CmsBtSellerCatModel cmsBtSellerCatModel = copyCmsBtSellerCatModel(model);
+            result.add(cmsBtSellerCatModel);
+            result.addAll(findAllChildren(model));
+        }
+        return result;
+    }
+
+    /**
+     * 插入上新表
+     */
+    private void insert2SxWorkload(String channelId, int cartId, String modifier, List<CmsBtProductModel> list) {
+        if (list != null) {
+            for (CmsBtProductModel product : list) {
+                sxProductService.insertSxWorkLoad(channelId, product.getCommon().getFields().getCode(), cartId, modifier);
+            }
+        }
+    }
+
+    /**
      * 重新设置店铺内分类的顺序（指定一个列表）
      *
      * @param shopBean
@@ -652,7 +603,6 @@ public class SellerCatService extends BaseService {
         return result;
     }
 
-
     /**
      * 将JD店铺自定义分类Model转换成CmsBtSellerCatModel
      */
@@ -679,7 +629,6 @@ public class SellerCatService extends BaseService {
 
         return result;
     }
-
 
     /**
      * 将店铺自定义分类列转成一组树
@@ -741,14 +690,12 @@ public class SellerCatService extends BaseService {
         return results;
     }
 
-
     /**
      * 是京东平台
      */
     private boolean isJDPlatform(ShopBean shopBean) {
         return PlatFormEnums.PlatForm.JD.getId().equals(shopBean.getPlatform_id());
     }
-
 
     /**
      * 是天猫平台
@@ -762,59 +709,126 @@ public class SellerCatService extends BaseService {
         return false;
     }
 
-
     /**
-     * 判断是否是重复的节点，同一层的节点名不能重复
-     *
-     * @param sellerCats
-     * @param name
-     * @param parentCId
+     * 根据cId从属性目录中寻找当前节点
+     * @param nodes
+     * @param cId
      * @return
      */
-    public boolean isDuplicateNode(List<CmsBtSellerCatModel> sellerCats, String name, String parentCId, String cId) {
-        if (sellerCats != null && sellerCats.size() > 0) {
-            if (sellerCats.stream().filter(w -> {
-                if (StringUtil.isEmpty(cId)) {
-                    return w.getParentCatId().equals(parentCId) && w.getCatName().equals(name);
-                } else {
-                    return w.getParentCatId().equals(parentCId) && w.getCatName().equals(name) && !w.getCatId().equalsIgnoreCase(cId);
+    private CmsBtSellerCatModel getCurrentNode(List<CmsBtSellerCatModel> nodes, String cId) {
+        if (CollectionUtils.isNotEmpty(nodes)) {
+            for (CmsBtSellerCatModel node:nodes) {
+                if (node.getCatId().equals(cId)) {
+                    return node;
                 }
-            }).count() > 0) {
-                return true;
+                CmsBtSellerCatModel tempNode = getCurrentNode(node.getChildren(), cId);
+                if (tempNode != null) {
+                    return tempNode;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 遍历属性结构，判断名称是否被占用
+     * @param sellercats
+     * @param cName
+     * @param parentCatId
+     * @param cId
+     * @return
+     */
+    private boolean isDuplicateNodeTree(List<CmsBtSellerCatModel> sellercats, String cName, String parentCatId, String cId) {
+        if (CollectionUtils.isNotEmpty(sellercats)) {
+            if (StringUtil.isEmpty(cId)) {
+                for (CmsBtSellerCatModel node:sellercats) {
+                    if (node.getParentCatId().equals(parentCatId) && node.getCatName().equals(cName)) {
+                        return true;
+                    }
+                    boolean tempResult = isDuplicateNodeTree(node.getChildren(), cName, parentCatId, cId);
+                    if (tempResult) {
+                        return tempResult;
+                    }
+                }
+            }else {
+                for (CmsBtSellerCatModel node:sellercats) {
+                    if (node.getParentCatId().equals(parentCatId) && node.getCatName().equals(cName) && !node.getCatId().equalsIgnoreCase(cId)) {
+                        return true;
+                    }
+                    boolean tempResult = isDuplicateNodeTree(node.getChildren(), cName, parentCatId, cId);
+                    if (tempResult) {
+                        return tempResult;
+                    }
+                }
             }
         }
         return false;
     }
 
     /**
-     * 保存整组分类树
-     *
-     * @param allCats
-     * @param channelId
-     * @param cartId
+     * 树形目录中判断某个节点在同级目录的序号
+     * @param sellerCats
+     * @param parentCid
+     * @param cId
+     * @return
      */
-    public void saveSortableCat(List<Map> allCats, String channelId, Integer cartId) {
-        //根据channelId和cartId去删除数据库对应的树
-        cmsBtSellerCatDao.deleteSortableCat(cartId, channelId);
-
-        List<CmsBtSellerCatModel> sellerCatList = new ArrayList<>();
-        //保存整组分类树
-        for (Map model : allCats) {
-            CmsBtSellerCatModel modelCat = new CmsBtSellerCatModel();
-            //将树转换成CmsBtSellerCatModel
-            BeanUtils.copyProperties(model, modelCat);
-            //将整组树插入数据库
-            cmsBtSellerCatDao.insert(modelCat);
-            sellerCatList.add(modelCat);
+    private int indexOfCurrentCat (List<CmsBtSellerCatModel> sellerCats, String parentCid, String cId) {
+        int index = -1;
+        if (CollectionUtils.isNotEmpty(sellerCats)) {
+            for (CmsBtSellerCatModel node : sellerCats) {
+                index++;
+                if (node.getParentCatId().equalsIgnoreCase(parentCid) && node.getCatId().equalsIgnoreCase(cId)) {
+                    return index;
+                }
+                int temp = indexOfCurrentCat(node.getChildren(), node.getCatId(), cId);
+                if (temp != -1) {
+                    return temp;
+                }
+            }
         }
-        //重新设置店铺内分类的顺序
-        // doResetPlatformSellerCatIndex(channelId, cartId);
-        ShopBean shopBean = Shops.getShop(channelId, cartId);
-        /*if (shopBean != null && CartEnums.Cart.LIKING.getId().equals(shopBean.getCart_id())) {*/
-        if (shopBean != null && (CartEnums.Cart.LCN.getId().equals(shopBean.getCart_id()) || CartEnums.Cart.CN.getId().equals(shopBean.getCart_id()))) {
-            cnSellerCatService.resetAllCatalog(sellerCatList, shopBean);
-//            cnCategoryService.uploadAllCnCategory(channelId, cartId, shopBean);
-        }
+        return -1;
+    }
 
+    /**
+     * 判断当前层级目录节点个数
+     * @param sellerCats
+     * @param cId
+     * @return
+     */
+    private int getBrotherSize(List<CmsBtSellerCatModel> sellerCats, String cId) {
+        if (CollectionUtils.isNotEmpty(sellerCats)) {
+            for (CmsBtSellerCatModel node:sellerCats) {
+                if (node.getParentCatId().equalsIgnoreCase(cId)) {
+                    return sellerCats.size();
+                }
+                int tempSize = getBrotherSize(node.getChildren(), cId);
+                if (tempSize != 0) {
+                    return tempSize;
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * 判断urlKey是否在属性目录中存在
+     * @param sellerCats
+     * @param urlKey
+     * @return
+     */
+    private boolean isDuplicateUrlKey (List<CmsBtSellerCatModel> sellerCats, String urlKey) {
+        if (CollectionUtils.isEmpty(sellerCats) || org.apache.commons.lang.StringUtils.isBlank(urlKey)) {
+            return false;
+        }
+        for (CmsBtSellerCatModel node:sellerCats) {
+            if (urlKey.equalsIgnoreCase(node.getUrlKey())) {
+                return true;
+            }
+            boolean temp = isDuplicateUrlKey(node.getChildren(), urlKey);
+            if (temp) {
+                return true;
+            }
+        }
+        return false;
     }
 }

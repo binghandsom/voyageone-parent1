@@ -227,6 +227,9 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
             } else {
                 failCause.append(addItemResponse.getSubCode());
                 failCause.append(addItemResponse.getSubMsg());
+                if (addItemResponse.getSubMsg() != null && addItemResponse.getSubMsg().contains("类目必选属性未填写")) {
+                    failCause.append(", 如果属性是产品属性的话， 可能需要去商家后台去纠错：https://product.tmall.com/product/spu_detail.htm?spu_id=" + productCode);
+                }
             }
 
             //天猫系统服务异常
@@ -272,6 +275,9 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
                 return numId;
             }
             failCause.append(updateItemResponse.getSubCode());
+            if (updateItemResponse.getSubMsg() != null && updateItemResponse.getSubMsg().contains("类目必选属性未填写")) {
+                failCause.append(", 如果属性是产品属性的话， 可能需要去商家后台去纠错：https://product.tmall.com/product/spu_detail.htm?spu_id=" + productId);
+            }
             //天猫系统服务异常
             if (failCause.indexOf("天猫商品服务异常") != -1
                     || failCause.indexOf("访问淘宝超时") != -1) {

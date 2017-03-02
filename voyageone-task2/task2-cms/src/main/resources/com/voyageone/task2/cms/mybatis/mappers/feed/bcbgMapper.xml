@@ -22,7 +22,7 @@
     </delete>
 
     <insert id="insertStyles">
-        INSERT INTO voyageone_cms2.cms_zz_feed_bcbg_styles (styleID, productDesc, productImgURLs, md5, sizeFit) VALUES
+        INSERT IGNORE INTO voyageone_cms2.cms_zz_feed_bcbg_styles (styleID, productDesc, productImgURLs, md5, sizeFit) VALUES
         <foreach collection="bcbgStyles" item="style" separator=",">
             (
             #{style.styleID}, #{style.productDesc},
