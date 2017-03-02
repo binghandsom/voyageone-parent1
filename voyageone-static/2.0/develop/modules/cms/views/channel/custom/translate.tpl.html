@@ -1,0 +1,111 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;翻译自定义属性</h4>
+                </div>
+                <div class="container-fluid m-t-xs m-b-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">属性种类</label>
+                                    <div class="col-sm-6">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.type" width="'100%'"
+                                                chosen
+                                                ng-options="_option.value as _option.name for _option in ctrl.typeOption">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">自定义属性名称</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" ng-model="ctrl.searchInfo.propName">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">自定义属性值</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" ng-model="vm.searchInfo.propValue"/>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-12 text-center m-b-sm">
+                            <div class="form-inline">
+                                <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'
+                                    | translate}}
+                                </button>
+                                <button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH'
+                                    | translate}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="alert alert-info" style="background: #fff;border-color: #e67e22;">
+        <div class="row">
+            <div class="col-md-3">
+                <label class="label label-primary">当前类目：</label>&emsp;
+                {{ctrl.datasource.catPath == '' ? '全类目' : ctrl.datasource.catPath}}
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.openAddAttributeValue()"><i class="glyphicon glyphicon-plus"></i>&nbsp;新增 </button>
+                </div>
+            </div>
+
+        </div>
+        <div class="panel-body">
+            <div class="box">
+                <div class="table-responsive">
+                    <table class="table table-hover-new table-hover">
+                        <thead>
+                        <tr>
+                            <th class="text-center">Seq.</th>
+                            <th class="text-center">种类</th>
+                            <th class="text-center">属性名（EN）</th>
+                            <th class="text-center">属性值（EN）</th>
+                            <th class="text-center">属性值（CN）</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="element in ctrl.attrValues">
+                            <td class="text-center">{{$index + 1}}</td>
+                            <td class="text-center">{{ctrl.TYPE[element.type]}}</td>
+                            <td class="text-center">{{element.name}}</td>
+                            <td class="text-center">{{element.valueEn}}</td>
+                            <td class="text-center">
+                                <input class="form-control" ng-model="element.valueCn"/>
+                            </td>
+                            <td class="text-center">
+                                <button title="保存" ng-click="ctrl.save(element)" class="btn btn-success btn-pop"><i
+                                        class="glyphicon glyphicon-floppy-disk"></i></button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="col-sm-12 m-t-sm">
+                        <vpagination config="ctrl.paging"></vpagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
