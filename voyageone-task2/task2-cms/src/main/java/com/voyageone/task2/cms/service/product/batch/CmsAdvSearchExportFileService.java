@@ -1362,6 +1362,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         CellStyle unlock = FileUtils.createUnLockStyle(workbook);
         Sheet sheet = workbook.getSheetAt(0);
         for (CmsBtProductBean item : products) {
+            $info(item.getCommonNotNull().getFields().getCode());
             CmsBtProductModel_Field fields = item.getCommon().getFields();
             List<CmsBtProductModel_Sku> skuList = item.getCommon().getSkus();
 
