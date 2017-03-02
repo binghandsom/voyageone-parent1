@@ -306,19 +306,23 @@ public class CmsAdvanceSearchController extends CmsController {
         Map<String, Integer> cartIdMap = new HashMap();
         for (TypeChannelBean cartObj : cartList) {
             CmsBtProductModel_Platform_Cart ptfObj = cmsBtProductBean.getPlatform(Integer.parseInt(cartObj.getValue()));
-            int qty = 0;
-            for (BaseMongoMap<String, Object> map : ptfObj.getSkus()) {
-                String sku = (String) map.get("skuCode");
-                Boolean isSale = (Boolean) map.get("isSale");
-                if (isSale) {
-                    for (WmsBtInventoryCenterLogicModel inventoryInfo : inventoryList) {
-                        if (inventoryInfo.getSku().equals(sku)) {
-                            qty = qty + inventoryInfo.getQtyChina();
+            if (ptfObj != null) {
+                int qty = 0;
+                for (BaseMongoMap<String, Object> map : ptfObj.getSkus()) {
+                    String sku = (String) map.get("skuCode");
+                    Boolean isSale = (Boolean) map.get("isSale");
+                    if (isSale) {
+                        for (WmsBtInventoryCenterLogicModel inventoryInfo : inventoryList) {
+                            if (inventoryInfo.getSku().equals(sku)) {
+                                qty = qty + inventoryInfo.getQtyChina();
+                            }
                         }
                     }
                 }
+                cartIdMap.put(cartObj.getAdd_name2(), qty);
+            } else {
+                cartIdMap.put(cartObj.getAdd_name2(), 0);
             }
-            cartIdMap.put(cartObj.getAdd_name2(), qty);
         }
         codeMap.put(cmsBtProductBean.getCommon().getFields().getCode(), cartIdMap);
         return codeMap;
