@@ -80,14 +80,20 @@ public class CmsBtCustomPropServiceTest {
     private void init(String channelId, List<CmsMtFeedCustomPropModel> items){
         CmsBtCustomPropModel cmsBtCustomPropModel = new CmsBtCustomPropModel();
         cmsBtCustomPropModel.setCat("all");
-        cmsBtCustomPropModel.setOrgChannelId(channelId);
+        if(!channelId.equalsIgnoreCase("928")) {
+            cmsBtCustomPropModel.setOrgChannelId(channelId);
+        }
         cmsBtCustomPropModel.setChannelId(channelId);
         items.forEach(item->{
             CmsBtCustomPropModel.Entity entity = new CmsBtCustomPropModel.Entity();
             entity.setActive(1);
             entity.setNameEn(item.getFeedPropOriginal());
             entity.setNameCn(item.getFeedPropTranslation());
-            entity.setType(3);
+            if(!channelId.equalsIgnoreCase("928")) {
+                entity.setType(3);
+            }else{
+                entity.setType(4);
+            }
             entity.setChecked(true);
             entity.setAttributeType(1);
             cmsBtCustomPropModel.getEntitys().add(entity);
