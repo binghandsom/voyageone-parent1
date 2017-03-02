@@ -1433,6 +1433,7 @@ public class ProductService extends BaseService {
                     String tag = String.format("-%s-%s-", refTagId, tagInfo.getId());
                     if (!tags.contains(tag)) {
                         tags.add(String.format("-%s-%s-", refTagId, tagInfo.getId()));
+                        tags.add(String.format("-%s-", refTagId));
                     }
 
                 }
@@ -1441,6 +1442,7 @@ public class ProductService extends BaseService {
             productModel.setTags(tags);
             //3.更新
             updateTags(channelId, productModel.getProdId(), tags, modifier);
+            System.out.println("111");
         }
     }
 
