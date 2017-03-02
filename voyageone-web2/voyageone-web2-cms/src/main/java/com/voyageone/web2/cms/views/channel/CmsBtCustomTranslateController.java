@@ -25,7 +25,11 @@ public class CmsBtCustomTranslateController extends CmsController {
     @Autowired
     private CmsBtTranslateService cmsBtTranslateService;
 
-
+    /**
+     * 获取该属性下的所有值
+     * @param params
+     * @return
+     */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_TRANSLATE.INIT)
     public AjaxResponse getFeedCustPropValueList(@RequestBody Map<String, Object> params) {
         Map<String, Object> ret = new HashMap();
@@ -40,6 +44,11 @@ public class CmsBtCustomTranslateController extends CmsController {
     }
 
 
+    /**
+     * 用于翻译页面新增页面
+     * @param params
+     * @return
+     */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_TRANSLATE.ADD)
     public AjaxResponse addFeedCustPropValue(@RequestBody CmsBtTranslateModel params) {
         params.setCreater(getUser().getUserName());
@@ -49,7 +58,11 @@ public class CmsBtCustomTranslateController extends CmsController {
         return success(true);
     }
 
-
+    /**
+     * 更新属性的中文值
+     * @param params
+     * @return
+     */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_TRANSLATE.SAVE)
     public AjaxResponse saveFeedCustPropValue(@RequestBody CmsBtTranslateModel params) {
         params.setModifier(getUser().getUserName());

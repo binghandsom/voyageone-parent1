@@ -1,22 +1,23 @@
 package com.voyageone.service.model.cms.mongo;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 
 /**
  * Created by james on 2017/2/27.
  */
+
 public class CmsBtTranslateModel extends BaseMongoModel {
 
     private String channelId;
 
+    // 1: '共通属性', 2: '主类目属性',3: '供货商属性',4: '自定义属性'
     private Integer type;
 
-    private String name;
+    private String name;           //属性英文名
 
-    private String valueEn;
+    private String valueEn;        //英文值
 
-    private String valueCn;
+    private String valueCn;        //中文值
 
     public String getChannelId() {
         return channelId;
