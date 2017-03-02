@@ -98,7 +98,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
         JongoQuery query = new JongoQuery();
         query.setQuery("{\"common.fields.code\": {$in: #}}");
         query.setParameters(productCodes);
-        query.setProjection("{\"orgChannelId\": 1,\"common.fields.code\": 1, \"platforms.P27\": 1}");
+//        query.setProjection("{\"orgChannelId\": 1,\"common.fields.code\": 1, \"platforms.P27\": 1}");
         List<CmsBtProductModel> productMongos = productService.getList(modelCmsBtJmPromotion.getChannelId(), query);
 
         // 获取活动中sku列表
@@ -445,7 +445,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
         request.setStart_time(parameter.cmsBtJmPromotionModel.getActivityStart());
         request.setEnd_time(parameter.cmsBtJmPromotionModel.getActivityEnd());
         request.setJumei_hash_id(originJmHashId);//原始jmHashId
-        request.setSkus_data(dealSkuList);
+        if (dealSkuList != null)
+            request.setSkus_data(dealSkuList);
+        else
+            request.setSkus_data(new ArrayList<jmHtDealCopyDealSkusData>());
         try {
             HtDealCopyDealResponse response = serviceJumeiHtDeal.copyDeal(parameter.shopBean, request);
             if (response.is_Success()) {
@@ -817,7 +820,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
      * 修改聚美下架Deal关联的Sku(下架)
      * 聚美平台上商品如果只剩下一个skuCode,下架时会报异常（每个商品至少要有一个sku），这里直接抛出异常，另外处理
      */
-    private void updateSkuIsEnableDeal(ShopBean shop, String jumeiHashId, String jumeiSkuNo, String code) {
+    private OperationResult updateSkuIsEnableDeal(ShopBean shop, String jumeiHashId, String jumeiSkuNo, String code) {
 
         OperationResult result = new OperationResult();
 
@@ -834,21 +837,21 @@ public class JuMeiProductPlatform3Service extends BaseService {
                     if (!StringUtils.isEmpty(response.getError_code())
                             && !"100013".equals(response.getError_code())) {
                         $warn("聚美上新修改聚美Deal关联的Sku下架失败! msg=%s", response.getErrorMsg());
-
                         result.setMsg(String.format("聚美上新修改聚美Deal关联的Sku下架失败! msg=%s", response.getErrorMsg()));
                         result.setCode(code);
                         result.setResult(false);
+//                        throw new BusinessException(String.format("聚美上新修改聚美Deal关联的Sku下架失败! msg=%s", response.getErrorMsg()));
                     }
                 }
             }
         } catch (Exception e) {
             $error(String.format("聚美上新修改聚美Deal关联的Sku下架 调用聚美API失败 channelId=%s, " + "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
-            throw new BusinessException(String.format("聚美上新修改聚美Deal关联的Sku下架 调用聚美API失败 channelId=%s, " + "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()));
-//            result.setMsg(String.format("聚美上新修改聚美Deal关联的Sku下架 调用聚美API失败 channelId=%s, " + "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()));
-//            result.setCode(code);
-//            result.setResult(false);
+//            throw new BusinessException(String.format("聚美上新修改聚美Deal关联的Sku下架 调用聚美API失败 channelId=%s, " + "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()));
+            result.setMsg(String.format("聚美上新修改聚美Deal关联的Sku下架 调用聚美API失败 channelId=%s, " + "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()));
+            result.setCode(code);
+            result.setResult(false);
         }
 
-//        return result;
+        return result;
     }
 }
