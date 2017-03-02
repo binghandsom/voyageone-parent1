@@ -310,13 +310,12 @@ define([
                         result1 = [],result2 = [];
 
                     _.each(qtyArr,function(value,key){
-
-                        if(_cartId && key == carts.valueOf($scope.vm.searchInfo.cartId).name)
+                        if(_cartId && key == carts.valueOf($scope.vm.searchInfo.cartId).name){
                             result1.push(key + ":" + value);
-
-                        result2.push(key + ":" + value);
+                        }else{
+                            result2.push(key + ":" + value);
+                        }
                     });
-
                     if(_cartId)
                         return result1.concat(result2);
                     else
