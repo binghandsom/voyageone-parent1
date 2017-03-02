@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.biReport.consult;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.util.HttpExcuteUtils;
 import com.voyageone.common.util.JacksonUtil;
@@ -112,7 +113,13 @@ public class BiRepConsultService extends BaseService {
             $error(e.getMessage());
         }
         if(!StringUtils.isNullOrBlank2(result)) {
-            Map mapResult =  JacksonUtil.jsonToMap(result);
+            $info("api result" + result);
+            Map mapResult = null;
+            try {
+                mapResult = JacksonUtil.jsonToMap(result);
+            } catch (BusinessException e) {
+                e.printStackTrace();
+            }
             Map<String,Object> data = (Map<String, Object>) mapResult.get("data");
             String ecd=(String)data.get("ecd");
             resultMap.put("ecd",ecd);

@@ -51,11 +51,11 @@ define(function () {
                     "setPlatformType": "setPlatformType",
                     "getHomeSumData": "getHomeSumData",
                     "getCmsConfig": session('getCmsConfig', [KEY.CHANNEL]),
-                    getMenuHeaderInfo:"getMenuHeaderInfo"
+                    getMenuHeaderInfo: "getMenuHeaderInfo"
                 },
-                "$modifyPassWordService":{
-                    "root":"/cms/home/menu/modifyPassword/",
-                    "save":"save"
+                "$modifyPassWordService": {
+                    "root": "/cms/home/menu/modifyPassword/",
+                    "save": "save"
                 }
             },
             "search": {
@@ -105,7 +105,7 @@ define(function () {
                     "updateProductSkuInfo": "updateProductSkuInfo",
                     "updateProductAllInfo": "updateProductAllInfo",
                     "changeCategory": "changeCategory",
-                    "refreshProductCategory":"refreshProductCategory",
+                    "refreshProductCategory": "refreshProductCategory",
                     "revertCategory": "revertCategory",
                     "getProductPlatform": "getProductPlatform",
                     "changePlatformCategory": "changePlatformCategory",
@@ -128,7 +128,7 @@ define(function () {
                     "copyProperty": "copyProperty",
                     "copyCommonProperty": "copyCommonProperty",
                     "resetTmProduct": "resetTmProduct",
-                    getMainCategoryInfo:"getMainCategoryInfo",
+                    getMainCategoryInfo: "getMainCategoryInfo",
                     priceConfirm: "priceConfirm",
                     getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL},
                     updateSkuPrice: "updateSkuPrice",
@@ -144,27 +144,28 @@ define(function () {
                     moveSku: "moveSku",
                     getSkuStockInfo: 'getSkuStockInfo',
                     restoreImg: "restoreImg",
+                    restorePlatFromImg: "restorePlatformImg",
                     doAppSwitch: "doAppSwitch",
                     doTranslateStatus: "doTranslateStatus",
-                    getProductIdByCode:"getProductIdByCode"
+                    getProductIdByCode: "getProductIdByCode"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
                     "getPutOnOffLogList": "getPutOnOffLogList"
                 },
-                "combinedProductService" : {
+                "combinedProductService": {
                     "root": "/cms/combined/product",
-                    "init" : "init",
-                    "search" : "search",
-                    "getCombinedProductPlatformDetail" : "getCombinedProductPlatformDetail",
-                    "add" : "add",
-                    "getSkuDetail" : "getSkuDetail",
-                    "delete" : "delete",
-                    "getCombinedProductDetail" : "getCombinedProductDetail",
-                    "edit" : "edit",
-                    "onOffShelves" : "onOffShelves",
-                    "getOperateLogs" : "getOperateLogs",
-                    "batchGetSkuDetail" : "batchGetSkuDetail"
+                    "init": "init",
+                    "search": "search",
+                    "getCombinedProductPlatformDetail": "getCombinedProductPlatformDetail",
+                    "add": "add",
+                    "getSkuDetail": "getSkuDetail",
+                    "delete": "delete",
+                    "getCombinedProductDetail": "getCombinedProductDetail",
+                    "edit": "edit",
+                    "onOffShelves": "onOffShelves",
+                    "getOperateLogs": "getOperateLogs",
+                    "batchGetSkuDetail": "batchGetSkuDetail"
                 },
                 productTopService: {
                     "root": "/cms/producttop",
@@ -227,7 +228,7 @@ define(function () {
                     deleteByPromotionId: "deleteByPromotionId",
                     setPromotionStatus: "setPromotionStatus",
                     getPromotionSimpleList: "getPromotionSimpleList",
-                    test:"test"
+                    test: "test"
                 },
                 "promotionDetailService": {
                     "root": "/cms/promotion/detail",
@@ -289,7 +290,7 @@ define(function () {
                     "updateJM": "updateJM",
                     "batchUpdateDealPrice": "batchUpdateDealPrice",
                     "batchSynchPrice": "batchSynchPrice",
-                    "batchSynchMallPrice":"batchSynchMallPrice",
+                    "batchSynchMallPrice": "batchSynchMallPrice",
                     "synchAllPrice": "synchAllPrice",
                     "batchCopyDeal": "batchCopyDeal",
                     "copyDealAll": "copyDealAll",
@@ -382,8 +383,8 @@ define(function () {
                     "root": "/cms/task/price",
                     "getPriceList": "getPriceList",
                     "updateTaskStatus": "updateTaskStatus",
-                    "refreshAllPromotionByCustomPromotionId":"refreshAllPromotionByCustomPromotionId",
-                    "delAllPromotionByCustomPromotionId":"delAllPromotionByCustomPromotionId"
+                    "refreshAllPromotionByCustomPromotionId": "refreshAllPromotionByCustomPromotionId",
+                    "delAllPromotionByCustomPromotionId": "delAllPromotionByCustomPromotionId"
                 },
                 "taskStockService": {
                     "root": "/cms/promotion/task_stock",
@@ -430,7 +431,7 @@ define(function () {
                         "getCategoryList": "getCategoryList",
                         "getCategoryDetail": "getCategoryDetail",
                         "updateCategorySchema": "updateCategorySchema",
-                        "getNewsCategoryList": session("getNewsCategoryList",[KEY.CHANNEL])
+                        "getNewsCategoryList": session("getNewsCategoryList", [KEY.CHANNEL])
                     },
                     "categorySettingService": {
                         "root": "/cms/system/category/setting",
@@ -475,7 +476,7 @@ define(function () {
                 "$valueChannelService": {
                     "root": "/cms/system/valueChannel/",
                     "addHsCodes": "addHsCode",
-                    "addEtkHsCode":"addEtkHsCode"
+                    "addEtkHsCode": "addEtkHsCode"
                 }
             },
             "pop": {
@@ -643,23 +644,23 @@ define(function () {
                         "detailSizeMapSave": "sizeChartDetailSizeMapSave"
                     }
                 },
-                "MtChannelConfig":{
+                "MtChannelConfig": {
                     "cmsMTChannelConfigService": {
                         "root": "/cms/mt/channel/config",
                         "search": "search",
-                        "saveList":"saveList"
+                        "saveList": "saveList"
                     }
                 },
-                "FeedConfig":{
+                "FeedConfig": {
                     "cmsFeedConfigService": {
                         "root": "/cms/channel/feedConfig",
                         "search": "search",
-                        "save":"save",
-                        "export":"export",
-                        "import":"import",
-                        "delete":"delete",
-                        "saveFeed":"saveFeed",
-                        "createFeed":"createFeed",
+                        "save": "save",
+                        "export": "export",
+                        "import": "import",
+                        "delete": "delete",
+                        "saveFeed": "saveFeed",
+                        "createFeed": "createFeed",
                     }
                 }
             },
@@ -745,13 +746,13 @@ define(function () {
             },
             // 货架模板管理
             "shelvesTemplateService": {
-                root:"/cms/shelves/template",
-                init:"init",
-                add:"add",
-                edit:"edit",
-                delete:"delete",
-                search:"search",
-                detail:"detail"
+                root: "/cms/shelves/template",
+                init: "init",
+                add: "add",
+                edit: "edit",
+                delete: "delete",
+                search: "search",
+                detail: "detail"
             },
             // 货架管理
             shelvesService: {
@@ -773,12 +774,12 @@ define(function () {
                 "init": "init",
                 getPage: "getPage",
                 getCount: "getCount",
-                biRepDownload:"biRepDownload",
-                createXlsFile:"createXlsFile",
-                getDownloadTaskList:"getDownloadTaskList",
-                createXlsFileTask:"createXlsFileTask",
-                get_channel_list:"get_channel_list",
-                deleteTask:"deleteTask"
+                biRepDownload: "biRepDownload",
+                createXlsFile: "createXlsFile",
+                getDownloadTaskList: "getDownloadTaskList",
+                createXlsFileTask: "createXlsFileTask",
+                get_channel_list: "get_channel_list",
+                deleteTask: "deleteTask"
             }
         }
     };

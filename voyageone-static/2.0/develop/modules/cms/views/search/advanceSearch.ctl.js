@@ -1,11 +1,12 @@
 define([
     'underscore',
+    'modules/cms/enums/Carts',
     'modules/cms/controller/popup.ctl',
     'modules/cms/directives/keyValue.directive',
     'modules/cms/service/search.advance2.service',
     'modules/cms/service/product.detail.service',
     './advance.search.append.ctl'
-], function (_) {
+], function (_,carts) {
 
     function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions, popups, $q, shelvesService) {
 
@@ -35,6 +36,7 @@ define([
             exportPageOption: {curr: 1, size: 10, total: 0, fetch: exportSearch},
             groupList: [],
             productList: [],
+            codeMap:[],
             currTab: "product",
             status: {open: true},
             groupSelList: {selList: []},
@@ -275,6 +277,8 @@ define([
                 $scope.vm.groupPageOption.total = res.data.groupListTotal;
                 $scope.vm.groupSelList = res.data.groupSelList;
                 $scope.vm.productList = res.data.productList;
+                $scope.vm.codeMap = res.data.codeMap;
+                $scope.vm.qtyList = res.data.qtyList;
                 $scope.vm.productPageOption.total = res.data.productListTotal;
                 $scope.vm.productSelList = res.data.productSelList;
                 for (idx in res.data.freeTagsList) {
@@ -289,10 +293,36 @@ define([
                     $scope.$feedActive = false;
 
                 $scope.vm.fstShowGrpFlg = true;
+
+                contructQty($scope.vm.productList,$scope.vm.codeMap);
+
                 // 计算表格宽度
                 $scope.vm.tblWidth = ($scope.vm.commonProps.length * 170 + $scope.vm.sumCustomProps.length * 100 + $scope.vm.selSalesType.length * 150 + $scope.vm.selBiDataList.length * 150 + 400) + 'px';
                 $scope.vm.tblWidth2 = ($scope.vm.commonProps.length * 170 + $scope.vm.sumCustomProps.length * 100 + $scope.vm.selSalesType.length * 150 + $scope.vm.selBiDataList.length * 180 + 960) + 'px';
             })
+        }
+
+        function contructQty(productList,codeMap){
+            _.map(productList,function(element){
+                element.saleQty = (function(){
+                    var qtyArr = codeMap[element.common.fields.code],
+                        _cartId = $scope.vm.searchInfo.cartId,
+                        result1 = [],result2 = [];
+
+                    _.each(qtyArr,function(value,key){
+
+                        if(_cartId && key == carts.valueOf($scope.vm.searchInfo.cartId).name)
+                            result1.push(key + ":" + value);
+
+                        result2.push(key + ":" + value);
+                    });
+
+                    if(_cartId)
+                        return result1.concat(result2);
+                    else
+                        return result2;
+                })();
+            });
         }
 
         /**
@@ -380,6 +410,7 @@ define([
             searchAdvanceService2.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType, $scope.vm.selBiDataList)
                 .then(function (res) {
                     $scope.vm.productList = res.data.productList == null ? [] : res.data.productList;
+                    $scope.vm.codeMap = res.data.codeMap;
                     $scope.vm.productPageOption.total = res.data.productListTotal;
                     $scope.vm.productSelList = res.data.productSelList;
                     $scope.vm._selall = false;
@@ -387,6 +418,7 @@ define([
                         var prodObj = $scope.vm.productList[idx];
                         prodObj._freeTagsInfo = res.data.freeTagsList[idx];
                     }
+                    contructQty($scope.vm.productList,$scope.vm.codeMap);
                 });
         }
 

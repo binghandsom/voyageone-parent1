@@ -828,6 +828,9 @@
                                                                                             ng-click="ctrlAdvance.columnOrder('quantity')"><i class="fa fa-{{ctrlAdvance.getArrowName('quantity')}}"></i></button>
                                         </th>
                                         <th class="text-center" style="width: 120px;">
+                                            可售库存
+                                        </th>
+                                        <th class="text-center" style="width: 120px;">
                                             中国建议售价&emsp;<button class="opacityBtn"
                                                                 ng-if="vm.productList.length && vm._cartType_"
                                                                 ng-click="ctrlAdvance.columnOrder('platforms.P✓.pPriceMsrpEd',vm._cartType_.value)"><i class="fa fa-{{ctrlAdvance.getArrowName('platforms.P✓.pPriceMsrpEd',vm._cartType_.value)}}"></i></button>
@@ -941,6 +944,15 @@
                                         </td>
                                         <td class="text-center">
                                             {{productInfo.common.fields.quantity || 0}}
+                                        </td>
+                                        <td class="text-center">
+                                            <button ng-controller="showPopoverCtrl"
+                                                    popover-html="getCartQty(productInfo.saleQty)"
+                                                    uib-popover-template="'qty.html'"
+                                                    popover-title="库存" type="button"
+                                                    popover-placement="right" class="btn btn-vo btn-xs">
+                                                {{productInfo.saleQty[0]}}
+                                            </button>
                                         </td>
                                         <td class="text-center">
                                             <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceMsrp.length>0"
@@ -1290,5 +1302,12 @@
             </tr>
             </tbody>
         </table>
+    </div>
+</script>
+<script type="text/ng-template" id="qty.html">
+    <div>
+        <ul class="col-sm-12 list-unstyled">
+            <li ng-repeat="x in codeCartQty">{{x}}</li>
+        </ul>
     </div>
 </script>

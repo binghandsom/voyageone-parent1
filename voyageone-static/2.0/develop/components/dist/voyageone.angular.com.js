@@ -142,6 +142,7 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
     $scope.showInfo = showInfo;
     $scope.popoverAdvanceSku = popoverAdvanceSku;
     $scope.popoverPromotionDetail = popoverPromotionDetail;
+    $scope.getCartQty = getCartQty;
 
     function showInfo(values) {
         if (values == undefined || values == '') {
@@ -219,6 +220,15 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
             $scope.promotionDetail = resp.data;
         });
 
+    }
+
+    /**
+     * code对应平台的库存
+     * @param code
+     * @param codeCartQty
+     */
+    function getCartQty(codeCartQty){
+        $scope.codeCartQty = codeCartQty;
     }
 });
 

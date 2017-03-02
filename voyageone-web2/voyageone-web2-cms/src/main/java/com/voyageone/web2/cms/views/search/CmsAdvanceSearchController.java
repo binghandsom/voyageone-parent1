@@ -1,8 +1,8 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
@@ -11,6 +11,7 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.PlatformService;
@@ -19,6 +20,8 @@ import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -62,8 +65,12 @@ public class CmsAdvanceSearchController extends CmsController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
+
     /**
      * 初始化,获取master数据
+     *
      * @return
      */
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.INIT)
@@ -78,6 +85,7 @@ public class CmsAdvanceSearchController extends CmsController {
 
     /**
      * 检索product数据,group数据只是在点击[GROUP一览]时才加载，性能优化
+     *
      * @param params
      * @return
      */
@@ -116,27 +124,29 @@ public class CmsAdvanceSearchController extends CmsController {
         List<String> currCodeList = advSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), true);
         List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
 
-        Map<String,TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), "cn");
-        Map<String,TypeChannelBean> sizeTypes  = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), "cn");
+        Map<String, TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), "cn");
+        Map<String, TypeChannelBean> sizeTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), "cn");
+        Map<String, Map<String, Integer>> codeMap = new HashMap<>();
         prodInfoList.forEach(cmsBtProductBean -> {
-            String productType =cmsBtProductBean.getCommon().getFields().getProductType();
-            if(!StringUtil.isEmpty(productType)){
+            String productType = cmsBtProductBean.getCommon().getFields().getProductType();
+            if (!StringUtil.isEmpty(productType)) {
                 TypeChannelBean temp = productTypes.get(productType);
-                if(temp != null){
+                if (temp != null) {
                     cmsBtProductBean.getCommon().getFields().setProductTypeCn(temp.getName());
                 }
             }
 
-            String sizeType =cmsBtProductBean.getCommon().getFields().getSizeType();
-            if(!StringUtil.isEmpty(sizeType)){
+            String sizeType = cmsBtProductBean.getCommon().getFields().getSizeType();
+            if (!StringUtil.isEmpty(sizeType)) {
                 TypeChannelBean temp = sizeTypes.get(sizeType);
-                if(temp != null){
+                if (temp != null) {
                     cmsBtProductBean.getCommon().getFields().setSizeTypeCn(temp.getName());
                 }
             }
+            codeMap.putAll(getCodeQty(cmsBtProductBean, userInfo));
         });
-
         searchIndexService.checkProcStatus(prodInfoList, getLang());
+        resultBean.put("codeMap", codeMap);
         resultBean.put("productList", prodInfoList);
         resultBean.put("productListTotal", productListTotal);
 
@@ -161,6 +171,7 @@ public class CmsAdvanceSearchController extends CmsController {
 
     /**
      * 分页检索group数据
+     *
      * @param params
      * @return
      */
@@ -184,21 +195,21 @@ public class CmsAdvanceSearchController extends CmsController {
         List<String> groupCodeList = advSearchQueryService.getGroupCodeList(params, userInfo.getSelChannelId());
         List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(groupCodeList, params, userInfo, cmsSession);
         searchIndexService.checkProcStatus(grpInfoList, getLang());
-        Map<String,TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), "cn");
-        Map<String,TypeChannelBean> sizeTypes  = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), "cn");
+        Map<String, TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), "cn");
+        Map<String, TypeChannelBean> sizeTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), "cn");
         grpInfoList.forEach(cmsBtProductBean -> {
-            String productType =cmsBtProductBean.getCommon().getFields().getProductType();
-            if(!StringUtil.isEmpty(productType)){
+            String productType = cmsBtProductBean.getCommon().getFields().getProductType();
+            if (!StringUtil.isEmpty(productType)) {
                 TypeChannelBean temp = productTypes.get(productType);
-                if(temp != null){
+                if (temp != null) {
                     cmsBtProductBean.getCommon().getFields().setProductTypeCn(temp.getName());
                 }
             }
 
-            String sizeType =cmsBtProductBean.getCommon().getFields().getSizeType();
-            if(!StringUtil.isEmpty(sizeType)){
+            String sizeType = cmsBtProductBean.getCommon().getFields().getSizeType();
+            if (!StringUtil.isEmpty(sizeType)) {
                 TypeChannelBean temp = sizeTypes.get(sizeType);
-                if(temp != null){
+                if (temp != null) {
                     cmsBtProductBean.getCommon().getFields().setSizeTypeCn(temp.getName());
                 }
             }
@@ -219,6 +230,7 @@ public class CmsAdvanceSearchController extends CmsController {
 
     /**
      * 分页检索product数据
+     *
      * @param params
      * @return
      */
@@ -237,27 +249,29 @@ public class CmsAdvanceSearchController extends CmsController {
         // 获取product列表
         List<String> currCodeList = advSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), true);
         List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
-
-        Map<String,TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), "cn");
-        Map<String,TypeChannelBean> sizeTypes  = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), "cn");
+        Map<String, Map<String, Integer>> codeMap = new HashMap<>();
+        Map<String, TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), "cn");
+        Map<String, TypeChannelBean> sizeTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), "cn");
         prodInfoList.forEach(cmsBtProductBean -> {
-            String productType =cmsBtProductBean.getCommon().getFields().getProductType();
-            if(!StringUtil.isEmpty(productType)){
+            String productType = cmsBtProductBean.getCommon().getFields().getProductType();
+            if (!StringUtil.isEmpty(productType)) {
                 TypeChannelBean temp = productTypes.get(productType);
-                if(temp != null){
+                if (temp != null) {
                     cmsBtProductBean.getCommon().getFields().setProductTypeCn(temp.getName());
                 }
             }
 
-            String sizeType =cmsBtProductBean.getCommon().getFields().getSizeType();
-            if(!StringUtil.isEmpty(sizeType)){
+            String sizeType = cmsBtProductBean.getCommon().getFields().getSizeType();
+            if (!StringUtil.isEmpty(sizeType)) {
                 TypeChannelBean temp = sizeTypes.get(sizeType);
-                if(temp != null){
+                if (temp != null) {
                     cmsBtProductBean.getCommon().getFields().setSizeTypeCn(temp.getName());
                 }
             }
+            codeMap.putAll(getCodeQty(cmsBtProductBean, userInfo));
         });
         searchIndexService.checkProcStatus(prodInfoList, getLang());
+        resultBean.put("codeMap", codeMap);
         resultBean.put("productList", prodInfoList);
         resultBean.put("productListTotal", productListTotal);
 
@@ -268,6 +282,46 @@ public class CmsAdvanceSearchController extends CmsController {
 
         // 返回用户信息
         return success(resultBean);
+    }
+
+    public Map<String, Map<String, Integer>> getCodeQty(CmsBtProductBean cmsBtProductBean, UserSessionBean userInfo) {
+        Map<String, Map<String, Integer>> codeMap = new HashMap<>();
+        // 店铺(cart/平台)列表
+        List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, getLang());
+
+        //sku取得库存
+        Map<String, String> codesMap = new HashMap<>();
+        if (StringUtils.isNotBlank(cmsBtProductBean.getCommon().getFields().getOriginalCode())) {
+            codesMap.put("channelId", cmsBtProductBean.getOrgChannelId());
+            codesMap.put("code", cmsBtProductBean.getCommon().getFields().getOriginalCode());
+        }
+        List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailByCode(codesMap);
+        //code取得库存
+        int codeQty = 0;
+        for (WmsBtInventoryCenterLogicModel inventoryInfo : inventoryList) {
+            codeQty = codeQty + inventoryInfo.getQtyChina();
+        }
+        cmsBtProductBean.getCommon().getFields().setQuantity(codeQty);
+
+        Map<String, Integer> cartIdMap = new HashMap();
+        for (TypeChannelBean cartObj : cartList) {
+            CmsBtProductModel_Platform_Cart ptfObj = cmsBtProductBean.getPlatform(Integer.parseInt(cartObj.getValue()));
+            int qty = 0;
+            for (BaseMongoMap<String, Object> map : ptfObj.getSkus()) {
+                String sku = (String) map.get("skuCode");
+                Boolean isSale = (Boolean) map.get("isSale");
+                if (isSale) {
+                    for (WmsBtInventoryCenterLogicModel inventoryInfo : inventoryList) {
+                        if (inventoryInfo.getSku().equals(sku)) {
+                            qty = qty + inventoryInfo.getQtyChina();
+                        }
+                    }
+                }
+            }
+            cartIdMap.put(cartObj.getAdd_name2(), qty);
+        }
+        codeMap.put(cmsBtProductBean.getCommon().getFields().getCode(), cartIdMap);
+        return codeMap;
     }
 
     /**
@@ -370,18 +424,18 @@ public class CmsAdvanceSearchController extends CmsController {
      * @apiSuccess (应用级返回字段) {String[]} commList 用户保存的共同属性显示列信息，没有数据时返回空数组
      * @apiSuccessExample 成功响应查询请求
      * {
-     *  "code":null, "message":null, "displayType":null, "redirectTo":null,
-     *  "data":{
-     *   "customProps": [ {"feed_prop_original":"a_b_c", "feed_prop_translation":"yourname" }...],
-     *   "commonProps": [ {"propId":"a_b_c", "propName":"yourname" }...],
-     *   "custAttrList": [ "a_b_c", "a_b_d", "a_b_e"...],
-     *   "commList": [ "q_b_c", "q_b_d", "q_b_e"...]
-     *  }
+     * "code":null, "message":null, "displayType":null, "redirectTo":null,
+     * "data":{
+     * "customProps": [ {"feed_prop_original":"a_b_c", "feed_prop_translation":"yourname" }...],
+     * "commonProps": [ {"propId":"a_b_c", "propName":"yourname" }...],
+     * "custAttrList": [ "a_b_c", "a_b_d", "a_b_e"...],
+     * "commList": [ "q_b_c", "q_b_d", "q_b_e"...]
      * }
-     * @apiExample  业务说明
-     *  取得自定义显示列设置
+     * }
+     * @apiExample 业务说明
+     * 取得自定义显示列设置
      * @apiExample 使用表
-     *  使用cms_bt_feed_custom_prop表, cms_mt_common_prop表
+     * 使用cms_bt_feed_custom_prop表, cms_mt_common_prop表
      * @apiSampleRequest off
      */
     @RequestMapping("getCustColumnsInfo")
@@ -409,14 +463,14 @@ public class CmsAdvanceSearchController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
      * @apiSuccessExample 成功响应请求
      * {
-     *  "code":null, "message":null, "displayType":null, "redirectTo":null,
-     *  "data":null
+     * "code":null, "message":null, "displayType":null, "redirectTo":null,
+     * "data":null
      * }
-     * @apiExample  业务说明
-     *  保存用户自定义显示列设置
-     *  当参数为空时将清除该用户原有设置
+     * @apiExample 业务说明
+     * 保存用户自定义显示列设置
+     * 当参数为空时将清除该用户原有设置
      * @apiExample 使用表
-     *  使用ct_user_config表
+     * 使用ct_user_config表
      * @apiSampleRequest off
      */
     @RequestMapping("saveCustColumnsInfo")
@@ -479,7 +533,7 @@ public class CmsAdvanceSearchController extends CmsController {
         // 返回用户信息
         return success(resultBean);
     }
-    
+
     /**
      * 取得SKU级的库存属性
      */
@@ -487,19 +541,20 @@ public class CmsAdvanceSearchController extends CmsController {
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.GET_SKU_INVENTORY)
     public AjaxResponse getSkuInventoryList(@RequestBody String code) {
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode(getUser().getSelChannelId(), code);
-        if(cmsBtProductModel != null){
+        if (cmsBtProductModel != null) {
             return success(advSearchQueryService.getSkuInventoryList(cmsBtProductModel.getOrgChannelId(), code));
-        }else{
-            throw new BusinessException(code+"：该商品不存在");
+        } else {
+            throw new BusinessException(code + "：该商品不存在");
         }
     }
 
     /**
      * 给美国同事抽一份“shoemetro已上新到聚美的sku级别数据”
+     *
      * @param params
      * @return
      */
-    public AjaxResponse exportShowMetroProduct(@RequestBody String params){
+    public AjaxResponse exportShowMetroProduct(@RequestBody String params) {
         return success("");
     }
 
