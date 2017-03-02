@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
@@ -36,6 +37,8 @@ public class CmsBtCustomPropService extends BaseService {
 
     private final
     FeedInfoService feedInfoService;
+
+    private final String CacheKey = CacheKeyEnums.KeyEnum.CmsCacheData_Feed_Attribute.name();
 
 
     @Autowired
@@ -109,6 +112,7 @@ public class CmsBtCustomPropService extends BaseService {
         }
 
         rearrange(cmsBtCustomProp);
+        //排除删除的属性
         cmsBtCustomProp.setEntitys(cmsBtCustomProp.getEntitys().stream().filter(entity -> entity.getActive() == null || 1 == entity.getActive()).collect(Collectors.toList()));
         return cmsBtCustomProp;
     }
@@ -266,11 +270,13 @@ public class CmsBtCustomPropService extends BaseService {
             if (entity.getAttributeType() != null) {
                 String value = (String) product.getFeed().getOrgAtts().get(entity.getNameEn());
                 String valueEn = value;
+                // 取出英文值
                 if (StringUtil.isEmpty(value)) {
                     valueEn = getEntityEnValue(product.getChannelId(), entity, product, cmsBtFeedInfoModel);
                     product.getFeed().getOrgAtts().put(entity.getNameEn(), valueEn);
                 }
 
+                // 取出中文值
                 value = (String) product.getFeed().getCnAtts().get(entity.getNameEn());
                 String valueCn="";
                 if (StringUtil.isEmpty(value)) {
@@ -283,6 +289,8 @@ public class CmsBtCustomPropService extends BaseService {
         List<String> enCustom = new ArrayList<>();
         List<String> cnCustom = new ArrayList<>();
         Map<String, String> attsName = new HashMap<>();
+
+        // 找出打勾并且有中文值的属性名
         cmsBtCustomPropModel.getEntitys().stream().filter(entity -> entity.getChecked() != null && entity.getChecked() && !StringUtil.isEmpty((String) product.getFeed().getCnAtts().get(entity.getNameEn()))).forEach(entity -> {
             enCustom.add(entity.getNameEn());
             cnCustom.add(StringUtil.isEmpty(entity.getNameCn()) ? entity.getNameEn() : entity.getNameCn());
@@ -385,20 +393,22 @@ public class CmsBtCustomPropService extends BaseService {
     }
 
 
+    // 获取feed属性  redis缓存  有效期未 1天
     private CmsBtCustomPropModel getFeedAttributeName(String orgChannelId) {
         CmsBtCustomPropModel feedCustomProp = new CmsBtCustomPropModel();
-        List<CmsBtCustomPropModel.Entity> entitys = (List<CmsBtCustomPropModel.Entity>) CacheHelper.getHashOperation().get("feedAttribute", orgChannelId);
+        List<CmsBtCustomPropModel.Entity> entitys = (List<CmsBtCustomPropModel.Entity>) CacheHelper.getHashOperation().get(CacheKey, orgChannelId);
         if (entitys == null) {
             entitys = feedCategoryAttributeService.getAttributeNameByChannelId(orgChannelId);
             if (!ListUtils.isNull(entitys)) {
-                CacheHelper.getHashOperation().put("feedAttribute", orgChannelId, entitys);
-                CacheHelper.getCacheTemplate().expire("feedAttribute", 1, TimeUnit.DAYS);
+                CacheHelper.getHashOperation().put(CacheKey, orgChannelId, entitys);
+                CacheHelper.getCacheTemplate().expire(CacheKey, 1, TimeUnit.DAYS);
             }
         }
         feedCustomProp.setEntitys(entitys);
         return feedCustomProp;
     }
 
+    // 继承计算
     private CmsBtCustomPropModel merge(CmsBtCustomPropModel prop1, CmsBtCustomPropModel prop2) {
         for (CmsBtCustomPropModel.Entity entity : prop2.getEntitys()) {
             CmsBtCustomPropModel.Entity temp = prop1.getEntitys().stream()
@@ -416,6 +426,7 @@ public class CmsBtCustomPropService extends BaseService {
         return prop1;
     }
 
+    // 给属性排序
     private void rearrange(CmsBtCustomPropModel cmsBtCustomPropModel) {
         cmsBtCustomPropModel.getEntitys().sort((o1, o2) -> {
             Boolean b1 = o1.getChecked() == null ? false : o1.getChecked();
@@ -424,19 +435,11 @@ public class CmsBtCustomPropService extends BaseService {
         });
 
         if (!ListUtils.isNull(cmsBtCustomPropModel.getSort())) {
-//            List<CmsBtCustomPropModel.Entity> newEntity = new ArrayList<>();
-//            for (Integer i = 0; i < cmsBtCustomPropModel.getSort().size(); i++) {
-//                String key = cmsBtCustomPropModel.getSort().get(i);
-//                CmsBtCustomPropModel.Entity item = cmsBtCustomPropModel.getEntitys().stream().filter(entity -> entity.getNameEn().equalsIgnoreCase(key)).findFirst().orElse(null);
-//                if (item != null && item.getChecked() != null && item.getChecked()) {
-//                    item.put("dispOrder", i);
-//                }
-//            }
             cmsBtCustomPropModel.getEntitys().sort((o1, o2) -> {
                 Integer b1 = cmsBtCustomPropModel.getSort().indexOf(o1.getNameEn()) == -1 ? Integer.MAX_VALUE : cmsBtCustomPropModel.getSort().indexOf(o1.getNameEn());
                 Integer b2 = cmsBtCustomPropModel.getSort().indexOf(o2.getNameEn()) == -1 ? Integer.MAX_VALUE : cmsBtCustomPropModel.getSort().indexOf(o2.getNameEn());
-//                Integer b1 = o1.getAttribute("dispOrder") == null ? 9999 : o1.getAttribute("dispOrder");
-//                Integer b2 = o2.getAttribute("dispOrder") == null ? 9999 : o2.getAttribute("dispOrder");
+                if(o1.getChecked() == null || true != o1.getChecked()) b1=Integer.MAX_VALUE;
+                if(o2.getChecked() == null || true != o2.getChecked()) b2=Integer.MAX_VALUE;
                 return b1.compareTo(b2);
             });
         }
