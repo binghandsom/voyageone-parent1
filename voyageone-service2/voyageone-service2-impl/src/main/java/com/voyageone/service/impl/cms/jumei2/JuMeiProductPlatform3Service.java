@@ -106,6 +106,8 @@ public class JuMeiProductPlatform3Service extends BaseService {
 
         // 获取product中目前有效销售的sku
         Map<String, List<jmHtDealCopyDealSkusData>> productSkus = new HashMap<>();
+        Map<String, List<String>> isNotSaleSkuList = new HashMap<>();
+        Map<String, String> originalHashIdList = new HashMap<>();
         productMongos.forEach((product) -> {
 
 //            List<String> newJmDealSkuNoList = new ArrayList<>();
@@ -131,7 +133,6 @@ public class JuMeiProductPlatform3Service extends BaseService {
             queryMap.put("code", product.getCommon().getFields().getCode());
             List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailByCode(queryMap);
 
-            List<String> isNotSaleSkuList = new ArrayList<String>();
             List<jmHtDealCopyDealSkusData> skuList = new ArrayList<>();
             product.getPlatform(27).getSkus()
                     .forEach((skuInfo) -> {
@@ -172,18 +173,15 @@ public class JuMeiProductPlatform3Service extends BaseService {
             if (skuList.size() > 0)
                 productSkus.put(product.getCommon().getFields().getCode(), skuList);
 
-            for (String s : newJmDealSkuNoList) {
-                OperationResult result = updateSkuIsEnableDeal(shopBean, product.getPlatform(27).getpNumIId(), s, product.getCommon().getFields().getCode());
-                if (!StringUtils.isEmpty(result.getMsg()))
-                    listOperationResult.add(result);
-            }
+            originalHashIdList.put(product.getCommon().getFields().getCode(), product.getPlatform(27).getpNumIId());
+            isNotSaleSkuList.put(product.getCommon().getFields().getCode(), newJmDealSkuNoList);
         });
 
         for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
 
-
             $debug(promotionId + " code:" + model.getProductCode() + "上新begin");
-            OperationResult result = updateJm(modelCmsBtJmPromotion, model, shopBean, mapMasterBrand, isBegin, productSkus.get(model.getProductCode()));
+            OperationResult result = updateJm(modelCmsBtJmPromotion, model, shopBean, mapMasterBrand, isBegin, productSkus.get(model.getProductCode()), isNotSaleSkuList.get(model.getProductCode()), originalHashIdList.get(model.getProductCode()));
+
             $debug(promotionId + " code:" + model.getProductCode() + "上新end");
             //if(!result.isResult()) {
             //加入错误列表
@@ -207,10 +205,18 @@ public class JuMeiProductPlatform3Service extends BaseService {
        if(parameter.platform==null){throw new  BusinessException("CmsBtProduct商品聚美信息不存在.");}
        return parameter;
    }
-    public OperationResult updateJm(CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel, ShopBean shopBean, HashMap<String,Boolean> mapMasterBrand, boolean isBegin, List<jmHtDealCopyDealSkusData> dealSkuList) {
+    public OperationResult updateJm(CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel
+            , ShopBean shopBean, HashMap<String,Boolean> mapMasterBrand, boolean isBegin, List<jmHtDealCopyDealSkusData> dealSkuList
+            , List<String> isNotSaleSkuList, String hashId) {
         OperationResult result=new OperationResult();
         try {
+
+            for (String s : isNotSaleSkuList) {
+                updateSkuIsEnableDeal(shopBean, hashId , s, cmsBtJmPromotionProductModel.getProductCode());
+            }
+
             UpdateJmParameter parameter = getUpdateJmParameter(modelCmsBtJmPromotion, cmsBtJmPromotionProductModel, shopBean);
+
             parameter.setBegin(isBegin);//活动是否开始
             api_beforeCheck(parameter,mapMasterBrand);//api调用前check
             if (parameter.cmsBtJmPromotionProductModel.getSynchStatus() != 2) {
@@ -811,7 +817,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
      * 修改聚美下架Deal关联的Sku(下架)
      * 聚美平台上商品如果只剩下一个skuCode,下架时会报异常（每个商品至少要有一个sku），这里直接抛出异常，另外处理
      */
-    private OperationResult updateSkuIsEnableDeal(ShopBean shop, String jumeiHashId, String jumeiSkuNo, String code) {
+    private void updateSkuIsEnableDeal(ShopBean shop, String jumeiHashId, String jumeiSkuNo, String code) {
 
         OperationResult result = new OperationResult();
 
@@ -837,11 +843,12 @@ public class JuMeiProductPlatform3Service extends BaseService {
             }
         } catch (Exception e) {
             $error(String.format("聚美上新修改聚美Deal关联的Sku下架 调用聚美API失败 channelId=%s, " + "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
-            result.setMsg(String.format("聚美上新修改聚美Deal关联的Sku下架 调用聚美API失败 channelId=%s, " + "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()));
-            result.setCode(code);
-            result.setResult(false);
+            throw new BusinessException(String.format("聚美上新修改聚美Deal关联的Sku下架 调用聚美API失败 channelId=%s, " + "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()));
+//            result.setMsg(String.format("聚美上新修改聚美Deal关联的Sku下架 调用聚美API失败 channelId=%s, " + "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()));
+//            result.setCode(code);
+//            result.setResult(false);
         }
 
-        return result;
+//        return result;
     }
 }
