@@ -14,6 +14,7 @@ public class CmsCartAddMQMessageBody extends BaseMQMessageBody {
 
     private String channelId;
     private Integer cartId;
+    // 是否按照一个code一个group来生成数据
     private Boolean single;
 
     public String getChannelId() {

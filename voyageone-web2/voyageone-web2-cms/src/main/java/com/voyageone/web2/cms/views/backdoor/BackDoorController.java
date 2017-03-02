@@ -1796,7 +1796,7 @@ public class BackDoorController extends CmsController {
 
                 });
 
-                productPlatformService.updateProductPlatform(channelId, productInfo.getProdId(), productInfo.getPlatform(cartId), "updateSkuUpcToUnique");
+                productPlatformService.updateProductPlatformWithSx(channelId, productInfo.getProdId(), productInfo.getPlatform(cartId), "updateSkuUpcToUnique", "updateSkuUpcToUnique", true);
             }
         });
 

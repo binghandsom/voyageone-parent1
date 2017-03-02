@@ -88,7 +88,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         platform.getSkus().forEach(f -> {
             f.setAttribute("isSale", parameter.getIsSale());
         });
-        productPlatformService.updateProductPlatform(channelId, parameter.getProdId(), platform, userName);
+        productPlatformService.updateProductPlatformWithSx(channelId, parameter.getProdId(), platform, userName, "设置sku的isSale状态", false);
 
     }
 
@@ -516,6 +516,15 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         return platformCart;
     }
 
+    /**
+     * 产品编辑页面修改产品信息
+     * @param channelId
+     * @param prodId
+     * @param platform
+     * @param modifier
+     * @param blnSmartSx
+     * @return
+     */
     public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier, Boolean blnSmartSx) {
 
         if (platform.get("schemaFields") != null) {
@@ -532,16 +541,21 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         Boolean isCatPathChg = false;
         CmsBtProductModel cmsBtProductModel = null;
+        String modified;
         // 天猫的场合如果平台类目发生变化 清空platforms.Pxx.pProductId    CMSDOC-262
         if(platformModel.getCartId() == CartEnums.Cart.TG.getValue() || platformModel.getCartId() == CartEnums.Cart.TM.getValue()){
             cmsBtProductModel = productService.getProductById(channelId, prodId);
             CmsBtProductModel_Platform_Cart oldPlatForm = cmsBtProductModel.getPlatform(platformModel.getCartId());
+            modified = oldPlatForm.getModified();
             if(platformModel.getpCatId() != null && !platformModel.getpCatId().equalsIgnoreCase(oldPlatForm.getpCatId())){
                 isCatPathChg = true;
             }
         }
+        if (blnSmartSx)
+            modified  = productPlatformService.updateProductPlatformWithSmartSx(channelId, prodId, platformModel, modifier, "产品编辑页-智能上新", true);
+        else
+            modified  = productPlatformService.updateProductPlatformWithSx(channelId, prodId, platformModel, modifier, "产品编辑页-普通上新", true);
 
-        String modified  = productPlatformService.updateProductPlatform(channelId, prodId, platformModel, modifier, true, blnSmartSx);
         if(isCatPathChg){
             productService.resetProductAndGroupPlatformPid(channelId, platformModel.getCartId(), cmsBtProductModel.getCommon().getFields().getCode());
         }

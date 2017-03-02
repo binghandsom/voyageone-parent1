@@ -262,7 +262,8 @@ public class JuMeiProductPlatform3Service extends BaseService {
     {
         //todo  逻辑待定最新jmHashId(取该商品的最新jmHashId,这样最靠谱)
         parameter.platform.setpNumIId(parameter.cmsBtJmPromotionProductModel.getJmHashId());
-        productPlatformService.updateProductPlatform(parameter.cmsBtProductModel.getChannelId(), parameter.cmsBtProductModel.getProdId(), parameter.platform, parameter.cmsBtJmPromotionProductModel.getModifier());
+        // 回写jmHashId,不需要做任何上新逻辑
+        productPlatformService.updateProductPlatformNoSx(parameter.cmsBtProductModel.getChannelId(), parameter.cmsBtProductModel.getProdId(), parameter.platform, parameter.cmsBtJmPromotionProductModel.getModifier(), "回写最新聚美HashId", false);
     }
     //所有api调用前check
     public void api_beforeCheck(UpdateJmParameter parameter, HashMap<String,Boolean> mapMasterBrand) {
