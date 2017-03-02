@@ -1362,6 +1362,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         CellStyle unlock = FileUtils.createUnLockStyle(workbook);
         Sheet sheet = workbook.getSheetAt(0);
         for (CmsBtProductBean item : products) {
+            $info(item.getCommonNotNull().getFields().getCode());
             CmsBtProductModel_Field fields = item.getCommon().getFields();
             List<CmsBtProductModel_Sku> skuList = item.getCommon().getSkus();
 
@@ -1374,6 +1375,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getModel()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSize())); // 原始尺码
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getSize()));
+                if(fields.getProductNameEn() != null && fields.getProductNameEn().length() > 2000) fields.setProductNameEn(fields.getProductNameEn().substring(0,2000));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getProductNameEn())); // 英文标题
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getOriginalTitleCn())); // 中文标题
                 // 图片路径
@@ -1390,7 +1392,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getWeightKG() + ""));
 
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getBarcode())); // UPC
+                if(fields.getShortDesEn() != null && fields.getShortDesEn().length() > 2000) fields.setShortDesEn(fields.getShortDesEn().substring(0,2000));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getShortDesEn()));
+                if(fields.getShortDesCn() != null && fields.getShortDesCn().length() > 2000) fields.setShortDesCn(fields.getShortDesCn().substring(0,2000));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getShortDesCn()));
 
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommon().getCatPath())); // 类目
