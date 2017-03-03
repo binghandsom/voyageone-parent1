@@ -42,12 +42,19 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-1" style="min-width: 150px;">
                 &emsp;
                 <div class="btn-group">
                     <button type="button" class="btn btn-pop btn-success" ng-click="ctrl.popAddAttribute()">
-                        <i class="fa fa-plus"></i>&nbsp;新建自定义属性
+                        <i class="fa fa-plus"></i>&nbsp;自定义属性
                     </button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <span class="input-group-addon" id="sizing-addon1"><i class="fa fa-filter"></i>&nbsp;过滤</span>
+                    <input type="text" class="form-control" ng-model="ctrl.filterName" ng-change="ctrl.filterEntity()"
+                           placeholder="过滤包括 : 属性英文名 、 属性中文名">
                 </div>
             </div>
         </div>

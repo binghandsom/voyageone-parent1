@@ -17,14 +17,10 @@ define([
             this.saveEntiy = {
                 type: context.type + '',
                 name: '',
-                valueEn: '',
+                valueEn: context.nameEn,
                 valueCn: ''
             }
         }
-
-        AddValueCtl.prototype.init = function () {
-
-        };
 
         AddValueCtl.prototype.save = function () {
             var self = this;

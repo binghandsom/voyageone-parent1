@@ -36,10 +36,11 @@ public class CmsBtCustomTranslateController extends CmsController {
 
         //前端组建中预定义好的分页属性名curr、size
         Integer skip = (Integer) params.get("curr"),
-                limit = (Integer) params.get("size");
+                limit = (Integer) params.get("size"),
+                type = Integer.valueOf((String)params.get("type")) ;
 
-        ret.put("resultData", cmsBtTranslateService.select(getUser().getSelChannelId(), (Integer) params.get("type"), (String) params.get("propName"), (String) params.get("propValue"), skip, limit));
-        ret.put("total", cmsBtTranslateService.selectCnt(getUser().getSelChannelId(), (Integer) params.get("type"), (String) params.get("propName"), (String) params.get("propValue")));
+        ret.put("resultData", cmsBtTranslateService.select(getUser().getSelChannelId(), type, (String) params.get("propName"), (String) params.get("propValue"), skip, limit));
+        ret.put("total", cmsBtTranslateService.selectCnt(getUser().getSelChannelId(), type, (String) params.get("propName"), (String) params.get("propValue")));
         return success(ret);
     }
 

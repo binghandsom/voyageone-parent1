@@ -8,7 +8,7 @@ define([
 
     cms.controller('attributeController', (function () {
 
-        function CustomAttributeCtl($routeParams, $localStorage, popups, notify, alert, confirm, $location, cRoutes,
+        function CustomAttributeCtl($routeParams, $localStorage, popups, notify, alert, confirm, cRoutes,
                                     systemCategoryService, attributeService2) {
             this.$routeParams = $routeParams;
             this.popups = popups;
@@ -18,7 +18,6 @@ define([
             this.notify = notify;
             this.alert = alert;
             this.confirm = confirm;
-            this.$location = $location;
             this.cRoutes = cRoutes;
             this.vm = {
                 catPath: $routeParams.catPath || $routeParams.catPath == 0 ? '' : $routeParams.catPath
@@ -61,7 +60,7 @@ define([
                 catPath = self.vm.catPath;
 
             //liking旗舰店
-            if(channelInfo.channel == 928)
+            if (channelInfo.channel == 928)
                 channelInfo.channel = '';
 
             self.attributeService2.search({
@@ -245,13 +244,33 @@ define([
                 nameEnArr: _.pluck(self.attributes, 'nameEn')
             }));
 
-            self.$location.path(self.cRoutes.marketing_setting_common_custom_translate_list.url + entity.nameEn);
+            window.open('#'+self.cRoutes.marketing_setting_common_custom_translate_list.url + entity.nameEn);
         };
 
-        CustomAttributeCtl.prototype.changeChannel = function(){
+        CustomAttributeCtl.prototype.changeChannel = function () {
             var self = this;
 
             self.search();
+        };
+
+        CustomAttributeCtl.prototype.filterEntity = function () {
+            var self = this,
+                filterName = self.filterName;
+
+            if (!filterName || filterName == '')
+                self.search();
+
+            self.attributes = _.filter(self.attributes, function (item) {
+                return item.nameEn.indexOf(filterName) >= 0 ||
+                    (item.nameCn && item.nameCn.indexOf(filterName) >= 0)
+            });
+
+            self.attributesTrue = _.filter(self.attributes, function (element) {
+                return element.checked
+            });
+            self.attributesFalse = _.filter(self.attributes, function (element) {
+                return !element.checked
+            });
         };
 
         return CustomAttributeCtl;
