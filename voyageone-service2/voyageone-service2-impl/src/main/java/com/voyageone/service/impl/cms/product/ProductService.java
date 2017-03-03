@@ -1424,40 +1424,39 @@ public class ProductService extends BaseService {
 
     //更新mongo product  tag
     public void updateCmsBtProductTags(String channelId, CmsBtProductModel productModel, int refTagId, List<TagTreeNode> tagList, String modifier) {
+        int cnt = 0;
         if (tagList == null || tagList.size() == 0) return;
         //更新商品Tags  sunpt
         if (productModel != null) {
             List<String> tags = productModel.getTags();
             tagList.forEach(tagInfo -> {
-                int cnt = 0;
                 if (tagInfo.getChecked() == 0) {
                     //删除
                     tags.remove(String.format("-%s-%s-", refTagId, tagInfo.getId()));
-                    for (String tag : tags) {
-                        String s = tag.split("-")[1];
-                        if (s.equals(String.valueOf(refTagId))) {
-                            cnt++;
-                        }
-                    }
-                    if (cnt == 1) {
-                        tags.remove(String.format("-%s-", refTagId));
-                    }
                 } else if (tagInfo.getChecked() == 2) {
+
                     //添加
                     String tag = String.format("-%s-%s-", refTagId, tagInfo.getId());
                     if (!tags.contains(tag)) {
                         tags.add(String.format("-%s-%s-", refTagId, tagInfo.getId()));
                         tags.add(String.format("-%s-", refTagId));
-                        HashSet tagsHashSet = new HashSet(tags);
-                        tags.clear();
-                        tags.addAll(tagsHashSet);
                     }
+
                 }
             });
-
-            productModel.setTags(tags);
+            //去掉重复项目
+            List<String> newTag = tags.stream().distinct().collect(Collectors.toList());
+            //如果只存在单个父级
+            for (String tag : newTag)
+                if (tag.split("-")[1].equals(String.valueOf(refTagId))) {
+                    cnt++;
+                }
+            if (cnt == 1) {
+                newTag.remove(String.format("-%s-", refTagId));
+            }
+            productModel.setTags(newTag);
             //3.更新
-            updateTags(channelId, productModel.getProdId(), tags, modifier);
+            updateTags(channelId, productModel.getProdId(), newTag, modifier);
         }
     }
 
