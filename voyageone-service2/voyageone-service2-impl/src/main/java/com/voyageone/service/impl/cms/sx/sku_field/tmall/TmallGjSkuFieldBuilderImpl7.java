@@ -579,7 +579,7 @@ public class TmallGjSkuFieldBuilderImpl7 extends AbstractSkuFieldBuilder {
 
     private String getImageUrl(ExpressionParser expressionParser, ShopBean shopBean, String user, SxData sxData, CmsBtProductModel sxProduct) throws Exception {
         String imageUrl = null;
-        String propImage = expressionParser.getSxProductService().getProductImages(sxProduct, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
+        String propImage = expressionParser.getSxProductService().getProductImages(sxProduct, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE, sxData.getCartId()).get(0).getName();
         if (propImage != null && !"".equals(propImage)) {
             if (StringUtils.isEmpty(getCodeImageTemplate())) {
                 $warn("图片模板url未设置");
