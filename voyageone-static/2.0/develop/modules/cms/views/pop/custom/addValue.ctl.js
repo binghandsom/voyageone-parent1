@@ -16,8 +16,8 @@ define([
             this.attrTranslateService = attrTranslateService;
             this.saveEntiy = {
                 type: context.type + '',
-                name: '',
-                valueEn: context.nameEn,
+                name: context.nameEn,
+                valueEn: '',
                 valueCn: ''
             }
         }
