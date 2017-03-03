@@ -78,7 +78,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
         // modified by morse.lu 2016/06/02 start
 //        List<CmsBtProductModel_Field_Image> productImages = mainProduct.getFields().getImages(imageType);
         // 如果是PRODUCT，先看看image6有没有值，只要image6有一条，那么都从image6里取,否则还是去取image1
-        List<CmsBtProductModel_Field_Image> productImages = sxProductService.getProductImages(mainProduct, imageType);
+        List<CmsBtProductModel_Field_Image> productImages = sxProductService.getProductImages(mainProduct, imageType, sxData.getCartId());
         // modified by morse.lu 2016/06/02 end
         if (extParameter != null && extParameter.length > 0) {
             // 获取指定product的图片(如果没找到, 那么就使用主商品的图片)
@@ -91,7 +91,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                     // modified by morse.lu 2016/06/02 start
 //                    productImages = product.getFields().getImages(imageType);
                     // 如果是PRODUCT，先看看image6有没有值，只要image6有一条，那么都从image6里取,否则还是去取image1
-                    productImages = sxProductService.getProductImages(product, imageType);
+                    productImages = sxProductService.getProductImages(product, imageType, sxData.getCartId());
                     // modified by morse.lu 2016/06/02 end
                     break;
                 }
