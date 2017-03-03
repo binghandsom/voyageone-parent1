@@ -1442,6 +1442,7 @@ public class ProductService extends BaseService {
                 if (tagInfo.getChecked() == 0) {
                     //删除
                     tags.remove(String.format("-%s-%s-", refTagId, tagInfo.getId()));
+                    tags.remove(String.format("-%s-", refTagId));
 
                 } else if (tagInfo.getChecked() == 2) {
 
@@ -1449,6 +1450,7 @@ public class ProductService extends BaseService {
                     String tag = String.format("-%s-%s-", refTagId, tagInfo.getId());
                     if (!tags.contains(tag)) {
                         tags.add(String.format("-%s-%s-", refTagId, tagInfo.getId()));
+                        tags.add(String.format("-%s-", refTagId));
                     }
 
                 }
