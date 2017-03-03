@@ -6,6 +6,18 @@ define([
     'cms'
 ], function (cms) {
 
+    /**
+     * 匹配大小写
+     */
+    String.prototype.matchStr = function(str){
+        if(!str)
+            return false;
+
+        var _targetValue = this.toString().toLowerCase();
+
+        return  _targetValue.indexOf(str.toLowerCase()) >= 0
+    };
+
     cms.controller('attributeController', (function () {
 
         function CustomAttributeCtl($routeParams, $localStorage, popups, notify, alert, confirm, cRoutes,
@@ -68,7 +80,7 @@ define([
                 cat: catPath
             }).then(function (res) {
                 self.attributes = res.data.entitys;
-               // self.orgAttributes = angular.copy(self.attributes);
+                // self.orgAttributes = angular.copy(self.attributes);
 
                 self.attributesTrue = _.filter(self.attributes, function (element) {
                     return element.checked
@@ -263,17 +275,10 @@ define([
                 self.search();
 
             self.attributes = _.each(self.attributes, function (item) {
-                if(item.nameEn.indexOf(filterName) < 0 ||
-                    !item.nameCn && item.nameCn.indexOf(filterName) < 0)
+                if ((!item.nameCn || !item.nameCn.matchStr(filterName)) && !item.nameEn.matchStr(filterName))
                     item.hide = true;
             });
 
-            self.attributesTrue = _.filter(self.attributes, function (element) {
-                return element.checked
-            });
-            self.attributesFalse = _.filter(self.attributes, function (element) {
-                return !element.checked
-            });
         };
 
         return CustomAttributeCtl;
