@@ -129,7 +129,7 @@
                     </tr>
                     </tbody>
                     <tbody>
-                    <tr ng-repeat="entity in ctrl.attributesFalse">
+                    <tr ng-repeat="entity in ctrl.attributesFalse"  ng-hide="entity.hide">
                         <td class="text-center">
                             <input type="checkbox" ng-model="entity.checked" ng-click="ctrl.updateEntity(entity)">
                         </td>
