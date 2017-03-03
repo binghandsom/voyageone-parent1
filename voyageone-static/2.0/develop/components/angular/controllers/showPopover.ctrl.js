@@ -105,11 +105,7 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
      * @param code
      * @param codeCartQty
      */
-    function getCartQty(code, codeCartQty){
-        _.forEach(codeCartQty, function(value,key) {
-            if (code == key) {
-                $scope.codeCartQty = value;
-            }
-        });
+    function getCartQty(codeCartQty){
+        $scope.codeCartQty = codeCartQty;
     }
 });

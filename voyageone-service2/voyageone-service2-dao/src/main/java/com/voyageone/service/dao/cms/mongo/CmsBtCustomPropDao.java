@@ -14,9 +14,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CmsBtCustomPropDao extends BaseMongoDao<CmsBtCustomPropModel> {
 
-    public CmsBtCustomPropModel getCustomPropByCatChannel(String channelId, String cat){
+    public CmsBtCustomPropModel getCustomPropByCatChannel(String channelId, String orgChannelId, String cat){
         JongoQuery jongoQuery = new JongoQuery();
-        jongoQuery.setQuery(new Criteria("cat").is(cat).and("channelId").is(channelId));
+        jongoQuery.setQuery(new Criteria("cat").is(cat).and("channelId").is(channelId).and("orgChannelId").is(orgChannelId));
         return selectOneWithQuery(jongoQuery);
     }
 

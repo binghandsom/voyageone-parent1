@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.product;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteResult;
@@ -20,7 +19,6 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
-import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -28,6 +26,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.CmsBtCustomPropService;
 import com.voyageone.service.impl.cms.CmsMtEtkHsCodeService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -37,7 +36,6 @@ import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.wms.InventoryCenterLogicService;
 import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
 import com.voyageone.service.model.cms.CmsMtEtkHsCodeModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.apache.commons.collections.CollectionUtils;
@@ -74,16 +72,10 @@ public class ProductService extends BaseService {
     private ProductSkuService productSkuService;
 
     @Autowired
-    private CmsBtFeedInfoDao cmsBtFeedInfoDao;
-
-    @Autowired
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
 
     @Autowired
     private ImageTemplateService imageTemplateService;
-
-    @Autowired
-    private FeedCustomPropService customPropService;
 
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
@@ -98,13 +90,7 @@ public class ProductService extends BaseService {
     private InventoryCenterLogicService inventoryCenterLogicService;
 
     @Autowired
-    private ProductStatusHistoryService productStatusHistoryService;
-
-    @Autowired
-    private PriceService priceService;
-
-    @Autowired
-    private PlatformPriceService platformPriceService;
+    private CmsBtCustomPropService cmsBtCustomPropService;
 
     /**
      * 获取商品 根据ID获
@@ -239,6 +225,7 @@ public class ProductService extends BaseService {
     /**
      * 查询产品信息(合并该产品的组信息)
      * queryObject中必须包含输出项:"common.fields.code"，否则将查询不到组信息
+     *
      * @param channelId
      * @param cartId
      * @param queryObject
@@ -285,6 +272,7 @@ public class ProductService extends BaseService {
 
     /**
      * checkProductDataIsReady
+     *
      * @param channelId
      * @param productId
      * @return
@@ -341,6 +329,7 @@ public class ProductService extends BaseService {
 
     /**
      * updateProduct
+     *
      * @param channelId
      * @param paraMap
      * @param updateMap
@@ -352,6 +341,7 @@ public class ProductService extends BaseService {
 
     /**
      * updateFirstProduct
+     *
      * @param updObj
      * @param channelId
      * @return
@@ -615,7 +605,7 @@ public class ProductService extends BaseService {
                     resultInfo.setEtkHsCode(cmsMtEtkHsCodeModel.getEtkHsCode());
                     resultInfo.setEtkDescription(cmsMtEtkHsCodeModel.getEtkDescription());
                     resultInfo.setEtkUnit(cmsMtEtkHsCodeModel.getEtkUnit());
-                }else{
+                } else {
                     resultInfo.setEtkHsCode(hsCodePu[0]);
                     resultInfo.setEtkDescription(hsCodePu[1]);
                     resultInfo.setEtkUnit(hsCodePu[2]);
@@ -790,6 +780,7 @@ public class ProductService extends BaseService {
 
     /**
      * updateTags
+     *
      * @param channelId
      * @param prodId
      * @param Tags
@@ -915,6 +906,7 @@ public class ProductService extends BaseService {
 
     /**
      * updateProductLock
+     *
      * @param channelId
      * @param prodId
      * @param lock
@@ -1110,106 +1102,130 @@ public class ProductService extends BaseService {
     /**
      * 获取CustomProp
      */
+//    public List<CustomPropBean> getCustomProp(CmsBtProductModel product) {
+//
+//        String channelId = product.getChannelId();
+//        CmsBtProductModel_Field fields = product.getCommon().getFields();
+//
+//        CmsBtProductModel_Feed productFeed = product.getFeed();
+//        BaseMongoMap<String, Object> cnAttrs = productFeed.getCnAtts();
+//
+//        List<CustomPropBean> props = new ArrayList<>();
+//
+//        //读feed_info
+//        CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(product.getOrgChannelId(), fields.getOriginalCode());
+//        if (feedInfo == null) {
+//            $error("getCustomProp 无feedInfo channelid=%s, prodid=%d", channelId, product.getProdId());
+//            return props;
+//        }
+//        Map<String, List<String>> feedAttr = feedInfo.getAttribute();
+//
+//        //读cms_mt_feed_custom_prop
+//        List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedInfo.getCategory());
+//
+//        //去除掉feedCustomPropList中的垃圾数据
+//        if (feedCustomPropList != null && !feedCustomPropList.isEmpty()) {
+//            feedCustomPropList = feedCustomPropList.stream().filter(w -> !StringUtils.isNullOrBlank2(w.getFeed_prop_translation()) &&
+//                    !StringUtils.isNullOrBlank2(w.getFeed_prop_original())).collect(Collectors.toList());
+//        } else {
+//            feedCustomPropList = new ArrayList<>();
+//        }
+//
+//        List<String> customIds = product.getFeed().getCustomIds();
+//
+//        customIds = customIds == null ? new ArrayList<>() : customIds;
+//
+//
+//        //合并feedAttr和feedCustomPropList
+//        for (Map.Entry<String, List<String>> entry : feedAttr.entrySet()) {
+//            String attrKey = entry.getKey();
+//            List<String> valueList = entry.getValue();
+//            CustomPropBean prop = new CustomPropBean();
+//            prop.setFeedAttrEn(attrKey);
+//            String attrValue = Joiner.on(",").skipNulls().join(valueList);
+//            prop.setFeedAttrValueEn(attrValue);
+//            prop.setFeedAttrCn("");
+//            prop.setFeedAttrValueCn("");
+//            prop.setFeedAttr(true);
+//            prop.setCustomPropActive(false);
+//
+//            if (feedCustomPropList.stream().filter(w -> w.getFeed_prop_original().equals(attrKey)).count() > 0) {
+//                FeedCustomPropWithValueBean feedCustProp = feedCustomPropList.stream().filter(w -> w.getFeed_prop_original().equals(attrKey)).findFirst().get();
+//                prop.setFeedAttrCn(feedCustProp.getFeed_prop_translation());
+//                if (cnAttrs.keySet().stream().filter(w -> w.equals(attrKey)).count() > 0) {
+//                    //如果product已经保存过
+//                    String cnAttKey = cnAttrs.keySet().stream().filter(w -> w.equals(attrKey)).findFirst().get();
+//                    prop.setFeedAttrValueCn(cnAttrs.getStringAttribute(cnAttKey));
+//                } else {
+//                    //取默认值
+//                    Map<String, List<String>> defaultValueMap = feedCustProp.getMapPropValue();
+//                    List<String> vList = defaultValueMap.get(attrValue);
+//                    if (vList != null) {
+//                        if (vList.stream().filter(w -> !StringUtils.isNullOrBlank2(w)).count() > 0) {
+//                            String cnAttValue = vList.stream().filter(w -> !StringUtils.isNullOrBlank2(w)).findFirst().get();
+//                            prop.setFeedAttrValueCn(cnAttValue);
+//                        }
+//                    }
+//
+//                }
+//
+//                if (customIds.stream().filter(w -> w.equals(attrKey)).count() > 0) {
+//                    prop.setCustomPropActive(true);
+//                }
+//            }
+//
+//            props.add(prop);
+//        }
+//
+//
+//        //仅存在于cms_mt_feed_custom_prop中，不存在于feed attributes中的项目
+//        for (FeedCustomPropWithValueBean custProp : feedCustomPropList) {
+//            String feedKey = custProp.getFeed_prop_original();
+//            if (feedAttr.keySet().stream().filter(w -> w.equals(feedKey)).count() == 0) {
+//                CustomPropBean prop = new CustomPropBean();
+//                prop.setFeedAttrEn(feedKey);
+//                prop.setFeedAttrValueEn("");
+//                prop.setFeedAttrCn(custProp.getFeed_prop_translation());
+//                prop.setFeedAttrValueCn("");
+//                prop.setFeedAttr(false);
+//                prop.setCustomPropActive(false);
+//
+//                if (cnAttrs.keySet().stream().filter(w -> w.equals(feedKey)).count() > 0) {
+//                    String cnAttKey = cnAttrs.keySet().stream().filter(w -> w.equals(feedKey)).findFirst().get();
+//                    prop.setFeedAttrValueCn(cnAttrs.getStringAttribute(cnAttKey));
+//                }
+//
+//                if (customIds.stream().filter(w -> w.equals(feedKey)).count() > 0) {
+//                    prop.setCustomPropActive(true);
+//                }
+//                props.add(prop);
+//            }
+//
+//        }
+//        return props;
+//    }
     public List<CustomPropBean> getCustomProp(CmsBtProductModel product) {
-
-        String channelId = product.getChannelId();
-        CmsBtProductModel_Field fields = product.getCommon().getFields();
-
-        CmsBtProductModel_Feed productFeed = product.getFeed();
-        BaseMongoMap<String, Object> cnAttrs = productFeed.getCnAtts();
-
         List<CustomPropBean> props = new ArrayList<>();
+        cmsBtCustomPropService.setProductCustomProp(product);
 
-        //读feed_info
-        CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(product.getOrgChannelId(), fields.getOriginalCode());
-        if (feedInfo == null) {
-            $error("getCustomProp 无feedInfo channelid=%s, prodid=%d", channelId, product.getProdId());
-            return props;
-        }
-        Map<String, List<String>> feedAttr = feedInfo.getAttribute();
+        Map<String, String> attsName = product.getFeed().getAttsName();
 
-        //读cms_mt_feed_custom_prop
-        List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedInfo.getCategory());
+        product.getFeed().getOrgAtts().forEach((s, o) -> {
+            CustomPropBean customPropBean = new CustomPropBean();
+            customPropBean.setFeedAttrEn(s);
+            customPropBean.setFeedAttrCn(attsName.get(s));
+            customPropBean.setFeedAttrValueEn((String) o);
+            customPropBean.setFeedAttrValueCn((String) product.getFeed().getCnAtts().get(s));
+            customPropBean.setFeedAttr(true);
+            customPropBean.setCustomPropActive(product.getFeed().getCustomIds().contains(s));
+            props.add(customPropBean);
+        });
+        props.sort((o1, o2) -> {
+            Integer b1 = product.getFeed().getCustomIds().indexOf(o1.getFeedAttrEn()) == -1 ? Integer.MAX_VALUE : product.getFeed().getCustomIds().indexOf(o1.getFeedAttrEn());
+            Integer b2 = product.getFeed().getCustomIds().indexOf(o2.getFeedAttrEn()) == -1 ? Integer.MAX_VALUE : product.getFeed().getCustomIds().indexOf(o2.getFeedAttrEn());
+            return b1.compareTo(b2);
+        });
 
-        //去除掉feedCustomPropList中的垃圾数据
-        if (feedCustomPropList != null && !feedCustomPropList.isEmpty()) {
-            feedCustomPropList = feedCustomPropList.stream().filter(w -> !StringUtils.isNullOrBlank2(w.getFeed_prop_translation()) &&
-                    !StringUtils.isNullOrBlank2(w.getFeed_prop_original())).collect(Collectors.toList());
-        } else {
-            feedCustomPropList = new ArrayList<>();
-        }
-
-        List<String> customIds = product.getFeed().getCustomIds();
-
-        customIds = customIds == null ? new ArrayList<>() : customIds;
-
-
-        //合并feedAttr和feedCustomPropList
-        for (Map.Entry<String, List<String>> entry : feedAttr.entrySet()) {
-            String attrKey = entry.getKey();
-            List<String> valueList = entry.getValue();
-            CustomPropBean prop = new CustomPropBean();
-            prop.setFeedAttrEn(attrKey);
-            String attrValue = Joiner.on(",").skipNulls().join(valueList);
-            prop.setFeedAttrValueEn(attrValue);
-            prop.setFeedAttrCn("");
-            prop.setFeedAttrValueCn("");
-            prop.setFeedAttr(true);
-            prop.setCustomPropActive(false);
-
-            if (feedCustomPropList.stream().filter(w -> w.getFeed_prop_original().equals(attrKey)).count() > 0) {
-                FeedCustomPropWithValueBean feedCustProp = feedCustomPropList.stream().filter(w -> w.getFeed_prop_original().equals(attrKey)).findFirst().get();
-                prop.setFeedAttrCn(feedCustProp.getFeed_prop_translation());
-                if (cnAttrs.keySet().stream().filter(w -> w.equals(attrKey)).count() > 0) {
-                    //如果product已经保存过
-                    String cnAttKey = cnAttrs.keySet().stream().filter(w -> w.equals(attrKey)).findFirst().get();
-                    prop.setFeedAttrValueCn(cnAttrs.getStringAttribute(cnAttKey));
-                } else {
-                    //取默认值
-                    Map<String, List<String>> defaultValueMap = feedCustProp.getMapPropValue();
-                    List<String> vList = defaultValueMap.get(attrValue);
-                    if (vList != null) {
-                        if (vList.stream().filter(w -> !StringUtils.isNullOrBlank2(w)).count() > 0) {
-                            String cnAttValue = vList.stream().filter(w -> !StringUtils.isNullOrBlank2(w)).findFirst().get();
-                            prop.setFeedAttrValueCn(cnAttValue);
-                        }
-                    }
-
-                }
-
-                if (customIds.stream().filter(w -> w.equals(attrKey)).count() > 0) {
-                    prop.setCustomPropActive(true);
-                }
-            }
-
-            props.add(prop);
-        }
-
-
-        //仅存在于cms_mt_feed_custom_prop中，不存在于feed attributes中的项目
-        for (FeedCustomPropWithValueBean custProp : feedCustomPropList) {
-            String feedKey = custProp.getFeed_prop_original();
-            if (feedAttr.keySet().stream().filter(w -> w.equals(feedKey)).count() == 0) {
-                CustomPropBean prop = new CustomPropBean();
-                prop.setFeedAttrEn(feedKey);
-                prop.setFeedAttrValueEn("");
-                prop.setFeedAttrCn(custProp.getFeed_prop_translation());
-                prop.setFeedAttrValueCn("");
-                prop.setFeedAttr(false);
-                prop.setCustomPropActive(false);
-
-                if (cnAttrs.keySet().stream().filter(w -> w.equals(feedKey)).count() > 0) {
-                    String cnAttKey = cnAttrs.keySet().stream().filter(w -> w.equals(feedKey)).findFirst().get();
-                    prop.setFeedAttrValueCn(cnAttrs.getStringAttribute(cnAttKey));
-                }
-
-                if (customIds.stream().filter(w -> w.equals(feedKey)).count() > 0) {
-                    prop.setCustomPropActive(true);
-                }
-                props.add(prop);
-            }
-
-        }
         return props;
     }
 
@@ -1406,7 +1422,7 @@ public class ProductService extends BaseService {
                         return sku.getSkuCode().equals(stock.getBase().getSku());
                     }
                 });
-                if(sku != null) {
+                if (sku != null) {
                     stock.getBase().setOrigSize(sku.getSize());
                     stock.getBase().setSaleSize(sku.getAttribute("platformSize"));
                 }
@@ -1454,18 +1470,19 @@ public class ProductService extends BaseService {
         return prodObj.getProdId();
     }
 
-    public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key){
-        return cmsBtProductDao.bulkUpdateWithMap(channelId,bulkList,modifier,key);
+    public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key) {
+        return cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, key);
     }
 
     /**
      * 重置product和group的platformPid
+     *
      * @param channelId 渠道Id
-     * @param cartId 平台Id
-     * @param code 产品Code
+     * @param cartId    平台Id
+     * @param code      产品Code
      * @return WriteResult
      */
-    public WriteResult resetProductAndGroupPlatformPid (String channelId, int cartId, String code) {
+    public WriteResult resetProductAndGroupPlatformPid(String channelId, int cartId, String code) {
 
         JongoUpdate query = new JongoUpdate();
         query.setQuery("{\"common.fields.code\": #}");
@@ -1492,6 +1509,7 @@ public class ProductService extends BaseService {
 
     /**
      * 判断两税号是否一样
+     *
      * @param hsCode1
      * @param hsCode2
      * @return
@@ -1513,6 +1531,7 @@ public class ProductService extends BaseService {
 
     /**
      * insertProductHistory
+     *
      * @param channelId
      * @param productId
      */

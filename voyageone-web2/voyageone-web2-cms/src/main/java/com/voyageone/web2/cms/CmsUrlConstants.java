@@ -777,6 +777,17 @@ public interface CmsUrlConstants {
             String SAVE = "update";
         }
 
+        interface CUSTOM_TRANSLATE {
+
+            String ROOT = "/cms/channel/customTranslate/value";
+
+            String INIT = "init";
+
+            String ADD = "create";
+
+            String SAVE = "update";
+        }
+
         interface CHANNEL_TAG {
             String ROOT = "/cms/channel/tag";
             String INIT_CHANNEL_TAG = "init";
@@ -885,6 +896,16 @@ public interface CmsUrlConstants {
             String IMPORT ="import";
             String DELETE = "delete";
             String SAVE_FEED ="saveFeed";
+            String CREATE_FEED ="createFeed";
+        }
+        interface CUSTOM {
+            String ROOT = "/cms/channel/custProp";
+            String SEARCH = "search";
+            String SET_CUSTOMSH_IS_DISPPLAY ="doSetCustomshIsDispPlay";
+            String UPDATE_ENTITY ="doUpdateEntity";
+            String SET_SORT ="doSetSort";
+            String DELETE = "delete";
+            String INIT ="init";
             String CREATE_FEED ="createFeed";
         }
     }

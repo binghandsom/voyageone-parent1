@@ -159,7 +159,7 @@ public class OverStockPriceAnalysisService extends BaseCronTaskService {
                                 if(!StringUtils.isEmpty(cmsZzFeedOverstockPriceModel.getMsrpPrice())){
                                     sku.setAttribute("priceMsrp", Double.parseDouble(cmsZzFeedOverstockPriceModel.getMsrpPrice()));
                                 }
-                                productPlatformService.updateProductPlatform(OverStock.getId(), cmsBtProductModel.getProdId(), cart, getTaskName(), false);
+                                productPlatformService.updateProductPlatform(OverStock.getId(), cmsBtProductModel.getProdId(), cart, getTaskName(), "价格变更", false);
                                 break;
                             }
                         }

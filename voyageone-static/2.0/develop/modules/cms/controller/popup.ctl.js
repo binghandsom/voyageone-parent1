@@ -172,7 +172,6 @@ define([
                 "templateUrl": "views/pop/custom/newAttribute.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/custom/newAttribute.ctl",
                 "controller": 'popAddAttributeValueCtl as ctrl',
-                "backdrop": 'static',
                 "size": 'md'
             },
             "newValue": {
@@ -181,6 +180,11 @@ define([
                 "controller": 'popAddAttributeValueNewCtl as ctrl',
                 "backdrop": 'static',
                 "size": 'md'
+            },
+            "addValue":{
+                "templateUrl": "views/pop/custom/addValue.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/custom/addValue.ctl",
+                "controller": 'popAddValueCtl as ctrl'
             },
             "column": {
                 "templateUrl": "views/pop/custom/column.tpl.html",
@@ -824,6 +828,10 @@ define([
          */
         $scope.openAddNewValue = function openAddNewValue(context) {
             return openModal(popActions.custom.newValue, context);
+        };
+
+        $scope.openAddAttrValue = function openAddNewValue(context) {
+            return openModal(popActions.custom.addValue, context);
         };
 
         /**

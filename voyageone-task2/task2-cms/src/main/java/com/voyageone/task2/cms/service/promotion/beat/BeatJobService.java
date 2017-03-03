@@ -12,7 +12,6 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.MapUtil;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
@@ -39,10 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.lang.String.format;
 
@@ -377,6 +373,8 @@ public class BeatJobService extends BaseCronTaskService {
 
         private String getTaobaoImageUrl(String imageUrl, String imageName, CmsMtImageCategoryModel categoryModel, boolean withPrice)
                 throws IOException, ApiException {
+
+            Objects.requireNonNull(categoryModel, "图片目录未配置");
 
             // 首先尝试获取之前存在图片
             // 如果之前使用过, 则直接删除, 如果没有或者出现了任何错误, 都无视。

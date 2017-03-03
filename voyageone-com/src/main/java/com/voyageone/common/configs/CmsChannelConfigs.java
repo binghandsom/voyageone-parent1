@@ -100,12 +100,12 @@ public class CmsChannelConfigs {
      * @param configKey config Key
      * @return List<CmsChannelConfigBean>
      */
-    public static List<CmsChannelConfigBean> getConfigBeans(String channelId, String configKey) {
+    public static List<CmsChannelConfigBean> getConfigBeans(String channelId, String configKey, String configCode) {
         Set<String> keyset = CacheHelper.getKeySet(KEY, selfClass);
         if (CollectionUtils.isEmpty(keyset)) return null;
         List<String> keyList = new ArrayList<>();
         keyset.forEach(k -> {
-            if (k.startsWith(buildKey(channelId, configKey, ""))) keyList.add(k);
+            if (k.startsWith(buildKey(channelId, configKey, configCode))) keyList.add(k);
         });
         Collections.sort(keyList);
         return CacheHelper.getBeans(KEY, keyList, selfClass);
@@ -124,18 +124,6 @@ public class CmsChannelConfigs {
         if (cmsChannelConfigBean == null) {
             cmsChannelConfigBean =  CacheHelper.getBean(KEY, buildKey(channelId, configKey, "0"), selfClass);
         }
-        return cmsChannelConfigBean;
-    }
-
-    /**
-     * get one ConfigBean by cartId, if ConfigBean is null, get one ConfigBean by default(0)
-     * @param channelId channel Id
-     * @param configKey config Key
-     * @param configCode config Code
-     * @return CmsChannelConfigBean
-     */
-    public static CmsChannelConfigBean getConfigBeanByValue1(String channelId, String configKey, String configCode, String value1) {
-        CmsChannelConfigBean cmsChannelConfigBean = CacheHelper.getBean(KEY, buildKey(channelId, configKey, configCode, value1), selfClass);
         return cmsChannelConfigBean;
     }
 }

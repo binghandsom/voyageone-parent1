@@ -6,14 +6,17 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by james on 2017/2/21.
  */
 public class CmsBtCustomPropModel extends BaseMongoModel {
     private String cat;
-    private String channelId = "";
+    private String channelId;
+    private String orgChannelId="";
     private List<Entity> entitys;
+    private List<String> sort;
 
     public String getCat() {
         return cat;
@@ -31,6 +34,14 @@ public class CmsBtCustomPropModel extends BaseMongoModel {
         this.channelId = channelId;
     }
 
+    public String getOrgChannelId() {
+        return orgChannelId;
+    }
+
+    public void setOrgChannelId(String orgChannelId) {
+        this.orgChannelId = orgChannelId;
+    }
+
     public List<Entity> getEntitys() {
         if(entitys == null) entitys = new ArrayList<>();
         return entitys;
@@ -40,7 +51,24 @@ public class CmsBtCustomPropModel extends BaseMongoModel {
         this.entitys = entitys;
     }
 
+    public List<String> getSort() {
+        if(sort == null) sort = new ArrayList<>();
+        return sort;
+    }
+
+    public void setSort(List<String> sort) {
+        this.sort = sort;
+    }
+
     public static class Entity extends BaseMongoMap<String,Object> {
+
+        public Entity(Map map){
+            putAll(map);
+        }
+
+        public Entity(){
+
+        }
 
 
         public String getNameEn(){
@@ -61,7 +89,7 @@ public class CmsBtCustomPropModel extends BaseMongoModel {
             return getAttribute("type");
         }
         public void setType(Integer type){
-            setAttribute("nameEn", type);
+            setAttribute("type", type);
         }
 
         public Boolean getChecked(){
@@ -71,6 +99,29 @@ public class CmsBtCustomPropModel extends BaseMongoModel {
         public void setChecked (Boolean checked){
             setAttribute("checked", checked);
         }
+
+        public Integer getAttributeType(){
+            return getIntAttribute("attributeType");
+        }
+        public void setAttributeType(Integer attributeType){
+            setAttribute("attributeType", attributeType);
+        }
+
+        public String getValue(){
+            return getStringAttribute("value");
+        }
+        public void setValue(String value){
+            setStringAttribute("value", value);
+        }
+
+        public Integer getActive(){
+            return getAttribute("active");
+        }
+
+        public void setActive (Integer active){
+            setAttribute("active", active);
+        }
+
     }
 
     public enum CustomPropType{

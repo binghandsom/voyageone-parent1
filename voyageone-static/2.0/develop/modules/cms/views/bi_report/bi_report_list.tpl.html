@@ -14,6 +14,7 @@
                     <div class="col-sm-10">
                         <div class="col-sm-6">
                             <select multiple chosen width="'55%'" class=" text-left m-t-sm form-control"
+                                    ng-change="fileTypeViewManager()"
                                     ng-model="vm.searchInfo.channelCodeList"
                                     ng-options="brand.channel_id as brand.channel_name for brand in channels">
                             </select>
@@ -23,9 +24,10 @@
                             <div class="col-sm-8 form-inline">
                                 <div class="col-sm-5 input-group">
                                     <input type="text" class="form-control" uib-datepicker-popup
+                                           ng-change="fileTypeViewManager()"
                                            ng-model="vm.searchInfo.staDate"
-                                           min-date="vm.minDate"
-                                           max-date="vm.searchInfo.endDate"
+                                           min-date="fromMinDate"
+                                           max-date="fromMaxDate"
                                            date-model-format="yyyy-MM-dd"
                                            is-open="datePicker3" ng-required="true"
                                            close-text="Close"/>
@@ -38,9 +40,10 @@
                                 &nbsp;~&nbsp;
                                 <div class="col-sm-5 input-group">
                                     <input type="text" class="form-control" uib-datepicker-popup
+                                           ng-change="fileTypeViewManager()"
                                            ng-model="vm.searchInfo.endDate"
-                                           min-date="vm.searchInfo.staDate"
-                                           max-date=" vm.maxDate "
+                                           min-date="toMinDate"
+                                           max-date="toMaxDate"
                                            date-model-format="yyyy-MM-dd" is-open="datePicker4" ng-required="true"
                                            close-text="Close"/>
                                     <span class="input-group-btn">
@@ -54,34 +57,35 @@
                     </div>
                 </div>
                 <div class="col-sm-8 m-t-sm">
-                    <div><label class="col-sm-2 text-right"> {{'TXT_BI_DOWNLOAD_LIST_FILE_TYPE'|translate}}</label>
-                        &nbsp;
-                        <button class="btn btn-success btn-xs" ng-click="selectAllFileTypes()"
-                                ng-bind="selectFileButton"></button>
+                    <div class="col-sm-12">
+                        <label class="col-sm-2 text-right"> {{'TXT_BI_DOWNLOAD_LIST_FILE_TYPE'|translate}}</label>
+                        <div class="col-sm-10">
+                            <button class="btn btn-success btn-xs" ng-click="selectAllFileTypes()"
+                                    ng-bind="selectFileButton">
+                            </button> &nbsp;&nbsp; &nbsp;&nbsp;
+                            <label>{{tips}}</label>
+                        </div>
+                        <br/>
+                        <br/>
                     </div>
-                    <div class="col-sm-10 text-center" ng-switch="vm.searchInfo.channelCodeList.length">
-                        <div class="col-sm-4" ng-switch-when="0" ng-repeat="item in fileTypes">
-                            <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox" ng-true-value="{{item.fileTypeCode}}" style="margin: 0"
-                                       ng-false-value="false" ng-model="vm.searchInfo.fileTypes[$index]">
-                                <span class="fa fa-check"></span> &nbsp;{{item.fileTypeName}}
-                            </label>
-                        </div>
-                        <div class="col-sm-4" ng-switch-when="1" ng-repeat="item in fileTypes">
-                            <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox" ng-true-value="{{item.fileTypeCode}}" style="margin: 0"
-                                       ng-false-value="false" ng-model="vm.searchInfo.fileTypes[$index]">
-                                <span class="fa fa-check"></span> &nbsp;{{item.fileTypeName}}
-                            </label>
-                        </div>
-                        <div class="col-sm-4" ng-switch-default ng-repeat="item in fileTypes">
-                            <label class="checkbox-inline c-checkbox" ng-if="item.fileTypeCode <=3">
-                                <input type="checkbox" ng-true-value="{{item.fileTypeCode}}" style="margin: 0"
-                                       ng-false-value="false" ng-model="vm.searchInfo.fileTypes[$index]">
-                                <span class="fa fa-check"></span> &nbsp;{{item.fileTypeName}}
-                            </label>
-                        </div>
-                    </div><!-- .form-inline -->
+                    <div class="col-sm-12">
+                        <div class="col-sm-10 col-sm-offset-2  text-center" ng-switch="AllfileShow">
+                            <div class="col-sm-4" ng-switch-when="true" ng ng-repeat="item in fileTypesSource">
+                                <label class="checkbox-inline c-checkbox">
+                                    <input type="checkbox" ng-true-value="{{item.fileTypeCode}}" style="margin: 0"
+                                           ng-false-value="false" ng-model="vm.searchInfo.fileTypesTempt[$index]">
+                                    <span class="fa fa-check"></span> &nbsp;{{item.fileTypeName}}
+                                </label>
+                            </div>
+                            <div class="col-sm-4" ng-switch-default ng-repeat="item in fileTypesSource">
+                                <label class="checkbox-inline c-checkbox" ng-if="item.fileTypeCode <=3">
+                                    <input type="checkbox" ng-true-value="{{item.fileTypeCode}}" style="margin: 0"
+                                           ng-false-value="false" ng-model="vm.searchInfo.fileTypesTempt[$index]">
+                                    <span class="fa fa-check"></span> &nbsp;{{item.fileTypeName}}
+                                </label>
+                            </div>
+                        </div><!-- .form-inline -->
+                    </div>
                     <br/>
                 </div>
                 <div class="col-sm-12 text-center m-t-md" ng-controller="popupCtrl">
@@ -90,7 +94,7 @@
                             | translate}}
                         </button>
                         &nbsp; &nbsp;
-                        <!-- <button class="btn btn-vo" ng-click="biRepDownload()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>-->
+                        <!--    <button class="btn btn-vo" ng-click="isExceedMemoryPossible()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>-->
                         <button class="btn  btn-default " ng-click="createXlsFileTask()"><i
                                 class="fa fa fa-mail-reply"></i>{{'TXT_BI_DOWNLOAD_LIST_CREATE_FILE'|translate}}
                         </button>
@@ -142,7 +146,8 @@
                         <span ng-switch-when="3">{{'TXT_BI_DOWNLOAD_LIST_CREATED'|translate}}</span>
                         <span ng-switch-when="0">{{'TXT_BI_DOWNLOAD_LIST_NOT_START'|translate}}</span>
                         <span ng-switch-when="4">{{'TXT_BI_DOWNLOAD_LIST_FILE_OUT_TIME'|translate}}</span>
-                        <span ng-switch-default>{{'TXT_BI_DOWNLOAD_LIST_UNKNOWN_ERROR'|translate}}</span>
+                        <span ng-switch-when="100">{{'TXT_BI_DOWNLOAD_LIST_CREATE_FAIL'|translate}}</span>
+                        <span ng-switch-default>{{'TXT_BI_DOWNLOAD_LIST_CREATE_FAIL'|translate}}</span>
                     </td>
                     <!-- <td class="text-left"><button class="btn btn-danger btn-xs" ng-click="test2()"><i class="fa fa-cloud-download"></i>文件下载</button></td>　-->
                     　　<!--downloadExcel(item)-->

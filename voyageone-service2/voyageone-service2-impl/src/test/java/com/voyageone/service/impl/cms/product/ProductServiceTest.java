@@ -110,12 +110,7 @@ public class ProductServiceTest {
 
         platformCart.setSellerCats(sellerCats);
 
-        productPlatformService.updateProductPlatform("010", 2522623L, platformCart,"test");
-
-
-
-
-
+        productPlatformService.updateProductPlatformNoSx("010", 2522623L, platformCart,"test", "comment", false);
 
     }
 

@@ -166,7 +166,7 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
                                 }
                                 newProduct.getPlatforms().forEach((s, platform) -> {
                                     if (platform.getCartId() != 0) {
-                                        productPlatformService.updateProductPlatform(channelId, newProduct.getProdId(), platform, userName, false, EnumProductOperationType.changeMainCategory, "批量修改主类目税号变更", true);
+                                        productPlatformService.updateProductPlatform(channelId, newProduct.getProdId(), platform, userName, false, EnumProductOperationType.changeMainCategory, "批量修改主类目税号变更", true, 1);
                                     }
                                 });
                             }catch (Exception e){

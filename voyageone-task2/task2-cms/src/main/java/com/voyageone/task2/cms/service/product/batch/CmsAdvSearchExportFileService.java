@@ -101,10 +101,10 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private final static String[] _DynColJMGroup = {"MallURL", "MallId", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice"};
     private final static String[] _DynColCNJMGroup = {"MallURL", "MallId", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)"};
 
-    private final static String[] _DynCol = {"URL", "Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify"};
-    private final static String[] _DynColCN = {"URL", "Numiid", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类"};
-    private final static String[] _DynColJM = {"MallURL", "MallId", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify"};
-    private final static String[] _DynColCNJM = {"MallURL", "MallId", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类"};
+    private final static String[] _DynCol = {"URL","qty","Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify"};
+    private final static String[] _DynColCN = {"URL","可售库存", "Numiid", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类"};
+    private final static String[] _DynColJM = {"MallURL","qty", "MallId", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify"};
+    private final static String[] _DynColCNJM = {"MallURL","可售库存", "MallId", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类"};
 
     // SKU级动态输出列
     private final static String[] _DynColSKU = {"URL", "Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify", "Live"};
@@ -388,12 +388,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
             FileUtils.cell(row1, i, style1).setCellValue(_CODE_STATIC_COLS[i]);
             FileUtils.cell(row2, i, style2).setCellValue(_CODE_STATIC_COLS_ZN[i]);
         }
-        for (TypeChannelBean cartObj : cartList) {
-            FileUtils.cell(row1, size, style1).setCellValue(cartObj.getName() + "quantity");
-            FileUtils.cell(row2, size, style2).setCellValue(cartObj.getName() + "库存");
-            size++;
-        }
-
         List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.get("_adv_search_customProps");
         List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.get("_adv_search_commonProps");
         List<Map<String, String>> salesProps = (List<Map<String, String>>) cmsSession.get("_adv_search_selSalesType");
@@ -734,6 +728,18 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
             for (TypeChannelBean cartObj : cartList) {
                 CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
+                if (ptfObj == null) {
+                    // 没有设值时也要输出,不然就会错位
+                    int columnLength = _DynCol.length;
+                    if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
+                        columnLength = _DynColJM.length;
+                    }
+                    for (int i = 0; i < columnLength; i++) {
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                    }
+                    continue;
+                }
+                //取得库存
                 int qty = 0;
                 for (BaseMongoMap<String, Object> map : ptfObj.getSkus()) {
                     String sku = (String) map.get("skuCode");
@@ -747,31 +753,19 @@ public class CmsAdvSearchExportFileService extends BaseService {
                         }
                     }
                 }
-                FileUtils.cell(row, index++, unlock).setCellValue(qty);
-            }
-            for (TypeChannelBean cartObj : cartList) {
-                CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
-                if (ptfObj == null) {
-                    // 没有设值时也要输出,不然就会错位
-                    int columnLength = _DynCol.length;
-                    if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
-                        columnLength = _DynColJM.length;
-                    }
-                    for (int i = 0; i < columnLength; i++) {
-                        FileUtils.cell(row, index++, unlock).setCellValue("");
-                    }
-                    continue;
-                }
                 if (org.apache.commons.lang3.StringUtils.isNotEmpty(ptfObj.getpNumIId())) {
                     if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
                         // JmMallURL
                         FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpPlatformMallId() + ".html");
+                        // 设置Jm库存
+                        FileUtils.cell(row, index++, unlock).setCellValue(qty);
                         // JmMallID
                         FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpPlatformMallId()));
                         // JmURL
                         FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpNumIId() + ".html");
                     } else {
                         FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpNumIId());
+                        FileUtils.cell(row, index++, unlock).setCellValue(qty);
                     }
                 } else {
                     // 补齐聚头的MallURL和MallID的空白列
@@ -782,6 +776,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                         FileUtils.cell(row, index++, unlock).setCellValue("");
                     }
                     FileUtils.cell(row, index++, unlock).setCellValue("");
+                    FileUtils.cell(row, index++, unlock).setCellValue(qty);
                 }
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpNumIId()));
 
@@ -1367,6 +1362,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         CellStyle unlock = FileUtils.createUnLockStyle(workbook);
         Sheet sheet = workbook.getSheetAt(0);
         for (CmsBtProductBean item : products) {
+            $info(item.getCommonNotNull().getFields().getCode());
             CmsBtProductModel_Field fields = item.getCommon().getFields();
             List<CmsBtProductModel_Sku> skuList = item.getCommon().getSkus();
 
@@ -1379,6 +1375,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getModel()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSize())); // 原始尺码
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getSize()));
+                if(fields.getProductNameEn() != null && fields.getProductNameEn().length() > 2000) fields.setProductNameEn(fields.getProductNameEn().substring(0,2000));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getProductNameEn())); // 英文标题
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getOriginalTitleCn())); // 中文标题
                 // 图片路径
@@ -1395,7 +1392,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getWeightKG() + ""));
 
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getBarcode())); // UPC
+                if(fields.getShortDesEn() != null && fields.getShortDesEn().length() > 2000) fields.setShortDesEn(fields.getShortDesEn().substring(0,2000));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getShortDesEn()));
+                if(fields.getShortDesCn() != null && fields.getShortDesCn().length() > 2000) fields.setShortDesCn(fields.getShortDesCn().substring(0,2000));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getShortDesCn()));
 
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommon().getCatPath())); // 类目
