@@ -681,6 +681,8 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         platform.setpCatId(mainPlatform.getpCatId());
         platform.setpCatPath(mainPlatform.getpCatPath());
+        platform.setpBrandId(mainPlatform.getpBrandId());
+        platform.setpBrandName(mainPlatform.getpBrandName());
         if(platform.getFields() == null) platform.setFields(new BaseMongoMap<>());
         mainPlatform.getFields().forEach((s, o) -> {
             if (platform.getFields().containsKey(s)) {
@@ -696,7 +698,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             }
         });
 
-        platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId, prodId, language, null, platform.getpBrandId()));
+        platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId, prodId, language, platform.getpCatPath(), platform.getpBrandId()));
 
         return platform;
     }
