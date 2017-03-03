@@ -1426,6 +1426,7 @@ public class ProductService extends BaseService {
                 if (tagInfo.getChecked() == 0) {
                     //删除
                     tags.remove(String.format("-%s-%s-", refTagId, tagInfo.getId()));
+                    tags.remove(String.format("-%s-", refTagId));
 
                 } else if (tagInfo.getChecked() == 2) {
 
@@ -1442,7 +1443,6 @@ public class ProductService extends BaseService {
             productModel.setTags(tags);
             //3.更新
             updateTags(channelId, productModel.getProdId(), tags, modifier);
-            System.out.println("111");
         }
     }
 

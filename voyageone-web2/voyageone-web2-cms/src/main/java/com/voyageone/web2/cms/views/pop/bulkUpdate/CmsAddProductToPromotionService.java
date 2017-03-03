@@ -5,33 +5,27 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
-import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.InitParameter;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.AddProductSaveParameter;
+import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.InitParameter;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
-import com.voyageone.service.bean.cms.businessmodel.CmsBtTag.TagCodeCountInfo;
 import com.voyageone.service.daoext.cms.CmsBtPromotionDaoExtCamel;
-import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.TagService;
-import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotion3Service;
-import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.promotion.JMPromotionDetailService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -52,17 +46,9 @@ public class CmsAddProductToPromotionService extends BaseViewService {
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
     @Autowired
-    private ProductService productService;
-    @Autowired
-    private ProductTagService productTagService;
-    @Autowired
     private PromotionDetailService promotionDetailService;
     @Autowired
     private CmsAdvanceSearchService advanceSearchService;
-    @Autowired
-    private FeedInfoService feedInfoService;
-    @Autowired
-    private CmsBtBrandBlockService brandBlockService;
 
     public  void  save(AddProductSaveParameter parameter, String channelId, String userName, CmsSessionBean cmsSession) {
 
@@ -106,7 +92,7 @@ public class CmsAddProductToPromotionService extends BaseViewService {
             $warn("addToPromotion promotionId不存在 promotionId=" + promotionId);
             throw new BusinessException("promotionId不存在：" + promotionId);
         }
-        List<Long> productIds = null;
+        List<Long> productIds;
         if (parameter.getIsSelAll() == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
             productIds = advanceSearchService.getProductIdList(promotion.getChannelId(), cmsSession);
@@ -142,7 +128,7 @@ public class CmsAddProductToPromotionService extends BaseViewService {
             $warn("addToPromotion promotionId不存在 promotionId=" + promotionId);
             throw new BusinessException("promotionId不存在：" + promotionId);
         }
-        List<Long> productIds = null;
+        List<Long> productIds;
         if (parameter.getIsSelAll() == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
             productIds = advanceSearchService.getProductIdList(promotion.getChannelId(), cmsSession);
@@ -198,7 +184,6 @@ public class CmsAddProductToPromotionService extends BaseViewService {
             $warn("CmsAddProductToPromotionService.init cartI==0 " + params.toString());
             throw new BusinessException("未选择平台");
         }
-        Map<String, Object> data = new HashMap<>();
         int isSelAll = params.getIsSelAll();
         //产品code
         List<String> codeList;
