@@ -1439,20 +1439,29 @@ public class ProductService extends BaseService {
         if (productModel != null) {
             List<String> tags = productModel.getTags();
             tagList.forEach(tagInfo -> {
+                int cnt = 0;
                 if (tagInfo.getChecked() == 0) {
                     //删除
                     tags.remove(String.format("-%s-%s-", refTagId, tagInfo.getId()));
-                    tags.remove(String.format("-%s-", refTagId));
-
+                    for (String tag : tags) {
+                        String s = tag.split("-")[1];
+                        if (s.equals(String.valueOf(refTagId))) {
+                            cnt++;
+                        }
+                    }
+                    if (cnt == 1) {
+                        tags.remove(String.format("-%s-", refTagId));
+                    }
                 } else if (tagInfo.getChecked() == 2) {
-
                     //添加
                     String tag = String.format("-%s-%s-", refTagId, tagInfo.getId());
                     if (!tags.contains(tag)) {
                         tags.add(String.format("-%s-%s-", refTagId, tagInfo.getId()));
                         tags.add(String.format("-%s-", refTagId));
+                        HashSet tagsHashSet = new HashSet(tags);
+                        tags.clear();
+                        tags.addAll(tagsHashSet);
                     }
-
                 }
             });
 
