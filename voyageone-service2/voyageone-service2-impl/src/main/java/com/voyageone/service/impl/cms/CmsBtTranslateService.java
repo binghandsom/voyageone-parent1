@@ -28,6 +28,7 @@ public class CmsBtTranslateService extends BaseService {
     }
 
     public void insertOrUpdate(CmsBtTranslateModel model){
+        model.setValueEn(model.getValueEn() == null?"":model.getValueEn().toLowerCase());
         CmsBtTranslateModel cmsBtTranslateModel = cmsBtTranslateDao.get(model.getChannelId(),model.getType(), model.getName(), model.getValueEn().toLowerCase());
         if(cmsBtTranslateModel == null){
             model.set_id(null);
