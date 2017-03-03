@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.daoext.cms.CmsMtFeedCustomPropDaoExt;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -85,6 +86,9 @@ public class CmsBtCustomPropServiceTest {
         }
         cmsBtCustomPropModel.setChannelId(channelId);
         items.forEach(item->{
+            if(StringUtil.isEmpty(item.getFeedPropTranslation())){
+                return;
+            }
             CmsBtCustomPropModel.Entity entity = new CmsBtCustomPropModel.Entity();
             entity.setActive(1);
             entity.setNameEn(item.getFeedPropOriginal());
@@ -95,7 +99,11 @@ public class CmsBtCustomPropServiceTest {
                 entity.setType(4);
             }
             entity.setChecked(true);
-            entity.setAttributeType(1);
+            if(!channelId.equalsIgnoreCase("928")) {
+                entity.setAttributeType(1);
+            }else{
+                entity.setAttributeType(3);
+            }
             cmsBtCustomPropModel.getEntitys().add(entity);
         });
         cmsBtCustomPropService.update(cmsBtCustomPropModel);
