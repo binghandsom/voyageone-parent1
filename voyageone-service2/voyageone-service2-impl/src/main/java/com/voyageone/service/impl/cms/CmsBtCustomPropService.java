@@ -314,9 +314,11 @@ public class CmsBtCustomPropService extends BaseService {
                 }
                 break;
             case 3:
-                List<String> values = feedInfo.getAttribute().get(entity.getValue());
-                if (!ListUtils.isNull(values)) {
-                    valueEn = values.get(0);
+                if(feedInfo != null) {
+                    List<String> values = feedInfo.getAttribute().get(entity.getValue());
+                    if (!ListUtils.isNull(values)) {
+                        valueEn = values.get(0);
+                    }
                 }
                 break;
             case 4:
