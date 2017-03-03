@@ -4,12 +4,13 @@ define([
 
     cms.controller('translateController', (function () {
 
-        function TranslateCtl($routeParams, attrTranslateService, popups, confirm, notify) {
+        function TranslateCtl($routeParams, attrTranslateService, popups, confirm, notify, alert) {
             var self = this;
             self.nameEn = $routeParams.nameEn;
             self.popups = popups;
             self.confirm = confirm;
             self.notify = notify;
+            self.alert = alert;
             self.attrTranslateService = attrTranslateService;
             self.searchInfo = {
                 type: '',
@@ -31,24 +32,22 @@ define([
         };
 
         TranslateCtl.prototype.init = function () {
-            var self = this, entity,
+            var self = this, entity, jsonStr,
                 searchInfo = self.searchInfo;
 
-            if (self.nameEn) {
-                var jsonStr = sessionStorage.getItem(self.nameEn);
-                self.datasource = angular.fromJson(jsonStr);
-                entity = self.datasource.entity
+            jsonStr = sessionStorage.getItem(self.nameEn);
+
+            if (!jsonStr) {
+                document.open();
+                document.write('<h3>请从自定义属性管理链接到此页面！</h3>');
+                document.close();
+                return;
             }
 
-            self.typeOption = [];
-            _.each(self.TYPE, function (value, key) {
-                var _tmp = {};
-                _tmp.value = Number(key);
-                _tmp.name = value;
-                self.typeOption.push(_tmp);
-            });
+            self.datasource = angular.fromJson(jsonStr);
+            entity = self.datasource.entity;
 
-            searchInfo.type = entity.type;
+            searchInfo.type = entity.type + '';
             searchInfo.propName = entity.nameEn;
 
             self.search();
@@ -75,6 +74,7 @@ define([
                 popups = self.popups;
 
             popups.openAddAttrValue({
+                nameEn: self.searchInfo.propName,
                 type: self.searchInfo.type,
                 nameEnArr: self.datasource.nameEnArr
             }).then(function () {
@@ -92,13 +92,13 @@ define([
                 }, function () {
                     self.search();
                 });
-            }else{
+            } else {
                 self.callSave(entity);
             }
 
         };
 
-        TranslateCtl.prototype.callSave = function(upEntity){
+        TranslateCtl.prototype.callSave = function (upEntity) {
             var self = this;
             self.attrTranslateService.update(upEntity).then(function (res) {
                 self.notify.success('更新成功！');

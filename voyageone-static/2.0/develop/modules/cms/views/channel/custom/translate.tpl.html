@@ -12,9 +12,11 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">属性种类</label>
                                     <div class="col-sm-6">
-                                        <select class="form-control" ng-model="ctrl.searchInfo.type" width="'100%'"
-                                                chosen
-                                                ng-options="_option.value as _option.name for _option in ctrl.typeOption">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.type" width="'100%'" chosen>
+                                            <option value="1">共通属性</option>
+                                            <option value="2">主类目属性</option>
+                                            <option value="3">供货商属性</option>
+                                            <option value="4">自定义属性</option>
                                         </select>
                                     </div>
                                 </div>
