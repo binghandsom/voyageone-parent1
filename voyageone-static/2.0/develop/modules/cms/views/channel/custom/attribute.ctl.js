@@ -275,6 +275,7 @@ define([
                 self.search();
 
             self.attributes = _.each(self.attributes, function (item) {
+                delete item.hide;
                 if ((!item.nameCn || !item.nameCn.matchStr(filterName)) && !item.nameEn.matchStr(filterName))
                     item.hide = true;
             });
