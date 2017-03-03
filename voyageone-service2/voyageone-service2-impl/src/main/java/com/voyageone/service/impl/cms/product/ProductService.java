@@ -239,6 +239,7 @@ public class ProductService extends BaseService {
     /**
      * 查询产品信息(合并该产品的组信息)
      * queryObject中必须包含输出项:"common.fields.code"，否则将查询不到组信息
+     *
      * @param channelId
      * @param cartId
      * @param queryObject
@@ -285,6 +286,7 @@ public class ProductService extends BaseService {
 
     /**
      * checkProductDataIsReady
+     *
      * @param channelId
      * @param productId
      * @return
@@ -341,6 +343,7 @@ public class ProductService extends BaseService {
 
     /**
      * updateProduct
+     *
      * @param channelId
      * @param paraMap
      * @param updateMap
@@ -352,6 +355,7 @@ public class ProductService extends BaseService {
 
     /**
      * updateFirstProduct
+     *
      * @param updObj
      * @param channelId
      * @return
@@ -615,7 +619,7 @@ public class ProductService extends BaseService {
                     resultInfo.setEtkHsCode(cmsMtEtkHsCodeModel.getEtkHsCode());
                     resultInfo.setEtkDescription(cmsMtEtkHsCodeModel.getEtkDescription());
                     resultInfo.setEtkUnit(cmsMtEtkHsCodeModel.getEtkUnit());
-                }else{
+                } else {
                     resultInfo.setEtkHsCode(hsCodePu[0]);
                     resultInfo.setEtkDescription(hsCodePu[1]);
                     resultInfo.setEtkUnit(hsCodePu[2]);
@@ -790,6 +794,7 @@ public class ProductService extends BaseService {
 
     /**
      * updateTags
+     *
      * @param channelId
      * @param prodId
      * @param Tags
@@ -915,6 +920,7 @@ public class ProductService extends BaseService {
 
     /**
      * updateProductLock
+     *
      * @param channelId
      * @param prodId
      * @param lock
@@ -1406,7 +1412,7 @@ public class ProductService extends BaseService {
                         return sku.getSkuCode().equals(stock.getBase().getSku());
                     }
                 });
-                if(sku != null) {
+                if (sku != null) {
                     stock.getBase().setOrigSize(sku.getSize());
                     stock.getBase().setSaleSize(sku.getAttribute("platformSize"));
                 }
@@ -1423,20 +1429,29 @@ public class ProductService extends BaseService {
         if (productModel != null) {
             List<String> tags = productModel.getTags();
             tagList.forEach(tagInfo -> {
+                int cnt = 0;
                 if (tagInfo.getChecked() == 0) {
                     //删除
                     tags.remove(String.format("-%s-%s-", refTagId, tagInfo.getId()));
-                    tags.remove(String.format("-%s-", refTagId));
-
+                    for (String tag : tags) {
+                        String s = tag.split("-")[1];
+                        if (s.equals(String.valueOf(refTagId))) {
+                            cnt++;
+                        }
+                    }
+                    if (cnt == 1) {
+                        tags.remove(String.format("-%s-", refTagId));
+                    }
                 } else if (tagInfo.getChecked() == 2) {
-
                     //添加
                     String tag = String.format("-%s-%s-", refTagId, tagInfo.getId());
                     if (!tags.contains(tag)) {
                         tags.add(String.format("-%s-%s-", refTagId, tagInfo.getId()));
                         tags.add(String.format("-%s-", refTagId));
+                        HashSet tagsHashSet = new HashSet(tags);
+                        tags.clear();
+                        tags.addAll(tagsHashSet);
                     }
-
                 }
             });
 
@@ -1456,18 +1471,19 @@ public class ProductService extends BaseService {
         return prodObj.getProdId();
     }
 
-    public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key){
-        return cmsBtProductDao.bulkUpdateWithMap(channelId,bulkList,modifier,key);
+    public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key) {
+        return cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, key);
     }
 
     /**
      * 重置product和group的platformPid
+     *
      * @param channelId 渠道Id
-     * @param cartId 平台Id
-     * @param code 产品Code
+     * @param cartId    平台Id
+     * @param code      产品Code
      * @return WriteResult
      */
-    public WriteResult resetProductAndGroupPlatformPid (String channelId, int cartId, String code) {
+    public WriteResult resetProductAndGroupPlatformPid(String channelId, int cartId, String code) {
 
         JongoUpdate query = new JongoUpdate();
         query.setQuery("{\"common.fields.code\": #}");
@@ -1494,6 +1510,7 @@ public class ProductService extends BaseService {
 
     /**
      * 判断两税号是否一样
+     *
      * @param hsCode1
      * @param hsCode2
      * @return
@@ -1515,6 +1532,7 @@ public class ProductService extends BaseService {
 
     /**
      * insertProductHistory
+     *
      * @param channelId
      * @param productId
      */
