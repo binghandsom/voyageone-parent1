@@ -58,7 +58,7 @@
                         <div class="col-md-11 col-md-offset-1">
                             <select class="form-control" name="prop_value" ng-model="ctrl.vm.prop_master_value" ng-disabled="ctrl.vm.attrType != 2"
                                     ng-options="field.id as field.name for field in ctrl.masterFields" chosen
-                                    ng-required="!ctrl.vm.prop_master_value && !ctrl.vm.prop_fix_value">
+                                    ng-required="!ctrl.vm.prop_master_value && !ctrl.vm.prop_fix_value && ctrl.vm.attrType != 3">
                             </select>
                         </div>
                     </div>
@@ -72,7 +72,7 @@
                     <div class="row"  ng-if="ctrl.vm.type == 4">
                         <div class="col-md-11 col-md-offset-1">
                             <textarea class="form-control no-resize" rows="5" ng-model="ctrl.vm.prop_fix_value" ng-disabled="ctrl.vm.attrType != 3"
-                                      ng-required="!ctrl.vm.prop_master_value && !ctrl.vm.prop_fix_value"></textarea>
+                                      ng-required="!ctrl.vm.prop_master_value && !ctrl.vm.prop_fix_value && ctrl.vm.attrType != 3"></textarea>
                         </div>
                     </div>
                 </div>

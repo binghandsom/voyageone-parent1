@@ -68,6 +68,8 @@ define([
                 cat: catPath
             }).then(function (res) {
                 self.attributes = res.data.entitys;
+               // self.orgAttributes = angular.copy(self.attributes);
+
                 self.attributesTrue = _.filter(self.attributes, function (element) {
                     return element.checked
                 });
@@ -231,7 +233,7 @@ define([
 
             self.attributeService2.doSetSort(upEntity).then(function () {
                 self.notify.success('排序完毕！');
-                self.search();
+                self.filterEntity();
             });
         };
 
@@ -244,7 +246,7 @@ define([
                 nameEnArr: _.pluck(self.attributes, 'nameEn')
             }));
 
-            window.open('#'+self.cRoutes.marketing_setting_common_custom_translate_list.url + entity.nameEn);
+            window.open('#' + self.cRoutes.marketing_setting_common_custom_translate_list.url + entity.nameEn);
         };
 
         CustomAttributeCtl.prototype.changeChannel = function () {
@@ -260,9 +262,10 @@ define([
             if (!filterName || filterName == '')
                 self.search();
 
-            self.attributes = _.filter(self.attributes, function (item) {
-                return item.nameEn.indexOf(filterName) >= 0 ||
-                    (item.nameCn && item.nameCn.indexOf(filterName) >= 0)
+            self.attributes = _.each(self.attributes, function (item) {
+                if(item.nameEn.indexOf(filterName) < 0 ||
+                    !item.nameCn && item.nameCn.indexOf(filterName) < 0)
+                    item.hide = true;
             });
 
             self.attributesTrue = _.filter(self.attributes, function (element) {
