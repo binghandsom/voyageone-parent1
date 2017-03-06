@@ -19,6 +19,8 @@ public class CacheKeyEnums {
 
     public static final String OAUTH_CACHE_DATA = "OATUH_CACHE_DATA";
 
+    public static final String CMS_CACHE_DATA = "CmsCacheData";
+
     public enum KeyEnum {
 
         ConfigData_FeedConfigs,
@@ -61,6 +63,10 @@ public class CacheKeyEnums {
 
         ConfigData_VmsChannelConfigs,
 
+        CmsCacheData_Feed_Attribute,
+
         COMM_CACHE_DATA;
+
+
     }
 }

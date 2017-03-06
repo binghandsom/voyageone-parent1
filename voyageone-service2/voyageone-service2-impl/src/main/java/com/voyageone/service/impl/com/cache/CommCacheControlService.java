@@ -25,8 +25,16 @@ public class CommCacheControlService {
         Set<String> result = CacheHelper.getCacheTemplate().keys(CacheKeyEnums.CONFIG_ALL_KEY_REGEX);
         // COMM_CACHE_DATA
         Set<String> commDataSet = CacheHelper.getCacheTemplate().keys(CacheKeyEnums.COMM_CACHE_DATA + "*");
+
+        // COMM_CACHE_DATA
+        Set<String> cmsDataSet = CacheHelper.getCacheTemplate().keys(CacheKeyEnums.CMS_CACHE_DATA + "*");
+
         if (commDataSet != null && !commDataSet.isEmpty()) {
             result.addAll(commDataSet);
+        }
+
+        if (cmsDataSet != null && !cmsDataSet.isEmpty()) {
+            result.addAll(cmsDataSet);
         }
 
         return result;
@@ -38,6 +46,10 @@ public class CommCacheControlService {
         } else {
             CacheHelper.delete(cacheKeyEnum.toString());
         }
+    }
+
+    public void deleteCache(String cacheKey) {
+        CacheHelper.delete(cacheKey);
     }
 
 }

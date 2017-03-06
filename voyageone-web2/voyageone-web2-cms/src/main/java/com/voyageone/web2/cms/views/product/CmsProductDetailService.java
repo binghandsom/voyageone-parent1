@@ -1269,7 +1269,7 @@ public class CmsProductDetailService extends BaseViewService {
     /**
      * 填充field选项值.
      */
-    private void fillFieldOptions(List<Field> fields, String channelId, String language) {
+    public static void fillFieldOptions(List<Field> fields, String channelId, String language) {
 
         for (Field field : fields) {
 

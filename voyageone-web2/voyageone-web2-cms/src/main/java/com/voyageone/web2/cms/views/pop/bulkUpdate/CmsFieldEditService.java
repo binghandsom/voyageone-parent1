@@ -43,6 +43,7 @@ import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
+import com.voyageone.web2.cms.views.product.CmsProductDetailService;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.collections.CollectionUtils;
@@ -123,7 +124,7 @@ public class CmsFieldEditService extends BaseViewService {
         return resultList;
     }
 
-    public List<CmsMtCommonPropDefModel> getPlatfromPopOptions(Integer cartId) {
+    public List<CmsMtCommonPropDefModel> getPlatfromPopOptions(Integer cartId, UserSessionBean user) {
         CmsMtPlatformCommonSchemaModel commonSchemaModel = cmsMtPlatformCommonSchemaService.get(cartId);
         List<Field> items = new ArrayList<>();
         if (commonSchemaModel == null)
@@ -137,7 +138,9 @@ public class CmsFieldEditService extends BaseViewService {
         if (productFieldMapList != null && !productFieldMapList.isEmpty())
             items.addAll(SchemaJsonReader.readJsonForList(productFieldMapList));
 
+        CmsProductDetailService.fillFieldOptions(items,user.getSelChannelId(),"cn");
         List<CmsMtCommonPropDefModel> resultList = new ArrayList<>(items.size());
+
         items.forEach(field -> {
             CmsMtCommonPropDefModel resModel = new CmsMtCommonPropDefModel();
             resModel.setField(field);

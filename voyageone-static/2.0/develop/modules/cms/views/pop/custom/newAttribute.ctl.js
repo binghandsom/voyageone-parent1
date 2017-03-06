@@ -1,40 +1,117 @@
 /**
  * Created by linanbin on 15/12/7.
+ *
+ * @description 添加自定义属性模态框
+ * @author by Piao
  */
 define([
-    'angularAMD',
+    'cms',
     'modules/cms/controller/popup.ctl'
-], function (angularAMD) {
+], function (cms) {
 
-    angularAMD.controller('popAddAttributeValueCtl', function ($scope, $modalInstance, context, alert) {
+    function AttrEntity(nameEn, nameCn, attributeType, value) {
+        if (!arguments || arguments.length < 4)
+            throw new Error('没有填写正确参数！');
+        this.nameEn = nameEn;
+        this.nameCn = nameCn;
+        this.type = 4;
+        this.attributeType = attributeType;
+        this.value = value;
+    }
 
-        $scope.vm = {
-            prop_original:"",
-            prop_translation:""
+    cms.controller('popAddAttributeValueCtl', (function () {
+
+        function AttributeValueCtl($modalInstance, context, attributeService2, notify, alert) {
+            this.$modalInstance = $modalInstance;
+            this.context = context;
+            this.attributeService2 = attributeService2;
+            this.notify = notify;
+            this.alert = alert;
+            this.vm = {
+                prop_original: "",
+                prop_translation: "",
+                attrType: '',
+                type: 4
+            };
+        }
+
+        AttributeValueCtl.prototype.init = function () {
+            var self = this, context = self.context;
+
+            if (context.entity) {
+                self.vm.prop_original = context.entity.nameEn;
+                self.vm.prop_translation = context.entity.nameCn;
+                self.vm.attrType = context.entity.attributeType;
+                self.vm.type = context.entity.type;
+
+                if (context.entity.attributeType == 2)
+                    self.vm.prop_master_value = context.entity.value;
+                else
+                    self.vm.prop_fix_value = context.entity.value;
+            }
+
+            //匹配Master详情内属性
+            self.masterFields = context.commonFields;
+
+        };
+
+        AttributeValueCtl.prototype.changeType = function () {
+            var vm = this.vm;
+
+            if (vm.attrType > 1)
+                vm.prop_master_value = vm.prop_fix_value = null;
         };
 
         /**
          * 提交属性追加
+         * $modalInstance.close($scope.vm);
          */
-        $scope.ok = function () {
-            var checkResult = true;
-            if($scope.vm.prop_original==""){
-                alert("请输入属性名");
-                checkResult = false;
-            }else{
-                _.each(context.from, function(value) {
-                    if (_.isEqual(value.prop_original, $scope.vm.prop_original)) {
-                        alert("该属性已经存在");
-                        checkResult = false;
-                    }
+        AttributeValueCtl.prototype.ok = function () {
+            var self = this, entity,
+                vm = self.vm, attrValue;
+
+            switch (Number(vm.attrType)) {
+                case 1:
+                    attrValue = attrValue ? attrValue : '';
+                    break;
+                case 2:
+                    attrValue = vm.prop_master_value;
+                    break;
+                case 3:
+                    attrValue = vm.prop_fix_value;
+                    break;
+            }
+
+            if (self.context.entity) {
+                entity = angular.copy(self.context.entity);
+                entity.nameCn = vm.prop_translation;
+                entity.attributeType = Number(vm.attrType);
+                entity.value = attrValue;
+            } else {
+                var repeat = _.some(self.context.nameEnArr, function (item) {
+                    return item === vm.prop_original
                 });
+
+                if (repeat) {
+                    self.alert('属性名重复！请重新编辑！');
+                    return;
+                }
+
+                entity = new AttrEntity(vm.prop_original, vm.prop_translation, Number(vm.attrType), attrValue)
             }
 
-            if (checkResult) {
-                $modalInstance.close($scope.vm);
-            }
+            self.attributeService2.doUpdateEntity({
+                orgChannelId: self.context.orgChannelId,
+                cat: self.context.cat,
+                entity: entity
+            }).then(function () {
+                self.notify.success('添加成功！');
+                self.$modalInstance.close();
+            });
         };
-    });
 
+        return AttributeValueCtl;
+
+    })());
 
 });
