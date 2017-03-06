@@ -6,8 +6,10 @@ import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.daoext.cms.CmsMtFeedCustomOptionDaoExt;
 import com.voyageone.service.daoext.cms.CmsMtFeedCustomPropDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.CmsBtCustomPropService;
 import com.voyageone.service.model.cms.CmsMtFeedCustomOptionModel;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
+import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 获取自定义属性的列表(含翻译), 同时获取属性相应的属性值的列表(含翻译)
@@ -28,6 +31,9 @@ public class FeedCustomPropService extends BaseService {
     private CmsMtFeedCustomPropDaoExt cmsMtFeedCustomPropDaoExt;
     @Autowired
     private CmsMtFeedCustomOptionDaoExt cmsMtFeedCustomOptionDaoExt;
+
+    @Autowired
+    private CmsBtCustomPropService cmsBtCustomPropService;
 
     private class FeedCustomPropData {
         // 自定义属性
@@ -504,10 +510,21 @@ public class FeedCustomPropService extends BaseService {
     }
 
     public List<Map<String, Object>> getFeedCustomPropAttrs(String channelId, String catPath) {
-        Map<String, Object> params = new HashMap<>(2);
-        params.put("channelId", channelId);
-        params.put("feedCatPath", catPath);
-        return cmsMtFeedCustomPropDaoExt.selectAttrs(params);
+        CmsBtCustomPropModel cmsBtCustomPropModel = cmsBtCustomPropService.getCustomPropByCatChannelExtend(channelId,channelId,catPath);
+        List<Map<String, Object>> customProps = new ArrayList<>();
+
+        customProps = cmsBtCustomPropModel.getEntitys().stream().map(entity -> {
+            Map<String, Object> item = new HashMap();
+            item.put("feed_prop_original", entity.getNameEn());
+            item.put("feed_prop_translation", entity.getNameCn());
+            return item;
+        }).collect(Collectors.toList());
+        return customProps;
+
+//        Map<String, Object> params = new HashMap<>(2);
+//        params.put("channelId", channelId);
+//        params.put("feedCatPath", catPath);
+//        return cmsMtFeedCustomPropDaoExt.selectAttrs(params);
     }
 
     public List<CmsMtFeedCustomPropModel> getFeedCustomPropWithCategory(String channelId, String feedCategory) {
