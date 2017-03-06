@@ -1,5 +1,6 @@
 /**
- * Created by 123 on 2016/4/18.
+ * @description 自由标签设置
+ * @author Piao
  */
 define([
     'angularAMD',
