@@ -26,6 +26,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     private String catId;
     private String category;
+    private String mainCategory;
     private String code;
     private String name;
     private String model;
@@ -51,6 +52,14 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private String productType;
     private String material;
     private String lastReceivedOn = "";
+
+    public String getMainCategory() {
+        return mainCategory;
+    }
+
+    public void setMainCategory(String mainCategory) {
+        this.mainCategory = mainCategory;
+    }
 
     public String getCategory() {
         return category;
@@ -264,6 +273,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     @JsonIgnore
     public CmsBtFeedInfoModel getCmsBtFeedInfoModel(ChannelConfigEnums.Channel channel) {
         CmsBtFeedInfoModel cmsBtFeedInfoModel = new CmsBtFeedInfoModel(this.channelId);
+        cmsBtFeedInfoModel.setMainCategory(this.mainCategory);
         cmsBtFeedInfoModel.setCategory(this.getCategory());
         cmsBtFeedInfoModel.setCode(this.getCode());
         cmsBtFeedInfoModel.setName(this.getName());
