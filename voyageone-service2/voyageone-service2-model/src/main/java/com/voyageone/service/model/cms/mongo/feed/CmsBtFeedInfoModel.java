@@ -78,6 +78,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     }
 
     public String getName() {
+        if(name == null) name = "";
         return name;
     }
 
@@ -110,6 +111,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     }
 
     public String getSizeType() {
+        if(sizeType == null) sizeType = "";
         return sizeType;
     }
 
@@ -130,6 +132,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     }
 
     public String getBrand() {
+        if(brand == null) brand = "";
         return brand;
     }
 
@@ -308,6 +311,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     }
 
     public String getProductType() {
+        if(productType == null) productType = "";
         return productType;
     }
 

@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.feed;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.category.match.*;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -51,9 +52,6 @@ public class FeedToCms2Service extends BaseService {
     private FeedCategoryTreeService feedCategoryTreeService;
 
     @Autowired
-    private FeedInfoLogService feedInfoLogService;
-
-    @Autowired
     private FeedInfoService feedInfoService;
 
     @Autowired
@@ -63,10 +61,10 @@ public class FeedToCms2Service extends BaseService {
     private FeedCategoryAttributeService feedCategoryAttributeService;
 
     @Autowired
-    private ClientInventoryService clientInventoryService;
+    private CmsBtBrandBlockService cmsBtBrandBlockService;
 
     @Autowired
-    private CmsBtBrandBlockService cmsBtBrandBlockService;
+    private Searcher searcher;
 
 
     public boolean chkCategoryPathValid(String categoryPath) {
@@ -204,6 +202,9 @@ public class FeedToCms2Service extends BaseService {
                 checkProduct(product);
 
 
+                if(isSetCategory && StringUtil.isEmpty(product.getMainCategory())){
+
+                }
 
                 feedInfoService.updateFeedInfo(product);
 
@@ -445,5 +446,27 @@ public class FeedToCms2Service extends BaseService {
 
     private Boolean isUsJoi(String channelId) {
         return "1".equalsIgnoreCase(Feeds.getVal1(channelId, FeedEnums.Name.is_usjoi));
+    }
+
+    private void setMainCategory(CmsBtFeedInfoModel feedProduct){
+
+        StopWordCleaner cleaner = new StopWordCleaner(StopWordCleaner.STOPWORD_LIST);
+        // 子店feed类目path分隔符(由于导入feedInfo表时全部替换成用"-"来分隔了，所以这里写固定值就可以了)
+        List<String> categoryPathSplit = new ArrayList<>();
+        categoryPathSplit.add("-");
+        Tokenizer tokenizer = new Tokenizer(categoryPathSplit);
+
+        FeedQuery query = new FeedQuery(feedProduct.getCategory(), cleaner, tokenizer);
+        query.setProductType(feedProduct.getProductType());
+        query.setSizeType(feedProduct.getSizeType());
+        query.setProductName(feedProduct.getName(), feedProduct.getBrand());
+
+        MatchResult searchResult = searcher.search(query, false);
+        if (searchResult == null) {
+            String errMsg = String.format("调用Feed到主数据的匹配程序匹配主类目失败！[feedCategoryPath:%s] [productType:%s] " +
+                    "[sizeType:%s] [productNameEn:%s] [brand:%s]", feedProduct.getCategory(), feedProduct.getProductType(), feedProduct.getSizeType(), feedProduct.getName(), feedProduct.getBrand());
+            $error(errMsg);
+        }
+
     }
 }
