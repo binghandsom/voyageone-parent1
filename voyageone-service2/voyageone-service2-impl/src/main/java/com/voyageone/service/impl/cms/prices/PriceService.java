@@ -808,7 +808,7 @@ public class PriceService extends BaseService {
                 product.getCommonNotNull().getSkus().forEach(sku -> {
                     skuinfo.put(sku.getSkuCode(), sku);
                 });
-                goldSize = sxProductService.getSizeMap(channelId, product.getCommon().getFields().getBrand(), product.getCommon().getFields().getProductType(), product.getCommon().getFields().getSizeType());
+                goldSize = sxProductService.getSizeMap(channelId, product.getCommon().getFields().getBrand(), product.getCommon().getFields().getProductType(), product.getCommon().getFields().getSizeType(), true);
             } catch (BusinessException e) {
                 $warn(e.getMessage());
             }
