@@ -244,7 +244,7 @@ public class ProductPlatformService extends BaseService {
         model.setQueryMap(queryMap);
         bulkList.add(model);
 
-//        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
 
         // 更新平台价格(因为批量修改价格,不存在修改sku的isSale的情况,默认调用API刷新价格)
         CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
