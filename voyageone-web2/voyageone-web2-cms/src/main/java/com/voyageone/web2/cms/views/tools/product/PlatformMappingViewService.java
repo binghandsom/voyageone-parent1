@@ -25,6 +25,7 @@ import com.voyageone.service.model.cms.mongo.CmsMtPlatformCommonSchemaModel;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.tools.product.PlatformMappingGetBean;
 import com.voyageone.web2.cms.bean.tools.product.PlatformMappingSaveBean;
+import com.voyageone.web2.cms.views.product.CmsProductDetailService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -139,6 +140,7 @@ class PlatformMappingViewService extends BaseViewService {
             List<Map<String, Object>> productFieldMapList = commonSchemaModel.getPropsProduct();
             if (productFieldMapList != null && !productFieldMapList.isEmpty())
                 product = SchemaJsonReader.readJsonForList(productFieldMapList);
+            CmsProductDetailService.fillFieldOptions(product,channelId,lang);
         } else {
             Map<String, List<Field>> fieldListMap = platformSchemaService.getFieldsByCategoryPath(categoryPath, channelId, cartId, lang);
 

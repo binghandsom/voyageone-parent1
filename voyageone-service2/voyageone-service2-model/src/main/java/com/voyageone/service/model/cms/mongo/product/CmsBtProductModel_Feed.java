@@ -4,7 +4,9 @@ package com.voyageone.service.model.cms.mongo.product;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Product 的商品Model feed
@@ -27,6 +29,8 @@ public class CmsBtProductModel_Feed  {
     private List<String> customIds = new ArrayList<>();
 
     private List<String> customIdsCn = new ArrayList<>();
+
+    private Map<String, String> attsName = new HashMap<>();
 
     private List<String> subCategories = new ArrayList<>();
 
@@ -92,5 +96,13 @@ public class CmsBtProductModel_Feed  {
 
     public void setSubCategories(List<String> subCategories) {
         this.subCategories = subCategories;
+    }
+
+    public Map<String, String> getAttsName() {
+        return attsName;
+    }
+
+    public void setAttsName(Map<String, String> attsName) {
+        this.attsName = attsName;
     }
 }

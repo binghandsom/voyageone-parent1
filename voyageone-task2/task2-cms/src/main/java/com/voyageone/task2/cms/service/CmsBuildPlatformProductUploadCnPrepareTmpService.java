@@ -1050,7 +1050,7 @@ public class CmsBuildPlatformProductUploadCnPrepareTmpService extends BaseCronTa
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            List<CmsBtProductModel_Field_Image> imageList = sxProductService.getProductImages(product, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE);
+            List<CmsBtProductModel_Field_Image> imageList = sxProductService.getProductImages(product, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE, sxData.getCartId());
             int imageCnt = imageList.size() > 5 ? 5 : imageList.size(); // 最多5张图
 
             List<String> imageKey = new ArrayList<>();

@@ -1,10 +1,81 @@
 <div class="product-shema-detail">
-    <div class="form-horizontal" name="productFieldForm" novalidate>
-        <div class="panel vo_panel tab_panel">
-                <div class="container-fluid"  id="master">
-                    <div class="row wrapper">
-                        <!----------------------------------------历史按钮---------------------------------------------->
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-heading cur-p" ng-click="vm.panelShow = true" ng-if="!vm.panelShow">
+                <h4 class="panel-title">
+                    <a href="javascript:void(0)">
+                        <i class="fa fa-caret-right"></i>&nbsp;&nbsp;<strong>展开</strong>
+                    </a>
+                </h4>
+            </div>
+            <div class="panel-heading cur-p" ng-click="vm.panelShow = false" ng-if="vm.panelShow">
+                <h4 class="panel-title">
+                    <a href="javascript:void(0)">
+                        <i class="fa fa-caret-down"></i>&nbsp;&nbsp;<strong>收起</strong>
+                    </a>
+                </h4>
+            </div>
+            <div class="panel-body" ng-if="vm.panelShow">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="col-sm-7" style="color: #000">
+                            <label class="control-label"> APP端启用开关</label>
+                        </div>
+                        <div class="col-sm-5">
+                            <div class="onoffswitch">
+                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox"
+                                       ng-model="vm.lockStatus.onOffSwitch1"
+                                       ng-click="lockProduct('onOffSwitch1')"
+                                       id="onOffSwitch1">
+                                <label class="onoffswitch-label" for="onOffSwitch1">
+                                    <span class="onoffswitch-inner"></span>
+                                    <span class="onoffswitch-switch"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="col-sm-7" style="color: #000">
+                            <label class="control-label"> 翻译完成开关</label>
+                        </div>
+                        <div class="col-sm-5">
+                            <div class="onoffswitch">
+                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox"
+                                       ng-model="vm.lockStatus.onOffSwitch2"
+                                       ng-click="lockProduct('onOffSwitch2')"
+                                       id="onOffSwitch2">
+                                <label class="onoffswitch-label" for="onOffSwitch2">
+                                    <span class="onoffswitch-inner"></span>
+                                    <span class="onoffswitch-switch"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="col-sm-7" style="color: #000">
+                            <label class="control-label"> Lock开关
+                                <span notice-direction="bottom"
+                                      notice-content="一旦锁定商品，CMS将不会同步最新状态至各个平台。仅仅同步库存。" notice-tip
+                                      class="text-warnings cur-p"><i class="fa fa-bell pull-right text-warnings"></i></span>
+                            </label>
+                        </div>
+                        <div class="col-sm-5">
+                            <div class="onoffswitch">
+                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox"
+                                       ng-model="vm.lockStatus.onOffSwitch3"
+                                       ng-click="lockProduct('onOffSwitch3')"
+                                       id="onOffSwitch3">
+                                <label class="onoffswitch-label" for="onOffSwitch3">
+                                    <span class="onoffswitch-inner"></span>
+                                    <span class="onoffswitch-switch"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
 
+                </div>
+                <div class="row m-t-xs">
+                    <div class="col-md-6">
                         <div class="btn-group" uib-dropdown ng-controller="popupCtrl">
                             <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
                                 &nbsp;历史记录&nbsp;<span class="caret"></span>
@@ -55,6 +126,13 @@
                             </ul>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-horizontal" name="productFieldForm" novalidate>
+        <div class="panel vo_panel tab_panel">
+                <div class="container-fluid"  id="master">
                     <div class="row">
                         <div class="col-sm-7">
                             <div class="row form-group">
@@ -462,12 +540,7 @@
                     <a href="javascript:void(0)" ng-click="pageAnchor('product',1000)">产品属性</a>
                 </li>
             </ul>
-            <button type="button" class="btn btn-nav btn-nav-pop" ng-controller="showPopoverCtrl"
-                    popover-html="showInfo({value:'sas',isUseComplexTemplate:true,type:'1Columns'})"
-                    uib-popover-template="dynamicPopover.templateUrl" type="button" popover-placement="left">
-                状态开关
-            </button>
-            <br>
+
             <button type="button" class="btn btn-nav btn-nav-pop" ng-click="saveProduct(openHsCodeChange)" ng-controller="popupCtrl">
                 <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;保存
             </button>
@@ -475,60 +548,3 @@
     </sticky>
 
 </div>
-
-<script type="text/ng-template" id="dynamicPopoverTemplate.html">
-    <div class="row" style="min-width: 241px;">
-        <div class="row">
-            <div class="col-sm-8" style="color: #000">
-                <label class="control-label"> APP端启用开关</label>
-            </div>
-            <div class="col-sm-4">
-                <div class="onoffswitch">
-                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox"
-                           ng-model="vm.lockStatus.onOffSwitch1"
-                           ng-click="lockProduct('onOffSwitch1')"
-                           id="onOffSwitch1">
-                    <label class="onoffswitch-label" for="onOffSwitch1">
-                        <span class="onoffswitch-inner"></span>
-                        <span class="onoffswitch-switch"></span>
-                    </label>
-                </div>
-            </div>
-            <div class="col-sm-8" style="color: #000">
-                <label class="control-label"> 翻译完成开关</label>
-            </div>
-            <div class="col-sm-4">
-                <div class="onoffswitch">
-                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox"
-                           ng-model="vm.lockStatus.onOffSwitch2"
-                           ng-click="lockProduct('onOffSwitch2')"
-                           id="onOffSwitch2">
-                    <label class="onoffswitch-label" for="onOffSwitch2">
-                        <span class="onoffswitch-inner"></span>
-                        <span class="onoffswitch-switch"></span>
-                    </label>
-                </div>
-            </div>
-            <div class="col-sm-8" style="color: #000">
-                <label class="control-label"> Lock开关 <a href="javascript:void(0)"><i class="fa fa-bell pull-right text-warnings" ng-click="canWarn = !canWarn"></i></a></label>
-            </div>
-            <div class="col-sm-4">
-                <div class="onoffswitch">
-                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox"
-                           ng-model="vm.lockStatus.onOffSwitch3"
-                           ng-click="lockProduct('onOffSwitch3')"
-                           id="onOffSwitch3">
-                    <label class="onoffswitch-label" for="onOffSwitch3">
-                        <span class="onoffswitch-inner"></span>
-                        <span class="onoffswitch-switch"></span>
-                    </label>
-                </div>
-            </div>
-            <div class="col-md-12" ng-if="canWarn">
-                <span class="text-warnings">
-                    &nbsp;一旦锁定商品，CMS将不会同步最新状态至各个平台。仅仅同步库存。
-                </span>
-            </div>
-        </div>
-    </div>
-</script>

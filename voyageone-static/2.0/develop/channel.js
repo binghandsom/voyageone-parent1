@@ -30,6 +30,7 @@ define(['components/dist/voyageone.angular.com.js'], function () {
                 // 成功后记录 channel, 用于缓存关键字
                 // user 对象在 login 生成
                 $localStorage.user.channel = channel.channelId;
+                $localStorage.user.channelName = channel.channelName;
                 // 之后跳转相应的应用
                 location.href = 'modules/' + app.application + '/app.html#/home';
             }, function (res) {

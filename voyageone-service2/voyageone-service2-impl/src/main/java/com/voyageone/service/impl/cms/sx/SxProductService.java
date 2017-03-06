@@ -184,6 +184,8 @@ public class SxProductService extends BaseService {
     private MongoSequenceService sequenceService;
     @Autowired
     private CmsBtPlatformActiveLogDao platformActiveLogDao;
+    @Autowired
+    private CmsBtCustomPropService cmsBtCustomPropService;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -887,43 +889,47 @@ public class SxProductService extends BaseService {
             // 20160606 tom 增加对feed属性(feed.customIds, feed.customIdsCn)的排序 START
             CmsBtProductModel mainProductModel = sxData.getMainProduct();
             if (mainProductModel != null) {
-                List<String> customIdsOld = mainProductModel.getFeed().getCustomIds();
-                List<String> customIdsCnOld = mainProductModel.getFeed().getCustomIdsCn();
+                // 20170228 tom 直接调用共通函数 START
+//                List<String> customIdsOld = mainProductModel.getFeed().getCustomIds();
+//                List<String> customIdsCnOld = mainProductModel.getFeed().getCustomIdsCn();
+//
+//                if (customIdsOld != null && !customIdsOld.isEmpty() && customIdsCnOld != null && !customIdsCnOld.isEmpty()) {
+//                    // 获取排序顺序
+////                    customPropService.doInit(channelId);
+//                    String feedCatPath = "";
+//                    if (sxData.getCmsBtFeedInfoModel() != null) {
+//                        feedCatPath = sxData.getCmsBtFeedInfoModel().getCategory();
+//                    }
+//                    if (feedCatPath == null) feedCatPath = "";
+//                    List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedCatPath);
+//
+//                    // 重新排序
+//                    List<String> customIdsNew = new ArrayList<>();
+//                    List<String> customIdsCnNew = new ArrayList<>();
+//                    for (FeedCustomPropWithValueBean feedCustomPropWithValueBean : feedCustomPropList) {
+//                        String customIdsSort = feedCustomPropWithValueBean.getFeed_prop_original();
+//
+//                        for (int i = 0; i < customIdsOld.size(); i++) {
+//                            if (customIdsSort.equals(customIdsOld.get(i))) {
+//                                // 设置到新的里
+//                                customIdsNew.add(customIdsOld.get(i));
+//                                customIdsCnNew.add(customIdsCnOld.get(i));
+//
+//                                // 删掉一下, 用来小小地提升下速度
+//                                customIdsOld.remove(i);
+//                                customIdsCnOld.remove(i);
+//                                break;
+//                            }
+//                        }
+//                    }
+//
+//                    // 设置回去
+//                    mainProductModel.getFeed().setCustomIds(customIdsNew);
+//                    mainProductModel.getFeed().setCustomIdsCn(customIdsCnNew);
+//                }
 
-                if (customIdsOld != null && !customIdsOld.isEmpty() && customIdsCnOld != null && !customIdsCnOld.isEmpty()) {
-                    // 获取排序顺序
-//                    customPropService.doInit(channelId);
-                    String feedCatPath = "";
-                    if (sxData.getCmsBtFeedInfoModel() != null) {
-                        feedCatPath = sxData.getCmsBtFeedInfoModel().getCategory();
-                    }
-                    if (feedCatPath == null) feedCatPath = "";
-                    List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedCatPath);
-
-                    // 重新排序
-                    List<String> customIdsNew = new ArrayList<>();
-                    List<String> customIdsCnNew = new ArrayList<>();
-                    for (FeedCustomPropWithValueBean feedCustomPropWithValueBean : feedCustomPropList) {
-                        String customIdsSort = feedCustomPropWithValueBean.getFeed_prop_original();
-
-                        for (int i = 0; i < customIdsOld.size(); i++) {
-                            if (customIdsSort.equals(customIdsOld.get(i))) {
-                                // 设置到新的里
-                                customIdsNew.add(customIdsOld.get(i));
-                                customIdsCnNew.add(customIdsCnOld.get(i));
-
-                                // 删掉一下, 用来小小地提升下速度
-                                customIdsOld.remove(i);
-                                customIdsCnOld.remove(i);
-                                break;
-                            }
-                        }
-                    }
-
-                    // 设置回去
-                    mainProductModel.getFeed().setCustomIds(customIdsNew);
-                    mainProductModel.getFeed().setCustomIdsCn(customIdsCnNew);
-                }
+                cmsBtCustomPropService.setProductCustomProp(mainProductModel);
+                // 20170228 tom 直接调用共通函数 END
             }
             // 20160606 tom 增加对feed属性(feed.customIds, feed.customIdsCn)的排序 END
 
@@ -3903,29 +3909,26 @@ public class SxProductService extends BaseService {
     }
     // 20160513 tom 图片服务器切换 END
 
-    public List<CmsBtProductModel_Field_Image> getProductImages(CmsBtProductModel product, CmsBtProductConstants.FieldImageType imageType) {
+    public List<CmsBtProductModel_Field_Image> getProductImages(CmsBtProductModel product, CmsBtProductConstants.FieldImageType imageType, int cartId) {
+        // 最优先看platforms.Pxx.图片， 如果不存在的场合， 再去看common.fields.图片
         // 如果是PRODUCT，先看看image6有没有值，只要image6有一条，那么都从image6里取,否则还是去取image1
-//        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBeanNoCode(product.getChannelId(), CmsConstants.ChannelConfig.PRODUCT_IMAGE_RULE);
         List<CmsBtProductModel_Field_Image> productImages;
         if (CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE == imageType) {
-            // modified by morse.lu 2016/06/27 start
-            // 表结构变化，改从common下的fields里去取
-//            productImages = product.getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
-            productImages = product.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
-            // modified by morse.lu 2016/06/27 end
+            productImages = product.getPlatform(cartId).getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
+
             if (productImages == null || productImages.isEmpty() || StringUtils.isEmpty(productImages.get(0).getName())) {
-                // modified by morse.lu 2016/06/27 start
-                // 表结构变化，改从common下的fields里去取
-//                productImages = product.getFields().getImages(imageType);
+                productImages = product.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
+            }
+
+            if (productImages == null || productImages.isEmpty() || StringUtils.isEmpty(productImages.get(0).getName())) {
                 productImages = product.getCommon().getFields().getImages(imageType);
-                // modified by morse.lu 2016/06/27 end
             }
         } else {
-            // modified by morse.lu 2016/06/27 start
-            // 表结构变化，改从common下的fields里去取
-//            productImages = product.getFields().getImages(imageType);
-            productImages = product.getCommon().getFields().getImages(imageType);
-            // modified by morse.lu 2016/06/27 end
+            productImages = product.getPlatform(cartId).getImages(imageType);
+
+            if (productImages == null || productImages.isEmpty() || StringUtils.isEmpty(productImages.get(0).getName())) {
+                productImages = product.getCommon().getFields().getImages(imageType);
+            }
         }
         return productImages;
     }

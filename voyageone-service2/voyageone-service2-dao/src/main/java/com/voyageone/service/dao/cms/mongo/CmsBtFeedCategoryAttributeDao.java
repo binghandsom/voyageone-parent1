@@ -4,6 +4,8 @@ import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author james.li on 2016/4/18.
  * @version 2.0.0
@@ -18,5 +20,9 @@ public class CmsBtFeedCategoryAttributeDao extends BaseMongoChannelDao<CmsMtFeed
     public CmsMtFeedAttributesModel selectCategoryAttributeByCategory(String channelId, String category){
         String query = "{\"catPath\":\"" + category + "\"}";
         return selectOneWithQuery(query, channelId);
+    }
+
+    public List<CmsMtFeedAttributesModel> selectCategoryAttributeByChannelId(String channelId) {
+        return selectAll(channelId);
     }
 }
