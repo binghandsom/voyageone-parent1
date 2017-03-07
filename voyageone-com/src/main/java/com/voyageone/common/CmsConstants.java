@@ -178,6 +178,9 @@ public class CmsConstants {
 
         // feed导入时是否设置主类目
         String FEED_IS_SET_MAIN_CATEGORY = "FEED_IS_SET_MAIN_CATEGORY";
+
+        // feed->mast 主类目黑名单
+        String CATEGORY_BLACKLIST = "CATEGORY_BLACKLIST";
     }
 
     public interface ImageUploadStatus {
