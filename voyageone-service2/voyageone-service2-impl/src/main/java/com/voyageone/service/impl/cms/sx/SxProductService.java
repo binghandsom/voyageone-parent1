@@ -3676,9 +3676,10 @@ public class SxProductService extends BaseService {
      * @param brandName product.fields.brand
      * @param productType product.fields.productType
      * @param sizeType product.fields.sizeType
+     * @param goldSizeFlg 是否值取出黄金尺码
      * @return Map<originalSize, adjustSize>
      */
-    public Map<String, String> getSizeMap(String channelId, String brandName, String productType, String sizeType) {
+    public Map<String, String> getSizeMap(String channelId, String brandName, String productType, String sizeType, Boolean goldSizeFlg) {
         Map<String, String> sizeMap = new HashMap<>();
         Map<Integer, List<CmsBtSizeChartModel>> matchMap = new HashMap<>(); // Map<完全匹配key的位置，List>
         for (int index = 0; index < 1 << 3; index++) {
@@ -3765,7 +3766,13 @@ public class SxProductService extends BaseService {
                                 "OriginalSize=" + sizeInfo.getOriginalSize());
                     }
                     // added by morse.lu start 2016/06/16 end
-                    sizeMap.put(sizeInfo.getOriginalSize(), sizeInfo.getAdjustSize());
+                    if(goldSizeFlg){
+                        if("1".equalsIgnoreCase(sizeInfo.getUsual())){
+                            sizeMap.put(sizeInfo.getOriginalSize(), sizeInfo.getAdjustSize());
+                        }
+                    }else{
+                        sizeMap.put(sizeInfo.getOriginalSize(), sizeInfo.getAdjustSize());
+                    }
                 }
                 break;
             }
@@ -3774,6 +3781,9 @@ public class SxProductService extends BaseService {
         return sizeMap;
     }
 
+    public Map<String, String> getSizeMap(String channelId, String brandName, String productType, String sizeType) {
+        return getSizeMap(channelId, brandName, productType, sizeType, false);
+    }
     /**
      * 指定尺码进行转换，尺码表找不到，用原始尺码，找到，用转换后尺码
      *
