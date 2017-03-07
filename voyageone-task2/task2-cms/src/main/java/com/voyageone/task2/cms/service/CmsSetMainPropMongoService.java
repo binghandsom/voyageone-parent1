@@ -296,6 +296,14 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
         List<TypeChannelBean> typeChannelBeanListApprove = null;
         // 允许展示的cart列表
         List<TypeChannelBean> typeChannelBeanListDisplay = null;
+
+        // 主类目黑名单
+        List<String> categoryBlacks = new ArrayList<>();
+
+        Double priceThreshold = null;
+
+        Double weightThreshold = null;
+
         // --------------------------------------------------------------------------------------------
 
         Map<String, String> mastBrand = null;
@@ -451,9 +459,25 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             }
             // -----------------------------------------------------------------------------
 
-            CmsChannelConfigBean onlyUpdatePriceChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId,
-                    CmsConstants.ChannelConfig.ONLY_UPDATE_PRICE_FLG);
+            // 主类目不导入的黑名单
+            List<CmsChannelConfigBean> categoryBlacklist = CmsChannelConfigs.getConfigBeans("000","0",
+                    CmsConstants.ChannelConfig.CATEGORY_BLACKLIST);
 
+            if(!ListUtils.isNull(categoryBlacklist)){
+                categoryBlacks = categoryBlacklist.stream().map(CmsChannelConfigBean::getConfigValue1).collect(Collectors.toList());
+            }
+
+            CmsChannelConfigBean feedMastThreshold = CmsChannelConfigs.getConfigBeanNoCode(channelId,
+                    CmsConstants.ChannelConfig.FEED_MAST_THRESHOLD);
+
+            if(feedMastThreshold != null){
+                if(!StringUtil.isEmpty(feedMastThreshold.getConfigValue1())){
+                    priceThreshold = Double.parseDouble(feedMastThreshold.getConfigValue1());
+                }
+                if(!StringUtil.isEmpty(feedMastThreshold.getConfigValue2())){
+                    weightThreshold = Double.parseDouble(feedMastThreshold.getConfigValue2());
+                }
+            }
         }
 
         private void showChannelErrorResult(String channelId, Map<String, String> resultMap) {
@@ -1115,6 +1139,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
                     // 设置sku数
                     cmsProduct.getCommon().getFields().setSkuCnt(cmsProduct.getCommon().getSkus().size());
+                    // 检查类目 重量 和 价格是否超过阈值
                     checkProduct(cmsProduct);
                     // 生成productGroup数据
                     doSetGroup(feed);
@@ -1199,6 +1224,25 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             updateFeedInfo(originalFeed, 1, "", "0");
             // ------------- 函数结束
 
+        }
+
+        private void checkProduct(CmsBtProductModel cmsProduct) {
+            if(!StringUtil.isEmpty(cmsProduct.getCommonNotNull().getCatPath())) {
+                if (categoryBlacks.stream().anyMatch(cat -> cmsProduct.getCommonNotNull().getCatPath().indexOf(cat) == 0)) {
+                    throw new BusinessException("主类目属于黑名单不能导入CMS：" + cmsProduct.getCommonNotNull().getCatPath());
+                }
+            }
+
+            if(priceThreshold != null){
+               if (cmsProduct.getCommon().getSkus().stream().anyMatch(sku->sku.getPriceRetail().compareTo(priceThreshold) >0)) {
+                   throw new BusinessException("该商品的价格超出了cms的价格阈值不能导入");
+               }
+            }
+            if(weightThreshold != null){
+                if(cmsProduct.getCommonNotNull().getFields().getWeightKG().compareTo(weightThreshold)> 0){
+                    throw new BusinessException("该商品的重量超出了cms的价格阈值不能导入");
+                }
+            }
         }
 
 
@@ -3557,10 +3601,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 sxProductService.insertSxWorkLoad(cmsProduct, ccAutoSyncCartList, getTaskName());
             }
         }
-    }
-
-    private void checkProduct(CmsBtProductModel cmsProduct) {
-
     }
 
     private void weightCalculate(CmsBtProductModel cmsProduct) {

@@ -181,6 +181,9 @@ public class CmsConstants {
 
         // feed->mast 主类目黑名单
         String CATEGORY_BLACKLIST = "CATEGORY_BLACKLIST";
+
+        // feed->mast 阈值 价格 和 重量
+        String FEED_MAST_THRESHOLD = "FEED_MAST_THRESHOLD";
     }
 
     public interface ImageUploadStatus {
