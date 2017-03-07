@@ -184,6 +184,9 @@ public class CmsConstants {
 
         // feed->mast 阈值 价格 和 重量
         String FEED_MAST_THRESHOLD = "FEED_MAST_THRESHOLD";
+
+        // feed->mast 阈值 价格 和 重量
+        String FEED_MAST_CONFIG = "FEED_MAST_CONFIG";
     }
 
     public interface ImageUploadStatus {

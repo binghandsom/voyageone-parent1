@@ -304,6 +304,12 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
         Double weightThreshold = null;
 
+        String singleFlg = "0";
+
+        String singleGroupFlg = "0";
+
+        String categoryFlg = "0";
+
         // --------------------------------------------------------------------------------------------
 
         Map<String, String> mastBrand = null;
@@ -477,6 +483,14 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 if(!StringUtil.isEmpty(feedMastThreshold.getConfigValue2())){
                     weightThreshold = Double.parseDouble(feedMastThreshold.getConfigValue2());
                 }
+            }
+
+            CmsChannelConfigBean feedMastConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId,
+                    CmsConstants.ChannelConfig.FEED_MAST_CONFIG);
+            if(feedMastConfig != null){
+                singleFlg = StringUtil.isEmpty(feedMastConfig.getConfigValue1())?"0":feedMastConfig.getConfigValue1();
+                singleGroupFlg = StringUtil.isEmpty(feedMastConfig.getConfigValue2())?"0":feedMastConfig.getConfigValue2();
+                categoryFlg = StringUtil.isEmpty(feedMastConfig.getConfigValue3())?"0":feedMastConfig.getConfigValue3();
             }
         }
 
@@ -701,7 +715,12 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             }
             return mapMasterBrand.get(feedBrand);
         }
+        public boolean singleSku(CmsBtProductModel cmsBtProductModel, CmsBtFeedInfoModel originalFeed){
+            if("0".equals(singleFlg)){
+                return false;
+            }
 
+        }
         /**
          * 将商品从feed导入主数据
          *
@@ -736,12 +755,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             CmsBtProductModel cmsProductParam = null;   // add desmond 2016/07/04
             // 找不到Code
             if (oldCmsProduct == null && cmsProductList.size() == 0) {
-                // 不存在
-                // 获取类目属性匹配关系(默认的)
-//                mapping = cmsBtFeedMappingDao.findDefault(channelId, feedCategory, true);  // delete desmond 2016/07/04
-                newMapping = cmsBtFeedMapping2Dao.findDefault(channelId, feedCategory);
-                // mapping check
-//                if (!checkMapping(mapping, null,channelId, originalFeed)) return;          // delete desmond 2016/07/04
 
             } else {
                 // 存在
@@ -753,51 +766,41 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     } else {
                         cmsProductParam = oldCmsProduct;
                     }
-
-                    // 获取类目属性匹配关系(指定的主类目)
-//                     mapping = cmsBtFeedMappingDao.selectByKey(channelId, feedCategory, cmsProductParam.getCommon().getCatPath());  // delete desmond 2016/07/04
-                    if (cmsProductParam.getCommon() != null && cmsProductParam.getCommon().getCatPath() != null) {
-                        newMapping = cmsBtFeedMapping2Dao.selectByKey(channelId, feedCategory, cmsProductParam.getCommon().getCatPath());
-                    }
-
-                    // mapping check
-//                     if (!checkMapping(mapping, cmsProductParam,channelId, originalFeed)) return;  // delete desmond 2016/07/04
                 }
             }
 
-            if (!this.skip_mapping_check) {
 
-                // 主类目Path(更新的时候，优先用product的主类目路径，没有的话再使用newMapping匹配的主类目路径)
-                String mainCategoryPath = null;
-                if (cmsProductParam != null
-                        && cmsProductParam.getCommon() != null
-                        && !StringUtil.isEmpty(cmsProductParam.getCommon().getCatPath())) {
-                    mainCategoryPath = cmsProductParam.getCommon().getCatPath();
-                } else if (newMapping != null) {
-                    mainCategoryPath = newMapping.getMainCategoryPath();
-                }
-                // 判断主类目路径是否只能为SingleSku
-                if (!StringUtils.isEmpty(mainCategoryPath)) {
-                    for (CmsMtCategoryTreeAllModel categoryTreeAll : categoryTreeAllList) {
-                        if (mainCategoryPath.equals(categoryTreeAll.getCatPath())) {
-                            if ("1".equals(categoryTreeAll.getSingleSku())) {
+            singleSku(cmsProductParam, originalFeed);
+            // 主类目Path(更新的时候，优先用product的主类目路径，没有的话再使用newMapping匹配的主类目路径)
+            String mainCategoryPath = null;
+            if (cmsProductParam != null
+                    && cmsProductParam.getCommon() != null
+                    && !StringUtil.isEmpty(cmsProductParam.getCommon().getCatPath())) {
+                mainCategoryPath = cmsProductParam.getCommon().getCatPath();
+            } else if (newMapping != null) {
+                mainCategoryPath = newMapping.getMainCategoryPath();
+            }
+            // 判断主类目路径是否只能为SingleSku
+            if (!StringUtils.isEmpty(mainCategoryPath)) {
+                for (CmsMtCategoryTreeAllModel categoryTreeAll : categoryTreeAllList) {
+                    if (mainCategoryPath.equals(categoryTreeAll.getCatPath())) {
+                        if ("1".equals(categoryTreeAll.getSingleSku())) {
+                            isSingleSku = true;
+                        }
+                        break;
+                    } else {
+                        List<String> result = new ArrayList<>();
+                        CmsMtCategoryTreeAllModel categoryTreeFind = categoryTreeAllService.findCategorySingleSku(categoryTreeAll, mainCategoryPath, result);
+                        if (categoryTreeFind != null) {
+                            if (result.size() > 0 || "1".equals(categoryTreeAll.getSingleSku())) {
                                 isSingleSku = true;
                             }
                             break;
-                        } else {
-                            List<String> result = new ArrayList<>();
-                            CmsMtCategoryTreeAllModel categoryTreeFind = categoryTreeAllService.findCategorySingleSku(categoryTreeAll, mainCategoryPath, result);
-                            if (categoryTreeFind != null) {
-                                if (result.size() > 0 || "1".equals(categoryTreeAll.getSingleSku())) {
-                                    isSingleSku = true;
-                                }
-                                break;
-                            }
                         }
                     }
                 }
-                // update desmond 2016/07/04 end
             }
+                // update desmond 2016/07/04 end
 
             boolean delOriginalFlg = false;
             // 需要拆分
