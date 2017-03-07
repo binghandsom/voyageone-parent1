@@ -632,7 +632,7 @@ public class PriceService extends BaseService {
         }
 
         // 如果是Liking店铺做重复尺码check
-        if(channelId.equals("928")) {
+        if(channelId.equals("928") || channelId.equals("024")) {
             repeatSizeChk(product, unifySkus, channelId);
         }
 
@@ -716,7 +716,7 @@ public class PriceService extends BaseService {
         }
 
         // 如果是Liking店铺做重复尺码check
-        if(channelId.equals("928")) {
+        if(channelId.equals("928") || channelId.equals("024")) {
             repeatSizeChk(product, unifySkus, channelId);
         }
 
@@ -808,7 +808,7 @@ public class PriceService extends BaseService {
                 product.getCommonNotNull().getSkus().forEach(sku -> {
                     skuinfo.put(sku.getSkuCode(), sku);
                 });
-                goldSize = sxProductService.getSizeMap(channelId, product.getCommon().getFields().getBrand(), product.getCommon().getFields().getProductType(), product.getCommon().getFields().getSizeType());
+                goldSize = sxProductService.getSizeMap(channelId, product.getCommon().getFields().getBrand(), product.getCommon().getFields().getProductType(), product.getCommon().getFields().getSizeType(), true);
             } catch (BusinessException e) {
                 $warn(e.getMessage());
             }

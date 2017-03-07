@@ -653,7 +653,7 @@ public class PlatformPriceService extends VOAbsLoggable {
 
         List<String> successList = new ArrayList<>();
         for (CmsBtProductModel prodObj : prodObjList) {
-
+            $info(String.format("channel=%s cartId=%d code=%s", channelId,cartId,prodObj.getCommon().getFields().getCode()));
             String prodCode = prodObj.getCommon().getFields().getCode();
 
 
