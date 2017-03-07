@@ -681,7 +681,42 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         platform.setpCatId(mainPlatform.getpCatId());
         platform.setpCatPath(mainPlatform.getpCatPath());
+        platform.setpBrandId(mainPlatform.getpBrandId());
+        platform.setpBrandName(mainPlatform.getpBrandName());
         if(platform.getFields() == null) platform.setFields(new BaseMongoMap<>());
+        if (cartId ==  CartEnums.Cart.TG.getValue()) {
+            String skuKey = "sku_outerId"; // 商家编码对应skuCode
+            try {
+                List<Map<String, Object>> listSkuVal = platform.getFields().getAttribute("sku");
+                if (ListUtils.isNull(listSkuVal)) {
+                    listSkuVal = new ArrayList<>();
+                    platform.getFields().setAttribute("sku", listSkuVal);
+                }
+                List<String> listValSkuCode = listSkuVal.stream().map(v -> (String) v.get(skuKey)).collect(Collectors.toList());
+                List<String> listCommSkucode = new ArrayList<>();
+                for (BaseMongoMap<String, Object> commonSku : platform.getSkus()) {
+                    String skuCode = commonSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+                    listCommSkucode.add(skuCode);
+                    if (!listValSkuCode.contains(skuCode)) {
+                        // fields.sku里没有，追加下默认值
+                        Map<String, Object> mapSkuVal = new HashMap<>();
+                        mapSkuVal.put(skuKey, skuCode);
+                        listSkuVal.add(mapSkuVal);
+                    }
+                }
+                Iterator<Map<String, Object>> iterator = listSkuVal.iterator();
+                while (iterator.hasNext()) {
+                    Map<String, Object> platSku = iterator.next();
+                    if (!listCommSkucode.contains(platSku.get(skuKey))) {
+                        // sku有删除的情况,把fields.sku里也删掉
+                        iterator.remove();
+                    }
+                }
+            } catch (Exception e) {
+                $warn("天猫国际sku商家编码默认值设值失败!" + e.getMessage());
+            }
+        }
+
         mainPlatform.getFields().forEach((s, o) -> {
             if (platform.getFields().containsKey(s)) {
                 System.out.println(s);
@@ -692,11 +727,16 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                     }
                 }
             } else {
-                platform.getFields().put(s, o);
+                if (platform.getFields().get(s) == null || StringUtils.isEmpty(platform.getFields().get(s).toString())) {
+                    // 天猫的场合 属性ID是 sku darwin_sku不复制
+                    if (cartId == CartEnums.Cart.TG.getValue() && !"sku".equalsIgnoreCase(s) && !"darwin_sku".equalsIgnoreCase(s)) {
+                        platform.getFields().put(s, o);
+                    }
+                }
             }
         });
 
-        platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId, prodId, language, null, platform.getpBrandId()));
+        platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId, prodId, language, platform.getpCatPath(), platform.getpBrandId()));
 
         return platform;
     }

@@ -178,13 +178,6 @@ define([
             }
         }
 
-        if (self.vm.status == "Ready" && self.vm.platform.pBrandName == null && mark != "temporary") {
-            masterBrand = self.$scope.productInfo.masterField.brand;
-            self.vm.status = self.vm.preStatus;
-            self.alert("该商品的品牌【" + masterBrand + "】没有与平台品牌建立关联，点击左侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置");
-            return false;
-        }
-
         if ((self.vm.status == "Ready" || self.vm.status == "Approved") && !self.checkSkuSale() && mark != "temporary") {
             self.vm.status = self.vm.preStatus;
             self.alert("请至少选择一个sku进行发布");

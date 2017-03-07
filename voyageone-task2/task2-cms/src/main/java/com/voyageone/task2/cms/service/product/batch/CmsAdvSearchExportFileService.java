@@ -1385,6 +1385,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 }
                 FileUtils.cell(row, index++, unlock).setCellValue(imgPath); // 图片
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getSizeType())); // 使用人群
+                if(fields.getMaterialEn() != null && fields.getMaterialEn().length() > 2000) fields.setMaterialEn(fields.getMaterialEn().substring(0,2000));
+                if(fields.getMaterialCn() != null && fields.getMaterialCn().length() > 2000) fields.setMaterialCn(fields.getMaterialCn().substring(0,2000));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getMaterialEn()) + " | " + org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getMaterialCn())); // 材质
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getOrigin()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getColor()));
