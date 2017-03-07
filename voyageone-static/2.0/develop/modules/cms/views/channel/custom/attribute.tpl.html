@@ -1,91 +1,165 @@
-<div class="wrapper-md" ng-init="initialize()">
-	<div class="vo_accordion vo_attr">
-		<div class="panel-group">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;自定义属性管理</h4>
-				</div>
-				<div class="container-fluid">
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="box">
-
-        <div class="custom_ts" ng-if="vm.cat_path != '0'">
-            <div class="pull-right m-t-xs m-r-xs"
-
-
-
-
-            ="popupCtrl">
-                <button ng-click="goAttributePage(0)" class="btn btn-default btn-xs"><i
-                        class="glyphicon glyphicon-refresh"></i> 切换到共通属性
-                </button>
-                <button ng-click="openCategoryMapping(popupNewCategory)" class="btn btn-default btn-xs"><i
-                        class="glyphicon glyphicon-link"></i> 类目选择
-                </button>
-                <button class="btn btn-vo btn-xs" ng-click="save();">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存
-                </button>
-                <button class="btn btn-success btn-xs" ng-click="goValuePage();">翻译自定义属性</button>
-            </div><!-- .form-inline -->
-            <p class="m-l-sm m-t-xs">您当前选择的是：<span ng-bind="vm.cat_path"></span></p>
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="panel panel-vo">
+        <div class="panel-heading">
+            <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;自定义属性管理</h4>
         </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-1 col-md-offset-1">
+                    <button type="button" class="btn btn-default pull-right" ng-click="ctrl.popCategoryMapping()"><i
+                            class="fa fa-arrow-circle-right"></i>&nbsp;当前类目
+                    </button>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" ng-model="ctrl.vm.catPath" readonly>
+                </div>
+                <div class="col-md-1 text-right m-t-xs">
+                    <!--<button type="button" class="btn btn-default pull-right" ng-disabled="true"><i class="fa fa-arrow-circle-right"></i>&nbsp;供应商</button>-->
+                    <label class="text-base"><strong>供应商</strong>&emsp;</label>
+                </div>
+                <div class="col-md-3" ng-if="!ctrl.channelList">
+                    <input type="text" class="form-control" ng-model="ctrl.channelInfo.channelName" readonly>
+                </div>
+                <div class="col-md-3" ng-if="ctrl.channelList">
+                    <select class="form-control" ng-model="ctrl.channelInfo.channel" ng-change="ctrl.changeChannel()"
+                            ng-options="channel.order_channel_id as channel.full_name for channel in ctrl.channelList"
+                            chosen></select>
+                </div>
+            </div>
+            <div class="row m-t-sm">
+                <div class="col-md-4 col-md-offset-3 text-center">
+                    <button type="button" class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;清空
+                    </button>&emsp;
+                    <button type="button" class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;搜索
+                    </button>
+                </div>
+            </div>
 
-        <div class="custom_ts" ng-if="vm.cat_path == '0'">
-            <div class="pull-right m-t-xs m-r-xs" ng-controller="popupCtrl">
-                <button ng-if="vm.sameAttr != '1'" ng-click="openCategoryMapping(popupNewCategory)"
-                        class="btn btn-default btn-xs"><i class="glyphicon glyphicon-refresh"></i> 类目选择
-                </button>
-                <button type="submit" class="btn btn-default btn-xs" ng-click="openAddAttributeValue(openAddAttribute)">
-                    <i class="glyphicon glyphicon-plus"></i>&nbsp;添加自定义属性
-                </button>
-                <button class="btn btn-vo btn-xs" ng-click="save();">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存
-                </button>
-                <button class="btn btn-success btn-xs" ng-click="goValuePage();">翻译自定义属性</button>
-            </div><!-- .form-inline -->
-            <p class="m-l-sm m-t-xs">您当前选择的是：<span>共通属性</span></p>
         </div>
+    </div>
+</div>
 
+<div class="panel panel-default">
+    <div class="panel-heading">
         <div class="row">
-            <div class="col-sm-6">
-                <div class="category_drag category_drag_list_qh">
-                    <div class="input-group m-b-sm ">
-                        <label for="custom-attribute-translating" class="input-group-addon">未翻译属性</label>
-                        <input id="custom-attribute-translating" type="text" class="form-control" ng-model="searchUnval">
-                    </div>
-                    <ul>
-                        <li ng-repeat="unvalData in vm.unvalList | filter:searchUnval" ng-click="addVal(unvalData, $index);">
-                            <span>{{::unvalData.prop_original}}</span><span class="pull-right text-muted"><i
-                                class="fa fa-fw fa-angle-right text-vo"></i></span>
-                        </li>
-                    </ul>
+            <div class="col-md-1" style="min-width: 150px;">
+                &emsp;
+                <div class="btn-group">
+                    <button type="button" class="btn btn-pop btn-success" ng-click="ctrl.popAddAttribute()">
+                        <i class="fa fa-plus"></i>&nbsp;自定义属性
+                    </button>
                 </div>
             </div>
-            <div class="col-sm-6">
-                <div class="category_drag category_drag_list_qh form-horizontal">
-                    <div class="input-group m-b-sm col-sm-10" >
-                        <label for="custom-attribute-translated" class="input-group-addon">已翻译属性</label>
-                        <input id="custom-attribute-translated" type="text" class="form-control" ng-model="searchVal">
-                    </div>
-                    <div class="translated-row form-group" ng-repeat="valData in vm.valList | filter:searchVal">
-                        <label for="custom-translated-{{$index}}" class="text-left control-label col-sm-4">{{valData.prop_original}}</label>
-                        <div class="col-sm-8 form-inline">
-                            <input id="custom-translated-{{$index}}" type="text" class="form-control"
-                                   ng-disabled="vm.cat_path != '0' && valData.cat_path == '0'"
-                                   ng-model="valData.prop_translation" title="">&nbsp;
-                            <button title="删除" class="btn btn-danger btn-xs"
-                                    ng-click="remove(valData, $index);"><i class="fa fa-trash-o"></i></button>
-                        </div>
-                    </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <span class="input-group-addon" id="sizing-addon1"><i class="fa fa-filter"></i>&nbsp;过滤</span>
+                    <input type="text" class="form-control" ng-model="ctrl.filterName" ng-change="ctrl.filterEntity()"
+                           placeholder="过滤包括 : 属性英文名 、 属性中文名">
                 </div>
             </div>
         </div>
-		<!--<div class="m-t-sm col-sm-12 text-right">-->
-			<!--<button class="btn btn-vo btn-sm"  ng-click="save();"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>-->
-			<!--<button class="btn btn-success btn-sm" ng-click="goValuePage();">翻译自定义属性</button>-->
-		<!--</div>-->
-	</div>
+    </div>
+    <div class="panel-body">
+        <div class="box">
+            <div class="box-body-new table-responsive" style="max-height: 527px;">
+                <table class="table table-hover-new text-center">
+                    <thead>
+                    <tr>
+                        <th class="text-center">参考图</th>
+                        <th class="text-center">属性英文名</th>
+                        <th class="text-center">属性中文名</th>
+                        <th class="text-center">属性中文值设定规则</th>
+                        <th class="text-center">属性类型</th>
+                        <th class="text-center">顺序</th>
+                        <th class="text-center">编辑</th>
+                    </tr>
+                    </thead>
+                    <tbody ng-if="!ctrl.attributes.length">
+                    <tr>
+                        <td colspan="14" if-no-rows="ctrl.attributes.length"></td>
+                    </tr>
+                    </tbody>
+                    <tbody>
+                    <tr ng-repeat="entity in ctrl.attributesTrue" ng-hide="entity.hide">
+                        <td class="text-center">
+                            <input type="checkbox" ng-model="entity.checked" ng-click="ctrl.updateEntity(entity)">
+                        </td>
+                        <td class="text-center">{{entity.nameEn}}</td>
+                        <td class="text-center">{{entity.nameCn}}</td>
+                        <td class="text-center">
+                            <button class="btn btn-default" ng-click="ctrl.linkValue(entity)"
+                                    ng-if="entity.attributeType == 1">
+                                <i class="fa fa-link"></i>&nbsp;{{ctrl.ATTRIBUTETYPE[entity.attributeType]}}
+                            </button>
+                            <span ng-if="entity.attributeType != 1">
+                                    {{ctrl.ATTRIBUTETYPE[entity.attributeType]}}
+                                </span>
+                        </td>
+                        <td class="text-center">{{ctrl.TYPE[entity.type]}}</td>
+                        <td class="text-center">
+
+                            <button type="button" class="btn-empty"
+                                    ng-click="ctrl.moveAttr($index, ctrl.moveKeys.down)">
+                                <i class="fa fa-angle-down"></i>
+                            </button>
+                            &nbsp;&nbsp;
+                            <button type="button" class="btn-empty" ng-click="ctrl.moveAttr($index, ctrl.moveKeys.up)">
+                                <i class="fa fa-angle-up"></i>
+                            </button>
+                            &nbsp;&nbsp;
+                            <button type="button" class="btn-empty"
+                                    ng-click="ctrl.moveAttr($index, ctrl.moveKeys.toTop)">
+                                <i class="fa fa-angle-double-up"></i>
+                            </button>
+                            &nbsp;&nbsp;
+                            <button type="button" class="btn-empty"
+                                    ng-click="ctrl.moveAttr($index, ctrl.moveKeys.toDown)">
+                                <i class="fa fa-angle-double-down"></i>
+                            </button>
+                            &nbsp;&nbsp;
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-success" title="编辑"
+                                    ng-click="ctrl.popEditAttribute(entity)"><i class="fa fa-pencil"></i>
+                            </button>
+                            <button type="button" class="btn btn-danger" title="删除" ng-click="ctrl.delete(entity)"><i
+                                    class="fa fa-trash-o"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tbody>
+                    <tr ng-repeat="entity in ctrl.attributesFalse"  ng-hide="entity.hide">
+                        <td class="text-center">
+                            <input type="checkbox" ng-model="entity.checked" ng-click="ctrl.updateEntity(entity)">
+                        </td>
+                        <td class="text-center">{{entity.nameEn}}</td>
+                        <td class="text-center">{{entity.nameCn}}</td>
+                        <td class="text-center">
+                            <button class="btn btn-default" ng-click="ctrl.linkValue(entity)"
+                                    ng-if="entity.attributeType == 1">
+                                <i class="fa fa-link"></i>&nbsp;{{ctrl.ATTRIBUTETYPE[entity.attributeType]}}
+                            </button>
+                            <span ng-if="entity.attributeType != 1">
+                                    {{ctrl.ATTRIBUTETYPE[entity.attributeType]}}
+                                </span>
+                        </td>
+                        <td class="text-center">{{ctrl.TYPE[entity.type]}}</td>
+                        <td class="text-center"></td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-success" title="编辑"
+                                    ng-click="ctrl.popEditAttribute(entity)"><i class="fa fa-pencil"></i>
+                            </button>
+                            <button type="button" class="btn btn-danger" title="删除" ng-click="ctrl.delete(entity)"><i
+                                    class="fa fa-trash-o"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
 </div>

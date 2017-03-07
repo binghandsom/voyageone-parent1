@@ -41,25 +41,25 @@ public class CmsFieldEditController extends CmsController {
         List<CmsMtCommonPropDefModel> result = fieldEditService.getPopOptions(getLang(), getUser().getSelChannelId());
         return success(result);
     }
-    
+
     /**
      * 商品智能上新
      */
-	@RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.INTELLIGENT_PUBLISH)
+    @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.INTELLIGENT_PUBLISH)
     public AjaxResponse intelligentPublish(@RequestBody Map<String, Object> params) {
-    	Integer cartId = (Integer) params.get("cartId");
-    	// 验证参数
-    	Preconditions.checkNotNull(cartId);
-    	// 设置商品的智能上新
-    	fieldEditService.intelligentPublish(cartId, params, getUser(), getCmsSession());
-    	
-    	return success(true);
+        Integer cartId = (Integer) params.get("cartId");
+        // 验证参数
+        Preconditions.checkNotNull(cartId);
+        // 设置商品的智能上新
+        fieldEditService.intelligentPublish(cartId, params, getUser(), getCmsSession());
+
+        return success(true);
     }
 
     @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.GET_PLATFROM_POP_OPTIONS)
     public AjaxResponse getPlatfromPopOptions(@RequestBody Integer cartId){
 
-        List<CmsMtCommonPropDefModel> result = fieldEditService.getPlatfromPopOptions(cartId);
+        List<CmsMtCommonPropDefModel> result = fieldEditService.getPlatfromPopOptions(cartId, getUser());
         return success(result);
     }
 

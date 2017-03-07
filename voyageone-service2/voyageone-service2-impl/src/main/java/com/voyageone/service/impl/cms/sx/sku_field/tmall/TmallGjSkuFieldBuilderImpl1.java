@@ -448,7 +448,7 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
             if (colorExtend_imageField != null) {
                 // modified by morse.lu 2016/08/09 start
 //                String propImage = sxProductBean.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
-                String propImage = expressionParser.getSxProductService().getProductImages(sxProductBean, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
+                String propImage = expressionParser.getSxProductService().getProductImages(sxProductBean, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE, sxData.getCartId()).get(0).getName();
                 // modified by morse.lu 2016/08/09 end
                 if (propImage != null && !"".equals(propImage)) {
                     if (StringUtils.isEmpty(getCodeImageTemplate())) {

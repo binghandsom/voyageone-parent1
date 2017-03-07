@@ -98,7 +98,7 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
             // modified by morse.lu 2016/06/02 start
 //            List<CmsBtProductModel_Field_Image> cmsBtProductModelFieldImages = sxProduct.getFields().getImages(imageType);
             // 如果是PRODUCT，先看看image6有没有值，只要image6有一条，那么都从image6里取,否则还是去取image1
-            List<CmsBtProductModel_Field_Image> cmsBtProductModelFieldImages = sxProductService.getProductImages(sxProduct, imageType);
+            List<CmsBtProductModel_Field_Image> cmsBtProductModelFieldImages = sxProductService.getProductImages(sxProduct, imageType, sxData.getCartId());
             // modified by morse.lu 2016/06/02 end
 
             // added by morse.lu 2016/12/05 start

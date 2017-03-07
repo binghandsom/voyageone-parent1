@@ -1,10 +1,14 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.service.impl.cms.CmsBtCustomPropService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
+import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,9 @@ public class CmsAdvSearchCustColumnService extends BaseViewService {
     private FeedCustomPropService feedCustomPropService;
     @Autowired
     private CmsAdvSearchOtherService advSearchQueryService;
+
+    @Autowired
+    private CmsBtCustomPropService cmsBtCustomPropService;
 
     /**
      * 取得用户已选择的自定义显示列设置（一览画面用）
@@ -50,7 +57,7 @@ public class CmsAdvSearchCustColumnService extends BaseViewService {
         String[] custAttrList = custAttrStr.split(",");
         StringBuilder customPropsStr = new StringBuilder();
         if (custAttrList.length > 0) {
-            List<Map<String, Object>> customProps = feedCustomPropService.getFeedCustomPropAttrs(channelId, "0");
+            List<Map<String, Object>> customProps = feedCustomPropService.getFeedCustomPropAttrs(channelId, "");
             for (Map<String, Object> props : customProps) {
                 String propId = (String) props.get("feed_prop_original");
                 Map<String, String> atts = new HashMap<>(2);
@@ -150,7 +157,7 @@ public class CmsAdvSearchCustColumnService extends BaseViewService {
         }
 
         // 取得所有自定义显示列
-        rsMap.put("customProps", feedCustomPropService.getFeedCustomPropAttrs(userInfo.getSelChannelId(), "0"));
+        rsMap.put("customProps", feedCustomPropService.getFeedCustomPropAttrs(userInfo.getSelChannelId(), ""));
         rsMap.put("commonProps", commonPropService.getCustColumns(2));
         // 取得已选择的自定义显示列
         colMap2 = commonPropService.getCustColumnsByUserId(userInfo.getUserId(), "cms_prod_cust_col");
@@ -179,7 +186,7 @@ public class CmsAdvSearchCustColumnService extends BaseViewService {
         List<Map<String, Object>> customProps2 = new ArrayList<>();
         StringBuilder customPropsStr = new StringBuilder();
         if (selCustomPropList != null && selCustomPropList.size() > 0) {
-            List<Map<String, Object>> customProps = feedCustomPropService.getFeedCustomPropAttrs(userInfo.getSelChannelId(), "0");
+            List<Map<String, Object>> customProps = feedCustomPropService.getFeedCustomPropAttrs(userInfo.getSelChannelId(), "");
             for (Map<String, Object> props : customProps) {
                 String propId = (String) props.get("feed_prop_original");
                 if (selCustomPropList.contains(propId)) {

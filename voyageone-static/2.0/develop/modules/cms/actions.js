@@ -547,11 +547,28 @@ define(function () {
             "channel": {
                 "custom": {
                     "attributeService": {
-                        "root": "/cms/channel/custom/prop",
-                        "init": "get",
-                        "getCatTree": session("getCatTree", [KEY.CHANNEL]),
-                        "save": "update",
-                        "getCatList": "getCatList"
+                        root: "/cms/channel/custom/prop",
+                        init: "get",
+                        getCatTree: session("getCatTree", [KEY.CHANNEL]),
+                        save: "update",
+                        getCatList: "getCatList"
+                    },
+                    "attributeService2": {
+                        root: "/cms/channel/custProp",
+                        search: "search",
+                        doSetCustomshIsDispPlay: "doSetCustomshIsDispPlay",
+                        doUpdateEntity: "doUpdateEntity",
+                        doSetSort: "doSetSort",
+                        delete: "delete",
+                        saveFeed: "saveFeed",
+                        createFeed: "createFeed",
+                        init: 'init'
+                    },
+                    "attrTranslateService":{
+                        root: "/cms/channel/customTranslate/value",
+                        init:"init",
+                        create:"create",
+                        update:"update"
                     }
                 },
                 "value": {

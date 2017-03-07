@@ -1,18 +1,22 @@
 <div class="product-shema-detail">
     <div class="panel-group" id="accordion">
         <div class="panel panel-default">
-            <div class="panel-heading">
+            <div class="panel-heading cur-p" ng-click="ctrl.panelShow = true" ng-if="!ctrl.panelShow">
                 <h4 class="panel-title">
-                    <a href="javascript:void(0)" ng-click="ctrl.panelShow = true" ng-if="!ctrl.panelShow">
+                    <a href="javascript:void(0)">
                         <i class="fa fa-caret-right"></i>&nbsp;&nbsp;<strong>展开</strong>
                     </a>
-                    <a href="javascript:void(0)" ng-click="ctrl.panelShow = false" ng-if="ctrl.panelShow">
+                </h4>
+            </div>
+            <div class="panel-heading cur-p" ng-click="ctrl.panelShow = false" ng-if="ctrl.panelShow">
+                <h4 class="panel-title">
+                    <a href="javascript:void(0)">
                         <i class="fa fa-caret-down"></i>&nbsp;&nbsp;<strong>收起</strong>
                     </a>
                 </h4>
             </div>
             <div class="panel-body" ng-if="ctrl.panelShow">
-                <div class="row">
+                <!--<div class="row">
                     <div class="col-md-6">
                         <div class="row">
                             <label class="col-sm-1 control-label">
@@ -37,7 +41,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>-->
                 <div class="row m-t-xs">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -418,7 +422,7 @@
     </form>
 
     <!-------------------------------- 导航栏 --------------------------------->
-    <sticky top-fix="-100" style="position: absolute; top: 280px; right: 47px;" drag>
+    <sticky top-fix="-100" style="position: absolute; top: 380px; right: 47px;" drag>
         <nav class="bs-docs-sidebar">
             <h3 drag-handle>导航栏</h3>
             <ul class="nav bs-docs-sidenav">

@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsPlatformCategoryUpdateMQMessageBody;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
@@ -37,9 +38,17 @@ public class CmsPlatformCategoryUpdateMQJob extends TBaseMQCmsService<CmsPlatfor
             updateMap.put("platforms.P" + cartId + ".pCatStatus", 1);
             HashMap<String, Object> queryMap = new HashMap<>();
             queryMap.put("common.fields.code", productCode);
-            HashMap<String, Object> queryMap2 = new HashMap<>();
-            queryMap2.put("$in", new String[]{null, ""});
-            queryMap.put("platforms.P" + cartId + ".pCatPath", queryMap2);
+
+            // 聚美和官网同构,平台类目可无条件更新
+            if (CartEnums.Cart.TT.getValue() != cartId
+                && CartEnums.Cart.LTT.getValue() != cartId
+                && CartEnums.Cart.JM.getValue() != cartId) {
+
+                HashMap<String, Object> queryMap2 = new HashMap<>();
+                queryMap2.put("$in", new String[]{null, ""});
+                queryMap.put("platforms.P" + cartId + ".pCatPath", queryMap2);
+            }
+
             BulkUpdateModel model = new BulkUpdateModel();
             model.setUpdateMap(updateMap);
             model.setQueryMap(queryMap);

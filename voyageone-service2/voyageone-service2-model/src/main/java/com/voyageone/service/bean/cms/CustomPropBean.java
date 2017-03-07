@@ -32,6 +32,7 @@ public class CustomPropBean {
     }
 
     public String getFeedAttrValueCn() {
+        if(feedAttrValueCn == null) feedAttrValueCn="";
         return feedAttrValueCn;
     }
 
@@ -40,6 +41,7 @@ public class CustomPropBean {
     }
 
     public String getFeedAttrValueEn() {
+        if(feedAttrValueEn == null) feedAttrValueEn="";
         return feedAttrValueEn;
     }
 

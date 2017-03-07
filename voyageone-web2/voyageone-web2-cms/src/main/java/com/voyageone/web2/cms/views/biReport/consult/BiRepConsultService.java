@@ -123,18 +123,11 @@ public class BiRepConsultService extends BaseService {
             Map<String,Object> data = (Map<String, Object>) mapResult.get("data");
             String ecd=(String)data.get("ecd");
             resultMap.put("ecd",ecd);
-            if(ecd != null && "0".equals(ecd))
-            {
-              model.setTaskStatus(ISheetInfo.SHEET.BASICINFO.CREATING);
-                BiReportDownloadTaskModel temp = biReportDownloadTaskDao.select(model.getId());
-                if(temp.getTaskStatus() < model.getTaskStatus())
-                {
-                    biReportDownloadTaskDao.update(model);
-                }
-            }
         }
         else
         {
+            model.setTaskStatus(ISheetInfo.SHEET.BASICINFO.FAILED);
+            biReportDownloadTaskDao.update(model);
             resultMap.put("ecd","4100"); //远程连接api服务失败
         }
         return resultMap;
