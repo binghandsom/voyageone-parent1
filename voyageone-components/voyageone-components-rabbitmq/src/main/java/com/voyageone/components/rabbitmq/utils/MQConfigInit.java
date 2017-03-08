@@ -52,12 +52,15 @@ public class MQConfigInit {
                 Object bean = entry.getValue();
                 if (checkMQRunnable(bean)) {
                     startMQ(bean);
+                    String subBeanName = null;
                     if (bean instanceof IMQSubBeanName) {
-                        logger.info(String.format("%s %s is start", bean.getClass().getSimpleName(), ((IMQSubBeanName)bean).getSubBeanName()));
+                        subBeanName = ((IMQSubBeanName)bean).getSubBeanName();
+                    }
+                    if (subBeanName != null) {
+                        logger.info(String.format("%s %s is start", bean.getClass().getSimpleName(), subBeanName));
                     } else {
                         logger.info(String.format("%s is start", bean.getClass().getSimpleName()));
                     }
-
                 } else {
                     stopMQ(bean);
                 }
