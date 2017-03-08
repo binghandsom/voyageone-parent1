@@ -187,6 +187,9 @@ public class CmsConstants {
 
         // feed->mast 阈值 价格 和 重量
         String FEED_MAST_CONFIG = "FEED_MAST_CONFIG";
+
+        // 需要拆分的主类目
+        String CATEGORY_SINGLE = "CATEGORY_SINGLE";
     }
 
     public interface ImageUploadStatus {

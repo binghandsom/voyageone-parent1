@@ -310,6 +310,10 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
         String categoryFlg = "0";
 
+        // 需要拆分的主类目
+        List<String> categorySingle = new ArrayList<>();
+
+
         // --------------------------------------------------------------------------------------------
 
         Map<String, String> mastBrand = null;
@@ -492,6 +496,13 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 singleGroupFlg = StringUtil.isEmpty(feedMastConfig.getConfigValue2())?"0":feedMastConfig.getConfigValue2();
                 categoryFlg = StringUtil.isEmpty(feedMastConfig.getConfigValue3())?"0":feedMastConfig.getConfigValue3();
             }
+            List<CmsChannelConfigBean> categorySingleConfig = CmsChannelConfigs.getConfigBeans("000","0",
+                    CmsConstants.ChannelConfig.CATEGORY_SINGLE);
+            if(!ListUtils.isNull(categorySingleConfig)){
+                categorySingle = categorySingleConfig.stream().map(CmsChannelConfigBean::getConfigValue1).collect(Collectors.toList());
+            }
+
+
         }
 
         private void showChannelErrorResult(String channelId, Map<String, String> resultMap) {
@@ -715,11 +726,47 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             }
             return mapMasterBrand.get(feedBrand);
         }
+
+        /**
+         * 判断是否是需要拆分code
+         * @param cmsBtProductModel
+         * @param originalFeed
+         * @return
+         */
         public boolean singleSku(CmsBtProductModel cmsBtProductModel, CmsBtFeedInfoModel originalFeed){
             if("0".equals(singleFlg)){
                 return false;
-            }
+            }else if("1".equals(singleFlg)){
+                String catPath = "";
+                switch (categoryFlg){
+                    case "0":
+                        if(cmsBtProductModel != null){
+                            catPath = cmsBtProductModel.getCommonNotNull().getCatPath();
+                        }else{
+                            catPath = originalFeed.getMainCategoryCn();
+                        }
+                        break;
+                    case "1":
+                        catPath = originalFeed.getMainCategoryCn();
+                        break;
+                    case "2":
+                        if(cmsBtProductModel != null){
+                            catPath = cmsBtProductModel.getCommonNotNull().getCatPath();
+                            if(StringUtil.isEmpty(catPath)){
+                                catPath = originalFeed.getMainCategoryCn();
+                            }
+                        }else{
+                            catPath = originalFeed.getMainCategoryCn();
+                        }
+                        break;
+                }
 
+                String finalCatPath = catPath;
+                return categorySingle.stream().anyMatch(cat-> finalCatPath.indexOf(cat) == 0);
+            }else if("2".equals(singleFlg)){
+                return true;
+            }
+            return false;
         }
         /**
          * 将商品从feed导入主数据
@@ -770,36 +817,36 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             }
 
 
-            singleSku(cmsProductParam, originalFeed);
-            // 主类目Path(更新的时候，优先用product的主类目路径，没有的话再使用newMapping匹配的主类目路径)
-            String mainCategoryPath = null;
-            if (cmsProductParam != null
-                    && cmsProductParam.getCommon() != null
-                    && !StringUtil.isEmpty(cmsProductParam.getCommon().getCatPath())) {
-                mainCategoryPath = cmsProductParam.getCommon().getCatPath();
-            } else if (newMapping != null) {
-                mainCategoryPath = newMapping.getMainCategoryPath();
-            }
-            // 判断主类目路径是否只能为SingleSku
-            if (!StringUtils.isEmpty(mainCategoryPath)) {
-                for (CmsMtCategoryTreeAllModel categoryTreeAll : categoryTreeAllList) {
-                    if (mainCategoryPath.equals(categoryTreeAll.getCatPath())) {
-                        if ("1".equals(categoryTreeAll.getSingleSku())) {
-                            isSingleSku = true;
-                        }
-                        break;
-                    } else {
-                        List<String> result = new ArrayList<>();
-                        CmsMtCategoryTreeAllModel categoryTreeFind = categoryTreeAllService.findCategorySingleSku(categoryTreeAll, mainCategoryPath, result);
-                        if (categoryTreeFind != null) {
-                            if (result.size() > 0 || "1".equals(categoryTreeAll.getSingleSku())) {
-                                isSingleSku = true;
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
+            isSingleSku = singleSku(cmsProductParam, originalFeed);
+//            // 主类目Path(更新的时候，优先用product的主类目路径，没有的话再使用newMapping匹配的主类目路径)
+//            String mainCategoryPath = null;
+//            if (cmsProductParam != null
+//                    && cmsProductParam.getCommon() != null
+//                    && !StringUtil.isEmpty(cmsProductParam.getCommon().getCatPath())) {
+//                mainCategoryPath = cmsProductParam.getCommon().getCatPath();
+//            } else if (newMapping != null) {
+//                mainCategoryPath = newMapping.getMainCategoryPath();
+//            }
+//            // 判断主类目路径是否只能为SingleSku
+//            if (!StringUtils.isEmpty(mainCategoryPath)) {
+//                for (CmsMtCategoryTreeAllModel categoryTreeAll : categoryTreeAllList) {
+//                    if (mainCategoryPath.equals(categoryTreeAll.getCatPath())) {
+//                        if ("1".equals(categoryTreeAll.getSingleSku())) {
+//                            isSingleSku = true;
+//                        }
+//                        break;
+//                    } else {
+//                        List<String> result = new ArrayList<>();
+//                        CmsMtCategoryTreeAllModel categoryTreeFind = categoryTreeAllService.findCategorySingleSku(categoryTreeAll, mainCategoryPath, result);
+//                        if (categoryTreeFind != null) {
+//                            if (result.size() > 0 || "1".equals(categoryTreeAll.getSingleSku())) {
+//                                isSingleSku = true;
+//                            }
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
                 // update desmond 2016/07/04 end
 
             boolean delOriginalFlg = false;
