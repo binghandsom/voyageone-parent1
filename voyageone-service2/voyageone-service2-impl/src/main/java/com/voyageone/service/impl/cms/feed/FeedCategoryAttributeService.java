@@ -45,6 +45,7 @@ public class FeedCategoryAttributeService extends BaseService {
                     entity.setType(CmsBtCustomPropModel.CustomPropType.Feed.getValue());
                     entity.setValue(s);
                     entities.add(entity);
+                    attributesName.add(key);
                 }
             });
         });
