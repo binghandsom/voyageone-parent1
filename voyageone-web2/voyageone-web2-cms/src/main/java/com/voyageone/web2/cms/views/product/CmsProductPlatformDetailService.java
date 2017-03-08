@@ -1,12 +1,17 @@
 package com.voyageone.web2.cms.views.product;
 
+import com.jd.open.api.sdk.response.ware.WareUpdateDelistingResponse;
+import com.jd.open.api.sdk.response.ware.WareUpdateListingResponse;
 import com.mongodb.BulkWriteResult;
+import com.taobao.api.response.ItemUpdateDelistingResponse;
+import com.taobao.api.response.ItemUpdateListingResponse;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -17,13 +22,13 @@ import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
-import com.voyageone.common.util.ConvertUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.ListUtils;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
+import com.voyageone.components.cnn.enums.CnnConstants;
 import com.voyageone.components.cnn.service.CnnWareService;
+import com.voyageone.components.dt.enums.DtConstants;
 import com.voyageone.components.dt.service.DtWareService;
 import com.voyageone.components.jd.service.JdSaleService;
+import com.voyageone.components.jumei.reponse.HtMallStatusUpdateBatchResponse;
 import com.voyageone.components.jumei.service.JumeiSaleService;
 import com.voyageone.components.tmall.service.TbSaleService;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.*;
@@ -769,141 +774,141 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         if (shopProp == null) {
             throw new BusinessException(String.format("获取到店铺信息失败, channelId=%s, cartId=%d", userBean.getSelChannelId(), cartId));
         }
-//        //调用api上架或者下架
-//        String numIId = grpObj.getNumIId();
-//        // 天猫国际上下架
-//        if (PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id())) {
-//            if (CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)) {
-//                // 上架
-//                ItemUpdateListingResponse response = tbSaleService.doWareUpdateListing(shopProp, numIId);
-//                if (response == null) {
-//                    throw new BusinessException("商品上架失败");
-//                } else {
-//                    if (!StringUtils.isEmpty(response.getErrorCode())) {
-//                        throw new BusinessException("商品上架失败");
-//                    }
-//                }
-//            }
-//            if (CmsConstants.PlatformActive.ToInStock.name().equals(pStatus)) {
-//                // 下架
-//                ItemUpdateDelistingResponse response = tbSaleService.doWareUpdateDelisting(shopProp, numIId);
-//                if (response == null) {
-//                    throw new BusinessException("商品下架失败");
-//                } else {
-//                    if (!StringUtils.isEmpty(response.getErrorCode())) {
-//                        throw new BusinessException("商品下架失败");
-//                    }
-//                }
-//            }
-//        }
-//        // 京东国际上下架
-//        else if (PlatFormEnums.PlatForm.JD.getId().equals(shopProp.getPlatform_id())) {
-//
-//            if (CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)) {
-//                // 上架
-//                WareUpdateListingResponse response = jdSaleService.doWareUpdateListing(shopProp, numIId);
-//                if (response == null) {
-//                    throw new BusinessException("商品上架失败");
-//                } else {
-//                    if (!"0".equals(response.getCode())) {
-//                        throw new BusinessException("商品上架失败");
-//                    }
-//                }
-//            }
-//            if (CmsConstants.PlatformActive.ToInStock.name().equals(pStatus)) {
-//                // 下架
-//                WareUpdateDelistingResponse response = jdSaleService.doWareUpdateDelisting(shopProp, numIId);
-//                if (response == null) {
-//                    throw new BusinessException("商品下架失败");
-//                } else {
-//                    if (!"0".equals(response.getCode())) {
-//                        throw new BusinessException("商品下架失败");
-//                    }
-//                }
-//            }
-//        }
-//
-//        // 聚美上下架
-//        else if (PlatFormEnums.PlatForm.JM.getId().equals(shopProp.getPlatform_id())) {
-//
-//            String mallId = grpObj.getPlatformMallId();
-//
-//            HtMallStatusUpdateBatchResponse response = null;
-//            if (CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)) {
-//                // 上架
-//                response = jmSaleService.doWareUpdateListing(shopProp, mallId);
-//            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(pStatus)) {
-//                // 下架
-//                response = jmSaleService.doWareUpdateDelisting(shopProp, mallId);
-//            }
-//            if (response == null) {
-//                if(CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)){
-//                    throw new BusinessException("商品上架失败");
-//                }else{
-//                    throw new BusinessException("商品下架失败");
-//                }
-//            } else {
-//                if (!response.isSuccess()) {
-//                    if(CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)){
-//                        throw new BusinessException("商品上架失败");
-//                    }else{
-//                        throw new BusinessException("商品下架失败");
-//                    }
-//                }
-//            }
-//        }
-//
-//        // 分销上下架
-//        else if (PlatFormEnums.PlatForm.DT.getId().equals(shopProp.getPlatform_id())) {
-//
-//            String result = "";
-//            if (CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)) {
-//                // 上架
-//                result = dtWareService.onShelfProduct(shopProp, numIId);
-//            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(pStatus)) {
-//                // 下架
-//                result = dtWareService.offShelfProduct(shopProp, numIId);
-//            }
-//            if (org.apache.commons.lang3.StringUtils.isNotBlank(result)) {
-//                Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
-//                if (responseMap != null && responseMap.containsKey("data") && responseMap.get("data") != null) {
-//                    Map<String, Object> resultMap = (Map<String, Object>) responseMap.get("data");
-//                    if (!DtConstants.C_DT_RETURN_SUCCESS_OK.equals(resultMap.get("result"))) {
-//                        if(CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)){
-//                            throw new BusinessException("商品上架失败");
-//                        }else{
-//                            throw new BusinessException("商品下架失败");
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        // 独立官网
-//        else if (PlatFormEnums.PlatForm.CNN.getId().equals(shopProp.getPlatform_id())) {
-//            String result = "";
-//            if (CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)) {
-//                // 上架
-//                result = cnnWareService.doWareUpdateListing(shopProp, Long.valueOf(numIId));
-//            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(pStatus)) {
-//                // 下架
-//                result = cnnWareService.doWareUpdateDelisting(shopProp, Long.valueOf(numIId));
-//            }
-//            if (!com.voyageone.common.util.StringUtils.isEmpty(result)) {
-//                Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
-//                if (responseMap != null && responseMap.containsKey("code") && responseMap.get("code") != null) {
-//                    if (CnnConstants.C_CNN_RETURN_SUCCESS_0 != (int) responseMap.get("code")) {
-//                        if(CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)){
-//                            throw new BusinessException("商品上架失败");
-//                        }else{
-//                            throw new BusinessException("商品下架失败");
-//                        }
-//                    }
-//                }
-//            }
-//        } else {
-//            throw new BusinessException("不正确的平台 cartId=%d", cartId);
-//        }
+        //调用api上架或者下架
+        String numIId = grpObj.getNumIId();
+        // 天猫国际上下架
+        if (PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id())) {
+            if (CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)) {
+                // 上架
+                ItemUpdateListingResponse response = tbSaleService.doWareUpdateListing(shopProp, numIId);
+                if (response == null) {
+                    throw new BusinessException("商品上架失败");
+                } else {
+                    if (!StringUtils.isEmpty(response.getErrorCode())) {
+                        throw new BusinessException("商品上架失败");
+                    }
+                }
+            }
+            if (CmsConstants.PlatformActive.ToInStock.name().equals(pStatus)) {
+                // 下架
+                ItemUpdateDelistingResponse response = tbSaleService.doWareUpdateDelisting(shopProp, numIId);
+                if (response == null) {
+                    throw new BusinessException("商品下架失败");
+                } else {
+                    if (!StringUtils.isEmpty(response.getErrorCode())) {
+                        throw new BusinessException("商品下架失败");
+                    }
+                }
+            }
+        }
+        // 京东国际上下架
+        else if (PlatFormEnums.PlatForm.JD.getId().equals(shopProp.getPlatform_id())) {
+
+            if (CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)) {
+                // 上架
+                WareUpdateListingResponse response = jdSaleService.doWareUpdateListing(shopProp, numIId);
+                if (response == null) {
+                    throw new BusinessException("商品上架失败");
+                } else {
+                    if (!"0".equals(response.getCode())) {
+                        throw new BusinessException("商品上架失败");
+                    }
+                }
+            }
+            if (CmsConstants.PlatformActive.ToInStock.name().equals(pStatus)) {
+                // 下架
+                WareUpdateDelistingResponse response = jdSaleService.doWareUpdateDelisting(shopProp, numIId);
+                if (response == null) {
+                    throw new BusinessException("商品下架失败");
+                } else {
+                    if (!"0".equals(response.getCode())) {
+                        throw new BusinessException("商品下架失败");
+                    }
+                }
+            }
+        }
+
+        // 聚美上下架
+        else if (PlatFormEnums.PlatForm.JM.getId().equals(shopProp.getPlatform_id())) {
+
+            String mallId = grpObj.getPlatformMallId();
+
+            HtMallStatusUpdateBatchResponse response = null;
+            if (CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)) {
+                // 上架
+                response = jmSaleService.doWareUpdateListing(shopProp, mallId);
+            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(pStatus)) {
+                // 下架
+                response = jmSaleService.doWareUpdateDelisting(shopProp, mallId);
+            }
+            if (response == null) {
+                if(CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)){
+                    throw new BusinessException("商品上架失败");
+                }else{
+                    throw new BusinessException("商品下架失败");
+                }
+            } else {
+                if (!response.isSuccess()) {
+                    if(CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)){
+                        throw new BusinessException("商品上架失败");
+                    }else{
+                        throw new BusinessException("商品下架失败");
+                    }
+                }
+            }
+        }
+
+        // 分销上下架
+        else if (PlatFormEnums.PlatForm.DT.getId().equals(shopProp.getPlatform_id())) {
+
+            String result = "";
+            if (CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)) {
+                // 上架
+                result = dtWareService.onShelfProduct(shopProp, numIId);
+            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(pStatus)) {
+                // 下架
+                result = dtWareService.offShelfProduct(shopProp, numIId);
+            }
+            if (org.apache.commons.lang3.StringUtils.isNotBlank(result)) {
+                Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
+                if (responseMap != null && responseMap.containsKey("data") && responseMap.get("data") != null) {
+                    Map<String, Object> resultMap = (Map<String, Object>) responseMap.get("data");
+                    if (!DtConstants.C_DT_RETURN_SUCCESS_OK.equals(resultMap.get("result"))) {
+                        if(CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)){
+                            throw new BusinessException("商品上架失败");
+                        }else{
+                            throw new BusinessException("商品下架失败");
+                        }
+                    }
+                }
+            }
+        }
+
+        // 独立官网
+        else if (PlatFormEnums.PlatForm.CNN.getId().equals(shopProp.getPlatform_id())) {
+            String result = "";
+            if (CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)) {
+                // 上架
+                result = cnnWareService.doWareUpdateListing(shopProp, Long.valueOf(numIId));
+            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(pStatus)) {
+                // 下架
+                result = cnnWareService.doWareUpdateDelisting(shopProp, Long.valueOf(numIId));
+            }
+            if (!com.voyageone.common.util.StringUtils.isEmpty(result)) {
+                Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
+                if (responseMap != null && responseMap.containsKey("code") && responseMap.get("code") != null) {
+                    if (CnnConstants.C_CNN_RETURN_SUCCESS_0 != (int) responseMap.get("code")) {
+                        if(CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)){
+                            throw new BusinessException("商品上架失败");
+                        }else{
+                            throw new BusinessException("商品下架失败");
+                        }
+                    }
+                }
+            }
+        } else {
+            throw new BusinessException("不正确的平台 cartId=%d", cartId);
+        }
         BulkWriteResult rs;
         //更新cms_bt_product表
         BulkJongoUpdateList productBulkList = productService.updateCmsBtProductInfo(userBean.getSelChannelId());
@@ -932,7 +937,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 ? CmsConstants.PlatformStatus.InStock.name()
                 : CmsConstants.PlatformStatus.OnSale.name();
         updObj.setUpdate("{$set:{'platforms.P#.pStatus':#,'platforms.P#.pReallyStatus':#,'platforms.P#.pPublishError':'','platforms.P#.pPublishMessage':'','modified':#,'modifier':#}}");
-        updObj.setUpdateParameters(cartId, platformStatus, cartId, pStatus, cartId, cartId, DateTimeUtil.getNowTimeStamp(), userName);
+        updObj.setUpdateParameters(cartId, platformStatus, cartId, platformStatus, cartId, cartId, DateTimeUtil.getNowTimeStamp(), userName);
         return updObj;
     }
 

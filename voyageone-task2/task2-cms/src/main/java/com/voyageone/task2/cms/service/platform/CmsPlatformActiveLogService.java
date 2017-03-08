@@ -559,7 +559,7 @@ public class CmsPlatformActiveLogService extends BaseService {
                     ? CmsConstants.PlatformStatus.InStock.name()
                     : CmsConstants.PlatformStatus.OnSale.name();
             updObj.setUpdate("{$set:{'platforms.P#.pStatus':#,'platforms.P#.pReallyStatus':#,'platforms.P#.pPublishError':'','platforms.P#.pPublishMessage':'','modified':#,'modifier':#}}");
-            updObj.setUpdateParameters(cartId, platformStatus, cartId, activeStatus, cartId, cartId, DateTimeUtil.getNowTimeStamp(), userName);
+            updObj.setUpdateParameters(cartId, platformStatus, cartId, platformStatus, cartId, cartId, DateTimeUtil.getNowTimeStamp(), userName);
         } else {
             updObj.setUpdate("{$set:{'platforms.P#.pPublishError':'Error','platforms.P#.pPublishMessage':#,'modified':#,'modifier':#}}");
             updObj.setUpdateParameters(cartId, cartId, errMsg, DateTimeUtil.getNowTimeStamp(), userName);
