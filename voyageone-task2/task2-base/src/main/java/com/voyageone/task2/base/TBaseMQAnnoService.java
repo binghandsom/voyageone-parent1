@@ -7,6 +7,7 @@ import com.voyageone.components.rabbitmq.annotation.VOMQRunnable;
 import com.voyageone.components.rabbitmq.annotation.VOMQStart;
 import com.voyageone.components.rabbitmq.annotation.VOMQStop;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
+import com.voyageone.components.rabbitmq.namesub.IMQSubBeanName;
 import com.voyageone.components.rabbitmq.exception.MQException;
 import com.voyageone.components.rabbitmq.exception.MQIgnoreException;
 import com.voyageone.components.rabbitmq.service.IMQJobLog;
@@ -36,14 +37,30 @@ import java.util.Map;
  * <p>
  * Created by jonas on 15/6/6.
  */
-public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> extends BaseTaskService implements IVOMQOnStartup<TMQMessageBody> {
+public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> extends BaseTaskService implements IVOMQOnStartup<TMQMessageBody>, IMQSubBeanName {
+
+    /**
+     * MQ 任务拆分后的子Bean名称
+     */
+    private String subBeanName;
+
+    @Override
+    public String getSubBeanName() {
+        return subBeanName;
+    }
+
+    @Override
+    public void setSubBeanName(String subTaskName) {
+        this.subBeanName = subTaskName;
+    }
 
     /**
      * taskControlList job配置
      */
     protected List<TaskControlBean> taskControlList = null;
-    @Autowired()
-    IMQJobLog mqJobLogService;
+
+    @Autowired
+    protected IMQJobLog mqJobLogService;
 
     /**
      * 默认公开的启动入口
@@ -54,6 +71,7 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
 
     /**
      * onMessage
+     *
      * @param message message
      * @param headers headers
      * @throws Exception Exception
@@ -77,6 +95,7 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
 
     /**
      * 监听通知消息，执行任务
+     *
      * @param message 接受到的消息体
      */
     private void onMessage(Message message) {
@@ -103,6 +122,7 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
 
     /**
      * 是否记录Job日志
+     *
      * @return true: 记录, false: 不记录
      */
     private boolean isMQJobLog() {
@@ -115,6 +135,7 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
 
     /**
      * 启动Mq
+     *
      * @param messageBody messageBody
      * @throws Exception Exception
      */
@@ -134,9 +155,10 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
 
     /**
      * 记录履历
+     *
      * @param messageBody messageBody
-     * @param ex ex
-     * @param beginDate beginDate
+     * @param ex          ex
+     * @param beginDate   beginDate
      */
     private void log(IMQMessageBody messageBody, Exception ex, Date beginDate) {
 
@@ -145,6 +167,7 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
 
     /**
      * 默认公开的启动入口
+     *
      * @param message message
      */
     public void startup(Message message) {
@@ -173,7 +196,6 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
     }
 
     /**
-     *
      * @param messageBody messageBody
      * @throws Exception Exception
      */
@@ -183,12 +205,14 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
 
     /**
      * MqJobService需要实现此方法
+     *
      * @param messageBody Mq消息Map
      */
     public abstract void onStartup(TMQMessageBody messageBody) throws Exception;
 
     /**
      * 判断TASK是否可以执行
+     *
      * @return true: 可执行, false: 不可执行
      */
     @VOMQRunnable
@@ -206,6 +230,7 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
 
     /**
      * 手动开启监听器
+     *
      * @return true: 开启成功, false: 开启失败
      */
     @VOMQStart
@@ -216,11 +241,11 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
             if (taskControlList == null) {
                 taskControlList = new ArrayList<>();
             }
-            MQControlHelper.start(getClass().getName());
+            MQControlHelper.start(this.getEndPointId());
             // set concurrentConsumers
             String threadCount = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.mq_thread_count);
             int nThreads = StringUtils.isEmpty(threadCount) ? 1 : Integer.parseInt(threadCount);
-            MQControlHelper.setConcurrentConsumers(getClass().getName(), nThreads);
+            MQControlHelper.setConcurrentConsumers(this.getEndPointId(), nThreads);
             return true;
         } catch (Exception ignored) {
             return false;
@@ -229,13 +254,15 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
 
     /**
      * 手动关闭监听器
+     *
      * @return true: 关闭成功
      */
     @VOMQStop
     public boolean stopMQ() {
-        MQControlHelper.stop(getClass().getName());
+        MQControlHelper.stop(this.getEndPointId());
         taskControlList = null;
         return true;
     }
+
 
 }

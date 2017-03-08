@@ -1,14 +1,14 @@
 package com.voyageone.task2.base;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.rabbitmq.annotation.VOMQRunnable;
 import com.voyageone.components.rabbitmq.annotation.VOMQStart;
 import com.voyageone.components.rabbitmq.annotation.VOMQStop;
 import com.voyageone.components.rabbitmq.exception.MQException;
 import com.voyageone.components.rabbitmq.exception.MQIgnoreException;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.components.rabbitmq.utils.MQControlHelper;
 import com.voyageone.components.rabbitmq.handler.VOExceptionStrategy;
+import com.voyageone.components.rabbitmq.utils.MQControlHelper;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -157,14 +157,14 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
     @VOMQStart
     public boolean startMQ() {
         try {
-            MQControlHelper.start(getClass().getName());
+            MQControlHelper.start(getEndPointId());
             // set concurrentConsumers
             String threadCount = null;
             if (taskControlList != null) {
                 threadCount = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.mq_thread_count);
             }
             int nThreads = StringUtils.isEmpty(threadCount) ? 1 : Integer.parseInt(threadCount);
-            MQControlHelper.setConcurrentConsumers(getClass().getName(), nThreads);
+            MQControlHelper.setConcurrentConsumers(this.getEndPointId(), nThreads);
             return true;
         } catch (Exception ignored) {
             return false;
@@ -176,7 +176,7 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
      */
     @VOMQStop
     public boolean stopMQ() {
-        MQControlHelper.stop(getClass().getName());
+        MQControlHelper.stop(this.getEndPointId());
         return true;
     }
 

@@ -4,8 +4,10 @@ import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.logger.VOAbsIssueLoggable;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.components.rabbitmq.utils.MQConfigUtils;
 import com.voyageone.task2.base.dao.TaskDao;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -17,7 +19,20 @@ import static java.lang.String.format;
  * <p>
  * Created by Chuanyu Liang 2016/10/12
  */
-public abstract class BaseTaskService extends VOAbsIssueLoggable {
+public abstract class BaseTaskService extends VOAbsIssueLoggable implements BeanNameAware {
+
+    /**
+     * Bean Name
+     */
+    protected String beanName;
+
+    public void setBeanName(String beanName) {
+        this.beanName = beanName;
+    }
+
+    protected String getEndPointId() {
+        return MQConfigUtils.getEndPointName(getClass().getName(), beanName);
+    }
 
     /**
      * 获取子系统

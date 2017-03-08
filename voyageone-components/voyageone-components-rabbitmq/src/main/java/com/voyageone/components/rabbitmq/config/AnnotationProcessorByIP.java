@@ -16,11 +16,18 @@
 
 package com.voyageone.components.rabbitmq.config;
 
+import com.voyageone.common.spring.SpringContext;
+import com.voyageone.common.util.GenericSuperclassUtils;
+import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
+import com.voyageone.components.rabbitmq.annotation.VOSubRabbitListener;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
+import com.voyageone.components.rabbitmq.namesub.IMQSubBeanName;
+import com.voyageone.components.rabbitmq.namesub.IMQSubBeanNameAll;
+import com.voyageone.components.rabbitmq.factory.MQSubRabbitListenerFactory;
 import com.voyageone.components.rabbitmq.service.IVOMQOnStartup;
 import com.voyageone.components.rabbitmq.utils.MQConfigUtils;
-import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
-import com.voyageone.common.util.GenericSuperclassUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.amqp.core.Queue;
@@ -36,6 +43,8 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.*;
 import org.springframework.beans.factory.config.*;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.expression.StandardBeanExpressionResolver;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -52,6 +61,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class AnnotationProcessorByIP
         implements BeanPostProcessor, Ordered, BeanFactoryAware, SmartInitializingSingleton {
+
+    private final static Logger logger = LoggerFactory.getLogger(AnnotationProcessorByIP.class);
 
     /**
      * The bean name of the default {@link RabbitListenerContainerFactory}.
@@ -194,33 +205,72 @@ public class AnnotationProcessorByIP
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        if (bean instanceof IMQSubBeanNameAll && bean instanceof IMQSubBeanName) {
+            if (((IMQSubBeanName) bean).getSubBeanName() != null) {
+                return bean;
+            }
+
+            String[] subBeanNames = ((IMQSubBeanNameAll) bean).getAllSubBeanName();
+            if (subBeanNames == null || subBeanNames.length == 0) {
+                return bean;
+            }
+
+            String newBeanName = MQConfigUtils.getNewBeanName(beanName, subBeanNames[0]);
+            ((IMQSubBeanName) bean).setSubBeanName(subBeanNames[0]);
+            logger.info(String.format("create new bean %s", newBeanName));
+
+            for (int i = 1; i < subBeanNames.length; i++) {
+                newBeanName = registerMQNewBean(beanName, subBeanNames[i], bean.getClass());
+                logger.info(String.format("create new bean %s", newBeanName));
+                IMQSubBeanName subBeanName = (IMQSubBeanName) SpringContext.getBean(newBeanName);
+                //noinspection ConstantConditions
+                subBeanName.setSubBeanName(subBeanNames[i]);
+            }
+        }
         return bean;
+    }
+
+    private String registerMQNewBean(String beanName, String subBeanName, Class<?> beanClass) {
+        String newBeanName = MQConfigUtils.getNewBeanName(beanName, subBeanName);
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(beanClass);
+        beanDefinitionBuilder.addPropertyValue("subBeanName", subBeanName);
+        ((DefaultListableBeanFactory) beanFactory).registerBeanDefinition(newBeanName, beanDefinitionBuilder.getRawBeanDefinition());
+        return newBeanName;
     }
 
     @Override
     public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
         Class<?> targetClass = AopUtils.getTargetClass(bean);
-        final RabbitListener classLevelListener = AnnotationUtils.findAnnotation(targetClass, RabbitListener.class);
-        final List<Method> multiMethods = new ArrayList<>();
-        ReflectionUtils.doWithMethods(targetClass, new ReflectionUtils.MethodCallback() {
 
-            @Override
-            public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-                RabbitListener rabbitListener = AnnotationUtils.findAnnotation(method, RabbitListener.class);
-                if (rabbitListener != null) {
-                    processAmqpListener(rabbitListener, method, bean, beanName);
-                }
-                if (classLevelListener != null) {
+        /**
+         * RabbitListener
+         */
+        RabbitListener classLevelListener = AnnotationUtils.findAnnotation(targetClass, RabbitListener.class);
+        if (classLevelListener == null) {
+            VOSubRabbitListener vosubRabbitListener = AnnotationUtils.findAnnotation(targetClass, VOSubRabbitListener.class);
+            if (vosubRabbitListener != null) {
+                classLevelListener = MQSubRabbitListenerFactory.create(vosubRabbitListener);
+            }
+        }
+        if (classLevelListener != null) {
+            final List<Method> multiMethods = new ArrayList<>();
+            ReflectionUtils.doWithMethods(targetClass, new ReflectionUtils.MethodCallback() {
+
+                @Override
+                public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+                    RabbitListener rabbitListener = AnnotationUtils.findAnnotation(method, RabbitListener.class);
+                    if (rabbitListener != null) {
+                        processAmqpListener(rabbitListener, method, bean, beanName);
+                    }
                     RabbitHandler rabbitHandler = AnnotationUtils.findAnnotation(method, RabbitHandler.class);
                     if (rabbitHandler != null) {
                         multiMethods.add(method);
                     }
                 }
-            }
-        });
-        if (classLevelListener != null) {
+            });
             processMultiMethodListener(classLevelListener, multiMethods, bean, beanName);
         }
+
         return bean;
     }
 
@@ -275,12 +325,14 @@ public class AnnotationProcessorByIP
                                  Object adminTarget, String beanName) {
         endpoint.setBean(bean);
         endpoint.setMessageHandlerMethodFactory(this.messageHandlerMethodFactory);
-        endpoint.setId(AopUtils.getTargetClass(bean).getName());
 
         /**
          * add ip to quenes key aooer start
          */
-        String[] queues = resolveQueues(rabbitListener,bean);
+        endpoint.setId(MQConfigUtils.getEndPointName(AopUtils.getTargetClass(bean).getName(), beanName));
+
+
+        String[] queues = resolveQueues(rabbitListener, bean, beanName);
 
         if (local) {
             for (int i = 0; i < queues.length; i++) {
@@ -349,9 +401,10 @@ public class AnnotationProcessorByIP
             return "org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#" + counter.getAndIncrement();
         }
     }
+
     // new add begin
-    private String[] resolveQueues(RabbitListener rabbitListener, Object bean) {
-        String[] queues = getQueues(rabbitListener,bean);
+    private String[] resolveQueues(RabbitListener rabbitListener, Object bean, String beanName) {
+        String[] queues = getQueues(rabbitListener, bean, beanName);
         QueueBinding[] bindings = rabbitListener.bindings();
         if (queues.length > 0 && bindings.length > 0) {
             throw new BeanInitializationException("@RabbitListener can have 'queues' or 'bindings' but not both");
@@ -367,7 +420,8 @@ public class AnnotationProcessorByIP
         }
         return result.toArray(new String[result.size()]);
     }
-    private String [] getQueues(RabbitListener rabbitListener,Object bean) {
+
+    private String[] getQueues(RabbitListener rabbitListener, Object bean, String beanName) {
         String[] queues = rabbitListener.queues();
         if (queues.length > 0) return queues;
         if (bean instanceof IVOMQOnStartup) {
@@ -376,6 +430,14 @@ public class AnnotationProcessorByIP
             //获取队列的注解
             final VOMQQueue voQueue = AnnotationUtils.findAnnotation(messageBodyClass, VOMQQueue.class);
             if (voQueue != null) {
+                if (bean instanceof IMQSubBeanName) {
+                    String subBeanName = ((IMQSubBeanName) bean).getSubBeanName();
+                    if (subBeanName != null) {
+                        return new String[]{MQConfigUtils.getNewQueueName(voQueue.value(), subBeanName)};
+                    } else {
+                        return new String[0];
+                    }
+                }
                 return new String[]{voQueue.value()};
             }
         }
