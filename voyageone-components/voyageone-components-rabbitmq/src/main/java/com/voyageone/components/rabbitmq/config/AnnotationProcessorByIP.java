@@ -23,7 +23,6 @@ import com.voyageone.components.rabbitmq.annotation.VOSubRabbitListener;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
 import com.voyageone.components.rabbitmq.namesub.IMQSubBeanName;
 import com.voyageone.components.rabbitmq.namesub.IMQSubBeanNameAll;
-import com.voyageone.components.rabbitmq.factory.MQSubRabbitListenerFactory;
 import com.voyageone.components.rabbitmq.service.IVOMQOnStartup;
 import com.voyageone.components.rabbitmq.utils.MQConfigUtils;
 import org.slf4j.Logger;
@@ -205,28 +204,33 @@ public class AnnotationProcessorByIP
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        if (bean instanceof IMQSubBeanNameAll && bean instanceof IMQSubBeanName) {
-            if (((IMQSubBeanName) bean).getSubBeanName() != null) {
-                return bean;
-            }
+        Class<?> targetClass = AopUtils.getTargetClass(bean);
+        VOSubRabbitListener voSubRabbitListener = AnnotationUtils.findAnnotation(targetClass, VOSubRabbitListener.class);
+        if (voSubRabbitListener != null) {
+            if (bean instanceof IMQSubBeanNameAll && bean instanceof IMQSubBeanName) {
+                if (((IMQSubBeanName) bean).getSubBeanName() != null) {
+                    return bean;
+                }
 
-            String[] subBeanNames = ((IMQSubBeanNameAll) bean).getAllSubBeanName();
-            if (subBeanNames == null || subBeanNames.length == 0) {
-                return bean;
-            }
+                String[] subBeanNames = ((IMQSubBeanNameAll) bean).getAllSubBeanName();
+                if (subBeanNames == null || subBeanNames.length == 0) {
+                    return bean;
+                }
 
-            String newBeanName = MQConfigUtils.getNewBeanName(beanName, subBeanNames[0]);
-            ((IMQSubBeanName) bean).setSubBeanName(subBeanNames[0]);
-            logger.info(String.format("create new bean %s", newBeanName));
-
-            for (int i = 1; i < subBeanNames.length; i++) {
-                newBeanName = registerMQNewBean(beanName, subBeanNames[i], bean.getClass());
+                String newBeanName = MQConfigUtils.getNewBeanName(beanName, subBeanNames[0]);
+                ((IMQSubBeanName) bean).setSubBeanName(subBeanNames[0]);
                 logger.info(String.format("create new bean %s", newBeanName));
-                IMQSubBeanName subBeanName = (IMQSubBeanName) SpringContext.getBean(newBeanName);
-                //noinspection ConstantConditions
-                subBeanName.setSubBeanName(subBeanNames[i]);
+
+                for (int i = 1; i < subBeanNames.length; i++) {
+                    newBeanName = registerMQNewBean(beanName, subBeanNames[i], bean.getClass());
+                    logger.info(String.format("create new bean %s", newBeanName));
+                    IMQSubBeanName subBeanName = (IMQSubBeanName) SpringContext.getBean(newBeanName);
+                    //noinspection ConstantConditions
+                    subBeanName.setSubBeanName(subBeanNames[i]);
+                }
             }
         }
+
         return bean;
     }
 
@@ -246,12 +250,6 @@ public class AnnotationProcessorByIP
          * RabbitListener
          */
         RabbitListener classLevelListener = AnnotationUtils.findAnnotation(targetClass, RabbitListener.class);
-        if (classLevelListener == null) {
-            VOSubRabbitListener vosubRabbitListener = AnnotationUtils.findAnnotation(targetClass, VOSubRabbitListener.class);
-            if (vosubRabbitListener != null) {
-                classLevelListener = MQSubRabbitListenerFactory.create(vosubRabbitListener);
-            }
-        }
         if (classLevelListener != null) {
             final List<Method> multiMethods = new ArrayList<>();
             ReflectionUtils.doWithMethods(targetClass, new ReflectionUtils.MethodCallback() {
@@ -434,8 +432,6 @@ public class AnnotationProcessorByIP
                     String subBeanName = ((IMQSubBeanName) bean).getSubBeanName();
                     if (subBeanName != null) {
                         return new String[]{MQConfigUtils.getNewQueueName(voQueue.value(), subBeanName)};
-                    } else {
-                        return new String[0];
                     }
                 }
                 return new String[]{voQueue.value()};

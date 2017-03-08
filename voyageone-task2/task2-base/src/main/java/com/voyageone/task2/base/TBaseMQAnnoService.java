@@ -12,6 +12,7 @@ import com.voyageone.components.rabbitmq.exception.MQException;
 import com.voyageone.components.rabbitmq.exception.MQIgnoreException;
 import com.voyageone.components.rabbitmq.service.IMQJobLog;
 import com.voyageone.components.rabbitmq.service.IVOMQOnStartup;
+import com.voyageone.components.rabbitmq.utils.MQConfigUtils;
 import com.voyageone.components.rabbitmq.utils.MQControlHelper;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -129,7 +130,7 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
         //  cfg_name = 'run_flg'  cfg_val2=1 全量记录mq处理日志   默认只记录异常日志
         String val2 = TaskControlUtils.getVal2(taskControlList, TaskControlEnums.Name.run_flg, "1");
 
-        logger.info(" RUN FLAG  val2为" + val2);
+        logger.debug(" RUN FLAG  val2为" + val2);
         return "1".equals(val2);
     }
 
@@ -264,5 +265,7 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
         return true;
     }
 
-
+    protected String getEndPointId() {
+        return MQConfigUtils.getEndPointName(getClass().getName(), beanName);
+    }
 }

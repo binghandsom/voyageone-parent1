@@ -17,11 +17,6 @@
             <artifactId>voyageone-components-base</artifactId>
             <version>${voyageone.components.base.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.athaydes.javanna</groupId>
-            <artifactId>javanna</artifactId>
-        </dependency>
     </dependencies>
     <build>
         <finalName>voyageone-components-rabbitmq</finalName>

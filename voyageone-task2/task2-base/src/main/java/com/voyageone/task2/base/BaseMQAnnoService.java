@@ -8,6 +8,7 @@ import com.voyageone.components.rabbitmq.annotation.VOMQStop;
 import com.voyageone.components.rabbitmq.exception.MQException;
 import com.voyageone.components.rabbitmq.exception.MQIgnoreException;
 import com.voyageone.components.rabbitmq.handler.VOExceptionStrategy;
+import com.voyageone.components.rabbitmq.utils.MQConfigUtils;
 import com.voyageone.components.rabbitmq.utils.MQControlHelper;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -178,6 +179,10 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
     public boolean stopMQ() {
         MQControlHelper.stop(this.getEndPointId());
         return true;
+    }
+
+    protected String getEndPointId() {
+        return MQConfigUtils.getEndPointName(getClass().getName(), beanName);
     }
 
 }

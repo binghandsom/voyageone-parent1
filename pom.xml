@@ -624,13 +624,6 @@
                 <version>1.5.5.RELEASE</version>
             </dependency>
 
-            <!-- javanna -->
-            <dependency>
-                <groupId>com.athaydes.javanna</groupId>
-                <artifactId>javanna</artifactId>
-                <version>1.1</version>
-            </dependency>
-
         </dependencies>
     </dependencyManagement>
 
