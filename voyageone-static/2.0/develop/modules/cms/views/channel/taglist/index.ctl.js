@@ -4,7 +4,8 @@
  */
 define([
     'cms',
-    'modules/cms/controller/popup.ctl'
+    'modules/cms/controller/popup.ctl',
+    'modules/cms/directives/noticeTip.directive'
 ], function (cms) {
 
     cms.controller('tagListController', (function () {
@@ -17,7 +18,7 @@ define([
             this.alert = alert;
             this.selected = [];
             this.vm = {
-                tagTypeSelectValue: "1",
+                tagTypeSelectValue: "0",
                 tagTypeList: null,
                 trees: null
             }
@@ -85,7 +86,7 @@ define([
         /**
          * 删除标签
          */
-        TagListCtl.prototype.delTag = function (tag, parentIndex) {
+        TagListCtl.prototype.delTag = function (tag, parentIndex,$event) {
             var self = this,
                 channelTagService = self.channelTagService;
 
@@ -97,7 +98,9 @@ define([
                 }).then(function () {
                     self.init(parentIndex);
                 });
-            })
+            });
+
+            $event.stopPropagation();
         };
 
         /**
@@ -116,7 +119,7 @@ define([
                 console.log(tagTree);
                 console.log(parentIndex);
                 vm.trees.push({level: 1, tags: tagTree});
-                for (var i = 0; i < parentIndex ; i++) {
+                for (var i = 0; i < parentIndex; i++) {
                     _.each(vm.trees[i].tags, function (item) {
                         if (item.tagChildrenName == self.selected[i].tagChildrenName)
                             vm.trees.push({tags: item.children});

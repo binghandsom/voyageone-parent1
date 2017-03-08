@@ -20,13 +20,18 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-1 m-t-sm">
+                                <span notice-direction="bottom" notice-content="请选择标签类型来设置标签！"
+                                      notice-tip class="text-warnings cur-p"><i
+                                        class="icon fa fa-hand-o-left text-md"></i></span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="container-fluid">
+    <div class="container-fluid" ng-if="ctrl.vm.tagTypeSelectValue != 0">
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="row">
@@ -44,7 +49,7 @@
                                     <li ng-repeat="tag in tree.tags">
                                         <a href="javascript:void(0)" ng-click="ctrl.openTag(tag , $parentIndex)" ng-class="{indexSelected:ctrl.selected[$parentIndex].tagChildrenName == tag.tagChildrenName}">
                                             <span>{{tag.tagChildrenName}}</span>
-                                            <button class="btn btn-danger btn-xs pull-right" ng-if = "tag.isLeaf" ng-click="ctrl.delTag(tag,$parentIndex)">
+                                            <button class="btn btn-danger btn-xs pull-right" ng-if = "tag.isLeaf" ng-click="ctrl.delTag(tag,$parentIndex,$event)">
                                                 <i class="fa  fa-trash-o"></i>
                                             </button>
                                         </a>
