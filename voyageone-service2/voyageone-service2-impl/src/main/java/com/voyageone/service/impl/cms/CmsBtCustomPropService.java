@@ -124,9 +124,10 @@ public class CmsBtCustomPropService extends BaseService {
      * @param orgChannelId orgChannelId
      * @param cat          类目
      * @param entity       entity
+     * @param userName
      * @return CmsBtCustomPropModel
      */
-    public CmsBtCustomPropModel setCustomshIsDispPlay(String channelId, String orgChannelId, String cat, CmsBtCustomPropModel.Entity entity) {
+    public CmsBtCustomPropModel setCustomshIsDispPlay(String channelId, String orgChannelId, String cat, CmsBtCustomPropModel.Entity entity, String userName) {
         cat = StringUtil.isEmpty(cat) ? "all" : cat;
         CmsBtCustomPropModel cmsBtCustomPropExtend = getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
         CmsBtCustomPropModel cmsBtCustomPropModel = getCustomPropByCatChannel(channelId, orgChannelId, cat);
@@ -135,7 +136,9 @@ public class CmsBtCustomPropService extends BaseService {
             cmsBtCustomPropModel.setCat(cat);
             cmsBtCustomPropModel.setChannelId(channelId);
             cmsBtCustomPropModel.setOrgChannelId(orgChannelId);
+            cmsBtCustomPropModel.setCreater(userName);
         }
+        cmsBtCustomPropModel.setModifier(userName);
         CmsBtCustomPropModel.Entity item = cmsBtCustomPropModel.getEntitys().stream()
                 .filter(entity1 -> entity1.getNameEn().equalsIgnoreCase(entity.getNameEn()) && Objects.equals(entity.getType(), entity1.getType()))
                 .findFirst().orElse(null);
@@ -170,7 +173,7 @@ public class CmsBtCustomPropService extends BaseService {
      * @param entity       entity
      * @return CmsBtCustomPropModel
      */
-    public CmsBtCustomPropModel updateEntity(String channelId, String orgChannelId, String cat, CmsBtCustomPropModel.Entity entity) {
+    public CmsBtCustomPropModel updateEntity(String channelId, String orgChannelId, String cat, CmsBtCustomPropModel.Entity entity, String modifier) {
         cat = StringUtil.isEmpty(cat) ? "all" : cat;
         CmsBtCustomPropModel cmsBtCustomPropModel = getCustomPropByCatChannel(channelId, orgChannelId, cat);
         if (cmsBtCustomPropModel == null) {
@@ -178,7 +181,9 @@ public class CmsBtCustomPropService extends BaseService {
             cmsBtCustomPropModel.setCat(cat);
             cmsBtCustomPropModel.setChannelId(channelId);
             cmsBtCustomPropModel.setOrgChannelId(orgChannelId);
+            cmsBtCustomPropModel.setCreater(modifier);
         }
+        cmsBtCustomPropModel.setModifier(modifier);
         CmsBtCustomPropModel.Entity item = cmsBtCustomPropModel.getEntitys().stream()
                 .filter(entity1 -> entity1.getNameEn().equalsIgnoreCase(entity.getNameEn()) && Objects.equals(entity.getType(), entity1.getType()))
                 .findFirst().orElse(null);
@@ -239,9 +244,10 @@ public class CmsBtCustomPropService extends BaseService {
      * @param orgChannelId orgChannelId
      * @param cat          类目
      * @param sort         顺序
+     * @param userName
      * @return CmsBtCustomPropModel
      */
-    public CmsBtCustomPropModel setSort(String channelId, String orgChannelId, String cat, List<String> sort) {
+    public CmsBtCustomPropModel setSort(String channelId, String orgChannelId, String cat, List<String> sort, String userName) {
         cat = StringUtil.isEmpty(cat) ? "all" : cat;
         CmsBtCustomPropModel cmsBtCustomPropModel = getCustomPropByCatChannel(channelId, orgChannelId, cat);
         if (cmsBtCustomPropModel == null) {
@@ -249,7 +255,9 @@ public class CmsBtCustomPropService extends BaseService {
             cmsBtCustomPropModel.setCat(cat);
             cmsBtCustomPropModel.setChannelId(channelId);
             cmsBtCustomPropModel.setOrgChannelId(orgChannelId);
+            cmsBtCustomPropModel.setCreater(userName);
         }
+        cmsBtCustomPropModel.setModifier(userName);
         cmsBtCustomPropModel.setSort(sort);
         update(cmsBtCustomPropModel);
         return getCustomPropByCatChannelExtend(channelId, orgChannelId, cat);
