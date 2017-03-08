@@ -68,8 +68,10 @@ public class CmsImagePostScene7Service extends BaseCronTaskService {
                     // 获得该渠道要上传Scene7的图片url列表
                     feedImage.setUpdFlg(4);
                     imageUrlList = cmsBtImagesDaoExt.selectImages(feedImage);
-                    feedImage.setUpdFlg(0);
-                    imageUrlList.addAll(cmsBtImagesDaoExt.selectImages(feedImage));
+                    if(imageUrlList.size() == 0) {
+                        feedImage.setUpdFlg(0);
+                        imageUrlList.addAll(cmsBtImagesDaoExt.selectImages(feedImage));
+                    }
                     $debug(channelId + String.format("渠道本次有%d要推送NEXCESS图片服务器的图片", imageUrlList.size()));
                     if (!imageUrlList.isEmpty()) {
 
@@ -164,7 +166,7 @@ public class CmsImagePostScene7Service extends BaseCronTaskService {
             }
 
             // FtpBean初期化
-            BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.SCENE7_FTP);
+//            BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.SCENE7_FTP);
 
             InputStream inputStream;
             String imageUrl = null;
@@ -172,8 +174,8 @@ public class CmsImagePostScene7Service extends BaseCronTaskService {
             InputStreamCacher  cacher = null;
             try {
                 //建立连接
-                ftpComponent.openConnect();
-                ftpComponent.enterLocalPassiveMode();
+//                ftpComponent.openConnect();
+//                ftpComponent.enterLocalPassiveMode();
 
                 for (CmsBtImagesModel imagesModel : imageUrlList) {
                     imageUrl = imagesModel.getOriginalUrl();
@@ -212,11 +214,11 @@ public class CmsImagePostScene7Service extends BaseCronTaskService {
                     }
                     // 直接通过http的方式上传到s7 end
                     //读取stream
-                    stream = cacher.getInputStream();
-                    $info("thread-" + threadNo + ":" + imageUrl + "ftp上传开始");
-                    FtpFileBean ftpFileBean = new FtpFileBean(stream, uploadPath, fileName);
-                    ftpComponent.uploadFile(ftpFileBean);
-                    $info("thread-" + threadNo + ":" + imageUrl + "ftp上传结束");
+//                    stream = cacher.getInputStream();
+//                    $info("thread-" + threadNo + ":" + imageUrl + "ftp上传开始");
+//                    FtpFileBean ftpFileBean = new FtpFileBean(stream, uploadPath, fileName);
+//                    ftpComponent.uploadFile(ftpFileBean);
+//                    $info("thread-" + threadNo + ":" + imageUrl + "ftp上传结束");
                     successImageUrlList.add(imagesModel);
                     $info("thread-" + threadNo + ":" + imageUrl + "上传成功!");
                 }
@@ -227,7 +229,7 @@ public class CmsImagePostScene7Service extends BaseCronTaskService {
                 isSuccess = false;
             } finally {
                 //断开连接
-                ftpComponent.closeConnect();
+//                ftpComponent.closeConnect();
                 if(cacher != null){
                     cacher.close();
                 }
