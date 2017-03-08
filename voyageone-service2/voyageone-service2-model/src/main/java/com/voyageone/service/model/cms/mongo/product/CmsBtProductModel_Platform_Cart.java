@@ -151,7 +151,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String, Object
     }
 
     public void setpStatus(CmsConstants.PlatformStatus pStatus) {
-        setAttribute("pStatus", pStatus.name());
+        setAttribute("pStatus", pStatus == null ? "" : pStatus.name());
     }
 
     //pPublishError
@@ -161,6 +161,15 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String, Object
 
     public void setpPublishError(String pPublishError) {
         setStringAttribute("pPublishError", pPublishError);
+    }
+
+    //pPublishMessage
+    public String getpPublishMessage() {
+        return getStringAttribute("pPublishMessage");
+    }
+
+    public void setpPublishMessage(String pPublishMessage) {
+        setStringAttribute("pPublishMessage", pPublishMessage);
     }
 
     //pBrandId

@@ -5,7 +5,9 @@ import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.common.CmsConstants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商品Model Group Channel
@@ -36,6 +38,7 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
     private Double priceRetailEd = 0.00;
     private Double priceSaleSt = 0.00;
     private Double priceSaleEd = 0.00;
+    private Map<String, Integer> sales = new HashMap<>();
 
     public Long getGroupId() {
         return groupId;
@@ -183,7 +186,7 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
         return rs;
     }
     public void setPlatformStatus(CmsConstants.PlatformStatus platformStatus) {
-        this.platformStatus = platformStatus.name();
+        this.platformStatus = platformStatus == null ? "" : platformStatus.name();
     }
 
     //"Instock"(在库)/"OnSale"(在售)
@@ -198,5 +201,13 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
 
     public void setPlatformActive(CmsConstants.PlatformActive platformActive) {
         this.platformActive = platformActive.name();
+    }
+
+    public Map<String, Integer> getSales() {
+        return sales;
+    }
+
+    public void setSales(Map<String, Integer> sales) {
+        this.sales = sales;
     }
 }

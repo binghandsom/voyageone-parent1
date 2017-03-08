@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  * @since 2.2.0
  */
-public class CmsBtProductModel extends ChannelPartitionModel {
+public class CmsBtProductModel extends ChannelPartitionModel implements Cloneable {
 
     /**
      * 定义platforms的固定文字
@@ -30,6 +30,8 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private Long prodId;
     //商品lock
     private String lock = "";
+    //comment
+    private String comment = "";
     //共通属性
     private CmsBtProductModel_Common common = new CmsBtProductModel_Common();
     //平台属性Map
@@ -79,6 +81,14 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     public void setLock(String lock) {
         this.lock = lock;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     //common
@@ -260,5 +270,10 @@ public class CmsBtProductModel extends ChannelPartitionModel {
             return new ArrayList<>(0);
         }
         return ((Set<String>) platforms.keySet()).stream().map(cartKey -> NumberUtils.toInt(cartKey.substring(1))).filter(cartKey -> cartKey != 0).collect(Collectors.toList());
+    }
+
+    @Override
+    public CmsBtProductModel clone() throws CloneNotSupportedException {
+        return (CmsBtProductModel)super.clone();
     }
 }

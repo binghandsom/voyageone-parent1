@@ -20,7 +20,6 @@ import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
 import com.voyageone.service.bean.cms.product.*;
-import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
@@ -29,9 +28,6 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsBtCustomPropService;
 import com.voyageone.service.impl.cms.CmsMtEtkHsCodeService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
-import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
-import com.voyageone.service.impl.cms.prices.PlatformPriceService;
-import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.wms.InventoryCenterLogicService;
 import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
@@ -1097,6 +1093,20 @@ public class ProductService extends BaseService {
 
     public List<Map<String, Object>> aggregateToMap(String channelId, List<JongoAggregate> aggregateList) {
         return cmsBtProductDao.aggregateToMap(channelId, aggregateList);
+    }
+
+
+    /**
+     * 根据model返回产品列表
+     * @param channelId
+     * @param model
+     * @return
+     */
+    public List<CmsBtProductModel> getProductListByModel (String channelId, String model) {
+        JongoQuery query = new JongoQuery();
+        query.setQuery("{\"channelId\": #, \"common.fields.model\": #}");
+        query.setParameters(channelId, model);
+        return getList(channelId, query);
     }
 
     /**
