@@ -72,7 +72,7 @@ define([
 
             switch (Number(vm.attrType)) {
                 case 1:
-                    attrValue = attrValue ? attrValue : '';
+                    attrValue = self.context.entity.value;
                     break;
                 case 2:
                     attrValue = vm.prop_master_value;

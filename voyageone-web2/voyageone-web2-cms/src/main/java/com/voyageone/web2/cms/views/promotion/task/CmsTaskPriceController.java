@@ -135,6 +135,20 @@ public class CmsTaskPriceController extends CmsController {
                 Map<String,Object> param = new HashMap<>();
                 param.put("promotionId", promotionId);
                 List<Map<String,Object>> items = cmsTaskPriceService.getPriceList(param);
+
+                List<String> numIids = items.stream()
+                        .filter(item-> item.get("numIid") != null && !StringUtil.isEmpty(item.get("numIid").toString()))
+                        .map(item->item.get("numIid").toString())
+                        .distinct()
+                        .collect(Collectors.toList());
+                CmsTeJiaBaoDelMQMessageBody cmsTeJiaBaoDelMQMessageBody = new CmsTeJiaBaoDelMQMessageBody();
+                cmsTeJiaBaoDelMQMessageBody.setChannelId(cmsBtPromotionModel.getChannelId());
+                cmsTeJiaBaoDelMQMessageBody.setCartId(cmsBtPromotionModel.getCartId());
+                cmsTeJiaBaoDelMQMessageBody.setNumIId(numIids);
+                cmsTeJiaBaoDelMQMessageBody.setTejiabaoId(Long.parseLong(cmsBtPromotionModel.getTejiabaoId()));
+                cmsTeJiaBaoDelMQMessageBody.setSender(getUser().getUserName());
+                cmsMqSenderService.sendMessage(cmsTeJiaBaoDelMQMessageBody);
+
                 List<String> codes = items.stream()
                         .filter(item-> item.get("key") != null && !StringUtil.isEmpty(item.get("key").toString()))
                         .map(item->item.get("key").toString())
