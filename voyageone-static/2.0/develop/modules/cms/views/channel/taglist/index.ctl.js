@@ -9,9 +9,13 @@ define([
 
     cms.controller('tagListController', (function () {
 
-        function TagListCtl(channelTagService, confirm) {
+        function TagListCtl(channelTagService, confirm, popups, notify, alert) {
             this.channelTagService = channelTagService;
             this.confirm = confirm;
+            this.popups = popups;
+            this.notify = notify;
+            this.alert = alert;
+            this.selected = [];
             this.vm = {
                 tagTypeSelectValue: "1",
                 tagTypeList: null,
@@ -19,29 +23,106 @@ define([
             }
         }
 
-        TagListCtl.prototype.init = function () {
+        /**
+         * 初始化    构建tag树形结构
+         * @param parentIndex
+         */
+        TagListCtl.prototype.init = function (parentIndex) {
             var self = this, vm = self.vm;
 
             self.channelTagService.init({tagTypeSelectValue: vm.tagTypeSelectValue}).then(function (res) {
                 //获取选择下拉数据
                 vm.tagTypeList = res.data.tagTypeList;
+                //保存原来的树
+                vm.orgTagTree = res.data.tagTree;
 
-                vm.trees = [];
-                vm.trees.push({level: 1, tags: res.data.tagTree});
+                self.constructOrg(res.data.tagTree, parentIndex);
             });
         };
 
-        TagListCtl.prototype.openTag = function (tag,treeIndex) {
+        TagListCtl.prototype.openTag = function (tag, treeIndex) {
             var self = this, vm = self.vm,
                 nextTags = vm.trees[treeIndex + 1];
+
+            //设置各级选中节点
+            if (treeIndex == 0)
+                self.selected[0] = tag;
+            else
+                self.selected[treeIndex] = tag;
 
             if (nextTags)
                 vm.trees.splice(treeIndex + 1);
 
-            if(!tag || tag.children.length === 0)
-                return;
-
             vm.trees.push({tags: tag.children});
+
+        };
+
+        /**
+         * 新增标签popup
+         * @param parentIndex 层级序号
+         */
+        TagListCtl.prototype.popNewTag = function (parentIndex) {
+            var self = this, vm = self.vm,
+                first, tagInfo;
+
+            first = parentIndex === 0;
+            tagInfo = {
+                tagTypeSelectValue: vm.tagTypeSelectValue,
+                tagTree: vm.orgTagTree
+            };
+
+            self.popups.openNewTag({
+                first: first,
+                tagInfo: tagInfo,
+                tagSelectObject: self.selected[parentIndex === 0 ? 0 : parentIndex - 1]
+            }).then(function () {
+                self.notify.success('添加成功！');
+                console.log(parentIndex);
+                self.init(parentIndex);
+            });
+        };
+
+        /**
+         * 删除标签
+         */
+        TagListCtl.prototype.delTag = function (tag, parentIndex) {
+            var self = this,
+                channelTagService = self.channelTagService;
+
+            self.confirm('您确定要删除该标签吗？').then(function () {
+                channelTagService.del({
+                    id: tag.id,
+                    parentTagId: tag.parentTagId,
+                    tagTree: self.vm.orgTagTree
+                }).then(function () {
+                    self.init(parentIndex);
+                });
+            })
+        };
+
+        /**
+         * 用于重新构建tag树
+         * @param tagTree
+         * @param parentIndex
+         */
+        TagListCtl.prototype.constructOrg = function (tagTree, parentIndex) {
+            var self = this,
+                vm = self.vm;
+
+            vm.trees = [];
+            if (!parentIndex) {
+                vm.trees.push({level: 1, tags: tagTree});
+            } else {
+                console.log(tagTree);
+                console.log(parentIndex);
+                vm.trees.push({level: 1, tags: tagTree});
+                for (var i = 0; i < parentIndex ; i++) {
+                    _.each(vm.trees[i].tags, function (item) {
+                        if (item.tagChildrenName == self.selected[i].tagChildrenName)
+                            vm.trees.push({tags: item.children});
+                    });
+                }
+            }
         };
 
         return TagListCtl;

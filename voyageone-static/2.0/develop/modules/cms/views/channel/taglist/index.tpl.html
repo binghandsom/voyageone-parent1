@@ -35,16 +35,16 @@
                             <div class="form-inline m-l-xs">
                                 <input type="text" placeholder="快速检索" class="form-control" style="width:85%" ng-model="key[0]">
                                 <button type="button" class="btn btn-vo btn-xxs" ng-click="search(0)"><i class="fa fa-search"></i></button>
-                                <button type="button" class="btn btn-success btn-xxs"
-                                        ng-click="newIndex.value = 0;openNewTag({first:true,tagSelectObject:selected[0],tagInfo:vm,save:save})">
-                                    <i class="fa fa-plus"></i></button>
+                                <button type="button" class="btn btn-success btn-xxs" ng-click="ctrl.popNewTag($parentIndex)">
+                                    <i class="fa fa-plus"></i>
+                                </button>
                             </div>
-                            <div class="category_drag_list_dp">
+                            <div class="category_drag_list_dp" style="height: 287px;">
                                 <ul>
                                     <li ng-repeat="tag in tree.tags">
-                                        <a href="javascript:void(0)" ng-click="ctrl.openTag(tag , $parentIndex)">
+                                        <a href="javascript:void(0)" ng-click="ctrl.openTag(tag , $parentIndex)" ng-class="{indexSelected:ctrl.selected[$parentIndex].tagChildrenName == tag.tagChildrenName}">
                                             <span>{{tag.tagChildrenName}}</span>
-                                            <button class="btn btn-danger btn-xs pull-right" ng-if = "tag.isLeaf" ng-click="ctrl.delTag(tag)">
+                                            <button class="btn btn-danger btn-xs pull-right" ng-if = "tag.isLeaf" ng-click="ctrl.delTag(tag,$parentIndex)">
                                                 <i class="fa  fa-trash-o"></i>
                                             </button>
                                         </a>
