@@ -679,6 +679,8 @@ public interface CmsUrlConstants {
 			String GetProductIdByCode="getProductIdByCode";
 
 			String RESTORE_PLATFORM_IMG = "restorePlatformImg";
+
+            String UPPER_LOWER_FRAME="upperLowerFrame";
         }
 
         interface HISTORY {

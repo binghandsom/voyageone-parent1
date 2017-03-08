@@ -7,7 +7,6 @@ import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceConfirmLogService;
-import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -41,39 +40,38 @@ public class CmsProductPlatformDetailController extends CmsController {
 
     @Autowired
     private CmsBtPriceConfirmLogService cmsBtPriceConfirmLogService;
-    
+
     @Autowired
     private CmsAdvanceSearchService cmsAdvanceSearchService;
 
     @Autowired
     private PriceService priceService;
 
-    @Autowired
-    private ProductService productService;
-
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SaveCartSkuPrice)
-    public  AjaxResponse  saveCartSkuPrice(@RequestBody SaveCartSkuPriceParameter parameter) {
+    public AjaxResponse saveCartSkuPrice(@RequestBody SaveCartSkuPriceParameter parameter) {
         UserSessionBean userSessionBean = getUser();
         cmsProductPlatformDetailService.saveCartSkuPrice(parameter, userSessionBean.getSelChannelId(), userSessionBean.getUserName());
         return success(null);
     }
 
-        @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SetCartSkuIsSale)
-    public  AjaxResponse setCartSkuIsSale(@RequestBody SetCartSkuIsSaleParameter parameter) {
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SetCartSkuIsSale)
+    public AjaxResponse setCartSkuIsSale(@RequestBody SetCartSkuIsSaleParameter parameter) {
         UserSessionBean userSessionBean = getUser();
         cmsProductPlatformDetailService.setCartSkuIsSale(parameter, userSessionBean.getSelChannelId(), userSessionBean.getUserName());
         return success(null);
     }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GetCalculateCartMsrp)
-    public  AjaxResponse getCalculateCartMsrp(@RequestBody Long prodId) throws IllegalPriceConfigException, PriceCalculateException {
-        return success(cmsProductPlatformDetailService.getCalculateCartMsrp(getUser().getSelChannelId(),prodId));
+    public AjaxResponse getCalculateCartMsrp(@RequestBody Long prodId) throws IllegalPriceConfigException, PriceCalculateException {
+        return success(cmsProductPlatformDetailService.getCalculateCartMsrp(getUser().getSelChannelId(), prodId));
 
     }
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GetProductPriceSales)
     public AjaxResponse getProductPriceSales(@RequestBody Long prodId) {
-        return success(cmsProductPlatformDetailService.getProductPriceSales(getUser().getSelChannelId(),prodId));
+        return success(cmsProductPlatformDetailService.getProductPriceSales(getUser().getSelChannelId(), prodId));
     }
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_PLATFORM)
     public AjaxResponse doGetProductPlatform(@RequestBody Map params) {
         Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
@@ -120,7 +118,7 @@ public class CmsProductPlatformDetailController extends CmsController {
         //插入workload表时，blnSmartSx标识是否为智能上新
         Boolean blnSmartSx = params.get("type") != null ? String.valueOf(params.get("type")).equals("intel") : false;
 
-        result.put("modified", cmsProductPlatformDetailService.updateProductPlatform(channelId, prodId, platform, getUser().getUserName(),blnSmartSx));
+        result.put("modified", cmsProductPlatformDetailService.updateProductPlatform(channelId, prodId, platform, getUser().getUserName(), blnSmartSx));
 
         return success(result);
     }
@@ -130,16 +128,12 @@ public class CmsProductPlatformDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_PRODUCT_PLATFORM_CHK)
     public AjaxResponse doUpdateProductPlatformChk(@RequestBody Map params) {
-
         String channelId = getUser().getSelChannelId();
-        Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
         String type = String.valueOf(params.get("type"));
         Map<String, Object> platform = (Map<String, Object>) params.get("platform");
         Integer cartId = Integer.valueOf(platform.get("cartId").toString());
 
-        if(!type.equals("temporary")){
-//            CmsBtProductModel productModel = productService.getProductById(channelId, prodId);
-//            productModel.setPlatform(cartId, );
+        if (!type.equals("temporary")) {
             priceService.priceChk(channelId, new CmsBtProductModel_Platform_Cart(platform), cartId);
         }
 
@@ -165,6 +159,7 @@ public class CmsProductPlatformDetailController extends CmsController {
         result.put("platform", cmsProductPlatformDetailService.copyPropertyFromMainProduct(getUser().getSelChannelId(), prodId, cartId, getLang()));
         return success(result);
     }
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PLATFORM_CATEGORIES)
     public AjaxResponse getPlatformCategories(@RequestBody Map<String, Integer> params) {
 
@@ -178,14 +173,20 @@ public class CmsProductPlatformDetailController extends CmsController {
 
         String productCode = String.valueOf(params.get("productCode"));
 
-        String channelId = getUser().getSelChannelId();
-
-        Map<String, Object> result = new HashMap<>();
-
         Map<String, Object> platform = (Map<String, Object>) params.get("platform");
 
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
-        cmsBtPriceConfirmLogService.addConfirmed(getUser().getSelChannelId(),productCode,platformModel,getUser().getUserName());
+        cmsBtPriceConfirmLogService.addConfirmed(getUser().getSelChannelId(), productCode, platformModel, getUser().getUserName());
+        return success(true);
+    }
+
+    /**
+     * 产品上下架
+     */
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPPER_LOWER_FRAME)
+    public AjaxResponse upperLowerFrame(@RequestBody Map<String, Object> params) throws Exception {
+        UserSessionBean userBean = getUser();
+        cmsProductPlatformDetailService.upperLowerFrame(userBean,params);
         return success(true);
     }
 }

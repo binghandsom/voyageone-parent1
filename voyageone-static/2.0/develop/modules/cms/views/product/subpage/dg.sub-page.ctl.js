@@ -485,6 +485,24 @@ define([
     };
 
     /**
+     * 产品详情上下架
+     */
+    SpJdController.prototype.upperAndLowerFrame = function(mark) {
+        var self = this,
+            msg = mark === 'OnSale'? '上架':'下架';
+
+        self.confirm('您是否执行'　+ msg +'操作？').then(function(){
+            self.productDetailService.upperLowerFrame({
+                cartId: self.$scope.cartInfo.value,
+                productCode: self.vm.mastData.productCode,
+                pStatus:mark
+            }).then(function () {
+                self.getPlatformData();
+            });
+        });
+    };
+
+    /**
      * 操作区域图片上传按钮
      */
     SpJdController.prototype.popUploadImg = function () {
