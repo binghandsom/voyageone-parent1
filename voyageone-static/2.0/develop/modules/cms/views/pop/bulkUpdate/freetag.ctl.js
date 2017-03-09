@@ -92,10 +92,6 @@ define([
 
             /**记录checkbox的半选状态*/
             if (self.orgDispMap[path]) {
-                // 如果初始是半选状态
-                if (self.selOrgDispList.indexOf(path) < 0) {
-                    self.selOrgDispList.push(path);
-                }
                 self.orgDispMap[path] = false;
             }
 
@@ -124,17 +120,15 @@ define([
             var self = this,
                 map = flatTrees(self.orgTagTree),
                 selectdTagList = [],
-                orgDispTagList = [];
-
-            var selFlagArr = _.map(self.vm.selectedNode, function (value, key) {
-                return {selectedId: key, selected: value};
-            }).filter(function (item) {
-                return item.selected;
-            });
+                orgDispTagList = [],
+                selFlagArr = _.map(self.vm.selectedNode, function (value, key) {
+                    return {selectedId: key, selected: value};
+                }).filter(function (item) {
+                    return item.selected;
+                });
 
             /**当是高级检索，设置自由标签*/
             if (self.context.orgFlg == 2) {
-
                 for (var key in self.orgDispMap) {
                     if (self.orgDispMap[key] == true) {
                         orgDispTagList.push(key);
@@ -157,13 +151,7 @@ define([
                 'orgDispTagList': orgDispTagList
             });
 
-            /*            console.log({
-             "selectdTagList": selectdTagList,
-             'orgFlg': self.context.orgFlg,
-             'orgDispTagList': orgDispTagList
-             });*/
         };
-
 
         return popFreeTagCtl;
 
