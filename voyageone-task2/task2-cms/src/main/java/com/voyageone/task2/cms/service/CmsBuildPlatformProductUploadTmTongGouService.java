@@ -788,7 +788,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 valCategory = JacksonUtil.bean2Json(paramCategory);
             } else {
                 // 主产品主类目path
-                String mainCatPath = mainProduct.getCommonNotNull().getCatPath();
+                String mainCatPath = mainProduct.getCommonNotNull().getCatPathEn();
                 // 类目匹配优先顺序："主类目到天猫叶子类目" > "主类目到天猫一级类目" > "feed类目到天猫一级类目"
                 // 主类目到天猫叶子类目匹配
                 if (!StringUtils.isEmpty(mainCatPath) && MapUtils.isNotEmpty(categoryMappingListMap)) {
