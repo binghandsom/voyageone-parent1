@@ -230,6 +230,7 @@ public class FeedToCms2Service extends BaseService {
                 e.printStackTrace();
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
                 $error(e.getMessage(), e);
+                product.setUpdMessage(e.getMessage());
                 failProduct.add(product);
             }
         }
