@@ -92,7 +92,7 @@ define([
         /**
          * 删除标签
          */
-        TagListCtl.prototype.delTag = function (tag, parentIndex,$event) {
+        TagListCtl.prototype.delTag = function (tag, parentIndex, $event) {
             var self = this,
                 channelTagService = self.channelTagService;
 
@@ -109,19 +109,21 @@ define([
             $event.stopPropagation();
         };
 
-        TagListCtl.prototype.filterByName = function(parentIndex,tags){
+        TagListCtl.prototype.filterByName = function (parentIndex, tags) {
             var self = this,
                 searchName = self.searchName[parentIndex];
 
-            if(!searchName)
+            if (!searchName) {
+                self.openTag(tags[0], parentIndex);
                 return;
+            }
 
-            var result = _.filter(tags,function(item){
+            var result = _.filter(tags, function (item) {
                 return item.tagChildrenName.indexOf(searchName) >= 0;
             })[0];
 
-            if(result)
-                self.openTag(result,parentIndex);
+            if (result)
+                self.openTag(result, parentIndex);
         };
 
         /**

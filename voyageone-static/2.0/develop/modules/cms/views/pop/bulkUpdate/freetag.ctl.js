@@ -77,7 +77,7 @@ define([
             if (nextTags)
                 vm.trees.splice(treeIndex + 1);
 
-            if(!tag || tag.children.length === 0)
+            if (!tag || tag.children.length === 0)
                 return;
 
             vm.trees.push({tags: tag.children});
@@ -103,19 +103,21 @@ define([
             event.stopPropagation();
         };
 
-        popFreeTagCtl.prototype.filterByName = function(parentIndex,tags){
+        popFreeTagCtl.prototype.filterByName = function (parentIndex, tags) {
             var self = this,
                 searchName = self.searchName[parentIndex];
 
-            if(!searchName)
+            if (!searchName) {
+                self.openTag(tags[0], parentIndex);
                 return;
+            }
 
-            var result = _.filter(tags,function(item){
+            var result = _.filter(tags, function (item) {
                 return item.tagChildrenName.indexOf(searchName) >= 0;
             })[0];
 
-            if(result)
-                self.openTag(result,parentIndex);
+            if (result)
+                self.openTag(result, parentIndex);
         };
 
         popFreeTagCtl.prototype.save = function () {
@@ -155,11 +157,11 @@ define([
                 'orgDispTagList': orgDispTagList
             });
 
-/*            console.log({
-                "selectdTagList": selectdTagList,
-                'orgFlg': self.context.orgFlg,
-                'orgDispTagList': orgDispTagList
-            });*/
+            /*            console.log({
+             "selectdTagList": selectdTagList,
+             'orgFlg': self.context.orgFlg,
+             'orgDispTagList': orgDispTagList
+             });*/
         };
 
 
