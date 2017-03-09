@@ -161,5 +161,9 @@ public class CmsMqRoutingKey {
      */
     public static final String CMS_TASK_CatelogySaleAttrJdJob = "voyageone_cms_task_CatelogySaleAttrJdJobService_queue";
 
+    public static final String CMS_FEED_IMPORT_MQ_JOB = "CmsFeedImportMQJob_queue";
+
+
+
 }
 
