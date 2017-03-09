@@ -1503,7 +1503,7 @@ public class CmsProductDetailService extends BaseViewService {
         cmsBtProductGroup.setPublishTime("");
         cmsBtProductGroup.setOnSaleTime("");
         cmsBtProductGroup.setInStockTime("");
-        cmsBtProductGroup.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
+        cmsBtProductGroup.setPlatformStatus(null);
         productGroupService.update(cmsBtProductGroup);//3.4.2 Group表中的【numIId】【platformPid】【publishTime】【onSaleTime】【inStockTime】清空
         //    3 平台商品删除 （只有在京东和天猫的平台才）
 //    3.1 根据 cartId和productCode找到对应pNumIId

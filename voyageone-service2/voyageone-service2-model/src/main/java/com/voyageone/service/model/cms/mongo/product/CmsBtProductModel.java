@@ -153,7 +153,8 @@ public class CmsBtProductModel extends ChannelPartitionModel implements Cloneabl
      * @param cart   CmsBtProductModel_Platform_Cart
      */
     public void setPlatform(Integer cartId, CmsBtProductModel_Platform_Cart cart) {
-        cart.setCartId(cartId);
+        if (cart != null)
+            cart.setCartId(cartId);
         platforms.put(PLATFORM_CART_PRE + cartId, cart);
     }
 

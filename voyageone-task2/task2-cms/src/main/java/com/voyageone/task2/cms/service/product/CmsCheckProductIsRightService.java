@@ -5,6 +5,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductErrorDao;
 import com.voyageone.service.impl.cms.product.ProductCheckService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -42,10 +43,14 @@ public class CmsCheckProductIsRightService extends BaseCronTaskService {
     ProductService productService;
     @Autowired
     ProductCheckService productCheckService;
+    @Autowired
+    CmsBtProductErrorDao cmsBtProductErrorDao;
 
     @SuppressWarnings("unchecked")
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+        // 处理开始前,昨天执行的结果清空
+        cmsBtProductErrorDao.deleteAll();
 
         List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
@@ -58,6 +63,8 @@ public class CmsCheckProductIsRightService extends BaseCronTaskService {
 
             for (int pageNum = 1; pageNum <= pageCnt; pageNum++) {
                 JongoQuery jongoQuery = new JongoQuery();
+                jongoQuery.setQuery("{\"common.fields.code\": #}");
+                jongoQuery.setParameters("020-332V116270");
 
                 jongoQuery.setSkip((pageNum - 1) * PAGE_SIZE);
                 jongoQuery.setLimit(PAGE_SIZE);

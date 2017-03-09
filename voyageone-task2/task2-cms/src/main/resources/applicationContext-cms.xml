@@ -66,7 +66,7 @@
         <task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="25 30 0/1 * * ?"/>
 
         <!-- Jewelry feed 导入 cms2 -->
-        <task:scheduled ref="CmsJEAnalysisJob" method="run" cron="0 0 0/1 * * ?"/>
+        <task:scheduled ref="CmsJEAnalysisJob" method="run" cron="0 0/1 * * * ?"/>
 
         <!-- Shoe City feed 导入 cms2 -->
         <task:scheduled ref="ShoeCityAnalysisJob" method="run" cron="0 10 0/1 * * ?"/>
@@ -233,7 +233,7 @@
         <task:scheduled ref="CmsBuildPlatformProductUploadCnnJob" method="run" cron="0 0/3 0-23 * * ?"/>
 
         <!-- Liking新独立域名上新（每3分钟一次） -->
-        <task:scheduled ref="CmsCheckProductIsRight" method="run" cron="10 10 17 * * ?"/>
+        <task:scheduled ref="CmsCheckProductIsRightJob" method="run" cron="10 10 17 * * ?"/>
 
     </task:scheduled-tasks>
 
