@@ -18,7 +18,10 @@
                                 <p class="text-center text-vo font-bold">{{$parentIndex + 1}}级标签</p>
                                 <div class="form-inline m-l-xs">
                                     <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="name[$parentIndex]">
-                                    <button type="button" class="btn btn-vo btn-xxs" ng-click="ctrl.searchName[$parentIndex] = name[$parentIndex]"><i class="fa fa-search"></i></button>
+                                    <button type="button" class="btn btn-vo btn-xxs"
+                                            ng-click="ctrl.searchName[$parentIndex] = name[$parentIndex];ctrl.filterByName($parentIndex,tree.tags)">
+                                        <i class="fa fa-search"></i>
+                                    </button>
                                 </div>
 
                                 <div class="category_drag_list_dp" style="max-height:260px;">

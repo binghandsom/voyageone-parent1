@@ -39,7 +39,10 @@
                         <div class="category_drag_main">
                             <div class="form-inline m-l-xs">
                                 <input type="text" placeholder="快速检索" class="form-control" style="width:85%" ng-model="name[$parentIndex]">
-                                <button type="button" class="btn btn-vo btn-xxs" ng-click="ctrl.searchName[$parentIndex] = name[$parentIndex]"><i class="fa fa-search"></i></button>
+                                <button type="button" class="btn btn-vo btn-xxs"
+                                        ng-click="ctrl.searchName[$parentIndex] = name[$parentIndex] ;ctrl.filterByName($parentIndex,tree.tags)">
+                                    <i class="fa fa-search"></i>
+                                </button>
                                 <button type="button" class="btn btn-success btn-xxs" ng-click="ctrl.popNewTag($parentIndex)">
                                     <i class="fa fa-plus"></i>
                                 </button>

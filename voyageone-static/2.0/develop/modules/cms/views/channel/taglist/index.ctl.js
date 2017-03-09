@@ -109,6 +109,21 @@ define([
             $event.stopPropagation();
         };
 
+        TagListCtl.prototype.filterByName = function(parentIndex,tags){
+            var self = this,
+                searchName = self.searchName[parentIndex];
+
+            if(!searchName)
+                return;
+
+            var result = _.filter(tags,function(item){
+                return item.tagChildrenName.indexOf(searchName) >= 0;
+            })[0];
+
+            if(result)
+                self.openTag(result,parentIndex);
+        };
+
         /**
          * 用于重新构建tag树
          * @param tagTree
