@@ -312,7 +312,7 @@ public class CmsAdvanceSearchController extends CmsController {
                 for (BaseMongoMap<String, Object> map : ptfObj.getSkus()) {
                     String sku = (String) map.get("skuCode");
                     Boolean isSale = (Boolean) map.get("isSale");
-                    if (isSale) {
+                    if (isSale != null || isSale) {
                         for(CmsBtProductModel_Sku skus : cmsBtProductBean.getCommonNotNull().getSkus()){
 //                        for (WmsBtInventoryCenterLogicModel inventoryInfo : inventoryList) {
                             if (skus.getSkuCode().equals(sku)) {
