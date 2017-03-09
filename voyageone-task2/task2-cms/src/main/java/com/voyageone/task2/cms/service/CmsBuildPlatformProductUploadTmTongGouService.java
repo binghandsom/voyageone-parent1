@@ -315,23 +315,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 throw new BusinessException(errMsg);
             }
 
-            // 店铺级标题禁用词 20161216 tom START
-            // 先临时这样处理
-            String notAllowList = getConditionPropValue(sxData, "notAllowTitleList_30", shopProp);
-            if (!StringUtils.isEmpty(notAllowList)) {
-                if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getOriginalTitleCn())) {
-                    String[] splitWord = notAllowList.split(",");
-                    for (String notAllow : splitWord) {
-                        if (mainProduct.getCommon().getFields().getOriginalTitleCn().contains(notAllow)) {
-                            String errMsg = "标题中含有禁用词：【" + notAllow + "】， 禁止上新。";
-                            $error(errMsg);
-                            throw new BusinessException(errMsg);
-                        }
-                    }
-                }
-            }
-            // 店铺级标题禁用词 20161216 tom END
-
             // 构造该产品所有SKUCODE的字符串列表
             List<String> strSkuCodeList = new ArrayList<>();
             skuList.forEach(sku -> strSkuCodeList.add(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name())));
@@ -753,6 +736,26 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             valTitle = mainProduct.getCommon().getFields().getStringAttribute("productNameEn");
         }
 //        productInfoMap.put("title", "测试请不要拍 " + valTitle);
+
+        // 店铺级标题禁用词 20161216 tom START
+        // 先临时这样处理
+        String notAllowList = getConditionPropValue(sxData, "notAllowTitleList_30", shopProp);
+        if (!StringUtils.isEmpty(notAllowList)) {
+            if (!StringUtils.isEmpty(valTitle)) {
+                String[] splitWord = notAllowList.split(",");
+                for (String notAllow : splitWord) {
+                    // 直接删掉违禁词
+                    valTitle.replaceAll(notAllow, "");
+//                    if (valTitle.contains(notAllow)) {
+//                        String errMsg = "标题中含有禁用词：【" + notAllow + "】， 禁止上新。";
+//                        $error(errMsg);
+//                        throw new BusinessException(errMsg);
+//                    }
+                }
+            }
+        }
+        // 店铺级标题禁用词 20161216 tom END
+
         productInfoMap.put("title", valTitle);
 
         // 子标题(卖点)(非必填)
