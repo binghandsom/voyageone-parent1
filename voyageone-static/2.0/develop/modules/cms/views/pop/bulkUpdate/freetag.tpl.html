@@ -22,11 +22,13 @@
                                 </div>
 
                                 <div class="category_drag_list_dp" style="max-height:260px;">
-                                    <div ng-repeat="tag in tree.tags | filter:{tagChildrenName:ctrl.searchName[$parentIndex]}" class="m-t-xs">
+                                    <div class="m-t-xs"
+                                         ng-repeat="tag in tree.tags | filter:{tagChildrenName:ctrl.searchName[$parentIndex]}"
+                                         ng-init="ctrl.vm.selectedNode[tag.id] = ctrl.orgChkStsMap[tag.tagPath]">
                                         <a href="javascript:void(0)" ng-click="ctrl.openTag(tag , $parentIndex)" style="float: initial;display: inherit;">
                                             <label>
                                                 <input type="checkbox"
-                                                       ng-model="ctrl.taglist.selFlag[tag.id]"
+                                                       ng-model="ctrl.vm.selectedNode[tag.id]"
                                                        ng-checked="ctrl.orgChkStsMap[tag.tagPath]"
                                                        ui-indeterminate="ctrl.orgDispMap[tag.tagPath]"
                                                        ng-click = "ctrl.selOrgDisp(tag.id , tag.tagPath , $event)"
