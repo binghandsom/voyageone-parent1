@@ -81,7 +81,7 @@ public class CmsCustomPropController extends CmsController {
         String orgChannelId = (String) param.get("orgChannelId");
         String cat = (String) param.get("cat");
         CmsBtCustomPropModel.Entity entity = new CmsBtCustomPropModel.Entity((Map) param.get("entity")) ;
-        CmsBtCustomPropModel cmsBtCustomPropModel = cmsBtCustomPropService.setCustomshIsDispPlay(getUser().getSelChannelId(),orgChannelId,cat, entity);
+        CmsBtCustomPropModel cmsBtCustomPropModel = cmsBtCustomPropService.setCustomshIsDispPlay(getUser().getSelChannelId(),orgChannelId,cat, entity, getUser().getUserName());
         return success(cmsBtCustomPropModel);
     }
 
@@ -91,7 +91,7 @@ public class CmsCustomPropController extends CmsController {
         String orgChannelId = (String) param.get("orgChannelId");
         String cat = (String) param.get("cat");
         CmsBtCustomPropModel.Entity entity = new CmsBtCustomPropModel.Entity((Map) param.get("entity")) ;
-        CmsBtCustomPropModel cmsBtCustomPropModel = cmsBtCustomPropService.updateEntity(getUser().getSelChannelId(),orgChannelId,cat, entity);
+        CmsBtCustomPropModel cmsBtCustomPropModel = cmsBtCustomPropService.updateEntity(getUser().getSelChannelId(),orgChannelId,cat, entity, getUser().getUserName());
         return success(cmsBtCustomPropModel);
     }
 
@@ -100,7 +100,7 @@ public class CmsCustomPropController extends CmsController {
         String orgChannelId = (String) param.get("orgChannelId");
         String cat = (String) param.get("cat");
         List<String> sort = (List<String>) param.get("sort");
-        CmsBtCustomPropModel cmsBtCustomPropModel = cmsBtCustomPropService.setSort(getUser().getSelChannelId(),orgChannelId,cat, sort);
+        CmsBtCustomPropModel cmsBtCustomPropModel = cmsBtCustomPropService.setSort(getUser().getSelChannelId(),orgChannelId,cat, sort, getUser().getUserName());
         return success(cmsBtCustomPropModel);
     }
 

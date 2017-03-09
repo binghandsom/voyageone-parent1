@@ -4,6 +4,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import org.springframework.stereotype.Repository;
 
@@ -50,5 +51,19 @@ public class CmsBtProductGroupDao extends BaseMongoChannelDao<CmsBtProductGroupM
     public List<CmsBtProductGroupModel> selectGroupInfoByMoreProductCodes(String channelId, Integer cartId) {
         String query = "{\"cartId\": "+cartId+", \"productCodes.1\": {$exists:true}}";
         return select(query, channelId);
+    }
+
+    /**
+     * 根据主商品code返回对应的cartId的group
+     * @param channelId
+     * @param cartId
+     * @param mainProductCode
+     * @return
+     */
+    public CmsBtProductGroupModel selectGroupInfoByMainProductCode(String channelId, Integer cartId, String mainProductCode) {
+        JongoQuery query = new JongoQuery();
+        query.setQuery("{\"channelId\": #, \"cartId\": #, \"mainProductCode\": #}");
+        query.setParameters(channelId, cartId, mainProductCode);
+        return selectOneWithQuery(query, channelId);
     }
 }

@@ -36,9 +36,13 @@
             "clientSku" : String,
             "image" : String[ ],
             "qty" : Int32,
+            "relationshipType": String;
+            "variationTheme": String;
             "weightOrg" : String,
             "weightOrgUnit" : String,
             "weightCalc" : String,
+            "isSale": Int32   ->edward 2017/03/09 1: 销售, 0: 不销售
+            "mainVid": String;  ->edward 2017/03/09 1:和其他商品共享库存, 0:不和其他商品共享库存(例如kigbag: 光标球衣, 有号码和无号码的球衣算不同sku,但是库存一样)
             "attribute" : { String: String[]}
         }],
     "attribute" : { String: String[]},

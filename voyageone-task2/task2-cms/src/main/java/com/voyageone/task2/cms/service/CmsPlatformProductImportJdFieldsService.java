@@ -4,6 +4,7 @@ import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
 import com.jd.open.api.sdk.domain.ware.Sku;
 import com.jd.open.api.sdk.domain.ware.Ware;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -336,6 +337,20 @@ public class CmsPlatformProductImportJdFieldsService extends BaseMQCmsService {
                     }
                 }
             }
+            // 回写jdSkuId START
+            Map<String, String> skuIdList = new HashMap<>();
+            for (Sku sku : ware.getSkus()) {
+                if (!StringUtils.isEmpty(sku.getOuterId())) {
+                    skuIdList.put(sku.getOuterId(), String.valueOf(sku.getSkuId()));
+                }
+            }
+            for (int i = 0; i < product.getPlatformNotNull(cartId).getSkus().size(); i++) {
+                BaseMongoMap<String, Object> sku = product.getPlatformNotNull(cartId).getSkus().get(i);
+                if (skuIdList.containsKey(sku.getAttribute("skuCode"))) {
+                    updateMap.put("platforms.P" + cartId + ".skus." + i + ".jdSkuId", skuIdList.get(sku.getAttribute("skuCode")));
+                }
+            }
+            // 回写jdSkuId END
 
             Long longCatId = ware.getCategoryId(); // 类目ID
             if (longCatId != null) {
