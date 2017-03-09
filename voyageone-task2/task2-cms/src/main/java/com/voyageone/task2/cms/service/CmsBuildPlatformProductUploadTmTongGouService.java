@@ -745,17 +745,11 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 String[] splitWord = notAllowList.split(",");
                 for (String notAllow : splitWord) {
                     // 直接删掉违禁词
-                    valTitle.replaceAll(notAllow, "");
-//                    if (valTitle.contains(notAllow)) {
-//                        String errMsg = "标题中含有禁用词：【" + notAllow + "】， 禁止上新。";
-//                        $error(errMsg);
-//                        throw new BusinessException(errMsg);
-//                    }
+                    valTitle = valTitle.replaceAll(notAllow, "");
                 }
             }
         }
         // 店铺级标题禁用词 20161216 tom END
-
         productInfoMap.put("title", valTitle);
 
         // 子标题(卖点)(非必填)
@@ -1012,6 +1006,18 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             valDescription = getValueByDict("天猫同购描述", expressionParser, shopProp);
         }
         // modified by morse.lu 2016/12/23 end
+        // 店铺级标题禁用词 20161216 tom START
+        // 先临时这样处理
+        if (!StringUtils.isEmpty(notAllowList)) {
+            if (!StringUtils.isEmpty(valDescription)) {
+                String[] splitWord = notAllowList.split(",");
+                for (String notAllow : splitWord) {
+                    // 直接删掉违禁词
+                    valDescription = valDescription.replaceAll(notAllow, "");
+                }
+            }
+        }
+        // 店铺级标题禁用词 20161216 tom END
         productInfoMap.put("description", valDescription);
 
         // 物流信息(必填)
