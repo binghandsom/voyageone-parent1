@@ -21,8 +21,6 @@ define([
         //页面初始化
         $scope.initialize = function () {
 
-            console.log(context);
-
             var vm = $scope.vm;
             vm.tagInfo = context.tagInfo;
             vm.first = context.first;
