@@ -44,6 +44,7 @@ define([
         };
 
         CustomAttributeCtl.prototype.ATTRIBUTETYPE = {
+            0:'不翻译',
             1: '自动翻译',
             2: '匹配Master详情内属性',
             3: '固定值'
