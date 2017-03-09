@@ -38,15 +38,15 @@
                     <div class="category_drag col-sm-3" ng-repeat="tree in ctrl.vm.trees" ng-init="$parentIndex = $index">
                         <div class="category_drag_main">
                             <div class="form-inline m-l-xs">
-                                <input type="text" placeholder="快速检索" class="form-control" style="width:85%" ng-model="key[0]">
-                                <button type="button" class="btn btn-vo btn-xxs" ng-click="search(0)"><i class="fa fa-search"></i></button>
+                                <input type="text" placeholder="快速检索" class="form-control" style="width:85%" ng-model="name[$parentIndex]">
+                                <button type="button" class="btn btn-vo btn-xxs" ng-click="ctrl.searchName[$parentIndex] = name[$parentIndex]"><i class="fa fa-search"></i></button>
                                 <button type="button" class="btn btn-success btn-xxs" ng-click="ctrl.popNewTag($parentIndex)">
                                     <i class="fa fa-plus"></i>
                                 </button>
                             </div>
                             <div class="category_drag_list_dp" style="height: 287px;">
                                 <ul>
-                                    <li ng-repeat="tag in tree.tags">
+                                    <li ng-repeat="tag in tree.tags | filter:{tagChildrenName:ctrl.searchName[$parentIndex]}">
                                         <a href="javascript:void(0)" ng-click="ctrl.openTag(tag , $parentIndex)" ng-class="{indexSelected:ctrl.selected[$parentIndex].tagChildrenName == tag.tagChildrenName}">
                                             <span>{{tag.tagChildrenName}}</span>
                                             <button class="btn btn-danger btn-xs pull-right" ng-if = "tag.isLeaf" ng-click="ctrl.delTag(tag,$parentIndex,$event)">

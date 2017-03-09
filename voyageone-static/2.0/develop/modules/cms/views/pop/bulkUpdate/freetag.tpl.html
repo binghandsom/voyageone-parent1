@@ -5,102 +5,51 @@
         </button>
         <h5 class="modal-title"><i class="fa fa-pencil"></i><span class="label" >&nbsp;{{'TXT_TAG_MANAGEMENT'|translate}}&nbsp;</span></h5>
     </div>
+
     <div class="modal-body wrapper">
-        <form role="form" class="form-horizontal m-b-md ng-pristine ng-valid">
-            <div class="form-group">
-                <div class="col-sm-12">
-                    <div class="box">
-                    <!---------------------------------------Tag one-------------------------------------->
-                    <div class="category_drag col-sm-4">
-                        <div class="category_drag_main">
-                            <p class="text-center text-vo font-bold" translate="TXT_TAG_ONE"></p>
-                            <div class="form-inline m-l-xs">
-                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="ctrl.key[0]">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(0)"><i class="fa fa-search"></i></button>
-                            </div>
-                            <div class="category_drag_list_dp" style="max-height:260px;">
-                                <div ng-repeat="tag1 in ctrl.tree[0]" class="m-t-xs" ng-init="ctrl.taglist.selFlag[tag1.id] = ctrl.orgChkStsMap[tag1.tagPath]">
-                                    <a href="javascript:void(0)" ng-class="{indexSelected:ctrl.selected[0] == tag1}" style="float: initial;display: inherit;" ng-click="ctrl.selected[0] = tag1;ctrl.search(1);">
-                                        <label>
-                                            <input type="checkbox"
-                                                   ng-model="ctrl.taglist.selFlag[tag1.id]"
-                                                   ng-checked="ctrl.orgChkStsMap[tag1.tagPath] = ctrl.orgChkStsMap[tag1.tagPath] ? ctrl.orgChkStsMap[tag1.tagPath] : ctrl.taglist.selFlag[tag1.id]"
-                                                   ui-indeterminate="ctrl.orgDispMap[tag1.tagPath]"
-                                                   ng-click = "ctrl.selOrgDisp(tag1.id , tag1.tagPath , $event)"
-                                                   >
-                                            {{tag1.tagChildrenName}}
-                                        </label>
-                                        <span class="pull-right text-muted" ng-if="tag1.isLeaf == false">
+
+        <div class="container-fluid">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+
+                        <div class="category_drag col-sm-3" ng-repeat="tree in ctrl.vm.trees" ng-init="$parentIndex = $index">
+                            <div class="category_drag_main">
+                                <p class="text-center text-vo font-bold">{{$parentIndex + 1}}级标签</p>
+                                <div class="form-inline m-l-xs">
+                                    <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="name[$parentIndex]">
+                                    <button type="button" class="btn btn-vo btn-xxs" ng-click="ctrl.searchName[$parentIndex] = name[$parentIndex]"><i class="fa fa-search"></i></button>
+                                </div>
+
+                                <div class="category_drag_list_dp" style="max-height:260px;">
+                                    <div ng-repeat="tag in tree.tags | filter:{tagChildrenName:ctrl.searchName[$parentIndex]}" class="m-t-xs">
+                                        <a href="javascript:void(0)" ng-click="ctrl.openTag(tag , $parentIndex)" style="float: initial;display: inherit;">
+                                            <label>
+                                                <input type="checkbox"
+                                                       ng-model="ctrl.taglist.selFlag[tag.id]"
+                                                       ng-checked="ctrl.orgChkStsMap[tag.tagPath]"
+                                                       ui-indeterminate="ctrl.orgDispMap[tag.tagPath]"
+                                                       ng-click = "ctrl.selOrgDisp(tag.id , tag.tagPath , $event)"
+                                                >
+                                                {{tag.tagChildrenName}}
+                                            </label>
+                                            <span class="pull-right text-muted" ng-if="tag.isLeaf == false">
                                             <i class="fa fa-fw fa-angle-right text"></i>
                                         </span>
-                                    </a>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!---------------------------------------Tag two-------------------------------------->
-                    <div class="category_drag col-sm-4">
-                        <div class="category_drag_main">
-                            <p class="text-center text-vo font-bold" translate="TXT_TAG_TWO"></p>
 
-                            <div class="form-inline m-l-xs">
-                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="ctrl.key[1]">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(1)"><i class="fa fa-search"></i></button>
-                            </div>
-                        </div>
-                        <div class="category_drag_list_dp" style="max-height:260px;">
-                            <div ng-repeat="tag2 in ctrl.tree[1]" class="m-t-xs" ng-init="ctrl.taglist.selFlag[tag2.id] = ctrl.orgChkStsMap[tag2.tagPath]">
-                                <a href="javascript:void(0)" ng-class="{indexSelected:ctrl.selected[1] == tag2}" style="float: initial;display: inherit;" ng-click="ctrl.selected[1] = tag2;ctrl.search(2);">
-                                    <label>
-                                        <input type="checkbox"
-                                               ng-model="ctrl.taglist.selFlag[tag2.id]"
-                                               ng-checked="ctrl.orgChkStsMap[tag2.tagPath] = ctrl.orgChkStsMap[tag2.tagPath] ? ctrl.orgChkStsMap[tag2.tagPath] : ctrl.taglist.selFlag[tag2.id]"
-                                               ui-indeterminate="ctrl.orgDispMap[tag2.tagPath]"
-                                               ng-click = "ctrl.selOrgDisp(tag2.id , tag2.tagPath , $event)"
-                                               >
-                                        {{tag2.tagChildrenName}}
-                                    </label>
-                                    <span class="pull-right text-muted" ng-if="tag2.isLeaf == false">
-                                        <i class="fa fa-fw fa-angle-right text"></i>
-                                    </span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <!---------------------------------------Tag three-------------------------------------->
-                    <div class="category_drag col-sm-4">
-                        <div class="category_drag_main">
-                            <p class="text-center text-vo font-bold" translate="TXT_TAG_THREE"></p>
-
-                            <div class="form-inline m-l-xs">
-                                <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="ctrl.key[2]">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(2)"><i class="fa fa-search"></i></button>
-                            </div>
-                        </div>
-                        <div class="category_drag_list_dp" style="max-height:260px;">
-                            <div ng-repeat="tag3 in ctrl.tree[2]" class="m-t-xs" ng-init="ctrl.taglist.selFlag[tag3.id] = ctrl.orgChkStsMap[tag3.tagPath]">
-                                <a href="javascript:void(0)" ng-class="{indexSelected:ctrl.selected[2] == tag3}" style="float: initial;display: inherit;" ng-click="ctrl.selected[2] = tag3;ctrl.search(3);">
-                                    <label>
-                                        <input type="checkbox"
-                                               ng-model="ctrl.taglist.selFlag[tag3.id]"
-                                               ng-checked="ctrl.orgChkStsMap[tag3.tagPath]"
-                                               ui-indeterminate="ctrl.orgDispMap[tag3.tagPath]"
-                                               ng-click = "ctrl.selOrgDisp(tag3.id , tag3.tagPath , $event)"
-                                               >
-                                        {{tag3.tagChildrenName}}
-                                    </label>
-                                    <span class="pull-right text-muted" ng-if="tag3.isLeaf == false">
-                                        <i class="fa fa-fw fa-angle-right text"></i>
-                                    </span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
+
+
     </div>
+
     <div class="modal-footer">
         <button class="btn btn-default ng-binding" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
         <button class="btn btn-vo ng-binding" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>

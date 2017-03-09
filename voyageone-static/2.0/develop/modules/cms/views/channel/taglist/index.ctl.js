@@ -17,6 +17,7 @@ define([
             this.notify = notify;
             this.alert = alert;
             this.selected = [];
+            this.searchName = [];
             this.vm = {
                 tagTypeSelectValue: "0",
                 tagTypeList: null,
@@ -41,6 +42,11 @@ define([
             });
         };
 
+        /**
+         * 展开树状结构
+         * @param tag
+         * @param treeIndex
+         */
         TagListCtl.prototype.openTag = function (tag, treeIndex) {
             var self = this, vm = self.vm,
                 nextTags = vm.trees[treeIndex + 1];
@@ -116,8 +122,6 @@ define([
             if (!parentIndex) {
                 vm.trees.push({level: 1, tags: tagTree});
             } else {
-                console.log(tagTree);
-                console.log(parentIndex);
                 vm.trees.push({level: 1, tags: tagTree});
                 for (var i = 0; i < parentIndex; i++) {
                     _.each(vm.trees[i].tags, function (item) {
