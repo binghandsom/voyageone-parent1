@@ -64,7 +64,7 @@ public class CmsSetMainPropMongo2Service  extends BaseCronTaskService {
 //            // 获取前一次的价格强制击穿时间
 //            String priceBreakTime = TaskControlUtils.getEndTime(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
             // 主逻辑
-            SetMainPropService.setMainProp mainProp = setMainPropService.new setMainProp(orderChannelID, true, bln_skip_mapping_check);
+            SetMainPropService.setMainProp mainProp = setMainPropService.new setMainProp(orderChannelID, false, bln_skip_mapping_check);
             mainProp.setTaskName(getTaskName());
             // 启动多线程
             executor.execute(() -> mainProp.doRun(resultMap, needReloadMap));

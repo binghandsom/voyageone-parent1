@@ -481,6 +481,7 @@ public class FeedToCms2Service extends BaseService {
         Map<String, Object> d1 = JacksonUtil.bean2Map(model1);
         Map<String, Object> d2 = JacksonUtil.bean2Map(model2);
         CmsChannelConfigBean isImportFeedTypeConfig = CmsChannelConfigs.getConfigBeanNoCode(model1.getChannelId(), CmsConstants.ChannelConfig.AUTO_SET_FEED_IMPORT_FLG);
+        if(isImportFeedTypeConfig == null) return false;
         if("2".equalsIgnoreCase(isImportFeedTypeConfig.getConfigValue2())){
             return true;
         }else if("1".equalsIgnoreCase(isImportFeedTypeConfig.getConfigValue2()) && StringUtil.isEmpty(isImportFeedTypeConfig.getConfigValue3())){

@@ -408,8 +408,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             // -----------------------------------------------------------------------------
 
             // 主类目不导入的黑名单
-            List<CmsChannelConfigBean> categoryBlacklist = CmsChannelConfigs.getConfigBeans("000", "0",
-                    CmsConstants.ChannelConfig.CATEGORY_BLACKLIST);
+            List<CmsChannelConfigBean> categoryBlacklist = CmsChannelConfigs.getConfigBeans("000",
+                    CmsConstants.ChannelConfig.CATEGORY_BLACKLIST,"0");
 
             if (!ListUtils.isNull(categoryBlacklist)) {
                 categoryBlacks = categoryBlacklist.stream().map(CmsChannelConfigBean::getConfigValue1).collect(Collectors.toList());
@@ -434,8 +434,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 singleGroupFlg = StringUtil.isEmpty(feedMastConfig.getConfigValue2()) ? "0" : feedMastConfig.getConfigValue2();
                 categoryFlg = StringUtil.isEmpty(feedMastConfig.getConfigValue3()) ? "0" : feedMastConfig.getConfigValue3();
             }
-            List<CmsChannelConfigBean> categorySingleConfig = CmsChannelConfigs.getConfigBeans("000", "0",
-                    CmsConstants.ChannelConfig.CATEGORY_SINGLE);
+            List<CmsChannelConfigBean> categorySingleConfig = CmsChannelConfigs.getConfigBeans("000",
+                    CmsConstants.ChannelConfig.CATEGORY_SINGLE,"0");
             if (!ListUtils.isNull(categorySingleConfig)) {
                 categorySingle = categorySingleConfig.stream().map(CmsChannelConfigBean::getConfigValue1).collect(Collectors.toList());
             }
