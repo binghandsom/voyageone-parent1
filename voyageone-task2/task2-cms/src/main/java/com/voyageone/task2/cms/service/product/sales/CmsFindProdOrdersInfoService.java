@@ -150,45 +150,45 @@ public class CmsFindProdOrdersInfoService extends BaseCronTaskService {
             runWithThreadPool(runnableList, taskControlList);
             $info(String.format("sumProdOrders end msg channel_id:%s", channelId));
 
-            // 统计group级的销售数据
-            // 先统计各个cart的数据
-            List<CmsBtProductGroupModel> getList;
-            grpIdx = 0;
-            List<Runnable> runnableList2 = new ArrayList<>();
-            do {
-                grpqryObj.setSkip(grpIdx * PAGE_LIMIT);
-                grpIdx++;
-                getList = cmsBtProductGroupDao.select(grpqryObj, channelId);
-                if (getList == null || getList.isEmpty()) {
-                    $warn(String.format("CmsFindProdOrdersInfoService(统计各个cart) 该店铺无group数据！ channel_id=%s", channelId));
-                    break;
-                }
-
-                final List<CmsBtProductGroupModel> finalGrpList = getList;
-                runnableList2.add(() -> cmsSumGroupOrdersService.sumPerCartGroupOrders(finalGrpList, channelId, begDate1, begDate2, endDate, getTaskName()));
-            } while (getList.size() == PAGE_LIMIT);
-            // 运行线程
-            runWithThreadPool(runnableList2, taskControlList);
-            $info(String.format("sumPerCartGroupOrders end msg channel_id:%s", channelId));
-
-            // 再统计所有cart的数据
-            grpIdx = 0;
-            List<Runnable> runnableList3 = new ArrayList<>();
-            do {
-                grpqryObj2.setSkip(grpIdx * PAGE_LIMIT);
-                grpIdx++;
-                getList = cmsBtProductGroupDao.select(grpqryObj2, channelId);
-                if (getList == null || getList.isEmpty()) {
-                    $warn(String.format("CmsFindProdOrdersInfoService(统计所有cart) 该店铺无group数据！ channel_id=%s", channelId));
-                    break;
-                }
-
-                final List<CmsBtProductGroupModel> finalGrpList = getList;
-                runnableList3.add(() -> cmsSumGroupOrdersService.sumAllCartGroupOrders(finalGrpList, channelId, begDate1, begDate2, endDate, getTaskName()));
-            } while (getList.size() == PAGE_LIMIT);
-            // 运行线程
-            runWithThreadPool(runnableList3, taskControlList);
-            $info(String.format("sumAllCartGroupOrders end msg channel_id:%s", channelId));
+//            // 统计group级的销售数据
+//            // 先统计各个cart的数据
+//            List<CmsBtProductGroupModel> getList;
+//            grpIdx = 0;
+//            List<Runnable> runnableList2 = new ArrayList<>();
+//            do {
+//                grpqryObj.setSkip(grpIdx * PAGE_LIMIT);
+//                grpIdx++;
+//                getList = cmsBtProductGroupDao.select(grpqryObj, channelId);
+//                if (getList == null || getList.isEmpty()) {
+//                    $warn(String.format("CmsFindProdOrdersInfoService(统计各个cart) 该店铺无group数据！ channel_id=%s", channelId));
+//                    break;
+//                }
+//
+//                final List<CmsBtProductGroupModel> finalGrpList = getList;
+//                runnableList2.add(() -> cmsSumGroupOrdersService.sumPerCartGroupOrders(finalGrpList, channelId, begDate1, begDate2, endDate, getTaskName()));
+//            } while (getList.size() == PAGE_LIMIT);
+//            // 运行线程
+//            runWithThreadPool(runnableList2, taskControlList);
+//            $info(String.format("sumPerCartGroupOrders end msg channel_id:%s", channelId));
+//
+//            // 再统计所有cart的数据
+//            grpIdx = 0;
+//            List<Runnable> runnableList3 = new ArrayList<>();
+//            do {
+//                grpqryObj2.setSkip(grpIdx * PAGE_LIMIT);
+//                grpIdx++;
+//                getList = cmsBtProductGroupDao.select(grpqryObj2, channelId);
+//                if (getList == null || getList.isEmpty()) {
+//                    $warn(String.format("CmsFindProdOrdersInfoService(统计所有cart) 该店铺无group数据！ channel_id=%s", channelId));
+//                    break;
+//                }
+//
+//                final List<CmsBtProductGroupModel> finalGrpList = getList;
+//                runnableList3.add(() -> cmsSumGroupOrdersService.sumAllCartGroupOrders(finalGrpList, channelId, begDate1, begDate2, endDate, getTaskName()));
+//            } while (getList.size() == PAGE_LIMIT);
+//            // 运行线程
+//            runWithThreadPool(runnableList3, taskControlList);
+//            $info(String.format("sumAllCartGroupOrders end msg channel_id:%s", channelId));
 
             chnObj.setModifier(Long.toString((System.currentTimeMillis() - staTime) / 1000));
             list2.add(chnObj);
