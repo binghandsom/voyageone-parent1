@@ -116,7 +116,10 @@ public class ProductService extends BaseService {
         String query = "{\"common.fields.code\":\"" + code + "\"}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
-
+    public CmsBtProductModel getProductByCode(String channelId, String orgCannelId, String code) {
+        String query = "{\"common.fields.orgChannelId\":\"" + orgCannelId + "\",\"common.fields.code\":\"" + code + "\"}";
+        return cmsBtProductDao.selectOneWithQuery(query, channelId);
+    }
     /**
      * 获取商品 根据Code&OriginalCode
      */
@@ -124,12 +127,20 @@ public class ProductService extends BaseService {
         String query = "{\"common.fields.code\":\"" + code + "\", \"common.fields.originalCode\":\"" + originalCode + "\"}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
-
+    public CmsBtProductModel getProductSingleSku(String channelId, String orgCannelId, String code, String originalCode) {
+        String query = "{\"common.fields.orgChannelId\":\"" + orgCannelId + "\",\"common.fields.code\":\"" + code + "\", \"common.fields.originalCode\":\"" + originalCode + "\"}";
+        return cmsBtProductDao.selectOneWithQuery(query, channelId);
+    }
     /**
      * 获取商品 根据OriginalCode
      */
     public List<CmsBtProductModel> getProductByOriginalCode(String channelId, String code) {
         String query = "{\"common.fields.originalCode\":\"" + code + "\"}";
+        return cmsBtProductDao.select(query, channelId);
+    }
+
+    public List<CmsBtProductModel> getProductByOriginalCode(String channelId, String orgChannelId, String code) {
+        String query = "{\"common.fields.orgChannelId\":\"" + orgChannelId + "\", \"common.fields.originalCode\":\"" + code + "\"}";
         return cmsBtProductDao.select(query, channelId);
     }
 

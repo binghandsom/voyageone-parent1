@@ -26,10 +26,10 @@ public class CmsSetMainPropMongo2ServiceTest {
     public void onStartup() throws Exception {
         List<TaskControlBean> taskControlList = new ArrayList<>();
         TaskControlBean taskControlBean = new TaskControlBean();
-        taskControlBean.setCfg_name("order_channel_id");
-        taskControlBean.setCfg_val1("010");
-        taskControlList.add(taskControlBean);
-        taskControlBean = new TaskControlBean();
+//        taskControlBean.setCfg_name("order_channel_id");
+//        taskControlBean.setCfg_val1("028");
+//        taskControlList.add(taskControlBean);
+//        taskControlBean = new TaskControlBean();
         taskControlBean.setCfg_name("order_channel_id");
         taskControlBean.setCfg_val1("009");
         taskControlList.add(taskControlBean);
