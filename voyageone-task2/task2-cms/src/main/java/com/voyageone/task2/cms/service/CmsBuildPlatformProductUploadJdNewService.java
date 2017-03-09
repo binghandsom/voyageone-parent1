@@ -97,12 +97,14 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
     // charis update
 //    private final static String OptioinType_offsale = "offsale";
     private final static int OptioinType_offsale = 2;
+    // 京东平台商品状态（从未上架）
+    private  final static int OptionType_neverSale = 1;
     // 价格类型(市场价格)
     //private final static String PriceType_marketprice = "retail_price";
     // 价格类型(京东价格)
     //private final static String PriceType_jdprice = "sale_price";
     // 商品属性列表
-    private final static String Attrivutes = "attributes";
+    private final static String Attributes = "attributes";
     // 用户自行输入的类目属性ID串
     private final static String Input_Pids = "input_pids";
     // 用户自行输入的属性值串
@@ -785,7 +787,8 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                     $error(errMsg);
                     throw new BusinessException(errMsg);
                 }
-
+                // 新增商品时将商品状态设置为从未上架 charis
+                jdProductBean.setWareStatus(OptionType_neverSale);
                 // 调用京东新增商品API(360buy.ware.add)
                 // charis update 发布商品api变更为 jingdong.ware.write.add
                 jdWareId = jdWareNewService.addProduct(shopProp, jdProductBean);
@@ -1152,7 +1155,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         feature.setKey(Is7ToReturn);
         feature.setValue(jdCommonInfoMap.get("productIs7ToReturn"));
         featureSet.add(feature);
-       jdProductBean.setFeatures(featureSet);
+        jdProductBean.setFeatures(featureSet);
         // UPC编码(非必须)
 //        jdProductBean.setUpcCode(mainProduct.getXXX());                 // 不使用
         // 操作类型 现只支持：offsale 或onsale,默认为下架状态 (非必须)
@@ -1335,7 +1338,11 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 
         //charis update
         Set<Prop> propSet = new HashSet<Prop>();
-        for(String attr : jdProductAttrMap.get(Attrivutes).split("|")) {
+        for(String attr : jdProductAttrMap.get(Attributes).split("\\|")) {
+            String attrValue = attr.split(":")[1];
+            if ("null".equals(attrValue)) {
+                continue;
+            }
             Prop prop = new Prop();
             prop.setAttrId(attr.split(":")[0]);
             prop.setAttrValues(attr.split(":")[1].split(","));
@@ -1400,10 +1407,12 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                     shopProp.getOrder_channel_id(), shopProp.getCart_id(), Prop_TransportId);
             $info(errMsg, ex);
         }
-        if(StringUtil.isEmpty(wareTransportId))
-           throw new BusinessException("京东运费模板id为空！[ChannelId:%s] [CartId:%s] [Prop_TransportId:%s]",
-                   shopProp.getOrder_channel_id(), shopProp.getCart_id(), Prop_TransportId);
-        jdProductBean.setTransportId(Long.parseLong(wareTransportId));
+        if(!StringUtil.isEmpty(wareTransportId)) {
+            jdProductBean.setTransportId(Long.parseLong(wareTransportId));
+        }
+//           throw new BusinessException("京东运费模板id为空！[ChannelId:%s] [CartId:%s] [Prop_TransportId:%s]",
+//                   shopProp.getOrder_channel_id(), shopProp.getCart_id(), Prop_TransportId);
+
         // charis update
         // 京东关联板式id
         String commonHtml_Id = "";
@@ -1415,10 +1424,12 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                     shopProp.getOrder_channel_id(), shopProp.getCart_id(), Prop_CommonHtmlId);
             $info(errMsg, ex);
         }
-        if(StringUtil.isEmpty(commonHtml_Id))
-            throw new BusinessException("京东关联板式id为空！[ChannelId:%s] [CartId:%s] [Prop_CommonHtmlId:%s]",
-                    shopProp.getOrder_channel_id(), shopProp.getCart_id(), Prop_CommonHtmlId);
-        jdProductBean.setTemplateId(Long.parseLong(commonHtml_Id));
+        if(!StringUtil.isEmpty(commonHtml_Id)) {
+            jdProductBean.setTemplateId(Long.parseLong(commonHtml_Id));
+        }
+//            throw new BusinessException("京东关联板式id为空！[ChannelId:%s] [CartId:%s] [Prop_CommonHtmlId:%s]",
+//                    shopProp.getOrder_channel_id(), shopProp.getCart_id(), Prop_CommonHtmlId);
+
         return jdProductBean;
     }
 
@@ -1625,7 +1636,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         }
 
         // 把取得的字符串值放进返回map中
-        retAttrMap.put(Attrivutes, sbAttributes.toString());
+        retAttrMap.put(Attributes, sbAttributes.toString());
         retAttrMap.put(Input_Pids, sbInputPids.toString());
         retAttrMap.put(Input_Strs, sbInputStrs.toString());
 
@@ -2079,7 +2090,8 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                 // 需要添加新品类目
 //                sbbuilder.append(newArrivalSellerCat);
 //                sbbuilder.append(Separtor_Semicolon); // 用分号(";")分隔
-                shopCategorysSet.add(Long.parseLong(newArrivalSellerCat));
+
+                shopCategorysSet.add(Long.parseLong(newArrivalSellerCat.split("-")[1]));
             }
             // added by morse.lu 2016/11/18 end
             CmsBtProductModel_Platform_Cart productPlatformCart = sxData.getMainProduct().getPlatform(sxData.getCartId());
@@ -2095,16 +2107,17 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                     // modified by morse.lu 2016/11/18 start
 //                    sbbuilder.append(sellerCat.getcIds().stream().collect(Collectors.joining(Separtor_Hyphen)));
 //                    sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
-                    String cids = sellerCat.getcIds().stream().collect(Collectors.joining(Separtor_Hyphen));
-                    if (!cids.equals(newArrivalSellerCat)) {
+//                    String cids = sellerCat.getcIds().stream().collect(Collectors.joining(Separtor_Hyphen));
+                String cid = sellerCat.getcId();
+                if (!cid.equals(newArrivalSellerCat)) {
 //                        sbbuilder.append(cids);
 //                        sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
-                        shopCategorysSet.add(Long.parseLong(cids));
-                    }
-                    // modified by morse.lu 2016/11/18 end
+                    shopCategorysSet.add(Long.parseLong(cid));
                 }
+                // modified by morse.lu 2016/11/18 end
             }
-            // 直接从Product中取得店铺内分类，不用从京东去取了
+        }
+        // 直接从Product中取得店铺内分类，不用从京东去取了
 //            List<ShopCategory> shopCategoryList = jdShopService.getShopCategoryList(shop);
 //            if (shopCategoryList != null && !shopCategoryList.isEmpty()) {
 //                for (ShopCategory shopCategory : shopCategoryList) {
@@ -2148,7 +2161,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 
         // 根据channelid和platformPropId取得cms_mt_channel_condition_config表的条件表达式
         List<ConditionPropValueModel> conditionPropValueModels = null;
-        if (channelConditionConfig.containsKey(shop.getOrder_channel_id())) {
+        if (channelConditionConfig != null && channelConditionConfig.containsKey(shop.getOrder_channel_id())) {
             if (channelConditionConfig.get(shop.getOrder_channel_id()).containsKey(platformPropId)) {
                 conditionPropValueModels = channelConditionConfig.get(shop.getOrder_channel_id()).get(platformPropId);
             }

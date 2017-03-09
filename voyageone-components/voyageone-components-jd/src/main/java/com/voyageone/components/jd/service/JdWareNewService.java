@@ -28,7 +28,7 @@ import java.util.Set;
 /**
  * 京东商品类API调用服务
  * <p/>
- * Created by charis on 2017/2/23.
+ * update by charis on 2017/2/23.
  */
 @SuppressWarnings("ALL")
 @Component
@@ -36,6 +36,7 @@ public class JdWareNewService extends JdBase {
 
     // 重试次数
     private static final int MAX_RETRY_TIMES = 3;
+
 
     /**
      * 京东新增商品
@@ -49,6 +50,8 @@ public class JdWareNewService extends JdBase {
         Ware ware = new Ware();
         // 商品id(必须)
         if (jdProduct.getWareId() != null)             ware.setWareId(jdProduct.getWareId());
+        // 京东三级类目id(必须)
+        if (jdProduct.getCategoryId() != null)         ware.setCategoryId(jdProduct.getCategoryId());
         // 商品名称(必须)
         if (jdProduct.getTitle() != null)              ware.setTitle(jdProduct.getTitle());
         // 品牌ID(非必须)
@@ -56,7 +59,7 @@ public class JdWareNewService extends JdBase {
         // 关联版式ID(必须)
         if (jdProduct.getTemplateId() != null)         ware.setTemplateId(jdProduct.getTemplateId());
         // 运费模板ID(必须)
-        if (jdProduct.getTransportId() != null)        ware.setTransportId(jdProduct.getTransportId());
+//        if (jdProduct.getTransportId() != null)        ware.setTransportId(jdProduct.getTransportId());
         // 商品状态(非必须)
         if (jdProduct.getWareStatus() != null)         ware.setWareStatus(jdProduct.getWareStatus());
         // 商品外部ID(非必须)
@@ -200,6 +203,8 @@ public class JdWareNewService extends JdBase {
         // 如果新增商品失败，返回0 (如果不设初期值后面有可能会报没有初期化的错误(wareId may not have been initialized))
         long wareId = 0L;
 
+        request.setWare(ware);
+        request.setSkus(ware.getSkus());
         try {
             // 调用京东新增商品API(360buy.ware.add)
             WareWriteAddResponse response = reqApi(shop, request);
@@ -249,8 +254,8 @@ public class JdWareNewService extends JdBase {
         if (jdProduct.getBrandId() != null)            ware.setBrandId(jdProduct.getBrandId());
         // 关联版式ID(必须)
         if (jdProduct.getTemplateId() != null)         ware.setTemplateId(jdProduct.getTemplateId());
-        // 运费模板ID(必须)
-        if (jdProduct.getTransportId() != null)        ware.setTransportId(jdProduct.getTransportId());
+        // 运费模板ID(非必须)
+//        if (jdProduct.getTransportId() != null)        ware.setTransportId(jdProduct.getTransportId());
         // 商品状态(非必须)
         if (jdProduct.getWareStatus() != null)         ware.setWareStatus(jdProduct.getWareStatus());
         // 商品外部ID(非必须)
