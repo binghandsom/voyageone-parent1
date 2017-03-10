@@ -54,6 +54,7 @@ define([
         this.doAppSwitch = doAppSwitch;
         this.doTranslateStatus = doTranslateStatus;
         this.getMainCategoryInfo = getMainCategoryInfo;
+        this.upperLowerFrame = upperLowerFrame;
 
         /**
          * 获取页面产品信息
@@ -800,6 +801,18 @@ define([
 
             return defer.promise;
 
+        }
+
+        function upperLowerFrame(req){
+            var defer = $q.defer();
+            $productDetailService.upperLowerFrame(req)
+                .then(function (res) {
+                    defer.resolve(res);
+                }, function (res) {
+                    defer.reject(res);
+                });
+
+            return defer.promise;
         }
 
         /**

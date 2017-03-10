@@ -8,6 +8,7 @@ import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -20,7 +21,6 @@ import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
 import com.voyageone.service.bean.cms.product.*;
-import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
@@ -29,9 +29,6 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsBtCustomPropService;
 import com.voyageone.service.impl.cms.CmsMtEtkHsCodeService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
-import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
-import com.voyageone.service.impl.cms.prices.PlatformPriceService;
-import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.wms.InventoryCenterLogicService;
 import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
@@ -1278,7 +1275,6 @@ public class ProductService extends BaseService {
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         HashMap<String, Object> updateMap = new HashMap<>();
-
 //        updateMap.put("common.fields.priceMsrpSt", productMode.getCommon().getFields().getPriceMsrpSt());
 //        updateMap.put("common.fields.priceMsrpEd", productMode.getCommon().getFields().getPriceMsrpEd());
 //        updateMap.put("common.fields.priceRetailSt", productMode.getCommon().getFields().getPriceRetailSt());
@@ -1556,5 +1552,33 @@ public class ProductService extends BaseService {
                 cmsBtProductLogDao.insert(logModel);
             }
         }
+    }
+
+    public BulkJongoUpdateList updateCmsBtProductInfo(String channelId) {
+        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(10, cmsBtProductDao, channelId);
+        return bulkList;
+    }
+    public BulkJongoUpdateList updateCmsBtProductGroupInfo(String channelId) {
+        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(10, cmsBtProductGroupDao, channelId);
+        return bulkList;
+    }
+    /**
+     * 取得商品对应的平台状态
+     */
+    public String getPlatformStatus(String prodCode, String channelId, int cartId) {
+        JongoQuery queryObj = new JongoQuery();
+        queryObj.setQuery("{'common.fields.code':#}");
+        queryObj.setParameters(prodCode);
+        queryObj.setProjectionExt("platforms.P" + cartId + ".pStatus");
+        CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
+        if (prodObj == null) {
+            $warn("CmsPlatformActiveLogService 找不到商品 channelId=%s，code=%s", channelId, prodCode);
+            return null;
+        }
+        CmsConstants.PlatformStatus pStatus = prodObj.getPlatformNotNull(cartId).getpStatus();
+        if (pStatus != null) {
+            return pStatus.name();
+        }
+        return null;
     }
 }
