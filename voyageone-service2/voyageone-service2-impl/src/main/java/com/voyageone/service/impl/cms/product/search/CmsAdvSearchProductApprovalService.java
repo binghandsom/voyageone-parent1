@@ -59,8 +59,8 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
     private PriceService priceService;
 
     public List<CmsBtOperationLogModel_Msg> approval(AdvSearchProductApprovalMQMessageBody mqMessageBody) {
-        long threadNo =  Thread.currentThread().getId();
-        $info(String.format("threadNo=%d 参数%s",threadNo, JacksonUtil.bean2Json(mqMessageBody)));
+        long threadNo = Thread.currentThread().getId();
+        $info(String.format("threadNo=%d 参数%s", threadNo, JacksonUtil.bean2Json(mqMessageBody)));
         Integer cartIdValue = mqMessageBody.getCartList().get(0);
         String channelId = mqMessageBody.getChannelId();
         String userName = mqMessageBody.getSender();
@@ -222,7 +222,6 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                 }
             }
 
-
             if (strList.isEmpty()) {
                 $debug("产品未更新 code=" + code);
                 CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
@@ -278,15 +277,25 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
         // 插入上新程序
         $debug("批量修改属性 (商品审批) 开始记入SxWorkLoad表");
         long sta = System.currentTimeMillis();
-        sxProductService.insertSxWorkLoad(channelId, newProdCodeList, cartIdValue, userName, false);
+
+        /**京东系和聚美的上新程序，blnSmartSx【上新标识】设置 : true*/
+        CartEnums.Cart _cartEnum = CartEnums.Cart.getValueByID(String.valueOf(cartIdValue));
+
+        if (!CartEnums.Cart.isJdSeries(_cartEnum) || CartEnums.Cart.JM.equals(_cartEnum)) {
+            sxProductService.insertSxWorkLoad(channelId, newProdCodeList, cartIdValue, userName, true);
+        } else {
+            sxProductService.insertSxWorkLoad(channelId, newProdCodeList, cartIdValue, userName, false);
+        }
+
+
         $debug("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
 
         // 记录商品修改历史
         productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdValue, EnumProductOperationType.ProductApproved, msg, userName);
-            sta = System.currentTimeMillis();
-            // 记录商品修改历史
-            productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdValue, EnumProductOperationType.ProductApproved, msg, userName);
-            $info("批量修改属性 (商品审批) 记入状态历史表结束 耗时" + (System.currentTimeMillis() - sta));
+        sta = System.currentTimeMillis();
+        // 记录商品修改历史
+        productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdValue, EnumProductOperationType.ProductApproved, msg, userName);
+        $info("批量修改属性 (商品审批) 记入状态历史表结束 耗时" + (System.currentTimeMillis() - sta));
 
         return errorCodeList;
     }

@@ -1468,7 +1468,7 @@ public class SxProductService extends BaseService {
             return false;
 
         // 目前只支持京东系的上新
-        if (!CartEnums.Cart.isJdSeries(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) { return false; }
+        //if (!CartEnums.Cart.isJdSeries(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) { return false; }
 
         // 获取当前channel的配置
         CmsChannelConfigBean sxSmartConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SX_SMART, String.valueOf(cartId));
