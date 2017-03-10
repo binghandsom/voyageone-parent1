@@ -846,6 +846,11 @@ public class PriceService extends BaseService {
             //
             if (priceSale <= 0 && configValue2 != 3)
                 skuInPlatform.put(Platform_SKU_COM.priceSale.name(), retailPrice);
+
+            // 保存击穿标识
+            String priceDiffFlgValue = getPriceDiffFlg(channelId, skuInPlatform, cartId);
+            // 最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，向下击穿警告:5）
+            skuInPlatform.put(priceDiffFlg.name(), priceDiffFlgValue);
         }
 
         if(goldPrice == null){

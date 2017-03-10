@@ -8,6 +8,7 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
@@ -44,21 +45,21 @@ public class CmsAdvSearchOtherService extends BaseViewService {
     private CmsChannelTagService cmsChannelTagService;
     @Autowired
     private TagService tagService;
-    
-    private static final String[] biSortItems = { "1", "7", "30" };
-    
+
+    private static final String[] biSortItems = {"1", "7", "30"};
+
     private static final String[][] biSortItemKeys = {
-    	{ "bi.sum%s.pv.cartId", "%s浏览量" },
-    	{ "bi.sum%s.uv.cartId", "%s访客数" },
-    	{ "bi.sum%s.gwc.cartId", "%s加购件数" },
-    	{ "bi.sum%s.scs.cartId", "%s收藏人数" }
+            {"bi.sum%s.pv.cartId", "%s浏览量"},
+            {"bi.sum%s.uv.cartId", "%s访客数"},
+            {"bi.sum%s.gwc.cartId", "%s加购件数"},
+            {"bi.sum%s.scs.cartId", "%s收藏人数"}
     };
-    
+
     private static final String[][] commonSortItems = {
-    	{ "platforms.P%s.pPublishTime", "商品发布时间" },
-    	{ "platforms.P%s.pPriceMsrpEd", "中国建议售价" },
-    	{ "platforms.P%s.pPriceRetailSt", "中国指导售价" },
-    	{ "platforms.P%s.pPriceSaleEd", "中国最终售价" }
+            {"platforms.P%s.pPublishTime", "商品发布时间"},
+            {"platforms.P%s.pPriceMsrpEd", "中国建议售价"},
+            {"platforms.P%s.pPriceRetailSt", "中国指导售价"},
+            {"platforms.P%s.pPriceSaleEd", "中国最终售价"}
     };
 
     /**
@@ -87,6 +88,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             return rslt;
         }
 
+        Map<String, CmsBtTagBean> cachTag = new HashMap<>();
         for (CmsBtProductBean groupObj : groupsList) {
             String prodCode = groupObj.getCommonNotNull().getFieldsNotNull().getCode();
             if (prodCode == null) {
@@ -123,8 +125,26 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                 // 获取商品free tag信息
                 List<String> tagPathList = groupObj.getFreeTags();
                 if (tagPathList != null && tagPathList.size() > 0) {
+                    List<CmsBtTagBean> tagModelList = new ArrayList<>();
+                    List<String> temp = new ArrayList<>();
+                    for(String tag: tagPathList){
+                        if (cachTag.containsKey(tag)) {
+                            tagModelList.add(cachTag.get(tag));
+                        } else {
+                            temp.add(tag);
+                        }
+                    }
+                    if (temp.size() > 0) {
+                        List<CmsBtTagBean> ts = tagService.getTagPathNameByTagPath(channelId, temp);
+                        if (!ListUtils.isNull(ts)) {
+                            for(CmsBtTagBean cmsBtTagBean : ts){
+                                cachTag.put(cmsBtTagBean.getTagPath(), cmsBtTagBean);
+                                tagModelList.add(cmsBtTagBean);
+                            }
+                        }
+                    }
                     // 根据tag path查询tag path name
-                    List<CmsBtTagBean> tagModelList = tagService.getTagPathNameByTagPath(channelId, tagPathList);
+//                    List<CmsBtTagBean> tagModelList = tagService.getTagPathNameByTagPath(channelId, tagPathList);
                     if (!tagModelList.isEmpty()) {
                         tagModelList = cmsChannelTagService.convertToTree(tagModelList);
                         List<CmsBtTagModel> tagList = cmsChannelTagService.convertToList(tagModelList);
@@ -212,7 +232,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
         if (cartList == null) {
             return Collections.emptyList();
         }
-        
+
         List<Map<String, String>> salseSumList = new ArrayList<>(0);
 
         for (TypeChannelBean cartObj : cartList) {
@@ -222,24 +242,24 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             }
             String cartName = cartObj.getName();
             if (cartId == 0) {
-            	cartName = "";
+                cartName = "";
             }
-            
+
             Map<String, String> keySum7Map = new HashMap<>(2);
             keySum7Map.put("name", cartName + "7天销量");
             keySum7Map.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_7 + "." + CmsBtProductModel_Sales.CARTID + cartId);
             salseSumList.add(keySum7Map);
-            
+
             Map<String, String> keySum30Map = new HashMap<>(2);
             keySum30Map.put("name", cartName + "30天销量");
             keySum30Map.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_30 + "." + CmsBtProductModel_Sales.CARTID + cartId);
             salseSumList.add(keySum30Map);
-            
+
             Map<String, String> keySumYearMap = new HashMap<>(2);
             keySumYearMap.put("name", cartName + "YTD销量");
             keySumYearMap.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_YEAR + "." + CmsBtProductModel_Sales.CARTID + cartId);
             salseSumList.add(keySumYearMap);
-            
+
             Map<String, String> keySumAllMap = new HashMap<>(2);
             keySumAllMap.put("name", cartName + "总销量");
             keySumAllMap.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_ALL + "." + CmsBtProductModel_Sales.CARTID + cartId);
@@ -286,20 +306,20 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                 $info("CmsAdvSearchOtherService 目前只有淘宝和京东有bi数据，其他平台都忽略 [ChannelId:%s] [CartId:%s]", channelId, cartId);
                 continue;
             }
-            
+
             // 添加各平台的排序字段
             for (String biSortItem : biSortItems) {
-            	for (String[] biSortItemKey : biSortItemKeys) {
-            		Map<String, String> keySumMap = new HashMap<>();
+                for (String[] biSortItemKey : biSortItemKeys) {
+                    Map<String, String> keySumMap = new HashMap<>();
                     keySumMap.put("name", cartObj.getName() + String.format(biSortItemKey[1], biSortItem));
                     keySumMap.put("value", String.format(biSortItemKey[0], biSortItem) + cartId);
                     dataSumList.add(keySumMap);
-            	}
+                }
             }
-            
+
             // 添加通用的排序字段
             for (String[] commonSortItem : commonSortItems) {
-            	Map<String, String> keySumMap = new HashMap<>();
+                Map<String, String> keySumMap = new HashMap<>();
                 keySumMap.put("name", cartObj.getName() + commonSortItem[1]);
                 keySumMap.put("value", String.format(commonSortItem[0], cartId));
                 dataSumList.add(keySumMap);

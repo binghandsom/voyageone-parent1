@@ -363,6 +363,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 outputStream.close();
             }
         } catch (Exception e) {
+            $error(CommonUtil.getMessages(e));
             $error(e);
         } finally {
             book.close();
@@ -744,7 +745,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 for (BaseMongoMap<String, Object> map : ptfObj.getSkus()) {
                     String sku = (String) map.get("skuCode");
                     Boolean isSale = (Boolean) map.get("isSale");
-                    if(isSale){
+                    if(isSale !=null && isSale){
                         SkuInventoryForCmsBean skuBeanObj = skuInventoryMap.keySet().stream().filter(skuBean -> sku.equalsIgnoreCase(skuBean.getSku())).findFirst().orElse(null);
                         if (skuBeanObj != null) {
                             if (skuInventoryMap.get(skuBeanObj) != null) {

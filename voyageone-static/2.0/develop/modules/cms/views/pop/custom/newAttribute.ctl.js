@@ -71,6 +71,7 @@ define([
                 vm = self.vm, attrValue;
 
             switch (Number(vm.attrType)) {
+                case 0:
                 case 1:
                     attrValue = self.context.entity.value;
                     break;

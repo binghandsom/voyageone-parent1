@@ -363,6 +363,7 @@ public class CmsBtCustomPropService extends BaseService {
                     }
                     return valueCn;
                 }
+            case 0:
             case 2:
             case 3:
                     return value;

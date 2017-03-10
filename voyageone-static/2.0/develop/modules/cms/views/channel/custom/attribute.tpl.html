@@ -87,11 +87,12 @@
                         <td class="text-center">{{entity.nameEn}}</td>
                         <td class="text-center">{{entity.nameCn}}</td>
                         <td class="text-center">
+                            <span ng-if="entity.attributeType == 0 "><label class="label label-danger">{{ctrl.ATTRIBUTETYPE[entity.attributeType]}}</label></span>
                             <button class="btn btn-default" ng-click="ctrl.linkValue(entity)"
                                     ng-if="entity.attributeType == 1">
                                 <i class="fa fa-link"></i>&nbsp;{{ctrl.ATTRIBUTETYPE[entity.attributeType]}}
                             </button>
-                            <span ng-if="entity.attributeType != 1">
+                            <span ng-if="entity.attributeType > 1">
                                     {{ctrl.ATTRIBUTETYPE[entity.attributeType]}}
                                 </span>
                         </td>
@@ -136,13 +137,14 @@
                         <td class="text-center">{{entity.nameEn}}</td>
                         <td class="text-center">{{entity.nameCn}}</td>
                         <td class="text-center">
+                            <span ng-if="entity.attributeType == 0 "><label class="label label-danger">{{ctrl.ATTRIBUTETYPE[entity.attributeType]}}</label></span>
                             <button class="btn btn-default" ng-click="ctrl.linkValue(entity)"
                                     ng-if="entity.attributeType == 1">
                                 <i class="fa fa-link"></i>&nbsp;{{ctrl.ATTRIBUTETYPE[entity.attributeType]}}
                             </button>
-                            <span ng-if="entity.attributeType != 1">
+                            <span ng-if="entity.attributeType > 1">
                                     {{ctrl.ATTRIBUTETYPE[entity.attributeType]}}
-                                </span>
+                            </span>
                         </td>
                         <td class="text-center">{{ctrl.TYPE[entity.type]}}</td>
                         <td class="text-center"></td>
