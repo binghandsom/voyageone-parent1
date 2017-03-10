@@ -131,7 +131,7 @@ public class ProductTagService extends BaseService {
 
         List<CmsBtTagBean> tagBeanList = cmsBtTagDaoExt.selectTagPathNameByTagPath(channelId, tagPathList);
         pathList = tagBeanList.stream().map(tagBean -> tagBean.getTagPathName()).collect(Collectors.toList());
-        String msg = "高级检索 批量设置自由标签 " + StringUtils.join(pathList, "; ");
+        String msg = "高级检索 批量设置自由标签 " ;
         productStatusHistoryService.insertList(channelId, prodCodeList, -1, EnumProductOperationType.BatchSetFreeTag, msg, modifier);
     }
 
