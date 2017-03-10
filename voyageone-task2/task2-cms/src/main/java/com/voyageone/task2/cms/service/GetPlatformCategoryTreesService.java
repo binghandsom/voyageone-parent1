@@ -311,9 +311,9 @@ public class GetPlatformCategoryTreesService extends BaseCronTaskService {
             }
 
             //为取得平台类目Schema方便，为每个叶子叶子结点添加channelId
-            if (platformCat.getIsParent() == 0) {
+//            if (platformCat.getIsParent() == 0) {
                 platformCat.setChannelId(channelId);
-            }
+//            }
 
         }
 
