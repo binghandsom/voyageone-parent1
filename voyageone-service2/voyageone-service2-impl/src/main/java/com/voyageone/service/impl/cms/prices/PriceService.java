@@ -1023,6 +1023,8 @@ public class PriceService extends BaseService {
             } else {
                 diffFlg = "5"; // 最终售价向下击穿警告
             }
+        } else if (priceSale > priceRetail){
+            diffFlg = "3";
         }
         return diffFlg;
     }
