@@ -121,7 +121,8 @@ define(function () {
         "image_product_label_list": {
             "hash": "/image/product_label_list",
             "templateUrl": "views/channel/taglist/index.tpl.html",
-            "controllerUrl": "modules/cms/views/channel/taglist/index.ctl"
+            "controllerUrl": "modules/cms/views/channel/taglist/index.ctl",
+            "controller": "tagListController as ctrl"
         },
         "channel_brand_mapping_list": {
             "hash": "/channel/brand_mapping_list",

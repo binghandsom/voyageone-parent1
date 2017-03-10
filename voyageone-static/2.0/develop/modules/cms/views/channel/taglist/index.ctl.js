@@ -1,131 +1,156 @@
 /**
- * Created by 123 on 2016/4/18.
+ * @description 自由标签设置
+ * @author Piao
  */
 define([
-    'angularAMD',
-    'modules/cms/controller/popup.ctl'
-], function () {
+    'cms',
+    'modules/cms/controller/popup.ctl',
+    'modules/cms/directives/noticeTip.directive'
+], function (cms) {
 
-    function cmsChannelTagController($scope, channelTagService,confirm) {
-        $scope.vm = {
-            tagTypeSelectValue:"1",
-            tagTree: null,
-            id: "",
-            parentTagId: "",
-            tagTypeList:[]
-        };
-        $scope.tree = [];
-        $scope.key = [];
-        $scope.selected = [];
-        $scope.newIndex = {
-            value: -1
-        };
+    cms.controller('tagListController', (function () {
+
+        function TagListCtl(channelTagService, confirm, popups, notify, alert) {
+            this.channelTagService = channelTagService;
+            this.confirm = confirm;
+            this.popups = popups;
+            this.notify = notify;
+            this.alert = alert;
+            this.selected = [];
+            this.searchName = [];
+            this.vm = {
+                tagTypeSelectValue: "0",
+                tagTypeList: null,
+                trees: null
+            }
+        }
 
         /**
-         *初始化数据,上手调用search拼装tree
+         * 初始化    构建tag树形结构
+         * @param parentIndex
          */
-        $scope.initialize = function () {
-            //默认选中店铺类分类
-            channelTagService.init({tagTypeSelectValue: $scope.vm.tagTypeSelectValue}).then(function (res) {
-                $scope.source = $scope.vm.tagTree = res.data.tagTree;
-                $scope.vm.tagTypeList = res.data.tagTypeList;
-                $scope.search(0);
+        TagListCtl.prototype.init = function (parentIndex) {
+            var self = this, vm = self.vm;
+
+            self.channelTagService.init({tagTypeSelectValue: vm.tagTypeSelectValue}).then(function (res) {
+                //获取选择下拉数据
+                vm.tagTypeList = res.data.tagTypeList;
+                //保存原来的树
+                vm.orgTagTree = res.data.tagTree;
+
+                self.constructOrg(res.data.tagTree, parentIndex);
             });
         };
 
         /**
-         *
-         * @param arr
-         * @param index
-         * @returns {*}
+         * 展开树状结构
+         * @param tag
+         * @param treeIndex
          */
-        function byTagChildrenName(arr, index){
-            var key = $scope.key[index];
-            return key ? arr.filter(function (item) {
-                return item.tagChildrenName.indexOf($scope.key[index]) > -1;
-            }) : arr;
-        }
+        TagListCtl.prototype.openTag = function (tag, treeIndex) {
+            var self = this, vm = self.vm,
+                nextTags = vm.trees[treeIndex + 1];
+
+            //设置各级选中节点
+            if (treeIndex == 0)
+                self.selected[0] = tag;
+            else
+                self.selected[treeIndex] = tag;
+
+            if (nextTags)
+                vm.trees.splice(treeIndex + 1);
+
+            vm.trees.push({tags: tag.children});
+
+        };
 
         /**
-         * 当用户点击搜索时触发
-         * @param index：记录层级
+         * 新增标签popup
+         * @param parentIndex 层级序号
          */
-        $scope.search = function (index) {
-            var tree = $scope.tree;
-            var source = $scope.source;
-            var selected = $scope.selected;
-            var prev;
-            for (; index < 3; index++) {
-                if (!index) {
-                    tree[index] = byTagChildrenName(source, index);
-                } else {
-                    prev = selected[index - 1];
-                    if (prev)
-                        tree[index] = byTagChildrenName(prev.children, index);
-                    else {
-                        tree[index] = [];
-                        continue;
-                    }
-                }
+        TagListCtl.prototype.popNewTag = function (parentIndex) {
+            var self = this, vm = self.vm,
+                first, tagInfo;
 
-                if (!selected[index]) {
-                    selected[index] = tree[index][0];
-                } else if (_.isString(selected[index])) {
-                    selected[index] = tree[index].find(function(item) {
-                        return item.tagChildrenName === selected[index];
+            first = parentIndex === 0;
+            tagInfo = {
+                tagTypeSelectValue: vm.tagTypeSelectValue,
+                tagTree: vm.orgTagTree
+            };
+
+            self.popups.openNewTag({
+                first: first,
+                tagInfo: tagInfo,
+                tagSelectObject: self.selected[parentIndex === 0 ? 0 : parentIndex - 1]
+            }).then(function () {
+                self.notify.success('添加成功！');
+                console.log(parentIndex);
+                self.init(parentIndex);
+            });
+        };
+
+        /**
+         * 删除标签
+         */
+        TagListCtl.prototype.delTag = function (tag, parentIndex, $event) {
+            var self = this,
+                channelTagService = self.channelTagService;
+
+            self.confirm('您确定要删除该标签吗？').then(function () {
+                channelTagService.del({
+                    id: tag.id,
+                    parentTagId: tag.parentTagId,
+                    tagTree: self.vm.orgTagTree
+                }).then(function () {
+                    self.init(parentIndex);
+                });
+            });
+
+            $event.stopPropagation();
+        };
+
+        TagListCtl.prototype.filterByName = function (parentIndex, tags) {
+            var self = this,
+                searchName = self.searchName[parentIndex];
+
+            if (!searchName) {
+                self.openTag(tags[0], parentIndex);
+                return;
+            }
+
+            var result = _.filter(tags, function (item) {
+                return item.tagChildrenName.indexOf(searchName) >= 0;
+            })[0];
+
+            if (result)
+                self.openTag(result, parentIndex);
+        };
+
+        /**
+         * 用于重新构建tag树
+         * @param tagTree
+         * @param parentIndex
+         */
+        TagListCtl.prototype.constructOrg = function (tagTree, parentIndex) {
+            var self = this,
+                vm = self.vm;
+
+            vm.trees = [];
+            if (!parentIndex) {
+                vm.trees.push({level: 1, tags: tagTree});
+            } else {
+                vm.trees.push({level: 1, tags: tagTree});
+                for (var i = 0; i < parentIndex; i++) {
+                    _.each(vm.trees[i].tags, function (item) {
+                        if (item.tagChildrenName == self.selected[i].tagChildrenName)
+                            vm.trees.push({tags: item.children});
                     });
-                } else if (tree[index].indexOf(selected[index]) < 0) {
-                    var indexSelected = tree[index].find(function (item) {
-                        return item.id === selected[index].id;
-                    });
-                    if (indexSelected)
-                        selected[index] = indexSelected;
-                    else
-                        selected[index] = tree[index][0];
                 }
             }
         };
 
-        /**
-         * 新增tag操作
-         * @param savedata
-         */
-        $scope.save = function(savedata) {
-            //记录新增记录名称
-            $scope.selected[$scope.newIndex.value] = savedata.vm.tagPathName;
+        return TagListCtl;
 
-            channelTagService.save(savedata.vm).then(function (res) {
-                    $scope.source = $scope.vm.tagTree = res.data.tagInfo.tagTree;
-                    $scope.search(0);
-                    savedata.$close();
-                },
-                function (err) {
-                    if (err.message != null) {
-                        savedata.vm.errMsg=err.message;
-                    }
-                    $scope.search(0);
-                })
-        }
+    })());
 
-        /**
-         * 删除tag操作
-         * @param tag
-         */
-        $scope.delTag = function(tag) {
-            $scope.vm.id = tag.id;
-            $scope.vm.parentTagId = tag.parentTagId;
-            confirm('TXT_MSG_DO_DELETE').then(function () {
-                channelTagService.del($scope.vm).then(function (res) {
-                    $scope.source = $scope.vm.tagTree = res.data.tagTree;
-                    $scope.search(0);
-                });
-            })
-        }
-
-
-    }
-
-    cmsChannelTagController.$inject = ['$scope', 'channelTagService','confirm'];
-
-    return cmsChannelTagController;
 });
