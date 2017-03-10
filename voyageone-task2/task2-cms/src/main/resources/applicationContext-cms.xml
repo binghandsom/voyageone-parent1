@@ -153,7 +153,7 @@
         <task:scheduled ref="CmsUploadImageToPlatformJob" method="run" cron="0 0/5 * * * ?"/>
 
         <!-- 从oms系统导入产品前90天订单信息到订单历史记录表，并统计出指定销量数据 -->
-        <task:scheduled ref="CmsImportOrdersHisInfoJob" method="run" cron="0 40 9 * * ?"/>
+        <task:scheduled ref="CmsImportOrdersHisInfoJob" method="run" cron="0 0 16 * * ?"/>
 
         <!-- 将主类目/对应的平台类目信息导入到cms_mt_category_tree_all表 -->
         <task:scheduled ref="CmsImportCategoryTreeJob" method="run" cron="0 0/1 * * * ?"/>
