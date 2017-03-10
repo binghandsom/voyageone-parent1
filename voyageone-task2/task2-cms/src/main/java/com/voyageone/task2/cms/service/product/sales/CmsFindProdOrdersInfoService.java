@@ -3,8 +3,10 @@ package com.voyageone.task2.cms.service.product.sales;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.beans.OrderChannelBean;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.ChannelService;
@@ -14,6 +16,7 @@ import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -72,7 +75,6 @@ public class CmsFindProdOrdersInfoService extends BaseCronTaskService {
         // 统计code销售数据的查询条件
         JongoQuery qryObj = new JongoQuery();
         qryObj.setProjection("{'common.fields.code':1,'common.skus.skuCode':1,'platforms':1}");
-        qryObj.setLimit(PAGE_LIMIT);
         int prodIdx;
 
         // 统计cart数据的查询条件
@@ -113,82 +115,102 @@ public class CmsFindProdOrdersInfoService extends BaseCronTaskService {
             if (prodCodeSet == null || prodCodeSet.isEmpty()) {
                 continue;
             }
+            List<String> codeList = new ArrayList<>();
+            codeList.addAll(prodCodeSet);
+            $info(String.format("共有%d的code产生销售过",codeList.size()));
+
             // 针对各店铺产品进行统计
             prodIdx = 0;
             // 统计code级销售数据
             List<CmsBtProductModel> prodList;
             List<Runnable> runnableList = new ArrayList<>();
-            do {
-                qryObj.setSkip(prodIdx * PAGE_LIMIT);
-                prodIdx++;
+            List<List<String>> codeListSplit = CommonUtil.splitList(codeList,100);
+            for(List<String> codes: codeListSplit){
+                qryObj.setQuery(new Criteria("common.fields.code").in(codes));
                 prodList = cmsBtProductDao.select(qryObj, channelId);
                 if (prodList == null || prodList.isEmpty()) {
                     $warn("CmsFindProdOrdersInfoService 该店铺无产品数据！ + channel_id=" + channelId);
-                    break;
+                    continue;
                 }
-
                 // check product sales exist
                 List<CmsBtProductModel> prodListThead = new ArrayList<>();
-                for (CmsBtProductModel prodObj : prodList) {
-                    if (prodObj.getCommon() == null || prodObj.getCommon().getFields() == null) {
-                        $warn("CmsFindProdOrdersInfoService 产品数据不正确 channelId=%s, ObjId=%s", channelId, prodObj.get_id());
-                        continue;
-                    }
-                    String productCode = StringUtils.trimToNull(prodObj.getCommon().getFields().getCode());
-                    if (productCode == null) {
-                        $warn("CmsFindProdOrdersInfoService 产品数据不正确 没有code channelId=%s, ObjId=%s", channelId, prodObj.get_id());
-                        continue;
-                    }
-                    if (prodCodeSet.contains(productCode)) {
-                        prodListThead.add(prodObj);
-                    }
-                }
+                prodListThead.addAll(prodList);
                 // add thread
                 runnableList.add(() -> cmsSumProdOrdersService.sumProdOrders(prodListThead, channelId, begDate1, begDate2, endDate, getTaskName()));
-            } while (prodList.size() == PAGE_LIMIT);
+            }
+//            do {
+//                qryObj.setSkip(prodIdx * PAGE_LIMIT);
+//                prodIdx++;
+//                prodList = cmsBtProductDao.select(qryObj, channelId);
+//                if (prodList == null || prodList.isEmpty()) {
+//                    $warn("CmsFindProdOrdersInfoService 该店铺无产品数据！ + channel_id=" + channelId);
+//                    break;
+//                }
+//
+//                // check product sales exist
+//                List<CmsBtProductModel> prodListThead = new ArrayList<>();
+//                for (CmsBtProductModel prodObj : prodList) {
+//                    if (prodObj.getCommon() == null || prodObj.getCommon().getFields() == null) {
+//                        $warn("CmsFindProdOrdersInfoService 产品数据不正确 channelId=%s, ObjId=%s", channelId, prodObj.get_id());
+//                        continue;
+//                    }
+//                    String productCode = StringUtils.trimToNull(prodObj.getCommon().getFields().getCode());
+//                    if (productCode == null) {
+//                        $warn("CmsFindProdOrdersInfoService 产品数据不正确 没有code channelId=%s, ObjId=%s", channelId, prodObj.get_id());
+//                        continue;
+//                    }
+//                    if (prodCodeSet.contains(productCode)) {
+//                        prodListThead.add(prodObj);
+//                    }
+//                }
+//                // add thread
+//                runnableList.add(() -> cmsSumProdOrdersService.sumProdOrders(prodListThead, channelId, begDate1, begDate2, endDate, getTaskName()));
+//            } while (prodList.size() == PAGE_LIMIT);
             // 运行线程
-            runWithThreadPool(runnableList, taskControlList);
+            if(!ListUtils.isNull(runnableList)) {
+                runWithThreadPool(runnableList, taskControlList);
+            }
             $info(String.format("sumProdOrders end msg channel_id:%s", channelId));
 
-            // 统计group级的销售数据
-            // 先统计各个cart的数据
-            List<CmsBtProductGroupModel> getList;
-            grpIdx = 0;
-            List<Runnable> runnableList2 = new ArrayList<>();
-            do {
-                grpqryObj.setSkip(grpIdx * PAGE_LIMIT);
-                grpIdx++;
-                getList = cmsBtProductGroupDao.select(grpqryObj, channelId);
-                if (getList == null || getList.isEmpty()) {
-                    $warn(String.format("CmsFindProdOrdersInfoService(统计各个cart) 该店铺无group数据！ channel_id=%s", channelId));
-                    break;
-                }
-
-                final List<CmsBtProductGroupModel> finalGrpList = getList;
-                runnableList2.add(() -> cmsSumGroupOrdersService.sumPerCartGroupOrders(finalGrpList, channelId, begDate1, begDate2, endDate, getTaskName()));
-            } while (getList.size() == PAGE_LIMIT);
-            // 运行线程
-            runWithThreadPool(runnableList2, taskControlList);
-            $info(String.format("sumPerCartGroupOrders end msg channel_id:%s", channelId));
-
-            // 再统计所有cart的数据
-            grpIdx = 0;
-            List<Runnable> runnableList3 = new ArrayList<>();
-            do {
-                grpqryObj2.setSkip(grpIdx * PAGE_LIMIT);
-                grpIdx++;
-                getList = cmsBtProductGroupDao.select(grpqryObj2, channelId);
-                if (getList == null || getList.isEmpty()) {
-                    $warn(String.format("CmsFindProdOrdersInfoService(统计所有cart) 该店铺无group数据！ channel_id=%s", channelId));
-                    break;
-                }
-
-                final List<CmsBtProductGroupModel> finalGrpList = getList;
-                runnableList3.add(() -> cmsSumGroupOrdersService.sumAllCartGroupOrders(finalGrpList, channelId, begDate1, begDate2, endDate, getTaskName()));
-            } while (getList.size() == PAGE_LIMIT);
-            // 运行线程
-            runWithThreadPool(runnableList3, taskControlList);
-            $info(String.format("sumAllCartGroupOrders end msg channel_id:%s", channelId));
+//            // 统计group级的销售数据
+//            // 先统计各个cart的数据
+//            List<CmsBtProductGroupModel> getList;
+//            grpIdx = 0;
+//            List<Runnable> runnableList2 = new ArrayList<>();
+//            do {
+//                grpqryObj.setSkip(grpIdx * PAGE_LIMIT);
+//                grpIdx++;
+//                getList = cmsBtProductGroupDao.select(grpqryObj, channelId);
+//                if (getList == null || getList.isEmpty()) {
+//                    $warn(String.format("CmsFindProdOrdersInfoService(统计各个cart) 该店铺无group数据！ channel_id=%s", channelId));
+//                    break;
+//                }
+//
+//                final List<CmsBtProductGroupModel> finalGrpList = getList;
+//                runnableList2.add(() -> cmsSumGroupOrdersService.sumPerCartGroupOrders(finalGrpList, channelId, begDate1, begDate2, endDate, getTaskName()));
+//            } while (getList.size() == PAGE_LIMIT);
+//            // 运行线程
+//            runWithThreadPool(runnableList2, taskControlList);
+//            $info(String.format("sumPerCartGroupOrders end msg channel_id:%s", channelId));
+//
+//            // 再统计所有cart的数据
+//            grpIdx = 0;
+//            List<Runnable> runnableList3 = new ArrayList<>();
+//            do {
+//                grpqryObj2.setSkip(grpIdx * PAGE_LIMIT);
+//                grpIdx++;
+//                getList = cmsBtProductGroupDao.select(grpqryObj2, channelId);
+//                if (getList == null || getList.isEmpty()) {
+//                    $warn(String.format("CmsFindProdOrdersInfoService(统计所有cart) 该店铺无group数据！ channel_id=%s", channelId));
+//                    break;
+//                }
+//
+//                final List<CmsBtProductGroupModel> finalGrpList = getList;
+//                runnableList3.add(() -> cmsSumGroupOrdersService.sumAllCartGroupOrders(finalGrpList, channelId, begDate1, begDate2, endDate, getTaskName()));
+//            } while (getList.size() == PAGE_LIMIT);
+//            // 运行线程
+//            runWithThreadPool(runnableList3, taskControlList);
+//            $info(String.format("sumAllCartGroupOrders end msg channel_id:%s", channelId));
 
             chnObj.setModifier(Long.toString((System.currentTimeMillis() - staTime) / 1000));
             list2.add(chnObj);

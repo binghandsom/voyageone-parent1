@@ -226,14 +226,14 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
             // 批量更新
             BulkWriteResult rs = bulkList.addBulkModel(updModel);
             if (rs != null) {
-                $debug(String.format("更新product 店铺%s 执行结果1 %s", channelId, rs.toString()));
+                $info(String.format("更新product 店铺%s 执行结果1 %s", channelId, rs.toString()));
             }
         } // end for product list
 
         // 批量更新
         BulkWriteResult rs = bulkList.execute();
         if (rs != null) {
-            $debug(String.format("更新product 店铺%s 执行结果2 %s", channelId, rs.toString()));
+            $info(String.format("更新product 店铺%s 执行结果2 %s", channelId, rs.toString()));
         }
     }
     
