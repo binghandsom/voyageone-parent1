@@ -73,15 +73,6 @@
                 </div>
             </div>
             <div class="form-group">
-                <div class="col-sm-3 text-right">
-                    <label class="control-label">团购价</label>
-                </div>
-                <div class="col-sm-1 text-center m-t-xs"> = </div>
-                <div class="col-sm-5 m-t-xs">
-                    {{vm._typeText}}&nbsp;&nbsp;{{vm._opeText}}&nbsp;&nbsp;{{vm.priceValue}}
-                </div>
-            </div>
-            <div class="form-group">
                 <div style="margin-left:60px;margin-top:15px">
                     <label class="checkbox-inline c-radio">
                         <input type="radio" value="1" ng-model="vm.skuUpdType"><span class="fa fa-check"></span> 商品内，SKU统一最高价
@@ -92,6 +83,15 @@
                     <label class="checkbox-inline c-radio">
                         <input type="radio" value="3" ng-model="vm.skuUpdType"><span class="fa fa-check"></span> 商品内，SKU价格不统一
                     </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-3 text-right">
+                    <label class="control-label">团购价</label>
+                </div>
+                <div class="col-sm-1 text-center m-t-xs"> = </div>
+                <div class="col-sm-5 m-t-xs">
+                    {{vm._typeText}}&nbsp;&nbsp;{{vm._opeText}}&nbsp;&nbsp;{{vm.priceValue}}
                 </div>
             </div>
         </form>
