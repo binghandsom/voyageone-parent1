@@ -6,6 +6,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.CommonConfigNotFoundException;
+import com.voyageone.category.match.*;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -163,6 +164,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
     private Map<String, List<ConditionPropValueModel>> channelConditionConfig;
 
+    @Autowired
+    private Searcher searcher;
+
 
     /**
      * 按渠道进行设置
@@ -227,9 +231,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         List<TypeChannelBean> typeChannelBeanListApprove = null;
         // 允许展示的cart列表
         List<TypeChannelBean> typeChannelBeanListDisplay = null;
-
-        // 主类目黑名单
-        List<String> categoryBlacks = new ArrayList<>();
 
         // 价格阈值 超过该值的商品不能导入主数据
         Double priceThreshold = null;
@@ -407,14 +408,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             }
             // -----------------------------------------------------------------------------
 
-            // 主类目不导入的黑名单
-            List<CmsChannelConfigBean> categoryBlacklist = CmsChannelConfigs.getConfigBeans("000",
-                    CmsConstants.ChannelConfig.CATEGORY_BLACKLIST,"0");
-
-            if (!ListUtils.isNull(categoryBlacklist)) {
-                categoryBlacks = categoryBlacklist.stream().map(CmsChannelConfigBean::getConfigValue1).collect(Collectors.toList());
-            }
-
+            //
             CmsChannelConfigBean feedMastThreshold = CmsChannelConfigs.getConfigBeanNoCode(channelId,
                     CmsConstants.ChannelConfig.FEED_MAST_THRESHOLD);
 
@@ -961,7 +955,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 if (blnProductExist) {
                     // 修改商品数据
                     // 一般只改改价格神马的
-//                    cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     if (feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())) {
                         cmsProduct.getCommon().getFields().setProductNameEn(feed.getName());
@@ -1008,6 +1001,11 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // TODO: 没有设置的fields里的内容, 不会被清除? 这个应该是在共通里做掉的吧, 要是共通里不做的话就要自己写了
 
                     // 清除一些batch的标记 // TODO: 梁兄啊, batchField的更新没有放到product更新里, 暂时自己写一个用, 这里暂时注释掉
+
+                    // 计算主类目
+                    if(usjoi) {
+                        doSetMainCategory(cmsProduct.getCommon(), feed.getCategory());
+                    }
 
                     // 更新价格相关项目
                     Integer chg = doSetPrice(feed, cmsProduct);
@@ -1081,6 +1079,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // tom 20160510 追加 END
 
                     platFromAttributeCopyFromMainProduct(cmsProduct);
+
+                    // 计算主类目
+                    if(usjoi) {
+                        doSetMainCategory(cmsProduct.getCommon(), feed.getCategory());
+                    }
+
                     // 更新价格相关项目
                     doSetPrice(feed, cmsProduct);
                     $debug("doSetPrice:" + (System.currentTimeMillis() - startTime));
@@ -1181,11 +1185,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         }
 
         private void checkProduct(CmsBtProductModel cmsProduct) {
-            if (!StringUtil.isEmpty(cmsProduct.getCommonNotNull().getCatPath())) {
-                if (categoryBlacks.stream().anyMatch(cat -> cmsProduct.getCommonNotNull().getCatPath().indexOf(cat) == 0)) {
-                    throw new BusinessException("主类目属于黑名单不能导入CMS：" + cmsProduct.getCommonNotNull().getCatPath());
-                }
-            }
 
             if (priceThreshold != null) {
                 if (cmsProduct.getCommon().getSkus().stream().anyMatch(sku -> sku.getPriceRetail().compareTo(priceThreshold) > 0)) {
@@ -3290,6 +3289,143 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     sellerCatList.add(sellerCatFromDict);
                 }
             }
+        }
+
+        protected void doSetMainCategory(CmsBtProductModel_Common prodCommon, String feedCategoryPath) {
+            if (prodCommon == null || StringUtils.isEmpty(feedCategoryPath)) return;
+
+            // 共通Field
+            CmsBtProductModel_Field prodCommonField = prodCommon.getFieldsNotNull();
+
+            // 调用Feed到主数据的匹配接口取得匹配度最高的主类目
+            long beginTime = System.currentTimeMillis();
+            MatchResult searchResult = getMainCatInfo(feedCategoryPath,
+                    !StringUtils.isEmpty(prodCommonField.getOrigProductType()) ? prodCommonField.getOrigProductType() : "",
+                    !StringUtils.isEmpty(prodCommonField.getOrigSizeType()) ? prodCommonField.getOrigSizeType() : "",
+                    prodCommonField.getProductNameEn(),
+                    prodCommonField.getBrand());
+            if (searchResult != null) {
+                $info(String.format("调用主类目匹配接口取得主类目和适用人群正常结束！[耗时:%s] [feedCategoryPath:%s] [productType:%s] " +
+                                "[sizeType:%s] [productNameEn:%s] [brand:%s]", (System.currentTimeMillis() - beginTime), feedCategoryPath,
+                        prodCommonField.getProductType(), prodCommonField.getSizeType(), prodCommonField.getProductNameEn(), prodCommonField.getBrand()));
+
+                    // 先备份原来的productType和sizeType
+                    // feed原始产品分类
+                if (StringUtils.isEmpty(prodCommonField.getOrigProductType())
+                        && !StringUtils.isEmpty(prodCommonField.getProductType())) {
+                    prodCommonField.setOrigProductType(prodCommonField.getProductType());
+                 }
+                // feed原始适合人群
+                if (StringUtils.isEmpty(prodCommonField.getOrigSizeType())
+                        && !StringUtils.isEmpty(prodCommonField.getSizeType())) {
+                    prodCommonField.setOrigSizeType(prodCommonField.getSizeType());
+                }
+
+                // 主类目path(中文)
+                if (!StringUtils.isEmpty(searchResult.getCnName()))   prodCommon.setCatPath(searchResult.getCnName());
+                // 主类目path(英文)
+                if (!StringUtils.isEmpty(searchResult.getEnName()))   prodCommon.setCatPathEn(searchResult.getEnName());
+                // 主类目id(就是主类目path中文的MD5码)
+                if (!StringUtils.isEmpty(searchResult.getCnName())) {
+                    prodCommon.setCatId(MD5.getMD5(searchResult.getCnName()));
+                    prodCommonField.setCategorySetTime(DateTimeUtil.getNow());
+                    prodCommonField.setCategorySetter(getTaskName());
+                }
+                // 更新主类目设置状态
+                if (!StringUtils.isEmpty(prodCommon.getCatId())) {
+                    prodCommonField.setCategoryStatus("1");
+                } else {
+                    prodCommonField.setCategoryStatus("0");
+                }
+                // 产品分类(英文)
+                if (!StringUtils.isEmpty(searchResult.getProductTypeEn()))   prodCommonField.setProductType(searchResult.getProductTypeEn().toLowerCase());
+                // 产品分类(中文)
+                if (!StringUtils.isEmpty(searchResult.getProductTypeCn()))   prodCommonField.setProductTypeCn(searchResult.getProductTypeCn());
+                // 适合人群(英文)
+                if (!StringUtils.isEmpty(searchResult.getSizeTypeEn()))      prodCommonField.setSizeType(searchResult.getSizeTypeEn().toLowerCase());
+                // 适合人群(中文)
+                if (!StringUtils.isEmpty(searchResult.getSizeTypeCn()))      prodCommonField.setSizeTypeCn(searchResult.getSizeTypeCn());
+                // TODO 2016/12/30暂时这样更新，以后要改
+                if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter()) || StringUtil.isEmpty(prodCommonField.getHsCodePrivate())) {
+                    // 税号个人
+                    if (!StringUtils.isEmpty(searchResult.getTaxPersonal())) {
+                        prodCommonField.setHsCodePrivate(searchResult.getTaxPersonal());
+                        prodCommonField.setHsCodeSetTime(DateTimeUtil.getNow());
+                        prodCommonField.setHsCodeSetter(getTaskName());
+                    }
+                    // 更新税号设置状态
+                    if (!StringUtils.isEmpty(prodCommonField.getHsCodePrivate())) {
+                        prodCommonField.setHsCodeStatus("1");
+                    } else {
+                        prodCommonField.setHsCodeStatus("0");
+                    }
+                }
+                // 税号跨境申报（10位）
+                if (!StringUtils.isEmpty(searchResult.getTaxDeclare()))      prodCommonField.setHsCodeCross(searchResult.getTaxDeclare());
+
+                // 商品中文名称(如果已翻译，则不设置)
+                // 临时特殊处理 017的名称不根据主类目自动翻译,如果后续有这个需求再改正
+                if ("0".equals(prodCommonField.getTranslateStatus())) {
+                    if (!StringUtils.isEmpty(searchResult.getCnName())) {
+                        // 主类目叶子级中文名称（"服饰>服饰配件>钱包卡包钥匙包>护照夹" -> "护照夹"）
+                        String leafCategoryCnName = searchResult.getCnName().substring(searchResult.getCnName().lastIndexOf(">") + 1,
+                                searchResult.getCnName().length());
+                    }
+                }
+            }
+        }
+
+        /**
+         * 调用Feed到主数据的匹配接口匹配主类目,返回匹配度最高的第一个查询结果
+         *
+         * @param feedCategoryPath feed类目Path
+         * @param productType 产品分类
+         * @param sizeType 适合人群(英文)
+         * @param productNameEn 产品名称（英文）
+         * @param brand 产品品牌
+         * @return SearchResult 匹配度最高的第一个查询结果
+         */
+        public MatchResult getMainCatInfo(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
+            // 取得查询条件
+            FeedQuery query = getFeedQuery(feedCategoryPath, productType, sizeType, productNameEn, brand);
+
+            // 调用主类目匹配接口，取得匹配度最高的一个主类目和sizeType
+            MatchResult searchResult = searcher.search(query, false);
+            if (searchResult == null) {
+                String errMsg = String.format("调用Feed到主数据的匹配程序匹配主类目失败！[feedCategoryPath:%s] [productType:%s] " +
+                        "[sizeType:%s] [productNameEn:%s] [brand:%s]", feedCategoryPath, productType, sizeType, productNameEn, brand);
+                $error(errMsg);
+                return null;
+            }
+
+            // 取得匹配度最高的主类目
+            return searchResult;
+        }
+
+        /**
+         * 取得查询条件
+         *
+         * @param feedCategoryPath feed类目Path
+         * @param productType 产品分类
+         * @param sizeType 适合人群(英文)
+         * @param productNameEn 产品名称（英文）
+         * @param brand 产品品牌
+         * @return FeedQuer 查询条件
+         */
+        private FeedQuery getFeedQuery(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
+            // 调用Feed到主数据的匹配程序匹配主类目
+            StopWordCleaner cleaner = new StopWordCleaner(StopWordCleaner.STOPWORD_LIST);
+            // 子店feed类目path分隔符(由于导入feedInfo表时全部替换成用"-"来分隔了，所以这里写固定值就可以了)
+            List<String> categoryPathSplit = new ArrayList<>();
+            categoryPathSplit.add("-");
+            Tokenizer tokenizer = new Tokenizer(categoryPathSplit);
+
+            FeedQuery query = new FeedQuery(feedCategoryPath, cleaner, tokenizer);
+            query.setProductType(productType);
+            query.setSizeType(sizeType);
+            query.setProductName(productNameEn, brand);
+
+            return query;
         }
     }
 
