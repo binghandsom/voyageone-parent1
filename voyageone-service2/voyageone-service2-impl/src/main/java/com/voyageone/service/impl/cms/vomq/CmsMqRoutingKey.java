@@ -88,6 +88,9 @@ public class CmsMqRoutingKey {
     // 聚美活动价格同步到聚美商城价格
     public static final String CMS_JM_MALL_PROMOTION_PRICE_SYNC = "VOCmsJmMallPromotionPriceSyncQueue";
 
+    // feed数据导入接口
+    public static final String CMS_FEED_IMPORT_MQ_JOB = "CmsFeedImportMQJobQueue";
+
 
 
     // 未整理的业务内容
@@ -160,8 +163,6 @@ public class CmsMqRoutingKey {
      * @since 2.10.0
      */
     public static final String CMS_TASK_CatelogySaleAttrJdJob = "voyageone_cms_task_CatelogySaleAttrJdJobService_queue";
-
-    public static final String CMS_FEED_IMPORT_MQ_JOB = "CmsFeedImportMQJob_queue";
 
 
 
