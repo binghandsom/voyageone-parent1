@@ -1562,4 +1562,23 @@ public class ProductService extends BaseService {
         BulkJongoUpdateList bulkList = new BulkJongoUpdateList(10, cmsBtProductGroupDao, channelId);
         return bulkList;
     }
+    /**
+     * 取得商品对应的平台状态
+     */
+    public String getPlatformStatus(String prodCode, String channelId, int cartId) {
+        JongoQuery queryObj = new JongoQuery();
+        queryObj.setQuery("{'common.fields.code':#}");
+        queryObj.setParameters(prodCode);
+        queryObj.setProjectionExt("platforms.P" + cartId + ".pStatus");
+        CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
+        if (prodObj == null) {
+            $warn("CmsPlatformActiveLogService 找不到商品 channelId=%s，code=%s", channelId, prodCode);
+            return null;
+        }
+        CmsConstants.PlatformStatus pStatus = prodObj.getPlatformNotNull(cartId).getpStatus();
+        if (pStatus != null) {
+            return pStatus.name();
+        }
+        return null;
+    }
 }

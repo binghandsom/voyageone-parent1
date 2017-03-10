@@ -1,10 +1,7 @@
 package com.voyageone.web2.cms.views.product;
 
-import com.jd.open.api.sdk.response.ware.WareUpdateDelistingResponse;
-import com.jd.open.api.sdk.response.ware.WareUpdateListingResponse;
 import com.mongodb.BulkWriteResult;
-import com.taobao.api.response.ItemUpdateDelistingResponse;
-import com.taobao.api.response.ItemUpdateListingResponse;
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
@@ -22,24 +19,23 @@ import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
-import com.voyageone.common.util.*;
-import com.voyageone.components.cnn.enums.CnnConstants;
-import com.voyageone.components.cnn.service.CnnWareService;
-import com.voyageone.components.dt.enums.DtConstants;
-import com.voyageone.components.dt.service.DtWareService;
-import com.voyageone.components.jd.service.JdSaleService;
-import com.voyageone.components.jumei.reponse.HtMallStatusUpdateBatchResponse;
+import com.voyageone.common.util.ConvertUtil;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.service.JumeiSaleService;
-import com.voyageone.components.tmall.service.TbSaleService;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.*;
 import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
 import com.voyageone.service.bean.cms.product.DelistingParameter;
+import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
+import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
+import com.voyageone.service.impl.cms.product.CmsBtCombinedProductService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductPlatformService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -82,15 +78,13 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     @Autowired
     private ProductPlatformService productPlatformService;
     @Autowired
-    private TbSaleService tbSaleService;
-    @Autowired
-    private JdSaleService jdSaleService;
-    @Autowired
     JumeiSaleService jmSaleService;
     @Autowired
-    private DtWareService dtWareService;
+    private CmsBtCombinedProductService cmsBtCombinedProductService;
     @Autowired
-    private CnnWareService cnnWareService;
+    private MongoSequenceService sequenceService;
+    @Autowired
+    private CmsBtPlatformActiveLogDao platformActiveLogDao;
 
     //设置isSale
     public void setCartSkuIsSale(SetCartSkuIsSaleParameter parameter, String channelId, String userName) {
@@ -98,16 +92,13 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, parameter.getProdId());
         CmsBtProductModel_Platform_Cart platform = cmsBtProduct.getPlatform(parameter.getCartId());
         if (parameter.getIsSale()) {
-            // 如果该已经approve，则插入上新work表
+            //如果该已经approve，则插入上新work表
             setCartSkuIsSale_True(parameter, cmsBtProduct, platform, userName);
-        } else {
-            if (!StringUtils.isEmpty(platform.getpNumIId())) {
-                //如果numiid存在则判断调用group下线，还是code下线 中同时清空pReallyStatus的值
+        } else if (!StringUtils.isEmpty(platform.getpNumIId())) {
+            //如果numiid存在则判断调用group下线，还是code下线 中同时清空pReallyStatus的值
+            platform.setpReallyStatus("");
+            setCartSkuIsSale_False(parameter, cmsBtProduct, platform, userName);
 
-                platform.setpReallyStatus("");
-                setCartSkuIsSale_False(parameter, cmsBtProduct, platform, userName);
-
-            }
         }
         platform.getSkus().forEach(f -> {
             f.setAttribute("isSale", parameter.getIsSale());
@@ -150,11 +141,6 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
     /**
      * 产品编辑一览页面, 修改价格后保存
-     *
-     * @param parameter
-     * @param channelId
-     * @param userName
-     * @throws Exception
      */
     public void saveCartSkuPrice(SaveCartSkuPriceParameter parameter, String channelId, String userName) throws BusinessException {
         Long productId = parameter.getProdId();
@@ -420,11 +406,6 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
     /**
      * 获取产品的基础数据给平台展示用
-     *
-     * @param channelId
-     * @param prodId
-     * @param cartId
-     * @return
      */
     public Map<String, Object> getProductMastData(String channelId, Long prodId, int cartId) {
         Map<String, Object> mastData = new HashMap<>();
@@ -479,7 +460,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         }
 
-        // TODO 取得Sku的库存
+        //TODO 取得Sku的库存
         String skuChannelId = StringUtils.isEmpty(cmsBtProduct.getOrgChannelId()) ? channelId : cmsBtProduct.getOrgChannelId();
         Map<String, Integer> skuInventoryList = productService.getProductSkuQty(skuChannelId, cmsBtProduct.getCommon().getFields().getCode());
         cmsBtProduct.getCommon().getSkus().forEach(cmsBtProductModel_sku -> cmsBtProductModel_sku.setQty(skuInventoryList.get(cmsBtProductModel_sku.getSkuCode()) == null ? 0 : skuInventoryList.get(cmsBtProductModel_sku.getSkuCode())));
@@ -489,12 +470,6 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
     /**
      * 平台类目变更
-     *
-     * @param channelId
-     * @param prodId
-     * @param cartId
-     * @param catId
-     * @return
      */
     public Map<String, Object> changePlatformCategory(String channelId, Long prodId, int cartId, String catId, String catPath, String language) {
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
@@ -538,13 +513,6 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
     /**
      * 产品编辑页面修改产品信息
-     *
-     * @param channelId
-     * @param prodId
-     * @param platform
-     * @param modifier
-     * @param blnSmartSx
-     * @return
      */
     public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier, Boolean blnSmartSx) {
 
@@ -574,8 +542,9 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         }
         if (blnSmartSx)
             modified = productPlatformService.updateProductPlatformWithSmartSx(channelId, prodId, platformModel, modifier, "产品编辑页-智能上新", true);
-        else
+        else {
             modified = productPlatformService.updateProductPlatformWithSx(channelId, prodId, platformModel, modifier, "产品编辑页-普通上新", true);
+        }
 
         if (isCatPathChg) {
             productService.resetProductAndGroupPlatformPid(channelId, platformModel.getCartId(), cmsBtProductModel.getCommon().getFields().getCode());
@@ -735,9 +704,6 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
     /**
      * 从共同属性mapping来的属性合并
-     *
-     * @param fieldMap
-     * @param valueMap
      */
     public void setDefaultValue(Map<String, Object> fieldMap, Map<String, Object> valueMap) {
         if (valueMap == null || valueMap.size() == 0) return;
@@ -759,14 +725,13 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
     /**
      * 产品上下架
-     *
-     * @param userBean
-     * @param params
      */
     public void upperLowerFrame(UserSessionBean userBean, Map<String, Object> params) throws Exception {
         Integer cartId = Integer.parseInt((String) params.get("cartId"));
         String productCode = (String) params.get("productCode");
         String pStatus = (String) params.get("pStatus");
+        // 取得batchNo
+        long batchNo = sequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PLATFORMACTIVEJOB_ID);
         //根据cartId和productCodes取得cmsBtProductGroup信息
         CmsBtProductGroupModel grpObj = productGroupService.selectProductGroupByCode(userBean.getSelChannelId(), productCode, cartId);
         // 根据cartId和channelId取得Shops信息
@@ -776,144 +741,22 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         }
         //调用api上架或者下架
         String numIId = grpObj.getNumIId();
+        //聚美特殊处理
+        if (PlatFormEnums.PlatForm.JM.getId().equals(shopProp.getPlatform_id())) {
+            numIId = grpObj.getPlatformMallId();
+        }
         // 天猫国际上下架
-        if (PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id())) {
-            if (CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)) {
-                // 上架
-                ItemUpdateListingResponse response = tbSaleService.doWareUpdateListing(shopProp, numIId);
-                if (response == null) {
-                    throw new BusinessException("商品上架失败");
-                } else {
-                    if (!StringUtils.isEmpty(response.getErrorCode())) {
-                        throw new BusinessException("商品上架失败");
-                    }
-                }
-            }
-            if (CmsConstants.PlatformActive.ToInStock.name().equals(pStatus)) {
-                // 下架
-                ItemUpdateDelistingResponse response = tbSaleService.doWareUpdateDelisting(shopProp, numIId);
-                if (response == null) {
-                    throw new BusinessException("商品下架失败");
-                } else {
-                    if (!StringUtils.isEmpty(response.getErrorCode())) {
-                        throw new BusinessException("商品下架失败");
-                    }
-                }
-            }
-        }
-        // 京东国际上下架
-        else if (PlatFormEnums.PlatForm.JD.getId().equals(shopProp.getPlatform_id())) {
-
-            if (CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)) {
-                // 上架
-                WareUpdateListingResponse response = jdSaleService.doWareUpdateListing(shopProp, numIId);
-                if (response == null) {
-                    throw new BusinessException("商品上架失败");
-                } else {
-                    if (!"0".equals(response.getCode())) {
-                        throw new BusinessException("商品上架失败");
-                    }
-                }
-            }
-            if (CmsConstants.PlatformActive.ToInStock.name().equals(pStatus)) {
-                // 下架
-                WareUpdateDelistingResponse response = jdSaleService.doWareUpdateDelisting(shopProp, numIId);
-                if (response == null) {
-                    throw new BusinessException("商品下架失败");
-                } else {
-                    if (!"0".equals(response.getCode())) {
-                        throw new BusinessException("商品下架失败");
-                    }
-                }
-            }
-        }
-
-        // 聚美上下架
-        else if (PlatFormEnums.PlatForm.JM.getId().equals(shopProp.getPlatform_id())) {
-
-            String mallId = grpObj.getPlatformMallId();
-
-            HtMallStatusUpdateBatchResponse response = null;
-            if (CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)) {
-                // 上架
-                response = jmSaleService.doWareUpdateListing(shopProp, mallId);
-            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(pStatus)) {
-                // 下架
-                response = jmSaleService.doWareUpdateDelisting(shopProp, mallId);
-            }
-            if (response == null) {
-                if(CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)){
-                    throw new BusinessException("商品上架失败");
-                }else{
-                    throw new BusinessException("商品下架失败");
-                }
-            } else {
-                if (!response.isSuccess()) {
-                    if(CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)){
-                        throw new BusinessException("商品上架失败");
-                    }else{
-                        throw new BusinessException("商品下架失败");
-                    }
-                }
-            }
-        }
-
-        // 分销上下架
-        else if (PlatFormEnums.PlatForm.DT.getId().equals(shopProp.getPlatform_id())) {
-
-            String result = "";
-            if (CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)) {
-                // 上架
-                result = dtWareService.onShelfProduct(shopProp, numIId);
-            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(pStatus)) {
-                // 下架
-                result = dtWareService.offShelfProduct(shopProp, numIId);
-            }
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(result)) {
-                Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
-                if (responseMap != null && responseMap.containsKey("data") && responseMap.get("data") != null) {
-                    Map<String, Object> resultMap = (Map<String, Object>) responseMap.get("data");
-                    if (!DtConstants.C_DT_RETURN_SUCCESS_OK.equals(resultMap.get("result"))) {
-                        if(CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)){
-                            throw new BusinessException("商品上架失败");
-                        }else{
-                            throw new BusinessException("商品下架失败");
-                        }
-                    }
-                }
-            }
-        }
-
-        // 独立官网
-        else if (PlatFormEnums.PlatForm.CNN.getId().equals(shopProp.getPlatform_id())) {
-            String result = "";
-            if (CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)) {
-                // 上架
-                result = cnnWareService.doWareUpdateListing(shopProp, Long.valueOf(numIId));
-            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(pStatus)) {
-                // 下架
-                result = cnnWareService.doWareUpdateDelisting(shopProp, Long.valueOf(numIId));
-            }
-            if (!com.voyageone.common.util.StringUtils.isEmpty(result)) {
-                Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
-                if (responseMap != null && responseMap.containsKey("code") && responseMap.get("code") != null) {
-                    if (CnnConstants.C_CNN_RETURN_SUCCESS_0 != (int) responseMap.get("code")) {
-                        if(CmsConstants.PlatformActive.ToOnSale.name().equals(pStatus)){
-                            throw new BusinessException("商品上架失败");
-                        }else{
-                            throw new BusinessException("商品下架失败");
-                        }
-                    }
-                }
-            }
-        } else {
-            throw new BusinessException("不正确的平台 cartId=%d", cartId);
+        String apiResult = cmsBtCombinedProductService.getUpperAndLowerRacksApiResult(numIId, shopProp, pStatus);
+        if (apiResult != null) {
+            throw new BusinessException(apiResult);
         }
         BulkWriteResult rs;
         //更新cms_bt_product表
         BulkJongoUpdateList productBulkList = productService.updateCmsBtProductInfo(userBean.getSelChannelId());
         for (String prodCode : grpObj.getProductCodes()) {
             productBulkList.addBulkJongo(updateCmsBtProductInfo(cartId, pStatus, userBean.getUserName(), prodCode));
+            //插入cms_bt_platform_active_log表
+            insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, userBean.getSelChannelId(), pStatus, grpObj, userBean.getUserName());
         }
         rs = productBulkList.execute();
         if (rs != null) {
@@ -954,4 +797,41 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         updObj.setUpdateParameters(pStatus, platformStatus, DateTimeUtil.getNow(), DateTimeUtil.getNowTimeStamp(), userName);
         return updObj;
     }
+
+    /**
+     * 根据参数插入cms_bt_platform_active_log表记录
+     */
+    private void insertCmsBtPlatformActiveLogModel(String prodCode, long batchNo, Integer cartId, String channelId
+            , String activeStatus, CmsBtProductGroupModel cmsBtProductGroupModel, String userName) {
+
+        CmsBtPlatformActiveLogModel model = new CmsBtPlatformActiveLogModel();
+        model.setBatchNo(batchNo);
+        model.setCartId(cartId);
+        model.setChannelId(channelId);
+        model.setActiveStatus(activeStatus);
+        model.setPlatformStatus(productService.getPlatformStatus(prodCode, channelId, cartId));
+        model.setComment("");
+        model.setGroupId(cmsBtProductGroupModel.getGroupId());
+        model.setMainProdCode(cmsBtProductGroupModel.getMainProductCode());
+        model.setProdCode(prodCode);
+        String numId;
+        if (CartEnums.Cart.JM.getId().equals(String.valueOf(cartId))) {
+            numId = cmsBtProductGroupModel.getPlatformMallId();
+        } else if (CartEnums.Cart.DT.getId().equals(String.valueOf(cartId))) {
+            // 如果是分销平台，numIId设置为商品code
+            numId = prodCode;
+        } else {
+            numId = cmsBtProductGroupModel.getNumIId();
+        }
+        model.setNumIId(numId);
+        model.setResult("");
+        model.setCreater(userName);
+        model.setCreated(DateTimeUtil.getNow());
+        model.setModified("");
+        model.setModifier("");
+        WriteResult rs = platformActiveLogDao.insert(model);
+        $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s, code=%s platformActiveLog保存结果=%s", cartId, channelId, prodCode, rs.toString());
+    }
+
+
 }
