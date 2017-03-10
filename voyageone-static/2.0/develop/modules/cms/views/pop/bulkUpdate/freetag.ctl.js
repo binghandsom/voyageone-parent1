@@ -15,6 +15,8 @@ define([
             this.$uibModalInstance = $uibModalInstance;
             this.alert = alert;
             this.searchName = [];
+            this.orgDispMap = {};           // 半选状态
+            this.orgChkStsMap = {};         // 全选状态
             this.vm = {
                 selectedNode: {},
                 trees: null
@@ -41,22 +43,10 @@ define([
                 /**设置自由标签时，有初始勾选值*/
                 if (context.orgFlg == 2) {
                     /**勾选状态*/
-                    if (!res.data.orgChkStsMap) {
-                        self.orgChkStsMap = {};
-                        self._orgChkStsMap = {};
-                    } else {
-                        self.orgChkStsMap = res.data.orgChkStsMap;
-                        self._orgChkStsMap = angular.copy(self.orgChkStsMap);
-                    }
-
+                    self.orgChkStsMap = res.data.orgChkStsMap;
                     /**半选状态*/
-                    if (!res.data.orgDispMap) {
-                        self.orgDispMap = {};
-                        self._orgDispMap = {};
-                    } else {
-                        self.orgDispMap = res.data.orgDispMap;
-                        self._orgDispMap = angular.copy(self.orgDispMap);
-                    }
+                    self.orgDispMap = res.data.orgDispMap;
+
                 }
 
                 vm.trees = [];
@@ -118,14 +108,10 @@ define([
 
         popFreeTagCtl.prototype.save = function () {
             var self = this,
-                map = flatTrees(self.orgTagTree),
+                mapById = flatTrees(self.orgTagTree, null, 'id'),
+                mapByTagPath = flatTrees(self.orgTagTree, null, 'tagPath'),
                 selectdTagList = [],
-                orgDispTagList = [],
-                selFlagArr = _.map(self.vm.selectedNode, function (value, key) {
-                    return {selectedId: key, selected: value};
-                }).filter(function (item) {
-                    return item.selected;
-                });
+                orgDispTagList = [];
 
             /**当是高级检索，设置自由标签*/
             if (self.context.orgFlg == 2) {
@@ -136,13 +122,34 @@ define([
                 }
             }
 
-            selFlagArr.forEach(function (item) {
-                var selTagList = map[item.selectedId];
-                selectdTagList.push({
-                    "id": selTagList.id,
-                    "tagPathName": selTagList.tagPathName,
-                    "tagPath": selTagList.tagPath
-                });
+            /**遍历选中的*/
+            _.map(self.vm.selectedNode, function (value, key) {
+                if (value) {
+                    var selTagList = mapById[key];
+                    selectdTagList.push({
+                        "id": selTagList.id,
+                        "tagPathName": selTagList.tagPathName,
+                        "tagPath": selTagList.tagPath
+                    });
+                }
+            });
+
+            /**合并默认选中的节点 , 排除重复项*/
+            _.map(self.orgChkStsMap, function (value, key) {
+                if (value) {
+                    var _obj = mapByTagPath[key],
+                        flag = _.some(selectdTagList, function (item) {
+                            return item.id == _obj.id;
+                        });
+
+                    if (!flag) {
+                        selectdTagList.push({
+                            "id": _obj.id,
+                            "tagPathName": _obj.tagPathName,
+                            "tagPath": _obj.tagPath
+                        });
+                    }
+                }
             });
 
             self.$uibModalInstance.close({
@@ -157,12 +164,12 @@ define([
 
     })());
 
-    function flatTrees(categories, parent) {
+    function flatTrees(categories, parent, attrName) {
         return categories.reduce(function (map, curr) {
             curr.parent = parent;
-            map[curr.id] = curr;
+            map[curr[attrName]] = curr;
             if (curr.children && curr.children.length)
-                map = angular.extend(map, flatTrees(curr.children, curr));
+                map = angular.extend(map, flatTrees(curr.children, curr, attrName));
             return map;
         }, {});
     }
