@@ -1489,7 +1489,11 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                         .findFirst()
                         .get();
                 // 尺寸
-                saleProp.put("规格", mergedSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
+                String size = mergedSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
+                if (!StringUtils.isEmpty(size)) {
+                    size = size.replaceAll(",", "，");
+                }
+                saleProp.put("规格", size);
                 // 追加销售属性
                 if (type == 0) { // 只有在type是0的场合（有多个颜色尺码的场合）才需要sale_prop这个属性
                     skuMap.put("sale_prop", saleProp);
