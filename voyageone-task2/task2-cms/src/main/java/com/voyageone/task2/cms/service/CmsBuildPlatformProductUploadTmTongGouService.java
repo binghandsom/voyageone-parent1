@@ -1492,6 +1492,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 String size = mergedSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
                 if (!StringUtils.isEmpty(size)) {
                     size = size.replaceAll(",", "，");
+                    size = size.replaceAll(":", "：");
+                    size = size.replaceAll(";", "；");
+                    size = size.replaceAll("&", "＆");
+                    size = size.replaceAll("/", "／");
                 }
                 saleProp.put("规格", size);
                 // 追加销售属性
