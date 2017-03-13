@@ -83,6 +83,8 @@
         <!-- OverStock feed 导入 cms2 -->
         <task:scheduled ref="CmsOverStockAnalysisJob" method="run" cron="20 0/5 * * * ?"/>
 
+        <task:scheduled ref="OverStockTempJob" method="run" cron="20 0/1 * * * ?"/>
+
         <!-- OverStock price 导入 cms2 -->
         <task:scheduled ref="OverStockPriceAnalysisJob" method="run" cron="13 0/2 * * * ?"/>
 
