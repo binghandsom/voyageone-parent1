@@ -633,7 +633,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             }
 
                             // 产品名称中文(common.fields.originalTitleCn)
-                            if (StringUtil.isEmpty(prCommonFields.getOriginalTitleCn())
+                            if ("0".equals(prCommonFields.getTranslateStatus())
                                     && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn())) {
                                 prCommonFields.setOriginalTitleCn(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn());
                             }
@@ -675,7 +675,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             }
 
                             // 颜色/口味/香型等(common.fields.color)
-                            if (StringUtil.isEmpty(prCommonFields.getColor())) {
+                            if ("0".equals(prCommonFields.getTranslateStatus())) {
                                 if (!StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getColor())) {
                                     // 优先使用子店的color字段
                                     prCommonFields.setColor(productModel.getCommonNotNull().getFieldsNotNull().getColor());
