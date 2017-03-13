@@ -28,6 +28,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.BusinessLogService;
+import com.voyageone.service.impl.cms.CmsBtTranslateService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.CmsBtFeedImportSizeService;
 import com.voyageone.service.impl.cms.prices.PlatformPriceService;
@@ -40,6 +41,7 @@ import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -111,6 +113,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
     @Autowired
     private PlatformPriceService platformPriceService;
+
+    @Autowired
+    private CmsBtTranslateService cmsBtTranslateService;
 
     // 每个channel的子店->USJOI主店导入最大件数
     private final static int UPLOAD_TO_USJOI_MAX_500 = 500;
@@ -476,6 +481,11 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
                     // 更新价格相关项目(根据主店配置的税号，公式等计算主店产品的SKU人民币价格)
                     doSetPrice(productModel);
+
+                    if(!StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff()) && StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getColor())){
+                        String color = cmsBtTranslateService.translate("928", CmsBtCustomPropModel.CustomPropType.Common.getValue(), "com_color", productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff());
+                        if(!StringUtil.isEmpty(color)) productModel.getCommonNotNull().getFieldsNotNull().setColor(color);
+                    }
 
                     productService.createProduct(usJoiChannelId, productModel, sxWorkLoadBean.getModifier());
 
@@ -1064,6 +1074,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
                         // 更新产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
                         // productService.updateProduct(channelId, requestModel);
+                        if(!StringUtil.isEmpty(pr.getCommonNotNull().getFieldsNotNull().getCodeDiff()) && StringUtil.isEmpty(pr.getCommonNotNull().getFieldsNotNull().getColor())){
+                            String color = cmsBtTranslateService.translate("928", CmsBtCustomPropModel.CustomPropType.Common.getValue(), "com_color", pr.getCommonNotNull().getFieldsNotNull().getCodeDiff());
+                            if(!StringUtil.isEmpty(color)) pr.getCommonNotNull().getFieldsNotNull().setColor(color);
+                        }
                         int updCnt = productService.updateProductFeedToMaster(usJoiChannelId, pr, getTaskName(), "子店->USJOI主店导入");
                         if (updCnt == 0) {
                             // 有出错, 跳过

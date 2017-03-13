@@ -434,7 +434,7 @@ define([
             function _openAddPromotion(cartId, selList, context) {
                 openAddToPromotionFnc(context.promotion, selList, context).then(function () {
                     searchAdvanceService2.clearSelList();
-                    search();
+                    $scope.search();
                 })
             }
         }
@@ -794,7 +794,7 @@ define([
                             $searchAdvanceService2.addFreeTag(data).then(function () {
                                 notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
                                 searchAdvanceService2.clearSelList();
-                                search();
+                                $scope.search();
                             })
                         });
                 });
@@ -1315,7 +1315,7 @@ define([
                             "pCatId": data.selected.catId
                         }).then(function () {
                             notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                            search();
+                            $scope.search();
                         });
                     });
 

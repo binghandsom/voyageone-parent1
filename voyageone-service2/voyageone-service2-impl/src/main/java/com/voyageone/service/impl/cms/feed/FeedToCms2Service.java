@@ -10,9 +10,7 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
-import com.voyageone.common.configs.VmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
-import com.voyageone.common.configs.beans.VmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
@@ -20,28 +18,20 @@ import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
-import com.voyageone.service.impl.cms.CmsBtCustomPropService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
-import com.voyageone.service.impl.wms.ClientInventoryService;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.model.cms.CmsMtChannelValuesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.voyageone.common.CmsConstants.FeedProductUpdateType;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -72,6 +62,9 @@ public class FeedToCms2Service extends BaseService {
 
     @Autowired
     private Searcher searcher;
+
+    @Autowired
+    private PriceService priceService;
 
 
     public boolean chkCategoryPathValid(String categoryPath) {
@@ -210,6 +203,9 @@ public class FeedToCms2Service extends BaseService {
                 // 产品数据合法性检查
                 checkProduct(product);
 
+                // 计算人民币价格
+                priceService.setFeedPrice(product);
+
                 feedInfoService.updateFeedInfo(product);
 
                 brandList.add(product.getBrand());
@@ -230,6 +226,7 @@ public class FeedToCms2Service extends BaseService {
                 e.printStackTrace();
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
                 $error(e.getMessage(), e);
+                product.setUpdMessage(e.getMessage());
                 failProduct.add(product);
             }
         }
@@ -480,6 +477,7 @@ public class FeedToCms2Service extends BaseService {
         Map<String, Object> d1 = JacksonUtil.bean2Map(model1);
         Map<String, Object> d2 = JacksonUtil.bean2Map(model2);
         CmsChannelConfigBean isImportFeedTypeConfig = CmsChannelConfigs.getConfigBeanNoCode(model1.getChannelId(), CmsConstants.ChannelConfig.AUTO_SET_FEED_IMPORT_FLG);
+        if(isImportFeedTypeConfig == null) return false;
         if("2".equalsIgnoreCase(isImportFeedTypeConfig.getConfigValue2())){
             return true;
         }else if("1".equalsIgnoreCase(isImportFeedTypeConfig.getConfigValue2()) && StringUtil.isEmpty(isImportFeedTypeConfig.getConfigValue3())){

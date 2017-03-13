@@ -58,48 +58,48 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <label class="col-sm-6">
-                                        <input type="radio" name="roundType" value="1" ng-model="ctrl.groupInfo.roundType" required>&nbsp;小数点向上取整
-                                    </label>
-                                    <label class="col-sm-6">
-                                        <input type="radio" name="roundType" value="2" ng-model="ctrl.groupInfo.roundType" required>&nbsp;个位向下取整
-                                    </label>
-                                </div>
-                                <div class="col-sm-12">
-                                    <label class="col-sm-6">
-                                    </label>
-                                    <input type="radio" name="roundType" value="3" ng-model="ctrl.groupInfo.roundType" required>&nbsp;个位向上取整
-                                    <label class="col-sm-6">
-                                        <input type="radio" name="roundType" value="4" ng-model="ctrl.groupInfo.roundType" required>&nbsp;无特殊处理
-                                    </label>
-                                </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <div class="col-sm-3">
+                                <input type="radio" name="roundType" value="1" ng-model="ctrl.groupInfo.roundType" required>&nbsp;小数点向上取整
                             </div>
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <vo-message target="ctrl.promotionFrom.roundType"></vo-message>
-                                </div>
+                            <div class="col-sm-3">
+                                <input type="radio" name="roundType" value="2" ng-model="ctrl.groupInfo.roundType" required>&nbsp;个位向下取整
                             </div>
+                            <div class="col-sm-3">
+                                <input type="radio" name="roundType" value="3" ng-model="ctrl.groupInfo.roundType" required>&nbsp;个位向上取整
+                            </div>
+                            <div class="col-sm-3">
+                                <input type="radio" name="roundType" value="4" ng-model="ctrl.groupInfo.roundType" required>&nbsp;无特殊处理
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <vo-message target="ctrl.promotionFrom.roundType"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <div class="col-sm-4">
+                                <input type="radio" name="skuUpdType" value="1" ng-model="ctrl.groupInfo.skuUpdType" required>&nbsp;商品内，SKU统一最高价
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="radio" name="skuUpdType" value="2" ng-model="ctrl.groupInfo.skuUpdType" required>&nbsp;商品内，SKU统一最低价
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="radio" name="skuUpdType" value="3" ng-model="ctrl.groupInfo.skuUpdType" required>&nbsp;商品内，SKU价格不统一
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <vo-message target="ctrl.promotionFrom.skuUpdType" class="m-l-sm"></vo-message>
                         </div>
                     </div>
                     <div class="form-group">
                         <span class="col-sm-2 label label-info">活动价</span>&emsp;=&emsp;<span class="label label-primary">{{ctrl.groupInfo._typeText}}</span>&emsp;
                         {{ctrl.groupInfo._opeText}}&emsp;<span class="label label-primary">{{ctrl.groupInfo.priceValue}}</span>&emsp;
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-4">
-                            <input type="radio" name="skuUpdType" value="1" ng-model="ctrl.groupInfo.skuUpdType" required>&nbsp;商品内，SKU统一最高价
-                        </label>
-                        <label class="col-sm-4">
-                            <input type="radio" name="skuUpdType" value="2" ng-model="ctrl.groupInfo.skuUpdType" required>&nbsp;商品内，SKU统一最低价
-                        </label>
-                        <label class="col-sm-4">
-                            <input type="radio" name="skuUpdType" value="3" ng-model="ctrl.groupInfo.skuUpdType" required>&nbsp;商品内，SKU价格不统一
-                        </label>
-                        <div class="form-group">
-                            <vo-message target="ctrl.promotionFrom.skuUpdType" class="m-l-sm"></vo-message>
-                        </div>
                     </div>
                 </div>
                 <div class="col-sm-5">

@@ -38,6 +38,15 @@
                 <div class="col-sm-6">
                     <div class="row" ng-if="ctrl.vm.type != 4">
                         <div class="col-md-1">
+                            <input type="radio" name="attrType" ng-model="ctrl.vm.attrType" value="0"
+                                   ng-click="ctrl.changeType()">
+                        </div>
+                        <div class="col-md-11">
+                            <label>不翻译</label>
+                        </div>
+                    </div>
+                    <div class="row" ng-if="ctrl.vm.type != 4">
+                        <div class="col-md-1">
                             <input type="radio" name="attrType" ng-model="ctrl.vm.attrType" value="1"
                                    ng-click="ctrl.changeType()">
                         </div>

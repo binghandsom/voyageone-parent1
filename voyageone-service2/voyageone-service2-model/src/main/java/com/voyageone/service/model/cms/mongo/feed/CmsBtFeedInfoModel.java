@@ -34,6 +34,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private String color; // 对应主数据的codeDiff:商品特质英文（颜色/口味/香型等）
     private String origin;
     private String sizeType;
+    private String sizeChartType;
     private List<String> image;
     private String brand;
     private String weight;
@@ -54,6 +55,13 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private String material;
     private String lastReceivedOn = "";
 
+    public String getSizeChartType() {
+        return sizeChartType;
+    }
+
+    public void setSizeChartType(String sizeChartType) {
+        this.sizeChartType = sizeChartType;
+    }
 
     public String getMainCategoryEn() {
         return mainCategoryEn;
@@ -289,6 +297,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         cmsBtFeedInfoModel.setMainCategoryEn(this.mainCategoryEn);
         cmsBtFeedInfoModel.setMainCategoryCn(this.mainCategoryCn);
         cmsBtFeedInfoModel.setCategory(this.getCategory());
+        cmsBtFeedInfoModel.setSizeChartType(this.sizeChartType);
         cmsBtFeedInfoModel.setCode(this.getCode());
         cmsBtFeedInfoModel.setName(this.getName());
         cmsBtFeedInfoModel.setModel(this.getModel());

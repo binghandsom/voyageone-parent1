@@ -8,6 +8,7 @@ import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -112,7 +113,10 @@ public class ProductService extends BaseService {
         String query = "{\"common.fields.code\":\"" + code + "\"}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
-
+    public CmsBtProductModel getProductByCode(String channelId, String orgCannelId, String code) {
+        String query = "{\"common.fields.orgChannelId\":\"" + orgCannelId + "\",\"common.fields.code\":\"" + code + "\"}";
+        return cmsBtProductDao.selectOneWithQuery(query, channelId);
+    }
     /**
      * 获取商品 根据Code&OriginalCode
      */
@@ -120,12 +124,20 @@ public class ProductService extends BaseService {
         String query = "{\"common.fields.code\":\"" + code + "\", \"common.fields.originalCode\":\"" + originalCode + "\"}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
-
+    public CmsBtProductModel getProductSingleSku(String channelId, String orgCannelId, String code, String originalCode) {
+        String query = "{\"common.fields.orgChannelId\":\"" + orgCannelId + "\",\"common.fields.code\":\"" + code + "\", \"common.fields.originalCode\":\"" + originalCode + "\"}";
+        return cmsBtProductDao.selectOneWithQuery(query, channelId);
+    }
     /**
      * 获取商品 根据OriginalCode
      */
     public List<CmsBtProductModel> getProductByOriginalCode(String channelId, String code) {
         String query = "{\"common.fields.originalCode\":\"" + code + "\"}";
+        return cmsBtProductDao.select(query, channelId);
+    }
+
+    public List<CmsBtProductModel> getProductByOriginalCode(String channelId, String orgChannelId, String code) {
+        String query = "{\"common.fields.orgChannelId\":\"" + orgChannelId + "\", \"common.fields.originalCode\":\"" + code + "\"}";
         return cmsBtProductDao.select(query, channelId);
     }
 
@@ -1288,7 +1300,6 @@ public class ProductService extends BaseService {
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         HashMap<String, Object> updateMap = new HashMap<>();
-
 //        updateMap.put("common.fields.priceMsrpSt", productMode.getCommon().getFields().getPriceMsrpSt());
 //        updateMap.put("common.fields.priceMsrpEd", productMode.getCommon().getFields().getPriceMsrpEd());
 //        updateMap.put("common.fields.priceRetailSt", productMode.getCommon().getFields().getPriceRetailSt());
@@ -1565,5 +1576,33 @@ public class ProductService extends BaseService {
                 cmsBtProductLogDao.insert(logModel);
             }
         }
+    }
+
+    public BulkJongoUpdateList updateCmsBtProductInfo(String channelId) {
+        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(10, cmsBtProductDao, channelId);
+        return bulkList;
+    }
+    public BulkJongoUpdateList updateCmsBtProductGroupInfo(String channelId) {
+        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(10, cmsBtProductGroupDao, channelId);
+        return bulkList;
+    }
+    /**
+     * 取得商品对应的平台状态
+     */
+    public String getPlatformStatus(String prodCode, String channelId, int cartId) {
+        JongoQuery queryObj = new JongoQuery();
+        queryObj.setQuery("{'common.fields.code':#}");
+        queryObj.setParameters(prodCode);
+        queryObj.setProjectionExt("platforms.P" + cartId + ".pStatus");
+        CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
+        if (prodObj == null) {
+            $warn("CmsPlatformActiveLogService 找不到商品 channelId=%s，code=%s", channelId, prodCode);
+            return null;
+        }
+        CmsConstants.PlatformStatus pStatus = prodObj.getPlatformNotNull(cartId).getpStatus();
+        if (pStatus != null) {
+            return pStatus.name();
+        }
+        return null;
     }
 }

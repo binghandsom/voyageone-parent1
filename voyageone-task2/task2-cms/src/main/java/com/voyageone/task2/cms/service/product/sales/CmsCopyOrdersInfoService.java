@@ -108,7 +108,10 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
                     hasData = false;
                     for (Map orderObj : rs) {
                         String skuCode = (String) orderObj.get("sku");
-
+                        if (channelId.equals("001")) {
+                            skuCode = skuCode.toLowerCase();
+                            orderObj.put("sku", skuCode);
+                        }
                         // 根据sku找出其产品code（暂不考虑sku重复的情况）
                         prodQryObj.setParameters(skuCode);
                         CmsBtProductModel prodModel = cmsBtProductDao.selectOneWithQuery(prodQryObj, channelId);

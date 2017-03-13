@@ -5,7 +5,6 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.jumei.JumeiHtMallService;
 import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
@@ -54,7 +53,7 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
     public void onStartup(CmsJmMallPromotionPriceSyncMQMessageBody messageBody) throws Exception {
         Integer jmPid = messageBody.getJmPromotionId();
         List<String> productCodes = messageBody.getProductCodes();
-        super.count = productCodes.size();
+        super.count = productCodes == null ? 0 :productCodes.size();
 
         String channelId = messageBody.getChannelId();
         ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.JM.getId());

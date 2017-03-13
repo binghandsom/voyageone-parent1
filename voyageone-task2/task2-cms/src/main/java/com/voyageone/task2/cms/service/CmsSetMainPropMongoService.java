@@ -56,6 +56,7 @@ import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
+import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -156,6 +157,8 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
     PromotionCodeService promotionCodeService;
     @Autowired
     private PlatformPriceService platformPriceService;
+    @Autowired
+    private CmsBtTranslateService cmsBtTranslateService;
 
     @Autowired
     private CmsMqSenderService sender;
@@ -1455,6 +1458,11 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             // 商品特质英文(颜色/口味/香型等)
             if (newFlg || StringUtils.isEmpty(productCommonField.getCodeDiff()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setCodeDiff(feed.getColor());
+            }
+
+            if(!"007".equals(feed.getChannelId()) && !StringUtil.isEmpty(productCommonField.getCodeDiff()) && StringUtil.isEmpty(productCommonField.getColor())){
+                String color = cmsBtTranslateService.translate(feed.getChannelId(), CmsBtCustomPropModel.CustomPropType.Common.getValue(), "com_color", productCommonField.getCodeDiff());
+                if(!StringUtil.isEmpty(color)) productCommonField.setColor(color);
             }
             // update desmond 2016/07/05 end
             // 产地

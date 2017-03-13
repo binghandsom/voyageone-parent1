@@ -147,7 +147,8 @@ define(function () {
                     restorePlatFromImg: "restorePlatformImg",
                     doAppSwitch: "doAppSwitch",
                     doTranslateStatus: "doTranslateStatus",
-                    getProductIdByCode: "getProductIdByCode"
+                    getProductIdByCode: "getProductIdByCode",
+                    upperLowerFrame :"upperLowerFrame",
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
