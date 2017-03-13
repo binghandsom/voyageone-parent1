@@ -15,6 +15,7 @@ import com.voyageone.service.impl.cms.promotion.JMPromotionDetailService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
+import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
@@ -142,7 +143,9 @@ public class CmsAddProductToPromotionService extends BaseViewService {
             $warn("addToPromotion 未选择商品 params=" + JacksonUtil.bean2Json(parameter));
             throw new BusinessException("未选择商品");
         }
-        productIds.forEach(item -> {
+        Integer prodSum = 0;
+        Integer quantitySum = 0;
+        for (Long item : productIds) {
             PromotionDetailAddBean request = new PromotionDetailAddBean();
             request.setModifier(modifier);
             request.setChannelId(promotion.getChannelId());
@@ -153,13 +156,22 @@ public class CmsAddProductToPromotionService extends BaseViewService {
             request.setTagList(tagList);
             request.setAddProductSaveParameter(parameter);
             if (promotionDetailService.check_addPromotionDetail(request)) {
-                jmPromotionDetailService.addPromotionDetail(request, promotion, modifier);
+                CmsBtJmPromotionProductModel jmProductModel = jmPromotionDetailService.addPromotionDetail(request, promotion, modifier);
+                if (jmProductModel.getQuantity() > 0) {
+                    prodSum += 1;
+                    quantitySum += jmProductModel.getQuantity();
+                }
+
 
                 CmsBtPromotionModel cmsBtPromotionModel = promotionService.getCmsBtPromotionModelByJmPromotionId(promotionId);
                 request.setPromotionId(cmsBtPromotionModel.getId());
                 promotionDetailService.addPromotionDetail(request, true);
             }
-        });
+        }
+
+        promotion.setProdSum(prodSum);
+        promotion.setQuantitySum(quantitySum);
+        cmsBtJmPromotion3Service.update(promotion);
     }
 
     void deleteFromPromotion(int promotionId, AddProductSaveParameter parameter) {
