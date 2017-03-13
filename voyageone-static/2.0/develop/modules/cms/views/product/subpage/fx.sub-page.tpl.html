@@ -85,12 +85,12 @@
                                             <i class="fa fa-arrow-circle-right"></i>&nbsp;上下架历史
                                         </a>
                                     </li>
-                                    <li>
+                                    <li ng-if="ctrl.vm.platform.pNumIId">
                                         <a href="javascript:void(0)" ng-click="ctrl.upperAndLowerFrame('ToInStock')">
                                             <i class="fa fa-arrow-circle-right"></i>&nbsp;产品下架
                                         </a>
                                     </li>
-                                    <li>
+                                    <li ng-if="ctrl.vm.platform.pNumIId">
                                         <a href="javascript:void(0)" ng-click="ctrl.upperAndLowerFrame('ToOnSale')">
                                             <i class="fa fa-arrow-circle-right"></i>&nbsp;产品上架
                                         </a>

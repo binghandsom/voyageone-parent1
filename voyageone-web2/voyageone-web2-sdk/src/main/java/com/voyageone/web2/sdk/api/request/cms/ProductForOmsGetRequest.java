@@ -1,8 +1,8 @@
-package com.voyageone.web2.sdk.api.request;
+package com.voyageone.web2.sdk.api.request.cms;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.ProductForOmsGetResponse;
+import com.voyageone.web2.sdk.api.response.cms.ProductForOmsGetResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 import java.util.List;
