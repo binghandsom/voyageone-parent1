@@ -883,7 +883,14 @@ define([
             _chkProductSel(parseInt(cartId), __openIntelligentPublish);
 
             function __openIntelligentPublish(cartId, _selProdList) {
-                confirm('以下3种属性未完成的商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台类目&nbsp;（3）平台品牌')
+                var _confirmMsg;
+
+                if(cartId != 27)
+                    _confirmMsg = '以下3种属性未完成的商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台类目&nbsp;（3）平台品牌';
+                else
+                    _confirmMsg = '请确认平台品牌是否设置。点击【确定】启动智能上新。';
+
+                confirm(_confirmMsg)
                     .then(function () {
                         var productIds = [];
                         if (_selProdList && _selProdList.length) {

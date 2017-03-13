@@ -278,10 +278,10 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
         $debug("批量修改属性 (商品审批) 开始记入SxWorkLoad表");
         long sta = System.currentTimeMillis();
 
-        /**京东系和聚美的上新程序，blnSmartSx【上新标识】设置 : true*/
+        /**京东系和聚美的上新程序，blnSmartSx【上新标识】设置 : true added by Piao*/
         CartEnums.Cart _cartEnum = CartEnums.Cart.getValueByID(String.valueOf(cartIdValue));
 
-        if (!CartEnums.Cart.isJdSeries(_cartEnum) || CartEnums.Cart.JM.equals(_cartEnum)) {
+        if (CartEnums.Cart.isJdSeries(_cartEnum) || CartEnums.Cart.JM.equals(_cartEnum)) {
             sxProductService.insertSxWorkLoad(channelId, newProdCodeList, cartIdValue, userName, true);
         } else {
             sxProductService.insertSxWorkLoad(channelId, newProdCodeList, cartIdValue, userName, false);

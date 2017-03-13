@@ -780,7 +780,7 @@
                                     <a href="javascript:void(0)" ng-click="$parent.openApproval(openUpdateApproval,cartBean.value)">{{'TXT_PRODUCTS_APPROVAL'|translate}}</a>
                                 </li>
                                 <li ng-if="vm.masterData.channelConfig.publishEnabledChannels.indexOf(cartBean.value) != -1">
-                                	<a href="javascript:void(0)" ng-click="$parent.openIntelligentPublish(cartBean.value)">智能上新</a>
+                                	<a href="javascript:void(0)" ng-click="openIntelligentPublish(cartBean.value)">智能上新</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" ng-click="refreshRetailPrice(cartBean)">重新计算价格</a>

@@ -244,7 +244,7 @@ define([
             };
 
         /**判断价格*/
-        return productDetailService.updateProductPlatformChk(updateInfo).then(function (resp) {
+        productDetailService.updateProductPlatformChk(updateInfo).then(function (resp) {
             self.vm.platform.modified = resp.data.modified;
             if (mark !== 'intel')
                 self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));

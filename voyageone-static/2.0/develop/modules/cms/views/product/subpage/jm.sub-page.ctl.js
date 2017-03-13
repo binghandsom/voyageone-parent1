@@ -97,7 +97,7 @@ define([
             vm.publishEnabled = resp.data.channelConfig.publishEnabledChannels.length > 0;
 
             if (vm.platform) {
-                if(vm.platform.noMain)
+                if (vm.platform.noMain)
                     vm.noMaterMsg = "该商品的没有设置主商品，请先设置主商品：" + vm.platform.mainCode;
 
                 vm.status = vm.platform.status == null ? vm.status : vm.platform.status;
@@ -264,7 +264,6 @@ define([
     /**调用服务器接口*/
     SpJmController.prototype.callSave = function (mark) {
         var self = this,
-            productDetailService = self.productDetailService,
             $translate = self.$translate,
             updateInfo = {
                 prodId: self.$scope.productInfo.productId,
@@ -272,12 +271,9 @@ define([
                 type: mark
             };
         /**判断价格*/
-        return self.productDetailService.updateProductPlatformChk(updateInfo).then(function (resp) {
+        self.productDetailService.updateProductPlatformChk(updateInfo).then(function (resp) {
             self.vm.platform.modified = resp.data.modified;
-            if (mark !== 'intel')
-                self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-
-            return true;
+            self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
 
         }, function (resp) {
             if (resp.code != "4000091" && resp.code != "4000092") {
@@ -286,10 +282,9 @@ define([
             }
 
             self.confirm(resp.message + ",是否强制保存").then(function () {
-                productDetailService.updateProductPlatform(updateInfo).then(function (resp) {
+                self.productDetailService.updateProductPlatform(updateInfo).then(function (resp) {
                     self.vm.platform.modified = resp.data.modified;
                     self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                    return true;
                 });
             }, function () {
                 if (mark != 'temporary')
@@ -541,10 +536,28 @@ define([
             cartId: self.$scope.cartInfo.value,
             productId: self.$scope.productInfo.productId,
             platform: self.vm.platform,
-            showArr:['image1','image6','image4']
+            showArr: ['image1', 'image6', 'image4']
         }).then(function (platform) {
             self.vm.platform = platform;
         });
+    };
+
+    /**商品智能上新*/
+    SpJmController.prototype.publishProduct = function () {
+        var self = this,
+            platform = self.vm.platform;
+
+        self.confirm('您是否确定要智能上新').then(function () {
+
+            self.vm.preStatus = angular.copy(self.vm.status);
+
+            //设置智能上新状态,如果pStatus已经存在则保留原来状态
+            platform.pStatus = platform.pStatus == "" ? "WaitingPublish" : platform.pStatus;
+            platform.status = self.vm.status = 'Approved';
+
+            self.callSave('intel');
+        });
+
     };
 
     cms.directive('jmSubPage', function () {
