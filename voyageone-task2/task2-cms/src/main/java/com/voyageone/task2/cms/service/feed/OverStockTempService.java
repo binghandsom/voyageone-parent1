@@ -43,7 +43,6 @@ public class OverStockTempService extends BaseCronTaskService {
                 } else {
                     $info("page=" + page +"页 size=" + eventTypeList.size()+" OverStock queryingForEventDetail event id =" + eventTypeList.get(0).getId());
                     page++;
-                    List<EventType> eventTypeListPara = new ArrayList<EventType>();
                     overstockEventService.updateHandledEvents(eventTypeList);
                 }
                 return eventTypeList.size();
