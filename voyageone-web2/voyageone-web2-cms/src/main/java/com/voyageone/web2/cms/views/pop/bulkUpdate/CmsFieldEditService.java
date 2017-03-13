@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
+import com.google.gson.Gson;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
@@ -507,6 +508,7 @@ public class CmsFieldEditService extends BaseViewService {
         List<List<String>>productCodesList = CommonUtil.splitList(productCodes,100);
         for (List<String> codes:productCodesList) {
             mqMessageBody.setProductCodes(codes);
+
             cmsMqSenderService.sendMessage(mqMessageBody);
         }
 

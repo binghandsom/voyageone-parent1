@@ -777,7 +777,7 @@
                                     <a href="javascript:void(0)" ng-click="popJoinPromotion(cartBean)">加入{{cartBean.name}}活动</a>
                                 </li>
                                 <li>
-                                    <a href="javascript:void(0)" ng-click="$parent.openApproval(openUpdateApproval,cartBean.value)">{{'TXT_PRODUCTS_APPROVAL'|translate}}</a>
+                                    <a href="javascript:void(0)" ng-click="openApproval(openUpdateApproval,cartBean.value)">{{'TXT_PRODUCTS_APPROVAL'|translate}}</a>
                                 </li>
                                 <li ng-if="vm.masterData.channelConfig.publishEnabledChannels.indexOf(cartBean.value) != -1">
                                 	<a href="javascript:void(0)" ng-click="openIntelligentPublish(cartBean.value)">智能上新</a>
