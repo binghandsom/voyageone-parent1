@@ -110,7 +110,7 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
                             updateMap.put("common.fields.productType", getString(productTypeEn));
                             updateMap.put("common.fields.productTypeCn", getString(productTypeCn));
 
-                            MatchResult matchResult = getSizeType(cmsBtProductModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType());
+                            MatchResult matchResult = getSizeType(cmsBtProductModel);
                             if(matchResult != null){
                                 updateMap.put("common.fields.sizeType", getString(matchResult.getSizeTypeEn()));
                                 updateMap.put("common.fields.sizeTypeCn", getString(matchResult.getSizeTypeCn()));
@@ -184,8 +184,8 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
         return str;
     }
 
-    public MatchResult getSizeType(String sizeType){
-        FeedQuery query = getFeedQuery("", "", sizeType, "", "");
+    public MatchResult getSizeType(CmsBtProductModel cmsBtProductModel){
+        FeedQuery query = getFeedQuery(cmsBtProductModel.getFeed().getCatPath(), cmsBtProductModel.getCommonNotNull().getFieldsNotNull().getOrigProductType(), cmsBtProductModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType(), cmsBtProductModel.getCommonNotNull().getFieldsNotNull().getProductNameEn(), "");
 
         // 调用主类目匹配接口，取得匹配度最高的一个主类目和sizeType
         MatchResult searchResult = searcher.search(query, true);
