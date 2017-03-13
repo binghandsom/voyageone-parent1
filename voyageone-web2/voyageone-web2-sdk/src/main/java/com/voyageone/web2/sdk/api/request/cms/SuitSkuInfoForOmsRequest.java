@@ -1,8 +1,8 @@
-package com.voyageone.web2.sdk.api.request;
+package com.voyageone.web2.sdk.api.request.cms;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.SuitSkuInfoForOmsResponse;
+import com.voyageone.web2.sdk.api.response.cms.SuitSkuInfoForOmsResponse;
 
 /**
  * Created by rex.wu on 2016/12/8.

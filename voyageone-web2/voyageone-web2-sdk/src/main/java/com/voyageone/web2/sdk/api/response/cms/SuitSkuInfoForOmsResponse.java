@@ -1,4 +1,4 @@
-package com.voyageone.web2.sdk.api.response;
+package com.voyageone.web2.sdk.api.response.cms;
 
 import com.voyageone.service.bean.cms.product.CombinedSkuInfoBean;
 import com.voyageone.service.bean.cms.product.ProductForOmsBean;

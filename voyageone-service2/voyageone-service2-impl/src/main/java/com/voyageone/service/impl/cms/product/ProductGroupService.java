@@ -5,8 +5,10 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
@@ -158,24 +160,19 @@ public class ProductGroupService extends BaseService {
     /**
      * change main product.
      */
-    public WriteResult updateMainProduct(String channelId, String productCode, Long groupId, String modifier){
+    public WriteResult updateMainProduct(String channelId, String productCode, Long groupId, String modifier) {
+        JongoUpdate query = new JongoUpdate();
+        query.setQuery("{\"groupId\": #}");
+        query.setQueryParameters(groupId);
 
-        Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put("groupId", groupId);
-
-        Map<String, Object> updateMap = new HashMap<>();
-        updateMap.put("mainProductCode", productCode);
-        updateMap.put("modifier", modifier);
+        query.setUpdate("{$set: {\"mainProductCode\": #, \"modifier\": #}}");
+        query.setUpdateParameters(productCode, modifier);
 
         //// TODO: 16/7/8 如果两个商品的平台类目不一致,并且该商品已经上新则不能切换主商品
 
 
         // 更新group下面的mainProductCode
-        cmsBtProductGroupDao.update(channelId, queryMap, updateMap);
-
-        // 更新产品级别下的
-
-        return cmsBtProductGroupDao.update(channelId, queryMap, updateMap);
+        return cmsBtProductGroupDao.updateMulti(query, channelId);  //.update(channelId, queryMap, updateMap);
     }
 
     /**
@@ -446,24 +443,6 @@ public class ProductGroupService extends BaseService {
     }
 
     /**
-     * 更新group的platformActive
-     */
-    public WriteResult updateGroupsPlatformActiveBympCode (CmsBtProductGroupModel model) {
-
-        Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put("mainProductCode", model.getMainProductCode());
-
-        if(model.getCartId() != null)
-            queryMap.put("cartId", model.getCartId());
-
-        Map<String, Object> updateMap = new HashMap<>();
-        updateMap.put("platformActive", model.getPlatformActive().name());
-        updateMap.put("modifier", model.getModifier());
-
-        return cmsBtProductGroupDao.update(model.getChannelId(), queryMap, updateMap);
-    }
-
-    /**
      * 获取聚美下面的所有group的codes大于1的数据,然后将其对应的group按一个code一个group做拆分,并删除以前的group.
      * @param channelId 渠道Id
      */
@@ -488,7 +467,7 @@ public class ProductGroupService extends BaseService {
                     newGroupInfo.setProductCodes(productCodes);
 
                     if (!code.equals(groupInfo.getMainProductCode())) {
-                        newGroupInfo.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
+                        newGroupInfo.setPlatformStatus(null);
                         newGroupInfo.setInStockTime("");
                         newGroupInfo.setNumIId("");
                         newGroupInfo.setPlatformPid("");
@@ -515,10 +494,6 @@ public class ProductGroupService extends BaseService {
 
     public WriteResult updateFirst(JongoUpdate updObj, String channelId) {
         return cmsBtProductGroupDao.updateFirst(updObj, channelId);
-    }
-
-    public WriteResult updateMulti(JongoUpdate updObj, String channelId) {
-        return cmsBtProductGroupDao.updateMulti(updObj, channelId);
     }
 
     public long countByQuery(final String strQuery, String channelId) {
@@ -616,7 +591,12 @@ public class ProductGroupService extends BaseService {
     }
 
     /**
-     * 新建一个新的Group。
+     * 新建一个新的Group
+     * @param channelId
+     * @param cartId
+     * @param productCode
+     * @param isCalculatePriceRange
+     * @return
      */
     public CmsBtProductGroupModel createNewGroup(String channelId, Integer cartId, String productCode, Boolean isCalculatePriceRange) {
 
@@ -635,7 +615,7 @@ public class ProductGroupService extends BaseService {
         group.setMainProductCode(productCode);
 
         // platform status:发布状态: 未上新 // Synship.com_mt_type : id = 45
-        group.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
+        group.setPlatformStatus(null);
 
         CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId
                 , CmsConstants.ChannelConfig.PLATFORM_ACTIVE
@@ -665,6 +645,57 @@ public class ProductGroupService extends BaseService {
         }
         return group;
     }
+
+    /**
+     * 将一个code加入到对应已经存在group中
+     * @param channelId
+     * @param cartId
+     * @param productCode
+     * @param mainProductCode
+     * @param isCalculatePriceRange
+     * @return
+     */
+    public CmsBtProductGroupModel addCodeToGroup(String channelId, Integer cartId, String productCode, String mainProductCode,Boolean isCalculatePriceRange) {
+        JongoQuery query = new JongoQuery();
+        query.setQuery("{\"cartId\": #, \"mainProductCode\": #}");
+        query.setParameters(cartId, mainProductCode);
+        CmsBtProductGroupModel group = cmsBtProductGroupDao.selectOneWithQuery(query, channelId);
+
+        // 如果group存在则将该产品加入到该group中
+        if (group != null) {
+            group.getProductCodes().add(productCode);
+        } else {
+            throw new BusinessException(String.format("对应的group不存在,请确认正确的group数据(channelId: %s, cartId: %d, mainProductCode: %s)", channelId, cartId, mainProductCode));
+        }
+
+        if(isCalculatePriceRange){
+            // 计算group价格区间
+            calculatePriceRange(group);
+        }
+        return group;
+
+    }
+
+    /**
+     * 根据cartId来判断是新建group还是将现有productCode加入已经存在group中
+     * @param channelId
+     * @param cartId
+     * @param productCode
+     * @param mainProductCode
+     * @param isCalculatePriceRange
+     * @return
+     */
+    public CmsBtProductGroupModel creatOrUpdateGroup(String channelId, Integer cartId, String productCode, String mainProductCode,Boolean isCalculatePriceRange) {
+        if (CartEnums.Cart.JM.getValue() == cartId
+                || CartEnums.Cart.LCN.getValue() == cartId
+                || CartEnums.Cart.CN.getValue() == cartId
+                || CartEnums.Cart.DT.getValue() == cartId) {
+            return createNewGroup(channelId, cartId, productCode, isCalculatePriceRange);
+        } else {
+            return addCodeToGroup(channelId, cartId, productCode, mainProductCode, isCalculatePriceRange);
+        }
+    }
+
 
     /**
      * 删除group

@@ -12,11 +12,9 @@ public class CmsConstants {
      * 产品状态
      */
     public enum ProductStatus {
-        New, 				// 新建
         Pending, 			// 等待中
         Ready, 				// 准备中
-        Approved, 			// 批准
-        Deleted 			// 删除
+        Approved
     }
 
     /**

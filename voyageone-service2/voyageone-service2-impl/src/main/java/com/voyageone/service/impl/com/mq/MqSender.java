@@ -144,7 +144,7 @@ public class MqSender extends BaseService {
     //声明临时延迟队列
     private void sendDelayQueue(AmqpAdmin amqpAdmin, AmqpTemplate amqpTemplate, String exchange, String redirectRoutingKey, long delaySecond, Message message) {
         Map<String, Object> queueMap = new HashMap<>();
-        queueMap.put("x-expires", 60000);
+//        queueMap.put("x-expires", 60000);
         queueMap.put("x-dead-letter-exchange", exchange);
         queueMap.put("x-dead-letter-routing-key", redirectRoutingKey);
         queueMap.put("x-message-ttl", TimeUnit.SECONDS.toMillis(delaySecond));

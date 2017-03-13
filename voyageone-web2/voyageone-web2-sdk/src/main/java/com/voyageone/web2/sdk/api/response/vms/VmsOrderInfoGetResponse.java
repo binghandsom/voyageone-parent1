@@ -1,4 +1,4 @@
-package com.voyageone.web2.sdk.api.response;
+package com.voyageone.web2.sdk.api.response.vms;
 
 import com.voyageone.web2.sdk.api.VoApiResponse;
 

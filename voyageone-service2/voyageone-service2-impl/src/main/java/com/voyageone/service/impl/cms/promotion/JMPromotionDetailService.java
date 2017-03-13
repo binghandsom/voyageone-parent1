@@ -115,7 +115,7 @@ public class JMPromotionDetailService extends BaseService {
     }
 
     @VOTransactional
-    public void addPromotionDetail(PromotionDetailAddBean bean, CmsBtJmPromotionModel jmPromotionModel, String modifier) {
+    public CmsBtJmPromotionProductModel addPromotionDetail(PromotionDetailAddBean bean, CmsBtJmPromotionModel jmPromotionModel, String modifier) {
 
         CmsBtProductModel productInfo=bean.getProductInfo();//check 初始化
         bean.setProductCode(productInfo.getCommon().getFields().getCode());
@@ -190,6 +190,8 @@ public class JMPromotionDetailService extends BaseService {
 
         //更新mongo product tag
         productService.updateCmsBtProductTags(bean.getChannelId(), productInfo, jmPromotionModel.getRefTagId(), bean.getTagList(), modifier);
+
+        return jmProductModel;
 
     }
     public BigDecimal getMaxMarketPrice(List<CmsBtJmPromotionSkuModel> skuList)

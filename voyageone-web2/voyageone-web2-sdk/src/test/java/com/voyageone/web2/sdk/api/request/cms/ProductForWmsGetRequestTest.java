@@ -1,7 +1,8 @@
-package com.voyageone.web2.sdk.api.request;
+package com.voyageone.web2.sdk.api.request.cms;
 
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.response.ProductForWmsGetResponse;
+import com.voyageone.web2.sdk.api.request.cms.ProductForWmsGetRequest;
+import com.voyageone.web2.sdk.api.response.cms.ProductForWmsGetResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

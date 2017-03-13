@@ -1107,6 +1107,20 @@ public class ProductService extends BaseService {
         return cmsBtProductDao.aggregateToMap(channelId, aggregateList);
     }
 
+
+    /**
+     * 根据model返回产品列表
+     * @param channelId
+     * @param model
+     * @return
+     */
+    public List<CmsBtProductModel> getProductListByModel (String channelId, String model, String orgChannelId) {
+        JongoQuery query = new JongoQuery();
+        query.setQuery("{\"channelId\": #, \"orgChannelId\": #, \"common.fields.model\": #}");
+        query.setParameters(channelId, orgChannelId, model);
+        return getList(channelId, query);
+    }
+
     /**
      * 获取CustomProp
      */
@@ -1499,7 +1513,7 @@ public class ProductService extends BaseService {
      * @param code      产品Code
      * @return WriteResult
      */
-    public WriteResult resetProductAndGroupPlatformPid(String channelId, int cartId, String code) {
+    public WriteResult resetProductAndGroupPlatformPid(String channelId, Integer cartId, String code) {
 
         JongoUpdate query = new JongoUpdate();
         query.setQuery("{\"common.fields.code\": #}");
@@ -1511,14 +1525,13 @@ public class ProductService extends BaseService {
 
         if (rs != null) {
 
-            Map<String, Object> queryMap = new HashMap<>();
-            queryMap.put("cartId", cartId);
-            queryMap.put("productCodes", code);
+            JongoUpdate groupQuery = new JongoUpdate();
+            query.setQuery("{\"cartId\": #, \"productCodes\": #}");
+            query.setQueryParameters(cartId, code);
 
-            Map<String, Object> updateMap = new HashMap<>();
-            updateMap.put("platformPid", "");
+            query.setUpdate("{$set: {\"platformPid\": \"\"}}");
 
-            rs = cmsBtProductGroupDao.update(channelId, queryMap, updateMap);
+            rs = cmsBtProductGroupDao.updateMulti(groupQuery, channelId);
         }
 
         return rs;

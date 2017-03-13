@@ -1,12 +1,9 @@
-package com.voyageone.web2.sdk.api.request;
+package com.voyageone.web2.sdk.api.request.vms;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.VmsOrderCancelResponse;
-import com.voyageone.web2.sdk.api.response.VmsOrderInfoGetResponse;
+import com.voyageone.web2.sdk.api.response.vms.VmsOrderInfoGetResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
-
-import java.util.List;
 
 /**
  *

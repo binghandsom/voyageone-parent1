@@ -482,7 +482,7 @@ define([
      */
     SpJdController.prototype.upperAndLowerFrame = function(mark) {
         var self = this,
-            msg = mark === 'OnSale'? '上架':'下架';
+            msg = mark === 'ToOnSale'? '上架':'下架';
 
         self.confirm('您是否执行'　+ msg +'操作？').then(function(){
             self.productDetailService.upperLowerFrame({
