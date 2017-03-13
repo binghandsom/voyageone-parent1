@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.category.match.*;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
@@ -46,15 +47,18 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
 
     private final ProductPlatformService productPlatformService;
 
+    private final Searcher searcher;
+
 
 
     @Autowired
-    public CmsBatchSetMainCategoryMqService(ProductService productService, CmsBtProductDao cmsBtProductDao, ProductStatusHistoryService productStatusHistoryService, PriceService priceService, ProductPlatformService productPlatformService) {
+    public CmsBatchSetMainCategoryMqService(ProductService productService, CmsBtProductDao cmsBtProductDao, ProductStatusHistoryService productStatusHistoryService, PriceService priceService, ProductPlatformService productPlatformService, Searcher searcher) {
         this.productService = productService;
         this.cmsBtProductDao = cmsBtProductDao;
         this.productStatusHistoryService = productStatusHistoryService;
         this.priceService = priceService;
         this.productPlatformService = productPlatformService;
+        this.searcher = searcher;
     }
 
 //    if 主类目人工设置FLG（common.catConf = 1 ）
@@ -78,12 +82,15 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
         String hscodeName8 = (String) requestMap.get("hscodeName8");
         String hscodeName10 = (String) requestMap.get("hscodeName10");
 
+
+
         if (mCatId == null || mCatPathCn == null || ListUtils.isNull(productCodes)) {
             $warn("切换类目 缺少参数 params=" + requestMap.toString());
             return;
         }
         $info(String.format("channel=%s mCatPath=%s prodCodes size=%d", channelId, mCatPathCn, productCodes.size()));
         productCodes.forEach(code -> {
+                    String sizeType = "";
                     CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, code);
                     if (cmsBtProductModel != null) {
 
@@ -99,35 +106,20 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
                         updateMap.put("common.fields.categoryStatus", "1");
                         updateMap.put("common.fields.categorySetter", userName);
                         updateMap.put("common.fields.categorySetTime", DateTimeUtil.getNow());
-                        if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getOriginalTitleCn()) || !"1".equalsIgnoreCase(cmsBtProductModel.getCommon().getFields().getTranslateStatus())) {
-                            // 设置商品中文名称（品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称）
-                            String[] temp = mCatPathCn.split(">");
-                            String titleCn = String.format("%s %s %s",getString(cmsBtProductModel.getCommon().getFields().getBrand()), getString(sizeTypeCn), temp[temp.length-1]);
-                            updateMap.put("common.fields.originalTitleCn", titleCn);
-                        }
-//                        if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getProductType())) {
-//                            updateMap.put("common.fields.productType", productTypeEn);
-//                        }
-//                        if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getProductTypeCn())) {
-//                            updateMap.put("common.fields.productTypeCn", productTypeCn);
-//                        }
-//                        if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getSizeType())) {
-//                            updateMap.put("common.fields.sizeType", sizeTypeEn);
-//                        }
-//                        if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getSizeTypeCn())) {
-//                            updateMap.put("common.fields.sizeTypeCn", sizeTypeCn);
-//                        }
-//                        if (!StringUtil.isEmpty(hscodeName8) && StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getHsCodePrivate())) {
-//                            updateMap.put("common.fields.hsCodePrivate", hscodeName8);
-//                        }
-//                        if (!StringUtil.isEmpty(hscodeName10) && StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getHsCodeCross())) {
-//                            updateMap.put("common.fields.hsCodeCross", hscodeName10);
-//                        }
                         if("0".equalsIgnoreCase(cmsBtProductModel.getCommon().getCatConf())){
                             updateMap.put("common.fields.productType", getString(productTypeEn));
                             updateMap.put("common.fields.productTypeCn", getString(productTypeCn));
-                            updateMap.put("common.fields.sizeType", getString(sizeTypeEn));
-                            updateMap.put("common.fields.sizeTypeCn", getString(sizeTypeCn));
+
+                            MatchResult matchResult = getSizeType(cmsBtProductModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType());
+                            if(matchResult != null){
+                                updateMap.put("common.fields.sizeType", getString(matchResult.getSizeTypeEn()));
+                                updateMap.put("common.fields.sizeTypeCn", getString(matchResult.getSizeTypeCn()));
+                                sizeType = getString(matchResult.getSizeTypeCn());
+                            }else{
+                                updateMap.put("common.fields.sizeType", getString(sizeTypeEn));
+                                updateMap.put("common.fields.sizeTypeCn", getString(sizeTypeCn));
+                                sizeType = sizeTypeCn;
+                            }
                             updateMap.put("common.fields.hsCodePrivate", getString(hscodeName8));
                             updateMap.put("common.fields.hsCodeCross", getString(hscodeName10));
                             if (!StringUtil.isEmpty(hscodeName8)) {
@@ -149,6 +141,14 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
                             if(StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getHsCodeCross()) && !StringUtil.isEmpty(hscodeName10)){
                                 updateMap.put("common.fields.hsCodeCross", getString(hscodeName10));
                             }
+                            sizeType = cmsBtProductModel.getCommonNotNull().getFieldsNotNull().getSizeTypeCn();
+                        }
+
+                        if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getOriginalTitleCn()) || !"1".equalsIgnoreCase(cmsBtProductModel.getCommon().getFields().getTranslateStatus())) {
+                            // 设置商品中文名称（品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称）
+                            String[] temp = mCatPathCn.split(">");
+                            String titleCn = String.format("%s %s %s",getString(cmsBtProductModel.getCommon().getFields().getBrand()), getString(sizeType), temp[temp.length-1]);
+                            updateMap.put("common.fields.originalTitleCn", titleCn);
                         }
                         BulkUpdateModel model = new BulkUpdateModel();
                         model.setUpdateMap(updateMap);
@@ -177,50 +177,35 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
                     }
                 }
         );
-
-//        List<Integer> cartList = null;
-//        if (cartIdObj == null || cartIdObj == 0) {
-//            // 表示全平台更新
-//            // 店铺(cart/平台)列表
-//            List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
-//            cartList = cartTypeList.stream().map((cartType) -> NumberUtils.toInt(cartType.getValue())).collect(Collectors.toList());
-//        } else {
-//            cartList = new ArrayList<>(1);
-//            cartList.add(cartIdObj);
-//        }
-//        for (Integer cartId : cartList) {
-//            updObj = new JongoUpdate();
-//            updObj.setQuery("{'common.fields.code':{$in:#},'platforms.P#':{$exists:true},'platforms.P#.pAttributeStatus':{$in:[null,'','0']}}");
-//            updObj.setQueryParameters(prodCodes, cartId, cartId);
-//
-//            boolean isInCatFlg = false;
-//            String pCatId = null;
-//            String pCatPath = null;
-//            for (Map pCatObj : pCatList) {
-//                if (cartId.toString().equals(pCatObj.get("cartId"))) {
-//                    isInCatFlg = true;
-//                    pCatId = StringUtils.trimToNull((String) pCatObj.get("catId"));
-//                    pCatPath = StringUtils.trimToNull((String) pCatObj.get("catPath"));
-//                    break;
-//                }
-//            }
-//            if (isInCatFlg && (pCatId == null || pCatPath == null)) {
-//                $debug(String.format("changeProductCategory 该平台未匹配此主类目 cartid=%d, 主类目path=%s, 主类目id=%s, platformCategory=%s", cartId, mCatPath, mCatId, pCatList.toString()));
-//            } else if (!isInCatFlg) {
-//                $debug(String.format("changeProductCategory 该平台未匹配此主类目 cartid=%d, 主类目path=%s, 主类目id=%s,", cartId, mCatPath, mCatId));
-//            }
-//            if (pCatId != null || pCatPath != null) {
-//                updObj.setUpdate("{$set:{'platforms.P#.pCatId':#,'platforms.P#.pCatPath':#,'platforms.P#.pCatStatus':'1'}}");
-//                updObj.setUpdateParameters(cartId, pCatId, cartId, pCatPath, cartId);
-//                rs = productService.updateMulti(updObj, channelId);
-//                $info("切换类目 product更新结果 " + rs.toString());
-//            }
-//
-//        }
     }
 
     private String getString(String str){
         if(str == null) return "";
         return str;
+    }
+
+    public MatchResult getSizeType(String sizeType){
+        FeedQuery query = getFeedQuery("", "", sizeType, "", "");
+
+        // 调用主类目匹配接口，取得匹配度最高的一个主类目和sizeType
+        MatchResult searchResult = searcher.search(query, true);
+
+        return searchResult;
+    }
+
+    private FeedQuery getFeedQuery(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
+        // 调用Feed到主数据的匹配程序匹配主类目
+        StopWordCleaner cleaner = new StopWordCleaner(StopWordCleaner.STOPWORD_LIST);
+        // 子店feed类目path分隔符(由于导入feedInfo表时全部替换成用"-"来分隔了，所以这里写固定值就可以了)
+        List<String> categoryPathSplit = new ArrayList<>();
+        categoryPathSplit.add("-");
+        Tokenizer tokenizer = new Tokenizer(categoryPathSplit);
+
+        FeedQuery query = new FeedQuery(feedCategoryPath, cleaner, tokenizer);
+        query.setProductType(productType);
+        query.setSizeType(sizeType);
+        query.setProductName(productNameEn, brand);
+
+        return query;
     }
 }
