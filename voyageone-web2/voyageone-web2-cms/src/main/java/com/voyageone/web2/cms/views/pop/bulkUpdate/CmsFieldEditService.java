@@ -170,7 +170,7 @@ public class CmsFieldEditService extends BaseViewService {
                 .append(" 'common.fields.code':{$in:#}")
                 .append(",'common.fields.hsCodeStatus': '1'");
 
-        if (cartId != 28 || cartId != 29) {
+        if (cartId != 28 && cartId != 29) {
             queryStr.append(",'platforms.P").append(cartId).append(".pCatId': {$nin:[null, '']}");
         }
         queryStr.append("}");
