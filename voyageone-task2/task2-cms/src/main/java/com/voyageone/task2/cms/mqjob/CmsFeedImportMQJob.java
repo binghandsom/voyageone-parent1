@@ -30,7 +30,7 @@ public class CmsFeedImportMQJob extends TBaseMQCmsService<CmsFeedImportMQMessage
     public void onStartup(CmsFeedImportMQMessageBody messageBody) throws Exception {
         messageBody.check();
         $info(String.format("feed导入 channelId=%s feedModel条数=%d", messageBody.getChannelId(), messageBody.getCmsBtFeedInfoModels().size()));
-        Map<String, List<CmsBtFeedInfoModel>> response = feedToCms2Service.updateProduct(messageBody.getChannelId(), messageBody.getCmsBtFeedInfoModels(), getTaskName());
+        Map<String, List<CmsBtFeedInfoModel>> response = feedToCms2Service.updateProduct(messageBody.getChannelId(), messageBody.getCmsBtFeedInfoModels(), messageBody.getSender());
         if(!ListUtils.isNull(response.get("fail"))){
             List<CmsBtFeedInfoModel> fails = response.get("fail");
             List<CmsBtOperationLogModel_Msg> msg = new ArrayList<>(fails.size());
