@@ -1106,7 +1106,7 @@ public class CmsBtCombinedProductService extends BaseService {
                 if (responseMap != null && responseMap.containsKey("data") && responseMap.get("data") != null) {
                     Map<String, Object> resultDtMap = (Map<String, Object>) responseMap.get("data");
                     if (!DtConstants.C_DT_RETURN_SUCCESS_OK.equals(resultDtMap.get("result"))) {
-                        if (CmsConstants.PlatformActive.ToOnSale.name().equals("")) {
+                        if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
                             resultMap = "调用分销上架API失败";
                         } else {
                             resultMap = "调用分销下架API失败";
@@ -1137,7 +1137,7 @@ public class CmsBtCombinedProductService extends BaseService {
                 Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
                 if (responseMap != null && responseMap.containsKey("code") && responseMap.get("code") != null) {
                     if (CnnConstants.C_CNN_RETURN_SUCCESS_0 != (int) responseMap.get("code")) {
-                        if (CmsConstants.PlatformActive.ToOnSale.name().equals("")) {
+                        if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
                             resultMap = "调用独立官网上架API失败";
                         } else {
                             resultMap = "调用独立官网下架API失败";
