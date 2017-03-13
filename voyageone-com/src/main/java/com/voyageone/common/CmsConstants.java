@@ -175,6 +175,21 @@ public class CmsConstants {
 
         // 天猫无线端的共通模块, 是否由运营自己在天猫后台进行管理(1：运营自己天猫后台管理，空或0：上新程序设定)
         String TMALL_WIRELESS_COMMON_MODULE_BY_USER = "TMALL_WIRELESS_COMMON_MODULE_BY_USER";
+
+        // feed导入时是否设置主类目
+        String FEED_IS_SET_MAIN_CATEGORY = "FEED_IS_SET_MAIN_CATEGORY";
+
+        // feed->mast 主类目黑名单
+        String CATEGORY_BLACKLIST = "CATEGORY_BLACKLIST";
+
+        // feed->mast 阈值 价格 和 重量
+        String FEED_MAST_THRESHOLD = "FEED_MAST_THRESHOLD";
+
+        // feed->mast 阈值 价格 和 重量
+        String FEED_MAST_CONFIG = "FEED_MAST_CONFIG";
+
+        // 需要拆分的主类目
+        String CATEGORY_SINGLE = "CATEGORY_SINGLE";
     }
 
     public interface ImageUploadStatus {

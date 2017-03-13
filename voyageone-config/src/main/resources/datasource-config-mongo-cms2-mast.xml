@@ -13,7 +13,7 @@
     <mongo:mongo-client id="mongo" host="10.0.0.59" port="8787" credentials="biz_read:Bxar+1Il12Q@cms">
         <mongo:client-options
                 connect-timeout="100000"
-                socket-timeout="10000"
+                socket-timeout="100000"
                 max-wait-time="150000"/>
     </mongo:mongo-client>
 
