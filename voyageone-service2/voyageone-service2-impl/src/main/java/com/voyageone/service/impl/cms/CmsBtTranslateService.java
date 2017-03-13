@@ -1,5 +1,7 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtTranslateDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel.CustomPropType;
@@ -7,6 +9,7 @@ import com.voyageone.service.model.cms.mongo.CmsBtTranslateModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,6 +28,27 @@ public class CmsBtTranslateService extends BaseService {
     public CmsBtTranslateModel get(String channelId, Integer customPropType, String name, String valueEn){
         valueEn = valueEn == null?"":valueEn.toLowerCase();
         return cmsBtTranslateDao.get(channelId,customPropType,name,valueEn.toLowerCase());
+    }
+
+    public String translate(String channelId, Integer customPropType, String name, String valueEn){
+        if(valueEn != null) valueEn = valueEn.toLowerCase();
+        CmsBtTranslateModel cmsBtTranslateModel = get(channelId, customPropType, name, valueEn);
+        if (cmsBtTranslateModel != null && !StringUtil.isEmpty(cmsBtTranslateModel.getValueCn())) {
+            return cmsBtTranslateModel.getValueCn();
+        } else {
+            String valueCn = "";
+            if (valueEn.length() < 50) {
+                try {
+                    valueCn = BaiduTranslateUtil.translate(valueEn);
+                } catch (Exception e) {
+                    $warn(Arrays.toString(e.getStackTrace()));
+                }
+                if (!StringUtil.isEmpty(valueCn)) {
+                    create(channelId, customPropType, name, valueEn, valueCn);
+                }
+            }
+            return valueCn;
+        }
     }
 
     public void insertOrUpdate(CmsBtTranslateModel model){

@@ -56,6 +56,7 @@ import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
+import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -158,7 +159,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
     private PlatformPriceService platformPriceService;
 
     @Autowired
-    private CmsMqSenderService sender;
+    private CmsBtTranslateService cmsBtTranslateService;
+
     // 每个channel的feed->master导入默认最大件数
     private final static int FEED_IMPORT_MAX_500 = 500;
 
@@ -1237,67 +1239,17 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                                                                        CmsBtProductModel_Field productCommonField,
                                                                        boolean isSplit, String originalCode) {
             // --------- 商品属性信息设定 ------------------------------------------------------
-            // CmsBtProductModel_Field field = new CmsBtProductModel_Field();
-
-//            if (!skip_mapping_check) {
-//                // 遍历mapping,设置主数据的属性
-//                if (mapping.getProps() != null) {
-//                    for (Prop prop : mapping.getProps()) {
-//                        if (!MappingPropType.FIELD.equals(prop.getType())) {
-//                            // 这段逻辑只处理类目属性(FIELD类型)的,如果是SKU属性或共通属性,则跳过
-//                            continue;
-//                        }
-//
-//                        // 递归设置属性
-//                        // jeff 2016/04 change start
-//                        // field.put(prop.getProp(), getPropValueByMapping(prop.getProp(), prop, feed, field, schemaModel));
-//                        if (newFlg || productField.get(prop.getProp()) == null) {
-//                            Object propValue = getPropValueByMapping(prop.getProp(), prop, feed, productField, schemaModel);
-//                            if (propValue != null) {
-//                                productField.put(prop.getProp(), propValue);
-//                            }
-//                        }
-//                        // jeff 2016/04 change end
-//                    }
-//                }
-//            }
-
-            // 新建的场合才设置的属性
-//            if (newFlg) {
-            // TODO: 现在mapping画面功能还不够强大, 共通属性和SKU属性先暂时写死在代码里, 等我写完上新代码回过头来再想办法改 (tom.zhu)
-            // 主数据的field里, 暂时强制写死的字段(共通属性)
-            // 产品code
-//            if (newFlg || StringUtils.isEmpty(productField.getCode())) {
-//                productField.setCode(feed.getCode());
-//            }
             if (newFlg || StringUtils.isEmpty(productCommonField.getCode())) {
                 productCommonField.setCode(feed.getCode());
             }
 
             // jeff 2016/05 add start
             // 产品原始code
-//            if (newFlg || StringUtils.isEmpty(productField.getOriginalCode())) {
-//                productField.setOriginalCode(originalCode);
-//            }
             if (newFlg || StringUtils.isEmpty(productCommonField.getOriginalCode())) {
                 productCommonField.setOriginalCode(originalCode);
             }
             // jeff 2016/05 add end
 
-            // 品牌
-//            if (newFlg || StringUtils.isEmpty(productField.getBrand()) || "1".equals(feed.getIsFeedReImport())) {
-//                if (mapBrandMapping.containsKey(feed.getBrand().toLowerCase())) {
-//                    productField.setBrand(mapBrandMapping.get(feed.getBrand().toLowerCase()));
-//                } else {
-//                    $error(getTaskName() + ":" + String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
-//
-//                    // 记下log, 跳过当前记录
-//                    //                logIssue(getTaskName(), String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
-//                    $warn(String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
-//
-//                    return null;
-//                }
-//            }
             if (newFlg || StringUtils.isEmpty(productCommonField.getBrand()) || "1".equals(feed.getIsFeedReImport())) {
                 // 插入的品牌名称为feed中的品牌名称的小写值
                 String feedBrandLowerCase = feed.getBrand().toLowerCase().trim();
@@ -1318,36 +1270,20 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     }
                     // add by desmond 2016/07/18 end
                 }
-                // 根据feed品牌取得mast对应的品牌
-//                String masterBrand = this.mastBrand.get(feed.getBrand());
-//                if(StringUtil.isEmpty(masterBrand)){
-//                    masterBrand = cmsMasterBrandMappingService.getMasterBrandByFeedBrand(this.channel.getOrder_channel_id(),feed.getBrand());
-//                }
-//                productCommonField.setBrand(masterBrand);
-//                this.mastBrand.put(feed.getBrand(),masterBrand);
             }
 
 
             // 产品名称（英文）
-//            if (newFlg || StringUtils.isEmpty(productField.getProductNameEn()) || "1".equals(feed.getIsFeedReImport())) {
-//                productField.setProductNameEn(feed.getName());
-//            }
             if (newFlg || StringUtils.isEmpty(productCommonField.getProductNameEn()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setProductNameEn(feed.getName());
             }
 
             // 长标题, 中标题, 短标题: 都是中文, 需要自己翻译的
             // 款号model
-//            if (newFlg || StringUtils.isEmpty(productField.getModel()))  {
-//                productField.setModel(feed.getModel());
-//            }
             if (newFlg || StringUtils.isEmpty(productCommonField.getModel())) {
                 productCommonField.setModel(feed.getModel());
             }
             // 颜色(中文颜色，feed->master不用设置了)
-//            if (newFlg || StringUtils.isEmpty(productField.getColor()) || "1".equals(feed.getIsFeedReImport())) {
-//                productField.setColor(feed.getColor());
-//            }
             // update desmond 2016/07/05 start
             // 小林说common.fields.color是中文颜色，不用在这里设置了，英文颜色值设到新加的字段codeDiff（商品特质英文）里面
             if (newFlg || "1".equals(feed.getIsFeedReImport())) {
@@ -1371,18 +1307,18 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             if (newFlg || StringUtils.isEmpty(productCommonField.getCodeDiff()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setCodeDiff(feed.getColor());
             }
+
+            if(!"007".equals(feed.getChannelId()) && !StringUtil.isEmpty(productCommonField.getCodeDiff()) && StringUtil.isEmpty(productCommonField.getColor())){
+                String color = cmsBtTranslateService.translate(usjoi?"928":feed.getChannelId(), CmsBtCustomPropModel.CustomPropType.Common.getValue(), "com_color", productCommonField.getCodeDiff());
+                if(!StringUtil.isEmpty(color)) productCommonField.setColor(color);
+            }
+
             // update desmond 2016/07/05 end
             // 产地
-//            if (newFlg || StringUtils.isEmpty(productField.getOrigin()) || "1".equals(feed.getIsFeedReImport())) {
-//                productField.setOrigin(feed.getOrigin());
-//            }
             if (newFlg || StringUtils.isEmpty(productCommonField.getOrigin()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setOrigin(feed.getOrigin());
             }
             // 简短描述英文
-//            if (newFlg || StringUtils.isEmpty(productField.getShortDesEn()) || "1".equals(feed.getIsFeedReImport())) {
-//                productField.setShortDesEn(feed.getShortDescription());
-//            }
             if (newFlg || StringUtils.isEmpty(productCommonField.getShortDesEn()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setShortDesEn(feed.getShortDescription());
             }
@@ -2039,23 +1975,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
             // jeff 2016/05 add start
             boolean numIdNoSet = doSetGroup(feed);
-//            if (numIdNoSet && !skip_mapping_check) {
-//                String catPath = mapping.getMainCategoryPath();
-//                product.setCatId(MD5.getMD5(catPath)); // 主类目id
-//                product.setCatPath(catPath); // 主类目path
-//            }
-            // jeff 2016/05 add end
-
-            // 注意: 价格是在外面共通方法更新的, 这里不需要更新
-
-            // --------- 获取主类目的schema信息 ------------------------------------------------------
-            // delete desmond 2016/07/04 start 现在不用通过shema匹配sku信息了
-//            CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(product.getCommon().getCatId());
-            // delete desmond 2016/07/04 end
-            // 更新Fields字段
-            // jeff 2016/04 change start
-            // CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, false);
-            // CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, false, product.getFields(), isSplit, originalCode);
             if (product.getCommon() == null) {
                 CmsBtProductModel_Common common = new CmsBtProductModel_Common();
                 common.setFields(new CmsBtProductModel_Field());
@@ -2068,11 +1987,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 product.getCommon().getFields().setLongDesEn(feed.getLongDescription());
             }
 
-            // delete desmond 2016/07/01 start 跟上面重复了
-//            if (product.getFields() == null) {
-//                product.setFields(new CmsBtProductModel_Field());
-//            }
-//            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, false, product.getFields(), product.getCommon().getFields(), isSplit, originalCode);
             CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, false, product.getCommon().getFields(), isSplit, originalCode);
             // delete desmond 2016/07/01 end
             // jeff 2016/04 change end
