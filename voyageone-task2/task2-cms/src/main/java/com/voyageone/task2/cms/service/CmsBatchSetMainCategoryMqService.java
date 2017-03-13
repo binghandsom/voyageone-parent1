@@ -112,9 +112,9 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
 
                             MatchResult matchResult = getSizeType(cmsBtProductModel);
                             if(matchResult != null){
-                                updateMap.put("common.fields.sizeType", StringUtil.isEmpty(matchResult.getSizeTypeEn())?sizeTypeEn:matchResult.getSizeTypeEn());
+                                updateMap.put("common.fields.sizeType", StringUtil.isEmpty(matchResult.getSizeTypeEn())?sizeTypeEn:matchResult.getSizeTypeEn().toLowerCase());
                                 updateMap.put("common.fields.sizeTypeCn", StringUtil.isEmpty(matchResult.getSizeTypeCn())?sizeTypeCn:matchResult.getSizeTypeCn());
-                                sizeType = StringUtil.isEmpty(matchResult.getSizeTypeCn())?sizeTypeCn:matchResult.getSizeTypeCn();
+                                sizeType = StringUtil.isEmpty(matchResult.getSizeTypeCn())?sizeTypeCn:matchResult.getSizeTypeCn().toLowerCase();
                             }else{
                                 updateMap.put("common.fields.sizeType", getString(sizeTypeEn));
                                 updateMap.put("common.fields.sizeTypeCn", getString(sizeTypeCn));
