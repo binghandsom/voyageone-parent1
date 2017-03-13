@@ -2,8 +2,8 @@ package com.voyageone.web2.openapi.vms.control;
 
 import com.voyageone.web2.openapi.OpenApiBaseController;
 import com.voyageone.web2.openapi.vms.service.VmsOrderService;
-import com.voyageone.web2.sdk.api.request.*;
-import com.voyageone.web2.sdk.api.response.*;
+import com.voyageone.web2.sdk.api.request.vms.*;
+import com.voyageone.web2.sdk.api.response.vms.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
