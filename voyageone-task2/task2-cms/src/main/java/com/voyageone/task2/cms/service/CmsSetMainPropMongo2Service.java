@@ -30,6 +30,11 @@ public class CmsSetMainPropMongo2Service  extends BaseCronTaskService {
 
     @Autowired
     SetMainPropService setMainPropService;
+    @Override
+    protected String getTaskName() {
+        return "CmsSetMainPropMongoJob";
+    }
+
     /**
      * feed数据 -> 主数据
      * 关联代码1 (从天猫获取Fields):
@@ -64,7 +69,7 @@ public class CmsSetMainPropMongo2Service  extends BaseCronTaskService {
 //            // 获取前一次的价格强制击穿时间
 //            String priceBreakTime = TaskControlUtils.getEndTime(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
             // 主逻辑
-            SetMainPropService.setMainProp mainProp = setMainPropService.new setMainProp(orderChannelID, false, bln_skip_mapping_check);
+            SetMainPropService.setMainProp mainProp = setMainPropService.new setMainProp(orderChannelID, true, bln_skip_mapping_check);
             mainProp.setTaskName(getTaskName());
             // 启动多线程
             executor.execute(() -> mainProp.doRun(resultMap, needReloadMap));
@@ -90,11 +95,6 @@ public class CmsSetMainPropMongo2Service  extends BaseCronTaskService {
                 .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
                 .forEach(p -> $info(p.getValue()));
         $info("=================feed->master导入  主线程结束====================");
-    }
-
-    @Override
-    protected String getTaskName() {
-        return "CmsSetMainPropMongoJob";
     }
 
     @Override

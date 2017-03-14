@@ -415,7 +415,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 }
             }
 
-            CmsChannelConfigBean feedMastThreshold = CmsChannelConfigs.getConfigBeanNoCode(channelId,
+            CmsChannelConfigBean feedMastThreshold = CmsChannelConfigs.getConfigBeanNoCode(usjoi?"928":channelId,
                     CmsConstants.ChannelConfig.FEED_MAST_THRESHOLD);
 
             if (feedMastThreshold != null) {
@@ -2467,44 +2467,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 //   如果已经有存在的话: 直接用那个group
                 //   如果没有的话: 新建一个
                 if (group == null) {
-
                     group = productGroupService.createNewGroup(usjoi ? "928" : feed.getChannelId(), Integer.parseInt(shop.getValue()), feed.getCode(), false);
-//                    group = new CmsBtProductGroupModel();
-//
-//                    // 渠道id
-//                    group.setChannelId(usjoi?"928":feed.getChannelId());
-//
-//                    // cart id
-//                    group.setCartId(Integer.parseInt(shop.getValue()));
-//
-//                    // 获取唯一编号
-//                    group.setGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID));
-//
-//                    // 主商品Code
-//                    group.setMainProductCode(feed.getCode());
-//
-//                    // platform status:发布状态: 未上新 // Synship.com_mt_type : id = 45
-//                    group.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
-//
-//                    CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId()
-//                            , CmsConstants.ChannelConfig.PLATFORM_ACTIVE
-//                            , String.valueOf(group.getCartId()));
-//                    if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
-//                        if (CmsConstants.PlatformActive.ToOnSale.name().equals(cmsChannelConfigBean.getConfigValue1())) {
-//                            group.setPlatformActive(CmsConstants.PlatformActive.ToOnSale);
-//                        } else {
-//                            // platform active:上新的动作: 暂时默认是放到:仓库中
-//                            group.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
-//                        }
-//                    } else {
-//                        // platform active:上新的动作: 暂时默认是放到:仓库中
-//                        group.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
-//                    }
-//
-//                    // ProductCodes
-//                    List<String> codes = new ArrayList<>();
-//                    codes.add(feed.getCode());
-//                    group.setProductCodes(codes);
                     group.setCreater(getTaskName());
                     group.setModifier(getTaskName());
                     cmsBtProductGroupDao.insert(group);

@@ -20,7 +20,6 @@ public class CmsBatchSetMainCategoryMqServiceTest {
     @Test
     public void getSizeType() throws Exception {
 
-        cmsBatchSetMainCategoryMqService.getSizeType("girls");
     }
 
 
