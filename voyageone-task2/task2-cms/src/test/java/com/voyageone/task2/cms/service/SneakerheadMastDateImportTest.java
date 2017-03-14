@@ -4,13 +4,9 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.ExcelUtils;
-import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
-import com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
-import com.voyageone.service.impl.cms.ImageGroupService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.SizeChartService;
-import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
@@ -38,7 +34,7 @@ import java.util.stream.Collectors;
 public class SneakerheadMastDateImportTest {
 
     public final static String cms_mt_sizechartrelation = "H:\\DOC\\14.共通素材整理\\14.6素材图程序导入版\\尺码表程序导入版12.28.xlsx";
-    public final static String cms_mt_sizechart = "H:\\DOC\\14.共通素材整理\\14.6素材图程序导入版\\尺码图程序导入版12.28.xlsx";
+    public final static String cms_mt_sizechart = "/Users/linanbin/Desktop/sneakerhead_size.xlsx";
     public final static String sellerCat = "H:\\sneaker\\店铺内分类\\sellerCat.xlsx";
 
     @Autowired
@@ -79,8 +75,9 @@ public class SneakerheadMastDateImportTest {
     private List<CmsBtImageGroupModel> resolveImageGroupModelModel(InputStream xls) throws Exception {
         Map<String, CmsBtImageGroupModel> models = new HashMap<>();
         Workbook wb = new XSSFWorkbook(xls);
-        Sheet sheet1 = wb.getSheetAt(0);
+        Sheet sheet1 = wb.getSheetAt(1);
         int rowNum = 0;
+
         for (Row row : sheet1) {
             try {
                 rowNum++;
@@ -92,16 +89,16 @@ public class SneakerheadMastDateImportTest {
                 if (row.getCell(0) == null || StringUtil.isEmpty(row.getCell(0).getStringCellValue())) {
                     break;
                 }
-                String channelId = ExcelUtils.getString(row, 0);
-                String cartId = ExcelUtils.getString(row, 5,"#");
-                String imageGroupName = ExcelUtils.getString(row, 3);
-                String imageType = ExcelUtils.getString(row, 2,"#");
-                String viewType = ExcelUtils.getString(row, 1,"#");
-                String brandName = ExcelUtils.getString(row, 6);
-                String sizeType = ExcelUtils.getString(row, 9);
-                String productType = ExcelUtils.getString(row, 7);
-                String originUrl = ExcelUtils.getString(row, 11);
-                String platformUrl =  ExcelUtils.getString(row, 12);
+                String channelId = "001";
+                String cartId = ExcelUtils.getString(row, 4, "#");
+                String imageType = "2";
+                String viewType = "PC".equals(ExcelUtils.getString(row, 3)) ? "1" : "2";
+                String brandName = ExcelUtils.getString(row, 0).toLowerCase();
+                String sizeType = ExcelUtils.getString(row, 2);
+                String productType = ExcelUtils.getString(row, 1);
+                String originUrl = ExcelUtils.getString(row, 5);
+                String platformUrl = ExcelUtils.getString(row, 5);
+                String imageGroupName = ExcelUtils.getString(row, 7);//brandName.toLowerCase() + "-" + productType + "-" + sizeType + "-" + cartId + "-" + ExcelUtils.getString(row, 3);
                 CmsBtImageGroupModel_Image cmsBtImageGroupModel_Image = new CmsBtImageGroupModel_Image();
                 cmsBtImageGroupModel_Image.setOriginUrl(originUrl);
                 cmsBtImageGroupModel_Image.setPlatformUrl(platformUrl);
@@ -119,13 +116,15 @@ public class SneakerheadMastDateImportTest {
                     cmsBtImageGroupModel.setCartId(Integer.parseInt(cartId));
                     cmsBtImageGroupModel.setImageGroupName(imageGroupName);
                     cmsBtImageGroupModel.setBrandName(Arrays.asList(brandName.split(",")));
-                    cmsBtImageGroupModel.setSizeType(Arrays.asList(sizeType.split(",")).stream().map(str->str.equalsIgnoreCase("All")?"All":str.toLowerCase()).collect(Collectors.toList()));
-                    cmsBtImageGroupModel.setProductType(Arrays.asList(productType.split(",")).stream().map(str->str.equalsIgnoreCase("All")?"All":str.toLowerCase()).collect(Collectors.toList()));
+                    cmsBtImageGroupModel.setSizeType(Arrays.asList(sizeType.split(",")).stream().map(str -> str.equalsIgnoreCase("All") ? "All" : str).collect(Collectors.toList()));
+                    cmsBtImageGroupModel.setProductType(Arrays.asList(productType.split(",")).stream().map(str -> str.equalsIgnoreCase("All") ? "All" : str).collect(Collectors.toList()));
                     cmsBtImageGroupModel.setImageType(Integer.parseInt(imageType));
                     //1:PC端 2:APP端
                     cmsBtImageGroupModel.setViewType(Integer.parseInt(viewType));
                     cmsBtImageGroupModel.setImage(new ArrayList<>());
                     models.put(imageType+imageGroupName, cmsBtImageGroupModel);
+                } else {
+
                 }
                 cmsBtImageGroupModel.getImage().add(cmsBtImageGroupModel_Image);
             } catch (Exception e) {
