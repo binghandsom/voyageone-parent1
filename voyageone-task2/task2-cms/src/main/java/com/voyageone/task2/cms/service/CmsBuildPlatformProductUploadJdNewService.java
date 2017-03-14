@@ -188,7 +188,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 
     @Override
     public String getTaskName() {
-        return "CmsBuildPlatformProductUploadJdJob";
+        return "CmsBuildPlatformProductUploadJdNewJob";
     }
 
     private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
