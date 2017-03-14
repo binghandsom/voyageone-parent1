@@ -17,6 +17,10 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class CmsBatchSetMainCategoryMqServiceTest {
+    @Test
+    public void getSizeType() throws Exception {
+
+    }
 
 
     @Test

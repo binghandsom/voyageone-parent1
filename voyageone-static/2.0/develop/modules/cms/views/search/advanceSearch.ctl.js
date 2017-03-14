@@ -746,7 +746,7 @@ define([
         $scope.chkSalesTypeList = function () {
             if ($scope.vm.searchInfo.sortSalesType == '' || $scope.vm.searchInfo.sortSalesType == undefined) {
                 $scope.vm.searchInfo.sortSales = '';
-                return;
+
             }
         };
 
@@ -886,9 +886,9 @@ define([
                 var _confirmMsg;
 
                 if(cartId != 27)
-                    _confirmMsg = '以下3种属性未完成的商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台类目&nbsp;（3）平台品牌';
+                    _confirmMsg = '以下2种属性未完成的商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台品牌';
                 else
-                    _confirmMsg = '请确认平台品牌是否设置。点击【确定】启动智能上新。';
+                    _confirmMsg = '以下2种属性未完成的商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台类目&nbsp;（3）平台品牌';
 
                 confirm(_confirmMsg)
                     .then(function () {
@@ -1009,7 +1009,7 @@ define([
                         $scope.search();
                     });
             }
-        }
+        };
 
         /**
          * popup弹出选择平台数据类目

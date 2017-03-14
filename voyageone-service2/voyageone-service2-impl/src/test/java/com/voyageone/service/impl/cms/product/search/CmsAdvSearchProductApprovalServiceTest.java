@@ -1,12 +1,17 @@
 package com.voyageone.service.impl.cms.product.search;
 
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchProductApprovalBySmartMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchProductApprovalMQMessageBody;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Piao on 2017/3/13.
@@ -425,4 +430,21 @@ public class CmsAdvSearchProductApprovalServiceTest {
 
     }
 
+    @Test
+    public void intelligent() throws Exception {
+
+        AdvSearchProductApprovalBySmartMQMessageBody messageBody = new AdvSearchProductApprovalBySmartMQMessageBody();
+        messageBody.setCartId(27);
+        messageBody.setChannelId("010");
+        List<String> productCodes = new ArrayList<>();
+        productCodes.add("CHBR043MB");
+        productCodes.add("BF00003YGK");
+        productCodes.add("01411YAA");
+        messageBody.setProductCodes(productCodes);
+        messageBody.setSender("edward.lin");
+        List<CmsBtOperationLogModel_Msg> errorList = cmsAdvSearchProductApprovalService.intelligent(messageBody);
+        errorList.forEach(msg -> {
+            System.out.println(msg.getSkuCode() + ":" + msg.getMsg());
+        });
+    }
 }

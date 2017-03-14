@@ -16,6 +16,7 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
+import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
@@ -23,18 +24,23 @@ import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchProductApprovalBySmartMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchProductApprovalMQMessageBody;
+import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 高级检索-商品审批Job业务类
@@ -46,18 +52,26 @@ import java.util.Map;
 public class CmsAdvSearchProductApprovalService extends BaseService {
 
     @Autowired
+    protected CmsBtProductDao cmsBtProductDao;
+    @Autowired
     private ProductService productService;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
-    @Autowired
-    protected CmsBtProductDao cmsBtProductDao;
     @Autowired
     private SxProductService sxProductService;
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
     @Autowired
     private PriceService priceService;
+    @Autowired
+    private CmsMtBrandsMappingDao cmsMtBrandsMappingDao;
 
+    /**
+     * 批量审批
+     *
+     * @param mqMessageBody
+     * @return
+     */
     public List<CmsBtOperationLogModel_Msg> approval(AdvSearchProductApprovalMQMessageBody mqMessageBody) {
         long threadNo = Thread.currentThread().getId();
         $info(String.format("threadNo=%d 参数%s", threadNo, JacksonUtil.bean2Json(mqMessageBody)));
@@ -297,6 +311,130 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
         $info("批量修改属性 (商品审批) 记入状态历史表结束 耗时" + (System.currentTimeMillis() - sta));
 
         return errorCodeList;
+    }
+
+    /**
+     * 智能上新
+     *
+     * @param mqMessageBody
+     * @return
+     */
+    public List<CmsBtOperationLogModel_Msg> intelligent(AdvSearchProductApprovalBySmartMQMessageBody mqMessageBody) {
+
+        List<String> productCodes = mqMessageBody.getProductCodes();
+        String channelId = mqMessageBody.getChannelId();
+        Integer cartId = mqMessageBody.getCartId();
+        String userName = mqMessageBody.getSender();
+
+        // 按产品的Code检索出所有的商品
+        JongoQuery queryObj = new JongoQuery();
+        queryObj.setQuery("{\"common.fields.code\": {$in: #}}");
+        queryObj.setParameters(productCodes);
+        List<CmsBtProductModel> products = productService.getList(channelId, queryObj);
+
+        // 开始智能上新
+        List<CmsBtOperationLogModel_Msg> errorList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(products)) {
+            productCodes.clear();
+
+            // 获取该平台已匹配的平台品牌
+            Map<String, Object> map = new HashMap<>();
+            map.put("channelId", channelId);
+            map.put("cartId", cartId);
+            map.put("active", 1);
+            List<CmsMtBrandsMappingModel> brandList = cmsMtBrandsMappingDao.selectList(map);
+            List<String> brands = brandList.stream()
+                    .filter(model -> !StringUtils.isEmpty(model.getBrandId()))
+                    .map(model -> model.getCmsBrand().toLowerCase())
+                    .collect(Collectors.toList());
+
+            // 智能上新批处理
+            BulkJongoUpdateList productBulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
+
+            String productCode;
+            for (CmsBtProductModel product : products) {
+                productCode = product.getCommon().getFields().getCode();
+
+                // 检测该商品的税号状态是否为已设置
+                if (!"1".equals(product.getCommon().getFields().getHsCodeStatus())) {
+                    CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                    errorInfo.setSkuCode(productCode);
+                    errorInfo.setMsg("该商品税号未设置,税号状态不为1");
+                    errorList.add(errorInfo);
+                    continue;
+                }
+
+                // 检测该JGJ和JGY的平台以外的时候 平台类目是否设置
+                if (cartId != 28 || cartId != 29) {
+                    if (StringUtils.isEmpty(product.getPlatform(cartId).getpCatId())) {
+                        CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                        errorInfo.setSkuCode(productCode);
+                        errorInfo.setMsg("该商品不属于Liking的京东系, 平台类目未设置");
+                        errorList.add(errorInfo);
+                        continue;
+                    }
+                }
+
+                // 检测平台品牌是否设置
+                if (StringUtils.isEmpty(product.getPlatform(cartId).getpBrandName())
+                        && !brands.contains(product.getCommon().getFields().getBrand().toLowerCase())) {
+                    CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+                    errorInfo.setSkuCode(productCode);
+                    errorInfo.setMsg(String.format("该商品的平台(cartId: %d)品牌未设置,并且平台品牌和主品牌的关联关系也未设置", cartId));
+                    errorList.add(errorInfo);
+                    continue;
+                }
+
+                StringBuffer updateStr = new StringBuffer("{$set:{")
+                        .append(" 'platforms.P").append(cartId).append(".status':'Approved'");
+
+                if (product.getPlatform(cartId) == null
+                        || product.getPlatform(cartId).getpStatus() == null
+                        || StringUtils.isEmpty(product.getPlatform(cartId).getpStatus().name())) {
+                    updateStr.append(",'platforms.P").append(cartId).append(".pStatus':'WaitingPublish'");
+                }
+
+                updateStr.append(",'modified':#")
+                        .append(",'modifier':#")
+                        .append("}}");
+                // 更新商品状态
+                JongoUpdate updateObj = new JongoUpdate();
+                updateObj.setQuery("{'common.fields.code':#}");
+                updateObj.setQueryParameters(productCode);
+                updateObj.setUpdate(updateStr.toString());
+                updateObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userName);
+
+                // 保存商品Code
+                productCodes.add(productCode);
+                // 添加秕处理执行语句
+                BulkWriteResult rs = productBulkList.addBulkJongo(updateObj);
+                if (rs != null) {
+                    $debug(String.format("智能上新(product表) channelId=%s 执行结果=%s", channelId, rs.toString()));
+                }
+            }
+
+            // 执行智能上新批处理
+            BulkWriteResult rs = productBulkList.execute();
+            if (rs != null) {
+                $debug(String.format("智能上新(product表) channelId=%s 结果=%s", channelId, rs.toString()));
+            }
+
+            // 插入上新程序
+            $debug("批量修改属性 (智能上新) 开始记入SxWorkLoad表");
+            long start = System.currentTimeMillis();
+            sxProductService.insertSxWorkLoad(channelId, productCodes, cartId, userName, true);
+            $debug("批量修改属性 (智能上新) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - start));
+
+            // 记录商品修改历史
+            productStatusHistoryService.insertList(channelId, productCodes, cartId, EnumProductOperationType.IntelligentPublish,
+                    "高级检索 智能上新", userName);
+        } else {
+            CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+            errorInfo.setSkuCode("All");
+            errorInfo.setMsg("该组商品在产品表中检索不到任何一个商品");
+            errorList.add(errorInfo);
+        }
+        return errorList;
     }
 
 }
