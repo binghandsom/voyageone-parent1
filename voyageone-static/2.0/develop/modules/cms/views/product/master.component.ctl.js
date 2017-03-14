@@ -164,7 +164,9 @@ define([
                                 if(context.selected.sizeTypeEn){
                                     var sizeType = searchField("适用人群",scope.vm.productComm.schemaFields);
                                     if(sizeType) {
-                                        sizeType.value.value = context.selected.sizeTypeEn;
+                                        if(!sizeType.value.value){
+                                            sizeType.value.value = context.selected.sizeTypeEn;
+                                        }
                                     }
                                 }
                                 if(context.selected.sizeTypeEn){
