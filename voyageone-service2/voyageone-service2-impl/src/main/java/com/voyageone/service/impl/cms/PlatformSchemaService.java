@@ -2,11 +2,13 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
@@ -152,20 +154,25 @@ public class PlatformSchemaService extends BaseService {
         String schemaProduct = platformCatSchemaModel.getPropsProduct();
 
         // 正式环境， 需要这段代码， release环境， 不需要这段代码 START
-//        if (CartEnums.Cart.isTmSeries(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) {
-//            if (platformBrandId != null) {
-//                // 如果传入的平台品牌id不是空的， 那么就从天猫上去获取一下
-//                ShopBean shopBean = Shops.getShop(channelId, cartId);
-//                try {
-//                    String schema = tbProductService.getAddProductSchema(Long.parseLong(catId), Long.parseLong(platformBrandId), shopBean);
-//                    if (!StringUtils.isEmpty(schema)) {
-//                        schemaProduct = schema;
-//                    }
-//                } catch (Exception e) {
-//
-//                }
-//            }
-//        }
+        // 获取共通的配置 （channel： 000， config key： IS_FACTORY， config code： 0）
+        // 如果config value1是1的话， 那就是说明是生产环境， 需要做下面的逻辑， 否则就是测试环境， 跳过下面的逻辑
+        CmsChannelConfigBean environmentConfig = CmsChannelConfigs.getConfigBean("000", CmsConstants.ChannelConfig.IS_FACTORY, "0");
+        if (environmentConfig != null && environmentConfig.getConfigValue1() != null && "1".equals(environmentConfig.getConfigValue1())) {
+            if (CartEnums.Cart.isTmSeries(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) {
+                if (platformBrandId != null) {
+                    // 如果传入的平台品牌id不是空的， 那么就从天猫上去获取一下
+                    ShopBean shopBean = Shops.getShop(channelId, cartId);
+                    try {
+                        String schema = tbProductService.getAddProductSchema(Long.parseLong(catId), Long.parseLong(platformBrandId), shopBean);
+                        if (!StringUtils.isEmpty(schema)) {
+                            schemaProduct = schema;
+                        }
+                    } catch (Exception e) {
+
+                    }
+                }
+            }
+        }
         // 正式环境， 需要这段代码， release环境， 不需要这段代码 END
 
 //        if (CartEnums.Cart.JG.getValue() == cartId || CartEnums.Cart.JGJ.getValue() == cartId || CartEnums.Cart.JGY.getValue() == cartId) {

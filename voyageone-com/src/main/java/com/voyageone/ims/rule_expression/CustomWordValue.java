@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = CustomWordValueGetMainProductImages.class, name = CustomWordValueGetMainProductImages.moduleName),
         @JsonSubTypes.Type(value = CustomWordValueGetDescImage.class, name = CustomWordValueGetDescImage.moduleName),
         @JsonSubTypes.Type(value = CustomWordValueImageWithParam.class, name = CustomWordValueImageWithParam.moduleName),
+        @JsonSubTypes.Type(value = CustomWordValueGetProductFieldInfo.class, name = CustomWordValueGetProductFieldInfo.moduleName),
         @JsonSubTypes.Type(value = CustomWordValueImageFormat.class, name = CustomWordValueImageFormat.moduleName),
         @JsonSubTypes.Type(value = CustomWordValueGetPaddingImageKey.class, name = CustomWordValueGetPaddingImageKey.moduleName),
         @JsonSubTypes.Type(value = CustomWordValueIf.class, name = CustomWordValueIf.moduleName),
