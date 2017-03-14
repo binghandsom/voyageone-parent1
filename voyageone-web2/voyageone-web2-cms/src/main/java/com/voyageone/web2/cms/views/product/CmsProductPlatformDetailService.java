@@ -91,10 +91,8 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, parameter.getProdId());
         CmsBtProductModel_Platform_Cart platform = cmsBtProduct.getPlatform(parameter.getCartId());
-        if (parameter.getIsSale()) {
-            //如果该已经approve，则插入上新work表
-            setCartSkuIsSale_True(parameter, cmsBtProduct, platform, userName);
-        } else if (!StringUtils.isEmpty(platform.getpNumIId())) {
+        // 如果该平台所有SKU设置成IsNotSale, 并且numIId存在的话,先做商品下线处理
+        if (!parameter.getIsSale() && !StringUtils.isEmpty(platform.getpNumIId())) {
             //如果numiid存在则判断调用group下线，还是code下线 中同时清空pReallyStatus的值
             platform.setpReallyStatus("");
             setCartSkuIsSale_False(parameter, cmsBtProduct, platform, userName);
@@ -103,21 +101,9 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         platform.getSkus().forEach(f -> {
             f.setAttribute("isSale", parameter.getIsSale());
         });
+        // 根据商品情况,判断上新是否做上新操作
         productPlatformService.updateProductPlatformWithSx(channelId, parameter.getProdId(), platform, userName, "设置sku的isSale状态", false);
 
-    }
-
-    void setCartSkuIsSale_True(SetCartSkuIsSaleParameter parameter, CmsBtProductModel cmsBtProduct, CmsBtProductModel_Platform_Cart platform, String userName) {
-        // 如果该已经approve，则插入上新work表
-        if ("Approved".equals(platform.getStatus())) {
-
-            List<String> cartIdList = new ArrayList<>();
-
-            cartIdList.add(Integer.toString(parameter.getCartId()));
-
-            //则插入上新work表
-            sxProductService.insertSxWorkLoad(cmsBtProduct, cartIdList, userName);
-        }
     }
 
     void setCartSkuIsSale_False(SetCartSkuIsSaleParameter parameter, CmsBtProductModel cmsBtProduct, CmsBtProductModel_Platform_Cart platform, String userName) {
@@ -130,7 +116,6 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         if (!StringUtils.isEmpty(platform.getpNumIId())) {
 
             if (platform.getpIsMain() == 1) {
-
                 cmsProductDetailService.delistinGroup(delistingParameter, userName);
             } else {
                 cmsProductDetailService.delisting(delistingParameter, userName);
@@ -141,6 +126,11 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
     /**
      * 产品编辑一览页面, 修改价格后保存
+     *
+     * @param parameter
+     * @param channelId
+     * @param userName
+     * @throws Exception
      */
     public void saveCartSkuPrice(SaveCartSkuPriceParameter parameter, String channelId, String userName) throws BusinessException {
         Long productId = parameter.getProdId();
@@ -513,8 +503,21 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
     /**
      * 产品编辑页面修改产品信息
+     *
+     * @param channelId
+     * @param prodId
+     * @param platform
+     * @param modifier
+     * @param blnSmartSx
+     * @return
      */
     public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier, Boolean blnSmartSx) {
+        /**保存类型*/
+        String saveType = null;
+        if (platform.get("saveType") != null) {
+            saveType = platform.get("saveType").toString();
+            platform.remove("saveType");
+        }
 
         if (platform.get("schemaFields") != null) {
             List<Field> masterFields = buildMasterFields((Map<String, Object>) platform.get("schemaFields"));
@@ -523,10 +526,6 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             platform.remove("schemaFields");
         }
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
-
-        if (platformModel.getCartId() == 27) {
-            blnSmartSx = false;
-        }
 
         Boolean isCatPathChg = false;
         CmsBtProductModel cmsBtProductModel = null;
@@ -540,17 +539,35 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 isCatPathChg = true;
             }
         }
-        if (blnSmartSx)
-            modified = productPlatformService.updateProductPlatformWithSmartSx(channelId, prodId, platformModel, modifier, "产品编辑页-智能上新", true);
-        else {
+
+        /**京东和聚美的普通上新和智能上新 上新标志【blnSmartSx】设置为true added by Piao*/
+        if (blnSmartSx) {
+            String comment;
+            if (saveType != null && saveType.equals("intel")) {
+                comment = "产品编辑页-智能上新";
+            } else {
+                comment = "京东&聚美-产品编辑页-普通上新";
+            }
+            modified = productPlatformService.updateProductPlatformWithSmartSx(channelId, prodId, platformModel, modifier, comment, true);
+        } else
             modified = productPlatformService.updateProductPlatformWithSx(channelId, prodId, platformModel, modifier, "产品编辑页-普通上新", true);
-        }
 
         if (isCatPathChg) {
             productService.resetProductAndGroupPlatformPid(channelId, platformModel.getCartId(), cmsBtProductModel.getCommon().getFields().getCode());
         }
         return modified;
 
+    }
+
+    /**
+     * 产品编辑页保存包含类型判断
+     */
+    public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier, Boolean blnSmartSx, String saveType) {
+        if (saveType != null) {
+            platform.put("saveType", saveType);
+        }
+
+        return updateProductPlatform(channelId, prodId, platform, modifier, blnSmartSx);
     }
 
     /**
@@ -673,8 +690,8 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         platform.setpCatPath(mainPlatform.getpCatPath());
         platform.setpBrandId(mainPlatform.getpBrandId());
         platform.setpBrandName(mainPlatform.getpBrandName());
-        if(platform.getFields() == null) platform.setFields(new BaseMongoMap<>());
-        if (cartId ==  CartEnums.Cart.TG.getValue()) {
+        if (platform.getFields() == null) platform.setFields(new BaseMongoMap<>());
+        if (cartId == CartEnums.Cart.TG.getValue()) {
             String skuKey = "sku_outerId"; // 商家编码对应skuCode
             try {
                 List<Map<String, Object>> listSkuVal = platform.getFields().getAttribute("sku");

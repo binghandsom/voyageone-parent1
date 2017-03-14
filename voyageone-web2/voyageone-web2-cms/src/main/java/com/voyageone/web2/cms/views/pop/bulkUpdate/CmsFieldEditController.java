@@ -28,6 +28,7 @@ import java.util.Map;
         value  = CmsUrlConstants.POP.FIELD_EDIT.ROOT,
         method = RequestMethod.POST
 )
+
 public class CmsFieldEditController extends CmsController {
 
     @Autowired
