@@ -586,15 +586,15 @@ define([
     /**
      * 产品详情上下架
      */
-    SpTmController.prototype.upperAndLowerFrame = function(mark) {
+    SpTmController.prototype.upperAndLowerFrame = function (mark) {
         var self = this,
-            msg = mark === 'ToOnSale'? '上架':'下架';
+            msg = mark === 'ToOnSale' ? '上架' : '下架';
 
-        self.confirm('您是否执行'　+ msg +'操作？').then(function(){
+        self.confirm('您是否执行' + msg + '操作？').then(function () {
             self.productDetailService.upperLowerFrame({
                 cartId: self.$scope.cartInfo.value,
                 productCode: self.vm.mastData.productCode,
-                pStatus:mark
+                pStatus: mark
             }).then(function () {
                 self.getPlatformData();
             });
@@ -662,10 +662,30 @@ define([
             cartId: self.$scope.cartInfo.value,
             productId: self.$scope.productInfo.productId,
             platform: self.vm.platform,
-            showArr:['image1','image6','image7','image2','image3','image4','image5']
+            showArr: ['image1', 'image6', 'image7', 'image2', 'image3', 'image4', 'image5']
         }).then(function (platform) {
             self.vm.platform = platform;
         });
+    };
+
+    /**
+     * 锁平台
+     */
+    SpTmController.prototype.platFormLock = function () {
+        var self = this, notify = self.notify,
+            lock = angular.copy(self.vm.platform.lock);
+
+        self.productDetailService.lockPlatForm({
+            cartId: self.$scope.cartInfo.value,
+            prodId: self.$scope.productInfo.productId,
+            lock: Number(lock)
+        }).then(function (res) {
+            notify.success(res);
+        }, function (res) {
+            if (!res)
+                self.vm.platform.lock = Number(!lock);
+        });
+
     };
 
     cms.directive('tmSubPage', function () {

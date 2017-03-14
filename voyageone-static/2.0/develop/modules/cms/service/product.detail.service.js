@@ -7,12 +7,13 @@
 
 define([
     'cms',
+    'modules/cms/enums/Carts',
     'modules/cms/enums/Status'
-], function (cms) {
+], function (cms, cartEnum) {
 
     cms.service("productDetailService", productDetailService);
 
-    function productDetailService($q, $productDetailService, $filter) {
+    function productDetailService($q, $productDetailService, $filter, confirm) {
 
         this.getProductInfo = getProductInfo;
         this.updateProductDetail = updateProductDetail;
@@ -803,7 +804,7 @@ define([
 
         }
 
-        function upperLowerFrame(req){
+        function upperLowerFrame(req) {
             var defer = $q.defer();
             $productDetailService.upperLowerFrame(req)
                 .then(function (res) {
@@ -848,7 +849,7 @@ define([
 
             platform.pAttributeStatus = vm.checkFlag.attribute == 1 ? "1" : "0";
             platform.status = statusEntity.mark == "temporary" ? vm.preStatus : vm.status;
-            platform.pStatus = vm.status == "Approved" && platform.pStatus == "" ? "WaitingPublish" :platform.pStatus;
+            platform.pStatus = vm.status == "Approved" && platform.pStatus == "" ? "WaitingPublish" : platform.pStatus;
             platform.sellerCats = vm.sellerCats;
             platform.cartId = Number(cartId);
 
@@ -858,5 +859,29 @@ define([
                 });
             }
         };
+
+        /**
+         * 平台级Lock
+         * @param prodId cartId lock
+         */
+        this.lockPlatForm = function (req) {
+            var defer = $q.defer(),
+                msg = req.lock ? '锁定' : '解锁';
+
+            confirm("您是否要" + msg + cartEnum.valueOf(Number(req.cartId)).desc + "?").then(function () {
+
+                return $productDetailService.lockPlatForm(req).then(function () {
+
+                    defer.resolve(msg + '成功！');
+                }, function (res) {
+                    defer.reject(res);
+                });
+
+            }, function () {
+                defer.reject(false);
+            });
+
+            return defer.promise
+        }
     }
 });

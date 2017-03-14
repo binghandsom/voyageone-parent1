@@ -5,6 +5,7 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -28,6 +29,7 @@ import com.voyageone.service.bean.cms.CmsProductPlatformDetail.*;
 import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
 import com.voyageone.service.bean.cms.product.DelistingParameter;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
@@ -85,6 +87,8 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     private MongoSequenceService sequenceService;
     @Autowired
     private CmsBtPlatformActiveLogDao platformActiveLogDao;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
 
     //设置isSale
     public void setCartSkuIsSale(SetCartSkuIsSaleParameter parameter, String channelId, String userName) {
@@ -826,6 +830,31 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         if (rs != null) {
             $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s,cmsBtProductGroup更新结果=%s", cartId, userBean.getSelChannelId(), rs.toString());
         }
+    }
+
+    /**
+     * Lock平台
+     */
+    public void lockPlatForm(UserSessionBean userBean, Map<String, Object> params) {
+
+        Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
+        String channelId = userBean.getSelChannelId();
+        Integer cartId = Integer.valueOf(String.valueOf(params.get("cartId"))),
+                lock = Integer.valueOf(String.valueOf(params.get("lock")));
+
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", prodId);
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put(String.format("platforms.P%s.lock", cartId), lock);
+
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
     }
 
     //更新cmsBtProduct

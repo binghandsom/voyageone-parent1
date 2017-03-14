@@ -13,7 +13,7 @@ define([
         bigImageUrl: 'http://image.sneakerhead.com/is/image/sneakerhead/✓?wid=2200&hei=2200'
     };
 
-    cms.directive("masterSchema", function (productDetailService, sizeChartService, $rootScope, systemCategoryService, alert, notify, confirm,$localStorage) {
+    cms.directive("masterSchema", function (productDetailService, sizeChartService, $rootScope, systemCategoryService, alert, notify, confirm, $localStorage) {
         return {
             restrict: "E",
             templateUrl: "views/product/master.component.tpl.html",
@@ -28,17 +28,17 @@ define([
                     productComm: null,
                     categoryMark: null,
                     hsCodeOrigin: null,
-                    sizeChartList:[],
-                    selectSizeChart:null,
-                    lockStatus:{},
-                    channelId:$localStorage.user.channel,
-                    panelShow:true
+                    sizeChartList: [],
+                    selectSizeChart: null,
+                    lockStatus: {},
+                    channelId: $localStorage.user.channel,
+                    panelShow: true
                 };
 
-                scope.selectSizeChartChange=function () {
-                    var sizeChartId=scope.vm.productComm.sizeChart;
-                    scope.vm.selectSizeChart= _.find(scope.vm.sizeChartList,function (f) {
-                       return f.sizeChartId==sizeChartId;
+                scope.selectSizeChartChange = function () {
+                    var sizeChartId = scope.vm.productComm.sizeChart;
+                    scope.vm.selectSizeChart = _.find(scope.vm.sizeChartList, function (f) {
+                        return f.sizeChartId == sizeChartId;
                     })
 
                 };
@@ -86,7 +86,7 @@ define([
                         }));
 
                         //champion不存在主商品图
-                        if(_fields.images1 && _fields.images1[0])
+                        if (_fields.images1 && _fields.images1[0])
                             scope.vm.currentImage = $rootScope.imageUrl.replace('%s', _fields.images1[0].image1);
 
                         scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
@@ -95,23 +95,23 @@ define([
                         scope.vm.lockStatus.onOffSwitch3 = scope.vm.mastData.lock == "1" ? true : false;
 
 
-
                         /**主商品提示*/
                         if (!scope.vm.mastData.isMain) {
                             alert("本商品不是平台主商品，如果您需要在天猫或者京东上新，您所修改的信息不会同步到平台上，图片除外。");
                         }
-                        var parameterGetProductSizeChartList={};
+                        var parameterGetProductSizeChartList = {};
 
-                        parameterGetProductSizeChartList.brandName=scope.productInfo.masterField.brand;
-                        parameterGetProductSizeChartList.productType=scope.productInfo.masterField.productType;
-                        parameterGetProductSizeChartList.sizeType=scope.productInfo.masterField.sizeType;
+                        parameterGetProductSizeChartList.brandName = scope.productInfo.masterField.brand;
+                        parameterGetProductSizeChartList.productType = scope.productInfo.masterField.productType;
+                        parameterGetProductSizeChartList.sizeType = scope.productInfo.masterField.sizeType;
 
                         sizeChartService.getProductSizeChartList(parameterGetProductSizeChartList).then(function (res) {
-                            scope.vm.sizeChartList=res.data;
+                            scope.vm.sizeChartList = res.data;
                             scope.selectSizeChartChange();
                         });
                     });
                 }
+
                 /**
                  @description 类目popup
                  * @param productInfo
@@ -137,51 +137,51 @@ define([
                             scope.vm.productComm.catPath = context.selected.catPath;
                             scope.vm.productComm.catPathEn = context.selected.catPathEn;
                             scope.vm.productComm.catConf = "1";
-                            if(context.selected.catPath){
-                                var translateStatus = searchField("商品翻译状态",scope.vm.productComm.schemaFields);
-                                var temp = searchField("产品名称中文",scope.vm.productComm.schemaFields);
-                                if(temp){
-                                    if(!temp.value || translateStatus.value.value != "1") {
+                            if (context.selected.catPath) {
+                                var translateStatus = searchField("商品翻译状态", scope.vm.productComm.schemaFields);
+                                var temp = searchField("产品名称中文", scope.vm.productComm.schemaFields);
+                                if (temp) {
+                                    if (!temp.value || translateStatus.value.value != "1") {
                                         var cat = context.selected.catPath.split(">");
-                                        var titleCn = scope.vm.productComm.fields.brand + ' ' +context.selected.sizeTypeCn + ' ' + cat[cat.length-1];
+                                        var titleCn = scope.vm.productComm.fields.brand + ' ' + context.selected.sizeTypeCn + ' ' + cat[cat.length - 1];
                                         temp.value = titleCn;
                                     }
                                 }
                             }
                             confirm("主类目切换是否自动覆盖产品分类，使用人群，税号个人，税号跨境申报？").then(function () {
-                                if(context.selected.productTypeEn){
-                                    var productType = searchField("产品分类",scope.vm.productComm.schemaFields);
-                                    if(productType){
+                                if (context.selected.productTypeEn) {
+                                    var productType = searchField("产品分类", scope.vm.productComm.schemaFields);
+                                    if (productType) {
                                         productType.value.value = context.selected.productTypeEn;
                                     }
                                 }
-                                if(context.selected.productTypeEn){
-                                    var productType = searchField("产品分类中文",scope.vm.productComm.schemaFields);
-                                    if(productType) {
+                                if (context.selected.productTypeEn) {
+                                    var productType = searchField("产品分类中文", scope.vm.productComm.schemaFields);
+                                    if (productType) {
                                         productType.value.value = context.selected.productTypeCn;
                                     }
                                 }
-                                if(context.selected.sizeTypeEn){
-                                    var sizeType = searchField("适用人群",scope.vm.productComm.schemaFields);
-                                    if(sizeType) {
+                                if (context.selected.sizeTypeEn) {
+                                    var sizeType = searchField("适用人群", scope.vm.productComm.schemaFields);
+                                    if (sizeType) {
                                         sizeType.value.value = context.selected.sizeTypeEn;
                                     }
                                 }
-                                if(context.selected.sizeTypeEn){
-                                    var sizeType = searchField("适用人群中文",scope.vm.productComm.schemaFields);
-                                    if(sizeType) {
+                                if (context.selected.sizeTypeEn) {
+                                    var sizeType = searchField("适用人群中文", scope.vm.productComm.schemaFields);
+                                    if (sizeType) {
                                         sizeType.value.value = context.selected.sizeTypeCn;
                                     }
                                 }
-                                if(context.selected.hscodeName8){
-                                    var sizeType = searchField("税号个人（8位）",scope.vm.productComm.schemaFields);
-                                    if(sizeType) {
+                                if (context.selected.hscodeName8) {
+                                    var sizeType = searchField("税号个人（8位）", scope.vm.productComm.schemaFields);
+                                    if (sizeType) {
                                         sizeType.value.value = context.selected.hscodeName8;
                                     }
                                 }
-                                if(context.selected.hscodeName10){
-                                    var sizeType = searchField("税号跨境申报（10位）",scope.vm.productComm.schemaFields);
-                                    if(sizeType) {
+                                if (context.selected.hscodeName10) {
+                                    var sizeType = searchField("税号跨境申报（10位）", scope.vm.productComm.schemaFields);
+                                    if (sizeType) {
                                         sizeType.value.value = context.selected.hscodeName10;
                                     }
                                 }
@@ -379,7 +379,7 @@ define([
 
                     confirm("您确认要删除该图片吗？").then(function () {
                         _.each(pictures, function (ele, index) {
-                            if (ele[imagesType.replace('images','image')] === imageName) {
+                            if (ele[imagesType.replace('images', 'image')] === imageName) {
                                 _rmIndex = index;
                             }
                         });
@@ -422,13 +422,13 @@ define([
                  * 导航栏上的状态锁定操作
                  * @param onOffSwitch：锁定的对象
                  */
-                function lockProduct(onOffSwitch){
+                function lockProduct(onOffSwitch) {
                     var _status = scope.vm.lockStatus[onOffSwitch],
                         lock = _status ? "1" : "0";
 
                     confirm("您确定执行该操作吗？").then(function () {
 
-                        switch (onOffSwitch){
+                        switch (onOffSwitch) {
                             case "onOffSwitch1":
                                 productDetailService.doAppSwitch({
                                     prodId: scope.productInfo.productId,
@@ -465,7 +465,6 @@ define([
                         scope.vm.lockStatus[onOffSwitch] = !_status;
                     });
                 }
-
 
 
                 /**全schema中通过name递归查找field*/

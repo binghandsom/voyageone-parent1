@@ -680,7 +680,9 @@ public interface CmsUrlConstants {
 
 			String RESTORE_PLATFORM_IMG = "restorePlatformImg";
 
-            String UPPER_LOWER_FRAME="upperLowerFrame";
+            String UPPER_LOWER_FRAME = "upperLowerFrame";
+
+            String LOCK_PLATFORM = "lockPlatForm";
         }
 
         interface HISTORY {
