@@ -28,6 +28,6 @@ public class CmsDataAmountServiceTest {
 
     @Test
     public void testOnStartup() throws Exception {
-        cmsBtDataAmountService.sumByChannelId("010");
+        cmsBtDataAmountService.sumByChannelId("001");
     }
 }
