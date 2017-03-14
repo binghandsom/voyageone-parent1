@@ -365,8 +365,8 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                 }
 
                 // 检测该JGJ和JGY的平台以外的时候 平台类目是否设置
-                if (cartId != 28 || cartId != 29) {
-                    if (StringUtils.isEmpty(product.getPlatform(cartId).getpCatId())) {
+                if (cartId != 28 && cartId != 29) {
+                    if (StringUtils.isEmpty(product.getPlatformNotNull(cartId).getpCatId())) {
                         CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
                         errorInfo.setSkuCode(productCode);
                         errorInfo.setMsg("该商品不属于Liking的京东系, 平台类目未设置");

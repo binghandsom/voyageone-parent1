@@ -20,14 +20,14 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
-public class CmsSetMainPropMongoServiceTest {
+public class CmsSetMainPropMongoServiceDelTest {
     @Test
     public void onStartup() throws Exception {
 
     }
 
     @Autowired
-    private CmsSetMainPropMongoService cmsSetMainPropMongoService;
+    private CmsSetMainPropMongoService_del cmsSetMainPropMongoServiceDel;
 
     @Autowired
     private FeedInfoService feedInfoService;
@@ -62,7 +62,7 @@ public class CmsSetMainPropMongoServiceTest {
 //        taskControlBean3.setCfg_val1("020");
 //        taskControlList.add(taskControlBean3);
 
-        cmsSetMainPropMongoService.onStartup(taskControlList);
+        cmsSetMainPropMongoServiceDel.onStartup(taskControlList);
     }
 
 
@@ -112,7 +112,7 @@ public class CmsSetMainPropMongoServiceTest {
 
         if (feedInfo != null && cmsProduct != null) {
             // 设置产品各个平台的店铺内分类信息
-            cmsSetMainPropMongoService.setSellerCats(feedInfo, cmsProduct);
+            cmsSetMainPropMongoServiceDel.setSellerCats(feedInfo, cmsProduct);
         }
 
     }

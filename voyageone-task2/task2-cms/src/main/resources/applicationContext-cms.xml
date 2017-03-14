@@ -23,6 +23,10 @@
         <!-- 将产品导入到主数据的值表 > 由于运营可能需要随时修改主类目，所以改为3分钟运行一次 -->
         <task:scheduled ref="CmsSetMainPropMongoJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
+        <!-- 将产品导入到liking主数据的值表 > 由于运营可能需要随时修改主类目，所以改为3分钟运行一次 -->
+        <task:scheduled ref="CmsSetMainPropMongoUSJoiJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
+
         <!--&lt;!&ndash; 旧版天猫上新CMS2中已废弃 &ndash;&gt;-->
         <!--<task:scheduled ref="UploadProductJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
 
