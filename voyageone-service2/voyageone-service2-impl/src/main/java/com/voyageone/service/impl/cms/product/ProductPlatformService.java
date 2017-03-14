@@ -87,7 +87,7 @@ public class ProductPlatformService extends BaseService {
      * @return
      */
     public String updateProductPlatformWithSmartSx(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, String Comment, boolean isModifiedChk) {
-        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.WebEdit, Comment, true, 1);
+        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.IntelligentPublish, Comment, true, 1);
     }
 
     /**

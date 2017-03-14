@@ -90,7 +90,11 @@
                                             <i class="fa fa-arrow-circle-right"></i>&nbsp;上下架历史
                                         </a>
                                     </li>
-
+                                    <li ng-if="ctrl.vm.publishEnabled">
+                                        <a href="javascript:void(0)" ng-click="openIntelApprove(ctrl.vm.mastData.productCode, ctrl.$scope.cartInfo.value)">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;智能上新历史
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>&emsp;
                             <div class="btn-group" uib-dropdown>
@@ -191,7 +195,7 @@
                                 </div>
 
                                 <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.publishEnabled">
-                                    <button class="btn btn-vo" ng-click="ctrl.publishProduct()" ng-disabled="!ctrl.vm.platform.pBrandName">
+                                    <button class="btn btn-vo" ng-click="ctrl.publishProduct()" ng-disabled="!ctrl.vm.platform.pBrandName || ctrl.vm.checkFlag.tax != 1 || ctrl.vm.checkFlag.category != 1">
                                         <i class="glyphicon glyphicon-floppy-disk"></i>智能上新
                                     </button>
                                 </div>
