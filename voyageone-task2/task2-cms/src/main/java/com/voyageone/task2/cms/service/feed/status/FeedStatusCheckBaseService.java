@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.daoext.cms.CmsFeedLiveSkuDaoExt;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.feed.FeedSaleService;
@@ -54,9 +55,9 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
 
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        notSale = Collections.synchronizedSet(new HashSet<String>());
+        notSale = Collections.synchronizedSet(new HashSet<>());
 
-        sale = Collections.synchronizedSet(new HashSet<String>());
+        sale = Collections.synchronizedSet(new HashSet<>());
 
         List<CmsFeedLiveSkuModel> skus = getSkuList();
         List<List<CmsFeedLiveSkuModel>> skuList = CommonUtil.splitList(skus, 1000);
@@ -82,7 +83,8 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
     }
 
     private void insertData(List<CmsFeedLiveSkuModel> skus) {
-        cmsFeedLiveSkuDaoExt.insertList(skus);
+        if(!ListUtils.isNull(skus))
+            cmsFeedLiveSkuDaoExt.insertList(skus);
     }
 
     private void deleteData() {

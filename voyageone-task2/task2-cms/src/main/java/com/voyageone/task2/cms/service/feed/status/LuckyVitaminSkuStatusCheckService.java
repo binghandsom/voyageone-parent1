@@ -5,6 +5,7 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.model.cms.CmsFeedLiveSkuModel;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +37,14 @@ public class LuckyVitaminSkuStatusCheckService extends FeedStatusCheckBaseServic
 
         // Body读入
         while (reader.readRecord()) {
-            String Discontinued = reader.get(95);
-            if (Discontinued.equalsIgnoreCase("yes")) continue;
+            String discontinued = reader.get(95);
+            //upc,MerchantPrimaryCategory,cnMsrp,cNPrice,ImageList
+            if (StringUtils.isEmpty(reader.get(1)) || StringUtils.isEmpty(reader.get(49))
+                    || StringUtils.isEmpty(reader.get(19))
+                    || StringUtils.isEmpty(reader.get(20))
+                    || StringUtils.isEmpty(reader.get(37))
+                    ) continue;
+            if (discontinued.equalsIgnoreCase("yes")) continue;
             CmsFeedLiveSkuModel cmsFeedLiveSkuModel = new CmsFeedLiveSkuModel();
             cmsFeedLiveSkuModel.setChannelId(getChannel().getId());
             String sku = reader.get(0);
