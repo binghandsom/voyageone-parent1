@@ -111,9 +111,11 @@ public class SxProductService extends BaseService {
      */
     private static final int UPD_FLG_UPLOADED = 1;
     @Autowired
-    private TbPictureService tbPictureService;
-    @Autowired
     TbProductService tbProductService;
+    @Autowired
+    JumeiImageFileService jumeiImageFileService;
+    @Autowired
+    private TbPictureService tbPictureService;
     @Autowired
     private SkuFieldBuilderService skuFieldBuilderService;
     @Autowired
@@ -132,7 +134,6 @@ public class SxProductService extends BaseService {
     private CmsMtBrandService cmsMtBrandService;
     @Autowired
     private SneakerheadApiService sneakerheadApiService;
-
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
     @Autowired
@@ -164,8 +165,6 @@ public class SxProductService extends BaseService {
     @Autowired
     private ProductGroupService productGroupService;
     @Autowired
-    JumeiImageFileService jumeiImageFileService;
-    @Autowired
     private CmsBtWorkloadHistoryDao cmsBtWorkloadHistoryDao;
     @Autowired
     private CmsMtPlatformPropSkuDao cmsMtPlatformPropSkuDao;
@@ -191,6 +190,24 @@ public class SxProductService extends BaseService {
         if (!plainValue.endsWith(endStr))
             return plainValue + endStr;
         return plainValue;
+    }
+
+    /**
+     * 获取网络图片流，遇错重试
+     *
+     * @param url   imgUrl
+     * @param retry retrycount
+     * @return inputStream / throw Exception
+     */
+    public static InputStream getImgInputStream(String url, int retry) throws BusinessException {
+        if (--retry > 0) {
+            try {
+                return HttpUtils.getInputStream(url, null);
+            } catch (Exception e) {
+                getImgInputStream(url, retry);
+            }
+        }
+        throw new BusinessException("通过URL取得图片失败. url:" + url);
     }
 
     /**
@@ -419,10 +436,31 @@ public class SxProductService extends BaseService {
                 effectCnt, channelId, cartId, LongUtils.toString(groupId), code);
     }
 
+    // delete by morse.lu 2016/06/14 start
+    // 设计变更，mysql -> mongo , 新方法getSizeMap
+//    /**
+//     * 尺码转换
+//     *
+//     * @param cmsBtSizeMapModelList 尺码对照表
+//     * @param originalSize   转换前size
+//     * @return 转后后size
+//     */
+//    public String changeSize(List<CmsBtSizeMapModel> cmsBtSizeMapModelList, String originalSize) {
+//
+//        for (CmsBtSizeMapModel cmsBtSizeMapModel : cmsBtSizeMapModelList) {
+//            if (originalSize.equals(cmsBtSizeMapModel.getOriginalSize())) {
+//                return cmsBtSizeMapModel.getAdjustSize();
+//            }
+//        }
+//
+//        return null;
+//    }
+    // delete by morse.lu 2016/06/14 end
+
     /**
      * 回写ims_bt_product表
      *
-     * @param sxData 上新数据
+     * @param sxData   上新数据
      * @param modifier 更新者
      */
     public void updateImsBtProduct(SxData sxData, String modifier) {
@@ -460,27 +498,6 @@ public class SxProductService extends BaseService {
             }
         }
     }
-
-    // delete by morse.lu 2016/06/14 start
-    // 设计变更，mysql -> mongo , 新方法getSizeMap
-//    /**
-//     * 尺码转换
-//     *
-//     * @param cmsBtSizeMapModelList 尺码对照表
-//     * @param originalSize   转换前size
-//     * @return 转后后size
-//     */
-//    public String changeSize(List<CmsBtSizeMapModel> cmsBtSizeMapModelList, String originalSize) {
-//
-//        for (CmsBtSizeMapModel cmsBtSizeMapModel : cmsBtSizeMapModelList) {
-//            if (originalSize.equals(cmsBtSizeMapModel.getOriginalSize())) {
-//                return cmsBtSizeMapModel.getAdjustSize();
-//            }
-//        }
-//
-//        return null;
-//    }
-    // delete by morse.lu 2016/06/14 end
 
     /**
      * 上传图片到天猫(或聚美)图片空间
@@ -669,6 +686,14 @@ public class SxProductService extends BaseService {
 
     }
 
+//    private String getImageName(String picUrl) throws MalformedURLException {
+//        URL url = new URL(picUrl);
+//        String path = url.getPath();
+//        String[] urlStr = path.split("/");
+//        String filename = urlStr[urlStr.length -1 ];
+//        return filename;
+//    }
+
     public Picture uploadImageToTm(ShopBean shopBean, byte[] file) {
         //上传到天猫
         Picture picture;
@@ -697,15 +722,6 @@ public class SxProductService extends BaseService {
         return picture;
     }
 
-//    private String getImageName(String picUrl) throws MalformedURLException {
-//        URL url = new URL(picUrl);
-//        String path = url.getPath();
-//        String[] urlStr = path.split("/");
-//        String filename = urlStr[urlStr.length -1 ];
-//        return filename;
-//    }
-    
-    
     public String uploadImageByUrl_JM(String picUrl, ShopBean shopBean) throws Exception {
 
         // 图片流
@@ -745,9 +761,6 @@ public class SxProductService extends BaseService {
         }
 
     }
-
-
-
 
     public String decodeImageUrl(String encodedValue) {
         return encodedValue.substring(0, encodedValue.length() - 2);
@@ -1627,7 +1640,7 @@ public class SxProductService extends BaseService {
         return retMap;
     }
 
-	/**
+    /**
      * [ 预判断 ] 设置京东属性 - [价格][价位]
      * 注意: 这里不是设置真正的价格, 而是设置价格区间用的
      * @param field 字段的内容
@@ -1638,7 +1651,7 @@ public class SxProductService extends BaseService {
         String strRex2 = "\\s*\\d+\\s*元*以上";
         String strRex3 = "其它";
         String strRex4 = "不限";
-		String strRex5 = "\\s*\\d+\\s*元*以下";
+        String strRex5 = "\\s*\\d+\\s*元*以下";
 
         // 如果不是京东京东国际的话, 返回false
         if (!shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
@@ -1680,13 +1693,13 @@ public class SxProductService extends BaseService {
                 }
             }
 
-			if (!blnError) {
-				Pattern pattern = Pattern.compile(strRex5, Pattern.CASE_INSENSITIVE);
-				Matcher matcher = pattern.matcher(optionDisplayName);
-				if (matcher.find()) {
-					blnError = true;
-				}
-			}
+            if (!blnError) {
+                Pattern pattern = Pattern.compile(strRex5, Pattern.CASE_INSENSITIVE);
+                Matcher matcher = pattern.matcher(optionDisplayName);
+                if (matcher.find()) {
+                    blnError = true;
+                }
+            }
 
             if (!blnError) {
                 if (optionDisplayName.equals(strRex3) ||
@@ -1723,12 +1736,12 @@ public class SxProductService extends BaseService {
             // 判断一下当前可选项属于哪类
             String optionDisplayName = option.getDisplayName();
 
-			{
-				// 把 "xxx以下"， 变成"0-xxx"
-				if (optionDisplayName.contains("以下")) {
-					optionDisplayName = "0-" + optionDisplayName.replace("以下", "");
-				}
-			}
+            {
+                // 把 "xxx以下"， 变成"0-xxx"
+                if (optionDisplayName.contains("以下")) {
+                    optionDisplayName = "0-" + optionDisplayName.replace("以下", "");
+                }
+            }
 
             if (optionDisplayName.contains("-")) {
                 // 专门处理这类的内容: 100-199元
@@ -1787,31 +1800,6 @@ public class SxProductService extends BaseService {
      * 注意: 通过这里统一设置品牌属性，这样运营就不用再设置品牌信息了
      * @param shopBean ShopBean 店铺信息
      * @param field Field 字段的内容
-     * @return 是否是品牌属性
-     */
-    public boolean resolveJdBrandSection_before(ShopBean shopBean, Field field) {
-
-        // 如果不是京东京东国际的话, 返回false
-        if (!shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
-            return false;
-        }
-
-        // 属性名字必须是指定内容
-        if (!"品牌".equals(field.getName())) {
-            return false;
-        }
-
-        // 判断类型
-        return field.getType() == FieldTypeEnum.SINGLECHECK;
-
-    }
-
-    /**
-     * [ 预判断 ] 设置京东属性 - [品牌]
-     * 注意: 通过这里统一设置品牌属性，这样运营就不用再设置品牌信息了
-     *
-     * @param shopBean ShopBean 店铺信息
-     * @param field    Field 字段的内容
      * @return 是否是品牌属性
      */
     public boolean resolveJdBrandSection_before(ShopBean shopBean, Field field) {
@@ -3606,13 +3594,13 @@ public class SxProductService extends BaseService {
         }
 
         for (Integer key : sortKey) {
-            List<CmsBtImageGroupModel> matchModels =  matchMap.get(key);
+            List<CmsBtImageGroupModel> matchModels = matchMap.get(key);
             if (matchModels.size() > 1) {
                 throw new BusinessException("共通图片表找到两条以上符合的记录,请修正设定!" +
                         "channelId= " + channelId +
                         ",cartId= " + cartId +
                         ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图 6：使用保养图 7：测量方式图)" +
-                        ",viewType= "+ viewType + "(1:PC端 2：APP端)" +
+                        ",viewType= " + viewType + "(1:PC端 2：APP端)" +
                         ",BrandName= " + paramBrandName +
                         ",ProductType= " + paramProductType +
                         ",SizeType=" + paramSizeType);
@@ -3624,7 +3612,7 @@ public class SxProductService extends BaseService {
                             "channelId= " + channelId +
                             ",cartId= " + cartId +
                             ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图 6：使用保养图 7：测量方式图)" +
-                            ",viewType= "+ viewType + "(1:PC端 2：APP端)" +
+                            ",viewType= " + viewType + "(1:PC端 2：APP端)" +
                             ",BrandName= " + paramBrandName +
                             ",ProductType= " + paramProductType +
                             ",SizeType=" + paramSizeType);
@@ -3675,9 +3663,9 @@ public class SxProductService extends BaseService {
                     if (sizeMap.containsKey(sizeInfo.getOriginalSize())) {
                         // 这一版暂时不允许有原始尺码一样的，以后会支持
                         throw new BusinessException("根据sizeChartId在尺码对照表找到一条符合的记录,但有相同的原始尺码,请修正尺码表设定!" +
-                                "channelId= "    + channelId   +
+                                "channelId= " + channelId +
                                 ",sizeChartId= " + sizeChartId +
-                                "OriginalSize="  + sizeInfo.getOriginalSize());
+                                "OriginalSize=" + sizeInfo.getOriginalSize());
                     }
                     sizeMap.put(sizeInfo.getOriginalSize(), sizeInfo.getAdjustSize());
                 }
@@ -3762,7 +3750,7 @@ public class SxProductService extends BaseService {
         }
 
         for (Integer key : sortKey) {
-            List<CmsBtSizeChartModel> matchModels =  matchMap.get(key);
+            List<CmsBtSizeChartModel> matchModels = matchMap.get(key);
             if (matchModels.size() > 1) {
                 throw new BusinessException("尺码对照表找到两条以上符合的记录,请修正设定!" +
                         "channelId= " + channelId +
@@ -3784,11 +3772,11 @@ public class SxProductService extends BaseService {
                                 "OriginalSize=" + sizeInfo.getOriginalSize());
                     }
                     // added by morse.lu start 2016/06/16 end
-                    if(goldSizeFlg){
-                        if("1".equalsIgnoreCase(sizeInfo.getUsual())){
+                    if (goldSizeFlg) {
+                        if ("1".equalsIgnoreCase(sizeInfo.getUsual())) {
                             sizeMap.put(sizeInfo.getOriginalSize(), sizeInfo.getAdjustSize());
                         }
-                    }else{
+                    } else {
                         sizeMap.put(sizeInfo.getOriginalSize(), sizeInfo.getAdjustSize());
                     }
                 }
@@ -3824,6 +3812,7 @@ public class SxProductService extends BaseService {
 
         return retSizeMap;
     }
+    // 20160513 tom 图片服务器切换 END
 
     /**
      * 从cms_bt_image_template(mongo)取得图片url，取得逻辑与getImageUrls相同
@@ -3831,11 +3820,11 @@ public class SxProductService extends BaseService {
      * @param channelId
      * @param cartId
      * @param imageTemplateType 1:商品图片模版 2:产品图片模版 3：详情细节模版 4：参数模版 5:自定义图片模版 6:商品包装模版
-     * @param viewType 1:PC端 2：APP端
-     * @param brandName product.fields.brand
-     * @param productType product.fields.productType
-     * @param sizeType product.fields.sizeType
-     * @param imageParam 参数
+     * @param viewType          1:PC端 2：APP端
+     * @param brandName         product.fields.brand
+     * @param productType       product.fields.productType
+     * @param sizeType          product.fields.sizeType
+     * @param imageParam        参数
      * @return url
      */
     public String getImageTemplate(String channelId, int cartId, int imageTemplateType, int viewType, String brandName, String productType, String sizeType, String... imageParam) throws Exception {
@@ -3903,7 +3892,7 @@ public class SxProductService extends BaseService {
 
         String retUrl = null;
         for (Integer key : sortKey) {
-            List<CmsBtImageTemplateModel> matchModels =  matchMap.get(key);
+            List<CmsBtImageTemplateModel> matchModels = matchMap.get(key);
             if (matchModels.size() > 1) {
                 throw new BusinessException("图片模板表找到两条以上符合的记录,请修正设定!" +
                         "channelId= " + channelId +
@@ -3920,7 +3909,6 @@ public class SxProductService extends BaseService {
 
         return retUrl;
     }
-    // 20160513 tom 图片服务器切换 END
 
     // 20160513 tom 图片服务器切换 START
     public String getImageByTemplateId(String channelId, String imageTemplateId, String... imageParam) throws Exception {
@@ -4041,15 +4029,15 @@ public class SxProductService extends BaseService {
                     }
                     retMap.putAll(resolveField);
                 } else {
-					if (blnIsSmartSx) {
-						Map<String, Field> resolveField_smart  = getValueBySmartCore(field, sxData, platformMappingFieldValues);
-						if (resolveField_smart != null) {
-							if (retMap == null) {
-								retMap = new HashMap<>();
-							}
-							retMap.putAll(resolveField_smart);
-						}
-					}
+                    if (blnIsSmartSx) {
+                        Map<String, Field> resolveField_smart = getValueBySmartCore(field, sxData, platformMappingFieldValues);
+                        if (resolveField_smart != null) {
+                            if (retMap == null) {
+                                retMap = new HashMap<>();
+                            }
+                            retMap.putAll(resolveField_smart);
+                        }
+                    }
                 }
             }
         }
@@ -4063,31 +4051,31 @@ public class SxProductService extends BaseService {
         // 如果 平台默认属性设置 里， 有设置过的话， 那就直接用了
         if (platformMappingFieldValues.containsKey(field.getId())) {
             Object o = platformMappingFieldValues.get(field.getId());
-			if (o != null && !StringUtils.isEmpty(String.valueOf(o))) {
-				switch (field.getType()) {
-					case INPUT:
-						InputField inputField = (InputField) field;
-						inputField.setValue(o.toString());
-						retMap.put(field.getId(), inputField);
-						break;
-					case SINGLECHECK:
-						SingleCheckField singleCheckField = (SingleCheckField) field;
+            if (o != null && !StringUtils.isEmpty(String.valueOf(o))) {
+                switch (field.getType()) {
+                    case INPUT:
+                        InputField inputField = (InputField) field;
+                        inputField.setValue(o.toString());
+                        retMap.put(field.getId(), inputField);
+                        break;
+                    case SINGLECHECK:
+                        SingleCheckField singleCheckField = (SingleCheckField) field;
                         if (singleCheckField.getOptions().stream().filter(option -> o.toString().equals(option.getValue())).count() == 0) {
                             // 如果在CMS 店铺管理>平台默认属性设置一览 画面中设置的类目默认属性值在最新的类目schema中不存在时，报出异常
                             throw new BusinessException(String.format("在CMS店铺管理>平台默认属性设置一览画面中设置的类目(%s)属性(%s)的" +
-                                    "默认属性值(%s)在京东平台最新的类目schema中已经不存在了(默认属性设置一览画面中也会显示为空)，" +
-                                    "请重新设置该类目的默认值之后再上新!",
+                                            "默认属性值(%s)在京东平台最新的类目schema中已经不存在了(默认属性设置一览画面中也会显示为空)，" +
+                                            "请重新设置该类目的默认值之后再上新!",
                                     sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(), singleCheckField.getName(), o.toString()));
                         }
-						singleCheckField.setValue(o.toString());
-						retMap.put(field.getId(), singleCheckField);
-						break;
+                        singleCheckField.setValue(o.toString());
+                        retMap.put(field.getId(), singleCheckField);
+                        break;
                     case MULTICHECK:
                         MultiCheckField multiCheckField = (MultiCheckField) field;
                         List<Value> lstValue = new ArrayList<>();
                         ArrayList<String> defaultValueList = (ArrayList<String>) o;
                         List<String> notExistValues = new ArrayList<>();
-                        for (String defaultValue : defaultValueList){
+                        for (String defaultValue : defaultValueList) {
                             if (multiCheckField.getOptions().stream().filter(option -> defaultValue.equals(option.getValue())).count() == 0) {
                                 // 如果在CMS店铺管理>平台默认属性设置一览画面中设置的类目默认属性值在最新的类目schema中不存在时
                                 notExistValues.add(defaultValue);
@@ -4108,8 +4096,8 @@ public class SxProductService extends BaseService {
                         multiCheckField.setValues(lstValue);
                         retMap.put(field.getId(), multiCheckField);
                         break;
-				}
-			}
+                }
+            }
 
             return retMap;
         }
@@ -4150,10 +4138,10 @@ public class SxProductService extends BaseService {
                     }
                 }
 
-				if (!StringUtils.isEmpty(val)) {
-					singleCheckField.setValue(val);
-					retMap.put(field.getId(), singleCheckField);
-				}
+                if (!StringUtils.isEmpty(val)) {
+                    singleCheckField.setValue(val);
+                    retMap.put(field.getId(), singleCheckField);
+                }
                 break;
             case MULTIINPUT:
                 break;
@@ -4193,7 +4181,7 @@ public class SxProductService extends BaseService {
      * 天猫以外的平台取得Product中FieldId对应的属性值(参考SxProductService的resolveMapping()方法)
      * 天猫之外的平台不需要用platform_mapping表信息来取得平台类目Schema的各个Field属性值，直接product.P29.fields取得
      *
-     * @param field Field    平台schema表中的propsItem里面的Field
+     * @param field  Field    平台schema表中的propsItem里面的Field
      * @param sxData SxData  上新数据
      * @return 设好值的FieldId和Field
      */
@@ -4250,7 +4238,7 @@ public class SxProductService extends BaseService {
             case MULTICHECK:
                 String[] valueArrays = ExpressionParser.decodeString(strfieldItemValue); // 解析"~~"分隔的字符串
 
-                MultiCheckField multiCheckField = (MultiCheckField)field;
+                MultiCheckField multiCheckField = (MultiCheckField) field;
                 List<String> notExistValues = new ArrayList<>();
                 for (String val : valueArrays) {
                     if (multiCheckField.getOptions().stream().filter(option -> val.equals(option.getValue())).count() == 0) {
@@ -4284,7 +4272,7 @@ public class SxProductService extends BaseService {
         return retMap;
     }
 
-    /**
+        /**
      * 取得Product中FieldId对应的属性值(Copy from MasterWordParser.java)
      *
      * @param evaluationContext Map<String, Object>  Product里面的PXX平台下面的fields
@@ -4305,8 +4293,7 @@ public class SxProductService extends BaseService {
         String leftPropName = propName.substring(separatorPos + 1);
         return getPropValue((Map<String, Object>) evaluationContext.get(firstPropName), leftPropName);
     }
-
-    /**
+/**
      * 上新成功或出错时状态回写操作
      * 上新成功时回写group, product,ims_bt_product(只限天猫和京东)表状态并记录履历
      * 上新失败时回写product表并将错误信息写入cms_bt_business_log表
@@ -4322,22 +4309,6 @@ public class SxProductService extends BaseService {
                                   String numIId, CmsConstants.PlatformStatus platformStatus,
                                   String platformPid, String modifier) {
         doUploadFinalProc(shopProp, uploadStatus, sxData, workload, numIId, platformStatus, platformPid, modifier, null);
-    }    /**
-     * 获取网络图片流，遇错重试
-     *
-     * @param url   imgUrl
-     * @param retry retrycount
-     * @return inputStream / throw Exception
-     */
-    public static InputStream getImgInputStream(String url, int retry) throws BusinessException {
-        if (--retry > 0) {
-            try {
-                return HttpUtils.getInputStream(url, null);
-            } catch (Exception e) {
-                getImgInputStream(url, retry);
-            }
-        }
-        throw new BusinessException("通过URL取得图片失败. url:" + url);
     }
 
     /**
