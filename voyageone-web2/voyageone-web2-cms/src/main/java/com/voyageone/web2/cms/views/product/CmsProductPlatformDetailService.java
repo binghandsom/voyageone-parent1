@@ -722,14 +722,22 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 System.out.println(s);
                 if (platform.getFields().get(s) == null || StringUtils.isEmpty(platform.getFields().get(s).toString())) {
                     // 天猫的场合 属性ID是 sku darwin_sku不复制
-                    if (cartId == CartEnums.Cart.TG.getValue() && !"sku".equalsIgnoreCase(s) && !"darwin_sku".equalsIgnoreCase(s)) {
+                    if(cartId == CartEnums.Cart.TG.getValue()) {
+                        if (!"sku".equalsIgnoreCase(s) && !"darwin_sku".equalsIgnoreCase(s)) {
+                            platform.getFields().put(s, o);
+                        }
+                    }else{
                         platform.getFields().put(s, o);
                     }
                 }
             } else {
                 if (platform.getFields().get(s) == null || StringUtils.isEmpty(platform.getFields().get(s).toString())) {
                     // 天猫的场合 属性ID是 sku darwin_sku不复制
-                    if (cartId == CartEnums.Cart.TG.getValue() && !"sku".equalsIgnoreCase(s) && !"darwin_sku".equalsIgnoreCase(s)) {
+                    if(cartId == CartEnums.Cart.TG.getValue()) {
+                        if (!"sku".equalsIgnoreCase(s) && !"darwin_sku".equalsIgnoreCase(s)) {
+                            platform.getFields().put(s, o);
+                        }
+                    }else{
                         platform.getFields().put(s, o);
                     }
                 }
