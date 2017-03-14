@@ -172,7 +172,9 @@ define([
                                 if(context.selected.sizeTypeEn){
                                     var sizeType = searchField("适用人群中文",scope.vm.productComm.schemaFields);
                                     if(sizeType) {
-                                        sizeType.value.value = context.selected.sizeTypeCn;
+                                        if(!sizeType.value.value) {
+                                            sizeType.value.value = context.selected.sizeTypeCn;
+                                        }
                                     }
                                 }
                                 if(context.selected.hscodeName8){
