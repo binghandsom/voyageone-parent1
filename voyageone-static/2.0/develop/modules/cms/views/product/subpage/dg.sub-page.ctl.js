@@ -514,6 +514,26 @@ define([
         });
     };
 
+    /**
+     * 锁平台
+     */
+    SpDgController.prototype.platFormLock = function () {
+        var self = this, notify = self.notify,
+            lock = angular.copy(self.vm.platform.lock);
+
+        self.productDetailService.lockPlatForm({
+            cartId: self.$scope.cartInfo.value,
+            prodId: self.$scope.productInfo.productId,
+            lock: Number(lock)
+        }).then(function (res) {
+            notify.success(res);
+        }, function (res) {
+            if (!res)
+                self.vm.platform.lock = Number(!lock);
+        });
+
+    };
+
     cms.directive('dgSubPage', function () {
         return {
             restrict: 'E',
