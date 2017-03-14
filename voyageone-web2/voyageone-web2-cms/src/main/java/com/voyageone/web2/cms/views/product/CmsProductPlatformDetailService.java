@@ -91,10 +91,8 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, parameter.getProdId());
         CmsBtProductModel_Platform_Cart platform = cmsBtProduct.getPlatform(parameter.getCartId());
-        if (parameter.getIsSale()) {
-            //如果该已经approve，则插入上新work表
-            setCartSkuIsSale_True(parameter, cmsBtProduct, platform, userName);
-        } else if (!StringUtils.isEmpty(platform.getpNumIId())) {
+        // 如果该平台所有SKU设置成IsNotSale, 并且numIId存在的话,先做商品下线处理
+        if (!parameter.getIsSale() && !StringUtils.isEmpty(platform.getpNumIId())) {
             //如果numiid存在则判断调用group下线，还是code下线 中同时清空pReallyStatus的值
             platform.setpReallyStatus("");
             setCartSkuIsSale_False(parameter, cmsBtProduct, platform, userName);
@@ -103,21 +101,9 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         platform.getSkus().forEach(f -> {
             f.setAttribute("isSale", parameter.getIsSale());
         });
+        // 根据商品情况,判断上新是否做上新操作
         productPlatformService.updateProductPlatformWithSx(channelId, parameter.getProdId(), platform, userName, "设置sku的isSale状态", false);
 
-    }
-
-    void setCartSkuIsSale_True(SetCartSkuIsSaleParameter parameter, CmsBtProductModel cmsBtProduct, CmsBtProductModel_Platform_Cart platform, String userName) {
-        // 如果该已经approve，则插入上新work表
-        if ("Approved".equals(platform.getStatus())) {
-
-            List<String> cartIdList = new ArrayList<>();
-
-            cartIdList.add(Integer.toString(parameter.getCartId()));
-
-            //则插入上新work表
-            sxProductService.insertSxWorkLoad(cmsBtProduct, cartIdList, userName);
-        }
     }
 
     void setCartSkuIsSale_False(SetCartSkuIsSaleParameter parameter, CmsBtProductModel cmsBtProduct, CmsBtProductModel_Platform_Cart platform, String userName) {
@@ -130,7 +116,6 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         if (!StringUtils.isEmpty(platform.getpNumIId())) {
 
             if (platform.getpIsMain() == 1) {
-
                 cmsProductDetailService.delistinGroup(delistingParameter, userName);
             } else {
                 cmsProductDetailService.delisting(delistingParameter, userName);
