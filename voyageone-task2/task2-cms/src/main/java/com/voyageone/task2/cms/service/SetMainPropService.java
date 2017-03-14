@@ -9,7 +9,6 @@ import com.voyageone.base.exception.CommonConfigNotFoundException;
 import com.voyageone.category.match.*;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -51,7 +50,6 @@ import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
-import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
@@ -64,10 +62,6 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.feed.mapping2.CmsBtFeedMapping2Model;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.task2.base.BaseCronTaskService;
-import com.voyageone.task2.base.Enums.TaskControlEnums;
-import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.bean.ItemDetailsBean;
 import com.voyageone.task2.cms.dao.ItemDetailsDao;
 import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
@@ -88,9 +82,6 @@ import org.springframework.web.client.RestTemplate;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -233,6 +224,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         List<TypeChannelBean> typeChannelBeanListApprove = null;
         // 允许展示的cart列表
         List<TypeChannelBean> typeChannelBeanListDisplay = null;
+
+        // 主类目黑名单
+        List<String> categoryWhite = new ArrayList<>();
 
         // 价格阈值 超过该值的商品不能导入主数据
         Double priceThreshold = null;
@@ -411,6 +405,16 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             // -----------------------------------------------------------------------------
 
             //
+            if(usjoi) {
+                // 主类目不导入的黑名单
+                List<CmsChannelConfigBean> categoryWhitelist = CmsChannelConfigs.getConfigBeans("000",
+                        CmsConstants.ChannelConfig.CATEGORY_WHITE, "0");
+
+                if (!ListUtils.isNull(categoryWhitelist)) {
+                    categoryWhite = categoryWhitelist.stream().map(CmsChannelConfigBean::getConfigValue1).collect(Collectors.toList());
+                }
+            }
+
             CmsChannelConfigBean feedMastThreshold = CmsChannelConfigs.getConfigBeanNoCode(channelId,
                     CmsConstants.ChannelConfig.FEED_MAST_THRESHOLD);
 
@@ -1187,6 +1191,16 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         }
 
         private void checkProduct(CmsBtProductModel cmsProduct) {
+            if(usjoi) {
+                if (StringUtil.isEmpty(cmsProduct.getCommonNotNull().getCatPath())) {
+                    throw new BusinessException("主类目没有计算成功");
+                }
+                if (!ListUtils.isNull(categoryWhite)) {
+                    if (!categoryWhite.stream().anyMatch(cat -> cmsProduct.getCommonNotNull().getCatPath().indexOf(cat) == 0)) {
+                        throw new BusinessException("主类目属于黑名单不能导入CMS：" + cmsProduct.getCommonNotNull().getCatPath());
+                    }
+                }
+            }
 
             if (priceThreshold != null) {
                 if (cmsProduct.getCommon().getSkus().stream().anyMatch(sku -> sku.getPriceRetail().compareTo(priceThreshold) > 0)) {
