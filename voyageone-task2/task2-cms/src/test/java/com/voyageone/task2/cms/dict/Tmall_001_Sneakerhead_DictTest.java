@@ -311,6 +311,10 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 		// 根字典
 		RuleExpression ruleRoot = new RuleExpression();
 
+		if (cartId == 24 || cartId == 26) {
+			ruleRoot.addRuleWord(new TextWord("<div style=\"margin:0 auto; width: 990px; background-color:#0c0c0c;\">"));
+		}
+
 		{
 			// 物流图 - 0
 			RuleExpression htmlTemplate = new RuleExpression();
@@ -471,6 +475,10 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 
 			CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, null, null);
 			ruleRoot.addRuleWord(new CustomWord(word));
+		}
+
+		if (cartId == 24 || cartId == 26) {
+			ruleRoot.addRuleWord(new TextWord("</div>"));
 		}
 
 		return ruleRoot;
