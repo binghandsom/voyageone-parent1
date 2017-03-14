@@ -480,7 +480,7 @@ define([
     /**
      * 产品详情上下架
      */
-    SpJdController.prototype.upperAndLowerFrame = function(mark) {
+    SpDgController.prototype.upperAndLowerFrame = function(mark) {
         var self = this,
             msg = mark === 'ToOnSale'? '上架':'下架';
 
