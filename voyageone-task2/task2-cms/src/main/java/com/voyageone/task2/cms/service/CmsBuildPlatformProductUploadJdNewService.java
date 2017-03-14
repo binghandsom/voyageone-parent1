@@ -1387,7 +1387,11 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         // 商品标语(广告词)内容最大支持45个字符(非必须)
         //charis update
         AdWords adwords = new AdWords();
-        adwords.setWords(jdCommonInfoMap.get("productAdContent"));
+        if (StringUtils.isEmpty(jdCommonInfoMap.get("productAdContent"))) {
+            adwords.setWords("");
+        } else {
+            adwords.setWords(jdCommonInfoMap.get("productAdContent"));
+        }
         jdProductBean.setAdWords(adwords);
         // 定时上架时间 时间格式：yyyy-MM-dd HH:mm:ss;规则是大于当前时间，10天内。(非必须)
 //        jdProductBean.setListTime(mainProduct.getXXX());                   // 不使用
