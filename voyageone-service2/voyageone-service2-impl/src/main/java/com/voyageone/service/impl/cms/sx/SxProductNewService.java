@@ -426,14 +426,6 @@ public class SxProductNewService extends BaseService {
                 effectCnt, channelId, cartId, LongUtils.toString(groupId), code);
     }
 
-    public void clearBusinessLog2(String channelId, Integer cartId, Long groupId,
-                                  String modifier) {
-        // 逻辑删除cms_bt_business_log表以前的错误信息
-        int effectCnt = businessLogService.updateFinishStatusByCondition2(channelId, cartId,
-                LongUtils.toString(groupId), modifier);
-        $debug("cms_bt_business_log表以前的错误信息逻辑删除件数：%d件 [ChannelId:%s] [CatId:%d] [GroupId:%s] ",
-                effectCnt, channelId, cartId, LongUtils.toString(groupId));
-    }
 
     /**
      * 回写ims_bt_product表
@@ -4827,7 +4819,7 @@ public class SxProductNewService extends BaseService {
             if(cartId != 33) {
                 long sta = System.currentTimeMillis();
                 modelList.forEach(p -> {
-                    clearBusinessLog2(p.getChannelId(), p.getCartId(), p.getGroupId(),  p.getModifier());
+                    clearBusinessLog(p.getChannelId(), p.getCartId(), p.getGroupId(), null, null, p.getModifier());
                 });
                 $info("逻辑删除cms_bt_business_log中以前的错误 耗时" + (System.currentTimeMillis() - sta));
             }
