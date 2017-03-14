@@ -141,6 +141,11 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
     /**
      * 产品编辑一览页面, 修改价格后保存
+     *
+     * @param parameter
+     * @param channelId
+     * @param userName
+     * @throws Exception
      */
     public void saveCartSkuPrice(SaveCartSkuPriceParameter parameter, String channelId, String userName) throws BusinessException {
         Long productId = parameter.getProdId();
@@ -513,8 +518,21 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
     /**
      * 产品编辑页面修改产品信息
+     *
+     * @param channelId
+     * @param prodId
+     * @param platform
+     * @param modifier
+     * @param blnSmartSx
+     * @return
      */
     public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier, Boolean blnSmartSx) {
+        /**保存类型*/
+        String saveType = null;
+        if (platform.get("saveType") != null) {
+            saveType = platform.get("saveType").toString();
+            platform.remove("saveType");
+        }
 
         if (platform.get("schemaFields") != null) {
             List<Field> masterFields = buildMasterFields((Map<String, Object>) platform.get("schemaFields"));
@@ -523,10 +541,6 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             platform.remove("schemaFields");
         }
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
-
-        if (platformModel.getCartId() == 27) {
-            blnSmartSx = false;
-        }
 
         Boolean isCatPathChg = false;
         CmsBtProductModel cmsBtProductModel = null;
@@ -540,17 +554,35 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 isCatPathChg = true;
             }
         }
-        if (blnSmartSx)
-            modified = productPlatformService.updateProductPlatformWithSmartSx(channelId, prodId, platformModel, modifier, "产品编辑页-智能上新", true);
-        else {
+
+        /**京东和聚美的普通上新和智能上新 上新标志【blnSmartSx】设置为true added by Piao*/
+        if (blnSmartSx) {
+            String comment;
+            if (saveType != null && saveType.equals("intel")) {
+                comment = "产品编辑页-智能上新";
+            } else {
+                comment = "京东&聚美-产品编辑页-普通上新";
+            }
+            modified = productPlatformService.updateProductPlatformWithSmartSx(channelId, prodId, platformModel, modifier, comment, true);
+        } else
             modified = productPlatformService.updateProductPlatformWithSx(channelId, prodId, platformModel, modifier, "产品编辑页-普通上新", true);
-        }
 
         if (isCatPathChg) {
             productService.resetProductAndGroupPlatformPid(channelId, platformModel.getCartId(), cmsBtProductModel.getCommon().getFields().getCode());
         }
         return modified;
 
+    }
+
+    /**
+     * 产品编辑页保存包含类型判断
+     */
+    public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier, Boolean blnSmartSx, String saveType) {
+        if (saveType != null) {
+            platform.put("saveType", saveType);
+        }
+
+        return updateProductPlatform(channelId, prodId, platform, modifier, blnSmartSx);
     }
 
     /**
@@ -673,8 +705,8 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         platform.setpCatPath(mainPlatform.getpCatPath());
         platform.setpBrandId(mainPlatform.getpBrandId());
         platform.setpBrandName(mainPlatform.getpBrandName());
-        if(platform.getFields() == null) platform.setFields(new BaseMongoMap<>());
-        if (cartId ==  CartEnums.Cart.TG.getValue()) {
+        if (platform.getFields() == null) platform.setFields(new BaseMongoMap<>());
+        if (cartId == CartEnums.Cart.TG.getValue()) {
             String skuKey = "sku_outerId"; // 商家编码对应skuCode
             try {
                 List<Map<String, Object>> listSkuVal = platform.getFields().getAttribute("sku");

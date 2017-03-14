@@ -744,7 +744,7 @@
                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;{{cartBean.name}}&nbsp;平台级变更&nbsp;<span class="caret"></span>
                             </button>
                             <ul uib-dropdown-menu>
-                                <li ng-if="cartBean.value!=27&&cartBean.cartType!=3">
+                                <li ng-if="cartBean.value != 27 && cartBean.cartType != 3">
                                     <a ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit,cartBean.value)">{{'TXT_TAG_STORE_CLASSIFY'|translate}}</a>
                                 </li>
                                 <li ng-if="getAutoSyncPriceSale(cartBean)!=true">
@@ -777,10 +777,10 @@
                                     <a href="javascript:void(0)" ng-click="popJoinPromotion(cartBean)">加入{{cartBean.name}}活动</a>
                                 </li>
                                 <li>
-                                    <a href="javascript:void(0)" ng-click="$parent.openApproval(openUpdateApproval,cartBean.value)">{{'TXT_PRODUCTS_APPROVAL'|translate}}</a>
+                                    <a href="javascript:void(0)" ng-click="openApproval(openUpdateApproval,cartBean.value)">{{'TXT_PRODUCTS_APPROVAL'|translate}}</a>
                                 </li>
                                 <li ng-if="vm.masterData.channelConfig.publishEnabledChannels.indexOf(cartBean.value) != -1">
-                                	<a href="javascript:void(0)" ng-click="$parent.openIntelligentPublish(cartBean.value)">智能上新</a>
+                                	<a href="javascript:void(0)" ng-click="openIntelligentPublish(cartBean.value)">智能上新</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" ng-click="refreshRetailPrice(cartBean)">重新计算价格</a>

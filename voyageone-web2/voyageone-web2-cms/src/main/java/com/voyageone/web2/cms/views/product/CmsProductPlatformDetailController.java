@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.product;
 
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SaveCartSkuPriceParameter;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SetCartSkuIsSaleParameter;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
@@ -109,16 +110,22 @@ public class CmsProductPlatformDetailController extends CmsController {
     public AjaxResponse doUpdateProductPlatform(@RequestBody Map params) {
         Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
 
-        String channelId = getUser().getSelChannelId();
-
         Map<String, Object> result = new HashMap<>();
 
         Map<String, Object> platform = (Map<String, Object>) params.get("platform");
 
-        //插入workload表时，blnSmartSx标识是否为智能上新
-        Boolean blnSmartSx = params.get("type") != null ? String.valueOf(params.get("type")).equals("intel") : false;
+        String channelId = getUser().getSelChannelId(),
+                cartId = platform.get("cartId").toString();
 
-        result.put("modified", cmsProductPlatformDetailService.updateProductPlatform(channelId, prodId, platform, getUser().getUserName(), blnSmartSx));
+        String type = String.valueOf(params.get("type"));   //存储类型 temporary  ready    intel
+
+        /**京东系和聚美的上新程序，blnSmartSx【上新标识】设置 : true
+         * 插入workload表时，blnSmartSx标识是否为智能上新 added by Piao*/
+        CartEnums.Cart _cartEnum = CartEnums.Cart.getValueByID(cartId);
+
+        Boolean blnSmartSx = CartEnums.Cart.isJdSeries(_cartEnum) || CartEnums.Cart.JM.equals(_cartEnum) || type.equals("intel");
+
+        result.put("modified", cmsProductPlatformDetailService.updateProductPlatform(channelId, prodId, platform, getUser().getUserName(), blnSmartSx, type));
 
         return success(result);
     }
@@ -128,9 +135,12 @@ public class CmsProductPlatformDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_PRODUCT_PLATFORM_CHK)
     public AjaxResponse doUpdateProductPlatformChk(@RequestBody Map params) {
-        String channelId = getUser().getSelChannelId();
-        String type = String.valueOf(params.get("type"));
+
         Map<String, Object> platform = (Map<String, Object>) params.get("platform");
+
+        String channelId = getUser().getSelChannelId(),
+                type = String.valueOf(params.get("type"));
+
         Integer cartId = Integer.valueOf(platform.get("cartId").toString());
 
         if (!type.equals("temporary")) {
