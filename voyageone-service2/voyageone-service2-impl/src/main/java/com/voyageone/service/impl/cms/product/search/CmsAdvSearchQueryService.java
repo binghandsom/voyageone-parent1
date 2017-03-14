@@ -665,6 +665,9 @@ public class CmsAdvSearchQueryService extends BaseService {
             }else if (searchValue.getSortOneName().startsWith("platforms.P")) {
                 // 按指定sales数据排序
                 result.append(MongoUtils.splicingValue(searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
+            }else if ("created".equals(searchValue.getSortOneName())) {
+                // 按指定sales数据排序
+                result.append(MongoUtils.splicingValue(searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
             } else {
                 result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
             }
@@ -684,6 +687,9 @@ public class CmsAdvSearchQueryService extends BaseService {
             }else if (searchValue.getSortTwoName().startsWith("platforms.P")) {
                 // 按指定sales数据排序
                 result.append(MongoUtils.splicingValue(searchValue.getSortTwoName(), Integer.valueOf(searchValue.getSortOneType())));
+            }else if ("created".equals(searchValue.getSortTwoName())) {
+                // 按指定sales数据排序
+                result.append(MongoUtils.splicingValue(searchValue.getSortTwoName(), Integer.valueOf(searchValue.getSortTwoName())));
             } else {
                 result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortTwoName(), Integer.valueOf(searchValue.getSortTwoType())));
             }
@@ -702,7 +708,10 @@ public class CmsAdvSearchQueryService extends BaseService {
                 result.append(MongoUtils.splicingValue(searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortOneType())));
             }else if (searchValue.getSortThreeName().startsWith("platforms.P")) {
                 // 按指定sales数据排序
-                result.append(MongoUtils.splicingValue(searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortOneType())));
+                result.append(MongoUtils.splicingValue(searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortThreeName())));
+            }else if ("created".equals(searchValue.getSortThreeName())) {
+                // 按指定sales数据排序
+                result.append(MongoUtils.splicingValue(searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortThreeName())));
             } else {
                 result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortThreeType())));
             }
