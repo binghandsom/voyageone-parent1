@@ -3,7 +3,6 @@ package com.voyageone.task2.cms.job;
 import com.voyageone.task2.base.BaseTaskJob;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.cms.service.CmsImportCategoryTreeService;
-import com.voyageone.task2.cms.service.CmsSetMainPropMongoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

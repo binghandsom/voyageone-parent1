@@ -103,7 +103,7 @@ import java.util.stream.Collectors;
  * @since 2.0.0
  */
 @Service
-public class CmsSetMainPropMongoService extends BaseCronTaskService {
+public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
 
     @Autowired
     private CmsBtFeedMapping2Dao cmsBtFeedMapping2Dao; // DAO: 新的feed->主数据的mapping关系

@@ -3,7 +3,6 @@ package com.voyageone.task2.cms.service;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
@@ -12,7 +11,8 @@ import com.voyageone.task2.base.util.TaskControlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,13 +26,13 @@ import java.util.concurrent.TimeUnit;
  * @since 2.0.0
  */
 @Service
-public class CmsSetMainPropMongo2Service  extends BaseCronTaskService {
+public class CmsSetMainPropMongoUSJoiService extends BaseCronTaskService {
 
     @Autowired
     SetMainPropService setMainPropService;
     @Override
     protected String getTaskName() {
-        return "CmsSetMainPropMongoJob";
+        return "CmsSetMainPropMongoUSJoiJob";
     }
 
     /**
@@ -69,7 +69,7 @@ public class CmsSetMainPropMongo2Service  extends BaseCronTaskService {
 //            // 获取前一次的价格强制击穿时间
 //            String priceBreakTime = TaskControlUtils.getEndTime(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
             // 主逻辑
-            SetMainPropService.setMainProp mainProp = setMainPropService.new setMainProp(orderChannelID, false, bln_skip_mapping_check);
+            SetMainPropService.setMainProp mainProp = setMainPropService.new setMainProp(orderChannelID, true, bln_skip_mapping_check);
             mainProp.setTaskName(getTaskName());
             // 启动多线程
             executor.execute(() -> mainProp.doRun(resultMap, needReloadMap));
