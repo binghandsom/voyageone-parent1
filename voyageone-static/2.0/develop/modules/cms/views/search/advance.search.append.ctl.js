@@ -103,6 +103,12 @@ define([
             columnArrow[searchInfo.sortOneName] = column;
         };
 
+        /**
+         * 平台级锁定
+         */
+        AdSearchAppendCtl.prototype.platFormLock = function(){
+
+        };
 
         return AdSearchAppendCtl;
 
