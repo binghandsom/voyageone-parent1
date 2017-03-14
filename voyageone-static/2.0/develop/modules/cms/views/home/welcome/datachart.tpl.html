@@ -108,6 +108,13 @@
                                         等待翻译数
                                     </div>
                                 </li>
+                                <li ng-if="channelId == '001'">
+                                    <div class="right data-priority-2"
+                                         ng-click="goSearchPage(10,{compareType:'$gt',inventory:0,noSale:true})">
+                                        <strong>{{vm.sumData.masterSum.CMS_MASTER_NO_SALE.amountVal}}</strong>
+                                        有库存未上新数
+                                    </div>
+                                </li>
                                 <li>
                                     <div class="right data-priority-2"
                                          ng-click="jumpBlackBrand('1|1|0')">
