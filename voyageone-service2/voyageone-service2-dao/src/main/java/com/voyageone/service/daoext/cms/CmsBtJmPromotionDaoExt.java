@@ -60,5 +60,5 @@ public interface CmsBtJmPromotionDaoExt {
     int updateByInput(CmsBtJmPromotionModel record);
 
     //加入活动有效列表
-    List<MapModel> selectAddPromotionList(@Param("channelId") String channelId, @Param("cartId") int cartId, @Param("codeList") List<String> codeList);
+    List<MapModel> selectAddPromotionList(@Param("channelId") String channelId, @Param("cartId") int cartId, @Param("codeList") List<String> codeList, @Param("activityStart") Date activityStart,, @Param("activityEnd") Date activityEnd);
 }
