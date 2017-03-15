@@ -870,7 +870,7 @@ define([
 
             confirm("您是否要" + msg + cartEnum.valueOf(Number(req.cartId)).desc + "?").then(function () {
 
-                return $productDetailService.lockPlatForm(req).then(function () {
+                $productDetailService.lockPlatForm(req).then(function () {
 
                     defer.resolve(msg + '成功！');
                 }, function (res) {

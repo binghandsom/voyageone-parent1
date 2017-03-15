@@ -38,6 +38,7 @@ import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
@@ -113,10 +114,12 @@ public class ProductService extends BaseService {
         String query = "{\"common.fields.code\":\"" + code + "\"}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
+
     public CmsBtProductModel getProductByCode(String channelId, String orgCannelId, String code) {
         String query = "{\"common.fields.orgChannelId\":\"" + orgCannelId + "\",\"common.fields.code\":\"" + code + "\"}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
+
     /**
      * 获取商品 根据Code&OriginalCode
      */
@@ -124,10 +127,12 @@ public class ProductService extends BaseService {
         String query = "{\"common.fields.code\":\"" + code + "\", \"common.fields.originalCode\":\"" + originalCode + "\"}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
+
     public CmsBtProductModel getProductSingleSku(String channelId, String orgCannelId, String code, String originalCode) {
         String query = "{\"common.fields.orgChannelId\":\"" + orgCannelId + "\",\"common.fields.code\":\"" + code + "\", \"common.fields.originalCode\":\"" + originalCode + "\"}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
+
     /**
      * 获取商品 根据OriginalCode
      */
@@ -933,7 +938,62 @@ public class ProductService extends BaseService {
         model.setQueryMap(queryMap);
         bulkList.add(model);
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+
+        /**产品级lock同时更新各个平台的lock属性  added by piao*/
+        CmsBtProductModel _productInfo = getProductById(channelId, prodId);
+        List<Integer> cartIds = new ArrayList<>();
+
+        if (_productInfo != null) {
+            // 处理各平台
+            _productInfo.getPlatforms().forEach((s, platform) -> {
+                Integer cartId = platform.getCartId();
+
+                if (cartId < CmsConstants.ACTIVE_CARTID_MIN)
+                    return;
+
+                cartIds.add(cartId);
+            });
+        }
+
+        Map<String, Object> _params = new HashedMap();
+        _params.put("carts", cartIds);
+        _params.put("prodId", prodId);
+        _params.put("lock", lock);
+
+        /**触发锁操作*/
+        lockPlatForms(channelId, _params);
+
+        /**最有插入产品记录表*/
         insertProductHistory(channelId, prodId);
+    }
+
+    /**
+     * 锁产品时关联相关平台的锁操作    added by piao
+     * @param channelId
+     */
+    public void lockPlatForms(String channelId, Map<String, Object> params) {
+
+        Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
+        Integer lock = Integer.valueOf(String.valueOf(params.get("lock")));
+        List<Integer> cartIds = (List<Integer>) params.get("carts");
+
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", prodId);
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+
+
+        for (Integer cartId : cartIds){
+            updateMap.put(String.format("platforms.P%s.lock", cartId), lock);
+        }
+
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
     }
 
     public void updateProductAppSwitch(String channelId, Long prodId, int appSwitch, String modifier) {
@@ -1110,11 +1170,12 @@ public class ProductService extends BaseService {
 
     /**
      * 根据model返回产品列表
+     *
      * @param channelId
      * @param model
      * @return
      */
-    public List<CmsBtProductModel> getProductListByModel (String channelId, String model, String orgChannelId) {
+    public List<CmsBtProductModel> getProductListByModel(String channelId, String model, String orgChannelId) {
         JongoQuery query = new JongoQuery();
         query.setQuery("{\"channelId\": #, \"orgChannelId\": #, \"common.fields.model\": #}");
         query.setParameters(channelId, orgChannelId, model);
@@ -1582,10 +1643,12 @@ public class ProductService extends BaseService {
         BulkJongoUpdateList bulkList = new BulkJongoUpdateList(10, cmsBtProductDao, channelId);
         return bulkList;
     }
+
     public BulkJongoUpdateList updateCmsBtProductGroupInfo(String channelId) {
         BulkJongoUpdateList bulkList = new BulkJongoUpdateList(10, cmsBtProductGroupDao, channelId);
         return bulkList;
     }
+
     /**
      * 取得商品对应的平台状态
      */
