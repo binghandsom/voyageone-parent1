@@ -123,13 +123,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
     @Autowired
     CategoryTreeService categoryTreeService;
     @Autowired
+    private
     CategoryTreeAllService categoryTreeAllService;
     @Autowired
     private BusinessLogService businessLogService;
     @Autowired
     private ImagesService imagesService;
-    @Autowired
-    private CmsBtPriceLogService cmsBtPriceLogService;
     @Autowired
     private SxProductService sxProductService;
     @Autowired
@@ -139,6 +138,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
     @Autowired
     private CmsBtFeedImportSizeService cmsBtFeedImportSizeService;
     @Autowired
+    private
     CmsBtBrandBlockService cmsBtBrandBlockService;
     @Autowired
     CmsMasterBrandMappingService cmsMasterBrandMappingService;
@@ -1116,47 +1116,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 insertCmsBtFeedImportSize(channelId, cmsProduct);
 
                 insertWorkload(cmsProduct);
-//                $info("insertCmsBtFeedImportSize:" + (System.currentTimeMillis() - startTime));
-                // jeff 2016/04 change start
-                // 生成更新前的价格履历Bean
-                // ProductPriceBean productPriceBeanBefore = getProductPriceBeanBefore(cmsProduct, blnProductExist);
-
-                // 调用共通方法来设置价格
-                // doSetPrice(channelId, feed, cmsProduct);
-//                CmsBtProductModel cmsProductBean = doSetPrice(channelId, feed, cmsProduct);
-
-
-                // Update desmond 2016/09/06 start
-                // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log
-
-//                if ("1".equals(sxFlg) && !"1".equals(cmsProduct.getLock())) {
-//                    // 遍历主数据product里的sku,看看有没有
-//                    for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : cmsProduct.getPlatforms().entrySet()) {
-//                        // P0（主数据）平台跳过
-//                        if (entry.getValue().getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
-//                            continue;
-//                        }
-//
-//                        // 该平台已经Approved过的才插入workload表
-//                        if (CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(entry.getValue().getStatus())) {
-//                            sxProductService.insertSxWorkLoad(channelId, cmsProduct.getCommon().getFields().getCode(), entry.getValue().getCartId(), getTaskName());
-//                        }
-//                    }
-//                }
-
-                // Add desmond 2016/07/01 end
-                // jeff 2016/04 change end
-
-                // tom 20160510 删除 START
-                // 这里不要了, 放到最前面去做, 如果出错了, 那么就跳过当前记录
-                //            // 更新wms_bt_item_details表的数据
-                //            doSaveItemDetails(channelId, cmsProduct.getProdId(), feed);
-                // tom 20160510 删除 END
-
-                // 更新price_log信息
-                // 更新price_log信息 -> 共通代码里会处理的,我这边就不需要写了
-                // 更新product_log信息
-                // 更新product_log信息 -> 还要不要写呢? 状态变化的话,共通代码里已经有了,其他的变化,这里是否要更新进去? 应该不用了吧.
 
                 // add desmond 2016/07/07 start
                 if (blnProductExist) {
@@ -1196,7 +1155,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     throw new BusinessException("主类目没有计算成功");
                 }
                 if (!ListUtils.isNull(categoryWhite)) {
-                    if (!categoryWhite.stream().anyMatch(cat -> cmsProduct.getCommonNotNull().getCatPath().indexOf(cat) == 0)) {
+                    if (categoryWhite.stream().noneMatch(cat -> cmsProduct.getCommonNotNull().getCatPath().indexOf(cat) == 0)) {
                         throw new BusinessException("主类目属于黑名单不能导入CMS：" + cmsProduct.getCommonNotNull().getCatPath());
                     }
                 }

@@ -189,7 +189,7 @@ public class FeedToCmsService extends BaseService {
                 for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
                     if (sku.getQty() != null) qty += sku.getQty();
                     weightConvert(sku);
-                    if (isUsJoi) priceConvert(sku);
+//                    if (isUsJoi) priceConvert(sku);
                 }
                 product.setQty(qty);
 
@@ -204,7 +204,11 @@ public class FeedToCmsService extends BaseService {
                 checkProduct(product);
 
                 // 计算人民币价格
-                priceService.setFeedPrice(product);
+                try {
+                    priceService.setFeedPrice(product);
+                }catch (Exception e){
+                    $error(e);
+                }
 
                 feedInfoService.updateFeedInfo(product);
 
