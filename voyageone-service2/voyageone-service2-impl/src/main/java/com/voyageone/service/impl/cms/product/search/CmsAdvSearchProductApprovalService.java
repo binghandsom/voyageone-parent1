@@ -138,6 +138,9 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                         productCodes.remove(field.getCode());
                         continue;
                     }
+
+                    // 平台级别的平台品牌, 平台类目不做check的原因(因为JM和JD系以外的场合不存在智能上新,所以只要是ready或者approve的场合,就是符合条件的数据,
+                    // 而对于JD和JM的场合, 暂时不做这部分check,以为不管智能上新/普通上新都是属于插入智能上新标示)
                 }
             }
         }
@@ -363,8 +366,8 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                 }
 
                 // 检测该JGJ和JGY的平台以外的时候 平台类目是否设置
-                if (cartId != 28 || cartId != 29) {
-                    if (StringUtils.isEmpty(product.getPlatform(cartId).getpCatId())) {
+                if (cartId != 28 && cartId != 29) {
+                    if (StringUtils.isEmpty(product.getPlatformNotNull(cartId).getpCatId())) {
                         CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
                         errorInfo.setSkuCode(productCode);
                         errorInfo.setMsg("该商品不属于Liking的京东系, 平台类目未设置");
