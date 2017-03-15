@@ -55,9 +55,9 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
 
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        notSale = Collections.synchronizedSet(new HashSet<>());
+        notSale = Collections.synchronizedSet(new HashSet<String>());
 
-        sale = Collections.synchronizedSet(new HashSet<>());
+        sale = Collections.synchronizedSet(new HashSet<String>());
 
         List<CmsFeedLiveSkuModel> skus = getSkuList();
         List<List<CmsFeedLiveSkuModel>> skuList = CommonUtil.splitList(skus, 1000);
@@ -80,6 +80,7 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
 
         saleList = notSale.stream().map(Object::toString).collect(Collectors.joining(","));
         $info(String.format(" sale -> not sale 共%d个[%s]",notSale.size(),saleList));
+        backupFeedFile();
     }
 
     private void insertData(List<CmsFeedLiveSkuModel> skus) {
@@ -118,6 +119,10 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
         param.put("channelId",getChannel().getId());
         param.put("sku",sku);
         return cmsFeedLiveSkuDaoExt.selectOne(param);
+    }
+
+    protected void backupFeedFile(){
+
     }
 
 }
