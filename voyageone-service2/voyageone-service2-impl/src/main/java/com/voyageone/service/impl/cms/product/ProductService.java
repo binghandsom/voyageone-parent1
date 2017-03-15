@@ -114,7 +114,7 @@ public class ProductService extends BaseService {
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
     public CmsBtProductModel getProductByCode(String channelId, String orgCannelId, String code) {
-        String query = "{\"common.fields.orgChannelId\":\"" + orgCannelId + "\",\"common.fields.code\":\"" + code + "\"}";
+        String query = "{\"orgChannelId\":\"" + orgCannelId + "\",\"common.fields.code\":\"" + code + "\"}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
     /**
@@ -125,7 +125,7 @@ public class ProductService extends BaseService {
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
     public CmsBtProductModel getProductSingleSku(String channelId, String orgCannelId, String code, String originalCode) {
-        String query = "{\"common.fields.orgChannelId\":\"" + orgCannelId + "\",\"common.fields.code\":\"" + code + "\", \"common.fields.originalCode\":\"" + originalCode + "\"}";
+        String query = "{\"orgChannelId\":\"" + orgCannelId + "\",\"common.fields.code\":\"" + code + "\", \"common.fields.originalCode\":\"" + originalCode + "\"}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
     /**
@@ -137,7 +137,7 @@ public class ProductService extends BaseService {
     }
 
     public List<CmsBtProductModel> getProductByOriginalCode(String channelId, String orgChannelId, String code) {
-        String query = "{\"common.fields.orgChannelId\":\"" + orgChannelId + "\", \"common.fields.originalCode\":\"" + code + "\"}";
+        String query = "{\"orgChannelId\":\"" + orgChannelId + "\", \"common.fields.originalCode\":\"" + code + "\"}";
         return cmsBtProductDao.select(query, channelId);
     }
 
