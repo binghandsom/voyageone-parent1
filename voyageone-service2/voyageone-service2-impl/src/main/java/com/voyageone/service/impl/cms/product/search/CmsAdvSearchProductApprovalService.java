@@ -284,9 +284,7 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
         // 记录商品修改历史
         productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdValue, EnumProductOperationType.ProductApproved, msg, userName);
             sta = System.currentTimeMillis();
-            // 记录商品修改历史
-            productStatusHistoryService.insertList(channelId, newProdCodeList, cartIdValue, EnumProductOperationType.ProductApproved, msg, userName);
-            $info("批量修改属性 (商品审批) 记入状态历史表结束 耗时" + (System.currentTimeMillis() - sta));
+        $info("批量修改属性 (商品审批) 记入状态历史表结束 耗时" + (System.currentTimeMillis() - sta));
 
         return errorCodeList;
     }

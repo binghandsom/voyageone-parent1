@@ -34,6 +34,8 @@
 
         <!-- 京东上新 -->
         <task:scheduled ref="CmsBuildPlatformProductUploadJdJob" method="run" cron="0 0/1 0-23 * * ?"/>
+        <!-- 京东新版上新 -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadJdNewJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!-- 聚美上新 -->
         <task:scheduled ref="CmsBuildPlatformProductUploadJMJob" method="run" cron="0 0/1 0-23 * * ?"/>
@@ -82,6 +84,8 @@
 
         <!-- OverStock feed 导入 cms2 -->
         <task:scheduled ref="CmsOverStockAnalysisJob" method="run" cron="20 0/5 * * * ?"/>
+
+        <task:scheduled ref="OverStockTempJob" method="run" cron="20 0/1 * * * ?"/>
 
         <!-- OverStock price 导入 cms2 -->
         <task:scheduled ref="OverStockPriceAnalysisJob" method="run" cron="13 0/2 * * * ?"/>

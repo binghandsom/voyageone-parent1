@@ -84,7 +84,7 @@ public class TmallGjSkuFieldBuilderImpl8 extends AbstractSkuFieldBuilder {
             colorCmsPropductMap = new HashMap<>();
             sizeCmsSkuPropMap = new HashMap<>();
             cmsPropductColorMap = new HashMap<>();
-            sizeMap = new HashMap<>();
+            sizeMap = new LinkedHashMap<>();
         }
 
         public Map<CmsBtProductModel, String> getCmsPropductColorMap() {

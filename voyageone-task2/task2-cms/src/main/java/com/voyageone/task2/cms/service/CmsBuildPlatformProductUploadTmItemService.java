@@ -5,11 +5,15 @@ import com.taobao.api.response.TmallItemSchemaAddResponse;
 import com.taobao.api.response.TmallItemSchemaUpdateResponse;
 import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.factory.SchemaWriter;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.MultiComplexField;
+import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.bean.ItemSchema;
 import com.voyageone.components.tmall.service.TbCategoryService;
@@ -20,6 +24,7 @@ import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -123,6 +128,28 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
 
         try {
             sxProductService.constructMappingPlatformProps(fields, cmsMtPlatformMappingModel, shopBean, expressionParser, modifier, true);
+            // 20160315 sneakerhead比较优秀， 写死判断 START
+            String channelId = shopBean.getOrder_channel_id();
+            String cartId = shopBean.getCart_id();
+            CmsBtProductModel mainProduct = sxData.getMainProduct();
+            if (ChannelConfigEnums.Channel.SN.getId().equals(channelId) && CartEnums.Cart.TM.getId().equals(cartId)) {
+                if (mainProduct != null
+                        && mainProduct.getCommonNotNull().getFieldsNotNull().getProductType() != null
+                        && "Shoes".equals(mainProduct.getCommonNotNull().getFieldsNotNull().getProductType())) {
+                    sxProductService.setFieldValue(fields, "postage_id", "458457070"); // 鞋子
+                } else {
+                    sxProductService.setFieldValue(fields, "postage_id", "538130290"); // 鞋子以外
+                }
+            } else if (ChannelConfigEnums.Channel.SN.getId().equals(channelId) && CartEnums.Cart.TG.getId().equals(cartId)) {
+                if (mainProduct != null
+                        && mainProduct.getCommonNotNull().getFieldsNotNull().getProductType() != null
+                        && "Shoes".equals(mainProduct.getCommonNotNull().getFieldsNotNull().getProductType())) {
+                    sxProductService.setFieldValue(fields, "postage_id", "927905130"); // 鞋子
+                } else {
+                    sxProductService.setFieldValue(fields, "postage_id", "927037460"); // 鞋子以外
+                }
+            }
+            // 20160315 sneakerhead比较优秀， 写死判断 END
         } catch (BusinessException be) {
             sxData.setErrorMessage(be.getMessage());
             throw be;
@@ -159,6 +186,10 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
                         // 把field列表中的"是否新品"从"是(true)"->"否(false)",再做一次新增商品
                         sxProductService.setFieldValue(fields, "is_xinpin", "false");
                         continue;
+                    } else if (retry == 0 &&
+                            e.getMessage().contains("您填写的 颜色分类 中不能包含该货号信息")) {
+                        doReSetXml(fields);
+                        continue;
                     }
                     sxData.setErrorMessage(e.getMessage());
                     throw new BusinessException(e.getMessage());
@@ -183,6 +214,10 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
                             && (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin") || e.getMessage().contains("isv.invalid-parameter:isXinpin"))) {
                         // 把field列表中的"是否新品"从"是(true)"->"否(false)",再做一次更新商品
                         sxProductService.setFieldValue(fields, "is_xinpin", "false");
+                        continue;
+                    } else if (retry == 0 &&
+                            e.getMessage().contains("您填写的 颜色分类 中不能包含该货号信息")) {
+                        doReSetXml(fields);
                         continue;
                     }
                     sxData.setErrorMessage(e.getMessage());
@@ -245,6 +280,28 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
             numId = addItemResponse.getAddItemResult();
             $debug("numId: " + numId);
             return numId;
+        }
+    }
+
+	/**
+	 * 有些商品（注意： 不是有些类目， 而是不确定的随机的商品）， 颜色分类 中不能包含货号信息
+	 * @param itemFields
+	 */
+	private void doReSetXml(List<Field> itemFields) {
+        for (Field field : itemFields) {
+            if ("prop_extend_1627207".equals(field.getId())) {
+                MultiComplexField multiComplexField = (MultiComplexField)field;
+                if (multiComplexField.getComplexValues() != null) {
+                    for (ComplexValue v : multiComplexField.getComplexValues()) {
+                        String alias_name = v.getInputFieldValue("alias_name");
+                        if (!StringUtils.isEmpty(alias_name)) {
+                            alias_name = alias_name.substring(0, 1) + "-" + alias_name.substring(1);
+                            v.setInputFieldValue("alias_name", alias_name);
+                        }
+                    }
+                }
+                break;
+            }
         }
     }
 

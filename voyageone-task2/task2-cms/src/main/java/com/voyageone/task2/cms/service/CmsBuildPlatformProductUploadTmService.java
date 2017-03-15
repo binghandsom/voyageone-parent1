@@ -532,7 +532,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                     updateTeJiaBaoPromotion(sxData);
 
                     // added by morse.lu 2016/12/08 start
-                    if (ChannelConfigEnums.Channel.SN.equals(channelId)) {
+                    if (ChannelConfigEnums.Channel.SN.getId().equals(channelId)) {
                         // Sneakerhead
                         try {
                             sxProductService.uploadCnInfo(sxData);

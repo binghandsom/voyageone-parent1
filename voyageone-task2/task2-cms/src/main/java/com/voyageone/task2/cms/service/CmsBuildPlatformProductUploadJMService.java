@@ -980,7 +980,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             }
 
             // added by morse.lu 2016/12/08 start
-            if (ChannelConfigEnums.Channel.SN.equals(channelId)) {
+            if (ChannelConfigEnums.Channel.SN.getId().equals(channelId)) {
                 // Sneakerhead
                 String numIId = sxData.getPlatform().getNumIId();
                 try {
