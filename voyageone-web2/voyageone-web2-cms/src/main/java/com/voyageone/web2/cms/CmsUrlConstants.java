@@ -509,12 +509,12 @@ public interface CmsUrlConstants {
             String BULK_SET_CATEGORY = "bulkSetCategory";
             String BULK_SET_PLATFORM_FIELDS = "bulkSetPlatformFields";
             String GET_PLATFROM_POP_OPTIONS = "getPlatfromPopOptions";
+            String BULK_LOCK_PRODUCTS = "bulkLockProducts";
         }
 
         interface ADD_TO_PROMOTION {
 
             String ROOT = "/cms/pop/add_to_promotion/";
-
             String GET_PROM_TAGS = "getPromotionTags";
             String CHECK_PROM_TAGS = "checkPromotionTags";
             String ADD_TO_PROMOTION = "addToPromotion";

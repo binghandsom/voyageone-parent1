@@ -83,6 +83,8 @@ define([
         $scope.jdCategoryMapping = jdCategoryMapping;
         $scope.editPlatformAttribute = editPlatformAttribute;
         $scope.addShelves = addShelves;
+        $scope._chkProductSel = _chkProductSel;
+
         /**
          * 初始化数据.
          */
@@ -818,15 +820,7 @@ define([
                     picList.push([""]);
                 }
             }
-            // for (var attr in item.common.fields) {
-            //     if (attr.indexOf("images") >= 0) {
-            //         var image = _.map(item.common.fields[attr], function (entity) {
-            //             var imageKeyName = "image" + attr.substring(6, 7);
-            //             return entity[imageKeyName] != null ? entity[imageKeyName] : "";
-            //         });
-            //         picList.push(image);
-            //     }
-            // }
+
             this.openImagedetail({'mainPic': picList[0][0], 'picList': picList, 'search': 'master'});
         }
 
@@ -890,8 +884,7 @@ define([
                 else
                     _confirmMsg = '请确认平台品牌是否设置。点击【确定】启动智能上新。';
 
-                confirm(_confirmMsg)
-                    .then(function () {
+                confirm(_confirmMsg).then(function () {
                         var productIds = [];
                         if (_selProdList && _selProdList.length) {
                             _.forEach(_selProdList, function (object) {

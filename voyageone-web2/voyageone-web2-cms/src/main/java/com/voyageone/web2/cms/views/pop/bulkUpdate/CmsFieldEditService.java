@@ -237,6 +237,13 @@ public class CmsFieldEditService extends BaseViewService {
     }
 
     /**
+     * 批量锁定产品
+     */
+    public void bulkLockProducts(int cartId, Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
+
+    }
+
+    /**
      * 批量修改属性.
      */
     public Map<String, Object> setProductFields(Map<String, Object> params, UserSessionBean userInfo, int cartId, CmsSessionBean cmsSession) {

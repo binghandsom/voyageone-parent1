@@ -8,20 +8,21 @@ define([
 
     cms.controller('adSearchAppendCtl', (function () {
 
-        function AdSearchAppendCtl($scope,notify) {
+        function AdSearchAppendCtl($scope, notify, confirm) {
             //高级检索中的scope
             this.parentScope = $scope.$parent;
             this.notify = notify;
             this.columnArrow = {};
+            this.confirm = confirm;
         }
 
-        AdSearchAppendCtl.prototype.columnOrder = function (columnName,cartId) {
+        AdSearchAppendCtl.prototype.columnOrder = function (columnName, cartId) {
             var self = this,
                 column,
                 columnArrow = self.columnArrow;
 
-            if(cartId){
-                columnName = columnName.replace('✓',cartId);
+            if (cartId) {
+                columnName = columnName.replace('✓', cartId);
             }
 
             _.forEach(columnArrow, function (value, key) {
@@ -58,18 +59,18 @@ define([
             searchInfo.sortOneName = columnName;
             searchInfo.sortOneType = sortOneType == 'sort-up' ? '1' : '-1';
 
-            if(parentScope.vm.currTab == 'product')
+            if (parentScope.vm.currTab == 'product')
                 parentScope.search();
             else
                 parentScope.getGroupList();
         };
 
-        AdSearchAppendCtl.prototype.getArrowName = function (columnName,cartId) {
+        AdSearchAppendCtl.prototype.getArrowName = function (columnName, cartId) {
             var self = this,
                 columnArrow = self.columnArrow;
 
-            if(cartId){
-                columnName = columnName.replace('✓',cartId);
+            if (cartId) {
+                columnName = columnName.replace('✓', cartId);
             }
 
             if (!columnArrow || !columnArrow[columnName])
@@ -86,7 +87,7 @@ define([
                 notify = self.notify,
                 columnArrow = self.columnArrow;
 
-            if(!searchInfo.sortOneName){
+            if (!searchInfo.sortOneName) {
                 searchInfo.sortOneName = 0;
                 notify.warning("Warning： 请选择排序条件1");
                 return;
@@ -106,8 +107,16 @@ define([
         /**
          * 平台级锁定
          */
-        AdSearchAppendCtl.prototype.platFormLock = function(){
+        AdSearchAppendCtl.prototype.platFormLock = function (cartId) {
+            var self = this, parentScope = self.parentScope;
 
+            parentScope._chkProductSel(parseInt(cartId), function (cartId, _selProdList) {
+
+                self.confirm("是否同步商品下架？").then(function () {
+                    console.log('所选产品', _selProdList);
+                });
+
+            });
         };
 
         return AdSearchAppendCtl;

@@ -148,8 +148,8 @@ define(function () {
                     doAppSwitch: "doAppSwitch",
                     doTranslateStatus: "doTranslateStatus",
                     getProductIdByCode: "getProductIdByCode",
-                    upperLowerFrame :"upperLowerFrame",
-                    lockPlatForm:"lockPlatForm"
+                    upperLowerFrame: "upperLowerFrame",
+                    lockPlatForm: "lockPlatForm"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -494,14 +494,15 @@ define(function () {
                     "save": "save"
                 },
                 "$fieldEditService": {
-                    "root": "/cms/pop/field_edit",
-                    "getPopOptions": "getPopOptions",
-                    "setProductFields": "setProductFields",
-                    "dldUnProcCode4PriceSale": "dldUnProcCode4PriceSale",
-                    "bulkSetCategory": "bulkSetCategory",
-                    "bulkSetPlatformFields": "bulkSetPlatformFields",
-                    "getPlatfromPopOptions": "getPlatfromPopOptions",
-                    "intelligentPublish": "intelligentPublish"
+                    root: "/cms/pop/field_edit",
+                    getPopOptions: "getPopOptions",
+                    setProductFields: "setProductFields",
+                    dldUnProcCode4PriceSale: "dldUnProcCode4PriceSale",
+                    bulkSetCategory: "bulkSetCategory",
+                    bulkSetPlatformFields: "bulkSetPlatformFields",
+                    getPlatfromPopOptions: "getPlatfromPopOptions",
+                    intelligentPublish: "intelligentPublish",
+                    bulkLockProducts: "bulkLockProducts"
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",
@@ -566,11 +567,11 @@ define(function () {
                         createFeed: "createFeed",
                         init: 'init'
                     },
-                    "attrTranslateService":{
+                    "attrTranslateService": {
                         root: "/cms/channel/customTranslate/value",
-                        init:"init",
-                        create:"create",
-                        update:"update"
+                        init: "init",
+                        create: "create",
+                        update: "update"
                     }
                 },
                 "value": {
