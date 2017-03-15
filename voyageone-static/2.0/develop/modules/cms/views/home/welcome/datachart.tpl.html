@@ -108,6 +108,13 @@
                                         等待翻译数
                                     </div>
                                 </li>
+                                <li ng-if="channelId == '001'">
+                                    <div class="right data-priority-2"
+                                         ng-click="goSearchPage(10,{compareType:'$gt',inventory:0,noSale:true})">
+                                        <strong>{{vm.sumData.masterSum.CMS_MASTER_NO_SALE.amountVal}}</strong>
+                                        有库存未上新数
+                                    </div>
+                                </li>
                                 <li>
                                     <div class="right data-priority-2"
                                          ng-click="jumpBlackBrand('1|1|0')">
@@ -171,7 +178,7 @@
                                                 <th class="mfb-xxt text-center">平台</th>
                                                 <th class="mfb-xxt text-center">比指导价低数</th>
                                                 <th class="mfb-xxt text-center">比指导价高数</th>
-                                                <th class="mfb-xxt text-center">向上击穿警告数</th>
+                                                <!--<th class="mfb-xxt text-center">向上击穿警告数</th>-->
                                                 <th class="mfb-xxt text-center">向下击穿警告数</th>
                                             </tr>
                                             </thead>
@@ -180,7 +187,7 @@
                                                 <td class="mfb-xxt text-center">{{m.platformName}}</td>
                                                 <td class="mfb-xxt text-center"><a ng-click="goSearchPage(30,{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_PRICE_DOWN.amountVal}}</a></td>
                                                 <td class="mfb-xxt text-center"><a ng-click="goSearchPage(30,{cartId:m.CMS_PLATFORM_PRICE_UP.cartId,priceDiffFlg:'3'})">{{m.CMS_PLATFORM_PRICE_UP.amountVal}}</a></td>
-                                                <td class="mfb-xxt text-center"><a ng-click="goSearchPage(30,{cartId:m.CMS_PLATFORM_PRICE_UP_BREAKDOWN.cartId,priceDiffFlg:'4'})"><span class="label label-danger">{{m.CMS_PLATFORM_PRICE_UP_BREAKDOWN.amountVal}}</span></a></td>
+                                                <!--<td class="mfb-xxt text-center"><a ng-click="goSearchPage(30,{cartId:m.CMS_PLATFORM_PRICE_UP_BREAKDOWN.cartId,priceDiffFlg:'4'})"><span class="label label-danger">{{m.CMS_PLATFORM_PRICE_UP_BREAKDOWN.amountVal}}</span></a></td>-->
                                                 <td class="mfb-xxt text-center"><a ng-click="goSearchPage(30,{cartId:m.CMS_PLATFORM_PRICE_DOWN_BREAKDOWN.cartId,priceDiffFlg:'5'})"><span class="label label-danger">{{m.CMS_PLATFORM_PRICE_DOWN_BREAKDOWN.amountVal}}</span></a></td>
                                             </tr>
                                             </tbody>

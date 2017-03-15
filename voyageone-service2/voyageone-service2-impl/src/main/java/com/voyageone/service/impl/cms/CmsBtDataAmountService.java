@@ -71,8 +71,12 @@ public class CmsBtDataAmountService extends BaseService {
         List<EnumMasterSum> list = EnumMasterSum.getList(0);
         CmsBtDataAmountModel model = null;
         for (EnumMasterSum enumFeed : list) {
-            long count = daoCmsBtProduct.countByQuery(enumFeed.getStrQuery(), channelId);
-            saveCmsBtDataAmount(channelId, 0, enumFeed, count);
+            if(enumFeed == EnumMasterSum.CMS_MASTER_NO_SALE && channelId != "001"){
+                saveCmsBtDataAmount(channelId, 0, enumFeed, 0);
+            }else{
+                long count = daoCmsBtProduct.countByQuery(enumFeed.getStrQuery(), channelId);
+                saveCmsBtDataAmount(channelId, 0, enumFeed, count);
+            }
         }
         //master品牌黑名单统计
         int count = cmsBtBrandBlockService.getBrandCount(channelId, null, 1);
@@ -145,6 +149,7 @@ public class CmsBtDataAmountService extends BaseService {
             model.setLinkUrl(enumFeed.getLinkUrl());
             model.setDataAmountTypeId(enumFeed.getDataAmountTypeId());
         }
+        model.setModified(new Date());
         model.setAmountVal(Long.toString(count));
         if (model.getId() == 0) {
             dao.insert(model);

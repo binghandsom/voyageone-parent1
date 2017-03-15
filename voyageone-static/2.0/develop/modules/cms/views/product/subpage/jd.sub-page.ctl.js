@@ -358,6 +358,7 @@ define([
             platform = self.vm.platform,
             cartId = self.vm.platform.cartId;
 
+        // liking店不需要检测平台类目是否填写完毕
         if ([28, 29].indexOf(cartId) < 0 && self.vm.checkFlag.category == 0) {
             self.alert('请检查类目是否设置完毕！');
             return;

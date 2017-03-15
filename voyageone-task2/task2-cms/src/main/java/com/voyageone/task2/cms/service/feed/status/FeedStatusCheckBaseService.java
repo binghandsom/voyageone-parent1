@@ -79,6 +79,7 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
 
         saleList = notSale.stream().map(Object::toString).collect(Collectors.joining(","));
         $info(String.format(" sale -> not sale 共%d个[%s]",notSale.size(),saleList));
+        backupFeedFile();
     }
 
     private void insertData(List<CmsFeedLiveSkuModel> skus) {
@@ -116,6 +117,10 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
         param.put("channelId",getChannel().getId());
         param.put("sku",sku);
         return cmsFeedLiveSkuDaoExt.selectOne(param);
+    }
+
+    protected void backupFeedFile(){
+
     }
 
 }

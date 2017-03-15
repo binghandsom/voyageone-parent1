@@ -10,7 +10,8 @@ public enum EnumMasterSum implements IEnumDataAmountSum{
     CMS_MASTER_NO_CATEGORY("CMS_MASTER_NO_CATEGORY", "{'lock':'0','common.fields.isMasterMain':1,'common.fields.categoryStatus':{$in:[null,'','0']}}", "", "", "等待设置主类目数"),
     CMS_MASTER_NO_HSCODE("CMS_MASTER_NO_HSCODE", "{'lock':'0','common.fields.hsCodeStatus':{$in:[null,'','0']}}", "", "", "等待设置税号数"),
     CMS_MASTER_UNTRANSLATED("CMS_MASTER_UNTRANSLATED", "{'lock':'0','common.fields.isMasterMain':1,'common.fields.translateStatus':{$in:[null,'','0']}}", "", "", "等待翻译数"),
-    CMS_MASTER_Brand_block("CMS_MASTER_Brand_block", "", "", "", "黑名单数量",1);
+    CMS_MASTER_Brand_block("CMS_MASTER_Brand_block", "", "", "", "黑名单数量",1),
+    CMS_MASTER_NO_SALE("CMS_MASTER_NO_SALE", "{'common.fields.quantity':{$gt:0}, 'platforms.P20.pNumIId':{$in:['',null]}, 'platforms.P21.pNumIId':{$in:['',null]}, 'platforms.P22.pNumIId':{$in:['',null]}, 'platforms.P23.pNumIId':{$in:['',null]}, 'platforms.P24.pNumIId':{$in:['',null]}, 'platforms.P25.pNumIId':{$in:['',null]}, 'platforms.P26.pNumIId':{$in:['',null]}, 'platforms.P27.pNumIId':{$in:['',null]}}", "", "", "有库存没上线");
 
     EnumMasterSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment) {
         this.amountName = amountName;

@@ -1059,21 +1059,9 @@ public class PriceService extends BaseService {
 
         CmsChannelConfigBean autoSyncPriceSaleConfig = getAutoSyncPriceSaleOption(channelId, cartId);
 
-        Double minRetail = null;
-        Double maxRetail = null;
+        Double minSale = null;
+        Double maxSale = null;
 
-        for (BaseMongoMap<String, Object> platformSku : unifySkus) {
-            Double retailPrice = platformSku.getDoubleAttribute(priceRetail.name());
-            //计算Retail Price范围 只计算isSale = true
-            if (platformSku.get(isSale.name()) != null && (Boolean) platformSku.get(isSale.name())) {
-                if (minRetail == null || minRetail > retailPrice) {
-                    minRetail = retailPrice;
-                }
-                if (maxRetail == null || maxRetail < retailPrice) {
-                    maxRetail = retailPrice;
-                }
-            }
-        }
 
         Integer configValue1 = 0;
         Integer configValue2 = 0;
@@ -1118,13 +1106,27 @@ public class PriceService extends BaseService {
             if (configValue1 == 1 || (configValue1 == 2 && retailPrice > priceSale)) {
                 skuInPlatform.put(Platform_SKU_COM.priceSale.name(), retailPrice);
             }
+
+            priceSale = skuInPlatform.getDoubleAttribute(Platform_SKU_COM.priceSale.name());
+            if (skuInPlatform.get(isSale.name()) != null && (Boolean) skuInPlatform.get(isSale.name())) {
+                if (minSale == null || minSale > priceSale) {
+                    minSale = priceSale;
+                }
+                if (maxSale == null || maxSale < priceSale) {
+                    maxSale = priceSale;
+                }
+            }
+        }
+        
+        for (BaseMongoMap<String, Object> skuInPlatform : unifySkus) {
+            Double retailPrice = skuInPlatform.getDoubleAttribute(priceRetail.name());
             // 中国最终售价 = 按中国建议售价最高价统一
-            if (configValue2 == 1 && maxRetail != null) {
-                skuInPlatform.put(Platform_SKU_COM.priceSale.name(), maxRetail);
+            if (configValue2 == 1 && maxSale != null) {
+                skuInPlatform.put(Platform_SKU_COM.priceSale.name(), maxSale);
             }
             // 中国最终售价 = 按中国建议售价最低价统一
-            else if (configValue2 == 2 && minRetail != null) {
-                skuInPlatform.put(Platform_SKU_COM.priceSale.name(), minRetail);
+            else if (configValue2 == 2 && minSale != null) {
+                skuInPlatform.put(Platform_SKU_COM.priceSale.name(), minSale);
             }
             // 算出黄金码最终售价最高价
             else if (configValue2 == 3 && goldSize != null) {
@@ -1137,7 +1139,7 @@ public class PriceService extends BaseService {
                     }
                 }
             }
-
+            Double priceSale = skuInPlatform.getDoubleAttribute(Platform_SKU_COM.priceSale.name());
             //
             if (priceSale <= 0 && configValue2 != 3)
                 skuInPlatform.put(Platform_SKU_COM.priceSale.name(), retailPrice);
@@ -1149,7 +1151,7 @@ public class PriceService extends BaseService {
         }
 
         if(goldPrice == null){
-            goldPrice = maxRetail;
+            goldPrice = maxSale;
         }
         // 设置黄金码价格
         if (configValue2 == 3 && goldPrice != null) {
@@ -1323,6 +1325,8 @@ public class PriceService extends BaseService {
             } else {
                 diffFlg = "5"; // 最终售价向下击穿警告
             }
+        } else if (priceSale > priceRetail){
+            diffFlg = "3";
         }
         return diffFlg;
     }

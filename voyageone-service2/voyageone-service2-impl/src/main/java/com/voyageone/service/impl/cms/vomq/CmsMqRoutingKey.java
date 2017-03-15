@@ -55,6 +55,9 @@ public class CmsMqRoutingKey {
     // 高级检索 - 批量更新共通属性
     public static final String CMS_UPDATE_PRODUCT_FIELDS = "VOCmsUpdateProductFieldsQueue";
 
+    // 高级检索 - 批量智能上新
+    public static final String CMS_UPDATE_PRODUCT_PLATFORM_STATUS_TO_APPROVE_BY_SMART = "VOCmsUpdateProductPlatformStatusToApproveBySmartQueue";
+
     // 高级检索 - 异步生成文件
     public static final String CMS_EXPORT_PRODUCT_INFO = "VOCmsExportProductInfoQueue";
 
