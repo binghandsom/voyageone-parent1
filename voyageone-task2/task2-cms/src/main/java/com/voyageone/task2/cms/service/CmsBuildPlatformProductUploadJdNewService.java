@@ -1412,7 +1412,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
             $info(errMsg, ex);
         }
         // 20160315 sneakerhead比较优秀， 写死判断 START
-        if (ChannelConfigEnums.Channel.SN.equals(channelId) && CartEnums.Cart.JD.equals(cartId)) {
+        if (ChannelConfigEnums.Channel.SN.getId().equals(channelId) && CartEnums.Cart.JD.getId().equals(cartId)) {
             if (mainProduct != null
                     && mainProduct.getCommonNotNull().getFieldsNotNull().getProductType() != null
                     && "Shoes".equals(mainProduct.getCommonNotNull().getFieldsNotNull().getProductType())) {
@@ -1420,7 +1420,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
             } else {
                 wareTransportId = "39060"; // 鞋子以外
             }
-        } else if (ChannelConfigEnums.Channel.SN.equals(channelId) && CartEnums.Cart.JG.equals(cartId)) {
+        } else if (ChannelConfigEnums.Channel.SN.getId().equals(channelId) && CartEnums.Cart.JG.getId().equals(cartId)) {
             if (mainProduct != null
                     && mainProduct.getCommonNotNull().getFieldsNotNull().getProductType() != null
                     && "Shoes".equals(mainProduct.getCommonNotNull().getFieldsNotNull().getProductType())) {
