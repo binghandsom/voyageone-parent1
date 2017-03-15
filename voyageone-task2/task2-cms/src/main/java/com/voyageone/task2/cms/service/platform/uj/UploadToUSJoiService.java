@@ -441,8 +441,13 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                         throw new BusinessException(errMsg);
                     }
 
-                    productModel.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
-                    productModel.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
+                    if(StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOrigProductType())) {
+                        productModel.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
+                    }
+                    if(StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType())) {
+                        productModel.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
+                    }
+
                     doSetMainCategory(productModel.getCommon(), productModel.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
 
                     // 产品不存在，新增
@@ -701,10 +706,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             }
 
                             // 材质英文(common.fields.materialEn)
-                            if (StringUtil.isEmpty(prCommonFields.getMaterialEn())
-                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getMaterialEn())) {
+//                            if (StringUtil.isEmpty(prCommonFields.getMaterialEn())
+//                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getMaterialEn())) {
                                 prCommonFields.setMaterialEn(productModel.getCommonNotNull().getFieldsNotNull().getMaterialEn());
-                            }
+//                            }
 
                             // 材质中文(common.fields.materialCn)
                             if (StringUtil.isEmpty(prCommonFields.getMaterialCn())
@@ -790,10 +795,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             }
 
                             // 商品特质英文（颜色/口味/香型等）(common.fields.codeDiff)
-                            if (StringUtil.isEmpty(prCommonFields.getCodeDiff())
-                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff())) {
+//                            if (StringUtil.isEmpty(prCommonFields.getCodeDiff())
+//                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff())) {
                                 prCommonFields.setCodeDiff(productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff());
-                            }
+//                            }
 
                             // 使用说明英语(common.fields.usageEn)
                             if (StringUtil.isEmpty(prCommonFields.getUsageEn())
@@ -824,8 +829,21 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                         // TODO 2016/12/30暂时这样更新，以后要改
 //                        if ("0".equals(pr.getCommonNotNull().getCatConf())) {
                             // 自动匹配商品主类目
-                            pr.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
-                            pr.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
+                            if(StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOrigProductType())){
+                                pr.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
+                            }else{
+                                pr.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getOrigProductType());
+                            }
+
+                            if(StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType())){
+                                pr.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
+                            }else{
+                                pr.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType());
+                            }
+
+                            if(!StringUtil.isEmpty(productModel.getFeed().getCatPath())) {
+                                pr.getFeed().setCatPath(productModel.getFeed().getCatPath());
+                            }
                             doSetMainCategory(pr.getCommon(), pr.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
 //                        }
 

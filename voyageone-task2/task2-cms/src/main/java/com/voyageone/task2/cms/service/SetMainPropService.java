@@ -962,6 +962,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // 修改商品数据
                     // 一般只改改价格神马的
                     cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
+                    cmsProduct.getFeed().setCatPath(feed.getCategory());
                     if (feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())) {
                         cmsProduct.getCommon().getFields().setProductNameEn(feed.getName());
                         cmsProduct.getCommon().getFields().setOriginalTitleCn(feed.getName());
@@ -1277,9 +1278,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 // 20161227 tom champion特殊处理， 目前没有设置common的配置画面， 将来会增加 END
             }
             // 商品特质英文(颜色/口味/香型等)
-            if (newFlg || StringUtils.isEmpty(productCommonField.getCodeDiff()) || "1".equals(feed.getIsFeedReImport())) {
+//            if (newFlg || StringUtils.isEmpty(productCommonField.getCodeDiff()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setCodeDiff(feed.getColor());
-            }
+//            }
 
             if(!"007".equals(feed.getChannelId()) && !StringUtil.isEmpty(productCommonField.getCodeDiff()) && StringUtil.isEmpty(productCommonField.getColor())){
                 String color = cmsBtTranslateService.translate(usjoi?"928":feed.getChannelId(), CmsBtCustomPropModel.CustomPropType.Common.getValue(), "com_color", productCommonField.getCodeDiff());
@@ -1316,9 +1317,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 productCommonField.setQuantity(feed.getQty());
             }
             // 材质
-            if (newFlg || StringUtils.isEmpty(productCommonField.getMaterialEn()) || "1".equals(feed.getIsFeedReImport())) {
+//            if (newFlg || StringUtils.isEmpty(productCommonField.getMaterialEn()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setMaterialEn(feed.getMaterial());
-            }
+//            }
 
             // 官方网站链接，商品图片1，产品分类，适用人群的Feed数据可能会变化，所以不管新建还是更新操作都会去重新设定
             // 官方网站链接
@@ -1444,6 +1445,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         productCommonField.setSizeType(feedSizeType);
                     }
             }
+            productCommonField.setOrigProductType(feedProductType);
+            productCommonField.setOrigSizeType(feedProductType);
             // jeff 2016/04 change end
 
             // add by desmond 2016/07/22 start
