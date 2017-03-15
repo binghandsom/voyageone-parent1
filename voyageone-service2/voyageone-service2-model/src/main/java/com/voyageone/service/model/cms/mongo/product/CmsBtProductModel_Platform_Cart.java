@@ -542,6 +542,14 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String, Object
         setAttribute("images9", images9);
     }
 
+    public void setLock(String lock) {
+        setAttribute("lock", lock);
+    }
+
+    public String getLock() {
+        return getStringAttribute("lock");
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public Object put(String key, Object value) {
