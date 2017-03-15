@@ -1419,7 +1419,7 @@ public class ProductService extends BaseService {
                     @Override
                     public boolean evaluate(Object object) {
                         CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku) object;
-                        return sku.getSkuCode().equals(stock.getBase().getSku());
+                        return sku.getSkuCode().equalsIgnoreCase(stock.getBase().getSku());
                     }
                 });
                 if (sku != null) {
