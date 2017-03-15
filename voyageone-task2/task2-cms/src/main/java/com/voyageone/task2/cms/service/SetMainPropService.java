@@ -1010,7 +1010,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                     // 计算主类目
                     if(usjoi) {
-                        doSetMainCategory(cmsProduct.getCommon(), feed.getCategory());
+                        doSetMainCategory(cmsProduct.getCommon(), feed);
                     }
 
                     // 更新价格相关项目
@@ -1088,7 +1088,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                     // 计算主类目
                     if(usjoi) {
-                        doSetMainCategory(cmsProduct.getCommon(), feed.getCategory());
+                        doSetMainCategory(cmsProduct.getCommon(), feed);
                     }
 
                     // 更新价格相关项目
@@ -3141,22 +3141,24 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             }
         }
 
-        protected void doSetMainCategory(CmsBtProductModel_Common prodCommon, String feedCategoryPath) {
-            if (prodCommon == null || StringUtils.isEmpty(feedCategoryPath)) return;
+        protected void doSetMainCategory(CmsBtProductModel_Common prodCommon, CmsBtFeedInfoModel feed) {
+            prodCommon.getFieldsNotNull().setOrigProductType(feed.getProductType());
+            prodCommon.getFieldsNotNull().setOrigSizeType(feed.getSizeType());
+            if (prodCommon == null || StringUtils.isEmpty(feed.getCategory())) return;
 
             // 共通Field
             CmsBtProductModel_Field prodCommonField = prodCommon.getFieldsNotNull();
 
             // 调用Feed到主数据的匹配接口取得匹配度最高的主类目
             long beginTime = System.currentTimeMillis();
-            MatchResult searchResult = getMainCatInfo(feedCategoryPath,
+            MatchResult searchResult = getMainCatInfo(feed.getCategory(),
                     !StringUtils.isEmpty(prodCommonField.getOrigProductType()) ? prodCommonField.getOrigProductType() : "",
                     !StringUtils.isEmpty(prodCommonField.getOrigSizeType()) ? prodCommonField.getOrigSizeType() : "",
                     prodCommonField.getProductNameEn(),
                     prodCommonField.getBrand());
             if (searchResult != null) {
                 $info(String.format("调用主类目匹配接口取得主类目和适用人群正常结束！[耗时:%s] [feedCategoryPath:%s] [productType:%s] " +
-                                "[sizeType:%s] [productNameEn:%s] [brand:%s]", (System.currentTimeMillis() - beginTime), feedCategoryPath,
+                                "[sizeType:%s] [productNameEn:%s] [brand:%s]", (System.currentTimeMillis() - beginTime), feed.getCategory(),
                         prodCommonField.getProductType(), prodCommonField.getSizeType(), prodCommonField.getProductNameEn(), prodCommonField.getBrand()));
 
                     // 先备份原来的productType和sizeType
