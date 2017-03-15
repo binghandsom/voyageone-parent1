@@ -170,11 +170,34 @@ public class CmsFieldEditService extends BaseViewService {
             cmsMqSenderService.sendMessage(mqMessageBody);
         }
     }
+
     /**
      * 批量锁定产品
      */
     public void bulkLockProducts(int cartId, Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
 
+        boolean isSelectAll = ((Integer) params.get("isSelectAll") == 1);    // 是否为全选
+        Integer lock =  Integer.valueOf(String.valueOf(params.get("lock")));
+        boolean down = Boolean.valueOf(String.valueOf(params.get("down")));
+
+        List<String> productCodes = null;
+        if (isSelectAll) {
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+        } else {
+            productCodes = (List<String>) params.get("productIds");
+        }
+
+        AdvSearchLockProductsMQMessageBody mqMessageBody = new AdvSearchLockProductsMQMessageBody();
+        mqMessageBody.setChannelId(userInfo.getSelChannelId());
+        mqMessageBody.setCartId(cartId);
+        /**当用户页面选择下架时，也要执行下架service*/
+        if(down)
+            mqMessageBody.setActiveStatus(CmsConstants.PlatformActive.ToInStock.name());
+        mqMessageBody.setProductCodes(productCodes);
+        mqMessageBody.setComment("批量lock平台");
+        mqMessageBody.setLock(lock);
+
+        cmsMqSenderService.sendMessage(mqMessageBody);
     }
 
     /**

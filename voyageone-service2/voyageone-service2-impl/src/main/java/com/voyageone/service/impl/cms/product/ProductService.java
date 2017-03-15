@@ -18,6 +18,7 @@ import com.voyageone.common.configs.Enums.CartEnums.Cart;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
 import com.voyageone.service.bean.cms.product.*;
@@ -32,13 +33,16 @@ import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.wms.InventoryCenterLogicService;
 import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
+import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
 import com.voyageone.service.model.cms.CmsMtEtkHsCodeModel;
+import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
@@ -918,7 +922,7 @@ public class ProductService extends BaseService {
     }
 
     /**
-     * updateProductLock
+     * 产品级lock同时更新各个平台的lock属性  added by piao
      *
      * @param channelId
      * @param prodId
@@ -931,17 +935,8 @@ public class ProductService extends BaseService {
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         HashMap<String, Object> updateMap = new HashMap<>();
         updateMap.put("lock", lock);
-        updateMap.put("modifier", modifier);
-        updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
-        BulkUpdateModel model = new BulkUpdateModel();
-        model.setUpdateMap(updateMap);
-        model.setQueryMap(queryMap);
-        bulkList.add(model);
-        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
 
-        /**产品级lock同时更新各个平台的lock属性  added by piao*/
         CmsBtProductModel _productInfo = getProductById(channelId, prodId);
-        List<Integer> cartIds = new ArrayList<>();
 
         if (_productInfo != null) {
             // 处理各平台
@@ -951,49 +946,88 @@ public class ProductService extends BaseService {
                 if (cartId < CmsConstants.ACTIVE_CARTID_MIN)
                     return;
 
-                cartIds.add(cartId);
+                updateMap.put(String.format("platforms.P%s.lock", cartId), lock);
+
             });
         }
 
-        Map<String, Object> _params = new HashedMap();
-        _params.put("carts", cartIds);
-        _params.put("prodId", prodId);
-        _params.put("lock", lock);
+        updateMap.put("modifier", modifier);
+        updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
 
-        /**触发锁操作*/
-        lockPlatForms(channelId, _params);
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
 
         /**最有插入产品记录表*/
         insertProductHistory(channelId, prodId);
     }
 
     /**
-     * 锁产品时关联相关平台的锁操作    added by piao
-     * @param channelId
+     * 批量lock产品
+     *
+     * @return 错误信息集合
      */
-    public void lockPlatForms(String channelId, Map<String, Object> params) {
+    public List<CmsBtOperationLogModel_Msg> batchLockProducts(Map<String, Object> messageMap) {
 
-        Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
-        Integer lock = Integer.valueOf(String.valueOf(params.get("lock")));
-        List<Integer> cartIds = (List<Integer>) params.get("carts");
+        List<CmsBtOperationLogModel_Msg> errorList = new ArrayList<>();
+        String channelId = ((String) messageMap.get("channelId")),
+                creator = ((String) messageMap.get("creator")),
+                comment = (String) messageMap.get("comment");
+        Integer cartId = (Integer) messageMap.get("cartId"),
+                lock = (Integer) messageMap.get("lock");
+        Collection<String> codeList = (Collection) messageMap.get("codeList");
 
-        HashMap<String, Object> queryMap = new HashMap<>();
-        queryMap.put("prodId", prodId);
+        // 按产品的Code检索出所有的商品
+        JongoQuery queryObj = new JongoQuery();
+        queryObj.setQuery("{\"common.fields.code\": {$in: #}}");
+        queryObj.setParameters(codeList);
+        List<CmsBtProductModel> products = getList(channelId, queryObj);
 
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
-        HashMap<String, Object> updateMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(products)) {
+            codeList.clear();
+
+            //批处理
+            BulkJongoUpdateList productBulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
+
+            String productCode;
+
+            for (CmsBtProductModel product : products) {
+
+                productCode = product.getCommon().getFields().getCode();
+
+                StringBuffer updateStr = new StringBuffer("{$set:{")
+                        .append("lock").append(lock)
+                        .append("'platforms.P").append(cartId).append(".lock':").append(lock);
+
+                updateStr.append(",'modified':#")
+                        .append(",'modifier':#")
+                        .append("}}");
 
 
-        for (Integer cartId : cartIds){
-            updateMap.put(String.format("platforms.P%s.lock", cartId), lock);
+                JongoUpdate updateObj = new JongoUpdate();
+                updateObj.setQuery("{'common.fields.code':#}");
+                updateObj.setQueryParameters(productCode);
+                updateObj.setUpdate(updateStr.toString());
+                updateObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), creator);
+
+                // 添加秕处理执行语句
+                BulkWriteResult rs = productBulkList.addBulkJongo(updateObj);
+
+                if (rs != null) {
+                    $debug(String.format("批量lock平台 channelId=%s 执行结果=%s", channelId, rs.toString()));
+                }
+            }
+        } else {
+            CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+            errorInfo.setSkuCode("All");
+            errorInfo.setMsg("该组商品在产品表中检索不到任何一个商品");
+            errorList.add(errorInfo);
         }
 
-        BulkUpdateModel model = new BulkUpdateModel();
-        model.setUpdateMap(updateMap);
-        model.setQueryMap(queryMap);
-        bulkList.add(model);
+        return errorList;
 
-        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
     }
 
     public void updateProductAppSwitch(String channelId, Long prodId, int appSwitch, String modifier) {
