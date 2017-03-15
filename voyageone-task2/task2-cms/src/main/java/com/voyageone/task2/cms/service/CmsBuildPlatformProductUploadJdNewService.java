@@ -971,7 +971,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
             updateSkuIds(shopProp, StringUtils.toString(jdWareId), updateWare);
 
             // added by morse.lu 2016/12/08 start
-            if (ChannelConfigEnums.Channel.SN.equals(channelId)) {
+            if (ChannelConfigEnums.Channel.SN.getId().equals(channelId)) {
                 // Sneakerhead
                 try {
                     sxProductService.uploadCnInfo(sxData);
