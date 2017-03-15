@@ -1611,6 +1611,65 @@ public class PriceService extends BaseService {
     }
 
     /**
+     * 获取价格公式(Feed)
+     * @param product 产品信息
+     * @param formulaConfigs 价格公式列表
+     * @return
+     */
+    private CmsChannelConfigBean getFeedPriceConfig(CmsBtFeedInfoModel product, List<CmsChannelConfigBean> formulaConfigs) {
+
+        // 查找主类目
+        formulaConfigs.sort((o1, o2) -> o1.getConfigValue1().compareTo(o2.getConfigValue1()) * -1);
+        CmsChannelConfigBean formulaConfig = null;
+        for (CmsChannelConfigBean config : formulaConfigs) {
+            if (!StringUtils.isEmpty(product.getMainCategoryEn())
+                    && product.getMainCategoryEn().indexOf(config.getConfigValue1()) == 0) {
+                formulaConfig = config;
+                break;
+            }
+        }
+
+        // 查找feed类目
+        if (formulaConfig == null) {
+            for (CmsChannelConfigBean config : formulaConfigs) {
+                if (!StringUtils.isEmpty(product.getCategory())
+                        && product.getCategory().indexOf(config.getConfigValue1()) == 0) {
+                    formulaConfig = config;
+                    break;
+                }
+            }
+        }
+
+        // 查找feed类目
+        if (formulaConfig == null) {
+            for (CmsChannelConfigBean config : formulaConfigs) {
+                if (!StringUtils.isEmpty(product.getModel())
+                        && product.getModel().indexOf(config.getConfigValue1()) == 0) {
+                    formulaConfig = config;
+                    break;
+                }
+            }
+        }
+
+        // 查找默认为0的
+        if (formulaConfig == null) {
+            for (CmsChannelConfigBean config : formulaConfigs) {
+                if ("0".equals(config.getConfigValue1())) {
+                    formulaConfig = config;
+                    break;
+                }
+            }
+        }
+
+        // 返回第一个
+        if (formulaConfig == null && formulaConfigs.size() > 0) {
+            formulaConfig = formulaConfigs.get(0);
+        }
+
+        return formulaConfig;
+    }
+
+    /**
      * 体系价格计算器
      * <p>
      * 在同一款商品进行价格计算时, 用来保持部分参数. 同时包含对参数和价格、计算部分的校验
@@ -1735,122 +1794,5 @@ public class PriceService extends BaseService {
         }
     }
 
-    /**
-     * 获取价格公式
-     * @param product 产品信息
-     * @param formulaConfigs 价格公式列表
-     * @return
-     */
-    private CmsChannelConfigBean getPriceConfig(CmsBtProductModel product, List<CmsChannelConfigBean> formulaConfigs) {
-
-        // 查找主类目
-        formulaConfigs.sort((o1, o2) -> o1.getConfigValue1().compareTo(o2.getConfigValue1()) * -1);
-        CmsChannelConfigBean formulaConfig = null;
-        for (CmsChannelConfigBean config : formulaConfigs) {
-            if (!StringUtils.isEmpty(product.getCommon().getCatPathEn())
-                    && product.getCommon().getCatPathEn().indexOf(config.getConfigValue1()) == 0) {
-                formulaConfig = config;
-                break;
-            }
-        }
-
-        // 查找feed类目
-        if (formulaConfig == null) {
-            for (CmsChannelConfigBean config : formulaConfigs) {
-                if (!StringUtils.isEmpty(product.getFeed().getCatPath())
-                        && product.getFeed().getCatPath().indexOf(config.getConfigValue1()) == 0) {
-                    formulaConfig = config;
-                    break;
-                }
-            }
-        }
-
-        // 查找feed类目
-        if (formulaConfig == null) {
-            for (CmsChannelConfigBean config : formulaConfigs) {
-                if (!StringUtils.isEmpty(product.getCommon().getFields().getModel())
-                        && product.getCommon().getFields().getModel().indexOf(config.getConfigValue1()) == 0) {
-                    formulaConfig = config;
-                    break;
-                }
-            }
-        }
-
-        // 查找默认为0的
-        if (formulaConfig == null) {
-            for (CmsChannelConfigBean config : formulaConfigs) {
-                if ("0".equals(config.getConfigValue1())) {
-                    formulaConfig = config;
-                    break;
-                }
-            }
-        }
-
-        // 返回第一个
-        if (formulaConfig == null && formulaConfigs.size() > 0) {
-            formulaConfig = formulaConfigs.get(0);
-        }
-
-        return formulaConfig;
-    }
-
-    /**
-     * 获取价格公式(Feed)
-     * @param product 产品信息
-     * @param formulaConfigs 价格公式列表
-     * @return
-     */
-    private CmsChannelConfigBean getFeedPriceConfig(CmsBtFeedInfoModel product, List<CmsChannelConfigBean> formulaConfigs) {
-
-        // 查找主类目
-        formulaConfigs.sort((o1, o2) -> o1.getConfigValue1().compareTo(o2.getConfigValue1()) * -1);
-        CmsChannelConfigBean formulaConfig = null;
-        for (CmsChannelConfigBean config : formulaConfigs) {
-            if (!StringUtils.isEmpty(product.getMainCategoryEn())
-                    && product.getMainCategoryEn().indexOf(config.getConfigValue1()) == 0) {
-                formulaConfig = config;
-                break;
-            }
-        }
-
-        // 查找feed类目
-        if (formulaConfig == null) {
-            for (CmsChannelConfigBean config : formulaConfigs) {
-                if (!StringUtils.isEmpty(product.getCategory())
-                        && product.getCategory().indexOf(config.getConfigValue1()) == 0) {
-                    formulaConfig = config;
-                    break;
-                }
-            }
-        }
-
-        // 查找feed类目
-        if (formulaConfig == null) {
-            for (CmsChannelConfigBean config : formulaConfigs) {
-                if (!StringUtils.isEmpty(product.getModel())
-                        && product.getModel().indexOf(config.getConfigValue1()) == 0) {
-                    formulaConfig = config;
-                    break;
-                }
-            }
-        }
-
-        // 查找默认为0的
-        if (formulaConfig == null) {
-            for (CmsChannelConfigBean config : formulaConfigs) {
-                if ("0".equals(config.getConfigValue1())) {
-                    formulaConfig = config;
-                    break;
-                }
-            }
-        }
-
-        // 返回第一个
-        if (formulaConfig == null && formulaConfigs.size() > 0) {
-            formulaConfig = formulaConfigs.get(0);
-        }
-
-        return formulaConfig;
-    }
 
 }
