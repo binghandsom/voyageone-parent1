@@ -67,74 +67,11 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
         }
     }
 
-    private void unblock(CmsBtBrandBlockModel brandBlockModel) {
-        switch (brandBlockModel.getType()) {
-            case CmsBtBrandBlockService.BRAND_TYPE_FEED:
-                unblockFeedBrand(brandBlockModel);
-                break;
-            case CmsBtBrandBlockService.BRAND_TYPE_MASTER:
-                unblockMasterBrand(brandBlockModel);
-                break;
-            case CmsBtBrandBlockService.BRAND_TYPE_PLATFORM:
-                // 品牌品牌解除不需要进行额外的处理
-                // 因为屏蔽时只做了下架处理，没有做任何其他处理
-                break;
-        }
-    }
-
     /**
-     * 解除主数据品牌的屏蔽，解锁这些品牌的商品
-     *
-     * @param brandBlockModel 被解锁品牌的数据模型
+     * 锁定品牌
+     * @param brandBlockModel brandBlockModel
+     * @return List<CmsBtOperationLogModel_Msg>
      */
-    private void unblockMasterBrand(CmsBtBrandBlockModel brandBlockModel) {
-
-        String channelId = brandBlockModel.getChannelId();
-
-        List<CmsBtProductModel> productModelList = productService.getList(channelId, JongoQuery.simple("common.fields.brand", brandBlockModel.getBrand()));
-
-        if (productModelList == null || productModelList.isEmpty())
-            return;
-
-        for (CmsBtProductModel productModel : productModelList)
-            unlockProduct(productModel.getCommon().getFields().getCode(), channelId);
-    }
-
-    /**
-     * 解除 Feed 品牌的屏蔽，解锁这些品牌商品对应的主数据商品，并修改 Feed 数据的状态
-     *
-     * @param brandBlockModel 被解锁品牌的数据模型
-     */
-    private void unblockFeedBrand(CmsBtBrandBlockModel brandBlockModel) {
-
-        String channelId = brandBlockModel.getChannelId();
-
-        List<CmsBtFeedInfoModel> feedInfoModelList = feedInfoService.getList(channelId, JongoQuery.simple("brand", brandBlockModel.getBrand()));
-
-        if (feedInfoModelList == null || feedInfoModelList.isEmpty())
-            return;
-
-        for (CmsBtFeedInfoModel feedInfoModel : feedInfoModelList) {
-
-            String code = feedInfoModel.getCode();
-
-            CmsBtProductModel productModel = productService.getProductByCode(channelId, code);
-
-            // 如果有主数据商品，就把 feed 标记为导入成功
-            // 否则，就标记为新商品
-            // 如果有主数据商品，还需要额外解锁这些商品
-            // 因为屏蔽时，会锁定它们
-            if (productModel == null) {
-                feedInfoModel.setUpdFlg(CmsConstants.FeedUpdFlgStatus.New);
-            } else {
-                feedInfoModel.setUpdFlg(CmsConstants.FeedUpdFlgStatus.Succeed);
-                unlockProduct(code, channelId);
-            }
-
-            feedInfoService.updateFeedInfo(feedInfoModel);
-        }
-    }
-
     private List<CmsBtOperationLogModel_Msg> block(CmsBtBrandBlockModel brandBlockModel) {
         List<CmsBtOperationLogModel_Msg> result = new ArrayList<>();
         switch (brandBlockModel.getType()) {
@@ -150,6 +87,26 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
         }
 
         return result;
+    }
+
+    /**
+     * 解锁品牌
+     * @param brandBlockModel brandBlockModel
+     */
+    private void unblock(CmsBtBrandBlockModel brandBlockModel) {
+        switch (brandBlockModel.getType()) {
+            case CmsBtBrandBlockService.BRAND_TYPE_FEED:
+                unblockFeedBrand(brandBlockModel);
+                break;
+            case CmsBtBrandBlockService.BRAND_TYPE_MASTER:
+                unblockMasterBrand(brandBlockModel);
+                break;
+            case CmsBtBrandBlockService.BRAND_TYPE_PLATFORM:
+                // 品牌品牌解除不需要进行额外的处理
+                // 因为屏蔽时只做了下架处理，没有做任何其他处理
+                unblockPlatformBrand(brandBlockModel);
+                break;
+        }
     }
 
     /**
@@ -173,6 +130,8 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
         OffShelfHelper offShelfHelper = new OffShelfHelper(channelId);
 
         productModelList.forEach(offShelfHelper::addProduct);
+        // 更新平台的lock=1
+        productModelList.forEach(productModel -> lockOrUnlockProductPlatform(productModel, "1", brandBlockModel.getCartId()));
 
         try {
             offShelfHelper.offThem();
@@ -219,6 +178,7 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
             // 在下架完成之后
             // 锁定商品
             lockProduct(productModel.getCommon().getFields().getCode(), channelId);
+            lockOrUnlockProductPlatform(productModel, "1", 0);
         }
 
         return failList;
@@ -273,9 +233,85 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
             // 在下架完成之后
             // 锁定商品
             lockProduct(feedInfoModel.getCode(), channelId);
+            lockOrUnlockProductPlatform(productModel, "1", 0);
         }
 
         return failList;
+    }
+
+    /**
+     * 解除主数据品牌的屏蔽，解锁这些品牌的商品
+     *
+     * @param brandBlockModel 被解锁品牌的数据模型
+     */
+    private void unblockMasterBrand(CmsBtBrandBlockModel brandBlockModel) {
+
+        String channelId = brandBlockModel.getChannelId();
+
+        List<CmsBtProductModel> productModelList = productService.getList(channelId, JongoQuery.simple("common.fields.brand", brandBlockModel.getBrand()));
+
+        if (productModelList == null || productModelList.isEmpty())
+            return;
+
+        for (CmsBtProductModel productModel : productModelList) {
+            unlockProduct(productModel.getCommon().getFields().getCode(), channelId);
+            lockOrUnlockProductPlatform(productModel, "0", 0);
+        }
+    }
+
+    /**
+     * 解除 Feed 品牌的屏蔽，解锁这些品牌商品对应的主数据商品，并修改 Feed 数据的状态
+     *
+     * @param brandBlockModel 被解锁品牌的数据模型
+     */
+    private void unblockFeedBrand(CmsBtBrandBlockModel brandBlockModel) {
+
+        String channelId = brandBlockModel.getChannelId();
+
+        List<CmsBtFeedInfoModel> feedInfoModelList = feedInfoService.getList(channelId, JongoQuery.simple("brand", brandBlockModel.getBrand()));
+
+        if (feedInfoModelList == null || feedInfoModelList.isEmpty())
+            return;
+
+        for (CmsBtFeedInfoModel feedInfoModel : feedInfoModelList) {
+
+            String code = feedInfoModel.getCode();
+
+            CmsBtProductModel productModel = productService.getProductByCode(channelId, code);
+
+            // 如果有主数据商品，就把 feed 标记为导入成功
+            // 否则，就标记为新商品
+            // 如果有主数据商品，还需要额外解锁这些商品
+            // 因为屏蔽时，会锁定它们
+            if (productModel == null) {
+                feedInfoModel.setUpdFlg(CmsConstants.FeedUpdFlgStatus.New);
+            } else {
+                feedInfoModel.setUpdFlg(CmsConstants.FeedUpdFlgStatus.Succeed);
+                unlockProduct(code, channelId);
+                lockOrUnlockProductPlatform(productModel, "0", 0);
+            }
+
+            feedInfoService.updateFeedInfo(feedInfoModel);
+        }
+    }
+
+    /**
+     * 解除平台品牌的屏蔽，解锁这些品牌的商品
+     *
+     * @param brandBlockModel 被解锁品牌的数据模型
+     */
+    private void unblockPlatformBrand(CmsBtBrandBlockModel brandBlockModel) {
+
+        String channelId = brandBlockModel.getChannelId();
+
+        List<CmsBtProductModel> productModelList = productService.getList(channelId, JongoQuery.simple("platforms.P" + brandBlockModel.getCartId() + ".pBrandId", brandBlockModel.getBrand()));
+
+        if (productModelList == null || productModelList.isEmpty())
+            return;
+
+        for (CmsBtProductModel productModel : productModelList) {
+            lockOrUnlockProductPlatform(productModel, "0", brandBlockModel.getCartId());
+        }
     }
 
     private void lockProduct(String code, String channelId) {
@@ -288,6 +324,27 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
         productService.updateFirstProduct(new JongoUpdate()
                 .setQuery("{\"common.fields.code\":\"" + code + "\"}")
                 .setUpdate("{$set:{\"lock\":\"0\", \"comment\":\"\"}}"), channelId);
+    }
+
+    /**
+     * 锁定/解锁各平台锁定状态
+     * @param productModel productModel
+     * @param lock lock
+     */
+    private void lockOrUnlockProductPlatform(CmsBtProductModel productModel, String lock, Integer cartId) {
+        JongoUpdate update = new JongoUpdate();
+        update.setQuery("{\"prodId\": #}");
+        update.setQueryParameters(productModel.getProdId());
+
+        if (cartId != 0) {
+            StringBuffer sb = new StringBuffer();
+            productModel.getPlatforms().forEach((key, value) -> sb.append("\"").append(key).append(".lock\": \"").append(lock).append("\","));
+            update.setUpdate("{"+ sb.toString().substring(0, sb.toString().length() - 1 )+"}");
+        } else {
+            update.setUpdate("{\"P#.lock\": #}");
+            update.setUpdateParameters(cartId, lock);
+        }
+        productService.updateFirstProduct(update, productModel.getChannelId());
     }
 
     private class OffShelfHelper {
