@@ -22,7 +22,7 @@ public class AdvSearchLockProductsMQMessageBody extends BaseMQMessageBody {
     private String activeStatus;        //上下架状态
     private List<String> productCodes;
     private String comment;             //备注
-    Integer lock;                       //锁定状态
+    private String lock;                       //锁定状态
 
     public String getChannelId() {
         return channelId;
@@ -64,11 +64,11 @@ public class AdvSearchLockProductsMQMessageBody extends BaseMQMessageBody {
         this.comment = comment;
     }
 
-    public Integer getLock() {
+    public String getLock() {
         return lock;
     }
 
-    public void setLock(Integer lock) {
+    public void setLock(String lock) {
         this.lock = lock;
     }
 
@@ -82,9 +82,6 @@ public class AdvSearchLockProductsMQMessageBody extends BaseMQMessageBody {
         }
         if (cartId == null) {
             throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数cartId为空.");
-        }
-        if (StringUtils.isBlank(activeStatus)) {
-            throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数activeStatus为空.");
         }
         if (StringUtils.isBlank(getSender())) {
             throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 发送者为空.");
