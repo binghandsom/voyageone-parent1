@@ -383,7 +383,9 @@ define([
     };
 
     SpDgController.prototype.openOffLinePop = function (type) {
-        var self = this, vm = self.vm;
+        var self = this,
+            $translate = self.$translate,
+            vm = self.vm;
 
         if (vm.mastData == null)
             return;
@@ -403,17 +405,20 @@ define([
             productCode: vm.mastData.productCode,
             type: type
         }).then(function () {
+            self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
             self.getPlatformData();
         });
     };
 
     SpDgController.prototype.openSwitchMainPop = function () {
-        var self = this;
+        var self = this,
+        $translate = self.$translate;
 
         self.popups.openSwitchMain({
             cartId: self.$scope.cartInfo.value,
             productCode: self.vm.mastData.productCode
         }).then(function () {
+            self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
             self.getPlatformData();
             self.vm.noMaterMsg = null;
         });
@@ -482,6 +487,7 @@ define([
      */
     SpDgController.prototype.upperAndLowerFrame = function(mark) {
         var self = this,
+            $translate = self.$translate,
             msg = mark === 'ToOnSale'? '上架':'下架';
 
         self.confirm('您是否执行'　+ msg +'操作？').then(function(){
@@ -490,6 +496,7 @@ define([
                 productCode: self.vm.mastData.productCode,
                 pStatus:mark
             }).then(function () {
+                self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 self.getPlatformData();
             });
         });
