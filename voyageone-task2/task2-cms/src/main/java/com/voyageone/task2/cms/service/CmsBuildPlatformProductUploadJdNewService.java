@@ -971,7 +971,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
             updateSkuIds(shopProp, StringUtils.toString(jdWareId), updateWare);
 
             // added by morse.lu 2016/12/08 start
-            if (ChannelConfigEnums.Channel.SN.equals(channelId)) {
+            if (ChannelConfigEnums.Channel.SN.getId().equals(channelId)) {
                 // Sneakerhead
                 try {
                     sxProductService.uploadCnInfo(sxData);
@@ -1411,6 +1411,25 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                     shopProp.getOrder_channel_id(), shopProp.getCart_id(), Prop_TransportId);
             $info(errMsg, ex);
         }
+        // 20160315 sneakerhead比较优秀， 写死判断 START
+        if (ChannelConfigEnums.Channel.SN.getId().equals(channelId) && CartEnums.Cart.JD.getId().equals(cartId)) {
+            if (mainProduct != null
+                    && mainProduct.getCommonNotNull().getFieldsNotNull().getProductType() != null
+                    && "Shoes".equals(mainProduct.getCommonNotNull().getFieldsNotNull().getProductType())) {
+                wareTransportId = "39227"; // 鞋子
+            } else {
+                wareTransportId = "39060"; // 鞋子以外
+            }
+        } else if (ChannelConfigEnums.Channel.SN.getId().equals(channelId) && CartEnums.Cart.JG.getId().equals(cartId)) {
+            if (mainProduct != null
+                    && mainProduct.getCommonNotNull().getFieldsNotNull().getProductType() != null
+                    && "Shoes".equals(mainProduct.getCommonNotNull().getFieldsNotNull().getProductType())) {
+                wareTransportId = "231866"; // 鞋子
+            } else {
+                wareTransportId = "235210"; // 鞋子以外
+            }
+        }
+        // 20160315 sneakerhead比较优秀， 写死判断 END
         if(!StringUtil.isEmpty(wareTransportId)) {
             jdProductBean.setTransportId(Long.parseLong(wareTransportId));
         }
