@@ -95,7 +95,6 @@ define([
                         scope.vm.lockStatus.onOffSwitch3 = scope.vm.mastData.lock == "1" ? true : false;
 
 
-
                         /**主商品提示*/
                         if (!scope.vm.mastData.isMain) {
                             alert("本商品不是平台主商品，如果您需要在天猫或者京东上新，您所修改的信息不会同步到平台上，图片除外。");
@@ -112,6 +111,7 @@ define([
                         });
                     });
                 }
+
                 /**
                  @description 类目popup
                  * @param productInfo
@@ -155,24 +155,24 @@ define([
                                         productType.value.value = context.selected.productTypeEn;
                                     }
                                 }
-                                if(context.selected.productTypeEn){
-                                    var productType = searchField("产品分类中文",scope.vm.productComm.schemaFields);
-                                    if(productType) {
+                                if (context.selected.productTypeEn) {
+                                    var productType = searchField("产品分类中文", scope.vm.productComm.schemaFields);
+                                    if (productType) {
                                         productType.value.value = context.selected.productTypeCn;
                                     }
                                 }
-                                if(context.selected.sizeTypeEn){
-                                    var sizeType = searchField("适用人群",scope.vm.productComm.schemaFields);
-                                    if(sizeType) {
-                                        if(!sizeType.value.value){
+                                if (context.selected.sizeTypeEn) {
+                                    var sizeType = searchField("适用人群", scope.vm.productComm.schemaFields);
+                                    if (sizeType) {
+                                        if (!sizeType.value.value) {
                                             sizeType.value.value = context.selected.sizeTypeEn;
                                         }
                                     }
                                 }
-                                if(context.selected.sizeTypeEn){
-                                    var sizeType = searchField("适用人群中文",scope.vm.productComm.schemaFields);
-                                    if(sizeType) {
-                                        if(!sizeType.value.value) {
+                                if (context.selected.sizeTypeEn) {
+                                    var sizeType = searchField("适用人群中文", scope.vm.productComm.schemaFields);
+                                    if (sizeType) {
+                                        if (!sizeType.value.value) {
                                             sizeType.value.value = context.selected.sizeTypeCn;
                                         }
                                     }
