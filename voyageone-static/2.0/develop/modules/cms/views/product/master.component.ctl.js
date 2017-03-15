@@ -455,8 +455,12 @@ define([
                                     prodId: scope.productInfo.productId,
                                     lock: lock
                                 }).then(function () {
-                                    initialize();
                                     notify.success(_status ? "商品已锁定" : "商品已接触锁定");
+
+                                    initialize();
+                                    scope.productInfo.masterLock = Number(lock);
+                                    //通知子页面
+                                    scope.productInfo.checkFlag = new Date().getTime();
                                 });
                                 break;
                         }
