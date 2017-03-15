@@ -216,7 +216,7 @@ public class JdWareNewService extends JdBase {
                     wareId = response.getWare().getWareId();
                 } else {
                     // 京东返回失败的场合
-                    throw new BusinessException(response.getZhDesc());
+                    throw new BusinessException(response.getMsg());
                 }
             } else {
                 // response = null（https://api.jd.com/routerjson）不能访问的可能原因是服务器禁掉了https端口
@@ -319,7 +319,7 @@ public class JdWareNewService extends JdBase {
                     result = response.getSuccess();
                 } else {
                     // 京东返回失败的场合
-                    String errMsg = response.getZhDesc();
+                    String errMsg = response.getMsg();
                     // switch字符串不能为null
                     if (!StringUtils.isEmpty(response.getCode())) {
                         switch (response.getCode()) {

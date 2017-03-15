@@ -188,7 +188,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 
     @Override
     public String getTaskName() {
-        return "CmsBuildPlatformProductUploadJdJob";
+        return "CmsBuildPlatformProductUploadJdNewJob";
     }
 
     private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
@@ -1387,7 +1387,11 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         // 商品标语(广告词)内容最大支持45个字符(非必须)
         //charis update
         AdWords adwords = new AdWords();
-        adwords.setWords(jdCommonInfoMap.get("productAdContent"));
+        if (StringUtils.isEmpty(jdCommonInfoMap.get("productAdContent"))) {
+            adwords.setWords("");
+        } else {
+            adwords.setWords(jdCommonInfoMap.get("productAdContent"));
+        }
         jdProductBean.setAdWords(adwords);
         // 定时上架时间 时间格式：yyyy-MM-dd HH:mm:ss;规则是大于当前时间，10天内。(非必须)
 //        jdProductBean.setListTime(mainProduct.getXXX());                   // 不使用
@@ -2590,6 +2594,8 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         List<Sku> skus;
 
         try {
+            // 先睡一会儿， 不然可能还没创建完成
+            Thread.sleep(3000);
             // 根据京东商品id取得京东平台上的sku信息列表(即使出错也不报出来，算上新成功，只是回写出错，以后再回写也可以)
             skus = jdSkuService.getSkusByWareId(shop, wareId, failCause);
 
