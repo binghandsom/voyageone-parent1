@@ -813,7 +813,11 @@ public class ProductService extends BaseService {
 
         Map<String, Integer> result = new HashMap<>();
         for (WmsBtInventoryCenterLogicModel inventory : inventoryList) {
-            result.put(inventory.getSku(), inventory.getQtyChina());
+            if(channelId.equals("001")){
+                result.put(inventory.getSku().toLowerCase(), inventory.getQtyChina());
+            }else{
+                result.put(inventory.getSku(), inventory.getQtyChina());
+            }
         }
         return result;
     }
