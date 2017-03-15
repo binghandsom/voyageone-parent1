@@ -79,7 +79,7 @@ public class JMPromotionDetailService extends BaseService {
         int cartId = params.getCartId();
         List<TagTreeNode> listTagTreeNode = new ArrayList<>();
 
-        List<MapModel> list = cmsBtJmPromotionDaoExt.selectAddPromotionList(channelId, cartId, codeList);
+        List<MapModel> list = cmsBtJmPromotionDaoExt.selectAddPromotionList(channelId, cartId, codeList, params.getActivityStart(), params.getActivityEnd());
         list.forEach(m -> listTagTreeNode.add(getPromotionTagTreeNode(m, codeList)));
         data.put("listTreeNode", listTagTreeNode);
         return data;

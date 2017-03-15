@@ -15,6 +15,7 @@ public class DefaultCustomRuleModules {
         customWordModules.add(new CustomWordModuleGetMainPropductImages());
         customWordModules.add(new CustomWordModuleGetDescImage());
         customWordModules.add(new CustomWordModuleImageWithParam());
+        customWordModules.add(new CustomWordModuleGetProductFieldInfo());
         customWordModules.add(new CustomWordModuleGetPaddingImageKey());
         customWordModules.add(new CustomWordModuleIf());
         customWordModules.add(new CustomWordModuleConditionAnd());

@@ -259,7 +259,7 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
             feedToCmsService.updateProduct(channelId, new ArrayList<CmsBtFeedInfoModel>() {{
                         add(cmsBtFeedInfoModel);
                     }},
-                    getTaskName(), CmsConstants.FeedProductUpdateType.VMS_PRICE_INVENTORY);
+                    getTaskName());
 
 
             // 推送库存

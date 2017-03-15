@@ -35,8 +35,8 @@ public class SneakerHeadBase extends ComponentBase {
 
     protected RestTemplate getRestTemplate() {
         SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
-        simpleClientHttpRequestFactory.setConnectTimeout(6000);
-        simpleClientHttpRequestFactory.setReadTimeout(6000);
+        simpleClientHttpRequestFactory.setConnectTimeout(200000);
+        simpleClientHttpRequestFactory.setReadTimeout(200000);
         return new RestTemplate(simpleClientHttpRequestFactory);
     }
 

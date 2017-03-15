@@ -371,7 +371,15 @@
      </foreach>
         WHERE
         a.channel_id =#{channelId}
-        AND b.activity_end >= NOW()
+        <if test="activityStart != null">
+        AND b.activity_end >= #{activityStart}
+        </if>
+         <if test="activityStart == null and activityEnd == null">
+          AND b.activity_end >= now()
+         </if>
+         <if test="activityEnd != null">
+             AND  #{activityEnd} >= b.activity_end
+         </if>
         AND b.promotion_status = 1
         AND b.active = 1
         AND a.active = 1

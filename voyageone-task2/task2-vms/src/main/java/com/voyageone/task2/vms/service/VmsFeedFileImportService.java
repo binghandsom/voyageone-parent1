@@ -352,8 +352,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     if (feedInfoModelList.size() > 0) {
                         $info("point-mongo-start" + ",channel：" + channel.getFull_name());
                         Map<String, List<CmsBtFeedInfoModel>> response = feedToCmsService.updateProduct(channel
-                                        .getOrder_channel_id(), feedInfoModelList, getTaskName(),
-                                CmsConstants.FeedProductUpdateType.VMS_FEED);
+                                        .getOrder_channel_id(), feedInfoModelList, getTaskName());
                         List<CmsBtFeedInfoModel> succeed = response.get("succeed");
                         codeCnt += succeed.size();
                         skuCnt += succeed.stream().mapToInt((model) -> model.getSkus().size()).summaryStatistics().getSum();
