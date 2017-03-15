@@ -94,6 +94,22 @@ public class Tmall_TongGou_024_OverStock_DictTest extends BaseDictTest{
 //		do参数图(ruleRoot);
 
 		{
+			// 店铺介绍图
+			RuleExpression htmlTemplate = new RuleExpression();
+			htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
+
+			RuleExpression imageType = new RuleExpression();
+			imageType.addRuleWord(new TextWord("5"));
+
+			RuleExpression viewType = new RuleExpression();
+			viewType.addRuleWord(new TextWord("1"));
+
+			RuleExpression useOriUrl = null;
+
+			CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+			ruleRoot.addRuleWord(new CustomWord(word));
+		}
+		{
 			// 正品保证
 			TextWord word = new TextWord(String.format(C_TEMPLATE_IMG, "https://img.alicdn.com/imgextra/i2/2939402618/TB2_9p0b5lnpuFjSZFgXXbi7FXa-2939402618.jpg"));
 			ruleRoot.addRuleWord(word);
@@ -221,7 +237,7 @@ public class Tmall_TongGou_024_OverStock_DictTest extends BaseDictTest{
 		{
 			if (isWatch) {
 				// 维护保养
-				String html = "<div><img src=\"https://img.alicdn.com/imgextra/i4/2939402618/TB2cPsybHlmpuFjSZFlXXbdQXXa-2939402618.jpg\" /></div>";
+				String html = "<div><img src=\"https://img.alicdn.com/imgextra/i4/2939402618/TB2m.bHfilnpuFjSZFgXXbi7FXa-2939402618.jpg\" /></div>";
 				ruleRoot.addRuleWord(new TextWord(html));
 			}
 		}
@@ -234,23 +250,6 @@ public class Tmall_TongGou_024_OverStock_DictTest extends BaseDictTest{
 
 			RuleExpression imageType = new RuleExpression();
 			imageType.addRuleWord(new TextWord("4"));
-
-			RuleExpression viewType = new RuleExpression();
-			viewType.addRuleWord(new TextWord("1"));
-
-			RuleExpression useOriUrl = null;
-
-			CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
-			ruleRoot.addRuleWord(new CustomWord(word));
-		}
-
-		{
-			// 店铺介绍图
-			RuleExpression htmlTemplate = new RuleExpression();
-			htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
-
-			RuleExpression imageType = new RuleExpression();
-			imageType.addRuleWord(new TextWord("5"));
 
 			RuleExpression viewType = new RuleExpression();
 			viewType.addRuleWord(new TextWord("1"));

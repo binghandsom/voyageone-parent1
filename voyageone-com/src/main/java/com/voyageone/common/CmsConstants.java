@@ -134,6 +134,9 @@ public class CmsConstants {
         // 上新方式
         String SX_SMART = "SX_SMART";
 
+        // 共通：当前是否是正式生产环境
+        String IS_FACTORY = "IS_FACTORY";
+
         // hscode
         String HSCODE = "HSCODE";
         String SX_HSCODE = ".sx_hscode";

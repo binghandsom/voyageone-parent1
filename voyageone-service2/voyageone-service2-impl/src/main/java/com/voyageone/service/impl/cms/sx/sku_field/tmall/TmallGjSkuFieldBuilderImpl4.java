@@ -111,7 +111,7 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
             cmsPropductColorMap = new HashMap<>();
             sizeCmsSkuPropMap = new HashMap<>();
             // added by morse.lu 2016/07/08 start
-            sizeMap = new HashMap<>();
+            sizeMap = new LinkedHashMap<>();
             // added by morse.lu 2016/07/08 end
         }
 
