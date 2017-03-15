@@ -138,6 +138,9 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                         productCodes.remove(field.getCode());
                         continue;
                     }
+
+                    // 平台级别的平台品牌, 平台类目不做check的原因(因为JM和JD系以外的场合不存在智能上新,所以只要是ready或者approve的场合,就是符合条件的数据,
+                    // 而对于JD和JM的场合, 暂时不做这部分check,以为不管智能上新/普通上新都是属于插入智能上新标示)
                 }
             }
         }
