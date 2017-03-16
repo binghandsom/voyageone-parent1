@@ -20,7 +20,18 @@ public class CmsAdvSearchLockProductsMQJobTest {
 
     @Test
     public void onStartup() throws Exception {
-        String json = "";
+        String json = "{\n" +
+                "\t\"channelId\": \"010\",\n" +
+                "\t\"cartId\": 23,\n" +
+                "\t\"activeStatus\": \"ToInStock\",\n" +
+                "\t\"productCodes\": [\"51A0HC13E1-00LCNB0\"],\n" +
+                "\t\"comment\": \"批量lock平台\",\n" +
+                "\t\"lock\": \"1\",\n" +
+                "\t\"consumerRetryTimes\": 0,\n" +
+                "\t\"mqId\": 0,\n" +
+                "\t\"delaySecond\": 0,\n" +
+                "\t\"sender\": \"edward\"\n" +
+                "}";
 
         AdvSearchLockProductsMQMessageBody messageBody = JacksonUtil.json2Bean(json, AdvSearchLockProductsMQMessageBody.class);
         cmsAdvSearchLockProductsMQJob.onStartup(messageBody);
