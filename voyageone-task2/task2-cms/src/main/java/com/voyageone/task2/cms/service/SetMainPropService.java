@@ -1175,7 +1175,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             }
             if (weightThreshold != null) {
                 if (cmsProduct.getCommonNotNull().getFields().getWeightKG().compareTo(weightThreshold) > 0) {
-                    throw new BusinessException("该商品的重量超出了cms的价格阈值不能导入");
+                    throw new BusinessException("该商品的重量超出了cms的重量阈值不能导入");
                 }
             }
         }
