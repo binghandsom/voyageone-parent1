@@ -656,7 +656,7 @@ define([
             notify.success(res);
         }, function (res) {
             if (!res)
-                self.vm.platform.lock = Number(!lock);
+                self.vm.platform.lock = lock === '1' ? '0' : '1';
         });
 
     };
