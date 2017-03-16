@@ -972,11 +972,11 @@ public class ProductService extends BaseService {
     public List<CmsBtOperationLogModel_Msg> batchLockProducts(Map<String, Object> messageMap) {
 
         List<CmsBtOperationLogModel_Msg> errorList = new ArrayList<>();
-        String channelId = ((String) messageMap.get("channelId")),
-                creator = ((String) messageMap.get("creator")),
-                comment = (String) messageMap.get("comment");
-        Integer cartId = (Integer) messageMap.get("cartId"),
-                lock = (Integer) messageMap.get("lock");
+        String channelId = (String) messageMap.get("channelId"),
+                creator = (String) messageMap.get("creator"),
+                lock = (String)messageMap.get("lock");
+        Integer cartId = (Integer) messageMap.get("cartId");
+
         Collection<String> codeList = (Collection) messageMap.get("codeList");
 
         // 按产品的Code检索出所有的商品
@@ -998,8 +998,7 @@ public class ProductService extends BaseService {
                 productCode = product.getCommon().getFields().getCode();
 
                 StringBuffer updateStr = new StringBuffer("{$set:{")
-                        .append("lock").append(lock)
-                        .append("'platforms.P").append(cartId).append(".lock':").append(lock);
+                        .append("'platforms.P").append(cartId).append(".lock':").append("'"+lock+"'");
 
                 updateStr.append(",'modified':#")
                         .append(",'modifier':#")
@@ -1013,11 +1012,15 @@ public class ProductService extends BaseService {
                 updateObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), creator);
 
                 // 添加秕处理执行语句
-                BulkWriteResult rs = productBulkList.addBulkJongo(updateObj);
+                productBulkList.addBulkJongo(updateObj);
 
-                if (rs != null) {
-                    $debug(String.format("批量lock平台 channelId=%s 执行结果=%s", channelId, rs.toString()));
-                }
+            }
+
+            // 执行智能上新批处理
+            BulkWriteResult rs = productBulkList.execute();
+
+            if (rs != null) {
+                $debug(String.format("批量lock平台 channelId=%s 执行结果=%s", channelId, rs.toString()));
             }
         } else {
             CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();

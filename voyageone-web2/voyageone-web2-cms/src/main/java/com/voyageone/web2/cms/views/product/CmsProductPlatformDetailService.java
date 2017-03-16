@@ -855,7 +855,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put(String.format("platforms.P%s.lock", cartId), lock);
+        updateMap.put(String.format("platforms.P%s.lock", cartId), lock + "");
 
         BulkUpdateModel model = new BulkUpdateModel();
         model.setUpdateMap(updateMap);

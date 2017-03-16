@@ -8,12 +8,14 @@ define([
 
     cms.controller('adSearchAppendCtl', (function () {
 
-        function AdSearchAppendCtl($scope, notify, confirm) {
+        function AdSearchAppendCtl($scope, notify, alert, confirm, $fieldEditService) {
             //高级检索中的scope
             this.parentScope = $scope.$parent;
             this.notify = notify;
             this.columnArrow = {};
             this.confirm = confirm;
+            this.alert = alert;
+            this.$fieldEditService = $fieldEditService;
         }
 
         AdSearchAppendCtl.prototype.columnOrder = function (columnName, cartId) {
@@ -107,15 +109,43 @@ define([
         /**
          * 平台级锁定
          */
-        AdSearchAppendCtl.prototype.platFormLock = function (cartId) {
+        AdSearchAppendCtl.prototype.platFormLock = function (cartId, lock) {
             var self = this, parentScope = self.parentScope;
 
             parentScope._chkProductSel(parseInt(cartId), function (cartId, _selProdList) {
+                var _msg = lock ? "锁定" : "解锁";
 
-                self.confirm("是否同步商品下架？").then(function () {
-                    console.log('所选产品', _selProdList);
+                self.confirm('您是否执行' + _msg + "操作？").then(function(){
+                    var upEntity = {
+                        cartId: cartId,
+                        productIds: _.pluck(_selProdList, "code"),
+                        lock: lock,
+                        isSelectAll: parentScope.vm._selall ? 1 : 0
+                    };
+
+                    if (lock) {
+                        self.confirm("是否同步商品下架？").then(function () {
+                            self.callPlatFormLock(_.extend(upEntity, {down: true}), _msg);
+                        }, function () {
+                            self.callPlatFormLock(upEntity, _msg + '成功!');
+                        });
+                    } else {
+                        self.callPlatFormLock(upEntity, _msg + '成功!');
+                    }
                 });
 
+            });
+        };
+
+        /**
+         * 调用平台级锁定接口
+         * @param upEntity   上行参数
+         * @param msg        提示语
+         */
+        AdSearchAppendCtl.prototype.callPlatFormLock = function (upEntity, msg) {
+            var self = this;
+            self.$fieldEditService.bulkLockProducts(upEntity).then(function () {
+                self.notify.success(msg);
             });
         };
 
