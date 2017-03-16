@@ -115,7 +115,7 @@ define([
             parentScope._chkProductSel(parseInt(cartId), function (cartId, _selProdList) {
                 var _msg = lock ? "锁定" : "解锁";
 
-                self.confirm('您是否执行' + _msg + "操作？").then(function(){
+                self.confirm('您是否执行' + _msg + "操作？").then(function () {
                     var upEntity = {
                         cartId: cartId,
                         productIds: _.pluck(_selProdList, "code"),
@@ -125,7 +125,7 @@ define([
 
                     if (lock) {
                         self.confirm("是否同步商品下架？").then(function () {
-                            self.callPlatFormLock(_.extend(upEntity, {down: true}), _msg);
+                            self.callPlatFormLock(_.extend(upEntity, {down: true}), _msg + '成功!');
                         }, function () {
                             self.callPlatFormLock(upEntity, _msg + '成功!');
                         });
