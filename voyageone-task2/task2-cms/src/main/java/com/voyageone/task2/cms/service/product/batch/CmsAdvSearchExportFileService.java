@@ -101,10 +101,10 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private final static String[] _DynColJMGroup = {"MallURL", "MallId", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice"};
     private final static String[] _DynColCNJMGroup = {"MallURL", "MallId", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)"};
 
-    private final static String[] _DynCol = {"URL","qty","Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify"};
-    private final static String[] _DynColCN = {"URL","可售库存", "Numiid", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类"};
-    private final static String[] _DynColJM = {"MallURL","qty", "MallId", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify"};
-    private final static String[] _DynColCNJM = {"MallURL","可售库存", "MallId", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类"};
+    private final static String[] _DynCol = {"URL","qty","Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify","lock"};
+    private final static String[] _DynColCN = {"URL","可售库存", "Numiid", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类","锁定"};
+    private final static String[] _DynColJM = {"MallURL","qty", "MallId", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify","lock"};
+    private final static String[] _DynColCNJM = {"MallURL","可售库存", "MallId", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类","锁定"};
 
     // SKU级动态输出列
     private final static String[] _DynColSKU = {"URL", "Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify", "Live"};
@@ -290,6 +290,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
         }
 
         Workbook book = new SXSSFWorkbook(1000);
+
+        /**开始写表头*/
         try {
             if (searchValue.getFileType() == 1) {
                 writeCodeHead(book, cmsSessionBean, cartList);
@@ -302,6 +304,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
             } else if (searchValue.getFileType() == 5) {
                 writeFilingHead(book);
             }
+
             Map<String, TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId, "cn");
             Map<String, TypeChannelBean> sizeTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId, "cn");
 
@@ -331,7 +334,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
                         }
                     }
                 });
-                // 每页开始行
+
+                /**每页开始行   开始写excel*/
                 int startRowIndex = i * SELECT_PAGE_SIZE + ((searchValue.getFileType() == 4 || searchValue.getFileType() == 5) ? 1 : 2);
                 if (searchValue.getFileType() == 1) {
                     writeRecordToFile(book, items, cmsSessionBean, channelId, cartList, startRowIndex, channelIdMap);

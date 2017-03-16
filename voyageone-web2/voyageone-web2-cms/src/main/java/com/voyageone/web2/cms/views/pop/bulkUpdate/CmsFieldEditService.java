@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
-import com.google.gson.Gson;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
@@ -198,14 +197,6 @@ public class CmsFieldEditService extends BaseViewService {
         mqMessageBody.setComment("批量lock平台");
         mqMessageBody.setLock(lock);
         mqMessageBody.setSender(userInfo.getUserName());
-
-        //测试用
-        Gson gson = new Gson();
-        String strAdvSearchExportMQMessageBody = gson.toJson(mqMessageBody);
-        System.out.println("###############################################################################");
-        System.out.println(strAdvSearchExportMQMessageBody);
-        System.out.println("###############################################################################");
-
 
         cmsMqSenderService.sendMessage(mqMessageBody);
     }
