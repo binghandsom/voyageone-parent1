@@ -813,7 +813,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(sellerCatVal.toString()));
 
                 /**code级导出，追加平台级lock added by piao*/
-                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getLock()));
+                FileUtils.cell(row, index++, unlock).setCellValue(getLockStatusTxt(ptfObj.getLock()));
 
             }
             nowIdx = index++;
