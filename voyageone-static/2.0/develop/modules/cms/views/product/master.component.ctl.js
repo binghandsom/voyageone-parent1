@@ -462,7 +462,7 @@ define([
                                     notify.success(_status ? "商品已锁定" : "商品已接触锁定");
 
                                     initialize();
-                                    scope.productInfo.masterLock = Number(lock);
+                                    scope.productInfo.masterLock = lock;
                                     //通知子页面
                                     scope.productInfo.checkFlag = new Date().getTime();
                                 });
