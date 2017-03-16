@@ -509,13 +509,6 @@ public class CmsAdvanceSearchService extends BaseViewService {
             advSearchExportMQMessageBody.setChannelIdMap(channelIdMap);
             advSearchExportMQMessageBody.setSender(userInfo.getUserName());
 
-            //测试用
-            Gson gson = new Gson();
-            String strAdvSearchExportMQMessageBody = gson.toJson(advSearchExportMQMessageBody);
-            System.out.println("################################");
-            System.out.println(strAdvSearchExportMQMessageBody);
-            System.out.println("################################");
-
             cmsMqSenderService.sendMessage(advSearchExportMQMessageBody);
             return true;
         } else {
