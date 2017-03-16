@@ -75,9 +75,12 @@ define([
 
         self.element = element;
 
-        //监控税号和翻译状态
+        //监控税号和翻译状态和锁定状态
         var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
             check.translate = $scope.productInfo.translateStatus;
+            if(self.vm.platform)
+                self.vm.platform.lock = $scope.productInfo.masterLock;
+
             if ($scope.cartInfo.value != 20)
                 check.tax = $scope.productInfo.hsCodeStatus;
         });
@@ -501,7 +504,9 @@ define([
     };
 
     SpTmController.prototype.openOffLinePop = function (type) {
-        var self = this, vm = self.vm;
+        var self = this,
+            $translate = self.$translate,
+            vm = self.vm;
 
         if (vm.mastData == null)
             return;
@@ -521,17 +526,20 @@ define([
             productCode: vm.mastData.productCode,
             type: type
         }).then(function () {
+            self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
             self.getPlatformData();
         });
     };
 
     SpTmController.prototype.openSwitchMainPop = function () {
-        var self = this;
+        var self = this,
+            $translate = self.$translate;
 
         self.popups.openSwitchMain({
             cartId: self.$scope.cartInfo.value,
             productCode: self.vm.mastData.productCode
         }).then(function () {
+            self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
             self.getPlatformData();
             self.vm.noMaterMsg = null;
         });
@@ -586,16 +594,18 @@ define([
     /**
      * 产品详情上下架
      */
-    SpTmController.prototype.upperAndLowerFrame = function(mark) {
+    SpTmController.prototype.upperAndLowerFrame = function (mark) {
         var self = this,
+            $translate = self.$translate,
             msg = mark === 'ToOnSale'? '上架':'下架';
 
-        self.confirm('您是否执行'　+ msg +'操作？').then(function(){
+        self.confirm('您是否执行' + msg + '操作？').then(function () {
             self.productDetailService.upperLowerFrame({
                 cartId: self.$scope.cartInfo.value,
                 productCode: self.vm.mastData.productCode,
-                pStatus:mark
+                pStatus: mark
             }).then(function () {
+                self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 self.getPlatformData();
             });
         });
@@ -662,10 +672,30 @@ define([
             cartId: self.$scope.cartInfo.value,
             productId: self.$scope.productInfo.productId,
             platform: self.vm.platform,
-            showArr:['image1','image6','image7','image2','image3','image4','image5']
+            showArr: ['image1', 'image6', 'image7', 'image2', 'image3', 'image4', 'image5']
         }).then(function (platform) {
             self.vm.platform = platform;
         });
+    };
+
+    /**
+     * 锁平台
+     */
+    SpTmController.prototype.platFormLock = function () {
+        var self = this, notify = self.notify,
+            lock = angular.copy(self.vm.platform.lock);
+
+        self.productDetailService.lockPlatForm({
+            cartId: self.$scope.cartInfo.value,
+            prodId: self.$scope.productInfo.productId,
+            lock: Number(lock)
+        }).then(function (res) {
+            notify.success(res);
+        }, function (res) {
+            if (!res)
+                self.vm.platform.lock = lock === '1' ? '0' : '1';
+        });
+
     };
 
     cms.directive('tmSubPage', function () {

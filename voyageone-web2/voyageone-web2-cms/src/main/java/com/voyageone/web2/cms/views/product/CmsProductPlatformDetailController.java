@@ -199,5 +199,15 @@ public class CmsProductPlatformDetailController extends CmsController {
         cmsProductPlatformDetailService.upperLowerFrame(userBean,params);
         return success(true);
     }
+
+    /**
+     * 产品上下架
+     */
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.LOCK_PLATFORM)
+    public AjaxResponse lockPlatForm(@RequestBody Map<String, Object> params) throws Exception {
+        UserSessionBean userBean = getUser();
+        cmsProductPlatformDetailService.lockPlatForm(userBean,params);
+        return success(true);
+    }
 }
 

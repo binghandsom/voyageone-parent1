@@ -107,6 +107,24 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     private Boolean isNewSku;
 
+    private Boolean noSale;
+
+    public Boolean getNewSku() {
+        return isNewSku;
+    }
+
+    public void setNewSku(Boolean newSku) {
+        isNewSku = newSku;
+    }
+
+    public Boolean getNoSale() {
+        return noSale;
+    }
+
+    public void setNoSale(Boolean noSale) {
+        this.noSale = noSale;
+    }
+
     public List<String> getCidValue() {
         return cidValue;
     }

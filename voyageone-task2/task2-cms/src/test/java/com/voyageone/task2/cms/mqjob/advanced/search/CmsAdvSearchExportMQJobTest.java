@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
-import com.voyageone.common.configs.MQConfigInitTestUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
 import org.junit.Test;
@@ -21,10 +20,92 @@ public class CmsAdvSearchExportMQJobTest {
 
     @Test
     public void onStartup() throws Exception {
-        String json = "{\"cmsBtExportTaskId\":10878,\"searchValue\":{\"tags\":[],\"priceChgFlg\":\"\",\"priceDiffFlg\":\"\",\"tagTypeSelectValue\":\"0\",\"promotionList\":[],\"catgoryList\":[],\"cidValue\":[],\"promotionTagType\":1,\"freeTagType\":1,\"supplierType\":1,\"brandSelType\":1,\"productSelType\":\"1\",\"sizeSelType\":\"1\",\"salesType\":\"All\",\"custGroupType\":\"1\",\"freeTags\":[\"-11768-\"],\"custAttrMap\":[{\"inputVal\":\"\",\"inputOpts\":\"\",\"inputOptsKey\":\"\"}],\"_selCodeList\":[],\"fileType\":1,\"productStatus\":[],\"platformStatus\":[],\"pRealStatus\":[],\"shopCatStatus\":0,\"pCatStatus\":0,\"_channleId\":\"928\",\"_userName\":\"james\",\"_language\":\"cn\",\"_taskId\":10878,\"_sessionBean\":{\"_adv_search_customProps\":[],\"_adv_search_commonProps\":[{\"valType\":\"string\",\"propId\":\"codeDiff\",\"propName\":\"原始 颜色/口味/香型等\"},{\"valType\":\"string\",\"propId\":\"color\",\"propName\":\"颜色/口味/香型等\"},{\"valType\":\"list-2\",\"propId\":\"productType\",\"propName\":\"产品分类\"},{\"valType\":\"list-2\",\"propId\":\"sizeType\",\"propName\":\"适用人群\"},{\"valType\":\"list-2\",\"propId\":\"productTypeCn\",\"propName\":\"产品分类(中文)\"},{\"valType\":\"list-2\",\"propId\":\"sizeTypeCn\",\"propName\":\"适用人群(中文)\"},{\"valType\":\"list-2\",\"propId\":\"hsCodeCrop\",\"propName\":\"税号集货\"},{\"valType\":\"list-2\",\"propId\":\"hsCodePrivate\",\"propName\":\"税号个人\"},{\"valType\":\"string\",\"propId\":\"origin\",\"propName\":\"产地\"},{\"valType\":\"string\",\"propId\":\"translator\",\"propName\":\"翻译者\"},{\"valType\":\"string\",\"propId\":\"weightLB\",\"propName\":\"重量(lb)\"},{\"valType\":\"string\",\"propId\":\"weightG\",\"propName\":\"重量(克)\"},{\"valType\":\"string\",\"propId\":\"weightKG\",\"propName\":\"重量(千克)\"}],\"_adv_search_props_searchItems\":\"common.fields.codeDiff;common.fields.color;common.fields.productType;common.fields.sizeType;common.fields.productTypeCn;common.fields.sizeTypeCn;common.fields.hsCodeCrop;common.fields.hsCodePrivate;common.fields.origin;common.fields.translator;common.fields.weightLB;common.fields.weightG;common.fields.weightKG;\",\"_adv_search_selSalesType\":[]}},\"channelIdMap\":{\"092\":\"channel092\",\"093\":\"channel093\",\"030\":\"Wella\",\"031\":\"WoodLand\",\"032\":\"Frye\",\"010\":\"Jewelry\",\"033\":\"KitBag\",\"034\":\"Coty\",\"012\":\"BCBG\",\"013\":\"Sears\",\"035\":\"LikingBuyer\",\"014\":\"WMF\",\"015\":\"GILT\",\"016\":\"ShoeCity\",\"996\":\"Test\",\"017\":\"Lucky Vitamin\",\"997\":\"VO\",\"018\":\"Target\",\"998\":\"TestUsJoi\",\"019\":\"SummerGuru\",\"020\":\"EdcSkincare\",\"021\":\"BHFOX\",\"022\":\"DFO\",\"000\":\"all Channel\",\"001\":\"Sneakerhead\",\"023\":\"ShoeZoo\",\"024\":\"Overstock\",\"002\":\"PortAmerican\",\"003\":\"Essuntial\",\"025\":\"FragranceNet\",\"004\":\"JuicyCouture\",\"026\":\"Lighthouse\",\"027\":\"Yogademocracy\",\"005\":\"Spalding\",\"006\":\"BHFO\",\"028\":\"ShoeMetro\",\"007\":\"Champion\",\"029\":\"Modotex\",\"008\":\"RealMadrid\",\"009\":\"SwissWatch\",\"928\":\"Liking\"},\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"james\"}";
+        String json = "{\n" +
+                "\t\"cmsBtExportTaskId\": 268,\n" +
+                "\t\"searchValue\": {\n" +
+                "\t\t\"tags\": [],\n" +
+                "\t\t\"priceChgFlg\": \"\",\n" +
+                "\t\t\"priceDiffFlg\": \"\",\n" +
+                "\t\t\"tagTypeSelectValue\": \"0\",\n" +
+                "\t\t\"promotionList\": [],\n" +
+                "\t\t\"catgoryList\": [],\n" +
+                "\t\t\"cidValue\": [],\n" +
+                "\t\t\"promotionTagType\": 1,\n" +
+                "\t\t\"freeTagType\": 1,\n" +
+                "\t\t\"supplierType\": 1,\n" +
+                "\t\t\"brandSelType\": 1,\n" +
+                "\t\t\"productSelType\": \"1\",\n" +
+                "\t\t\"sizeSelType\": \"1\",\n" +
+                "\t\t\"salesType\": \"All\",\n" +
+                "\t\t\"custGroupType\": \"1\",\n" +
+                "\t\t\"custAttrMap\": [{\n" +
+                "\t\t\t\"inputVal\": \"\",\n" +
+                "\t\t\t\"inputOpts\": \"\",\n" +
+                "\t\t\t\"inputOptsKey\": \"\"\n" +
+                "\t\t}],\n" +
+                "\t\t\"_selCodeList\": [\"51A0HC13E1-00LCNB0\"],\n" +
+                "\t\t\"fileType\": 1,\n" +
+                "\t\t\"productStatus\": [],\n" +
+                "\t\t\"platformStatus\": [],\n" +
+                "\t\t\"pRealStatus\": [],\n" +
+                "\t\t\"shopCatStatus\": 0,\n" +
+                "\t\t\"pCatStatus\": 0,\n" +
+                "\t\t\"_channleId\": \"010\",\n" +
+                "\t\t\"_userName\": \"edward\",\n" +
+                "\t\t\"_language\": \"cn\",\n" +
+                "\t\t\"_taskId\": 268,\n" +
+                "\t\t\"_sessionBean\": {\n" +
+                "\t\t\t\"_adv_search_customProps\": [],\n" +
+                "\t\t\t\"_adv_search_commonProps\": [],\n" +
+                "\t\t\t\"_adv_search_props_searchItems\": \"\",\n" +
+                "\t\t\t\"_adv_search_selSalesType\": []\n" +
+                "\t\t}\n" +
+                "\t},\n" +
+                "\t\"channelIdMap\": {\n" +
+                "\t\t\"030\": \"Wella\",\n" +
+                "\t\t\"031\": \"WoodLand\",\n" +
+                "\t\t\"010\": \"Jewelry\",\n" +
+                "\t\t\"032\": \"Frye\",\n" +
+                "\t\t\"033\": \"KitBag\",\n" +
+                "\t\t\"012\": \"BCBG\",\n" +
+                "\t\t\"034\": \"Coty\",\n" +
+                "\t\t\"013\": \"Sears\",\n" +
+                "\t\t\"035\": \"LikingBuyer\",\n" +
+                "\t\t\"014\": \"WMF\",\n" +
+                "\t\t\"015\": \"GILT\",\n" +
+                "\t\t\"016\": \"ShoeCity\",\n" +
+                "\t\t\"017\": \"Lucky Vitamin\",\n" +
+                "\t\t\"018\": \"Target\",\n" +
+                "\t\t\"019\": \"SummerGuru\",\n" +
+                "\t\t\"020\": \"EdcSkincare\",\n" +
+                "\t\t\"021\": \"BHFOX\",\n" +
+                "\t\t\"022\": \"DFO\",\n" +
+                "\t\t\"001\": \"Sneakerhead\",\n" +
+                "\t\t\"023\": \"ShoeZoo\",\n" +
+                "\t\t\"002\": \"PortAmerican\",\n" +
+                "\t\t\"024\": \"Overstock\",\n" +
+                "\t\t\"003\": \"Essuntial\",\n" +
+                "\t\t\"025\": \"FragranceNet\",\n" +
+                "\t\t\"004\": \"JuicyCouture\",\n" +
+                "\t\t\"026\": \"Lighthouse\",\n" +
+                "\t\t\"005\": \"Spalding\",\n" +
+                "\t\t\"027\": \"Yogademocracy\",\n" +
+                "\t\t\"006\": \"BHFO\",\n" +
+                "\t\t\"028\": \"ShoeMetro\",\n" +
+                "\t\t\"007\": \"Champion\",\n" +
+                "\t\t\"029\": \"Modotex\",\n" +
+                "\t\t\"008\": \"RealMadrid\",\n" +
+                "\t\t\"009\": \"SwissWatch\",\n" +
+                "\t\t\"928\": \"Liking\"\n" +
+                "\t},\n" +
+                "\t\"consumerRetryTimes\": 0,\n" +
+                "\t\"mqId\": 0,\n" +
+                "\t\"delaySecond\": 0,\n" +
+                "\t\"sender\": \"edward\"\n" +
+                "}";
+
         AdvSearchExportMQMessageBody advSearchExportMQMessageBody = JacksonUtil.json2Bean(json, AdvSearchExportMQMessageBody.class);
         cmsAdvSearchExportMQJob.onStartup(advSearchExportMQMessageBody);
-//        MQConfigInitTestUtil.startMQ(cmsAdvSearchExportMQJob);
 
     }
 

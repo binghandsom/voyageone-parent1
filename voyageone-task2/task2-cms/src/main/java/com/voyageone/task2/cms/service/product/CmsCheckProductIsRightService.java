@@ -63,9 +63,6 @@ public class CmsCheckProductIsRightService extends BaseCronTaskService {
 
             for (int pageNum = 1; pageNum <= pageCnt; pageNum++) {
                 JongoQuery jongoQuery = new JongoQuery();
-                jongoQuery.setQuery("{\"common.fields.code\": #}");
-                jongoQuery.setParameters("020-332V116270");
-
                 jongoQuery.setSkip((pageNum - 1) * PAGE_SIZE);
                 jongoQuery.setLimit(PAGE_SIZE);
                 List<CmsBtProductModel> cmsBtProductModels = productService.getList(channelId, jongoQuery);

@@ -30,6 +30,11 @@ public class CmsSetMainPropMongo2Service  extends BaseCronTaskService {
 
     @Autowired
     SetMainPropService setMainPropService;
+    @Override
+    protected String getTaskName() {
+        return "CmsSetMainPropMongoJob";
+    }
+
     /**
      * feed数据 -> 主数据
      * 关联代码1 (从天猫获取Fields):
@@ -90,11 +95,6 @@ public class CmsSetMainPropMongo2Service  extends BaseCronTaskService {
                 .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
                 .forEach(p -> $info(p.getValue()));
         $info("=================feed->master导入  主线程结束====================");
-    }
-
-    @Override
-    protected String getTaskName() {
-        return "CmsSetMainPropMongoJob";
     }
 
     @Override

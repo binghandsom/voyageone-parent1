@@ -1,11 +1,8 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
-import com.google.gson.Gson;
-import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
-import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
@@ -25,7 +22,6 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -41,13 +37,11 @@ import com.voyageone.service.impl.com.cache.CommCacheService;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.product.CmsProductDetailService;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +59,7 @@ import java.util.stream.Collectors;
 @Service
 public class CmsFieldEditService extends BaseViewService {
 
+    private static final String FIELD_SKU_CARTS = "skuCarts";
     @Autowired
     private CategorySchemaService categorySchemaService;
     @Autowired
@@ -85,8 +80,6 @@ public class CmsFieldEditService extends BaseViewService {
     private CmsMtPlatformCommonSchemaService cmsMtPlatformCommonSchemaService;
     @Autowired
     private CmsMqSenderService cmsMqSenderService;
-
-    private static final String FIELD_SKU_CARTS = "skuCarts";
 
     /**
      * 获取pop画面options.
@@ -165,75 +158,47 @@ public class CmsFieldEditService extends BaseViewService {
             productCodes = (List<String>) params.get("productIds");
         }
 
-        // 按产品的Code检索出所有的商品
-        JongoQuery queryObj = new JongoQuery();
-        StringBuilder queryStr = new StringBuilder("{")
-                .append(" 'common.fields.code':{$in:#}")
-                .append(",'common.fields.hsCodeStatus': '1'");
+        AdvSearchProductApprovalBySmartMQMessageBody mqMessageBody = new AdvSearchProductApprovalBySmartMQMessageBody();
+        mqMessageBody.setChannelId(userInfo.getSelChannelId());
+        mqMessageBody.setCartId(cartId);
+        mqMessageBody.setSender(userInfo.getUserName());
 
-        if (cartId != 28) {
-            queryStr.append(",'platforms.P").append(cartId).append(".pCatId': {$nin:[null, '']}");
+        List<List<String>> productCodesList = CommonUtil.splitList(productCodes, 100);
+        for (List<String> codes : productCodesList) {
+            mqMessageBody.setProductCodes(codes);
+
+            cmsMqSenderService.sendMessage(mqMessageBody);
         }
-        queryStr.append("}");
+    }
 
-        queryObj.setQuery(queryStr.toString());
-        queryObj.setParameters(productCodes);
-        queryObj.setProjection("{'common.fields.code':1,'_id':0}");
-        List<CmsBtProductModel> products = productService.getList(userInfo.getSelChannelId(), queryObj);
+    /**
+     * 批量锁定产品
+     */
+    public void bulkLockProducts(int cartId, Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
 
-        // 开始智能上新
-        if (CollectionUtils.isNotEmpty(products)) {
-            productCodes.clear();
-            // 智能上新批处理
-            BulkJongoUpdateList productBulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, userInfo.getSelChannelId());
+        boolean isSelectAll = ((Integer) params.get("isSelectAll") == 1);    // 是否为全选
+        String lock =  String.valueOf(params.get("lock"));
+        boolean down = Boolean.valueOf(String.valueOf(params.get("down")));
 
-            String productCode = null;
-            for (CmsBtProductModel product : products) {
-                productCode = product.getCommon().getFields().getCode();
-                StringBuffer updateStr = new StringBuffer("{$set:{")
-                        .append(" 'platforms.P").append(cartId).append(".status':'Approved'");
-
-                if (product.getPlatform(cartId) == null
-                        || product.getPlatform(cartId).getpStatus() == null
-                        || StringUtils.isEmpty(product.getPlatform(cartId).getpStatus().name())) {
-                    updateStr.append(",'platforms.P").append(cartId).append(".pStatus':'WaitingPublish'");
-                }
-
-                updateStr.append(",'modified':#")
-                        .append(",'modifier':#")
-                        .append("}}");
-                // 更新商品状态
-                JongoUpdate updateObj = new JongoUpdate();
-                updateObj.setQuery("{'common.fields.code':#}");
-                updateObj.setQueryParameters(productCode);
-                updateObj.setUpdate(updateStr.toString());
-                updateObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
-
-                // 保存商品Code
-                productCodes.add(productCode);
-                // 添加秕处理执行语句
-                BulkWriteResult rs = productBulkList.addBulkJongo(updateObj);
-                if (rs != null) {
-                    $debug(String.format("智能上新(product表) channelId=%s 执行结果=%s", userInfo.getSelChannelId(), rs.toString()));
-                }
-            }
-
-            // 执行智能上新批处理
-            BulkWriteResult rs = productBulkList.execute();
-            if (rs != null) {
-                $debug(String.format("智能上新(product表) channelId=%s 结果=%s", userInfo.getSelChannelId(), rs.toString()));
-            }
-
-            // 插入上新程序
-            $debug("批量修改属性 (智能上新) 开始记入SxWorkLoad表");
-            long start = System.currentTimeMillis();
-            sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), productCodes, cartId, userInfo.getUserName(), true);
-            $debug("批量修改属性 (智能上新) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - start));
-
-            // 记录商品修改历史
-            productStatusHistoryService.insertList(userInfo.getSelChannelId(), productCodes, cartId, EnumProductOperationType.IntelligentPublish,
-                    "高级检索 智能上新", userInfo.getUserName());
+        List<String> productCodes = null;
+        if (isSelectAll) {
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+        } else {
+            productCodes = (List<String>) params.get("productIds");
         }
+
+        AdvSearchLockProductsMQMessageBody mqMessageBody = new AdvSearchLockProductsMQMessageBody();
+        mqMessageBody.setChannelId(userInfo.getSelChannelId());
+        mqMessageBody.setCartId(cartId);
+        /**当用户页面选择下架时，也要执行下架service*/
+        if(down)
+            mqMessageBody.setActiveStatus(CmsConstants.PlatformActive.ToInStock.name());
+        mqMessageBody.setProductCodes(productCodes);
+        mqMessageBody.setComment("批量lock平台");
+        mqMessageBody.setLock(lock);
+        mqMessageBody.setSender(userInfo.getUserName());
+
+        cmsMqSenderService.sendMessage(mqMessageBody);
     }
 
     /**
@@ -306,7 +271,7 @@ public class CmsFieldEditService extends BaseViewService {
             } else {
                 updObj.setUpdate("{$set:{'common.fields.commissionRate':#}}");
                 if (voRate instanceof Integer) {
-                    voRateVal = ((Integer) voRate).toString();
+                    voRateVal = voRate.toString();
                     updObj.setUpdateParameters(voRate.doubleValue());
                 } else {
                     BigDecimal val = new BigDecimal(voRate.toString());

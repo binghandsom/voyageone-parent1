@@ -68,10 +68,12 @@ define([
 
         self.element = element;
 
-        //监控税号和翻译状态
+        //监控税号和翻译状态和锁定状态
         var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
             check.translate = $scope.productInfo.translateStatus;
             check.tax = $scope.productInfo.hsCodeStatus;
+            if(self.vm.platform)
+                self.vm.platform.lock = $scope.productInfo.masterLock;
         });
 
         //监控主类目
@@ -430,7 +432,9 @@ define([
     };
 
     SpJmController.prototype.openOffLinePop = function (type) {
-        var self = this, vm = self.vm;
+        var self = this,
+            $translate = self.$translate,
+            vm = self.vm;
 
         if (vm.mastData == null)
             return;
@@ -450,17 +454,20 @@ define([
             productCode: vm.mastData.productCode,
             type: type
         }).then(function () {
+            self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
             self.getPlatformData();
         });
     };
 
     SpJmController.prototype.openSwitchMainPop = function () {
-        var self = this;
+        var self = this,
+            $translate = self.$translate;
 
         self.popups.openSwitchMain({
             cartId: self.$scope.cartInfo.value,
             productCode: self.vm.mastData.productCode
         }).then(function () {
+            self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
             self.getPlatformData();
             self.vm.noMaterMsg = null;
         });
@@ -528,6 +535,7 @@ define([
      */
     SpJmController.prototype.upperAndLowerFrame = function(mark) {
         var self = this,
+            $translate = self.$translate,
             msg = mark === 'ToOnSale'? '上架':'下架';
 
         self.confirm('您是否执行'　+ msg +'操作？').then(function(){
@@ -536,6 +544,7 @@ define([
                 productCode: self.vm.mastData.productCode,
                 pStatus:mark
             }).then(function () {
+                self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 self.getPlatformData();
             });
         });
@@ -574,6 +583,26 @@ define([
             platform.status = self.vm.status = 'Approved';
 
             self.callSave('intel');
+        });
+
+    };
+
+    /**
+     * 锁平台
+     */
+    SpJmController.prototype.platFormLock = function () {
+        var self = this, notify = self.notify,
+            lock = angular.copy(self.vm.platform.lock);
+
+        self.productDetailService.lockPlatForm({
+            cartId: self.$scope.cartInfo.value,
+            prodId: self.$scope.productInfo.productId,
+            lock: Number(lock)
+        }).then(function (res) {
+            notify.success(res);
+        }, function (res) {
+            if (!res)
+                self.vm.platform.lock = lock === '1' ? '0' : '1';
         });
 
     };

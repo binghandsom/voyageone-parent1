@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.impl.cms.CmsBtCustomPropService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -157,7 +158,11 @@ public class CmsAdvSearchCustColumnService extends BaseViewService {
         }
 
         // 取得所有自定义显示列
-        rsMap.put("customProps", feedCustomPropService.getFeedCustomPropAttrs(userInfo.getSelChannelId(), ""));
+        List<Map<String, Object>> custommProps = feedCustomPropService.getFeedCustomPropAttrs(userInfo.getSelChannelId(), "");
+        if(!ListUtils.isNull(custommProps)) {
+            custommProps = custommProps.stream().filter(item -> !StringUtil.isEmpty((String) item.get("feed_prop_translation"))).collect(Collectors.toList());
+        }
+        rsMap.put("customProps", custommProps);
         rsMap.put("commonProps", commonPropService.getCustColumns(2));
         // 取得已选择的自定义显示列
         colMap2 = commonPropService.getCustColumnsByUserId(userInfo.getUserId(), "cms_prod_cust_col");

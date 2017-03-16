@@ -188,6 +188,9 @@ public class CmsConstants {
 
         // 需要拆分的主类目
         String CATEGORY_SINGLE = "CATEGORY_SINGLE";
+
+        // usjoi导入的白名单
+        String CATEGORY_WHITE = "CATEGORY_WHITE";
     }
 
     public interface ImageUploadStatus {

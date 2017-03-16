@@ -535,6 +535,10 @@ public class CmsAdvSearchQueryService extends BaseService {
             queryObject.addParameters(fuzzyStr, fuzzyStr, fuzzyStr, fuzzyStr, fuzzyStr, fuzzyStr);
         }
 
+        if(searchValue.getNoSale() != null && searchValue.getNoSale()){
+            queryObject.addQuery("'platforms.P20.pNumIId':{$in:['',null]}, 'platforms.P21.pNumIId':{$in:['',null]}, 'platforms.P22.pNumIId':{$in:['',null]}, 'platforms.P23.pNumIId':{$in:['',null]}, 'platforms.P24.pNumIId':{$in:['',null]}, 'platforms.P25.pNumIId':{$in:['',null]}, 'platforms.P26.pNumIId':{$in:['',null]}, 'platforms.P27.pNumIId':{$in:['',null]}}");
+        }
+
         // 获取自定义查询条件
         // 1.  >  有输入框  eg {"a": {$gt: 123123}}
         // 2.  =  有输入框  eg {"a": 123123}}
@@ -665,6 +669,9 @@ public class CmsAdvSearchQueryService extends BaseService {
             }else if (searchValue.getSortOneName().startsWith("platforms.P")) {
                 // 按指定sales数据排序
                 result.append(MongoUtils.splicingValue(searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
+            }else if ("created".equals(searchValue.getSortOneName())) {
+                // 按指定sales数据排序
+                result.append(MongoUtils.splicingValue(searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
             } else {
                 result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
             }
@@ -684,6 +691,9 @@ public class CmsAdvSearchQueryService extends BaseService {
             }else if (searchValue.getSortTwoName().startsWith("platforms.P")) {
                 // 按指定sales数据排序
                 result.append(MongoUtils.splicingValue(searchValue.getSortTwoName(), Integer.valueOf(searchValue.getSortOneType())));
+            }else if ("created".equals(searchValue.getSortTwoName())) {
+                // 按指定sales数据排序
+                result.append(MongoUtils.splicingValue(searchValue.getSortTwoName(), Integer.valueOf(searchValue.getSortTwoName())));
             } else {
                 result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortTwoName(), Integer.valueOf(searchValue.getSortTwoType())));
             }
@@ -702,7 +712,10 @@ public class CmsAdvSearchQueryService extends BaseService {
                 result.append(MongoUtils.splicingValue(searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortOneType())));
             }else if (searchValue.getSortThreeName().startsWith("platforms.P")) {
                 // 按指定sales数据排序
-                result.append(MongoUtils.splicingValue(searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortOneType())));
+                result.append(MongoUtils.splicingValue(searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortThreeName())));
+            }else if ("created".equals(searchValue.getSortThreeName())) {
+                // 按指定sales数据排序
+                result.append(MongoUtils.splicingValue(searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortThreeName())));
             } else {
                 result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortThreeType())));
             }
