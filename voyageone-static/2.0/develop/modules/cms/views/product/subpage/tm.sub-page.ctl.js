@@ -78,8 +78,6 @@ define([
         //监控税号和翻译状态和锁定状态
         var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
             check.translate = $scope.productInfo.translateStatus;
-            if(self.vm.platform)
-                self.vm.platform.lock = $scope.productInfo.masterLock;
 
             if ($scope.cartInfo.value != 20)
                 check.tax = $scope.productInfo.hsCodeStatus;
