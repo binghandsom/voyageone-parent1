@@ -764,10 +764,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             boolean delOriginalFlg = false;
             // 需要拆分
             // 条件1：根据OriginalCode找到多条
-            // 条件2：根据OriginalCode找到1条 并且 产品对应的主类目.singleSku == 1：需要拆分 并且 Feed.sku多条)
+            // 条件2：根据OriginalCode找到1条 并且 产品对应的主类目.singleSku == 1：需要拆分 并且 之前的sku = 1 并且 Feed.sku多条)
             // 条件3：根据OriginalCode找到0条 并且 对应的默认主类目.singleSku == 1：需要拆分 并且 Feed.sku多条)
             if (cmsProductList.size() > 1
-                    || (cmsProductList.size() == 1 && isSingleSku && originalFeed.getSkus() != null && originalFeed.getSkus().size() > 1)
+                    || (cmsProductList.size() == 1 && cmsProductList.get(0).getCommon().getSkus().size() == 1 && isSingleSku && originalFeed.getSkus() != null && originalFeed.getSkus().size() > 1)
                     || (cmsProductList.size() == 0 && isSingleSku && originalFeed.getSkus() != null && originalFeed.getSkus().size() > 1 && oldCmsProduct == null)) {
 
                 // 根据OriginalCode找到多条的情况下，先把多个Product信息集记一下Map<sku，ProductInfo>（这种情况下，Product下面只会有一个sku）
