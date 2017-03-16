@@ -110,27 +110,29 @@ define([
          * 平台级锁定
          */
         AdSearchAppendCtl.prototype.platFormLock = function (cartId, lock) {
-            var self = this, parentScope = self.parentScope,
-                $fieldEditService = $fieldEditService;
+            var self = this, parentScope = self.parentScope;
 
             parentScope._chkProductSel(parseInt(cartId), function (cartId, _selProdList) {
-                var _msg = lock ? "锁定成功!" : "解锁成功!";
-                var upEntity = {
-                    cartId: cartId,
-                    productIds: _.pluck(_selProdList, "code"),
-                    lock: lock,
-                    isSelectAll: parentScope.vm._selall ? 1 : 0
-                };
+                var _msg = lock ? "锁定" : "解锁";
 
-                if (lock) {
-                    self.confirm("是否同步商品下架？").then(function () {
-                        self.callPlatFormLock(_.extend(upEntity, {down: true}), _msg)
-                    }, function () {
-                        self.callPlatFormLock(upEntity, _msg)
-                    });
-                } else {
-                    self.callPlatFormLock(upEntity, _msg)
-                }
+                self.confirm('您是否执行' + _msg + "操作？").then(function(){
+                    var upEntity = {
+                        cartId: cartId,
+                        productIds: _.pluck(_selProdList, "code"),
+                        lock: lock,
+                        isSelectAll: parentScope.vm._selall ? 1 : 0
+                    };
+
+                    if (lock) {
+                        self.confirm("是否同步商品下架？").then(function () {
+                            self.callPlatFormLock(_.extend(upEntity, {down: true}), _msg);
+                        }, function () {
+                            self.callPlatFormLock(upEntity, _msg + '成功!');
+                        });
+                    } else {
+                        self.callPlatFormLock(upEntity, _msg + '成功!');
+                    }
+                });
 
             });
         };
@@ -143,7 +145,7 @@ define([
         AdSearchAppendCtl.prototype.callPlatFormLock = function (upEntity, msg) {
             var self = this;
             self.$fieldEditService.bulkLockProducts(upEntity).then(function () {
-                self.alert(msg);
+                self.notify.success(msg);
             });
         };
 

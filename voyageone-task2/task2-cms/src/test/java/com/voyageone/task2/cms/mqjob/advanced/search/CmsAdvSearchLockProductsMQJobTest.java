@@ -23,10 +23,9 @@ public class CmsAdvSearchLockProductsMQJobTest {
         String json = "{\n" +
                 "\t\"channelId\": \"010\",\n" +
                 "\t\"cartId\": 23,\n" +
-                "\t\"activeStatus\": \"ToInStock\",\n" +
                 "\t\"productCodes\": [\"51A0HC13E1-00LCNB0\"],\n" +
                 "\t\"comment\": \"批量lock平台\",\n" +
-                "\t\"lock\": \"1\",\n" +
+                "\t\"lock\": \"0\",\n" +
                 "\t\"consumerRetryTimes\": 0,\n" +
                 "\t\"mqId\": 0,\n" +
                 "\t\"delaySecond\": 0,\n" +
