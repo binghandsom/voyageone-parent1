@@ -702,7 +702,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         break;
                 }
 
-                String finalCatPath = catPath;
+                String finalCatPath = catPath == null?"":catPath;
                 return categorySingle.stream().anyMatch(cat -> finalCatPath.indexOf(cat) == 0);
             } else if ("2".equals(singleFlg)) {
                 return true;
@@ -758,7 +758,13 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 }
             }
 
-
+            if(StringUtil.isEmpty(originalFeed.getMainCategoryCn())){
+                MatchResult matchResult = getMainCatInfo(originalFeed.getCategory(), originalFeed.getProductType(), originalFeed.getSizeType(), originalFeed.getName(), originalFeed.getBrand());
+                if(matchResult != null){
+                    originalFeed.setMainCategoryEn(matchResult.getEnName());
+                    originalFeed.setMainCategoryCn(matchResult.getCnName());
+                }
+            }
             isSingleSku = singleSku(cmsProductParam, originalFeed);
 
             boolean delOriginalFlg = false;
@@ -3283,6 +3289,4 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             return query;
         }
     }
-
-
 }
