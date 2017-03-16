@@ -70,9 +70,10 @@ define([
 
         self.element = element;
 
-        //监控税号和翻译状态
+        //监控税号和翻译状态和锁定状态
         var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
             check.tax = $scope.productInfo.hsCodeStatus;
+            self.vm.platform.lock = $scope.productInfo.masterLock;
         });
 
         //监控主类目
@@ -529,6 +530,26 @@ define([
         }).then(function (platform) {
             self.vm.platform = platform;
         });
+    };
+
+    /**
+     * 锁平台
+     */
+    SpFxController.prototype.platFormLock = function () {
+        var self = this, notify = self.notify,
+            lock = angular.copy(self.vm.platform.lock);
+
+        self.productDetailService.lockPlatForm({
+            cartId: self.$scope.cartInfo.value,
+            prodId: self.$scope.productInfo.productId,
+            lock: Number(lock)
+        }).then(function (res) {
+            notify.success(res);
+        }, function (res) {
+            if (!res)
+                self.vm.platform.lock = lock === '1' ? '0' : '1';
+        });
+
     };
 
     cms.directive('fxSubPage', function () {

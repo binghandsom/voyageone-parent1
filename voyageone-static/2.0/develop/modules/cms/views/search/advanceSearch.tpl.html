@@ -798,6 +798,12 @@
                                 <li ng-if="cartBean.value==27">
                                     <a href="javascript:void(0)" ng-click="exportFile(4)">聚美上新商品导出</a>
                                 </li>
+                                <li>
+                                    <a href="javascript:void(0)" ng-click="ctrlAdvance.platFormLock(cartBean.value,1)">平台锁定</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)" ng-click="ctrlAdvance.platFormLock(cartBean.value,0)">平台解锁</a>
+                                </li>
                             </ul>
                         </div>
                     </div>
