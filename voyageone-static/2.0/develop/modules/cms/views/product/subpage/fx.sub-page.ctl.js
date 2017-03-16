@@ -73,7 +73,8 @@ define([
         //监控税号和翻译状态和锁定状态
         var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
             check.tax = $scope.productInfo.hsCodeStatus;
-            self.vm.platform.lock = $scope.productInfo.masterLock;
+            if(self.vm.platform)
+                self.vm.platform.lock = $scope.productInfo.masterLock;
         });
 
         //监控主类目
