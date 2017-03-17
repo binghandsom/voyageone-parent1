@@ -13,7 +13,7 @@ define([
 
     cms.service("productDetailService", productDetailService);
 
-    function productDetailService($q, $productDetailService, $filter, confirm) {
+    function productDetailService($q, $productDetailService, $filter, confirm, $compile) {
 
         this.getProductInfo = getProductInfo;
         this.updateProductDetail = updateProductDetail;
@@ -882,6 +882,18 @@ define([
             });
 
             return defer.promise
+        };
+
+        /**
+         * @param targetDom 目标jq对象
+         * @param pScope    绑定在jq对象上的scope作用域
+         */
+        this.createPstatus = function (targetDom, pScope, data) {
+            var _pStatusHtml = "<platform-status data='data' ng-if='data'></platform-status>",
+                _pStatusDom = angular.element(_pStatusHtml);
+
+            pScope.data = data;
+            targetDom.html($compile(_pStatusDom)(pScope));
         }
     }
 });
