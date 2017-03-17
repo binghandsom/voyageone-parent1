@@ -64,6 +64,8 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
         deleteData();
         $info("插入channel=" + getChannel().getId() + "的数据。共" + skus.size() + "条");
         skuList.forEach(this::insertData);
+        skus.clear();
+        skuList.clear();
 
         long cnt = feedInfoService.getCnt(getChannel().getId(), new HashMap<>());
         long pageCnt = cnt / pageSize + (cnt % pageSize == 0 ? 0 : 1);
@@ -93,7 +95,12 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
 
     private void checkSkuStatus(CmsBtFeedInfoModel cmsBtFeedInfoModel) {
         cmsBtFeedInfoModel.getSkus().forEach(sku -> {
-            CmsFeedLiveSkuModel cmsFeedLiveSku = selectOne(sku.getSku());
+            CmsFeedLiveSkuModel cmsFeedLiveSku;
+            if(getChannel().getId().equals("018")) {
+                cmsFeedLiveSku = selectOne(sku.getSku());
+            }else{
+                cmsFeedLiveSku = selectOne(sku.getClientSku());
+            }
             if (sku.getIsSale() == 0 && cmsFeedLiveSku != null) {
                 $info(getChannel().getId()+ " " + sku.getSku() + " notSale -> sale");
                 feedSaleService.sale(getChannel().getId(),sku.getClientSku(),cmsBtFeedInfoModel.getQty());
