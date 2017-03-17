@@ -1381,8 +1381,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 //        String sizeType = fields.getSizeType();
         // delete by desmond 2016/07/08 end
         String productCode = fields.getCode();
-
         BaseMongoMap<String, Object> jmFields = jmCart.getFields();
+
+        String pBrandName = product.getPlatform(CART_ID).getpBrandName();
         // 商品规格编号
         bean.setProduct_spec_number(fields.getCode());
         // update by desmond 2016/09/01 start
@@ -1393,10 +1394,23 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 //        bean.setBrand_id(Integer.valueOf(jmCart.getpBrandId()));
         bean.setBrand_id(NumberUtils.toInt(jmCart.getpBrandId()));
         // update by desmond 2016/09/01 end
-        // 产品名
-        bean.setName(jmFields.getStringAttribute("productNameCn") + " " +  special_symbol.matcher(productCode).replaceAll("-"));
-        // 外文名
-        bean.setForeign_language_name(jmFields.getStringAttribute("productNameEn"));
+        // 产品名 charis update
+        if (jmFields.getStringAttribute("productNameCn") != null) {
+            bean.setName(jmFields.getStringAttribute("productNameCn") + " " +  special_symbol.matcher(productCode).replaceAll("-"));
+        } else {
+            bean.setName(pBrandName + " " +
+                    jmFields.getStringAttribute("suitPeople") + " " + //Feed Category（翻译）
+                    productCode
+            );
+        }
+
+        // 外文名 charis update
+        if (jmFields.getStringAttribute("productNameEn") != null) {
+            bean.setForeign_language_name(jmFields.getStringAttribute("productNameEn"));
+        } else {
+            bean.setForeign_language_name(fields.getProductNameEn());
+        }
+
         // 白底方图
         String picTemplate = getTemplate("聚美白底方图", expressionParser, shopProp);
 
@@ -1445,22 +1459,61 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         String jmUseageTemplate = getTemplate("聚美使用方法", expressionParser, shopProp);
         deal.setDescription_usage(jmUseageTemplate);
 
-        // 产品长标题
-        deal.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
-        // 产品中标题
-        deal.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
-        // 产品短标题
-        deal.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
-        // 保质期限
-        deal.setBefore_date(jmFields.getStringAttribute("beforeDate"));
-        // 适用人群
-        deal.setSuit_people(jmFields.getStringAttribute("suitPeople"));
-        // 特殊说明
-        deal.setSpecial_explain(jmFields.getStringAttribute("specialExplain"));
-        // 自定义搜索词
-        deal.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
-        // 生产地区
-        deal.setAddress_of_produce(jmFields.getStringAttribute("originCn"));
+        // 产品长标题 charis update
+        if (jmFields.getStringAttribute("productLongName") != null) {
+            deal.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
+        } else {
+            deal.setProduct_long_name(pBrandName + " " + fields.getOriginalTitleCn() + " " + productCode);
+        }
+        // 产品中标题 charis update
+        if (jmFields.getStringAttribute("productMediumName") != null) {
+            deal.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
+        } else {
+            deal.setProduct_medium_name(pBrandName + " " + // 适用人群（翻译） Feed Category（翻译）
+                    productCode);
+        }
+        // 产品短标题 charis update
+        if (jmFields.getStringAttribute("productShortName") != null) {
+            deal.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
+        } else {
+            deal.setProduct_short_name(pBrandName + " " + // 适用人群（翻译） Feed Category（翻译）
+                    fields.getModel() + " " + productCode);
+        }
+        // 保质期限 charis update
+        if (jmFields.getStringAttribute("beforeDate") != null) {
+            deal.setBefore_date(jmFields.getStringAttribute("beforeDate"));
+        } else {
+            deal.setBefore_date("无");
+        }
+
+        // 适用人群 charis update
+        if (jmFields.getStringAttribute("suitPeople") != null) {
+            deal.setSuit_people(jmFields.getStringAttribute("suitPeople"));
+        } else {
+            deal.setSuit_people("时尚潮流人士");
+        }
+
+        // 特殊说明 charis update
+        if (jmFields.getStringAttribute("specialExplain") != null) {
+            deal.setSpecial_explain(jmFields.getStringAttribute("specialExplain"));
+        } else {
+            deal.setSpecial_explain("自海外直邮发货，物流周期15个工作日左右。");
+        }
+
+        // 自定义搜索词  charis update
+        if (jmFields.getStringAttribute("searchMetaTextCustom") != null) {
+            deal.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
+        } else {
+            deal.setSearch_meta_text_custom(pBrandName + "," + // 产品分类（翻译）适用人群（翻译）
+                    fields.getModel());
+        }
+        // 生产地区 charis update
+        if (jmFields.getStringAttribute("originCn") != null) {
+            deal.setAddress_of_produce(jmFields.getStringAttribute("originCn"));
+        } else {
+            deal.setAddress_of_produce("根据生产批次、生产线，详情请见实物包装");
+        }
+
         // Deal开始时间
         deal.setStart_time(System.currentTimeMillis() / 1000);
         // Deal结束时间
@@ -1494,7 +1547,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             spu.setUpc_code(addVoToBarcode(jmSku.getStringAttribute("barcode"), channelId, jmSku.getStringAttribute("skuCode")));
             // 规格 :FORMAL 正装 MS 中小样 OTHER 其他
             spu.setPropery(jmSku.getStringAttribute("property"));
-            spu.setAttribute(jmFields.getStringAttribute("attribute"));//Code级
+            // 型号/颜色 charis update
+            if (jmFields.getStringAttribute("attribute") != null) {
+                spu.setAttribute(jmFields.getStringAttribute("attribute"));//Code级
+            } else {
+                spu.setAttribute(fields.getColor());
+            }
+
             // update by desmond 2016/07/08 start
             // 容量/尺寸
 //            String size = jmSku.getStringAttribute("size");
