@@ -125,6 +125,12 @@ define([
             self.autoSyncPriceMsrp = resp.data.autoSyncPriceMsrp;
             self.autoSyncPriceSale = resp.data.autoSyncPriceSale;
 
+            /**生成共通部分，商品状态*/
+            self.productDetailService.createPstatus(self.element.find("#platform-status"),
+                self.$scope.$new(),
+                self.vm.platform
+            );
+
         }, function (resp) {
             vm.noMaterMsg = resp.message.indexOf("Server Exception") >= 0 ? null : resp.message;
         });
