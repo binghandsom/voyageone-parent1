@@ -80,7 +80,7 @@ public class ProductCheckService extends BaseService {
             // 更新group表
             // TODO: 2017/3/7 暂时不更新数据库
 //            productModel.setChannelId("999");
-            cmsBtProductDao.insert(productModel);
+            cmsBtProductDao.update(productModel);
             errorModel.getErrors().stream().distinct().collect(Collectors.toList());
             cmsBtProductErrorDao.insert(errorModel);
         }

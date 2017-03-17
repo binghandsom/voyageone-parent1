@@ -336,12 +336,12 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
         update.setQuery("{\"prodId\": #}");
         update.setQueryParameters(productModel.getProdId());
 
-        if (cartId != 0) {
+        if (cartId == 0) {
             StringBuffer sb = new StringBuffer();
-            productModel.getPlatforms().forEach((key, value) -> sb.append("\"").append(key).append(".lock\": \"").append(lock).append("\","));
-            update.setUpdate("{"+ sb.toString().substring(0, sb.toString().length() - 1 )+"}");
+            productModel.getPlatforms().forEach((key, value) -> sb.append("\"platforms.").append(key).append(".lock\": \"").append(lock).append("\","));
+            update.setUpdate("{$set: {"+ sb.toString().substring(0, sb.toString().length() - 1 )+"}}");
         } else {
-            update.setUpdate("{\"P#.lock\": #}");
+            update.setUpdate("{$set: {\"platforms.P#.lock\": #}}");
             update.setUpdateParameters(cartId, lock);
         }
         productService.updateFirstProduct(update, productModel.getChannelId());
