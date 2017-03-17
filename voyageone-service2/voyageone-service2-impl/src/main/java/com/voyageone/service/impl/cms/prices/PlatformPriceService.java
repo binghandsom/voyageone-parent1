@@ -340,6 +340,10 @@ public class PlatformPriceService extends VOAbsLoggable {
             $warn("PriceService 产品未上新,不可修改价格 channelId=%s, cartId=%d, prod=%s", channelId, cartId, productModel.getCommon().getFields().getCode());
             return;
         }
+        if ("1".equals(platObj.getLock())) {
+            $warn("PriceService 产品被锁定,不可修改价格 channelId=%s, cartId=%d, prod=%s", channelId, cartId, productModel.getCommon().getFields().getCode());
+            return;
+        }
 
         List<BaseMongoMap<String, Object>> skuList = platObj.getSkus();
         if (skuList == null || skuList.isEmpty()) {

@@ -1151,4 +1151,15 @@ public class CmsBtCombinedProductService extends BaseService {
         }
         return resultMap;
     }
+
+    /**
+     * 根据group的code取得cms_bt_product信息数据(未被锁定的商品)
+     */
+    public List<CmsBtProductModel> getCmsBtProductModelInfo(Integer cartId, List<String> prodCodes, String channelId) {
+        JongoQuery queryObj = new JongoQuery();
+        queryObj.setQuery("{'common.fields.code': {$in:#}, \"platforms.P#.lock\": \"0\"}");
+        queryObj.setParameters(prodCodes, cartId);
+        queryObj.setProjectionExt("lock", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".pPlatformMallId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".pStatus", "platforms.P" + cartId + ".mainProductCode");
+        return cmsBtProductDao.select(queryObj, channelId);
+    }
 }
