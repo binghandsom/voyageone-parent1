@@ -59,7 +59,7 @@ public class JdWareNewService extends JdBase {
         // 关联版式ID(必须)
         if (jdProduct.getTemplateId() != null)         ware.setTemplateId(jdProduct.getTemplateId());
         // 运费模板ID(必须)
-//        if (jdProduct.getTransportId() != null)        ware.setTransportId(jdProduct.getTransportId());
+        if (jdProduct.getTransportId() != null)        ware.setTransportId(jdProduct.getTransportId());
         // 商品状态(非必须)
         if (jdProduct.getWareStatus() != null)         ware.setWareStatus(jdProduct.getWareStatus());
         // 商品外部ID(非必须)
@@ -255,7 +255,7 @@ public class JdWareNewService extends JdBase {
         // 关联版式ID(必须)
         if (jdProduct.getTemplateId() != null)         ware.setTemplateId(jdProduct.getTemplateId());
         // 运费模板ID(非必须)
-//        if (jdProduct.getTransportId() != null)        ware.setTransportId(jdProduct.getTransportId());
+        if (jdProduct.getTransportId() != null)        ware.setTransportId(jdProduct.getTransportId());
         // 商品状态(非必须)
         if (jdProduct.getWareStatus() != null)         ware.setWareStatus(jdProduct.getWareStatus());
         // 商品外部ID(非必须)

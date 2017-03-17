@@ -2614,7 +2614,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 
         try {
             // 先睡一会儿， 不然可能还没创建完成
-            Thread.sleep(3000);
+            Thread.sleep(5000);
             // 根据京东商品id取得京东平台上的sku信息列表(即使出错也不报出来，算上新成功，只是回写出错，以后再回写也可以)
             skus = jdSkuService.getSkusByWareId(shop, wareId, failCause);
 

@@ -813,7 +813,11 @@ public class ProductService extends BaseService {
 
         Map<String, Integer> result = new HashMap<>();
         for (WmsBtInventoryCenterLogicModel inventory : inventoryList) {
-            result.put(inventory.getSku(), inventory.getQtyChina());
+            if(channelId.equals("001")){
+                result.put(inventory.getSku().toLowerCase(), inventory.getQtyChina());
+            }else{
+                result.put(inventory.getSku(), inventory.getQtyChina());
+            }
         }
         return result;
     }
@@ -1419,7 +1423,7 @@ public class ProductService extends BaseService {
                     @Override
                     public boolean evaluate(Object object) {
                         CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku) object;
-                        return sku.getSkuCode().equals(stock.getBase().getSku());
+                        return sku.getSkuCode().equalsIgnoreCase(stock.getBase().getSku());
                     }
                 });
                 if (sku != null) {
