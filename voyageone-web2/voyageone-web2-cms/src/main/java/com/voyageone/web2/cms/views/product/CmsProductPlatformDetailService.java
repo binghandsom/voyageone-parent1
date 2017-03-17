@@ -814,29 +814,38 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         if (PlatFormEnums.PlatForm.JM.getId().equals(shopProp.getPlatform_id())) {
             numIId = grpObj.getPlatformMallId();
         }
-        // 天猫国际上下架
-        String apiResult = cmsBtCombinedProductService.getUpperAndLowerRacksApiResult(numIId, shopProp, pStatus);
-        if (apiResult != null) {
-            throw new BusinessException(apiResult);
-        }
-        BulkWriteResult rs;
-        //更新cms_bt_product表
-        BulkJongoUpdateList productBulkList = productService.updateCmsBtProductInfo(userBean.getSelChannelId());
-        for (String prodCode : grpObj.getProductCodes()) {
-            productBulkList.addBulkJongo(updateCmsBtProductInfo(cartId, pStatus, userBean.getUserName(), prodCode));
-            //插入cms_bt_platform_active_log表
-            insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, userBean.getSelChannelId(), pStatus, grpObj, userBean.getUserName());
-        }
-        rs = productBulkList.execute();
-        if (rs != null) {
-            $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s,cmsBtProductGroup更新结果=%s", cartId, userBean.getSelChannelId(), rs.toString());
-        }
-        //更新cms_bt_product_group表
-        BulkJongoUpdateList groupBulkList = productService.updateCmsBtProductGroupInfo(userBean.getSelChannelId());
-        groupBulkList.addBulkJongo(updateCmsBtProductGroupInfo(cartId, grpObj.getGroupId(), pStatus, userBean.getUserName()));
-        rs = groupBulkList.execute();
-        if (rs != null) {
-            $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s,cmsBtProductGroup更新结果=%s", cartId, userBean.getSelChannelId(), rs.toString());
+
+        //根据group的code取得cms_bt_product信息数据
+        List<CmsBtProductModel> prodObjList = cmsBtCombinedProductService.getCmsBtProductModelInfo(cartId, grpObj.getProductCodes(), grpObj.getChannelId());
+
+        if (prodObjList.size() > 0) {
+
+            // 天猫国际上下架
+            String apiResult = cmsBtCombinedProductService.getUpperAndLowerRacksApiResult(numIId, shopProp, pStatus);
+            if (apiResult != null) {
+                throw new BusinessException(apiResult);
+            }
+            BulkWriteResult rs;
+            //更新cms_bt_product表
+            BulkJongoUpdateList productBulkList = productService.updateCmsBtProductInfo(userBean.getSelChannelId());
+            for (String prodCode : grpObj.getProductCodes()) {
+                productBulkList.addBulkJongo(updateCmsBtProductInfo(cartId, pStatus, userBean.getUserName(), prodCode));
+                //插入cms_bt_platform_active_log表
+                insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, userBean.getSelChannelId(), pStatus, grpObj, userBean.getUserName());
+            }
+            rs = productBulkList.execute();
+            if (rs != null) {
+                $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s,cmsBtProductGroup更新结果=%s", cartId, userBean.getSelChannelId(), rs.toString());
+            }
+            //更新cms_bt_product_group表
+            BulkJongoUpdateList groupBulkList = productService.updateCmsBtProductGroupInfo(userBean.getSelChannelId());
+            groupBulkList.addBulkJongo(updateCmsBtProductGroupInfo(cartId, grpObj.getGroupId(), pStatus, userBean.getUserName()));
+            rs = groupBulkList.execute();
+            if (rs != null) {
+                $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s,cmsBtProductGroup更新结果=%s", cartId, userBean.getSelChannelId(), rs.toString());
+            }
+        } else {
+            throw new BusinessException(String.format("该商品对应商品group(Id: )下所有商品都处于锁定状态,无法操作平台上下架.", grpObj.getGroupId()));
         }
     }
 

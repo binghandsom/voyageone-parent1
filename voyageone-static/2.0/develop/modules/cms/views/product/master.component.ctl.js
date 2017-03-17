@@ -459,12 +459,12 @@ define([
                                     prodId: scope.productInfo.productId,
                                     lock: lock
                                 }).then(function () {
-                                    notify.success(_status ? "商品已锁定" : "商品已接触锁定");
+                                    notify.success(_status ? "商品已锁定" : "商品已解除锁定");
 
                                     initialize();
                                     scope.productInfo.masterLock = lock;
-                                    //通知子页面
-                                    scope.productInfo.checkFlag = new Date().getTime();
+                                    //刷新子页面
+                                    scope.productInfo.masterCategory = new Date().getTime();
                                 });
                                 break;
                         }

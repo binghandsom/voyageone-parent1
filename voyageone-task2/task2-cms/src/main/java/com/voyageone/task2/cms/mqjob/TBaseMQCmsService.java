@@ -23,12 +23,10 @@ import java.util.List;
  * @since 2.0.0
  */
 public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> extends TBaseMQAnnoService<TMQMessageBody> {
+    public long count = 0;
+    public boolean isFailed = false;
     @Autowired
     CmsBtOperationLogService cmsBtOperationLogService;
-
-    public long count = 0;
-
-    public boolean isFailed = false;
 
     @Override
     public SubSystem getSubSystem() {
@@ -68,7 +66,7 @@ public abstract class TBaseMQCmsService<TMQMessageBody extends IMQMessageBody> e
 
             $debug(String.format("处理总件数(%s), 开始时间: %s, 结束时间: %s", count, begin, end));
             if (!isFailed)
-                cmsSuccessLog(messageBody, String.format("处理总件数(%s), 开始时间: %s, 结束时间: %s", count, begin, end));
+                cmsSuccessLog(messageBody, String.format("处理总件数(%s), 开始时间: %s, 结束时间: %s", count == 0 ? "无法统计件数" : count, begin, end));
         } catch (BusinessException ex) {
             cmsBusinessExLog(messageBody, ex.getMessage());
         } catch (Exception ex) {

@@ -155,7 +155,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
     // 每个channel的feed->master导入默认最大件数
     private final static int FEED_IMPORT_MAX_500 = 500;
 
-    private Map<String, List<ConditionPropValueModel>> channelConditionConfig;
+
 
     @Autowired
     private Searcher searcher;
@@ -183,6 +183,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         long startTime;
         private OrderChannelBean channel;
         private boolean skip_mapping_check;
+
+        private Map<String, List<ConditionPropValueModel>> channelConditionConfig;
         // jeff 2016/04 change start
 //        // 前一次的价格强制击穿时间
 //        private String priceBreakTime;

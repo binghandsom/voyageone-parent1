@@ -811,6 +811,167 @@ public class CmsBtCombinedProductService extends BaseService {
         return null;
     }
 
+    /**
+     * 各个平台调用上下架Api
+     *
+     * @param numIId
+     * @param shopProp
+     * @param status
+     * @return UpperAndLowerRacksApiResult
+     */
+    public String getUpperAndLowerRacksApiResult(String numIId, ShopBean shopProp, String status) {
+
+        String resultMap = null;
+        // 天猫国际上下架
+        if (PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id())) {
+            if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
+                // 上架
+                ItemUpdateListingResponse response = tbSaleService.doWareUpdateListing(shopProp, numIId);
+                if (response == null) {
+                    resultMap = "调用天猫系商品上架API失败";
+                } else {
+                    if (!StringUtils.isEmpty(response.getErrorCode())) {
+                        resultMap = "调用天猫系商品上架API失败";
+                    }
+                }
+            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(status)) {
+                // 下架
+                ItemUpdateDelistingResponse response = tbSaleService.doWareUpdateDelisting(shopProp, numIId);
+                if (response == null) {
+                    resultMap = "调用天猫系商品下架API失败";
+                } else {
+                    if (!StringUtils.isEmpty(response.getErrorCode())) {
+                        resultMap = "调用天猫系商品下架API失败";
+                    }
+                }
+            }
+        }// 京东国际上下架
+        else if (PlatFormEnums.PlatForm.JD.getId().equals(shopProp.getPlatform_id())) {
+            if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
+                // 上架
+                WareUpdateListingResponse response = jdSaleService.doWareUpdateListing(shopProp, numIId);
+                if (response == null) {
+                    resultMap = "调用京东商品上架API失败";
+                } else {
+                    if (!"0".equals(response.getCode())) {
+                        resultMap = "调用京东商品上架API失败";
+                    }
+                }
+            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(status)) {
+                // 下架
+                WareUpdateDelistingResponse response = jdSaleService.doWareUpdateDelisting(shopProp, numIId);
+                if (response == null) {
+                    resultMap = "调用京东商品下架API失败";
+                } else {
+                    if (!"0".equals(response.getCode())) {
+                        resultMap = "调用京东商品下架API失败";
+                    }
+                }
+            }
+        }// 聚美上下架
+        else if (PlatFormEnums.PlatForm.JM.getId().equals(shopProp.getPlatform_id())) {
+            HtMallStatusUpdateBatchResponse response = null;
+            if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
+                // 上架
+                response = jmSaleService.doWareUpdateListing(shopProp, numIId);
+            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(status)) {
+                // 下架
+                response = jmSaleService.doWareUpdateDelisting(shopProp, numIId);
+            }
+            if (response == null) {
+                if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
+                    resultMap = "调用聚美商品上架API失败";
+                } else {
+                    resultMap = "调用聚美商品下架API失败";
+                }
+            } else {
+                if (!response.isSuccess()) {
+                    if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
+                        resultMap = "调用聚美商品上架API失败";
+                    } else {
+                        resultMap = "调用聚美商品下架API失败";
+                    }
+                }
+            }
+        }// 分销上下架
+        else if (PlatFormEnums.PlatForm.DT.getId().equals(shopProp.getPlatform_id())) {
+            String result = "";
+            if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
+                // 上架
+                try {
+                    result = dtWareService.onShelfProduct(shopProp, numIId);
+                } catch (Exception e) {
+                    resultMap = "调用分销上架API失败";
+                }
+            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(status)) {
+                // 下架
+                try {
+                    result = dtWareService.offShelfProduct(shopProp, numIId);
+                } catch (Exception e) {
+                    resultMap = "调用分销下架API失败";
+                }
+            }
+            if (StringUtils.isNotBlank(result)) {
+                Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
+                if (responseMap != null && responseMap.containsKey("data") && responseMap.get("data") != null) {
+                    Map<String, Object> resultDtMap = (Map<String, Object>) responseMap.get("data");
+                    if (!DtConstants.C_DT_RETURN_SUCCESS_OK.equals(resultDtMap.get("result"))) {
+                        if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
+                            resultMap = "调用分销上架API失败";
+                        } else {
+                            resultMap = "调用分销下架API失败";
+                        }
+                    }
+                }
+            }
+        }// 独立官网
+        else if (PlatFormEnums.PlatForm.CNN.getId().equals(shopProp.getPlatform_id())) {
+
+            String result = "";
+            if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
+                // 上架
+                try {
+                    result = cnnWareService.doWareUpdateListing(shopProp, Long.valueOf(numIId));
+                } catch (Exception e) {
+                    resultMap = "调用独立官网上架API失败";
+                }
+            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(status)) {
+                // 下架
+                try {
+                    result = cnnWareService.doWareUpdateDelisting(shopProp, Long.valueOf(numIId));
+                } catch (Exception e) {
+                    resultMap = "调用独立官网上架API失败";
+                }
+            }
+            if (!com.voyageone.common.util.StringUtils.isEmpty(result)) {
+                Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
+                if (responseMap != null && responseMap.containsKey("code") && responseMap.get("code") != null) {
+                    if (CnnConstants.C_CNN_RETURN_SUCCESS_0 != (int) responseMap.get("code")) {
+                        if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
+                            resultMap = "调用独立官网上架API失败";
+                        } else {
+                            resultMap = "调用独立官网下架API失败";
+                        }
+                    }
+                }
+            }
+        }// 其他平台
+        else {
+            resultMap = "不正确的平台";
+        }
+        return resultMap;
+    }
+
+    /**
+     * 根据group的code取得cms_bt_product信息数据(未被锁定的商品)
+     */
+    public List<CmsBtProductModel> getCmsBtProductModelInfo(Integer cartId, List<String> prodCodes, String channelId) {
+        JongoQuery queryObj = new JongoQuery();
+        queryObj.setQuery("{'common.fields.code': {$in:#}, \"platforms.P#.lock\": \"0\"}");
+        queryObj.setParameters(prodCodes, cartId);
+//        queryObj.setProjectionExt("lock", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".pPlatformMallId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".pStatus", "platforms.P" + cartId + ".mainProductCode");
+        return cmsBtProductDao.select(queryObj, channelId);
+    }
 
     /**
      * 天猫组合商品信息
@@ -999,156 +1160,5 @@ public class CmsBtCombinedProductService extends BaseService {
         public void setRatio(String ratio) {
             this.ratio = ratio;
         }
-    }
-
-    /**
-     * 各个平台调用上下架Api
-     *
-     * @param numIId
-     * @param shopProp
-     * @param status
-     * @return UpperAndLowerRacksApiResult
-     */
-    public String getUpperAndLowerRacksApiResult(String numIId, ShopBean shopProp, String status) {
-
-        String resultMap = null;
-        // 天猫国际上下架
-        if (PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id())) {
-            if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
-                // 上架
-                ItemUpdateListingResponse response = tbSaleService.doWareUpdateListing(shopProp, numIId);
-                if (response == null) {
-                    resultMap = "调用天猫系商品上架API失败";
-                } else {
-                    if (!StringUtils.isEmpty(response.getErrorCode())) {
-                        resultMap =  "调用天猫系商品上架API失败";
-                    }
-                }
-            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(status)) {
-                // 下架
-                ItemUpdateDelistingResponse response = tbSaleService.doWareUpdateDelisting(shopProp, numIId);
-                if (response == null) {
-                    resultMap = "调用天猫系商品下架API失败";
-                } else {
-                    if (!StringUtils.isEmpty(response.getErrorCode())) {
-                        resultMap =  "调用天猫系商品下架API失败";
-                    }
-                }
-            }
-        }// 京东国际上下架
-        else if (PlatFormEnums.PlatForm.JD.getId().equals(shopProp.getPlatform_id())) {
-            if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
-                // 上架
-                WareUpdateListingResponse response = jdSaleService.doWareUpdateListing(shopProp, numIId);
-                if (response == null) {
-                    resultMap = "调用京东商品上架API失败";
-                } else {
-                    if (!"0".equals(response.getCode())) {
-                        resultMap = "调用京东商品上架API失败";
-                    }
-                }
-            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(status)) {
-                // 下架
-                WareUpdateDelistingResponse response = jdSaleService.doWareUpdateDelisting(shopProp, numIId);
-                if (response == null) {
-                    resultMap = "调用京东商品下架API失败";
-                } else {
-                    if (!"0".equals(response.getCode())) {
-                        resultMap =  "调用京东商品下架API失败";
-                    }
-                }
-            }
-        }// 聚美上下架
-        else if (PlatFormEnums.PlatForm.JM.getId().equals(shopProp.getPlatform_id())) {
-            HtMallStatusUpdateBatchResponse response = null;
-            if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
-                // 上架
-                response = jmSaleService.doWareUpdateListing(shopProp, numIId);
-            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(status)) {
-                // 下架
-                response = jmSaleService.doWareUpdateDelisting(shopProp, numIId);
-            }
-            if (response == null) {
-                if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
-                    resultMap = "调用聚美商品上架API失败";
-                } else {
-                    resultMap = "调用聚美商品下架API失败";
-                }
-            } else {
-                if (!response.isSuccess()) {
-                    if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
-                        resultMap =  "调用聚美商品上架API失败";
-                    } else {
-                        resultMap = "调用聚美商品下架API失败";
-                    }
-                }
-            }
-        }// 分销上下架
-        else if (PlatFormEnums.PlatForm.DT.getId().equals(shopProp.getPlatform_id())) {
-            String result = "";
-            if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
-                // 上架
-                try {
-                    result = dtWareService.onShelfProduct(shopProp, numIId);
-                } catch (Exception e) {
-                    resultMap =  "调用分销上架API失败";
-                }
-            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(status)) {
-                // 下架
-                try {
-                    result = dtWareService.offShelfProduct(shopProp, numIId);
-                } catch (Exception e) {
-                    resultMap ="调用分销下架API失败";
-                }
-            }
-            if (StringUtils.isNotBlank(result)) {
-                Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
-                if (responseMap != null && responseMap.containsKey("data") && responseMap.get("data") != null) {
-                    Map<String, Object> resultDtMap = (Map<String, Object>) responseMap.get("data");
-                    if (!DtConstants.C_DT_RETURN_SUCCESS_OK.equals(resultDtMap.get("result"))) {
-                        if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
-                            resultMap = "调用分销上架API失败";
-                        } else {
-                            resultMap = "调用分销下架API失败";
-                        }
-                    }
-                }
-            }
-        }// 独立官网
-        else if (PlatFormEnums.PlatForm.CNN.getId().equals(shopProp.getPlatform_id())) {
-
-            String result = "";
-            if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
-                // 上架
-                try {
-                    result = cnnWareService.doWareUpdateListing(shopProp, Long.valueOf(numIId));
-                } catch (Exception e) {
-                    resultMap ="调用独立官网上架API失败";
-                }
-            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(status)) {
-                // 下架
-                try {
-                    result = cnnWareService.doWareUpdateDelisting(shopProp, Long.valueOf(numIId));
-                } catch (Exception e) {
-                    resultMap = "调用独立官网上架API失败";
-                }
-            }
-            if (!com.voyageone.common.util.StringUtils.isEmpty(result)) {
-                Map<String, Object> responseMap = JacksonUtil.jsonToMap(result);
-                if (responseMap != null && responseMap.containsKey("code") && responseMap.get("code") != null) {
-                    if (CnnConstants.C_CNN_RETURN_SUCCESS_0 != (int) responseMap.get("code")) {
-                        if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
-                            resultMap = "调用独立官网上架API失败";
-                        } else {
-                            resultMap = "调用独立官网下架API失败";
-                        }
-                    }
-                }
-            }
-        }// 其他平台
-        else {
-            resultMap = "不正确的平台";
-        }
-        return resultMap;
     }
 }

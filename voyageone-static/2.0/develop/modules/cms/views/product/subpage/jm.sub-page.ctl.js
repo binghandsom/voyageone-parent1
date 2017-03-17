@@ -72,8 +72,6 @@ define([
         var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
             check.translate = $scope.productInfo.translateStatus;
             check.tax = $scope.productInfo.hsCodeStatus;
-            if(self.vm.platform)
-                self.vm.platform.lock = $scope.productInfo.masterLock;
         });
 
         //监控主类目
@@ -121,6 +119,11 @@ define([
             self.autoSyncPriceMsrp = resp.data.autoSyncPriceMsrp;
             self.autoSyncPriceSale = resp.data.autoSyncPriceSale;
 
+            /**生成共通部分，商品状态*/
+            self.productDetailService.createPstatus(self.element.find("#platform-status"),
+                self.$scope.$new(),
+                self.vm.platform
+            );
         });
 
         vm.productUrl = carts.valueOf(+$scope.cartInfo.value).pUrl;
@@ -546,6 +549,7 @@ define([
             }).then(function () {
                 self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 self.getPlatformData();
+
             });
         });
     };

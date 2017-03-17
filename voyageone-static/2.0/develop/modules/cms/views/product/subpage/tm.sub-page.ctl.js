@@ -78,8 +78,6 @@ define([
         //监控税号和翻译状态和锁定状态
         var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
             check.translate = $scope.productInfo.translateStatus;
-            if(self.vm.platform)
-                self.vm.platform.lock = $scope.productInfo.masterLock;
 
             if ($scope.cartInfo.value != 20)
                 check.tax = $scope.productInfo.hsCodeStatus;
@@ -134,6 +132,11 @@ define([
             self.autoSyncPriceMsrp = resp.data.autoSyncPriceMsrp;
             self.autoSyncPriceSale = resp.data.autoSyncPriceSale;
 
+            /**生成共通部分，商品状态*/
+            self.productDetailService.createPstatus(self.element.find("#platform-status"),
+                self.$scope.$new(),
+                self.vm.platform
+            );
         });
 
         vm.productUrl = carts.valueOf(+$scope.cartInfo.value).pUrl;

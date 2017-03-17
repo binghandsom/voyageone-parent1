@@ -28,7 +28,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -101,46 +104,58 @@ public class CmsPlatformActiveLogService extends BaseService {
             if (PlatFormEnums.PlatForm.JM.getId().equals(shopProp.getPlatform_id())) {
                 numIId = cmsBtProductGroupModel.getPlatformMallId();
             }
-            List<String> pcdList = cmsBtProductGroupModel.getProductCodes();
-            String apiResult = cmsBtCombinedProductService.getUpperAndLowerRacksApiResult(numIId, shopProp, activeStatus);
-            if (apiResult != null) {
+//            List<String> pcdList = cmsBtProductGroupModel.getProductCodes();
+
+            //根据group的code取得cms_bt_product信息数据
+            List<CmsBtProductModel> prodObjList = cmsBtCombinedProductService.getCmsBtProductModelInfo(cartId, cmsBtProductGroupModel.getProductCodes(), channelId);
+
+            // 如果该group下有一个code不是被锁状态,则可以执行上下架操作
+            if (prodObjList.size() > 0) {
+
+                String apiResult = cmsBtCombinedProductService.getUpperAndLowerRacksApiResult(numIId, shopProp, activeStatus);
+                if (apiResult != null) {
+                    errorInfo = new CmsBtOperationLogModel_Msg();
+                    errorInfo.setSkuCode("numberId:" + cmsBtProductGroupModel.getNumIId());
+                    errorInfo.setMsg(apiResult);
+                    failList.add(errorInfo);
+                }
+
+                // 保存调用结果
+                for (CmsBtProductModel prodObj : prodObjList) {
+                    String prodCode = prodObj.getCommon().getFields().getCode();
+                    //根据group的code判断cms_bt_product表是否有异常信息数据
+                    String failedComment = failedComment(prodObj, cartId, prodCode, channelId);
+                    String result;
+                    if (failedComment != null) {
+                        result = "3";
+                    } else {
+                        if (apiResult == null) {
+                            result = "1";
+                        } else {
+                            result = "2";
+                            failedComment = apiResult;
+                        }
+                        // 更新cms_bt_product表
+                        rs = bulkList3.addBulkJongo(updateCmsBtProductInfo(cartId, activeStatus, userName, prodCode, apiResult));
+                        if (rs != null) {
+                            $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s, code=%s cmsBtProduct更新结果=%s", cartId, channelId, prodCode, rs.toString());
+                        }
+                    }
+                    //插入cms_bt_platform_active_log表
+                    insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, channelId, activeStatus, comment, cmsBtProductGroupModel, userName, result, failedComment);
+                }
+                if (apiResult == null) {
+                    //更新cms_bt_product_group表
+                    rs = bulkList2.addBulkJongo(updateCmsBtProductGroupInfo(cartId, cmsBtProductGroupModel.getGroupId(), activeStatus, userName));
+                    if (rs != null) {
+                        $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s, numIId=%s cmsBtProductGroup更新结果=%s", cartId, channelId, numIId, rs.toString());
+                    }
+                }
+            } else {
                 errorInfo = new CmsBtOperationLogModel_Msg();
                 errorInfo.setSkuCode("numberId:" + cmsBtProductGroupModel.getNumIId());
-                errorInfo.setMsg(apiResult);
+                errorInfo.setMsg("该group下所有的code都处于锁定状态,无法上下架.");
                 failList.add(errorInfo);
-            }
-
-            // 保存调用结果
-            for (String prodCode : pcdList) {
-                //根据group的code取得cms_bt_product信息数据
-                CmsBtProductModel prodObj = getCmsBtProductModelInfo(cartId, prodCode, channelId);
-                //根据group的code判断cms_bt_product表是否有异常信息数据
-                String failedComment = failedComment(prodObj, cartId, prodCode, channelId);
-                String result;
-                if (failedComment != null) {
-                    result = "3";
-                } else {
-                    if (apiResult == null) {
-                        result = "1";
-                    } else {
-                        result = "2";
-                        failedComment = apiResult;
-                    }
-                    // 更新cms_bt_product表
-                    rs = bulkList3.addBulkJongo(updateCmsBtProductInfo(cartId, activeStatus, userName, prodCode, apiResult));
-                    if (rs != null) {
-                        $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s, code=%s cmsBtProduct更新结果=%s", cartId, channelId, prodCode, rs.toString());
-                    }
-                }
-                //插入cms_bt_platform_active_log表
-                insertCmsBtPlatformActiveLogModel(prodCode, batchNo, cartId, channelId, activeStatus, comment, cmsBtProductGroupModel, userName, result, failedComment);
-            }
-            if (apiResult == null) {
-                //更新cms_bt_product_group表
-                rs = bulkList2.addBulkJongo(updateCmsBtProductGroupInfo(cartId, cmsBtProductGroupModel.getGroupId(), activeStatus, userName));
-                if (rs != null) {
-                    $debug("CmsPlatformActiveLogService cartId=%d, channelId=%s, numIId=%s cmsBtProductGroup更新结果=%s", cartId, channelId, numIId, rs.toString());
-                }
             }
         }
         rs = bulkList2.execute();
@@ -275,17 +290,6 @@ public class CmsPlatformActiveLogService extends BaseService {
             return pStatus.name();
         }
         return null;
-    }
-
-    /**
-     * 根据group的code取得cms_bt_product信息数据
-     */
-    private CmsBtProductModel getCmsBtProductModelInfo(Integer cartId, String prodCode, String channelId) {
-        JongoQuery queryObj = new JongoQuery();
-        queryObj.setQuery("{'common.fields.code':#}");
-        queryObj.setParameters(prodCode);
-        queryObj.setProjectionExt("lock", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".pPlatformMallId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".pStatus", "platforms.P" + cartId + ".mainProductCode");
-        return cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
     }
 
     /**

@@ -943,7 +943,7 @@ public class SxProductService extends BaseService {
                 continue;
             }
             // 2016/06/12 add desmond START
-            if (!StringUtils.isEmpty(productModel.getLock()) && "1".equals(productModel.getLock())) {
+            if (!StringUtils.isEmpty(productPlatformCart.getLock()) && "1".equals(productPlatformCart.getLock())) {
                 removeProductList.add(productModel);
                 continue;
             }
@@ -4458,7 +4458,7 @@ public class SxProductService extends BaseService {
     public void insertSxWorkLoad(CmsBtProductModel productModel, String modifier) {
         productModel.getPlatforms().forEach((cartId, platform) -> {
             if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())
-                    && (StringUtils.isEmpty(productModel.getLock()) || "0".equals(productModel.getLock()))) {
+                    && (StringUtils.isEmpty(platform.getLock()) || "0".equals(platform.getLock()))) {
                 insertSxWorkLoad(productModel.getChannelId(), productModel.getCommon().getFields().getCode(), platform.getCartId(), modifier, isSmartSx(productModel.getChannelId(), platform.getCartId()));
             }
         });
@@ -4473,7 +4473,7 @@ public class SxProductService extends BaseService {
     public void insertSxWorkLoad(CmsBtProductModel productModel, String modifier, boolean blnSmartSx) {
         productModel.getPlatforms().forEach( (cartId, platform) -> {
             if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())
-                    && (StringUtils.isEmpty(productModel.getLock()) || "0".equals(productModel.getLock()))) {
+                    && (StringUtils.isEmpty(platform.getLock()) || "0".equals(platform.getLock()))) {
                 insertSxWorkLoad(productModel.getChannelId(), productModel.getCommon().getFields().getCode(), platform.getCartId(), modifier, blnSmartSx);
             }
         });
@@ -4495,7 +4495,7 @@ public class SxProductService extends BaseService {
             // 指定平台，已批准且未锁定时插入指定平台的workload上新
             if (cartIdList.contains(StringUtils.toString(platform.getCartId()))
                     && CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())
-                    && (StringUtils.isEmpty(productModel.getLock()) || "0".equals(productModel.getLock()))) {
+                    && (StringUtils.isEmpty(platform.getLock()) || "0".equals(platform.getLock()))) {
                 insertSxWorkLoad(productModel.getChannelId(), productModel.getCommon().getFields().getCode(), platform.getCartId(), modifier, isSmartSx(productModel.getChannelId(), platform.getCartId()));
             }
         });
@@ -4518,7 +4518,7 @@ public class SxProductService extends BaseService {
             // 指定平台，已批准且未锁定时插入指定平台的workload上新
             if (cartIdList.contains(StringUtils.toString(platform.getCartId()))
                     && CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())
-                    && (StringUtils.isEmpty(productModel.getLock()) || "0".equals(productModel.getLock()))) {
+                    && (StringUtils.isEmpty(platform.getLock()) || "0".equals(platform.getLock()))) {
                 insertSxWorkLoad(productModel.getChannelId(), productModel.getCommon().getFields().getCode(), platform.getCartId(), modifier, blnSmartSx);
             }
         });

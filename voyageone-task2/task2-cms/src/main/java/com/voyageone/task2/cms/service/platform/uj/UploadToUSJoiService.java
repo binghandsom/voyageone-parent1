@@ -2071,12 +2071,14 @@ public class UploadToUSJoiService extends BaseCronTaskService {
     }
 
     private void checkProduct(CmsBtProductModel cmsProduct) {
-        if (StringUtil.isEmpty(cmsProduct.getCommonNotNull().getCatPath())) {
-            throw new BusinessException("主类目没有计算成功");
-        }
-        if (!ListUtils.isNull(categoryWhite)) {
-            if (!categoryWhite.stream().anyMatch(cat -> cmsProduct.getCommonNotNull().getCatPath().indexOf(cat) == 0)) {
-                throw new BusinessException("主类目属于黑名单不能导入CMS：" + cmsProduct.getCommonNotNull().getCatPath());
+        if(!ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId().equals(cmsProduct.getOrgChannelId())){
+            if (StringUtil.isEmpty(cmsProduct.getCommonNotNull().getCatPath())) {
+                throw new BusinessException("主类目没有计算成功");
+            }
+            if (!ListUtils.isNull(categoryWhite)) {
+                if (!categoryWhite.stream().anyMatch(cat -> cmsProduct.getCommonNotNull().getCatPath().indexOf(cat) == 0)) {
+                    throw new BusinessException("主类目属于黑名单不能导入CMS：" + cmsProduct.getCommonNotNull().getCatPath());
+                }
             }
         }
 

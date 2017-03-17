@@ -10,6 +10,7 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.impl.CmsProperty;
@@ -307,7 +308,7 @@ public class CmsAdvanceSearchController extends CmsController {
         Map<String, Integer> cartIdMap = new HashMap();
         for (TypeChannelBean cartObj : cartList) {
             CmsBtProductModel_Platform_Cart ptfObj = cmsBtProductBean.getPlatform(Integer.parseInt(cartObj.getValue()));
-            if (ptfObj != null) {
+            if (ptfObj != null && !ListUtils.isNull(ptfObj.getSkus())) {
                 int qty = 0;
                 for (BaseMongoMap<String, Object> map : ptfObj.getSkus()) {
                     String sku = (String) map.get("skuCode");
