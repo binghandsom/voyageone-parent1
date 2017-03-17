@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -31,15 +32,12 @@ import java.util.Map;
 @RabbitListener()
 public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMallPromotionPriceSyncMQMessageBody> {
 
-    private final CmsBtJmPromotionService cmsBtJmPromotionService;
-
-    private final JumeiHtMallService jumeiHtMallService;
-
     final
     CmsBtJmPromotionProductDaoExt cmsBtJmPromotionProductDaoExt;
-
     final
     CmsBtJmPromotionProductDao cmsBtJmPromotionProductDao;
+    private final CmsBtJmPromotionService cmsBtJmPromotionService;
+    private final JumeiHtMallService jumeiHtMallService;
 
     @Autowired
     public CmsJmMallPromotionPriceSyncMQJob(CmsBtJmPromotionService cmsBtJmPromotionService, JumeiHtMallService jumeiHtMallService, CmsBtJmPromotionProductDaoExt cmsBtJmPromotionProductDaoExt, CmsBtJmPromotionProductDao cmsBtJmPromotionProductDao) {
@@ -52,8 +50,6 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
     @Override
     public void onStartup(CmsJmMallPromotionPriceSyncMQMessageBody messageBody) throws Exception {
         Integer jmPid = messageBody.getJmPromotionId();
-        List<String> productCodes = messageBody.getProductCodes();
-        super.count = productCodes == null ? 0 :productCodes.size();
 
         String channelId = messageBody.getChannelId();
         ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.JM.getId());
@@ -65,6 +61,8 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
 
         // 找到该活动下所有sku
         List<Map<String, Object>> skus = cmsBtJmPromotionService.selectCloseJmPromotionSku(jmPid);
+        List<String> productCodes = skus.stream().map(sku -> sku.get("product_code").toString()).distinct().collect(Collectors.toList());
+        super.count = productCodes == null ? 0 : productCodes.size();
         // 设置请求参数
 //        for (Map<String, Object> skuPriceBean : skus) {
 //            if (ListUtils.isNull(productCodes) || productCodes.contains(skuPriceBean.get("product_code").toString())) {
