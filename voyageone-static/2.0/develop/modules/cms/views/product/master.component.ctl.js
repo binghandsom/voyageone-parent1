@@ -463,8 +463,8 @@ define([
 
                                     initialize();
                                     scope.productInfo.masterLock = lock;
-                                    //通知子页面
-                                    scope.productInfo.checkFlag = new Date().getTime();
+                                    //刷新子页面
+                                    scope.productInfo.masterCategory = new Date().getTime();
                                 });
                                 break;
                         }

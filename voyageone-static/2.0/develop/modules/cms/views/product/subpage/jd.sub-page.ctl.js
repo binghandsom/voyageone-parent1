@@ -73,8 +73,6 @@ define([
         var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
             check.translate = $scope.productInfo.translateStatus;
             check.tax = $scope.productInfo.hsCodeStatus;
-            if(self.vm.platform)
-                self.vm.platform.lock = $scope.productInfo.masterLock;
         });
 
         //监控主类目
