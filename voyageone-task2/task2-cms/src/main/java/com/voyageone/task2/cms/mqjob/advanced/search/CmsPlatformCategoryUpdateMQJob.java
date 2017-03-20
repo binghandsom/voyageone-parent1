@@ -2,10 +2,10 @@ package com.voyageone.task2.cms.mqjob.advanced.search;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.components.rabbitmq.annotation.VOSubRabbitListener;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsPlatformCategoryUpdateMQMessageBody;
-import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import com.voyageone.task2.cms.mqjob.TBaseMQCmsSubService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +17,8 @@ import java.util.List;
  * Created by james on 2017/1/13.
  */
 @Service
-@RabbitListener()
-public class CmsPlatformCategoryUpdateMQJob extends TBaseMQCmsService<CmsPlatformCategoryUpdateMQMessageBody> {
+@VOSubRabbitListener
+public class CmsPlatformCategoryUpdateMQJob extends TBaseMQCmsSubService<CmsPlatformCategoryUpdateMQMessageBody> {
 
     @Autowired
     private ProductService productService;

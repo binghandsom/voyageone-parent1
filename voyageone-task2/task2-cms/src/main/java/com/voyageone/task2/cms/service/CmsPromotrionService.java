@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author james.li on 2016/2/16.
@@ -51,19 +54,21 @@ public class CmsPromotrionService extends BaseCronTaskService {
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-
+        ExecutorService executor = Executors.newFixedThreadPool(4);
         for (TaskControlBean taskControlBean : taskControlList) {
             if ("order_channel_id".equalsIgnoreCase(taskControlBean.getCfg_name())) {
                 try {
                     String channelId = taskControlBean.getCfg_val1();
                     String cartId = taskControlBean.getCfg_val2();
-                    updatePromotion(channelId, cartId);
+                    executor.execute(() -> updatePromotion(channelId, cartId));
                 }catch (Exception e){
                     e.printStackTrace();
                     issueLog.log(e, ErrorType.BatchJob,SubSystem.CMS);
                 }
             }
         }
+        executor.shutdown(); // 并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
+        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
     }
 
     public void updatePromotion(String channelId, String cartId) {
