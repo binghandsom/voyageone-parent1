@@ -32,7 +32,64 @@ public class BaseSellerCidsDictTest {
 	protected enum CompareType {
 		Eq,
 		Neq,
-		Like
+		Like,
+		NLike
+	}
+
+	protected class SimpleCase {
+		public CompareType getCompareType() {
+			return compareType;
+		}
+
+		public void setCompareType(CompareType compareType) {
+			this.compareType = compareType;
+		}
+
+		public RuleWord getIgnoreCaseFlg() {
+			return ignoreCaseFlg;
+		}
+
+		public void setIgnoreCaseFlg(RuleWord ignoreCaseFlg) {
+			this.ignoreCaseFlg = ignoreCaseFlg;
+		}
+
+		public RuleWord getRuleWordLeft() {
+			return ruleWordLeft;
+		}
+
+		public void setRuleWordLeft(RuleWord ruleWordLeft) {
+			this.ruleWordLeft = ruleWordLeft;
+		}
+
+		public RuleWord getRuleWordRight() {
+			return ruleWordRight;
+		}
+
+		public void setRuleWordRight(RuleWord ruleWordRight) {
+			this.ruleWordRight = ruleWordRight;
+		}
+
+		private CompareType compareType;
+		private RuleWord ignoreCaseFlg;
+		private RuleWord ruleWordLeft;
+		private RuleWord ruleWordRight;
+
+		public SimpleCase(CompareType compareType, RuleWord ignoreCaseFlg, RuleWord ruleWordLeft, RuleWord ruleWordRight) {
+			this.compareType = compareType;
+			this.ignoreCaseFlg = ignoreCaseFlg;
+			this.ruleWordLeft = ruleWordLeft;
+			this.ruleWordRight = ruleWordRight;
+		}
+		public SimpleCase(CompareType compareType, String ignoreCaseFlg, String ruleWordLeft, String ruleWordRight) {
+			this.compareType = compareType;
+			if (StringUtils.isEmpty(ignoreCaseFlg)) {
+				this.ignoreCaseFlg = null;
+			} else {
+				this.ignoreCaseFlg = new TextWord(ignoreCaseFlg);
+			}
+			this.ruleWordLeft = new FeedOrgWord(ruleWordLeft);
+			this.ruleWordRight = new TextWord(ruleWordRight);
+		}
 	}
 
 	protected class SellerCids {
@@ -89,6 +146,151 @@ public class BaseSellerCidsDictTest {
 		System.out.println("=====================================");
 		System.out.println(json);
 
+	}
+
+	protected RuleExpression doCreateSimpleIf(List<SimpleCase> simpleCaseList, SellerCids value) {
+		// 根字典
+		RuleExpression ruleRoot = new RuleExpression();
+
+		List<RuleWord> ruleWordListIf = new ArrayList<>();
+		CustomWordValueConditionAnd customWordValueConditionAnd = new CustomWordValueConditionAnd();
+		CustomModuleUserParamConditionAnd userParamAnd = new CustomModuleUserParamConditionAnd();
+		RuleExpression ruleExpressionAnd = new RuleExpression();
+
+		for (SimpleCase simpleCase : simpleCaseList) {
+
+			// 设置条件
+			if (simpleCase.compareType.equals(CompareType.Eq)) {
+				// 参数
+				CustomModuleUserParamConditionEq conditionParamEq = new CustomModuleUserParamConditionEq();
+
+				// Eq的左边
+				{
+					RuleExpression param = new RuleExpression();
+					param.addRuleWord(simpleCase.ruleWordLeft);
+					conditionParamEq.setFirstParam(param);
+				}
+
+				// Eq的右边
+				{
+					RuleExpression param = new RuleExpression();
+					param.addRuleWord(simpleCase.ruleWordRight);
+					conditionParamEq.setSecondParam(param);
+				}
+
+				// 是否忽略大小写
+				if (simpleCase.ignoreCaseFlg != null) {
+					RuleExpression param = new RuleExpression();
+					param.addRuleWord(simpleCase.ignoreCaseFlg);
+					conditionParamEq.setIgnoreCaseFlg(param);
+				}
+
+				CustomWordValueConditionEq conditionEq = new CustomWordValueConditionEq();
+				conditionEq.setUserParam(conditionParamEq);
+
+				ruleExpressionAnd.addRuleWord(new CustomWord(conditionEq));
+			} else if (simpleCase.compareType.equals(CompareType.Neq)) {
+				// 参数
+				CustomModuleUserParamConditionNeq conditionParamNeq = new CustomModuleUserParamConditionNeq();
+
+				// Neq的左边
+				{
+					RuleExpression param = new RuleExpression();
+					param.addRuleWord(simpleCase.ruleWordLeft);
+					conditionParamNeq.setFirstParam(param);
+				}
+
+				// Neq的右边
+				{
+					RuleExpression param = new RuleExpression();
+					param.addRuleWord(simpleCase.ruleWordRight);
+					conditionParamNeq.setSecondParam(param);
+				}
+
+				// 是否忽略大小写
+				if (simpleCase.ignoreCaseFlg != null) {
+					RuleExpression param = new RuleExpression();
+					param.addRuleWord(simpleCase.ignoreCaseFlg);
+					conditionParamNeq.setIgnoreCaseFlg(param);
+				}
+
+				CustomWordValueConditionNeq conditionNeq = new CustomWordValueConditionNeq();
+				conditionNeq.setUserParam(conditionParamNeq);
+
+				ruleExpressionAnd.addRuleWord(new CustomWord(conditionNeq));
+			} else if (simpleCase.compareType.equals(CompareType.Like)) {
+				// 参数
+				CustomModuleUserParamConditionLike conditionParamLike = new CustomModuleUserParamConditionLike();
+
+				// Like的左边
+				{
+					RuleExpression param = new RuleExpression();
+					param.addRuleWord(simpleCase.ruleWordLeft);
+					conditionParamLike.setFirstParam(param);
+				}
+
+				// Like的右边
+				{
+					RuleExpression param = new RuleExpression();
+					param.addRuleWord(simpleCase.ruleWordRight);
+					conditionParamLike.setSecondParam(param);
+				}
+
+				CustomWordValueConditionLike conditionLike = new CustomWordValueConditionLike();
+				conditionLike.setUserParam(conditionParamLike);
+
+				ruleExpressionAnd.addRuleWord(new CustomWord(conditionLike));
+			} else if (simpleCase.compareType.equals(CompareType.NLike)) {
+				// 参数
+				CustomModuleUserParamConditionNLike conditionParamNLike = new CustomModuleUserParamConditionNLike();
+
+				// NLike的左边
+				{
+					RuleExpression param = new RuleExpression();
+					param.addRuleWord(simpleCase.ruleWordLeft);
+					conditionParamNLike.setFirstParam(param);
+				}
+
+				// NLike的右边
+				{
+					RuleExpression param = new RuleExpression();
+					param.addRuleWord(simpleCase.ruleWordRight);
+					conditionParamNLike.setSecondParam(param);
+				}
+
+				CustomWordValueConditionNLike conditionNLike = new CustomWordValueConditionNLike();
+				conditionNLike.setUserParam(conditionParamNLike);
+
+				ruleExpressionAnd.addRuleWord(new CustomWord(conditionNLike));
+			}
+		}
+
+		userParamAnd.setConditionListExpression(ruleExpressionAnd);
+		customWordValueConditionAnd.setUserParam(userParamAnd);
+		ruleWordListIf.add(new CustomWord(customWordValueConditionAnd));
+
+		RuleExpression conditionListExpressionIf = new RuleExpression();
+		conditionListExpressionIf.setRuleWordList(ruleWordListIf);
+
+		// 最终的条件
+		CustomModuleUserParamIf customModuleUserParamIf = new CustomModuleUserParamIf();
+		customModuleUserParamIf.setCondition(conditionListExpressionIf);
+
+		// 最终的值
+		// propValue "cId(子分类id)|cIds(父分类id,子分类id)|cName(父分类名字>子分类名字)|cNames(父分类名字,子分类名字)"
+		RuleExpression propValue = new RuleExpression();
+		propValue.addRuleWord(new TextWord(value.getTextSellerCidsValue()));
+		customModuleUserParamIf.setPropValue(propValue);
+
+		// 设置返回值
+		CustomWordValueIf customWordValueIf = new CustomWordValueIf();
+		customWordValueIf.setUserParam(customModuleUserParamIf);
+
+		RuleWord customWordIf = new CustomWord(customWordValueIf);
+
+		ruleRoot.addRuleWord(customWordIf);
+
+		return ruleRoot;
 	}
 
 	protected RuleExpression doCreateSimpleIf_Feed_Text(CompareType compareType, String ignoreCaseFlg, String ruleWordLeft, String ruleWordRight, SellerCids value) {
@@ -187,6 +389,28 @@ public class BaseSellerCidsDictTest {
 			conditionLike.setUserParam(conditionParamLike);
 
 			ruleWordListIf.add(new CustomWord(conditionLike));
+		} else if (compareType.equals(CompareType.NLike)) {
+			// 参数
+			CustomModuleUserParamConditionNLike conditionParamNLike = new CustomModuleUserParamConditionNLike();
+
+			// NLike的左边
+			{
+				RuleExpression param = new RuleExpression();
+				param.addRuleWord(ruleWordLeft);
+				conditionParamNLike.setFirstParam(param);
+			}
+
+			// NLike的右边
+			{
+				RuleExpression param = new RuleExpression();
+				param.addRuleWord(ruleWordRight);
+				conditionParamNLike.setSecondParam(param);
+			}
+
+			CustomWordValueConditionNLike conditionNLike = new CustomWordValueConditionNLike();
+			conditionNLike.setUserParam(conditionParamNLike);
+
+			ruleWordListIf.add(new CustomWord(conditionNLike));
 		}
 
 		RuleExpression conditionListExpressionIf = new RuleExpression();
