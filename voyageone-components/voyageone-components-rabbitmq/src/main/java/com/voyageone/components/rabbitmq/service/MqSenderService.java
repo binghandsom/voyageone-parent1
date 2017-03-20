@@ -1,16 +1,16 @@
 package com.voyageone.components.rabbitmq.service;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.components.rabbitmq.utils.MQConfigUtils;
-import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.common.spring.SpringContext;
 import com.voyageone.common.util.JacksonUtil;
-
-
 import com.voyageone.components.ComponentBase;
-import com.voyageone.components.rabbitmq.config.VoRabbitMqLocalConfig;
-import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
+import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
+import com.voyageone.components.rabbitmq.config.VoRabbitMqLocalConfig;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.components.rabbitmq.namesub.IMQMessageSubBeanName;
+import com.voyageone.components.rabbitmq.utils.MQConfigUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -70,9 +70,19 @@ public class MqSenderService extends ComponentBase {
     public void sendMessage(String exchange, String routingKey, Object message,
                             boolean isBackupMessage, boolean isLoad, boolean isDeclareQueue, long delaySecond) {
         try {
-            // isload add ipaddress to routingKey
-            if (isLoad && !routingKey.endsWith(MQConfigUtils.EXISTS_IP)) {
-                routingKey = MQConfigUtils.getAddStrQueneName(routingKey);
+
+            if (!routingKey.endsWith(MQConfigUtils.EXISTS_IP)) {
+                // add subBeanName
+                if (message instanceof IMQMessageSubBeanName) {
+                    String subBeanName = ((IMQMessageSubBeanName)message).getSubBeanName();
+                    if (!StringUtils.isBlank(subBeanName)) {
+                        routingKey = MQConfigUtils.getNewBeanName(routingKey, subBeanName);
+                    }
+                }
+                // isload add ipaddress to routingKey
+                if (isLoad) {
+                    routingKey = MQConfigUtils.getAddStrQueneName(routingKey);
+                }
             }
 
             AmqpAdmin amqpAdmin = SpringContext.getBean(AmqpAdmin.class);
