@@ -17,12 +17,14 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
+import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.ImagesService;
 import com.voyageone.service.impl.cms.PlatformService;
+import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
@@ -71,6 +73,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
     @Autowired
     private InventoryDao inventoryDao;
 
+    @Autowired
+    private TagService tagService;
+
     // excel cell的内容长度限制
     private final static int CELL_LENGTH_LIMIT = 2000;
     // DB检索页大小
@@ -81,8 +86,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private final static String[] _GROUP_STATIC_COLS_ZN = {"款号", "品牌", "供应商", "主类目", "产品名称英语", "产品名称中文", "主商品编码", "feed分类", "原始尺码类型"};
     //common.fields.origSizeType
     /*code级导出时和平台无关的固定列：英文和中文列头名称*/
-    private final static String[] _CODE_STATIC_COLS = {"code", "brand", "supplier", "category", "productNameEn", "originalTitleCn", "model", "color", "feeCatPath", "origSizeType", "quantity"};
-    private final static String[] _CODE_STATIC_COLS_ZN = {"商品编码", "品牌", "供应商", "主类目", "产品名称英语", "产品名称中文", "款号", "颜色/口味/香型等", "feed分类", "原始尺码类型", "库存"};
+    private final static String[] _CODE_STATIC_COLS = {"code", "brand", "supplier", "category", "productNameEn", "originalTitleCn", "model", "color", "feeCatPath", "origSizeType", "quantity","freeTags"};
+    private final static String[] _CODE_STATIC_COLS_ZN = {"商品编码", "品牌", "供应商", "主类目", "产品名称英语", "产品名称中文", "款号", "颜色/口味/香型等", "feed分类", "原始尺码类型", "库存","自由标签"};
 
     /*sku级导出时和平台无关的固定列：英文和中文列头名称*/
     private final static String[] _SKU_STATIC_COLS = {
@@ -700,6 +705,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         CellStyle cs = book.createCellStyle();
         cs.setWrapText(true);
         int nowIdx = 0;
+        Map<String, CmsBtTagBean> cachTag = new HashMap<>();
         for (CmsBtProductBean item : items) {
             if (item.getCommon() == null) {
                 continue;
@@ -733,6 +739,33 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 codeQty = codeQty + qty;
             }
             FileUtils.cell(row, index++, unlock).setCellValue(codeQty);
+
+
+            // 取得自由标签
+            List<CmsBtTagBean> tagModelList = new ArrayList<>();
+            List<String> temp = new ArrayList<>();
+            for(String tag: item.getFreeTags()){
+                if (cachTag.containsKey(tag)) {
+                    tagModelList.add(cachTag.get(tag));
+                } else {
+                    temp.add(tag);
+                }
+            }
+            if (temp.size() > 0) {
+                List<CmsBtTagBean> ts = tagService.getTagPathNameByTagPath(channelId, temp);
+                if (!ListUtils.isNull(ts)) {
+                    for(CmsBtTagBean cmsBtTagBean : ts){
+                        cachTag.put(cmsBtTagBean.getTagPath(), cmsBtTagBean);
+                        tagModelList.add(cmsBtTagBean);
+                    }
+                }
+            }
+            String tag ="";
+            if(!ListUtils.isNull(tagModelList)) {
+                tag = tagModelList.stream().map(CmsBtTagBean::getTagChildrenName).collect(Collectors.joining(","));
+            }
+            FileUtils.cell(row, index++, unlock).setCellValue(tag);
+
 
             /**平台级内容输出*/
             for (TypeChannelBean cartObj : cartList) {
