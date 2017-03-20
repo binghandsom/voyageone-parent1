@@ -16,7 +16,7 @@
                 </h4>
             </div>
             <div class="panel-body" ng-if="ctrl.panelShow">
-                <!--<div class="row">
+                <div class="row">
                     <div class="col-md-6">
                         <div class="row">
                             <label class="col-sm-1 control-label">
@@ -30,10 +30,11 @@
                             <div class="col-sm-3">
                                 <div class="onoffswitch">
                                     <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox"
-                                           ng-model="vm.lockStatus.onOffSwitch3"
-                                           ng-click="lockProduct('onOffSwitch3')"
-                                           id="onOffSwitch3">
-                                    <label class="onoffswitch-label" for="onOffSwitch3">
+                                           ng-model="ctrl.vm.platform.lock"
+                                           ng-true-value="'1'" ng-false-value="'0'"
+                                           ng-click="ctrl.platFormLock()"
+                                           id="GT{{cartInfo.value}}">
+                                    <label class="onoffswitch-label" for="GT{{cartInfo.value}}">
                                         <span class="onoffswitch-inner"></span>
                                         <span class="onoffswitch-switch"></span>
                                     </label>
@@ -41,7 +42,7 @@
                             </div>
                         </div>
                     </div>
-                </div>-->
+                </div>
                 <div class="row m-t-xs">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -118,16 +119,16 @@
                                             <i class="fa fa-arrow-circle-right"></i>&nbsp;移动到其他Group
                                         </a>
                                     </li>
-                                    <!--                                        <li>
-                                                                                <a href="javascript:void(0)">
-                                                                                    <i class="fa fa-arrow-circle-right"></i>&nbsp;产品下架
-                                                                                </a>
-                                                                            </li>
-                                                                            <li>
-                                                                                <a href="javascript:void(0)">
-                                                                                    <i class="fa fa-arrow-circle-right"></i>&nbsp;产品上架
-                                                                                </a>
-                                                                            </li>-->
+                                    <li ng-if="ctrl.vm.platform.pNumIId">
+                                        <a href="javascript:void(0)" ng-click="ctrl.upperAndLowerFrame('ToInStock')">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;产品下架
+                                        </a>
+                                    </li>
+                                    <li ng-if="ctrl.vm.platform.pNumIId">
+                                        <a href="javascript:void(0)" ng-click="ctrl.upperAndLowerFrame('ToOnSale')">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;产品上架
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>&emsp;
                             <div class="btn-group">
@@ -188,9 +189,7 @@
                     <div class="row">
                         <div class="col-sm-9">
                             <div class="row form-group">
-                                <label class="col-md-2 control-label">
-                                    <platform-status data="ctrl.vm.platform" ng-if="ctrl.vm.platform"></platform-status>
-                                </label>
+                                <label class="col-md-2 control-label" id="platform-status"></label>
                                 <div class="col-md-8">
                                     <label class="col-md-1" style="width: 35px;">
                                         <span notice-direction="bottom" notice-content="【{{cartInfo.name}} NumIID】，红灯时为上新/更新失败状态，请及时修正；绿灯时为在售状态；黄灯时为在库状态；灰灯时为未发布状态。点击以上{{cartInfo.name}} NumIID进入{{cartInfo.name}}商品页面。" notice-tip class="text-warnings cur-p"><i class="icon fa fa-question-circle text-md"></i></span>

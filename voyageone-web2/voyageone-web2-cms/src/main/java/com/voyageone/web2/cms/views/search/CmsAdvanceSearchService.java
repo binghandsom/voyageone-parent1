@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.google.gson.Gson;
 import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.CmsConstants;
@@ -507,6 +508,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
             advSearchExportMQMessageBody.setSearchValue(searchValue);
             advSearchExportMQMessageBody.setChannelIdMap(channelIdMap);
             advSearchExportMQMessageBody.setSender(userInfo.getUserName());
+
             cmsMqSenderService.sendMessage(advSearchExportMQMessageBody);
             return true;
         } else {

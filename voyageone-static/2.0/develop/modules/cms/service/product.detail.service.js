@@ -7,12 +7,13 @@
 
 define([
     'cms',
+    'modules/cms/enums/Carts',
     'modules/cms/enums/Status'
-], function (cms) {
+], function (cms, cartEnum) {
 
     cms.service("productDetailService", productDetailService);
 
-    function productDetailService($q, $productDetailService, $filter) {
+    function productDetailService($q, $productDetailService, $filter, confirm, $compile) {
 
         this.getProductInfo = getProductInfo;
         this.updateProductDetail = updateProductDetail;
@@ -54,6 +55,7 @@ define([
         this.doAppSwitch = doAppSwitch;
         this.doTranslateStatus = doTranslateStatus;
         this.getMainCategoryInfo = getMainCategoryInfo;
+        this.upperLowerFrame = upperLowerFrame;
 
         /**
          * 获取页面产品信息
@@ -802,6 +804,18 @@ define([
 
         }
 
+        function upperLowerFrame(req) {
+            var defer = $q.defer();
+            $productDetailService.upperLowerFrame(req)
+                .then(function (res) {
+                    defer.resolve(res);
+                }, function (res) {
+                    defer.reject(res);
+                });
+
+            return defer.promise;
+        }
+
         /**
          * @description 判断产品详情页的翻译|税号|平台|属性
          */
@@ -835,7 +849,7 @@ define([
 
             platform.pAttributeStatus = vm.checkFlag.attribute == 1 ? "1" : "0";
             platform.status = statusEntity.mark == "temporary" ? vm.preStatus : vm.status;
-            platform.pStatus = vm.status == "Approved" && platform.pStatus == "" ? "WaitingPublish" :platform.pStatus;
+            platform.pStatus = vm.status == "Approved" && platform.pStatus == "" ? "WaitingPublish" : platform.pStatus;
             platform.sellerCats = vm.sellerCats;
             platform.cartId = Number(cartId);
 
@@ -845,5 +859,41 @@ define([
                 });
             }
         };
+
+        /**
+         * 平台级Lock
+         * @param prodId cartId lock
+         */
+        this.lockPlatForm = function (req) {
+            var defer = $q.defer(),
+                msg = req.lock ? '锁定' : '解锁';
+
+            confirm("您是否要" + msg + cartEnum.valueOf(Number(req.cartId)).desc + "?").then(function () {
+
+                $productDetailService.lockPlatForm(req).then(function () {
+
+                    defer.resolve(msg + '成功！');
+                }, function (res) {
+                    defer.reject(res);
+                });
+
+            }, function () {
+                defer.reject(false);
+            });
+
+            return defer.promise
+        };
+
+        /**
+         * @param targetDom 目标jq对象
+         * @param pScope    绑定在jq对象上的scope作用域
+         */
+        this.createPstatus = function (targetDom, pScope, data) {
+            var _pStatusHtml = "<platform-status data='data' ng-if='data'></platform-status>",
+                _pStatusDom = angular.element(_pStatusHtml);
+
+            pScope.data = data;
+            targetDom.html($compile(_pStatusDom)(pScope));
+        }
     }
 });

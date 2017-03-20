@@ -214,7 +214,7 @@ public class BackDoorController extends CmsController {
     @RequestMapping(value = "changeDataByNewModel", method = RequestMethod.GET)
     public Object changeDataBy20160708(@RequestParam("channelId") String channelId, @RequestParam("platformId") String platformId, @RequestParam("productCode") String code) {
 
-        final String productNewStatusName = CmsConstants.ProductStatus.New.name();
+        final String productNewStatusName = CmsConstants.ProductStatus.Pending.name();
 
         List<String> codes = new ArrayList<>();
         if (!StringUtils.isEmpty(code)) {
@@ -480,7 +480,7 @@ public class BackDoorController extends CmsController {
 //                    }
 
                     OldCmsBtProductModel_Field oldField = oldCmsBtProductModel.getFields();
-                    if (oldField.getStatus().equals(CmsConstants.ProductStatus.New.name())
+                    if (oldField.getStatus().equals(CmsConstants.ProductStatus.Pending.name())
                             || oldField.getStatus().equals(CmsConstants.ProductStatus.Pending.name())) {
                         platformInfo.setStatus(CmsConstants.ProductStatus.Pending);
                         platformInfo.setpAttributeStatus("0");

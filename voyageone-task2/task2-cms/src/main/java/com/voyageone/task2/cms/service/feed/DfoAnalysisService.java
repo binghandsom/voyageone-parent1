@@ -10,6 +10,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CamelUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.task2.cms.bean.SuperFeedDfoBean;
@@ -19,13 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -231,6 +231,28 @@ public class DfoAnalysisService extends BaseAnalysisService  {
         $info("取得 [ %s ] 的 Product 数 %s", categorPath, modelBeans.size());
 
         return modelBeans;
+    }
+
+    @Override
+    protected boolean backupFeedFile(String channel_id) {
+        $info("备份处理文件开始");
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        String date_ymd = sdf.format(date);
+
+        String filename = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id));
+        String filename_backup = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + "status" + "_"
+                + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id));
+        File file = new File(filename);
+        File file_backup = new File(filename_backup);
+
+        if (!file.renameTo(file_backup)) {
+//            logger.error("产品文件备份失败");
+            $info("产品文件备份失败");
+        }
+
+        $info("备份处理文件结束");
+        return true;
     }
 
     @Override

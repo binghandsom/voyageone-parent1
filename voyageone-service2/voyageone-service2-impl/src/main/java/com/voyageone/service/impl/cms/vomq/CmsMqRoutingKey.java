@@ -55,6 +55,9 @@ public class CmsMqRoutingKey {
     // 高级检索 - 批量更新共通属性
     public static final String CMS_UPDATE_PRODUCT_FIELDS = "VOCmsUpdateProductFieldsQueue";
 
+    // 高级检索 - 批量智能上新
+    public static final String CMS_UPDATE_PRODUCT_PLATFORM_STATUS_TO_APPROVE_BY_SMART = "VOCmsUpdateProductPlatformStatusToApproveBySmartQueue";
+
     // 高级检索 - 异步生成文件
     public static final String CMS_EXPORT_PRODUCT_INFO = "VOCmsExportProductInfoQueue";
 
@@ -88,7 +91,11 @@ public class CmsMqRoutingKey {
     // 聚美活动价格同步到聚美商城价格
     public static final String CMS_JM_MALL_PROMOTION_PRICE_SYNC = "VOCmsJmMallPromotionPriceSyncQueue";
 
+    // feed数据导入接口
+    public static final String CMS_FEED_IMPORT_MQ_JOB = "CmsFeedImportMQJobQueue";
 
+    //批量lock平台    added by piao
+    public static final String  CMS_ADV_SEARCH_LOCK_PRODUCTS = "VOCmsAdvSearchLockProductsMQJobQueue";
 
     // 未整理的业务内容
     /**
@@ -160,6 +167,8 @@ public class CmsMqRoutingKey {
      * @since 2.10.0
      */
     public static final String CMS_TASK_CatelogySaleAttrJdJob = "voyageone_cms_task_CatelogySaleAttrJdJobService_queue";
+
+
 
 }
 

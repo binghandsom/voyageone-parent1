@@ -1,4 +1,5 @@
 package com.voyageone.service.impl.cms.vomqjobservice;
+import com.google.gson.Gson;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsBrandBlockMQMessageBody;
@@ -20,6 +21,7 @@ public class CmsBrandBlockService extends BaseService {
         mqMessageBody.setData(data);
         mqMessageBody.setBlocking(blocking);
         mqMessageBody.setSender(sender);
+
         cmsMqSenderService.sendMessage(mqMessageBody);
     }
 

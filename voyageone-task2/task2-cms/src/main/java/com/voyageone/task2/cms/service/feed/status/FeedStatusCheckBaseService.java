@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.daoext.cms.CmsFeedLiveSkuDaoExt;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.feed.FeedSaleService;
@@ -59,11 +60,17 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
         sale = Collections.synchronizedSet(new HashSet<String>());
 
         List<CmsFeedLiveSkuModel> skus = getSkuList();
+        if(ListUtils.isNull(skus)){
+            $info("没有数据");
+            return;
+        }
         List<List<CmsFeedLiveSkuModel>> skuList = CommonUtil.splitList(skus, 1000);
         $info("删除channel=" + getChannel().getId() + "的数据");
         deleteData();
         $info("插入channel=" + getChannel().getId() + "的数据。共" + skus.size() + "条");
         skuList.forEach(this::insertData);
+        skus.clear();
+        skuList.clear();
 
         long cnt = feedInfoService.getCnt(getChannel().getId(), new HashMap<>());
         long pageCnt = cnt / pageSize + (cnt % pageSize == 0 ? 0 : 1);
@@ -79,6 +86,7 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
 
         saleList = notSale.stream().map(Object::toString).collect(Collectors.joining(","));
         $info(String.format(" sale -> not sale 共%d个[%s]",notSale.size(),saleList));
+        backupFeedFile();
     }
 
     private void insertData(List<CmsFeedLiveSkuModel> skus) {
@@ -93,7 +101,12 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
 
     private void checkSkuStatus(CmsBtFeedInfoModel cmsBtFeedInfoModel) {
         cmsBtFeedInfoModel.getSkus().forEach(sku -> {
-            CmsFeedLiveSkuModel cmsFeedLiveSku = selectOne(sku.getSku());
+            CmsFeedLiveSkuModel cmsFeedLiveSku;
+            if(getChannel().getId().equals("018")) {
+                cmsFeedLiveSku = selectOne(sku.getSku());
+            }else{
+                cmsFeedLiveSku = selectOne(sku.getClientSku());
+            }
             if (sku.getIsSale() == 0 && cmsFeedLiveSku != null) {
                 $info(getChannel().getId()+ " " + sku.getSku() + " notSale -> sale");
                 feedSaleService.sale(getChannel().getId(),sku.getClientSku(),cmsBtFeedInfoModel.getQty());
@@ -111,6 +124,10 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
         param.put("channelId",getChannel().getId());
         param.put("sku",sku);
         return cmsFeedLiveSkuDaoExt.selectOne(param);
+    }
+
+    protected void backupFeedFile(){
+
     }
 
 }

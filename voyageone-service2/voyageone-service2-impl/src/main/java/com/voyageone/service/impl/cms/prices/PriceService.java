@@ -4,16 +4,22 @@ import com.google.common.collect.Lists;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.Constants;
 import com.voyageone.common.asserts.Assert;
 import com.voyageone.common.configs.Carts;
+import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Common;
@@ -124,6 +130,41 @@ public class PriceService extends BaseService {
             chg |= skuCompare(old, product, cartId);
         }
         return chg;
+    }
+
+    /**
+     * 用于feed导入的时候初步计算中国相关价格
+     * @param feed
+     */
+    public void setFeedPrice(CmsBtFeedInfoModel feed) throws PriceCalculateException, IllegalPriceConfigException{
+        // 如果是子店采用旗舰店的价格公式计算
+
+        String channelId = feed.getChannelId();
+        List<TypeChannelBean> typeChannelBeans = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "cn");
+        for(TypeChannelBean typeChannelBean : typeChannelBeans){
+            if (Channels.isUsJoi(typeChannelBean.getValue()) && typeChannelBeans.size() == 1) {
+                channelId = "928";
+                break;
+            }
+        };
+
+        CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanWithDefault(channelId, PRICE_CALCULATOR, "0");
+
+        String priceCalculator;
+        if (priceCalculatorConfig == null || StringUtils.isEmpty(priceCalculator = priceCalculatorConfig.getConfigValue1()))
+            throw new IllegalPriceConfigException("无法获取价格计算方式的配置: " + channelId);
+
+        switch (priceCalculator) {
+            case PRICE_CALCULATOR_SYSTEM:
+                setFeedPriceBySystem(feed, channelId);
+                break;
+            case PRICE_CALCULATOR_FORMULA:
+                setFeedPriceByFormula(feed, channelId);
+                break;
+            default:
+                throw new IllegalPriceConfigException("获取的价格计算方式不合法: %s ('%s')", channelId, priceCalculator);
+        }
+
     }
 
     /**
@@ -405,7 +446,7 @@ public class PriceService extends BaseService {
      * @param cartId    平台Id
      * @return String
      */
-    public String getMPriceRetailCalcFormulaOption(CmsBtProductModel product, Integer cartId) throws IllegalPriceConfigException{
+    public String getPriceRetailCalcFormulaOption(CmsBtProductModel product, Integer cartId) throws IllegalPriceConfigException{
 
         String channelId = product.getChannelId();
         // 尝试获取类目级别的价格计算公式
@@ -420,6 +461,64 @@ public class PriceService extends BaseService {
 
             // 返回平台级配置
             formulaConfig = getPriceConfig(product, formulaConfigs);
+        }
+
+        if (formulaConfig == null || StringUtils.isEmpty(formulaConfig.getConfigValue2()))
+            throw new IllegalPriceConfigException("无法获取价格计算公式配置: %s, %s", channelId, PRICE_RETAIL_CALC_FORMULA);
+
+        return formulaConfig.getConfigValue2();
+    }
+
+    /**
+     * 获取PRICE_MSRP_CALC_FORMULA的配置信息(Feed用)
+     *
+     * @param product   产品信息
+     * @param channelId 店铺Id
+     * @param cartId    平台Id
+     * @return String
+     */
+    public String getFeedPriceMsrpCalcFormulaOption(CmsBtFeedInfoModel product, String channelId, Integer cartId) throws IllegalPriceConfigException{
+        // 尝试获取类目级别的价格计算公式
+        // 根据主类目获取价格公式
+        List<CmsChannelConfigBean> formulaConfigs = CmsChannelConfigs.getConfigBeans(channelId, PRICE_MSRP_CALC_FORMULA, String.valueOf(cartId));
+
+        // 返回平台级配置
+        CmsChannelConfigBean formulaConfig = getFeedPriceConfig(product, formulaConfigs);
+
+        if (formulaConfig == null) {
+            formulaConfigs = CmsChannelConfigs.getConfigBeans(channelId, PRICE_MSRP_CALC_FORMULA, "0");
+
+            // 返回平台级配置
+            formulaConfig = getFeedPriceConfig(product, formulaConfigs);
+        }
+
+        if (formulaConfig == null || StringUtils.isEmpty(formulaConfig.getConfigValue2()))
+            throw new IllegalPriceConfigException("无法获取价格计算公式配置: %s, %s", channelId, PRICE_MSRP_CALC_FORMULA);
+
+        return formulaConfig.getConfigValue2();
+    }
+
+    /**
+     * 获取PRICE_RETAIL_CALC_FORMULA的配置信息(Feed)
+     *
+     * @param product   产品信息
+     * @param channelId 店铺Id
+     * @param cartId    平台Id
+     * @return String
+     */
+    public String getFeedPriceRetailCalcFormulaOption(CmsBtFeedInfoModel product, String channelId, Integer cartId) throws IllegalPriceConfigException{
+        // 尝试获取类目级别的价格计算公式
+        // 根据主类目获取价格公式
+        List<CmsChannelConfigBean> formulaConfigs = CmsChannelConfigs.getConfigBeans(channelId, PRICE_RETAIL_CALC_FORMULA, String.valueOf(cartId));
+
+        // 返回平台级配置
+        CmsChannelConfigBean formulaConfig = getFeedPriceConfig(product, formulaConfigs);
+
+        if (formulaConfig == null) {
+            formulaConfigs = CmsChannelConfigs.getConfigBeans(channelId, PRICE_RETAIL_CALC_FORMULA, "0");
+
+            // 返回平台级配置
+            formulaConfig = getFeedPriceConfig(product, formulaConfigs);
         }
 
         if (formulaConfig == null || StringUtils.isEmpty(formulaConfig.getConfigValue2()))
@@ -658,7 +757,7 @@ public class PriceService extends BaseService {
 
         // 获取价格计算公式
         String msrpFormula = getPriceMsrpCalcFormulaOption(product, cartId);
-        String retailFormula = getMPriceRetailCalcFormulaOption(product, cartId);
+        String retailFormula = getPriceRetailCalcFormulaOption(product, cartId);
 
         // 获取价格处理逻辑规则
         CmsChannelConfigBean autoSyncPriceMsrp = getAutoSyncPriceMsrpOption(channelId, cartId);
@@ -728,6 +827,167 @@ public class PriceService extends BaseService {
     }
 
     /**
+     * 通过SYSTEM的价格公式计算feed的价格
+     * @param feed 产品信息
+     * @param channelId  店铺Id
+     * @throws PriceCalculateException
+     * @throws IllegalPriceConfigException
+     */
+    private void setFeedPriceBySystem(CmsBtFeedInfoModel feed, String channelId) throws PriceCalculateException, IllegalPriceConfigException {
+
+        // 公式参数: 其他费用
+        final Double otherFee = 0.0d;
+
+        // 公式参数: 汇率
+        Double exchangeRate = feeExchangeService.getExchangeRateForUsd();
+
+        Integer platformId = 2;
+
+        // 计算是否计算 MSRP
+        CmsChannelConfigBean autoSyncPriceMsrpConfig = getAutoSyncPriceMsrpOption(channelId, 0);
+
+        // 计算发货方式
+
+        //ShippingType存在cms_mt_channel_config里
+        CmsChannelConfigBean shippingTypeConfig = getShippingTypeOption(channelId, 0);
+
+        CmsMtFeeCommissionService.CommissionQueryBuilder commissionQueryBuilder = feeCommissionService.new CommissionQueryBuilder()
+                .withChannel(channelId)
+                .withPlatform(platformId)
+                .withCart(928)
+                .withCategory(null);
+
+        // 公式参数: 退货率
+        Double returnRate = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_RETURN);
+
+        // 公式参数: 公司佣金比例
+        Double voyageOneCommission = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_VOYAGE_ONE);
+
+        // 公式参数: 平台佣金比例
+        Double platformCommission = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_PLATFORM);
+
+        // 计算税号
+        /*
+         * 1.如果无税号，价格计算 按默认值11.9（配置）中计算 中国建议售价,中国指导售价和中国最终售价
+         * 2.如果税号从无 -》有，根据税号的税率重新计算 中国建议售价,中国指导售价和中国最终售价
+         * 3.如果税号从有 -》有，现有逻辑不变，根据价格同步配置，重新计算 中国指导售价和中国最终售价（看配置）
+         */
+        Double taxRate = feeTaxService.getDefaultTaxRate();
+
+        Double catCostRate = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_CATEGORY_COST);
+        if (catCostRate == null || catCostRate.doubleValue() < 0) {
+            catCostRate = 1D;
+        }
+        Double catCommission = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_CATEGORY);
+        if (catCommission == null) {
+            catCommission = 0D;
+        }
+
+        // 获取中国指导售价/中国最终售价的价格设置
+        CmsChannelConfigBean autoSyncPriceSaleConfig = getAutoSyncPriceSaleOption(channelId, 0);
+
+        // 进入计算阶段
+        SystemPriceCalculator systemPriceCalculator = new SystemPriceCalculator()
+                .setTaxRate(taxRate)
+                .setPfCommission(platformCommission)
+                .setReturnRate(returnRate)
+                .setVoCommission(voyageOneCommission)
+                .setExchangeRate(exchangeRate)
+                .setOtherFee(otherFee)
+                .setCatCostRate(catCostRate)
+                .setCatCommission(catCommission);
+
+        // 对设置到价格计算器上的参数
+        // 在计算之前做一次检查
+        if (!systemPriceCalculator.isValid())
+            throw new PriceCalculateException("创建价格计算器失败. %s [ 以下是管理员查看 => %s, %s, %s, %s ]",
+                    systemPriceCalculator.getErrorMessage(), channelId, platformId, 0, "");
+
+        // 对 sku 进行匹配
+        // 获取重量进行运费计算
+        for (CmsBtFeedInfoModel_Sku feedSku : feed.getSkus()) {
+
+            Double clientNetPrice = feedSku.getPriceNet();
+            Double clientMsrp = feedSku.getPriceClientMsrp();
+
+            // 获取sku的重量
+            Double weight = Double.valueOf(feedSku.getWeightOrg());
+            if (weight == null || weight <= 0) {
+
+                // 获取默认商品重量
+                String weightString = shippingTypeConfig.getConfigValue2();
+//
+                if (StringUtils.isEmpty(weightString) || !StringUtils.isNumeric(weightString) || (weight = Double.valueOf(weightString)) <= 0)
+                    throw new PriceCalculateException("没有为渠道 %s (%s) 的(SKU) %s 找到可用的商品重量", channelId, 0, feedSku.getSku());
+            }
+            weight = Double.sum(weight, Double.valueOf(shippingTypeConfig.getConfigValue3()));
+
+            // 公式参数: 获取运费
+            Double shippingFee = feeShippingService.getShippingFee(shippingTypeConfig.getConfigValue1(), weight);
+            systemPriceCalculator.setShippingFee(shippingFee);
+
+            // !! 最终价格计算 !!
+            // 计算指导价(已包含处理小数点逻辑)
+            Double retailPrice = roundDouble(systemPriceCalculator.calculate(clientNetPrice), autoSyncPriceSaleConfig.getConfigValue3());
+            if (retailPrice <= 0)
+                throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的指导价不合法: %s", channelId, 0, feedSku.getSku(), retailPrice);
+
+            // 设置中国指导售价
+            feedSku.setPriceCurrent(retailPrice);
+
+
+            // 计算原始中国建议售价(已包含处理小数点逻辑)
+            Double originPriceMsrp = roundDouble(systemPriceCalculator.calculate(clientMsrp), autoSyncPriceMsrpConfig.getConfigValue3());
+            if (originPriceMsrp <= 0)
+                throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的 MSRP 不合法: %s", channelId, 0, feedSku.getSku(), originPriceMsrp);
+
+            // 设置原始中国建议售价
+            feedSku.setPriceMsrp(originPriceMsrp);
+        }
+    }
+
+    /**
+     * 使用固定公式计算价格, 并保存到商品模型上
+     *
+     * @param feed         目标商品
+     * @param channelId    价格计算公式渠道
+     * @throws IllegalPriceConfigException 获取价格公式错误
+     * @throws PriceCalculateException     价格计算错误
+     */
+    private void setFeedPriceByFormula(CmsBtFeedInfoModel feed, String channelId) throws IllegalPriceConfigException, PriceCalculateException {
+
+        // 获取价格计算公式
+        // 尝试获取类目级别的价格计算公式
+        // 根据主类目获取价格公式
+        String msrpFormula = getFeedPriceMsrpCalcFormulaOption(feed, channelId, 0);
+        String retailFormula = getFeedPriceRetailCalcFormulaOption(feed, channelId, 0);
+
+        // 获取价格处理逻辑规则
+        CmsChannelConfigBean autoSyncPriceMsrp = getAutoSyncPriceMsrpOption(channelId, 0);
+        CmsChannelConfigBean autoSyncPriceSale = getAutoSyncPriceSaleOption(channelId, 0);
+
+        for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
+
+            // 计算指导价(已包含处理小数点逻辑)
+            Double retailPrice = calculateFeedByFormula(retailFormula, sku, autoSyncPriceSale.getConfigValue3());
+            if (retailPrice <= 0)
+                throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的指导价不合法: %s", channelId, 0, sku.getSku(), retailPrice);
+
+            // 设置中国指导售价和中国指导确认售价
+            sku.setPriceCurrent(retailPrice);
+
+            // 计算原始中国建议售价(已包含处理小数点逻辑)
+            Double originPriceMsrp = calculateFeedByFormula(msrpFormula, sku, autoSyncPriceMsrp.getConfigValue3());
+            if (originPriceMsrp <= 0)
+                throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的 MSRP 不合法: %s", channelId, 0, sku.getSku(), originPriceMsrp);
+
+            // 设置原始中国建议售价
+            sku.setPriceMsrp(originPriceMsrp);
+        }
+
+    }
+
+    /**
      * 使用公式为 sku 计算相应价格
      *
      * @param formula 价格计算公式, 从 {@code getCalculateFormula()} 获取
@@ -736,6 +996,41 @@ public class PriceService extends BaseService {
      * @throws IllegalPriceConfigException sku 中不包含公式所需的参数
      */
     private Double calculateByFormula(String formula, CmsBtProductModel_Sku sku, String roundUp) throws IllegalPriceConfigException {
+
+        ExpressionParser parser = new SpelExpressionParser();
+
+        Expression expression = parser.parseExpression(formula);
+
+        StandardEvaluationContext context = new StandardEvaluationContext(sku);
+
+        try {
+            BigDecimal price = expression.getValue(context, BigDecimal.class);
+
+            return roundDouble(price.doubleValue(), roundUp);
+        } catch (SpelEvaluationException sp) {
+            throw new IllegalPriceConfigException("使用固定公式计算时出现错误", sp);
+        }
+    }
+
+    /**
+     * 使用公式为 sku 计算相应价格(Feed)
+     *
+     * @param formula 价格计算公式, 从 {@code getCalculateFormula()} 获取
+     * @param sku     包含公式参数的 sku 模型
+     * @return 计算后的价格
+     * @throws IllegalPriceConfigException sku 中不包含公式所需的参数
+     */
+    private Double calculateFeedByFormula(String formula, CmsBtFeedInfoModel_Sku sku, String roundUp) throws IllegalPriceConfigException {
+
+        Map<String, String> priceExchange = new HashMap<>();
+        priceExchange.put("priceMsrp", "priceMsrp");
+        priceExchange.put("priceRetail", "priceCurrent");
+        priceExchange.put("clientMsrpPrice", "priceClientMsrp");
+        priceExchange.put("clientRetailPrice", "priceClientRetail");
+        priceExchange.put("clientNetPrice", "priceNet");
+        for (Map.Entry<String, String> entry : priceExchange.entrySet()) {
+            formula = formula.replaceAll(entry.getKey(), entry.getValue());
+        }
 
         ExpressionParser parser = new SpelExpressionParser();
 
@@ -1316,6 +1611,65 @@ public class PriceService extends BaseService {
     }
 
     /**
+     * 获取价格公式(Feed)
+     * @param product 产品信息
+     * @param formulaConfigs 价格公式列表
+     * @return
+     */
+    private CmsChannelConfigBean getFeedPriceConfig(CmsBtFeedInfoModel product, List<CmsChannelConfigBean> formulaConfigs) {
+
+        // 查找主类目
+        formulaConfigs.sort((o1, o2) -> o1.getConfigValue1().compareTo(o2.getConfigValue1()) * -1);
+        CmsChannelConfigBean formulaConfig = null;
+        for (CmsChannelConfigBean config : formulaConfigs) {
+            if (!StringUtils.isEmpty(product.getMainCategoryEn())
+                    && product.getMainCategoryEn().indexOf(config.getConfigValue1()) == 0) {
+                formulaConfig = config;
+                break;
+            }
+        }
+
+        // 查找feed类目
+        if (formulaConfig == null) {
+            for (CmsChannelConfigBean config : formulaConfigs) {
+                if (!StringUtils.isEmpty(product.getCategory())
+                        && product.getCategory().indexOf(config.getConfigValue1()) == 0) {
+                    formulaConfig = config;
+                    break;
+                }
+            }
+        }
+
+        // 查找feed类目
+        if (formulaConfig == null) {
+            for (CmsChannelConfigBean config : formulaConfigs) {
+                if (!StringUtils.isEmpty(product.getModel())
+                        && product.getModel().indexOf(config.getConfigValue1()) == 0) {
+                    formulaConfig = config;
+                    break;
+                }
+            }
+        }
+
+        // 查找默认为0的
+        if (formulaConfig == null) {
+            for (CmsChannelConfigBean config : formulaConfigs) {
+                if ("0".equals(config.getConfigValue1())) {
+                    formulaConfig = config;
+                    break;
+                }
+            }
+        }
+
+        // 返回第一个
+        if (formulaConfig == null && formulaConfigs.size() > 0) {
+            formulaConfig = formulaConfigs.get(0);
+        }
+
+        return formulaConfig;
+    }
+
+    /**
      * 体系价格计算器
      * <p>
      * 在同一款商品进行价格计算时, 用来保持部分参数. 同时包含对参数和价格、计算部分的校验
@@ -1439,4 +1793,6 @@ public class PriceService extends BaseService {
             return price;
         }
     }
+
+
 }

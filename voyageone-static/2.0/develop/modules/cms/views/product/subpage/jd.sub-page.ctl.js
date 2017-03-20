@@ -69,7 +69,7 @@ define([
 
         self.element = element;
 
-        //监控税号和翻译状态
+        //监控税号和翻译状态和锁定状态
         var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
             check.translate = $scope.productInfo.translateStatus;
             check.tax = $scope.productInfo.hsCodeStatus;
@@ -125,6 +125,12 @@ define([
             self.autoSyncPriceMsrp = resp.data.autoSyncPriceMsrp;
             self.autoSyncPriceSale = resp.data.autoSyncPriceSale;
 
+            /**生成共通部分，商品状态*/
+            self.productDetailService.createPstatus(self.element.find("#platform-status"),
+                self.$scope.$new(),
+                self.vm.platform
+            );
+
         }, function (resp) {
             vm.noMaterMsg = resp.message.indexOf("Server Exception") >= 0 ? null : resp.message;
         });
@@ -144,7 +150,7 @@ define([
             productDetailService = self.productDetailService,
             $scope = self.$scope;
 
-        if (self.vm.status == 'Approved') {
+        if (self.vm.platform.pNumIId != '') {
             self.alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
             return;
         }
@@ -357,6 +363,7 @@ define([
             platform = self.vm.platform,
             cartId = self.vm.platform.cartId;
 
+        // liking店不需要检测平台类目是否填写完毕
         if ([28, 29].indexOf(cartId) < 0 && self.vm.checkFlag.category == 0) {
             self.alert('请检查类目是否设置完毕！');
             return;
@@ -510,7 +517,9 @@ define([
     };
 
     SpJdController.prototype.openOffLinePop = function (type) {
-        var self = this, vm = self.vm;
+        var self = this,
+            $translate = self.$translate,
+            vm = self.vm;
 
         if (vm.mastData == null)
             return;
@@ -530,17 +539,20 @@ define([
             productCode: vm.mastData.productCode,
             type: type
         }).then(function () {
+            self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
             self.getPlatformData();
         });
     };
 
     SpJdController.prototype.openSwitchMainPop = function () {
-        var self = this;
+        var self = this,
+            $translate = self.$translate;
 
         self.popups.openSwitchMain({
             cartId: self.$scope.cartInfo.value,
             productCode: self.vm.mastData.productCode
         }).then(function () {
+            self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
             self.getPlatformData();
             self.vm.noMaterMsg = null;
         });
@@ -603,7 +615,25 @@ define([
             $compile(modal)(modalChildScope);
         });
     };
+    /**
+     * 产品详情上下架
+     */
+    SpJdController.prototype.upperAndLowerFrame = function(mark) {
+        var self = this,
+            $translate = self.$translate,
+            msg = mark === 'ToOnSale'? '上架':'下架';
 
+        self.confirm('您是否执行'　+ msg +'操作？').then(function(){
+            self.productDetailService.upperLowerFrame({
+                cartId: self.$scope.cartInfo.value,
+                productCode: self.vm.mastData.productCode,
+                pStatus:mark
+            }).then(function () {
+                self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                self.getPlatformData();
+            });
+        });
+    };
     /**
      * 操作区域图片上传按钮
      */
@@ -621,6 +651,26 @@ define([
         }).then(function (platform) {
             self.vm.platform = platform;
         });
+    };
+
+    /**
+     * 锁平台
+     */
+    SpJdController.prototype.platFormLock = function () {
+        var self = this, notify = self.notify,
+            lock = angular.copy(self.vm.platform.lock);
+
+        self.productDetailService.lockPlatForm({
+            cartId: self.$scope.cartInfo.value,
+            prodId: self.$scope.productInfo.productId,
+            lock: Number(lock)
+        }).then(function (res) {
+            notify.success(res);
+        }, function (res) {
+            if (!res)
+                self.vm.platform.lock = lock === '1' ? '0' : '1';
+        });
+
     };
 
     cms.directive('jdSubPage', function () {

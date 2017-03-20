@@ -15,9 +15,9 @@ import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.openapi.OpenApiBaseService;
 import com.voyageone.web2.sdk.api.exception.ApiException;
-import com.voyageone.web2.sdk.api.request.*;
-import com.voyageone.web2.sdk.api.response.*;
+import com.voyageone.web2.sdk.api.request.vms.*;
 import com.voyageone.web2.openapi.vms.VmsConstants;
+import com.voyageone.web2.sdk.api.response.vms.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

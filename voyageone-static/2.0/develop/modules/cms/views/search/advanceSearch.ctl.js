@@ -8,7 +8,7 @@ define([
     './advance.search.append.ctl'
 ], function (_,carts) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions, popups, $q, shelvesService) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions, popups, $q, shelvesService,$localStorage) {
 
         $scope.vm = {
             searchInfo: {
@@ -83,6 +83,8 @@ define([
         $scope.jdCategoryMapping = jdCategoryMapping;
         $scope.editPlatformAttribute = editPlatformAttribute;
         $scope.addShelves = addShelves;
+        $scope._chkProductSel = _chkProductSel;
+
         /**
          * 初始化数据.
          */
@@ -434,7 +436,7 @@ define([
             function _openAddPromotion(cartId, selList, context) {
                 openAddToPromotionFnc(context.promotion, selList, context).then(function () {
                     searchAdvanceService2.clearSelList();
-                    search();
+                    $scope.search();
                 })
             }
         }
@@ -746,7 +748,7 @@ define([
         $scope.chkSalesTypeList = function () {
             if ($scope.vm.searchInfo.sortSalesType == '' || $scope.vm.searchInfo.sortSalesType == undefined) {
                 $scope.vm.searchInfo.sortSales = '';
-                return;
+
             }
         };
 
@@ -794,7 +796,7 @@ define([
                             $searchAdvanceService2.addFreeTag(data).then(function () {
                                 notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
                                 searchAdvanceService2.clearSelList();
-                                search();
+                                $scope.search();
                             })
                         });
                 });
@@ -818,15 +820,7 @@ define([
                     picList.push([""]);
                 }
             }
-            // for (var attr in item.common.fields) {
-            //     if (attr.indexOf("images") >= 0) {
-            //         var image = _.map(item.common.fields[attr], function (entity) {
-            //             var imageKeyName = "image" + attr.substring(6, 7);
-            //             return entity[imageKeyName] != null ? entity[imageKeyName] : "";
-            //         });
-            //         picList.push(image);
-            //     }
-            // }
+
             this.openImagedetail({'mainPic': picList[0][0], 'picList': picList, 'search': 'master'});
         }
 
@@ -883,8 +877,14 @@ define([
             _chkProductSel(parseInt(cartId), __openIntelligentPublish);
 
             function __openIntelligentPublish(cartId, _selProdList) {
-                confirm('以下3种属性未完成的商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台类目&nbsp;（3）平台品牌')
-                    .then(function () {
+                var _confirmMsg;
+
+                if(cartId != 27)
+                    _confirmMsg = '以下2种属性未完成的商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台品牌';
+                else
+                    _confirmMsg = '以下3种属性未完成的商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台类目&nbsp;（3）平台品牌';
+
+                confirm(_confirmMsg).then(function () {
                         var productIds = [];
                         if (_selProdList && _selProdList.length) {
                             _.forEach(_selProdList, function (object) {
@@ -1002,7 +1002,7 @@ define([
                         $scope.search();
                     });
             }
-        }
+        };
 
         /**
          * popup弹出选择平台数据类目
@@ -1315,7 +1315,7 @@ define([
                             "pCatId": data.selected.catId
                         }).then(function () {
                             notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                            search();
+                            $scope.search();
                         });
                     });
 
@@ -1429,6 +1429,6 @@ define([
 
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions', 'popups', '$q', 'shelvesService'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions', 'popups', '$q', 'shelvesService','$localStorage'];
     return searchIndex;
 });

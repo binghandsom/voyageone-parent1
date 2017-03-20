@@ -535,6 +535,10 @@ public class CmsAdvSearchQueryService extends BaseService {
             queryObject.addParameters(fuzzyStr, fuzzyStr, fuzzyStr, fuzzyStr, fuzzyStr, fuzzyStr);
         }
 
+        if(searchValue.getNoSale() != null && searchValue.getNoSale()){
+            queryObject.addQuery("{'platforms.P20.pNumIId':{$in:['',null]}, 'platforms.P21.pNumIId':{$in:['',null]}, 'platforms.P22.pNumIId':{$in:['',null]}, 'platforms.P23.pNumIId':{$in:['',null]}, 'platforms.P24.pNumIId':{$in:['',null]}, 'platforms.P25.pNumIId':{$in:['',null]}, 'platforms.P26.pNumIId':{$in:['',null]}, 'platforms.P27.pNumIId':{$in:['',null]}}");
+        }
+
         // 获取自定义查询条件
         // 1.  >  有输入框  eg {"a": {$gt: 123123}}
         // 2.  =  有输入框  eg {"a": 123123}}
