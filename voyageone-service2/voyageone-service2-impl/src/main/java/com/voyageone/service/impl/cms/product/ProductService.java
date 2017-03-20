@@ -18,7 +18,6 @@ import com.voyageone.common.configs.Enums.CartEnums.Cart;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
 import com.voyageone.service.bean.cms.product.*;
@@ -33,7 +32,6 @@ import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.wms.InventoryCenterLogicService;
 import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
-import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
 import com.voyageone.service.model.cms.CmsMtEtkHsCodeModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -41,8 +39,6 @@ import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.Predicate;
-import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.lang3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
@@ -1107,6 +1103,37 @@ public class ProductService extends BaseService {
             $debug("更新了 " + subBulkList.size() + " 个 product 的subCategories 共耗时 " +
                     (new Date().getTime() - start.getTime()) + " 毫秒");
         });
+    }
+
+    public BulkWriteResult updateForCheckRight(String channelId, CmsBtProductModel cmsProduct, String modifier) {
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", cmsProduct.getProdId());
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+
+        /**
+         * common
+         */
+        if (cmsProduct.getCommon() != null) {
+            updateMap.put("common", cmsProduct.getCommon());
+        }
+
+        /**
+         * platforms
+         */
+        if (cmsProduct.getPlatforms() != null) {
+            updateMap.put("platforms", cmsProduct.getPlatforms());
+        }
+
+        updateMap.put("modifier", modifier);
+        updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+
+        BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+        return result;
     }
 
     public int updateProductFeedToMaster(String channelId, CmsBtProductModel cmsProduct, String modifier, String comment) {

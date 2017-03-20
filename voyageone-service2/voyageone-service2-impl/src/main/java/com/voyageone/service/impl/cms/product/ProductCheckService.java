@@ -44,7 +44,7 @@ public class ProductCheckService extends BaseService {
      * @param productModel
      * @return
      */
-    public void checkProductIsRight(CmsBtProductModel productModel, List<TypeChannelBean> cartTypeList) throws Exception {
+    public void checkProductIsRight(CmsBtProductModel productModel, List<TypeChannelBean> cartTypeList, String modifer) throws Exception {
         CmsBtProductErrorModel errorModel = new CmsBtProductErrorModel();
         errorModel.setChannelId(productModel.getChannelId());
         errorModel.setProduct_Id(productModel.get_id());
@@ -80,7 +80,7 @@ public class ProductCheckService extends BaseService {
             // 更新group表
             // TODO: 2017/3/7 暂时不更新数据库
 //            productModel.setChannelId("999");
-            cmsBtProductDao.update(productModel);
+            productService.updateForCheckRight(productModel.getChannelId(), productModel, modifer);
             errorModel.getErrors().stream().distinct().collect(Collectors.toList());
             cmsBtProductErrorDao.insert(errorModel);
         }
@@ -430,7 +430,7 @@ public class ProductCheckService extends BaseService {
             // Approve的时候
             else {
                 //
-                if(StringUtils.isEmpty(cartInfo.getpPublishTime())
+                if ((StringUtils.isEmpty(cartInfo.getpPublishTime())
                         || cartInfo.getpStatus() == null
                         || StringUtils.isEmpty(cartInfo.getpNumIId())
                         || StringUtils.isEmpty(cartInfo.getpReallyStatus())
@@ -440,7 +440,8 @@ public class ProductCheckService extends BaseService {
                         || CartEnums.Cart.JM.getValue() == cartId)
                         && StringUtils.isEmpty(cartInfo.getpProductId()))
                         || (CartEnums.Cart.JM.getValue() == cartId
-                        && StringUtils.isEmpty(cartInfo.getpPlatformMallId()))) {
+                        && StringUtils.isEmpty(cartInfo.getpPlatformMallId())))
+                        && !"Error".equals(cartInfo.getpPublishError())) {
                     errorModel.getErrors().add(String.format("platform(_id: %s, cartId: %d), 该商品平台状态为Approved,但是商品相关状态属性不在正确的值内(%s)", productModel.get_id(), cartId, cartInfo.getStatus()));
 //                cartInfo.setStatus(CmsConstants.ProductStatus.Approved);
                     cartInfo.setpNumIId(mainProduct.getPlatform(cartId).getpNumIId());
