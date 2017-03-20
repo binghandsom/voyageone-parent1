@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.daoext.cms.CmsFeedLiveSkuDaoExt;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.feed.FeedSaleService;
@@ -59,11 +60,17 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
         sale = Collections.synchronizedSet(new HashSet<String>());
 
         List<CmsFeedLiveSkuModel> skus = getSkuList();
+        if(ListUtils.isNull(skus)){
+            $info("没有数据");
+            return;
+        }
         List<List<CmsFeedLiveSkuModel>> skuList = CommonUtil.splitList(skus, 1000);
         $info("删除channel=" + getChannel().getId() + "的数据");
         deleteData();
         $info("插入channel=" + getChannel().getId() + "的数据。共" + skus.size() + "条");
         skuList.forEach(this::insertData);
+        skus.clear();
+        skuList.clear();
 
         long cnt = feedInfoService.getCnt(getChannel().getId(), new HashMap<>());
         long pageCnt = cnt / pageSize + (cnt % pageSize == 0 ? 0 : 1);

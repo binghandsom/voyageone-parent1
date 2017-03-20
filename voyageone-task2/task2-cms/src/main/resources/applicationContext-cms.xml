@@ -182,6 +182,7 @@
         <!-- 单独向Target发送数据-->
         <task:scheduled ref="TargetDailyService" method="run" cron="0 0 1,13 * * *"/>
 
+
         <!-- 从天猫/京东获取商品的上下架状态（每天早上2点一次） -->
         <task:scheduled ref="CmsGetPlatformStatusJob" method="run" cron="0 0 0/2 * * ?"/>
 
@@ -210,6 +211,8 @@
 
         <!-- target的feed所有sku的判断,是live还是notLive处理（每天早上3点一次） -->
         <task:scheduled ref="CmsTargetStautsJob" method="run" cron="0 20 0/1 * * ?"/>
+
+        <task:scheduled ref="CmsDfoStatusJob" method="run" cron="1 0/1 * * * ?"/>
 
         <!-- CmsUsCategorySyncJob: 获取 sneakerhead 在美国 cms 的类目结构和 product 的挂靠关系 vantis -->
         <task:scheduled ref="CmsUsCategorySyncJob" method="run" cron="0 45 0/1 * * ?"/>
