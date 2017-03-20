@@ -90,7 +90,8 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
     }
 
     private void insertData(List<CmsFeedLiveSkuModel> skus) {
-        cmsFeedLiveSkuDaoExt.insertList(skus);
+        if(!ListUtils.isNull(skus))
+            cmsFeedLiveSkuDaoExt.insertList(skus);
     }
 
     private void deleteData() {
