@@ -18,7 +18,7 @@ define([
 ], function (cms) {
 
     var mConfig = {
-        bigImageUrl: 'http://image.sneakerhead.com/is/image/sneakerhead/✓?wid=2200&hei=2200'
+        bigImageUrl: 'http://image.voyageone.com.cn/is/image/sneakerhead/✓?wid=2200&hei=2200'
     };
 
     cms.controller('uploadImagesController', (function () {

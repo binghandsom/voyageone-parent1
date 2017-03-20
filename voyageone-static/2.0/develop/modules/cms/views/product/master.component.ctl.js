@@ -10,7 +10,7 @@ define([
 ], function (cms, carts) {
 
     var mConfig = {
-        bigImageUrl: 'http://image.sneakerhead.com/is/image/sneakerhead/✓?wid=2200&hei=2200'
+        bigImageUrl: 'http://image.voyageone.com.cn/is/image/sneakerhead/✓?wid=2200&hei=2200'
     };
 
     cms.directive("masterSchema", function (productDetailService, sizeChartService, $rootScope, systemCategoryService, alert, notify, confirm, $localStorage) {
