@@ -76,7 +76,7 @@
         MAX(modified) as modified
         FROM voyageone_cms2.cms_bt_sx_workload
         WHERE
-        (publish_status=0)
+        (publish_status=3)
         <if test="channelIdList != null and channelIdList.size() > 0">
             AND channel_id IN
             <foreach collection="channelIdList" item="channelId" open="(" separator="," close=")">#{channelId} </foreach>
