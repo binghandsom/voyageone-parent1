@@ -1,11 +1,17 @@
 package com.voyageone.components.solr.service;
 
+import com.voyageone.common.util.BeanUtils;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.solr.BaseSearchService;
+import com.voyageone.components.solr.bean.CmsProductSearchModel;
+import com.voyageone.components.solr.bean.CmsProductSearchPlatformModel;
 import com.voyageone.components.solr.bean.CommIdSearchModel;
 import com.voyageone.components.solr.bean.SolrUpdateBean;
 import com.voyageone.components.solr.query.SimpleQueryBean;
 import com.voyageone.components.solr.query.SimpleQueryCursor;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.bson.Document;
 import org.springframework.data.domain.Page;
@@ -16,6 +22,7 @@ import org.springframework.data.solr.core.query.result.SolrResultPage;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -45,23 +52,62 @@ public class CmsProductSearchService extends BaseSearchService {
                 || cmsBtProductModel.getCommon() == null || cmsBtProductModel.getCommon().getFields() == null) {
             return null;
         }
-
+        CmsBtProductModel_Field field = cmsBtProductModel.getCommon().getFieldsNotNull();
+        CmsProductSearchModel cmsProductSearchModel = new CmsProductSearchModel();
         //id
-        String id = cmsBtProductModel.get_id();
+        cmsProductSearchModel.setId(cmsBtProductModel.get_id());
         //channelId
-        String productChannel = cmsBtProductModel.getChannelId();
+        cmsProductSearchModel.setProductChannel(cmsBtProductModel.getChannelId());
         //product code
-        String productCode = cmsBtProductModel.getCommon().getFields().getCode();
+        cmsProductSearchModel.setProductCode(field.getCode());
         //product model
-        String productModel = cmsBtProductModel.getCommon().getFields().getModel();
+        cmsProductSearchModel.setProductModel(field.getModel());
         // sku code
         List<CmsBtProductModel_Sku> skuList = cmsBtProductModel.getCommon().getSkus();
         List<String> skuCodeList = new ArrayList<>();
         if (skuList != null && !skuList.isEmpty()) {
-            skuCodeList.addAll(skuList.stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
+            cmsProductSearchModel.setSkuCode(skuList.stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
         }
 
-        return createSolrBean(id, productChannel, productCode, productModel, skuCodeList, null, lastVer);
+        cmsProductSearchModel.setTranslateStatus(field.getTranslateStatus());
+
+        cmsProductSearchModel.setBrand(field.getBrand());
+
+        cmsProductSearchModel.setCatPath(cmsBtProductModel.getCommon().getCatPath());
+
+        cmsProductSearchModel.setQuantity(field.getQuantity());
+
+        cmsProductSearchModel.setFreeTags(cmsBtProductModel.getFreeTags());
+
+        cmsProductSearchModel.setTags(cmsBtProductModel.getTags());
+
+        cmsProductSearchModel.setProductType(field.getProductType());
+
+        cmsProductSearchModel.setSizeType(field.getSizeType());
+
+        cmsProductSearchModel.setCategoryStatus(field.getCategoryStatus());
+
+        cmsProductSearchModel.setHsCodeStatus(field.getHsCodeStatus());
+
+        cmsProductSearchModel.setCreated(cmsBtProductModel.getCreated());
+
+        cmsProductSearchModel.setPriceMsrpEd(field.getPriceMsrpEd());
+
+        cmsProductSearchModel.setPriceRetailEd(field.getPriceRetailEd());
+
+        cmsProductSearchModel.setFeedCat(cmsBtProductModel.getFeed().getCatPath());
+
+        cmsBtProductModel.getPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> {
+            if(cmsBtProductModel_platform_cart.getCartId() > 10 && cmsBtProductModel_platform_cart.getCartId() < 900){
+                CmsProductSearchPlatformModel cmsProductSearchPlatformModel = new CmsProductSearchPlatformModel();
+                BeanUtils.copy(cmsBtProductModel_platform_cart, cmsProductSearchPlatformModel);
+                cmsProductSearchModel.getPlatform().put(s, cmsProductSearchPlatformModel);
+            }
+        });
+
+
+
+        return createSolrBean(cmsProductSearchModel, lastVer);
     }
 
     /**
@@ -215,6 +261,45 @@ public class CmsProductSearchService extends BaseSearchService {
 
         return update;
     }
+
+    private SolrUpdateBean createSolrBean(CmsProductSearchModel cmsProductSearchModel, Long lastVer) {
+        if (cmsProductSearchModel.getId() == null || cmsProductSearchModel.getProductChannel() == null) {
+            return null;
+        }
+
+
+        SolrUpdateBean update = new SolrUpdateBean("id", cmsProductSearchModel.getId());
+
+        bean2SolrUpdateBean(update, cmsProductSearchModel,"");
+
+        if (lastVer != null) {
+            update.add("lastVer", lastVer);
+        }
+
+        return update;
+    }
+
+    private void bean2SolrUpdateBean(SolrUpdateBean update, Object object, String prefix){
+        Map<String, Object>data = JacksonUtil.bean2Map(object);
+        data.forEach((s, o) -> {
+            if("id".equals(s)) return;
+            if(o instanceof Collection){
+                for(Object item: (Collection)o){
+                    update.add(prefix+s, item);
+                }
+            }else if(o instanceof Map){
+                Map<String, Object> items = (Map<String, Object>) o;
+                items.forEach((s1, cmsProductSearchPlatformModel) -> {
+                    bean2SolrUpdateBean(update, cmsProductSearchPlatformModel, s1);
+                });
+
+            }else{
+                update.add(prefix+s, o);
+            }
+        });
+
+    }
+
 
     /**
      * queryForCursorByLastVer

@@ -57,10 +57,9 @@ public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
     /**
      * 全量导入
      */
-    void importDataToSearchFromMongo(String channelId) {
+    public void importDataToSearchFromMongo(String channelId) {
         long currentTime = System.currentTimeMillis();
         JongoQuery queryObject = new JongoQuery();
-        queryObject.setProjection("{'_id':1, 'channelId':1, 'common.fields.code':1, 'common.fields.model':1, 'common.skus.skuCode':1}");
         Iterator<CmsBtProductModel> it = cmsBtProductDao.selectCursor(queryObject, channelId);
 
         List<SolrUpdateBean> beans = new ArrayList<>();
