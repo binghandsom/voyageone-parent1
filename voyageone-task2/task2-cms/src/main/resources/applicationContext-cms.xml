@@ -214,6 +214,9 @@
 
         <task:scheduled ref="CmsDfoStatusJob" method="run" cron="1 0/1 * * * ?"/>
 
+        <task:scheduled ref="CmsLuckyVitaminSkuStatusJob" method="run" cron="1 0/1 * * * ?"/>
+
+
         <!-- CmsUsCategorySyncJob: 获取 sneakerhead 在美国 cms 的类目结构和 product 的挂靠关系 vantis -->
         <task:scheduled ref="CmsUsCategorySyncJob" method="run" cron="0 45 0/1 * * ?"/>
 

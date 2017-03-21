@@ -331,12 +331,12 @@ public class ProductCheckService extends BaseService {
 
                 if (CartEnums.Cart.JM.getValue() == cartId
                         && (StringUtils.isEmpty(groupInfo.getPlatformMallId())
-                        || !mainProduct.getPlatform(cartId).getpPlatformMallId().equals(groupInfo.getPlatformMallId()))) {
+                        || (!StringUtils.isEmpty(mainProduct.getPlatform(cartId).getpPlatformMallId())
+                        && !mainProduct.getPlatform(cartId).getpPlatformMallId().equals(groupInfo.getPlatformMallId())))) {
                     flg = true;
                     errorModel.getErrors().add(String.format("group(grup_id: %s, cartId: %d),该group已上新,但是平台PlatformMallId为空或不正确(%s)", groupInfo.get_id(), cartId, mainProduct.getPlatform(cartId).getpPlatformMallId()));
                     groupInfo.setPlatformMallId(mainProduct.getPlatform(cartId).getpPlatformMallId());
-                }
-                else if (!StringUtils.isEmpty(groupInfo.getPlatformMallId())) {
+                } else if (CartEnums.Cart.JM.getValue() != cartId && !StringUtils.isEmpty(groupInfo.getPlatformMallId())) {
                     flg = true;
                     groupInfo.setPlatformMallId("");
                 }
@@ -410,12 +410,12 @@ public class ProductCheckService extends BaseService {
                                 || CartEnums.Cart.TG.getValue() == cartId
                                 || CartEnums.Cart.TB.getValue() == cartId
                                 || CartEnums.Cart.JM.getValue() == cartId)
-                            cartInfo.setpProductId(mainProduct.getPlatform(cartId).getpProductId());
+                            cartInfo.setpProductId(mainProduct.getPlatform(cartId).getpProductId() != null ? mainProduct.getPlatform(cartId).getpProductId() : groupInfo.getPlatformPid());
                         else
                             cartInfo.setpProductId("");
 
                         if (CartEnums.Cart.JM.getValue() == cartId)
-                            cartInfo.setpPlatformMallId(mainProduct.getPlatform(cartId).getpPlatformMallId());
+                            cartInfo.setpPlatformMallId(mainProduct.getPlatform(cartId).getpPlatformMallId() != null ? mainProduct.getPlatform(cartId).getpPlatformMallId() : groupInfo.getPlatformMallId());
                         else
                             cartInfo.setpPlatformMallId("");
 //                    cartInfo.setpPublishTime(mainProduct.getPlatform(cartId).getpPublishTime());
@@ -430,7 +430,7 @@ public class ProductCheckService extends BaseService {
             // Approve的时候
             else {
                 //
-                if ((StringUtils.isEmpty(cartInfo.getpPublishTime())
+                if (StringUtils.isEmpty(cartInfo.getpPublishTime())
                         || cartInfo.getpStatus() == null
                         || StringUtils.isEmpty(cartInfo.getpNumIId())
                         || StringUtils.isEmpty(cartInfo.getpReallyStatus())
@@ -440,29 +440,43 @@ public class ProductCheckService extends BaseService {
                         || CartEnums.Cart.JM.getValue() == cartId)
                         && StringUtils.isEmpty(cartInfo.getpProductId()))
                         || (CartEnums.Cart.JM.getValue() == cartId
-                        && StringUtils.isEmpty(cartInfo.getpPlatformMallId())))
-                        && !"Error".equals(cartInfo.getpPublishError())) {
-                    errorModel.getErrors().add(String.format("platform(_id: %s, cartId: %d), 该商品平台状态为Approved,但是商品相关状态属性不在正确的值内(%s)", productModel.get_id(), cartId, cartInfo.getStatus()));
-//                cartInfo.setStatus(CmsConstants.ProductStatus.Approved);
-                    cartInfo.setpNumIId(mainProduct.getPlatform(cartId).getpNumIId());
+                        && StringUtils.isEmpty(cartInfo.getpPlatformMallId()))) {
 
-                    if (CartEnums.Cart.TM.getValue() == cartId
+                    if ("Error".equals(cartInfo.getpPublishError())
+                            && (!StringUtils.isEmpty(cartInfo.getpPublishTime()))
+                            || cartInfo.getpStatus() != null
+                            || !StringUtils.isEmpty(cartInfo.getpNumIId())
+                            || !StringUtils.isEmpty(cartInfo.getpReallyStatus())
+                            || ((CartEnums.Cart.TM.getValue() == cartId
                             || CartEnums.Cart.TG.getValue() == cartId
                             || CartEnums.Cart.TB.getValue() == cartId
                             || CartEnums.Cart.JM.getValue() == cartId)
-                        cartInfo.setpProductId(mainProduct.getPlatform(cartId).getpProductId());
-                    else
-                        cartInfo.setpProductId("");
+                            && !StringUtils.isEmpty(cartInfo.getpProductId()))
+                            || (CartEnums.Cart.JM.getValue() == cartId
+                            && !StringUtils.isEmpty(cartInfo.getpPlatformMallId()))) {
 
-                    if (CartEnums.Cart.JM.getValue() == cartId)
-                        cartInfo.setpPlatformMallId(mainProduct.getPlatform(cartId).getpPlatformMallId());
-                    else
-                        cartInfo.setpPlatformMallId("");
+                        errorModel.getErrors().add(String.format("platform(_id: %s, cartId: %d), 该商品平台状态为Approved,但是商品相关状态属性不在正确的值内(%s)", productModel.get_id(), cartId, cartInfo.getStatus()));
+//                cartInfo.setStatus(CmsConstants.ProductStatus.Approved);
+                        cartInfo.setpNumIId(mainProduct.getPlatform(cartId).getpNumIId());
+
+                        if (CartEnums.Cart.TM.getValue() == cartId
+                                || CartEnums.Cart.TG.getValue() == cartId
+                                || CartEnums.Cart.TB.getValue() == cartId
+                                || CartEnums.Cart.JM.getValue() == cartId)
+                            cartInfo.setpProductId(!StringUtils.isEmpty(mainProduct.getPlatform(cartId).getpProductId()) ? mainProduct.getPlatform(cartId).getpProductId() : groupInfo.getPlatformPid());
+                        else
+                            cartInfo.setpProductId("");
+
+                        if (CartEnums.Cart.JM.getValue() == cartId)
+                            cartInfo.setpPlatformMallId(!StringUtils.isEmpty(mainProduct.getPlatform(cartId).getpPlatformMallId()) ? mainProduct.getPlatform(cartId).getpPlatformMallId() : groupInfo.getPlatformMallId());
+                        else
+                            cartInfo.setpPlatformMallId("");
 //                    cartInfo.setpPublishTime(mainProduct.getPlatform(cartId).getpPublishTime());
 //                cartInfo.setpPublishError("");
 //                cartInfo.setpPublishMessage("");
-                    cartInfo.setpReallyStatus(mainProduct.getPlatform(cartId).getpReallyStatus());
-                    cartInfo.setpStatus(mainProduct.getPlatform(cartId).getpStatus());
+                        cartInfo.setpReallyStatus(mainProduct.getPlatform(cartId).getpReallyStatus());
+                        cartInfo.setpStatus(mainProduct.getPlatform(cartId).getpStatus());
+                    }
                 }
             }
 

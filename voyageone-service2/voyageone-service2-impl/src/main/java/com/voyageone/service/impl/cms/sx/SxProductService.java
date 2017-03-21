@@ -968,6 +968,9 @@ public class SxProductService extends BaseService {
                         || masterBrand.equals("burberry brit")
                         || masterBrand.equals("burberry childrenswear")
                         || masterBrand.equals("burberry prorsum")
+                        || masterBrand.equals("maje")
+                        || masterBrand.equals("sandro")
+                        || masterBrand.equals("sandro moscoloni")
                         ) {
                     removeProductList.add(productModel);
                     continue;
