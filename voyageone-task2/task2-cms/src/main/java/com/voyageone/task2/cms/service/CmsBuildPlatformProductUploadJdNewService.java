@@ -232,132 +232,132 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         $info("主线程正常结束");
     }
 
-    public void doUploadMain(List<TaskControlBean> taskControlList) {
-        // 由于这个方法可能会自己调用自己循环很多很多次， 不一定会跳出循环， 但又希望能获取到最新的TaskControl的信息， 所以不使用基类里的这个方法了
-        // 为了调试方便， 允许作为参数传入， 但是理想中实际运行中， 基本上还是自主获取的场合比较多
-        if (taskControlList == null) {
-            taskControlList = taskDao.getTaskControlList(getTaskName());
-
-            if (taskControlList.isEmpty()) {
-                $info("没有找到任何配置。");
-                logIssue("没有找到任何配置！！！", getTaskName());
-                return;
-            }
-
-            // 是否可以运行的判断
-            if (!TaskControlUtils.isRunnable(taskControlList)) {
-                return;
-            }
-
-        }
-
-        // 获取该任务可以运行的销售渠道
-        List<TaskControlBean> taskControlBeanList = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.order_channel_id);
-
-        // 准备按组分配线程（相同的组， 会共用相同的一组线程通道， 不同的组， 线程通道互不干涉）
-        Map<String, List<String>> mapTaskControl = new HashMap<>();
-        taskControlBeanList.forEach((l)->{
-            String key = l.getCfg_val2();
-            if (StringUtils.isEmpty(key)) {
-                key = "0";
-            }
-            if (mapTaskControl.containsKey(key)) {
-                mapTaskControl.get(key).add(l.getCfg_val1());
-            } else {
-                List<String> channelList = new ArrayList<>();
-                channelList.add(l.getCfg_val1());
-                mapTaskControl.put(key, channelList);
-            }
-        });
-
-        // 总共最多5个组同时运行
-        int threadPoolCnt = 5;
-//        ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
-        Map<String, ExecutorService> mapThread = new HashMap<>();
-
-        while (true) {
-            boolean blnAllOver = true;
-            for (Map.Entry<String, ExecutorService> entry : mapThread.entrySet()) {
-                if (!entry.getValue().isTerminated()) {
-                    blnAllOver = false;
-                    break;
-                }
-            }
-            if (blnAllOver) {
-                break;
-            }
-
-            mapTaskControl.forEach((k, v)->{
-                boolean blnCreateThread = false;
-
-                if (mapThread.containsKey(k)) {
-                    ExecutorService t = mapThread.get(k);
-                    if (t.isTerminated()) {
-                        // 可以新做一个线程
-                        blnCreateThread = true;
-                    }
-                } else {
-                    // 可以新做一个线程
-                    blnCreateThread = true;
-                }
-
-                if (blnCreateThread) {
-                    ExecutorService t = Executors.newFixedThreadPool(threadPoolCnt);
-
-                    List<String> channelIdList = v;
-                    if (channelIdList != null) {
-                        for (String channelId : channelIdList) {
-                            t.execute(() -> {
-                                try {
-                                    doProductUpload(channelId, CartEnums.Cart.JD.getValue());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            });
-                            t.execute(() -> {
-                                try {
-                                    doProductUpload(channelId, CartEnums.Cart.JG.getValue());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            });
-                            t.execute(() -> {
-                                try {
-                                    doProductUpload(channelId, CartEnums.Cart.JGJ.getValue());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            });
-                            t.execute(() -> {
-                                try {
-                                    doProductUpload(channelId, CartEnums.Cart.JGY.getValue());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            });
-
-                        }
-                    }
-
-                    mapThread.put(k, t);
-
-                }
-            });
-
-        }
-
-//        executor.shutdown(); //并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
-//        try {
-//            // 阻塞，直到线程池里所有任务结束
-//            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-//        } catch (InterruptedException ie) {
-//            ie.printStackTrace();
+//    public void doUploadMain(List<TaskControlBean> taskControlList) {
+//        // 由于这个方法可能会自己调用自己循环很多很多次， 不一定会跳出循环， 但又希望能获取到最新的TaskControl的信息， 所以不使用基类里的这个方法了
+//        // 为了调试方便， 允许作为参数传入， 但是理想中实际运行中， 基本上还是自主获取的场合比较多
+//        if (taskControlList == null) {
+//            taskControlList = taskDao.getTaskControlList(getTaskName());
+//
+//            if (taskControlList.isEmpty()) {
+//                $info("没有找到任何配置。");
+//                logIssue("没有找到任何配置！！！", getTaskName());
+//                return;
+//            }
+//
+//            // 是否可以运行的判断
+//            if (!TaskControlUtils.isRunnable(taskControlList)) {
+//                return;
+//            }
+//
 //        }
-
-        // TODO: 所有渠道处理总件数为0的场合， 就跳出不继续做了。 以外的场合， 说明可能还有别的未完成的数据， 继续自己调用自己一下
-        doUploadMain(null);
-
-    }
+//
+//        // 获取该任务可以运行的销售渠道
+//        List<TaskControlBean> taskControlBeanList = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.order_channel_id);
+//
+//        // 准备按组分配线程（相同的组， 会共用相同的一组线程通道， 不同的组， 线程通道互不干涉）
+//        Map<String, List<String>> mapTaskControl = new HashMap<>();
+//        taskControlBeanList.forEach((l)->{
+//            String key = l.getCfg_val2();
+//            if (StringUtils.isEmpty(key)) {
+//                key = "0";
+//            }
+//            if (mapTaskControl.containsKey(key)) {
+//                mapTaskControl.get(key).add(l.getCfg_val1());
+//            } else {
+//                List<String> channelList = new ArrayList<>();
+//                channelList.add(l.getCfg_val1());
+//                mapTaskControl.put(key, channelList);
+//            }
+//        });
+//
+//        // 总共最多5个组同时运行
+//        int threadPoolCnt = 5;
+////        ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
+//        Map<String, ExecutorService> mapThread = new HashMap<>();
+//
+//        while (true) {
+//            boolean blnAllOver = true;
+//            for (Map.Entry<String, ExecutorService> entry : mapThread.entrySet()) {
+//                if (!entry.getValue().isTerminated()) {
+//                    blnAllOver = false;
+//                    break;
+//                }
+//            }
+//            if (blnAllOver) {
+//                break;
+//            }
+//
+//            mapTaskControl.forEach((k, v)->{
+//                boolean blnCreateThread = false;
+//
+//                if (mapThread.containsKey(k)) {
+//                    ExecutorService t = mapThread.get(k);
+//                    if (t.isTerminated()) {
+//                        // 可以新做一个线程
+//                        blnCreateThread = true;
+//                    }
+//                } else {
+//                    // 可以新做一个线程
+//                    blnCreateThread = true;
+//                }
+//
+//                if (blnCreateThread) {
+//                    ExecutorService t = Executors.newFixedThreadPool(threadPoolCnt);
+//
+//                    List<String> channelIdList = v;
+//                    if (channelIdList != null) {
+//                        for (String channelId : channelIdList) {
+//                            t.execute(() -> {
+//                                try {
+//                                    doProductUpload(channelId, CartEnums.Cart.JD.getValue());
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            });
+//                            t.execute(() -> {
+//                                try {
+//                                    doProductUpload(channelId, CartEnums.Cart.JG.getValue());
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            });
+//                            t.execute(() -> {
+//                                try {
+//                                    doProductUpload(channelId, CartEnums.Cart.JGJ.getValue());
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            });
+//                            t.execute(() -> {
+//                                try {
+//                                    doProductUpload(channelId, CartEnums.Cart.JGY.getValue());
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            });
+//
+//                        }
+//                    }
+//
+//                    mapThread.put(k, t);
+//
+//                }
+//            });
+//
+//        }
+//
+////        executor.shutdown(); //并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
+////        try {
+////            // 阻塞，直到线程池里所有任务结束
+////            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+////        } catch (InterruptedException ie) {
+////            ie.printStackTrace();
+////        }
+//
+//        // TODO: 所有渠道处理总件数为0的场合， 就跳出不继续做了。 以外的场合， 说明可能还有别的未完成的数据， 继续自己调用自己一下
+//        doUploadMain(null);
+//
+//    }
 
     /**
      * 平台产品上新主处理
