@@ -26,11 +26,8 @@ public class CmsSetMainPropMongoUSJoiServiceTest {
         List<TaskControlBean> taskControlList = new ArrayList<>();
         TaskControlBean taskControlBean = new TaskControlBean();
         taskControlBean.setCfg_name("order_channel_id");
-        taskControlBean.setCfg_val1("015");
+        taskControlBean.setCfg_val1("028");
         taskControlList.add(taskControlBean);
-
-
-
         cmsSetMainPropMongoUSJoiService.onStartup(taskControlList);
     }
 
