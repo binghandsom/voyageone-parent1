@@ -731,7 +731,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                     if (blnIsSmartSx) {
                         // 先判断一下必要的条件
                         // 主产品主类目path
-                        String mainCatPath = mainProduct.getCommonNotNull().getCatPath();
+                        String mainCatPath = mainProduct.getCommonNotNull().getCatPathEn();
                         if (!StringUtils.isEmpty(mainCatPath) && MapUtils.isNotEmpty(categoryMappingListMap)) {
                             String brand = mainProduct.getCommonNotNull().getFieldsNotNull().getBrand();
                             String sizeType = mainProduct.getCommonNotNull().getFieldsNotNull().getSizeType();
