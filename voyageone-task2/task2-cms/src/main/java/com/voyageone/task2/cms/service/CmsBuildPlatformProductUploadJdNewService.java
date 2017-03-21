@@ -537,7 +537,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         // 新增或更新商品标志
         boolean updateWare = false;
         // 是否是智能上新(根据配置)
-        boolean blnIsSmartSx = sxProductService.isSmartSx(shopProp.getOrder_channel_id(), shopProp.getCart_id());
+		boolean blnIsSmartSx = sxProductService.isSmartSx(shopProp.getOrder_channel_id(), Integer.parseInt(shopProp.getCart_id()));
         String sxType = "普通上新";
         if (blnIsSmartSx) {
             sxType = "智能上新";
