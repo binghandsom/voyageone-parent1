@@ -391,8 +391,10 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         // 取得cms_mt_channel_config表中配置的渠道级别的配置项目值(如：颜色别名等)
         doChannelConfigInit(channelId, cartId, channelConfigValueMap);
 
+		$info("TOM-01:" + sxWorkloadModels.size() + "Channel:" + channelId + ": CartId:" + cartId);
         // 从cms_mt_channel_condition_mapping_config表中取得当前渠道的取得产品主类目与天猫平台叶子类目(或者平台一级类目)，以及feed类目id和天猫平台类目之间的mapping关系数据
         Map<String, List<Map<String, String>>> categoryMappingListMap = getCategoryMapping(channelId, cartId);
+		$info("TOM-02");
 
         // 创建线程池
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
@@ -406,7 +408,9 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         executor.shutdown(); // 并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
         try {
             // 阻塞，直到线程池里所有任务结束
+			$info("TOM-03");
             executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+			$info("TOM-04");
         } catch (InterruptedException ie) {
             ie.printStackTrace();
         }
