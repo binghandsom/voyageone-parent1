@@ -14,10 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.LUCKY_VITAMIN;
@@ -273,12 +271,9 @@ public class VtmService extends BaseCronTaskService {
 
     private boolean backupFeedFile(String channel_id, FeedEnums.Name name) {
         $info("备份处理文件开始");
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-        String date_ymd = sdf.format(date);
 
         String filename = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feeds.getVal1(channel_id, name));
-        String filename_backup = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
+        String filename_backup = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + "discontinue" + "_"
                 + StringUtils.null2Space(Feeds.getVal1(channel_id, name));
         File file = new File(filename);
         File file_backup = new File(filename_backup);

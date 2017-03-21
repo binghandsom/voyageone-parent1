@@ -27,6 +27,14 @@ import java.util.List;
 @Service
 public class CmsCheckProductIsRightService extends BaseCronTaskService {
 
+    private final Integer PAGE_SIZE = 100;
+    @Autowired
+    ProductService productService;
+    @Autowired
+    ProductCheckService productCheckService;
+    @Autowired
+    CmsBtProductErrorDao cmsBtProductErrorDao;
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -36,15 +44,6 @@ public class CmsCheckProductIsRightService extends BaseCronTaskService {
     public String getTaskName() {
         return "CmsCheckProductIsRightJob";
     }
-
-    private final Integer PAGE_SIZE = 100;
-
-    @Autowired
-    ProductService productService;
-    @Autowired
-    ProductCheckService productCheckService;
-    @Autowired
-    CmsBtProductErrorDao cmsBtProductErrorDao;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -68,7 +67,7 @@ public class CmsCheckProductIsRightService extends BaseCronTaskService {
                 List<CmsBtProductModel> cmsBtProductModels = productService.getList(channelId, jongoQuery);
                 for (int i = 0; i < cmsBtProductModels.size(); i++) {
                     $info(String.format("%d/%d  _id:%s", (pageNum - 1) * PAGE_SIZE + i + 1, sumCnt, cmsBtProductModels.get(i).get_id()));
-                    productCheckService.checkProductIsRight(cmsBtProductModels.get(i), cartList);
+                    productCheckService.checkProductIsRight(cmsBtProductModels.get(i), cartList, getTaskName());
                 }
             }
         }
