@@ -231,13 +231,13 @@ public class ProductCheckService extends BaseService {
 
         // 检测产品的平台级别的mainProductCode是否正确(默认已group级别的mainProduct为准)
         String productCode = productModel.getCommon().getFields().getCode();
-        String mainProductCode = productModel.getPlatform(cartId).getMainProductCode();
 
         if (productModel.getPlatform(cartId) == null || productModel.getPlatform(cartId).getSkus() == null) {
-            if (productModel.getPlatform(cartId).getSkus() == null)
+            if (productModel.getPlatform(cartId) != null && productModel.getPlatform(cartId).getSkus() == null)
                 productModel.getPlatforms().remove("P"+ cartId);
             errorModel.getErrors().add(String.format("该产品_id:%s的platforms.P%d为空", productModel.get_id(), cartId));
         } else {
+            String mainProductCode = productModel.getPlatform(cartId).getMainProductCode();
 
             // 检测和设置group级别的主商品
             CmsBtProductGroupModel groupInfo = productGroupService.selectProductGroupByCode(productModel.getChannelId(), productCode, cartId);
