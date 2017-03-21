@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,45 +36,47 @@ public class LuckyVitaminSkuStatusCheckService  extends BaseCronTaskService {
     private FeedSaleService feedSaleService;
 
     protected void checkSale() throws Exception {
-        CsvReader reader;
+        CsvReader reader = null;
         List<CmsFeedLiveSkuModel> skuList = new ArrayList<>();
         String fileName = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.file_id);
         String filePath = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.feed_ftp_localpath);
         String fileFullName = String.format("%s/%s", filePath, "discontinue_"+fileName);
 
         String encode = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.feed_ftp_file_coding);
-
-        reader = new CsvReader(new FileInputStream(fileFullName), '\t', Charset.forName(encode));
-
-        // Head读入
-        reader.readHeaders();
-        reader.getHeaders();
-        int sale = 0;
-        int noSale = 0 ;
-        // Body读入
-        while (reader.readRecord()) {
-            String discontinued = reader.get(95);
-            //upc,MerchantPrimaryCategory,cnMsrp,cNPrice,ImageList
-            if (StringUtils.isEmpty(reader.get(1)) || StringUtils.isEmpty(reader.get(49))
-                    || StringUtils.isEmpty(reader.get(19))
-                    || StringUtils.isEmpty(reader.get(20))
-                    || StringUtils.isEmpty(reader.get(37))
-                    ) continue;
-            String sku = reader.get(0);
-            if(!StringUtil.isEmpty(sku)) {
-                if (discontinued.equalsIgnoreCase("yes")) {
-                    feedSaleService.notSale(getChannel().getId(), sku);
-                    $info(getChannel().getId() + " " + sku + " sale -> notSale");
-                    sale++;
-                } else {
-                    feedSaleService.sale(getChannel().getId(), sku, 0);
-                    $info(getChannel().getId() + " " + sku + " notSale -> sale");
-                    noSale++;
+        try{
+            reader = new CsvReader(new FileInputStream(fileFullName), '\t', Charset.forName(encode));
+            // Head读入
+            reader.readHeaders();
+            reader.getHeaders();
+            int sale = 0;
+            int noSale = 0 ;
+            // Body读入
+            while (reader.readRecord()) {
+                String discontinued = reader.get(95);
+                //upc,MerchantPrimaryCategory,cnMsrp,cNPrice,ImageList
+                if (StringUtils.isEmpty(reader.get(1)) || StringUtils.isEmpty(reader.get(49))
+                        || StringUtils.isEmpty(reader.get(19))
+                        || StringUtils.isEmpty(reader.get(20))
+                        || StringUtils.isEmpty(reader.get(37))
+                        ) continue;
+                String sku = reader.get(0);
+                if(!StringUtil.isEmpty(sku)) {
+                    if (discontinued.equalsIgnoreCase("yes")) {
+                        feedSaleService.notSale(getChannel().getId(), sku);
+                        $info(getChannel().getId() + " " + sku + " sale -> notSale");
+                        sale++;
+                    } else {
+                        feedSaleService.sale(getChannel().getId(), sku, 0);
+                        $info(getChannel().getId() + " " + sku + " notSale -> sale");
+                        noSale++;
+                    }
                 }
             }
-        }
-        $info(String.format("notSale -> sale 共%d件  sale -> notSale 共%d件", sale, noSale));
+            $info(String.format("notSale -> sale 共%d件  sale -> notSale 共%d件", sale, noSale));
+            backupFeedFile();
+        }catch (FileNotFoundException e){
 
+        }
     }
 
     protected ChannelConfigEnums.Channel getChannel() {
