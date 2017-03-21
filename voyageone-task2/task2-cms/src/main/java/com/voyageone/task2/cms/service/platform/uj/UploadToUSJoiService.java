@@ -675,12 +675,6 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 prCommonFields.setProductNameEn(productModel.getCommonNotNull().getFieldsNotNull().getProductNameEn());
                             }
 
-                            // 产品名称中文(common.fields.originalTitleCn)
-                            if ("0".equals(prCommonFields.getTranslateStatus())
-                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn())) {
-                                prCommonFields.setOriginalTitleCn(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn());
-                            }
-
                             // 简短描述英语(common.fields.shortDesEn)
                             if (StringUtil.isEmpty(prCommonFields.getShortDesEn())
                                     && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getShortDesEn())) {
@@ -846,6 +840,11 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             }
                             doSetMainCategory(pr.getCommon(), pr.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
 //                        }
+                        // 产品名称中文(common.fields.originalTitleCn)
+                        if ("0".equals(prCommonFields.getTranslateStatus())
+                                && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn())) {
+                            prCommonFields.setOriginalTitleCn(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn());
+                        }
 
                         // ****************common.skus的更新(有的sku可能在拆分后的product中)****************
                         for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
