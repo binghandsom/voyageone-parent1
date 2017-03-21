@@ -522,6 +522,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
      */
     public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp, Map<String, String> channelConfigValueMap
                 , Map<String, List<Map<String, String>>> categoryMappingListMap) {
+		$info("TOM-02-1");
 
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
@@ -541,6 +542,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         if (blnIsSmartSx) {
             sxType = "智能上新";
         }
+		$info("TOM-02-2:" + sxType);
 
         try {
             // 上新用的商品数据信息取得 // TODO：这段翻译写得不好看， 以后再改
@@ -550,6 +552,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
             if (sxData == null) {
                 throw new BusinessException("取得上新用的商品数据信息失败！请向管理员确认 [sxData=null]");
             }
+			$info("TOM-02-3");
             // 如果取得上新对象商品信息出错时，报错
             if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
                 String errorMsg = sxData.getErrorMessage();
@@ -559,6 +562,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                 // 有错误的时候，直接报错
                 throw new BusinessException(errorMsg);
             }
+			$info("TOM-02-4");
 
             // 如果一个产品的类目要求至少5张图片，但运营部愿意自己去补足图片导致大量图片上新错误，只好在这里手动给每个产品补足5张图片(用第一张图片补)
             // 但这里补足的图片不会回写到mongoDB的产品中，如果在京东平台上展示出来的效果运营不满意，让他们自己去补足图片
