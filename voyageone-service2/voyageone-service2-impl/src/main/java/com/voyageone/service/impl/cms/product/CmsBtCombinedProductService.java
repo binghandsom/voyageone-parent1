@@ -196,7 +196,6 @@ public class CmsBtCombinedProductService extends BaseService {
                             skuBean.setSuitPreferentialPrice(Double.parseDouble(item.getJdPrice()));
                             productBean.getSkus().add(skuBean);
                         }
-                        ;
                         this.compareSuitSkuWithLocal(productBean, local);
                         return productBean;
                     } else {
@@ -967,7 +966,7 @@ public class CmsBtCombinedProductService extends BaseService {
      */
     public List<CmsBtProductModel> getCmsBtProductModelInfo(Integer cartId, List<String> prodCodes, String channelId) {
         JongoQuery queryObj = new JongoQuery();
-        queryObj.setQuery("{'common.fields.code': {$in:#}, \"platforms.P#.lock\": \"0\"}");
+        queryObj.setQuery("{'common.fields.code': {$in:#}, \"platforms.P#.lock\": {$in: [\"0\", null]}}");
         queryObj.setParameters(prodCodes, cartId);
 //        queryObj.setProjectionExt("lock", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".pPlatformMallId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".pStatus", "platforms.P" + cartId + ".mainProductCode");
         return cmsBtProductDao.select(queryObj, channelId);

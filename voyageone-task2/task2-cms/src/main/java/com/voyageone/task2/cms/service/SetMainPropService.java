@@ -1130,12 +1130,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 if (blnProductExist) {
                     updateCnt++;
                     $info("feed->master导入:更新成功 [ChannelId:%s] [%d/%d] [ProductCode:%s] [耗时:%s]",
-                            cmsProduct.getChannelId(), currentIndex, feedListCnt, cmsProduct.getCommon().getFields().getCode(),
+                            usjoi?cmsProduct.getOrgChannelId():cmsProduct.getChannelId(), currentIndex, feedListCnt, cmsProduct.getCommon().getFields().getCode(),
                             (System.currentTimeMillis() - startTime));
                 } else {
                     insertCnt++;
                     $info("feed->master导入:新增成功 [ChannelId:%s] [%d/%d] [ProductCode:%s] [耗时:%s]",
-                            cmsProduct.getChannelId(), currentIndex, feedListCnt, cmsProduct.getCommon().getFields().getCode(),
+                            usjoi?cmsProduct.getOrgChannelId():cmsProduct.getChannelId(), currentIndex, feedListCnt, cmsProduct.getCommon().getFields().getCode(),
                             (System.currentTimeMillis() - startTime));
                 }
                 // add desmond 2016/07/07 end
