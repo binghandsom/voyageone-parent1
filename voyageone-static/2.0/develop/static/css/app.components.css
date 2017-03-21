@@ -95,19 +95,17 @@ d-toolbox .btn {
     margin-left: 5px;
 }
 
+/**updated by piao date:2017-3-21 */
 s-complex[multi],
 d-complex[multi] {
-    display: flex;
-    align-items: flex-start;
+    display: table;
+    width: 100%;
 }
 
 s-complex[multi] s-field,
 d-complex[multi] d-field {
-    display: block;
-    flex-grow: 1;
-    width: 100%;
-    margin-bottom: 0;
-    margin-right: 5px;
+    position: relative;
+    display: table-cell;
 }
 
 s-complex[multi] .s-wrapper,
@@ -127,7 +125,20 @@ d-complex[multi]:first-of-type d-header.simple {
 
 s-complex[multi] s-toolbox,
 d-complex[multi] d-toolbox {
-    align-self: flex-end;
+    display: table-cell;
+    width: 50px;
+    text-align: right;
+    vertical-align: bottom;
+}
+
+s-complex[multi] s-tip-new{
+    position: absolute;
+    top: 0;
+    right: 15px;
+}
+
+s-complex[multi] s-header{
+    width: 100%;
 }
 
 .s-required:after {
@@ -176,6 +187,7 @@ d-tip:before {
     -webkit-font-smoothing: antialiased;
     /*content: '\f0a2';*/
     padding-right: 3px;
+    margin-left: -17px;
 }
 
 .d-col-content {
