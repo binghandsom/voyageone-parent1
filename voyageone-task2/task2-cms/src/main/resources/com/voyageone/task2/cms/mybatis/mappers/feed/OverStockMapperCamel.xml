@@ -798,6 +798,10 @@
     delete from voyageone_cms2.cms_zz_feed_overstock_product_temp
   </delete>
 
+  <delete id="deleteBySku" parameterType="com.voyageone.task2.cms.bean.SuperFeedOverStockBean">
+    delete from voyageone_cms2.cms_zz_feed_overstock_product_temp  where sku = #{sku,jdbcType=VARCHAR}
+  </delete>
+
   <resultMap id="resultMap_feed" type="com.voyageone.task2.cms.model.CmsBtFeedInfoOverStockModel" autoMapping="true">
     <result column="category" property="category" />
     <result column="channel_id" property="channelId" />

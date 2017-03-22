@@ -70,4 +70,14 @@ public abstract class OverstockBase extends ComponentBase {
                 .build()
                 .execute(getCredentials());
     }
+
+    protected Result<EventsType> queryingForNewEvents(EventTypeType type, Integer limit) throws Exception {
+        return getClientFactory().forEvents()
+                .getMany()
+                .withStatus(EventStatusType.NEW)
+                .withType(type)
+                .withLimit(limit)
+                .build()
+                .execute(getCredentials());
+    }
 }
