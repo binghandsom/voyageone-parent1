@@ -800,31 +800,33 @@ public class SxProductNewService extends BaseService {
                     waitTime += 1000;
 
                     if (waitTime >= TIMEOUT_TIME) {
-                        $error("fail to download image:" + picUrl);
+//                        $error("fail to download image:" + picUrl);
                         return null;
                     }
                 }
                 is.close();
             } catch (Exception e) {
-                $error("exception when upload image", e);
+//                $error("exception when upload image", e);
                 if ("Connection reset".equals(e.getMessage())) {
                     if (++retry_times < max_retry_times)
                         continue;
                 }
-                throw new BusinessException(String.format("Fail to upload image[%s]: %s", picUrl, e.getMessage()));
+                throw new BusinessException(String.format("Fail to upload image[channelId: %s, cartId: %s, orgPicUrl: %s]%s", shopBean.getOrder_channel_id(), shopBean.getCart_id(), picUrl, e.getMessage()));
             }
             break;
         } while (true);
 
-        $info("read complete, begin to upload image");
+//        $info("read complete, begin to upload image");
         try {
             ImgzonePictureUploadResponse imgzonePictureUploadResponse = jdImgzoneService.uploadPicture(shopBean, baos.toByteArray(), "0", "image_title");
             if(imgzonePictureUploadResponse == null) {
                 String failCause = "上传图片到京东时，超时, jingdong response为空";
+                failCause = String.format("%s[channelId: %s, cartId: %s, orgPicUrl: %s]", failCause, shopBean.getOrder_channel_id(), shopBean.getCart_id(), picUrl);
                 $error(failCause);
                 throw new BusinessException(failCause);
             } else if (imgzonePictureUploadResponse.getEnDesc() != null) {
                 String failCause = "上传图片到京东时，错误:" + imgzonePictureUploadResponse.getCode() + ", " + imgzonePictureUploadResponse.getEnDesc();
+                failCause = String.format("%s[channelId: %s, cartId: %s, orgPicUrl: %s]", failCause, shopBean.getOrder_channel_id(), shopBean.getCart_id(), picUrl);
                 $error(failCause);
                 $error("上传图片到京东时，sub错误:" + imgzonePictureUploadResponse.getDesc() + ", " + imgzonePictureUploadResponse.getZhDesc());
                 throw new BusinessException(failCause);
@@ -833,6 +835,8 @@ public class SxProductNewService extends BaseService {
             imageUrl[1] = imgzonePictureUploadResponse.getPictureId();
         } catch(JdException e) {
             String failCause = "上传图片到京东时出错！ msg:" + e.getMessage();
+            failCause = String.format("%s[channelId: %s, cartId: %s, orgPicUrl: %s]", failCause, shopBean.getOrder_channel_id(), shopBean.getCart_id(), picUrl);
+            $error(failCause);
             $error("errCode: " + e.getErrCode());
             $error("errMsg: " + e.getErrMsg());
             throw new BusinessException(failCause);

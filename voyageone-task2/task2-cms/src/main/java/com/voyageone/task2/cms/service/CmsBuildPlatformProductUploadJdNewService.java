@@ -1628,7 +1628,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                 // 从属性值map里面取得当前fieldId对应的Field
                 Field fieldValue = attrMap.get(fieldId);
                 if (fieldValue == null) {
-                    $info("没找到该fieldId对应的属性值！ [FieldId:%s]", fieldId);
+//                    $info("没找到该fieldId对应的属性值！ [FieldId:%s]", fieldId);
                     continue;
                 }
 
@@ -1717,7 +1717,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                 // 从属性值map里面取得当前fieldId对应的Field
                 Field fieldValue = attrMap.get(fieldId);
                 if (fieldValue == null) {
-                    $info("没找到该fieldId对应的属性值！ [FieldId:%s]", fieldId);
+//                    $info("没找到该fieldId对应的属性值！ [FieldId:%s]", fieldId);
                     continue;
                 }
 
