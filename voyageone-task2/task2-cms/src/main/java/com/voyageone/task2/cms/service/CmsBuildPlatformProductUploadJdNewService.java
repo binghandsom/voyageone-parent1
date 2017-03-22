@@ -226,9 +226,138 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
             }
         }
 
+//        doUploadMain(taskControlList);
+
         // 正常结束
         $info("主线程正常结束");
     }
+
+//    public void doUploadMain(List<TaskControlBean> taskControlList) {
+//        // 由于这个方法可能会自己调用自己循环很多很多次， 不一定会跳出循环， 但又希望能获取到最新的TaskControl的信息， 所以不使用基类里的这个方法了
+//        // 为了调试方便， 允许作为参数传入， 但是理想中实际运行中， 基本上还是自主获取的场合比较多
+//        if (taskControlList == null) {
+//            taskControlList = taskDao.getTaskControlList(getTaskName());
+//
+//            if (taskControlList.isEmpty()) {
+//                $info("没有找到任何配置。");
+//                logIssue("没有找到任何配置！！！", getTaskName());
+//                return;
+//            }
+//
+//            // 是否可以运行的判断
+//            if (!TaskControlUtils.isRunnable(taskControlList)) {
+//                return;
+//            }
+//
+//        }
+//
+//        // 获取该任务可以运行的销售渠道
+//        List<TaskControlBean> taskControlBeanList = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.order_channel_id);
+//
+//        // 准备按组分配线程（相同的组， 会共用相同的一组线程通道， 不同的组， 线程通道互不干涉）
+//        Map<String, List<String>> mapTaskControl = new HashMap<>();
+//        taskControlBeanList.forEach((l)->{
+//            String key = l.getCfg_val2();
+//            if (StringUtils.isEmpty(key)) {
+//                key = "0";
+//            }
+//            if (mapTaskControl.containsKey(key)) {
+//                mapTaskControl.get(key).add(l.getCfg_val1());
+//            } else {
+//                List<String> channelList = new ArrayList<>();
+//                channelList.add(l.getCfg_val1());
+//                mapTaskControl.put(key, channelList);
+//            }
+//        });
+//
+//        // 总共最多5个组同时运行
+//        int threadPoolCnt = 5;
+////        ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
+//        Map<String, ExecutorService> mapThread = new HashMap<>();
+//
+//        while (true) {
+//            boolean blnAllOver = true;
+//            for (Map.Entry<String, ExecutorService> entry : mapThread.entrySet()) {
+//                if (!entry.getValue().isTerminated()) {
+//                    blnAllOver = false;
+//                    break;
+//                }
+//            }
+//            if (blnAllOver) {
+//                break;
+//            }
+//
+//            mapTaskControl.forEach((k, v)->{
+//                boolean blnCreateThread = false;
+//
+//                if (mapThread.containsKey(k)) {
+//                    ExecutorService t = mapThread.get(k);
+//                    if (t.isTerminated()) {
+//                        // 可以新做一个线程
+//                        blnCreateThread = true;
+//                    }
+//                } else {
+//                    // 可以新做一个线程
+//                    blnCreateThread = true;
+//                }
+//
+//                if (blnCreateThread) {
+//                    ExecutorService t = Executors.newFixedThreadPool(threadPoolCnt);
+//
+//                    List<String> channelIdList = v;
+//                    if (channelIdList != null) {
+//                        for (String channelId : channelIdList) {
+//                            t.execute(() -> {
+//                                try {
+//                                    doProductUpload(channelId, CartEnums.Cart.JD.getValue());
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            });
+//                            t.execute(() -> {
+//                                try {
+//                                    doProductUpload(channelId, CartEnums.Cart.JG.getValue());
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            });
+//                            t.execute(() -> {
+//                                try {
+//                                    doProductUpload(channelId, CartEnums.Cart.JGJ.getValue());
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            });
+//                            t.execute(() -> {
+//                                try {
+//                                    doProductUpload(channelId, CartEnums.Cart.JGY.getValue());
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            });
+//
+//                        }
+//                    }
+//
+//                    mapThread.put(k, t);
+//
+//                }
+//            });
+//
+//        }
+//
+////        executor.shutdown(); //并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
+////        try {
+////            // 阻塞，直到线程池里所有任务结束
+////            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+////        } catch (InterruptedException ie) {
+////            ie.printStackTrace();
+////        }
+//
+//        // TODO: 所有渠道处理总件数为0的场合， 就跳出不继续做了。 以外的场合， 说明可能还有别的未完成的数据， 继续自己调用自己一下
+//        doUploadMain(null);
+//
+//    }
 
     /**
      * 平台产品上新主处理
@@ -262,8 +391,10 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         // 取得cms_mt_channel_config表中配置的渠道级别的配置项目值(如：颜色别名等)
         doChannelConfigInit(channelId, cartId, channelConfigValueMap);
 
+		$info("TOM-01:" + sxWorkloadModels.size() + "Channel:" + channelId + ": CartId:" + cartId);
         // 从cms_mt_channel_condition_mapping_config表中取得当前渠道的取得产品主类目与天猫平台叶子类目(或者平台一级类目)，以及feed类目id和天猫平台类目之间的mapping关系数据
         Map<String, List<Map<String, String>>> categoryMappingListMap = getCategoryMapping(channelId, cartId);
+		$info("TOM-02");
 
         // 创建线程池
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
@@ -277,7 +408,9 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         executor.shutdown(); // 并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
         try {
             // 阻塞，直到线程池里所有任务结束
+			$info("TOM-03");
             executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+			$info("TOM-04");
         } catch (InterruptedException ie) {
             ie.printStackTrace();
         }
@@ -389,6 +522,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
      */
     public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp, Map<String, String> channelConfigValueMap
                 , Map<String, List<Map<String, String>>> categoryMappingListMap) {
+		$info("TOM-02-1");
 
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
@@ -402,13 +536,13 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         SxData sxData = null;
         // 新增或更新商品标志
         boolean updateWare = false;
-        // 是否是智能上新(status:3(智能上新))
-        boolean blnForceSmartSx = false;
+        // 是否是智能上新(根据配置)
+		boolean blnIsSmartSx = sxProductService.isSmartSx(shopProp.getOrder_channel_id(), Integer.parseInt(shopProp.getCart_id()));
         String sxType = "普通上新";
-        if (CmsConstants.SxWorkloadPublishStatusNum.smartSx == cmsBtSxWorkloadModel.getPublishStatus()) {
-            blnForceSmartSx = true;
+        if (blnIsSmartSx) {
             sxType = "智能上新";
         }
+		$info("TOM-02-2:" + sxType);
 
         try {
             // 上新用的商品数据信息取得 // TODO：这段翻译写得不好看， 以后再改
@@ -418,6 +552,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
             if (sxData == null) {
                 throw new BusinessException("取得上新用的商品数据信息失败！请向管理员确认 [sxData=null]");
             }
+			$info("TOM-02-3");
             // 如果取得上新对象商品信息出错时，报错
             if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
                 String errorMsg = sxData.getErrorMessage();
@@ -427,6 +562,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                 // 有错误的时候，直接报错
                 throw new BusinessException(errorMsg);
             }
+			$info("TOM-02-4");
 
             // 如果一个产品的类目要求至少5张图片，但运营部愿意自己去补足图片导致大量图片上新错误，只好在这里手动给每个产品补足5张图片(用第一张图片补)
             // 但这里补足的图片不会回写到mongoDB的产品中，如果在京东平台上展示出来的效果运营不满意，让他们自己去补足图片
@@ -592,11 +728,10 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
             } else {
                 // 新增商品的场合， 如果类目没填， 并且是智能上新的话， 想想办法能不能设置一下
                 if (StringUtils.isEmpty(platformCategoryId)) {
-                    boolean blnIsSmartSx = sxProductService.isSmartSx(sxData.getChannelId(), sxData.getCartId());
-                    if (blnIsSmartSx && blnForceSmartSx) {
+                    if (blnIsSmartSx) {
                         // 先判断一下必要的条件
                         // 主产品主类目path
-                        String mainCatPath = mainProduct.getCommonNotNull().getCatPath();
+                        String mainCatPath = mainProduct.getCommonNotNull().getCatPathEn();
                         if (!StringUtils.isEmpty(mainCatPath) && MapUtils.isNotEmpty(categoryMappingListMap)) {
                             String brand = mainProduct.getCommonNotNull().getFieldsNotNull().getBrand();
                             String sizeType = mainProduct.getCommonNotNull().getFieldsNotNull().getSizeType();
@@ -658,7 +793,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 
             // 编辑京东共通属性
             JdProductNewBean jdProductBean = setJdProductCommonInfo(sxData, platformCategoryId, groupId, shopProp,
-                    jdCommonSchema, cmsMtPlatformCategorySchema, skuLogicQtyMap, blnForceSmartSx);
+                    jdCommonSchema, cmsMtPlatformCategorySchema, skuLogicQtyMap, blnIsSmartSx);
             // 更新时设置商品id
             if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
                 jdProductBean.setWareId(Long.parseLong(sxData.getPlatform().getNumIId()));
@@ -1085,7 +1220,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
      * @param jdCommonSchema CmsMtPlatformCategorySchemaModel  京东共通schema数据
      * @param platformSchemaData CmsMtPlatformCategorySchemaModel  主产品类目对应的平台schema数据
      * @param skuLogicQtyMap Map<String, Integer>  SKU逻辑库存
-     * @param blnForceSmartSx 是否强制使用智能上新
+     * @param blnIsSmartSx 是否强制使用智能上新
      * @return JdProductBean 京东上新用bean
      * @throws BusinessException
      */
@@ -1094,7 +1229,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                                                  CmsMtPlatformCategorySchemaModel jdCommonSchema,
                                                  CmsMtPlatformCategorySchemaModel platformSchemaData,
                                                  Map<String, Integer> skuLogicQtyMap,
-                                                 boolean blnForceSmartSx) throws BusinessException {
+                                                 boolean blnIsSmartSx) throws BusinessException {
         CmsBtProductModel mainProduct = sxData.getMainProduct();
         List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
@@ -1110,7 +1245,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         String cartId = sxData.getCartId().toString();
 
         // 取得京东共通属性值(包括标题，长宽高，重量等)
-        Map<String, String> jdCommonInfoMap = getJdCommonInfo(jdCommonSchema, shopProp, expressionParser, blnForceSmartSx);
+        Map<String, String> jdCommonInfoMap = getJdCommonInfo(jdCommonSchema, shopProp, expressionParser, blnIsSmartSx);
 
         // 流水号(非必须)
 //        jdProductBean.setTradeNo(mainProduct.getXXX());                  // 不使用
@@ -1332,7 +1467,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 //        jdProductBean.setService(mainProduct.getXXX());                   // 不使用
 
         // 调用共通函数取得商品属性列表，用户自行输入的类目属性ID和用户自行输入的属性值Map
-        Map<String, String> jdProductAttrMap = getJdProductAttributes(platformSchemaData, shopProp, expressionParser, blnForceSmartSx);
+        Map<String, String> jdProductAttrMap = getJdProductAttributes(platformSchemaData, shopProp, expressionParser, blnIsSmartSx);
         // 商品属性列表,多组之间用|分隔，格式:aid:vid 或 aid:vid|aid1:vid1 或 aid1:vid1(必须)
         // 如输入类型input_type为1或2，则attributes为必填属性；如输入类型input_type为3，则用字段input_str填入属性的值
 
@@ -1462,12 +1597,12 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
      * @param jdCommonSchema CmsMtPlatformCategorySchemaModel  京东共通schema数据
      * @param shopBean ShopBean  店铺信息
      * @param expressionParser ExpressionParser  解析子
-     * @param blnForceSmartSx 是否强制使用智能上新
+     * @param blnIsSmartSx 是否强制使用智能上新
      * @return Map<String, String> 京东商品共通属性
      */
     private Map<String, String> getJdCommonInfo(CmsMtPlatformCategorySchemaModel jdCommonSchema,
                                                 ShopBean shopBean, ExpressionParser expressionParser,
-                                                boolean blnForceSmartSx) {
+                                                boolean blnIsSmartSx) {
         Map<String, String> retAttrMap = new HashMap<>();
 
         // 取得京东共通schema数据中的propsItem(XML字符串)
@@ -1483,7 +1618,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 
         try {
             // 取得平台Schema所有field对应的属性值（不使用platform_mapping，直接从mainProduct中取得fieldId对应的值）
-            attrMap = sxProductService.constructPlatformProps(itemFieldList, shopBean, expressionParser, blnForceSmartSx);
+            attrMap = sxProductService.constructPlatformProps(itemFieldList, shopBean, expressionParser, blnIsSmartSx);
         } catch (Exception ex) {
             String errMsg = String.format("取得京东共通Schema所有Field对应的属性值失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), jdCommonSchema.getCatId());
@@ -1542,12 +1677,12 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
      * @param platformSchemaData CmsMtPlatformCategorySchemaModel  主产品类目对应的平台schema数据
      * @param shopBean ShopBean  店铺信息
      * @param expressionParser ExpressionParser  解析子
-     * @param blnForceSmartSx 是否强制使用智能上新
+     * @param blnIsSmartSx 是否强制使用智能上新
      * @return Map<String, String> 京东类目属性
      */
     private Map<String, String> getJdProductAttributes(CmsMtPlatformCategorySchemaModel platformSchemaData,
                                                        ShopBean shopBean, ExpressionParser expressionParser,
-                                                       boolean blnForceSmartSx) {
+                                                       boolean blnIsSmartSx) {
         Map<String, String> retAttrMap = new HashMap<>();
 
         // 取得schema数据中的propsItem(XML字符串)
@@ -1563,7 +1698,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 
         try {
             // 取得平台Schema所有field对应的属性值（不使用platform_mapping，直接从mainProduct中取得fieldId对应的值）
-            attrMap = sxProductService.constructPlatformProps(itemFieldList, shopBean, expressionParser, blnForceSmartSx);
+            attrMap = sxProductService.constructPlatformProps(itemFieldList, shopBean, expressionParser, blnIsSmartSx);
         } catch (Exception ex) {
             String errMsg = String.format("取得京东平台Schema所有Field对应的属性值失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformSchemaData.getCatId());
