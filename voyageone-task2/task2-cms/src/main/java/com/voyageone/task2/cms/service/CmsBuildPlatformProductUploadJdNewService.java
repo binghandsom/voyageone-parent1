@@ -329,6 +329,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 
                         }
                     }
+                    t.shutdown();
 
                     mapThread.put(k, t);
 
@@ -347,14 +348,6 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
             }
 
         }
-
-//        executor.shutdown(); //并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
-//        try {
-//            // 阻塞，直到线程池里所有任务结束
-//            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-//        } catch (InterruptedException ie) {
-//            ie.printStackTrace();
-//        }
 
         // TODO: 所有渠道处理总件数为0的场合， 就跳出不继续做了。 以外的场合， 说明可能还有别的未完成的数据， 继续自己调用自己一下
         doUploadMain(null);
@@ -407,12 +400,12 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
         // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
         executor.shutdown(); // 并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
-        try {
-            // 阻塞，直到线程池里所有任务结束
-            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-        } catch (InterruptedException ie) {
-            ie.printStackTrace();
-        }
+//        try {
+//            // 阻塞，直到线程池里所有任务结束
+//            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+//        } catch (InterruptedException ie) {
+//            ie.printStackTrace();
+//        }
     }
 
 
