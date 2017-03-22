@@ -324,7 +324,7 @@ public class FeedToCmsService extends BaseService {
 
                 CmsBtOperationLogModel_Msg _successMsg = new CmsBtOperationLogModel_Msg();
                 _successMsg.setSkuCode(orgFeedInfo.getCode());
-                _successMsg.setMsg("修改feed信息失败！");
+                _successMsg.setMsg("修改feed信息完毕");
                 success.add(_successMsg);
 
             } catch (Exception e) {
