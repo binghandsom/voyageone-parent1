@@ -273,24 +273,29 @@ public class FeedToCmsService extends BaseService {
 
             CmsBtFeedInfoModel orgFeedInfo = feedInfoService.getProductByCode(channelId, skuEntity.getCode());
             /**标识是否要触发价格公式，
-             * 当判断中的3个价格都没有值时，不会触发价格公式*/
+             * 当判断中的3个价格都没有值时，不会触发价格公式
+             * */
             boolean triggerPrice = false;
 
             for (CmsBtFeedInfoModel_Sku skuInfo : skuEntity.getSkus()) {
                 CmsBtFeedInfoModel_Sku targetSku = filterSku(orgFeedInfo.getSkus(), skuInfo);
 
-                if (skuInfo.getPriceCurrent() == 0 && skuInfo.getPriceNet() == 0 && skuInfo.getPriceCurrent() == 0)
-                    triggerPrice = false;
-                else
-                    triggerPrice = true;
+                /**
+                 * 比较一下客户价格
+                 * priceNet:美金成本价
+                 * priceClientRetail:美金指导价
+                 * priceClientMsrp:美金专柜价
+                 */
+                triggerPrice = skuInfo.getPriceNet() == 0 && skuInfo.getPriceClientRetail() == 0 && skuInfo.getPriceClientMsrp() == 0 ? false : true;
 
-                if (skuInfo.getPriceCurrent() != 0)
-                    targetSku.setPriceCurrent(skuInfo.getPriceCurrent());
                 if (skuInfo.getPriceNet() != 0)
                     targetSku.setPriceNet(skuInfo.getPriceNet());
-                if (skuInfo.getPriceCurrent() != 0)
-                    targetSku.setPriceCurrent(skuInfo.getPriceCurrent());
-
+                if (skuInfo.getPriceClientRetail() != 0)
+                    targetSku.setPriceClientRetail(skuInfo.getPriceClientRetail());
+                if (skuInfo.getPriceClientMsrp() != 0)
+                    targetSku.setPriceClientMsrp(skuInfo.getPriceClientMsrp());
+                if (skuInfo.getQty() != 0)
+                    targetSku.setQty(skuInfo.getQty());
             }
 
             try {
