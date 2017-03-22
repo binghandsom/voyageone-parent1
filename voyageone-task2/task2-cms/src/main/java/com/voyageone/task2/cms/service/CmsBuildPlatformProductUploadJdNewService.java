@@ -363,7 +363,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
     public void doProductUpload(String channelId, int cartId) throws Exception {
 
         // 默认线程池最大线程数
-        int threadPoolCnt = 10;
+        int threadPoolCnt = 5;
 
         // 获取店铺信息
         ShopBean shopProp = Shops.getShop(channelId, cartId);
