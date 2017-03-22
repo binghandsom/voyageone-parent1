@@ -1364,9 +1364,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     }
                 }
             }
-            if("017".equals(item.getOrgChannelId())){
-                skip = false;
-            }
             if (skip) {
                 CmsBtOperationLogModel_Msg failMap = new CmsBtOperationLogModel_Msg();
                 failMap.setSkuCode(fields.getCode());
