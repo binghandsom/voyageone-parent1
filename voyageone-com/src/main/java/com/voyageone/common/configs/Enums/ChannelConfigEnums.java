@@ -622,6 +622,17 @@ public class ChannelConfigEnums {
         LikingBuyer("035"),
 
         /**
+         * LikingBuyer
+         */
+        Cinxus("036"),
+
+        /**
+         * LikingBuyer
+         */
+        SharonShoe("037"),
+
+
+        /**
          * TestChannel088
          */
         TestChannel088("088"),
