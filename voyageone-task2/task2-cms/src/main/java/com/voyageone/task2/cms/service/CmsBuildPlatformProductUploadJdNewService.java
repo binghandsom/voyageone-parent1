@@ -239,7 +239,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
             taskControlList = taskDao.getTaskControlList(getTaskName());
 
             if (taskControlList.isEmpty()) {
-                $info("没有找到任何配置。");
+//                $info("没有找到任何配置。");
                 logIssue("没有找到任何配置！！！", getTaskName());
                 return;
             }
@@ -368,10 +368,10 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         // 获取店铺信息
         ShopBean shopProp = Shops.getShop(channelId, cartId);
         if (shopProp == null) {
-            $error("获取到店铺信息失败(shopProp == null)! [ChannelId:%s] [CartId:%s]", channelId, cartId);
+//            $error("获取到店铺信息失败(shopProp == null)! [ChannelId:%s] [CartId:%s]", channelId, cartId);
             return;
         }
-        $info("获取店铺信息成功![ChannelId:%s] [CartId:%s]", channelId, cartId);
+//        $info("获取店铺信息成功![ChannelId:%s] [CartId:%s]", channelId, cartId);
 
         // 从上新的任务表中获取该平台及渠道需要上新的任务列表(group by channel_id, cart_id, group_id)
         List<CmsBtSxWorkloadModel> sxWorkloadModels = platformProductUploadService.getSxWorkloadWithChannelIdCartId(
@@ -386,7 +386,6 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         // 取得cms_mt_channel_config表中配置的渠道级别的配置项目值(如：颜色别名等)
         doChannelConfigInit(channelId, cartId, channelConfigValueMap);
 
-		$info("TOM-01:" + sxWorkloadModels.size() + "Channel:" + channelId + ": CartId:" + cartId);
         // 从cms_mt_channel_condition_mapping_config表中取得当前渠道的取得产品主类目与天猫平台叶子类目(或者平台一级类目)，以及feed类目id和天猫平台类目之间的mapping关系数据
         Map<String, List<Map<String, String>>> categoryMappingListMap = getCategoryMapping(channelId, cartId);
 
@@ -514,7 +513,6 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
      */
     public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp, Map<String, String> channelConfigValueMap
                 , Map<String, List<Map<String, String>>> categoryMappingListMap) {
-		$info("TOM-02-1");
 
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
@@ -755,7 +753,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                     }
                 }
             }
-            $info("主产品的京东平台类目:" + platformCategoryId);
+//            $info("主产品的京东平台类目:" + platformCategoryId);
             // 取得平台类目schema信息
             CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchema = platformCategoryService.getPlatformCatSchema(platformCategoryId, cartId);
             if (cmsMtPlatformCategorySchema == null) {
