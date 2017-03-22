@@ -743,6 +743,8 @@ public class ChannelConfigEnums {
                 case "033": return KitBag;
                 case "034": return Coty;
                 case "035": return LikingBuyer;
+                case "036": return Cinxus;
+                case "037": return SharonShoe;
                 case "088": return TestChannel088;
                 case "089": return TestChannel089;
                 case "090": return TestChannel090;
