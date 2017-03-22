@@ -3602,7 +3602,7 @@ public class SxProductService extends BaseService {
                         ",SizeType=" + paramSizeType);
             }
             if (matchModels.size() == 1) {
-                $info("找到image_group记录!");
+//                $info("找到image_group记录!");
                 if (matchModels.get(0).getImage() == null || matchModels.get(0).getImage().size() == 0) {
                     throw new BusinessException("共通图片表找到的图片类型对应的图片数为0,请确保至少上传1张图片！" +
                             "channelId= " + channelId +
@@ -3755,7 +3755,7 @@ public class SxProductService extends BaseService {
                         ",SizeType=" + paramSizeType);
             }
             if (matchModels.size() == 1) {
-                $info("找到size_chart记录!");
+//                $info("找到size_chart记录!");
                 for (CmsBtSizeChartModelSizeMap sizeInfo : matchModels.get(0).getSizeMap()) {
                     // added by morse.lu start 2016/06/16 start
                     if (sizeMap.containsKey(sizeInfo.getOriginalSize())) {

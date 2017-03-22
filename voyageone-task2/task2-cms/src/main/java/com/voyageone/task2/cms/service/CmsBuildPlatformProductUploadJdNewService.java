@@ -502,8 +502,8 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         List<CmsMtChannelConditionMappingConfigModel> conditionMappingConfigModels =
                 cmsMtChannelConditionMappingConfigDao.selectList(conditionMappingParamMap);
         if (ListUtils.isNull(conditionMappingConfigModels)) {
-            $warn("cms_mt_channel_condition_mapping_config表中没有该渠道和平台对应的天猫平台类目匹配信息！[ChannelId:%s] " +
-                    "[CartId:%s] [propName:%s]", channelId, cartId, propName);
+//            $warn("cms_mt_channel_condition_mapping_config表中没有该渠道和平台对应的天猫平台类目匹配信息！[ChannelId:%s] " +
+//                    "[CartId:%s] [propName:%s]", channelId, cartId, propName);
             return null;
         }
 
