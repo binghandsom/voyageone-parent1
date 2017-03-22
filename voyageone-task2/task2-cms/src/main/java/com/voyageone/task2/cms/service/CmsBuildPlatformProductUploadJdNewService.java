@@ -272,7 +272,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         });
 
         // 总共最多5个线程同时运行
-        int threadPoolCnt = 5;
+        int threadPoolCnt = 1;
 //        ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
         Map<String, ExecutorService> mapThread = new HashMap<>();
 
