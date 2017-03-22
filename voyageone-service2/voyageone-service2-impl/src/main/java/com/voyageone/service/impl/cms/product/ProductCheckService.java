@@ -318,7 +318,8 @@ public class ProductCheckService extends BaseService {
                         || CartEnums.Cart.TB.getValue() == cartId
                         || CartEnums.Cart.JM.getValue() == cartId)
                         && (StringUtils.isEmpty(groupInfo.getPlatformPid())
-                        || !mainProduct.getPlatform(cartId).getpProductId().equals(groupInfo.getPlatformPid()))) {
+                        || (!StringUtils.isEmpty(mainProduct.getPlatform(cartId).getpProductId())
+                        && !mainProduct.getPlatform(cartId).getpProductId().equals(groupInfo.getPlatformPid())))) {
                     flg = true;
                     errorModel.getErrors().add(String.format("group(grup_id: %s, cartId: %d),该group已上新,但是平台PlatformPid为空或不正确(%s)", groupInfo.get_id(), cartId, mainProduct.getPlatform(cartId).getpProductId()));
                     groupInfo.setPlatformPid(mainProduct.getPlatform(cartId).getpProductId());
