@@ -350,6 +350,11 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         }
 
         // TODO: 所有渠道处理总件数为0的场合， 就跳出不继续做了。 以外的场合， 说明可能还有别的未完成的数据， 继续自己调用自己一下
+        try {
+            Thread.sleep(1000 * 30);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         doUploadMain(null);
 
     }
