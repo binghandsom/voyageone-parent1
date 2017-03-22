@@ -201,163 +201,164 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
     @Override
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        // 获取该任务可以运行的销售渠道
-        List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
+//        // 获取该任务可以运行的销售渠道
+//        List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
+//
+//        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
+//        channelConditionConfig = new HashMap<>();
+//        if (ListUtils.notNull(channelIdList)) {
+//            for (final String orderChannelID : channelIdList) {
+//                channelConditionConfig.put(orderChannelID, conditionPropValueRepo.getAllByChannelId(orderChannelID));
+//            }
+//        }
+//
+//        // 循环所有销售渠道
+//        if (ListUtils.notNull(channelIdList)) {
+//            for (String channelId : channelIdList) {
+//                // 京东平台商品信息新增或更新(京东)
+//                doProductUpload(channelId, CartEnums.Cart.JD.getValue());
+//                // 京东国际商品信息新增或更新(京东国际)
+//                doProductUpload(channelId, CartEnums.Cart.JG.getValue());
+//                // 京东平台商品信息新增或更新(京东国际 匠心界)
+//                doProductUpload(channelId, CartEnums.Cart.JGJ.getValue());
+//                // 京东国际商品信息新增或更新(京东国际 悦境)
+//                doProductUpload(channelId, CartEnums.Cart.JGY.getValue());
+//            }
+//        }
 
-        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
-        channelConditionConfig = new HashMap<>();
-        if (ListUtils.notNull(channelIdList)) {
-            for (final String orderChannelID : channelIdList) {
-                channelConditionConfig.put(orderChannelID, conditionPropValueRepo.getAllByChannelId(orderChannelID));
-            }
-        }
-
-        // 循环所有销售渠道
-        if (ListUtils.notNull(channelIdList)) {
-            for (String channelId : channelIdList) {
-                // 京东平台商品信息新增或更新(京东)
-                doProductUpload(channelId, CartEnums.Cart.JD.getValue());
-                // 京东国际商品信息新增或更新(京东国际)
-                doProductUpload(channelId, CartEnums.Cart.JG.getValue());
-                // 京东平台商品信息新增或更新(京东国际 匠心界)
-                doProductUpload(channelId, CartEnums.Cart.JGJ.getValue());
-                // 京东国际商品信息新增或更新(京东国际 悦境)
-                doProductUpload(channelId, CartEnums.Cart.JGY.getValue());
-            }
-        }
-
-//        doUploadMain(taskControlList);
+        doUploadMain(taskControlList);
 
         // 正常结束
         $info("主线程正常结束");
     }
 
-//    public void doUploadMain(List<TaskControlBean> taskControlList) {
-//        // 由于这个方法可能会自己调用自己循环很多很多次， 不一定会跳出循环， 但又希望能获取到最新的TaskControl的信息， 所以不使用基类里的这个方法了
-//        // 为了调试方便， 允许作为参数传入， 但是理想中实际运行中， 基本上还是自主获取的场合比较多
-//        if (taskControlList == null) {
-//            taskControlList = taskDao.getTaskControlList(getTaskName());
-//
-//            if (taskControlList.isEmpty()) {
-//                $info("没有找到任何配置。");
-//                logIssue("没有找到任何配置！！！", getTaskName());
-//                return;
-//            }
-//
-//            // 是否可以运行的判断
-//            if (!TaskControlUtils.isRunnable(taskControlList)) {
-//                return;
-//            }
-//
+    public void doUploadMain(List<TaskControlBean> taskControlList) {
+        // 由于这个方法可能会自己调用自己循环很多很多次， 不一定会跳出循环， 但又希望能获取到最新的TaskControl的信息， 所以不使用基类里的这个方法了
+        // 为了调试方便， 允许作为参数传入， 但是理想中实际运行中， 基本上还是自主获取的场合比较多
+        if (taskControlList == null) {
+            taskControlList = taskDao.getTaskControlList(getTaskName());
+
+            if (taskControlList.isEmpty()) {
+                $info("没有找到任何配置。");
+                logIssue("没有找到任何配置！！！", getTaskName());
+                return;
+            }
+
+            // 是否可以运行的判断
+            if (!TaskControlUtils.isRunnable(taskControlList)) {
+				$info("Runnable is false");
+                return;
+            }
+
+        }
+
+        // 获取该任务可以运行的销售渠道
+        List<TaskControlBean> taskControlBeanList = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.order_channel_id);
+
+        // 准备按组分配线程（相同的组， 会共用相同的一组线程通道， 不同的组， 线程通道互不干涉）
+        Map<String, List<String>> mapTaskControl = new HashMap<>();
+        taskControlBeanList.forEach((l)->{
+            String key = l.getCfg_val2();
+            if (StringUtils.isEmpty(key)) {
+                key = "0";
+            }
+            if (mapTaskControl.containsKey(key)) {
+                mapTaskControl.get(key).add(l.getCfg_val1());
+            } else {
+                List<String> channelList = new ArrayList<>();
+                channelList.add(l.getCfg_val1());
+                mapTaskControl.put(key, channelList);
+            }
+        });
+
+        // 总共最多5个线程同时运行
+        int threadPoolCnt = 5;
+//        ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
+        Map<String, ExecutorService> mapThread = new HashMap<>();
+
+        while (true) {
+            boolean blnAllOver = true;
+            for (Map.Entry<String, ExecutorService> entry : mapThread.entrySet()) {
+                if (!entry.getValue().isTerminated()) {
+                    blnAllOver = false;
+                    break;
+                }
+            }
+            if (blnAllOver) {
+                break;
+            }
+
+            mapTaskControl.forEach((k, v)->{
+                boolean blnCreateThread = false;
+
+                if (mapThread.containsKey(k)) {
+                    ExecutorService t = mapThread.get(k);
+                    if (t.isTerminated()) {
+                        // 可以新做一个线程
+                        blnCreateThread = true;
+                    }
+                } else {
+                    // 可以新做一个线程
+                    blnCreateThread = true;
+                }
+
+                if (blnCreateThread) {
+                    ExecutorService t = Executors.newFixedThreadPool(threadPoolCnt);
+
+                    List<String> channelIdList = v;
+                    if (channelIdList != null) {
+                        for (String channelId : channelIdList) {
+                            t.execute(() -> {
+                                try {
+                                    doProductUpload(channelId, CartEnums.Cart.JD.getValue());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                            t.execute(() -> {
+                                try {
+                                    doProductUpload(channelId, CartEnums.Cart.JG.getValue());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                            t.execute(() -> {
+                                try {
+                                    doProductUpload(channelId, CartEnums.Cart.JGJ.getValue());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                            t.execute(() -> {
+                                try {
+                                    doProductUpload(channelId, CartEnums.Cart.JGY.getValue());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            });
+
+                        }
+                    }
+
+                    mapThread.put(k, t);
+
+                }
+            });
+
+        }
+
+//        executor.shutdown(); //并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
+//        try {
+//            // 阻塞，直到线程池里所有任务结束
+//            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+//        } catch (InterruptedException ie) {
+//            ie.printStackTrace();
 //        }
-//
-//        // 获取该任务可以运行的销售渠道
-//        List<TaskControlBean> taskControlBeanList = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.order_channel_id);
-//
-//        // 准备按组分配线程（相同的组， 会共用相同的一组线程通道， 不同的组， 线程通道互不干涉）
-//        Map<String, List<String>> mapTaskControl = new HashMap<>();
-//        taskControlBeanList.forEach((l)->{
-//            String key = l.getCfg_val2();
-//            if (StringUtils.isEmpty(key)) {
-//                key = "0";
-//            }
-//            if (mapTaskControl.containsKey(key)) {
-//                mapTaskControl.get(key).add(l.getCfg_val1());
-//            } else {
-//                List<String> channelList = new ArrayList<>();
-//                channelList.add(l.getCfg_val1());
-//                mapTaskControl.put(key, channelList);
-//            }
-//        });
-//
-//        // 总共最多5个组同时运行
-//        int threadPoolCnt = 5;
-////        ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
-//        Map<String, ExecutorService> mapThread = new HashMap<>();
-//
-//        while (true) {
-//            boolean blnAllOver = true;
-//            for (Map.Entry<String, ExecutorService> entry : mapThread.entrySet()) {
-//                if (!entry.getValue().isTerminated()) {
-//                    blnAllOver = false;
-//                    break;
-//                }
-//            }
-//            if (blnAllOver) {
-//                break;
-//            }
-//
-//            mapTaskControl.forEach((k, v)->{
-//                boolean blnCreateThread = false;
-//
-//                if (mapThread.containsKey(k)) {
-//                    ExecutorService t = mapThread.get(k);
-//                    if (t.isTerminated()) {
-//                        // 可以新做一个线程
-//                        blnCreateThread = true;
-//                    }
-//                } else {
-//                    // 可以新做一个线程
-//                    blnCreateThread = true;
-//                }
-//
-//                if (blnCreateThread) {
-//                    ExecutorService t = Executors.newFixedThreadPool(threadPoolCnt);
-//
-//                    List<String> channelIdList = v;
-//                    if (channelIdList != null) {
-//                        for (String channelId : channelIdList) {
-//                            t.execute(() -> {
-//                                try {
-//                                    doProductUpload(channelId, CartEnums.Cart.JD.getValue());
-//                                } catch (Exception e) {
-//                                    e.printStackTrace();
-//                                }
-//                            });
-//                            t.execute(() -> {
-//                                try {
-//                                    doProductUpload(channelId, CartEnums.Cart.JG.getValue());
-//                                } catch (Exception e) {
-//                                    e.printStackTrace();
-//                                }
-//                            });
-//                            t.execute(() -> {
-//                                try {
-//                                    doProductUpload(channelId, CartEnums.Cart.JGJ.getValue());
-//                                } catch (Exception e) {
-//                                    e.printStackTrace();
-//                                }
-//                            });
-//                            t.execute(() -> {
-//                                try {
-//                                    doProductUpload(channelId, CartEnums.Cart.JGY.getValue());
-//                                } catch (Exception e) {
-//                                    e.printStackTrace();
-//                                }
-//                            });
-//
-//                        }
-//                    }
-//
-//                    mapThread.put(k, t);
-//
-//                }
-//            });
-//
-//        }
-//
-////        executor.shutdown(); //并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
-////        try {
-////            // 阻塞，直到线程池里所有任务结束
-////            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-////        } catch (InterruptedException ie) {
-////            ie.printStackTrace();
-////        }
-//
-//        // TODO: 所有渠道处理总件数为0的场合， 就跳出不继续做了。 以外的场合， 说明可能还有别的未完成的数据， 继续自己调用自己一下
-//        doUploadMain(null);
-//
-//    }
+
+        // TODO: 所有渠道处理总件数为0的场合， 就跳出不继续做了。 以外的场合， 说明可能还有别的未完成的数据， 继续自己调用自己一下
+        doUploadMain(null);
+
+    }
 
     /**
      * 平台产品上新主处理
@@ -368,7 +369,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
     public void doProductUpload(String channelId, int cartId) throws Exception {
 
         // 默认线程池最大线程数
-        int threadPoolCnt = 5;
+        int threadPoolCnt = 10;
 
         // 获取店铺信息
         ShopBean shopProp = Shops.getShop(channelId, cartId);
@@ -394,7 +395,6 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 		$info("TOM-01:" + sxWorkloadModels.size() + "Channel:" + channelId + ": CartId:" + cartId);
         // 从cms_mt_channel_condition_mapping_config表中取得当前渠道的取得产品主类目与天猫平台叶子类目(或者平台一级类目)，以及feed类目id和天猫平台类目之间的mapping关系数据
         Map<String, List<Map<String, String>>> categoryMappingListMap = getCategoryMapping(channelId, cartId);
-		$info("TOM-02");
 
         // 创建线程池
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
@@ -408,9 +408,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         executor.shutdown(); // 并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
         try {
             // 阻塞，直到线程池里所有任务结束
-			$info("TOM-03");
             executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-			$info("TOM-04");
         } catch (InterruptedException ie) {
             ie.printStackTrace();
         }
@@ -542,7 +540,6 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         if (blnIsSmartSx) {
             sxType = "智能上新";
         }
-		$info("TOM-02-2:" + sxType);
 
         try {
             // 上新用的商品数据信息取得 // TODO：这段翻译写得不好看， 以后再改
@@ -552,7 +549,6 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
             if (sxData == null) {
                 throw new BusinessException("取得上新用的商品数据信息失败！请向管理员确认 [sxData=null]");
             }
-			$info("TOM-02-3");
             // 如果取得上新对象商品信息出错时，报错
             if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
                 String errorMsg = sxData.getErrorMessage();
@@ -562,7 +558,6 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                 // 有错误的时候，直接报错
                 throw new BusinessException(errorMsg);
             }
-			$info("TOM-02-4");
 
             // 如果一个产品的类目要求至少5张图片，但运营部愿意自己去补足图片导致大量图片上新错误，只好在这里手动给每个产品补足5张图片(用第一张图片补)
             // 但这里补足的图片不会回写到mongoDB的产品中，如果在京东平台上展示出来的效果运营不满意，让他们自己去补足图片
