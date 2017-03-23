@@ -4013,7 +4013,7 @@ public class SxProductService extends BaseService {
                 }
             } else {
                 // 京东不让在这里设置品牌属性
-                if ("品牌".equals(field.getName())) {
+                if (field.getName().contains("品牌")) { // 有些属性叫【品牌】， 有些叫【品牌1】， 估计还有别的名
                     continue;
                 }
 

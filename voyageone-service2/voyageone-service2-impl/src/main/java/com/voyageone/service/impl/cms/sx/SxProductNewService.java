@@ -1890,23 +1890,25 @@ public class SxProductNewService extends BaseService {
      * @return 是否是品牌属性
      */
     public boolean resolveJdBrandSection_before(ShopBean shopBean, Field field) {
+        // 京东新版上新不需要这个属性了（老版京东上新仍然需要的， 但是以后不会再用老版本上新了）
+        return false;
 
-        // 如果不是京东京东国际的话, 返回false
-        if (!shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
-            return false;
-        }
-
-        // 属性名字必须是指定内容
-        if (!"品牌".equals(field.getName())) {
-            return false;
-        }
-
-        // 判断类型
-        if (field.getType() != FieldTypeEnum.SINGLECHECK) {
-            return false;
-        }
-
-        return true;
+//        // 如果不是京东京东国际的话, 返回false
+//        if (!shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
+//            return false;
+//        }
+//
+//        // 属性名字必须是指定内容
+//        if (!"品牌".equals(field.getName())) {
+//            return false;
+//        }
+//
+//        // 判断类型
+//        if (field.getType() != FieldTypeEnum.SINGLECHECK) {
+//            return false;
+//        }
+//
+//        return true;
     }
 
     /**
@@ -4142,6 +4144,11 @@ public class SxProductNewService extends BaseService {
                     retMap.putAll(resolveField);
                 }
             } else {
+                // 京东不让在这里设置品牌属性
+                if (field.getName().contains("品牌")) { // 有些属性叫【品牌】， 有些叫【品牌1】， 估计还有别的名
+                    continue;
+                }
+
                 // 除了价格价位之外，其余的FieldId对应的值都在这里设定
                 // 根据FieldId取得mainProduct中对应的属性值,设置到返回的Field中
                 Map<String, Field> resolveField = resolveFieldMapping(field, sxData);
