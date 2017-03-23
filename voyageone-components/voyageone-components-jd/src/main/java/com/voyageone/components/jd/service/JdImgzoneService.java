@@ -46,13 +46,7 @@ public class JdImgzoneService extends JdBase {
 
 
         // 调用京东上传单张图片API(jingdong.imgzone.picture.upload)
-        logger.info(String.format("开始:%s:%s:%s:%s:%s", shop.getApp_url(), shop.getAppKey(), shop.getAppSecret(), shop.getSessionKey(), pictureName));
         ImgzonePictureUploadResponse response = reqApi(shop, request);
-        if (response == null) {
-            logger.info(String.format("失败:%s:%s:%s:%s:%s:%s", shop.getApp_url(), shop.getAppKey(), shop.getAppSecret(), shop.getSessionKey(), pictureName, "return null"));
-        } else {
-            logger.info(String.format("成功:%s:%s:%s:%s:%s:%s", shop.getApp_url(), shop.getAppKey(), shop.getAppSecret(), shop.getSessionKey(), pictureName, response.getPictureUrl()));
-        }
 
         return response;
     }
