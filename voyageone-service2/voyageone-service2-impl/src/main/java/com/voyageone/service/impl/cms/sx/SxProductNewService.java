@@ -818,7 +818,7 @@ public class SxProductNewService extends BaseService {
 
 //        $info("read complete, begin to upload image");
         try {
-            ImgzonePictureUploadResponse imgzonePictureUploadResponse = jdImgzoneService.uploadPicture(shopBean, baos.toByteArray(), "0", "image_title");
+            ImgzonePictureUploadResponse imgzonePictureUploadResponse = jdImgzoneService.uploadPicture("SX", picUrl, shopBean, baos.toByteArray(), "0", "image_title");
             if(imgzonePictureUploadResponse == null) {
                 String failCause = "上传图片到京东时，超时, jingdong response为空";
                 failCause = String.format("%s[channelId: %s, cartId: %s, orgPicUrl: %s]", failCause, shopBean.getOrder_channel_id(), shopBean.getCart_id(), picUrl);
