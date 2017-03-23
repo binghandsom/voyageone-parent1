@@ -91,11 +91,6 @@ public abstract class JdBase extends ComponentBase {
 	            
         	} catch (Exception ex) {
         		logger.error(ex.getMessage(), ex);
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 			}
         }
 
