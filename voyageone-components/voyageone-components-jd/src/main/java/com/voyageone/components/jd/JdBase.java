@@ -77,7 +77,7 @@ public abstract class JdBase extends ComponentBase {
 
 			try {
 	            JdClient client = getDefaultClient(shopBean, ComponentConstants.C_CONNECT_TIMEOUT, ComponentConstants.C_READ_TIMEOUT);
-	
+
 	            T response = client.execute(request);
 
 	            if (response != null) {
@@ -91,7 +91,12 @@ public abstract class JdBase extends ComponentBase {
 	            
         	} catch (Exception ex) {
         		logger.error(ex.getMessage(), ex);
-        	}
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
         }
 
         return null;
