@@ -47,11 +47,6 @@ public class JdImgzoneService extends JdBase {
 
         // 调用京东上传单张图片API(jingdong.imgzone.picture.upload)
         logger.info(String.format("开始"));
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         ImgzonePictureUploadResponse response = reqApi(shop, request);
         if (response == null) {
             logger.info(String.format("失败:return null"));
