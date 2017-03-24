@@ -1,9 +1,10 @@
-package com.voyageone.task2.cms.bean.stock;
+package com.voyageone.service.bean.cms.stock;
+
 
 /**
  * 变化的店铺库存信息
  *         WMS => CMS 发送MQ
- * 
+ *
  * @author Wangtd 2017/03/17
  * @version 1.0.0
  *
@@ -13,13 +14,13 @@ package com.voyageone.task2.cms.bean.stock;
 public class CartChangedStockBean {
 
     private String channelId;
-    
+
     private Integer cartId;
-    
+
     private String sku;
-    
+
     private String itemCode;
-    
+
     private Integer qty;
 
     public String getChannelId() {
@@ -45,7 +46,7 @@ public class CartChangedStockBean {
     public void setSku(String sku) {
         this.sku = sku;
     }
-    
+
     public String getItemCode() {
         return itemCode;
     }
@@ -61,5 +62,5 @@ public class CartChangedStockBean {
     public void setQty(Integer qty) {
         this.qty = qty;
     }
-    
+
 }

@@ -3,10 +3,9 @@ package com.voyageone.service.impl.cms.vomq.vomessage.body.stock;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.service.bean.cms.stock.CartChangedStockBean;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
-import com.voyageone.task2.cms.bean.stock.CartChangedStockBean;
 import org.apache.commons.collections.CollectionUtils;
-
 import java.util.List;
 
 /**

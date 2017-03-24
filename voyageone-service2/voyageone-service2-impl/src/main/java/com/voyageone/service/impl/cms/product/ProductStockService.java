@@ -1,9 +1,9 @@
 package com.voyageone.service.impl.cms.product;
 
 import com.voyageone.common.CmsConstants;
+import com.voyageone.service.bean.cms.stock.CartChangedStockBean;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.task2.cms.bean.stock.CartChangedStockBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
