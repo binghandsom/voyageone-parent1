@@ -17,7 +17,6 @@ import java.util.List;
 public class CmsFeedSkuPqMQMessageBody extends BaseMQMessageBody {
 
     String channelId;
-    String modifier;
     List<CmsBtFeedSkuPqModel> skuInfo;
 
     public String getChannelId() {
@@ -26,14 +25,6 @@ public class CmsFeedSkuPqMQMessageBody extends BaseMQMessageBody {
 
     public void setChannelId(String channelId) {
         this.channelId = channelId;
-    }
-
-    public String getModifier() {
-        return modifier;
-    }
-
-    public void setModifier(String modifier) {
-        this.modifier = modifier;
     }
 
     public List<CmsBtFeedSkuPqModel> getSkuInfo() {
