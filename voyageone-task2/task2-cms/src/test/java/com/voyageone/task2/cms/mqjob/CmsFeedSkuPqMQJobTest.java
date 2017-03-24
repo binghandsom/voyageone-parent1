@@ -51,7 +51,7 @@ public class CmsFeedSkuPqMQJobTest {
 
         //拼消息体
         message.setChannelId("010");
-        message.setModifier("piao");
+        message.setSender("piao");
         message.setSkuInfo(skus);
 
 
