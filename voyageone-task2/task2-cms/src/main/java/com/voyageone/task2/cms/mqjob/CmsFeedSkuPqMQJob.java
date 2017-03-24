@@ -30,12 +30,8 @@ public class CmsFeedSkuPqMQJob extends TBaseMQCmsService<CmsFeedSkuPqMQMessageBo
 
     @Override
     public void onStartup(CmsFeedSkuPqMQMessageBody messageBody) throws Exception {
-        String modifier = null;     //触发者
-        
-        if(messageBody.getModifier() == null)
-            modifier = "VMS监控库存价格";
 
-        Map<String, List<CmsBtOperationLogModel_Msg>> result = feedToCmsService.updateFeedSkuPrice(messageBody.getChannelId(), messageBody.getSkuInfo(), modifier);
+        Map<String, List<CmsBtOperationLogModel_Msg>> result = feedToCmsService.updateFeedSkuPrice(messageBody.getChannelId(), messageBody.getSkuInfo(), messageBody.getSender());
 
         List<CmsBtOperationLogModel_Msg> success = result.get("success"),
                 failed = result.get("failed");
