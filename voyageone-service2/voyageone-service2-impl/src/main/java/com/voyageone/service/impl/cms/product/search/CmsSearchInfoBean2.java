@@ -3,7 +3,6 @@ package com.voyageone.service.impl.cms.product.search;
 import com.voyageone.common.util.JsonUtil;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +38,7 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     private String[] codeList;
     private String fuzzyStr;
+    private String productNameCn;
     // MINI MALL 店铺时查询原始CHANNEL
     private int supplierType = 0;
     private List<String> supplierList = null;
@@ -616,5 +616,13 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     public void setIsNewSku(Boolean isNewSku) {
         this.isNewSku = isNewSku;
+    }
+
+    public String getProductNameCn() {
+        return productNameCn;
+    }
+
+    public void setProductNameCn(String productNameCn) {
+        this.productNameCn = productNameCn;
     }
 }
