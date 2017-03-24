@@ -271,9 +271,6 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
             }
         });
 
-        // 总共最多5个线程同时运行
-        int threadPoolCnt = 1;
-//        ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
         Map<String, ExecutorService> mapThread = new HashMap<>();
 
         while (true) {
@@ -293,7 +290,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                 }
 
                 if (blnCreateThread) {
-                    ExecutorService t = Executors.newFixedThreadPool(threadPoolCnt);
+                    ExecutorService t = Executors.newSingleThreadExecutor();
 
                     List<String> channelIdList = v;
                     if (channelIdList != null) {
@@ -301,27 +298,9 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                             t.execute(() -> {
                                 try {
                                     doProductUpload(channelId, CartEnums.Cart.JD.getValue());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            });
-                            t.execute(() -> {
-                                try {
-                                    doProductUpload(channelId, CartEnums.Cart.JG.getValue());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            });
-                            t.execute(() -> {
-                                try {
-                                    doProductUpload(channelId, CartEnums.Cart.JGJ.getValue());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            });
-                            t.execute(() -> {
-                                try {
-                                    doProductUpload(channelId, CartEnums.Cart.JGY.getValue());
+									doProductUpload(channelId, CartEnums.Cart.JG.getValue());
+									doProductUpload(channelId, CartEnums.Cart.JGJ.getValue());
+									doProductUpload(channelId, CartEnums.Cart.JGY.getValue());
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -346,12 +325,17 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
             if (blnAllOver) {
                 break;
             }
+			try {
+				Thread.sleep(1000 * 10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 
         }
 
         // TODO: 所有渠道处理总件数为0的场合， 就跳出不继续做了。 以外的场合， 说明可能还有别的未完成的数据， 继续自己调用自己一下
         try {
-            Thread.sleep(1000 * 30);
+            Thread.sleep(1000 * 10);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -368,7 +352,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
     public void doProductUpload(String channelId, int cartId) throws Exception {
 
         // 默认线程池最大线程数
-        int threadPoolCnt = 10;
+        int threadPoolCnt = 40;
 
         // 获取店铺信息
         ShopBean shopProp = Shops.getShop(channelId, cartId);
@@ -404,12 +388,12 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
         // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
         executor.shutdown(); // 并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
-//        try {
-//            // 阻塞，直到线程池里所有任务结束
-//            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-//        } catch (InterruptedException ie) {
-//            ie.printStackTrace();
-//        }
+        try {
+            // 阻塞，直到线程池里所有任务结束
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
+        }
     }
 
 
