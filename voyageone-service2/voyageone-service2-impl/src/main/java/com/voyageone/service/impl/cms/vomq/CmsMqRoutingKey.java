@@ -98,6 +98,10 @@ public class CmsMqRoutingKey {
     public static final String  CMS_ADV_SEARCH_LOCK_PRODUCTS = "VOCmsAdvSearchLockProductsMQJobQueue";
 
     // 未整理的业务内容
+
+    /**库存相关MQ*/
+    public static final String EWMS_MQ_STOCK_CART_CHANGED_STOCK = "ewms_mq_stock_cart_changed_stock";
+
     /**
      * image create task
      */
