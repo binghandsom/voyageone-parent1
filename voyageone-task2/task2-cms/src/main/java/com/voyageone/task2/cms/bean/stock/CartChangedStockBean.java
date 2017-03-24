@@ -1,7 +1,5 @@
 package com.voyageone.task2.cms.bean.stock;
 
-import java.io.Serializable;
-
 /**
  * 变化的店铺库存信息
  *         WMS => CMS 发送MQ
@@ -12,9 +10,7 @@ import java.io.Serializable;
  * @piao
  *
  */
-public class CartChangedStockBean implements Serializable {
-
-    private static final long serialVersionUID = -8684941589218349997L;
+public class CartChangedStockBean {
 
     private String channelId;
     
