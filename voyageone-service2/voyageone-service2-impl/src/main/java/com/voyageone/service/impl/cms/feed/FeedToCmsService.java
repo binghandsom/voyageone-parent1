@@ -272,7 +272,12 @@ public class FeedToCmsService extends BaseService {
 
         for (CmsBtFeedSkuPqModel skuEntity : products) {
 
-            CmsBtFeedInfoModel orgFeedInfo = feedInfoService.getProductByCode(channelId, skuEntity.getCode());
+            CmsBtFeedInfoModel_Sku firstSku = skuEntity.getSkus().get(0);
+
+            if(firstSku == null)
+                continue;
+
+            CmsBtFeedInfoModel orgFeedInfo = feedInfoService.getProductByClientSku(channelId, firstSku.getClientSku());
             /**标识是否要触发价格公式，
              * 当判断中的3个价格都没有值时，不会触发价格公式
              * */
