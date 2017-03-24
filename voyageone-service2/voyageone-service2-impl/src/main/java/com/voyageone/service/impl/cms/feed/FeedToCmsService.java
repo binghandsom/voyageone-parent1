@@ -294,8 +294,10 @@ public class FeedToCmsService extends BaseService {
                     targetSku.setPriceClientRetail(skuInfo.getPriceClientRetail());
                 if (skuInfo.getPriceClientMsrp() != 0)
                     targetSku.setPriceClientMsrp(skuInfo.getPriceClientMsrp());
-                if (skuInfo.getQty() != 0)
+                if (skuInfo.getQty() != null)
                     targetSku.setQty(skuInfo.getQty());
+                if (skuInfo.getQty() != null)
+                    targetSku.setIsSale(skuInfo.getIsSale());
             }
 
             try {
@@ -354,7 +356,7 @@ public class FeedToCmsService extends BaseService {
         CmsBtFeedInfoModel_Sku targetSku = null;
 
         for (CmsBtFeedInfoModel_Sku entity : skus) {
-            if (entity.getSku().equals(matchSku.getSku())) {
+            if (entity.getClientSku().equals(matchSku.getClientSku())) {
                 targetSku = entity;
                 break;
             }

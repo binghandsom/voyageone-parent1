@@ -14,6 +14,11 @@ import java.util.Map;
 /**
  * @description VMS的价格和库存改变时请求MQ
  *              更新CMS=》feedInfo信息
+ *              该MQ只更新    priceNet:美金成本价
+ *                           priceClientRetail:美金指导价
+ *                           priceClientMsrp:美金专柜价
+ *                           qty:库存
+ *                           isSale:是否在卖
  * @author  piao
  */
 @Service
