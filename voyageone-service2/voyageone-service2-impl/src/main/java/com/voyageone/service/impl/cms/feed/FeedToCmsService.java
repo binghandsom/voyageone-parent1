@@ -34,6 +34,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.reducing;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -277,8 +278,10 @@ public class FeedToCmsService extends BaseService {
              * */
             boolean triggerPrice = false;
 
-            for (CmsBtFeedInfoModel_Sku skuInfo : skuEntity.getSkus()) {
-                CmsBtFeedInfoModel_Sku targetSku = filterSku(orgFeedInfo.getSkus(), skuInfo);
+            /**code 库存计算*/
+            Integer qty = 0;
+            for (CmsBtFeedInfoModel_Sku skuInfo : orgFeedInfo.getSkus()) {
+                CmsBtFeedInfoModel_Sku targetSku = filterSku(skuEntity.getSkus(), skuInfo);
 
                 /**
                  * 比较一下客户价格
@@ -286,42 +289,30 @@ public class FeedToCmsService extends BaseService {
                  * priceClientRetail:美金指导价
                  * priceClientMsrp:美金专柜价
                  */
-                triggerPrice = skuInfo.getPriceNet() == 0 && skuInfo.getPriceClientRetail() == 0 && skuInfo.getPriceClientMsrp() == 0 ? false : true;
+                if (targetSku != null) {
+                    triggerPrice = targetSku.getPriceNet() == 0 && targetSku.getPriceClientRetail() == 0 && targetSku.getPriceClientMsrp() == 0 ? false : true;
 
-                if (skuInfo.getPriceNet() != 0)
-                    targetSku.setPriceNet(skuInfo.getPriceNet());
-                if (skuInfo.getPriceClientRetail() != 0)
-                    targetSku.setPriceClientRetail(skuInfo.getPriceClientRetail());
-                if (skuInfo.getPriceClientMsrp() != 0)
-                    targetSku.setPriceClientMsrp(skuInfo.getPriceClientMsrp());
-                if (skuInfo.getQty() != null)
-                    targetSku.setQty(skuInfo.getQty());
-                if (skuInfo.getQty() != null)
-                    targetSku.setIsSale(skuInfo.getIsSale());
+                    if (targetSku.getPriceNet() != 0)
+                        skuInfo.setPriceNet(skuInfo.getPriceNet());
+                    if (targetSku.getPriceClientRetail() != 0)
+                        skuInfo.setPriceClientRetail(skuInfo.getPriceClientRetail());
+                    if (targetSku.getPriceClientMsrp() != 0)
+                        skuInfo.setPriceClientMsrp(skuInfo.getPriceClientMsrp());
+                    skuInfo.setQty(targetSku.getQty());
+                    skuInfo.setIsSale(targetSku.getIsSale());
+                }
+                qty += skuInfo.getQty();
             }
 
             try {
-                orgFeedInfo.setCreated(DateTimeUtil.getNowTimeStamp());
-                orgFeedInfo.setCreater(modifier);
-
-                /**code 库存计算*/
-                Integer qty = 0;
-                for (CmsBtFeedInfoModel_Sku sku : orgFeedInfo.getSkus()) {
-                    if (sku.getQty() != null)
-                        qty += sku.getQty();
-                }
+                orgFeedInfo.setModified(DateTimeUtil.getNowTimeStamp());
+                orgFeedInfo.setModifier(modifier);
                 orgFeedInfo.setQty(qty);
-
 
                 // 计算人民币价格
                 if (triggerPrice) {
-                    try {
-                        priceService.setFeedPrice(orgFeedInfo);
-                    } catch (Exception e) {
-                        $error("触发价格公式报错：\n" + e.getMessage());
-                    }
+                    priceService.setFeedPrice(orgFeedInfo);
                 }
-
                 feedInfoService.updateFeedInfo(orgFeedInfo);
 
                 CmsBtOperationLogModel_Msg _successMsg = new CmsBtOperationLogModel_Msg();
