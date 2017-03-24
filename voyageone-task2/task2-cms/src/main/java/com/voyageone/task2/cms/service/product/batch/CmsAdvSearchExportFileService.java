@@ -1389,9 +1389,11 @@ public class CmsAdvSearchExportFileService extends BaseService {
             Map<String, CmsBtProductModel_Platform_Cart> platforms = item.getPlatforms();
             if (platforms != null && platforms.size() > 0) {
                 for (CmsBtProductModel_Platform_Cart platform : platforms.values()) {
-                    if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())) {
-                        skip = false;
-                        break;
+                    if(platform.getCartId() > 10 && platform.getCartId() < 900) {
+                        if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())) {
+                            skip = false;
+                            break;
+                        }
                     }
                 }
             }

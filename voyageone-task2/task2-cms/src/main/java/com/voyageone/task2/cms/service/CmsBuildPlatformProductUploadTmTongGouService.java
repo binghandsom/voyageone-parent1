@@ -440,6 +440,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                     errMsg = "天猫官网同购更新商品时出现错误! ";
                 }
                 errMsg += result;
+                if (result.contains("商品类目未授权")) {
+                    errMsg += "（使用的类目是：" + productInfoMap.get("category") + "）";
+                }
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             } else {

@@ -298,7 +298,7 @@ public class PromotionDetailService extends BaseService {
         }
 
         // 统计code级别的库存
-        List<String> skuList = productInfo.getPlatform(27).getSkus()
+        List<String> skuList = productInfo.getPlatform(cartId).getSkus()
                 .stream()
                 .filter(sku -> Boolean.valueOf(sku.getStringAttribute("isSale")))
                 .map(sku -> sku.getStringAttribute("skuCode")).collect(Collectors.toList());

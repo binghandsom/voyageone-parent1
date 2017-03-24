@@ -93,7 +93,7 @@ public class OverstockEventService extends OverstockBase {
      */
     @Retryable
     public Result<EventsType> queryingForNewVariation() throws Exception {
-        return queryingForNewEvents(EventTypeType.VARIATION);
+        return queryingForNewEvents(EventTypeType.VARIATION,100);
     }
 
     /**

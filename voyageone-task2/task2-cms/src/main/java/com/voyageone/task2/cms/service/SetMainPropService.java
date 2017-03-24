@@ -42,7 +42,6 @@ import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceService;
-import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
@@ -96,6 +95,16 @@ import java.util.stream.Collectors;
 @Service
 public class SetMainPropService extends VOAbsIssueLoggable {
 
+    // 每个channel的feed->master导入默认最大件数
+    private final static int FEED_IMPORT_MAX_500 = 500;
+    @Autowired
+    CategoryTreeService categoryTreeService;
+    @Autowired
+    CmsMasterBrandMappingService cmsMasterBrandMappingService;
+    @Autowired
+    PromotionService promotionService;
+    @Autowired
+    PromotionCodeService promotionCodeService;
     @Autowired
     private CmsBtFeedMapping2Dao cmsBtFeedMapping2Dao; // DAO: 新的feed->主数据的mapping关系
     @Autowired
@@ -121,8 +130,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
     @Autowired
     private FeedInfoService feedInfoService;
     @Autowired
-    CategoryTreeService categoryTreeService;
-    @Autowired
     private
     CategoryTreeAllService categoryTreeAllService;
     @Autowired
@@ -141,22 +148,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
     private
     CmsBtBrandBlockService cmsBtBrandBlockService;
     @Autowired
-    CmsMasterBrandMappingService cmsMasterBrandMappingService;
-    @Autowired
-    PromotionService promotionService;
-    @Autowired
-    PromotionCodeService promotionCodeService;
-    @Autowired
     private PlatformPriceService platformPriceService;
-
     @Autowired
     private CmsBtTranslateService cmsBtTranslateService;
-
-    // 每个channel的feed->master导入默认最大件数
-    private final static int FEED_IMPORT_MAX_500 = 500;
-
-
-
     @Autowired
     private Searcher searcher;
 
@@ -165,14 +159,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
      * 按渠道进行设置
      */
     public class setMainProp {
-        public String getTaskName() {
-            return taskName;
-        }
-
-        public void setTaskName(String taskName) {
-            this.taskName = taskName;
-        }
-
         Boolean usjoi;
         String taskName;
         int insertCnt = 0;
@@ -181,17 +167,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         int currentIndex = 0;
         int feedListCnt = 0;
         long startTime;
-        private OrderChannelBean channel;
-        private boolean skip_mapping_check;
-
-        private Map<String, List<ConditionPropValueModel>> channelConditionConfig;
-        // jeff 2016/04 change start
-//        // 前一次的价格强制击穿时间
-//        private String priceBreakTime;
-        private int m_mulitComplex_index = 0; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
-        // jeff 2016/04 change end
-        private boolean m_mulitComplex_run = false; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
-
         // --------------------------------------------------------------------------------------------
         // synship.com_mt_value_channel表共通信息
         // 品牌mapping表
@@ -226,32 +201,30 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         List<TypeChannelBean> typeChannelBeanListApprove = null;
         // 允许展示的cart列表
         List<TypeChannelBean> typeChannelBeanListDisplay = null;
-
         // 主类目黑名单
         List<String> categoryWhite = new ArrayList<>();
-
         // 价格阈值 超过该值的商品不能导入主数据
         Double priceThreshold = null;
-
         // 重量阈值 超过该值的商品不能导入主数据
         Double weightThreshold = null;
-
         // 拆分规则 0：不拆分 1：按主类目拆分 2：无条件拆分
         String singleFlg = "0";
-
         // group设置规则 0：按model设置group 1：按code设置group
         String singleGroupFlg = "0";
-
         // feed-》mast 主类目是否同步  0：不同步 1：无条件同步
         String categoryFlg = "0";
-
         // 需要拆分的主类目
         List<String> categorySingle = new ArrayList<>();
-
-
-        // --------------------------------------------------------------------------------------------
-
         Map<String, String> mastBrand = null;
+        private OrderChannelBean channel;
+        private boolean skip_mapping_check;
+        private Map<String, List<ConditionPropValueModel>> channelConditionConfig;
+        // jeff 2016/04 change start
+//        // 前一次的价格强制击穿时间
+//        private String priceBreakTime;
+        private int m_mulitComplex_index = 0; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
+        // jeff 2016/04 change end
+        private boolean m_mulitComplex_run = false; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
 
         public setMainProp(String channelId, boolean usjoi, boolean skip_mapping_check) {
             this.channel = Channels.getChannel(channelId);
@@ -259,6 +232,17 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             this.mastBrand = new HashMap<>();
             this.usjoi = usjoi;
 //            this.priceBreakTime = priceBreakTime;
+        }
+
+
+        // --------------------------------------------------------------------------------------------
+
+        public String getTaskName() {
+            return taskName;
+        }
+
+        public void setTaskName(String taskName) {
+            this.taskName = taskName;
         }
 
         /**
@@ -910,11 +894,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         blnProductExist = true;
                     } else {
                         cmsProduct = oldCmsProduct;
-                        if (cmsProduct == null) {
-                            blnProductExist = false;
-                        } else {
-                            blnProductExist = true;
-                        }
+                        blnProductExist = cmsProduct != null;
                     }
                 }
 
@@ -3229,6 +3209,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         // 主类目叶子级中文名称（"服饰>服饰配件>钱包卡包钥匙包>护照夹" -> "护照夹"）
                         String leafCategoryCnName = searchResult.getCnName().substring(searchResult.getCnName().lastIndexOf(">") + 1,
                                 searchResult.getCnName().length());
+
+                        // 设置中文名称
+                        prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(prodCommonField.getBrand()
+                                , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
                     }
                 }
             }
@@ -3285,6 +3269,18 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             query.setProductName(productNameEn, brand);
 
             return query;
+        }
+
+        /**
+         * 根据自动匹配商品主类目取得商品中文名称
+         *
+         * @param brand              品牌
+         * @param sizeTypeCn         适合人群(中文)
+         * @param leafCategoryCnName 主类目叶子级中文名称
+         * @return String 商品中文名称(品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称)
+         */
+        private String getOriginalTitleCnByCategory(String brand, String sizeTypeCn, String leafCategoryCnName) {
+            return brand + " " + sizeTypeCn + " " + leafCategoryCnName;
         }
     }
 }
