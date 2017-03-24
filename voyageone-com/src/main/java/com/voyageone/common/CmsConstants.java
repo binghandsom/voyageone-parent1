@@ -3,7 +3,7 @@ package com.voyageone.common;
 public class CmsConstants {
 
     // 从上新的任务表中一次数据抽出最大件数
-    public static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 50;
+    public static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 15;
 
     // 有效销售平台cartId的最小值
     public static final int ACTIVE_CARTID_MIN = 20;
