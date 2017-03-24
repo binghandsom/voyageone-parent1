@@ -957,6 +957,7 @@
 
                 if (showName)
                     container.append(angular.element('<s-header>'));
+
                 //sofia
                 each(rules, function (content, key) {
 
@@ -966,10 +967,13 @@
                     if (key.indexOf('Rule') > 0 && key !== 'tipRule')
                         return;
 
-                    var contentContainer = angular.element('<s-tip-new ng-click="showTip=!showTip">');
+                    var contentContainer = angular.element('<s-tip-new ng-click="showTip =! showTip">');
+
                     container.append(contentContainer);
                 });
-                innerElement = angular.element('<div class="s-wrapper" style="margin-left:15px">');
+
+                /**updated by piao 去掉了 style="margin-left:15px"*/
+                innerElement = angular.element('<div class="s-wrapper">');
                 //sofia
                 // 创建一个 div 用来包裹非 name 的所有内容, 便于外观控制
                 // innerElement = angular.element('<div class="s-wrapper">');
