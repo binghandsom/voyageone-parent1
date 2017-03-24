@@ -201,32 +201,32 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
     @Override
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-//        // 获取该任务可以运行的销售渠道
-//        List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
-//
-//        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
-//        channelConditionConfig = new HashMap<>();
-//        if (ListUtils.notNull(channelIdList)) {
-//            for (final String orderChannelID : channelIdList) {
-//                channelConditionConfig.put(orderChannelID, conditionPropValueRepo.getAllByChannelId(orderChannelID));
-//            }
-//        }
-//
-//        // 循环所有销售渠道
-//        if (ListUtils.notNull(channelIdList)) {
-//            for (String channelId : channelIdList) {
-//                // 京东平台商品信息新增或更新(京东)
-//                doProductUpload(channelId, CartEnums.Cart.JD.getValue());
-//                // 京东国际商品信息新增或更新(京东国际)
-//                doProductUpload(channelId, CartEnums.Cart.JG.getValue());
-//                // 京东平台商品信息新增或更新(京东国际 匠心界)
-//                doProductUpload(channelId, CartEnums.Cart.JGJ.getValue());
-//                // 京东国际商品信息新增或更新(京东国际 悦境)
-//                doProductUpload(channelId, CartEnums.Cart.JGY.getValue());
-//            }
-//        }
+        // 获取该任务可以运行的销售渠道
+        List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
-        doUploadMain(taskControlList);
+        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
+        channelConditionConfig = new HashMap<>();
+        if (ListUtils.notNull(channelIdList)) {
+            for (final String orderChannelID : channelIdList) {
+                channelConditionConfig.put(orderChannelID, conditionPropValueRepo.getAllByChannelId(orderChannelID));
+            }
+        }
+
+        // 循环所有销售渠道
+        if (ListUtils.notNull(channelIdList)) {
+            for (String channelId : channelIdList) {
+                // 京东平台商品信息新增或更新(京东)
+                doProductUpload(channelId, CartEnums.Cart.JD.getValue());
+                // 京东国际商品信息新增或更新(京东国际)
+                doProductUpload(channelId, CartEnums.Cart.JG.getValue());
+                // 京东平台商品信息新增或更新(京东国际 匠心界)
+                doProductUpload(channelId, CartEnums.Cart.JGJ.getValue());
+                // 京东国际商品信息新增或更新(京东国际 悦境)
+                doProductUpload(channelId, CartEnums.Cart.JGY.getValue());
+            }
+        }
+
+//        doUploadMain(taskControlList);
 
         // 正常结束
         $info("主线程正常结束");
@@ -404,12 +404,12 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
         // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
         executor.shutdown(); // 并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
-//        try {
-//            // 阻塞，直到线程池里所有任务结束
-//            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-//        } catch (InterruptedException ie) {
-//            ie.printStackTrace();
-//        }
+        try {
+            // 阻塞，直到线程池里所有任务结束
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
+        }
     }
 
 
