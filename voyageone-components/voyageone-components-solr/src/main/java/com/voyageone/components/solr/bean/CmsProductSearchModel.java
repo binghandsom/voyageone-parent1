@@ -16,8 +16,11 @@ public class CmsProductSearchModel {
     private String id;
     private Long lastVer;
     private String productModel;
+    private String nameEn;
+    private String nameCn;
     private String productCode;
     private String productChannel;
+    private String orgChannelId;
     private List<String> skuCode;
     private String translateStatus;
     private String brand;
@@ -204,5 +207,29 @@ public class CmsProductSearchModel {
 
     public void setPlatform(Map<String, CmsProductSearchPlatformModel> platform) {
         this.platform = platform;
+    }
+
+    public String getNameEn() {
+        return nameEn;
+    }
+
+    public void setNameEn(String nameEn) {
+        this.nameEn = nameEn;
+    }
+
+    public String getNameCn() {
+        return nameCn;
+    }
+
+    public void setNameCn(String nameCn) {
+        this.nameCn = nameCn;
+    }
+
+    public String getOrgChannelId() {
+        return orgChannelId;
+    }
+
+    public void setOrgChannelId(String orgChannelId) {
+        this.orgChannelId = orgChannelId;
     }
 }

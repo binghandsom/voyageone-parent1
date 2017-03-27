@@ -97,16 +97,27 @@ public class CmsProductSearchService extends BaseSearchService {
 
         cmsProductSearchModel.setFeedCat(cmsBtProductModel.getFeed().getCatPath());
 
+        cmsProductSearchModel.setNameCn(field.getOriginalTitleCn());
+
+        cmsProductSearchModel.setNameEn(field.getProductNameEn());
+
+        cmsProductSearchModel.setOrgChannelId(cmsBtProductModel.getOrgChannelId());
+
         cmsBtProductModel.getPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> {
             if(cmsBtProductModel_platform_cart.getCartId() > 10 && cmsBtProductModel_platform_cart.getCartId() < 900){
                 CmsProductSearchPlatformModel cmsProductSearchPlatformModel = new CmsProductSearchPlatformModel();
                 BeanUtils.copy(cmsBtProductModel_platform_cart, cmsProductSearchPlatformModel);
+                cmsProductSearchPlatformModel.setpStatus(cmsBtProductModel_platform_cart.getpStatus()==null?null:cmsBtProductModel_platform_cart.getpStatus().name());
+                cmsProductSearchPlatformModel.setPriceChgFlg(cmsBtProductModel_platform_cart.getSkus().stream().map(sku->sku.getStringAttribute("priceChgFlg")).collect(Collectors.toList()));
+                cmsProductSearchPlatformModel.setPriceMsrpFlg(cmsBtProductModel_platform_cart.getSkus().stream().map(sku->sku.getStringAttribute("priceMsrpFlg")).collect(Collectors.toList()));
+                cmsProductSearchPlatformModel.setPriceDiffFlg(cmsBtProductModel_platform_cart.getSkus().stream().map(sku->sku.getStringAttribute("priceDiffFlg")).collect(Collectors.toList()));
+                cmsProductSearchPlatformModel.setSale7( cmsBtProductModel.getSales().getCodeSum7(cmsBtProductModel_platform_cart.getCartId()));
+                cmsProductSearchPlatformModel.setSale30(cmsBtProductModel.getSales().getCodeSum30(cmsBtProductModel_platform_cart.getCartId()));
+                cmsProductSearchPlatformModel.setSaleYear(cmsBtProductModel.getSales().getCodeSumYear(cmsBtProductModel_platform_cart.getCartId()));
+                cmsProductSearchPlatformModel.setSaleAll(cmsBtProductModel.getSales().getCodeSumAll(cmsBtProductModel_platform_cart.getCartId()));
                 cmsProductSearchModel.getPlatform().put(s, cmsProductSearchPlatformModel);
             }
         });
-
-
-
         return createSolrBean(cmsProductSearchModel, lastVer);
     }
 
@@ -290,7 +301,7 @@ public class CmsProductSearchService extends BaseSearchService {
             }else if(o instanceof Map){
                 Map<String, Object> items = (Map<String, Object>) o;
                 items.forEach((s1, cmsProductSearchPlatformModel) -> {
-                    bean2SolrUpdateBean(update, cmsProductSearchPlatformModel, s1);
+                    bean2SolrUpdateBean(update, cmsProductSearchPlatformModel, s1+"_");
                 });
 
             }else{
