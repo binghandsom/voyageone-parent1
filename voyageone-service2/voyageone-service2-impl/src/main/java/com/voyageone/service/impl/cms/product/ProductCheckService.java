@@ -443,18 +443,7 @@ public class ProductCheckService extends BaseService {
                         || (CartEnums.Cart.JM.getValue() == cartId
                         && StringUtils.isEmpty(cartInfo.getpPlatformMallId()))) {
 
-                    if ("Error".equals(cartInfo.getpPublishError())
-                            && (!StringUtils.isEmpty(cartInfo.getpPublishTime()))
-                            || cartInfo.getpStatus() != null
-                            || !StringUtils.isEmpty(cartInfo.getpNumIId())
-                            || !StringUtils.isEmpty(cartInfo.getpReallyStatus())
-                            || ((CartEnums.Cart.TM.getValue() == cartId
-                            || CartEnums.Cart.TG.getValue() == cartId
-                            || CartEnums.Cart.TB.getValue() == cartId
-                            || CartEnums.Cart.JM.getValue() == cartId)
-                            && !StringUtils.isEmpty(cartInfo.getpProductId()))
-                            || (CartEnums.Cart.JM.getValue() == cartId
-                            && !StringUtils.isEmpty(cartInfo.getpPlatformMallId()))) {
+                    if (!"Error".equals(cartInfo.getpPublishError())) {
 
                         errorModel.getErrors().add(String.format("platform(_id: %s, cartId: %d), 该商品平台状态为Approved,但是商品相关状态属性不在正确的值内(%s)", productModel.get_id(), cartId, cartInfo.getStatus()));
 //                cartInfo.setStatus(CmsConstants.ProductStatus.Approved);
