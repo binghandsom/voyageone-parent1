@@ -43,7 +43,6 @@ public class CmsFeedSkuPqMQJobTest {
         _skuInfo.setPriceClientRetail(0.0);
         _skuInfo.setPriceClientMsrp(0.0);
 
-        skuPqModel.setCode("1FMA3324Y11");
         skuList.add(_skuInfo);
         skuPqModel.setSkus(skuList);
 
