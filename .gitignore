@@ -16,7 +16,4 @@ dependency-reduced-pom.xml
 npm-debug.log
 rebel.xml
 node_modules
-## Add by wangtd
 .project
-.gitignore
-.tern-project
