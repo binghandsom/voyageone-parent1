@@ -1006,15 +1006,15 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                         $error(failCause.toString());
                         throw new BusinessException(failCause.toString());
                     }
-//                    // 更新商品共通信息成功后，调用京东全量保存SKU接口设置SKU属性(包括颜色和尺码别名)
-//                    boolean saveWareSkusResult = doSaveWareSkus(shopProp, jdWareId, sxData, productColorMap, skuLogicQtyMap,
-//                            cmsColorList, cmsSizeList, salePropStatus, channelConfigValueMap);
+                    // 更新商品共通信息成功后，调用京东全量保存SKU接口设置SKU属性(包括颜色和尺码别名)
+                    boolean saveWareSkusResult = doSaveWareSkus(shopProp, jdWareId, sxData, productColorMap, skuLogicQtyMap,
+                            cmsColorList, cmsSizeList, salePropStatus, channelConfigValueMap);
                     // 新增之后更新商品SKU信息成功
-//                    if (!saveWareSkusResult) {
-//                        String errMsg = String.format("京东更新商品时，调用京东全量保存SKU接口设置SKU属性失败! [ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
-//                                channelId, cartId, groupId, jdWareId);
-//                        throw new BusinessException(errMsg);
-//                    }
+                    if (!saveWareSkusResult) {
+                        String errMsg = String.format("京东更新商品时，调用京东全量保存SKU接口设置SKU属性失败! [ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
+                                channelId, cartId, groupId, jdWareId);
+                        throw new BusinessException(errMsg);
+                    }
                 } catch (Exception e) {
                     // 设置异常信息
                     sxData.setErrorMessage(e.getMessage());
