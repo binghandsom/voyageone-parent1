@@ -8,16 +8,7 @@ import java.util.List;
  */
 
 public class CmsBtFeedSkuPqModel {
-    private String code;
     private List<CmsBtFeedInfoModel_Sku> skus;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public List<CmsBtFeedInfoModel_Sku> getSkus() {
         return skus;
