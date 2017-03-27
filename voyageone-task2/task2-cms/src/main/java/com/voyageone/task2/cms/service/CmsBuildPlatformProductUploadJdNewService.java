@@ -1290,7 +1290,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         }
         if (StringUtils.isEmpty(productModel)) {
             // 默认使用model来设置
-            jdProductBean.setItemNum(mainProduct.getCommon().getFields().getModel());
+            jdProductBean.setItemNum(mainProduct.getCommon().getFields().getCode());
         } else {
             // 如果有填了的话, 那就用运营自己填写的来设置
             jdProductBean.setItemNum(productModel);
