@@ -36,7 +36,8 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 	public void startupTest() {
 		System.out.println("天猫国际");
 		do天猫国际_男鞋();
-		do天猫国际_女鞋();
+		do天猫国际_女鞋("Women");
+		do天猫国际_女鞋("Big Kids");
 		do天猫国际_童鞋和服饰配件();
 
 		System.out.println("京东");
@@ -44,7 +45,8 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		do京东_各种鞋类();
 		do京东_童鞋();
 		do京东_男鞋();
-		do京东_女鞋();
+		do京东_女鞋("Women");
+		do京东_女鞋("Big Kids");
 		do京东_服饰配件();
 
 		System.out.println("京东国际");
@@ -52,7 +54,8 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		do京东国际_各种鞋类();
 		do京东国际_童鞋();
 		do京东国际_男鞋();
-		do京东国际_女鞋();
+		do京东国际_女鞋("Women");
+		do京东国际_女鞋("Big Kids");
 		do京东国际_服饰配件();
 
 
@@ -130,12 +133,12 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 
 	}
 
-	private void do天猫国际_女鞋() {
+	private void do天猫国际_女鞋(String sizeType) {
 
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Running Shoes"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("1140385995", "1264026242", "女鞋", "跑步鞋")));
@@ -144,7 +147,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Lifestyle Shoes"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("1140385995", "1264026243", "女鞋", "休闲鞋/板鞋")));
@@ -153,7 +156,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Retro"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("1140385995", "1264026243", "女鞋", "休闲鞋/板鞋")));
@@ -162,7 +165,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Skateborad"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("1140385995", "1264026243", "女鞋", "休闲鞋/板鞋")));
@@ -171,7 +174,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Basketball"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("1140385995", "1264026244", "女鞋", "篮球鞋")));
@@ -180,7 +183,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Training"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("1140385995", "1264026245", "女鞋", "训练鞋")));
@@ -189,7 +192,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.NLike, "1", C_SHORT_DESC, "Running Shoes"));
 			simpleCaseList.add(new SimpleCase(CompareType.NLike, "1", C_SHORT_DESC, "Lifestyle Shoes"));
 			simpleCaseList.add(new SimpleCase(CompareType.NLike, "1", C_SHORT_DESC, "Retro"));
@@ -476,12 +479,12 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 
 	}
 
-	private void do京东_女鞋() {
+	private void do京东_女鞋(String sizeType) {
 
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Running Shoes"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("4313718", "5287871", "女鞋", "跑步鞋")));
@@ -490,7 +493,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Lifestyle Shoes"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("4313718", "5287872", "女鞋", "休闲鞋/板鞋")));
@@ -499,7 +502,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Retro"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("4313718", "5287872", "女鞋", "休闲鞋/板鞋")));
@@ -508,7 +511,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Skateborad"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("4313718", "5287872", "女鞋", "休闲鞋/板鞋")));
@@ -517,7 +520,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Basketball"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("4313718", "5287873", "女鞋", "篮球鞋")));
@@ -526,7 +529,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Training"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("4313718", "5287874", "女鞋", "训练鞋")));
@@ -535,7 +538,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.NLike, "1", C_SHORT_DESC, "Running Shoes"));
 			simpleCaseList.add(new SimpleCase(CompareType.NLike, "1", C_SHORT_DESC, "Lifestyle Shoes"));
 			simpleCaseList.add(new SimpleCase(CompareType.NLike, "1", C_SHORT_DESC, "Retro"));
@@ -891,12 +894,12 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 
 	}
 
-	private void do京东国际_女鞋() {
+	private void do京东国际_女鞋(String sizeType) {
 
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Running Shoes"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("5333900", "5333901", "女鞋", "跑步鞋")));
@@ -905,7 +908,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Lifestyle Shoes"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("5333900", "5333902", "女鞋", "休闲鞋/板鞋")));
@@ -914,7 +917,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Retro"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("5333900", "5333902", "女鞋", "休闲鞋/板鞋")));
@@ -923,7 +926,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Skateborad"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("5333900", "5333902", "女鞋", "休闲鞋/板鞋")));
@@ -932,7 +935,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Basketball"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("5333900", "5333903", "女鞋", "篮球鞋")));
@@ -941,7 +944,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.Like, "1", C_SHORT_DESC, "Training"));
 
 			doCreateJson(doCreateSimpleIf(simpleCaseList, new SellerCids("5333900", "5333904", "女鞋", "训练鞋")));
@@ -950,7 +953,7 @@ public class Tmall_001_Sneakerhead_SellerCids_DictTest extends BaseSellerCidsDic
 		{
 			List<SimpleCase> simpleCaseList = new ArrayList<>();
 			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_PRODUCT_TYPE, "Shoes"));
-			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, "Women"));
+			simpleCaseList.add(new SimpleCase(CompareType.Eq, "1", C_SIZE_TYPE, sizeType));
 			simpleCaseList.add(new SimpleCase(CompareType.NLike, "1", C_SHORT_DESC, "Running Shoes"));
 			simpleCaseList.add(new SimpleCase(CompareType.NLike, "1", C_SHORT_DESC, "Lifestyle Shoes"));
 			simpleCaseList.add(new SimpleCase(CompareType.NLike, "1", C_SHORT_DESC, "Retro"));
