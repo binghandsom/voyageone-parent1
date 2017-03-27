@@ -153,8 +153,9 @@ public class CmsSynInventoryToCmsService extends BaseCronTaskService {
                 HashMap<String, Object> updateMap = new HashMap<>();
                 updateMap.put("common.fields.quantity", codeInventory.getQty());
                 HashMap<String, Object> queryMap = new HashMap<>();
+
                 if(channelId.equals("001")) codeInventory.setCode(codeInventory.getCode().toLowerCase());
-                queryMap.put("common.fields.code", codeInventory.getCode());
+                    queryMap.put("common.fields.code", codeInventory.getCode());
                 if (!StringUtil.isEmpty(orgChannelId)) {
                     queryMap.put("orgChannelId", orgChannelId);
                 }
@@ -181,7 +182,7 @@ public class CmsSynInventoryToCmsService extends BaseCronTaskService {
                 updateMap.put("common.skus.$.qty", codeInventory.getQty());
                 HashMap<String, Object> queryMap = new HashMap<>();
                 if(channelId.equals("001")) codeInventory.setSku(codeInventory.getSku().toLowerCase());
-                queryMap.put("common.skus.skuCode", codeInventory.getSku());
+                    queryMap.put("common.skus.skuCode", codeInventory.getSku());
                 if (!StringUtil.isEmpty(orgChannelId)) {
                     queryMap.put("orgChannelId", orgChannelId);
                 }
