@@ -2958,6 +2958,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         List<com.jd.open.api.sdk.domain.Sku> salePropSkuList = new ArrayList<>();
         // 更新商品维度的销售属性值别名用总的别名列表
         Set<Prop> allSkuSaleProps = new HashSet<>();
+        Map<String, Prop> allSkuSalePropsMap = new HashMap<>();
 
         // 根据product列表循环设置该商品的SKU属性
         for (CmsBtProductModel objProduct : productList) {
@@ -3002,13 +3003,13 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                             // 当前SKU的颜色销售属性
                             colorProp = getSaleProp(colorAttrValues[0], colorAttrValues[1], colorAlias);
                             saleProp.add(colorProp);
-                            allSkuSaleProps.add(colorProp);   // 后面更新销售属性别名用
+                            if (!allSkuSalePropsMap.containsKey(colorAttrValues[1])) allSkuSalePropsMap.put(colorAttrValues[1], colorProp);   // 后面更新销售属性别名用
                             // 将当前sku对应的尺码属性值(来自cms_mt_platform_skus表)解析成尺码属性id和尺码属性值id
                             sizeAttrValues = getSizeAttrValueId(productCode, pSkuCode, sizeSx, sizeKey, skuSizeMap, platformCart.getpCatId(), platformCart.getpCatPath());
                             // 当前SKU的尺码销售属性
                             sizeProp = getSaleProp(sizeAttrValues[0], sizeAttrValues[1], sizeKey);
                             saleProp.add(sizeProp);
-                            allSkuSaleProps.add(sizeProp);    // 后面更新销售属性别名用
+							if (!allSkuSalePropsMap.containsKey(sizeAttrValues[1])) allSkuSalePropsMap.put(sizeAttrValues[1], sizeProp);    // 后面更新销售属性别名用
                             sku.setSaleAttrs(saleProp);
                             break;
                         case SaleProp_Only_Color_2:
@@ -3021,7 +3022,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                             // 当前SKU的颜色销售属性
                             colorProp = getSaleProp(colorAttrValues[0], colorAttrValues[1], colorAlias);
                             saleProp.add(colorProp);
-                            allSkuSaleProps.add(colorProp);   // 后面更新销售属性别名用
+							if (!allSkuSalePropsMap.containsKey(colorAttrValues[1])) allSkuSalePropsMap.put(colorAttrValues[1], colorProp);   // 后面更新销售属性别名用
                             sku.setSaleAttrs(saleProp);
                             break;
                         case SaleProp_Only_Size_3:
@@ -3034,7 +3035,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                             // 当前SKU的尺码销售属性
                             sizeProp = getSaleProp(sizeAttrValues[0], sizeAttrValues[1], sizeKey);
                             saleProp.add(sizeProp);
-                            allSkuSaleProps.add(sizeProp);    // 后面更新销售属性别名用
+							if (!allSkuSalePropsMap.containsKey(sizeAttrValues[1])) allSkuSalePropsMap.put(sizeAttrValues[1], sizeProp);    // 后面更新销售属性别名用
                             sku.setSaleAttrs(saleProp);
                             break;
                     }
@@ -3069,7 +3070,9 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 //            throw new BusinessException(failCause.toString());
 //        }
 
-
+		allSkuSalePropsMap.forEach((k, v)->{
+			allSkuSaleProps.add(v);
+		});
 
         return allSkuSaleProps;
     }
