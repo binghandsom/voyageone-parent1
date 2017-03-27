@@ -851,7 +851,7 @@ public class ProductService extends BaseService {
 
         if (listLogicInventory != null && !listLogicInventory.isEmpty()) {
             for (WmsBtInventoryCenterLogicModel logicInventory : listLogicInventory) {
-                String sku = logicInventory.getSku();
+                String sku = logicInventory.getSku().toLowerCase();
                 Integer logicQty = logicInventory.getQtyChina();
                 skuLogicQty.merge(sku, logicQty, (val, newVal) -> val + newVal);
             }
