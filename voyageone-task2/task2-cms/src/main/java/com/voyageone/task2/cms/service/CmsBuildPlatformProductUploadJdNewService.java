@@ -1449,16 +1449,30 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 
         //charis update
         Set<Prop> propSet = new HashSet<Prop>();
+		Map<String, Prop> propMap = new HashMap<>();
         for(String attr : jdProductAttrMap.get(Attributes).split("\\|")) {
             String attrValue = attr.split(":")[1];
             if ("null".equals(attrValue)) {
                 continue;
             }
-            Prop prop = new Prop();
-            prop.setAttrId(attr.split(":")[0]);
-            prop.setAttrValues(attr.split(":")[1].split(","));
-            propSet.add(prop);
+			String strKey = attr.split(":")[0];
+			String strValue = attr.split(":")[1];
+
+			if (propMap.containsKey(strKey)) {
+				Prop prop = propMap.get(strKey);
+				List<String> lst = new ArrayList<>(Arrays.asList(prop.getAttrValues()));
+				lst.add(strValue);
+				prop.setAttrValues((String[])lst.toArray(new String[lst.size()]));
+				propMap.put(strKey, prop);
+			} else {
+				Prop prop = new Prop();
+				prop.setAttrId(strKey);
+				String[] strValues = {strValue};
+				prop.setAttrValues(strValues);
+				propMap.put(strKey, prop);
+			}
         }
+		propMap.forEach((k, v)->{ propSet.add(v); });
         jdProductBean.setProps(propSet);
 
         // 是否先款后货,false为否，true为是 (非必须)
