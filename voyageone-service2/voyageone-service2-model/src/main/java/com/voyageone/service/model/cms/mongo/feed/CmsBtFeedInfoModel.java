@@ -54,6 +54,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private String productType;
     private String material;
     private String lastReceivedOn = "";
+    private String mpn = "";
 
     public String getSizeChartType() {
         return sizeChartType;
@@ -327,6 +328,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         cmsBtFeedInfoModel.setMaterial(this.material);
         cmsBtFeedInfoModel.setUsageEn(this.usageEn);
         cmsBtFeedInfoModel.setLastReceivedOn(this.lastReceivedOn);
+        cmsBtFeedInfoModel.setMpn(this.mpn);
         return cmsBtFeedInfoModel;
     }
 
@@ -381,5 +383,14 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setLastReceivedOn(String lastReceivedOn) {
         this.lastReceivedOn = lastReceivedOn;
+    }
+
+
+    public String getMpn() {
+        return mpn;
+    }
+
+    public void setMpn(String mpn) {
+        this.mpn = mpn;
     }
 }
