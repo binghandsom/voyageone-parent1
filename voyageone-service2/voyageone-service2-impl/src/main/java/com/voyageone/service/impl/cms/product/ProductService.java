@@ -1655,10 +1655,10 @@ public class ProductService extends BaseService {
         if (rs != null) {
 
             JongoUpdate groupQuery = new JongoUpdate();
-            query.setQuery("{\"cartId\": #, \"productCodes\": #}");
-            query.setQueryParameters(cartId, code);
+            groupQuery.setQuery("{\"cartId\": #, \"productCodes\": #}");
+            groupQuery.setQueryParameters(cartId, code);
 
-            query.setUpdate("{$set: {\"platformPid\": \"\"}}");
+            groupQuery.setUpdate("{$set: {\"platformPid\": \"\"}}");
 
             rs = cmsBtProductGroupDao.updateMulti(groupQuery, channelId);
         }
