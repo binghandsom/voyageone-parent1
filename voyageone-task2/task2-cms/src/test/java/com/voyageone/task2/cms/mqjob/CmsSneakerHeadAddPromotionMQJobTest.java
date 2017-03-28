@@ -15,12 +15,22 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class CmsSneakerHeadAddPromotionMQJobTest {
+    @Test
+    public void onStartup1() throws Exception {
+
+    }
+
+    @Test
+    public void addPromotionDetail() throws Exception {
+//        cmsSneakerHeadAddPromotionMQJob.addPromotionDetail("010", 23, "00395", 807, "james");
+    }
+
     @Autowired
     CmsSneakerHeadAddPromotionMQJob cmsSneakerHeadAddPromotionMQJob;
     @Test
     public void onStartup() throws Exception {
         CmsSneakerHeadAddPromotionMQMessageBody cmsSneakerHeadAddPromotionMQMessageBody = new CmsSneakerHeadAddPromotionMQMessageBody();
-        cmsSneakerHeadAddPromotionMQMessageBody.setPromotionId(9);
+        cmsSneakerHeadAddPromotionMQMessageBody.setPromotionId(808);
         cmsSneakerHeadAddPromotionMQJob.onStartup(cmsSneakerHeadAddPromotionMQMessageBody);
     }
 }
