@@ -1,15 +1,14 @@
 define([
-    'underscore',
+    'cms',
     'modules/cms/enums/Carts',
     'modules/cms/controller/popup.ctl',
     'modules/cms/directives/keyValue.directive',
-    'modules/cms/service/search.advance2.service',
+    'modules/cms/service/search.advanceSolr.service',
     'modules/cms/service/product.detail.service',
-    './advance.search.append.ctl'
-], function (_,carts) {
+    '../search/advance.search.append.ctl'
+], function (cms,carts) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions, popups, $q, shelvesService,$localStorage) {
-
+    cms.controller('searchAdvanceSolrController',function($scope, $routeParams, searchAdvanceSolrService, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions, popups, $q, shelvesService){
         $scope.vm = {
             searchInfo: {
                 compareType: null,
@@ -256,7 +255,7 @@ define([
             //$scope.vm.productPageOption.curr = 1;
 
             $scope.vm.searchInfo.custAttrMap = angular.copy($scope.vm.custAttrList);
-            searchAdvanceService2.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption).then(function (res) {
+            searchAdvanceSolrService.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption).then(function (res) {
                 $scope.vm.customProps = res.data.customProps;
                 var sumCustomProps = [];
                 _.forEach($scope.vm.customProps, function (data) {
@@ -360,7 +359,7 @@ define([
             }
             confirm(msg).then(function () {
                 $scope.vm.searchInfo.fileType = fileType;
-                searchAdvanceService2.exportFile($scope.vm.searchInfo).then(function (res) {
+                searchAdvanceSolrService.exportFile($scope.vm.searchInfo).then(function (res) {
                     var ecd = res.data.ecd;
                     if (ecd == undefined || ecd == '4003') {
                         alert("创建文件时出错。");
@@ -395,7 +394,7 @@ define([
          * 分页处理group数据
          */
         function getGroupList() {
-            searchAdvanceService2.getGroupList($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.groupSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType, $scope.vm.selBiDataList)
+            searchAdvanceSolrService.getGroupList($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.groupSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType, $scope.vm.selBiDataList)
                 .then(function (res) {
                     $scope.vm.groupList = res.data.groupList == null ? [] : res.data.groupList;
                     $scope.vm.groupPageOption.total = res.data.groupListTotal;
@@ -408,7 +407,7 @@ define([
          * 分页处理product数据
          */
         function getProductList() {
-            searchAdvanceService2.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType, $scope.vm.selBiDataList)
+            searchAdvanceSolrService.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType, $scope.vm.selBiDataList)
                 .then(function (res) {
                     $scope.vm.productList = res.data.productList == null ? [] : res.data.productList;
                     $scope.vm.codeMap = res.data.codeMap;
@@ -435,7 +434,7 @@ define([
 
             function _openAddPromotion(cartId, selList, context) {
                 openAddToPromotionFnc(context.promotion, selList, context).then(function () {
-                    searchAdvanceService2.clearSelList();
+                    searchAdvanceSolrService.clearSelList();
                     $scope.search();
                 })
             }
@@ -795,7 +794,7 @@ define([
                             };
                             $searchAdvanceService2.addFreeTag(data).then(function () {
                                 notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
-                                searchAdvanceService2.clearSelList();
+                                searchAdvanceSolrService.clearSelList();
                                 $scope.search();
                             })
                         });
@@ -885,21 +884,21 @@ define([
                     _confirmMsg = '以下3种属性未完成的商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台类目&nbsp;（3）平台品牌';
 
                 confirm(_confirmMsg).then(function () {
-                        var productIds = [];
-                        if (_selProdList && _selProdList.length) {
-                            _.forEach(_selProdList, function (object) {
-                                productIds.push(object.code);
-                            });
-                        }
-                        $fieldEditService.intelligentPublish({
-                            cartId: cartId,
-                            productIds: productIds,
-                            isSelectAll: $scope.vm._selall ? 1 : 0
-                        }).then(function () {
-                            alert('已完成商品的智能上新！');
-                            $scope.search();
+                    var productIds = [];
+                    if (_selProdList && _selProdList.length) {
+                        _.forEach(_selProdList, function (object) {
+                            productIds.push(object.code);
                         });
+                    }
+                    $fieldEditService.intelligentPublish({
+                        cartId: cartId,
+                        productIds: productIds,
+                        isSelectAll: $scope.vm._selall ? 1 : 0
+                    }).then(function () {
+                        alert('已完成商品的智能上新！');
+                        $scope.search();
                     });
+                });
             }
         }
 
@@ -1425,10 +1424,6 @@ define([
             }
 
         }
+    });
 
-
-    }
-
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions', 'popups', '$q', 'shelvesService','$localStorage'];
-    return searchIndex;
 });

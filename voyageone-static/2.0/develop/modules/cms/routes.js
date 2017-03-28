@@ -171,6 +171,13 @@ define(function () {
             "templateUrl": "views/search/advanceSearch.tpl.html",
             "controllerUrl": "modules/cms/views/search/advanceSearch.ctl"
         },
+        "search_advance_solr":{
+            "url": "/searchSolr/advanceSearch/",
+            "hash": "/searchSolr/advanceSearch/",
+            "templateUrl": "views/searchSolr/advanceSolrSearch.tpl.html",
+            "controllerUrl": "modules/cms/views/searchSolr/advanceSolrSearch.ctl",
+            "controller":"searchAdvanceSolrController"
+        },
         "marketing_error_upload_error_list": {
             "hash": "/marketing_error/upload_error_list/:type",
             "templateUrl": "views/system/error/list.tpl.html",
