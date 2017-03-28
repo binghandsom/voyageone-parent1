@@ -1780,6 +1780,9 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                         image.setColorId(colorId);
                         image.setImgIndex(i + 1);
                         image.setImgUrl(imageMap.get(picUrl));
+                        if (StringUtils.isEmpty(image.getImgUrl())) {
+                            image.setImgUrl(imageList.get(0).getImgUrl());
+                        }
                         imageList.add(image);
 //                        // 如果之前没有一张图片上传成功则本次上传对象图片设置为主图，如果之前已经有图片上传成功，则本次设为非主图
 //                        boolean skuPicResult = jdWareNewService.addWarePropimg(shopProp, String.valueOf(wareId), colorId, picUrl, picName, !uploadProductPicResult);
@@ -1799,6 +1802,18 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                     }
                 }
 
+                if (imageList.size() < 5) {
+                    for (int q=0;q<5-imageList.size();q++) {
+                        Image image = new Image();
+                        image.setColorId(colorId);
+                        image.setImgIndex(q + imageList.size() + 1);
+                        image.setImgUrl(imageList.get(0).getImgUrl());
+                        if (StringUtils.isEmpty(image.getImgUrl())) {
+                            image.setImgUrl(imageList.get(0).getImgUrl());
+                        }
+                        imageList.add(image);
+                    }
+                }
                 // 该产品5张图片全部上传失败的时候
                 if (imageList == null) {
                     $error("新增商品时该颜色图片全部上传失败！[WareId:%s] [ProductCode:%s]", jdProductBean.getWareId(), product.getCommon().getFields().getCode());
@@ -1871,7 +1886,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                 throw new BusinessException("京东更新商品图片API返回为空(response = null)");
             }
         }catch (Exception e) {
-            String errMsg = String.format(shopProp.getShop_name() + "调用京东更新商品维度的销售属性值别名API失败! [channelId:%s] [cartId:%s] [jdSkuId:%s] " +
+            String errMsg = String.format(shopProp.getShop_name() + "调用京东更新商品图片API失败! [channelId:%s] [cartId:%s] [jdSkuId:%s] " +
                     "[errMsg:%s]", shopProp.getOrder_channel_id(), shopProp.getCart_id(), StringUtils.toString(wareId), e.getMessage());
             logger.error(errMsg);
             throw new BusinessException(errMsg);
