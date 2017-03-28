@@ -16,6 +16,7 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
@@ -1529,7 +1530,11 @@ public class SxProductService extends BaseService {
             List<WmsBtInventoryCenterLogicModel> skuInventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailBySkuList(sxData.getChannelId(), skus);
             Map<String, Integer> skuInventoryMap = new HashMap<>();
             for (WmsBtInventoryCenterLogicModel model : skuInventoryList) {
-                skuInventoryMap.put(model.getSku().toLowerCase(), model.getQtyChina());
+                if (ChannelConfigEnums.Channel.SN.getId().equals(shopBean.getOrder_channel_id())) {
+                    skuInventoryMap.put(model.getSku().toLowerCase(), model.getQtyChina());
+                } else {
+                    skuInventoryMap.put(model.getSku(), model.getQtyChina());
+                }
             }
 
             Map<String, Field> resolveField = constructCustomPlatformProps(mappingTypePropsMap, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
