@@ -40,6 +40,12 @@ define([
         /**
          * 检索group
          * @param data
+         * @param pagination
+         * @param list
+         * @param commonProps
+         * @param customProps
+         * @param selSalesTypes
+         * @param selBiDataList
          * @returns {*}
          */
         this.getGroupList = function(data, pagination, list, commonProps, customProps, selSalesTypes, selBiDataList){
@@ -265,7 +271,7 @@ define([
          */
         function _resetGroupList (data, commonProps, customProps, selSalesTypes, selBiDataList, searchParam) {
             tempGroupSelect.clearCurrPageRows();
-            for (idx in data.groupList) {
+            for (var idx in data.groupList) {
                 var prodObj = data.groupList[idx];
                 prodObj._grpPriceInfoList = data.grpPriceInfoList[idx];
             }
@@ -453,9 +459,10 @@ define([
 
         /**
          * 设置Price Detail 产品指导价
-         * @param groups
          * @returns {string}
          * @private
+         * @param object
+         * @param cartArr
          */
         function _setPriceDetail(object, cartArr) {
             if (cartArr == null || cartArr == undefined || cartArr.length == 0) {
@@ -466,13 +473,13 @@ define([
             if (platObj == null || platObj == undefined) {
                 return '';
             }
-            var tempRetailPriceDetail = _setOnePriceDetail("", platObj.pPriceRetailSt, platObj.pPriceRetailEd);
-            return tempRetailPriceDetail;
+            return _setOnePriceDetail("", platObj.pPriceRetailSt, platObj.pPriceRetailEd);
         }
 
         /**
          * 设置页面上显示的价格 group最终价格
          * @param object
+         * @param searchParam
          * @returns {*}
          * @private
          */
@@ -486,6 +493,9 @@ define([
         /**
          * 设置页面上显示的最终价格
          * @param object
+         * @param searchParam
+         * @param stakey
+         * @param endKey
          * @returns {*}
          * @private
          */
@@ -562,7 +572,7 @@ define([
             if (searchParam && searchParam.cartId) {
                 fstCode = searchParam.cartId;
             }
-            for (idx in object) {
+            for (var idx in object) {
                 var data = object[idx];
                 if (data == null || data == undefined || data.cartId == null || data.cartId == undefined || data.cartId == 0) {
                     continue;
@@ -592,7 +602,7 @@ define([
 
                 // 当是中国指导价时，要有价格变化提示
                 if (data.skus) {
-                    for (idx in data.skus) {
+                    for (var idx in data.skus) {
                         if (data.skus[idx].priceChgFlg) {
                             var upFlg = data.skus[idx].priceChgFlg.indexOf('U');
                             var downFlg = data.skus[idx].priceChgFlg.indexOf('D');
@@ -621,6 +631,7 @@ define([
 
         /**
          * 设置Price Detail
+         * @param title
          * @param priceStart
          * @param priceEnd
          * @returns {*}
@@ -646,8 +657,8 @@ define([
 
         /**
          * 设置time detail
-         * @param platforms
          * @private
+         * @param product
          */
         function _setTimeDetail(product) {
             var result = [];
