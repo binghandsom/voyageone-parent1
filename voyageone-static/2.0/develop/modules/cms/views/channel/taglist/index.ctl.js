@@ -84,7 +84,6 @@ define([
                 tagSelectObject: self.selected[parentIndex === 0 ? 0 : parentIndex - 1]
             }).then(function () {
                 self.notify.success('添加成功！');
-                console.log(parentIndex);
                 self.init(parentIndex);
             });
         };

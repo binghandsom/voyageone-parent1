@@ -159,7 +159,7 @@ public class CmsPlatformTitleTranslateMqService extends BaseMQCmsService {
 
             if (!judgeNeedUpdate(sxData ,runType)) {
                 // 不需要翻译
-                $info("不需要翻译!code[%s]", code);
+//                $info("不需要翻译!code[%s]", code);
                 return;
             }
 

@@ -152,7 +152,7 @@ class CmsShelvesDetailService extends BaseViewService {
         updateShelvesProduct(cmsBtShelvesProductModels);
 
         if(!ListUtils.isNull(prodIdList)){
-            productTagService.addProdTag(cmsBtShelvesModel.getChannelId(), "-"+cmsBtShelvesModel.getRefTagId()+"-", prodIdList, modifier);
+            productTagService.addProdTag(cmsBtShelvesModel.getChannelId(), "-" + cmsBtShelvesModel.getRefTagId() + "-", prodIdList);
         }
     }
 

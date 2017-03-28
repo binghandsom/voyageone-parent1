@@ -118,8 +118,8 @@ public class UploadToUSJoiServiceTest {
         }
 
         CmsBtSxWorkloadModel sxWorkLoadBean = new CmsBtSxWorkloadModel();
-        sxWorkLoadBean.setChannelId("017");
-        sxWorkLoadBean.setGroupId(662793L);
+        sxWorkLoadBean.setChannelId("024");
+        sxWorkLoadBean.setGroupId(4619158L);
         sxWorkLoadBean.setModifier("james");
         sxWorkLoadBean.setCartId(Integer.parseInt(usjoiChannelId)); // "928"
 

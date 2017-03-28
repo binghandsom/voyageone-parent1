@@ -19,6 +19,7 @@ import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
@@ -32,13 +33,15 @@ import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
-import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsBatchSetMainCategoryMQMessageBody;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.wms.InventoryCenterLogicService;
 import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
@@ -60,7 +63,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR;
@@ -114,6 +120,74 @@ public class CmsProductDetailService extends BaseViewService {
     private PlatformPriceService platformPriceService;
     @Autowired
     private ProductPlatformService productPlatformService;
+    @Autowired
+    private CmsMqSenderService senderService;
+
+    /**
+     * 填充field选项值.
+     */
+    public static void fillFieldOptions(List<Field> fields, String channelId, String language) {
+
+        for (Field field : fields) {
+
+            if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())
+                    || CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+
+                FieldTypeEnum type = field.getType();
+
+                switch (type) {
+                    case LABEL:
+                        break;
+                    case INPUT:
+                        break;
+                    case SINGLECHECK:
+                    case MULTICHECK:
+                        if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
+                            List<TypeBean> typeBeanList = Types.getTypeList(field.getId(), language);
+
+                            // 替换成field需要的样式
+                            List<Option> options = new ArrayList<>();
+                            for (TypeBean typeBean : typeBeanList) {
+                                Option opt = new Option();
+                                opt.setDisplayName(typeBean.getName());
+                                opt.setValue(typeBean.getValue());
+                                options.add(opt);
+                            }
+
+                            OptionsField optionsField = (OptionsField) field;
+                            optionsField.setOptions(options);
+                        } else if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+                            // 获取type channel bean
+                            List<TypeChannelBean> typeChannelBeanList;
+                            if (FIELD_SKU_CARTS.equals(field.getId())) {
+                                typeChannelBeanList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
+                            } else {
+                                typeChannelBeanList = TypeChannels.getTypeWithLang(field.getId(), channelId, language);
+                            }
+
+                            // 替换成field需要的样式
+                            List<Option> options = new ArrayList<>();
+                            if (typeChannelBeanList != null) {
+                                for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
+                                    Option opt = new Option();
+                                    opt.setDisplayName(typeChannelBean.getName());
+                                    opt.setValue(typeChannelBean.getValue());
+                                    options.add(opt);
+                                }
+                            }
+                            OptionsField optionsField = (OptionsField) field;
+                            optionsField.setOptions(options);
+                        }
+                        break;
+                    default:
+                        break;
+
+                }
+
+            }
+        }
+
+    }
 
     /**
      * 获取类目以及类目属性信息.
@@ -167,7 +241,7 @@ public class CmsProductDetailService extends BaseViewService {
 
         List<Field> comSchemaFields = comSchemaModel.getFields();
 
-        this.fillFieldOptions(comSchemaFields, channelId, language);
+        fillFieldOptions(comSchemaFields, channelId, language);
 
 
         //获取主数据的值.
@@ -515,58 +589,13 @@ public class CmsProductDetailService extends BaseViewService {
             return resultMap;
         }
 
-        requestMap.put("prodIds",prodCodes);
+        requestMap.put("productCodes", prodCodes);
         requestMap.put("userName",userInfo.getUserName());
         requestMap.put("channelId",userInfo.getSelChannelId());
-        sender.sendMessage( CmsMqRoutingKey.CMS_BATCH_CmsBatchSetMainCategoryJob, requestMap);
 
-//        Integer cartIdObj = (Integer) requestMap.get("cartId");
-//        List<Integer> cartList = null;
-//        if (cartIdObj == null || cartIdObj == 0) {
-//            // 表示全平台更新
-//            // 店铺(cart/平台)列表
-//            List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
-//            cartList = cartTypeList.stream().map((cartType) -> NumberUtils.toInt(cartType.getValue())).collect(Collectors.toList());
-//        } else {
-//            cartList = new ArrayList<>(1);
-//            cartList.add(cartIdObj);
-//        }
-//
-//        for (Integer cartId : cartList) {
-//            JongoUpdate updObj = new JongoUpdate();
-//            updObj.setQuery("{'common.fields.code':{$in:#},'platforms.P#':{$exists:true},'platforms.P#.pAttributeStatus':{$in:[null,'','0']}}");
-//            updObj.setQueryParameters(prodCodes, cartId, cartId);
-//
-//            boolean isInCatFlg = false;
-//            String pCatId = null;
-//            String pCatPath = null;
-//            for (Map pCatObj : pCatList) {
-//                if (cartId.toString().equals(pCatObj.get("cartId"))) {
-//                    isInCatFlg = true;
-//                    pCatId = StringUtils.trimToNull((String) pCatObj.get("catId"));
-//                    pCatPath = StringUtils.trimToNull((String) pCatObj.get("catPath"));
-//                    break;
-//                }
-//            }
-//            if (isInCatFlg && (pCatId == null || pCatPath == null)) {
-//                $debug(String.format("changeProductCategory 该平台未匹配此主类目 cartid=%d, 主类目path=%s, 主类目id=%s, platformCategory=%s", cartId, mCatPath, mCatId, pCatList.toString()));
-//            } else if (!isInCatFlg) {
-//                $debug(String.format("changeProductCategory 该平台未匹配此主类目 cartid=%d, 主类目path=%s, 主类目id=%s,", cartId, mCatPath, mCatId));
-//            }
-//            if (pCatId == null || pCatPath == null) {
-//                updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'common.fields.categoryStatus':'1','common.fields.categorySetter':#,'common.fields.categorySetTime':#}}");
-//                updObj.setUpdateParameters(mCatId, mCatPath, userInfo.getUserName(), DateTimeUtil.getNow());
-//            } else {
-//                updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'common.fields.categoryStatus':'1','common.fields.categorySetter':#,'common.fields.categorySetTime':#,'platforms.P#.pCatId':#,'platforms.P#.pCatPath':#,'platforms.P#.pCatStatus':'1'}}");
-//                updObj.setUpdateParameters(mCatId, mCatPath, userInfo.getUserName(), DateTimeUtil.getNow(), cartId, pCatId, cartId, pCatPath, cartId);
-//            }
-//            WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
-//            $debug("切换类目 product更新结果 " + rs.toString());
-//        }
-//
-//        String feeUpdStr = "{'code':{$in:['" + StringUtils.join(prodCodes, "','") + "']}}";
-//        WriteResult wrs = feedInfoService.updateAllUpdFlg(userInfo.getSelChannelId(), feeUpdStr, 1, userInfo.getUserName());
-//        $debug("切换类目 feed更新结果 " + wrs.toString());
+        CmsBatchSetMainCategoryMQMessageBody messageBody = BeanUtils.toModel(requestMap, CmsBatchSetMainCategoryMQMessageBody.class);
+        messageBody.setSender(userInfo.getUserName());
+        senderService.sendMessage(messageBody);
 
         // 获取更新结果
         resultMap.put("isChangeCategory", true);
@@ -637,7 +666,7 @@ public class CmsProductDetailService extends BaseViewService {
         });
 
         List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
-        this.fillFieldOptions(cmsMtCommonFields, channelId, lang);
+        fillFieldOptions(cmsMtCommonFields, channelId, lang);
         CmsBtProductModel_Common productComm = cmsBtProduct.getCommon();
 
         String productType = productComm.getFields().getProductType();
@@ -989,7 +1018,6 @@ public class CmsProductDetailService extends BaseViewService {
         return skuSchemaValue;
     }
 
-
     /**
      * 构建sku schema.
      */
@@ -1268,72 +1296,6 @@ public class CmsProductDetailService extends BaseViewService {
     }
 
     /**
-     * 填充field选项值.
-     */
-    public static void fillFieldOptions(List<Field> fields, String channelId, String language) {
-
-        for (Field field : fields) {
-
-            if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())
-                    || CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
-
-                FieldTypeEnum type = field.getType();
-
-                switch (type) {
-                    case LABEL:
-                        break;
-                    case INPUT:
-                        break;
-                    case SINGLECHECK:
-                    case MULTICHECK:
-                        if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
-                            List<TypeBean> typeBeanList = Types.getTypeList(field.getId(), language);
-
-                            // 替换成field需要的样式
-                            List<Option> options = new ArrayList<>();
-                            for (TypeBean typeBean : typeBeanList) {
-                                Option opt = new Option();
-                                opt.setDisplayName(typeBean.getName());
-                                opt.setValue(typeBean.getValue());
-                                options.add(opt);
-                            }
-
-                            OptionsField optionsField = (OptionsField) field;
-                            optionsField.setOptions(options);
-                        } else if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
-                            // 获取type channel bean
-                            List<TypeChannelBean> typeChannelBeanList;
-                            if (FIELD_SKU_CARTS.equals(field.getId())) {
-                                typeChannelBeanList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
-                            } else {
-                                typeChannelBeanList = TypeChannels.getTypeWithLang(field.getId(), channelId, language);
-                            }
-
-                            // 替换成field需要的样式
-                            List<Option> options = new ArrayList<>();
-                            if (typeChannelBeanList != null) {
-                                for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
-                                    Option opt = new Option();
-                                    opt.setDisplayName(typeChannelBean.getName());
-                                    opt.setValue(typeChannelBean.getValue());
-                                    options.add(opt);
-                                }
-                            }
-                            OptionsField optionsField = (OptionsField) field;
-                            optionsField.setOptions(options);
-                        }
-                        break;
-                    default:
-                        break;
-
-                }
-
-            }
-        }
-
-    }
-
-    /**
      * 取得自定义属性的属性名称的中文翻译
      */
     private Map<String, String[]> getCustomAttributesCnAttsShow(String feedCategory, CmsBtProductModel_Feed feed, String channelId) {
@@ -1609,7 +1571,7 @@ public class CmsProductDetailService extends BaseViewService {
             common.getFields().setCategoryStatus("1");
         }
         List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
-        this.fillFieldOptions(cmsMtCommonFields, channelId, lang);
+        fillFieldOptions(cmsMtCommonFields, channelId, lang);
         FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, common.getFields());
         common.put("schemaFields", cmsMtCommonFields);
 

@@ -179,7 +179,7 @@ public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImag
                     $error(e);
                 }
             }
-            pictureUploadResponse = jdImgzoneService.uploadPicture(shopBean, downImage(imageUrl), picCatId, cmsBtShelvesProductModel.getShelvesId() + "-" + cmsBtShelvesProductModel.getImage());
+            pictureUploadResponse = jdImgzoneService.uploadPicture("MQ", imageUrl, shopBean, downImage(imageUrl), picCatId, cmsBtShelvesProductModel.getShelvesId() + "-" + cmsBtShelvesProductModel.getImage());
 
             if (pictureUploadResponse != null && !StringUtil.isEmpty(pictureUploadResponse.getPictureId())) {
                 cmsBtShelvesProductModel.setPlatformImageId(pictureUploadResponse.getPictureId() + "");

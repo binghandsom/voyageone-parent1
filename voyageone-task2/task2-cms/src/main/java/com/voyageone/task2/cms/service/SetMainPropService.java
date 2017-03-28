@@ -42,7 +42,6 @@ import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceService;
-import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
@@ -96,6 +95,16 @@ import java.util.stream.Collectors;
 @Service
 public class SetMainPropService extends VOAbsIssueLoggable {
 
+    // 每个channel的feed->master导入默认最大件数
+    private final static int FEED_IMPORT_MAX_500 = 500;
+    @Autowired
+    CategoryTreeService categoryTreeService;
+    @Autowired
+    CmsMasterBrandMappingService cmsMasterBrandMappingService;
+    @Autowired
+    PromotionService promotionService;
+    @Autowired
+    PromotionCodeService promotionCodeService;
     @Autowired
     private CmsBtFeedMapping2Dao cmsBtFeedMapping2Dao; // DAO: 新的feed->主数据的mapping关系
     @Autowired
@@ -121,8 +130,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
     @Autowired
     private FeedInfoService feedInfoService;
     @Autowired
-    CategoryTreeService categoryTreeService;
-    @Autowired
     private
     CategoryTreeAllService categoryTreeAllService;
     @Autowired
@@ -141,22 +148,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
     private
     CmsBtBrandBlockService cmsBtBrandBlockService;
     @Autowired
-    CmsMasterBrandMappingService cmsMasterBrandMappingService;
-    @Autowired
-    PromotionService promotionService;
-    @Autowired
-    PromotionCodeService promotionCodeService;
-    @Autowired
     private PlatformPriceService platformPriceService;
-
     @Autowired
     private CmsBtTranslateService cmsBtTranslateService;
-
-    // 每个channel的feed->master导入默认最大件数
-    private final static int FEED_IMPORT_MAX_500 = 500;
-
-
-
     @Autowired
     private Searcher searcher;
 
@@ -165,14 +159,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
      * 按渠道进行设置
      */
     public class setMainProp {
-        public String getTaskName() {
-            return taskName;
-        }
-
-        public void setTaskName(String taskName) {
-            this.taskName = taskName;
-        }
-
         Boolean usjoi;
         String taskName;
         int insertCnt = 0;
@@ -181,17 +167,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         int currentIndex = 0;
         int feedListCnt = 0;
         long startTime;
-        private OrderChannelBean channel;
-        private boolean skip_mapping_check;
-
-        private Map<String, List<ConditionPropValueModel>> channelConditionConfig;
-        // jeff 2016/04 change start
-//        // 前一次的价格强制击穿时间
-//        private String priceBreakTime;
-        private int m_mulitComplex_index = 0; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
-        // jeff 2016/04 change end
-        private boolean m_mulitComplex_run = false; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
-
         // --------------------------------------------------------------------------------------------
         // synship.com_mt_value_channel表共通信息
         // 品牌mapping表
@@ -226,32 +201,30 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         List<TypeChannelBean> typeChannelBeanListApprove = null;
         // 允许展示的cart列表
         List<TypeChannelBean> typeChannelBeanListDisplay = null;
-
         // 主类目黑名单
         List<String> categoryWhite = new ArrayList<>();
-
         // 价格阈值 超过该值的商品不能导入主数据
         Double priceThreshold = null;
-
         // 重量阈值 超过该值的商品不能导入主数据
         Double weightThreshold = null;
-
         // 拆分规则 0：不拆分 1：按主类目拆分 2：无条件拆分
         String singleFlg = "0";
-
         // group设置规则 0：按model设置group 1：按code设置group
         String singleGroupFlg = "0";
-
         // feed-》mast 主类目是否同步  0：不同步 1：无条件同步
         String categoryFlg = "0";
-
         // 需要拆分的主类目
         List<String> categorySingle = new ArrayList<>();
-
-
-        // --------------------------------------------------------------------------------------------
-
         Map<String, String> mastBrand = null;
+        private OrderChannelBean channel;
+        private boolean skip_mapping_check;
+        private Map<String, List<ConditionPropValueModel>> channelConditionConfig;
+        // jeff 2016/04 change start
+//        // 前一次的价格强制击穿时间
+//        private String priceBreakTime;
+        private int m_mulitComplex_index = 0; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
+        // jeff 2016/04 change end
+        private boolean m_mulitComplex_run = false; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
 
         public setMainProp(String channelId, boolean usjoi, boolean skip_mapping_check) {
             this.channel = Channels.getChannel(channelId);
@@ -261,29 +234,40 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 //            this.priceBreakTime = priceBreakTime;
         }
 
+
+        // --------------------------------------------------------------------------------------------
+
+        public String getTaskName() {
+            return taskName;
+        }
+
+        public void setTaskName(String taskName) {
+            this.taskName = taskName;
+        }
+
         /**
          * 初始化该店铺一些共通配置的属性
          */
         public void doInit(String channelId) {
 
-            if (!usjoi) {
-                // -----------------------------------------------------------------------------
-                // 从synship.com_mt_value_channel表中取得品牌，产品分类，使用人群等mapping信息
-                // 品牌mapping作成
-                List<TypeChannelBean> brandTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41,
-                        channelId);
-                if (ListUtils.notNull(brandTypeChannelBeanList)) {
-                    for (TypeChannelBean typeChannelBean : brandTypeChannelBeanList) {
-                        if (!StringUtils.isEmpty(typeChannelBean.getAdd_name1())
-                                && !StringUtils.isEmpty(typeChannelBean.getName())
-                                && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
-                                ) {
-                            // 品牌mapping表中key,value都设为小写(feed进来的brand不区分大小写)
-                            mapBrandMapping.put(typeChannelBean.getAdd_name1().toLowerCase().trim(), typeChannelBean.getName().toLowerCase().trim());
-                        }
+
+            // -----------------------------------------------------------------------------
+            // 从synship.com_mt_value_channel表中取得品牌，产品分类，使用人群等mapping信息
+            // 品牌mapping作成
+            List<TypeChannelBean> brandTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41,
+                    usjoi?"928":channelId);
+            if (ListUtils.notNull(brandTypeChannelBeanList)) {
+                for (TypeChannelBean typeChannelBean : brandTypeChannelBeanList) {
+                    if (!StringUtils.isEmpty(typeChannelBean.getAdd_name1())
+                            && !StringUtils.isEmpty(typeChannelBean.getName())
+                            && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
+                            ) {
+                        // 品牌mapping表中key,value都设为小写(feed进来的brand不区分大小写)
+                        mapBrandMapping.put(typeChannelBean.getAdd_name1().toLowerCase().trim(), typeChannelBean.getName().toLowerCase().trim());
                     }
                 }
-
+            }
+            if (!usjoi) {
                 // 产品分类mapping作成
 
                 List<TypeChannelBean> productTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_57,
@@ -412,8 +396,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 List<CmsChannelConfigBean> categoryWhitelist = CmsChannelConfigs.getConfigBeans("000",
                         CmsConstants.ChannelConfig.CATEGORY_WHITE, "0");
 
-                if (!ListUtils.isNull(categoryWhitelist)) {
-                    categoryWhite = categoryWhitelist.stream().map(CmsChannelConfigBean::getConfigValue1).collect(Collectors.toList());
+                if (!ListUtils.isNull(categoryWhitelist) && !StringUtil.isEmpty(categoryWhitelist.get(0).getConfigValue1())) {
+                    categoryWhite = Arrays.asList(categoryWhitelist.get(0).getConfigValue1().split(";"));
                 }
             }
 
@@ -438,8 +422,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             }
             List<CmsChannelConfigBean> categorySingleConfig = CmsChannelConfigs.getConfigBeans("000",
                     CmsConstants.ChannelConfig.CATEGORY_SINGLE,"0");
-            if (!ListUtils.isNull(categorySingleConfig)) {
-                categorySingle = categorySingleConfig.stream().map(CmsChannelConfigBean::getConfigValue1).collect(Collectors.toList());
+            if (!ListUtils.isNull(categorySingleConfig) && !StringUtil.isEmpty(categorySingleConfig.get(0).getConfigValue1())) {
+                categorySingle = Arrays.asList(categorySingleConfig.get(0).getConfigValue1().split(";"));
             }
 
             channelConditionConfig = conditionPropValueRepo.getAllByChannelId(channelId);
@@ -910,11 +894,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         blnProductExist = true;
                     } else {
                         cmsProduct = oldCmsProduct;
-                        if (cmsProduct == null) {
-                            blnProductExist = false;
-                        } else {
-                            blnProductExist = true;
-                        }
+                        blnProductExist = cmsProduct != null;
                     }
                 }
 
@@ -1078,21 +1058,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 //                        return;
                     }
 
-                    // tom 20160510 追加 START
-                    // 更新wms_bt_item_details表的数据
-                    if (!doSaveItemDetails(channelId, cmsProduct.getProdId(), feed)) {
-                        // 如果出错了的话, 就跳出去
-                        String errMsg = "feed->master导入:新增:更新wms_bt_item_details表数据的时候出错:" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
-                        $error(errMsg);
-                        throw new BusinessException(errMsg);
-//                        // 设置更新时间,更新者
-//                        originalFeed.setModifier(getTaskName());
-//                        cmsBtFeedInfoDao.update(originalFeed);
-//                        return;
-                    }
-                    $debug("doSaveItemDetails:" + (System.currentTimeMillis() - startTime));
-                    // tom 20160510 追加 END
-
                     platFromAttributeCopyFromMainProduct(cmsProduct);
 
                     // 计算主类目
@@ -1114,6 +1079,17 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     cmsProduct.getCommon().getFields().setSkuCnt(cmsProduct.getCommon().getSkus().size());
                     // 检查类目 重量 和 价格是否超过阈值
                     checkProduct(cmsProduct);
+
+                    // tom 20160510 追加 START
+                    // 更新wms_bt_item_details表的数据
+                    if (!doSaveItemDetails(channelId, cmsProduct.getProdId(), feed)) {
+                        // 如果出错了的话, 就跳出去
+                        String errMsg = "feed->master导入:新增:更新wms_bt_item_details表数据的时候出错:" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
+                        $error(errMsg);
+                        throw new BusinessException(errMsg);
+                    }
+                    $debug("doSaveItemDetails:" + (System.currentTimeMillis() - startTime));
+
                     // 生成productGroup数据
                     doSetGroup(feed);
                     productService.createProduct(cmsProduct.getChannelId(), cmsProduct, getTaskName());
@@ -1245,7 +1221,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // 将该feed品牌小写值mapping信息插入或更新到Synship.com_mt_value_channel表中(41:品牌mapping信息)
 //                    insertBrandMappingInfo(this.channel.getOrder_channel_id(), feed, feedBrandLowerCase);
                     if (!StringUtils.isEmpty(feedBrandLowerCase)) {
-                        comMtValueChannelService.insertComMtValueChannelMapping(41, this.channel.getOrder_channel_id(),
+                        comMtValueChannelService.insertComMtValueChannelMapping(41, usjoi?"928":this.channel.getOrder_channel_id(),
                                 feedBrandLowerCase, feedBrandLowerCase, getTaskName());
                         // 将更新完整之后的mapping信息添加到前面取出来的品牌mapping表中
                         mapBrandMapping.put(feedBrandLowerCase, feedBrandLowerCase);
@@ -3233,6 +3209,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         // 主类目叶子级中文名称（"服饰>服饰配件>钱包卡包钥匙包>护照夹" -> "护照夹"）
                         String leafCategoryCnName = searchResult.getCnName().substring(searchResult.getCnName().lastIndexOf(">") + 1,
                                 searchResult.getCnName().length());
+
+                        // 设置中文名称
+                        prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(prodCommonField.getBrand()
+                                , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
                     }
                 }
             }
@@ -3289,6 +3269,18 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             query.setProductName(productNameEn, brand);
 
             return query;
+        }
+
+        /**
+         * 根据自动匹配商品主类目取得商品中文名称
+         *
+         * @param brand              品牌
+         * @param sizeTypeCn         适合人群(中文)
+         * @param leafCategoryCnName 主类目叶子级中文名称
+         * @return String 商品中文名称(品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称)
+         */
+        private String getOriginalTitleCnByCategory(String brand, String sizeTypeCn, String leafCategoryCnName) {
+            return brand + " " + sizeTypeCn + " " + leafCategoryCnName;
         }
     }
 }

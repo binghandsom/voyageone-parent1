@@ -968,6 +968,9 @@ public class SxProductService extends BaseService {
                         || masterBrand.equals("burberry brit")
                         || masterBrand.equals("burberry childrenswear")
                         || masterBrand.equals("burberry prorsum")
+                        || masterBrand.equals("maje")
+                        || masterBrand.equals("sandro")
+                        || masterBrand.equals("sandro moscoloni")
                         ) {
                     removeProductList.add(productModel);
                     continue;
@@ -1526,7 +1529,7 @@ public class SxProductService extends BaseService {
             List<WmsBtInventoryCenterLogicModel> skuInventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailBySkuList(sxData.getChannelId(), skus);
             Map<String, Integer> skuInventoryMap = new HashMap<>();
             for (WmsBtInventoryCenterLogicModel model : skuInventoryList) {
-                skuInventoryMap.put(model.getSku(), model.getQtyChina());
+                skuInventoryMap.put(model.getSku().toLowerCase(), model.getQtyChina());
             }
 
             Map<String, Field> resolveField = constructCustomPlatformProps(mappingTypePropsMap, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
@@ -3599,7 +3602,7 @@ public class SxProductService extends BaseService {
                         ",SizeType=" + paramSizeType);
             }
             if (matchModels.size() == 1) {
-                $info("找到image_group记录!");
+//                $info("找到image_group记录!");
                 if (matchModels.get(0).getImage() == null || matchModels.get(0).getImage().size() == 0) {
                     throw new BusinessException("共通图片表找到的图片类型对应的图片数为0,请确保至少上传1张图片！" +
                             "channelId= " + channelId +
@@ -3752,7 +3755,7 @@ public class SxProductService extends BaseService {
                         ",SizeType=" + paramSizeType);
             }
             if (matchModels.size() == 1) {
-                $info("找到size_chart记录!");
+//                $info("找到size_chart记录!");
                 for (CmsBtSizeChartModelSizeMap sizeInfo : matchModels.get(0).getSizeMap()) {
                     // added by morse.lu start 2016/06/16 start
                     if (sizeMap.containsKey(sizeInfo.getOriginalSize())) {
@@ -3950,13 +3953,13 @@ public class SxProductService extends BaseService {
      * @param fields List<Field> 直接把值set进这个fields对象
      * @param shopBean ShopBean
      * @param expressionParser ExpressionParser
-	 * @param blnForceSmartSx 是否强制使用智能上新
+	 * @param blnIsSmartSx 是否强制使用智能上新
      * @return 设好值的FieldId和Field
      * @throws Exception
      */
     public Map<String, Field> constructPlatformProps(List<Field> fields, ShopBean shopBean,
                                                      ExpressionParser expressionParser,
-													   boolean blnForceSmartSx) throws Exception {
+													   boolean blnIsSmartSx) throws Exception {
         // 返回用Map<field_id, Field>
         Map<String, Field> retMap = null;
         SxData sxData = expressionParser.getSxData();
@@ -3975,18 +3978,14 @@ public class SxProductService extends BaseService {
         Map<String, Object> mapSp = new HashMap<>();
 
 		// 是否智能上新
-		boolean blnIsSmartSx = isSmartSx(sxData.getChannelId(), sxData.getCartId());
         Map<String, Object> platformMappingFieldValues = null;
-		if (blnIsSmartSx && blnForceSmartSx) {
+		if (blnIsSmartSx) {
 			// 当前店铺允许智能上新， 并且要求当前商品智能上新 的场合
-            blnIsSmartSx = true;
 
             // 根据 平台默认属性设置 里设置好的内容， 生成的值
             platformMappingFieldValues = platformMappingService.getValueMap(
                     sxData.getChannelId(), sxData.getMainProduct().getProdId(), sxData.getCartId(), sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath());
 
-        } else {
-            blnIsSmartSx = false;
         }
 
         for(Field field : fields) {
@@ -4013,6 +4012,11 @@ public class SxProductService extends BaseService {
                     retMap.putAll(resolveField);
                 }
             } else {
+                // 京东不让在这里设置品牌属性
+                if (field.getName().contains("品牌")) { // 有些属性叫【品牌】， 有些叫【品牌1】， 估计还有别的名
+                    continue;
+                }
+
                 // 除了价格价位之外，其余的FieldId对应的值都在这里设定
                 // 根据FieldId取得mainProduct中对应的属性值,设置到返回的Field中
                 Map<String, Field> resolveField = resolveFieldMapping(field, sxData);

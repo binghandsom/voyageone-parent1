@@ -52,7 +52,7 @@ public class CmsAddToPromotionService extends BaseViewService {
 
     public List<CmsBtTagModel> getPromotionTags(Map<String, Object> params) {
         //fix error by holysky
-        int tag_id = (int) Integer.parseInt(String.valueOf(params.get("refTagId")));
+        int tag_id = Integer.parseInt(String.valueOf(params.get("refTagId")));
         return this.selectListByParentTagId(tag_id);
     }
 
@@ -189,7 +189,7 @@ public class CmsAddToPromotionService extends BaseViewService {
         }
 
         // 给产品数据添加活动标签
-        productTagService.addProdTag(channelId, tagInfo.getTagPath(), productIds, modifier);
+        productTagService.addProdTag(channelId, tagInfo.getTagPath(), productIds);
         productIds.forEach(item -> {
             PromotionDetailAddBean request = new PromotionDetailAddBean();
             request.setModifier(modifier);

@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.product;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.StringUtils;
@@ -39,6 +40,10 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
             if (!StringUtils.isEmpty(chanelBean.getValue())) {
                 int cartId = Integer.parseInt(chanelBean.getValue());
                 if (cartId == 1 || cartId == 0) {
+                    continue;
+                }
+                if (CartEnums.Cart.isJdSeries(CartEnums.Cart.getValueByID(chanelBean.getValue()))) {
+                    // 京东调用API次数太多， 没有好的解决办法之前， 暂时先全部跳过
                     continue;
                 }
                 if (isAutoOnSale(channelId, cartId)) {

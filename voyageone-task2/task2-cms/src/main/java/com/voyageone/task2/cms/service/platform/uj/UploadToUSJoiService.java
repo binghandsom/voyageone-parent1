@@ -31,8 +31,8 @@ import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.CmsBtTranslateService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.CmsBtFeedImportSizeService;
-import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -75,50 +75,44 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class UploadToUSJoiService extends BaseCronTaskService {
 
-    @Autowired
-    ProductGroupService productGroupService;
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
-
-    @Autowired
-    private CmsBtProductGroupDao cmsBtProductGroupDao;
-
-    @Autowired
-    private PriceService priceService;
-
-    @Autowired
-    private MongoSequenceService commSequenceMongoService;
-
-    @Autowired
-    private CmsBtSxWorkloadDaoExt cmsBtSxWorkloadDaoExt;
-
-    @Autowired
-    private ComMtValueChannelService comMtValueChannelService;    // 更新synship.com_mt_value_channel表
-
-    @Autowired
-    private BusinessLogService businessLogService;
-
-    @Autowired
-    private SxProductService sxProductService;
-
-    @Autowired
-    private Searcher searcher;
-
-    @Autowired
-    private CmsBtFeedImportSizeService cmsBtFeedImportSizeService;
-
-    @Autowired
-    private PlatformPriceService platformPriceService;
-
-    @Autowired
-    private CmsBtTranslateService cmsBtTranslateService;
-
     // 每个channel的子店->USJOI主店导入最大件数
     private final static int UPLOAD_TO_USJOI_MAX_500 = 500;
+    @Autowired
+    ProductGroupService productGroupService;
+    // APP端启用开关
+    String appSwitchFlg = "0";              // 0: 不启动APP端
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
+    @Autowired
+    private PriceService priceService;
+    @Autowired
+    private MongoSequenceService commSequenceMongoService;
+    @Autowired
+    private CmsBtSxWorkloadDaoExt cmsBtSxWorkloadDaoExt;
+    @Autowired
+    private ComMtValueChannelService comMtValueChannelService;    // 更新synship.com_mt_value_channel表
+    @Autowired
+    private BusinessLogService businessLogService;
+    @Autowired
+    private SxProductService sxProductService;
+    @Autowired
+    private Searcher searcher;
+    @Autowired
+    private CmsBtFeedImportSizeService cmsBtFeedImportSizeService;
+    @Autowired
+    private PlatformPriceService platformPriceService;
+    @Autowired
+    private CmsBtTranslateService cmsBtTranslateService;
+    // 价格阈值 超过该值的商品不能导入主数据
+    private Double priceThreshold = null;
+    // 重量阈值 超过该值的商品不能导入主数据
+    private Double weightThreshold = null;
+    // 主类目黑名单
+    private List<String> categoryWhite = new ArrayList<>();
 
     @Override
     public SubSystem getSubSystem() {
@@ -129,15 +123,6 @@ public class UploadToUSJoiService extends BaseCronTaskService {
     public String getTaskName() {
         return "CmsUploadProductToUSJoiJob";
     }
-
-    // 价格阈值 超过该值的商品不能导入主数据
-    private Double priceThreshold = null;
-
-    // 重量阈值 超过该值的商品不能导入主数据
-    private Double weightThreshold = null;
-
-    // 主类目黑名单
-    private List<String> categoryWhite = new ArrayList<>();
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
@@ -300,6 +285,14 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             }
         }
 
+        // 从cms_mt_channel_config取得APP端启用开关的值（0或者1）
+        CmsChannelConfigBean appSwitchChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode("928",
+                CmsConstants.ChannelConfig.APP_SWITCH);
+        if (appSwitchChannelConfigBean != null && "1".equals(appSwitchChannelConfigBean.getConfigValue1())) {
+            // APP端启用开关的值配置成1的场合，设为APP端启用开1
+            appSwitchFlg = "1";
+        }
+
         // 取得feed->master导入之前的品牌等mapping件数，用于判断是否新增之后需要清空缓存
         int oldBrandCnt = mapBrandMapping.size();
         int newBrandCnt;
@@ -455,6 +448,13 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     productModel.setOrgChannelId(sxWorkLoadBean.getChannelId());
                     productModel.setSales(new CmsBtProductModel_Sales());
                     productModel.setTags(new ArrayList<>());
+
+                    // APP端启用开关
+                    if ("1".equals(appSwitchFlg)) {
+                        productModel.getCommonNotNull().getFieldsNotNull().setAppSwitch(1);
+                    } else {
+                        productModel.getCommonNotNull().getFieldsNotNull().setAppSwitch(0);
+                    }
 
                     // platform对应 从子店的platform.p928 929 中的数据生成usjoi的platform
                     CmsBtProductModel_Platform_Cart fromPlatform = productModel.getPlatform(sxWorkLoadBean.getCartId());
@@ -675,12 +675,6 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 prCommonFields.setProductNameEn(productModel.getCommonNotNull().getFieldsNotNull().getProductNameEn());
                             }
 
-                            // 产品名称中文(common.fields.originalTitleCn)
-                            if ("0".equals(prCommonFields.getTranslateStatus())
-                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn())) {
-                                prCommonFields.setOriginalTitleCn(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn());
-                            }
-
                             // 简短描述英语(common.fields.shortDesEn)
                             if (StringUtil.isEmpty(prCommonFields.getShortDesEn())
                                     && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getShortDesEn())) {
@@ -846,6 +840,11 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             }
                             doSetMainCategory(pr.getCommon(), pr.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
 //                        }
+                        // 产品名称中文(common.fields.originalTitleCn)
+                        if ("0".equals(prCommonFields.getTranslateStatus())
+                                && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn())) {
+                            prCommonFields.setOriginalTitleCn(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn());
+                        }
 
                         // ****************common.skus的更新(有的sku可能在拆分后的product中)****************
                         for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {

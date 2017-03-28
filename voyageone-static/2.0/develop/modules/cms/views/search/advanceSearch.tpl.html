@@ -48,6 +48,16 @@
                                             </div>
                                             <div class="form-horizontal">
                                                 <div class="form-group">
+                                                    <label class="col-sm-3 control-label">模糊查询产品名称中文</label>
+
+                                                    <div class="col-sm-8">
+                                                        <textarea class="form-control inherited" style="resize: none;" rows="2"
+                                                                  ng-model="vm.searchInfo.productNameCn"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-horizontal">
+                                                <div class="form-group">
                                                     <label class="col-sm-3 control-label">款号/Code/SKU</label>
                                                     <div class="col-sm-8">
                                                         <textarea class="form-control inherited no-resize" rows="3" ng-model="vm.searchInfo.codeList" ></textarea>
@@ -250,8 +260,12 @@
                                             </div>
                                             <div class="form-group"><!-- 查询自由标签输出区 -->
                                                 <div ng-model="vm.searchInfo.freeTags" style="width:58%;float:left;min-height:40px;max-height:160px;background: #EEEEEE; border: 1px solid #C8C2C2; overflow: auto;margin-left:25.7%;">
-                                                    <label class="label label-default m-r-xxs" ng-repeat="freeTag in vm._freeTags" style="display: inline-block;">{{freeTag.tagPathName}}</label>
+                                                    <label ng-repeat="freeTag in vm._freeTags">
+                                                        <label class="label label-default m-r-xxs" >{{freeTag.tagPathName}}</label>{{$last?'':'&nbsp;&nbsp;'}}
+                                                    </label>
+
                                                 </div>
+
                                                 <button class="btn btn-default btn-md" style="margin-left:-1px" type="button" translate="BTN_RESET" ng-click="dismiss('freeTag')"></button>
                                             </div>
                                             <div class="form-group" style="margin-bottom:0px"><!-- 适用人群 -->

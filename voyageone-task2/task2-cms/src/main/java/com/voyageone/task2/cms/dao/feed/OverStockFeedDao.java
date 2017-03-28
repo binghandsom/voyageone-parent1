@@ -31,6 +31,8 @@ public interface OverStockFeedDao {
 
     void delete();
 
+    int deleteBySku(SuperFeedOverStockBean record);
+
     List<CmsBtFeedInfoOverStockModel> selectSuperfeedModel(Map colums);
 
     int fullCopyTemp();
