@@ -61,6 +61,9 @@ public class CmsMqRoutingKey {
     // 高级检索 - 异步生成文件
     public static final String CMS_EXPORT_PRODUCT_INFO = "VOCmsExportProductInfoQueue";
 
+    // 高级检索 - 批量设置主类目
+    public static final String CMS_BATCH_SET_MAIN_CATEGORY = "VOCmsBatchSetMainCategoryQueue";
+
     // Feed检索 - 异步生成Feed导出文件
     public static final String CMS_EXPORT_FEED_INFO = "VOCmsExportFeedInfoQueue";
 
@@ -97,13 +100,12 @@ public class CmsMqRoutingKey {
     //批量lock平台    added by piao
     public static final String  CMS_ADV_SEARCH_LOCK_PRODUCTS = "VOCmsAdvSearchLockProductsMQJobQueue";
 
+
     // 未整理的业务内容
     /**
      * image create task
      */
     public static final String CMS_BATCH_CmsMtImageCreateTaskJob = "voyageone_cms_batchjob_CmsMtImageCreateTaskJob_queue";
-
-    public static final String CMS_BATCH_CmsBatchSetMainCategoryJob = "voyageone_cms_batchjob_SetMainCategoryJob_queue";
 
     public static final String CMS_BATCH_CmsBatchRefreshMainCategoryJob = "voyageone_cms_batchjob_RefreshMainCategoryJob_queue";
     /**

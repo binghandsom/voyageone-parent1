@@ -31,11 +31,11 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
     /**
      * 全量 高级查询条件 发送mq
      *
-     * @param chanelId
-     * @param searchValue
-     * @param tagPathList
-     * @param orgDispTagList
-     * @param sender
+     * @param chanelId chanelId
+     * @param searchValue searchValue
+     * @param tagPathList tagPathList
+     * @param orgDispTagList orgDispTagList
+     * @param sender sender
      */
     public void sendMessage(String chanelId, CmsSearchInfoBean2 searchValue,List<String> tagPathList ,List<String> orgDispTagList, String sender) {
         CmsProductFreeTagsUpdateMQMessageBody mqMessageBody = new CmsProductFreeTagsUpdateMQMessageBody();
@@ -51,11 +51,11 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
 
     /**
      *
-     * @param chanelId
-     * @param prodCodeList
-     * @param tagPathList
-     * @param orgDispTagList
-     * @param sender
+     * @param chanelId chanelId
+     * @param prodCodeList prodCodeList
+     * @param tagPathList tagPathList
+     * @param orgDispTagList orgDispTagList
+     * @param sender sender
      */
     public void sendMessage(String chanelId, List<String> prodCodeList,List<String> tagPathList, List<String> orgDispTagList, String sender) {
         CmsProductFreeTagsUpdateMQMessageBody mqMessageBody = new CmsProductFreeTagsUpdateMQMessageBody();
@@ -70,6 +70,9 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
 
     /**
      * 设置产品free tag，同时添加该tag的所有上级tag
+     * @param messageMap messageMap
+     * @return List<String>
+     * @throws Exception
      */
     public List<String> setProductFreeTags(CmsProductFreeTagsUpdateMQMessageBody messageMap) throws Exception {
 
@@ -81,7 +84,7 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
 
         boolean isSelAll = messageMap.getIsSelAll();
 
-        List<String> prodCodeList = null;
+        List<String> prodCodeList;
         if (isSelAll) {
             // 从高级检索重新取得查询结果
             messageMap.getSearchValue().setProductPageNum(0);
