@@ -9,7 +9,7 @@ define([
     'modules/cms/enums/PlatformStatus'
 ], function (cms, Carts, PlatformStatus) {
 
-    cms.service('searchAdvanceSolrService', function($q, blockUI, $translate, selectRowsFactory, $searchAdvanceService2, $filter){
+    cms.service('searchAdvanceSolrService', function($q, blockUI, $translate, selectRowsFactory, $searchAdvanceSolrService, $filter){
 
         var tempGroupSelect = new selectRowsFactory();
         var tempProductSelect = new selectRowsFactory();
@@ -24,7 +24,7 @@ define([
             data.productPageNum = productPagination.curr;
             data.productPageSize = productPagination.size;
 
-            $searchAdvanceService2.search(data).then(function (res) {
+            $searchAdvanceSolrService.search(data).then(function (res) {
 
                 // 重新初始化选中标签
                 tempGroupSelect = new selectRowsFactory();
@@ -45,7 +45,7 @@ define([
         this.getGroupList = function(data, pagination, list, commonProps, customProps, selSalesTypes, selBiDataList){
             var defer = $q.defer();
 
-            $searchAdvanceService2.getGroupList(resetGroupPagination(data, pagination)).then(function (res) {
+            $searchAdvanceSolrService.getGroupList(resetGroupPagination(data, pagination)).then(function (res) {
                 _resetGroupList(res.data, commonProps, customProps, selSalesTypes, selBiDataList, data);
                 defer.resolve (res);
             });
@@ -59,7 +59,7 @@ define([
          */
         this.getProductList = function(data, pagination, list, commonProps, customProps, selSalesTypes, selBiDataList){
             var defer = $q.defer();
-            $searchAdvanceService2.getProductList(resetProductPagination(data, pagination)).then(function (res) {
+            $searchAdvanceSolrService.getProductList(resetProductPagination(data, pagination)).then(function (res) {
                 _resetProductList(res.data, commonProps, customProps, selSalesTypes, selBiDataList, data);
                 defer.resolve (res);
             });
@@ -70,7 +70,7 @@ define([
             data = resetSearchInfo(data);
             var defer = $q.defer();
 
-            $searchAdvanceService2.exportProducts(data).then(function (res) {
+            $searchAdvanceSolrService.exportProducts(data).then(function (res) {
                 defer.resolve (res);
             });
             return defer.promise;
