@@ -20,6 +20,7 @@ public class CmsProductSearchPlatformModel {
     List<String> priceDiffFlg;
     List<String> priceChgFlg;
     List<String> priceMsrpFlg;
+    List<String> sellerCats;
     String status;
     Double pPriceMsrpEd;
     Double pPriceRetailEd;
@@ -168,5 +169,13 @@ public class CmsProductSearchPlatformModel {
 
     public void setpPriceSaleEd(Double pPriceSaleEd) {
         this.pPriceSaleEd = pPriceSaleEd;
+    }
+
+    public List<String> getSellerCats() {
+        return sellerCats;
+    }
+
+    public void setSellerCats(List<String> sellerCats) {
+        this.sellerCats = sellerCats;
     }
 }

@@ -184,6 +184,10 @@ public class CmsProductSearchQueryService extends BaseService {
                 criteria = criteria.and("tags").in(searchValue.getPromotionTags());
             }
 
+            // 获取店铺内分类查询条件
+            if (searchValue.getCidValue() !=  null && searchValue.getCidValue().size() > 0) {
+                criteria = criteria.and("P"+cartId+"_sellerCats").in(searchValue.getCidValue());
+            }
 
             // 查询价格变动(指导售价)
             if (StringUtils.isNotEmpty(searchValue.getPriceChgFlg())) {

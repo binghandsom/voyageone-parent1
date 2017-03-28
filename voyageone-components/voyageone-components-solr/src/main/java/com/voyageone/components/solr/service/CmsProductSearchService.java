@@ -12,6 +12,7 @@ import com.voyageone.components.solr.query.SimpleQueryBean;
 import com.voyageone.components.solr.query.SimpleQueryCursor;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.bson.Document;
 import org.springframework.data.domain.Page;
@@ -108,13 +109,16 @@ public class CmsProductSearchService extends BaseSearchService {
                 CmsProductSearchPlatformModel cmsProductSearchPlatformModel = new CmsProductSearchPlatformModel();
                 BeanUtils.copy(cmsBtProductModel_platform_cart, cmsProductSearchPlatformModel);
                 cmsProductSearchPlatformModel.setpStatus(cmsBtProductModel_platform_cart.getpStatus()==null?null:cmsBtProductModel_platform_cart.getpStatus().name());
-                cmsProductSearchPlatformModel.setPriceChgFlg(cmsBtProductModel_platform_cart.getSkus().stream().map(sku->sku.getStringAttribute("priceChgFlg")).collect(Collectors.toList()));
-                cmsProductSearchPlatformModel.setPriceMsrpFlg(cmsBtProductModel_platform_cart.getSkus().stream().map(sku->sku.getStringAttribute("priceMsrpFlg")).collect(Collectors.toList()));
-                cmsProductSearchPlatformModel.setPriceDiffFlg(cmsBtProductModel_platform_cart.getSkus().stream().map(sku->sku.getStringAttribute("priceDiffFlg")).collect(Collectors.toList()));
+                cmsProductSearchPlatformModel.setPriceChgFlg(cmsBtProductModel_platform_cart.getSkus().stream().map(sku->sku.getStringAttribute("priceChgFlg")).distinct().collect(Collectors.toList()));
+                cmsProductSearchPlatformModel.setPriceMsrpFlg(cmsBtProductModel_platform_cart.getSkus().stream().map(sku->sku.getStringAttribute("priceMsrpFlg")).distinct().collect(Collectors.toList()));
+                cmsProductSearchPlatformModel.setPriceDiffFlg(cmsBtProductModel_platform_cart.getSkus().stream().map(sku->sku.getStringAttribute("priceDiffFlg")).distinct().collect(Collectors.toList()));
                 cmsProductSearchPlatformModel.setSale7( cmsBtProductModel.getSales().getCodeSum7(cmsBtProductModel_platform_cart.getCartId()));
                 cmsProductSearchPlatformModel.setSale30(cmsBtProductModel.getSales().getCodeSum30(cmsBtProductModel_platform_cart.getCartId()));
                 cmsProductSearchPlatformModel.setSaleYear(cmsBtProductModel.getSales().getCodeSumYear(cmsBtProductModel_platform_cart.getCartId()));
                 cmsProductSearchPlatformModel.setSaleAll(cmsBtProductModel.getSales().getCodeSumAll(cmsBtProductModel_platform_cart.getCartId()));
+                if(cmsBtProductModel_platform_cart.getSellerCats() != null) {
+                    cmsProductSearchPlatformModel.setSellerCats(cmsBtProductModel_platform_cart.getSellerCats().stream().map(CmsBtProductModel_SellerCat::getcId).collect(Collectors.toList()));
+                }
                 cmsProductSearchModel.getPlatform().put(s, cmsProductSearchPlatformModel);
             }
         });
