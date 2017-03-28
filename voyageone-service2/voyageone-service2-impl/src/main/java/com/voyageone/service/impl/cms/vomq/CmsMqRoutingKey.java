@@ -94,6 +94,9 @@ public class CmsMqRoutingKey {
     // feed数据导入接口
     public static final String CMS_FEED_IMPORT_MQ_JOB = "CmsFeedImportMQJobQueue";
 
+    //sneakerHead根据活动里面的产品找出同一group的商品加入活动
+    public static final String CMS_SNEAKERHEAD_ADD_PROMOTION = "CmsSneakerheadAddPromotionMQJobQueue";
+
     //批量lock平台    added by piao
     public static final String  CMS_ADV_SEARCH_LOCK_PRODUCTS = "VOCmsAdvSearchLockProductsMQJobQueue";
 
