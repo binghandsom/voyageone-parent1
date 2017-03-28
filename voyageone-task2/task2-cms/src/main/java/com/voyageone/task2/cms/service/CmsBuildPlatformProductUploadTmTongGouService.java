@@ -140,9 +140,75 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
      */
     @Override
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+//
+////        // 清除缓存（这样在cms_mt_channel_config表中刚追加的价格计算公式等配置就能立刻生效了）
+////        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
+//
+//        // 线程数(默认为5)
+//        threadCount = NumberUtils.toInt(TaskControlUtils.getVal1WithDefVal(taskControlList, TaskControlEnums.Name.thread_count, "5"));
+//        // 抽出件数(默认为500)
+//        rowCount = NumberUtils.toInt(TaskControlUtils.getVal1WithDefVal(taskControlList, TaskControlEnums.Name.row_count, "500"));
+//
+//        // 获取该任务可以运行的销售渠道
+//        List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
+//
+//        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
+//        channelConditionConfig = new HashMap<>();
+//        if (ListUtils.notNull(channelIdList)) {
+//            for (final String orderChannelID : channelIdList) {
+//                channelConditionConfig.put(orderChannelID, conditionPropValueRepo.getAllByChannelId(orderChannelID));
+//            }
+//        }
+//
+//        List<Map<String, Object>> channelCartMapList = new ArrayList<>();
+//
+//        // 循环所有销售渠道
+//        if (ListUtils.notNull(channelIdList)) {
+//            for (String channelId : channelIdList) {
+//                if (ChannelConfigEnums.Channel.USJGJ.getId().equals(channelId)) {
+//                    // 商品上传(USJOI天猫国际官网同购)
+//                    doProductUpload(channelId, CartEnums.Cart.LTT.getValue(), threadCount, rowCount);
+//                    sxProductService.add2ChannelCartMapList(channelCartMapList, channelId, CartEnums.Cart.LTT.getValue());
+//                } else {
+//                    // 商品上传(天猫国际官网同购)
+//                    doProductUpload(channelId, CartEnums.Cart.TT.getValue(), threadCount, rowCount);
+//                    sxProductService.add2ChannelCartMapList(channelCartMapList, channelId, CartEnums.Cart.TT.getValue());
+//                }
+//            }
+//        }
+//
+//        // 输出最终结果
+//        sxProductService.doPrintResultMap(resultMap, "天猫官网同购上新", channelCartMapList);
 
-//        // 清除缓存（这样在cms_mt_channel_config表中刚追加的价格计算公式等配置就能立刻生效了）
-//        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
+        doUploadMain(taskControlList);
+
+        // 正常结束
+        $info("天猫国际官网同购主线程正常结束");
+    }
+
+
+    public void doUploadMain(List<TaskControlBean> taskControlList) {
+        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
+        channelConditionConfig = new HashMap<>();
+
+        // 由于这个方法可能会自己调用自己循环很多很多次， 不一定会跳出循环， 但又希望能获取到最新的TaskControl的信息， 所以不使用基类里的这个方法了
+        // 为了调试方便， 允许作为参数传入， 但是理想中实际运行中， 基本上还是自主获取的场合比较多
+        if (taskControlList == null) {
+            taskControlList = taskDao.getTaskControlList(getTaskName());
+
+            if (taskControlList.isEmpty()) {
+//                $info("没有找到任何配置。");
+                logIssue("没有找到任何配置！！！", getTaskName());
+                return;
+            }
+
+            // 是否可以运行的判断
+            if (!TaskControlUtils.isRunnable(taskControlList)) {
+                $info("Runnable is false");
+                return;
+            }
+
+        }
 
         // 线程数(默认为5)
         threadCount = NumberUtils.toInt(TaskControlUtils.getVal1WithDefVal(taskControlList, TaskControlEnums.Name.thread_count, "5"));
@@ -150,38 +216,97 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         rowCount = NumberUtils.toInt(TaskControlUtils.getVal1WithDefVal(taskControlList, TaskControlEnums.Name.row_count, "500"));
 
         // 获取该任务可以运行的销售渠道
-        List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
+        List<TaskControlBean> taskControlBeanList = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.order_channel_id);
 
-        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
-        channelConditionConfig = new HashMap<>();
-        if (ListUtils.notNull(channelIdList)) {
-            for (final String orderChannelID : channelIdList) {
-                channelConditionConfig.put(orderChannelID, conditionPropValueRepo.getAllByChannelId(orderChannelID));
+        // 准备按组分配线程（相同的组， 会共用相同的一组线程通道， 不同的组， 线程通道互不干涉）
+        Map<String, List<String>> mapTaskControl = new HashMap<>();
+        taskControlBeanList.forEach((l)->{
+            String key = l.getCfg_val2();
+            if (StringUtils.isEmpty(key)) {
+                key = "0";
             }
-        }
+            if (mapTaskControl.containsKey(key)) {
+                mapTaskControl.get(key).add(l.getCfg_val1());
+            } else {
+                List<String> channelList = new ArrayList<>();
+                channelList.add(l.getCfg_val1());
+                mapTaskControl.put(key, channelList);
+            }
+            // 再次获取一下配置项
+            channelConditionConfig.put(l.getCfg_val1(), conditionPropValueRepo.getAllByChannelId(l.getCfg_val1()));
+        });
 
-        List<Map<String, Object>> channelCartMapList = new ArrayList<>();
+        Map<String, ExecutorService> mapThread = new HashMap<>();
 
-        // 循环所有销售渠道
-        if (ListUtils.notNull(channelIdList)) {
-            for (String channelId : channelIdList) {
-                if (ChannelConfigEnums.Channel.USJGJ.getId().equals(channelId)) {
-                    // 商品上传(USJOI天猫国际官网同购)
-                    doProductUpload(channelId, CartEnums.Cart.LTT.getValue(), threadCount, rowCount);
-                    sxProductService.add2ChannelCartMapList(channelCartMapList, channelId, CartEnums.Cart.LTT.getValue());
+        while (true) {
+
+            mapTaskControl.forEach((k, v)->{
+                boolean blnCreateThread = false;
+
+                if (mapThread.containsKey(k)) {
+                    ExecutorService t = mapThread.get(k);
+                    if (t.isTerminated()) {
+                        // 可以新做一个线程
+                        blnCreateThread = true;
+                    }
                 } else {
-                    // 商品上传(天猫国际官网同购)
-                    doProductUpload(channelId, CartEnums.Cart.TT.getValue(), threadCount, rowCount);
-                    sxProductService.add2ChannelCartMapList(channelCartMapList, channelId, CartEnums.Cart.TT.getValue());
+                    // 可以新做一个线程
+                    blnCreateThread = true;
+                }
+
+                if (blnCreateThread) {
+                    ExecutorService t = Executors.newSingleThreadExecutor();
+
+                    List<String> channelIdList = v;
+                    if (channelIdList != null) {
+                        for (String channelId : channelIdList) {
+                            t.execute(() -> {
+                                try {
+                                    if (ChannelConfigEnums.Channel.USJGJ.getId().equals(channelId)) {
+                                        doProductUpload(channelId, CartEnums.Cart.LTT.getValue(), threadCount, rowCount);
+                                    } else {
+                                        doProductUpload(channelId, CartEnums.Cart.TT.getValue(), threadCount, rowCount);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            });
+
+                        }
+                    }
+                    t.shutdown();
+
+                    mapThread.put(k, t);
+
+                }
+            });
+
+            boolean blnAllOver = true;
+            for (Map.Entry<String, ExecutorService> entry : mapThread.entrySet()) {
+                if (!entry.getValue().isTerminated()) {
+                    blnAllOver = false;
+                    break;
                 }
             }
+            if (blnAllOver) {
+                break;
+            }
+            try {
+                Thread.sleep(1000 * 10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         }
 
-        // 输出最终结果
-        sxProductService.doPrintResultMap(resultMap, "天猫官网同购上新", channelCartMapList);
+        // TODO: 所有渠道处理总件数为0的场合， 就跳出不继续做了。 以外的场合， 说明可能还有别的未完成的数据， 继续自己调用自己一下
+        try {
+            Thread.sleep(1000 * 10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        doUploadMain(null);
 
-        // 正常结束
-        $info("天猫国际官网同购主线程正常结束");
     }
 
     /**
