@@ -115,15 +115,10 @@ define([
 
             if (entity.children && entity.children.length > 0 && checkNodes[entity.id]) {
 
-                var exit = _.some(entity.children, function (item) {
+                _.some(entity.children, function (item) {
                     //只判断全选状态
                     return item.checked == 2;
                 });
-
-                if (!exit) {
-                    alert("至少勾选一个活动标签！");
-                    return;
-                }
             }
         };
 

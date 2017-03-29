@@ -1321,8 +1321,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         try {
             String url = sxProductService.resolveDict("透明图", expressionParser, shopProp, getTaskName(), null);
             if (!StringUtils.isEmpty(url)) {
-                sxProductService.uploadTransparentPictureToTm(sxData.getChannelId(), sxData.getCartId(), Long.toString(sxData.getGroupId()), shopProp, url, getTaskName());
-                productInfoMap.put("white_bg_image", valMainImages);
+				String white_bg_image = sxProductService.uploadTransparentPictureToTm(sxData.getChannelId(), sxData.getCartId(), Long.toString(sxData.getGroupId()), shopProp, url, getTaskName());
+				if (!StringUtils.isEmpty(white_bg_image)) {
+					productInfoMap.put("white_bg_image", white_bg_image);
+				}
             }
         } catch (Exception e) {
             // 出错了就算了， 不设置透明图碰碰运气
