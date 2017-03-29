@@ -38,19 +38,6 @@ define([
         };
 
         /**
-         * 检索group
-         */
-        this.getGroupList = function(data, pagination, list, commonProps, customProps, selSalesTypes, selBiDataList){
-            var defer = $q.defer();
-
-            $searchAdvanceSolrService.getGroupList(resetGroupPagination(data, pagination)).then(function (res) {
-                _resetGroupList(res.data, commonProps, customProps, selSalesTypes, selBiDataList, data);
-                defer.resolve (res);
-            });
-            return defer.promise;
-        };
-
-        /**
          * 检索product
          */
         this.getProductList = function(data, pagination, list, commonProps, customProps, selSalesTypes, selBiDataList){
@@ -126,16 +113,6 @@ define([
             if (!_.isUndefined(searchInfo.codeList) && !_.isNull(searchInfo.codeList))
                 searchInfo.codeList = searchInfo.codeList.split("\n");
             return searchInfo;
-        }
-
-        /**
-         * 添加group的当前页码和每页显示size到server端使用的bean接口
-         */
-        function resetGroupPagination (data, pagination) {
-            var searchInfo = resetSearchInfo(data);
-            searchInfo.groupPageNum = pagination.curr;
-            searchInfo.groupPageSize = pagination.size;
-            return searchInfo
         }
 
         /**
@@ -245,36 +222,6 @@ define([
                 }
                 return value;
             }
-        }
-
-        /**
-         * 设置group list
-         */
-        function _resetGroupList (data, commonProps, customProps, selSalesTypes, selBiDataList, searchParam) {
-            tempGroupSelect.clearCurrPageRows();
-            for (var idx in data.groupList) {
-                var prodObj = data.groupList[idx];
-                prodObj._grpPriceInfoList = data.grpPriceInfoList[idx];
-            }
-            _.forEach(data.groupList, function (groupInfo, index) {
-                _resetProdInfo(groupInfo, commonProps, customProps, selSalesTypes, selBiDataList);
-
-                _resetCartInfo(groupInfo);
-
-                // 初始化数据选中需要的数组
-                tempGroupSelect.currPageRows({"id": groupInfo.prodId, "code": groupInfo.common.fields["code"], "prodIds": data.grpProdIdList[index]});
-
-                // 设置price detail
-                groupInfo.groupBean.priceSale = _setGroupPriceSale(groupInfo, searchParam);
-
-                // 设置time detail
-                groupInfo.groupBean.timeDetail = _setTimeDetail(groupInfo);
-
-                groupInfo.grpImgList = data.grpImgList[index];
-            });
-            data.groupSelList = tempGroupSelect.selectRowsInfo;
-
-            return data;
         }
 
         /**
@@ -438,31 +385,6 @@ define([
         }
 
         /**
-         * 设置Price Detail 产品指导价
-         */
-        function _setPriceDetail(object, cartArr) {
-            if (cartArr == null || cartArr == undefined || cartArr.length == 0) {
-                return '';
-            }
-            // 设置retail price
-            var platObj = object["P" + cartArr[0].cartId];
-            if (platObj == null || platObj == undefined) {
-                return '';
-            }
-            return _setOnePriceDetail("", platObj.pPriceRetailSt, platObj.pPriceRetailEd);
-        }
-
-        /**
-         * 设置页面上显示的价格 group最终价格
-         */
-        function _setGroupPriceSale(object, searchParam) {
-            object._grpPriceInfoList = object._grpPriceInfoList.sort(function (a, b) {
-                return a.cartId > b.cartId;
-            });
-            return _setPriceSale(object._grpPriceInfoList, searchParam, 'priceSaleSt', 'priceSaleEd');
-        }
-
-        /**
          * 设置页面上显示的最终价格
          */
         function _setPriceSale(object, searchParam, stakey, endKey) {
@@ -538,6 +460,7 @@ define([
             if (searchParam && searchParam.cartId) {
                 fstCode = searchParam.cartId;
             }
+
             for (var idx in object) {
                 var data = object[idx];
                 if (data == null || data == undefined || data.cartId == null || data.cartId == undefined || data.cartId == 0) {
@@ -593,27 +516,6 @@ define([
             }
 
             return fstLine;
-        }
-
-        /**
-         * 设置Price Detail
-         */
-        function _setOnePriceDetail(title, priceStart, priceEnd) {
-            var result = null;
-            if (!_.isUndefined(priceStart) && !_.isNull(priceStart)
-                && !_.isUndefined(priceEnd) && !_.isNull(priceEnd)) {
-                result = _.isEqual(priceStart, priceEnd)
-                    ? $filter('number')(priceStart, 2)
-                    : $filter('number')(priceStart, 2) + " ~ " + $filter('number')(priceEnd, 2);
-            } else {
-                result = _.isNumber(priceStart)
-                    ? $filter('number')(priceStart, 2)
-                    : ((_.isNumber(priceEnd)
-                        ? $filter('number')(priceEnd, 2)
-                        : null));
-            }
-
-            return _.isNull(result) ? null : title + result;
         }
 
         /**

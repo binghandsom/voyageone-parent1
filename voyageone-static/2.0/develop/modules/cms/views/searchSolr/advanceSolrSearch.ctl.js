@@ -29,7 +29,6 @@ define([
                 custGroupType: '1'
             },
             _selall: false,
-            groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
             exportPageOption: {curr: 1, size: 10, total: 0, fetch: exportSearch},
             groupList: [],
@@ -58,7 +57,6 @@ define([
         };
         $scope.exportFile = exportFile;
         $scope.exportSearch = exportSearch;
-        $scope.getGroupList = getGroupList;
         $scope.getProductList = getProductList;
         $scope.openCategoryMapping = openCategoryMapping;
         $scope.refreshProductCategory = refreshProductCategory;
@@ -374,19 +372,6 @@ define([
                     }
                 });
             });
-        }
-
-        /**
-         * 分页处理group数据
-         */
-        function getGroupList() {
-            searchAdvanceSolrService.getGroupList($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.groupSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType, $scope.vm.selBiDataList)
-                .then(function (res) {
-                    $scope.vm.groupList = res.data.groupList == null ? [] : res.data.groupList;
-                    $scope.vm.groupPageOption.total = res.data.groupListTotal;
-                    $scope.vm.groupSelList = res.data.groupSelList;
-                    $scope.vm._selall = false;
-                });
         }
 
         /**
@@ -1528,8 +1513,7 @@ define([
 
             if (vm.currTab == 'product')
                 $scope.search();
-            else
-                $scope.getGroupList();
+
         }
 
         $scope.getArrowName = function (columnName, cartId) {
