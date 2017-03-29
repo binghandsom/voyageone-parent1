@@ -481,9 +481,7 @@ public class CmsBtCombinedProductService extends BaseService {
      * @param channelId
      */
     public void deleteCombinedProduct(CmsBtCombinedProductBean modelBean, String user, String channelId) {
-        /*String query = String.format("{'numID':'%s', 'channelId':'%s'}", modelBean.getNumID(), channelId);
-        CmsBtCombinedProductModel target = cmsBtCombinedProductDao.selectOneWithQuery(query);*/
-        CmsBtCombinedProductModel target = null;
+        CmsBtCombinedProductModel target;
         if (modelBean == null || StringUtils.isBlank(modelBean.get_id()) || (target = cmsBtCombinedProductDao.selectById(modelBean.get_id())) == null) {
             throw new BusinessException("要删除的组合套装商品不存在！");
         }
@@ -569,7 +567,9 @@ public class CmsBtCombinedProductService extends BaseService {
         logModel.setStatus(model.getStatus());
         logModel.setPlatformStatus(model.getPlatformStatus());
         WriteResult rs_log = cmsBtCombinedProductLogDao.insert(logModel);
-        sendMqMessage(model,channelId,user,"1");
+        if (model.getStatus() == null){
+            sendMqMessage(model,channelId,user,"1");
+        }
         $debug("编辑 组合套装商品操作日志 结果 " + rs_log.toString());
     }
 
