@@ -1898,8 +1898,8 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                 String[] extParameter = {product.getCommon().getFields().getCode()};   // 产品code
 
                 // 循环取得5张图片的url并分别上传到京东
+                String firstImage = "";
                 for (int i=0;i<productPicNameList.size();i++) {
-                    String firstImage = "";
                     String picUrl = "";
                     try {
                         // 取得图片URL
