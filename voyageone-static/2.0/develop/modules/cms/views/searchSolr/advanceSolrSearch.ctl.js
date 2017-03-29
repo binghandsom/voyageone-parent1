@@ -31,12 +31,10 @@ define([
             _selall: false,
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
             exportPageOption: {curr: 1, size: 10, total: 0, fetch: exportSearch},
-            groupList: [],
             productList: [],
             codeMap: [],
             currTab: "product",
             status: {open: true},
-            groupSelList: {selList: []},
             productSelList: {selList: []},
             custAttrList: [],
             sumCustomProps: [],
@@ -77,7 +75,7 @@ define([
         $scope.platformCategoryMapping = platformCategoryMapping;
         $scope.openTagManagement = openTagManagement;
         $scope.dismiss = dismiss;
-        $scope.jdCategoryMapping = jdCategoryMapping;
+        $scope.categoryMapping = categoryMapping;
         $scope.editPlatformAttribute = editPlatformAttribute;
         $scope.addShelves = addShelves;
         $scope._chkProductSel = _chkProductSel;
@@ -109,7 +107,6 @@ define([
                 }
 
                 // 如果来至category 或者header search 则默认检索
-                $scope.vm.tblWidth = '100%'; // group tab的原始宽度
                 $scope.vm.tblWidth2 = '100%'; // product tab的原始宽度
                 if ($routeParams.type == "3") {
                     // 从菜单栏而来，检索店铺内分类
@@ -248,14 +245,11 @@ define([
 
             // 默认设置成第一页
             if (curr) {
-                $scope.vm.groupPageOption.curr = curr;
                 $scope.vm.productPageOption.curr = curr;
             }
-            //$scope.vm.groupPageOption.curr = 1;
-            //$scope.vm.productPageOption.curr = 1;
 
             $scope.vm.searchInfo.custAttrMap = angular.copy($scope.vm.custAttrList);
-            searchAdvanceSolrService.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption).then(function (res) {
+            searchAdvanceSolrService.search($scope.vm.searchInfo, $scope.vm.productPageOption).then(function (res) {
                 $scope.vm.customProps = res.data.customProps;
                 var sumCustomProps = [];
                 _.forEach($scope.vm.customProps, function (data) {
@@ -274,15 +268,12 @@ define([
                 }
 
                 $scope.vm.productUrl = res.data.productUrl;
-                $scope.vm.groupList = res.data.groupList;
-                $scope.vm.groupPageOption.total = res.data.groupListTotal;
-                $scope.vm.groupSelList = res.data.groupSelList;
                 $scope.vm.productList = res.data.productList;
                 $scope.vm.codeMap = res.data.codeMap;
                 $scope.vm.qtyList = res.data.qtyList;
                 $scope.vm.productPageOption.total = res.data.productListTotal;
                 $scope.vm.productSelList = res.data.productSelList;
-                for (idx in res.data.freeTagsList) {
+                for (var idx in res.data.freeTagsList) {
                     var prodObj = $scope.vm.productList[idx];
                     prodObj._freeTagsInfo = res.data.freeTagsList[idx];
                 }
@@ -357,6 +348,7 @@ define([
             } else if (fileType == 5) {
                 msg = "即将根据搜索结果导出报备文件，请确认。" + msg;
             }
+
             confirm(msg).then(function () {
                 $scope.vm.searchInfo.fileType = fileType;
                 searchAdvanceSolrService.exportFile($scope.vm.searchInfo).then(function (res) {
@@ -385,7 +377,7 @@ define([
                     $scope.vm.productPageOption.total = res.data.productListTotal;
                     $scope.vm.productSelList = res.data.productSelList;
                     $scope.vm._selall = false;
-                    for (idx in res.data.freeTagsList) {
+                    for (var idx in res.data.freeTagsList) {
                         var prodObj = $scope.vm.productList[idx];
                         prodObj._freeTagsInfo = res.data.freeTagsList[idx];
                     }
@@ -464,7 +456,7 @@ define([
                 }
                 context.selCnt = selCnt;
                 context.autoSynPrice = $scope.vm.masterData.autoApprovePrice;
-                openFieldEdit(selList, context).then(function (res) {
+                openFieldEdit(selList, context).then(function () {
                     $scope.search();
                 })
             }
@@ -481,11 +473,11 @@ define([
                         productIds.push(object.code);
                     });
                 }
-                var data = {
+
+                productDetailService.refreshProductCategory({
                     prodIds: productIds,
                     isSelAll: $scope.vm._selall ? 1 : 0
-                };
-                productDetailService.refreshProductCategory(data).then(function (res) {
+                }).then(function () {
                     notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     $scope.search();
                 });
@@ -630,22 +622,10 @@ define([
         };
 
         /**
-         * 返回选中的数据,如果选中的是groups则返回的group下面所有的product,如果选择的是product,则只返回选中的product
-         * @returns {Array}
+         * 选择product,则只返回选中的product
          */
         function getSelProductList() {
-            var selList = [];
-            if ($scope.vm.currTab === 'group') {
-                _.forEach($scope.vm.groupSelList.selList, function (info) {
-                    selList.push({"id": info.id, "code": info.code});
-                    _.forEach(info.prodIds, function (prodInfo) {
-                        selList.push({"id": prodInfo.prodId, "code": prodInfo.code});
-                    })
-                });
-            } else {
-                selList = $scope.vm.productSelList.selList;
-            }
-            return selList;
+            return $scope.vm.productSelList.selList;
         }
 
         /**
@@ -833,9 +813,13 @@ define([
                         productIds.push(object.code);
                     });
                 }
-                var property = {'cartId': cartId, '_option': 'putonoff', 'productIds': productIds};
-                property.isSelAll = $scope.vm._selall ? 1 : 0;
-                openPutOnOffFnc(property).then(
+
+                openPutOnOffFnc({
+                    cartId: cartId,
+                    _option: 'putonoff',
+                    productIds: productIds,
+                    isSelAll: $scope.vm._selall ? 1 : 0
+                }).then(
                     function () {
                         $scope.search();
                     });
@@ -1225,9 +1209,13 @@ define([
                             productIds.push(object.code);
                         });
                     }
-                    var property = {'cartId': cartId, '_option': 'retailprice', 'productIds': productIds};
-                    property.isSelAll = $scope.vm._selall ? 1 : 0;
-                    $fieldEditService.setProductFields(property).then(function (res) {
+
+                    $fieldEditService.setProductFields({
+                        'cartId': cartId,
+                        _option: 'retailprice',
+                        productIds: productIds,
+                        isSelAll: $scope.vm._selall ? 1 : 0
+                    }).then(function (res) {
                         if (res.data == null || res.data.ecd == null || res.data.ecd == undefined) {
                             alert($translate.instant('TXT_COMMIT_ERROR'));
                             return;
@@ -1245,11 +1233,9 @@ define([
         };
 
         /**
-         @description 类目popup
-         * @param productInfo
-         * @param popupNewCategory popup实例
+         * @description 类目popup
          */
-        function jdCategoryMapping(cartId) {
+        function categoryMapping(cartId) {
             _chkProductSel(null, _openAddPromotion, {"cartId": cartId, "selList": []});
 
             function _openAddPromotion(cartId, selList, context) {
@@ -1259,38 +1245,34 @@ define([
                         context.selList.push(item.code);
                     })
                 }
-                productDetailService.getPlatformCategories({"cartId": context.cartId})
-                    .then(function (res) {
-                        return $q(function (resolve, reject) {
-                            if (!res.data || !res.data.length) {
-                                notify.danger("数据还未准备完毕");
-                                reject("数据还未准备完毕");
-                            } else {
-                                resolve(popups.popupNewCategory({
-                                    //' from: scope.vm.platform == null ? "" : scope.vm.platform.pCatPath,
-                                    categories: res.data,
-                                    divType: ">",
-                                    plateSchema: true
-                                }));
-                            }
-                        });
-                    }).then(function (data) {
 
-                    confirm("将要批量更新商品类目，是否确认？").then(function () {
-                        $fieldEditService.bulkSetCategory({
-                            'isSelAll': $scope.vm._selall ? 1 : 0,
-                            "productIds": context.selList,
-                            "cartId": +context.cartId,
-                            "pCatPath": data.selected.catPath,
-                            "pCatId": data.selected.catId
-                        }).then(function () {
-                            notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                            $scope.search();
+                productDetailService.getPlatformCategories({"cartId": context.cartId}).then(function (res) {
+
+                    if (!res.data || !res.data.length) {
+                        notify.danger("数据还未准备完毕");
+                        return;
+                    }
+
+                    popups.popupNewCategory({
+                        categories: res.data,
+                        divType: ">",
+                        plateSchema: true
+                    }).then(function (data) {
+                        confirm("将要批量更新商品类目，是否确认？").then(function () {
+                            $fieldEditService.bulkSetCategory({
+                                'isSelAll': $scope.vm._selall ? 1 : 0,
+                                "productIds": context.selList,
+                                "cartId": +context.cartId,
+                                "pCatPath": data.selected.catPath,
+                                "pCatId": data.selected.catId
+                            }).then(function () {
+                                notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                                $scope.search();
+                            });
                         });
-                    });
+                    })
 
                 });
-
             }
         }
 
@@ -1341,9 +1323,13 @@ define([
                             productIds.push(object.code);
                         });
                     }
-                    var property = {'cartId': cartId, '_option': 'refreshRetailPrice', 'productIds': productIds};
-                    property.isSelAll = $scope.vm._selall ? 1 : 0;
-                    $fieldEditService.setProductFields(property).then(function (res) {
+
+                    $fieldEditService.setProductFields({
+                        cartId: cartId,
+                        _option: 'refreshRetailPrice',
+                        productIds: productIds,
+                        isSelAll: $scope.vm._selall ? 1 : 0
+                    }).then(function (res) {
                         if (res.data == null || res.data.ecd == null || res.data.ecd == undefined) {
                             alert($translate.instant('TXT_COMMIT_ERROR'));
                             return;
@@ -1389,7 +1375,8 @@ define([
                     configValue1 = $scope.vm.masterData.autoApprovePrice[0].configValue1;
                 }
 
-                if ("1" == configValue1) return true;
+                if ("1" == configValue1)
+                    return true;
             } else {
                 return false;
             }
@@ -1541,7 +1528,11 @@ define([
         };
 
         /**
-         * solr销量排序字段命令规则为P{cartId}_sale7、P{cartId}_sale30、P{cartId}_saleYear、P{cartId}_saleAll、
+         * solr销量排序字段命令规则:
+         * P{cartId}_sale7、
+         * P{cartId}_sale30、
+         * P{cartId}_saleYear、
+         * P{cartId}_saleAll、
          */
         function sortNameForSolr(sortName) {
             var compiled = _.template("P<%= cartId %>_sale<%= sum %>"),

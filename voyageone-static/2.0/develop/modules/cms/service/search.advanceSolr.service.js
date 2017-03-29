@@ -17,7 +17,7 @@ define([
         /**
          * 检索product
          */
-        this.search = function(data, groupPagination, productPagination){
+        this.search = function(data, productPagination){
             var defer = $q.defer();
             data = resetSearchInfo(data);
 
