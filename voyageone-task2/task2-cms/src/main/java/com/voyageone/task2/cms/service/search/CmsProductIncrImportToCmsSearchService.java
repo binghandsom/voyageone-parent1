@@ -19,11 +19,15 @@ import org.springframework.stereotype.Service;
 @Service
 class CmsProductIncrImportToCmsSearchService extends CmsBaseIncrImportSearchSubService {
 
-    @Autowired
-    ProductService productService;
+    private final ProductService productService;
+
+    private final CmsProductSearchService cmsProductSearchService;
 
     @Autowired
-    private CmsProductSearchService cmsProductSearchService;
+    public CmsProductIncrImportToCmsSearchService(ProductService productService, CmsProductSearchService cmsProductSearchService) {
+        this.productService = productService;
+        this.cmsProductSearchService = cmsProductSearchService;
+    }
 
     /**
      * handleInsert
@@ -31,24 +35,22 @@ class CmsProductIncrImportToCmsSearchService extends CmsBaseIncrImportSearchSubS
     @Override
     protected boolean handleInsert(Document document) {
         $debug("CmsProductIncrImportToSearchService.handleInsert" + document.toJson());
-        String id = (String)document.get("_id");
-        if(id == null) {
-            Document objectDoc = (Document) document.get("o");
-            if (objectDoc != null) {
-                Object idObject = objectDoc.get("_id");
-                if (idObject != null) {
-                    id = idObject.toString();
-                }
+        String id = "";
+        Document objectDoc = (Document) document.get("o");
+        if (objectDoc != null) {
+            Object idObject = objectDoc.get("_id");
+            if (idObject != null) {
+                id = idObject.toString();
             }
         }
-        String channelId="";
+        String channelId = "";
         String nsStr = ((String) document.get("ns"));
         if (nsStr != null && nsStr.length() > 4) {
             channelId = nsStr.substring(nsStr.length() - 3, nsStr.length());
         }
 
 
-        if(!StringUtil.isEmpty(id) && !StringUtil.isEmpty(channelId)) {
+        if (!StringUtil.isEmpty(id) && !StringUtil.isEmpty(channelId)) {
             $info(String.format("Insert channel=%s id=%s", channelId, id));
             CmsBtProductModel cmsBtProductModel = productService.getProductByObjectId(channelId, id);
             if (cmsBtProductModel != null) {
@@ -76,7 +78,7 @@ class CmsProductIncrImportToCmsSearchService extends CmsBaseIncrImportSearchSubS
             return false;
         }
 
-        String channelId="";
+        String channelId = "";
         String nsStr = ((String) document.get("ns"));
         if (nsStr != null && nsStr.length() > 4) {
             channelId = nsStr.substring(nsStr.length() - 3, nsStr.length());
@@ -96,10 +98,10 @@ class CmsProductIncrImportToCmsSearchService extends CmsBaseIncrImportSearchSubS
         } else {
             id = objectDoc.get("_id").toString();
         }
-        if(!StringUtil.isEmpty(id) && !StringUtil.isEmpty(channelId)){
+        if (!StringUtil.isEmpty(id) && !StringUtil.isEmpty(channelId)) {
             $info(String.format("update channel=%s id=%s", channelId, id));
             CmsBtProductModel cmsBtProductModel = productService.getProductByObjectId(channelId, id);
-            if(cmsBtProductModel != null) {
+            if (cmsBtProductModel != null) {
                 update = cmsProductSearchService.createSolrBeanForNew(cmsBtProductModel, null);
 
                 if (update != null) {

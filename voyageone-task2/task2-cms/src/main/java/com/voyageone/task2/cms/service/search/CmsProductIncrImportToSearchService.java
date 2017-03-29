@@ -61,8 +61,8 @@ public class CmsProductIncrImportToSearchService extends BaseListenService {
      */
     protected void onStartup(List<TaskControlBean> taskControlList) {
         importSubServiceBeanArray = new CmsBaseIncrImportSearchSubService[]{
-                cmsProductIncrImportToSearchService,
-                cmsProductIncrImportToDistSearchService
+                cmsProductIncrImportToSearchService
+//                ,cmsProductIncrImportToDistSearchService
         };
         super.onStartup(taskControlList);
     }
@@ -177,32 +177,36 @@ public class CmsProductIncrImportToSearchService extends BaseListenService {
      * handleOp
      */
     private void handleOp(Document op) {
-        for (CmsBaseIncrImportSearchSubService service : importSubServiceBeanArray) {
-            switch ((String) op.get("op")) { // usually op looks like {"op": "i"} or {"op": "u"}
-                case "i":
-                    // insert event in mongodb
-                    if (service.handleInsert(op)) {
-                        isNeedCommit = true;
-                    }
-                    break;
-                case "u":
-                    // update event in mongodb
-                    if (!"repl.time".equals(op.getString("ns"))) {
-                        if (service.handleUpdate(op)) {
+        try {
+            for (CmsBaseIncrImportSearchSubService service : importSubServiceBeanArray) {
+                switch ((String) op.get("op")) { // usually op looks like {"op": "i"} or {"op": "u"}
+                    case "i":
+                        // insert event in mongodb
+                        if (service.handleInsert(op)) {
                             isNeedCommit = true;
                         }
-                    }
-                    break;
-                case "d":
-                    // delete event in mongodb
-                    if (service.handleDelete(op)) {
-                        isNeedCommit = true;
-                    }
-                    break;
-                default:
-                    $error("CmsProductIncrImportToSearchService Non-handled operation: " + op);
-                    break;
+                        break;
+                    case "u":
+                        // update event in mongodb
+                        if (!"repl.time".equals(op.getString("ns"))) {
+                            if (service.handleUpdate(op)) {
+                                isNeedCommit = true;
+                            }
+                        }
+                        break;
+                    case "d":
+                        // delete event in mongodb
+                        if (service.handleDelete(op)) {
+                            isNeedCommit = true;
+                        }
+                        break;
+                    default:
+                        $error("CmsProductIncrImportToSearchService Non-handled operation: " + op);
+                        break;
+                }
             }
+        }catch (Exception e){
+            $error(op.toJson(), e);
         }
     }
 
