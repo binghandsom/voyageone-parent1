@@ -1899,6 +1899,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 
                 // 循环取得5张图片的url并分别上传到京东
                 for (int i=0;i<productPicNameList.size();i++) {
+                    String firstImage = "";
                     String picUrl = "";
                     try {
                         // 取得图片URL
@@ -1913,7 +1914,11 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                         image.setImgIndex(i + 1);
                         image.setImgUrl(imageMap.get(picUrl));
                         if (StringUtils.isEmpty(image.getImgUrl())) {
-                            image.setImgUrl(imageList.get(0).getImgUrl());
+                            image.setImgUrl(firstImage);
+                        } else {
+                            if (StringUtils.isEmpty(firstImage)) {
+                                firstImage = image.getImgUrl();
+                            }
                         }
                         imageList.add(image);
 //                        // 如果之前没有一张图片上传成功则本次上传对象图片设置为主图，如果之前已经有图片上传成功，则本次设为非主图
