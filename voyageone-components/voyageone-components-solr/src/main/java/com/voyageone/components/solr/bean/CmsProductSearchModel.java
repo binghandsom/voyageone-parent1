@@ -1,5 +1,7 @@
 package com.voyageone.components.solr.bean;
 
+import com.voyageone.components.solr.annotation.SolrField;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,11 +15,14 @@ import java.util.Map;
  */
 public class CmsProductSearchModel {
 
+    @SolrField(required = true)
     private String id;
     private Long lastVer;
+    @SolrField(type = "lowercase")
     private String productModel;
     private String nameEn;
     private String nameCn;
+    @SolrField(type = "lowercase")
     private String productCode;
     private String productChannel;
     private String orgChannelId;

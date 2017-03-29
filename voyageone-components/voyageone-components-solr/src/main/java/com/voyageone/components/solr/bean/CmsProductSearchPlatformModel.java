@@ -1,10 +1,13 @@
 package com.voyageone.components.solr.bean;
 
+import com.voyageone.components.solr.annotation.SolrField;
+
 import java.util.List;
 
 /**
  * Created by james on 2017/3/21.
  */
+@SolrField(fieldType = "dynamicField")
 public class CmsProductSearchPlatformModel {
     String pCatId;
     String pCatPath;

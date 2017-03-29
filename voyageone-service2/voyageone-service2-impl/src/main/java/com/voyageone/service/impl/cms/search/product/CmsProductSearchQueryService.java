@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.search.product;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.MongoUtils;
 import com.voyageone.components.solr.bean.CmsProductSearchModel;
 import com.voyageone.components.solr.query.SimpleQueryBean;
 import com.voyageone.components.solr.service.CmsProductSearchService;
@@ -379,7 +380,7 @@ public class CmsProductSearchQueryService extends BaseService {
         query.addProjectionOnField("productCode");
 
         // Sort
-        query.addSort(new Sort(Sort.Direction.DESC, "id"));
+        getSortValue(searchValue, query);
 
         // limit & page
         int offset = (searchValue.getProductPageNum() - 1) * searchValue.getProductPageSize();
@@ -388,5 +389,43 @@ public class CmsProductSearchQueryService extends BaseService {
         query.setOffset(offset);
 
         return query;
+    }
+
+    public void getSortValue(CmsSearchInfoBean2 searchValue, SimpleQueryBean query) {
+        StringBuilder result = new StringBuilder();
+
+        // 获取排序字段1
+        if (StringUtils.isNotEmpty(searchValue.getSortOneName()) && StringUtils.isNotEmpty(searchValue.getSortOneType())) {
+            Sort.Direction sortType;
+            if("1".equalsIgnoreCase(searchValue.getSortOneType())){
+                sortType = Sort.Direction.ASC;
+            }else{
+                sortType = Sort.Direction.DESC;
+            }
+            query.addSort(new Sort(sortType, searchValue.getSortOneName()));
+        }
+
+        // 获取排序字段2
+        if (StringUtils.isNotEmpty(searchValue.getSortTwoName()) && StringUtils.isNotEmpty(searchValue.getSortTwoType())) {
+            Sort.Direction sortType;
+            if("1".equalsIgnoreCase(searchValue.getSortTwoType())){
+                sortType = Sort.Direction.ASC;
+            }else{
+                sortType = Sort.Direction.DESC;
+            }
+            query.addSort(new Sort(sortType, searchValue.getSortTwoName()));
+        }
+
+        // 获取排序字段3
+        if (StringUtils.isNotEmpty(searchValue.getSortThreeName()) && StringUtils.isNotEmpty(searchValue.getSortThreeType())) {
+            Sort.Direction sortType;
+            if("1".equalsIgnoreCase(searchValue.getSortThreeType())){
+                sortType = Sort.Direction.ASC;
+            }else{
+                sortType = Sort.Direction.DESC;
+            }
+            query.addSort(new Sort(sortType, searchValue.getSortThreeName()));
+        }
+
     }
 }
