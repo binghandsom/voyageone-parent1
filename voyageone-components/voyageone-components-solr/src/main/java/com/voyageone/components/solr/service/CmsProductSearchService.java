@@ -122,6 +122,14 @@ public class CmsProductSearchService extends BaseSearchService {
                 cmsProductSearchModel.getPlatform().put(s, cmsProductSearchPlatformModel);
             }
         });
+        // cart=0 的保存全部的销量信息
+        CmsProductSearchPlatformModel cmsProductSearchPlatformModel = new CmsProductSearchPlatformModel();
+        cmsProductSearchPlatformModel.setSale7( cmsBtProductModel.getSales().getCodeSum7(0));
+        cmsProductSearchPlatformModel.setSale30(cmsBtProductModel.getSales().getCodeSum30(0));
+        cmsProductSearchPlatformModel.setSaleYear(cmsBtProductModel.getSales().getCodeSumYear(0));
+        cmsProductSearchPlatformModel.setSaleAll(cmsBtProductModel.getSales().getCodeSumAll(0));
+        cmsProductSearchModel.getPlatform().put("P0", cmsProductSearchPlatformModel);
+
         return createSolrBean(cmsProductSearchModel, lastVer);
     }
 
