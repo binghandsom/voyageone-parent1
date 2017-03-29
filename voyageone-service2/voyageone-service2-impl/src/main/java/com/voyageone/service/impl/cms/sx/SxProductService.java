@@ -962,6 +962,22 @@ public class SxProductService extends BaseService {
             // 2016/09/13 add desmond END
 
             // 2017/02/17 tom Liking官网同购的场合， 禁止某些品牌上新 START
+            if (channelId.equals("928")) {
+                String masterBrand = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getBrand();
+                if (masterBrand.equals("hermes")
+                        || masterBrand.equals("chanel")
+                        || masterBrand.equals("foley & corinna")
+                        || masterBrand.equals("foley + corinna")
+                        || masterBrand.equals("hermes")
+                        || masterBrand.equals("hermès")
+                        || masterBrand.equals("hermès fragrance")
+                        || masterBrand.equals("hermès paris")
+                        || masterBrand.equals("louis vuitton")
+                        ) {
+                    removeProductList.add(productModel);
+                    continue;
+                }
+            }
             if (channelId.equals("928") && cartId == 31) {
                 String masterBrand = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getBrand();
                 if (masterBrand.equals("burberry")
