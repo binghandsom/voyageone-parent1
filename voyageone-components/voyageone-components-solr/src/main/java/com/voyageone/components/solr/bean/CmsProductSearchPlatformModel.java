@@ -28,7 +28,9 @@ public class CmsProductSearchPlatformModel {
     Double pPriceMsrpEd;
     Double pPriceRetailEd;
     Double pPriceSaleEd;
-
+    Double pPriceMsrpSt;
+    Double pPriceRetailSt;
+    Double pPriceSaleSt;
 
     public String getpCatId() {
         return pCatId;
@@ -180,5 +182,29 @@ public class CmsProductSearchPlatformModel {
 
     public void setSellerCats(List<String> sellerCats) {
         this.sellerCats = sellerCats;
+    }
+
+    public Double getpPriceMsrpSt() {
+        return pPriceMsrpSt;
+    }
+
+    public void setpPriceMsrpSt(Double pPriceMsrpSt) {
+        this.pPriceMsrpSt = pPriceMsrpSt;
+    }
+
+    public Double getpPriceRetailSt() {
+        return pPriceRetailSt;
+    }
+
+    public void setpPriceRetailSt(Double pPriceRetailSt) {
+        this.pPriceRetailSt = pPriceRetailSt;
+    }
+
+    public Double getpPriceSaleSt() {
+        return pPriceSaleSt;
+    }
+
+    public void setpPriceSaleSt(Double pPriceSaleSt) {
+        this.pPriceSaleSt = pPriceSaleSt;
     }
 }
