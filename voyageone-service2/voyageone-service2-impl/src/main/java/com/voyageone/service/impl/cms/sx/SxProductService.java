@@ -74,9 +74,13 @@ import com.voyageone.service.model.ims.ImsBtProductModel;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.http.*;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -87,6 +91,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -5578,6 +5583,38 @@ public class SxProductService extends BaseService {
                 ((ComplexField) fieldObj).setComplexValue(complexValue);
             }
         }
+    }
+
+    /**
+     * 平台级库存同步
+     *
+     * @param channelId channelId
+     * @param cartId    cartId
+     * @param codeList  codeList
+     * @throws IOException
+     */
+    public void synInventoryToPlatform(String channelId, String cartId, List<String> codeList, List<String> skuList) throws IOException {
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.parseMediaType("application/json;charset=UTF-8"));
+        ObjectMapper objectMapper = new ObjectMapper();
+        HashMap<String, Object> feedInfo = new HashMap<>();
+        feedInfo.put("orderChannelId", channelId);
+        feedInfo.put("cartId", cartId);
+        feedInfo.put("codeList", codeList);
+        feedInfo.put("skuList", skuList);
+        feedInfo.put("timeStamp", System.currentTimeMillis());
+        feedInfo.put("signature", MD5.getMD5(channelId + System.currentTimeMillis()));
+        List<HashMap<String, Object>> requestList = Arrays.asList(feedInfo);
+
+        String json = objectMapper.writeValueAsString(requestList);
+        httpHeaders.set("Authorization", "Basic " + MD5.getMD5(json + System.currentTimeMillis() / TimeUnit.MINUTES.toMillis(30)));
+        HttpEntity<String> httpEntity = new HttpEntity<>(json, httpHeaders);
+        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+        simpleClientHttpRequestFactory.setConnectTimeout(6000);
+        simpleClientHttpRequestFactory.setReadTimeout(6000);
+        RestTemplate restTemplate = new RestTemplate(simpleClientHttpRequestFactory);
+        ResponseEntity<String> exchange = restTemplate.exchange("http://open.synship.net/wms/logSynInventoryForCms/import", HttpMethod.POST, httpEntity, String.class);
     }
 
     private enum SkuSort {
