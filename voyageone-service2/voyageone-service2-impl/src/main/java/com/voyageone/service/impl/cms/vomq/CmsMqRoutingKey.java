@@ -102,6 +102,10 @@ public class CmsMqRoutingKey {
     /**库存相关MQ*/
     public static final String EWMS_MQ_STOCK_CART_CHANGED_STOCK = "ewms_mq_stock_cart_changed_stock";
 
+    /**组合商品推送MQ*/
+    public static final String EWMS_MQ_GROUP_SKU = "ewms_mq_group_sku";
+
+
     /**
      * image create task
      */
