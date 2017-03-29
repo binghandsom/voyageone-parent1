@@ -16,6 +16,7 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums.Cart;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
@@ -855,7 +856,12 @@ public class ProductService extends BaseService {
 
         if (listLogicInventory != null && !listLogicInventory.isEmpty()) {
             for (WmsBtInventoryCenterLogicModel logicInventory : listLogicInventory) {
-                String sku = logicInventory.getSku().toLowerCase();
+                String sku;
+                if (ChannelConfigEnums.Channel.SN.getId().equals(channelId)) {
+                    sku = logicInventory.getSku().toLowerCase();
+                } else {
+                    sku = logicInventory.getSku();
+                }
                 Integer logicQty = logicInventory.getQtyChina();
                 skuLogicQty.merge(sku, logicQty, (val, newVal) -> val + newVal);
             }
@@ -1554,10 +1560,10 @@ public class ProductService extends BaseService {
         if (rs != null) {
 
             JongoUpdate groupQuery = new JongoUpdate();
-            query.setQuery("{\"cartId\": #, \"productCodes\": #}");
-            query.setQueryParameters(cartId, code);
+            groupQuery.setQuery("{\"cartId\": #, \"productCodes\": #}");
+            groupQuery.setQueryParameters(cartId, code);
 
-            query.setUpdate("{$set: {\"platformPid\": \"\"}}");
+            groupQuery.setUpdate("{$set: {\"platformPid\": \"\"}}");
 
             rs = cmsBtProductGroupDao.updateMulti(groupQuery, channelId);
         }
