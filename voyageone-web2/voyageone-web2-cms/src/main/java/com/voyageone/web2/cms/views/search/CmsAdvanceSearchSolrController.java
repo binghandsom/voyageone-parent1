@@ -126,6 +126,7 @@ public class CmsAdvanceSearchSolrController extends CmsController {
 
         List<String> currCodeList = cmsProductCodeListBean.getProductCodeList();
         List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
+        prodInfoList.sort((o1, o2) -> Integer.compare(currCodeList.indexOf(o1.getCommon().getFields().getCode()),currCodeList.indexOf(o2.getCommon().getFields().getCode())));
 
         Map<String, TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), "cn");
         Map<String, TypeChannelBean> sizeTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), "cn");
@@ -253,6 +254,7 @@ public class CmsAdvanceSearchSolrController extends CmsController {
         long productListTotal = cmsProductCodeListBean.getTotalCount();
         List<String> currCodeList = cmsProductCodeListBean.getProductCodeList();
         List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
+        prodInfoList.sort((o1, o2) -> Integer.compare(currCodeList.indexOf(o1.getCommon().getFields().getCode()),currCodeList.indexOf(o2.getCommon().getFields().getCode())));
         Map<String, Map<String, Integer>> codeMap = new HashMap<>();
         Map<String, TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), "cn");
         Map<String, TypeChannelBean> sizeTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), "cn");

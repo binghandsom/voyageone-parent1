@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="initialize();" id="advanceSearch" ng-controller="adSearchAppendCtl as ctrlAdvance">
+<div class="wrapper-md" ng-init="initialize();" id="advanceSearch">
     <uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
         <uib-accordion-group is-open="vm.status.open">
             <uib-accordion-heading>
@@ -365,7 +365,7 @@
         </uib-accordion-group>
     </uib-accordion>
     <div class="form-group text-center">
-        <button class="btn btn-default ng-binding" ng-click="clear(ctrlAdvance)"><i class="fa fa-remove"></i>&nbsp;Clear</button>
+        <button class="btn btn-default ng-binding" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;Clear</button>
         <button class="btn btn-vo ng-binding" ng-click="search(1)"><i class="fa fa-search"></i>&nbsp;Search</button>
     </div>
 
@@ -535,7 +535,7 @@
                                         <th class="text-center">
                                             <span translate="TXT_INVENTORY"></span>&emsp;<button class="opacityBtn"
                                                                                             ng-if="vm.productList.length"
-                                                                                            ng-click="ctrlAdvance.columnOrder('quantity')"><i class="fa fa-{{ctrlAdvance.getArrowName('quantity')}}"></i></button>
+                                                                                            ng-click="columnOrder('quantity')"><i class="fa fa-{{getArrowName('quantity')}}"></i></button>
                                         </th>
                                         <th class="text-center">
                                             可售库存
@@ -543,22 +543,20 @@
                                         <th class="text-center">
                                             中国建议售价&emsp;<button class="opacityBtn"
                                                                 ng-if="vm.productList.length && vm._cartType_"
-                                                                ng-click="ctrlAdvance.columnOrder('platforms.P✓.pPriceMsrpEd',vm._cartType_.value)"><i class="fa fa-{{ctrlAdvance.getArrowName('platforms.P✓.pPriceMsrpEd',vm._cartType_.value)}}"></i></button>
+                                                                ng-click="columnOrder('P✓_pPriceMsrpSt',vm._cartType_.value)"><i class="fa fa-{{getArrowName('P✓_pPriceMsrpSt',vm._cartType_.value)}}"></i></button>
                                         </th>
                                         <th class="text-center">
                                             中国指导售价&emsp;<button class="opacityBtn"
                                                                 ng-if="vm.productList.length && vm._cartType_"
-                                                                ng-click="ctrlAdvance.columnOrder('platforms.P✓.pPriceRetailSt',vm._cartType_.value)"><i class="fa fa-{{ctrlAdvance.getArrowName('platforms.P✓.pPriceRetailSt',vm._cartType_.value)}}"></i></button>
+                                                                ng-click="columnOrder('P✓_pPriceRetailSt',vm._cartType_.value)"><i class="fa fa-{{getArrowName('P✓_pPriceRetailSt',vm._cartType_.value)}}"></i></button>
                                         </th>
                                         <th class="text-center">
                                             中国最终售价&emsp;<button class="opacityBtn"
                                                                 ng-if="vm.productList.length && vm._cartType_"
-                                                                ng-click="ctrlAdvance.columnOrder('platforms.P✓.pPriceSaleEd',vm._cartType_.value)"><i class="fa fa-{{ctrlAdvance.getArrowName('platforms.P✓.pPriceSaleEd',vm._cartType_.value)}}"></i></button>
+                                                                ng-click="columnOrder('P✓_pPriceSaleSt',vm._cartType_.value)"><i class="fa fa-{{getArrowName('P✓_pPriceSaleSt',vm._cartType_.value)}}"></i></button>
                                         </th>
                                         <th class="text-center">
-                                            <span translate="TXT_SKU_COUNT"></span>&emsp;<button class="opacityBtn"
-                                                                                                 ng-if="vm.productList.length"
-                                                                                                 ng-click="ctrlAdvance.columnOrder('skuCnt')"><i class="fa fa-{{ctrlAdvance.getArrowName('skuCnt')}}"></i></button>
+                                            <span translate="TXT_SKU_COUNT"></span>
                                         </th>
                                         <th class="text-left" ng-repeat="prop1 in vm.commonProps">
                                             {{prop1.propName}}&emsp;
@@ -567,7 +565,7 @@
                                         <th class="text-center" ng-repeat="prop3 in vm.selSalesType">
                                             {{prop3.name}}&emsp;<button class="opacityBtn"
                                                                         ng-if="vm.productList.length"
-                                                                        ng-click="ctrlAdvance.columnOrder(prop3.value)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop3.value)}}"></i></button>
+                                                                        ng-click="columnOrderSale(prop3.value)"><i class="fa fa-{{getArrowNameSale(prop3.value)}}"></i></button>
                                         </th>
                                         <th class="text-center" ng-repeat="prop4 in vm.selBiDataList">
                                             {{prop4.name}}&emsp;
