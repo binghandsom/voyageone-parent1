@@ -1277,7 +1277,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 productCommonField.setOrigin(feed.getOrigin());
             }
             //货号
-            if (newFlg || StringUtils.isEmpty(productCommonField.getMpn()) || "1".equals(feed.getIsFeedReImport())) {
+            if ( !StringUtils.isEmpty(feed.getMpn())) {
                 productCommonField.setMpn(feed.getMpn());
             }
             // 简短描述英文
