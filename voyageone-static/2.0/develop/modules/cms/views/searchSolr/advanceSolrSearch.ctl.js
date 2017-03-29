@@ -375,22 +375,6 @@ define([
         }
 
         /**
-         * 初始化显示group数据
-         */
-        $scope.firstShowGroupList = function () {
-            $scope.vm.currTab = 'group';
-            if ($scope.vm.fstShowGrpFlg) {
-                $scope.vm.fstShowGrpFlg = false;
-                getGroupList();
-            }
-
-            if ($scope.vm.currTab == 'product')
-                $scope.vm.currTab2 = true;
-            else
-                $scope.$feedActive = false;
-        };
-
-        /**
          * 分页处理group数据
          */
         function getGroupList() {
@@ -1423,7 +1407,51 @@ define([
                 return false;
             }
 
-        }
+        };
+
+        /**
+         * 平台级锁定
+         */
+        $scope.platFormLock = function (cartId, lock) {
+            var self = this, parentScope = self.parentScope;
+
+            parentScope._chkProductSel(parseInt(cartId), function (cartId, _selProdList) {
+                var _msg = lock ? "锁定" : "解锁";
+
+                self.confirm('您是否执行' + _msg + "操作？").then(function () {
+                    var upEntity = {
+                        cartId: cartId,
+                        productIds: _.pluck(_selProdList, "code"),
+                        lock: lock,
+                        isSelectAll: parentScope.vm._selall ? 1 : 0
+                    };
+
+                    if (lock) {
+                        self.confirm("是否同步商品下架？").then(function () {
+                            self.callPlatFormLock(_.extend(upEntity, {down: true}), _msg + '成功!');
+                        }, function () {
+                            self.callPlatFormLock(upEntity, _msg + '成功!');
+                        });
+                    } else {
+                        self.callPlatFormLock(upEntity, _msg + '成功!');
+                    }
+                });
+
+            });
+        };
+
+        /**
+         * 调用平台级锁定接口
+         * @param upEntity   上行参数
+         * @param msg        提示语
+         */
+        function callPlatFormLock(upEntity, msg) {
+            var self = this;
+            self.$fieldEditService.bulkLockProducts(upEntity).then(function () {
+                self.notify.success(msg);
+            });
+        };
+
     });
 
 });
