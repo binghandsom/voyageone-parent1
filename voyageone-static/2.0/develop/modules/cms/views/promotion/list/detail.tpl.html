@@ -156,6 +156,10 @@
         <uib-tabset class="tab-container vo_nav-tabs">
             <!--right-btn-->
             <div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
+                <button ng-if="vm.promotion.cartId != 27" class="btn btn-default" ng-click="addPromotionByGroup()"><i
+                        class="fa fa-mail-forward"></i>
+                    <span>导入Group下的其它商品</span>
+                </button>&nbsp;
                 <button class="btn btn-default" ng-click="openImport('md',vm.promotionId,search)"><i
                         class="fa fa-mail-forward"></i>
                     <span translate="BTN_IMPORT_PROMOTION_FILE"></span>
@@ -176,6 +180,116 @@
             </div>
             <!-- /right-btn -->
             <!--tab-->
+            <uib-tab>
+                <tab-heading ng-click="vm.tabIndex = 1"><i class="glyphicons glyphicons-sort text-default"></i>
+                    {{'TXT_PRODUCT_LIST' | translate}}
+                </tab-heading>
+                <div class="table-responsive">
+                    <table class="table table-hover vo_table vo_models dropdown_table_bk font-bold text-vo" style="background:#e67e22;color:#fff">
+                        <thead>
+                        <tr ng-controller="selectRowsCtrl">
+                            <td class="mfb-xxt"><label class="checkbox-inline c-checkbox">
+                                <input type="checkbox" ng-click="selectAll(vm.codeSelList)" ng-checked="isAllSelected(vm.codeSelList)" ng-disabled="!vm.codeList.length">
+                                <span class="fa fa-check"></span> {{'TXT_SELECT_ALL' | translate}} </label></td>
+                            <td class="mfb-xxt text-left" translate="TXT_PROMOTION_TAG"></td>
+                            <td class="mfb-xxt text-center" translate="TXT_INVENTORY"></td>
+                            <td class="mfb-xxt text-right" translate="TXT_RETAIL_PRICE"></td>
+                            <td class="mfb-xxt text-right" translate="TXT_SALE_PRICE"></td>
+                            <td class="mfb-xxt text-right" translate="TXT_PROMOTION_PRICE"></td>
+                            <td class="mfb-xxx text-left" translate="TXT_BASE_PROPERTY"></td>
+                            <td class="mfb-xxt text-center" translate="TXT_SKU_COUNT"></td>
+                            <td class="mfb-xxt text-left" translate="TXT_TIME"></td>
+                            <td class="mfb-xx text-center" translate="TXT_ACTION"></td>
+                        </tr>
+                        </thead>
+                    </table>
+                    <div class="col-sm-12 dropdown_table_main box-body" if-no-rows="vm.codeList.length">
+                        <table class="table table-hover vo_table vo_models" ng-if="vm.codeList.length">
+                            <tbody ng-repeat="code in vm.codeList">
+                            <tr class="table_bg_gray">
+                                <td colspan="10" class="control-label text-left form-inline">
+                                    <label class="checkbox-inline c-checkbox">
+                                        <input ng-model="vm.codeSelList.selFlag[code.productCode]" type="checkbox" ng-controller="selectRowsCtrl"
+                                               ng-click="selectOne(code.productCode, vm.codeSelList)">
+                                        <span class="fa fa-check"></span>
+                                    </label>
+                                    <span class="label label-danger m-t-xs m-l-sm m-r-sm">&nbsp;M&nbsp;</span>
+                                    <span ng-if = "currentChannelId == '997'" class="label label-yellow-new m-l-md">&nbsp;{{code.channelName}}&nbsp;</span>
+                                    <span class="m-r-sm" ng-if="code.numIid">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
+										<a ng-href="{{vm.platformUrl}}{{code.numIid}}" target="_blank"  ng-bind="code.numIid"></a>
+									</span>&nbsp;
+                                    <span class="m-r-sm">{{'TXT_PRODUCT_CODE_WITH_COLON' | translate}}&nbsp;
+											<a ng-href="#/product/detail/{{code.productId}}" target="_blank" ng-bind="code.productCode"></a>
+										</span>&nbsp;
+                                    <span>{{'TXT_PRODUCT_NAME_WITH_COLON' | translate}}&nbsp;
+											<a href="#/product/detail/{{code.productId}}" title="{{code.productName}}"
+                                               target="_blank">{{code.productName | limitTo: 30}}{{code.productName.length > 30 ? '...' : ''}}</a>
+										</span>
+                                    <span class="pull-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{code.catPath}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="mfb-xxt text-center">
+                                    <img image="{{code.image}}"
+                                         alt="{{code.productName}}" class="thumb-sm-search pull-left m-r"/>
+                                </td>
+                                <td class="mfb-xxt text-left">
+                                    <!--ng-model="model.tagNameList"-->
+                                    <select multiple chosen class="form-control"  ng-model="code.tagNameList" width="'100%'"   ng-change="codeTagChange(code,{{code.tagNameList}})"
+                                            ng-options="m.tagName as m.tagName for m in vm.tagList">
+                                    </select>
+                                    <!--<select  class="form-control" width="'285px'" ng-change="codeTagChange(code)" ng-model="code.tagId"  ng-options="m.id as m.tagName for m in vm.tagList" >-->
+                                    </select>
+                                </td>
+                                <td class="mfb-xxt text-center">{{code.inventory}}</td>
+                                <td class="mfb-xxt text-right">{{getMinMaxPrice(code.minRetailPrice,code.maxRetailPrice)}}</td>
+                                <td class="mfb-xxt text-right">{{getMinMaxPrice(code.minSalePrice,code.maxSalePrice)}}</td>
+                                <td class="mfb-xxt text-right">
+                                    {{getMinMaxPrice(code.minPromotionPrice,code.maxPromotionPrice)}}
+                                    <!--<span class="text-right text-l-t">{{code.msrp | number: 2}}</span>-->
+                                    <!--<p class="">-->
+                                    <!--<input type="text" class="col-sm-1 form-control m-b-xs" ng-model="code.promotionPrice" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">-->
+                                    <!--</p>-->
+                                    <!--<p class="text-u-red">-->
+                                    <!--（<span class="text-u-sub"><i class="glyphicon glyphicon-triangle-bottom"></i></span>&nbsp;{{code.msrp-code.promotionPrice | number: 2}})-->
+                                    <!--{{(code.promotionPrice/code.msrp*100).toFixed(2)}}{{'TXT_DISCOUNT_WORD' | translate}}</p>-->
+                                </td>
+                                <td class="mfb-xxx text-left">
+                                    <div class="table_main">
+                                        <!-- TODO 未实现 -->
+                                    </div>
+                                </td>
+                                <td class="mfb-xxt text-center">
+                                    <button class="btn btn-default btn-pop" ng-click="openSetSkuPrice({productCode:code.productCode,productId:code.productId,promotionId:code.promotionId})" ng-controller="popupCtrl">{{code.skuCount}}</button>
+                                </td>
+                                <td class="mfb-xxt text-left">
+                                    <small popover-trigger="mouseenter" popover-placement="left">
+                                        <!-- TODO 未实现pulishtime -->
+                                        <div class="table_main">
+                                            <ul>
+                                                <li>{{'TXT_CREATE_TIME' | translate}}</li>
+                                                <li><span>{{(code.created).substring(0,19)}}</span></li>
+                                            </ul>
+                                        </div>
+                                    </small>
+                                </td>
+                                <td class="mfb-xx text-center">
+                                    <button ng-if="code.promotionPrice != code.promotionPriceBak||code.isUpdate" title="保存"
+                                            class="btn btn-vo btn-xs" ng-click="updateCode(code)"><i
+                                            class="fa fa-floppy-o"></i></button>
+                                    <button class="btn btn-danger btn-xs" ng-click="delPromotionCode(code)"><i
+                                            class="fa fa-trash-o"></i></button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-12 m-t-xs">
+                        <vpagination config="vm.codePageOption" total="{{vm.codePageOption.total}}"></vpagination>
+                    </div>
+                </div>
+                <!-- .table-responsive -->
+            </uib-tab>
             <uib-tab>
                 <tab-heading ng-click="vm.tabIndex = 0"><i class="glyphicons glyphicons-more-items text-default"></i>
                     {{'TXT_GROUP_LIST' | translate}}
@@ -260,116 +374,6 @@
                         <vpagination config="vm.groupPageOption" total="{{vm.groupPageOption.total}}"></vpagination>
                     </div>
                 </div>
-            </uib-tab>
-            <uib-tab>
-                <tab-heading ng-click="vm.tabIndex = 1"><i class="glyphicons glyphicons-sort text-default"></i>
-                    {{'TXT_PRODUCT_LIST' | translate}}
-                </tab-heading>
-                <div class="table-responsive">
-                    <table class="table table-hover vo_table vo_models dropdown_table_bk font-bold text-vo" style="background:#e67e22;color:#fff">
-                        <thead>
-                        <tr ng-controller="selectRowsCtrl">
-                            <td class="mfb-xxt"><label class="checkbox-inline c-checkbox">
-                                <input type="checkbox" ng-click="selectAll(vm.codeSelList)" ng-checked="isAllSelected(vm.codeSelList)" ng-disabled="!vm.codeList.length">
-                                <span class="fa fa-check"></span> {{'TXT_SELECT_ALL' | translate}} </label></td>
-                            <td class="mfb-xxt text-left" translate="TXT_PROMOTION_TAG"></td>
-                            <td class="mfb-xxt text-center" translate="TXT_INVENTORY"></td>
-                            <td class="mfb-xxt text-right" translate="TXT_RETAIL_PRICE"></td>
-                            <td class="mfb-xxt text-right" translate="TXT_SALE_PRICE"></td>
-                            <td class="mfb-xxt text-right" translate="TXT_PROMOTION_PRICE"></td>
-                            <td class="mfb-xxx text-left" translate="TXT_BASE_PROPERTY"></td>
-                            <td class="mfb-xxt text-center" translate="TXT_SKU_COUNT"></td>
-                            <td class="mfb-xxt text-left" translate="TXT_TIME"></td>
-                            <td class="mfb-xx text-center" translate="TXT_ACTION"></td>
-                        </tr>
-                        </thead>
-                    </table>
-                    <div class="col-sm-12 dropdown_table_main box-body" if-no-rows="vm.codeList.length">
-                        <table class="table table-hover vo_table vo_models" ng-if="vm.codeList.length">
-                            <tbody ng-repeat="code in vm.codeList">
-                            <tr class="table_bg_gray">
-                                <td colspan="10" class="control-label text-left form-inline">
-                                    <label class="checkbox-inline c-checkbox">
-                                        <input ng-model="vm.codeSelList.selFlag[code.productCode]" type="checkbox" ng-controller="selectRowsCtrl"
-                                               ng-click="selectOne(code.productCode, vm.codeSelList)">
-                                        <span class="fa fa-check"></span>
-                                    </label>
-                                    <span class="label label-danger m-t-xs m-l-sm m-r-sm">&nbsp;M&nbsp;</span>
-                                    <span ng-if = "currentChannelId == '997'" class="label label-yellow-new m-l-md">&nbsp;{{code.channelName}}&nbsp;</span>
-									<span class="m-r-sm" ng-if="code.numIid">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
-										<a ng-href="{{vm.platformUrl}}{{code.numIid}}" target="_blank"  ng-bind="code.numIid"></a>
-									</span>&nbsp;
-										<span class="m-r-sm">{{'TXT_PRODUCT_CODE_WITH_COLON' | translate}}&nbsp;
-											<a ng-href="#/product/detail/{{code.productId}}" target="_blank" ng-bind="code.productCode"></a>
-										</span>&nbsp;
-										<span>{{'TXT_PRODUCT_NAME_WITH_COLON' | translate}}&nbsp;
-											<a href="#/product/detail/{{code.productId}}" title="{{code.productName}}"
-                                               target="_blank">{{code.productName | limitTo: 30}}{{code.productName.length > 30 ? '...' : ''}}</a>
-										</span>
-                                    <span class="pull-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{code.catPath}}</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="mfb-xxt text-center">
-                                    <img image="{{code.image}}"
-                                         alt="{{code.productName}}" class="thumb-sm-search pull-left m-r"/>
-                                </td>
-                                <td class="mfb-xxt text-left">
-                                    <!--ng-model="model.tagNameList"-->
-                                    <select multiple chosen class="form-control"  ng-model="code.tagNameList" width="'100%'"   ng-change="codeTagChange(code,{{code.tagNameList}})"
-                                            ng-options="m.tagName as m.tagName for m in vm.tagList">
-                                    </select>
-                                    <!--<select  class="form-control" width="'285px'" ng-change="codeTagChange(code)" ng-model="code.tagId"  ng-options="m.id as m.tagName for m in vm.tagList" >-->
-                                </select>
-                                </td>
-                                <td class="mfb-xxt text-center">{{code.inventory}}</td>
-                                <td class="mfb-xxt text-right">{{getMinMaxPrice(code.minRetailPrice,code.maxRetailPrice)}}</td>
-                                <td class="mfb-xxt text-right">{{getMinMaxPrice(code.minSalePrice,code.maxSalePrice)}}</td>
-                                <td class="mfb-xxt text-right">
-                                    {{getMinMaxPrice(code.minPromotionPrice,code.maxPromotionPrice)}}
-                                    <!--<span class="text-right text-l-t">{{code.msrp | number: 2}}</span>-->
-                                    <!--<p class="">-->
-                                        <!--<input type="text" class="col-sm-1 form-control m-b-xs" ng-model="code.promotionPrice" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">-->
-                                    <!--</p>-->
-                                    <!--<p class="text-u-red">-->
-                                        <!--（<span class="text-u-sub"><i class="glyphicon glyphicon-triangle-bottom"></i></span>&nbsp;{{code.msrp-code.promotionPrice | number: 2}})-->
-                                        <!--{{(code.promotionPrice/code.msrp*100).toFixed(2)}}{{'TXT_DISCOUNT_WORD' | translate}}</p>-->
-                                </td>
-                                <td class="mfb-xxx text-left">
-                                    <div class="table_main">
-                                        <!-- TODO 未实现 -->
-                                    </div>
-                                </td>
-                                <td class="mfb-xxt text-center">
-                                    <button class="btn btn-default btn-pop" ng-click="openSetSkuPrice({productCode:code.productCode,productId:code.productId,promotionId:code.promotionId})" ng-controller="popupCtrl">{{code.skuCount}}</button>
-                                </td>
-                                <td class="mfb-xxt text-left">
-                                    <small popover-trigger="mouseenter" popover-placement="left">
-                                        <!-- TODO 未实现pulishtime -->
-                                        <div class="table_main">
-                                            <ul>
-                                                <li>{{'TXT_CREATE_TIME' | translate}}</li>
-                                                <li><span>{{(code.created).substring(0,19)}}</span></li>
-                                            </ul>
-                                        </div>
-                                    </small>
-                                </td>
-                                <td class="mfb-xx text-center">
-                                    <button ng-if="code.promotionPrice != code.promotionPriceBak||code.isUpdate" title="保存"
-                                            class="btn btn-vo btn-xs" ng-click="updateCode(code)"><i
-                                            class="fa fa-floppy-o"></i></button>
-                                    <button class="btn btn-danger btn-xs" ng-click="delPromotionCode(code)"><i
-                                            class="fa fa-trash-o"></i></button>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-sm-12 m-t-xs">
-                        <vpagination config="vm.codePageOption" total="{{vm.codePageOption.total}}"></vpagination>
-                    </div>
-                </div>
-                <!-- .table-responsive -->
             </uib-tab>
             <!-- TODO 暂时不显示SKU列表,如果以后需要根据SKU列表来制定 促销价格再放开 -->
 

@@ -224,6 +224,12 @@ define([
             $.download.post(cActions.cms.promotion.promotionDetailService.root + "/" + cActions.cms.promotion.promotionDetailService.tmallPromotionExport, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
         };
 
+        $scope.addPromotionByGroup = function () {
+            promotionDetailService.addPromotionByGroup($scope.vm.promotion.id).then(function (res) {
+                notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+            })
+        }
+
 
 
         //function selAllFlag(objectList,id){

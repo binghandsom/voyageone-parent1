@@ -246,7 +246,8 @@ define(function () {
                     "tmallPromotionExport": "tmallPromotionExport",
                     "getPromotionSkuList": "getPromotionSkuList",
                     "saveSkuPromotionPrices": "saveSkuPromotionPrices",
-                    "updatePromotionProductTag": "updatePromotionProductTag"
+                    "updatePromotionProductTag": "updatePromotionProductTag",
+                    "addPromotionByGroup":"addPromotionByGroup"
                 }
             },
             "jmpromotion": {

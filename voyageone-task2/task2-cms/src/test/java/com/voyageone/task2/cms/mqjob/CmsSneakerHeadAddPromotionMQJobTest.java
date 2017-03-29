@@ -30,7 +30,7 @@ public class CmsSneakerHeadAddPromotionMQJobTest {
     @Test
     public void onStartup() throws Exception {
         CmsSneakerHeadAddPromotionMQMessageBody cmsSneakerHeadAddPromotionMQMessageBody = new CmsSneakerHeadAddPromotionMQMessageBody();
-        cmsSneakerHeadAddPromotionMQMessageBody.setPromotionId(808);
+        cmsSneakerHeadAddPromotionMQMessageBody.setPromotionId(809);
         cmsSneakerHeadAddPromotionMQJob.onStartup(cmsSneakerHeadAddPromotionMQMessageBody);
     }
 }

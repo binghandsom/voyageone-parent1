@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
+import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.AddProductSaveParameter;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
@@ -89,6 +90,12 @@ public class CmsSneakerHeadAddPromotionMQJob extends TBaseMQCmsService<CmsSneake
     }
 
     private void addPromotionDetail(String channelId, Integer cartId, String code, Integer promotionId, String modifier) {
+        AddProductSaveParameter addProductSaveParameter = new AddProductSaveParameter();
+        addProductSaveParameter.setCartId(cartId);
+        addProductSaveParameter.setPriceTypeId(3);
+        addProductSaveParameter.setRoundType(4);
+        addProductSaveParameter.setSkuUpdType(3);
+        addProductSaveParameter.setOptType("=");
         PromotionDetailAddBean request = new PromotionDetailAddBean();
         request.setModifier(modifier);
         request.setChannelId(channelId);
@@ -97,6 +104,9 @@ public class CmsSneakerHeadAddPromotionMQJob extends TBaseMQCmsService<CmsSneake
         request.setPromotionId(promotionId);
         request.setTagId(null);
         request.setTagPath(null);
-        promotionDetailService.addPromotionDetail(request);
+        request.setAddProductSaveParameter(addProductSaveParameter);
+        if (promotionDetailService.check_addPromotionDetail(request)) {
+            promotionDetailService.addPromotionDetail(request, true);
+        }
     }
 }
