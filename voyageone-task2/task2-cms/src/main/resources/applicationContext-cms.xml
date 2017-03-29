@@ -214,6 +214,8 @@
 
         <task:scheduled ref="CmsDfoStatusJob" method="run" cron="1 0/1 * * * ?"/>
 
+        <task:scheduled ref="CmsEdcStatusJob" method="run" cron="1 0/1 * * * ?"/>
+
         <task:scheduled ref="CmsLuckyVitaminSkuStatusJob" method="run" cron="1 0/1 * * * ?"/>
 
 
