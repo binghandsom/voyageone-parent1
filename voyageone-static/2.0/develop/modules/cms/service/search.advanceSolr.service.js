@@ -11,8 +11,8 @@ define([
 
     cms.service('searchAdvanceSolrService', function($q, blockUI, $translate, selectRowsFactory, $searchAdvanceSolrService, $filter){
 
-        var tempGroupSelect = new selectRowsFactory();
-        var tempProductSelect = new selectRowsFactory();
+        var tempGroupSelect = new selectRowsFactory(),
+            tempProductSelect = new selectRowsFactory();
 
         /**
          * 检索product
@@ -39,14 +39,6 @@ define([
 
         /**
          * 检索group
-         * @param data
-         * @param pagination
-         * @param list
-         * @param commonProps
-         * @param customProps
-         * @param selSalesTypes
-         * @param selBiDataList
-         * @returns {*}
          */
         this.getGroupList = function(data, pagination, list, commonProps, customProps, selSalesTypes, selBiDataList){
             var defer = $q.defer();
@@ -60,8 +52,6 @@ define([
 
         /**
          * 检索product
-         * @param data
-         * @returns {*}
          */
         this.getProductList = function(data, pagination, list, commonProps, customProps, selSalesTypes, selBiDataList){
             var defer = $q.defer();
@@ -72,6 +62,9 @@ define([
             return defer.promise;
         };
 
+        /**
+         * 导出
+         */
         this.exportFile = function(data){
             data = resetSearchInfo(data);
             var defer = $q.defer();
@@ -82,7 +75,6 @@ define([
             return defer.promise;
         };
 
-
         this.clearSelList = function(){
             tempGroupSelect.clearSelectedList();
             tempProductSelect.clearSelectedList();
@@ -90,8 +82,6 @@ define([
 
         /**
          * 将searchInfo转换成server端使用的bean接口
-         * @param data
-         * @returns {*}
          */
         function resetSearchInfo (data) {
             var searchInfo = angular.copy (data);
@@ -140,9 +130,6 @@ define([
 
         /**
          * 添加group的当前页码和每页显示size到server端使用的bean接口
-         * @param data
-         * @param pagination
-         * @returns {*}
          */
         function resetGroupPagination (data, pagination) {
             var searchInfo = resetSearchInfo(data);
@@ -153,9 +140,6 @@ define([
 
         /**
          * 添加product的当前页码和每页显示size到server端使用的bean接口
-         * @param data
-         * @param pagination
-         * @returns {*}
          */
         function resetProductPagination (data, pagination) {
             var searchInfo = resetSearchInfo(data);
@@ -167,8 +151,6 @@ define([
         /**
          * 如果checkbox被选中,返回被选中的value.
          * eg.[{new: true, pending: false, approved: true}] -> [new, approved]
-         * @param object
-         * @returns {*}
          */
         function _returnKey(object) {
             return _.chain(object)
@@ -177,7 +159,9 @@ define([
                 .value();
         }
 
-        // 把取回的数据作相应转换(转换到画面对应的项目)
+        /**
+         * 把取回的数据作相应转换(转换到画面对应的项目)
+         */
         function _resetProdInfo(prodInfo, commonProps, customProps, selSalesTypes, selBiDataList) {
             var commArr = [];
             _.forEach(commonProps, function (data) {
@@ -265,9 +249,6 @@ define([
 
         /**
          * 设置group list
-         * @param data
-         * @returns {*}
-         * @private
          */
         function _resetGroupList (data, commonProps, customProps, selSalesTypes, selBiDataList, searchParam) {
             tempGroupSelect.clearCurrPageRows();
@@ -298,9 +279,6 @@ define([
 
         /**
          * 设置product list
-         * @param data
-         * @returns {*}
-         * @private
          */
         function _resetProductList (data, commonProps, customProps, selSalesTypes, selBiDataList, searchParam) {
             tempProductSelect.clearCurrPageRows();
@@ -338,6 +316,7 @@ define([
             productInfo.carts = [];
             if (productInfo.platforms) {
                 var ptms = [];
+
                 _.forEach(productInfo.platforms, function (data) {
                     ptms.push(data);
                 });
@@ -349,12 +328,15 @@ define([
                     if (data.cartId == undefined || data.cartId == '' || data.cartId == null) {
                         return;
                     }
-                    var cartItem = {};
-                    cartItem.cartId = parseInt(data.cartId);
-                    cartItem.platformStatus = data.pStatus;
-                    cartItem.publishTime = data.pPublishTime;
-                    cartItem.numiid = data.pNumIId;
-                    cartItem.mallId = data.pPlatformMallId;
+
+                    var cartItem = {
+                        cartId : parseInt(data.cartId),
+                        platformStatus : data.pStatus,
+                        publishTime : data.pPublishTime,
+                        numiid : data.pNumIId,
+                        mallId : data.pPlatformMallId
+                    };
+
                     // 设置产品状态显示区域的css(背景色)
                     var cssVal = '';
                     var statusTxt = '';
@@ -391,6 +373,7 @@ define([
                     if (cssVal) {
                         cartItem.cssVal = { "background-color" : cssVal };
                     }
+
                     cartItem.statusTxt = statusTxt;
                     cartItem.publishError = publishError;
 
@@ -429,9 +412,6 @@ define([
 
         /**
          * 设置sku的销售渠道信息
-         * @param platforms
-         * @returns {Array}
-         * @private
          */
         function _setSkuDetail(platforms) {
             var result = [];
@@ -459,10 +439,6 @@ define([
 
         /**
          * 设置Price Detail 产品指导价
-         * @returns {string}
-         * @private
-         * @param object
-         * @param cartArr
          */
         function _setPriceDetail(object, cartArr) {
             if (cartArr == null || cartArr == undefined || cartArr.length == 0) {
@@ -478,10 +454,6 @@ define([
 
         /**
          * 设置页面上显示的价格 group最终价格
-         * @param object
-         * @param searchParam
-         * @returns {*}
-         * @private
          */
         function _setGroupPriceSale(object, searchParam) {
             object._grpPriceInfoList = object._grpPriceInfoList.sort(function (a, b) {
@@ -492,12 +464,6 @@ define([
 
         /**
          * 设置页面上显示的最终价格
-         * @param object
-         * @param searchParam
-         * @param stakey
-         * @param endKey
-         * @returns {*}
-         * @private
          */
         function _setPriceSale(object, searchParam, stakey, endKey) {
             if (object == null || object == undefined) {
@@ -631,11 +597,6 @@ define([
 
         /**
          * 设置Price Detail
-         * @param title
-         * @param priceStart
-         * @param priceEnd
-         * @returns {*}
-         * @private
          */
         function _setOnePriceDetail(title, priceStart, priceEnd) {
             var result = null;
@@ -657,16 +618,14 @@ define([
 
         /**
          * 设置time detail
-         * @private
-         * @param product
          */
         function _setTimeDetail(product) {
-            var result = [];
+            var result = [],
+                platforms = product.groupBean;
 
             if(!_.isEmpty(product.created))
                 result.push($translate.instant('TXT_CREATE_TIME_WITH_COLON') + product.created.substring(0, 19));
 
-            var platforms = product.groupBean;
             if(!_.isEmpty(platforms.publishTime))
                 result.push($translate.instant('TXT_PUBLISH_TIME_WITH_COLON') + platforms.publishTime.substring(0, 19));
 
