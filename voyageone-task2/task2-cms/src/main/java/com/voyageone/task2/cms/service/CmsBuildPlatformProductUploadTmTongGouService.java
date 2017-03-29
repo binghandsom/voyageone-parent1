@@ -1317,6 +1317,18 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             }
         }
 
+        // 透明素材图
+        try {
+            String url = sxProductService.resolveDict("透明图", expressionParser, shopProp, getTaskName(), null);
+            if (!StringUtils.isEmpty(url)) {
+                sxProductService.uploadTransparentPictureToTm(sxData.getChannelId(), sxData.getCartId(), Long.toString(sxData.getGroupId()), shopProp, url, getTaskName());
+                productInfoMap.put("white_bg_image", valMainImages);
+            }
+        } catch (Exception e) {
+            // 出错了就算了， 不设置透明图碰碰运气
+        }
+
+
         // 商品上下架
         CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
         // 更新商品并且PlatformActive=ToOnSale时,执行商品上架；新增商品或PlatformActive=ToInStock时，执行下架功能
