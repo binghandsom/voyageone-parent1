@@ -46,7 +46,7 @@ public class CmsProductBIDataService extends BaseService {
     CmsMqSenderService cmsMqSenderService;
 
     // 每次查询取得的最大件数
-    private final static int PAGE_LIMIT = 1000;
+    private final static int PAGE_LIMIT = 100;
 
 
     public void onStartup(CmsProductBIDataMQMessageBody messageMap) throws Exception {
