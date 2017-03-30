@@ -74,11 +74,7 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 			ruleRoot.addRuleWord(new CommonWord("color"));
 
 			// 前缀
-			if (cartId == 20 || cartId == 23) {
-				ruleRoot.addRuleWord(new TextWord("<img width=\"790px\" src=\""));
-			} else if (cartId == 24 || cartId == 26) {
-				ruleRoot.addRuleWord(new TextWord("<img width=\"990px\" src=\""));
-			}
+			ruleRoot.addRuleWord(new TextWord("<img src=\""));
 
 			{
 				RuleExpression imageTemplate = new RuleExpression();
@@ -131,11 +127,7 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 			ruleRoot.addRuleWord(new SubCodeWord(idx - 1 , "color"));
 
 			// 前缀
-			if (cartId == 20 || cartId == 23) {
-				ruleRoot.addRuleWord(new TextWord("<img width=\"790px\" src=\""));
-			} else if (cartId == 24 || cartId == 26) {
-				ruleRoot.addRuleWord(new TextWord("<img width=\"990px\" src=\""));
-			}
+			ruleRoot.addRuleWord(new TextWord("<img src=\""));
 
 			{
 				RuleExpression imageTemplate = new RuleExpression();
