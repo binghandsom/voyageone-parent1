@@ -195,7 +195,7 @@
         <task:scheduled ref="CmsSynJmPromotionDealPriceJob" method="run" cron="0 0 17 * * ?"/>
 
         <!-- 每天同步聚美活动里面的价格 -->
-        <task:scheduled ref="CmsGetAllPlatformsInfoJob" method="run" cron="0 0 5 * * ?"/>
+        <task:scheduled ref="CmsGetAllPlatformsInfoJob" method="run" cron="0 30 3 * * ?"/>
 
         <!-- 独立域名上新xml准备（每分钟一次） -->
         <task:scheduled ref="CmsBuildPlatformProductUploadCnPrepareJob" method="run" cron="0 0/1 0-23 * * ?"/>
@@ -213,6 +213,8 @@
         <task:scheduled ref="CmsTargetStautsJob" method="run" cron="0 20 0/1 * * ?"/>
 
         <task:scheduled ref="CmsDfoStatusJob" method="run" cron="1 0/1 * * * ?"/>
+
+        <task:scheduled ref="CmsEdcStatusJob" method="run" cron="1 0/1 * * * ?"/>
 
         <task:scheduled ref="CmsLuckyVitaminSkuStatusJob" method="run" cron="1 0/1 * * * ?"/>
 
