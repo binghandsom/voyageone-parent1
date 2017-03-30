@@ -142,6 +142,11 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
             Map<String, String> map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
             if (map != null && map.containsKey(parseResult)) {
                 parseResult = map.get(parseResult);
+                if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
+                    if (!StringUtils.isEmpty(parseResult) && !parseResult.startsWith("http")) {
+                        parseResult = "https://img10.360buyimg.com/imgzone/" + parseResult;
+                    }
+                }
             }
         }
 //        if (imageSet != null) {
