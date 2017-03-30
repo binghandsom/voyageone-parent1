@@ -2,6 +2,8 @@ package com.voyageone.service.impl.cms.sx;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.jd.open.api.sdk.JdException;
+import com.jd.open.api.sdk.response.imgzone.ImgzonePictureUploadResponse;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.taobao.api.ApiException;
@@ -31,6 +33,7 @@ import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.*;
 import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
+import com.voyageone.components.jd.service.JdImgzoneService;
 import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
 import com.voyageone.components.sneakerhead.SneakerHeadBase;
@@ -185,6 +188,8 @@ public class SxProductService extends BaseService {
     private CmsBtPlatformActiveLogDao platformActiveLogDao;
     @Autowired
     private CmsBtCustomPropService cmsBtCustomPropService;
+    @Autowired
+    private JdImgzoneService jdImgzoneService;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -541,6 +546,14 @@ public class SxProductService extends BaseService {
                             if (!StringUtils.isEmpty(picture)) {
                                 destUrl = picture;
                             }
+                        } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
+                            // 20170227 增加上传图片到京东图片空间 charis STA
+                            String[] picture = uploadImageByUrl_JD(srcUrl, shopBean);
+                            if (picture != null && picture.length > 0) {
+                                destUrl = picture[0];
+                                pictureId = picture[1];
+                            }
+                            // 20170227 增加上传图片到京东图片空间 charis END
                         }
                     } catch (Exception e) {
                         // 上传图片出错时不抛出异常，具体的错误信息在上传图片方法里面已经输出了，这里不做任何处理
@@ -584,6 +597,14 @@ public class SxProductService extends BaseService {
                         if (!StringUtils.isEmpty(picture)) {
                             destUrl = picture;
                         }
+                    } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
+                        // 20170227 增加上传图片到京东图片空间 charis STA
+                        String[] picture = uploadImageByUrl_JD(srcUrl, shopBean);
+                        if (picture != null && picture.length > 0) {
+                            destUrl = picture[0];
+                            pictureId = picture[1];
+                        }
+                        // 20170227 增加上传图片到京东图片空间 charis END
                     }
                 } catch (Exception e) {
                     // 上传图片出错时不抛出异常，具体的错误信息在上传图片方法里面已经输出了,这里不做任何处理
@@ -5642,4 +5663,80 @@ public class SxProductService extends BaseService {
         }
     }
 
+    public String[] uploadImageByUrl_JD(String picUrl, ShopBean shopBean) throws Exception {
+        String imageUrl[] = {"",""};
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        int TIMEOUT_TIME = 10*1000;
+        int waitTime = 0;
+        int retry_times = 0;
+        int max_retry_times = 3;
+        InputStream is;
+        do {
+            try {
+                URL imgUrl = new URL(picUrl);
+                is = imgUrl.openStream();
+                byte[] byte_buf = new byte[1024];
+                int readBytes = 0;
+
+                while (true) {
+                    while (is.available() >= 0) {
+                        readBytes = is.read(byte_buf, 0, 1024);
+                        if (readBytes < 0)
+                            break;
+                        $debug("read " + readBytes + " bytes");
+                        waitTime = 0;
+                        baos.write(byte_buf, 0, readBytes);
+                    }
+                    if (readBytes < 0)
+                        break;
+
+                    Thread.sleep(1000);
+                    waitTime += 1000;
+
+                    if (waitTime >= TIMEOUT_TIME) {
+//                        $error("fail to download image:" + picUrl);
+                        return null;
+                    }
+                }
+                is.close();
+            } catch (Exception e) {
+//                $error("exception when upload image", e);
+                if ("Connection reset".equals(e.getMessage())) {
+                    if (++retry_times < max_retry_times)
+                        continue;
+                }
+                throw new BusinessException(String.format("Fail to upload image[channelId: %s, cartId: %s, orgPicUrl: %s]%s", shopBean.getOrder_channel_id(), shopBean.getCart_id(), picUrl, e.getMessage()));
+            }
+            break;
+        } while (true);
+
+//        $info("read complete, begin to upload image");
+        try {
+            ImgzonePictureUploadResponse imgzonePictureUploadResponse = jdImgzoneService.uploadPicture("SX", picUrl, shopBean, baos.toByteArray(), "0", "image_title");
+            if(imgzonePictureUploadResponse == null) {
+                String failCause = "上传图片到京东时，超时, jingdong response为空";
+                failCause = String.format("%s[channelId: %s, cartId: %s, orgPicUrl: %s]", failCause, shopBean.getOrder_channel_id(), shopBean.getCart_id(), picUrl);
+                $error(failCause);
+                throw new BusinessException(failCause);
+            } else if (imgzonePictureUploadResponse.getEnDesc() != null) {
+                String failCause = "上传图片到京东时，错误:" + imgzonePictureUploadResponse.getCode() + ", " + imgzonePictureUploadResponse.getEnDesc();
+                failCause = String.format("%s[channelId: %s, cartId: %s, orgPicUrl: %s]", failCause, shopBean.getOrder_channel_id(), shopBean.getCart_id(), picUrl);
+                $error(failCause);
+                $error("上传图片到京东时，sub错误:" + imgzonePictureUploadResponse.getDesc() + ", " + imgzonePictureUploadResponse.getZhDesc());
+                throw new BusinessException(failCause);
+            }
+            imageUrl[0] = imgzonePictureUploadResponse.getPictureUrl();
+            imageUrl[1] = imgzonePictureUploadResponse.getPictureId();
+        } catch(JdException e) {
+            String failCause = "上传图片到京东时出错！ msg:" + e.getMessage();
+            failCause = String.format("%s[channelId: %s, cartId: %s, orgPicUrl: %s]", failCause, shopBean.getOrder_channel_id(), shopBean.getCart_id(), picUrl);
+            $error(failCause);
+            $error("errCode: " + e.getErrCode());
+            $error("errMsg: " + e.getErrMsg());
+            throw new BusinessException(failCause);
+        }
+
+        return imageUrl;
+    }
 }
