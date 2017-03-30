@@ -181,15 +181,23 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
                     sxData.setErrorMessage(e.getMessage());
                     throw new BusinessException(e.getMessage());
                 } catch (BusinessException e) {
-                    if (retry == 0
-                            && (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin") || e.getMessage().contains("isv.invalid-parameter:isXinpin"))) {
-                        // 把field列表中的"是否新品"从"是(true)"->"否(false)",再做一次新增商品
-                        sxProductService.setFieldValue(fields, "is_xinpin", "false");
-                        continue;
-                    } else if (retry == 0 &&
-                            e.getMessage().contains("您填写的 颜色分类 中不能包含该货号信息")) {
-                        doReSetXml(fields);
-                        continue;
+                    if (retry == 0) {
+                        boolean blnRetry = false;
+
+                        if (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin") || e.getMessage().contains("isv.invalid-parameter:isXinpin")) {
+                            // 把field列表中的"是否新品"从"是(true)"->"否(false)",再做一次新增商品
+                            sxProductService.setFieldValue(fields, "is_xinpin", "false");
+                            blnRetry = true;
+                        }
+
+                        if (e.getMessage().contains("您填写的 颜色分类 中不能包含该货号信息")) {
+                            doReSetXml(fields);
+                            blnRetry = true;
+                        }
+
+                        if (blnRetry) {
+                            continue;
+                        }
                     }
                     sxData.setErrorMessage(e.getMessage());
                     throw new BusinessException(e.getMessage());
@@ -199,26 +207,33 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
                 try {
                     $debug("updateTmallItem: [productCode:" + platformProductId + ", categoryCode:" + categoryCode + ", numIId:" + numIId + "]");
                     numIId = updateTmallItem(platformProductId, numIId, categoryCode, fields, shopBean);
-                } catch (ApiException e) {
-//                issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
-                    if (retry == 0
-                            && (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin") || e.getMessage().contains("isv.invalid-parameter:isXinpin"))) {
-                        // 把field列表中的"是否新品"从"是(true)"->"否(false)",再做一次更新商品
-                        sxProductService.setFieldValue(fields, "is_xinpin", "false");
-                        continue;
-                    }
-                    sxData.setErrorMessage(e.getMessage());
-                    throw new BusinessException(e.getMessage());
+//                } catch (ApiException e) {
+////                issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+//                    if (retry == 0
+//                            && (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin") || e.getMessage().contains("isv.invalid-parameter:isXinpin"))) {
+//                        // 把field列表中的"是否新品"从"是(true)"->"否(false)",再做一次更新商品
+//                        sxProductService.setFieldValue(fields, "is_xinpin", "false");
+//                        continue;
+//                    }
+//                    sxData.setErrorMessage(e.getMessage());
+//                    throw new BusinessException(e.getMessage());
                 } catch (BusinessException e) {
-                    if (retry == 0
-                            && (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin") || e.getMessage().contains("isv.invalid-parameter:isXinpin"))) {
-                        // 把field列表中的"是否新品"从"是(true)"->"否(false)",再做一次更新商品
-                        sxProductService.setFieldValue(fields, "is_xinpin", "false");
-                        continue;
-                    } else if (retry == 0 &&
-                            e.getMessage().contains("您填写的 颜色分类 中不能包含该货号信息")) {
-                        doReSetXml(fields);
-                        continue;
+                    if (retry == 0) {
+                        boolean blnRetry = false;
+                        if (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin") || e.getMessage().contains("isv.invalid-parameter:isXinpin")) {
+                            // 把field列表中的"是否新品"从"是(true)"->"否(false)",再做一次更新商品
+                            sxProductService.setFieldValue(fields, "is_xinpin", "false");
+                            blnRetry = true;
+                        }
+                        if (e.getMessage().contains("您填写的 颜色分类 中不能包含该货号信息")) {
+                            doReSetXml(fields);
+                            blnRetry = true;
+                        }
+
+                        if (blnRetry) {
+                            continue;
+                        }
+
                     }
                     sxData.setErrorMessage(e.getMessage());
                     throw new BusinessException(e.getMessage());

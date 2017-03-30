@@ -30,7 +30,7 @@ public class JdImgzoneService extends JdBase {
      * @return ImgzonePictureUploadResponse 京东图片上传结果，包含图片信息
      * @throws JdException
      */
-    public ImgzonePictureUploadResponse  uploadPicture(ShopBean shop, byte[] imageData, String pictureCateId, String pictureName) throws JdException {
+    public ImgzonePictureUploadResponse  uploadPicture(String whoCallMe, String orgImgPath, ShopBean shop, byte[] imageData, String pictureCateId, String pictureName) throws JdException {
 
         if (imageData == null || imageData.length == 0) {
             throw new BusinessException("要上传到京东图片空间的图片imageData为空!");
@@ -46,7 +46,13 @@ public class JdImgzoneService extends JdBase {
 
 
         // 调用京东上传单张图片API(jingdong.imgzone.picture.upload)
+        logger.info(String.format("开始:%s:%s", whoCallMe, orgImgPath));
         ImgzonePictureUploadResponse response = reqApi(shop, request);
+        if (response == null) {
+            logger.info(String.format("失败:return null:%s:%s", whoCallMe, orgImgPath));
+        } else {
+            logger.info(String.format("成功:%s:%s:%s", response.getPictureUrl(), whoCallMe, orgImgPath));
+        }
 
         return response;
     }

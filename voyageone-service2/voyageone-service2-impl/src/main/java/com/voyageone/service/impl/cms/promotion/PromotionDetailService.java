@@ -41,6 +41,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author aooer 2016/1/19.
@@ -237,6 +238,7 @@ public class PromotionDetailService extends BaseService {
                 if (cmsBtPromotionSkuModelBean.getPromotionPrice() == null) {
                     cmsBtPromotionSkuModelBean.setPromotionPrice(new BigDecimal(0));
                 }
+                cmsBtPromotionSkuModelBean.setQty(sku.getQty());
                 listPromotionSku.add(cmsBtPromotionSkuModelBean);
             }
         });
@@ -294,6 +296,18 @@ public class PromotionDetailService extends BaseService {
                 codesModel.setImageUrl1(imgList.get(0).getName());
             }
         }
+
+        // 统计code级别的库存
+        List<String> skuList = productInfo.getPlatform(cartId).getSkus()
+                .stream()
+                .filter(sku -> Boolean.valueOf(sku.getStringAttribute("isSale")))
+                .map(sku -> sku.getStringAttribute("skuCode")).collect(Collectors.toList());
+        Integer qty = 0;
+        for (CmsBtProductModel_Sku sku : productInfo.getCommon().getSkus()) {
+            if(skuList.contains(sku.getSkuCode()))
+                qty += sku.getQty();
+        }
+        codesModel.setQuantity(qty);
 
         return codesModel;
     }

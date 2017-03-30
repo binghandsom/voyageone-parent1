@@ -3,7 +3,7 @@ package com.voyageone.common;
 public class CmsConstants {
 
     // 从上新的任务表中一次数据抽出最大件数
-    public static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100000;
+    public static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 200;
 
     // 有效销售平台cartId的最小值
     public static final int ACTIVE_CARTID_MIN = 20;
@@ -12,11 +12,9 @@ public class CmsConstants {
      * 产品状态
      */
     public enum ProductStatus {
-        New, 				// 新建
         Pending, 			// 等待中
         Ready, 				// 准备中
-        Approved, 			// 批准
-        Deleted 			// 删除
+        Approved
     }
 
     /**
@@ -178,6 +176,21 @@ public class CmsConstants {
 
         // 天猫无线端的共通模块, 是否由运营自己在天猫后台进行管理(1：运营自己天猫后台管理，空或0：上新程序设定)
         String TMALL_WIRELESS_COMMON_MODULE_BY_USER = "TMALL_WIRELESS_COMMON_MODULE_BY_USER";
+
+        // feed导入时是否设置主类目
+        String FEED_IS_SET_MAIN_CATEGORY = "FEED_IS_SET_MAIN_CATEGORY";
+
+        // feed->mast 阈值 价格 和 重量
+        String FEED_MAST_THRESHOLD = "FEED_MAST_THRESHOLD";
+
+        // feed->mast 阈值 价格 和 重量
+        String FEED_MAST_CONFIG = "FEED_MAST_CONFIG";
+
+        // 需要拆分的主类目
+        String CATEGORY_SINGLE = "CATEGORY_SINGLE";
+
+        // usjoi导入的白名单
+        String CATEGORY_WHITE = "CATEGORY_WHITE";
     }
 
     public interface ImageUploadStatus {

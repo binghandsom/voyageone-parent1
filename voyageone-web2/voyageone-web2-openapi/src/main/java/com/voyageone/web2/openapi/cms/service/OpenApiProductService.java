@@ -6,10 +6,10 @@ import com.voyageone.service.bean.cms.product.ProductForOmsBean;
 import com.voyageone.service.bean.cms.product.ProductForWmsBean;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.web2.openapi.OpenApiBaseService;
-import com.voyageone.web2.sdk.api.request.ProductForOmsGetRequest;
-import com.voyageone.web2.sdk.api.request.ProductForWmsGetRequest;
-import com.voyageone.web2.sdk.api.response.ProductForOmsGetResponse;
-import com.voyageone.web2.sdk.api.response.ProductForWmsGetResponse;
+import com.voyageone.web2.sdk.api.request.cms.ProductForOmsGetRequest;
+import com.voyageone.web2.sdk.api.request.cms.ProductForWmsGetRequest;
+import com.voyageone.web2.sdk.api.response.cms.ProductForOmsGetResponse;
+import com.voyageone.web2.sdk.api.response.cms.ProductForWmsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

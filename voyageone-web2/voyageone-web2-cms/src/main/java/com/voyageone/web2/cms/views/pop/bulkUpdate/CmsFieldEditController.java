@@ -28,6 +28,7 @@ import java.util.Map;
         value  = CmsUrlConstants.POP.FIELD_EDIT.ROOT,
         method = RequestMethod.POST
 )
+
 public class CmsFieldEditController extends CmsController {
 
     @Autowired
@@ -140,6 +141,7 @@ public class CmsFieldEditController extends CmsController {
 
         return success(true);
     }
+
     @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.BULK_SET_PLATFORM_FIELDS)
     public AjaxResponse bulkSetPlatformFields(@RequestBody Map<String, Object> params) {
 
@@ -147,4 +149,17 @@ public class CmsFieldEditController extends CmsController {
 
         return success(true);
     }
+
+    @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.BULK_LOCK_PRODUCTS)
+    public AjaxResponse bulkLockProducts(@RequestBody Map<String, Object> params) {
+
+        Integer cartId = (Integer) params.get("cartId");
+        // 验证参数
+        Preconditions.checkNotNull(cartId);
+        // 设置商品的智能上新
+        fieldEditService.bulkLockProducts(cartId, params, getUser(), getCmsSession());
+
+        return success(true);
+    }
+
 }

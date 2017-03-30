@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by dell on 2016/11/7.
@@ -78,7 +79,7 @@ public class JMPromotionDetailService extends BaseService {
         int cartId = params.getCartId();
         List<TagTreeNode> listTagTreeNode = new ArrayList<>();
 
-        List<MapModel> list = cmsBtJmPromotionDaoExt.selectAddPromotionList(channelId, cartId, codeList);
+        List<MapModel> list = cmsBtJmPromotionDaoExt.selectAddPromotionList(channelId, cartId, codeList, params.getActivityStart(), params.getActivityEnd());
         list.forEach(m -> listTagTreeNode.add(getPromotionTagTreeNode(m, codeList)));
         data.put("listTreeNode", listTagTreeNode);
         return data;
@@ -114,7 +115,7 @@ public class JMPromotionDetailService extends BaseService {
     }
 
     @VOTransactional
-    public void addPromotionDetail(PromotionDetailAddBean bean, CmsBtJmPromotionModel jmPromotionModel, String modifier) {
+    public CmsBtJmPromotionProductModel addPromotionDetail(PromotionDetailAddBean bean, CmsBtJmPromotionModel jmPromotionModel, String modifier) {
 
         CmsBtProductModel productInfo=bean.getProductInfo();//check 初始化
         bean.setProductCode(productInfo.getCommon().getFields().getCode());
@@ -153,6 +154,18 @@ public class JMPromotionDetailService extends BaseService {
             jmProductModel.setMinDealPrice(getMinDealPrice(listPromotionSku));
             jmProductModel.setDiscount(listPromotionSku.get(0).getDiscount());//折扣
             jmProductModel.setSkuCount(listPromotionSku.size());
+
+            // 统计code级别的库存
+            List<String> skuList = productInfo.getPlatform(27).getSkus()
+                    .stream()
+                    .filter(sku -> Boolean.valueOf(sku.getStringAttribute("isSale")))
+                    .map(sku -> sku.getStringAttribute("skuCode")).collect(Collectors.toList());
+            Integer qty = 0;
+            for (CmsBtProductModel_Sku sku : productInfo.getCommon().getSkus()) {
+                if(skuList.contains(sku.getSkuCode()))
+                    qty += sku.getQty();
+            }
+            jmProductModel.setQuantity(qty);
         }
 
         // 保存 JmPromotionProduct
@@ -177,6 +190,8 @@ public class JMPromotionDetailService extends BaseService {
 
         //更新mongo product tag
         productService.updateCmsBtProductTags(bean.getChannelId(), productInfo, jmPromotionModel.getRefTagId(), bean.getTagList(), modifier);
+
+        return jmProductModel;
 
     }
     public BigDecimal getMaxMarketPrice(List<CmsBtJmPromotionSkuModel> skuList)

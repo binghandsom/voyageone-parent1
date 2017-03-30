@@ -1,7 +1,23 @@
-<div class="shelves-item" ng-class="{'empty':!p.cartInventory}">
-    <span class="label {{p|shelvesProductClass}}">{{p|shelvesProductName}}</span>
-    <a href class="pull-right a-close-btn" ng-click="ctrl.removeOne(i, $index)"><i class="fa fa-close"></i></a>
-    <p>Code：{{p.productCode}}</p>
-    <p>CMS 库存：{{p.cmsInventory}}</p>
-    <p>平台库存：{{p.cartInventory}}</p>
+<div class="shelves-item" ng-class="{'empty':!p.cartInventory}" style="padding-top: 3px;height: 127px;">
+    <div class="row" style="height: 27px">
+        <div class="col-md-2">
+            <span class="label {{p|shelvesProductClass}}">{{p|shelvesProductName}}</span>
+        </div>
+        <div class="col-md-2 col-md-offset-8">
+            <a href class="pull-right a-close-btn" ng-click="ctrl.removeOne(i, $index)"><i class="fa fa-close"></i></a>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <img class="thumb-sm-search" image="{{p.image}}" style="width: auto;">
+        </div>
+        <div class="col-md-8">
+            <p>Code：{{p.productCode}}</p>
+            <p>CMS 库存：{{p.cmsInventory}}</p>
+            <p>平台库存：{{p.cartInventory}}</p>
+        </div>
+    </div>
+
 </div>

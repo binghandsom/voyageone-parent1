@@ -1,9 +1,9 @@
-<div class="wrapper-md" ng-init="initialize()">
+<div class="wrapper-md" ng-init="ctrl.init()">
     <div class="vo_accordion vo_attr">
         <div class="panel-group">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="panel-title"><i class="fa fa-reorder" translate="TXT_TAG_MANAGEMENT"></i></h4>
+                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;&nbsp;{{'TXT_TAG_MANAGEMENT' | translate}}</h4>
                 </div>
                 <div class="container-fluid">
                     <div class="col-sm-12">
@@ -11,15 +11,19 @@
                             <div class="form-horizontal">
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_TAG_TYPE"></label>
-
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="vm.tagTypeSelectValue" ng-change="initialize()"
-                                                ng-options="tagType.value as tagType.name for tagType in vm.tagTypeList">
+                                        <select class="form-control" ng-model="ctrl.vm.tagTypeSelectValue" ng-change="ctrl.init()"
+                                                ng-options="tagType.value as tagType.name for tagType in ctrl.vm.tagTypeList">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-md-1 m-t-sm">
+                                <span notice-direction="bottom" notice-content="请选择标签类型来设置标签！"
+                                      notice-tip class="text-warnings cur-p"><i
+                                        class="icon fa fa-hand-o-left text-md"></i></span>
                         </div>
                     </div>
                 </div>
@@ -27,86 +31,39 @@
         </div>
     </div>
 
-    <div class="box" ng-controller="popupCtrl">
-        <!---------------------------------------Tag one-------------------------------------->
-        <div class="category_drag col-sm-4">
-            <div class="category_drag_main">
-                <p class="text-center text-vo font-bold" translate="TXT_TAG_ONE"></p>
-
-                <div class="form-inline m-l-xs">
-
-                    <input type="text" placeholder="快速检索" class="form-control" style="width:90%" ng-model="key[0]">
-                    <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(0)"><i class="fa fa-search"></i></button>
-                    <button type="submit" class="btn btn-success btn-xxs"
-                            ng-click="newIndex.value = 0;openNewTag({first:true,tagSelectObject:selected[0],tagInfo:vm,save:save})">
-                        <i class="fa fa-plus"></i></button>
-                </div>
-                <div class="category_drag_list_dp">
-                    <ul>
-                        <li ng-repeat="tag1 in tree[0]">
-                            <a href="javascript:void(0)" ng-click="selected[0] = tag1;search(1);" ng-class="{indexSelected:selected[0] == tag1}">
-                                <span>{{tag1.tagChildrenName}}</span>
-                                <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
-                                        ng-show = tag1.isLeaf ng-click="delTag(tag1)">
-                                    <i class="fa  fa-trash-o"></i></button>
-                            </a>
-                        </li>
-                    </ul>
+    <div class="container-fluid" ng-if="ctrl.vm.tagTypeSelectValue != 0">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="category_drag col-sm-3" ng-repeat="tree in ctrl.vm.trees" ng-init="$parentIndex = $index">
+                        <div class="category_drag_main">
+                            <div class="form-inline m-l-xs">
+                                <input type="text" placeholder="快速检索" class="form-control" style="width:85%" ng-model="name[$parentIndex]">
+                                <button type="button" class="btn btn-vo btn-xxs"
+                                        ng-click="ctrl.searchName[$parentIndex] = name[$parentIndex] ;ctrl.filterByName($parentIndex,tree.tags)">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                                <button type="button" class="btn btn-success btn-xxs" ng-click="ctrl.popNewTag($parentIndex)">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="category_drag_list_dp" style="height: 287px;">
+                                <ul>
+                                    <li ng-repeat="tag in tree.tags | filter:{tagChildrenName:ctrl.searchName[$parentIndex]}">
+                                        <a href="javascript:void(0)" ng-click="ctrl.openTag(tag , $parentIndex)" ng-class="{indexSelected:ctrl.selected[$parentIndex].tagChildrenName == tag.tagChildrenName}">
+                                            <span>{{tag.tagChildrenName}}</span>
+                                            <button class="btn btn-danger btn-xs pull-right" ng-if = "tag.isLeaf" ng-click="ctrl.delTag(tag,$parentIndex,$event)">
+                                                <i class="fa  fa-trash-o"></i>
+                                            </button>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <!---------------------------------------Tag two-------------------------------------->
-        <div class="category_drag col-sm-4">
-            <div class="category_drag_main">
-                <p class="text-center text-vo font-bold" translate="TXT_TAG_TWO"></p>
 
-                <div class="form-inline m-l-xs">
-                    <input type="text" placeholder="快速检索" class="form-control" style="width:90%" ng-model="key[1]">
-                    <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(1)"><i class="fa fa-search"></i></button>
-                    <button type="submit" class="btn btn-success btn-xxs"
-                            ng-click="newIndex.value = 1; openNewTag({first:false,tagSelectObject:selected[0],tagInfo:vm,save:save})">
-                        <i class="fa fa-plus"></i></button>
-                </div>
-            </div>
-            <div class="category_drag_list_dp">
-                <ul>
-                    <li ng-repeat="tag2 in tree[1]">
-                        <a href="javascript:void(0)" ng-click="selected[1] = tag2;search(2)"  ng-class="{indexSelected:selected[1] == tag2}">
-                            <span>{{tag2.tagChildrenName}}</span>
-                            <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
-                                    ng-show = tag2.isLeaf ng-show="tagTwo.children.length" ng-click="delTag(tag2)">
-                                <i class="fa  fa-trash-o"></i></button>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <!---------------------------------------Tag three-------------------------------------->
-        <div class="category_drag col-sm-4">
-            <div class="category_drag_main">
-                <p class="text-center text-vo font-bold" translate="TXT_TAG_THREE"></p>
-
-                <div class="form-inline m-l-xs">
-                    <input type="text" placeholder="快速检索" class="form-control" style="width:90%" ng-model="key[2]">
-                    <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(2)"><i class="fa fa-search"></i></button>
-                    <button type="submit" class="btn btn-success btn-xxs"
-                            ng-click="newIndex.value = 2; openNewTag({first:false,tagSelectObject:selected[1],tagInfo:vm,save:save})">
-                        <i class="fa fa-plus"></i></button>
-                </div>
-            </div>
-            <div class="category_drag_list_dp">
-                <ul>
-                    <li ng-repeat="tag3 in tree[2]">
-                        <a href="javascript:void(0)" ng-click="selected[2] = tag3"  ng-class="{indexSelected:selected[2] == tag3}">
-                            <span>{{ tag3.tagChildrenName }}</span>
-                            <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
-                                    ng-show = tag3.isLeaf ng-click="delTag(tag3)">
-                                <i class="fa  fa-trash-o"></i></button>
-                        </a>
-                    </li>
-
-                </ul>
-            </div>
-        </div>
     </div>
 </div>

@@ -6,9 +6,9 @@ define([
     'cms'
 ], function (cms) {
 
-    cms.controller('datachartController', function ($scope, $menuService, $location, cRoutes, $sessionStorage) {
+    cms.controller('datachartController', function ($scope, $menuService, $location, cRoutes, $sessionStorage,$localStorage) {
         $scope.vm = {sumData: {}};
-
+        $scope.channelId = $localStorage.user.channel;
         $scope.init = function () {
             $menuService.getHomeSumData().then(function (res) {
                 $scope.vm.sumData = res.data;

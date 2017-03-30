@@ -50,7 +50,7 @@ define([
             if(args.length == 0)
                 return;
 
-            window.open("http://image.sneakerhead.com/is/image/sneakerhead/✓?wid=2200&hei=2200".replace("✓",args[args.length-1]));
+            window.open("http://image.voyageone.com.cn/is/image/sneakerhead/✓?wid=2200&hei=2200".replace("✓", args[args.length - 1]));
         }
 
     });

@@ -1,46 +1,55 @@
-* _id
-* created
-* creater
-* modified
-* modifier
-* channelId
-* catId
-* category
-* code
-* name
-* model
-* color
-* origin
-* sizeType
-* productType
-* brand
-* weight   ->用于feed检索页面展示用,设置:第一个sku的重量
-* clientProductURL -> feed的商品官网
-* shortDescription
-* longDescription
-* updFlg     -> (用于feed->master的导入)0:等待导入,1:导入成功,2:master导入失败,3:不导入,8:feed导入数据错误,9:新品
-* updMessage -> (用于feed->master的导入或者feed导入)如果导入失败,写明原因
-* image[]
-* material ->材质
-* qty ->库存,默认值0
-* isFeedReImport ->是否重新导入,duan,由李德敏判断,是否还需要这个字段
-* usageEn ->20160720,追加,edward
-* skus
- * sku
- * size
- * barcode
- * clientSku
- * priceCurrent    -> 中国指导价
- * priceMsrp       -> 中国建议零售价
- * priceNet           -> 客户成本价
- * priceClientRetail  -> 客户指导价
- * priceClientMsrp    -> 客户建议零售价
- * iamge -> 用于产品按sku拆分
- * quantity      ->20160720,edward,库存值
- * weightQrg     ->20160720,edward,原始重量
- * weightOrgUnit ->20160720,edward,原始重量单位
- * weightCalc    ->20160720,edward,如果原始重量不是lb的,根据公式转成lb
-* attribute[]
- * 按feed的字段名字定义数组名称
-   eg:MSRP[0] -> 3355.0
-* fullAttribute ->暂时先不删除
+{
+    "_id" : ObjectId(),
+    "channelId" : String,
+    "code" : String,
+    "model" : String,
+    "name" : String,
+    "catId" : String,
+    "category" : String,
+    "brand" : String,
+    "productType": String,
+    "sizeType" : String,
+    "sizeChartType": String,   ->edward 2017/03/08 CA-API对应追加 EN/US/CN
+    "color" : String,
+    "origin" : String,
+    "weight" : String,
+    "usageEn" : String,
+    "shortDescription" : String,
+    "longDescription" : String,
+    "clientProductURL" : String,
+    "lastReceivedOne": String,
+    "qty" : Int32,
+    "image" : String[ ],
+    "isFeedReImport" : String  ->是否强制重新导入,
+    "updFlg" : Int32,     -> 0:等待导入, 1:导入成功, 2:导入失败, 3:不导入, 7:品牌黑名单, 8:Feed数据异常错误,9:新品
+    "updMessage" : String,
+    "skus" : Object[
+        {
+            "priceCurrent" : Double,
+            "priceMsrp" : Double,
+            "priceNet" : Double,
+            "priceClientRetail" : Double,
+            "priceClientMsrp" : Double,
+            "sku" : String,
+            "size" : String,
+            "barcode" : String,
+            "clientSku" : String,
+            "image" : String[ ],
+            "qty" : Int32,
+            "relationshipType": String;
+            "variationTheme": String;
+            "weightOrg" : String,
+            "weightOrgUnit" : String,
+            "weightCalc" : String,
+            "isSale": Int32   ->edward 2017/03/09 1: 销售, 0: 不销售
+            "mainVid": String;  ->edward 2017/03/09 1:和其他商品共享库存, 0:不和其他商品共享库存(例如kigbag: 光标球衣, 有号码和无号码的球衣算不同sku,但是库存一样)
+            "attribute" : { String: String[]}
+        }],
+    "attribute" : { String: String[]},
+    "attributeVms" : {},  -> 废止,结构保留
+    "fullAttribute" : {},  -> 废止,结构保留
+    "created" : String,
+    "creater" : String,
+    "modified" : String,
+    "modifier" : String
+}

@@ -133,19 +133,20 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
             return parseResult;
         }
 
-        if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
+        if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())
+                || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())
+                || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())
+                ) {
             Set<String> url = new HashSet<>();
             url.add(parseResult);
             Map<String, String> map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
             if (map != null && map.containsKey(parseResult)) {
                 parseResult = map.get(parseResult);
-            }
-        } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())) {
-            Set<String> url = new HashSet<>();
-            url.add(parseResult);
-            Map<String, String> map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
-            if (map != null && map.containsKey(parseResult)) {
-                parseResult = map.get(parseResult);
+                if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
+                    if (!StringUtils.isEmpty(parseResult) && !parseResult.startsWith("http")) {
+                        parseResult = "https://img10.360buyimg.com/imgzone/" + parseResult;
+                    }
+                }
             }
         }
 //        if (imageSet != null) {

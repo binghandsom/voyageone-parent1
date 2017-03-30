@@ -28,10 +28,11 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.BusinessLogService;
+import com.voyageone.service.impl.cms.CmsBtTranslateService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.CmsBtFeedImportSizeService;
-import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
+import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -40,6 +41,7 @@ import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -73,47 +75,44 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class UploadToUSJoiService extends BaseCronTaskService {
 
-    @Autowired
-    ProductGroupService productGroupService;
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
-
-    @Autowired
-    private CmsBtProductGroupDao cmsBtProductGroupDao;
-
-    @Autowired
-    private PriceService priceService;
-
-    @Autowired
-    private MongoSequenceService commSequenceMongoService;
-
-    @Autowired
-    private CmsBtSxWorkloadDaoExt cmsBtSxWorkloadDaoExt;
-
-    @Autowired
-    private ComMtValueChannelService comMtValueChannelService;    // 更新synship.com_mt_value_channel表
-
-    @Autowired
-    private BusinessLogService businessLogService;
-
-    @Autowired
-    private SxProductService sxProductService;
-
-    @Autowired
-    private Searcher searcher;
-
-    @Autowired
-    private CmsBtFeedImportSizeService cmsBtFeedImportSizeService;
-
-    @Autowired
-    private PlatformPriceService platformPriceService;
-
     // 每个channel的子店->USJOI主店导入最大件数
     private final static int UPLOAD_TO_USJOI_MAX_500 = 500;
+    @Autowired
+    ProductGroupService productGroupService;
+    // APP端启用开关
+    String appSwitchFlg = "0";              // 0: 不启动APP端
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
+    @Autowired
+    private PriceService priceService;
+    @Autowired
+    private MongoSequenceService commSequenceMongoService;
+    @Autowired
+    private CmsBtSxWorkloadDaoExt cmsBtSxWorkloadDaoExt;
+    @Autowired
+    private ComMtValueChannelService comMtValueChannelService;    // 更新synship.com_mt_value_channel表
+    @Autowired
+    private BusinessLogService businessLogService;
+    @Autowired
+    private SxProductService sxProductService;
+    @Autowired
+    private Searcher searcher;
+    @Autowired
+    private CmsBtFeedImportSizeService cmsBtFeedImportSizeService;
+    @Autowired
+    private PlatformPriceService platformPriceService;
+    @Autowired
+    private CmsBtTranslateService cmsBtTranslateService;
+    // 价格阈值 超过该值的商品不能导入主数据
+    private Double priceThreshold = null;
+    // 重量阈值 超过该值的商品不能导入主数据
+    private Double weightThreshold = null;
+    // 主类目黑名单
+    private List<String> categoryWhite = new ArrayList<>();
 
     @Override
     public SubSystem getSubSystem() {
@@ -127,6 +126,28 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+
+        CmsChannelConfigBean feedMastThreshold = CmsChannelConfigs.getConfigBeanNoCode("928",
+                CmsConstants.ChannelConfig.FEED_MAST_THRESHOLD);
+
+        if (feedMastThreshold != null) {
+            if (!StringUtil.isEmpty(feedMastThreshold.getConfigValue1())) {
+                priceThreshold = Double.parseDouble(feedMastThreshold.getConfigValue1());
+            }
+            if (!StringUtil.isEmpty(feedMastThreshold.getConfigValue2())) {
+                weightThreshold = Double.parseDouble(feedMastThreshold.getConfigValue2());
+            }
+        }
+
+        // 主类目不导入的黑名单
+        List<CmsChannelConfigBean> categoryWhitelist = CmsChannelConfigs.getConfigBeans("000",
+                CmsConstants.ChannelConfig.CATEGORY_WHITE, "0");
+
+        if (!ListUtils.isNull(categoryWhitelist)) {
+            categoryWhite = categoryWhitelist.stream().map(CmsChannelConfigBean::getConfigValue1).collect(Collectors.toList());
+        }
+
+
 
         // 默认线程池最大线程数(目前最后只有2个USJOI的channelId 928, 929)
         int threadPoolCnt = 2;
@@ -262,6 +283,14 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 // 取得自动同步指定平台列表
                 ccAutoSyncCartList = Arrays.asList(strAutoSyncCarts.split(","));
             }
+        }
+
+        // 从cms_mt_channel_config取得APP端启用开关的值（0或者1）
+        CmsChannelConfigBean appSwitchChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode("928",
+                CmsConstants.ChannelConfig.APP_SWITCH);
+        if (appSwitchChannelConfigBean != null && "1".equals(appSwitchChannelConfigBean.getConfigValue1())) {
+            // APP端启用开关的值配置成1的场合，设为APP端启用开1
+            appSwitchFlg = "1";
         }
 
         // 取得feed->master导入之前的品牌等mapping件数，用于判断是否新增之后需要清空缓存
@@ -405,24 +434,27 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                         throw new BusinessException(errMsg);
                     }
 
+                    if(StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOrigProductType())) {
+                        productModel.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
+                    }
+                    if(StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType())) {
+                        productModel.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
+                    }
+
+                    doSetMainCategory(productModel.getCommon(), productModel.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
+
                     // 产品不存在，新增
                     productModel.setChannelId(usJoiChannelId);
                     productModel.setOrgChannelId(sxWorkLoadBean.getChannelId());
                     productModel.setSales(new CmsBtProductModel_Sales());
                     productModel.setTags(new ArrayList<>());
-                    // 插入或者更新cms_bt_product_group_c928中的productGroup信息
-                    doSetGroup(productModel, usJoiChannelId, usjoiTypeChannelBeanList);
 
-                    productModel.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
-
-                    // 更新product.common.fields里面的信息
-                    // CMSDOC-365,CMCDOC-414 如果common.catConf="0"(非人工匹配主类目)时，自动匹配商品主类目
-                    // TODO 2016/12/30暂时这样更新，以后要改
-//                    if ("0".equals(productModel.getCommonNotNull().getCatConf())) {
-                        productModel.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
-                        productModel.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
-                        doSetMainCategory(productModel.getCommon(), productModel.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
-//                    }
+                    // APP端启用开关
+                    if ("1".equals(appSwitchFlg)) {
+                        productModel.getCommonNotNull().getFieldsNotNull().setAppSwitch(1);
+                    } else {
+                        productModel.getCommonNotNull().getFieldsNotNull().setAppSwitch(0);
+                    }
 
                     // platform对应 从子店的platform.p928 929 中的数据生成usjoi的platform
                     CmsBtProductModel_Platform_Cart fromPlatform = productModel.getPlatform(sxWorkLoadBean.getCartId());
@@ -446,26 +478,34 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 sku = newSku;
                                 return sku;
                             }).collect(Collectors.toList()));
-                            // 重新设置P28平台的mainProductCode和pIsMain
-                            CmsBtProductGroupModel cartGroupModel = productGroupService.selectProductGroupByCode(usJoiChannelId, productModel.getCommon().getFields().getCode(), cartId);
-                            if (cartGroupModel != null && !StringUtils.isEmpty(cartGroupModel.getMainProductCode())) {
-                                // 如果存在group信息，则将group的mainProductCode设为mainProductCode
-                                platform.setMainProductCode(cartGroupModel.getMainProductCode());
-                                if (cartGroupModel.getMainProductCode().equals(productModel.getCommon().getFields().getCode())) {
-                                    platform.setpIsMain(1);
-                                } else {
-                                    platform.setpIsMain(0);
-                                }
-                            } else {
-                                // 如果不存在group信息，则将自身设为mainProductCode
-                                platform.setMainProductCode(productModel.getCommon().getFields().getCode());
-                                platform.setpIsMain(1);
-                            }
-
                             // 下面几个cartId都设成同一个platform
                             finalProductModel.setPlatform(cartId, platform);
                         }
-
+                    }
+                    // 更新价格相关项目(根据主店配置的税号，公式等计算主店产品的SKU人民币价格)
+                    doSetPrice(productModel);
+                    //价差价格 类目  重量是否合法
+                    checkProduct(productModel);
+                    // 插入或者更新cms_bt_product_group_c928中的productGroup信息
+                    doSetGroup(productModel, usJoiChannelId, usjoiTypeChannelBeanList);
+                    productModel.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
+                    for (Integer cartId : cartIds) {
+                        CmsBtProductModel_Platform_Cart platform = productModel.getPlatform(cartId);
+                        // 重新设置P28平台的mainProductCode和pIsMain
+                        CmsBtProductGroupModel cartGroupModel = productGroupService.selectProductGroupByCode(usJoiChannelId, productModel.getCommon().getFields().getCode(), cartId);
+                        if (cartGroupModel != null && !StringUtils.isEmpty(cartGroupModel.getMainProductCode())) {
+                            // 如果存在group信息，则将group的mainProductCode设为mainProductCode
+                            platform.setMainProductCode(cartGroupModel.getMainProductCode());
+                            if (cartGroupModel.getMainProductCode().equals(productModel.getCommon().getFields().getCode())) {
+                                platform.setpIsMain(1);
+                            } else {
+                                platform.setpIsMain(0);
+                            }
+                        } else {
+                            // 如果不存在group信息，则将自身设为mainProductCode
+                            platform.setMainProductCode(productModel.getCommon().getFields().getCode());
+                            platform.setpIsMain(1);
+                        }
                     }
 
                     // 设置P0平台信息
@@ -474,8 +514,11 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     CmsBtProductModel_Platform_Cart p0 = getPlatformP0(groupModel, productModel);
                     productModel.getPlatforms().put("P0", p0);
 
-                    // 更新价格相关项目(根据主店配置的税号，公式等计算主店产品的SKU人民币价格)
-                    doSetPrice(productModel);
+
+                    if(!StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff()) && StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getColor())){
+                        String color = cmsBtTranslateService.translate("928", CmsBtCustomPropModel.CustomPropType.Common.getValue(), "com_color", productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff());
+                        if(!StringUtil.isEmpty(color)) productModel.getCommonNotNull().getFieldsNotNull().setColor(color);
+                    }
 
                     productService.createProduct(usJoiChannelId, productModel, sxWorkLoadBean.getModifier());
 
@@ -632,12 +675,6 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 prCommonFields.setProductNameEn(productModel.getCommonNotNull().getFieldsNotNull().getProductNameEn());
                             }
 
-                            // 产品名称中文(common.fields.originalTitleCn)
-                            if (StringUtil.isEmpty(prCommonFields.getOriginalTitleCn())
-                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn())) {
-                                prCommonFields.setOriginalTitleCn(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn());
-                            }
-
                             // 简短描述英语(common.fields.shortDesEn)
                             if (StringUtil.isEmpty(prCommonFields.getShortDesEn())
                                     && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getShortDesEn())) {
@@ -663,10 +700,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             }
 
                             // 材质英文(common.fields.materialEn)
-                            if (StringUtil.isEmpty(prCommonFields.getMaterialEn())
-                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getMaterialEn())) {
+//                            if (StringUtil.isEmpty(prCommonFields.getMaterialEn())
+//                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getMaterialEn())) {
                                 prCommonFields.setMaterialEn(productModel.getCommonNotNull().getFieldsNotNull().getMaterialEn());
-                            }
+//                            }
 
                             // 材质中文(common.fields.materialCn)
                             if (StringUtil.isEmpty(prCommonFields.getMaterialCn())
@@ -675,7 +712,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             }
 
                             // 颜色/口味/香型等(common.fields.color)
-                            if (StringUtil.isEmpty(prCommonFields.getColor())) {
+                            if ("0".equals(prCommonFields.getTranslateStatus())) {
                                 if (!StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getColor())) {
                                     // 优先使用子店的color字段
                                     prCommonFields.setColor(productModel.getCommonNotNull().getFieldsNotNull().getColor());
@@ -752,10 +789,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             }
 
                             // 商品特质英文（颜色/口味/香型等）(common.fields.codeDiff)
-                            if (StringUtil.isEmpty(prCommonFields.getCodeDiff())
-                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff())) {
+//                            if (StringUtil.isEmpty(prCommonFields.getCodeDiff())
+//                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff())) {
                                 prCommonFields.setCodeDiff(productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff());
-                            }
+//                            }
 
                             // 使用说明英语(common.fields.usageEn)
                             if (StringUtil.isEmpty(prCommonFields.getUsageEn())
@@ -786,10 +823,28 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                         // TODO 2016/12/30暂时这样更新，以后要改
 //                        if ("0".equals(pr.getCommonNotNull().getCatConf())) {
                             // 自动匹配商品主类目
-                            pr.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
-                            pr.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
+                            if(StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOrigProductType())){
+                                pr.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
+                            }else{
+                                pr.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getOrigProductType());
+                            }
+
+                            if(StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType())){
+                                pr.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
+                            }else{
+                                pr.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType());
+                            }
+
+                            if(!StringUtil.isEmpty(productModel.getFeed().getCatPath())) {
+                                pr.getFeed().setCatPath(productModel.getFeed().getCatPath());
+                            }
                             doSetMainCategory(pr.getCommon(), pr.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
 //                        }
+                        // 产品名称中文(common.fields.originalTitleCn)
+                        if ("0".equals(prCommonFields.getTranslateStatus())
+                                && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn())) {
+                            prCommonFields.setOriginalTitleCn(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn());
+                        }
 
                         // ****************common.skus的更新(有的sku可能在拆分后的product中)****************
                         for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
@@ -1064,6 +1119,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
                         // 更新产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
                         // productService.updateProduct(channelId, requestModel);
+                        if(!StringUtil.isEmpty(pr.getCommonNotNull().getFieldsNotNull().getCodeDiff()) && StringUtil.isEmpty(pr.getCommonNotNull().getFieldsNotNull().getColor())){
+                            String color = cmsBtTranslateService.translate("928", CmsBtCustomPropModel.CustomPropType.Common.getValue(), "com_color", pr.getCommonNotNull().getFieldsNotNull().getCodeDiff());
+                            if(!StringUtil.isEmpty(color)) pr.getCommonNotNull().getFieldsNotNull().setColor(color);
+                        }
                         int updCnt = productService.updateProductFeedToMaster(usJoiChannelId, pr, getTaskName(), "子店->USJOI主店导入");
                         if (updCnt == 0) {
                             // 有出错, 跳过
@@ -2008,6 +2067,30 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             cmsBtFeedImportSizeModel.setOriginalSize(sku.getSize());
             cmsBtFeedImportSizeService.saveCmsBtFeedImportSizeModel(cmsBtFeedImportSizeModel, getTaskName());
         });
+    }
+
+    private void checkProduct(CmsBtProductModel cmsProduct) {
+        if(!ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId().equals(cmsProduct.getOrgChannelId())){
+            if (StringUtil.isEmpty(cmsProduct.getCommonNotNull().getCatPath())) {
+                throw new BusinessException("主类目没有计算成功");
+            }
+            if (!ListUtils.isNull(categoryWhite)) {
+                if (!categoryWhite.stream().anyMatch(cat -> cmsProduct.getCommonNotNull().getCatPath().indexOf(cat) == 0)) {
+                    throw new BusinessException("主类目属于黑名单不能导入CMS：" + cmsProduct.getCommonNotNull().getCatPath());
+                }
+            }
+        }
+
+        if (priceThreshold != null) {
+            if (cmsProduct.getCommon().getSkus().stream().anyMatch(sku -> sku.getPriceRetail().compareTo(priceThreshold) > 0)) {
+                throw new BusinessException("该商品的价格超出了cms的价格阈值不能导入");
+            }
+        }
+        if (weightThreshold != null) {
+            if (cmsProduct.getCommonNotNull().getFields().getWeightKG().compareTo(weightThreshold) > 0) {
+                throw new BusinessException("该商品的重量超出了cms的价格阈值不能导入");
+            }
+        }
     }
 
 }

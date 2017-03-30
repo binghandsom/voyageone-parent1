@@ -132,6 +132,9 @@ public class CmsCartAddMQJob extends TBaseMQCmsService<CmsCartAddMQMessageBody> 
             skuList.add(skuInfo);
         }
 
+        // 设置lock状态
+        platform.setLock(cmsBtProductModel.getLock());
+
         platform.setSkus(skuList);
         cmsBtProductModel.setPlatform(cartId, platform);
         try {

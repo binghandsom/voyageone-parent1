@@ -16,7 +16,7 @@
                 </h4>
             </div>
             <div class="panel-body" ng-if="ctrl.panelShow">
-                <!--<div class="row">
+                <div class="row">
                     <div class="col-md-6">
                         <div class="row">
                             <label class="col-sm-1 control-label">
@@ -30,10 +30,11 @@
                             <div class="col-sm-3">
                                 <div class="onoffswitch">
                                     <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox"
-                                           ng-model="vm.lockStatus.onOffSwitch3"
-                                           ng-click="lockProduct('onOffSwitch3')"
-                                           id="onOffSwitch3">
-                                    <label class="onoffswitch-label" for="onOffSwitch3">
+                                           ng-model="ctrl.vm.platform.lock"
+                                           ng-true-value="'1'" ng-false-value="'0'"
+                                           ng-click="ctrl.platFormLock()"
+                                           id="TM{{cartInfo.value}}">
+                                    <label class="onoffswitch-label" for="TM{{cartInfo.value}}">
                                         <span class="onoffswitch-inner"></span>
                                         <span class="onoffswitch-switch"></span>
                                     </label>
@@ -41,7 +42,7 @@
                             </div>
                         </div>
                     </div>
-                </div>-->
+                </div>
                 <div class="row m-t-xs">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -129,20 +130,20 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="javascript:void(0)" ng-click="ctrl.moveToGroup()" target="_blank">
+                                        <a href="javascript:void(0)" ng-click="ctrl.moveToGroup()">
                                             <i class="fa fa-arrow-circle-right"></i>&nbsp;移动到其他Group
                                         </a>
                                     </li>
-                                    <!--                                        <li>
-                                                                                <a href="javascript:void(0)">
-                                                                                    <i class="fa fa-arrow-circle-right"></i>&nbsp;产品下架
-                                                                                </a>
-                                                                            </li>
-                                                                            <li>
-                                                                                <a href="javascript:void(0)">
-                                                                                    <i class="fa fa-arrow-circle-right"></i>&nbsp;产品上架
-                                                                                </a>
-                                                                            </li>-->
+                                    <li ng-if="ctrl.vm.platform.pNumIId">
+                                        <a href="javascript:void(0)" ng-click="ctrl.upperAndLowerFrame('ToInStock')">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;产品下架
+                                        </a>
+                                    </li>
+                                    <li ng-if="ctrl.vm.platform.pNumIId">
+                                        <a href="javascript:void(0)" ng-click="ctrl.upperAndLowerFrame('ToOnSale')">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;产品上架
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>&emsp;
                             <div class="btn-group">
@@ -232,9 +233,7 @@
                     <div class="row">
                         <div class="col-sm-9">
                             <div class="row form-group">
-                                <label class="col-md-2 control-label">
-                                    <platform-status data="ctrl.vm.platform" ng-if="ctrl.vm.platform"></platform-status>
-                                </label>
+                                <label class="col-md-2 control-label" id="platform-status"></label>
                                 <div class="col-md-8">
                                     <label class="col-md-1" style="width: 35px">
                                         <span notice-direction="bottom"
@@ -410,7 +409,7 @@
                     </div>
                     <div class="container-fluid" id="item">
                         <div class="row">
-                            <div class="col-sm-9">
+                            <div class="col-sm-10">
                                 <schema data="ctrl.vm.platform.schemaFields.item"></schema>
                             </div>
                         </div>
@@ -423,7 +422,7 @@
                     </div>
                     <div class="container-fluid" id="product">
                         <div class="row">
-                            <div class="col-sm-9">
+                            <div class="col-sm-10">
                                 <schema data="ctrl.vm.platform.schemaFields.product"></schema>
                             </div>
                         </div>

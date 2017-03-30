@@ -38,5 +38,13 @@ public class CmsBtJmPromotion3Service {
     public CmsBtJmPromotionModel get(int id) {
         return dao.select(id);
     }
+
+    /**
+     * 更新cms_bt_jm_promotion_model表
+     * @param model
+     */
+    public void update(CmsBtJmPromotionModel model) {
+        dao.update(model);
+    }
 }
 
