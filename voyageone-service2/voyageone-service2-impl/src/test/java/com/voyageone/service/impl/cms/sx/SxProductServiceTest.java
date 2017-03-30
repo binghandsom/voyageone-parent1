@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -237,4 +238,14 @@ public class SxProductServiceTest {
         System.out.println("测试完成");
     }
 
+    @Test
+    public void testSynInventoryToPlatform() {
+        List<String> codeList = new ArrayList<>();
+        codeList.add("028-ps3962611");
+        try {
+            sxProductService.synInventoryToPlatform("928", "27", codeList, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
