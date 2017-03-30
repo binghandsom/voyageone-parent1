@@ -3986,7 +3986,7 @@ public class SxProductService extends BaseService {
         } else {
             productImages = product.getPlatform(cartId).getImages(imageType);
 
-            if (productImages == null || productImages.isEmpty() || StringUtils.isEmpty(productImages.get(0).getStringAttribute(imageType.getName()))) {
+            if (productImages == null || productImages.isEmpty() || StringUtils.isEmpty(String.valueOf(productImages.get(0).get(imageType.getName())))) {
                 productImages = product.getCommon().getFields().getImages(imageType);
             }
         }
