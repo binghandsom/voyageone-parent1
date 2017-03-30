@@ -51,7 +51,25 @@
             <div class="wrapper">
                 <div class="container-fluid" id="common">
                     <div class="row">
-
+                        <div class="col-md-8 form-group">
+                            <!----------------------------------check 状态------------------------------------------>
+                            <ul class="nav nav-pills" ng-hide="true">
+                                <li ng-click="ctrl.focusError()"
+                                    ng-style="{ cursor:!ctrl.validSchema() ? 'pointer' : 'default' }">
+                                        <span ng-class="{tagFlag:!ctrl.validSchema()}">{{'TXT_ATTRIBUTE' | translate}}&emsp;
+                                            <i class="fa fa-check"
+                                               ng-if="ctrl.vm.checkFlag.attribute = ctrl.validSchema()"></i>
+                                            <i class="fa fa-times" ng-if="!ctrl.validSchema()"></i>
+                                        </span>
+                                </li>
+                            </ul>
+                            <div class="text-warnings no-master" style="padding-left:0px;" ng-if="ctrl.vm.noMaterMsg">
+                                <i class="icon fa fa-bell-o"></i>&nbsp;{{ctrl.vm.noMaterMsg}} , 否则该产品信息无法显示！！！<br>
+                            </div>
+                            <div class="text-warnings" style="padding-left:0px" ng-if="ctrl.vm.mastData.isMain != true">
+                                <i class="icon fa fa-bell-o"></i>&nbsp;此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面。<br>
+                            </div>
+                        </div>
                         <div class="col-md-4 col-lg-offset-8">
                             <!--应运营要求，保存按钮跳过check，一直为pending状态，除了平台类目为必选-->
                             <div class="row">

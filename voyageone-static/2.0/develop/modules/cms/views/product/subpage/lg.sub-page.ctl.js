@@ -33,7 +33,7 @@ define([
         return result;
     }
 
-    function SpLgController($scope, productDetailService, $translate, notify, confirm, $compile, alert, popups, $fieldEditService, $document, $templateRequest) {
+    function SpLgController($scope, productDetailService, $translate, notify, confirm, $compile, alert, popups, $document, $templateRequest) {
         var self = this;
         self.$scope = $scope;
         self.productDetailService = productDetailService;
@@ -43,7 +43,6 @@ define([
         self.$compile = $compile;
         self.alert = alert;
         self.popups = popups;
-        self.$fieldEditService = $fieldEditService;
         self.$document = $document;
         self.$templateRequest = $templateRequest;
         self.vm = {
@@ -53,9 +52,8 @@ define([
             platform: null,
             status: "Pending",
             skuTemp: {},
-            checkFlag: { attribute: 1 },
+            checkFlag: { attribute: 0 },
             resultFlag: 0,
-            sellerCats: [],
             productUrl: "",
             preStatus: null,
             noMaterMsg: null
@@ -64,24 +62,8 @@ define([
     }
 
     SpLgController.prototype.init = function (element) {
-        var self = this,
-            check = self.vm.checkFlag,
-            $scope = self.$scope;
-
-        self.element = element;
-
-        //监控税号和翻译状态和锁定状态
-        var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
-            check.translate = $scope.productInfo.translateStatus;
-
-            if ($scope.cartInfo.value != 20)
-                check.tax = $scope.productInfo.hsCodeStatus;
-        });
-
-        //监控主类目
-        var masterCategory = $scope.$watch("productInfo.masterCategory", function () {
-            self.getPlatformData();
-        });
+        this.element = element;
+        this.getPlatformData();
     };
 
     /**
@@ -106,9 +88,7 @@ define([
                     vm.noMaterMsg = "该商品的没有设置主商品，请先设置主商品：" + vm.platform.mainCode;
 
                 vm.status = vm.platform.status == null ? vm.status : vm.platform.status;
-                vm.checkFlag.category = vm.platform.pCatPath == null ? 0 : 1;
                 vm.platform.pStatus = vm.platform.pStatus == null ? "" : vm.platform.pStatus;
-                vm.sellerCats = vm.platform.sellerCats == null ? [] : vm.platform.sellerCats;
             }
 
             _.each(vm.mastData.skus, function (mSku) {
@@ -134,7 +114,6 @@ define([
         vm.productUrl = carts.valueOf(+$scope.cartInfo.value).pUrl;
 
     };
-
 
     /**
      * @description 更新操作
@@ -211,26 +190,14 @@ define([
                         platform: self.vm.platform
                     });
 
-                    productDetailService.checkCategory({
-                        cartId: self.$scope.vm.platform.cartId,
-                        pCatPath: self.$scope.vm.platform.pCatPath
-                    }).then(function (resp) {
-                        if (resp.data === false) {
-                            confirm("当前类目没有申请 是否还需要保存？如果选择[确定]，那么状态会返回[待编辑]。请联系IT人员处理平台类目").then(function () {
-                                self.vm.platform.status = self.vm.status = "Pending";
-                                self.callSave();
-                            });
-                        } else {
-                            self.callSave();
-                        }
-                    });
-
+                    self.callSave();
                 } else {
                     self.callSave();
                 }
             });
+
         } else {
-            return self.callSave();
+            self.callSave();
         }
     };
 
@@ -405,7 +372,7 @@ define([
     cms.directive('lgSubPage', function () {
         return {
             restrict: 'E',
-            controller: ['$scope', 'productDetailService', '$translate', 'notify', 'confirm', '$compile', 'alert', 'popups', '$fieldEditService', '$document', '$templateRequest', SpLgController],
+            controller: ['$scope', 'productDetailService', '$translate', 'notify', 'confirm', '$compile', 'alert', 'popups', '$document', '$templateRequest', SpLgController],
             controllerAs: 'ctrl',
             scope: {
                 productInfo: "=productInfo",
