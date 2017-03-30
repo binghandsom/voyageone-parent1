@@ -277,7 +277,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
         return getProductCodeList(channelId, searchValue);
     }
 
-    private List<String> getProductCodeList(String channelId, CmsSearchInfoBean2 searchValue) {
+    public List<String> getProductCodeList(String channelId, CmsSearchInfoBean2 searchValue) {
         if (searchValue == null) {
             $warn("高级检索 getProductCodeList session中的查询条件为空");
             return new ArrayList<>(0);

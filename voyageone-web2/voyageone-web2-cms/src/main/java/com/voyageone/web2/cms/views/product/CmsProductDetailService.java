@@ -38,6 +38,7 @@ import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
+import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
@@ -613,7 +614,7 @@ public class CmsProductDetailService extends BaseViewService {
         List<String> prodCodes = null;
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            prodCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+            prodCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (CmsSearchInfoBean2) requestMap.get("searchInfo"));
         } else {
             prodCodes = (List<String>) requestMap.get("prodIds");
         }

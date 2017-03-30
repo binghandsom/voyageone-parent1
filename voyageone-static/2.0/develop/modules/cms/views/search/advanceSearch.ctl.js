@@ -50,6 +50,7 @@ define([
             _cart_tab_act: false,
             channelId:""
         };
+        $scope.searchInfoBefo;
         $scope.exportStatus = ["正在生成", "完成", "失败"];
         $scope.initialize = initialize;
         $scope.clear = clear;
@@ -256,6 +257,7 @@ define([
             //$scope.vm.productPageOption.curr = 1;
 
             $scope.vm.searchInfo.custAttrMap = angular.copy($scope.vm.custAttrList);
+            $scope.searchInfoBefo = angular.copy($scope.vm.searchInfo);
             searchAdvanceService2.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption).then(function (res) {
                 $scope.vm.customProps = res.data.customProps;
                 var sumCustomProps = [];
@@ -452,6 +454,7 @@ define([
                     });
                 }
                 context.productCodes = productIds;
+                context.searchInfo = $scope.searchInfoBefo;
                 shelvesService.addProduct(context).then(function () {
                     notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
                     $scope.search();
@@ -513,7 +516,8 @@ define([
                 }
                 var data = {
                     prodIds: productIds,
-                    isSelAll: $scope.vm._selall ? 1 : 0
+                    isSelAll: $scope.vm._selall ? 1 : 0,
+                    searchInfo:$scope.searchInfoBefo
                 };
                 productDetailService.refreshProductCategory(data).then(function (res) {
                     notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
