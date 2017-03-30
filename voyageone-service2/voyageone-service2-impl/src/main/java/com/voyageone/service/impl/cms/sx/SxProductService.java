@@ -3982,7 +3982,7 @@ public class SxProductService extends BaseService {
                 for (int i = 0; i < tmp.size(); i++) {
                     CmsBtProductModel_Field_Image img = new CmsBtProductModel_Field_Image();
 
-                    Object v = tmp.get(0);
+                    Object v = tmp.get(i);
                     String s = ((LinkedHashMap<String, String>)v).get(imageType.getName());
                     img.put(imageType.getName(), s);
 
@@ -4006,7 +4006,7 @@ public class SxProductService extends BaseService {
                 for (int i = 0; i < tmp.size(); i++) {
                     CmsBtProductModel_Field_Image img = new CmsBtProductModel_Field_Image();
 
-                    Object v = tmp.get(0);
+                    Object v = tmp.get(i);
                     String s = ((LinkedHashMap<String, String>)v).get(imageType.getName());
                     img.put(imageType.getName(), s);
 
