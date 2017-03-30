@@ -1,9 +1,12 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
+import com.voyageone.components.rabbitmq.annotation.VOSubRabbitListener;
+import com.voyageone.components.rabbitmq.namesub.IMQSubBeanNameAll;
 import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchRefreshRetailPriceMQMessageBody;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
+import com.voyageone.task2.cms.mqjob.TBaseMQCmsSubService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,8 +20,8 @@ import java.util.List;
  * @Create 2016-12-30 16:17
  */
 @Service
-@RabbitListener()
-public class CmsAdvSearchRefreshRetailPriceMQJob extends TBaseMQCmsService<AdvSearchRefreshRetailPriceMQMessageBody> {
+@VOSubRabbitListener
+public class CmsAdvSearchRefreshRetailPriceMQJob extends TBaseMQCmsSubService<AdvSearchRefreshRetailPriceMQMessageBody> {
 
     @Autowired
     private PlatformPriceService cmsProductPriceUpdateService;

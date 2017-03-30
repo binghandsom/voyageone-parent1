@@ -4,6 +4,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.components.rabbitmq.namesub.IMQMessageSubBeanName;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -13,7 +14,7 @@ import java.util.List;
  * Created by james on 2017/1/13.
  */
 @VOMQQueue(value = CmsMqRoutingKey.CMS_UPDATE_PRODUCT_PLATFORM_CATEGORY)
-public class CmsPlatformCategoryUpdateMQMessageBody extends BaseMQMessageBody {
+public class CmsPlatformCategoryUpdateMQMessageBody extends BaseMQMessageBody  implements IMQMessageSubBeanName {
     String channelId;
     List<String> productCodes;
     Integer cartId;
@@ -77,5 +78,10 @@ public class CmsPlatformCategoryUpdateMQMessageBody extends BaseMQMessageBody {
         if (StringUtils.isEmpty(getSender())) {
             throw new MQMessageRuleException("高级检索-批量设置平台类目MQ发送异常, 发送者为空.");
         }
+    }
+
+    @Override
+    public String getSubBeanName() {
+        return getChannelId();
     }
 }
