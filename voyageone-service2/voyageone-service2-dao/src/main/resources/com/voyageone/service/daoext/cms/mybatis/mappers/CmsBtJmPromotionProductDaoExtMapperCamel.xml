@@ -203,7 +203,7 @@
             </if>
 
             <if test="colorEn!=null">
-                and    b.color_en=#{colorEn}
+                and (b.color_en= like CONCAT(#{colorEn},'%') or b.attribute like CONCAT(#{colorEn},'%'))
             </if>
         </where>
         order by a.product_code
