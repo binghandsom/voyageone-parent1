@@ -330,26 +330,26 @@ public class TranslationTaskService extends BaseService {
 
         TranslationTaskBean_CommonFields cnFields = bean.getCommonFields();
 
-        //读cms_mt_feed_custom_prop
-        List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, bean
-                .getFeedCategory());
-
-        //去除掉feedCustomPropList中的垃圾数据
-        if (feedCustomPropList != null && !feedCustomPropList.isEmpty()) {
-            feedCustomPropList = feedCustomPropList.stream()
-                    .filter(w -> !StringUtils.isNullOrBlank2(w.getFeed_prop_translation()) && !StringUtils
-                            .isNullOrBlank2(w.getFeed_prop_original()))
-                    .collect(Collectors.toList());
-        } else {
-            feedCustomPropList = new ArrayList<>();
-        }
-        Set<String> custPropKeySet = feedCustomPropList.stream().map
-                (FeedCustomPropWithValueBean::getFeed_prop_original).collect(Collectors.toSet());
+//        //读cms_mt_feed_custom_prop
+//        List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, bean
+//                .getFeedCategory());
+//
+//        //去除掉feedCustomPropList中的垃圾数据
+//        if (feedCustomPropList != null && !feedCustomPropList.isEmpty()) {
+//            feedCustomPropList = feedCustomPropList.stream()
+//                    .filter(w -> !StringUtils.isNullOrBlank2(w.getFeed_prop_translation()) && !StringUtils
+//                            .isNullOrBlank2(w.getFeed_prop_original()))
+//                    .collect(Collectors.toList());
+//        } else {
+//            feedCustomPropList = new ArrayList<>();
+//        }
+//        Set<String> custPropKeySet = feedCustomPropList.stream().map
+//                (FeedCustomPropWithValueBean::getFeed_prop_original).collect(Collectors.toSet());
         //根据feedCustomPropList精简cnProps
         List<CustomPropBean> cnProps = bean.getCustomProps();
-        if (custPropKeySet != null && !custPropKeySet.isEmpty()) {
-            cnProps = cnProps.stream().filter(w -> custPropKeySet.contains(w.getFeedAttrEn())).collect(Collectors.toList());
-        }
+//        if (custPropKeySet != null && !custPropKeySet.isEmpty()) {
+//            cnProps = cnProps.stream().filter(w -> custPropKeySet.contains(w.getFeedAttrEn())).collect(Collectors.toList());
+//        }
 
         for (CmsBtProductModel product : productList) {
             Map<String, Object> rsMap = new HashMap<>();
