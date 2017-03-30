@@ -100,6 +100,9 @@ public class CmsMqRoutingKey {
     // VMS价格和库存变更 通知CMS更新feedInfo
     public static final String CMS_FEED_SKU_PQ_MQ_JOB = "CmsFeedSkuPqMQJobQueue";
 
+    //sneakerHead根据活动里面的产品找出同一group的商品加入活动
+    public static final String CMS_SNEAKERHEAD_ADD_PROMOTION = "CmsSneakerheadAddPromotionMQJobQueue";
+
     //批量lock平台    added by piao
     public static final String  CMS_ADV_SEARCH_LOCK_PRODUCTS = "VOCmsAdvSearchLockProductsMQJobQueue";
 

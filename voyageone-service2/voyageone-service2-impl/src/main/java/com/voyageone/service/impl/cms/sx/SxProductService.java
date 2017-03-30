@@ -1529,7 +1529,7 @@ public class SxProductService extends BaseService {
             List<WmsBtInventoryCenterLogicModel> skuInventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailBySkuList(sxData.getChannelId(), skus);
             Map<String, Integer> skuInventoryMap = new HashMap<>();
             for (WmsBtInventoryCenterLogicModel model : skuInventoryList) {
-                skuInventoryMap.put(model.getSku(), model.getQtyChina());
+                skuInventoryMap.put(model.getSku().toLowerCase(), model.getQtyChina());
             }
 
             Map<String, Field> resolveField = constructCustomPlatformProps(mappingTypePropsMap, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
