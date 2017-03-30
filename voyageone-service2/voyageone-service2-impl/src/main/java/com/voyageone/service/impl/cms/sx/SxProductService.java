@@ -5658,6 +5658,7 @@ public class SxProductService extends BaseService {
             return;
         }
 
+
         // 准备插入workload表的数据
         List<CmsBtSxWorkloadModel> modelList = new ArrayList<>();
         // 已处理过的group(防止同一个group多次被插入)
