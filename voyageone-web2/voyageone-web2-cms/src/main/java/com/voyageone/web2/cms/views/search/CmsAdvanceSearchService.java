@@ -15,6 +15,7 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
@@ -275,6 +276,12 @@ public class CmsAdvanceSearchService extends BaseViewService {
     public List<String> getProductCodeList(String channelId, CmsSessionBean cmsSessionBean) {
         CmsSearchInfoBean2 searchValue = (CmsSearchInfoBean2) cmsSessionBean.getAttribute("_adv_search_params");
         return getProductCodeList(channelId, searchValue);
+    }
+
+    public List<String> getProductCodeList(String channelId, Map<String,Object> searchInfo) {
+        CmsSearchInfoBean2 cmsSearchInfoBean2 = new CmsSearchInfoBean2();
+        BeanUtils.copyProperties(searchInfo,cmsSearchInfoBean2);
+        return getProductCodeList(channelId, cmsSearchInfoBean2);
     }
 
     public List<String> getProductCodeList(String channelId, CmsSearchInfoBean2 searchValue) {
