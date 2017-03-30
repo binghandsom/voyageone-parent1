@@ -17,7 +17,8 @@ define([
     './subpage/jm.sub-page.ctl',
     './subpage/gt.sub-page.ctl',
     './subpage/dg.sub-page.ctl',
-    './subpage/fx.sub-page.ctl'
+    './subpage/fx.sub-page.ctl',
+    './subpage/lg.sub-page.ctl'
 ], function (cms) {
 
     return cms.controller('productDetailController', (function () {
@@ -53,7 +54,7 @@ define([
             // cartId:928【匠心界】,929【悦境】不显示
             self.menuService.getPlatformType().then(function (resp) {
                 self.platformTypes = _.filter(resp, function (element) {
-                    return element.value != 21 && element.value >= 20 && element.value < 928;
+                    return element.value != 21 && element.value >= 20 && element.value <= 928;
                 });
             });
 
@@ -61,7 +62,7 @@ define([
                 self.product.autoApprovePrice = resp.autoApprovePrice[0];
             });
 
-            if(_cartObj){
+/*            if(_cartObj){
                 var strArr = _cartObj.split("|");
 
                 if(strArr.length > 1){
@@ -69,7 +70,9 @@ define([
                     self.product.skuBlock = true;
                 }else
                     self.defaultCartId = _cartObj;
-            }
+            }*/
+
+            self.defaultCartId = 928;
 
         };
 
