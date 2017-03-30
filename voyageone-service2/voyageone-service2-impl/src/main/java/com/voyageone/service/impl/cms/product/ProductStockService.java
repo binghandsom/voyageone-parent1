@@ -54,7 +54,7 @@ public class ProductStockService extends BaseService {
                     }
 
                     for (CmsBtProductModel_Sku skuModel : productInfo.getCommon().getSkus()) {
-                        quantity = quantity + skuModel.getQty();
+                        quantity += skuModel.getQty();
                     }
 
                     HashMap<String, Object> updateMap = new HashMap<>();
@@ -77,7 +77,7 @@ public class ProductStockService extends BaseService {
                     }
 
                     for (BaseMongoMap<String, Object> skuModel : productInfo.getPlatform(stockInfo.getCartId()).getSkus()) {
-                        quantity = quantity + Integer.parseInt(skuModel.getAttribute("qty"));
+                        quantity += Integer.parseInt(skuModel.getAttribute("qty"));
                     }
 
                     HashMap<String, Object> updateMap = new HashMap<>();
@@ -92,7 +92,7 @@ public class ProductStockService extends BaseService {
 
                 }
 
-                /**记录操作结果*/
+                //记录操作结果
                 CmsBtOperationLogModel_Msg msgInfo = new CmsBtOperationLogModel_Msg();
                 msgInfo.setSkuCode(stockInfo.getSku());
                 msgInfo.setMsg("产品库存更新成功！");
