@@ -5747,11 +5747,11 @@ public class SxProductService extends BaseService {
      * @param codeList  待更新商品列表
      * @param modifier  变更人
      */
-    public void insertPlatformWorkload(String channelId, Integer cartId, String workloadName, List<String> codeList,
+    public void insertPlatformWorkload(String channelId, Integer cartId, PlatformWorkloadAttribute workloadName, List<String> codeList,
                                         String modifier) {
         // 输入参数检查
         if (StringUtils.isEmpty(channelId) || ListUtils.isNull(codeList) || StringUtils.isEmpty(modifier)
-                || StringUtils.isEmpty(workloadName)) {
+                || workloadName == null) {
             $error("insertPlatformWorkLoad 缺少参数" + channelId + "==" + codeList.size() + "==" + modifier
                      + "==" + workloadName);
             return;
@@ -5795,7 +5795,7 @@ public class SxProductService extends BaseService {
             CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
             model.setChannelId(channelId);
             model.setCartId(group.getCartId());
-            model.setWorkloadName(workloadName);
+            model.setWorkloadName(workloadName.name);
             model.setGroupId(group.getGroupId());
             model.setPriority_order(codeList.size());
             model.setModifier(modifier);
