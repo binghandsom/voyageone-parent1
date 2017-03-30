@@ -1,13 +1,7 @@
 package com.voyageone.service.impl.cms.product;
 
-import com.mongodb.BulkWriteResult;
-import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.common.CmsConstants;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.stock.CartChangedStockBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
@@ -36,7 +30,7 @@ public class ProductStockService extends BaseService {
      * 批量更新产品库存 方法待优化
      * 不着急发布   added by piao
      */
-    public  List<CmsBtOperationLogModel_Msg> updateProductStock(List<CartChangedStockBean> stockList) {
+    public List<CmsBtOperationLogModel_Msg> updateProductStock(List<CartChangedStockBean> stockList) {
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         CartChangedStockBean firstStock = stockList.get(0);
@@ -46,19 +40,20 @@ public class ProductStockService extends BaseService {
 
             CmsBtProductModel productInfo = productService.getProductByCode(stockInfo.getChannelId(), stockInfo.getItemCode());
 
-            if(productInfo != null){
+            if (productInfo != null) {
 
-                if(stockInfo.getCartId() == 0){
+                Integer quantity = null;
 
-                    for(CmsBtProductModel_Sku skuModel : productInfo.getCommon().getSkus()){
-                        if(skuModel.getSkuCode().equals(stockInfo.getSku())){
+                if (stockInfo.getCartId() == 0) {
+
+                    for (CmsBtProductModel_Sku skuModel : productInfo.getCommon().getSkus()) {
+                        if (skuModel.getSkuCode().equals(stockInfo.getSku())) {
                             skuModel.setQty(stockInfo.getQty());
                             break;
                         }
                     }
 
-                    Integer quantity = null;
-                    for(CmsBtProductModel_Sku skuModel:productInfo.getCommon().getSkus()){
+                    for (CmsBtProductModel_Sku skuModel : productInfo.getCommon().getSkus()) {
                         quantity = quantity + skuModel.getQty();
                     }
 
@@ -70,37 +65,30 @@ public class ProductStockService extends BaseService {
                     queryMap.put("channelId", stockInfo.getChannelId());
                     queryMap.put("common.skus.skuCode", stockInfo.getSku());
 
-                    BulkUpdateModel model = new BulkUpdateModel();
-                    model.setUpdateMap(updateMap);
-                    model.setQueryMap(queryMap);
-                    bulkList.add(model);
+                    bulkList.add(createBulkUpdateModel(updateMap, queryMap));
 
-                }else{
+                } else {
 
-                    for(BaseMongoMap<String, Object> skuModel : productInfo.getPlatform(stockInfo.getCartId()).getSkus()){
-                        if(skuModel.getStringAttribute("skuCode").equals(stockInfo.getSku())){
-                            skuModel.setAttribute("qty",stockInfo.getQty());
+                    for (BaseMongoMap<String, Object> skuModel : productInfo.getPlatform(stockInfo.getCartId()).getSkus()) {
+                        if (skuModel.getStringAttribute("skuCode").equals(stockInfo.getSku())) {
+                            skuModel.setAttribute("qty", stockInfo.getQty());
                             break;
                         }
                     }
 
-                    Integer quantity = null;
-                    for(BaseMongoMap<String, Object> skuModel:productInfo.getPlatform(stockInfo.getCartId()).getSkus()){
+                    for (BaseMongoMap<String, Object> skuModel : productInfo.getPlatform(stockInfo.getCartId()).getSkus()) {
                         quantity = quantity + Integer.parseInt(skuModel.getAttribute("qty"));
                     }
 
                     HashMap<String, Object> updateMap = new HashMap<>();
-                    updateMap.put(String.format("platforms.P%s.skus.$.qty" , stockInfo.getCartId()), stockInfo.getQty());
-                    updateMap.put(String.format("platforms.P%s.fields.quantity" , stockInfo.getCartId()),quantity);
+                    updateMap.put(String.format("platforms.P%s.skus.$.qty", stockInfo.getCartId()), stockInfo.getQty());
+                    updateMap.put(String.format("platforms.P%s.fields.quantity", stockInfo.getCartId()), quantity);
 
                     HashMap<String, Object> queryMap = new HashMap<>();
                     queryMap.put("channelId", stockInfo.getChannelId());
-                    queryMap.put(String.format("platforms.P%s.skus.skuCode",stockInfo.getCartId()), stockInfo.getSku());
+                    queryMap.put(String.format("platforms.P%s.skus.skuCode", stockInfo.getCartId()), stockInfo.getSku());
 
-                    BulkUpdateModel model = new BulkUpdateModel();
-                    model.setUpdateMap(updateMap);
-                    model.setQueryMap(queryMap);
-                    bulkList.add(model);
+                    bulkList.add(createBulkUpdateModel(updateMap, queryMap));
 
                 }
 
@@ -118,5 +106,12 @@ public class ProductStockService extends BaseService {
         return result;
     }
 
+    private BulkUpdateModel createBulkUpdateModel(HashMap<String, Object> updateMap,
+                                                  HashMap<String, Object> queryMap) {
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        return model;
+    }
 
 }
