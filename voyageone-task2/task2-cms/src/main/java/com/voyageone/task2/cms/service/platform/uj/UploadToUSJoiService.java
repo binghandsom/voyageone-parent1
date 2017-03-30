@@ -711,6 +711,12 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 prCommonFields.setMaterialCn(productModel.getCommonNotNull().getFieldsNotNull().getMaterialCn());
                             }
 
+                            //货号
+                            if (StringUtil.isEmpty(prCommonFields.getMpn())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getMpn())) {
+                                prCommonFields.setMpn(productModel.getCommonNotNull().getFieldsNotNull().getMpn());
+                            }
+
                             // 颜色/口味/香型等(common.fields.color)
                             if ("0".equals(prCommonFields.getTranslateStatus())) {
                                 if (!StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getColor())) {
