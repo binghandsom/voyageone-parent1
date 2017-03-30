@@ -12,6 +12,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.bean.cms.search.product.CmsProductCodeListBean;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
@@ -23,7 +24,6 @@ import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryServic
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -43,10 +43,10 @@ import java.util.*;
  */
 @RestController
 @RequestMapping(
-        value = "/cms/search/advanceSearch/",
+        value = "/cms/search/advanceSearchSolr/",
         method = RequestMethod.POST
 )
-public class CmsAdvanceSearchController extends CmsController {
+public class CmsAdvanceSearchSolrController extends CmsController {
 
     @Autowired
     private CmsAdvanceSearchService searchIndexService;
@@ -119,14 +119,14 @@ public class CmsAdvanceSearchController extends CmsController {
         // 分页
         int endIdx = params.getProductPageSize();
         // 先统计product件数,并放到session中(这时group总件数为空)
-        long productListTotal = searchIndexService.countProductCodeList(params, userInfo, cmsSession);
+        CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId());
+        long productListTotal = cmsProductCodeListBean.getTotalCount();
         cmsSession.putAttribute("_adv_search_productListTotal", productListTotal);
         cmsSession.putAttribute("_adv_search_groupListTotal", null);
 
-        List<String> currCodeList = advSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), true);
+        List<String> currCodeList = cmsProductCodeListBean.getProductCodeList();
         List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
-
-
+        prodInfoList.sort((o1, o2) -> Integer.compare(currCodeList.indexOf(o1.getCommon().getFields().getCode()),currCodeList.indexOf(o2.getCommon().getFields().getCode())));
 
         Map<String, TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), "cn");
         Map<String, TypeChannelBean> sizeTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), "cn");
@@ -247,13 +247,14 @@ public class CmsAdvanceSearchController extends CmsController {
         resultBean.put("productUrl", platformService.getPlatformProductUrl(cartId.toString()));
 
         // 先统计product件数
-        long productListTotal = searchIndexService.countProductCodeList(params, userInfo, cmsSession);
 //        long productListTotal = (Long) cmsSession.getAttribute("_adv_search_productListTotal");
 
         // 获取product列表
-        List<String> currCodeList = advSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), true);
+        CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId());
+        long productListTotal = cmsProductCodeListBean.getTotalCount();
+        List<String> currCodeList = cmsProductCodeListBean.getProductCodeList();
         List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
-
+        prodInfoList.sort((o1, o2) -> Integer.compare(currCodeList.indexOf(o1.getCommon().getFields().getCode()),currCodeList.indexOf(o2.getCommon().getFields().getCode())));
         Map<String, Map<String, Integer>> codeMap = new HashMap<>();
         Map<String, TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), "cn");
         Map<String, TypeChannelBean> sizeTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), "cn");

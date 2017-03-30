@@ -40,6 +40,7 @@ import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.Predicate;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
@@ -93,6 +94,15 @@ public class ProductService extends BaseService {
 
     @Autowired
     private Searcher searcher;
+
+    /**
+     * 获取商品 根据ID获
+     */
+    public CmsBtProductModel getProductByObjectId(String channelId, String objectId) {
+        JongoQuery jongoQuery = new JongoQuery();
+        jongoQuery.setObjectId(new ObjectId(objectId));
+        return cmsBtProductDao.selectOneWithQuery(jongoQuery, channelId);
+    }
 
     /**
      * 获取商品 根据ID获
