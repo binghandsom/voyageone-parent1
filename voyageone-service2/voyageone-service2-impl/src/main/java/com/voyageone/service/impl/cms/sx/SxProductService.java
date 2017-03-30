@@ -91,7 +91,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -5593,28 +5592,29 @@ public class SxProductService extends BaseService {
      * @param codeList  codeList
      * @throws IOException
      */
-    public void synInventoryToPlatform(String channelId, String cartId, List<String> codeList, List<String> skuList) throws IOException {
+    public Map<String, Object> synInventoryToPlatform(String channelId, String cartId, List<String> codeList, List<String> skuList) throws IOException {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.parseMediaType("application/json;charset=UTF-8"));
         ObjectMapper objectMapper = new ObjectMapper();
         HashMap<String, Object> feedInfo = new HashMap<>();
-        feedInfo.put("orderChannelId", channelId);
+        feedInfo.put("orderChanneId", channelId);
         feedInfo.put("cartId", cartId);
         feedInfo.put("codeList", codeList);
         feedInfo.put("skuList", skuList);
         feedInfo.put("timeStamp", System.currentTimeMillis());
         feedInfo.put("signature", MD5.getMD5(channelId + System.currentTimeMillis()));
-        List<HashMap<String, Object>> requestList = Arrays.asList(feedInfo);
+//        List<HashMap<String, Object>> requestList = Arrays.asList();
 
-        String json = objectMapper.writeValueAsString(requestList);
-        httpHeaders.set("Authorization", "Basic " + MD5.getMD5(json + System.currentTimeMillis() / TimeUnit.MINUTES.toMillis(30)));
+        String json = objectMapper.writeValueAsString(feedInfo);
+//        httpHeaders.set("Authorization", "Basic " + MD5.getMD5(json + System.currentTimeMillis() / TimeUnit.MINUTES.toMillis(30)));
         HttpEntity<String> httpEntity = new HttpEntity<>(json, httpHeaders);
         SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
         simpleClientHttpRequestFactory.setConnectTimeout(6000);
         simpleClientHttpRequestFactory.setReadTimeout(6000);
         RestTemplate restTemplate = new RestTemplate(simpleClientHttpRequestFactory);
         ResponseEntity<String> exchange = restTemplate.exchange("http://open.synship.net/wms/logSynInventoryForCms/import", HttpMethod.POST, httpEntity, String.class);
+        return JsonUtil.jsonToMap(exchange.getBody());
     }
 
     private enum SkuSort {
