@@ -1,0 +1,56 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h5 class="modal-title"><i class="fa fa-th-list"></i>&nbsp;Sku-code信息</h5>
+    </div>
+
+    <div class="modal-body wrapper">
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-2">
+                    <label class="control-label"><strong>sku-code</strong></label>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-btn">
+                           <button class="btn btn-default" type="button" disabled><i class="fa fa-filter"></i></button>
+                        </span>
+                        <input type="text" class="form-control" placeholder="Search for..." ng-model="codeName">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 m-t-sm">
+                <div class="table-responsive" style="max-height: 380px;overflow-y: auto;">
+                    <table class="table table-bordered table-striped">
+                        <colgroup>
+                            <col class="col-xs-1">
+                            <col class="col-xs-7">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th>skuCode</th>
+                            <th>msg</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="model in ctrl.msgList | filter:{skuCode:codeName}">
+                                <th scope="row">
+                                    <code>{{model.skuCode}}</code>
+                                </th>
+                                <td>{{model.msg}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>
+    </div>
+</div>

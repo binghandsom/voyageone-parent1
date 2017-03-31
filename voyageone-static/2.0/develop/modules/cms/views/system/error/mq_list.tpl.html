@@ -72,6 +72,7 @@
                         <th class="mfb-xxs text-left">error list</th>
                         <th class="mfb-x text-left">created</th>
                         <th class="mfb-x text-left">modifier</th>
+                        <th class="mfb-x text-center">msg</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -85,7 +86,10 @@
                         <td class="mfb-xxs text-lef text-wrap">{{mq.comment}}</td>
                         <td class="mfb-xxs text-left"><popover-text content="mq.msg" direct="left" size="30"></popover-text></td>
                         <td class="mfb-x text-left">{{mq.created}}</td>
-                        <td class="mfb-x text-left">{{mq.modifier}}</td>
+                        <td class="mfb-x text-center">{{mq.modifier}}</td>
+                        <td>
+                            <button class="btn btn-info btn-pop" ng-click="ctrl.popMqSkuCodeError(mq)"><i class="fa fa-th-list"></i>&nbsp;错误详情</button>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
