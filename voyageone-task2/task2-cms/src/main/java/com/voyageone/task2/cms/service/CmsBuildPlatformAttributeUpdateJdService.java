@@ -13,6 +13,7 @@ import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
+import com.voyageone.service.impl.cms.sx.PlatformWorkloadAttribute;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
@@ -22,7 +23,6 @@ import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
-import com.voyageone.task2.cms.enums.PlatformWorkloadAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -128,15 +128,15 @@ public class CmsBuildPlatformAttributeUpdateJdService extends BaseCronTaskServic
             com.jd.open.api.sdk.domain.Ware ware = new com.jd.open.api.sdk.domain.Ware();
             ware.setWareId(Long.parseLong(wareId));
             // 店内分类
-            if (PlatformWorkloadAttribute.SELLER_CIDS.equals(workloadName)) {
+            if (PlatformWorkloadAttribute.SELLER_CIDS.name().equals(workloadName)) {
                 ware.setShopCategorys(getShopCat(cartData));
             }
             // 商品标题
-            else if (PlatformWorkloadAttribute.TITLE.equals(workloadName)) {
+            else if (PlatformWorkloadAttribute.TITLE.name().equals(workloadName)) {
                 ware.setTitle(getTitle(sxData, cartData));
             }
             // 商品描述
-            else if (PlatformWorkloadAttribute.DESCRIPTION.equals(workloadName)) {
+            else if (PlatformWorkloadAttribute.DESCRIPTION.name().equals(workloadName)) {
                 ware.setIntroduction(getNote(expressionParser, shop, sxData));
             }
 
