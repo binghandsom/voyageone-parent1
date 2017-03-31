@@ -73,7 +73,8 @@
                         <div class="col-md-4 col-lg-offset-8">
                             <!--应运营要求，保存按钮跳过check，一直为pending状态，除了平台类目为必选-->
                             <div class="row">
-                                <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Ready' || ctrl.vm.status == 'Approved'">
+                                <div class="pull-right m-t-xs m-r-xs"
+                                     ng-if="ctrl.vm.status == 'Ready' || ctrl.vm.status == 'Approved' || isPublishSucceed">
                                     <button class="btn btn-vo" ng-click="ctrl.saveProduct()">
                                         <i class="glyphicon glyphicon-floppy-disk"></i>Approved
                                     </button>
@@ -83,7 +84,8 @@
                                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Ready
                                     </button>
                                 </div>
-                                <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Pending' || ctrl.vm.status == 'Ready'">
+                                <div class="pull-right m-t-xs m-r-xs"
+                                     ng-if="ctrl.vm.status == 'Pending' || ctrl.vm.status == 'Ready'">
                                     <button class="btn btn-vo" ng-click="ctrl.saveProduct('temporary')">
                                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存
                                     </button>
