@@ -25,7 +25,7 @@ public class Jingdong_030_Wella_DictTest extends BaseDictTest {
 		{
 			// 店铺介绍图
 			RuleExpression htmlTemplate = new RuleExpression();
-			htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+			htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_990));
 
 			RuleExpression imageType = new RuleExpression();
 			imageType.addRuleWord(new TextWord("5"));
@@ -40,7 +40,7 @@ public class Jingdong_030_Wella_DictTest extends BaseDictTest {
 		{
 			// 自定义图
 			RuleExpression htmlTemplate = new RuleExpression();
-			htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+			htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_990));
 
 			RuleExpression imageTemplate = null;
 
@@ -57,7 +57,7 @@ public class Jingdong_030_Wella_DictTest extends BaseDictTest {
 		{
 			// 购物流程图
 			RuleExpression htmlTemplate = new RuleExpression();
-			htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+			htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_990));
 
 			RuleExpression imageType = new RuleExpression();
 			imageType.addRuleWord(new TextWord("4"));
