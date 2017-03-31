@@ -2310,12 +2310,14 @@ public class SxProductService extends BaseService {
 
         Map<CustomMappingType, List<Field>> mappingTypePropsMap = new HashMap<>();
 
+        // 为了一种特殊的schema， 做出的一个补丁， 以后要改 START
         // 取出当前类目的sku属性（或达尔文sku属性）里的属性
         List<Field> tmallSkuFields = fieldsMap.entrySet().stream()
                 .filter(f -> f.getKey().equalsIgnoreCase("darwin_sku") || f.getKey().equalsIgnoreCase("sku"))
                 .map(f -> ((MultiComplexField)f.getValue()).getFields())
                 .findAny()
                 .orElse(new ArrayList<>());
+        // 为了一种特殊的schema， 做出的一个补丁， 以后要改 END
 
         for (CmsMtPlatformPropMappingCustomModel model : cmsMtPlatformPropMappingCustomModels) {
             // add by morse.lu 2016/05/24 start
@@ -2325,16 +2327,32 @@ public class SxProductService extends BaseService {
             }
             // add by morse.lu 2016/05/24 end
 
-            if (CustomMappingType.valueOf(model.getMappingType()) == CustomMappingType.SKU_INFO) {
-                // 如果当前这个属性名称大多数情况下是属于sku里的属性的话， 那么看看sku（或达尔文sku）里， 是否有当前这个属性
-                // 如果没有这个属性的话， 那就说明这个属性是在sku（或达尔文sku）外层的属性， 无需自动处理
+            // 为了一种特殊的schema， 做出的一个补丁， 以后要改 START
+//            if (CustomMappingType.valueOf(model.getMappingType()) == CustomMappingType.SKU_INFO || CustomMappingType.valueOf(model.getMappingType()) == CustomMappingType.DARWIN_SKU) {
+//                if (!"darwin_sku".equals(model.getPlatformPropId()) // 不能被踢掉
+//                        && !"sku".equals(model.getPlatformPropId()) // 不能被踢掉
+//                        && !"sku".equals(model.getPlatformPropId()) // 不能被踢掉
+//                        ) {
+//                    // 如果当前这个属性名称大多数情况下是属于sku里的属性的话， 那么看看sku（或达尔文sku）里， 是否有当前这个属性
+//                    // 如果没有这个属性的话， 那就说明这个属性是在sku（或达尔文sku）外层的属性， 无需自动处理
+//                    boolean haveThisAttr = tmallSkuFields.stream()
+//                            .filter(f -> model.getPlatformPropId().equals(f.getId()))
+//                            .count() > 0;
+//                    if (!haveThisAttr) {
+//                        continue;
+//                    }
+//                }
+//            }
+
+            if (CustomMappingType.valueOf(model.getMappingType()) == CustomMappingType.SKU_INFO && "prop_20509".equals(model.getPlatformPropId())) {
                 boolean haveThisAttr = tmallSkuFields.stream()
-                        .filter(f -> model.getPlatformPropId().equals(f.getId()))
+                        .filter(f -> "prop_20509".equals(f.getId()))
                         .count() > 0;
                 if (!haveThisAttr) {
                     continue;
                 }
             }
+            // 为了一种特殊的schema， 做出的一个补丁， 以后要改 END
 
             Field field = fieldsMap.get(model.getPlatformPropId());
             if (field != null) {
