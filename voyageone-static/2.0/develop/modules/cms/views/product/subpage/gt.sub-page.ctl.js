@@ -271,11 +271,7 @@ define([
 
         //判断页面头部状态
         if (mark != "temporary") {
-            if (cartId == 31) {
-                self.vm.status = 'Approved';
-            } else {
-                self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
-            }
+            self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
         }
 
         /**构造调用接口上行参数*/
