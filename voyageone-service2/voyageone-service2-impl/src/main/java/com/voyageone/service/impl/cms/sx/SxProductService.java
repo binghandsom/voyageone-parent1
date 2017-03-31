@@ -5776,4 +5776,105 @@ public class SxProductService extends BaseService {
 
         return imageUrl;
     }
+    /**
+     *
+     * @param channelId 渠道ID
+     * @param cartId    平台ID
+     * @param workloadName  任务名称
+     * @param codeList  待更新商品列表
+     * @param modifier  变更人
+     */
+    public void insertPlatformWorkload(String channelId, Integer cartId, PlatformWorkloadAttribute workloadName, List<String> codeList,
+                                        String modifier) {
+        // 输入参数检查
+        if (StringUtils.isEmpty(channelId) || ListUtils.isNull(codeList) || StringUtils.isEmpty(modifier)
+                || workloadName == null) {
+            $error("insertPlatformWorkLoad 缺少参数" + channelId + "==" + codeList.size() + "==" + modifier
+                     + "==" + workloadName);
+            return;
+        }
+
+
+        // 准备插入workload表的数据
+        List<CmsBtSxWorkloadModel> modelList = new ArrayList<>();
+        // 已处理过的group(防止同一个group多次被插入)
+//        List<Long> groupWorkList = new ArrayList<>();
+
+        // 根据商品code获取其所有group信息(所有平台)
+        JongoQuery jongoQuery = new JongoQuery();
+        Criteria criteria;
+        if(cartId != null){
+            criteria = new Criteria("productCodes").in(codeList).and("cartId").is(cartId);
+        }else{
+            criteria = new Criteria("productCodes").in(codeList);
+        }
+        jongoQuery.setQuery(criteria);
+        List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select(jongoQuery, channelId);
+        for (CmsBtProductGroupModel group : groups) {
+//            if (groupWorkList.contains(group.getGroupId())) {
+//                // 如果已经处理过了, 那么就跳过
+//                continue;
+//            } else {
+//                groupWorkList.add(group.getGroupId());
+//            }
+
+            // 如果cart是0或者1的话, 直接就跳过, 肯定不用上新的.
+            if (group.getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
+                continue;
+            }
+
+            if (cartId != null && cartId.intValue() != group.getCartId().intValue()) {
+                // 指定了cartId, 并且指定的cartId并不是现在正在处理的group的场合, 跳过
+                continue;
+            }
+
+            // 加入等待更新列表
+            CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
+            model.setChannelId(channelId);
+            model.setCartId(group.getCartId());
+            model.setWorkloadName(workloadName.name);
+            model.setGroupId(group.getGroupId());
+            model.setPriority_order(codeList.size());
+            model.setModifier(modifier);
+            model.setModified(DateTimeUtil.getDate());
+            model.setCreater(modifier);
+            model.setCreated(DateTimeUtil.getDate());
+            modelList.add(model);
+
+        }
+
+        // 插入上新表
+        int iCnt = 0;
+        if (!modelList.isEmpty()) {
+            List<CmsBtSxWorkloadModel> modelListFaster = new ArrayList<>();
+
+            for (int i = 0; i < modelList.size(); i++) {
+                modelListFaster.add(modelList.get(i));
+                if (i % 301 == 0 ) {
+                    iCnt += sxWorkloadDao.insertPlatformWorkloadModels(modelListFaster);
+                    // 初始化一下
+                    modelListFaster = new ArrayList<>();
+                }
+            }
+
+            if (modelListFaster.size() > 0) {
+                // 最后插入一次数据库
+                iCnt += sxWorkloadDao.insertPlatformWorkloadModels(modelListFaster);
+            }
+
+            // 逻辑删除cms_bt_business_log中以前的错误,即把status更新成1:已解决
+
+//            if(cartId != 33) {
+//                long sta = System.currentTimeMillis();
+//                modelList.forEach(p -> {
+//                    clearBusinessLog2(p.getChannelId(), p.getCartId(), p.getGroupId(), p.getModifier());
+//                });
+//                $info("逻辑删除cms_bt_business_log中以前的错误 耗时" + (System.currentTimeMillis() - sta));
+//            }
+        }
+        $debug("insertPlatformWorkLoad 新增PlatformWorkload结果 " + iCnt);
+
+
+    }
+
 }
