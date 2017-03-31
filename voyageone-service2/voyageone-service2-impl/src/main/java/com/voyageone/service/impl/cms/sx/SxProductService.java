@@ -78,9 +78,13 @@ import com.voyageone.service.model.ims.ImsBtProductModel;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.http.*;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -3968,8 +3972,23 @@ public class SxProductService extends BaseService {
         // 最优先看platforms.Pxx.图片， 如果不存在的场合， 再去看common.fields.图片
         // 如果是PRODUCT，先看看image6有没有值，只要image6有一条，那么都从image6里取,否则还是去取image1
         List<CmsBtProductModel_Field_Image> productImages;
+        List<CmsBtProductModel_Field_Image> tmp;
         if (CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE == imageType) {
-            productImages = product.getPlatform(cartId).getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
+            tmp = product.getPlatform(cartId).getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
+            if (tmp == null || tmp.isEmpty()) {
+                productImages = null;
+            } else {
+                productImages = new ArrayList<>();
+                for (int i = 0; i < tmp.size(); i++) {
+                    CmsBtProductModel_Field_Image img = new CmsBtProductModel_Field_Image();
+
+                    Object v = tmp.get(i);
+                    String s = ((LinkedHashMap<String, String>)v).get(imageType.getName());
+                    img.put(imageType.getName(), s);
+
+                    productImages.add(img);
+                }
+            }
 
             if (productImages == null || productImages.isEmpty() || StringUtils.isEmpty(productImages.get(0).getName())) {
                 productImages = product.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
@@ -3979,7 +3998,21 @@ public class SxProductService extends BaseService {
                 productImages = product.getCommon().getFields().getImages(imageType);
             }
         } else {
-            productImages = product.getPlatform(cartId).getImages(imageType);
+            tmp = product.getPlatform(cartId).getImages(imageType);
+            if (tmp == null || tmp.isEmpty()) {
+                productImages = null;
+            } else {
+                productImages = new ArrayList<>();
+                for (int i = 0; i < tmp.size(); i++) {
+                    CmsBtProductModel_Field_Image img = new CmsBtProductModel_Field_Image();
+
+                    Object v = tmp.get(i);
+                    String s = ((LinkedHashMap<String, String>)v).get(imageType.getName());
+                    img.put(imageType.getName(), s);
+
+                    productImages.add(img);
+                }
+            }
 
             if (productImages == null || productImages.isEmpty() || StringUtils.isEmpty(productImages.get(0).getName())) {
                 productImages = product.getCommon().getFields().getImages(imageType);
@@ -5621,6 +5654,39 @@ public class SxProductService extends BaseService {
                 ((ComplexField) fieldObj).setComplexValue(complexValue);
             }
         }
+    }
+
+    /**
+     * 平台级库存同步
+     *
+     * @param channelId channelId
+     * @param cartId    cartId
+     * @param codeList  codeList
+     * @throws IOException
+     */
+    public Map<String, Object> synInventoryToPlatform(String channelId, String cartId, List<String> codeList, List<String> skuList) throws IOException {
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.parseMediaType("application/json;charset=UTF-8"));
+        ObjectMapper objectMapper = new ObjectMapper();
+        HashMap<String, Object> feedInfo = new HashMap<>();
+        feedInfo.put("orderChanneId", channelId);
+        feedInfo.put("cartId", cartId);
+        feedInfo.put("codeList", codeList);
+        feedInfo.put("skuList", skuList);
+        feedInfo.put("timeStamp", System.currentTimeMillis());
+        feedInfo.put("signature", MD5.getMD5(channelId + System.currentTimeMillis()));
+//        List<HashMap<String, Object>> requestList = Arrays.asList();
+
+        String json = objectMapper.writeValueAsString(feedInfo);
+//        httpHeaders.set("Authorization", "Basic " + MD5.getMD5(json + System.currentTimeMillis() / TimeUnit.MINUTES.toMillis(30)));
+        HttpEntity<String> httpEntity = new HttpEntity<>(json, httpHeaders);
+        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+        simpleClientHttpRequestFactory.setConnectTimeout(6000);
+        simpleClientHttpRequestFactory.setReadTimeout(6000);
+        RestTemplate restTemplate = new RestTemplate(simpleClientHttpRequestFactory);
+        ResponseEntity<String> exchange = restTemplate.exchange("http://open.synship.net/wms/logSynInventoryForCms/import", HttpMethod.POST, httpEntity, String.class);
+        return JsonUtil.jsonToMap(exchange.getBody());
     }
 
     private enum SkuSort {
