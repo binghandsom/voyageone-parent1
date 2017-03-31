@@ -44,7 +44,7 @@ public class TbSaleService extends TbBase {
      * @param numIid String 商品数字ID，该参数必须
      */
     public ItemUpdateListingResponse doWareUpdateListing(ShopBean shopBean, String numIid) {
-        String quantityCnt = "999";
+        String quantityCnt = "99";
         logger.info("商品上架 " + numIid);
         ItemUpdateListingRequest request = new ItemUpdateListingRequest();
         request.setNumIid(NumberUtils.toLong(numIid));
