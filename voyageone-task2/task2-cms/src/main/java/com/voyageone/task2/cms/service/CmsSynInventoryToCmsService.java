@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,9 +72,10 @@ public class CmsSynInventoryToCmsService extends BaseCronTaskService {
      */
     @Override
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+        List<String> other = Arrays.asList("000","002","003","004","005","006");
         // 获取允许运行的渠道
         Set<String> colList = mongoTemplate.getCollectionNames();
-        List<String> orderChannelIdList = Channels.getChannelList().stream().map(OrderChannelBean::getOrder_channel_id).collect(Collectors.toList());
+        List<String> orderChannelIdList = Channels.getChannelList().stream().filter(orderChannelBean -> !other.contains(orderChannelBean.getOrder_channel_id())).map(OrderChannelBean::getOrder_channel_id).collect(Collectors.toList());
 //        List<String> orderChannelIdList = colList.stream().filter(s -> s.indexOf("cms_bt_product_c") != -1 && s.length() == 19).map(s1 -> s1.substring(16)).collect(Collectors.toList());
 
         $info("orderChannelIdList=" + orderChannelIdList.size());
@@ -82,7 +84,7 @@ public class CmsSynInventoryToCmsService extends BaseCronTaskService {
 
         // 根据订单渠道运行
         for (final String orderChannelID : orderChannelIdList) {
-            if (Integer.parseInt(orderChannelID) <1 || Integer.parseInt(orderChannelID) > 900) continue;
+            if (Integer.parseInt(orderChannelID) > 900) continue;
             try {
                 isChildren = false;
 
