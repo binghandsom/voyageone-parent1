@@ -5,6 +5,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CommonUtil;
@@ -72,7 +73,8 @@ public class CmsSynInventoryToCmsService extends BaseCronTaskService {
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         // 获取允许运行的渠道
         Set<String> colList = mongoTemplate.getCollectionNames();
-        List<String> orderChannelIdList = colList.stream().filter(s -> s.indexOf("cms_bt_product_c") != -1 && s.length() == 19).map(s1 -> s1.substring(16)).collect(Collectors.toList());
+        List<String> orderChannelIdList = Channels.getChannelList().stream().map(OrderChannelBean::getOrder_channel_id).collect(Collectors.toList());
+//        List<String> orderChannelIdList = colList.stream().filter(s -> s.indexOf("cms_bt_product_c") != -1 && s.length() == 19).map(s1 -> s1.substring(16)).collect(Collectors.toList());
 
         $info("orderChannelIdList=" + orderChannelIdList.size());
 
@@ -80,7 +82,7 @@ public class CmsSynInventoryToCmsService extends BaseCronTaskService {
 
         // 根据订单渠道运行
         for (final String orderChannelID : orderChannelIdList) {
-            if (Integer.parseInt(orderChannelID) > 900) continue;
+            if (Integer.parseInt(orderChannelID) <1 || Integer.parseInt(orderChannelID) > 900) continue;
             try {
                 isChildren = false;
 
