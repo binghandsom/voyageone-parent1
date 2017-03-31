@@ -24,6 +24,7 @@ import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.PlatformMappingDeprecatedService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.sx.PlatformWorkloadAttribute;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
@@ -35,7 +36,6 @@ import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
-import com.voyageone.task2.cms.enums.PlatformWorkloadAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,10 +58,10 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
     private final static List<String> cartList = Lists.newArrayList("20","23");
     // 天猫增量更新支持的属性 -> 对应系统任务名(workloadName)
     private final static List<String> IncrementAttrList = Lists.newArrayList(
-                        PlatformWorkloadAttribute.SELLER_CIDS, PlatformWorkloadAttribute.ITEM_IMAGES,
-                        PlatformWorkloadAttribute.DESCRIPTION, PlatformWorkloadAttribute.TITLE,
-                        PlatformWorkloadAttribute.SELL_POINTS, PlatformWorkloadAttribute.WHITE_BG_IMAGE,
-                        PlatformWorkloadAttribute.WIRELESS_DESC);
+                        PlatformWorkloadAttribute.SELLER_CIDS.name(), PlatformWorkloadAttribute.ITEM_IMAGES.name(),
+                        PlatformWorkloadAttribute.DESCRIPTION.name(), PlatformWorkloadAttribute.TITLE.name(),
+                        PlatformWorkloadAttribute.SELL_POINTS.name(), PlatformWorkloadAttribute.WHITE_BG_IMAGE.name(),
+                        PlatformWorkloadAttribute.WIRELESS_DESC.name());
 
     @Autowired
     private PlatformMappingDeprecatedService platformMappingDeprecatedService;
