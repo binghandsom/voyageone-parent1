@@ -2310,6 +2310,13 @@ public class SxProductService extends BaseService {
 
         Map<CustomMappingType, List<Field>> mappingTypePropsMap = new HashMap<>();
 
+        // 取出当前类目的sku属性（或达尔文sku属性）里的属性
+        List<Field> tmallSkuFields = fieldsMap.entrySet().stream()
+                .filter(f -> f.getKey().equalsIgnoreCase("darwin_sku") || f.getKey().equalsIgnoreCase("sku"))
+                .map(f -> ((MultiComplexField)f.getValue()).getFields())
+                .findAny()
+                .orElse(new ArrayList<>());
+
         for (CmsMtPlatformPropMappingCustomModel model : cmsMtPlatformPropMappingCustomModels) {
             // add by morse.lu 2016/05/24 start
             if (!isItem && CustomMappingType.valueOf(model.getMappingType()) == CustomMappingType.SKU_INFO) {
@@ -2317,6 +2324,18 @@ public class SxProductService extends BaseService {
                 continue;
             }
             // add by morse.lu 2016/05/24 end
+
+            if (CustomMappingType.valueOf(model.getMappingType()) == CustomMappingType.SKU_INFO) {
+                // 如果当前这个属性名称大多数情况下是属于sku里的属性的话， 那么看看sku（或达尔文sku）里， 是否有当前这个属性
+                // 如果没有这个属性的话， 那就说明这个属性是在sku（或达尔文sku）外层的属性， 无需自动处理
+                boolean haveThisAttr = tmallSkuFields.stream()
+                        .filter(f -> model.getPlatformPropId().equals(f.getId()))
+                        .count() > 0;
+                if (!haveThisAttr) {
+                    continue;
+                }
+            }
+
             Field field = fieldsMap.get(model.getPlatformPropId());
             if (field != null) {
                 List<Field> mappingPlatformPropBeans = mappingTypePropsMap.get(CustomMappingType.valueOf(model.getMappingType()));
