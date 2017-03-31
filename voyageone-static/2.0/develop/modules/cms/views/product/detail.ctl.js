@@ -62,7 +62,7 @@ define([
                 self.product.autoApprovePrice = resp.autoApprovePrice[0];
             });
 
-/*            if(_cartObj){
+            if(_cartObj){
                 var strArr = _cartObj.split("|");
 
                 if(strArr.length > 1){
@@ -70,9 +70,7 @@ define([
                     self.product.skuBlock = true;
                 }else
                     self.defaultCartId = _cartObj;
-            }*/
-
-            self.defaultCartId = 928;
+            }
 
         };
 
