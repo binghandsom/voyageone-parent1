@@ -22,6 +22,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -83,10 +84,16 @@ public class CmsProductIncrImportToSearchService extends BaseListenService {
         // get Query
         BasicDBObject queryDBObject = getQueryDBObject();
         $info("CmsProductIncrImportToSearchService Start tailing with query:" + queryDBObject);
-        return fromCollection.find(queryDBObject)
-                .sort(new BasicDBObject("$natural", 1))
-                .cursorType(CursorType.TailableAwait)
-                .noCursorTimeout(true).iterator();
+        try {
+            return fromCollection.find(queryDBObject)
+                    .sort(new BasicDBObject("$natural", 1))
+                    .cursorType(CursorType.TailableAwait)
+                    .noCursorTimeout(true).iterator();
+        }catch (Exception e){
+            $info(e.getMessage());
+            throw e;
+        }
+
     }
 
     @Override
