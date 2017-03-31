@@ -36,12 +36,12 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 		}
 
 		// 京东
-		doCreateJson("详情页描述", false, doDict_详情页描述(24));
+		doCreateJson("京东详情页描述", false, doDict_详情页描述(24));
 		for (int i = 0; i < 10; i++) {
 			doCreateJson("商品标题与图片-" + i, false, doDict_商品标题与图片(24, i));
 		}
 		// 京东国际
-		doCreateJson("详情页描述", false, doDict_详情页描述(26));
+		doCreateJson("京东详情页描述", false, doDict_详情页描述(26));
 		for (int i = 0; i < 10; i++) {
 			doCreateJson("商品标题与图片-" + i, false, doDict_商品标题与图片(26, i));
 		}

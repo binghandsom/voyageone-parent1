@@ -25,6 +25,7 @@ import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.PlatformMappingDeprecatedService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
+import com.voyageone.service.impl.cms.sx.PlatformWorkloadAttribute;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
@@ -36,7 +37,6 @@ import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
-import com.voyageone.task2.cms.enums.PlatformWorkloadAttribute;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import org.apache.avro.data.Json;
 import org.apache.commons.lang.math.NumberUtils;
@@ -266,7 +266,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
         // 店铺级标题禁用词 20161216 tom START
         // 先临时这样处理
         String notAllowList = getConditionPropValue(sxData, "notAllowTitleList", shop);
-        if (PlatformWorkloadAttribute.TITLE.equals(workloadName)) {
+        if (PlatformWorkloadAttribute.TITLE.name().equals(workloadName)) {
             // 标题(必填)
             // 商品标题支持英文到中文，韩文到中文的自动翻译，可以在extends字段里面进行设置是否需要翻译
             // 注意：使用测试账号的APPKEY测试时，标题应包含中文"测试请不要拍"
@@ -293,7 +293,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
                 }
             }
             // 店铺级标题禁用词 20161216 tom END
-            productInfoMap.put(PlatformWorkloadAttribute.TITLE, valTitle);
+            productInfoMap.put(PlatformWorkloadAttribute.TITLE.name(), valTitle);
         } else if (PlatformWorkloadAttribute.SELLER_CIDS.equals(workloadName)) {
             // 店铺内分类id(非必填)  格式："shop_cats":"111111,222222,333333"
             String extends_shop_cats = "";
@@ -348,8 +348,8 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
                 }
             }
             // 店铺级标题禁用词 20161216 tom END
-            productInfoMap.put(PlatformWorkloadAttribute.DESCRIPTION, valDescription);
-        } else if (PlatformWorkloadAttribute.ITEM_IMAGES.equals(workloadName)) {
+            productInfoMap.put(PlatformWorkloadAttribute.DESCRIPTION.name(), valDescription);
+        } else if (PlatformWorkloadAttribute.ITEM_IMAGES.name().equals(workloadName)) {
             // 主图(必填)
             // 最少1张，最多5张。多张图片之间，使用英文的逗号进行分割。需要使用alicdn的图片地址。建议尺寸为800*800像素。
             // 格式：<value>http://img.alicdn.com/imgextra/i1/2640015666/TB2PTFYkXXXXXaUXpXXXXXXXXXX_!!2640015666.jpg,
