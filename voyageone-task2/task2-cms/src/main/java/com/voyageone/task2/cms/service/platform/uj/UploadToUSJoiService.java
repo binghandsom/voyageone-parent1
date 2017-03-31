@@ -36,7 +36,6 @@ import com.voyageone.service.impl.cms.CmsBtTranslateService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.CmsBtFeedImportSizeService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
-import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceService;
@@ -123,9 +122,13 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
     @Autowired
     private FeedInfoService feedInfoService;
-
-    // 每个channel的子店->USJOI主店导入最大件数
-    private final static int UPLOAD_TO_USJOI_MAX_500 = 500;
+    // 价格阈值 超过该值的商品不能导入主数据
+    private Double priceThreshold = null;
+    // 重量阈值 超过该值的商品不能导入主数据
+    private Double weightThreshold = null;
+    // 主类目黑名单
+    private List<String> categoryWhite = new ArrayList<>();
+    private Map<String, List<ConditionPropValueModel>> channelConditionConfig;
 
     @Override
     public SubSystem getSubSystem() {
@@ -136,15 +139,6 @@ public class UploadToUSJoiService extends BaseCronTaskService {
     public String getTaskName() {
         return "CmsUploadProductToUSJoiJob";
     }
-
-    // 价格阈值 超过该值的商品不能导入主数据
-    private Double priceThreshold = null;
-    // 重量阈值 超过该值的商品不能导入主数据
-    private Double weightThreshold = null;
-    // 主类目黑名单
-    private List<String> categoryWhite = new ArrayList<>();
-
-    private Map<String, List<ConditionPropValueModel>> channelConditionConfig;
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
