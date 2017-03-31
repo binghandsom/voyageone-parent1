@@ -38,6 +38,17 @@
                                             </div>
                                             <div class="form-horizontal">
                                                 <div class="form-group">
+                                                    <label class="col-sm-3 control-label" translate="TXT_FUZZY_SEARCH"></label>
+                                                    <div class="col-sm-8">
+                                                        <textarea class="form-control inherited" style="resize: none;" rows="2" ng-model="vm.searchInfo.fuzzyStr"></textarea>
+                                                        <div class="text-warnings" style="padding-left:0px">
+                                                            <i class="icon fa fa-bell-o"></i>&nbsp;模糊查询,包括:产品名称
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-horizontal">
+                                                <div class="form-group">
                                                     <label class="col-sm-3 control-label">款号/Code/SKU</label>
                                                     <div class="col-sm-8">
                                                         <textarea class="form-control inherited no-resize" rows="3" ng-model="vm.searchInfo.codeList" ></textarea>
@@ -51,7 +62,18 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-horizontal">
-
+                                            <div class="form-group"><!-- 查询category状态 -->
+                                                <label class="col-sm-3 control-label" translate="TXT_CATEGORY_STATUS"></label>
+                                                <div class="col-sm-8">
+                                                    <div class="col-sm-10">
+                                                        <select class="form-control" ng-model="vm.searchInfo.mCatStatus">
+                                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                            <option value="0">未设置</option>
+                                                            <option value="1">已设置</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="form-group"><!-- 查询翻译状态 -->
                                                 <label class="col-sm-3 control-label" translate="TXT_TRANSSTS_ATTRIBUTE"></label>
                                                 <div class="col-sm-8">
@@ -62,7 +84,30 @@
                                                     </div>
                                                 </div>
                                             </div>
-
+                                            <div class="form-group"><!-- 查询税号设置状态 -->
+                                                <label class="col-sm-3 control-label" translate="TXT_TAX_NO_STATUS"></label>
+                                                <div class="col-sm-8">
+                                                    <div class="col-sm-10">
+                                                        <select class="form-control" ng-model="vm.searchInfo.taxNoStatus">
+                                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                            <option value="0">未设置</option>
+                                                            <option value="1">已设置</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group"><!-- 锁定商品 -->
+                                                <label class="col-sm-3 control-label" >锁定商品</label>
+                                                <div class="col-sm-8">
+                                                    <div class="col-sm-10">
+                                                        <select class="form-control" ng-model="vm.searchInfo.lockFlg">
+                                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                            <option value="0">No</option>
+                                                            <option value="1">Yes</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="form-group"><!-- 查询库存状态 -->
                                                 <label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
                                                 <div class="col-sm-8" style="padding-left:0px">
@@ -282,7 +327,18 @@
                                 </div>
                                 <div class="col-sm-4" ng-controller="popupCtrl">
                                     <div class="form-horizontal">
-
+                                        <div class="form-group" ng-if="vm._cart_display&&vm._mmmcart_display"><!-- 锁定商品 -->
+                                            <label class="col-sm-3 control-label" >锁定商品</label>
+                                            <div class="col-sm-8">
+                                                <div class="col-sm-10">
+                                                    <select class="form-control" ng-model="vm.searchInfo.pLockFlg">
+                                                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                        <option value="0">No</option>
+                                                        <option value="1">Yes</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="form-group" ng-if="vm._cart_display&&vm._mmmcart_display"><!--店铺内分类-->
                                             <div class="col-sm-4 text-right">
                                                 <div class="">

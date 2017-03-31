@@ -39,6 +39,7 @@ public class CmsProductSearchModel {
     private String hsCodeStatus;
     private String feedCat;
     private String created;
+    private String lock;
     private Double priceMsrpEd;
     private Double priceRetailEd;
 
@@ -236,5 +237,13 @@ public class CmsProductSearchModel {
 
     public void setOrgChannelId(String orgChannelId) {
         this.orgChannelId = orgChannelId;
+    }
+
+    public String getLock() {
+        return lock;
+    }
+
+    public void setLock(String lock) {
+        this.lock = lock;
     }
 }

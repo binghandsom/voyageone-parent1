@@ -159,6 +159,14 @@ public class CmsProductSearchQueryService extends BaseService {
         // 只有选中具体的某个平台的时候,和platform相关的检索才有效
         if (cartId > 1) {
             // 设置platform检索条件
+            // 获取platform/lock
+            if (StringUtils.isNotEmpty(searchValue.getpLockFlg())) {
+                if ("1".equals(searchValue.getLockFlg())) {
+                    criteria = criteria.and("P"+cartId+"_lock").is("1");
+                } else {
+                    criteria = criteria.and("P"+cartId+"_lock").is("1").not();
+                }
+            }
             // 获取platform/cart status
             if (searchValue.getPlatformStatus() != null && searchValue.getPlatformStatus().size() > 0) {
                 criteria = criteria.and("P"+cartId+"_pStatus").in(searchValue.getPlatformStatus());
@@ -299,7 +307,7 @@ public class CmsProductSearchQueryService extends BaseService {
             if ("1".equals(searchValue.getmCatStatus())) {
                 criteria = criteria.and("categoryStatus").is(searchValue.getmCatStatus());
             } else {
-                criteria = criteria.and("categoryStatus").is(searchValue.getmCatStatus()).not();
+                criteria = criteria.and("categoryStatus").is("1").not();
             }
         }
         // 获取税号设置完成状态
@@ -307,10 +315,17 @@ public class CmsProductSearchQueryService extends BaseService {
             if ("1".equals(searchValue.getTaxNoStatus())) {
                 criteria = criteria.and("hsCodeStatus").is(searchValue.getTaxNoStatus());
             } else {
-                criteria = criteria.and("hsCodeStatus").is(searchValue.getTaxNoStatus()).not();
+                criteria = criteria.and("hsCodeStatus").is("1").not();
             }
         }
-
+        // 获取商品锁定状态
+        if (StringUtils.isNotEmpty(searchValue.getLockFlg())) {
+            if ("1".equals(searchValue.getLockFlg())) {
+                criteria = criteria.and("lock").is("1");
+            } else {
+                criteria = criteria.and("lock").is("1").not();
+            }
+        }
         // 获取产品类型设置状态
         if (StringUtils.isNotEmpty(searchValue.getProductSelType())
                 && CollectionUtils.isNotEmpty(searchValue.getProductTypeList())) {

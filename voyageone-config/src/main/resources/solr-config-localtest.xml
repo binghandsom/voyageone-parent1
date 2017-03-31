@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="true"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:solr="http://www.springframework.org/schema/data/solr"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/data/solr
+        http://www.springframework.org/schema/data/solr/spring-solr-1.0.xsd">
+
+    <solr:solr-server id="cmsProductSolrClient" url="http://10.0.0.73:8983/solr/cms_product" maxConnections="10" timeout="5000" />
+
+    <bean id="cmsProductSolrTemplate" class="org.springframework.data.solr.core.SolrTemplate">
+        <constructor-arg ref="cmsProductSolrClient" />
+    </bean>
+
+    <solr:solr-server id="cmsProductSolrDistClient" url="http://10.0.0.73:8983/solr/cms_product_d" maxConnections="10" timeout="5000" />
+
+    <bean id="cmsProductSolrDistTemplate" class="org.springframework.data.solr.core.SolrTemplate">
+        <constructor-arg ref="cmsProductSolrDistClient" />
+    </bean>
+
+    <solr:solr-server id="cmsBrandCatsSolrDistClient" url="http://10.0.0.73:8983/solr/cms_brand_cats_d" maxConnections="10" timeout="5000" />
+
+    <bean id="cmsBrandCatsSolrDistTemplate" class="org.springframework.data.solr.core.SolrTemplate">
+        <constructor-arg ref="cmsBrandCatsSolrDistClient" />
+    </bean>
+
+</beans>

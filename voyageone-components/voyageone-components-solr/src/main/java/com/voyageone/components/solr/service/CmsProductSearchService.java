@@ -104,6 +104,8 @@ public class CmsProductSearchService extends BaseSearchService {
 
         cmsProductSearchModel.setOrgChannelId(cmsBtProductModel.getOrgChannelId());
 
+        cmsProductSearchModel.setLock(cmsBtProductModel.getLock());
+
         cmsBtProductModel.getPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> {
             if(cmsBtProductModel_platform_cart.getCartId() > 10 && cmsBtProductModel_platform_cart.getCartId() < 900){
                 CmsProductSearchPlatformModel cmsProductSearchPlatformModel = new CmsProductSearchPlatformModel();
@@ -116,6 +118,7 @@ public class CmsProductSearchService extends BaseSearchService {
                 cmsProductSearchPlatformModel.setSale30(cmsBtProductModel.getSales().getCodeSum30(cmsBtProductModel_platform_cart.getCartId()));
                 cmsProductSearchPlatformModel.setSaleYear(cmsBtProductModel.getSales().getCodeSumYear(cmsBtProductModel_platform_cart.getCartId()));
                 cmsProductSearchPlatformModel.setSaleAll(cmsBtProductModel.getSales().getCodeSumAll(cmsBtProductModel_platform_cart.getCartId()));
+                cmsProductSearchPlatformModel.setLock(cmsBtProductModel_platform_cart.getLock());
                 if(cmsBtProductModel_platform_cart.getSellerCats() != null) {
                     cmsProductSearchPlatformModel.setSellerCats(cmsBtProductModel_platform_cart.getSellerCats().stream().map(CmsBtProductModel_SellerCat::getcId).collect(Collectors.toList()));
                 }
