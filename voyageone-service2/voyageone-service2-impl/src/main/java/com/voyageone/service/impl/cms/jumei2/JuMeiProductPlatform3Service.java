@@ -199,6 +199,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
             // 每100个调用一次库存同步
             List<List<String>> productCodesList = CommonUtil.splitList(productCodes, 100);
             for (List<String> codes : productCodesList) {
+                $info("发送库存同步请求" + codes.toArray().toString());
                 Map<String, Object> result = sxProductService.synInventoryToPlatform(modelCmsBtJmPromotion.getChannelId(), "27", codes, null);
 
                 // 同步库存失败结果返回
