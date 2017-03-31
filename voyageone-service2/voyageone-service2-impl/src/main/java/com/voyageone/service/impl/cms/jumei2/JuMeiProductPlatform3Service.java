@@ -155,24 +155,26 @@ public class JuMeiProductPlatform3Service extends BaseService {
 
                                 if (!StringUtil.isEmpty(promotionSkuMap.get("jmSkuNo"))) {
 
+                                    dealCopyDealSkuData.setStocks(String.valueOf("1"));
                                     inventoryList.forEach(inventoryInfo -> {
                                         if (inventoryInfo.getSku().equals(skuCode)
                                                 && inventoryInfo.getQtyChina() > 0) {
                                             dealCopyDealSkuData.setStocks(String.valueOf(inventoryInfo.getQtyChina()));
-                                            dealCopyDealSkuData.setSku_no(String.valueOf(promotionSkuMap.get("jmSkuNo")));
-                                            dealCopyDealSkuData.setDeal_price(String.valueOf(promotionSkuMap.get("dealPrice")));
-                                            dealCopyDealSkuData.setMarket_price(String.valueOf(promotionSkuMap.get("marketPrice")));
+                                            return;
                                         }
                                     });
+                                    dealCopyDealSkuData.setSku_no(String.valueOf(promotionSkuMap.get("jmSkuNo")));
+                                    dealCopyDealSkuData.setDeal_price(String.valueOf(promotionSkuMap.get("dealPrice")));
+                                    dealCopyDealSkuData.setMarket_price(String.valueOf(promotionSkuMap.get("marketPrice")));
+                                    skuList.add(dealCopyDealSkuData);
                                 }
                             } else {
-
                                 dealCopyDealSkuData.setStocks("1");
                                 dealCopyDealSkuData.setSku_no(jmSkuNo);
                                 dealCopyDealSkuData.setDeal_price(skuInfo.getStringAttribute("priceSale"));
                                 dealCopyDealSkuData.setMarket_price(skuInfo.getStringAttribute("priceMsrp"));
+                                skuList.add(dealCopyDealSkuData);
                             }
-                            skuList.add(dealCopyDealSkuData);
                         }
                     });
 
