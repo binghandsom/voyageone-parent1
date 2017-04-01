@@ -194,6 +194,10 @@ public class SxProductService extends BaseService {
     private CmsBtCustomPropService cmsBtCustomPropService;
     @Autowired
     private JdImgzoneService jdImgzoneService;
+    @Autowired
+    private CmsBtSizeChartImageGroupService cmsBtSizeChartImageGroupService;
+    @Autowired
+    private ImageGroupService imageGroupService;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -5841,5 +5845,40 @@ public class SxProductService extends BaseService {
         }
 
         return imageUrl;
+    }
+
+    /**
+     *
+     * @param channelId
+     * @param sizeChartId
+     * @param viewType 1:PC端 2：APP端
+     * @return
+     */
+    public List<Map<String,Object>> getListImageGroupBySizeChartId(String channelId, int sizeChartId, String viewType) {
+        List<CmsBtSizeChartImageGroupModel> list = cmsBtSizeChartImageGroupService.getListByCmsBtSizeChartId(channelId, sizeChartId);
+        List<Map<String, Object>> listImageGroup = new ArrayList<>();
+        CmsBtImageGroupModel groupModel;
+        Map<String, Object> map;
+        for (CmsBtSizeChartImageGroupModel model : list) {
+            map = new HashMap<>();
+            if ("1".equals(viewType)) {
+                groupModel = imageGroupService.getImageGroupModel(String.valueOf(model.getCmsBtImageGroupId()));
+            } else {
+                groupModel = imageGroupService.getImageGroupModel(String.valueOf(model.getCmsBtImageGroupIdApp()));
+            }
+
+            if(groupModel != null) {
+                List<CmsBtImageGroupModel_Image> sizeChartImageList = groupModel.getImage();
+                if (ListUtils.notNull(sizeChartImageList) && groupModel.getImageType() == 2) {  // imageType == 2 (尺码图)
+                    map.put("image", sizeChartImageList);
+                }
+                map.put("imageGroupName", groupModel.getImageGroupName());
+                map.put("imageGroupId", groupModel.getImageGroupId());
+                map.put("cartId", model.getCartId());
+
+                listImageGroup.add(map);
+            }
+        }
+        return listImageGroup;
     }
 }

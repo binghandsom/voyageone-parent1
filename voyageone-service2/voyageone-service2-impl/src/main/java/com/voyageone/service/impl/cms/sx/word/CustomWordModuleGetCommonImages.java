@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.sx.word;
 
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamGetCommonImages;
 import com.voyageone.ims.rule_expression.CustomWord;
@@ -10,11 +11,10 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * cms_bt_image_group(mongoDB)取得url
@@ -49,24 +49,41 @@ public class CustomWordModuleGetCommonImages extends CustomWordModule {
             useOriUrl = true;
         }
 
+        String image = "";
         String parseResult = "";
-
-        List<String> urls = sxProductService.getImageUrls(
-                                    sxData.getChannelId(),
+        List<String> urls = new ArrayList<>();
+        List<String> imageList = new ArrayList<>();
+        // charis 对一张尺码表对应多张尺码图的进行绑定处理
+        if ("2".equals(imageType)) {
+            List<Map<String, Object>> imageGroupList = sxProductService.getListImageGroupBySizeChartId(sxData.getChannelId(), sxData.getSizeChartId(), viewType);
+            Map<String, Object> imageMap = imageGroupList.stream()
+                    .filter(map -> sxData.getCartId().equals(map.get("cartId")))
+                    .findAny()
+                    .orElse(new HashMap<>());
+            imageList = ((List<CmsBtImageGroupModel_Image>) imageMap.get("image")).stream()
+                    .map(i -> i.getPlatformUrl())
+                    .collect(Collectors.toList());
+        }
+        if (ListUtils.notNull(imageList)) {
+            urls.addAll(imageList);
+        }else {
+            urls = sxProductService.getImageUrls(
+                    sxData.getChannelId(),
 //                                    sxData.getMainProduct().getOrgChannelId(),
-                                    sxData.getCartId(),
-                                    Integer.valueOf(imageType),
-                                    Integer.valueOf(viewType),
-                                    // modified by morse.lu 2016/06/27 start
-                                    // 表结构变化，改从common下的fields里去取
+                    sxData.getCartId(),
+                    Integer.valueOf(imageType),
+                    Integer.valueOf(viewType),
+                    // modified by morse.lu 2016/06/27 start
+                    // 表结构变化，改从common下的fields里去取
 //                                    sxData.getMainProduct().getFields().getBrand(),
 //                                    sxData.getMainProduct().getFields().getProductType(),
 //                                    sxData.getMainProduct().getFields().getSizeType(),
-                                    sxData.getMainProduct().getCommon().getFields().getBrand(),
-                                    sxData.getMainProduct().getCommon().getFields().getProductType(),
-                                    sxData.getMainProduct().getCommon().getFields().getSizeType(),
-                                    // modified by morse.lu 2016/06/27 end
-                                    useOriUrl);
+                    sxData.getMainProduct().getCommon().getFields().getBrand(),
+                    sxData.getMainProduct().getCommon().getFields().getProductType(),
+                    sxData.getMainProduct().getCommon().getFields().getSizeType(),
+                    // modified by morse.lu 2016/06/27 end
+                    useOriUrl);
+        }
 
         if (imageIndex == null) {
             for (String url : urls) {
