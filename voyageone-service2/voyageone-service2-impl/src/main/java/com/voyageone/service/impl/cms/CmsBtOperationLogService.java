@@ -182,11 +182,7 @@ public class CmsBtOperationLogService {
             userName = "";
 
 
-        Criteria criteria = new Criteria();
-        queryObject.setQuery(criteria);
-        if(!StringUtil.isEmpty(userName)){
-            criteria = criteria.and("modifier").is(userName);
-        }
+        Criteria criteria = new Criteria("modifier").is(userName);
 
         if(!StringUtil.isEmpty(name)){
             criteria = criteria.and("name").regex(name);
@@ -199,7 +195,7 @@ public class CmsBtOperationLogService {
         if (type != null && type.size() > 0) {
             criteria = criteria.and("type").in(type);
         }
-
+        queryObject.setQuery(criteria);
 //        queryObject.setQuery(new Criteria())
 //        List type = (List) params.get("typeValue");
 //        if (type != null && type.size() > 0) {
