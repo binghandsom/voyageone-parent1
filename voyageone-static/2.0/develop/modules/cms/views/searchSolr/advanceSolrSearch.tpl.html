@@ -622,7 +622,7 @@
                                     <tr><td colspan="14" if-no-rows="vm.productList.length"></td></tr>
                                 </tbody>
                                 <tbody class="box-body" ng-repeat="productInfo in vm.productList" style="border-bottom: 1px solid #ddd; height: 80px;">
-                                    <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
+                                    <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="border-bottom:1px solid #ddd;border-top:1px solid #ddd;height: 40px;">
                                         <td class="text-center" rowspan="2" style="width: 70px;">
                                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
                                                 <input ng-model="vm.productSelList.selFlag[productInfo.prodId]" type="checkbox"
@@ -675,7 +675,7 @@
                                             </span>
                                         </td>
                                     </tr>
-                                    <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray">
+                                    <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="height: 66px">
                                         <td class="text-left">
                                             <a ng-href="#/product/detail/{{productInfo.prodId}}" target="_blank" ng-bind="productInfo.common.fields.code"></a>
                                         </td>
