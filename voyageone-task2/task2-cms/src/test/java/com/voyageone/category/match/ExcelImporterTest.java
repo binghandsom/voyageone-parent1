@@ -15,8 +15,8 @@ import java.text.NumberFormat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class ExcelImporterTest extends TestCase {
-    private static final String TEST_FILEPATH1 = "H:/DOC/1.Master Category文档/主数据结构资料-Master Category & Key Word.xlsx";
-    private static final String TEST_FILEPATH2 = "H:/DOC/1.Master Category文档/主数据结构资料-Master Data Frame（系统导入版）.xlsx";
+    private static final String TEST_FILEPATH1 = "/Users/linanbin/Documents/3.files/0.SVN/2.ProductDesignManage/96.亚马逊主类目数据整理/1.Master Category文档/主数据结构资料-Master Category & Key Word.xlsx";
+    private static final String TEST_FILEPATH2 = "/Users/linanbin/Documents/3.files/0.SVN/2.ProductDesignManage/96.亚马逊主类目数据整理/1.Master Category文档/主数据结构资料-Master Data Frame（系统导入版）.xlsx";
 
     @Autowired
     ExcelImporter excelImporter;
