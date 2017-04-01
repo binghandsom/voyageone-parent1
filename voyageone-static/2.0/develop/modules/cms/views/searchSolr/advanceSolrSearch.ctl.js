@@ -4,7 +4,8 @@ define([
     'modules/cms/controller/popup.ctl',
     'modules/cms/directives/keyValue.directive',
     'modules/cms/service/search.advanceSolr.service',
-    'modules/cms/service/product.detail.service'
+    'modules/cms/service/product.detail.service',
+    'modules/cms/directives/platFormStatus.directive'
 ], function (cms, carts) {
 
     cms.controller('searchAdvanceSolrController', function ($scope, $routeParams, searchAdvanceSolrService, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions, popups, $q, shelvesService) {
