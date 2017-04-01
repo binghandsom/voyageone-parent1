@@ -5,6 +5,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.jumei.JumeiHtMallService;
 import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
@@ -50,6 +51,7 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
     @Override
     public void onStartup(CmsJmMallPromotionPriceSyncMQMessageBody messageBody) throws Exception {
         Integer jmPid = messageBody.getJmPromotionId();
+        List<String> productCodes = messageBody.getProductCodes();
 
         String channelId = messageBody.getChannelId();
         ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.JM.getId());
@@ -61,7 +63,9 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
 
         // 找到该活动下所有sku
         List<Map<String, Object>> skus = cmsBtJmPromotionService.selectCloseJmPromotionSku(jmPid);
-        List<String> productCodes = skus.stream().map(sku -> sku.get("product_code").toString()).distinct().collect(Collectors.toList());
+        if(ListUtils.isNull(productCodes)) {
+            productCodes = skus.stream().map(sku -> sku.get("product_code").toString()).distinct().collect(Collectors.toList());
+        }
         super.count = productCodes == null ? 0 : productCodes.size();
         // 设置请求参数
 //        for (Map<String, Object> skuPriceBean : skus) {
