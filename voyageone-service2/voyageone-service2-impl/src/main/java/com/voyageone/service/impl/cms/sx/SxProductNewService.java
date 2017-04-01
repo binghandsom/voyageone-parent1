@@ -1234,7 +1234,7 @@ public class SxProductNewService extends BaseService {
         for (int i = 0; i < skuList.size(); i++) {
             strSqlSkuList.add(skuList.get(i).getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
         }
-        int cnt = imsBtProductExceptDao.selectImsBtProductExceptByChannelCartSku(channelId, cartId, strSqlSkuList);
+        int cnt = imsBtProductExceptDao.selectImsBtProductExceptByChannelCartSku(channelId, strSqlSkuList);
         if (cnt > 0) {
             String errorMsg = "取得上新数据(SxData)失败! 库存已经被隔离， 不能执行上新程序。groupId(" + groupId + "), main code(" + mainProductCode + ")";
             $error(errorMsg);

@@ -14,10 +14,9 @@ import java.util.Map;
 @Repository
 public class ImsBtProductExceptDao extends ServiceBaseDao {
 
-    public int selectImsBtProductExceptByChannelCartSku(String orderChannelId, int cartId, List<String> skuList) {
+    public int selectImsBtProductExceptByChannelCartSku(String orderChannelId, List<String> skuList) {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("order_channel_id", orderChannelId);
-        dataMap.put("cart_id", cartId);
         dataMap.put("except_sku", skuList);
         List<ImsBtProductExceptModel> lst = selectList("ims_bt_product_except_selectByChannelCartSku", dataMap);
 
