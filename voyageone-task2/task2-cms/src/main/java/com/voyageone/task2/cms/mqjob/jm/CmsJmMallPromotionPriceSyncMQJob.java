@@ -118,14 +118,12 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
             try {
                 if (!jumeiHtMallService.updateMallSkuPrice(shopBean, page, sb)) {
                     $error(sb.toString());
-
-
-                    CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
-                    StringBuffer sbSku = new StringBuffer();
-                    page.stream().forEach(skuInfo -> sbSku.append(skuInfo.getJumei_sku_no()).append(","));
-                    errorInfo.setSkuCode(sbSku.toString());
-                    errorInfo.setMsg(sb.toString());
-                    failList.add(errorInfo);
+//                    CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+//                    StringBuffer sbSku = new StringBuffer();
+//                    page.stream().forEach(skuInfo -> sbSku.append(skuInfo.getJumei_sku_no()).append(","));
+//                    errorInfo.setSkuCode(sbSku.toString());
+//                    errorInfo.setMsg(sb.toString());
+//                    failList.add(errorInfo);
                     throw new BusinessException(sb.toString());
                 }
             } catch (Exception e) {
