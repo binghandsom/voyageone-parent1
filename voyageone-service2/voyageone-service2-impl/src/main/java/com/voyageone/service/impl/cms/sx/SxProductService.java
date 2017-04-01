@@ -4025,7 +4025,7 @@ public class SxProductService extends BaseService {
                     CmsBtProductModel_Field_Image img = new CmsBtProductModel_Field_Image();
 
                     Object v = tmp.get(i);
-                    String s = ((LinkedHashMap<String, String>)v).get(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE.name());
+                    String s = ((LinkedHashMap<String, String>)v).get(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE.getName());
                     img.put(imageType.getName(), s);
 
                     productImages.add(img);
