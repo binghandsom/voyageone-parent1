@@ -60,9 +60,11 @@ public class CustomWordModuleGetCommonImages extends CustomWordModule {
                     .filter(map -> sxData.getCartId().equals(map.get("cartId")))
                     .findAny()
                     .orElse(new HashMap<>());
-            imageList = ((List<CmsBtImageGroupModel_Image>) imageMap.get("image")).stream()
-                    .map(i -> i.getPlatformUrl())
-                    .collect(Collectors.toList());
+            if (imageMap.get("image") != null) {
+                imageList = ((List<CmsBtImageGroupModel_Image>) imageMap.get("image")).stream()
+                        .map(i -> i.getPlatformUrl())
+                        .collect(Collectors.toList());
+            }
         }
         if (ListUtils.notNull(imageList)) {
             urls.addAll(imageList);
