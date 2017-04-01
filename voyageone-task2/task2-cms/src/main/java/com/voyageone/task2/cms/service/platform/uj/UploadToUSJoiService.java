@@ -1083,7 +1083,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
                         CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(pr.getOrgChannelId(),pr.getCommon().getFields().getOriginalCode());
                         if(cmsBtFeedInfoModel != null) {
-                            setSellerCats(cmsBtFeedInfoModel, productModel);
+                            setSellerCats(cmsBtFeedInfoModel, pr);
                         }
 
                         int updCnt = productService.updateProductFeedToMaster(usJoiChannelId, pr, getTaskName(), "子店->USJOI主店导入");
