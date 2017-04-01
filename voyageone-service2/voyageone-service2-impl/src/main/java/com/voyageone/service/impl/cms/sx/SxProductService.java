@@ -1207,6 +1207,7 @@ public class SxProductService extends BaseService {
 //        }
         if (!StringUtils.isEmpty(sxData.getMainProduct().getCommon().getStringAttribute("sizeChart"))) {
             sizeChartId = Integer.parseInt(sxData.getMainProduct().getCommon().getStringAttribute("sizeChart"));
+            sxData.setSizeChartId(sizeChartId);
         }
         Map<String, String> sizeMap;
         try {

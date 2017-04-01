@@ -54,7 +54,7 @@ public class CustomWordModuleGetCommonImages extends CustomWordModule {
         List<String> urls = new ArrayList<>();
         List<String> imageList = new ArrayList<>();
         // charis 对一张尺码表对应多张尺码图的进行绑定处理
-        if ("2".equals(imageType)) {
+        if ("2".equals(imageType) && sxData.getSizeChartId() != null && sxData.getSizeChartId() != 0) {
             List<Map<String, Object>> imageGroupList = sxProductService.getListImageGroupBySizeChartId(sxData.getChannelId(), sxData.getSizeChartId(), viewType);
             Map<String, Object> imageMap = imageGroupList.stream()
                     .filter(map -> sxData.getCartId().equals(map.get("cartId")))
