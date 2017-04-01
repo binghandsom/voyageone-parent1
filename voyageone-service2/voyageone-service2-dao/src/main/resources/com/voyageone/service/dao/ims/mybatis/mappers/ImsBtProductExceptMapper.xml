@@ -12,7 +12,6 @@
         active
         FROM voyageone_ims.ims_bt_product_except
         WHERE order_channel_id = #{order_channel_id}
-        AND cart_id = #{cart_id}
         AND except_sku in (
         <foreach collection="except_sku" item="sku" index="index" separator=",">
             #{sku}
