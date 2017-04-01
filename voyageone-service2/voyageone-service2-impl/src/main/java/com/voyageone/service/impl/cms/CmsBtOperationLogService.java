@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.common.util.JsonUtil;
@@ -12,6 +13,7 @@ import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -172,20 +174,41 @@ public class CmsBtOperationLogService {
     private JongoQuery getSearchQuery(Map params) {
         JongoQuery queryObject = new JongoQuery();
 
+
         String title = params.get("title") != null ? String.valueOf(params.get("title")) : "";
         String name = params.get("name") != null ? String.valueOf(params.get("name")) : "";
         String userName = params.get("userName") != null ? String.valueOf(params.get("userName")) : "";
         if ("0".equals(userName))
             userName = "";
 
+
+        Criteria criteria = new Criteria();
+        queryObject.setQuery(criteria);
+        if(!StringUtil.isEmpty(userName)){
+            criteria = criteria.and("modifier").is(userName);
+        }
+
+        if(!StringUtil.isEmpty(name)){
+            criteria = criteria.and("name").regex(name);
+        }
+
+        if(!StringUtil.isEmpty(title)){
+            criteria = criteria.and("title").regex(title);
+        }
         List type = (List) params.get("typeValue");
         if (type != null && type.size() > 0) {
-            queryObject.setQuery("{\"name\": {$regex: #}, \"title\": {$regex: #}, \"modifier\": {$regex: #}, \"type\": {$in: #}}");
-            queryObject.setParameters(name, title, userName, type);
-        } else {
-            queryObject.setQuery("{\"name\": {$regex: #}, \"title\": {$regex: #}, \"modifier\": {$regex: #}}");
-            queryObject.setParameters(name, title, userName);
+            criteria = criteria.and("type").in(type);
         }
+
+//        queryObject.setQuery(new Criteria())
+//        List type = (List) params.get("typeValue");
+//        if (type != null && type.size() > 0) {
+//            queryObject.setQuery("{\"name\": {$regex: #}, \"title\": {$regex: #}, \"modifier\": {$regex: #}, \"type\": {$in: #}}");
+//            queryObject.setParameters(name, title, userName, type);
+//        } else {
+//            queryObject.setQuery("{\"name\": {$regex: #}, \"title\": {$regex: #}, \"modifier\": {$regex: #}}");
+//            queryObject.setParameters(name, title, userName);
+//        }
         return queryObject;
     }
 }
