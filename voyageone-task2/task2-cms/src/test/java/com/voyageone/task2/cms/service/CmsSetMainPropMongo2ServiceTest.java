@@ -34,7 +34,7 @@ public class CmsSetMainPropMongo2ServiceTest {
 //        taskControlList.add(taskControlBean);
 //        taskControlBean = new TaskControlBean();
         taskControlBean.setCfg_name("order_channel_id");
-        taskControlBean.setCfg_val1("015");
+        taskControlBean.setCfg_val1("001");
         taskControlList.add(taskControlBean);
 
         cmsSetMainPropMongo2Service.onStartup(taskControlList);

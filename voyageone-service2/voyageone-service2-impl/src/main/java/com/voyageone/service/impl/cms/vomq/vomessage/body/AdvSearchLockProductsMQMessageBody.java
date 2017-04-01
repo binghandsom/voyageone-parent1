@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.vomq.vomessage.body;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.components.rabbitmq.namesub.IMQMessageSubBeanName;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -15,7 +16,7 @@ import java.util.List;
  */
 
 @VOMQQueue(value = CmsMqRoutingKey.CMS_ADV_SEARCH_LOCK_PRODUCTS)
-public class AdvSearchLockProductsMQMessageBody extends BaseMQMessageBody {
+public class AdvSearchLockProductsMQMessageBody extends BaseMQMessageBody  implements IMQMessageSubBeanName {
 
     private String channelId;
     private Integer cartId;
@@ -89,5 +90,10 @@ public class AdvSearchLockProductsMQMessageBody extends BaseMQMessageBody {
         if (lock == null) {
             throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数lock为空.");
         }
+    }
+
+    @Override
+    public String getSubBeanName() {
+        return getChannelId();
     }
 }

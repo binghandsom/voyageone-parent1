@@ -1939,6 +1939,18 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                     }
                 }
 
+                if (imageList.size() < 5) {
+                    for (int q=0;q<5-imageList.size();q++) {
+                        Image image = new Image();
+                        image.setColorId(colorId);
+                        image.setImgIndex(q + imageList.size() + 1);
+                        image.setImgUrl(imageList.get(0).getImgUrl());
+                        if (StringUtils.isEmpty(image.getImgUrl())) {
+                            image.setImgUrl(imageList.get(0).getImgUrl());
+                        }
+                        imageList.add(image);
+                    }
+                }
                 // 该产品5张图片全部上传失败的时候
                 if (imageList == null) {
                     $error("新增商品时该颜色图片全部上传失败！[WareId:%s] [ProductCode:%s]", jdProductBean.getWareId(), product.getCommon().getFields().getCode());

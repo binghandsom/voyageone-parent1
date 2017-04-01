@@ -69,6 +69,7 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
         List<CmsBtProductModel> prodList = cmsBtProductDao.select(queryObj, channelId);
         if (prodList.size() == 0) return;
 
+
         //productCodes
         List<String> productCodes = new ArrayList<>();
         prodList.forEach(f -> {

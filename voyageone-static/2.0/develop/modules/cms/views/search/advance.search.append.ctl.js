@@ -37,16 +37,16 @@ define([
             if (!column) {
                 column = {};
                 column.mark = 'unsorted';
-                column.count = 0;
+                column.count = null;
             }
 
-            column.count++;
+            column.count = !column.count;
 
             //偶数升序，奇数降序
-            if (column.count % 2 === 0)
-                column.mark = 'sort-up';
-            else
+            if (column.count)
                 column.mark = 'sort-desc';
+            else
+                column.mark = 'sort-up';
 
             columnArrow[columnName] = column;
 

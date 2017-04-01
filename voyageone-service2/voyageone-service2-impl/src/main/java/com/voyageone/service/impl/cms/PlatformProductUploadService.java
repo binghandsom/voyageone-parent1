@@ -60,6 +60,16 @@ public class PlatformProductUploadService extends BaseService {
 //    public CmsMtPlatformCategorySchemaModel getSxWorkloadWithChannelIdCartId(String categoryPath, int cartId) {
 //        return platformCategorySchemaDao.selectPlatformCatSchemaModel(MD5.getMD5(categoryPath), cartId);
 //    }
-
+    /**
+     * 获取平台ID对应的更新数据
+     *
+     * @param recordCount  int     更新的任务表中一次数据抽出最大件数
+     * @param channelIdList    String  店铺ID
+     * @param cartList       String  渠道ID
+     * @return List<CmsBtSxWorkloadModel>    上新任务模型列表
+     */
+    public List<CmsBtSxWorkloadModel> getSxWorkloadWithChannelIdListCartIdList(int recordCount, List<String> channelIdList, List<String> cartList) {
+        return sxWorkloadDao.selectSxWorkloadModelWithChannelIdListCartIdList(recordCount, channelIdList, cartList);
+    }
 
 }

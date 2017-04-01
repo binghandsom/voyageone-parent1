@@ -1,5 +1,7 @@
 package com.voyageone.components.rabbitmq.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -28,4 +30,24 @@ public class MQConfigUtils {
         }
         return addStr;
     }
+
+    public static String getEndPointName(String className, String beanName) {
+        return className + "_" + beanName;
+    }
+
+    public static String getNewBeanName(String beanName, String addBeanName) {
+        if (StringUtils.isBlank(addBeanName)) {
+            return beanName;
+        }
+        return beanName + "_" + addBeanName;
+    }
+
+    public static String getNewQueueName(String queueName, String addBeanName) {
+        if (StringUtils.isBlank(addBeanName)) {
+            return queueName;
+        }
+        return queueName + "_" + addBeanName;
+    }
+
+
 }

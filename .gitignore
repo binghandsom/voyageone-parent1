@@ -5,7 +5,6 @@ classes/
 .settings/
 .classpath
 .tern-project
-contents/ant/
 *.iml
 *.patch
 *.diff
@@ -16,7 +15,4 @@ dependency-reduced-pom.xml
 npm-debug.log
 rebel.xml
 node_modules
-## Add by wangtd
 .project
-.gitignore
-.tern-project

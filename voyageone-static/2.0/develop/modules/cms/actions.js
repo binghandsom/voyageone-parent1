@@ -75,6 +75,22 @@ define(function () {
                     "getCustSearchList": "getCustSearchList",
                     "getSkuInventory": "getSkuInventory"
                 },
+                "$searchAdvanceSolrService": {
+                    "root": "/cms/search/advanceSearchSolr/",
+                    "init": "init",
+                    "search": "search",
+                    "searchAutoComplete": "searchAutoComplete",
+                    "getGroupList": "getGroupList",
+                    "getProductList": "getProductList",
+                    "exportProducts": "exportProducts",
+                    "exportSearch": "exportSearch",
+                    "exportDownload": "exportDownload",
+                    "getCustColumnsInfo": "getCustColumnsInfo",
+                    "saveCustColumnsInfo": "saveCustColumnsInfo",
+                    "addFreeTag": "addFreeTag",
+                    "getCustSearchList": "getCustSearchList",
+                    "getSkuInventory": "getSkuInventory"
+                },
                 "$feedSearchService": {
                     "root": "/cms/search/feed/",
                     "init": "init",
@@ -246,7 +262,8 @@ define(function () {
                     "tmallPromotionExport": "tmallPromotionExport",
                     "getPromotionSkuList": "getPromotionSkuList",
                     "saveSkuPromotionPrices": "saveSkuPromotionPrices",
-                    "updatePromotionProductTag": "updatePromotionProductTag"
+                    "updatePromotionProductTag": "updatePromotionProductTag",
+                    "addPromotionByGroup":"addPromotionByGroup"
                 }
             },
             "jmpromotion": {

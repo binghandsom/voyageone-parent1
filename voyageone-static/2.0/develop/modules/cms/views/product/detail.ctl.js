@@ -17,7 +17,8 @@ define([
     './subpage/jm.sub-page.ctl',
     './subpage/gt.sub-page.ctl',
     './subpage/dg.sub-page.ctl',
-    './subpage/fx.sub-page.ctl'
+    './subpage/fx.sub-page.ctl',
+    './subpage/lg.sub-page.ctl'
 ], function (cms) {
 
     return cms.controller('productDetailController', (function () {
@@ -40,8 +41,8 @@ define([
                 lockStatus: null,
                 feedInfo: null,
                 autoApprovePrice: null,
-                productComm : null,
-                skuBlock:null     //为了定位到平台详情页的sku区域
+                productComm: null,
+                skuBlock: null     //为了定位到平台详情页的sku区域
             };
         }
 
@@ -53,7 +54,7 @@ define([
             // cartId:928【匠心界】,929【悦境】不显示
             self.menuService.getPlatformType().then(function (resp) {
                 self.platformTypes = _.filter(resp, function (element) {
-                    return element.value != 21 && element.value >= 20 && element.value < 928;
+                    return element.value != 21 && element.value >= 20 && element.value <= 928;
                 });
             });
 
@@ -61,21 +62,20 @@ define([
                 self.product.autoApprovePrice = resp.autoApprovePrice[0];
             });
 
-            if(_cartObj){
+            if (_cartObj) {
                 var strArr = _cartObj.split("|");
 
-                if(strArr.length > 1){
+                if (strArr.length > 1) {
                     self.defaultCartId = strArr[0];
                     self.product.skuBlock = true;
-                }else
+                } else
                     self.defaultCartId = _cartObj;
             }
-
         };
 
         /**锁定操作*/
         ProductDetailController.prototype.lockProduct = function (domId) {
-            var self = this,lock,notice,
+            var self = this, lock, notice,
                 message = self.product.lockStatus ? "您确定要锁定商品吗？" : "您确定要解锁商品吗？";
 
             this.confirm(message).then(function () {

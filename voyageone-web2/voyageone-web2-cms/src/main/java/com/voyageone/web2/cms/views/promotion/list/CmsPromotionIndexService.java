@@ -8,6 +8,7 @@ import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TestBean;
 import com.voyageone.common.util.FileUtils;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
@@ -141,6 +142,8 @@ public class CmsPromotionIndexService extends BaseViewService {
                 rowIndex += promotionCode.getSkus() != null ? promotionCode.getSkus().size() : 0;
             }
 
+            writeCodeRecordToFile(book, promotionCodes);
+
             $info("文档写入完成");
 
 //            try (FileOutputStream outputFileStream = new FileOutputStream("d:/test.xlsx")) {
@@ -172,7 +175,7 @@ public class CmsPromotionIndexService extends BaseViewService {
      * @return boolean 是否终止输出
      */
     private boolean writeRecordToFile(Workbook book, CmsBtPromotionCodesBean item, int startRowIndex) {
-        Sheet sheet = book.getSheetAt(0);
+        Sheet sheet = book.getSheet("sku");
 
         Row styleRow = FileUtils.row(sheet, 1);
 
@@ -240,6 +243,80 @@ public class CmsPromotionIndexService extends BaseViewService {
                 FileUtils.cell(row, CmsConstants.CellNum.property4CellNum, unlock).setCellValue(item.getProperty4());
 
                 FileUtils.cell(row, CmsConstants.CellNum.size, unlock).setCellValue(sku.getSize());
+
+                startRowIndex++;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean writeCodeRecordToFile(Workbook book, List<CmsBtPromotionCodesBean> items) {
+        Sheet sheet = book.getSheet("code");
+
+        Row styleRow = FileUtils.row(sheet, 1);
+
+        CellStyle unlock = styleRow.getCell(0).getCellStyle();
+        int startRowIndex = 1;
+
+        if(!ListUtils.isNull(items)) {
+            for (CmsBtPromotionCodesBean item : items) {
+                Row row = FileUtils.row(sheet, startRowIndex);
+
+                FileUtils.cell(row, CmsConstants.CellNum.cartIdCellNum, unlock).setCellValue(item.getCartId());
+
+                FileUtils.cell(row, CmsConstants.CellNum.channelIdCellNum, unlock).setCellValue(item.getOrgChannelId());
+
+                FileUtils.cell(row, CmsConstants.CellNum.catPathCellNum, unlock).setCellValue(item.getCatPath());
+
+                FileUtils.cell(row, CmsConstants.CellNum.numberIdCellNum, unlock).setCellValue(item.getNumIid());
+
+                FileUtils.cell(row, CmsConstants.CellNum.groupIdCellNum, unlock).setCellValue(item.getModelId());
+
+                FileUtils.cell(row, CmsConstants.CellNum.groupNameCellNum, unlock).setCellValue(item.getProductModel());
+
+                FileUtils.cell(row, CmsConstants.CellNum.productIdCellNum, unlock).setCellValue(item.getProductId());
+
+                FileUtils.cell(row, CmsConstants.CellNum.productCodeCellNum, unlock).setCellValue(item.getProductCode());
+
+                FileUtils.cell(row, CmsConstants.CellNum.productNameCellNum, unlock).setCellValue(item.getProductName());
+
+                FileUtils.cell(row, CmsConstants.CellNum.tagCellNum-1, unlock).setCellValue(item.getTag());
+
+                if(item.getMsrpUS() != null){
+                    FileUtils.cell(row, CmsConstants.CellNum.msrpUSCellNum-1, unlock).setCellValue(item.getMsrpUS());
+                }
+                if(item.getMsrp() != null){
+                    FileUtils.cell(row, CmsConstants.CellNum.msrpRMBCellNum-1, unlock).setCellValue(item.getMsrp());
+                }
+                if(item.getRetailPrice() != null){
+                    FileUtils.cell(row, CmsConstants.CellNum.retailPriceCellNum-1, unlock).setCellValue(item.getRetailPrice());
+                }
+                if(item.getSalePrice() != null){
+                    FileUtils.cell(row, CmsConstants.CellNum.salePriceCellNum-1, unlock).setCellValue(item.getSalePrice());
+                }
+                if(item.getPromotionPrice() != null){
+                    FileUtils.cell(row, CmsConstants.CellNum.promotionPriceCellNum-1, unlock).setCellValue(item.getPromotionPrice());
+                }
+                if(item.getInventory() != null){
+                    FileUtils.cell(row, CmsConstants.CellNum.inventoryCellNum-1, unlock).setCellValue(item.getInventory());
+                }
+
+                FileUtils.cell(row, CmsConstants.CellNum.image1CellNum-1, unlock).setCellValue(item.getImage_url_1());
+
+                FileUtils.cell(row, CmsConstants.CellNum.image2CellNum-1, unlock).setCellValue(item.getImage_url_2());
+
+                FileUtils.cell(row, CmsConstants.CellNum.image3CellNum-1, unlock).setCellValue(item.getImage_url_3());
+
+                FileUtils.cell(row, CmsConstants.CellNum.timeCellNum-1, unlock).setCellValue(item.getTime());
+
+                FileUtils.cell(row, CmsConstants.CellNum.property1CellNum-1, unlock).setCellValue(item.getProperty1());
+
+                FileUtils.cell(row, CmsConstants.CellNum.property2CellNum-1, unlock).setCellValue(item.getProperty2());
+
+                FileUtils.cell(row, CmsConstants.CellNum.property3CellNum-1, unlock).setCellValue(item.getProperty3());
+
+                FileUtils.cell(row, CmsConstants.CellNum.property4CellNum-1, unlock).setCellValue(item.getProperty4());
 
                 startRowIndex++;
             }

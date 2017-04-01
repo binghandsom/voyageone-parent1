@@ -265,4 +265,13 @@ public class TbProductService extends TbBase {
         TmallItemCombineGetResponse response = reqTaobaoApi(config, req);
         return response;
     }
+
+    //tmall.item.schema.update(参数只有商品id)
+    public TmallItemSchemaUpdateResponse updateItemByNumIId(String numId, String xmlData, ShopBean config) throws ApiException {
+        TmallItemSchemaUpdateRequest request = new TmallItemSchemaUpdateRequest();
+        request.setItemId(Long.parseLong(numId));
+        request.setXmlData(xmlData);
+
+        return reqTaobaoApi(config, request);
+    }
 }

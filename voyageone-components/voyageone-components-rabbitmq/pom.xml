@@ -17,7 +17,6 @@
             <artifactId>voyageone-components-base</artifactId>
             <version>${voyageone.components.base.version}</version>
         </dependency>
-
     </dependencies>
     <build>
         <finalName>voyageone-components-rabbitmq</finalName>

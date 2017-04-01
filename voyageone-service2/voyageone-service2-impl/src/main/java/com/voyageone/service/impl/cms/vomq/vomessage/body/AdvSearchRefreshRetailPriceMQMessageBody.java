@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.vomq.vomessage.body;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.components.rabbitmq.namesub.IMQMessageSubBeanName;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -17,7 +18,7 @@ import java.util.List;
  * @Create 2016-12-30 16:09
  */
 @VOMQQueue(value = CmsMqRoutingKey.CMS_REFRESH_PLATFORM_RETAIL_PRICE)
-public class AdvSearchRefreshRetailPriceMQMessageBody extends BaseMQMessageBody {
+public class AdvSearchRefreshRetailPriceMQMessageBody extends BaseMQMessageBody  implements IMQMessageSubBeanName {
 
     private String channelId;
     private List<String> codeList;
@@ -63,4 +64,8 @@ public class AdvSearchRefreshRetailPriceMQMessageBody extends BaseMQMessageBody 
         }
     }
 
+    @Override
+    public String getSubBeanName() {
+        return getChannelId();
+    }
 }

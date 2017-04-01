@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.mqjob.advanced.search;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.components.rabbitmq.annotation.VOSubRabbitListener;
 import com.voyageone.service.dao.cms.CmsBtRefreshProductTaskDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.fields.cms.CmsBtRefreshProductTaskModelStatus;
@@ -12,9 +13,8 @@ import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsRefreshProductsMQMe
 import com.voyageone.service.model.cms.CmsBtRefreshProductTaskItemModel;
 import com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
+import com.voyageone.task2.cms.mqjob.TBaseMQCmsSubService;
 import org.bson.types.ObjectId;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +31,8 @@ import java.util.Map;
  * @since 2.9.0
  */
 @Service
-@RabbitListener()
-public class CmsRefreshProductsMQJob extends TBaseMQCmsService<CmsRefreshProductsMQMessageBody> {
+@VOSubRabbitListener
+public class CmsRefreshProductsMQJob extends TBaseMQCmsSubService<CmsRefreshProductsMQMessageBody> {
 
     private final PlatformMappingService platformMappingService;
     private final ProductService productService;
