@@ -185,7 +185,7 @@
                 and a.org_channel_id= #{orgChannelId,jdbcType=VARCHAR}
             </if>
         </where>
-        group by a.id,c.id
+        group by a.product_model,a.tag_id desc, c.id
     </select>
     <select id="select_cms_bt_promotion_code_in_active_promotion_name" resultType="HashMap" parameterType="HashMap">
         SELECT DISTINCT(promotion_name) from voyageone_cms2.cms_bt_promotion_codes t1

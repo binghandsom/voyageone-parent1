@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.voyageone</groupId>
@@ -20,7 +20,7 @@
     </modules>
     <properties>
         <voyageone.task2.base.version>2.0.0-SNAPSHOT</voyageone.task2.base.version>
-        <voyageone.task2.cms.version>2.15.0-SNAPSHOT</voyageone.task2.cms.version>
+        <voyageone.task2.cms.version>2.16.0-SNAPSHOT</voyageone.task2.cms.version>
         <voyageone.task2.vms.version>1.0.0-SNAPSHOT</voyageone.task2.vms.version>
         <!--<voyageone.task2.imagecreate.version>2.0.0-SNAPSHOT</voyageone.task2.imagecreate.version>-->
     </properties>

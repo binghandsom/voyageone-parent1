@@ -19,6 +19,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtSxCnProductSellercatDaoExt;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
+import com.voyageone.service.impl.cms.sx.PlatformWorkloadAttribute;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtSxCnProductSellercatModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
@@ -189,7 +190,7 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
 
         //取得approved的code插入
         $debug("批量设置店铺内分类 开始记入SxWorkLoad表");
-        sxProductService.insertSxWorkLoad(channelId, approvedCodeList, cartId, userName);
+        sxProductService.insertPlatformWorkload(channelId, cartId, PlatformWorkloadAttribute.SELLER_CIDS, approvedCodeList, userName);
 
         // 记录商品修改历史
         TypeChannelBean cartObj = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, Integer.toString(cartId), "cn");

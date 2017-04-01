@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.components.rabbitmq.annotation.VOSubRabbitListener;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -14,6 +15,7 @@ import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
+import com.voyageone.task2.cms.mqjob.TBaseMQCmsSubService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,8 +26,8 @@ import java.util.*;
  * Created by james on 2016/11/4.
  */
 @Service
-@RabbitListener()
-public class CmsBatchEditPlatformFieldsMqJob extends TBaseMQCmsService<CmsBatchPlatformFieldsMQMessageBody> {
+@VOSubRabbitListener
+public class CmsBatchEditPlatformFieldsMqJob extends TBaseMQCmsSubService<CmsBatchPlatformFieldsMQMessageBody> {
 
     private final ProductService productService;
 

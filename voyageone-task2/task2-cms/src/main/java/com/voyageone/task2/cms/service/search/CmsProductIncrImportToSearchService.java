@@ -22,6 +22,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -61,8 +62,8 @@ public class CmsProductIncrImportToSearchService extends BaseListenService {
      */
     protected void onStartup(List<TaskControlBean> taskControlList) {
         importSubServiceBeanArray = new CmsBaseIncrImportSearchSubService[]{
-                cmsProductIncrImportToSearchService,
-                cmsProductIncrImportToDistSearchService
+                cmsProductIncrImportToSearchService
+//                ,cmsProductIncrImportToDistSearchService
         };
         super.onStartup(taskControlList);
     }
@@ -83,10 +84,16 @@ public class CmsProductIncrImportToSearchService extends BaseListenService {
         // get Query
         BasicDBObject queryDBObject = getQueryDBObject();
         $info("CmsProductIncrImportToSearchService Start tailing with query:" + queryDBObject);
-        return fromCollection.find(queryDBObject)
-                .sort(new BasicDBObject("$natural", 1))
-                .cursorType(CursorType.TailableAwait)
-                .noCursorTimeout(true).iterator();
+        try {
+            return fromCollection.find(queryDBObject)
+                    .sort(new BasicDBObject("$natural", 1))
+                    .cursorType(CursorType.TailableAwait)
+                    .noCursorTimeout(true).iterator();
+        }catch (Exception e){
+            $info(e.getMessage());
+            throw e;
+        }
+
     }
 
     @Override
@@ -177,32 +184,36 @@ public class CmsProductIncrImportToSearchService extends BaseListenService {
      * handleOp
      */
     private void handleOp(Document op) {
-        for (CmsBaseIncrImportSearchSubService service : importSubServiceBeanArray) {
-            switch ((String) op.get("op")) { // usually op looks like {"op": "i"} or {"op": "u"}
-                case "i":
-                    // insert event in mongodb
-                    if (service.handleInsert(op)) {
-                        isNeedCommit = true;
-                    }
-                    break;
-                case "u":
-                    // update event in mongodb
-                    if (!"repl.time".equals(op.getString("ns"))) {
-                        if (service.handleUpdate(op)) {
+        try {
+            for (CmsBaseIncrImportSearchSubService service : importSubServiceBeanArray) {
+                switch ((String) op.get("op")) { // usually op looks like {"op": "i"} or {"op": "u"}
+                    case "i":
+                        // insert event in mongodb
+                        if (service.handleInsert(op)) {
                             isNeedCommit = true;
                         }
-                    }
-                    break;
-                case "d":
-                    // delete event in mongodb
-                    if (service.handleDelete(op)) {
-                        isNeedCommit = true;
-                    }
-                    break;
-                default:
-                    $error("CmsProductIncrImportToSearchService Non-handled operation: " + op);
-                    break;
+                        break;
+                    case "u":
+                        // update event in mongodb
+                        if (!"repl.time".equals(op.getString("ns"))) {
+                            if (service.handleUpdate(op)) {
+                                isNeedCommit = true;
+                            }
+                        }
+                        break;
+                    case "d":
+                        // delete event in mongodb
+                        if (service.handleDelete(op)) {
+                            isNeedCommit = true;
+                        }
+                        break;
+                    default:
+                        $error("CmsProductIncrImportToSearchService Non-handled operation: " + op);
+                        break;
+                }
             }
+        }catch (Exception e){
+            $error(op.toJson(), e);
         }
     }
 
