@@ -194,6 +194,10 @@ public class SxProductService extends BaseService {
     private CmsBtCustomPropService cmsBtCustomPropService;
     @Autowired
     private JdImgzoneService jdImgzoneService;
+    @Autowired
+    private CmsBtSizeChartImageGroupService cmsBtSizeChartImageGroupService;
+    @Autowired
+    private ImageGroupService imageGroupService;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -1203,6 +1207,7 @@ public class SxProductService extends BaseService {
 //        }
         if (!StringUtils.isEmpty(sxData.getMainProduct().getCommon().getStringAttribute("sizeChart"))) {
             sizeChartId = Integer.parseInt(sxData.getMainProduct().getCommon().getStringAttribute("sizeChart"));
+            sxData.setSizeChartId(sizeChartId);
         }
         Map<String, String> sizeMap;
         try {
@@ -2310,6 +2315,15 @@ public class SxProductService extends BaseService {
 
         Map<CustomMappingType, List<Field>> mappingTypePropsMap = new HashMap<>();
 
+        // 为了一种特殊的schema， 做出的一个补丁， 以后要改 START
+        // 取出当前类目的sku属性（或达尔文sku属性）里的属性
+        List<Field> tmallSkuFields = fieldsMap.entrySet().stream()
+                .filter(f -> f.getKey().equalsIgnoreCase("darwin_sku") || f.getKey().equalsIgnoreCase("sku"))
+                .map(f -> ((MultiComplexField)f.getValue()).getFields())
+                .findAny()
+                .orElse(new ArrayList<>());
+        // 为了一种特殊的schema， 做出的一个补丁， 以后要改 END
+
         for (CmsMtPlatformPropMappingCustomModel model : cmsMtPlatformPropMappingCustomModels) {
             // add by morse.lu 2016/05/24 start
             if (!isItem && CustomMappingType.valueOf(model.getMappingType()) == CustomMappingType.SKU_INFO) {
@@ -2317,6 +2331,34 @@ public class SxProductService extends BaseService {
                 continue;
             }
             // add by morse.lu 2016/05/24 end
+
+            // 为了一种特殊的schema， 做出的一个补丁， 以后要改 START
+//            if (CustomMappingType.valueOf(model.getMappingType()) == CustomMappingType.SKU_INFO || CustomMappingType.valueOf(model.getMappingType()) == CustomMappingType.DARWIN_SKU) {
+//                if (!"darwin_sku".equals(model.getPlatformPropId()) // 不能被踢掉
+//                        && !"sku".equals(model.getPlatformPropId()) // 不能被踢掉
+//                        && !"sku".equals(model.getPlatformPropId()) // 不能被踢掉
+//                        ) {
+//                    // 如果当前这个属性名称大多数情况下是属于sku里的属性的话， 那么看看sku（或达尔文sku）里， 是否有当前这个属性
+//                    // 如果没有这个属性的话， 那就说明这个属性是在sku（或达尔文sku）外层的属性， 无需自动处理
+//                    boolean haveThisAttr = tmallSkuFields.stream()
+//                            .filter(f -> model.getPlatformPropId().equals(f.getId()))
+//                            .count() > 0;
+//                    if (!haveThisAttr) {
+//                        continue;
+//                    }
+//                }
+//            }
+
+            if (CustomMappingType.valueOf(model.getMappingType()) == CustomMappingType.SKU_INFO && "prop_20509".equals(model.getPlatformPropId())) {
+                boolean haveThisAttr = tmallSkuFields.stream()
+                        .filter(f -> "prop_20509".equals(f.getId()))
+                        .count() > 0;
+                if (!haveThisAttr) {
+                    continue;
+                }
+            }
+            // 为了一种特殊的schema， 做出的一个补丁， 以后要改 END
+
             Field field = fieldsMap.get(model.getPlatformPropId());
             if (field != null) {
                 List<Field> mappingPlatformPropBeans = mappingTypePropsMap.get(CustomMappingType.valueOf(model.getMappingType()));
@@ -5804,5 +5846,40 @@ public class SxProductService extends BaseService {
         }
 
         return imageUrl;
+    }
+
+    /**
+     *
+     * @param channelId
+     * @param sizeChartId
+     * @param viewType 1:PC端 2：APP端
+     * @return
+     */
+    public List<Map<String,Object>> getListImageGroupBySizeChartId(String channelId, int sizeChartId, String viewType) {
+        List<CmsBtSizeChartImageGroupModel> list = cmsBtSizeChartImageGroupService.getListByCmsBtSizeChartId(channelId, sizeChartId);
+        List<Map<String, Object>> listImageGroup = new ArrayList<>();
+        CmsBtImageGroupModel groupModel;
+        Map<String, Object> map;
+        for (CmsBtSizeChartImageGroupModel model : list) {
+            map = new HashMap<>();
+            if ("1".equals(viewType)) {
+                groupModel = imageGroupService.getImageGroupModel(String.valueOf(model.getCmsBtImageGroupId()));
+            } else {
+                groupModel = imageGroupService.getImageGroupModel(String.valueOf(model.getCmsBtImageGroupIdApp()));
+            }
+
+            if(groupModel != null) {
+                List<CmsBtImageGroupModel_Image> sizeChartImageList = groupModel.getImage();
+                if (ListUtils.notNull(sizeChartImageList) && groupModel.getImageType() == 2) {  // imageType == 2 (尺码图)
+                    map.put("image", sizeChartImageList);
+                }
+                map.put("imageGroupName", groupModel.getImageGroupName());
+                map.put("imageGroupId", groupModel.getImageGroupId());
+                map.put("cartId", model.getCartId());
+
+                listImageGroup.add(map);
+            }
+        }
+        return listImageGroup;
     }
 }

@@ -41,6 +41,8 @@ public class SxData {
 
 	private Map<String, SxDarwinSkuProps> mapDarwinSkuProps; // Map<sku, SxDarwinSkuProps>
 
+	private Integer sizeChartId;
+
 	public class SxDarwinSkuProps {
 		private SxDarwinSkuProps() {}
 
@@ -278,6 +280,14 @@ public class SxData {
 		}
 
 		return sxDarwinSkuProps;
+	}
+
+	public Integer getSizeChartId() {
+		return sizeChartId;
+	}
+
+	public void setSizeChartId(Integer sizeChartId) {
+		this.sizeChartId = sizeChartId;
 	}
 
 	public Map<String, SxSkuExInfo> getMapSxSkuExInfo() {
