@@ -99,29 +99,30 @@ public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
             cmsProductSearchService.commit();
         }
 
-        index = 1;
-        List<String> removeIdList = new ArrayList<>();
-        //删除数据
-        SimpleQueryCursor<CommIdSearchModel> productSearchCursor = cmsProductSearchService.queryIdsForCursorNotLastVer(channelId, currentTime);
-        //noinspection Duplicates
-        while (productSearchCursor.hasNext()) {
-            CommIdSearchModel model = productSearchCursor.next();
-            if (model != null && model.getId() != null) {
-                removeIdList.add(model.getId());
-            }
-            // 删除数据
-            if (index % IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE == 0) {
-                cmsProductSearchService.deleteByIds(removeIdList);
-                removeIdList = new ArrayList<>();
-                cmsProductSearchService.commit();
-            }
-            index++;
-        }
-        // 删除数据
-        if (!removeIdList.isEmpty()) {
-            cmsProductSearchService.deleteByIds(removeIdList);
-            cmsProductSearchService.commit();
-        }
+        // 因为增量job以运行 避免删除增量误删除
+//        index = 1;
+//        List<String> removeIdList = new ArrayList<>();
+//        //删除数据
+//        SimpleQueryCursor<CommIdSearchModel> productSearchCursor = cmsProductSearchService.queryIdsForCursorNotLastVer(channelId, currentTime);
+//        //noinspection Duplicates
+//        while (productSearchCursor.hasNext()) {
+//            CommIdSearchModel model = productSearchCursor.next();
+//            if (model != null && model.getId() != null) {
+//                removeIdList.add(model.getId());
+//            }
+//            // 删除数据
+//            if (index % IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE == 0) {
+//                cmsProductSearchService.deleteByIds(removeIdList);
+//                removeIdList = new ArrayList<>();
+//                cmsProductSearchService.commit();
+//            }
+//            index++;
+//        }
+//        // 删除数据
+//        if (!removeIdList.isEmpty()) {
+//            cmsProductSearchService.deleteByIds(removeIdList);
+//            cmsProductSearchService.commit();
+//        }
 
         cmsProductSearchService.optimize();
     }
