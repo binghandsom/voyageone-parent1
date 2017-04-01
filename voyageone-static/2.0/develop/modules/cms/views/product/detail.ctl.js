@@ -41,8 +41,8 @@ define([
                 lockStatus: null,
                 feedInfo: null,
                 autoApprovePrice: null,
-                productComm : null,
-                skuBlock:null     //为了定位到平台详情页的sku区域
+                productComm: null,
+                skuBlock: null     //为了定位到平台详情页的sku区域
             };
         }
 
@@ -65,18 +65,17 @@ define([
             if (_cartObj) {
                 var strArr = _cartObj.split("|");
 
-                if(strArr.length > 1){
+                if (strArr.length > 1) {
                     self.defaultCartId = strArr[0];
                     self.product.skuBlock = true;
-                }else
+                } else
                     self.defaultCartId = _cartObj;
             }
-
         };
 
         /**锁定操作*/
         ProductDetailController.prototype.lockProduct = function (domId) {
-            var self = this,lock,notice,
+            var self = this, lock, notice,
                 message = self.product.lockStatus ? "您确定要锁定商品吗？" : "您确定要解锁商品吗？";
 
             this.confirm(message).then(function () {
