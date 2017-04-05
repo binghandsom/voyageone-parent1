@@ -248,7 +248,7 @@ public class CmsProductSearchQueryService extends BaseService {
 
         // 获取 master category
         if (StringUtils.isNotEmpty(searchValue.getmCatPath())) {
-            criteria = criteria.and("catPath").in(searchValue.getmCatPath());
+            criteria = criteria.and("catPath").contains(searchValue.getmCatPath());
         }
 
         if (StringUtils.isNotEmpty(searchValue.getCreateTimeStart())) {
@@ -371,6 +371,7 @@ public class CmsProductSearchQueryService extends BaseService {
             List<String> orSearch = new ArrayList<>();
             // 英文查询内容
             String fuzzyStr = searchValue.getFuzzyStr();
+            fuzzyStr = fuzzyStr.replaceAll(" ","\\ ");
             Criteria criteria1 = new Criteria("nameEn").contains(fuzzyStr).or("nameCn").contains(fuzzyStr);
             criteria = criteria.and(criteria1);
         }
