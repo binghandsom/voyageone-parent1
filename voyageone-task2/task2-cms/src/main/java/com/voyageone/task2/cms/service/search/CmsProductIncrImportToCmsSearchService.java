@@ -51,7 +51,7 @@ class CmsProductIncrImportToCmsSearchService extends CmsBaseIncrImportSearchSubS
 
 
         if (!StringUtil.isEmpty(id) && !StringUtil.isEmpty(channelId)) {
-            $info(String.format("Insert channel=%s id=%s", channelId, id));
+//            $info(String.format("Insert channel=%s id=%s", channelId, id));
             CmsBtProductModel cmsBtProductModel = productService.getProductByObjectId(channelId, id);
             if (cmsBtProductModel != null) {
                 SolrUpdateBean update = cmsProductSearchService.createSolrBeanForNew(cmsBtProductModel, null);
@@ -99,7 +99,7 @@ class CmsProductIncrImportToCmsSearchService extends CmsBaseIncrImportSearchSubS
             id = objectDoc.get("_id").toString();
         }
         if (!StringUtil.isEmpty(id) && !StringUtil.isEmpty(channelId)) {
-            $info(String.format("update channel=%s id=%s", channelId, id));
+//            $info(String.format("update channel=%s id=%s", channelId, id));
             CmsBtProductModel cmsBtProductModel = productService.getProductByObjectId(channelId, id);
             if (cmsBtProductModel != null) {
                 update = cmsProductSearchService.createSolrBeanForNew(cmsBtProductModel, null);

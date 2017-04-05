@@ -1,8 +1,10 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
@@ -11,11 +13,14 @@ import com.voyageone.service.dao.cms.CmsBtShelvesDao;
 import com.voyageone.service.dao.cms.CmsBtShelvesTemplateDao;
 import com.voyageone.service.fields.cms.CmsBtShelvesModelActive;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtShelvesExample;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import com.voyageone.service.model.cms.CmsBtShelvesTemplateModel;
 import com.voyageone.service.model.cms.enums.PlatformType;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +44,8 @@ public class CmsBtShelvesService extends BaseService {
     private final CmsBtShelvesDao cmsBtShelvesDao;
     private final CmsBtShelvesTemplateDao cmsBtShelvesTemplateDao;
     private final CmsBtShelvesProductService cmsBtShelvesProductService;
+    @Autowired
+    private ProductService productService;
 
     @Autowired
     public CmsBtShelvesService(CmsBtShelvesDao cmsBtShelvesDao, CmsBtShelvesTemplateDao cmsBtShelvesTemplateDao, CmsBtShelvesProductService cmsBtShelvesProductService) {
@@ -151,7 +158,16 @@ public class CmsBtShelvesService extends BaseService {
                 if (shopBean.getPlatform_id().equalsIgnoreCase(PlatformType.TMALL.getPlatformId().toString())) {
                     singleHtml = singleHtml.replace("@link", "https://detail.tmall.hk/hk/item.htm?id=" + productBean.getNumIid()); // 根据商品在平台ID拼接商品详情页
                 } else if (shopBean.getPlatform_id().equalsIgnoreCase(PlatformType.JD.getPlatformId().toString())) {
-                    singleHtml = singleHtml.replace("@link", "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId=" + productBean.getNumIid()); // 根据商品在平台ID拼接商品详情页
+                    String jdskuid = "";
+                    CmsBtProductModel cmsBtProductModel = productService.getProductByCode(shelves.getChannelId(), productBean.getProductCode());
+                    if(cmsBtProductModel != null) {
+                        CmsBtProductModel_Platform_Cart platform = cmsBtProductModel.getPlatform(shelves.getCartId());
+                        BaseMongoMap<String, Object> jdsku = platform.getSkus().stream().filter(sku -> !StringUtil.isEmpty(sku.getStringAttribute("jdSkuId"))).findFirst().orElse(null);
+                        if (jdsku != null) {
+                            jdskuid = jdsku.getStringAttribute("jdSkuId");
+                        }
+                    }
+                    singleHtml = singleHtml.replace("@link", "https://item.jd.hk/" + jdskuid+".html"); // 根据商品在平台ID拼接商品详情页
                 }
                 if (!preview) {
                     singleHtml = singleHtml.replace("@imglink", productBean.getPlatformImageUrl()); // 单品模板生成图片在平台的地址
