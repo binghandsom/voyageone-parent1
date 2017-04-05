@@ -85,6 +85,7 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
         service.saveList(listModel);
         for (CmsBtJmPromotionImportTaskModel taskModel : listModel) {
             JmPromotionImportMQMessageBody mqMessageBody = new JmPromotionImportMQMessageBody();
+            mqMessageBody.setChannelId(getUser().getSelChannelId());
             mqMessageBody.setJmBtPromotionImportTaskId(taskModel.getId());
             mqMessageBody.setSender(this.getUser().getUserName());
             service.sendMessage(mqMessageBody);

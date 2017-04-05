@@ -47,9 +47,10 @@ public class CmsBtJmPromotionSkuService {
         return entity.getId();
     }
 
-    public void  senderJMRefreshPriceMQMessage(int jmPromotionId,String sender) {
+    public void senderJMRefreshPriceMQMessage(int jmPromotionId, String sender, String channelId) {
         JMRefreshPriceMQMessageBody mqMessageBody = new JMRefreshPriceMQMessageBody();
         mqMessageBody.setCmsBtJmPromotionId(jmPromotionId);
+        mqMessageBody.setChannelId(channelId);
         mqMessageBody.setSender(sender);
         cmsMqSenderService.sendMessage(mqMessageBody);
     }

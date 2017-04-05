@@ -16,16 +16,7 @@ import java.util.List;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_FEED_SKU_PQ_MQ_JOB)
 public class CmsFeedSkuPqMQMessageBody extends BaseMQMessageBody {
 
-    String channelId;
     List<CmsBtFeedSkuPqModel> skuInfo;
-
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 
     public List<CmsBtFeedSkuPqModel> getSkuInfo() {
         return skuInfo;
@@ -38,7 +29,7 @@ public class CmsFeedSkuPqMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
-        if(StringUtil.isEmpty(channelId)){
+        if (StringUtil.isEmpty(super.getChannelId())) {
             throw new MQMessageRuleException("缺少参数：channelId");
         }
 
