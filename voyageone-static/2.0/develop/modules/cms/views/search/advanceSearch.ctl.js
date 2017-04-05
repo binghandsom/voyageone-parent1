@@ -572,7 +572,8 @@ define([
                         sizeTypeCn:selectedCat.sizeTypeCn,
                         hscodeName8:selectedCat.hscodeName8,
                         hscodeName10:selectedCat.hscodeName10,
-                        isSelAll: $scope.vm._selall ? 1 : 0
+                        isSelAll: $scope.vm._selall ? 1 : 0,
+                        searchInfo:$scope.searchInfoBefo
                     };
                     productDetailService.changeCategory(data).then(function (res) {
                         if (res.data.isChangeCategory) {
