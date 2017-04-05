@@ -4,7 +4,6 @@ import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -19,7 +18,6 @@ import java.util.List;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_UPDATE_PRODUCT_VO_RATE)
 public class ProductVoRateUpdateMQMessageBody extends BaseMQMessageBody {
 
-    private String channelId;
     private List<String> codeList;
     private String voRate;
 
@@ -29,14 +27,6 @@ public class ProductVoRateUpdateMQMessageBody extends BaseMQMessageBody {
 
     public void setVoRate(String voRate) {
         this.voRate = voRate;
-    }
-
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
     }
 
     public List<String> getCodeList() {
@@ -49,7 +39,7 @@ public class ProductVoRateUpdateMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isBlank(channelId)) {
+        if (StringUtils.isBlank(super.getChannelId())) {
             throw new MQMessageRuleException("高级检索-批量更新商品vo扣点MQ发送异常, 参数channelId为空.");
         }
         if (CollectionUtils.isEmpty(codeList)) {

@@ -15,16 +15,7 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
  */
 @VOMQQueue(value = CmsMqRoutingKey.CMS_BATCH_GET_PRODUCT_BI_DATA)
 public class CmsProductBIDataMQMessageBody extends BaseMQMessageBody {
-    String channelId;
     Integer cartId;
-
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 
     public Integer getCartId() {
         return cartId;
@@ -36,7 +27,7 @@ public class CmsProductBIDataMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isEmpty(channelId)) {
+        if (StringUtils.isEmpty(super.getChannelId())) {
             throw new MQMessageRuleException("定时任务-取得产品的bi信息MQ发送异常, 参数channelId为空.");
         }
         if (cartId == null || cartId == 0) {

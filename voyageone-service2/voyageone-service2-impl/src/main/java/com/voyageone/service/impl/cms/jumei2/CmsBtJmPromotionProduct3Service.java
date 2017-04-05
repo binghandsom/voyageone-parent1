@@ -462,8 +462,9 @@ public class CmsBtJmPromotionProduct3Service {
      * @param cmsBtJmPromotionId
      * @param sender
      */
-    public void sendMessage(int cmsBtJmPromotionId, String sender) {
+    public void sendMessage(int cmsBtJmPromotionId, String sender, String channelId) {
         JMProductUpdateMQMessageBody mqMessageBody = new JMProductUpdateMQMessageBody();
+        mqMessageBody.setChannelId(channelId);
         mqMessageBody.setCmsBtJmPromotionId(cmsBtJmPromotionId);
         mqMessageBody.setSender(sender);
         cmsMqSenderService.sendMessage(mqMessageBody);

@@ -12,18 +12,9 @@ import org.apache.commons.lang.StringUtils;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_ADD_PLATFORM_CART)
 public class CmsCartAddMQMessageBody extends BaseMQMessageBody {
 
-    private String channelId;
     private Integer cartId;
     // 是否按照一个code一个group来生成数据
     private Boolean single;
-
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 
     public Integer getCartId() {
         return cartId;
@@ -43,7 +34,7 @@ public class CmsCartAddMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isBlank(channelId)) {
+        if (StringUtils.isBlank(super.getChannelId())) {
             throw new MQMessageRuleException("追加一个新cart自动添加product.platforms处理MQ发送异常, 参数channelId为空.");
         }
         if (cartId == null) {

@@ -38,6 +38,9 @@ public class CmsBrandBlockMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
+        if (StringUtils.isEmpty(super.getChannelId())) {
+            throw new MQMessageRuleException("变更黑名单操作MQ发送异常, 参数channelId为空.");
+        }
         if (data == null) {
             throw new MQMessageRuleException("变更黑名单操作MQ发送异常, 参数data为空.");
         }

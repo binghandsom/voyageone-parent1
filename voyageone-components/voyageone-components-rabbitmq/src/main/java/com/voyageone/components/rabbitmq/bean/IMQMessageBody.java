@@ -12,5 +12,7 @@ public interface IMQMessageBody {
 
     String getSender();
 
+    String getChannelId();
+
     void check() throws MQMessageRuleException;
 }

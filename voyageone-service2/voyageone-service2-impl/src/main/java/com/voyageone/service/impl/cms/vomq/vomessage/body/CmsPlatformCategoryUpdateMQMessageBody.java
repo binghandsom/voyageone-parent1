@@ -15,19 +15,10 @@ import java.util.List;
  */
 @VOMQQueue(value = CmsMqRoutingKey.CMS_UPDATE_PRODUCT_PLATFORM_CATEGORY)
 public class CmsPlatformCategoryUpdateMQMessageBody extends BaseMQMessageBody  implements IMQMessageSubBeanName {
-    String channelId;
     List<String> productCodes;
     Integer cartId;
     String pCatPath;
     String pCatId;
-
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 
     public List<String> getProductCodes() {
         return productCodes;
@@ -63,7 +54,7 @@ public class CmsPlatformCategoryUpdateMQMessageBody extends BaseMQMessageBody  i
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (org.apache.commons.lang.StringUtils.isBlank(channelId)) {
+        if (org.apache.commons.lang.StringUtils.isBlank(super.getChannelId())) {
             throw new MQMessageRuleException("高级检索-批量设置平台类目MQ发送异常, 参数channelId为空.");
         }
         if (CollectionUtils.isEmpty(productCodes)) {

@@ -17,7 +17,6 @@ import java.util.List;
 public class CmsBatchPlatformFieldsMQMessageBody extends BaseMQMessageBody  implements IMQMessageSubBeanName {
 
     private List<String> productCodes;
-    private String channelId;
     private Integer cartId;
     private String fieldsId;
     private String fieldsName;
@@ -29,14 +28,6 @@ public class CmsBatchPlatformFieldsMQMessageBody extends BaseMQMessageBody  impl
 
     public void setProductCodes(List<String> productCodes) {
         this.productCodes = productCodes;
-    }
-
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
     }
 
     public Integer getCartId() {
@@ -73,7 +64,7 @@ public class CmsBatchPlatformFieldsMQMessageBody extends BaseMQMessageBody  impl
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isBlank(channelId)) {
+        if (StringUtils.isBlank(super.getChannelId())) {
             throw new MQMessageRuleException("高级检索-批量设置平台属性MQ发送异常, 参数channelId为空.");
         }
         if (CollectionUtils.isEmpty(productCodes)) {

@@ -35,6 +35,7 @@ public class CmsMqErrorListController extends CmsController {
         if (params.get("userName") == null) {
             params.put("userName", getUser().getUserName());
         }
+        params.put("channelId", getUser().getSelChannelId());
         // 检索Master品牌匹配的数据
         result.put("mqErrorList", cmsBtOperationLogService.searchMqCmsBtOperationLogData(params));
         // 检索Master品牌匹配的数量

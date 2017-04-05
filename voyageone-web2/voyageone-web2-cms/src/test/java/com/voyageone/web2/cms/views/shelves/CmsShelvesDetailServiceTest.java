@@ -1,8 +1,5 @@
 package com.voyageone.web2.cms.views.shelves;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
-import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
@@ -10,7 +7,6 @@ import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -22,9 +18,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by james on 2016/11/15.
@@ -33,6 +26,9 @@ import static org.junit.Assert.*;
 @WebAppConfiguration
 @ContextConfiguration({"classpath*:META-INF/context-web2.xml","classpath*:META-INF/context-web2-mvc.xml"})
 public class CmsShelvesDetailServiceTest {
+    @Autowired
+    CmsShelvesDetailService cmsShelvesDetailService;
+
     @Test
     public void exportAppImage() throws Exception {
         FileUtils.deleteAllFilesOfDir(new File("H:\\shelves\\shelves1"));
@@ -44,15 +40,12 @@ public class CmsShelvesDetailServiceTest {
         }
     }
 
-
-    @Autowired
-    CmsShelvesDetailService cmsShelvesDetailService;
     @Test
     public void getShelvesInfo() throws Exception {
 
 //        CacheHelper.getValueOperation().set("ShelvesMonitor_" + 1, 1, 10, TimeUnit.SECONDS);
 
-        List<CmsBtShelvesInfoBean> cmsBtShelvesInfoBeen = cmsShelvesDetailService.getShelvesInfo(Arrays.asList(1),false,"test");
+        List<CmsBtShelvesInfoBean> cmsBtShelvesInfoBeen = cmsShelvesDetailService.getShelvesInfo(Arrays.asList(1), false, "test", "000");
         System.out.print(JacksonUtil.bean2Json(cmsBtShelvesInfoBeen));
     }
 
