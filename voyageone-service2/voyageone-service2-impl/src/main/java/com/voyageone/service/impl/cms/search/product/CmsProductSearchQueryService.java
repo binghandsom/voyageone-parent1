@@ -371,7 +371,7 @@ public class CmsProductSearchQueryService extends BaseService {
             List<String> orSearch = new ArrayList<>();
             // 英文查询内容
             String fuzzyStr = searchValue.getFuzzyStr();
-            fuzzyStr = fuzzyStr.replaceAll(" ","\\\\ ");
+            fuzzyStr = "*"+fuzzyStr.replaceAll(" ","\\\\ ")+"*";
             Criteria criteria1 = new Criteria("nameEn").expression(fuzzyStr).or("nameCn").expression(fuzzyStr);
             criteria = criteria.and(criteria1);
         }
