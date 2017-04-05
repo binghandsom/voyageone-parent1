@@ -1924,7 +1924,7 @@ public class BackDoorController extends CmsController {
     }
 
     @RequestMapping(value = "addNewCart", method = RequestMethod.GET)
-    public void addNewCart(@RequestParam("channelId") String channelId, @RequestParam("channelId") Integer cartId, @RequestParam("isSingle") Boolean isSingle) {
+    public void addNewCart(@RequestParam("channelId") String channelId, @RequestParam("cartId") Integer cartId, @RequestParam("isSingle") Boolean isSingle) {
         CmsCartAddMQMessageBody map = new CmsCartAddMQMessageBody();
         map.setChannelId(channelId);
         map.setCartId(cartId);
