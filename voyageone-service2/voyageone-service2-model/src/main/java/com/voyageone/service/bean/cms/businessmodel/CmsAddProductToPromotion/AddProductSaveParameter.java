@@ -1,6 +1,7 @@
 package com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by dell on 2016/11/3.
@@ -28,6 +29,16 @@ public class AddProductSaveParameter {
     String optType;
     //price value
     double priceValue;
+
+    Map<String,Object> searchInfo;
+
+    public Map<String, Object> getSearchInfo() {
+        return searchInfo;
+    }
+
+    public void setSearchInfo(Map<String, Object> searchInfo) {
+        this.searchInfo = searchInfo;
+    }
 
     public int getCartId() {
         return cartId;

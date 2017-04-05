@@ -497,6 +497,7 @@ define([
                 }
                 context.selCnt = selCnt;
                 context.autoSynPrice = $scope.vm.masterData.autoApprovePrice;
+                context.searchInfo = $scope.searchInfoBefo;
                 openFieldEdit(selList, context).then(function (res) {
                     $scope.search();
                 })
@@ -775,7 +776,8 @@ define([
                     'tagTypeSel': '4',
                     'cartId': $scope.vm.searchInfo.cartId,
                     'productIds': productIds,
-                    'selAllFlg': $scope.vm._selall ? 1 : 0
+                    'selAllFlg': $scope.vm._selall ? 1 : 0,
+                    'searchInfo':$scope.searchInfoBefo
                 }).then(function (res) {
                     // 设置自由标签
                     var msg = '';
@@ -796,7 +798,8 @@ define([
                                 "tagPathList": freeTags,
                                 "prodIdList": productIds,
                                 "isSelAll": $scope.vm._selall ? 1 : 0,
-                                "orgDispTagList": res.orgDispTagList
+                                "orgDispTagList": res.orgDispTagList,
+
                             };
                             $searchAdvanceService2.addFreeTag(data).then(function () {
                                 notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
@@ -868,7 +871,7 @@ define([
                         productIds.push(object.code);
                     });
                 }
-                var property = {'cartId': cartId, '_option': 'putonoff', 'productIds': productIds};
+                var property = {'cartId': cartId, '_option': 'putonoff', 'productIds': productIds, 'searchInfo':$scope.searchInfoBefo};
                 property.isSelAll = $scope.vm._selall ? 1 : 0;
                 openPutOnOffFnc(property).then(
                     function () {
@@ -899,7 +902,8 @@ define([
                         $fieldEditService.intelligentPublish({
                             cartId: cartId,
                             productIds: productIds,
-                            isSelectAll: $scope.vm._selall ? 1 : 0
+                            isSelectAll: $scope.vm._selall ? 1 : 0,
+                            searchInfo:$scope.searchInfoBefo
                         }).then(function () {
                             alert('已完成商品的智能上新！');
                             $scope.search();
@@ -930,7 +934,8 @@ define([
                         cartId: cartId,
                         _option: 'approval',
                         productIds: productIds,
-                        isSelAll: $scope.vm._selall ? 1 : 0
+                        isSelAll: $scope.vm._selall ? 1 : 0,
+                        searchInfo:$scope.searchInfoBefo
                     };
 
                     check(property);
@@ -996,6 +1001,7 @@ define([
                 }
                 var property = {'cartId': cartId, '_option': 'saleprice', 'productIds': productIds};
                 property.isSelAll = $scope.vm._selall ? 1 : 0;
+                property.searchInfo = $scope.searchInfoBefo;
 
                 var config = $scope.vm.masterData.autoApprovePrice["0"];
                 if($scope.vm.masterData.autoApprovePrice[cartId]){
@@ -1262,6 +1268,7 @@ define([
                     }
                     var property = {'cartId': cartId, '_option': 'retailprice', 'productIds': productIds};
                     property.isSelAll = $scope.vm._selall ? 1 : 0;
+                    property.searchInfo = $scope.searchInfoBefo;
                     $fieldEditService.setProductFields(property).then(function (res) {
                         if (res.data == null || res.data.ecd == null || res.data.ecd == undefined) {
                             alert($translate.instant('TXT_COMMIT_ERROR'));
@@ -1317,7 +1324,8 @@ define([
                             "productIds": context.selList,
                             "cartId": +context.cartId,
                             "pCatPath": data.selected.catPath,
-                            "pCatId": data.selected.catId
+                            "pCatId": data.selected.catId,
+                            "searchInfo":$scope.searchInfoBefo
                         }).then(function () {
                             notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                             $scope.search();
@@ -1342,7 +1350,8 @@ define([
                 popups.popupPlatformPopOptions({
                     productIds: context.selList,
                     isSelAll: $scope.vm._selall,
-                    cartId: context.cartId
+                    cartId: context.cartId,
+                    searchInfo:$scope.searchInfoBefo
                 });
 
             }
@@ -1376,7 +1385,7 @@ define([
                             productIds.push(object.code);
                         });
                     }
-                    var property = {'cartId': cartId, '_option': 'refreshRetailPrice', 'productIds': productIds};
+                    var property = {'cartId': cartId, '_option': 'refreshRetailPrice', 'productIds': productIds, 'searchInfo':$scope.searchInfoBefo};
                     property.isSelAll = $scope.vm._selall ? 1 : 0;
                     $fieldEditService.setProductFields(property).then(function (res) {
                         if (res.data == null || res.data.ecd == null || res.data.ecd == undefined) {
@@ -1403,7 +1412,8 @@ define([
             _chkProductSel(cartBean.value, function (cartId, selList, context) {
                 popups.openJoinPromotion(_.extend({
                     cartBean: cartBean,
-                    selList: selList
+                    selList: selList,
+                    searchInfo:$scope.searchInfoBefo
                 }, context)).then(function (context) {
 
                 });

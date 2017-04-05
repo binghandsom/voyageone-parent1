@@ -153,7 +153,7 @@ public class CmsFieldEditService extends BaseViewService {
         boolean isSelectAll = ((Integer) params.get("isSelectAll") == 1);
         if (isSelectAll) {
             // 从高级检索重新取得查询结果（根据Session中保存的查询条件）
-            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (Map<String, Object>) params.get("searchInfo"));
         } else {
             productCodes = (List<String>) params.get("productIds");
         }
@@ -182,7 +182,7 @@ public class CmsFieldEditService extends BaseViewService {
 
         List<String> productCodes = null;
         if (isSelectAll) {
-            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (Map<String, Object>) params.get("searchInfo"));
         } else {
             productCodes = (List<String>) params.get("productIds");
         }
@@ -204,7 +204,7 @@ public class CmsFieldEditService extends BaseViewService {
     /**
      * 批量修改属性.
      */
-    public Map<String, Object> setProductFields(Map<String, Object> params, UserSessionBean userInfo, int cartId, CmsSessionBean cmsSession) {
+    public Map<String, Object> setProductFields(Map<String, Object> params, UserSessionBean userInfo, int cartId) {
         Map<String, Object> rsMap = new HashMap<>();
         Integer isSelAll = (Integer) params.get("isSelAll");
         if (isSelAll == null) {
@@ -213,7 +213,7 @@ public class CmsFieldEditService extends BaseViewService {
         List<String> productCodes = null;
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (Map<String, Object>) params.get("searchInfo"));
         } else {
             productCodes = (ArrayList<String>) params.get("productIds");
         }
@@ -340,7 +340,7 @@ public class CmsFieldEditService extends BaseViewService {
         Map<String, Object> rsMap = new HashMap<>();
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (Map<String, Object>) params.get("searchInfo"));
         }
         if (productCodes == null || productCodes.isEmpty()) {
             $warn("没有code条件 params=" + params.toString());
@@ -433,7 +433,7 @@ public class CmsFieldEditService extends BaseViewService {
 
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (Map<String, Object>) params.get("searchInfo"));
         }
 
         /**
@@ -552,7 +552,7 @@ public class CmsFieldEditService extends BaseViewService {
         Map<String, Object> rsMap = new HashMap<>();
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (Map<String, Object>) params.get("searchInfo"));
         }
         if (productCodes == null || productCodes.isEmpty()) {
             $warn("批量修改商品价格 没有code条件 params=" + params.toString());
@@ -979,7 +979,7 @@ public class CmsFieldEditService extends BaseViewService {
         Map<String, Object> rsMap = new HashMap<>();
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (Map<String, Object>) params.get("searchInfo"));
         }
 
         if (productCodes == null || productCodes.isEmpty()) {
@@ -1039,7 +1039,7 @@ public class CmsFieldEditService extends BaseViewService {
         Map<String, Object> rsMap = new HashMap<>();
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (Map<String, Object>) params.get("searchInfo"));
         }
         if (productCodes == null || productCodes.isEmpty()) {
             $warn("没有code条件 params=" + params.toString());
@@ -1095,7 +1095,7 @@ public class CmsFieldEditService extends BaseViewService {
 
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (Map<String, Object>) params.get("searchInfo"));
         }
         if (productCodes == null || productCodes.isEmpty()) {
 
@@ -1134,7 +1134,7 @@ public class CmsFieldEditService extends BaseViewService {
 
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (Map<String, Object>) params.get("searchInfo"));
         }
         if (productCodes == null || productCodes.isEmpty()) {
 

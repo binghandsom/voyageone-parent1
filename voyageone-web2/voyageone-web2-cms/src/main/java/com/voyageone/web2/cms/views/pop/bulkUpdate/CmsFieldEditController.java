@@ -104,7 +104,7 @@ public class CmsFieldEditController extends CmsController {
         else
             cartIdVal = cartId;
 
-        return success(fieldEditService.setProductFields(params, getUser(), cartIdVal, cmsSession));
+        return success(fieldEditService.setProductFields(params, getUser(), cartIdVal));
     }
 
     /**

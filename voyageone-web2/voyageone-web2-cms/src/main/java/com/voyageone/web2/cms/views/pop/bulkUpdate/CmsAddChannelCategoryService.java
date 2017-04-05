@@ -188,7 +188,7 @@ public class CmsAddChannelCategoryService extends BaseViewService {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
             //channelId
             String channelId = (String) params.get("channelId");
-            codeList = advanceSearchService.getProductCodeList(channelId, cmsSession);
+            codeList = advanceSearchService.getProductCodeList(channelId, (Map<String, Object>) params.get("searchInfo"));
             params.put("productIds", codeList);
         }
         if (codeList == null || codeList.isEmpty()) {
