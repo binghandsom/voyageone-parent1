@@ -74,11 +74,7 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 			ruleRoot.addRuleWord(new CommonWord("color"));
 
 			// 前缀
-			if (cartId == 20 || cartId == 23) {
-				ruleRoot.addRuleWord(new TextWord("<img width=\"790px\" src=\""));
-			} else if (cartId == 24 || cartId == 26) {
-				ruleRoot.addRuleWord(new TextWord("<img width=\"990px\" src=\""));
-			}
+			ruleRoot.addRuleWord(new TextWord("<img src=\""));
 
 			{
 				RuleExpression imageTemplate = new RuleExpression();
@@ -131,11 +127,7 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 			ruleRoot.addRuleWord(new SubCodeWord(idx - 1 , "color"));
 
 			// 前缀
-			if (cartId == 20 || cartId == 23) {
-				ruleRoot.addRuleWord(new TextWord("<img width=\"790px\" src=\""));
-			} else if (cartId == 24 || cartId == 26) {
-				ruleRoot.addRuleWord(new TextWord("<img width=\"990px\" src=\""));
-			}
+			ruleRoot.addRuleWord(new TextWord("<img src=\""));
 
 			{
 				RuleExpression imageTemplate = new RuleExpression();
@@ -348,34 +340,32 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 
 				// 产品信息style div start
 				ruleRoot.addRuleWord(new TextWord("<div style=\"color: #acacac;padding: 0 60.0px 80.0px 60.0px;line-height: 16.0pt;background-color: #0c0c0c;font-family: arial;\">"));
+
+				// 英文长描述
+				ruleRoot.addRuleWord(new MasterWord("longDesEn"));
+				ruleRoot.addRuleWord(new TextWord("</div>"));
 			} else if (cartId == 20) {
 				// 固定图（产品信息）
 				ruleRoot.addRuleWord(new TextWord(String.format(strPlatformTemplate, "https://img.alicdn.com/imgextra/i1/907029661/TB24yAvc9FjpuFjSspbXXXagVXa-907029661.jpg")));
 
 				// 产品信息style div start
 				ruleRoot.addRuleWord(new TextWord("<div style=\"color: #acacac;padding: 0 60.0px 80.0px 60.0px;line-height: 16.0pt;font-family: arial;\">"));
-			} else if (cartId == 24) {
-				// 固定图（产品信息）
-				ruleRoot.addRuleWord(new TextWord(String.format(strPlatformTemplate, "http://img10.360buyimg.com/imgzone/jfs/t3112/87/5788074319/34714/6977432/58844413N02924d00.jpg")));
 
-				// 产品信息style div start
-				ruleRoot.addRuleWord(new TextWord("<div style=\"width:990px; background-color:#0c0c0c; padding-bottom:5em; font-size:1.2em; color:#acacac;line-height:33px; font-family:arial;\"><p style=\"padding-left:2em; padding-right:2em; text-align:left; word-break:normal;\">"));
-			} else if (cartId == 26) {
-				// 固定图（产品信息）
-				ruleRoot.addRuleWord(new TextWord(String.format(strPlatformTemplate, "https://img10.360buyimg.com/imgzone/jfs/t3112/87/5788074319/34714/6977432/58844413N02924d00.jpg")));
-
-				// 产品信息style div start
-				ruleRoot.addRuleWord(new TextWord("<div style=\"width:990px; background-color:#0c0c0c; padding-bottom:5em; font-size:1.2em; color:#acacac;line-height:33px; font-family:arial;\"><p style=\"padding-left:2em; padding-right:2em; text-align:left; word-break:normal;\">"));
-			}
-
-			// 英文长描述
-			ruleRoot.addRuleWord(new MasterWord("longDesEn"));
-
-			// 产品信息style div end
-			if (cartId == 23 || cartId == 20) {
+				// 英文长描述
+				ruleRoot.addRuleWord(new MasterWord("longDesEn"));
 				ruleRoot.addRuleWord(new TextWord("</div>"));
-			} else if (cartId == 24 || cartId == 26) {
-				ruleRoot.addRuleWord(new TextWord("</p></div>"));
+//			} else if (cartId == 24) {
+//				// 固定图（产品信息）
+//				ruleRoot.addRuleWord(new TextWord(String.format(strPlatformTemplate, "http://img10.360buyimg.com/imgzone/jfs/t3112/87/5788074319/34714/6977432/58844413N02924d00.jpg")));
+//
+//				// 产品信息style div start
+//				ruleRoot.addRuleWord(new TextWord("<div style=\"width:990px; background-color:#0c0c0c; padding-bottom:5em; font-size:1.2em; color:#acacac;line-height:33px; font-family:arial;\"><p style=\"padding-left:2em; padding-right:2em; text-align:left; word-break:normal;\">"));
+//			} else if (cartId == 26) {
+//				// 固定图（产品信息）
+//				ruleRoot.addRuleWord(new TextWord(String.format(strPlatformTemplate, "https://img10.360buyimg.com/imgzone/jfs/t3112/87/5788074319/34714/6977432/58844413N02924d00.jpg")));
+//
+//				// 产品信息style div start
+//				ruleRoot.addRuleWord(new TextWord("<div style=\"width:990px; background-color:#0c0c0c; padding-bottom:5em; font-size:1.2em; color:#acacac;line-height:33px; font-family:arial;\"><p style=\"padding-left:2em; padding-right:2em; text-align:left; word-break:normal;\">"));
 			}
 
 			if (cartId == 23) {

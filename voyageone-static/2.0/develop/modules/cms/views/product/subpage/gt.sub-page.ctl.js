@@ -271,11 +271,7 @@ define([
 
         //判断页面头部状态
         if (mark != "temporary") {
-            if (cartId == 31) {
-                self.vm.status = 'Approved';
-            } else {
-                self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
-            }
+            self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
         }
 
         /**构造调用接口上行参数*/
@@ -326,6 +322,12 @@ define([
             self.vm.platform.modified = resp.data.modified;
             if (mark !== 'intel')
                 self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+
+            /**生成共通部分，商品状态*/
+            self.productDetailService.createPstatus(self.element.find("#platform-status"),
+                self.$scope.$new(),
+                self.vm.platform
+            );
         }, function (resp) {
             if (resp.code != "4000091" && resp.code != "4000092") {
                 self.vm.status = self.vm.preStatus;
@@ -336,6 +338,12 @@ define([
                 productDetailService.updateProductPlatform(updateInfo).then(function (resp) {
                     self.vm.platform.modified = resp.data.modified;
                     self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+
+                    /**生成共通部分，商品状态*/
+                    self.productDetailService.createPstatus(self.element.find("#platform-status"),
+                        self.$scope.$new(),
+                        self.vm.platform
+                    );
                 });
             }, function () {
                 if (mark != 'temporary')

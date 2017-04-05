@@ -34,8 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -61,31 +59,23 @@ public class CmsBtJmPromotionService extends BaseService {
     private final CmsMtJmConfigService jmConfigService;
     private final CmsBtJmBayWindowService cmsBtJmBayWindowService;
     private final CmsBtJmPromotionBrandLogoDao cmsBtJmPromotionBrandLogoDao;
-
+    CmsBtTagJmModuleExtensionDao tagJmModuleExtensionDao;
     @Autowired
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
     @Autowired
     private CmsMtBrandsMappingDaoExt brandsMappingDaoExt;
-
     @Autowired
     private CmsBtJmPromotionProductDaoExt cmsBtJmPromotionProductDaoExt;
-
     @Autowired
     private CmsBtJmPromotionSkuDaoExt cmsBtJmPromotionSkuDaoExt;
-
     @Autowired
     private CmsBtJmPromotionImportTask3Service cmsBtJmPromotionImportTask3Service;
-
     @Autowired
     private CmsBtJmPromotionTagProductDaoExt cmsBtJmPromotionTagProductDaoExt;
-
     @Autowired
     private CmsBtJmPromotionTagProductDao cmsBtJmPromotionTagProductDao;
-
     @Autowired
     private CmsBtJmPromotionImagesDao cmsBtJmPromotionImagesDao;
-
-    CmsBtTagJmModuleExtensionDao  tagJmModuleExtensionDao;
     @Autowired
     public CmsBtJmPromotionService(CmsBtPromotionDao daoCmsBtPromotion,
                                    CmsBtJmPromotionDao dao, CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand,
@@ -312,6 +302,8 @@ public class CmsBtJmPromotionService extends BaseService {
     public int saveModel(CmsBtJmPromotionSaveBean parameter, String userName, String channelId) {
         parameter.getModel().setChannelId(channelId);
 
+        parameter.getTagList().forEach(tag -> tag.getModel().setTagPathName("-" + parameter.getModel().getName() + "-" + tag.getModel().getTagName()));
+
         if (parameter.getModel().getId() != null && parameter.getModel().getId() > 0) {
             // 更新
             if (parameter.isHasExt()) {
@@ -466,6 +458,10 @@ public class CmsBtJmPromotionService extends BaseService {
                         tagService.updateTagModel(tagModel);
                         if(tagModel.getActive()==1) {
                             module = tagService.getJmModule(tagModel);
+                            if (module.getModuleTitle() != tagModel.getTagName()) {
+                                module.setModuleTitle(tagModel.getTagName());
+                                tagService.updateTagModel(module);
+                            }
                         }
                     } else {
                         addChildTag(tagModel, jmPromotionModel);
@@ -473,6 +469,7 @@ public class CmsBtJmPromotionService extends BaseService {
                         tagService.addJmModule(module);
                     }
                     return module;
+
                 }).filter(f -> f != null)
                 .collect(toList());
 
@@ -849,7 +846,7 @@ public class CmsBtJmPromotionService extends BaseService {
         daoExt.setJmPromotionStepStatus(param);
     }
 
-    public static enum JmPromotionStepNameEnum {
+    public enum JmPromotionStepNameEnum {
 
         SessionsUpload("upload_status"),    // 专场上传
         PromotionDetail("detail_status"),   // 活动信息
@@ -868,7 +865,7 @@ public class CmsBtJmPromotionService extends BaseService {
         }
     }
 
-    public static enum JmPromotionStepStatusEnum {
+    public enum JmPromotionStepStatusEnum {
 
         Default(0),    // 初始状态
         Success(1),  // 提交完成

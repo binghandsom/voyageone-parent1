@@ -95,7 +95,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -195,6 +194,10 @@ public class SxProductService extends BaseService {
     private CmsBtCustomPropService cmsBtCustomPropService;
     @Autowired
     private JdImgzoneService jdImgzoneService;
+    @Autowired
+    private CmsBtSizeChartImageGroupService cmsBtSizeChartImageGroupService;
+    @Autowired
+    private ImageGroupService imageGroupService;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -1187,7 +1190,7 @@ public class SxProductService extends BaseService {
         for (int i = 0; i < skuList.size(); i++) {
             strSqlSkuList.add(skuList.get(i).getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
         }
-        int cnt = imsBtProductExceptDao.selectImsBtProductExceptByChannelCartSku(channelId, cartId, strSqlSkuList);
+        int cnt = imsBtProductExceptDao.selectImsBtProductExceptByChannelCartSku(channelId, strSqlSkuList);
         if (cnt > 0) {
             String errorMsg = "取得上新数据(SxData)失败! 库存已经被隔离， 不能执行上新程序。groupId(" + groupId + "), main code(" + mainProductCode + ")";
             $error(errorMsg);
@@ -1204,6 +1207,7 @@ public class SxProductService extends BaseService {
 //        }
         if (!StringUtils.isEmpty(sxData.getMainProduct().getCommon().getStringAttribute("sizeChart"))) {
             sizeChartId = Integer.parseInt(sxData.getMainProduct().getCommon().getStringAttribute("sizeChart"));
+            sxData.setSizeChartId(sizeChartId);
         }
         Map<String, String> sizeMap;
         try {
@@ -2311,6 +2315,15 @@ public class SxProductService extends BaseService {
 
         Map<CustomMappingType, List<Field>> mappingTypePropsMap = new HashMap<>();
 
+        // 为了一种特殊的schema， 做出的一个补丁， 以后要改 START
+        // 取出当前类目的sku属性（或达尔文sku属性）里的属性
+        List<Field> tmallSkuFields = fieldsMap.entrySet().stream()
+                .filter(f -> f.getKey().equalsIgnoreCase("darwin_sku") || f.getKey().equalsIgnoreCase("sku"))
+                .map(f -> ((MultiComplexField)f.getValue()).getFields())
+                .findAny()
+                .orElse(new ArrayList<>());
+        // 为了一种特殊的schema， 做出的一个补丁， 以后要改 END
+
         for (CmsMtPlatformPropMappingCustomModel model : cmsMtPlatformPropMappingCustomModels) {
             // add by morse.lu 2016/05/24 start
             if (!isItem && CustomMappingType.valueOf(model.getMappingType()) == CustomMappingType.SKU_INFO) {
@@ -2318,6 +2331,34 @@ public class SxProductService extends BaseService {
                 continue;
             }
             // add by morse.lu 2016/05/24 end
+
+            // 为了一种特殊的schema， 做出的一个补丁， 以后要改 START
+//            if (CustomMappingType.valueOf(model.getMappingType()) == CustomMappingType.SKU_INFO || CustomMappingType.valueOf(model.getMappingType()) == CustomMappingType.DARWIN_SKU) {
+//                if (!"darwin_sku".equals(model.getPlatformPropId()) // 不能被踢掉
+//                        && !"sku".equals(model.getPlatformPropId()) // 不能被踢掉
+//                        && !"sku".equals(model.getPlatformPropId()) // 不能被踢掉
+//                        ) {
+//                    // 如果当前这个属性名称大多数情况下是属于sku里的属性的话， 那么看看sku（或达尔文sku）里， 是否有当前这个属性
+//                    // 如果没有这个属性的话， 那就说明这个属性是在sku（或达尔文sku）外层的属性， 无需自动处理
+//                    boolean haveThisAttr = tmallSkuFields.stream()
+//                            .filter(f -> model.getPlatformPropId().equals(f.getId()))
+//                            .count() > 0;
+//                    if (!haveThisAttr) {
+//                        continue;
+//                    }
+//                }
+//            }
+
+            if (CustomMappingType.valueOf(model.getMappingType()) == CustomMappingType.SKU_INFO && "prop_20509".equals(model.getPlatformPropId())) {
+                boolean haveThisAttr = tmallSkuFields.stream()
+                        .filter(f -> "prop_20509".equals(f.getId()))
+                        .count() > 0;
+                if (!haveThisAttr) {
+                    continue;
+                }
+            }
+            // 为了一种特殊的schema， 做出的一个补丁， 以后要改 END
+
             Field field = fieldsMap.get(model.getPlatformPropId());
             if (field != null) {
                 List<Field> mappingPlatformPropBeans = mappingTypePropsMap.get(CustomMappingType.valueOf(model.getMappingType()));
@@ -3973,8 +4014,23 @@ public class SxProductService extends BaseService {
         // 最优先看platforms.Pxx.图片， 如果不存在的场合， 再去看common.fields.图片
         // 如果是PRODUCT，先看看image6有没有值，只要image6有一条，那么都从image6里取,否则还是去取image1
         List<CmsBtProductModel_Field_Image> productImages;
+        List<CmsBtProductModel_Field_Image> tmp;
         if (CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE == imageType) {
-            productImages = product.getPlatform(cartId).getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
+            tmp = product.getPlatform(cartId).getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
+            if (tmp == null || tmp.isEmpty()) {
+                productImages = null;
+            } else {
+                productImages = new ArrayList<>();
+                for (int i = 0; i < tmp.size(); i++) {
+                    CmsBtProductModel_Field_Image img = new CmsBtProductModel_Field_Image();
+
+                    Object v = tmp.get(i);
+                    String s = ((LinkedHashMap<String, String>)v).get(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE.getName());
+                    img.put(imageType.getName(), s);
+
+                    productImages.add(img);
+                }
+            }
 
             if (productImages == null || productImages.isEmpty() || StringUtils.isEmpty(productImages.get(0).getName())) {
                 productImages = product.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
@@ -3984,7 +4040,21 @@ public class SxProductService extends BaseService {
                 productImages = product.getCommon().getFields().getImages(imageType);
             }
         } else {
-            productImages = product.getPlatform(cartId).getImages(imageType);
+            tmp = product.getPlatform(cartId).getImages(imageType);
+            if (tmp == null || tmp.isEmpty()) {
+                productImages = null;
+            } else {
+                productImages = new ArrayList<>();
+                for (int i = 0; i < tmp.size(); i++) {
+                    CmsBtProductModel_Field_Image img = new CmsBtProductModel_Field_Image();
+
+                    Object v = tmp.get(i);
+                    String s = ((LinkedHashMap<String, String>)v).get(imageType.getName());
+                    img.put(imageType.getName(), s);
+
+                    productImages.add(img);
+                }
+            }
 
             if (productImages == null || productImages.isEmpty() || StringUtils.isEmpty(productImages.get(0).getName())) {
                 productImages = product.getCommon().getFields().getImages(imageType);
@@ -5636,28 +5706,29 @@ public class SxProductService extends BaseService {
      * @param codeList  codeList
      * @throws IOException
      */
-    public void synInventoryToPlatform(String channelId, String cartId, List<String> codeList, List<String> skuList) throws IOException {
+    public Map<String, Object> synInventoryToPlatform(String channelId, String cartId, List<String> codeList, List<String> skuList) throws IOException {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.parseMediaType("application/json;charset=UTF-8"));
         ObjectMapper objectMapper = new ObjectMapper();
         HashMap<String, Object> feedInfo = new HashMap<>();
-        feedInfo.put("orderChannelId", channelId);
+        feedInfo.put("orderChanneId", channelId);
         feedInfo.put("cartId", cartId);
         feedInfo.put("codeList", codeList);
         feedInfo.put("skuList", skuList);
         feedInfo.put("timeStamp", System.currentTimeMillis());
         feedInfo.put("signature", MD5.getMD5(channelId + System.currentTimeMillis()));
-        List<HashMap<String, Object>> requestList = Arrays.asList(feedInfo);
+//        List<HashMap<String, Object>> requestList = Arrays.asList();
 
-        String json = objectMapper.writeValueAsString(requestList);
-        httpHeaders.set("Authorization", "Basic " + MD5.getMD5(json + System.currentTimeMillis() / TimeUnit.MINUTES.toMillis(30)));
+        String json = objectMapper.writeValueAsString(feedInfo);
+//        httpHeaders.set("Authorization", "Basic " + MD5.getMD5(json + System.currentTimeMillis() / TimeUnit.MINUTES.toMillis(30)));
         HttpEntity<String> httpEntity = new HttpEntity<>(json, httpHeaders);
         SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
         simpleClientHttpRequestFactory.setConnectTimeout(6000);
         simpleClientHttpRequestFactory.setReadTimeout(6000);
         RestTemplate restTemplate = new RestTemplate(simpleClientHttpRequestFactory);
         ResponseEntity<String> exchange = restTemplate.exchange("http://open.synship.net/wms/logSynInventoryForCms/import", HttpMethod.POST, httpEntity, String.class);
+        return JsonUtil.jsonToMap(exchange.getBody());
     }
 
     private enum SkuSort {
@@ -5776,4 +5847,141 @@ public class SxProductService extends BaseService {
 
         return imageUrl;
     }
+
+    /**
+     *
+     * @param channelId
+     * @param sizeChartId
+     * @param viewType 1:PC端 2：APP端
+     * @return
+     */
+    public List<Map<String,Object>> getListImageGroupBySizeChartId(String channelId, int sizeChartId, String viewType) {
+        List<CmsBtSizeChartImageGroupModel> list = cmsBtSizeChartImageGroupService.getListByCmsBtSizeChartId(channelId, sizeChartId);
+        List<Map<String, Object>> listImageGroup = new ArrayList<>();
+        CmsBtImageGroupModel groupModel;
+        Map<String, Object> map;
+        for (CmsBtSizeChartImageGroupModel model : list) {
+            map = new HashMap<>();
+            if ("1".equals(viewType)) {
+                groupModel = imageGroupService.getImageGroupModel(String.valueOf(model.getCmsBtImageGroupId()));
+            } else {
+                groupModel = imageGroupService.getImageGroupModel(String.valueOf(model.getCmsBtImageGroupIdApp()));
+            }
+
+            if(groupModel != null) {
+                List<CmsBtImageGroupModel_Image> sizeChartImageList = groupModel.getImage();
+                if (ListUtils.notNull(sizeChartImageList) && groupModel.getImageType() == 2) {  // imageType == 2 (尺码图)
+                    map.put("image", sizeChartImageList);
+                }
+                map.put("imageGroupName", groupModel.getImageGroupName());
+                map.put("imageGroupId", groupModel.getImageGroupId());
+                map.put("cartId", model.getCartId());
+
+                listImageGroup.add(map);
+            }
+        }
+        return listImageGroup;
+    }
+
+    /**
+     *
+     * @param channelId 渠道ID
+     * @param cartId    平台ID
+     * @param workloadName  任务名称
+     * @param codeList  待更新商品列表
+     * @param modifier  变更人
+     */
+    public void insertPlatformWorkload(String channelId, Integer cartId, PlatformWorkloadAttribute workloadName, List<String> codeList,
+                                        String modifier) {
+        // 输入参数检查
+        if (StringUtils.isEmpty(channelId) || ListUtils.isNull(codeList) || StringUtils.isEmpty(modifier)
+                || workloadName == null) {
+            $error("insertPlatformWorkLoad 缺少参数" + channelId + "==" + codeList.size() + "==" + modifier
+                     + "==" + workloadName);
+            return;
+        }
+
+
+        // 准备插入workload表的数据
+        List<CmsBtSxWorkloadModel> modelList = new ArrayList<>();
+        // 已处理过的group(防止同一个group多次被插入)
+//        List<Long> groupWorkList = new ArrayList<>();
+
+        // 根据商品code获取其所有group信息(所有平台)
+        JongoQuery jongoQuery = new JongoQuery();
+        Criteria criteria;
+        if(cartId != null){
+            criteria = new Criteria("productCodes").in(codeList).and("cartId").is(cartId);
+        }else{
+            criteria = new Criteria("productCodes").in(codeList);
+        }
+        jongoQuery.setQuery(criteria);
+        List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select(jongoQuery, channelId);
+        for (CmsBtProductGroupModel group : groups) {
+//            if (groupWorkList.contains(group.getGroupId())) {
+//                // 如果已经处理过了, 那么就跳过
+//                continue;
+//            } else {
+//                groupWorkList.add(group.getGroupId());
+//            }
+
+            // 如果cart是0或者1的话, 直接就跳过, 肯定不用上新的.
+            if (group.getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
+                continue;
+            }
+
+            if (cartId != null && cartId.intValue() != group.getCartId().intValue()) {
+                // 指定了cartId, 并且指定的cartId并不是现在正在处理的group的场合, 跳过
+                continue;
+            }
+
+            // 加入等待更新列表
+            CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
+            model.setChannelId(channelId);
+            model.setCartId(group.getCartId());
+            model.setWorkloadName(workloadName.name);
+            model.setGroupId(group.getGroupId());
+            model.setPriority_order(codeList.size());
+            model.setModifier(modifier);
+            model.setModified(DateTimeUtil.getDate());
+            model.setCreater(modifier);
+            model.setCreated(DateTimeUtil.getDate());
+            modelList.add(model);
+
+        }
+
+        // 插入上新表
+        int iCnt = 0;
+        if (!modelList.isEmpty()) {
+            List<CmsBtSxWorkloadModel> modelListFaster = new ArrayList<>();
+
+            for (int i = 0; i < modelList.size(); i++) {
+                modelListFaster.add(modelList.get(i));
+                if (i % 301 == 0 ) {
+                    iCnt += sxWorkloadDao.insertPlatformWorkloadModels(modelListFaster);
+                    // 初始化一下
+                    modelListFaster = new ArrayList<>();
+                }
+            }
+
+            if (modelListFaster.size() > 0) {
+                // 最后插入一次数据库
+                iCnt += sxWorkloadDao.insertPlatformWorkloadModels(modelListFaster);
+            }
+
+            // 逻辑删除cms_bt_business_log中以前的错误,即把status更新成1:已解决
+
+//            if(cartId != 33) {
+//                long sta = System.currentTimeMillis();
+//                modelList.forEach(p -> {
+//                    clearBusinessLog2(p.getChannelId(), p.getCartId(), p.getGroupId(), p.getModifier());
+//                });
+//                $info("逻辑删除cms_bt_business_log中以前的错误 耗时" + (System.currentTimeMillis() - sta));
+//            }
+        }
+        $debug("insertPlatformWorkLoad 新增PlatformWorkload结果 " + iCnt);
+
+
+    }
+
 }

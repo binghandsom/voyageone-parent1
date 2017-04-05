@@ -8,7 +8,9 @@ import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionTagProductDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionTagProductDaoExt;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.*;
+import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
+import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
+import com.voyageone.service.model.cms.CmsBtJmPromotionTagProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +64,7 @@ public class CmsBtJmPromotionTagProductService {
             }
         });
     }
+
     @VOTransactional
     public  void  updatePromotionProductTag(UpdatePromotionProductTagParameter parameter, String channelId, String userName) {
 
@@ -83,6 +86,7 @@ public class CmsBtJmPromotionTagProductService {
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, codesModel.getProductCode());
         productService.updateCmsBtProductTags(channelId, cmsBtProductModel, promotionModel.getRefTagId(), tagList, userName);
     }
+
     public  String getPromotionTag(List<TagTreeNode> tagList,String oldPromotionTag) {
         HashSet<String> hs = new HashSet<>();
 

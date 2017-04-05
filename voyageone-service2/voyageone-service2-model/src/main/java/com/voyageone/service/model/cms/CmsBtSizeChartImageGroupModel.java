@@ -27,6 +27,11 @@ public class CmsBtSizeChartImageGroupModel extends BaseModel {
      */
     protected Long cmsBtImageGroupId;
 
+    /**
+     * 尺码图片组 - APP
+     */
+    protected Long cmsBtImageGroupIdApp;
+
     public String getChannelId() {
         return channelId;
     }
@@ -57,5 +62,13 @@ public class CmsBtSizeChartImageGroupModel extends BaseModel {
 
     public void setCmsBtImageGroupId(Long cmsBtImageGroupId) {
         this.cmsBtImageGroupId = cmsBtImageGroupId;
+    }
+
+    public Long getCmsBtImageGroupIdApp() {
+        return cmsBtImageGroupIdApp;
+    }
+
+    public void setCmsBtImageGroupIdApp(Long cmsBtImageGroupIdApp) {
+        this.cmsBtImageGroupIdApp = cmsBtImageGroupIdApp;
     }
 }

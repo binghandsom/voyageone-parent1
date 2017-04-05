@@ -139,6 +139,11 @@ define([
             item.priceMsrp = undefined;
             item.priceSale = undefined;
 
+            //更新页面数据
+            self.init();
+            //更新子页面数据
+            self.$scope.productInfo.masterCategory = new Date().getTime();
+
             self.notify.success("保存成功")
 
         });

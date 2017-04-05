@@ -109,6 +109,16 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     private Boolean noSale;
 
+    private String pLockFlg;
+
+    public String getpLockFlg() {
+        return pLockFlg;
+    }
+
+    public void setpLockFlg(String pLockFlg) {
+        this.pLockFlg = pLockFlg;
+    }
+
     public Boolean getNewSku() {
         return isNewSku;
     }

@@ -3,12 +3,12 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtSizeChartImageGroupDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtSizeChartImageGroupModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `cart_id`, `cms_bt_size_chart_Id`, `cms_bt_image_group_id`, `creater`, 
+        `id`, `channel_id`, `cart_id`, `cms_bt_size_chart_Id`, `cms_bt_image_group_id` , `cms_bt_image_group_id_app`, `creater`,
         `modifier`, `created`, `modified`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-        select 
+        select
         <include refid="Base_Column_List" />
         from cms_bt_size_chart_image_group
         where `id` = #{id,jdbcType=INTEGER}
@@ -28,6 +28,9 @@
             </if>
             <if test="cmsBtImageGroupId != null" >
                 `cms_bt_image_group_id` = #{cmsBtImageGroupId,jdbcType=BIGINT},
+            </if>
+            <if test="cmsBtImageGroupIdApp != null" >
+                `cms_bt_image_group_id_app` = #{cmsBtImageGroupIdApp,jdbcType=BIGINT},
             </if>
             <if test="creater != null" >
                 `creater` = #{creater,jdbcType=VARCHAR},
@@ -54,10 +57,10 @@
     </delete>
 
     <select id="selectOne" resultMap="BaseResultMap" >
-        select 
+        select
         <include refid="Base_Column_List" />
         from cms_bt_size_chart_image_group
-        <where >
+        <where>
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
@@ -69,6 +72,9 @@
             </if>
             <if test="cmsBtImageGroupId != null" >
                 and `cms_bt_image_group_id` = #{cmsBtImageGroupId,jdbcType=BIGINT}
+            </if>
+            <if test="cmsBtImageGroupIdApp != null" >
+                and `cms_bt_image_group_id_app` = #{cmsBtImageGroupIdApp,jdbcType=BIGINT},
             </if>
             <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
@@ -87,7 +93,7 @@
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
-        select 
+        select
         <include refid="Base_Column_List" />
         from cms_bt_size_chart_image_group
         <where >
@@ -102,6 +108,9 @@
             </if>
             <if test="cmsBtImageGroupId != null" >
                 and `cms_bt_image_group_id` = #{cmsBtImageGroupId,jdbcType=BIGINT}
+            </if>
+            <if test="cmsBtImageGroupIdApp != null" >
+                and `cms_bt_image_group_id_app` = #{cmsBtImageGroupIdApp,jdbcType=BIGINT},
             </if>
             <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
@@ -133,6 +142,9 @@
             <if test="cmsBtImageGroupId != null" >
                 and `cms_bt_image_group_id` = #{cmsBtImageGroupId,jdbcType=BIGINT}
             </if>
+            <if test="cmsBtImageGroupIdApp != null" >
+                and `cms_bt_image_group_id_app` = #{cmsBtImageGroupIdApp,jdbcType=BIGINT},
+            </if>
             <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
@@ -163,6 +175,9 @@
             <if test="cmsBtImageGroupId != null" >
                 `cms_bt_image_group_id`,
             </if>
+            <if test="cmsBtImageGroupIdApp != null" >
+                `cms_bt_image_group_id_app`,
+            </if>
             <if test="creater != null" >
                 `creater`,
             </if>
@@ -187,6 +202,9 @@
             </if>
             <if test="cmsBtImageGroupId != null" >
                 #{cmsBtImageGroupId,jdbcType=BIGINT},
+            </if>
+            <if test="cmsBtImageGroupIdApp != null" >
+                #{cmsBtImageGroupIdApp,jdbcType=BIGINT},
             </if>
             <if test="creater != null" >
                 #{creater,jdbcType=VARCHAR},

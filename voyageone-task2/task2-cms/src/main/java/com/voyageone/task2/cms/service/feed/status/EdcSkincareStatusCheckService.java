@@ -63,15 +63,16 @@ public class EdcSkincareStatusCheckService extends FeedStatusCheckBaseService {
         return ChannelConfigEnums.Channel.EDCSKINCARE;
     }
 
-    private boolean backupFeedFile(String channel_id) {
+    @Override
+    protected void backupFeedFile() {
         $info("备份处理文件开始");
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         String date_ymd = sdf.format(date);
 
-        String filename = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/status_" + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id));
-        String filename_backup = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
-                + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id));
+        String filename = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.feed_ftp_localpath) + "/status_" + StringUtils.null2Space(Feeds.getVal1(getChannel().getId(), FeedEnums.Name.file_id));
+        String filename_backup = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
+                + StringUtils.null2Space(Feeds.getVal1(getChannel().getId(), FeedEnums.Name.file_id));
         File file = new File(filename);
         File file_backup = new File(filename_backup);
 
@@ -81,6 +82,5 @@ public class EdcSkincareStatusCheckService extends FeedStatusCheckBaseService {
         }
 
         $info("备份处理文件结束");
-        return true;
     }
 }
