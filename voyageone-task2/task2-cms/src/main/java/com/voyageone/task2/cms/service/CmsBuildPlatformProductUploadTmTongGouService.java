@@ -1004,6 +1004,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             // 如果不是下面这些类目，统一设置成"50026470"
             if (!StringUtils.isEmpty(strCategoryPath)
                     && !strCategoryPath.startsWith("孕妇装/孕产妇用品/营养")
+                    && !strCategoryPath.startsWith("童鞋/婴儿鞋/亲子鞋")
                     && !strCategoryPath.startsWith("奶粉/辅食/营养品/零食")) {
                 Map<String, Object> paramCategory = new HashMap<>();
                 paramCategory.put("cat_id", "50026470"); // 孕妇装/孕产妇用品/营养>孕产妇营养品>其它
