@@ -119,7 +119,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         parameter.getDealEndTime().setSeconds(59);//聚美专场结束时间都以59秒结尾。
         CallResult result = service3.updateDealEndTimeAll(parameter);
         if (result.isResult()) {
-            service3.sendMessage(parameter.getPromotionId(),getUser().getUserName());
+            service3.sendMessage(parameter.getPromotionId(), getUser().getUserName(), getUser().getSelChannelId());
         }
         return success(result);
     }
@@ -138,7 +138,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.JmNewUpdateAll)
     public AjaxResponse jmNewUpdateAll(@RequestBody int promotionId) {
         serviceCmsBtJmPromotionProduct.jmNewUpdateAll(promotionId);
-        service3.sendMessage(promotionId,getUser().getUserName());
+        service3.sendMessage(promotionId, getUser().getUserName(), getUser().getSelChannelId());
         CallResult result = new CallResult();
         return success(result);
     }
@@ -147,7 +147,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.JmNewByProductIdListInfo)
     public AjaxResponse jmNewByProductIdListInfo(@RequestBody ProductIdListInfo parameter) {
         serviceCmsBtJmPromotionProduct.jmNewByProductIdListInfo(parameter);
-        service3.sendMessage(parameter.getPromotionId(),getUser().getUserName());
+        service3.sendMessage(parameter.getPromotionId(), getUser().getUserName(), getUser().getSelChannelId());
 
         CallResult result = new CallResult();
         return success(result);
@@ -206,7 +206,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchSynchPrice)
     public AjaxResponse batchSyncPrice(@RequestBody BatchSynchPriceParameter parameter) {
         service3.batchSynchPrice(parameter);
-        service3.sendMessage(parameter.getPromotionId(),getUser().getUserName());
+        service3.sendMessage(parameter.getPromotionId(), getUser().getUserName(), getUser().getSelChannelId());
         CallResult result = new CallResult();
         return success(result);
     }
@@ -215,7 +215,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     public AjaxResponse syncAllPrice(@RequestBody int promotionId) {
         CallResult result = service3.synchAllPrice(promotionId);
         if (result.isResult()) {
-            service3.sendMessage(promotionId,getUser().getUserName());
+            service3.sendMessage(promotionId, getUser().getUserName(), getUser().getSelChannelId());
         }
         return success(result);
     }
@@ -224,7 +224,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchCopyDeal)
     public AjaxResponse batchCopyDeal(@RequestBody BatchCopyDealParameter parameter) {
         service3.batchCopyDeal(parameter);
-        service3.sendMessage(parameter.getPromotionId(),getUser().getUserName());
+        service3.sendMessage(parameter.getPromotionId(), getUser().getUserName(), getUser().getSelChannelId());
         CallResult result = new CallResult();
         return success(result);
     }
@@ -234,7 +234,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     public AjaxResponse copyDealAll(@RequestBody int promotionId) {
         CallResult result = service3.copyDealAll(promotionId);
         if (result.isResult()) {
-            service3.sendMessage(promotionId,getUser().getUserName());
+            service3.sendMessage(promotionId, getUser().getUserName(), getUser().getSelChannelId());
         }
         return success(result);
     }
@@ -304,7 +304,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     //刷新参考价格
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.RefreshPrice)
     public  AjaxResponse refreshPrice(@RequestBody int jmPromotionId) {
-        cmsBtJmPromotionSkuService.senderJMRefreshPriceMQMessage(jmPromotionId, getUser().getUserName());
+        cmsBtJmPromotionSkuService.senderJMRefreshPriceMQMessage(jmPromotionId, getUser().getUserName(), getUser().getSelChannelId());
         return success(null);
     }
     //jm2 end

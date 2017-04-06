@@ -15,18 +15,9 @@ import java.util.List;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_TM_TE_JIA_BAO_DEL)
 public class CmsTeJiaBaoDelMQMessageBody extends BaseMQMessageBody {
 
-    private String channelId;
     private Long tejiabaoId;
     private Integer cartId;
     private List<String> numIId;
-
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 
     public Long getTejiabaoId() {
         return tejiabaoId;
@@ -54,7 +45,7 @@ public class CmsTeJiaBaoDelMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isEmpty(channelId)) {
+        if (StringUtils.isEmpty(super.getChannelId())) {
             throw new MQMessageRuleException("天猫活动-天猫特价宝刷新MQ发送异常, 参数channelId为空.");
         }
         if(tejiabaoId == null){

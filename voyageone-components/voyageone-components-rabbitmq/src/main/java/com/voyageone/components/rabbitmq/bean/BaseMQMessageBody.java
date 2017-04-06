@@ -15,6 +15,9 @@ public abstract class BaseMQMessageBody implements IMQMessageBody {
     //发送者
     private String sender;
 
+    //店铺Id
+    private String channelId;
+
     public int getConsumerRetryTimes() {
         return consumerRetryTimes;
     }
@@ -47,6 +50,14 @@ public abstract class BaseMQMessageBody implements IMQMessageBody {
 
     public void setSender(String sender) {
         this.sender = sender;
+    }
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
     }
 
     public abstract void check() throws MQMessageRuleException;

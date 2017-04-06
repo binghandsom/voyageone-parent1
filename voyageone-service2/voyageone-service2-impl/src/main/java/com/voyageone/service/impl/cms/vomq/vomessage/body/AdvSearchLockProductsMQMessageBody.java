@@ -18,20 +18,11 @@ import java.util.List;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_ADV_SEARCH_LOCK_PRODUCTS)
 public class AdvSearchLockProductsMQMessageBody extends BaseMQMessageBody  implements IMQMessageSubBeanName {
 
-    private String channelId;
     private Integer cartId;
     private String activeStatus;        //上下架状态
     private List<String> productCodes;
     private String comment;             //备注
     private String lock;                       //锁定状态
-
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 
     public Integer getCartId() {
         return cartId;
@@ -75,7 +66,7 @@ public class AdvSearchLockProductsMQMessageBody extends BaseMQMessageBody  imple
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isBlank(channelId)) {
+        if (StringUtils.isBlank(super.getChannelId())) {
             throw new MQMessageRuleException("高级检索-批量设置商品上下架MQ发送异常, 参数channelId为空.");
         }
         if (CollectionUtils.isEmpty(productCodes)) {

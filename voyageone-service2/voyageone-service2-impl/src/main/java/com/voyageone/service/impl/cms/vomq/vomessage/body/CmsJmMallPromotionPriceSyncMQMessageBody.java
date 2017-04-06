@@ -15,19 +15,9 @@ import java.util.List;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_JM_MALL_PROMOTION_PRICE_SYNC)
 public class CmsJmMallPromotionPriceSyncMQMessageBody extends BaseMQMessageBody {
 
-    private String  channelId;
-
     private Integer jmPromotionId;
 
     private List<String> productCodes;
-
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 
     public Integer getJmPromotionId() {
         return jmPromotionId;
@@ -47,7 +37,7 @@ public class CmsJmMallPromotionPriceSyncMQMessageBody extends BaseMQMessageBody 
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isBlank(channelId)) {
+        if (StringUtils.isBlank(super.getChannelId())) {
             throw new MQMessageRuleException("聚美活动-聚美活动价格同步到聚美商城价格MQ发送异常, 参数channelId为空.");
         }
         if(jmPromotionId == null || jmPromotionId <= 0){

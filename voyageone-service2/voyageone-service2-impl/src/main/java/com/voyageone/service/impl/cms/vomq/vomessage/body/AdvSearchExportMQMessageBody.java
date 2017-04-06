@@ -46,6 +46,9 @@ public class AdvSearchExportMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
+        if (org.apache.commons.lang.StringUtils.isBlank(super.getChannelId())) {
+            throw new MQMessageRuleException("高级检索-异步生成文件MQ发送异常, 参数channelId为空.");
+        }
         if (cmsBtExportTaskId == null) {
             throw new MQMessageRuleException("高级检索-异步生成文件MQ发送异常, 参数cmsBtExportTaskId为空.");
         }

@@ -641,6 +641,12 @@ define([
             controllerUrl: "modules/cms/views/pop/platformMapping/confirmProductRefresh.controller",
             controller: 'ConfirmProductRefreshController as $ctrl',
             size: 'md'
+        },
+        mqSkuCodeError:{
+            templateUrl: "views/pop/error/mqSkuCodeError.html",
+            controllerUrl: "modules/cms/views/pop/error/mqSkuCodeError.ctl",
+            controller: 'mqSkuCodeErrorController as ctrl',
+            size: 'md'
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
@@ -1488,6 +1494,13 @@ define([
         /**产品详情页图片上传*/
         $scope.openUploadImages = function openUploadImages(context) {
             return openModal(popActions.product.uploadImages, context);
+        };
+
+        /**
+         * MQ:sku-code 错误列表
+         */
+        $scope.openMqSkuCodeError = function openMqSkuCodeError(context){
+            return openModal(popActions.mqSkuCodeError, context);
         }
 
     }).factory('popups', function ($controller, $rootScope) {
