@@ -588,6 +588,7 @@ public class PlatformPriceService extends VOAbsLoggable {
 
                 try {
 
+                    updateProductPlatformPrice(productModel, cartId, false, userName, msg);
                     // 保存计算结果
                     JongoUpdate updObj = new JongoUpdate();
                     updObj.setQuery("{'common.fields.code':#}");
@@ -597,8 +598,6 @@ public class PlatformPriceService extends VOAbsLoggable {
                     WriteResult rs = productService.updateFirstProduct(updObj, channelId);
                     $debug("CmsProductVoRateUpdateService 保存计算结果 " + rs.toString());
 
-
-                    updateProductPlatformPrice(productModel, cartId, false, userName, msg);
                 } catch (Exception exp) {
 
                     $error(String.format("CmsProductVoRateUpdateService 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channelId, code, cartId, exp.getMessage()), exp);

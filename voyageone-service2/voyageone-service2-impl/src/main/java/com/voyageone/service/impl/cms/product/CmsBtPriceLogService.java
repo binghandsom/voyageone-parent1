@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.product;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -21,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM.*;
 import static java.util.stream.Collectors.toMap;
@@ -76,6 +78,17 @@ public class CmsBtPriceLogService extends BaseService {
             $warn("CmsBtPriceLogService:addLogListAndCallSyncPriceJob 输入为空");
             return 0;
         }
+        paramList = paramList.stream()
+                .filter(newlog->{
+                    CmsBtPriceLogModel lastLog = priceLogDaoExt.selectLastOneBySkuOnCart(newlog.getSku(), newlog.getCartId(), newlog.getChannelId());
+                    if (lastLog != null && compareAllPrice(newlog, lastLog)){
+                        return false;
+                    }else{
+                        return true;
+                    }
+                })
+                .collect(Collectors.toList());
+        if(ListUtils.isNull(paramList)) return 0;
         int rs = priceLogDaoExt.insertCmsBtPriceLogList(paramList);
 
         if(paramList.size()>0){
