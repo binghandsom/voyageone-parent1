@@ -104,7 +104,9 @@
 							<span ng-if="errorInfo.errorMsg.length > 50"><popover-text content="::errorInfo.errorMsg" direct="left" size="50"></popover-text></span>
 							<span ng-if="errorInfo.errorMsg.length <= 50">{{::errorInfo.errorMsg}}</span>
                         </td>
-						<td class="mfb-xt text-left" ng-bind="::errorInfo.created.substring(0, 19)"></td>
+						<td class="mfb-xt text-left">
+							{{errorInfo.created}}
+						</td>
 						<td class="mfb-xt text-left" ng-bind="::errorInfo.creater"></td>
 						<td class="mfb-xt text-center">
 							<div class="onoffswitch" style="margin: 0px auto;">

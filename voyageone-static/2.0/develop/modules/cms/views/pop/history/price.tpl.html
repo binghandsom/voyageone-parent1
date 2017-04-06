@@ -56,7 +56,7 @@
                     <td class="text-right">{{item.clientRetailPrice}}</td>
                     <td class="text-right">{{item.clientNetPrice}}</td>
                     <td class="text-left">{{item.comment}}</td>
-                    <td class="text-left">{{item.modified.substring(0, 19)}}</td>
+                    <td class="text-left">{{item.modified.substring(0, 19) | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
                     <td class="text-left">{{item.modifier}}</td>
                 </tr>
                 </tbody>

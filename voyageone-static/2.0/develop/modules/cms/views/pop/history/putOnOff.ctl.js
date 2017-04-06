@@ -2,14 +2,13 @@
  * Created by sofia on 7/14/2016.
  */
 define([
-    'angularAMD',
-    'underscore',
+    'cms',
     'modules/cms/enums/Carts'
-], function (angularAMD, _, Carts) {
-    angularAMD.controller('PutOnOffController', function ($scope, context, productHistoryLogService) {
+], function (cms, Carts) {
+    cms.controller('PutOnOffController', function ($scope, context, productHistoryLogService) {
 
         $scope.vm = {
-            logList : [],
+            logList: [],
             cartId: '',
             context: context,
             pageOption: {curr: 1, total: 0, size: 10, fetch: search}
@@ -39,7 +38,7 @@ define([
         /**
          * 查询数据
          */
-        function search (selCartId) {
+        function search(selCartId) {
             var data = {};
             data.prodCode = $scope.vm.context.code;
             data.cartId = parseInt(selCartId);
@@ -47,7 +46,7 @@ define([
             data.pageSize = $scope.vm.pageOption.size;
 
             productHistoryLogService.getPutOnOffLogList(data)
-                .then(function(res) {
+                .then(function (res) {
                     if (res.data && res.data.logList && res.data.logList.length > 0) {
                         $scope.vm.logList = res.data.logList;
                         $scope.vm.pageOption.total = res.data.total;
