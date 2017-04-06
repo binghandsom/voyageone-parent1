@@ -67,7 +67,10 @@
 							<td class="mfb-xt text-center" ng-bind="dictionaryInfo.id"></td>
 							<td class="mfb-xxx text-left text-u-l"><a ng-click="openDictionaryItem(dictionaryInfo.id)" ng-bind="dictionaryInfo.name"></a></td>
 							<td class="mfb-xxt text-left"><span ng-bind="dictionaryInfo.cartName"></span></td>
-							<td class="mfb-xxs text-left"><div class="line-height">{{dictionaryInfo.value}}</div></td>
+							<td class="mfb-xxs text-left">
+								<!--<div class="line-height">{{dictionaryInfo.value}}</div>-->
+								<popover-text content="dictionaryInfo.value" direct="bottom" size="50"></popover-text>
+							</td>
 							<td class="mfb-xx text-left" ng-bind="dictionaryInfo.created.substring(0, 19)"></td>
 							<td class="mfb-xx text-left" ng-bind="dictionaryInfo.modified.substring(0, 19)"></td>
 							<td class="mfb-xt text-center">

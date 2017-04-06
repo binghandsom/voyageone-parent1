@@ -66,16 +66,6 @@ class CmsErrorListService extends BaseViewService {
         Map<String, Object> resultBean = new HashMap<>();
         params.put("channelId", channelId);
         List<CmsBtBusinessLogModel> cmsBtBusinessLogModelList=businessLogService.getList(params);
-        for(CmsBtBusinessLogModel model:cmsBtBusinessLogModelList){
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date date = null;
-            try {
-                date = sdf.parse(DateTimeUtil.getLocalTime(model.getCreated(), timeZone));
-            } catch (ParseException e) {
-                throw new BusinessException("7000010");
-            }
-            model.setCreated(date);
-        }
         resultBean.put("errorList", cmsBtBusinessLogModelList);
         resultBean.put("errorCnt", businessLogService.getCount(params));
         return resultBean;
