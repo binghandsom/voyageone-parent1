@@ -1889,15 +1889,22 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 //            }
 
             // 主类目path(中文)
-            if (!StringUtils.isEmpty(searchResult.getCnName()))   prodCommon.setCatPath(searchResult.getCnName());
-            // 主类目path(英文)
-            if (!StringUtils.isEmpty(searchResult.getEnName()))   prodCommon.setCatPathEn(searchResult.getEnName());
-            // 主类目id(就是主类目path中文的MD5码)
-            if (!StringUtils.isEmpty(searchResult.getCnName())) {
+            if (!StringUtils.isEmpty(searchResult.getCnName()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommon.getCatPath()))) {
+                prodCommon.setCatPath(searchResult.getCnName());
                 prodCommon.setCatId(MD5.getMD5(searchResult.getCnName()));
                 prodCommonField.setCategorySetTime(DateTimeUtil.getNow());
                 prodCommonField.setCategorySetter(getTaskName());
             }
+            // 主类目path(英文)
+            if (!StringUtils.isEmpty(searchResult.getEnName()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommon.getCatPathEn()))) {
+                prodCommon.setCatPathEn(searchResult.getEnName());
+            }
+//                // 主类目id(就是主类目path中文的MD5码)
+//                if (!StringUtils.isEmpty(searchResult.getCnName())) {
+//                    prodCommon.setCatId(MD5.getMD5(searchResult.getCnName()));
+//                    prodCommonField.setCategorySetTime(DateTimeUtil.getNow());
+//                    prodCommonField.setCategorySetter(getTaskName());
+//                }
             // 更新主类目设置状态
             if (!StringUtils.isEmpty(prodCommon.getCatId())) {
                 prodCommonField.setCategoryStatus("1");
@@ -1905,15 +1912,19 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 prodCommonField.setCategoryStatus("0");
             }
             // 产品分类(英文)
-            if (!StringUtils.isEmpty(searchResult.getProductTypeEn()))   prodCommonField.setProductType(searchResult.getProductTypeEn().toLowerCase());
+            if (!StringUtils.isEmpty(searchResult.getProductTypeEn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getProductType())))
+                prodCommonField.setProductType(searchResult.getProductTypeEn().toLowerCase());
             // 产品分类(中文)
-            if (!StringUtils.isEmpty(searchResult.getProductTypeCn()))   prodCommonField.setProductTypeCn(searchResult.getProductTypeCn());
+            if (!StringUtils.isEmpty(searchResult.getProductTypeCn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getProductTypeCn())))
+                prodCommonField.setProductTypeCn(searchResult.getProductTypeCn());
             // 适合人群(英文)
-            if (!StringUtils.isEmpty(searchResult.getSizeTypeEn()))      prodCommonField.setSizeType(searchResult.getSizeTypeEn().toLowerCase());
+            if (!StringUtils.isEmpty(searchResult.getSizeTypeEn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getSizeType())))
+                prodCommonField.setSizeType(searchResult.getSizeTypeEn().toLowerCase());
             // 适合人群(中文)
-            if (!StringUtils.isEmpty(searchResult.getSizeTypeCn()))      prodCommonField.setSizeTypeCn(searchResult.getSizeTypeCn());
+            if (!StringUtils.isEmpty(searchResult.getSizeTypeCn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getSizeTypeCn())))
+                prodCommonField.setSizeTypeCn(searchResult.getSizeTypeCn());
             // TODO 2016/12/30暂时这样更新，以后要改
-            if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter()) || StringUtil.isEmpty(prodCommonField.getHsCodePrivate())) {
+            if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter()) || !"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getHsCodePrivate())) {
                 // 税号个人
                 if (!StringUtils.isEmpty(searchResult.getTaxPersonal())) {
                     prodCommonField.setHsCodePrivate(searchResult.getTaxPersonal());
@@ -1928,7 +1939,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 }
             }
             // 税号跨境申报（10位）
-            if (!StringUtils.isEmpty(searchResult.getTaxDeclare()))      prodCommonField.setHsCodeCross(searchResult.getTaxDeclare());
+            if (!StringUtils.isEmpty(searchResult.getTaxDeclare()) || !"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getHsCodeCross()))      prodCommonField.setHsCodeCross(searchResult.getTaxDeclare());
 
             // 商品中文名称(如果已翻译，则不设置)
             // 临时特殊处理 017的名称不根据主类目自动翻译,如果后续有这个需求再改正

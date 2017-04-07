@@ -3215,7 +3215,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     }
                 }
                 // 税号跨境申报（10位）
-                if (!StringUtils.isEmpty(searchResult.getTaxDeclare()))
+                if (!StringUtils.isEmpty(searchResult.getTaxDeclare()) || !"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getHsCodeCross()))
                     prodCommonField.setHsCodeCross(searchResult.getTaxDeclare());
 
                 // 商品中文名称(如果已翻译，则不设置)
