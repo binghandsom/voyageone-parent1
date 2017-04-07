@@ -255,7 +255,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             // 从synship.com_mt_value_channel表中取得品牌，产品分类，使用人群等mapping信息
             // 品牌mapping作成
             List<TypeChannelBean> brandTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41,
-                    usjoi?"928":channelId);
+                    usjoi ? "928" : channelId);
             if (ListUtils.notNull(brandTypeChannelBeanList)) {
                 for (TypeChannelBean typeChannelBean : brandTypeChannelBeanList) {
                     if (!StringUtils.isEmpty(typeChannelBean.getAdd_name1())
@@ -391,7 +391,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             // -----------------------------------------------------------------------------
 
             //
-            if(usjoi) {
+            if (usjoi) {
                 // 主类目不导入的黑名单
                 List<CmsChannelConfigBean> categoryWhitelist = CmsChannelConfigs.getConfigBeans("000",
                         CmsConstants.ChannelConfig.CATEGORY_WHITE, "0");
@@ -401,7 +401,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 }
             }
 
-            CmsChannelConfigBean feedMastThreshold = CmsChannelConfigs.getConfigBeanNoCode(usjoi?"928":channelId,
+            CmsChannelConfigBean feedMastThreshold = CmsChannelConfigs.getConfigBeanNoCode(usjoi ? "928" : channelId,
                     CmsConstants.ChannelConfig.FEED_MAST_THRESHOLD);
 
             if (feedMastThreshold != null) {
@@ -421,7 +421,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 categoryFlg = StringUtil.isEmpty(feedMastConfig.getConfigValue3()) ? "0" : feedMastConfig.getConfigValue3();
             }
             List<CmsChannelConfigBean> categorySingleConfig = CmsChannelConfigs.getConfigBeans("000",
-                    CmsConstants.ChannelConfig.CATEGORY_SINGLE,"0");
+                    CmsConstants.ChannelConfig.CATEGORY_SINGLE, "0");
             if (!ListUtils.isNull(categorySingleConfig) && !StringUtil.isEmpty(categorySingleConfig.get(0).getConfigValue1())) {
                 categorySingle = Arrays.asList(categorySingleConfig.get(0).getConfigValue1().split(";"));
             }
@@ -688,7 +688,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         break;
                 }
 
-                String finalCatPath = catPath == null?"":catPath;
+                String finalCatPath = catPath == null ? "" : catPath;
                 return categorySingle.stream().anyMatch(cat -> finalCatPath.indexOf(cat) == 0);
             } else if ("2".equals(singleFlg)) {
                 return true;
@@ -744,9 +744,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 }
             }
 
-            if(StringUtil.isEmpty(originalFeed.getMainCategoryCn())){
+            if (StringUtil.isEmpty(originalFeed.getMainCategoryCn())) {
                 MatchResult matchResult = getMainCatInfo(originalFeed.getCategory(), originalFeed.getProductType(), originalFeed.getSizeType(), originalFeed.getName(), originalFeed.getBrand());
-                if(matchResult != null){
+                if (matchResult != null) {
                     originalFeed.setMainCategoryEn(matchResult.getEnName());
                     originalFeed.setMainCategoryCn(matchResult.getCnName());
                 }
@@ -998,7 +998,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // 清除一些batch的标记 // TODO: 梁兄啊, batchField的更新没有放到product更新里, 暂时自己写一个用, 这里暂时注释掉
 
                     // 计算主类目
-                    if(usjoi) {
+                    if (usjoi) {
                         doSetMainCategory(cmsProduct.getCommon(), feed);
                     }
 
@@ -1061,7 +1061,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     platFromAttributeCopyFromMainProduct(cmsProduct);
 
                     // 计算主类目
-                    if(usjoi) {
+                    if (usjoi) {
                         doSetMainCategory(cmsProduct.getCommon(), feed);
                     }
 
@@ -1106,12 +1106,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 if (blnProductExist) {
                     updateCnt++;
                     $info("feed->master导入:更新成功 [ChannelId:%s] [%d/%d] [ProductCode:%s] [耗时:%s]",
-                            usjoi?cmsProduct.getOrgChannelId():cmsProduct.getChannelId(), currentIndex, feedListCnt, cmsProduct.getCommon().getFields().getCode(),
+                            usjoi ? cmsProduct.getOrgChannelId() : cmsProduct.getChannelId(), currentIndex, feedListCnt, cmsProduct.getCommon().getFields().getCode(),
                             (System.currentTimeMillis() - startTime));
                 } else {
                     insertCnt++;
                     $info("feed->master导入:新增成功 [ChannelId:%s] [%d/%d] [ProductCode:%s] [耗时:%s]",
-                            usjoi?cmsProduct.getOrgChannelId():cmsProduct.getChannelId(), currentIndex, feedListCnt, cmsProduct.getCommon().getFields().getCode(),
+                            usjoi ? cmsProduct.getOrgChannelId() : cmsProduct.getChannelId(), currentIndex, feedListCnt, cmsProduct.getCommon().getFields().getCode(),
                             (System.currentTimeMillis() - startTime));
                 }
                 // add desmond 2016/07/07 end
@@ -1135,7 +1135,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         }
 
         private void checkProduct(CmsBtProductModel cmsProduct) {
-            if(usjoi) {
+            if (usjoi) {
                 if (StringUtil.isEmpty(cmsProduct.getCommonNotNull().getCatPath())) {
                     throw new BusinessException("主类目没有计算成功");
                 }
@@ -1221,7 +1221,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // 将该feed品牌小写值mapping信息插入或更新到Synship.com_mt_value_channel表中(41:品牌mapping信息)
 //                    insertBrandMappingInfo(this.channel.getOrder_channel_id(), feed, feedBrandLowerCase);
                     if (!StringUtils.isEmpty(feedBrandLowerCase)) {
-                        comMtValueChannelService.insertComMtValueChannelMapping(41, usjoi?"928":this.channel.getOrder_channel_id(),
+                        comMtValueChannelService.insertComMtValueChannelMapping(41, usjoi ? "928" : this.channel.getOrder_channel_id(),
                                 feedBrandLowerCase, feedBrandLowerCase, getTaskName());
                         // 将更新完整之后的mapping信息添加到前面取出来的品牌mapping表中
                         mapBrandMapping.put(feedBrandLowerCase, feedBrandLowerCase);
@@ -1263,12 +1263,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             }
             // 商品特质英文(颜色/口味/香型等)
 //            if (newFlg || StringUtils.isEmpty(productCommonField.getCodeDiff()) || "1".equals(feed.getIsFeedReImport())) {
-                productCommonField.setCodeDiff(feed.getColor());
+            productCommonField.setCodeDiff(feed.getColor());
 //            }
 
-            if(!"007".equals(feed.getChannelId()) && !StringUtil.isEmpty(productCommonField.getCodeDiff()) && StringUtil.isEmpty(productCommonField.getColor())){
-                String color = cmsBtTranslateService.translate(usjoi?"928":feed.getChannelId(), CmsBtCustomPropModel.CustomPropType.Common.getValue(), "com_color", productCommonField.getCodeDiff());
-                if(!StringUtil.isEmpty(color)) productCommonField.setColor(color);
+            if (!"007".equals(feed.getChannelId()) && !StringUtil.isEmpty(productCommonField.getCodeDiff()) && StringUtil.isEmpty(productCommonField.getColor())) {
+                String color = cmsBtTranslateService.translate(usjoi ? "928" : feed.getChannelId(), CmsBtCustomPropModel.CustomPropType.Common.getValue(), "com_color", productCommonField.getCodeDiff());
+                if (!StringUtil.isEmpty(color)) productCommonField.setColor(color);
             }
 
             // update desmond 2016/07/05 end
@@ -1277,7 +1277,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 productCommonField.setOrigin(feed.getOrigin());
             }
             //货号
-            if ( !StringUtils.isEmpty(feed.getMpn())) {
+            if (!StringUtils.isEmpty(feed.getMpn())) {
                 productCommonField.setMpn(feed.getMpn());
             }
             // 简短描述英文
@@ -1306,7 +1306,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             }
             // 材质
 //            if (newFlg || StringUtils.isEmpty(productCommonField.getMaterialEn()) || "1".equals(feed.getIsFeedReImport())) {
-                productCommonField.setMaterialEn(feed.getMaterial());
+            productCommonField.setMaterialEn(feed.getMaterial());
 //            }
 
             // 官方网站链接，商品图片1，产品分类，适用人群的Feed数据可能会变化，所以不管新建还是更新操作都会去重新设定
@@ -3152,12 +3152,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                                 "[sizeType:%s] [productNameEn:%s] [brand:%s]", (System.currentTimeMillis() - beginTime), feed.getCategory(),
                         prodCommonField.getProductType(), prodCommonField.getSizeType(), prodCommonField.getProductNameEn(), prodCommonField.getBrand()));
 
-                    // 先备份原来的productType和sizeType
-                    // feed原始产品分类
+                // 先备份原来的productType和sizeType
+                // feed原始产品分类
                 if (StringUtils.isEmpty(prodCommonField.getOrigProductType())
                         && !StringUtils.isEmpty(prodCommonField.getProductType())) {
                     prodCommonField.setOrigProductType(prodCommonField.getProductType());
-                 }
+                }
                 // feed原始适合人群
                 if (StringUtils.isEmpty(prodCommonField.getOrigSizeType())
                         && !StringUtils.isEmpty(prodCommonField.getSizeType())) {
@@ -3165,15 +3165,22 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 }
 
                 // 主类目path(中文)
-                if (!StringUtils.isEmpty(searchResult.getCnName()))   prodCommon.setCatPath(searchResult.getCnName());
-                // 主类目path(英文)
-                if (!StringUtils.isEmpty(searchResult.getEnName()))   prodCommon.setCatPathEn(searchResult.getEnName());
-                // 主类目id(就是主类目path中文的MD5码)
-                if (!StringUtils.isEmpty(searchResult.getCnName())) {
+                if (!StringUtils.isEmpty(searchResult.getCnName()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommon.getCatPath()))) {
+                    prodCommon.setCatPath(searchResult.getCnName());
                     prodCommon.setCatId(MD5.getMD5(searchResult.getCnName()));
                     prodCommonField.setCategorySetTime(DateTimeUtil.getNow());
                     prodCommonField.setCategorySetter(getTaskName());
                 }
+                // 主类目path(英文)
+                if (!StringUtils.isEmpty(searchResult.getEnName()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommon.getCatPathEn()))) {
+                    prodCommon.setCatPathEn(searchResult.getEnName());
+                }
+//                // 主类目id(就是主类目path中文的MD5码)
+//                if (!StringUtils.isEmpty(searchResult.getCnName())) {
+//                    prodCommon.setCatId(MD5.getMD5(searchResult.getCnName()));
+//                    prodCommonField.setCategorySetTime(DateTimeUtil.getNow());
+//                    prodCommonField.setCategorySetter(getTaskName());
+//                }
                 // 更新主类目设置状态
                 if (!StringUtils.isEmpty(prodCommon.getCatId())) {
                     prodCommonField.setCategoryStatus("1");
@@ -3181,15 +3188,19 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     prodCommonField.setCategoryStatus("0");
                 }
                 // 产品分类(英文)
-                if (!StringUtils.isEmpty(searchResult.getProductTypeEn()))   prodCommonField.setProductType(searchResult.getProductTypeEn().toLowerCase());
+                if (!StringUtils.isEmpty(searchResult.getProductTypeEn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getProductType())))
+                    prodCommonField.setProductType(searchResult.getProductTypeEn().toLowerCase());
                 // 产品分类(中文)
-                if (!StringUtils.isEmpty(searchResult.getProductTypeCn()))   prodCommonField.setProductTypeCn(searchResult.getProductTypeCn());
+                if (!StringUtils.isEmpty(searchResult.getProductTypeCn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getProductTypeCn())))
+                    prodCommonField.setProductTypeCn(searchResult.getProductTypeCn());
                 // 适合人群(英文)
-                if (!StringUtils.isEmpty(searchResult.getSizeTypeEn()))      prodCommonField.setSizeType(searchResult.getSizeTypeEn().toLowerCase());
+                if (!StringUtils.isEmpty(searchResult.getSizeTypeEn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getSizeType())))
+                    prodCommonField.setSizeType(searchResult.getSizeTypeEn().toLowerCase());
                 // 适合人群(中文)
-                if (!StringUtils.isEmpty(searchResult.getSizeTypeCn()))      prodCommonField.setSizeTypeCn(searchResult.getSizeTypeCn());
+                if (!StringUtils.isEmpty(searchResult.getSizeTypeCn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getSizeTypeCn())))
+                    prodCommonField.setSizeTypeCn(searchResult.getSizeTypeCn());
                 // TODO 2016/12/30暂时这样更新，以后要改
-                if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter()) || StringUtil.isEmpty(prodCommonField.getHsCodePrivate())) {
+                if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter()) || !"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getHsCodePrivate())) {
                     // 税号个人
                     if (!StringUtils.isEmpty(searchResult.getTaxPersonal())) {
                         prodCommonField.setHsCodePrivate(searchResult.getTaxPersonal());
@@ -3204,7 +3215,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     }
                 }
                 // 税号跨境申报（10位）
-                if (!StringUtils.isEmpty(searchResult.getTaxDeclare()))      prodCommonField.setHsCodeCross(searchResult.getTaxDeclare());
+                if (!StringUtils.isEmpty(searchResult.getTaxDeclare()) || !"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getHsCodeCross()))
+                    prodCommonField.setHsCodeCross(searchResult.getTaxDeclare());
 
                 // 商品中文名称(如果已翻译，则不设置)
                 // 临时特殊处理 017的名称不根据主类目自动翻译,如果后续有这个需求再改正
@@ -3226,10 +3238,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
          * 调用Feed到主数据的匹配接口匹配主类目,返回匹配度最高的第一个查询结果
          *
          * @param feedCategoryPath feed类目Path
-         * @param productType 产品分类
-         * @param sizeType 适合人群(英文)
-         * @param productNameEn 产品名称（英文）
-         * @param brand 产品品牌
+         * @param productType      产品分类
+         * @param sizeType         适合人群(英文)
+         * @param productNameEn    产品名称（英文）
+         * @param brand            产品品牌
          * @return SearchResult 匹配度最高的第一个查询结果
          */
         public MatchResult getMainCatInfo(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
@@ -3253,10 +3265,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
          * 取得查询条件
          *
          * @param feedCategoryPath feed类目Path
-         * @param productType 产品分类
-         * @param sizeType 适合人群(英文)
-         * @param productNameEn 产品名称（英文）
-         * @param brand 产品品牌
+         * @param productType      产品分类
+         * @param sizeType         适合人群(英文)
+         * @param productNameEn    产品名称（英文）
+         * @param brand            产品品牌
          * @return FeedQuer 查询条件
          */
         private FeedQuery getFeedQuery(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
