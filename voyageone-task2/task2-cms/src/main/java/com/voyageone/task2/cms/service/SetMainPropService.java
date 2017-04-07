@@ -3188,19 +3188,19 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     prodCommonField.setCategoryStatus("0");
                 }
                 // 产品分类(英文)
-                if (!StringUtils.isEmpty(searchResult.getProductTypeEn()))
+                if (!StringUtils.isEmpty(searchResult.getProductTypeEn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getProductType())))
                     prodCommonField.setProductType(searchResult.getProductTypeEn().toLowerCase());
                 // 产品分类(中文)
-                if (!StringUtils.isEmpty(searchResult.getProductTypeCn()))
+                if (!StringUtils.isEmpty(searchResult.getProductTypeCn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getProductTypeCn())))
                     prodCommonField.setProductTypeCn(searchResult.getProductTypeCn());
                 // 适合人群(英文)
-                if (!StringUtils.isEmpty(searchResult.getSizeTypeEn()))
+                if (!StringUtils.isEmpty(searchResult.getSizeTypeEn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getSizeType())))
                     prodCommonField.setSizeType(searchResult.getSizeTypeEn().toLowerCase());
                 // 适合人群(中文)
-                if (!StringUtils.isEmpty(searchResult.getSizeTypeCn()))
+                if (!StringUtils.isEmpty(searchResult.getSizeTypeCn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getSizeTypeCn())))
                     prodCommonField.setSizeTypeCn(searchResult.getSizeTypeCn());
                 // TODO 2016/12/30暂时这样更新，以后要改
-                if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter()) || StringUtil.isEmpty(prodCommonField.getHsCodePrivate())) {
+                if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter()) || !"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getHsCodePrivate())) {
                     // 税号个人
                     if (!StringUtils.isEmpty(searchResult.getTaxPersonal())) {
                         prodCommonField.setHsCodePrivate(searchResult.getTaxPersonal());
