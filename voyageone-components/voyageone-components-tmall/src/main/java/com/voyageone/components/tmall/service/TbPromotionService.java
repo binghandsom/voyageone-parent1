@@ -68,16 +68,16 @@ public class TbPromotionService extends TbBase {
         } else {
 
             @VOMQQueue("voyageone_cms_jushita_mq_tjb_promotion_tip_Item_modify_queue")
-            class TmallPromotionTipItemModifyMessage extends BaseMQMessageBody {
+            class TmallPromotionTipItemModifyMessage extends SimplePromotionMessage {
 
                 private TmallPromotionTipItemModifyRequest tmallPromotionTipItemModifyRequest = req;
 
-                public TmallPromotionTipItemModifyRequest getTmallPromotionTipItemModifyRequest() {
-                    return tmallPromotionTipItemModifyRequest;
+                private TmallPromotionTipItemModifyMessage() {
+                    super(shopBean);
                 }
 
-                @Override
-                public void check() throws MQMessageRuleException {
+                public TmallPromotionTipItemModifyRequest getTmallPromotionTipItemModifyRequest() {
+                    return tmallPromotionTipItemModifyRequest;
                 }
             }
 
@@ -105,16 +105,16 @@ public class TbPromotionService extends TbBase {
             }
         } else {
             @VOMQQueue("voyageone_cms_jushita_mq_tjb_promotion_tip_Item_remove_queue")
-            class TmallPromotionTipItemRemoveMessage extends BaseMQMessageBody {
+            class TmallPromotionTipItemRemoveMessage extends SimplePromotionMessage {
 
                 private TmallPromotionTipItemRemoveRequest tmallPromotionTipItemModifyRequest = req;
 
-                public TmallPromotionTipItemRemoveRequest getTmallPromotionTipItemModifyRequest() {
-                    return tmallPromotionTipItemModifyRequest;
+                private TmallPromotionTipItemRemoveMessage() {
+                    super(shopBean);
                 }
 
-                @Override
-                public void check() throws MQMessageRuleException {
+                public TmallPromotionTipItemRemoveRequest getTmallPromotionTipItemModifyRequest() {
+                    return tmallPromotionTipItemModifyRequest;
                 }
             }
 
@@ -125,5 +125,22 @@ public class TbPromotionService extends TbBase {
         }
 
         return response;
+    }
+
+    abstract class SimplePromotionMessage extends BaseMQMessageBody {
+        private final int cartId;
+
+        SimplePromotionMessage(ShopBean shopBean) {
+            this.cartId = Integer.valueOf(shopBean.getCart_id());
+            setChannelId(shopBean.getOrder_channel_id());
+        }
+
+        public int getCartId() {
+            return cartId;
+        }
+
+        @Override
+        public void check() throws MQMessageRuleException {
+        }
     }
 }
