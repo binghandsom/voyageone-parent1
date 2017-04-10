@@ -340,6 +340,21 @@ public class SxProductService extends BaseService {
     }
 
     /**
+     * 回写cms_bt_platform_workload表
+     *
+     * @param sxWorkloadModel bean
+     * @param publishStatus   status
+     * @param modifier 更新者
+     */
+    public int updatePlatformWorkload(CmsBtSxWorkloadModel sxWorkloadModel, int publishStatus, String modifier) {
+
+        if (sxWorkloadModel == null) return 0;
+        sxWorkloadModel.setPublishStatus(publishStatus);
+        sxWorkloadModel.setModifier(modifier);
+        return sxWorkloadDao.updatePlatformWorkloadPublishStatus(sxWorkloadModel);
+    }
+
+    /**
      * 回写product group表中的numIId和platformStatus(Onsale/InStock)
      *
      * @param sxData SxData 上新数据
