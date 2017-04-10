@@ -32,7 +32,7 @@ public class TbPromotionService extends TbBase {
         this.mqSenderService = mqSenderService;
     }
 
-    public TmallPromotionTipItemAddResponse addPromotion(ShopBean shopBean,TipItemPromDTO ItemProm) throws ApiException {
+    public TmallPromotionTipItemAddResponse addPromotion(ShopBean shopBean, TipItemPromDTO ItemProm) throws ApiException {
 
         logger.info("天猫特价宝添加活动商品 " + ItemProm.getItemId());
 
@@ -41,15 +41,14 @@ public class TbPromotionService extends TbBase {
         req.setItemProm(ItemProm);
 
         TmallPromotionTipItemAddResponse response = reqTaobaoApi(shopBean, req);
-        if (response.getErrorCode() != null)
-        {
+        if (response.getErrorCode() != null) {
             logger.error(response.getSubMsg());
         }
 
         return response;
     }
 
-    public TmallPromotionTipItemModifyResponse updatePromotion(ShopBean shopBean,TipItemPromDTO ItemProm) throws ApiException {
+    public TmallPromotionTipItemModifyResponse updatePromotion(ShopBean shopBean, TipItemPromDTO ItemProm) throws ApiException {
         logger.info("天猫特价宝更新活动商品 " + ItemProm.getItemId());
 
         TmallPromotionTipItemModifyRequest req = new TmallPromotionTipItemModifyRequest();
@@ -107,14 +106,14 @@ public class TbPromotionService extends TbBase {
             @VOMQQueue("voyageone_cms_jushita_mq_tjb_promotion_tip_Item_remove_queue")
             class TmallPromotionTipItemRemoveMessage extends SimplePromotionMessage {
 
-                private TmallPromotionTipItemRemoveRequest tmallPromotionTipItemModifyRequest = req;
+                private TmallPromotionTipItemRemoveRequest tmallPromotionTipItemRemoveRequest = req;
 
                 private TmallPromotionTipItemRemoveMessage() {
                     super(shopBean);
                 }
 
-                public TmallPromotionTipItemRemoveRequest getTmallPromotionTipItemModifyRequest() {
-                    return tmallPromotionTipItemModifyRequest;
+                public TmallPromotionTipItemRemoveRequest getTmallPromotionTipItemRemoveRequest() {
+                    return tmallPromotionTipItemRemoveRequest;
                 }
             }
 
@@ -127,6 +126,9 @@ public class TbPromotionService extends TbBase {
         return response;
     }
 
+    /**
+     * 简单实现的接口调用 MQ 信息体，追加必要的 cartId 字段
+     */
     abstract class SimplePromotionMessage extends BaseMQMessageBody {
         private final int cartId;
 
