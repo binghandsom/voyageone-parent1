@@ -5,7 +5,6 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.rabbitmq.namesub.IMQMessageSubBeanName;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -21,17 +20,8 @@ import java.util.Map;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_UPDATE_PRODUCT_FIELDS)
 public class BatchUpdateProductMQMessageBody extends BaseMQMessageBody  implements IMQMessageSubBeanName {
 
-    private String channelId;
     private List<String> productCodes;
     private Map<String, Object> params;
-
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 
     public List<String> getProductCodes() {
         return productCodes;
@@ -51,7 +41,7 @@ public class BatchUpdateProductMQMessageBody extends BaseMQMessageBody  implemen
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isBlank(channelId)) {
+        if (StringUtils.isBlank(super.getChannelId())) {
             throw new MQMessageRuleException("高级检索-批量更新共通属性MQ发送异常, 参数channelId为空.");
         }
         if (CollectionUtils.isEmpty(productCodes)) {

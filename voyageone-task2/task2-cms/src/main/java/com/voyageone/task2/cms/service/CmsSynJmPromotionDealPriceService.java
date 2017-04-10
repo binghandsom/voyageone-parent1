@@ -17,9 +17,9 @@ import java.util.List;
 public class CmsSynJmPromotionDealPriceService extends BaseCronTaskService {
 
     @Autowired
-    private CmsBtJmPromotionService cmsBtJmPromotionService;
-    @Autowired
     CmsBtJmPromotionSkuService cmsBtJmPromotionSkuService;
+    @Autowired
+    private CmsBtJmPromotionService cmsBtJmPromotionService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -38,7 +38,7 @@ public class CmsSynJmPromotionDealPriceService extends BaseCronTaskService {
 
             jmPromotionIds.forEach(jmPromotionId -> {
                 if (jmPromotionId > 0) {
-                    cmsBtJmPromotionSkuService.senderJMRefreshPriceMQMessage(jmPromotionId, "定时自动刷新");
+                    cmsBtJmPromotionSkuService.senderJMRefreshPriceMQMessage(jmPromotionId, "定时自动刷新", "000");
                 }
             });
         }

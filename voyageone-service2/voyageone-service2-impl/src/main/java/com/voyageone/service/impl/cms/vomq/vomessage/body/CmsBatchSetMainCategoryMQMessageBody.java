@@ -24,8 +24,6 @@ public class CmsBatchSetMainCategoryMQMessageBody extends BaseMQMessageBody {
 
     private List<String> productCodes;
 
-    private String channelId;
-
     private String productType;
 
     private String sizeType;
@@ -68,14 +66,6 @@ public class CmsBatchSetMainCategoryMQMessageBody extends BaseMQMessageBody {
 
     public void setProductCodes(List<String> productCodes) {
         this.productCodes = productCodes;
-    }
-
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
     }
 
     public String getProductType() {
@@ -128,7 +118,7 @@ public class CmsBatchSetMainCategoryMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isEmpty(channelId)) {
+        if (StringUtils.isEmpty(super.getChannelId())) {
             throw new MQMessageRuleException("高级检索-批量设置主类目MQ发送异常, 参数channelId为空.");
         }
         if (StringUtils.isEmpty(catId)) {

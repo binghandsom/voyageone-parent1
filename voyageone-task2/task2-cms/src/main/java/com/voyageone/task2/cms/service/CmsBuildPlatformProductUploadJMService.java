@@ -1788,6 +1788,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
 
         for (BaseMongoMap<String, Object> jmSku : jmSkus) {
+            if (Boolean.parseBoolean(jmSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
             //填写CmsBtJMSku
             // update by desmond 2016/07/08 start
 //            String size = jmSku.getStringAttribute("size");
@@ -1796,6 +1797,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             // update by desmond 2016/07/08 end
             CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, jmSku, sizeStr);
             list.add(cmsBtJmSkuModel);
+            }
         }
 
         return list;

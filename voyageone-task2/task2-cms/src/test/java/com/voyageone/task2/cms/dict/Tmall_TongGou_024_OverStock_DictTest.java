@@ -132,9 +132,14 @@ public class Tmall_TongGou_024_OverStock_DictTest extends BaseDictTest{
 //			MasterHtmlWord word = new MasterHtmlWord("shortDesEn");
 //			ruleRoot.addRuleWord(word);
 //		}
+//		{
+//			// feed_info的modelLongdescription
+//			FeedOrgWord word = new FeedOrgWord("modelLongdescription");
+//			ruleRoot.addRuleWord(word);
+//		}
 		{
-			// feed_info的modelLongdescription
-			FeedOrgWord word = new FeedOrgWord("modelLongdescription");
+			// 英文长描述
+			MasterHtmlWord word = new MasterHtmlWord("longDesEn");
 			ruleRoot.addRuleWord(word);
 		}
 		{

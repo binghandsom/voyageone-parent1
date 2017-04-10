@@ -52,7 +52,7 @@ public class JuMeiProductPlatform3ServiceTest {
     @Test
     public void testUpdateJmByPromotionId() throws Exception {
         int promotionId = 76;
-        service.updateJmByPromotionId(1308);
+        service.updateJmByPromotionId(1407);
     }
     @Test
     public void update() throws Exception {

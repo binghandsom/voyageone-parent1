@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms;
 
+import com.taobao.api.ApiException;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -78,7 +79,7 @@ public class PlatformSchemaService extends BaseService {
     public Map<String, List<Field>> getFieldsByCategoryPath(String categoryPath, String channelId, int cartId, String language) {
 
         if (CartEnums.Cart.JM.getValue() == cartId)
-            return getFieldForProductImage(null, channelId, cartId, language, null);
+            return getFieldForProductImage(null, channelId, cartId, language, null, null);
 
         CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
 
@@ -91,13 +92,13 @@ public class PlatformSchemaService extends BaseService {
         if (platformCategorySchemaModel == null)
             return null;
 
-        return getFieldListMap(platformCategorySchemaModel, channelId, language, null);
+        return getFieldListMap(platformCategorySchemaModel, channelId, language, null, null);
     }
 
     /**
      * 产品画面属性list取得
      */
-    public Map<String, List<Field>> getFieldForProductImage(String catId, String channelId, int cartId, String language, String platformBrandId) {
+    public Map<String, List<Field>> getFieldForProductImage(String catId, String channelId, int cartId, String language, String platformBrandId, String styleCode) {
 //        if (CartEnums.Cart.JM.getValue() == cartId
 //                || CartEnums.Cart.TT.getValue() == cartId
 //                || CartEnums.Cart.LTT.getValue() == cartId
@@ -124,10 +125,10 @@ public class PlatformSchemaService extends BaseService {
             return null;
         }
 
-        return getFieldListMap(platformCatSchemaModel, channelId, language, platformBrandId);
+        return getFieldListMap(platformCatSchemaModel, channelId, language, platformBrandId, styleCode);
     }
 
-    private Map<String, List<Field>> getFieldListMap(CmsMtPlatformCategorySchemaModel platformCatSchemaModel, String channelId, String language, String platformBrandId) {
+    private Map<String, List<Field>> getFieldListMap(CmsMtPlatformCategorySchemaModel platformCatSchemaModel, String channelId, String language, String platformBrandId, String styleCode) {
 
         String catId = platformCatSchemaModel.getCatId();
 
@@ -159,9 +160,9 @@ public class PlatformSchemaService extends BaseService {
         CmsChannelConfigBean environmentConfig = CmsChannelConfigs.getConfigBean("000", CmsConstants.ChannelConfig.IS_FACTORY, "0");
         if (environmentConfig != null && environmentConfig.getConfigValue1() != null && "1".equals(environmentConfig.getConfigValue1())) {
             if (CartEnums.Cart.isTmSeries(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) {
+                ShopBean shopBean = Shops.getShop(channelId, cartId);
                 if (platformBrandId != null) {
                     // 如果传入的平台品牌id不是空的， 那么就从天猫上去获取一下
-                    ShopBean shopBean = Shops.getShop(channelId, cartId);
                     try {
                         String schema = tbProductService.getAddProductSchema(Long.parseLong(catId), Long.parseLong(platformBrandId), shopBean);
                         if (!StringUtils.isEmpty(schema)) {
@@ -171,6 +172,34 @@ public class PlatformSchemaService extends BaseService {
 
                     }
                 }
+
+                // sneakerhead 特殊功能 START
+                // 如果是sneakerhead， 并且是天猫的话， 自动去天猫上搜索一下， 是否已经创建过产品了， 如果创建过了的话， 把属性拉回来
+                if (ChannelConfigEnums.Channel.SN.getId().equals(channelId) && CartEnums.Cart.TM.getId().equals(String.valueOf(cartId))) {
+                    if (!StringUtils.isEmpty(platformBrandId) && !StringUtils.isEmpty(styleCode)) {
+                        String xml = "<itemParam><field id=\"prop_13021751\" name=\"款号\" type=\"input\"><value>%s</value></field><field id=\"prop_20000\" name=\"品牌\" type=\"singleCheck\"><value>%s</value></field></itemParam>";
+                        xml = String.format(xml, styleCode, platformBrandId);
+                        try {
+                            String[] productIds = tbProductService.matchProduct(Long.parseLong(catId), xml, shopBean);
+
+                            if (productIds != null && productIds.length > 0) {
+                                // 从天猫上拉一下这个商品的属性
+                                String pId = productIds[0]; // 348593092
+                                StringBuffer failCause = null;
+                                String schema = tbProductService.getProductUpdateSchema(Long.parseLong(pId), shopBean, failCause);
+
+                                if (!StringUtils.isEmpty(schema)) {
+                                    schemaProduct = schema;
+                                }
+                            }
+                        } catch (ApiException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                }
+                // sneakerhead 特殊功能 END
             }
         }
         // 正式环境， 需要这段代码， release环境， 不需要这段代码 END

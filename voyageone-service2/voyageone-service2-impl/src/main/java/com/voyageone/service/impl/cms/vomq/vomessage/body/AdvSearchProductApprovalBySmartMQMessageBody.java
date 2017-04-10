@@ -20,18 +20,9 @@ import java.util.Map;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_UPDATE_PRODUCT_PLATFORM_STATUS_TO_APPROVE_BY_SMART)
 public class AdvSearchProductApprovalBySmartMQMessageBody extends BaseMQMessageBody  implements IMQMessageSubBeanName{
 
-    private String channelId;
     private Integer cartId;
     private List<String> productCodes;
     private Map<String, Object> cmsSessionParams;
-
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 
     public Integer getCartId() {
         return cartId;
@@ -59,7 +50,7 @@ public class AdvSearchProductApprovalBySmartMQMessageBody extends BaseMQMessageB
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isBlank(channelId)) {
+        if (StringUtils.isBlank(super.getChannelId())) {
             throw new MQMessageRuleException("高级检索-批量上新商品平台状态MQ发送异常, 参数channelId为空.");
         }
         if (cartId == null) {

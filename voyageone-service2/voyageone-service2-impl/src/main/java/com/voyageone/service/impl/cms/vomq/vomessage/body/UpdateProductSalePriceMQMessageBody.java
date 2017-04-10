@@ -22,7 +22,6 @@ public class UpdateProductSalePriceMQMessageBody extends BaseMQMessageBody imple
 
     private List<String> productCodes;
     private Integer cartId;
-    private String channelId;
     private Map<String, Object> params;
 
     public List<String> getProductCodes() {
@@ -41,14 +40,6 @@ public class UpdateProductSalePriceMQMessageBody extends BaseMQMessageBody imple
         this.cartId = cartId;
     }
 
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
-
     public Map<String, Object> getParams() {
         return params;
     }
@@ -59,7 +50,7 @@ public class UpdateProductSalePriceMQMessageBody extends BaseMQMessageBody imple
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isBlank(channelId)) {
+        if (StringUtils.isBlank(super.getChannelId())) {
             throw new MQMessageRuleException("高级检索-批量修改中国最终售价MQ发送异常, 参数channelId为空.");
         }
         if (cartId == null) {

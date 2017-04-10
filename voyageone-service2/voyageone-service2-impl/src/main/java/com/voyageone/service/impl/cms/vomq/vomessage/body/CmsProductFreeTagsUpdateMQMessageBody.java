@@ -21,8 +21,6 @@ import java.util.List;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_UPDATE_PRODUCT_FREE_TAGS)
 public class CmsProductFreeTagsUpdateMQMessageBody extends BaseMQMessageBody  implements IMQMessageSubBeanName {
 
-    //channelId
-    String channelId;
     //是否全量
     boolean isSelAll;
     //product code List
@@ -74,18 +72,10 @@ public class CmsProductFreeTagsUpdateMQMessageBody extends BaseMQMessageBody  im
         this.isSelAll = isSelAll;
     }
 
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
-
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isEmpty(channelId)) {
+        if (StringUtils.isEmpty(super.getChannelId())) {
             throw new MQMessageRuleException("高级搜索-批量设置自由标签MQ发送异常, 参数channelId为空.");
         }
         if (!isSelAll && CollectionUtils.isEmpty(prodCodeList)) {

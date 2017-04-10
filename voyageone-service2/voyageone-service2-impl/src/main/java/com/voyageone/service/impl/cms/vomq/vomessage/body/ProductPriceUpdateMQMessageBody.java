@@ -5,7 +5,6 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.rabbitmq.namesub.IMQMessageSubBeanName;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
-
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -17,17 +16,8 @@ import org.apache.commons.lang.StringUtils;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_BATCH_COUNT_PRODUCT_PRICE)
 public class ProductPriceUpdateMQMessageBody extends BaseMQMessageBody  implements IMQMessageSubBeanName {
 
-    private String channelId;
     private Long prodId;
     private Integer cartId;
-
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 
     public Long getProdId() {
         return prodId;
@@ -48,7 +38,7 @@ public class ProductPriceUpdateMQMessageBody extends BaseMQMessageBody  implemen
     @Override
     public void check() throws MQMessageRuleException {
 
-        if (StringUtils.isBlank(channelId)) {
+        if (StringUtils.isBlank(super.getChannelId())) {
             throw new MQMessageRuleException("定时任务-同步产品sku的价格至code的group价格范围MQ发送异常, 参数channelId为空.");
         }
         if (prodId == null) {

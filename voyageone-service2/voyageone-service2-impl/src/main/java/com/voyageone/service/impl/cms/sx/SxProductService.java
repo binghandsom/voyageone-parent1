@@ -1101,8 +1101,9 @@ public class SxProductService extends BaseService {
                         productPlatformSku.forEach(sku -> {
                             // update by desmond 2017/02/22 start
 //                            // 聚美以外的平台需要看PXX.skus.isSale是否等于true(该sku是否在当前平台销售),聚美不用过滤掉isSale=false的sku(聚美上新的时候false时会把它更新成隐藏)
-//                            if ((!CartEnums.Cart.JM.getId().equals(cartId.toString()) && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name())))
-//                                    || CartEnums.Cart.JM.getId().equals(cartId.toString())) {
+                            // 下面这个判断还是要的 2017/04/17 tom
+                        if ((!CartEnums.Cart.JM.getId().equals(cartId.toString()) && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name())))
+                                || CartEnums.Cart.JM.getId().equals(cartId.toString())) {
                             // 根据小汤需求，聚美平台也跟其他平台一样，只有选择的sku(PXX.skus.isSale=true)才往平台上上新
                             if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
                                 // update by desmond 2017/02/22 end
@@ -1123,6 +1124,7 @@ public class SxProductService extends BaseService {
                                 }
                                 // update by desmond 2016/08/03 end
                             }
+                        }
                         });
                     }
                     // add by desmond 2016/08/03 start

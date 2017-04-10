@@ -172,6 +172,7 @@ public class CmsPromotionDetailController extends CmsController {
 
         CmsSneakerHeadAddPromotionMQMessageBody cmsSneakerHeadAddPromotionMQMessageBody = new CmsSneakerHeadAddPromotionMQMessageBody();
         cmsSneakerHeadAddPromotionMQMessageBody.setPromotionId(promotionId);
+        cmsSneakerHeadAddPromotionMQMessageBody.setChannelId(getUser().getSelChannelId());
         cmsSneakerHeadAddPromotionMQMessageBody.setSender(getUser().getUserName());
         cmsMqSenderService.sendMessage(cmsSneakerHeadAddPromotionMQMessageBody);
         return success(true);

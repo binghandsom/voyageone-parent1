@@ -10,6 +10,10 @@ import java.util.List;
 public class CmsBtOperationLogModel extends BaseMongoModel {
 
     /**
+     * 店铺Id
+     */
+    String channelId;
+    /**
      * job名称 或 api(请求url)
      */
     String name;
@@ -37,6 +41,14 @@ public class CmsBtOperationLogModel extends BaseMongoModel {
      * 错误异常堆栈
      */
     String stackTrace;
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
 
     public String getName() {
         return name;
