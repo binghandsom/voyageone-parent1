@@ -871,6 +871,37 @@ public class SxProductService extends BaseService {
         List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "}", channelId);
         List<CmsBtProductModel> removeProductList = new ArrayList<>(); // product删除对象(如果该product下没有允许在该平台上上架的sku，删除)
 
+        // 根据原始的尺码， 删掉不想要的SKU
+        if (ChannelConfigEnums.Channel.SN.getId().equals(channelId)) {
+            for (CmsBtProductModel p : productModelList) {
+                List<CmsBtProductModel_Sku> common_skus = p.getCommonNotNull().getSkus();
+                if (common_skus != null) {
+                    for (int i = common_skus.size() - 1; i >= 0; i--) {
+                        CmsBtProductModel_Sku s = common_skus.get(i);
+                        if (bigSizeList.contains(s.getSize())) {
+                            common_skus.remove(i);
+                        }
+                    }
+                }
+
+                Map<String, CmsBtProductModel_Platform_Cart> platforms = p.getPlatforms();
+                platforms.entrySet().stream().forEach((kv)->{
+                    CmsBtProductModel_Platform_Cart platformCart = kv.getValue();
+                    List<BaseMongoMap<String, Object>> platformCartSkus = platformCart.getSkus();
+                    if (platformCartSkus != null) {
+                        for (int i = platformCartSkus.size() - 1; i >= 0; i--) {
+                            BaseMongoMap<String, Object> s = platformCartSkus.get(i);
+                            // 这里的size取得临时从sku里拆出来（sn专用） 如果其他店有着部分代码逻辑的需求 需要用sku去common里匹配
+                            String size = s.getStringAttribute("skuCode").replaceAll("^(.*)-(.*)$", "$2");
+                            if (bigSizeList.contains(size)) {
+                                platformCartSkus.remove(i);
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
         // 预设主商品
         for (CmsBtProductModel productModel : productModelList) {
             if (mainProductCode.equals(productModel.getCommon().getFields().getCode())) {
@@ -1350,11 +1381,6 @@ public class SxProductService extends BaseService {
         Map<String, String> sizeSxMap = new HashMap<>();
         for (BaseMongoMap<String, Object> sku : skuList) {
             String size = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name());
-            // 对大码进行过滤处理 charis 170410 STA
-            if (bigSizeList.contains(size)) {
-                continue;
-            }
-            // 对大码进行过滤处理 charis 170410 END
             String sizeNick = sku.getStringAttribute("sizeNick");
             // modified by morse.lu 2016/10/26 start
             // liking 不允许手动填写别名
