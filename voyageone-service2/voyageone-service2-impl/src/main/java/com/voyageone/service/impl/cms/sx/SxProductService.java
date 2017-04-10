@@ -118,6 +118,10 @@ public class SxProductService extends BaseService {
      * upd_flg=1,已经上传
      */
     private static final int UPD_FLG_UPLOADED = 1;
+    /**
+     * 大码List
+     */
+    private static List<String> bigSizeList = Lists.newArrayList("16","17","18");
     @Autowired
     TbProductService tbProductService;
     @Autowired
@@ -337,6 +341,21 @@ public class SxProductService extends BaseService {
         sxWorkloadModel.setPublishStatus(publishStatus);
         sxWorkloadModel.setModifier(modifier);
         return sxWorkloadDao.updatePublishStatus(sxWorkloadModel);
+    }
+
+    /**
+     * 回写cms_bt_platform_workload表
+     *
+     * @param sxWorkloadModel bean
+     * @param publishStatus   status
+     * @param modifier 更新者
+     */
+    public int updatePlatformWorkload(CmsBtSxWorkloadModel sxWorkloadModel, int publishStatus, String modifier) {
+
+        if (sxWorkloadModel == null) return 0;
+        sxWorkloadModel.setPublishStatus(publishStatus);
+        sxWorkloadModel.setModifier(modifier);
+        return sxWorkloadDao.updatePlatformWorkloadPublishStatus(sxWorkloadModel);
     }
 
     /**
@@ -1331,6 +1350,11 @@ public class SxProductService extends BaseService {
         Map<String, String> sizeSxMap = new HashMap<>();
         for (BaseMongoMap<String, Object> sku : skuList) {
             String size = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name());
+            // 对大码进行过滤处理 charis 170410 STA
+            if (bigSizeList.contains(size)) {
+                continue;
+            }
+            // 对大码进行过滤处理 charis 170410 END
             String sizeNick = sku.getStringAttribute("sizeNick");
             // modified by morse.lu 2016/10/26 start
             // liking 不允许手动填写别名

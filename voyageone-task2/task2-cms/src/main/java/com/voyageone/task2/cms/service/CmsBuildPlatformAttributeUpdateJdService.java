@@ -93,11 +93,10 @@ public class CmsBuildPlatformAttributeUpdateJdService extends BaseCronTaskServic
         int cartId = work.getCartId();
         Long groupId = work.getGroupId();
         String workloadName = work.getWorkloadName();
+        // 开始时间
+        long prodStartTime = System.currentTimeMillis();
         try {
-
-
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
-
             if (sxData == null) {
                 String errorMsg = String.format("取得上新用的商品数据(SxData)信息失败！请向管理员确认 [sxData=null][workloadId:%s][groupId:%s]:", work.getId(), work.getGroupId());
                 $error(errorMsg);
@@ -145,42 +144,28 @@ public class CmsBuildPlatformAttributeUpdateJdService extends BaseCronTaskServic
         }
         catch (Exception e) {
 
-            if(sxData == null)
-            {
+            if (sxData == null) {
                 sxData = new SxData();
-                sxData.setCartId(work.getCartId());
-                sxData.setChannelId(work.getChannelId());
-                sxData.setGroupId(work.getGroupId());
+                sxData.setChannelId(channelId);
+                sxData.setCartId(cartId);
+                sxData.setGroupId(groupId);
+                sxData.setErrorMessage(String.format("京东取得商品数据为空！[ChannelId:%s] [GroupId:%s]", channelId, groupId));
             }
-            $error("异常信息显示为1调查", e);
-
-            if (e instanceof BusinessException && StringUtils.isEmpty(sxData.getErrorMessage())) {
-                sxData.setErrorMessage(e.getMessage());
-            }
-
-            //保存错误log
-            // 如果上新数据中的errorMessage为空
-            if (StringUtils.isNullOrBlank2(sxData.getErrorMessage())) {
-                if(StringUtils.isNullOrBlank2(e.getMessage())) {
-                    sxData.setErrorMessage("京东更新属性出现不可预知的错误，请跟管理员联系 " + e.getStackTrace()[0].toString());
-                    $error(sxData.getErrorMessage());
-                } else {
-                    sxData.setErrorMessage(e.getMessage());
-                }
-            }
-
-            // 更新失败后回写product表pPublishError的值("Error")和pPublishMessage(上新错误信息)
-//            productGroupService.updateUploadErrorStatus(sxData.getPlatform(), listSxCode, sxData.getErrorMessage());
-            // 上新出错时状态回写操作
-            sxProductService.doUploadFinalProc(shop, false, sxData, work, "", null, "", getTaskName());
-            // 插入错误消息
-            sxProductService.insertBusinessLog(sxData, getTaskName());
-            //保存workload
-//            saveWorkload(work, WORK_LOAD_FAIL);
-
+            String errMsg = String.format("京东平台更新商品异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WorkloadName:%s] [%s]",
+                    channelId, cartId, groupId, workloadName, e.getMessage());
+            $error(errMsg);
             e.printStackTrace();
-            if (!StringUtils.isEmpty(sxData.getErrorMessage())) $error(sxData.getErrorMessage());
-            $error("workload更新失败！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
+            // 如果上新数据中的errorMessage为空
+            if (StringUtils.isEmpty(sxData.getErrorMessage())) {
+                sxData.setErrorMessage(errMsg);
+            }
+            // 回写workload表(失败2)
+            sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+            // 回写详细错误信息表(cms_bt_business_log)
+            sxProductService.insertBusinessLog(sxData, getTaskName());
+            $error(String.format("京东平台更新商品信息异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [耗时:%s]",
+                    channelId, cartId, groupId, (System.currentTimeMillis() - prodStartTime)));
+            return;
         }
     }
 
