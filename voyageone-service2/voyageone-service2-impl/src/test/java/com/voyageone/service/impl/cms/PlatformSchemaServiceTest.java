@@ -24,7 +24,7 @@ public class PlatformSchemaServiceTest {
     @Test
     public void testGetSchema() throws Exception {
 
-        Map<String, List<Field>> map = platformSchemaService.getFieldForProductImage("50016235","018",23, "cn", null);
+        Map<String, List<Field>> map = platformSchemaService.getFieldForProductImage("50016235","018",23, "cn", null, null);
 
         System.out.println("break point");
     }
