@@ -1481,12 +1481,12 @@ public class CmsProductDetailService extends BaseViewService {
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode(paramr.getChannelId(), code);
         if(cmsBtProductModel != null) {
             CmsBtProductModel_Platform_Cart platForm = cmsBtProductModel.getPlatform(paramr.getCartId());
+            String comment = String.format("NumIID【%s】，人工下线。备注:%s", platForm.getpNumIId(), paramr.getComment());
             platForm.setStatus(CmsConstants.ProductStatus.Ready.name());
             platForm.setpProductId("");
             platForm.setpNumIId("");
             platForm.remove("pStatus");
             productPlatformService.updateProductPlatformWithSx(paramr.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier, "group下线", false);
-            String comment = paramr.getComment();
             productStatusHistoryService.insert(paramr.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), paramr.getCartId(), EnumProductOperationType.DelistinGroup, comment, modifier);
             ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(paramr.getChannelId(), paramr.getCartId(), code);
             if (imsBtProductModel != null) {
