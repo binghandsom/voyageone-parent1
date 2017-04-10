@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.search;
 
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.components.solr.bean.SolrUpdateBean;
 import com.voyageone.components.solr.service.CmsProductSearchService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -8,6 +9,8 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 /**
  * Cms Product Data 增量导入收索服务器 Service
@@ -51,14 +54,18 @@ class CmsProductIncrImportToCmsSearchService extends CmsBaseIncrImportSearchSubS
 
 
         if (!StringUtil.isEmpty(id) && !StringUtil.isEmpty(channelId)) {
-//            $info(String.format("Insert channel=%s id=%s", channelId, id));
+            $info(String.format("Insert channel=%s id=%s", channelId, id));
+            long beginTime = System.currentTimeMillis();
             CmsBtProductModel cmsBtProductModel = productService.getProductByObjectId(channelId, id);
+            $info("getProduct " + (System.currentTimeMillis() - beginTime));
             if (cmsBtProductModel != null) {
                 SolrUpdateBean update = cmsProductSearchService.createSolrBeanForNew(cmsBtProductModel, null);
+                $info("createSolrBeanForNew " + (System.currentTimeMillis() - beginTime));
 
                 if (update != null) {
                     String response = cmsProductSearchService.saveBean(update);
                     $debug("CmsProductIncrImportToSearchService.handleInsert commit ; response:" + response);
+                    $info("cmsProductSearchService " + (System.currentTimeMillis() - beginTime));
                     return true;
                 }
             }
@@ -99,13 +106,17 @@ class CmsProductIncrImportToCmsSearchService extends CmsBaseIncrImportSearchSubS
             id = objectDoc.get("_id").toString();
         }
         if (!StringUtil.isEmpty(id) && !StringUtil.isEmpty(channelId)) {
-//            $info(String.format("update channel=%s id=%s", channelId, id));
+            long beginTime = System.currentTimeMillis();
+            $info(String.format("update channel=%s id=%s", channelId, id));
             CmsBtProductModel cmsBtProductModel = productService.getProductByObjectId(channelId, id);
+            $info("getProduct " + (System.currentTimeMillis() - beginTime));
             if (cmsBtProductModel != null) {
                 update = cmsProductSearchService.createSolrBeanForNew(cmsBtProductModel, null);
+                $info("createSolrBeanForNew " + (System.currentTimeMillis() - beginTime));
 
                 if (update != null) {
                     String response = cmsProductSearchService.saveBean(update);
+                    $info("cmsProductSearchService " + (System.currentTimeMillis() - beginTime));
                     $debug("CmsProductIncrImportToSearchService.handleInsert commit ; response:" + response);
                     return true;
                 }
