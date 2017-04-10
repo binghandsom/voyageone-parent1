@@ -1127,7 +1127,7 @@ define([
                 productIds.push(object.code);
             });
             if (context && context.isSelAll) {
-                data = {"productIds": [], "cartId": cartId, 'isSelAll': context.isSelAll};
+                data = {"productIds": [], "cartId": cartId, 'isSelAll': context.isSelAll,"searchInfo":context.searchInfo};
             } else if (selList.length > 0 && selList[0].plateSchema) {
                 data = {
                     "productIds": productIds,

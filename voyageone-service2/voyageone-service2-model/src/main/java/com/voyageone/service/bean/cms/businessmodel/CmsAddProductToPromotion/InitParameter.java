@@ -2,6 +2,7 @@ package com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by dell on 2016/11/1.
@@ -12,6 +13,7 @@ public class InitParameter {
     Date activityEnd;
     int cartId;
     int isSelAll;
+    Map<String, Object> searchInfo;
     List<String> codeList;
 
 
@@ -54,5 +56,13 @@ public class InitParameter {
 
     public void setActivityEnd(Date activityEnd) {
         this.activityEnd = activityEnd;
+    }
+
+    public Map<String, Object> getSearchInfo() {
+        return searchInfo;
+    }
+
+    public void setSearchInfo(Map<String, Object> searchInfo) {
+        this.searchInfo = searchInfo;
     }
 }

@@ -127,7 +127,7 @@ public class CmsAddToPromotionService extends BaseViewService {
         List<Long> productIds = null;
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productIds = advanceSearchService.getProductIdList(userInfo.getSelChannelId(), cmsSession);
+            productIds = advanceSearchService.getProductIdList(userInfo.getSelChannelId(), (Map<String, Object>) params.get("searchInfo"));
         } else {
             productIds = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
         }
