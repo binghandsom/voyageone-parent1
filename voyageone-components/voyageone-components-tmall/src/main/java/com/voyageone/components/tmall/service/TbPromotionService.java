@@ -9,7 +9,12 @@ import com.taobao.api.response.TmallPromotionTipItemAddResponse;
 import com.taobao.api.response.TmallPromotionTipItemModifyResponse;
 import com.taobao.api.response.TmallPromotionTipItemRemoveResponse;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
+import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.components.tmall.TbBase;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,6 +22,15 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class TbPromotionService extends TbBase {
+
+    @Value("${cms2.components.tmall.services.promotion.async:false}")
+    private boolean async;
+
+    private final MqSenderService mqSenderService;
+
+    public TbPromotionService(MqSenderService mqSenderService) {
+        this.mqSenderService = mqSenderService;
+    }
 
     public TmallPromotionTipItemAddResponse addPromotion(ShopBean shopBean,TipItemPromDTO ItemProm) throws ApiException {
 
@@ -42,12 +56,37 @@ public class TbPromotionService extends TbBase {
 
         req.setItemProm(ItemProm);
 
-        TmallPromotionTipItemModifyResponse response = reqTaobaoApi(shopBean, req);
-        if (response.getErrorCode() != null)
-        {
-            String msg = (response.getSubMsg() == null?"":response.getSubMsg()) + (response.getMsg() == null?"":response.getMsg());
-            logger.error(msg);
+        TmallPromotionTipItemModifyResponse response;
+
+        if (!async) {
+            response = reqTaobaoApi(shopBean, req);
+
+            if (response.getErrorCode() != null) {
+                String msg = (response.getSubMsg() == null ? "" : response.getSubMsg()) + (response.getMsg() == null ? "" : response.getMsg());
+                logger.error(msg);
+            }
+        } else {
+
+            @VOMQQueue("voyageone_cms_jushita_mq_tjb_promotion_tip_Item_modify_queue")
+            class TmallPromotionTipItemModifyMessage extends BaseMQMessageBody {
+
+                private TmallPromotionTipItemModifyRequest tmallPromotionTipItemModifyRequest = req;
+
+                public TmallPromotionTipItemModifyRequest getTmallPromotionTipItemModifyRequest() {
+                    return tmallPromotionTipItemModifyRequest;
+                }
+
+                @Override
+                public void check() throws MQMessageRuleException {
+                }
+            }
+
+            mqSenderService.sendMessage(new TmallPromotionTipItemModifyMessage());
+
+            response = new TmallPromotionTipItemModifyResponse();
+            response.setModifyRst(true);
         }
+
         return response;
     }
 
@@ -56,11 +95,35 @@ public class TbPromotionService extends TbBase {
         TmallPromotionTipItemRemoveRequest req = new TmallPromotionTipItemRemoveRequest();
         req.setItemId(num_iid);
         req.setCampaignId(campaign_id);
-        TmallPromotionTipItemRemoveResponse response = reqTaobaoApi(shopBean, req);
-        if (response.getErrorCode() != null)
-        {
-            logger.error(response.getSubMsg());
+
+        TmallPromotionTipItemRemoveResponse response;
+
+        if (!async) {
+            response = reqTaobaoApi(shopBean, req);
+            if (response.getErrorCode() != null) {
+                logger.error(response.getSubMsg());
+            }
+        } else {
+            @VOMQQueue("voyageone_cms_jushita_mq_tjb_promotion_tip_Item_remove_queue")
+            class TmallPromotionTipItemRemoveMessage extends BaseMQMessageBody {
+
+                private TmallPromotionTipItemRemoveRequest tmallPromotionTipItemModifyRequest = req;
+
+                public TmallPromotionTipItemRemoveRequest getTmallPromotionTipItemModifyRequest() {
+                    return tmallPromotionTipItemModifyRequest;
+                }
+
+                @Override
+                public void check() throws MQMessageRuleException {
+                }
+            }
+
+            mqSenderService.sendMessage(new TmallPromotionTipItemRemoveMessage());
+
+            response = new TmallPromotionTipItemRemoveResponse();
+            response.setRemoveRst(true);
         }
+
         return response;
     }
 }
