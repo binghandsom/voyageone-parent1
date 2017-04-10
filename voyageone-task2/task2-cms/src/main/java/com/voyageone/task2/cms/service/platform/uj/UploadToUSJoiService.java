@@ -161,9 +161,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         List<CmsChannelConfigBean> categoryWhitelist = CmsChannelConfigs.getConfigBeans("000",
                 CmsConstants.ChannelConfig.CATEGORY_WHITE, "0");
 
-        if (!ListUtils.isNull(categoryWhitelist)) {
-            categoryWhite = categoryWhitelist.stream().map(CmsChannelConfigBean::getConfigValue1).collect(Collectors.toList());
+        if (!ListUtils.isNull(categoryWhitelist) && !StringUtil.isEmpty(categoryWhitelist.get(0).getConfigValue1())) {
+            categoryWhite = Arrays.asList(categoryWhitelist.get(0).getConfigValue1().split(";"));
         }
+
 
 
 
