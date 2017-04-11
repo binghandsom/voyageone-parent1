@@ -30,8 +30,9 @@ import java.util.stream.Collectors;
 public class CmsAdvSearchQueryService extends BaseService {
 
     // 查询产品信息时的缺省输出列
+    // sku 添加clientMsrpPrice & clientMsrpPriceChgFlg added by piao
     public final static String searchItems = "channelId;prodId;created;creater;modified;orgChannelId;modifier;freeTags;sales;bi;platforms;lock;" +
-            "common.skus.skuCode;common.skus.clientNetPriceChgFlg;common.skus.qty;common.skus.size;common.fields.originalCode;common.fields.originalTitleCn;common.catPath;common.fields.productNameEn;common.fields.brand;common.fields.code;" +
+            "common.skus.skuCode;common.skus.clientNetPriceChgFlg;common.skus.qty;common.skus.size;common.skus.clientMsrpPrice;common.skus.clientMsrpPriceChgFlg;common.fields.originalCode;common.fields.originalTitleCn;common.catPath;common.fields.productNameEn;common.fields.brand;common.fields.code;" +
             "common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.images5;common.fields.images6;common.fields.images7;common.fields.images8;common.fields.images9;" +
             "common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
             "common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;usPlatforms;";
