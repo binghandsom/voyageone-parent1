@@ -44,6 +44,12 @@
         <!-- 聚美上新 -->
         <task:scheduled ref="CmsBuildPlatformProductUploadJMJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
+        <!-- 各个平台增量更新 -->
+        <task:scheduled ref="CmsBuildPlatformAttributeUpdateTmJob" method="run" cron="0 0/1 0-23 * * ?"/>
+        <task:scheduled ref="CmsBuildPlatformAttributeUpdateTmTongGouJob" method="run" cron="0 0/1 0-23 * * ?"/>
+        <task:scheduled ref="CmsBuildPlatformAttributeUpdateJdJob" method="run" cron="0 0/1 0-23 * * ?"/>
+        <task:scheduled ref="CmsBuildPlatformAttributeUpdateJmJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
         <!-- 取得平台类目:手动batch -->
         <task:scheduled ref="getPlatformCategoryTreesTask" method="run" cron="0 0/1 0-23 * * ?"/>
 
