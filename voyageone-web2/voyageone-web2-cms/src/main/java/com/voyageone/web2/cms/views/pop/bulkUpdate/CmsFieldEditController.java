@@ -162,4 +162,15 @@ public class CmsFieldEditController extends CmsController {
         return success(true);
     }
 
+    @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.BULK_CONF_CLIENT_MSRP)
+    public AjaxResponse bulkConfClientMsrp(@RequestBody Map<String, Object> params) {
+
+        // 设置商品的智能上新
+        fieldEditService.bulkConfClientMsrp(params, getUser());
+
+        return success(true);
+    }
+
+
+
 }

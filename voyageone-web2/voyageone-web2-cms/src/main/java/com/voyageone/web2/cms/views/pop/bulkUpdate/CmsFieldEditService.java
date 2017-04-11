@@ -202,6 +202,29 @@ public class CmsFieldEditService extends BaseViewService {
     }
 
     /**
+     * 批量确认客户msrp
+     */
+    public void bulkConfClientMsrp(Map<String, Object> params, UserSessionBean userInfo) {
+
+        boolean isSelectAll = ((Integer) params.get("isSelectAll") == 1);    // 是否为全选
+        List<String> productCodes = null;
+        if (isSelectAll) {
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (Map<String, Object>) params.get("searchInfo"));
+        } else {
+            productCodes = (List<String>) params.get("productIds");
+        }
+
+        AdvSearchConfirmClientMsrpPriceMQMessageBody mqMessageBody = new AdvSearchConfirmClientMsrpPriceMQMessageBody();
+        mqMessageBody.setChannelId(userInfo.getSelChannelId());
+        mqMessageBody.setSender(userInfo.getUserName());
+        List<List<String>>productCodesList = CommonUtil.splitList(productCodes,100);
+        for (List<String> codes:productCodesList) {
+            mqMessageBody.setCodeList(codes);
+            cmsMqSenderService.sendMessage(mqMessageBody);
+        }
+    }
+
+    /**
      * 批量修改属性.
      */
     public Map<String, Object> setProductFields(Map<String, Object> params, UserSessionBean userInfo, int cartId) {
