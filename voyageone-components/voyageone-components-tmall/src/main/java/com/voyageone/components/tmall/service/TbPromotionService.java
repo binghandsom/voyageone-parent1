@@ -1,6 +1,7 @@
 package com.voyageone.components.tmall.service;
 
 import com.taobao.api.ApiException;
+import com.taobao.api.BaseTaobaoRequest;
 import com.taobao.api.domain.TipItemPromDTO;
 import com.taobao.api.request.TmallPromotionTipItemAddRequest;
 import com.taobao.api.request.TmallPromotionTipItemModifyRequest;
@@ -66,21 +67,14 @@ public class TbPromotionService extends TbBase {
             }
         } else {
 
-            @VOMQQueue("voyageone_cms_jushita_mq_tjb_promotion_tip_Item_modify_queue")
-            class TmallPromotionTipItemModifyMessage extends SimplePromotionMessage {
-
-                private TmallPromotionTipItemModifyRequest tmallPromotionTipItemModifyRequest = req;
-
-                private TmallPromotionTipItemModifyMessage() {
-                    super(shopBean);
-                }
-
-                public TmallPromotionTipItemModifyRequest getTmallPromotionTipItemModifyRequest() {
-                    return tmallPromotionTipItemModifyRequest;
+            @VOMQQueue("voyageone_cms_jushita_mq_tjb_promotion_tip_item_update_queue")
+            class PromotionTipItemModifyMessage extends SimplePromotionTipItemOperatingMessage<TmallPromotionTipItemModifyRequest> {
+                private PromotionTipItemModifyMessage() {
+                    super(shopBean, OperatingType.UPDATE, req);
                 }
             }
 
-            mqSenderService.sendMessage(new TmallPromotionTipItemModifyMessage());
+            mqSenderService.sendMessage(new PromotionTipItemModifyMessage());
 
             response = new TmallPromotionTipItemModifyResponse();
             response.setModifyRst(true);
@@ -103,21 +97,15 @@ public class TbPromotionService extends TbBase {
                 logger.error(response.getSubMsg());
             }
         } else {
-            @VOMQQueue("voyageone_cms_jushita_mq_tjb_promotion_tip_Item_remove_queue")
-            class TmallPromotionTipItemRemoveMessage extends SimplePromotionMessage {
 
-                private TmallPromotionTipItemRemoveRequest tmallPromotionTipItemRemoveRequest = req;
-
-                private TmallPromotionTipItemRemoveMessage() {
-                    super(shopBean);
-                }
-
-                public TmallPromotionTipItemRemoveRequest getTmallPromotionTipItemRemoveRequest() {
-                    return tmallPromotionTipItemRemoveRequest;
+            @VOMQQueue("voyageone_cms_jushita_mq_tjb_promotion_tip_item_update_queue")
+            class PromotionTipItemRemoveMessage extends SimplePromotionTipItemOperatingMessage<TmallPromotionTipItemRemoveRequest> {
+                private PromotionTipItemRemoveMessage() {
+                    super(shopBean, OperatingType.REMOVE, req);
                 }
             }
 
-            mqSenderService.sendMessage(new TmallPromotionTipItemRemoveMessage());
+            mqSenderService.sendMessage(new PromotionTipItemRemoveMessage());
 
             response = new TmallPromotionTipItemRemoveResponse();
             response.setRemoveRst(true);
@@ -129,11 +117,17 @@ public class TbPromotionService extends TbBase {
     /**
      * 简单实现的接口调用 MQ 信息体，追加必要的 cartId 字段
      */
-    abstract class SimplePromotionMessage extends BaseMQMessageBody {
+    abstract class SimplePromotionTipItemOperatingMessage<T extends BaseTaobaoRequest<?>> extends BaseMQMessageBody {
         private final int cartId;
 
-        SimplePromotionMessage(ShopBean shopBean) {
+        private final int operatingType;
+
+        private final T req;
+
+        SimplePromotionTipItemOperatingMessage(ShopBean shopBean, OperatingType operatingType, T req) {
             this.cartId = Integer.valueOf(shopBean.getCart_id());
+            this.operatingType = operatingType.value;
+            this.req = req;
             setChannelId(shopBean.getOrder_channel_id());
         }
 
@@ -141,8 +135,27 @@ public class TbPromotionService extends TbBase {
             return cartId;
         }
 
+        public int getOperatingType() {
+            return operatingType;
+        }
+
+        public T getReq() {
+            return req;
+        }
+
         @Override
         public void check() throws MQMessageRuleException {
+        }
+    }
+
+    enum OperatingType {
+        REMOVE(0),
+        UPDATE(1);
+
+        private int value;
+
+        OperatingType(int value) {
+            this.value = value;
         }
     }
 }
