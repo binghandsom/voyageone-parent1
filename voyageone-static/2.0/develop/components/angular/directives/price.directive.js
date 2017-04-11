@@ -5,7 +5,7 @@
  */
 (function () {
 
-    function _priceSale(prices) {
+    function _priceScale(prices) {
         if (!prices || prices.length === 0) {
             console.warn('directive:price=> 请输入要显示的价格');
             return;
@@ -31,7 +31,7 @@
                 prices: "=prices"
             },
             link: function (scope, element) {
-                element.html(_priceSale(scope.prices));
+                element.html(_priceScale(scope.prices));
             }
         };
     }).directive("clientMsrpPrice", function ($compile) {
@@ -42,9 +42,9 @@
             },
             link: function (scope, element) {
 
-                var skuList = scope.data;
-
-                var buttonPopover = angular.element('<button  type="button">');
+                var skuList = scope.data,
+                    final = [],
+                    buttonPopover = angular.element('<button  type="button">');
 
                 buttonPopover.attr('ng-controller','showPopoverCtrl');
                 buttonPopover.attr('popover-title','客户建议零售价');
@@ -53,8 +53,6 @@
 
                 if (!skuList)
                     console.warn('没有提供sku数据！');
-
-                var final = [];
 
                 if (skuList instanceof Array) {
 
@@ -83,7 +81,7 @@
                 }
 
                 buttonPopover.attr('popover-html', 'showInfo(' + JSON.stringify(final) + ')');
-                buttonPopover.html(_priceSale(_.pluck(skuList, 'clientMsrpPrice')));
+                buttonPopover.html(_priceScale(_.pluck(skuList, 'clientMsrpPrice')));
 
                 element.html($compile(buttonPopover)(scope.$new()));
             }
