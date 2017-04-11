@@ -98,7 +98,7 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         List<Long> productIds;
         if (parameter.getIsSelAll() == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productIds = advanceSearchService.getProductIdList(promotion.getChannelId(), cmsSession);
+            productIds = advanceSearchService.getProductIdList(promotion.getChannelId(), parameter.getSearchInfo());
         } else {
             productIds = parameter.getIdList();
         }
@@ -136,7 +136,7 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         List<Long> productIds;
         if (parameter.getIsSelAll() == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productIds = advanceSearchService.getProductIdList(promotion.getChannelId(), cmsSession);
+            productIds = advanceSearchService.getProductIdList(promotion.getChannelId(), parameter.getSearchInfo());
         } else {
             productIds = parameter.getIdList();
         }
@@ -206,7 +206,7 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         List<String> codeList;
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            codeList = advanceSearchService.getProductCodeList(channelId, cmsSession);
+            codeList = advanceSearchService.getProductCodeList(channelId, params.getSearchInfo());
         } else {
             codeList = params.getCodeList();
         }

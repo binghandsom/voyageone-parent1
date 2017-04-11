@@ -46,7 +46,7 @@ public class CmsAddChannelCategoryController  extends CmsController {
         params.put("channelId", this.getUser().getSelChannelId());
         //创建者/更新者用
         params.put("userName", this.getUser().getUserName());
-        cmsAddChannelCategoryService.saveChannelCategory(params, getCmsSession(), getUser().getSelChannelId());
+        cmsAddChannelCategoryService.saveChannelCategory(params, this.getUser().getSelChannelId());
         return success(null);
     }
 }

@@ -53,6 +53,16 @@ public class CmsJMController extends CmsController {
         String tagId;
         private Integer isSelAll = null;
 
+        Map<String,Object> searchInfo;
+
+        public Map<String, Object> getSearchInfo() {
+            return searchInfo;
+        }
+
+        public void setSearchInfo(Map<String, Object> searchInfo) {
+            this.searchInfo = searchInfo;
+        }
+
         public String getTagName() {
             return tagName;
         }
@@ -127,7 +137,7 @@ public class CmsJMController extends CmsController {
     public AjaxResponse doProductAdd(@RequestBody AddPromotionParam param) {
         UserSessionBean user = getUser();
         Map<String, Object> response = jmPromotionService.addProductionToPromotion(param.getProductIds(), param.promotion, user.getSelChannelId(),
-                param.discount, param.priceType, param.tagName, param.tagId, param.getIsSelAll(), getCmsSession());
+                param.discount, param.priceType, param.tagName, param.tagId, param.getIsSelAll(), param.getSearchInfo());
         return success(response);
     }
 

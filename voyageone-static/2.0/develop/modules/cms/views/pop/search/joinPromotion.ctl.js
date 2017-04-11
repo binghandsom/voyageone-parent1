@@ -79,7 +79,8 @@ define([
                 cartId: self.cartBean.value,
                 isSelAll: self.context.isSelAll,
                 activityStart: self.groupInfo.startTime,
-                activityEnd: self.groupInfo.endTime
+                activityEnd: self.groupInfo.endTime,
+                searchInfo:self.context.searchInfo
             }).then(function (res) {
                 self.listTreeNode = res.data.listTreeNode;
 
@@ -220,7 +221,8 @@ define([
                 isSelAll: context.isSelAll,
                 codeList: self.getCodeList(),
                 idList: self.getProductIdList(),
-                listTagTreeNode: self.listTreeNode
+                listTagTreeNode: self.listTreeNode,
+                searchInfo:context.searchInfo
             }, groupInfo)).then(function () {
                 notify.success("添加成功！");
                 $uibModalInstance.close();
