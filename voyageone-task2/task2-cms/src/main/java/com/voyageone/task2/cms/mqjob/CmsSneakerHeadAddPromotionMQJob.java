@@ -60,7 +60,9 @@ public class CmsSneakerHeadAddPromotionMQJob extends TBaseMQCmsService<CmsSneake
                 if (cmsBtProductGroupModel != null) {
                     cmsBtProductGroupModel.getProductCodes().forEach(item -> {
                         if (codes.contains(item)) {
-                            codes.remove(item);
+                            if(!code.equalsIgnoreCase(item)) {
+                                codes.remove(item);
+                            }
                         } else {
                             importProductCodes.add(item);
                         }
@@ -72,6 +74,7 @@ public class CmsSneakerHeadAddPromotionMQJob extends TBaseMQCmsService<CmsSneake
         if (importProductCodes.size() > 0) {
             importProductCodes.forEach(code -> {
                 try {
+                    $info(code);
                     addPromotionDetail(cmsBtPromotionModel.getChannelId(), cmsBtPromotionModel.getCartId(), code, messageBody.getPromotionId(), messageBody.getSender());
                 } catch (Exception e) {
                     CmsBtOperationLogModel_Msg item = new CmsBtOperationLogModel_Msg();
