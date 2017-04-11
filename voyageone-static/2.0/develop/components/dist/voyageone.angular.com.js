@@ -915,7 +915,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
                             cmcf = element.clientMsrpPriceChgFlg,
                             labelStr = '';
 
-                        if (cmcf && cmcf != 0) {
+                        if (cmcf && cmcf != 0 && !/^\w{1}\d{1}%$/.test(cmcf)) {
 
                             if (cmcf.indexOf('U') >= 0) {
                                 labelStr += '<label class="text-u-red font-bold">&nbsp;(↑' + cmcf.substring(1) + ')</label>';
