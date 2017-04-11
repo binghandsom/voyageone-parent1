@@ -81,6 +81,10 @@ public class CmsBtSxWorkloadDaoExt extends ServiceBaseDao {
         return update("update_publish_status", model);
     }
 
+    public int updatePlatformWorkloadPublishStatus(CmsBtSxWorkloadModel model) {
+        return update("update_publish_status_platformWorkload", model);
+    }
+
     public int delayWorkload(CmsBtSxWorkloadModel model) {
         return update("delay_work_load", model);
     }

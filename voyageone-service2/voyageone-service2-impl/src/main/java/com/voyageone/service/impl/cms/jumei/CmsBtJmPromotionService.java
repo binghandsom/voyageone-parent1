@@ -394,12 +394,12 @@ public class CmsBtJmPromotionService extends BaseService {
         CmsBtPromotionModel promotion = daoCmsBtPromotion.selectOne(map);
         if (promotion == null) {
             promotion = new CmsBtPromotionModel();
+            promotion.setChannelId(model.getChannelId());
+            promotion.setCreater(model.getCreater());
         }
         promotion.setPromotionId(model.getId());
         promotion.setRefTagId(model.getRefTagId());
-        promotion.setChannelId(model.getChannelId());
         promotion.setModifier(model.getModifier());
-        promotion.setCreater(model.getCreater());
         promotion.setActive(model.getActive());
         if (model.getActivityStart() != null) {
             promotion.setActivityStart(DateTimeUtil.getDateTime(model.getActivityStart(), "yyyy-MM-dd HH:mm:ss"));

@@ -224,6 +224,27 @@
          ]]>
     </update>
 
+    <update id="update_publish_status_platformWorkload" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
+        <![CDATA[
+        UPDATE
+        voyageone_cms2.cms_bt_platform_workload
+        SET
+        publish_status=#{publishStatus},
+        modifier=#{modifier},
+        modified=now()
+        WHERE
+        modified <= #{modified}
+        AND
+        channel_id = #{channelId}
+        AND
+        cart_id = #{cartId}
+        AND
+        group_id = #{groupId}
+        AND
+         (publish_status=0 or publish_status=3)
+         ]]>
+    </update>
+
 
     <update id="delay_work_load" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
         <![CDATA[

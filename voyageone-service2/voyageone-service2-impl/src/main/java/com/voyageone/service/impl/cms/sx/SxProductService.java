@@ -118,6 +118,10 @@ public class SxProductService extends BaseService {
      * upd_flg=1,已经上传
      */
     private static final int UPD_FLG_UPLOADED = 1;
+    /**
+     * 大码List
+     */
+    private static List<String> bigSizeList = Lists.newArrayList("16","17","18");
     @Autowired
     TbProductService tbProductService;
     @Autowired
@@ -337,6 +341,21 @@ public class SxProductService extends BaseService {
         sxWorkloadModel.setPublishStatus(publishStatus);
         sxWorkloadModel.setModifier(modifier);
         return sxWorkloadDao.updatePublishStatus(sxWorkloadModel);
+    }
+
+    /**
+     * 回写cms_bt_platform_workload表
+     *
+     * @param sxWorkloadModel bean
+     * @param publishStatus   status
+     * @param modifier 更新者
+     */
+    public int updatePlatformWorkload(CmsBtSxWorkloadModel sxWorkloadModel, int publishStatus, String modifier) {
+
+        if (sxWorkloadModel == null) return 0;
+        sxWorkloadModel.setPublishStatus(publishStatus);
+        sxWorkloadModel.setModifier(modifier);
+        return sxWorkloadDao.updatePlatformWorkloadPublishStatus(sxWorkloadModel);
     }
 
     /**
@@ -852,6 +871,37 @@ public class SxProductService extends BaseService {
         List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "}", channelId);
         List<CmsBtProductModel> removeProductList = new ArrayList<>(); // product删除对象(如果该product下没有允许在该平台上上架的sku，删除)
 
+        // 根据原始的尺码， 删掉不想要的SKU
+        if (ChannelConfigEnums.Channel.SN.getId().equals(channelId)) {
+            for (CmsBtProductModel p : productModelList) {
+                List<CmsBtProductModel_Sku> common_skus = p.getCommonNotNull().getSkus();
+                if (common_skus != null) {
+                    for (int i = common_skus.size() - 1; i >= 0; i--) {
+                        CmsBtProductModel_Sku s = common_skus.get(i);
+                        if (bigSizeList.contains(s.getSize())) {
+                            common_skus.remove(i);
+                        }
+                    }
+                }
+
+                Map<String, CmsBtProductModel_Platform_Cart> platforms = p.getPlatforms();
+                platforms.entrySet().stream().forEach((kv)->{
+                    CmsBtProductModel_Platform_Cart platformCart = kv.getValue();
+                    List<BaseMongoMap<String, Object>> platformCartSkus = platformCart.getSkus();
+                    if (platformCartSkus != null) {
+                        for (int i = platformCartSkus.size() - 1; i >= 0; i--) {
+                            BaseMongoMap<String, Object> s = platformCartSkus.get(i);
+                            // 这里的size取得临时从sku里拆出来（sn专用） 如果其他店有着部分代码逻辑的需求 需要用sku去common里匹配
+                            String size = s.getStringAttribute("skuCode").replaceAll("^(.*)-(.*)$", "$2");
+                            if (bigSizeList.contains(size)) {
+                                platformCartSkus.remove(i);
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
         // 预设主商品
         for (CmsBtProductModel productModel : productModelList) {
             if (mainProductCode.equals(productModel.getCommon().getFields().getCode())) {
@@ -1082,8 +1132,9 @@ public class SxProductService extends BaseService {
                         productPlatformSku.forEach(sku -> {
                             // update by desmond 2017/02/22 start
 //                            // 聚美以外的平台需要看PXX.skus.isSale是否等于true(该sku是否在当前平台销售),聚美不用过滤掉isSale=false的sku(聚美上新的时候false时会把它更新成隐藏)
-//                            if ((!CartEnums.Cart.JM.getId().equals(cartId.toString()) && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name())))
-//                                    || CartEnums.Cart.JM.getId().equals(cartId.toString())) {
+                            // 下面这个判断还是要的 2017/04/17 tom
+                        if ((!CartEnums.Cart.JM.getId().equals(cartId.toString()) && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name())))
+                                || CartEnums.Cart.JM.getId().equals(cartId.toString())) {
                             // 根据小汤需求，聚美平台也跟其他平台一样，只有选择的sku(PXX.skus.isSale=true)才往平台上上新
                             if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
                                 // update by desmond 2017/02/22 end
@@ -1104,6 +1155,7 @@ public class SxProductService extends BaseService {
                                 }
                                 // update by desmond 2016/08/03 end
                             }
+                        }
                         });
                     }
                     // add by desmond 2016/08/03 start
