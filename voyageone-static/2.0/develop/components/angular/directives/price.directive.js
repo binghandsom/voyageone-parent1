@@ -51,8 +51,11 @@
                 buttonPopover.attr('popover-placement','left');
                 buttonPopover.addClass('btn btn-default btn-xs');
 
-                if (!skuList)
+                if (!skuList){
                     console.warn('没有提供sku数据！');
+                    return;
+                }
+
 
                 if (skuList instanceof Array) {
 
