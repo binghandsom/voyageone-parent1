@@ -23,7 +23,6 @@ public class CmsCartAddMQJobTest {
         map.setChannelId("010");
         map.setCartId(928);
         map.setSender("CmsCartAddMQJob");
-
         try {
             cmsCartAddMQJob.onStartup(map);
         } catch (Exception e) {
