@@ -30,6 +30,7 @@ import java.util.Map;
 @Service
 public class CmsAddChannelCategoryService extends BaseViewService {
 
+    private static final String DEFAULT_SELLER_CAT_CNT = "10";
     @Autowired
     private ProductService productService;
     @Autowired
@@ -38,8 +39,6 @@ public class CmsAddChannelCategoryService extends BaseViewService {
     private CmsAdvanceSearchService advanceSearchService;
     @Autowired
     private CmsMqSenderService cmsMqSenderService;
-
-    private static final String DEFAULT_SELLER_CAT_CNT = "10";
 
     /**
      * 数据页面初始化(无产品信息)
@@ -177,7 +176,7 @@ public class CmsAddChannelCategoryService extends BaseViewService {
     /**
      * 保存数据到cms_bt_product
      */
-    public void saveChannelCategory(Map<String, Object> params, CmsSessionBean cmsSession) {
+    public void saveChannelCategory(Map<String, Object> params, String channelId) {
         Integer isSelAll = (Integer) params.get("isSelAll");
         if (isSelAll == null) {
             isSelAll = 0;
@@ -186,8 +185,6 @@ public class CmsAddChannelCategoryService extends BaseViewService {
         List<String> codeList = (List) params.get("productIds");
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            //channelId
-            String channelId = (String) params.get("channelId");
             codeList = advanceSearchService.getProductCodeList(channelId, (Map<String, Object>) params.get("searchInfo"));
             params.put("productIds", codeList);
         }
