@@ -167,21 +167,26 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
             }
 
         } catch(Exception ex) {
-            // 取得sxData为空
             if (sxData == null) {
                 sxData = new SxData();
                 sxData.setChannelId(channelId);
                 sxData.setCartId(cartId);
                 sxData.setGroupId(groupId);
-                sxData.setErrorMessage(String.format("取得上新用的商品数据信息失败！[ChannelId:%s] [GroupId:%s]", channelId, groupId));
+                sxData.setErrorMessage(String.format("天猫取得商品数据为空！[ChannelId:%s] [GroupId:%s]", channelId, groupId));
+            }
+            String errMsg = String.format("天猫平台更新商品异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WorkloadName:%s] [%s]",
+                    channelId, cartId, groupId, workloadName, ex.getMessage());
+            $error(errMsg);
+            ex.printStackTrace();
+            // 如果上新数据中的errorMessage为空
+            if (StringUtils.isEmpty(sxData.getErrorMessage())) {
+                sxData.setErrorMessage(errMsg);
             }
             // 回写workload表(失败2)
-            sxProductService.updateSxWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+            sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, getTaskName());
-            // 上新出错时状态回写操作
-            sxProductService.doUploadFinalProc(shop, false, sxData, work, "", null, "", getTaskName());
-            $error(String.format("天猫平台单个产品和商品新增或更新信息异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [耗时:%s]",
+            $error(String.format("天猫平台更新商品信息异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [耗时:%s]",
                     channelId, cartId, groupId, (System.currentTimeMillis() - prodStartTime)));
             return;
         }

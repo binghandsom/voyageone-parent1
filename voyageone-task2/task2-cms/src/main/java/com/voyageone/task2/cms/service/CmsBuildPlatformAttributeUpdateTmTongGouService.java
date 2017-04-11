@@ -213,40 +213,28 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
             }
 
         }catch (Exception e) {
-            // 异常结束时
-            String errMsg = String.format("天猫官网同购更新异常结束，开始记录异常状态！[ChannelId:%s] [CartId:%s] [GroupId:%s] [NumIId:%s] [WorkloadName:%s]",
-                    channelId, cartId_shop, groupId, numIId, workloadName);
-            $error(errMsg);
-
-//            // 把上新失败结果加入到resultMap中
-//            sxProductService.add2ResultMap(resultMap, channelId, cartId_shop, groupId, true, false);
-
             if (sxData == null) {
-                // 回写详细错误信息表(cms_bt_business_log)用
                 sxData = new SxData();
                 sxData.setChannelId(channelId);
                 sxData.setCartId(cartId_shop);
                 sxData.setGroupId(groupId);
-                sxData.setErrorMessage(shop.getShop_name() + " 天猫同购取得更新用的商品数据信息异常,请跟管理员联系! [更新数据为null]");
+                sxData.setErrorMessage(String.format("天猫同购取得商品数据为空！[ChannelId:%s] [GroupId:%s]", channelId, groupId));
             }
+            String errMsg = String.format("天猫同购平台更新商品异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WorkloadName:%s] [%s]",
+                    channelId, cartId_shop, groupId, workloadName, e.getMessage());
+            $error(errMsg);
+            e.printStackTrace();
             // 如果上新数据中的errorMessage为空
             if (StringUtils.isEmpty(sxData.getErrorMessage())) {
-                // nullpoint错误的处理
-                if(StringUtils.isNullOrBlank2(e.getMessage())) {
-                    e.printStackTrace();
-                    sxData.setErrorMessage(shop.getShop_name() + " 天猫同购更新时出现不可预知的错误，请跟管理员联系! "
-                            + e.getStackTrace()[0].toString());
-                } else {
-                    sxData.setErrorMessage(shop.getShop_name() + " " +e.getMessage());
-                }
+                sxData.setErrorMessage(errMsg);
             }
-
-            // 上新出错时状态回写操作
-            sxProductService.doUploadFinalProc(shop, false, sxData, work, "", null, "", getTaskName());
-
-            // 异常结束
-            $error(String.format("天猫官网同购单个商品%s失败！[ChannelId:%s] [CartId:%s] [WorkloadName:%s] [GroupId:%s] [NumIId:%s] [耗时:%s] [errMsg:%s]",
-                    "更新", channelId, cartId_shop, workloadName, groupId, numIId, (System.currentTimeMillis() - prodStartTime), sxData.getErrorMessage()));
+            // 回写workload表(失败2)
+            sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+            // 回写详细错误信息表(cms_bt_business_log)
+            sxProductService.insertBusinessLog(sxData, getTaskName());
+            $error(String.format("天猫同购平台更新商品信息异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [耗时:%s]",
+                    channelId, cartId_shop, groupId, (System.currentTimeMillis() - prodStartTime)));
+            return;
         }
     }
 
