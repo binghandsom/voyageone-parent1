@@ -58,10 +58,10 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
     private final static List<String> cartList = Lists.newArrayList("20","23");
     // 天猫增量更新支持的属性 -> 对应系统任务名(workloadName)
     private final static List<String> IncrementAttrList = Lists.newArrayList(
-                        PlatformWorkloadAttribute.SELLER_CIDS.name(), PlatformWorkloadAttribute.ITEM_IMAGES.name(),
-                        PlatformWorkloadAttribute.DESCRIPTION.name(), PlatformWorkloadAttribute.TITLE.name(),
-                        PlatformWorkloadAttribute.SELL_POINTS.name(), PlatformWorkloadAttribute.WHITE_BG_IMAGE.name(),
-                        PlatformWorkloadAttribute.WIRELESS_DESC.name());
+                        PlatformWorkloadAttribute.SELLER_CIDS.getValue(), PlatformWorkloadAttribute.ITEM_IMAGES.getValue(),
+                        PlatformWorkloadAttribute.DESCRIPTION.getValue(), PlatformWorkloadAttribute.TITLE.getValue(),
+                        PlatformWorkloadAttribute.SELL_POINTS.getValue(), PlatformWorkloadAttribute.WHITE_BG_IMAGE.getValue(),
+                        PlatformWorkloadAttribute.WIRELESS_DESC.getValue());
 
     @Autowired
     private PlatformMappingDeprecatedService platformMappingDeprecatedService;

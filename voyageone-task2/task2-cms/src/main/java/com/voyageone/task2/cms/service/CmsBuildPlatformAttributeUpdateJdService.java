@@ -127,15 +127,15 @@ public class CmsBuildPlatformAttributeUpdateJdService extends BaseCronTaskServic
             com.jd.open.api.sdk.domain.Ware ware = new com.jd.open.api.sdk.domain.Ware();
             ware.setWareId(Long.parseLong(wareId));
             // 店内分类
-            if (PlatformWorkloadAttribute.SELLER_CIDS.name().equals(workloadName)) {
+            if (PlatformWorkloadAttribute.SELLER_CIDS.getValue().equals(workloadName)) {
                 ware.setShopCategorys(getShopCat(cartData));
             }
             // 商品标题
-            else if (PlatformWorkloadAttribute.TITLE.name().equals(workloadName)) {
+            else if (PlatformWorkloadAttribute.TITLE.getValue().equals(workloadName)) {
                 ware.setTitle(getTitle(sxData, cartData));
             }
             // 商品描述
-            else if (PlatformWorkloadAttribute.DESCRIPTION.name().equals(workloadName)) {
+            else if (PlatformWorkloadAttribute.DESCRIPTION.getValue().equals(workloadName)) {
                 ware.setIntroduction(getNote(expressionParser, shop, sxData));
             }
 

@@ -134,11 +134,11 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
             CmsBtProductModel_Field fields = mainProduct.getCommon().getFields();
             BaseMongoMap<String, Object> jmFields = platform_cart.getFields();
 
-            if (PlatformWorkloadAttribute.TITLE.name().equals(workloadName)) {
+            if (PlatformWorkloadAttribute.TITLE.getValue().equals(workloadName)) {
                 updateTitle(jmFields, channelId, groupId, mainProduct, shop, fields, blnIsSmartSx, sxData, platform_cart);
-            } else if (PlatformWorkloadAttribute.DESCRIPTION.name().equals(workloadName)) {
+            } else if (PlatformWorkloadAttribute.DESCRIPTION.getValue().equals(workloadName)) {
                 updateDescription(jmFields, channelId, groupId, mainProduct, shop, fields, blnIsSmartSx, sxData, platform_cart, expressionParser);
-            } else if (PlatformWorkloadAttribute.ITEM_IMAGES.name().equals(workloadName)) {
+            } else if (PlatformWorkloadAttribute.ITEM_IMAGES.getValue().equals(workloadName)) {
                 updateImage(jmFields, channelId, groupId, mainProduct, shop, fields, blnIsSmartSx, sxData, platform_cart, expressionParser);
             }
 

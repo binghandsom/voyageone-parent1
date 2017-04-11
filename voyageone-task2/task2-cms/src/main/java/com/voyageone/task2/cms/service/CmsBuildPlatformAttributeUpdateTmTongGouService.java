@@ -254,7 +254,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
         // 店铺级标题禁用词 20161216 tom START
         // 先临时这样处理
         String notAllowList = getConditionPropValue(sxData, "notAllowTitleList", shop);
-        if (PlatformWorkloadAttribute.TITLE.name().equals(workloadName)) {
+        if (PlatformWorkloadAttribute.TITLE.getValue().equals(workloadName)) {
             // 标题(必填)
             // 商品标题支持英文到中文，韩文到中文的自动翻译，可以在extends字段里面进行设置是否需要翻译
             // 注意：使用测试账号的APPKEY测试时，标题应包含中文"测试请不要拍"
@@ -281,8 +281,8 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
                 }
             }
             // 店铺级标题禁用词 20161216 tom END
-            productInfoMap.put(PlatformWorkloadAttribute.TITLE.name(), valTitle);
-        } else if (PlatformWorkloadAttribute.SELLER_CIDS.equals(workloadName)) {
+            productInfoMap.put(PlatformWorkloadAttribute.TITLE.getValue(), valTitle);
+        } else if (PlatformWorkloadAttribute.SELLER_CIDS.getValue().equals(workloadName)) {
             // 店铺内分类id(非必填)  格式："shop_cats":"111111,222222,333333"
             String extends_shop_cats = "";
             if (mainProductPlatformCart != null
@@ -299,7 +299,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
             }
             productInfoMap.put("extends", extends_shop_cats);
 //            productInfoMap.put("extends", JacksonUtil.bean2Json(paramExtends));
-        } else if (PlatformWorkloadAttribute.DESCRIPTION.equals(workloadName)) {
+        } else if (PlatformWorkloadAttribute.DESCRIPTION.getValue().equals(workloadName)) {
             // 描述(必填)
             // 商品描述支持HTML格式，但是需要将内容变成XML格式。
             // 为了更好的用户体验，建议全部使用图片来做描述内容。描述的图片宽度不超过800像素.
@@ -336,8 +336,8 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
                 }
             }
             // 店铺级标题禁用词 20161216 tom END
-            productInfoMap.put(PlatformWorkloadAttribute.DESCRIPTION.name(), valDescription);
-        } else if (PlatformWorkloadAttribute.ITEM_IMAGES.name().equals(workloadName)) {
+            productInfoMap.put(PlatformWorkloadAttribute.DESCRIPTION.getValue(), valDescription);
+        } else if (PlatformWorkloadAttribute.ITEM_IMAGES.getValue().equals(workloadName)) {
             // 主图(必填)
             // 最少1张，最多5张。多张图片之间，使用英文的逗号进行分割。需要使用alicdn的图片地址。建议尺寸为800*800像素。
             // 格式：<value>http://img.alicdn.com/imgextra/i1/2640015666/TB2PTFYkXXXXXaUXpXXXXXXXXXX_!!2640015666.jpg,
