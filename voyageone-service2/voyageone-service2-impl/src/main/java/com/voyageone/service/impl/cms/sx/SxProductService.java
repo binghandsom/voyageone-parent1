@@ -871,6 +871,37 @@ public class SxProductService extends BaseService {
         List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "}", channelId);
         List<CmsBtProductModel> removeProductList = new ArrayList<>(); // product删除对象(如果该product下没有允许在该平台上上架的sku，删除)
 
+        // 根据原始的尺码， 删掉不想要的SKU
+        if (ChannelConfigEnums.Channel.SN.getId().equals(channelId)) {
+            for (CmsBtProductModel p : productModelList) {
+                List<CmsBtProductModel_Sku> common_skus = p.getCommonNotNull().getSkus();
+                if (common_skus != null) {
+                    for (int i = common_skus.size() - 1; i >= 0; i--) {
+                        CmsBtProductModel_Sku s = common_skus.get(i);
+                        if (bigSizeList.contains(s.getSize())) {
+                            common_skus.remove(i);
+                        }
+                    }
+                }
+
+                Map<String, CmsBtProductModel_Platform_Cart> platforms = p.getPlatforms();
+                platforms.entrySet().stream().forEach((kv)->{
+                    CmsBtProductModel_Platform_Cart platformCart = kv.getValue();
+                    List<BaseMongoMap<String, Object>> platformCartSkus = platformCart.getSkus();
+                    if (platformCartSkus != null) {
+                        for (int i = platformCartSkus.size() - 1; i >= 0; i--) {
+                            BaseMongoMap<String, Object> s = platformCartSkus.get(i);
+                            // 这里的size取得临时从sku里拆出来（sn专用） 如果其他店有着部分代码逻辑的需求 需要用sku去common里匹配
+                            String size = s.getStringAttribute("skuCode").replaceAll("^(.*)-(.*)$", "$2");
+                            if (bigSizeList.contains(size)) {
+                                platformCartSkus.remove(i);
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
         // 预设主商品
         for (CmsBtProductModel productModel : productModelList) {
             if (mainProductCode.equals(productModel.getCommon().getFields().getCode())) {
@@ -1350,11 +1381,6 @@ public class SxProductService extends BaseService {
         Map<String, String> sizeSxMap = new HashMap<>();
         for (BaseMongoMap<String, Object> sku : skuList) {
             String size = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name());
-            // 对大码进行过滤处理 charis 170410 STA
-            if (bigSizeList.contains(size)) {
-                continue;
-            }
-            // 对大码进行过滤处理 charis 170410 END
             String sizeNick = sku.getStringAttribute("sizeNick");
             // modified by morse.lu 2016/10/26 start
             // liking 不允许手动填写别名
@@ -4202,10 +4228,11 @@ public class SxProductService extends BaseService {
                         SingleCheckField singleCheckField = (SingleCheckField) field;
                         if (singleCheckField.getOptions().stream().filter(option -> o.toString().equals(option.getValue())).count() == 0) {
                             // 如果在CMS 店铺管理>平台默认属性设置一览 画面中设置的类目默认属性值在最新的类目schema中不存在时，报出异常
-                            throw new BusinessException(String.format("在CMS店铺管理>平台默认属性设置一览画面中设置的类目(%s)属性(%s)的" +
-                                            "默认属性值(%s)在京东平台最新的类目schema中已经不存在了(默认属性设置一览画面中也会显示为空)，" +
-                                            "请重新设置该类目的默认值之后再上新!",
-                                    sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(), singleCheckField.getName(), o.toString()));
+//                            throw new BusinessException(String.format("在CMS店铺管理>平台默认属性设置一览画面中设置的类目(%s)属性(%s)的" +
+//                                            "默认属性值(%s)在京东平台最新的类目schema中已经不存在了(默认属性设置一览画面中也会显示为空)，" +
+//                                            "请重新设置该类目的默认值之后再上新!",
+//                                    sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(), singleCheckField.getName(), o.toString()));
+                            break; // 不报错， 直接返回空， 后面如果是智能
                         }
                         singleCheckField.setValue(o.toString());
                         retMap.put(field.getId(), singleCheckField);
@@ -4227,11 +4254,12 @@ public class SxProductService extends BaseService {
                         }
                         // 如果有在最新的类目schema中已经不存在的属性值的时候，报出异常
                         if (ListUtils.notNull(notExistValues)) {
-                            throw new BusinessException(String.format("在CMS店铺管理>平台默认属性设置一览画面中设置的类目(%s)属性(%s)的" +
-                                            "默认属性值(%s)在京东平台最新的类目schema中已经不存在了(默认属性设置一览画面中也会显示为空)，" +
-                                            "请重新设置该类目的默认值之后再上新!",
-                                    sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(),
-                                    multiCheckField.getName(), Joiner.on(",").join(notExistValues)));
+//                            throw new BusinessException(String.format("在CMS店铺管理>平台默认属性设置一览画面中设置的类目(%s)属性(%s)的" +
+//                                            "默认属性值(%s)在京东平台最新的类目schema中已经不存在了(默认属性设置一览画面中也会显示为空)，" +
+//                                            "请重新设置该类目的默认值之后再上新!",
+//                                    sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(),
+//                                    multiCheckField.getName(), Joiner.on(",").join(notExistValues)));
+                            break; // 不报错， 直接返回空， 后面如果是智能
                         }
                         multiCheckField.setValues(lstValue);
                         retMap.put(field.getId(), multiCheckField);
@@ -4239,8 +4267,10 @@ public class SxProductService extends BaseService {
                 }
             }
 
-            return retMap;
-        }
+            if (retMap.size() > 0) {
+                return retMap;
+            }
+       }
 
         // 目前只做必填项
         if (field.getRules() == null || field.getRuleByName("requiredRule") == null || !field.getRuleByName("requiredRule").getValue().equals("true")) {
@@ -4366,9 +4396,10 @@ public class SxProductService extends BaseService {
                 String value = strfieldItemValue;
                 if (singleCheckField.getOptions().stream().filter(option -> value.equals(option.getValue())).count() == 0) {
                     // 如果高级检索产品页中设置的属性值在最新的类目schema中不存在时，报出异常
-                    throw new BusinessException(String.format("类目(%s)属性(%s)的属性值(%s)在京东平台最新的类目schema中已经不存在了，" +
-                                    "请到高级检索该产品的平台页面中重新设置该属性的值之后再上新!",
-                            sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(), singleCheckField.getName(), value));
+//                    throw new BusinessException(String.format("类目(%s)属性(%s)的属性值(%s)在京东平台最新的类目schema中已经不存在了，" +
+//                                    "请到高级检索该产品的平台页面中重新设置该属性的值之后再上新!",
+//                            sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(), singleCheckField.getName(), value));
+                    return null; // 不报错， 直接返回空， 后面如果是智能
                 }
                 singleCheckField.setValue(strfieldItemValue);
                 retMap.put(field.getId(), singleCheckField);
@@ -4391,10 +4422,11 @@ public class SxProductService extends BaseService {
                 }
                 // 如果有在最新的类目schema中已经不存在的属性值的时候，报出异常
                 if (ListUtils.notNull(notExistValues)) {
-                    throw new BusinessException(String.format("类目(%s)属性(%s)的属性值(%s)在京东平台最新的类目schema中已经不存在了，" +
-                                    "请到高级检索该产品的平台页面中重新设置该属性的值之后再上新!",
-                            sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(),
-                            multiCheckField.getName(), Joiner.on(",").join(notExistValues)));
+//                    throw new BusinessException(String.format("类目(%s)属性(%s)的属性值(%s)在京东平台最新的类目schema中已经不存在了，" +
+//                                    "请到高级检索该产品的平台页面中重新设置该属性的值之后再上新!",
+//                            sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(),
+//                            multiCheckField.getName(), Joiner.on(",").join(notExistValues)));
+                    return null; // 不报错， 直接返回空， 后面如果是智能
                 }
                 retMap.put(field.getId(), multiCheckField);
                 break;

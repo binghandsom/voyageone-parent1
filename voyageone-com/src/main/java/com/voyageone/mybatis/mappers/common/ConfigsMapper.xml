@@ -7,7 +7,7 @@
     </select>
 
     <select id="cms_mt_feed_config_getAll" resultType="com.voyageone.common.configs.beans.FeedBean">
-        SELECT * FROM voyageone_cms2.cms_mt_feed_config ORDER BY order_channel_id, cfg_name, cfg_val1
+        SELECT * FROM voyageone_vms.vms_mt_feed_config ORDER BY order_channel_id, cfg_name, cfg_val1
     </select>
 
     <select id="tm_order_channel_config_getAll" resultType="com.voyageone.common.configs.beans.OrderChannelConfigBean">
