@@ -176,7 +176,7 @@ public class CmsAddChannelCategoryService extends BaseViewService {
     /**
      * 保存数据到cms_bt_product
      */
-    public void saveChannelCategory(Map<String, Object> params, CmsSessionBean cmsSession, String channelId) {
+    public void saveChannelCategory(Map<String, Object> params, String channelId) {
         Integer isSelAll = (Integer) params.get("isSelAll");
         if (isSelAll == null) {
             isSelAll = 0;
@@ -185,8 +185,6 @@ public class CmsAddChannelCategoryService extends BaseViewService {
         List<String> codeList = (List) params.get("productIds");
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            //channelId
-            String channelId = (String) params.get("channelId");
             codeList = advanceSearchService.getProductCodeList(channelId, (Map<String, Object>) params.get("searchInfo"));
             params.put("productIds", codeList);
         }
