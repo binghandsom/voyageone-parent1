@@ -397,6 +397,7 @@ define([
          * 分页处理group数据
          */
         function getGroupList() {
+            $scope.searchInfoBefo = angular.copy($scope.vm.searchInfo);
             searchAdvanceService2.getGroupList($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.groupSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType, $scope.vm.selBiDataList)
                 .then(function (res) {
                     $scope.vm.groupList = res.data.groupList == null ? [] : res.data.groupList;
@@ -410,6 +411,7 @@ define([
          * 分页处理product数据
          */
         function getProductList() {
+            $scope.searchInfoBefo = angular.copy($scope.vm.searchInfo);
             searchAdvanceService2.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType, $scope.vm.selBiDataList)
                 .then(function (res) {
                     $scope.vm.productList = res.data.productList == null ? [] : res.data.productList;
