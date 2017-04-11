@@ -863,9 +863,9 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
 
         if (prices.length === 1)
             return prices[0];
-
+        
         var min = _.min(prices),
-            max = max = _.max(prices),
+            max  = _.max(prices),
             compiled = _.template("<%= min %> ~ <%= max %>");
 
         if (min === max)
