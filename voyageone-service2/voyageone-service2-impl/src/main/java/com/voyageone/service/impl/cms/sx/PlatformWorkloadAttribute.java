@@ -33,4 +33,7 @@ public enum PlatformWorkloadAttribute {
         this.name = name;
     }
 
+    public String getValue() {
+        return this.name;
+    }
 }

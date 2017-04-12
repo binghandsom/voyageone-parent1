@@ -1,6 +1,5 @@
 package com.voyageone.components.jd.service;
 
-import com.jd.open.api.sdk.JdException;
 import com.jd.open.api.sdk.domain.Prop;
 import com.jd.open.api.sdk.domain.Sku;
 import com.jd.open.api.sdk.domain.ware.ImageReadService.Image;
@@ -10,25 +9,16 @@ import com.jd.open.api.sdk.response.ware.*;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpUtils;
-import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.JdBase;
 import com.voyageone.components.jd.JdConstants;
 import com.voyageone.components.jd.bean.JdProductBean;
-import com.voyageone.components.jd.bean.JdProductNewBean;
-import com.voyageone.ims.rule_expression.MasterWord;
-import com.voyageone.ims.rule_expression.RuleExpression;
-import com.voyageone.service.bean.cms.product.SxData;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
 import org.apache.commons.io.IOUtils;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -1127,8 +1117,7 @@ public class JdWareService extends JdBase {
         return true;
     }
 
-    public void updateJdAttribute(ShopBean shopBean, com.jd.open.api.sdk.domain.Ware ware, String workloadName) {
-
+    public boolean updateJdAttribute(ShopBean shopBean, com.jd.open.api.sdk.domain.Ware ware, String workloadName) throws Exception{
 
         WareWriteUpdateWareRequest request = new WareWriteUpdateWareRequest();
         request.setWare(ware);
@@ -1138,6 +1127,8 @@ public class JdWareService extends JdBase {
                 if (!JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
                     // 京东返回失败的场合
                     throw new BusinessException(response.getMsg());
+                } else {
+                    return true;
                 }
             } else {
                 throw new BusinessException("京东更新商品API返回应答为空(response = null) [workloadName:%s]", workloadName);

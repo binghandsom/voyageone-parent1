@@ -1114,7 +1114,15 @@ public class PlatformPriceService extends VOAbsLoggable {
      */
     private void jmUpdateMallPriceBatch(ShopBean shopBean, List<BaseMongoMap<String, Object>> skuList, String priceConfigValue) throws Exception {
         List<HtMallSkuPriceUpdateInfo> list = new ArrayList<>(skuList.size());
-        HtMallSkuPriceUpdateInfo updateData = null;
+        HtMallSkuPriceUpdateInfo updateData;
+
+        // 因为聚美mall中的sku价格必须一致, 获取isSale的sku价格,随便取一个就行
+        Double defaultSalePrice = 0.0D;
+        for (BaseMongoMap<String, Object> sku : skuList) {
+            if (Boolean.valueOf(sku.getStringAttribute("isSale")))
+                defaultSalePrice = sku.getDoubleAttribute("priceSale");
+        }
+
         for (BaseMongoMap skuObj : skuList) {
             updateData = new HtMallSkuPriceUpdateInfo();
             String skuCode = (String) skuObj.get("jmSkuNo");
@@ -1122,9 +1130,12 @@ public class PlatformPriceService extends VOAbsLoggable {
                 continue;
             }
             updateData.setJumei_sku_no(skuCode);
-            Double priceSale = null;
+            Double priceSale;
             if (priceConfigValue == null) {
-                priceSale = skuObj.getDoubleAttribute("priceSale");
+                // 如果该sku不销售,则使用默认的sku的salePrice
+                priceSale = Boolean.valueOf(skuObj.getStringAttribute("isSale"))
+                        ? skuObj.getDoubleAttribute("priceSale")
+                        : defaultSalePrice;
             } else {
                 priceSale = skuObj.getDoubleAttribute(priceConfigValue);
             }

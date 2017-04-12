@@ -722,6 +722,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
         List<HtDeal_UpdateDealPriceBatch_UpdateData> list = new ArrayList<>();
         for (SkuPriceBean skuPriceBean : listSkuPrice) {
             updateData = new HtDeal_UpdateDealPriceBatch_UpdateData();
+            // 如果该sku未上新到平台则不刷新该sku价格
+            if (StringUtils.isEmpty(skuPriceBean.getJmSkuNo()))
+                continue;
+
             list.add(updateData);
             updateData.setJumei_hash_id(model.getJmHashId());
             updateData.setJumei_sku_no(skuPriceBean.getJmSkuNo());

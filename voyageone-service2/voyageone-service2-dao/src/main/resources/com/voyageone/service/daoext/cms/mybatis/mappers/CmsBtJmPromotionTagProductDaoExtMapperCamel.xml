@@ -41,4 +41,18 @@
         GROUP BY c.`id`
     </select>
 
+    <update id="updatePromotionTagName">
+        update cms_bt_jm_promotion_tag_product
+        <set>
+            <if test="tagName != null">
+                `tag_name` = #{tagName,jdbcType=VARCHAR},
+            </if>
+            `modified` = now(),
+            <if test="modifier != null">
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `cms_bt_tag_id` = #{cmsBtTagId,jdbcType=INTEGER}
+    </update>
+
 </mapper>

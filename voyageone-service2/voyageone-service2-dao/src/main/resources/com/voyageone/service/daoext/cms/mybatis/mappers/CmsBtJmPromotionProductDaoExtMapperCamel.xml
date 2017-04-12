@@ -598,4 +598,20 @@ WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
                 SELECT *
         FROM cms_bt_jm_promotion_product where cms_bt_jm_promotion_id = #{promotionProductId}
     </select>
+
+    <update id="updatePromotionTag">
+UPDATE cms_bt_jm_promotion_product a
+  INNER JOIN (SELECT
+                a.cms_bt_jm_promotion_product_id,
+                GROUP_CONCAT(DISTINCT a.tag_name ORDER BY a.cms_bt_tag_id DESC SEPARATOR '|') AS tag_names
+              FROM cms_bt_jm_promotion_tag_product a
+                INNER JOIN cms_bt_jm_promotion_product b
+                  ON a.cms_bt_jm_promotion_product_id = b.id AND b.cms_bt_jm_promotion_id = #{jmPromotionId} AND
+                     a.channel_id = b.channel_id
+              WHERE a.channel_id = #{channelId}
+              GROUP BY a.cms_bt_jm_promotion_product_id) b ON a.id = b.cms_bt_jm_promotion_product_id
+SET a.promotion_tag = b.tag_names
+WHERE a.cms_bt_jm_promotion_id = #{jmPromotionId}
+      AND a.promotion_tag != b.tag_names
+    </update>
 </mapper>

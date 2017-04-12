@@ -4228,10 +4228,11 @@ public class SxProductService extends BaseService {
                         SingleCheckField singleCheckField = (SingleCheckField) field;
                         if (singleCheckField.getOptions().stream().filter(option -> o.toString().equals(option.getValue())).count() == 0) {
                             // 如果在CMS 店铺管理>平台默认属性设置一览 画面中设置的类目默认属性值在最新的类目schema中不存在时，报出异常
-                            throw new BusinessException(String.format("在CMS店铺管理>平台默认属性设置一览画面中设置的类目(%s)属性(%s)的" +
-                                            "默认属性值(%s)在京东平台最新的类目schema中已经不存在了(默认属性设置一览画面中也会显示为空)，" +
-                                            "请重新设置该类目的默认值之后再上新!",
-                                    sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(), singleCheckField.getName(), o.toString()));
+//                            throw new BusinessException(String.format("在CMS店铺管理>平台默认属性设置一览画面中设置的类目(%s)属性(%s)的" +
+//                                            "默认属性值(%s)在京东平台最新的类目schema中已经不存在了(默认属性设置一览画面中也会显示为空)，" +
+//                                            "请重新设置该类目的默认值之后再上新!",
+//                                    sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(), singleCheckField.getName(), o.toString()));
+                            break; // 不报错， 直接返回空， 后面如果是智能
                         }
                         singleCheckField.setValue(o.toString());
                         retMap.put(field.getId(), singleCheckField);
@@ -4253,11 +4254,12 @@ public class SxProductService extends BaseService {
                         }
                         // 如果有在最新的类目schema中已经不存在的属性值的时候，报出异常
                         if (ListUtils.notNull(notExistValues)) {
-                            throw new BusinessException(String.format("在CMS店铺管理>平台默认属性设置一览画面中设置的类目(%s)属性(%s)的" +
-                                            "默认属性值(%s)在京东平台最新的类目schema中已经不存在了(默认属性设置一览画面中也会显示为空)，" +
-                                            "请重新设置该类目的默认值之后再上新!",
-                                    sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(),
-                                    multiCheckField.getName(), Joiner.on(",").join(notExistValues)));
+//                            throw new BusinessException(String.format("在CMS店铺管理>平台默认属性设置一览画面中设置的类目(%s)属性(%s)的" +
+//                                            "默认属性值(%s)在京东平台最新的类目schema中已经不存在了(默认属性设置一览画面中也会显示为空)，" +
+//                                            "请重新设置该类目的默认值之后再上新!",
+//                                    sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(),
+//                                    multiCheckField.getName(), Joiner.on(",").join(notExistValues)));
+                            break; // 不报错， 直接返回空， 后面如果是智能
                         }
                         multiCheckField.setValues(lstValue);
                         retMap.put(field.getId(), multiCheckField);
@@ -4265,8 +4267,10 @@ public class SxProductService extends BaseService {
                 }
             }
 
-            return retMap;
-        }
+            if (retMap.size() > 0) {
+                return retMap;
+            }
+       }
 
         // 目前只做必填项
         if (field.getRules() == null || field.getRuleByName("requiredRule") == null || !field.getRuleByName("requiredRule").getValue().equals("true")) {
@@ -4392,9 +4396,10 @@ public class SxProductService extends BaseService {
                 String value = strfieldItemValue;
                 if (singleCheckField.getOptions().stream().filter(option -> value.equals(option.getValue())).count() == 0) {
                     // 如果高级检索产品页中设置的属性值在最新的类目schema中不存在时，报出异常
-                    throw new BusinessException(String.format("类目(%s)属性(%s)的属性值(%s)在京东平台最新的类目schema中已经不存在了，" +
-                                    "请到高级检索该产品的平台页面中重新设置该属性的值之后再上新!",
-                            sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(), singleCheckField.getName(), value));
+//                    throw new BusinessException(String.format("类目(%s)属性(%s)的属性值(%s)在京东平台最新的类目schema中已经不存在了，" +
+//                                    "请到高级检索该产品的平台页面中重新设置该属性的值之后再上新!",
+//                            sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(), singleCheckField.getName(), value));
+                    return null; // 不报错， 直接返回空， 后面如果是智能
                 }
                 singleCheckField.setValue(strfieldItemValue);
                 retMap.put(field.getId(), singleCheckField);
@@ -4417,10 +4422,11 @@ public class SxProductService extends BaseService {
                 }
                 // 如果有在最新的类目schema中已经不存在的属性值的时候，报出异常
                 if (ListUtils.notNull(notExistValues)) {
-                    throw new BusinessException(String.format("类目(%s)属性(%s)的属性值(%s)在京东平台最新的类目schema中已经不存在了，" +
-                                    "请到高级检索该产品的平台页面中重新设置该属性的值之后再上新!",
-                            sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(),
-                            multiCheckField.getName(), Joiner.on(",").join(notExistValues)));
+//                    throw new BusinessException(String.format("类目(%s)属性(%s)的属性值(%s)在京东平台最新的类目schema中已经不存在了，" +
+//                                    "请到高级检索该产品的平台页面中重新设置该属性的值之后再上新!",
+//                            sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(),
+//                            multiCheckField.getName(), Joiner.on(",").join(notExistValues)));
+                    return null; // 不报错， 直接返回空， 后面如果是智能
                 }
                 retMap.put(field.getId(), multiCheckField);
                 break;

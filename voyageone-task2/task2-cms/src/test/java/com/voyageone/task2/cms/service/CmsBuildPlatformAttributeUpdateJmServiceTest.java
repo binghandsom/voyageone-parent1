@@ -28,6 +28,7 @@ public class CmsBuildPlatformAttributeUpdateJmServiceTest {
         workload.setGroupId(Long.parseLong("978142"));   //bcbg
         workload.setPublishStatus(0);
         workload.setWorkloadName("title");
+//        workload.setModified();
         cmsBuildPlatformAttributeUpdateJmService.doJmAttributeUpdate(workload);
     }
 

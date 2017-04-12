@@ -34,32 +34,38 @@ define([
     }
 
     function SpJdController($scope, productDetailService, $translate, notify, confirm, $compile, alert, popups, $fieldEditService, $document, $templateRequest) {
-        this.$scope = $scope;
-        this.productDetailService = productDetailService;
-        this.$translate = $translate;
-        this.notify = notify;
-        this.confirm = confirm;
-        this.$compile = $compile;
-        this.alert = alert;
-        this.popups = popups;
-        this.$fieldEditService = $fieldEditService;
-        this.$document = $document;
-        this.$templateRequest = $templateRequest;
-        this.vm = {
+        var self = this;
+        self.$scope = $scope;
+        self.productDetailService = productDetailService;
+        self.$translate = $translate;
+        self.notify = notify;
+        self.confirm = confirm;
+        self.$compile = $compile;
+        self.alert = alert;
+        self.popups = popups;
+        self.$fieldEditService = $fieldEditService;
+        self.$document = $document;
+        self.$templateRequest = $templateRequest;
+        self.vm = {
             productDetails: null,
             productCode: "",
             mastData: null,
             platform: null,
             status: "Pending",
             skuTemp: {},
-            checkFlag: {translate: 0, tax: 0, category: 0, attribute: 0},
+            checkFlag: self.$scope.cartInfo.value == 24 ? {translate: 0, category: 0, attribute: 0} : {
+                    translate: 0,
+                    tax: 0,
+                    category: 0,
+                    attribute: 0
+                },
             resultFlag: 0,
             sellerCats: [],
             productUrl: "",
             preStatus: null,
             noMaterMsg: null
         };
-        this.panelShow = true;
+        self.panelShow = true;
     }
 
     SpJdController.prototype.init = function (element) {
@@ -72,7 +78,8 @@ define([
         //监控税号和翻译状态和锁定状态
         var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
             check.translate = $scope.productInfo.translateStatus;
-            check.tax = $scope.productInfo.hsCodeStatus;
+            if ($scope.cartInfo.value != 24)
+                check.tax = $scope.productInfo.hsCodeStatus;
         });
 
         //监控主类目
@@ -383,7 +390,7 @@ define([
 
             self.vm.preStatus = angular.copy(self.vm.status);
             //设置智能上新状态,如果pStatus已经存在则保留原来状态
-            platform.pStatus = platform.pStatus == "" ? "WaitingPublish" :platform.pStatus;
+            platform.pStatus = platform.pStatus == "" ? "WaitingPublish" : platform.pStatus;
             platform.status = self.vm.status = 'Approved';
 
             self.callSave('intel');
@@ -628,16 +635,16 @@ define([
     /**
      * 产品详情上下架
      */
-    SpJdController.prototype.upperAndLowerFrame = function(mark) {
+    SpJdController.prototype.upperAndLowerFrame = function (mark) {
         var self = this,
             $translate = self.$translate,
-            msg = mark === 'ToOnSale'? '上架':'下架';
+            msg = mark === 'ToOnSale' ? '上架' : '下架';
 
-        self.confirm('您是否执行'　+ msg +'操作？').then(function(){
+        self.confirm('您是否执行' + msg + '操作？').then(function () {
             self.productDetailService.upperLowerFrame({
                 cartId: self.$scope.cartInfo.value,
                 productCode: self.vm.mastData.productCode,
-                pStatus:mark
+                pStatus: mark
             }).then(function () {
                 self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 self.getPlatformData();
@@ -657,7 +664,7 @@ define([
             cartId: self.$scope.cartInfo.value,
             productId: self.$scope.productInfo.productId,
             platform: self.vm.platform,
-            showArr:['image1','image6','image7','image4','image5']
+            showArr: ['image1', 'image6', 'image7', 'image4', 'image5']
         }).then(function (platform) {
             self.vm.platform = platform;
         });
