@@ -43,10 +43,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -103,7 +100,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
         }
     }
 
-    public void doTmTongGouAttibuteUpdate(CmsBtSxWorkloadModel work) throws Exception{
+    public void doTmTongGouAttibuteUpdate(CmsBtSxWorkloadModel work){
         String channelId = work.getChannelId();
         int cartId_shop = work.getCartId();
         Long groupId = work.getGroupId();
@@ -112,6 +109,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
         String numIId = "";
         // 开始时间
         long prodStartTime = System.currentTimeMillis();
+        work.setModified(new Date(prodStartTime));
         //读店铺信息
         ShopBean shop = new ShopBean();
         try {
@@ -210,6 +208,9 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
                 errMsg += result;
                 $error(errMsg);
                 throw new BusinessException(errMsg);
+            } else {
+                // 回写workload表(成功1)
+                sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
             }
 
         }catch (Exception e) {

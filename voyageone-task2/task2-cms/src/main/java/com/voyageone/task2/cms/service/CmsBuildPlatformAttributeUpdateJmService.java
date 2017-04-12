@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -90,7 +91,7 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
 
     }
 
-    public void doJmAttributeUpdate(CmsBtSxWorkloadModel workloadModel) {
+    public void doJmAttributeUpdate(CmsBtSxWorkloadModel workloadModel){
         String channelId = workloadModel.getChannelId();
         int cartId = workloadModel.getCartId();
         Long groupId = workloadModel.getGroupId();
@@ -99,6 +100,7 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
         ShopBean shop = new ShopBean();
         // 开始时间
         long prodStartTime = System.currentTimeMillis();
+        workloadModel.setModified(new Date(prodStartTime));
         try {
             shop = Shops.getShop(channelId, cartId);
             if (shop == null) {
@@ -133,13 +135,25 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
             CmsBtProductModel_Platform_Cart platform_cart = mainProduct.getPlatform(CartEnums.Cart.JM.getValue());
             CmsBtProductModel_Field fields = mainProduct.getCommon().getFields();
             BaseMongoMap<String, Object> jmFields = platform_cart.getFields();
-
+            String result = "";
             if (PlatformWorkloadAttribute.TITLE.getValue().equals(workloadName)) {
-                updateTitle(jmFields, channelId, groupId, mainProduct, shop, fields, blnIsSmartSx, sxData, platform_cart);
+                result = updateTitle(jmFields, channelId, groupId, mainProduct, shop, fields, blnIsSmartSx, sxData, platform_cart);
+
             } else if (PlatformWorkloadAttribute.DESCRIPTION.getValue().equals(workloadName)) {
-                updateDescription(jmFields, channelId, groupId, mainProduct, shop, fields, blnIsSmartSx, sxData, platform_cart, expressionParser);
+                result = updateDescription(jmFields, channelId, groupId, mainProduct, shop, fields, blnIsSmartSx, sxData, platform_cart, expressionParser);
+
             } else if (PlatformWorkloadAttribute.ITEM_IMAGES.getValue().equals(workloadName)) {
-                updateImage(jmFields, channelId, groupId, mainProduct, shop, fields, blnIsSmartSx, sxData, platform_cart, expressionParser);
+                result = updateImage(jmFields, channelId, groupId, mainProduct, shop, fields, blnIsSmartSx, sxData, platform_cart, expressionParser);
+            }
+
+            if (!StringUtils.isEmpty(result)) {
+                String msg = String.format("更新聚美Deal属性或更新聚美商城属性失败![WorkloadName:%s], [ProductId:%s], [HashId:%s], [MallId:%s], [Message:%s]",
+                        workloadName, mainProduct.getProdId(), platform_cart.getpNumIId(), platform_cart.getpPlatformMallId(), result);
+                $error(msg);
+                throw new BusinessException(msg);
+            } else {
+                // 回写workload表(成功1)
+                sxProductService.updatePlatformWorkload(workloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
             }
 
         }catch (Exception e) {
@@ -167,7 +181,7 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
             return;
         }
     }
-    public void updateTitle(BaseMongoMap<String, Object> jmFields, String channelId, Long groupId ,CmsBtProductModel mainProduct, ShopBean shop,
+    public String updateTitle(BaseMongoMap<String, Object> jmFields, String channelId, Long groupId ,CmsBtProductModel mainProduct, ShopBean shop,
                             CmsBtProductModel_Field fields, boolean blnIsSmartSx, SxData sxData, CmsBtProductModel_Platform_Cart platform_cart) throws Exception{
         StringBuffer failInfo = new StringBuffer();
         String jmHashId = platform_cart.getpNumIId(); // 聚美hashId
@@ -263,15 +277,11 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
             $info("聚美更新商城标题成功！[ProductId:%s]", mainProduct.getProdId());
         }
 
-        if (failInfo.length() > 0) {
-            String msg = String.format("更新聚美Deal标题或更新聚美商城标题失败! [ProductId:%s], [HashId:%s], [MallId:%s], [Message:%s]",
-                    mainProduct.getProdId(), jmHashId, mallId, failInfo.toString());
-            $error(msg);
-            throw new BusinessException(msg);
-        }
+        return failInfo.toString();
+
     }
 
-    public void updateDescription(BaseMongoMap<String, Object> jmFields, String channelId, Long groupId ,CmsBtProductModel mainProduct, ShopBean shop,
+    public String updateDescription(BaseMongoMap<String, Object> jmFields, String channelId, Long groupId ,CmsBtProductModel mainProduct, ShopBean shop,
                             CmsBtProductModel_Field fields, boolean blnIsSmartSx, SxData sxData, CmsBtProductModel_Platform_Cart platform_cart, ExpressionParser expressionParser) throws Exception{
         StringBuffer failInfo = new StringBuffer();
         String jmHashId = platform_cart.getpNumIId(); // 聚美hashId
@@ -324,7 +334,7 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
             else {
                 String msg = String.format("聚美更新Deal商品描述失败！[ProductId:%s], [HashId:%s], [Message:%s]", mainProduct.getProdId(), jmHashId, htDealUpdateResponse.getErrorMsg());
                 $error(msg);
-                failInfo.append(msg + ",");
+                failInfo.append(msg + ";");
             }
         }
         {
@@ -350,17 +360,14 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
             }
         }
 
-        if (failInfo.length() > 0) {
-            String msg = String.format("更新聚美Deal商品描述或更新聚美商城商品描述失败! [ProductId:%s], [HashId:%s], [MallId:%s], [Message:%s]",
-                    mainProduct.getProdId(), jmHashId, mallId, failInfo.toString());
-            $error(msg);
-            throw new BusinessException(msg);
-        }
+        return failInfo.toString();
+
 
     }
 
-    public void updateImage(BaseMongoMap<String, Object> jmFields, String channelId, Long groupId ,CmsBtProductModel mainProduct, ShopBean shop,
+    public String updateImage(BaseMongoMap<String, Object> jmFields, String channelId, Long groupId ,CmsBtProductModel mainProduct, ShopBean shop,
                             CmsBtProductModel_Field fields, boolean blnIsSmartSx, SxData sxData, CmsBtProductModel_Platform_Cart platform_cart, ExpressionParser expressionParser) throws Exception{
+        StringBuffer failInfo = new StringBuffer();
         String jmProductId = platform_cart.getpProductId(); // 聚美ProductId
         if (StringUtils.isEmpty(jmProductId)) {
             String error = String.format("取得聚美jmProductId为空！[ChannelId:%s] [GroupId:%s]", channelId, groupId);
@@ -383,12 +390,14 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
         if (htProductUpdateResponse != null && htProductUpdateResponse.getIs_Success()) {
             $info("聚美更新商品主图成功！[ProductId:%s]", mainProduct.getProdId());
         }
+
         //更新商品主图失败
         else {
             String msg = String.format("聚美更新商品主图失败！[ProductId:%s], [HashId:%s], [Message:%s]", mainProduct.getProdId(), jmProductId, htProductUpdateResponse.getErrorMsg());
             $error(msg);
-            throw new BusinessException(msg);
+            failInfo.append(msg);
         }
+        return failInfo.toString();
     }
 
 
