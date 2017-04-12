@@ -241,6 +241,8 @@
         AND
         group_id = #{groupId}
         AND
+        workload_name = #{workloadName}
+        AND
          (publish_status=0 or publish_status=3)
          ]]>
     </update>

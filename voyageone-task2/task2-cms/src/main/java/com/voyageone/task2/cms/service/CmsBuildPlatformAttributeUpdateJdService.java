@@ -26,10 +26,7 @@ import com.voyageone.task2.base.util.TaskControlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Charis on 2017/3/17.
@@ -86,7 +83,7 @@ public class CmsBuildPlatformAttributeUpdateJdService extends BaseCronTaskServic
      * 平台产品 部分属性更新处理
      * @param work 需要更新的数据
      */
-    public void doJdAttributeUpdate(CmsBtSxWorkloadModel work) throws Exception  {
+    public void doJdAttributeUpdate(CmsBtSxWorkloadModel work){
         ShopBean shop = new ShopBean();
         SxData sxData = null;
         String channelId = work.getChannelId();
@@ -95,6 +92,7 @@ public class CmsBuildPlatformAttributeUpdateJdService extends BaseCronTaskServic
         String workloadName = work.getWorkloadName();
         // 开始时间
         long prodStartTime = System.currentTimeMillis();
+        work.setModified(new Date(prodStartTime));
         try {
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
             if (sxData == null) {
@@ -127,19 +125,23 @@ public class CmsBuildPlatformAttributeUpdateJdService extends BaseCronTaskServic
             com.jd.open.api.sdk.domain.Ware ware = new com.jd.open.api.sdk.domain.Ware();
             ware.setWareId(Long.parseLong(wareId));
             // 店内分类
-            if (PlatformWorkloadAttribute.SELLER_CIDS.name().equals(workloadName)) {
+            if (PlatformWorkloadAttribute.SELLER_CIDS.getValue().equals(workloadName)) {
                 ware.setShopCategorys(getShopCat(cartData));
             }
             // 商品标题
-            else if (PlatformWorkloadAttribute.TITLE.name().equals(workloadName)) {
+            else if (PlatformWorkloadAttribute.TITLE.getValue().equals(workloadName)) {
                 ware.setTitle(getTitle(sxData, cartData));
             }
             // 商品描述
-            else if (PlatformWorkloadAttribute.DESCRIPTION.name().equals(workloadName)) {
+            else if (PlatformWorkloadAttribute.DESCRIPTION.getValue().equals(workloadName)) {
                 ware.setIntroduction(getNote(expressionParser, shop, sxData));
             }
 
-            jdWareService.updateJdAttribute(shop, ware, workloadName);
+            boolean result = jdWareService.updateJdAttribute(shop, ware, workloadName);
+            if (result) {
+                // 回写workload表(成功1)
+                sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
+            }
 
         }
         catch (Exception e) {
