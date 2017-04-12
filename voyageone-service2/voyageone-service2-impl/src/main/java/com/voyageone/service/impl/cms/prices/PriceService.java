@@ -759,8 +759,8 @@ public class PriceService extends BaseService {
             if(commonSku.containsKey(sku.getStringAttribute("skuCode"))){
                 CmsBtProductModel_Sku comsku = commonSku.get(sku.getStringAttribute("skuCode"));
                 sku.put(priceMsrp.name(), comsku.getClientMsrpPrice());
-                sku.put(priceRetail.name(), comsku.getClientRetailPrice());
-                sku.put(priceSale.name(),comsku.getClientRetailPrice());
+                sku.put(priceRetail.name(), sku.getDoubleAttribute(priceRetail.name()) + 10.0 > comsku.getClientRetailPrice()? sku.getDoubleAttribute(priceRetail.name()) + 10.0 : comsku.getClientRetailPrice());
+                sku.put(priceSale.name(), sku.getDoubleAttribute(priceSale.name()) + 10.0 > comsku.getClientRetailPrice()? sku.getDoubleAttribute(priceSale.name()) + 10.0 : comsku.getClientRetailPrice());
                 // 最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，向下击穿警告:5）
                 sku.put(priceDiffFlg.name(), "1");
                 sku.put(priceChgFlg.name(),"0");

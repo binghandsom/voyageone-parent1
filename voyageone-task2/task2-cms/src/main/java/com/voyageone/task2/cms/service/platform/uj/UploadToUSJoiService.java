@@ -477,6 +477,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
                     // platform对应 从子店的platform.p928 929 中的数据生成usjoi的platform
                     CmsBtProductModel_Platform_Cart fromPlatform = productModel.getPlatform(sxWorkLoadBean.getCartId());
+                    if(ChannelConfigEnums.Channel.JEWELRY.getId().equals(sxWorkLoadBean.getChannelId())){
+                        fromPlatform = productModel.getPlatform(CartEnums.Cart.TG);
+                    }
                     productModel.platformsClear();
                     // 下面几个cartId都设成同一个platform
                     if (fromPlatform != null) {
@@ -494,6 +497,11 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 newSku.setAttribute("skuCode",sku.getStringAttribute("skuCode"));
                                 newSku.setAttribute("isSale",sku.get("isSale"));
                                 newSku.setAttribute("sizeNick",sku.get("sizeNick"));
+                                if(ChannelConfigEnums.Channel.JEWELRY.getId().equals(sxWorkLoadBean.getChannelId())){
+                                    newSku.setAttribute("priceMsrp",sku.getStringAttribute("priceMsrp"));
+                                    newSku.setAttribute("priceRetail",sku.get("priceRetail"));
+                                    newSku.setAttribute("priceSale",sku.get("priceSale"));
+                                }
                                 sku = newSku;
                                 return sku;
                             }).collect(Collectors.toList()));
@@ -917,6 +925,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                         List<BaseMongoMap<String, Object>> correctPlatformSkus = new ArrayList<>();
                         // 取得子店的平台(P928)数据
                         CmsBtProductModel_Platform_Cart fromPlatform = finalProductModel1.getPlatform(sxWorkLoadBean.getCartId());
+                        // jewelry 的价格来自与子店的天猫国际
+                        if(ChannelConfigEnums.Channel.JEWELRY.getId().equals(sxWorkLoadBean.getChannelId())){
+                            fromPlatform = finalProductModel1.getPlatform(CartEnums.Cart.TG);
+                        }
                         fromPlatform.getSkus().forEach(p -> {
                             // 在common.skus里面有的sku才会加进来(已拆分出去的sku不会加进来)
                             if (prCommonSkuCodeList.contains(p.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))) {
@@ -938,11 +950,16 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 newPlatform.setCartId(cartId);
                                 // 重新设置newPlatform的skus，因为fromPlatform里面过来的是全部的sku，要去掉拆分到其他产品的sku
                                 newPlatform.setSkus(correctPlatformSkus);
-                                newPlatform.setSkus(newPlatform.getSkus().stream().map(sku->{
+                                newPlatform.setSkus(newPlatform.getSkus().stream().map((BaseMongoMap<String, Object> sku) ->{
                                     BaseMongoMap<String, Object> newSku = new BaseMongoMap<String, Object>();
                                     newSku.setAttribute("skuCode",sku.getStringAttribute("skuCode"));
                                     newSku.setAttribute("isSale",sku.get("isSale"));
                                     newSku.setAttribute("sizeNick",sku.get("sizeNick"));
+                                    if(ChannelConfigEnums.Channel.JEWELRY.getId().equals(sxWorkLoadBean.getChannelId())){
+                                        newSku.setAttribute("priceMsrp",sku.getStringAttribute("priceMsrp"));
+                                        newSku.setAttribute("priceRetail",sku.get("priceRetail"));
+                                        newSku.setAttribute("priceSale",sku.get("priceSale"));
+                                    }
                                     sku = newSku;
                                     return sku;
                                 }).collect(Collectors.toList()));
@@ -1059,6 +1076,17 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                                 platformCart.setIsNewSku("1");
                                             }
                                         }
+                                    }
+                                }
+                                if(ChannelConfigEnums.Channel.JEWELRY.getId().equals(sxWorkLoadBean.getChannelId())){
+                                    for(BaseMongoMap<String, Object> prSku : platformCart.getSkus()){
+                                        fromPlatform.getSkus().forEach(formSku->{
+                                            if(formSku.getStringAttribute("skuCode").equals(prSku.getStringAttribute("skuCode"))){
+                                                prSku.setAttribute("priceMsrp",formSku.getStringAttribute("priceMsrp"));
+                                                prSku.setAttribute("priceRetail",formSku.get("priceRetail"));
+                                                prSku.setAttribute("priceSale",formSku.get("priceSale"));
+                                            }
+                                        });
                                     }
                                 }
                             }
