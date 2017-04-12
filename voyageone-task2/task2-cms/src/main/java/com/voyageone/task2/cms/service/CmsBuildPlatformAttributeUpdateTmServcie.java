@@ -84,8 +84,6 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
     @Override
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        //获取Workload列表
-        List<CmsBtSxWorkloadModel> groupList = new ArrayList<>();
         // 获取该任务可以运行的销售渠道
         List<String> channels = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
@@ -97,7 +95,7 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
             return;
         }
 
-        for(CmsBtSxWorkloadModel workloadModel : groupList) {
+        for(CmsBtSxWorkloadModel workloadModel : sxWorkloadModels) {
             doTmAttibuteUpdate(workloadModel);
         }
     }
