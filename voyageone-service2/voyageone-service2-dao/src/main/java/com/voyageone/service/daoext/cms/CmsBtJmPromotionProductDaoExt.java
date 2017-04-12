@@ -126,4 +126,6 @@ public interface CmsBtJmPromotionProductDaoExt {
 
 
     List<ProductImportBean> selectProductByJmPromotionId(Integer jmPromotionId);
+
+    int updatePromotionTag(@Param("jmPromotionId") int jmPromotionId, @Param("channelId") String channelId);
 }
