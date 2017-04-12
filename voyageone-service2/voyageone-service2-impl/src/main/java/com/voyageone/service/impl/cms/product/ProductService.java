@@ -1010,7 +1010,7 @@ public class ProductService extends BaseService {
                 updateObj.setUpdate(updateStr.toString());
                 updateObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), creator);
 
-                // 添加秕处理执行语句
+                // 添加批处理执行语句
                 productBulkList.addBulkJongo(updateObj);
 
             }

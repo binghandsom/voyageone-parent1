@@ -8,7 +8,7 @@ package com.voyageone.service.bean.cms.stock;
  * @author Wangtd 2017/03/17
  * @version 1.0.0
  *
- * @piao
+ * @author piao
  *
  */
 public class CartChangedStockBean {
