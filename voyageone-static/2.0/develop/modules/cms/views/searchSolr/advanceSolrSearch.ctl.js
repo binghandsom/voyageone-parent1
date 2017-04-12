@@ -1257,28 +1257,18 @@ define([
 
                 confirm('即将对选中的商品全店铺批量确认指导价变更').then(function () {
 
-                    var productIds = _.pluck(_selProdList, 'code');
+                    $fieldEditService.bulkConfClientMsrp({
+                        productIds: _.pluck(_selProdList, 'code'),
+                        isSelAll: $scope.vm._selall ? 1 : 0,
+                        searchInfo: $scope.searchInfoBefo
+                    }).then(function (res) {
 
-                    console.log('productIds', productIds);
+                        if (res.data) {
+                            $scope.search();
+                            notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        }
 
-                    /*                    $fieldEditService.bulkConfClientMsrp({
-                     _option: 'clientMsrpPrice',
-                     productIds: productIds,
-                     isSelAll: $scope.vm._selall ? 1 : 0,
-                     searchInfo: $scope.searchInfoBefo
-                     }).then(function (res) {
-                     if (res.data == null || res.data.ecd == null || res.data.ecd == undefined) {
-                     alert($translate.instant('TXT_COMMIT_ERROR'));
-                     return;
-                     }
-                     if (res.data.ecd == 1) {
-                     // 未选择商品
-                     alert($translate.instant('未选择商品，请选择后再操作'));
-                     return;
-                     }
-                     $scope.search();
-                     notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                     });*/
+                    });
 
                 });
 

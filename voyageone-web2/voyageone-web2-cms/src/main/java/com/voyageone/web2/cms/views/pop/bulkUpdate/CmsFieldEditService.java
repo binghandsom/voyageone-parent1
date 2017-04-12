@@ -206,8 +206,9 @@ public class CmsFieldEditService extends BaseViewService {
      */
     public void bulkConfClientMsrp(Map<String, Object> params, UserSessionBean userInfo) {
 
-        boolean isSelectAll = ((Integer) params.get("isSelectAll") == 1);    // 是否为全选
-        List<String> productCodes = null;
+        boolean isSelectAll = (Integer.parseInt(String.valueOf(params.get("isSelAll")))  == 1);    // 是否为全选
+        List<String> productCodes;
+
         if (isSelectAll) {
             productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (Map<String, Object>) params.get("searchInfo"));
         } else {
