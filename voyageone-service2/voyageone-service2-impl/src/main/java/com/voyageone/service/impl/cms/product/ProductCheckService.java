@@ -316,15 +316,15 @@ public class ProductCheckService extends BaseService {
                 if ((CartEnums.Cart.TM.getValue() == cartId
                         || CartEnums.Cart.TG.getValue() == cartId
                         || CartEnums.Cart.TB.getValue() == cartId
-                        || CartEnums.Cart.JM.getValue() == cartId)
-                        && (StringUtils.isEmpty(groupInfo.getPlatformPid())
-                        || (!StringUtils.isEmpty(mainProduct.getPlatform(cartId).getpProductId())
-                        && !mainProduct.getPlatform(cartId).getpProductId().equals(groupInfo.getPlatformPid())))) {
-                    flg = true;
-                    errorModel.getErrors().add(String.format("group(grup_id: %s, cartId: %d),该group已上新,但是平台PlatformPid为空或不正确(%s)", groupInfo.get_id(), cartId, mainProduct.getPlatform(cartId).getpProductId()));
-                    groupInfo.setPlatformPid(mainProduct.getPlatform(cartId).getpProductId());
-                }
-                else if (!StringUtils.isEmpty(groupInfo.getPlatformPid())) {
+                        || CartEnums.Cart.JM.getValue() == cartId)) {
+                    if ((StringUtils.isEmpty(groupInfo.getPlatformPid())
+                            || (!StringUtils.isEmpty(mainProduct.getPlatform(cartId).getpProductId())
+                            && !mainProduct.getPlatform(cartId).getpProductId().equals(groupInfo.getPlatformPid())))) {
+                        flg = true;
+                        errorModel.getErrors().add(String.format("group(grup_id: %s, cartId: %d),该group已上新,但是平台PlatformPid为空或不正确(%s)", groupInfo.get_id(), cartId, mainProduct.getPlatform(cartId).getpProductId()));
+                        groupInfo.setPlatformPid(mainProduct.getPlatform(cartId).getpProductId());
+                    }
+                } else {
 
                     flg = true;
                     groupInfo.setPlatformPid("");
