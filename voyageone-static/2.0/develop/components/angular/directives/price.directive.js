@@ -43,7 +43,7 @@
             link: function (scope, element) {
 
                 var skuList = scope.data,
-                    final = [],
+                    final = [],rangArr = [],
                     buttonPopover = angular.element('<button  type="button">');
 
                 buttonPopover.attr('ng-controller','showPopoverCtrl');
@@ -72,7 +72,8 @@
                             } else {
                                 labelStr += '<label class="text-u-green font-bold">&nbsp;(↓' + cmcf.substring(1) + ')</label>';
                             }
-
+                            //记录标识涨幅的label标签
+                            rangArr.push(labelStr);
                         }
 
                         final.push(str + labelStr);
@@ -84,7 +85,11 @@
                 }
 
                 buttonPopover.attr('popover-html', 'showInfo(' + JSON.stringify(final) + ')');
-                buttonPopover.html(_priceScale(_.pluck(skuList, 'clientMsrpPrice')));
+
+                if(rangArr[0])
+                    buttonPopover.html(_priceScale(_.pluck(skuList, 'clientMsrpPrice')) + rangArr[0]);
+                else
+                    buttonPopover.html(_priceScale(_.pluck(skuList, 'clientMsrpPrice')));
 
                 element.html($compile(buttonPopover)(scope.$new()));
             }
