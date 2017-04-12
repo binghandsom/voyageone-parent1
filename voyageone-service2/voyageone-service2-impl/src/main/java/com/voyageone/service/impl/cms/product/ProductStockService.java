@@ -42,19 +42,15 @@ public class ProductStockService extends BaseService {
 
             if (productInfo != null) {
 
-                Integer quantity = null;
+                Integer quantity = 0;
 
                 if (stockInfo.getCartId() == 0) {
 
                     for (CmsBtProductModel_Sku skuModel : productInfo.getCommon().getSkus()) {
                         if (skuModel.getSkuCode().equals(stockInfo.getSku())) {
                             skuModel.setQty(stockInfo.getQty());
-                            break;
+                            quantity += stockInfo.getQty();
                         }
-                    }
-
-                    for (CmsBtProductModel_Sku skuModel : productInfo.getCommon().getSkus()) {
-                        quantity += skuModel.getQty();
                     }
 
                     HashMap<String, Object> updateMap = new HashMap<>();
@@ -72,12 +68,8 @@ public class ProductStockService extends BaseService {
                     for (BaseMongoMap<String, Object> skuModel : productInfo.getPlatform(stockInfo.getCartId()).getSkus()) {
                         if (skuModel.getStringAttribute("skuCode").equals(stockInfo.getSku())) {
                             skuModel.setAttribute("qty", stockInfo.getQty());
-                            break;
+                            quantity += stockInfo.getQty();
                         }
-                    }
-
-                    for (BaseMongoMap<String, Object> skuModel : productInfo.getPlatform(stockInfo.getCartId()).getSkus()) {
-                        quantity += Integer.parseInt(skuModel.getAttribute("qty"));
                     }
 
                     HashMap<String, Object> updateMap = new HashMap<>();
@@ -89,7 +81,6 @@ public class ProductStockService extends BaseService {
                     queryMap.put(String.format("platforms.P%s.skus.skuCode", stockInfo.getCartId()), stockInfo.getSku());
 
                     bulkList.add(createBulkUpdateModel(updateMap, queryMap));
-
                 }
 
                 //记录操作结果

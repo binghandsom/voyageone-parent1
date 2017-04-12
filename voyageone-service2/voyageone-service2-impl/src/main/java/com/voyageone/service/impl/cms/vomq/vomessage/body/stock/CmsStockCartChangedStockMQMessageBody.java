@@ -6,13 +6,14 @@ import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.bean.cms.stock.CartChangedStockBean;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import org.apache.commons.collections.CollectionUtils;
+
 import java.util.List;
 
 /**
  * @description 接收WMS推送过来的渠道库存
  * @author piao
  */
-@VOMQQueue(value = CmsMqRoutingKey.EWMS_MQ_STOCK_CART_CHANGED_STOCK)
+@VOMQQueue(value = CmsMqRoutingKey.CMS_STOCK_CART_CHANGED_STOCK)
 public class CmsStockCartChangedStockMQMessageBody extends BaseMQMessageBody {
 
     private List<CartChangedStockBean> stockList;

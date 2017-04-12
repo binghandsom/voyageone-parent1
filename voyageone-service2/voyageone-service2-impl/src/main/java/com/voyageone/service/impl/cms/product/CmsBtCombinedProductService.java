@@ -56,7 +56,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by rex.wu on 2016/11/28.
@@ -507,7 +506,7 @@ public class CmsBtCombinedProductService extends BaseService {
         logModel.setStatus(modelBean.getStatus());
         logModel.setPlatformStatus(modelBean.getPlatformStatus());
         WriteResult rs_log = cmsBtCombinedProductLogDao.insert(logModel);
-        sendMqMessage(modelBean,channelId,user,"0");
+        sendMqMessage(modelBean, channelId, user, "2");
         $debug("删除 组合套装商品操作日志 结果 " + rs_log.toString());
     }
 
@@ -574,28 +573,41 @@ public class CmsBtCombinedProductService extends BaseService {
     }
 
 
-    /*组合商品推送MQ*/
+    /**
+     * 组合商品推送MQ
+     *
+     * @param model     model
+     * @param channelId channelId
+     * @param user      user
+     * @param type      type
+     */
     private  void sendMqMessage(CmsBtCombinedProductModel model, String channelId, String user,String type){
 
         EwmsMQUpdateProductMessageBody ewmsMQUpdateProductMessageBody = new EwmsMQUpdateProductMessageBody();
         ewmsMQUpdateProductMessageBody.setChannelId(channelId);
         ewmsMQUpdateProductMessageBody.setCartId(model.getCartId());
-        ewmsMQUpdateProductMessageBody.setGroupSku(model.getProductName());
-        ArrayList<String> skuList = new ArrayList<>();
-        if(model.getSkus().size()>0){
-            model.getSkus().stream()
-                    .filter(cmsBtCombinedProductModel_Sku -> cmsBtCombinedProductModel_Sku.getSkuItems().size() > 0)
-                    .forEach(cmsBtCombinedProductModel_Sku -> skuList.addAll(
-                            cmsBtCombinedProductModel_Sku.getSkuItems().stream()
-                                    .map(CmsBtCombinedProductModel_Sku_Item::getSkuCode)
-                                    .collect(Collectors.toList())));
-        }
-        ewmsMQUpdateProductMessageBody.setSku(skuList);
         ewmsMQUpdateProductMessageBody.setGroupKind("1");
         ewmsMQUpdateProductMessageBody.setNumIid(model.getNumID());
         ewmsMQUpdateProductMessageBody.setUserName(user);
         ewmsMQUpdateProductMessageBody.setType(type);
-        cmsMqSenderService.sendMessage(ewmsMQUpdateProductMessageBody);
+        if (model.getSkus().size() > 0) {
+
+            model.getSkus().stream()
+                    .filter(cmsBtCombinedProductModel_Sku -> cmsBtCombinedProductModel_Sku.getSkuItems().size() > 0)
+                    .forEach(sku -> {
+                        ewmsMQUpdateProductMessageBody.setGroupSku(sku.getSuitSkuCode());
+                        ewmsMQUpdateProductMessageBody.setGroupSkuPrice(sku.getSuitSellingPriceCn());
+                        List<Map<String, Object>> skus = new ArrayList<>();
+                        sku.getSkuItems().forEach(subSku -> {
+                            Map<String, Object> skuMap = new HashMap<>();
+                            skuMap.put("sku", subSku.getSkuCode());
+                            skuMap.put("price", subSku.getSellingPriceCn());
+                            skus.add(skuMap);
+                        });
+                        ewmsMQUpdateProductMessageBody.setSku(skus);
+                        cmsMqSenderService.sendMessage(ewmsMQUpdateProductMessageBody);
+                    });
+        }
   }
     /**
      * 新增或者编辑时校验组合套装商品
