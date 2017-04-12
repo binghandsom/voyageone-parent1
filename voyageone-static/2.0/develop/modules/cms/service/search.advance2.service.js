@@ -46,17 +46,17 @@ define([
                 // 获取product列表
                 _resetProductList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, res.data.selBiDataList, data);
 
-                defer.resolve (res);
+                defer.resolve(res);
             });
             return defer.promise;
         }
 
-        function exportFile (data) {
+        function exportFile(data) {
             data = resetSearchInfo(data);
             var defer = $q.defer();
 
             $searchAdvanceService2.exportProducts(data).then(function (res) {
-                defer.resolve (res);
+                defer.resolve(res);
             });
             return defer.promise;
         }
@@ -71,7 +71,7 @@ define([
 
             $searchAdvanceService2.getGroupList(resetGroupPagination(data, pagination)).then(function (res) {
                 _resetGroupList(res.data, commonProps, customProps, selSalesTypes, selBiDataList, data);
-                defer.resolve (res);
+                defer.resolve(res);
             });
             return defer.promise;
         }
@@ -85,7 +85,7 @@ define([
             var defer = $q.defer();
             $searchAdvanceService2.getProductList(resetProductPagination(data, pagination)).then(function (res) {
                 _resetProductList(res.data, commonProps, customProps, selSalesTypes, selBiDataList, data);
-                defer.resolve (res);
+                defer.resolve(res);
             });
             return defer.promise;
         }
@@ -95,9 +95,9 @@ define([
          * @param data
          * @returns {*}
          */
-        function resetSearchInfo (data) {
-            var searchInfo = angular.copy (data);
-            searchInfo.productStatus = _returnKey (searchInfo.productStatus);
+        function resetSearchInfo(data) {
+            var searchInfo = angular.copy(data);
+            searchInfo.productStatus = _returnKey(searchInfo.productStatus);
             searchInfo.platformStatus = _returnKey(searchInfo.platformStatus);
             searchInfo.pRealStatus = _returnKey(searchInfo.pRealStatus);
             if (searchInfo.shopCatStatus) {
@@ -146,7 +146,7 @@ define([
          * @param pagination
          * @returns {*}
          */
-        function resetGroupPagination (data, pagination) {
+        function resetGroupPagination(data, pagination) {
             var searchInfo = resetSearchInfo(data);
             searchInfo.groupPageNum = pagination.curr;
             searchInfo.groupPageSize = pagination.size;
@@ -159,7 +159,7 @@ define([
          * @param pagination
          * @returns {*}
          */
-        function resetProductPagination (data, pagination) {
+        function resetProductPagination(data, pagination) {
             var searchInfo = resetSearchInfo(data);
             searchInfo.productPageNum = pagination.curr;
             searchInfo.productPageSize = pagination.size;
@@ -174,8 +174,12 @@ define([
          */
         function _returnKey(object) {
             return _.chain(object)
-                .map(function(value, key) { return value ? key : null;})
-                .filter(function(value) { return value;})
+                .map(function (value, key) {
+                    return value ? key : null;
+                })
+                .filter(function (value) {
+                    return value;
+                })
                 .value();
         }
 
@@ -184,31 +188,38 @@ define([
             var commArr = [];
             _.forEach(commonProps, function (data) {
                 var itemVal = '';
-                if ("comment" == data.propId) {
-                    itemVal = prodInfo.common.comment;
-                } else if ('created' == data.propId) {
-                	itemVal = prodInfo.created;
-                } else {
-                    itemVal = prodInfo.common.fields[data.propId];
+
+                switch (data.propId) {
+                    case "comment":
+                        itemVal = prodInfo.common.comment;
+                        break;
+                    case "created":
+                        itemVal = prodInfo.created;
+                        break;
+                    case  "clientMsrpPrice":
+                        itemVal = data.propId;
+                        break;
+                    case "isMasterMain":
+                        // 原始主商品的转换
+                        if (itemVal == 1)
+                            itemVal = '是';
+                        else if (itemVal == 0)
+                            itemVal = '否';
+                        break;
+                    default:
+                        itemVal = prodInfo.common.fields[data.propId];
                 }
-                // 原始主商品的转换
-                if (data.propId == 'isMasterMain') {
-                    if (itemVal == 1) {
-                        itemVal = '是';
-                    } else if (itemVal == 0) {
-                        itemVal = '否';
-                    }
-                }
-                if (itemVal == undefined) {
+
+                if (itemVal == undefined)
                     itemVal = "";
-                }
+
                 commArr.push({value: itemVal.toString()});
             });
             prodInfo.commArr = commArr;
             var custArr = [];
             _.forEach(customProps, function (data) {
                 var itemVal = prodInfo.feed.cnAtts[data.feed_prop_original];
-                var orgAttsitemVal= prodInfo.feed.orgAtts[data.feed_prop_original];
+                var orgAttsitemVal = prodInfo.feed.orgAtts[data.feed_prop_original];
                 if (itemVal == undefined) {
                     itemVal = "";
                 }
@@ -244,24 +255,24 @@ define([
                 var itemVal = getObjectValue(prodInfo, selValue);
                 // 处理发布时间格式
                 if (selValue.indexOf('.pPublishTime') != -1 && angular.isString(itemVal)) {
-                	itemVal = itemVal.substring(0, 19);
+                    itemVal = itemVal.substring(0, 19);
                 }
                 selBiDataArr.push({value: itemVal});
             });
             prodInfo.selBiDataArr = selBiDataArr;
-            
+
             // 解析对象值
             function getObjectValue(object, name) {
-            	var value = angular.copy(object);
-            	var names = name.split('.');
-            	for (var i = 0; i < names.length; i++) {
-            		if (value.hasOwnProperty(names[i])) {
-            			value = value[names[i]];
-            		} else {
-            			return '';
-            		}
-            	}
-            	return value;
+                var value = angular.copy(object);
+                var names = name.split('.');
+                for (var i = 0; i < names.length; i++) {
+                    if (value.hasOwnProperty(names[i])) {
+                        value = value[names[i]];
+                    } else {
+                        return '';
+                    }
+                }
+                return value;
             }
         }
 
@@ -271,7 +282,7 @@ define([
          * @returns {*}
          * @private
          */
-        function _resetGroupList (data, commonProps, customProps, selSalesTypes, selBiDataList, searchParam) {
+        function _resetGroupList(data, commonProps, customProps, selSalesTypes, selBiDataList, searchParam) {
             tempGroupSelect.clearCurrPageRows();
             for (idx in data.groupList) {
                 var prodObj = data.groupList[idx];
@@ -281,9 +292,13 @@ define([
                 _resetProdInfo(groupInfo, commonProps, customProps, selSalesTypes, selBiDataList);
 
                 _resetCartInfo(groupInfo);
-               
+
                 // 初始化数据选中需要的数组
-                tempGroupSelect.currPageRows({"id": groupInfo.prodId, "code": groupInfo.common.fields["code"], "prodIds": data.grpProdIdList[index]});
+                tempGroupSelect.currPageRows({
+                    "id": groupInfo.prodId,
+                    "code": groupInfo.common.fields["code"],
+                    "prodIds": data.grpProdIdList[index]
+                });
 
                 // 设置price detail
                 groupInfo.groupBean.priceSale = _setGroupPriceSale(groupInfo, searchParam);
@@ -304,7 +319,7 @@ define([
          * @returns {*}
          * @private
          */
-        function _resetProductList (data, commonProps, customProps, selSalesTypes, selBiDataList, searchParam) {
+        function _resetProductList(data, commonProps, customProps, selSalesTypes, selBiDataList, searchParam) {
             tempProductSelect.clearCurrPageRows();
             _.forEach(data.productList, function (productInfo, index) {
                 _resetProdInfo(productInfo, commonProps, customProps, selSalesTypes, selBiDataList);
@@ -334,8 +349,8 @@ define([
 
             return data;
         }
-        
-        function _resetCartInfo(productInfo){
+
+        function _resetCartInfo(productInfo) {
 
             productInfo.carts = [];
             if (productInfo.platforms) {
@@ -391,7 +406,7 @@ define([
                     }
 
                     if (cssVal) {
-                        cartItem.cssVal = { "background-color" : cssVal };
+                        cartItem.cssVal = {"background-color": cssVal};
                     }
                     cartItem.statusTxt = statusTxt;
                     cartItem.publishError = publishError;
@@ -426,9 +441,9 @@ define([
                     productInfo.carts.push(cartItem);
                 });
             }
-        
+
         }
-        
+
         /**
          * 设置sku的销售渠道信息
          * @param platforms
@@ -442,9 +457,9 @@ define([
                     var cartInfoObj = Carts.valueOf(parseInt(platformObj.cartId));
                     var cartInfo = "";
                     _.forEach(platformObj.skus, function (skuObj) {
-                         cartInfo += skuObj.skuCode + ",";
+                        cartInfo += skuObj.skuCode + ",";
                     });
-                    var skuTxt = cartInfo.substr(0, cartInfo.length -1);
+                    var skuTxt = cartInfo.substr(0, cartInfo.length - 1);
                     if (skuTxt == undefined || skuTxt == null) {
                         skuTxt = '';
                     }
@@ -521,7 +536,7 @@ define([
                 }
                 priceItem += ': ';
                 // 合计sku价格的上下限
-                if (data[stakey] != null && data[stakey] != undefined && data[endKey] != null && data[endKey] != undefined ) {
+                if (data[stakey] != null && data[stakey] != undefined && data[endKey] != null && data[endKey] != undefined) {
                     if (data[stakey] == data[endKey]) {
                         priceItem += $filter('number')(data[stakey], 2);
                     } else {
@@ -561,7 +576,7 @@ define([
         }
 
         function _setRetailPriceCol(object, searchParam) {
-            var fstLine = { 'pVal': '', 'pTxt': '', 'cssTxt': '' };
+            var fstLine = {'pVal': '', 'pTxt': '', 'cssTxt': ''};
             if (object == null || object == undefined) {
                 return fstLine;
             }
@@ -588,7 +603,7 @@ define([
                 }
                 priceItem += ': ';
                 // 合计sku价格的上下限 'pPriceRetailSt', 'pPriceRetailEd'
-                if (data['pPriceRetailSt'] != null && data['pPriceRetailSt'] != undefined && data['pPriceRetailEd'] != null && data['pPriceRetailEd'] != undefined ) {
+                if (data['pPriceRetailSt'] != null && data['pPriceRetailSt'] != undefined && data['pPriceRetailEd'] != null && data['pPriceRetailEd'] != undefined) {
                     if (data['pPriceRetailSt'] == data['pPriceRetailEd']) {
                         priceItem += $filter('number')(data['pPriceRetailSt'], 2);
                     } else {
@@ -645,8 +660,8 @@ define([
                 result = _.isNumber(priceStart)
                     ? $filter('number')(priceStart, 2)
                     : ((_.isNumber(priceEnd)
-                    ? $filter('number')(priceEnd, 2)
-                    : null));
+                        ? $filter('number')(priceEnd, 2)
+                        : null));
             }
 
             return _.isNull(result) ? null : title + result;
@@ -660,20 +675,20 @@ define([
         function _setTimeDetail(product) {
             var result = [];
 
-            if(!_.isEmpty(product.created))
+            if (!_.isEmpty(product.created))
                 result.push($translate.instant('TXT_CREATE_TIME_WITH_COLON') + product.created.substring(0, 19));
 
             var platforms = product.groupBean;
-            if(!_.isEmpty(platforms.publishTime))
+            if (!_.isEmpty(platforms.publishTime))
                 result.push($translate.instant('TXT_PUBLISH_TIME_WITH_COLON') + platforms.publishTime.substring(0, 19));
 
-            if(!_.isEmpty(platforms.inStockTime))
+            if (!_.isEmpty(platforms.inStockTime))
                 result.push($translate.instant('TXT_ON_SALE_TIME_WITH_COLON') + platforms.inStockTime.substring(0, 19));
 
             return result;
         }
 
-        function clearSelList(){
+        function clearSelList() {
             tempGroupSelect.clearSelectedList();
             tempProductSelect.clearSelectedList();
         }

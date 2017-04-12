@@ -482,7 +482,7 @@ define([
                 productDetailService.refreshProductCategory({
                     prodIds: productIds,
                     isSelAll: $scope.vm._selall ? 1 : 0,
-                    searchInfo:$scope.searchInfoBefo
+                    searchInfo: $scope.searchInfoBefo
                 }).then(function () {
                     notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     $scope.search();
@@ -537,7 +537,7 @@ define([
                         hscodeName8: selectedCat.hscodeName8,
                         hscodeName10: selectedCat.hscodeName10,
                         isSelAll: $scope.vm._selall ? 1 : 0,
-                        searchInfo:$scope.searchInfoBefo
+                        searchInfo: $scope.searchInfoBefo
                     };
                     productDetailService.changeCategory(data).then(function (res) {
                         if (res.data.isChangeCategory) {
@@ -728,7 +728,7 @@ define([
                     'cartId': $scope.vm.searchInfo.cartId,
                     'productIds': productIds,
                     'selAllFlg': $scope.vm._selall ? 1 : 0,
-                    'searchInfo':$scope.searchInfoBefo
+                    'searchInfo': $scope.searchInfoBefo
                 }).then(function (res) {
                     // 设置自由标签
                     var msg = '';
@@ -828,7 +828,7 @@ define([
                     _option: 'putonoff',
                     productIds: productIds,
                     isSelAll: $scope.vm._selall ? 1 : 0,
-                    searchInfo:$scope.searchInfoBefo
+                    searchInfo: $scope.searchInfoBefo
                 }).then(
                     function () {
                         $scope.search();
@@ -859,7 +859,7 @@ define([
                         cartId: cartId,
                         productIds: productIds,
                         isSelectAll: $scope.vm._selall ? 1 : 0,
-                        searchInfo:$scope.searchInfoBefo
+                        searchInfo: $scope.searchInfoBefo
                     }).then(function () {
                         alert('已完成商品的智能上新！');
                         $scope.search();
@@ -891,7 +891,7 @@ define([
                         _option: 'approval',
                         productIds: productIds,
                         isSelAll: $scope.vm._selall ? 1 : 0,
-                        searchInfo:$scope.searchInfoBefo
+                        searchInfo: $scope.searchInfoBefo
                     };
 
                     check(property);
@@ -1083,7 +1083,10 @@ define([
          * @param openCategoryEdit
          */
         function openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit, cartId) {
-            _chkProductSel(cartId, _openAddChannelCategory, {'isSelAll': $scope.vm._selall ? 1 : 0, "searchInfo":$scope.searchInfoBefo});
+            _chkProductSel(cartId, _openAddChannelCategory, {
+                'isSelAll': $scope.vm._selall ? 1 : 0,
+                "searchInfo": $scope.searchInfoBefo
+            });
 
             function _openAddChannelCategory(cartId, selList, context) {
                 openAddChannelCategoryEdit(selList, cartId, context).then(function (res) {
@@ -1229,7 +1232,7 @@ define([
                         _option: 'retailprice',
                         productIds: productIds,
                         isSelAll: $scope.vm._selall ? 1 : 0,
-                        searchInfo : $scope.searchInfoBefo
+                        searchInfo: $scope.searchInfoBefo
                     }).then(function (res) {
                         if (res.data == null || res.data.ecd == null || res.data.ecd == undefined) {
                             alert($translate.instant('TXT_COMMIT_ERROR'));
@@ -1245,6 +1248,33 @@ define([
                     });
                 });
             }
+        };
+
+        /**
+         * 客户建议售价变更确认
+         * @param cartObj 平台信息
+         */
+        $scope.clientMsrpConfirm = function () {
+            _chkProductSel('0', function (cartId, _selProdList) {
+
+                confirm('即将对选中的商品全店铺批量确认指导价变更').then(function () {
+
+                    $fieldEditService.bulkConfClientMsrp({
+                        productIds: _.pluck(_selProdList, 'code'),
+                        isSelAll: $scope.vm._selall ? 1 : 0,
+                        searchInfo: $scope.searchInfoBefo
+                    }).then(function (res) {
+
+                        if (res.data) {
+                            $scope.search();
+                            notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        }
+
+                    });
+
+                });
+
+            });
         };
 
         /**
@@ -1280,7 +1310,7 @@ define([
                                 "cartId": +context.cartId,
                                 "pCatPath": data.selected.catPath,
                                 "pCatId": data.selected.catId,
-                                "searchInfo":$scope.searchInfoBefo
+                                "searchInfo": $scope.searchInfoBefo
                             }).then(function () {
                                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                                 $scope.search();
@@ -1306,7 +1336,7 @@ define([
                     productIds: context.selList,
                     isSelAll: $scope.vm._selall,
                     cartId: context.cartId,
-                    searchInfo:$scope.searchInfoBefo
+                    searchInfo: $scope.searchInfoBefo
                 });
 
             }
@@ -1346,7 +1376,7 @@ define([
                         _option: 'refreshRetailPrice',
                         productIds: productIds,
                         isSelAll: $scope.vm._selall ? 1 : 0,
-                        searchInfo : $scope.searchInfoBefo
+                        searchInfo: $scope.searchInfoBefo
                     }).then(function (res) {
                         if (res.data == null || res.data.ecd == null || res.data.ecd == undefined) {
                             alert($translate.instant('TXT_COMMIT_ERROR'));
@@ -1373,7 +1403,7 @@ define([
                 popups.openJoinPromotion(_.extend({
                     cartBean: cartBean,
                     selList: selList,
-                    searchInfo:$scope.searchInfoBefo
+                    searchInfo: $scope.searchInfoBefo
                 }, context)).then(function (context) {
 
                 });

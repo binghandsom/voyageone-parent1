@@ -42,7 +42,6 @@ define([
 
             column.count = !column.count;
 
-            //偶数升序，奇数降序
             if (column.count)
                 column.mark = 'sort-desc';
             else

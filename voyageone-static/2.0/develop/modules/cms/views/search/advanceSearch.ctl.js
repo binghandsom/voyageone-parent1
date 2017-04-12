@@ -1442,8 +1442,34 @@ define([
                 return false;
             }
 
-        }
+        };
 
+        /**
+         * 客户建议售价变更确认
+         * @param cartObj 平台信息
+         */
+        $scope.clientMsrpConfirm = function () {
+            _chkProductSel('0', function (cartId, _selProdList) {
+
+                confirm('即将对选中的商品全店铺批量确认指导价变更').then(function () {
+
+                    $fieldEditService.bulkConfClientMsrp({
+                        productIds: _.pluck(_selProdList, 'code'),
+                        isSelAll: $scope.vm._selall ? 1 : 0,
+                        searchInfo: $scope.searchInfoBefo
+                    }).then(function (res) {
+
+                        if (res.data) {
+                            $scope.search();
+                            notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        }
+
+                    });
+
+                });
+
+            });
+        };
 
     }
 

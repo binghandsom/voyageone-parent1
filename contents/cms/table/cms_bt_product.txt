@@ -82,6 +82,8 @@
     * clientMsrpPrice     ->客户建议零售价(double)
     * clientRetailPrice   ->客户指导价(double)
     * clientNetPrice      ->客户成本价(double)
+    * confClientMsrpPrice  ->确认后的美元MSRP价格(double)
+    * clientMsrpPriceChgFlg ->美元MSRP价格变化状态（U/D） 这里是美元MSRP价格本身变化
     * priceMsrp           ->中国建议零售价(double)
     * priceRetail         ->中国指导价(double)
     * weight              ->20160713,重量
