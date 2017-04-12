@@ -2757,7 +2757,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     }
 
                     String clientMsrpPriceChgFlg = null;
-                    if (commonSku.getConfClientMsrpPrice() < commonSku.getClientMsrpPrice()) {
+                    if(commonSku.getConfClientMsrpPrice().compareTo(commonSku.getClientMsrpPrice()) == 0){
+                        clientMsrpPriceChgFlg =  "0";
+                    }else if (commonSku.getConfClientMsrpPrice() < commonSku.getClientMsrpPrice()) {
                         if (commonSku.getConfClientMsrpPrice().equals(0D))
                             clientMsrpPriceChgFlg =  "U100%";
                         else {

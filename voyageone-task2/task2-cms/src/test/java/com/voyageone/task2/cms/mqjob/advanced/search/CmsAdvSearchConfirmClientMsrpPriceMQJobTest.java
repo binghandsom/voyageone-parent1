@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchConfirmClientMsrpPriceMQMessageBody;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,10 +24,12 @@ public class CmsAdvSearchConfirmClientMsrpPriceMQJobTest {
 
     @Test
     public void onStartup() throws Exception {
+        String aa="{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"james\",\"channelId\":\"001\",\"codeList\":[\"68220-lag\"]}";
         AdvSearchConfirmClientMsrpPriceMQMessageBody advSearchConfirmClientMsrpPriceMQMessageBody = new AdvSearchConfirmClientMsrpPriceMQMessageBody();
-        advSearchConfirmClientMsrpPriceMQMessageBody.setCodeList(Arrays.asList("68220-gem"));
-        advSearchConfirmClientMsrpPriceMQMessageBody.setChannelId("001");
-        advSearchConfirmClientMsrpPriceMQMessageBody.setSender("james");
+//        advSearchConfirmClientMsrpPriceMQMessageBody.setCodeList(Arrays.asList("68220-gem"));
+//        advSearchConfirmClientMsrpPriceMQMessageBody.setChannelId("001");
+//        advSearchConfirmClientMsrpPriceMQMessageBody.setSender("james");
+        advSearchConfirmClientMsrpPriceMQMessageBody = JacksonUtil.json2Bean(aa, AdvSearchConfirmClientMsrpPriceMQMessageBody.class);
         cmsAdvSearchConfirmClientMsrpPriceMQJob.onStartup(advSearchConfirmClientMsrpPriceMQMessageBody);
     }
 
