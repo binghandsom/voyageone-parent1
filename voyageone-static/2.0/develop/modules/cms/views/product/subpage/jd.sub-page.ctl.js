@@ -632,6 +632,16 @@ define([
             $compile(modal)(modalChildScope);
         });
     };
+
+    /**
+     * @description 判断Ready和Approved的button激活状态
+     */
+    SpJdController.prototype.btnDisabled = function () {
+        return _.every(this.vm.checkFlag, function (ele) {
+            return ele == true ? 1 : 0;
+        });
+    };
+
     /**
      * 产品详情上下架
      */
