@@ -801,7 +801,7 @@ define([
                                 "prodIdList": productIds,
                                 "isSelAll": $scope.vm._selall ? 1 : 0,
                                 "orgDispTagList": res.orgDispTagList,
-
+                                'searchInfo':$scope.searchInfoBefo
                             };
                             $searchAdvanceService2.addFreeTag(data).then(function () {
                                 notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
@@ -1139,6 +1139,7 @@ define([
                     });
                     res.productIds = productIds;
                     res.isSelAll = $scope.vm._selall ? 1 : 0;
+                    res.searchInfo = $scope.searchInfoBefo;
                     $addChannelCategoryService.save(res).then(function () {
                         notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
                         $scope.search();
