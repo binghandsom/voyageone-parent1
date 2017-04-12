@@ -223,6 +223,73 @@ public class CmsAdvSearchOtherService extends BaseViewService {
         return rslt;
     }
 
+    public List[] getProductExtraInfo(List<CmsBtProductBean> groupsList, String channelId, int cartId) {
+        List[] rslt;
+        List<String> orgChaNameList = new ArrayList<>();
+        List<String> freeTagsList = new ArrayList<>();
+
+        rslt = new List[2];
+        rslt[0] = orgChaNameList;
+        rslt[1] = freeTagsList;
+        if (groupsList == null || groupsList.isEmpty()) {
+            $warn("CmsAdvSearchQueryService.getGroupExtraInfo groupsList为空");
+            return rslt;
+        }
+
+        Map<String, CmsBtTagBean> cachTag = new HashMap<>();
+        for (CmsBtProductBean groupObj : groupsList) {
+            String prodCode = groupObj.getCommonNotNull().getFieldsNotNull().getCode();
+            if (prodCode == null) {
+                $warn("高级检索 getGroupExtraInfo 无产品code ObjId=:" + groupObj.get_id());
+                continue;
+            }
+
+            ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(groupObj.getOrgChannelId());
+            if (channel == null) {
+                orgChaNameList.add("");
+            } else {
+                orgChaNameList.add(channel.getFullName());
+            }
+
+            // 获取商品free tag信息
+            List<String> tagPathList = groupObj.getFreeTags();
+            if (tagPathList != null && tagPathList.size() > 0) {
+                List<CmsBtTagBean> tagModelList = new ArrayList<>();
+                List<String> temp = new ArrayList<>();
+                for(String tag: tagPathList){
+                    if (cachTag.containsKey(tag)) {
+                        tagModelList.add(cachTag.get(tag));
+                    } else {
+                        temp.add(tag);
+                    }
+                }
+                if (temp.size() > 0) {
+                    List<CmsBtTagBean> ts = tagService.getTagPathNameByTagPath(channelId, temp);
+                    if (!ListUtils.isNull(ts)) {
+                        for(CmsBtTagBean cmsBtTagBean : ts){
+                            cachTag.put(cmsBtTagBean.getTagPath(), cmsBtTagBean);
+                            tagModelList.add(cmsBtTagBean);
+                        }
+                    }
+                }
+                // 根据tag path查询tag path name
+//                    List<CmsBtTagBean> tagModelList = tagService.getTagPathNameByTagPath(channelId, tagPathList);
+                if (!tagModelList.isEmpty()) {
+                    tagModelList = cmsChannelTagService.convertToTree(tagModelList);
+                    List<CmsBtTagModel> tagList = cmsChannelTagService.convertToList(tagModelList);
+                    List<String> tagPathStrList = new ArrayList<>();
+                    tagList.forEach(tag -> tagPathStrList.add(tag.getTagPathName()));
+                    freeTagsList.add(StringUtils.join(tagPathStrList, "<br>"));
+                } else {
+                    freeTagsList.add("");
+                }
+            } else {
+                freeTagsList.add("");
+            }
+        }
+        return rslt;
+    }
+
     /**
      * 取得销量数据显示列
      */
