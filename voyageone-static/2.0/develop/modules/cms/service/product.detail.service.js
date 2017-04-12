@@ -817,6 +817,28 @@ define([
         }
 
         /**
+         * @description 批量重新计算主类目
+         * @param req 上行请求参数
+         * @returns {Promise}
+         */
+        this.refreshProductCategory = function (req) {
+            var defer = $q.defer();
+
+            confirm('您是否确认要重新计算主类目？').then(function () {
+                $productDetailService.refreshProductCategory(req)
+                    .then(function (res) {
+                        defer.resolve(res);
+                    }, function (res) {
+                        defer.reject(res);
+                    });
+            }, function () {
+                defer.reject(false);
+            });
+
+            return defer.promise;
+        };
+
+        /**
          * @description 判断产品详情页的翻译|税号|平台|属性
          */
         this.bulbAdjust = function (status, checkFlag) {
