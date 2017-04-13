@@ -94,10 +94,13 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                     && !CartEnums.Cart.LCN.getId().equals(String.valueOf(cartIdValue))
                     && !CartEnums.Cart.DT.getId().equals(String.valueOf(cartIdValue)))
                 qryStr.append("{'platforms.P" + cartIdValue + ".status':{$nin:['Ready','Approved']}},");
-            else if (!CartEnums.Cart.LTT.getId().equals(String.valueOf(cartIdValue)))
+            else if (!CartEnums.Cart.LTT.getId().equals(String.valueOf(cartIdValue))
+                    && !CartEnums.Cart.JD.getId().equals(String.valueOf(cartIdValue))
+                    && !CartEnums.Cart.TM.getId().equals(String.valueOf(cartIdValue)))
                 qryStr.append("{'common.fields.hsCodeStatus': '0'},");
             else
                 qryStr.append("{'prodId':{$exists:false}},");
+
             qryStr.deleteCharAt(qryStr.length() - 1);
             qryStr.append("]}");
             queryObject.setQuery(qryStr.toString());
@@ -120,7 +123,9 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                     // 判断该商品税号是否设置
                     if (field != null &&
                             ("0".equals(field.getHsCodeStatus())
-                                    && !CartEnums.Cart.LTT.getId().equals(String.valueOf(cartIdValue)))) {
+                                    && !CartEnums.Cart.LTT.getId().equals(String.valueOf(cartIdValue))
+                                    && !CartEnums.Cart.JD.getId().equals(String.valueOf(cartIdValue))
+                                    && !CartEnums.Cart.TM.getId().equals(String.valueOf(cartIdValue)))) {
                         CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
                         errorInfo.setSkuCode(field.getCode());
                         errorInfo.setMsg(String.format("有商品商品没有设置税号, 无法审批 cartIdValue:%s", cartIdValue));
@@ -357,7 +362,10 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                 productCode = product.getCommon().getFields().getCode();
 
                 // 检测该商品的税号状态是否为已设置
-                if (!"1".equals(product.getCommon().getFields().getHsCodeStatus())) {
+                /**京东（24）,天猫(20)不判断税号*/
+                if (cartId != CartEnums.Cart.JD.getValue()
+                        && cartId != CartEnums.Cart.TM.getValue()
+                        && !"1".equals(product.getCommon().getFields().getHsCodeStatus())) {
                     CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
                     errorInfo.setSkuCode(productCode);
                     errorInfo.setMsg("该商品税号未设置,税号状态不为1");
