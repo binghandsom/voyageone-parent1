@@ -609,6 +609,12 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
             // delete by morse.lu 2016/06/06 end
             // 天猫商品上新处理
             try {
+                // 新增更新标记
+                boolean isNewFlag = false;
+                if (StringUtils.isEmpty(numIId)) {
+                    isNewFlag = true;
+                }
+
                 // 新增或更新商品信息到天猫平台
                 numIId = uploadTmItemService.uploadItem(expressionParser, platformProductId, cmsMtPlatformCategorySchemaModel, cmsMtPlatformMappingModel, shopProp, getTaskName());
                 // 新增或更新商品结果判断
@@ -620,8 +626,15 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                         // 自动设置天猫商品全链路库存管理（函数里会自动判断当前店铺是否需要处理全链路）
                         taobaoScItemService.doSetScItem(shopProp, sxData.getMainProduct(), Long.parseLong(numIId));
 
+                        // 20170413 tom 如果是新建的场合， 需要根据配置来设置上下架状态 START
+                        CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
+                        if (isNewFlag) {
+                            platformActive = sxProductService.getDefaultPlatformActiveConfigByChannelCart(channelId, String.valueOf(cartId));
+                        }
+                        // 20170413 tom 如果是新建的场合， 需要根据配置来设置上下架状态 END
+
                         // 如果action是onsale的场合， 再做一次上架
-                        if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
+                        if (CmsConstants.PlatformActive.ToOnSale.equals(platformActive)) {
                             tbSaleService.doWareUpdateListing(shopProp, numIId);
                         }
                     }
