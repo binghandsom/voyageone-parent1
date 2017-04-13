@@ -510,6 +510,7 @@ public interface CmsUrlConstants {
             String BULK_SET_PLATFORM_FIELDS = "bulkSetPlatformFields";
             String GET_PLATFROM_POP_OPTIONS = "getPlatfromPopOptions";
             String BULK_LOCK_PRODUCTS = "bulkLockProducts";
+            String BULK_CONF_CLIENT_MSRP = "bulkConfClientMsrp";
         }
 
         interface ADD_TO_PROMOTION {

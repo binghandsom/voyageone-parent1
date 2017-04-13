@@ -10,6 +10,7 @@ import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
+import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsShelvesImageUploadMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
@@ -83,7 +84,7 @@ public class CmsShelvesDetailController extends CmsController {
         }
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productCodes = advanceSearchService.getProductCodeList(getUser().getSelChannelId(), getCmsSession());
+            productCodes = advanceSearchService.getProductCodeList(getUser().getSelChannelId(), params.searchInfo);
         }
         if (productCodes == null || productCodes.isEmpty()) {
             throw new BusinessException("批量修改商品属性 没有code条件 params=" + params.toString());
@@ -237,6 +238,10 @@ public class CmsShelvesDetailController extends CmsController {
         List<String> productCodes;
         @JsonProperty("isSelAll")
         Integer isSelAll;
+        @JsonProperty("searchInfo")
+        CmsSearchInfoBean2 searchInfo;
+
+
     }
 
     private static class GetShelvesInfo {

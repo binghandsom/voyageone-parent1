@@ -137,7 +137,7 @@ public class CmsProductDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.REFRESH_PRODUCT_CATEGORY)
     public AjaxResponse doRefreshProductCategory(@RequestBody Map requestMap) {
 
-        Map<String, Object> resultMap = productPropsEditService.refreshProductCategory(requestMap, getUser(), getCmsSession());
+        Map<String, Object> resultMap = productPropsEditService.refreshProductCategory(requestMap, getUser());
 
         return success(resultMap);
     }

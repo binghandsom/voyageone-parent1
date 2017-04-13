@@ -111,6 +111,17 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     private String pLockFlg;
 
+    // 客户建议售价状态
+    private String clientMsrpPriceChgFlg;
+
+    public String getClientMsrpPriceChgFlg() {
+        return clientMsrpPriceChgFlg;
+    }
+
+    public void setClientMsrpPriceChgFlg(String clientMsrpPriceChgFlg) {
+        this.clientMsrpPriceChgFlg = clientMsrpPriceChgFlg;
+    }
+
     public String getpLockFlg() {
         return pLockFlg;
     }

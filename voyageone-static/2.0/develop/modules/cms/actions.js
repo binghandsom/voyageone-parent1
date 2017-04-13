@@ -519,7 +519,8 @@ define(function () {
                     bulkSetPlatformFields: "bulkSetPlatformFields",
                     getPlatfromPopOptions: "getPlatfromPopOptions",
                     intelligentPublish: "intelligentPublish",
-                    bulkLockProducts: "bulkLockProducts"
+                    bulkLockProducts: "bulkLockProducts",
+                    bulkConfClientMsrp:"bulkConfClientMsrp"
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",

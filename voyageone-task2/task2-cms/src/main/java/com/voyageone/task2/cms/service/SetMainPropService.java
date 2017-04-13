@@ -2751,16 +2751,40 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     } else if (commonSku.getClientNetPrice() < minClientNetPrice) {
                         minClientNetPrice = commonSku.getClientNetPrice();
                     }
+
+                    if(commonSku.getAttribute("confClientMsrpPrice") == null){
+                        commonSku.setConfClientMsrpPrice(commonSku.getClientMsrpPrice());
+                    }
+
+                    String clientMsrpPriceChgFlg = null;
+                    if(commonSku.getConfClientMsrpPrice().compareTo(commonSku.getClientMsrpPrice()) == 0){
+                        clientMsrpPriceChgFlg =  "0";
+                    }else if (commonSku.getConfClientMsrpPrice() < commonSku.getClientMsrpPrice()) {
+                        if (commonSku.getConfClientMsrpPrice().equals(0D))
+                            clientMsrpPriceChgFlg =  "U100%";
+                        else {
+                            Long range = Math.round(((commonSku.getClientMsrpPrice() - commonSku.getConfClientMsrpPrice()) / commonSku.getConfClientMsrpPrice()) * 100d);
+                            clientMsrpPriceChgFlg =  "U" + range + "%";
+                        }
+                    } else {
+                        Long range = Math.round(((commonSku.getConfClientMsrpPrice() - commonSku.getClientMsrpPrice()) / commonSku.getConfClientMsrpPrice()) * 100d);
+                        if(range.compareTo(0L) == 0){
+                            clientMsrpPriceChgFlg = "0";
+                        }else{
+                            clientMsrpPriceChgFlg = "D" + range + "%";
+                        }
+                    }
+                    commonSku.setClientMsrpPriceChgFlg(clientMsrpPriceChgFlg);
                 }
             }
 
-            if (minClientMsrpPrice == maxClientMsrpPrice) {
+            if (Double.compare(minClientMsrpPrice, maxClientMsrpPrice) == 0) {
                 cmsProduct.getCommon().getFields().setClientMsrpPrice(String.format("%s", minClientMsrpPrice));
             } else {
                 cmsProduct.getCommon().getFields().setClientMsrpPrice(String.format("%s~%s", minClientMsrpPrice, maxClientMsrpPrice));
             }
 
-            if (maxClientNetPrice == minClientNetPrice) {
+            if (Double.compare(maxClientNetPrice, minClientNetPrice) == 0) {
                 cmsProduct.getCommon().getFields().setClientNetPrice(String.format("%s", minClientNetPrice));
             } else {
                 cmsProduct.getCommon().getFields().setClientNetPrice(String.format("%s~%s", minClientNetPrice, maxClientNetPrice));

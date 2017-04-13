@@ -471,9 +471,11 @@
                                     <a href="javascript:void(0)" ng-click="cfmRetailPrice(null)">全店铺指导价变更确认</a>
                                 </li>
                                 <li>
+                                    <a href="javascript:void(0)" ng-click="clientMsrpConfirm()">客户建议售价确认</a>
+                                </li>
+                                <li>
                                     <a href="javascript:void(0)" ng-click="_openPutOnOff(openPutOnOff)">{{'TXT_ALL_PUT_ON|OFF'|translate}}</a>
                                 </li>
-
                                 <li>
                                     <a href="javascript:void(0)" ng-click="refreshRetailPrice(null)">重新计算价格</a>
                                 </li>
@@ -739,8 +741,11 @@
                                             </button>
                                         </td>
                                         <td class="text-left" ng-repeat="prop1 in productInfo.commArr">
-                                            <span ng-if="prop1.value.length > 50"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
-                                            <span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
+                                            <span ng-if = "prop1.value.length <= 50 && prop1.value != 'clientMsrpPrice'">{{prop1.value}}</span>
+                                            <span ng-if = "prop1.value.length > 50 && prop1.value != 'clientMsrpPrice'"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
+                                            <span ng-if = "prop1.value == 'clientMsrpPrice'">
+                                                <client-msrp-price data="productInfo.common.skus"></client-msrp-price>
+                                            </span>
                                         </td>
                                         <td class="text-left" ng-repeat="prop2 in productInfo.custArr" title="{{prop2.value}}">
                                             <span ng-if="prop2.value.length > 50"><popover-text content="prop2.value" direct="left" size="50"></popover-text></span>

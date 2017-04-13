@@ -33,7 +33,7 @@ public class CmsChannelTagController extends CmsController {
         //公司平台销售渠道
         param.put("channelId", this.getUser().getSelChannelId());
         //取得标签初始化的数据
-        Map<String, Object> resultMap = cmsChannelTagService.getInitTagInfo(param, getCmsSession(), getLang());
+        Map<String, Object> resultMap = cmsChannelTagService.getInitTagInfo(param, getLang());
         //返回数据的类型
         return success(resultMap);
     }

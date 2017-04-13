@@ -42,7 +42,6 @@ define([
 
             column.count = !column.count;
 
-            //偶数升序，奇数降序
             if (column.count)
                 column.mark = 'sort-desc';
             else
@@ -120,7 +119,8 @@ define([
                         cartId: cartId,
                         productIds: _.pluck(_selProdList, "code"),
                         lock: lock,
-                        isSelectAll: parentScope.vm._selall ? 1 : 0
+                        isSelectAll: parentScope.vm._selall ? 1 : 0,
+                        searchInfo:parentScope.searchInfoBefo
                     };
 
                     if (lock) {
