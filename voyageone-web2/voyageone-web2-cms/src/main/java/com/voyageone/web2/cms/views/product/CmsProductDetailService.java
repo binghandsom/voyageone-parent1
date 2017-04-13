@@ -56,6 +56,12 @@ import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.wms.GetStoreStockDetailRequest;
+import com.voyageone.web2.sdk.api.response.wms.GetStoreStockDetailResponse;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,6 +71,7 @@ import java.util.stream.Collectors;
 
 import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR;
 import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA;
+import static org.apache.flume.tools.VersionInfo.getUser;
 
 /**
  * Created by lewis on 15-12-16.
@@ -114,6 +121,9 @@ public class CmsProductDetailService extends BaseViewService {
     private PlatformPriceService platformPriceService;
     @Autowired
     private ProductPlatformService productPlatformService;
+
+    @Autowired
+    protected VoApiDefaultClient voApiClient;
 
     /**
      * 获取类目以及类目属性信息.
@@ -1331,6 +1341,53 @@ public class CmsProductDetailService extends BaseViewService {
             }
         }
 
+    }
+
+    /**
+     * 查询商品的库存信息（合并SKU与库存信息）
+     */
+    public GetStoreStockDetailResponse getStockInfoBySku(String channelId, long productId) {
+        // 查询商品信息
+        CmsBtProductModel productInfo = productService.getProductById(channelId, productId);
+        if (productInfo == null) {
+            throw new BusinessException("找不到商品信息, channelId=" + channelId + ", productId=" + productId);
+        }
+        // 查询商品的库存信息
+        String code = productInfo.getCommon().getFields().getCode();
+        //调用wms openapi 取得code的详细库存
+        GetStoreStockDetailRequest storeStockDetailRequest = new GetStoreStockDetailRequest();
+        storeStockDetailRequest.setChannelId(channelId);
+        storeStockDetailRequest.setItemCode(code);
+        GetStoreStockDetailResponse stockDetail = voApiClient.execute(storeStockDetailRequest);
+
+        // 取得SKU的平台尺寸信息
+        List<CmsBtProductModel_Sku> skus = productInfo.getCommon().getSkus();
+        Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, productInfo.getCommon().getFields().getBrand(),
+                productInfo.getCommon().getFields().getProductType(), productInfo.getCommon().getFields().getSizeType());
+        if (MapUtils.isNotEmpty(sizeMap)) {
+            skus.forEach(sku -> {
+                sku.setAttribute("platformSize", sizeMap.get(sku.getSize()));
+            });
+        }
+
+        // 更新商品库存中的SKU尺寸信息
+        if (CollectionUtils.isNotEmpty(stockDetail.getStocks())) {
+            stockDetail.getStocks().forEach(stock -> {
+                CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku) CollectionUtils.find(skus, new Predicate() {
+                    @Override
+                    public boolean evaluate(Object object) {
+                        CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku) object;
+                        return sku.getSkuCode().equalsIgnoreCase(stock.getBase().getSku());
+                    }
+                });
+                if (sku != null) {
+                    stock.getBase().setOrigSize(sku.getSize());
+                    stock.getBase().setSaleSize(sku.getAttribute("platformSize"));
+                }
+            });
+        }
+
+        return stockDetail;
     }
 
     /**

@@ -47,6 +47,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
+import static org.apache.flume.tools.VersionInfo.getUser;
 
 /**
  * product Service
@@ -1536,49 +1537,6 @@ public class ProductService extends BaseService {
 
     public void removeTagByCodes(String channelId, List<String> codes, int tagId) {
         cmsBtProductDao.removeTagByCodes(channelId, codes, tagId);
-    }
-
-    /**
-     * 查询商品的库存信息（合并SKU与库存信息）
-     */
-    public WmsCodeStoreInvBean getStockInfoBySku(String channelId, long productId) {
-        // 查询商品信息
-        CmsBtProductModel productInfo = getProductById(channelId, productId);
-        if (productInfo == null) {
-            throw new BusinessException("找不到商品信息, channelId=" + channelId + ", productId=" + productId);
-        }
-        // 查询商品的库存信息
-        String code = productInfo.getCommon().getFields().getCode();
-        WmsCodeStoreInvBean stockDetail = inventoryCenterLogicService.getCodeStockDetails(productInfo.getOrgChannelId(), code);
-
-        // 取得SKU的平台尺寸信息
-        List<CmsBtProductModel_Sku> skus = productInfo.getCommon().getSkus();
-        Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, productInfo.getCommon().getFields().getBrand(),
-                productInfo.getCommon().getFields().getProductType(), productInfo.getCommon().getFields().getSizeType());
-        if (MapUtils.isNotEmpty(sizeMap)) {
-            skus.forEach(sku -> {
-                sku.setAttribute("platformSize", sizeMap.get(sku.getSize()));
-            });
-        }
-
-        // 更新商品库存中的SKU尺寸信息
-        if (CollectionUtils.isNotEmpty(stockDetail.getStocks())) {
-            stockDetail.getStocks().forEach(stock -> {
-                CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku) CollectionUtils.find(skus, new Predicate() {
-                    @Override
-                    public boolean evaluate(Object object) {
-                        CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku) object;
-                        return sku.getSkuCode().equalsIgnoreCase(stock.getBase().getSku());
-                    }
-                });
-                if (sku != null) {
-                    stock.getBase().setOrigSize(sku.getSize());
-                    stock.getBase().setSaleSize(sku.getAttribute("platformSize"));
-                }
-            });
-        }
-
-        return stockDetail;
     }
 
     //更新mongo product  tag
