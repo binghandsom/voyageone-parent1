@@ -361,7 +361,7 @@ define([
             );
 
         }, function (resp) {
-            if (resp.code != "4000091" && resp.code != "4000092") {
+            if (resp.code != "4000091" && resp.code != "4000092" && resp.code != "4000094") {
                 self.vm.status = self.vm.preStatus;
                 return;
             }
