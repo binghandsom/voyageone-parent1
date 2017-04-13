@@ -239,12 +239,23 @@ define([
     SpTmController.prototype.saveProduct = function (mark) {
         var self = this;
 
+
+
         if (!self.checkPriceMsrp()) {
             self.confirm("建议售价不能低于指导价和最终售价，是否强制保存？").then(function () {
                 self.saveProductAction(mark);
             });
         } else {
-            self.saveProductAction(mark);
+
+            if(self.vm.status == "Approved"){
+                self.popups.openLoadAttribute().then(function(res){
+                    console.log('res',res);
+                    self.saveProductAction(mark);
+                });
+            }else{
+                self.saveProductAction(mark);
+            }
+
         }
     };
 
