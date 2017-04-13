@@ -2870,6 +2870,13 @@ public class SxProductService extends BaseService {
                         SingleCheckField singleCheckField = (SingleCheckField) field;
 
                         CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
+
+                        // 20170413 tom 如果是新建的场合， 需要根据配置来设置上下架状态 START
+                        if (StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
+                            platformActive = getDefaultPlatformActiveConfigByChannelCart(sxData.getChannelId(), String.valueOf(sxData.getCartId()));
+                        }
+                        // 20170413 tom 如果是新建的场合， 需要根据配置来设置上下架状态 END
+
                         if (platformActive == CmsConstants.PlatformActive.ToOnSale) {
                             singleCheckField.setValue("0");
                         } else if (platformActive == CmsConstants.PlatformActive.ToInStock) {
@@ -3024,6 +3031,29 @@ public class SxProductService extends BaseService {
         }
 
         return retMap;
+    }
+
+    /**
+     * 获取指定店铺指定平台默认要求上架还是下架
+     * @param channelId
+     * @param cartId
+     * @return 默认上下架状态
+     */
+    public CmsConstants.PlatformActive getDefaultPlatformActiveConfigByChannelCart(String channelId, String cartId) {
+        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId
+                , CmsConstants.ChannelConfig.PLATFORM_ACTIVE
+                , cartId);
+        if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
+            if (CmsConstants.PlatformActive.ToOnSale.name().equals(cmsChannelConfigBean.getConfigValue1())) {
+                return CmsConstants.PlatformActive.ToOnSale;
+            } else {
+                // platform active:上新的动作: 暂时默认是放到:仓库中
+                return CmsConstants.PlatformActive.ToInStock;
+            }
+        } else {
+            // platform active:上新的动作: 暂时默认是放到:仓库中
+            return CmsConstants.PlatformActive.ToInStock;
+        }
     }
 
     /**
