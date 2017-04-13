@@ -13,8 +13,8 @@ public class CustomWordValueGetProductFieldInfo extends CustomWordValue{
     public CustomWordValueGetProductFieldInfo() {
     }
 
-    public CustomWordValueGetProductFieldInfo(RuleExpression isMain, RuleExpression codeIdx, RuleExpression dataType, RuleExpression propName, RuleExpression imageType, RuleExpression imageIdx) {
-        this.userParam = new CustomModuleUserParamGetProductFieldInfo(isMain, codeIdx, dataType, propName, imageType, imageIdx);
+    public CustomWordValueGetProductFieldInfo(RuleExpression isMain, RuleExpression codeIdx, RuleExpression dataType, RuleExpression propName, RuleExpression imageType, RuleExpression imageIdx, RuleExpression paddingImageType) {
+        this.userParam = new CustomModuleUserParamGetProductFieldInfo(isMain, codeIdx, dataType, propName, imageType, imageIdx, paddingImageType);
     }
 
     public CustomModuleUserParamGetProductFieldInfo getUserParam() {
