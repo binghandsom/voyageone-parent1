@@ -1067,7 +1067,13 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             // JmURL
                             FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
                         } else {
-                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
+                            if (CartEnums.Cart.JD.getId().equals(cartObj.getValue())
+                                    || CartEnums.Cart.JG.getId().equals(cartObj.getValue())
+                                    || CartEnums.Cart.JGY.getId().equals(cartObj.getValue())
+                                    || CartEnums.Cart.JGJ.getId().equals(cartObj.getValue())) {
+                                FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), getJdPlatformSkuId(ptfObj)));
+                            } else
+                                FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
                         }
                     } else {
                         // 补齐聚头的MallURL和MallID的空白列
@@ -1079,13 +1085,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                         }
                         FileUtils.cell(row, index++, unlock).setCellValue("");
                     }
-                    if (CartEnums.Cart.JD.getId().equals(cartObj.getValue())
-                            || CartEnums.Cart.JG.getId().equals(cartObj.getValue())
-                            || CartEnums.Cart.JGY.getId().equals(cartObj.getValue())
-                            || CartEnums.Cart.JGJ.getId().equals(cartObj.getValue())) {
-                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), getJdPlatformSkuId(ptfObj)));
-                    } else
-                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
+                    FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(grpModel.getNumIId()));
 
                     // 设置平台下的商品名
                     FileUtils.cell(row, index++, unlock).setCellValue(getPlatformProdName(cartObj.getValue(), ptfObj.getFieldsNotNull()));
@@ -1236,7 +1236,13 @@ public class CmsAdvSearchExportFileService extends BaseService {
                                     // JmURL
                                     FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
                                 } else {
-                                    FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
+                                    if (CartEnums.Cart.JD.getId().equals(cartObj.getValue())
+                                            || CartEnums.Cart.JG.getId().equals(cartObj.getValue())
+                                            || CartEnums.Cart.JGY.getId().equals(cartObj.getValue())
+                                            || CartEnums.Cart.JGJ.getId().equals(cartObj.getValue())) {
+                                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), getJdPlatformSkuId(ptfObj)));
+                                    } else
+                                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
                                 }
                             } else {
                                 // 补齐聚头的MallURL, MallID和SkuNo的空白列
@@ -1250,13 +1256,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                                 }
                                 FileUtils.cell(row, index++, unlock).setCellValue("");
                             }
-                            if (CartEnums.Cart.JD.getId().equals(cartObj.getValue())
-                                    || CartEnums.Cart.JG.getId().equals(cartObj.getValue())
-                                    || CartEnums.Cart.JGY.getId().equals(cartObj.getValue())
-                                    || CartEnums.Cart.JGJ.getId().equals(cartObj.getValue())) {
-                                FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), getJdPlatformSkuId(ptfObj)));
-                            } else
-                                FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
+                            FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpNumIId()));
 
                             // 设置平台下的商品名
                             FileUtils.cell(row, index++, unlock).setCellValue(getPlatformProdName(cartObj.getValue(), ptfObj.getFieldsNotNull()));
