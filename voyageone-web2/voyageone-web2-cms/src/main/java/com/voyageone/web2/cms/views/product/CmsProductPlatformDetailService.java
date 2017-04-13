@@ -28,6 +28,7 @@ import com.voyageone.components.jumei.service.JumeiSaleService;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.*;
 import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
 import com.voyageone.service.bean.cms.product.DelistingParameter;
+import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
@@ -37,10 +38,7 @@ import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
-import com.voyageone.service.impl.cms.product.CmsBtCombinedProductService;
-import com.voyageone.service.impl.cms.product.ProductGroupService;
-import com.voyageone.service.impl.cms.product.ProductPlatformService;
-import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -89,6 +87,8 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     private CmsBtPlatformActiveLogDao platformActiveLogDao;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private ProductStatusHistoryService productStatusHistoryService;
 
     //设置isSale
     public void setCartSkuIsSale(SetCartSkuIsSaleParameter parameter, String channelId, String userName) {
@@ -352,7 +352,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 CmsBtProductModel_Platform_Cart mainPlatform = mainProduct.getPlatform(cartId);
                 if (mainPlatform == null || StringUtil.isEmpty(mainPlatform.getpCatId())) {
 //                    throw new BusinessException(CartEnums.Cart.getValueByID(cartId + "") + "该商品的主商品类目没有设置，请先设置主商品：" + mainProduct.getCommon().getFields().getCode());
-                }else{
+                } else {
                     platformCart.setpCatPath(mainPlatform.getpCatPath());
                     platformCart.setpCatId(mainPlatform.getpCatId());
                 }
@@ -735,22 +735,22 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 System.out.println(s);
                 if (platform.getFields().get(s) == null || StringUtils.isEmpty(platform.getFields().get(s).toString())) {
                     // 天猫的场合 属性ID是 sku darwin_sku不复制
-                    if(cartId == CartEnums.Cart.TG.getValue()) {
+                    if (cartId == CartEnums.Cart.TG.getValue()) {
                         if (!"sku".equalsIgnoreCase(s) && !"darwin_sku".equalsIgnoreCase(s)) {
                             platform.getFields().put(s, o);
                         }
-                    }else{
+                    } else {
                         platform.getFields().put(s, o);
                     }
                 }
             } else {
                 if (platform.getFields().get(s) == null || StringUtils.isEmpty(platform.getFields().get(s).toString())) {
                     // 天猫的场合 属性ID是 sku darwin_sku不复制
-                    if(cartId == CartEnums.Cart.TG.getValue()) {
+                    if (cartId == CartEnums.Cart.TG.getValue()) {
                         if (!"sku".equalsIgnoreCase(s) && !"darwin_sku".equalsIgnoreCase(s)) {
                             platform.getFields().put(s, o);
                         }
-                    }else{
+                    } else {
                         platform.getFields().put(s, o);
                     }
                 }
@@ -874,6 +874,15 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         bulkList.add(model);
 
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+
+        //插入商品修改历史
+        CmsBtProductModel productModel = productService.getProductById(channelId, prodId);
+        productStatusHistoryService.insert(channelId,
+                productModel.getCommon().getFields().getCode(),
+                productModel.getPlatform(cartId).getStatus(),
+                cartId, EnumProductOperationType.UpdatePlatformLock,
+                String.format("%s,触发%s操作", CartEnums.Cart.getValueByID(cartId.toString()), lock == 1 ? "锁" : "解锁"),
+                userBean.getUserName());
     }
 
     //更新cmsBtProduct
