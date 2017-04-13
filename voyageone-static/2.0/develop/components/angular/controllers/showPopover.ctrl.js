@@ -66,7 +66,7 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
             _.forEach(skus, function(sku) {
                 var inventory = null;
                 _.forEach(skuInventories, function(skuInventory) {
-                    if (skuInventory.sku == sku.skuCode) {
+                    if (skuInventory.sku.toLowerCase() == sku.skuCode.toLowerCase()) {
                         inventory = skuInventory.qtyChina;
                         return false;
                     }
