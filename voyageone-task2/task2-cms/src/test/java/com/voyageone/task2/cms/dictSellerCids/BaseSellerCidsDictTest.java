@@ -1,11 +1,19 @@
 package com.voyageone.task2.cms.dictSellerCids;
 
+import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
+import com.taobao.api.domain.SellerCat;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.jd.service.JdShopService;
+import com.voyageone.components.tmall.service.TbSellerCatService;
 import com.voyageone.ims.rule_expression.*;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 生成店铺内分类字典
@@ -28,6 +36,11 @@ import java.util.List;
  *
  */
 public class BaseSellerCidsDictTest {
+
+	@Autowired
+	private JdShopService jdShopService;
+	@Autowired
+	private TbSellerCatService tbSellerCatService;
 
 	protected enum CompareType {
 		Eq,
@@ -90,6 +103,16 @@ public class BaseSellerCidsDictTest {
 			this.ruleWordLeft = new FeedOrgWord(ruleWordLeft);
 			this.ruleWordRight = new TextWord(ruleWordRight);
 		}
+		public SimpleCase(CompareType compareType, String ignoreCaseFlg, String ruleWordLeft, String ruleWordRight, boolean leftIsMaster) {
+			this.compareType = compareType;
+			if (StringUtils.isEmpty(ignoreCaseFlg)) {
+				this.ignoreCaseFlg = null;
+			} else {
+				this.ignoreCaseFlg = new TextWord(ignoreCaseFlg);
+			}
+			this.ruleWordLeft = new MasterWord(ruleWordLeft);
+			this.ruleWordRight = new TextWord(ruleWordRight);
+		}
 	}
 
 	protected class SellerCids {
@@ -112,6 +135,10 @@ public class BaseSellerCidsDictTest {
 			this.childName = childName;
 		}
 
+		private String getChildName() {
+			return childName;
+		}
+
 		public String getTextSellerCidsValue() {
 			StringBuffer sbResult = new StringBuffer();
 
@@ -131,6 +158,66 @@ public class BaseSellerCidsDictTest {
 			return sbResult.toString();
 		}
 
+	}
+
+	/**
+	 * 获取京东系的店铺内分类
+	 * @param shopBean
+	 * @return 以叶子类目id为key的SellerCids
+	 */
+	protected Map<String, SellerCids> getJdSellerCatList(ShopBean shopBean) {
+		List<ShopCategory> shopCategoryList = jdShopService.getShopCategoryList(shopBean);
+
+		Map<String, SellerCids> mapCat = new LinkedHashMap<>();
+		mapCat.put("0", new SellerCids("", "", "", ""));
+		for (ShopCategory cat : shopCategoryList) {
+			if (cat.getParentId() == 0) {
+				mapCat.put(String.valueOf(cat.getCid()),
+						new SellerCids(""
+								, String.valueOf(cat.getCid())
+								, ""
+								, String.valueOf(cat.getName())
+						));
+			} else {
+				mapCat.put(String.valueOf(cat.getCid()),
+						new SellerCids(String.valueOf(cat.getParentId())
+								, String.valueOf(cat.getCid())
+								, ((SellerCids)mapCat.get(String.valueOf(cat.getParentId()))).getChildName()
+								, String.valueOf(cat.getName())
+						));
+			}
+		}
+		return mapCat;
+	}
+
+	/**
+	 * 获取天猫系的店铺内分类
+	 * @param shopBean
+	 * @return 以叶子类目id为key的SellerCids
+	 */
+	protected Map<String, SellerCids> getTmSellerCatList(ShopBean shopBean) {
+		List<SellerCat> shopCategoryList = tbSellerCatService.getSellerCat(shopBean);
+
+		Map<String, SellerCids> mapCat = new LinkedHashMap<>();
+		mapCat.put("0", new SellerCids("", "", "", ""));
+		for (SellerCat cat : shopCategoryList) {
+			if (cat.getParentCid() == 0) {
+				mapCat.put(String.valueOf(cat.getCid()),
+						new SellerCids(""
+								, String.valueOf(cat.getCid())
+								, ""
+								, String.valueOf(cat.getName())
+						));
+			} else {
+				mapCat.put(String.valueOf(cat.getCid()),
+						new SellerCids(String.valueOf(cat.getParentCid())
+								, String.valueOf(cat.getCid())
+								, ((SellerCids)mapCat.get(String.valueOf(cat.getParentCid()))).getChildName()
+								, String.valueOf(cat.getName())
+						));
+			}
+		}
+		return mapCat;
 	}
 
 	/**

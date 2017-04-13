@@ -166,22 +166,22 @@
                             <!----------------------------------check 状态------------------------------------------>
                             <ul class="nav nav-pills">
                                 <li>
-                                        <span ng-class="{tagFlag:ctrl.vm.checkFlag.translate != 1}">{{'TXT_TRANSSTS_ATTRIBUTE' | translate}}&emsp;
-                                            <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.translate == 1"></i>
-                                            <i class="fa fa-times" ng-if="ctrl.vm.checkFlag.translate != 1"></i>
-                                        </span>
+                                    <span ng-class="{tagFlag:ctrl.vm.checkFlag.translate != 1}">{{'TXT_TRANSSTS_ATTRIBUTE' | translate}}&emsp;
+                                        <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.translate == 1"></i>
+                                        <i class="fa fa-times" ng-if="ctrl.vm.checkFlag.translate != 1"></i>
+                                    </span>
                                 </li>
                                 <li ng-if="cartInfo.value != 20">
-                                        <span ng-class="{tagFlag:ctrl.vm.checkFlag.tax != 1}">{{'TXT_HS_CODE_STATUS' | translate}}&emsp;
-                                            <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.tax == 1"></i>
-                                            <i class="fa fa-times" ng-if="ctrl.vm.checkFlag.tax != 1"></i>
-                                        </span>
+                                    <span ng-class="{tagFlag:ctrl.vm.checkFlag.tax != 1}">{{'TXT_HS_CODE_STATUS' | translate}}&emsp;
+                                        <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.tax == 1"></i>
+                                        <i class="fa fa-times" ng-if="ctrl.vm.checkFlag.tax != 1"></i>
+                                    </span>
                                 </li>
                                 <li>
-                                        <span ng-class="{tagFlag:ctrl.vm.checkFlag.category != 1}">{{'TXT_PLATFORM_CATEGORY' | translate}}&emsp;
-                                            <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.category == 1"></i>
-                                            <i class="fa fa-times" ng-if="ctrl.vm.checkFlag.category != 1"></i>
-                                        </span>
+                                    <span ng-class="{tagFlag:ctrl.vm.checkFlag.category != 1}">{{'TXT_PLATFORM_CATEGORY' | translate}}&emsp;
+                                        <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.category == 1"></i>
+                                        <i class="fa fa-times" ng-if="ctrl.vm.checkFlag.category != 1"></i>
+                                    </span>
                                 </li>
                                 <!-----------------------------添加聚焦提示------------------------>
                                 <li ng-click="ctrl.focusError()"

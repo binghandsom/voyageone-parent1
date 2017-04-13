@@ -15,6 +15,7 @@ import com.voyageone.category.match.Searcher;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.CartEnums.Cart;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -96,6 +97,8 @@ public class ProductService extends BaseService {
     @Autowired
     private Searcher searcher;
 
+    @Autowired
+    private ProductStatusHistoryService productStatusHistoryService;
     /**
      * 获取商品 根据ID获
      */
@@ -966,6 +969,14 @@ public class ProductService extends BaseService {
                 if (cartId < CmsConstants.ACTIVE_CARTID_MIN)
                     return;
 
+                //插入商品修改历史
+                productStatusHistoryService.insert(channelId,
+                        _productInfo.getCommon().getFields().getCode(),
+                        platform.getStatus(),
+                        platform.getCartId(), EnumProductOperationType.UpdateCommonLock,
+                        String.format("%s,触发%s操作", CartEnums.Cart.getValueByID(platform.getCartId().toString()), lock.equals("1") ? "锁" : "解锁"),
+                        modifier);
+
                 updateMap.put(String.format("platforms.P%s.lock", cartId), lock);
 
             });
@@ -1031,12 +1042,21 @@ public class ProductService extends BaseService {
                 updateObj.setUpdate(updateStr.toString());
                 updateObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), creator);
 
-                // 添加秕处理执行语句
+                /**插入商品修改历史 added by piao*/
+                CmsBtProductModel_Platform_Cart cartPlatform = product.getPlatform(cartId);
+                productStatusHistoryService.insert(channelId,
+                        product.getCommon().getFields().getCode(),
+                        cartPlatform.getStatus(),
+                        cartPlatform.getCartId(), EnumProductOperationType.BatchUpdatePlatformLock,
+                        String.format("%s,触发%s操作", CartEnums.Cart.getValueByID(cartId.toString()), lock.equals("1") ? "锁" : "解锁"),
+                        creator);
+
+                // 添加批处理执行语句
                 productBulkList.addBulkJongo(updateObj);
 
             }
 
-            // 执行智能上新批处理
+            // 执行批处理
             BulkWriteResult rs = productBulkList.execute();
 
             if (rs != null) {

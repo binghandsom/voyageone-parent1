@@ -129,6 +129,9 @@ public class MasterWordParser extends VOAbsLoggable {
         if (plainPropValueObj == null) {
             plainPropValueObj = getPropValue(cmsBtProductModel.getCommon().getFields(), propName);
         }
+        if (plainPropValueObj == null) {
+            plainPropValueObj = getPropValue(cmsBtProductModel.getCommon(), propName);
+        }
         return plainPropValueObj;
     }
 
