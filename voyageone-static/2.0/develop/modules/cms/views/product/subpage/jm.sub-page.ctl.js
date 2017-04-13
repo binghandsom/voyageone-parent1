@@ -192,6 +192,23 @@ define([
     };
 
     /**
+     * @description 部分属性上新
+     */
+    SpJmController.prototype.loadAttribute = function(){
+        var self = this;
+
+        self.popups.openLoadAttribute({
+            attribute: ['description', 'title', 'item_images', 'seller_cids', 'sell_points', 'wireless_desc']
+        }).then(function (res) {
+            self.approveAttr = null;
+            self.approveAttr = res;
+
+            self.saveProduct();
+        });
+
+    };
+
+    /**
      * @description 保存前判断数据的有效性
      * @param mark 标识字段
      */
@@ -275,6 +292,12 @@ define([
                 platform: self.vm.platform,
                 type: mark
             };
+
+        if(self.approveAttr)
+            _.extend(updateInfo,{
+                platformWorkloadAttributes:self.approveAttr
+            });
+
         /**判断价格*/
         self.productDetailService.updateProductPlatformChk(updateInfo).then(function (resp) {
             self.vm.platform.modified = resp.data.modified;

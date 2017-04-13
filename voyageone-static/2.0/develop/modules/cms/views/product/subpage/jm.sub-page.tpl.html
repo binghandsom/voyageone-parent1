@@ -172,13 +172,24 @@
                         <div class="col-md-4">
                             <!--应运营要求，保存按钮跳过check，一直为pending状态，除了平台类目为必选-->
                             <div class="row">
-
-                                <div class="pull-right m-t-xs m-r-xs"
+                                <div class="pull-right m-t-xs m-r-xs" uib-dropdown
                                      ng-if="ctrl.vm.status == 'Ready' || ctrl.vm.status == 'Approved' || isPublishSucceed">
-                                    <button class="btn btn-vo" ng-click="ctrl.saveProduct()" ng-disabled="ctrl.vm.checkFlag.translate != 1 || ctrl.vm.checkFlag.tax != 1 ||
-                                                                                            ctrl.vm.checkFlag.category != 1 || ctrl.vm.checkFlag.attribute == false">
-                                        <i class="glyphicon glyphicon-floppy-disk"></i>Approved
+                                    <button class="btn btn-vo"  uib-dropdown-toggle ng-disabled="ctrl.vm.checkFlag.translate != 1 || ctrl.vm.checkFlag.tax != 1 ||
+                                                                             ctrl.vm.checkFlag.category != 1 || ctrl.vm.checkFlag.attribute == false">
+                                        <i class="glyphicon glyphicon-floppy-disk"></i>Approved&nbsp;<span class="caret"></span>
                                     </button>
+                                    <ul uib-dropdown-menu>
+                                        <li>
+                                            <a href="javascript:void(0)" ng-click="ctrl.saveProduct()">
+                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;普通上新
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)" ng-click="ctrl.loadAttribute()">
+                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;部分上新
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </div>
 
                                 <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Pending'">

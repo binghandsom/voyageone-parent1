@@ -239,24 +239,30 @@ define([
     SpTmController.prototype.saveProduct = function (mark) {
         var self = this;
 
-
-
         if (!self.checkPriceMsrp()) {
             self.confirm("建议售价不能低于指导价和最终售价，是否强制保存？").then(function () {
                 self.saveProductAction(mark);
             });
         } else {
-
-            if(self.vm.status == "Approved"){
-                self.popups.openLoadAttribute().then(function(res){
-                    console.log('res',res);
-                    self.saveProductAction(mark);
-                });
-            }else{
-                self.saveProductAction(mark);
-            }
-
+            self.saveProductAction(mark);
         }
+    };
+
+    /**
+     * @description 部分属性上新
+     */
+    SpTmController.prototype.loadAttribute = function(){
+        var self = this;
+
+        self.popups.openLoadAttribute({
+            attribute: ['description', 'title', 'item_images', 'seller_cids', 'sell_points', 'wireless_desc']
+        }).then(function (res) {
+            self.approveAttr = null;
+            self.approveAttr = res;
+
+            self.saveProduct();
+        });
+
     };
 
     /**
@@ -358,6 +364,11 @@ define([
                 platform: self.vm.platform,
                 type: mark
             };
+
+        if(self.approveAttr)
+            _.extend(updateInfo,{
+                platformWorkloadAttributes:self.approveAttr
+            });
 
         /**判断价格*/
         productDetailService.updateProductPlatformChk(updateInfo).then(function (resp) {
@@ -622,7 +633,7 @@ define([
     SpTmController.prototype.upperAndLowerFrame = function (mark) {
         var self = this,
             $translate = self.$translate,
-            msg = mark === 'ToOnSale'? '上架':'下架';
+            msg = mark === 'ToOnSale' ? '上架' : '下架';
 
         self.confirm('您是否执行' + msg + '操作？').then(function () {
             self.productDetailService.upperLowerFrame({
