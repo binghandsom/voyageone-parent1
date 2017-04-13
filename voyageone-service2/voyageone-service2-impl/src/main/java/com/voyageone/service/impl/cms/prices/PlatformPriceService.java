@@ -935,7 +935,9 @@ public class PlatformPriceService extends VOAbsLoggable {
                     skuObj.setAttribute("priceDiffFlg", diffFlg);
 
                     // 价格变更check
-                    priceService.priceCheck(skuObj, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
+                    if(1 != notChkPriceFlg) {
+                        priceService.priceCheck(skuObj, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
+                    }
 
                     CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
                     cmsBtPriceLogModel.setChannelId(channelId);

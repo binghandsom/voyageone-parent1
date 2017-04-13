@@ -54,6 +54,7 @@ define([
             $scope.vm.property.priceValue = $scope.vm.priceValue;
             $scope.vm.property.roundType = parseInt($scope.vm.roundType);
             $scope.vm.property.skuUpdType = parseInt($scope.vm.skuUpdType);
+            $scope.vm.property.notChkPriceFlg = true == $scope.vm.notChkPriceFlg?1:0;
             confirm($translate.instant('TXT_BULK_SETSALEPRICE')).then(function(){
                 _setProductFields($scope.vm.property);
             });
