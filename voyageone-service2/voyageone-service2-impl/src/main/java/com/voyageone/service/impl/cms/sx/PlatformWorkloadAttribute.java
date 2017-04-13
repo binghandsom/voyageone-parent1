@@ -36,4 +36,18 @@ public enum PlatformWorkloadAttribute {
     public String getValue() {
         return this.name;
     }
+
+    //是否包含枚举项
+    public static PlatformWorkloadAttribute get(String name){
+        //所有的枚举值
+        PlatformWorkloadAttribute[] platformWorkloadAttribute = values();
+        //遍历查找
+        for(PlatformWorkloadAttribute s : platformWorkloadAttribute){
+            if(s.getValue().equals(name)){
+                return s;
+            }
+        }
+
+        return null;
+    }
 }
