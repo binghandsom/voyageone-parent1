@@ -245,7 +245,7 @@ define([
         var self = this;
 
         self.popups.openLoadAttribute({
-            attribute: ['description', 'title', 'item_images', 'seller_cids', 'sell_points', 'wireless_desc']
+            attribute: ['description', 'title', 'seller_cids']
         }).then(function (res) {
             self.approveAttr = null;
             self.approveAttr = res;
