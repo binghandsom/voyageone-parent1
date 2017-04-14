@@ -10,6 +10,7 @@ import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.JumeiHtMallService;
 import com.voyageone.components.jumei.bean.HtMallSkuAddInfo;
+import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.components.jumei.bean.JmGetProductInfoRes;
 import com.voyageone.components.jumei.bean.JmGetProductInfo_Spus;
 import com.voyageone.components.jumei.service.JumeiProductService;
@@ -712,5 +713,49 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         cmsBuildPlatformProductUploadJMService.saveBtJmSku(channelId, listSxCode, sxData);
         System.out.println("回写mysql的cms_bt_jm_sku表的测试 ok");
     }
+    // 测试聚美商城价格更新
+    @Test
+    public void testUpdateMallPrice() {
+        ShopBean shop = new ShopBean();
+        shop.setOrder_channel_id("928");
+        shop.setCart_id(String.valueOf("27"));
+        shop.setApp_url("http://openapi.ext.jumei.com/");
+        shop.setAppKey(""); // 131
+        shop.setAppSecret("");  // 0f9e3437ca010f63f2c4f3a216b7f4bc9698f071
+        shop.setSessionKey(""); // 7e059a48c30c67d2693be14275c2d3be
+        List<HtMallSkuPriceUpdateInfo> updateData = new ArrayList<>();
+
+        HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
+        skuInfo.setJumei_sku_no("701300414");
+        skuInfo.setMarket_price(2893.00);
+        skuInfo.setMall_price(1827.00);
+        updateData.add(skuInfo);
+        StringBuffer sbPrice = new StringBuffer("");
+        try {
+            boolean isSuccess = jumeiHtMallService.updateMallSkuPrice(shop, updateData, sbPrice);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 测试聚美商城更新
+    @Test
+    public void testUpdateMall() {
+        ShopBean shop = new ShopBean();
+        shop.setOrder_channel_id("928");
+        shop.setCart_id(String.valueOf("27"));
+        shop.setApp_url("http://openapi.ext.jumei.com/");
+        shop.setAppKey(""); // 131
+        shop.setAppSecret("");  // 0f9e3437ca010f63f2c4f3a216b7f4bc9698f071
+        shop.setSessionKey(""); // 7e059a48c30c67d2693be14275c2d3be
+        //按groupId取Product
+        SxData sxData = sxProductService.getSxProductDataByGroupId("928", 1042325L);
+        try {
+            cmsBuildPlatformProductUploadJMService.uploadMall(sxData.getMainProduct(), shop, null, null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
