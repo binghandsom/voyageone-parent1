@@ -20,6 +20,7 @@ import java.util.List;
  * @propName 当数据类型是text的场合， 这个项目就是common里的属性名称
  * @imageType 当数据类型是image的场合， 这个项目就是指图片类型（商品图之类的）
  * @imageIdx 当数据类型是image的场合， 第几张图片
+ * @paddingImageType 当数据类型是image的场合， 第几张图片不存在的时候， 用什么方式来补（不设置就是不补）
  */
 public class CustomWordModuleGetProductFieldInfo extends CustomWordModule {
 
@@ -45,6 +46,7 @@ public class CustomWordModuleGetProductFieldInfo extends CustomWordModule {
         RuleExpression propNameExpression = customModuleUserParamGetProductFieldInfo.getPropName();
         RuleExpression imageTypeExpression = customModuleUserParamGetProductFieldInfo.getImageType();
         RuleExpression imageIdxExpression = customModuleUserParamGetProductFieldInfo.getImageIdx();
+        RuleExpression paddingImageTypeExpression = customModuleUserParamGetProductFieldInfo.getPaddingImageType();
 
         String isMain = expressionParser.parse(isMainExpression, shopBean, user, extParameter);
         String codeIdx = expressionParser.parse(codeIdxExpression, shopBean, user, extParameter);
@@ -53,6 +55,7 @@ public class CustomWordModuleGetProductFieldInfo extends CustomWordModule {
         String imageTypeStr = expressionParser.parse(imageTypeExpression, shopBean, user, extParameter);
         CmsBtProductConstants.FieldImageType imageType = CmsBtProductConstants.FieldImageType.valueOf(imageTypeStr);
         String imageIdx = expressionParser.parse(imageIdxExpression, shopBean, user, extParameter);
+        String paddingImageType = expressionParser.parse(paddingImageTypeExpression, shopBean, user, extParameter);
 
         // 正式逻辑开始， 先确定一下用的是Group里的哪个商品
         CmsBtProductModel cmsBtProductModel = null;
@@ -112,6 +115,16 @@ public class CustomWordModuleGetProductFieldInfo extends CustomWordModule {
             } else {
                 List<CmsBtProductModel_Field_Image> cmsBtProductModelFieldImages = sxProductService.getProductImages(cmsBtProductModel, imageType, sxData.getCartId());
                 if (Integer.parseInt(imageIdx) >= cmsBtProductModelFieldImages.size()) {
+                    // 看看有没有设置补救措施
+                    if (!StringUtils.isEmpty(paddingImageType)) {
+                        // 如果以后还有其他补救措施的话， 就写在这个地方加else 。。。
+                        if ("1stProductImage".equals(paddingImageType)) {
+                            return cmsBtProductModelFieldImages.get(0).getName();
+                        } else {
+                            return paddingImageType; //  上记以外的情况， 认为输入的值就是图片名
+                        }
+                    }
+
                     return "";
                 } else {
                     return cmsBtProductModelFieldImages.get(Integer.parseInt(imageIdx)).getName();

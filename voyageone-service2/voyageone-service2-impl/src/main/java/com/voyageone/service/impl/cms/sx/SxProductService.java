@@ -46,6 +46,7 @@ import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.ims.rule_expression.*;
 import com.voyageone.service.bean.cms.*;
+import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
 import com.voyageone.service.bean.cms.product.ProductMqqBean;
 import com.voyageone.service.bean.cms.product.SxData;
@@ -118,10 +119,10 @@ public class SxProductService extends BaseService {
      * upd_flg=1,已经上传
      */
     private static final int UPD_FLG_UPLOADED = 1;
-    /**
-     * 大码List
-     */
-    private static List<String> bigSizeList = Lists.newArrayList("16","17","18");
+//    /**
+//     * 大码List
+//     */
+//    private static List<String> bigSizeList = Lists.newArrayList("16","17","18");
     @Autowired
     TbProductService tbProductService;
     @Autowired
@@ -871,36 +872,36 @@ public class SxProductService extends BaseService {
         List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "}", channelId);
         List<CmsBtProductModel> removeProductList = new ArrayList<>(); // product删除对象(如果该product下没有允许在该平台上上架的sku，删除)
 
-        // 根据原始的尺码， 删掉不想要的SKU
-        if (ChannelConfigEnums.Channel.SN.getId().equals(channelId)) {
-            for (CmsBtProductModel p : productModelList) {
-                List<CmsBtProductModel_Sku> common_skus = p.getCommonNotNull().getSkus();
-                if (common_skus != null) {
-                    for (int i = common_skus.size() - 1; i >= 0; i--) {
-                        CmsBtProductModel_Sku s = common_skus.get(i);
-                        if (bigSizeList.contains(s.getSize())) {
-                            common_skus.remove(i);
-                        }
-                    }
-                }
-
-                Map<String, CmsBtProductModel_Platform_Cart> platforms = p.getPlatforms();
-                platforms.entrySet().stream().forEach((kv)->{
-                    CmsBtProductModel_Platform_Cart platformCart = kv.getValue();
-                    List<BaseMongoMap<String, Object>> platformCartSkus = platformCart.getSkus();
-                    if (platformCartSkus != null) {
-                        for (int i = platformCartSkus.size() - 1; i >= 0; i--) {
-                            BaseMongoMap<String, Object> s = platformCartSkus.get(i);
-                            // 这里的size取得临时从sku里拆出来（sn专用） 如果其他店有着部分代码逻辑的需求 需要用sku去common里匹配
-                            String size = s.getStringAttribute("skuCode").replaceAll("^(.*)-(.*)$", "$2");
-                            if (bigSizeList.contains(size)) {
-                                platformCartSkus.remove(i);
-                            }
-                        }
-                    }
-                });
-            }
-        }
+//        // 根据原始的尺码， 删掉不想要的SKU
+//        if (ChannelConfigEnums.Channel.SN.getId().equals(channelId)) {
+//            for (CmsBtProductModel p : productModelList) {
+//                List<CmsBtProductModel_Sku> common_skus = p.getCommonNotNull().getSkus();
+//                if (common_skus != null) {
+//                    for (int i = common_skus.size() - 1; i >= 0; i--) {
+//                        CmsBtProductModel_Sku s = common_skus.get(i);
+//                        if (bigSizeList.contains(s.getSize())) {
+//                            common_skus.remove(i);
+//                        }
+//                    }
+//                }
+//
+//                Map<String, CmsBtProductModel_Platform_Cart> platforms = p.getPlatforms();
+//                platforms.entrySet().stream().forEach((kv)->{
+//                    CmsBtProductModel_Platform_Cart platformCart = kv.getValue();
+//                    List<BaseMongoMap<String, Object>> platformCartSkus = platformCart.getSkus();
+//                    if (platformCartSkus != null) {
+//                        for (int i = platformCartSkus.size() - 1; i >= 0; i--) {
+//                            BaseMongoMap<String, Object> s = platformCartSkus.get(i);
+//                            // 这里的size取得临时从sku里拆出来（sn专用） 如果其他店有着部分代码逻辑的需求 需要用sku去common里匹配
+//                            String size = s.getStringAttribute("skuCode").replaceAll("^(.*)-(.*)$", "$2");
+//                            if (bigSizeList.contains(size)) {
+//                                platformCartSkus.remove(i);
+//                            }
+//                        }
+//                    }
+//                });
+//            }
+//        }
 
         // 预设主商品
         for (CmsBtProductModel productModel : productModelList) {
@@ -1413,6 +1414,75 @@ public class SxProductService extends BaseService {
                 sku.setSizeSx(sizeSxMap.get(sku.getSkuCode()));
             }
         }
+
+        // 20170413 tom sneakerhead所有的上新用的尺码是"UNKNOW"的sku， 不上新 START
+        String sn_sxsku_unknow = "UNKNOW";
+        if (ChannelConfigEnums.Channel.SN.getId().equals(channelId)) {
+            // mainProduct
+            {
+                CmsBtProductModel mainProduct = sxData.getMainProduct();
+                List<CmsBtProductModel_Sku> common_skus = mainProduct.getCommonNotNull().getSkus();
+                if (common_skus != null) {
+                    for (int i = common_skus.size() - 1; i >= 0; i--) {
+                        CmsBtProductModel_Sku s = common_skus.get(i);
+                        if (sn_sxsku_unknow.equals(sizeSxMap.get(s.getSkuCode()))) {
+                            common_skus.remove(i);
+                        }
+                    }
+                }
+                CmsBtProductModel_Platform_Cart platform = mainProduct.getPlatform(sxData.getCartId());
+                List<BaseMongoMap<String, Object>> platformCartSkus = platform.getSkus();
+                if (platformCartSkus != null) {
+                    for (int i = platformCartSkus.size() - 1; i >= 0; i--) {
+                        BaseMongoMap<String, Object> s = platformCartSkus.get(i);
+                        // 这里的size取得临时从sku里拆出来（sn专用） 如果其他店有着部分代码逻辑的需求 需要用sku去common里匹配
+                        String skuCode = s.getStringAttribute("skuCode");
+                        if (sn_sxsku_unknow.equals(sizeSxMap.get(skuCode))) {
+                            platformCartSkus.remove(i);
+                        }
+                    }
+                }
+            }
+
+            // productList
+            for (CmsBtProductModel product : sxData.getProductList()) {
+                List<CmsBtProductModel_Sku> common_skus = product.getCommonNotNull().getSkus();
+                if (common_skus != null) {
+                    for (int i = common_skus.size() - 1; i >= 0; i--) {
+                        CmsBtProductModel_Sku s = common_skus.get(i);
+                        if (sn_sxsku_unknow.equals(sizeSxMap.get(s.getSkuCode()))) {
+                            common_skus.remove(i);
+                        }
+                    }
+                }
+                CmsBtProductModel_Platform_Cart platform = product.getPlatform(sxData.getCartId());
+                List<BaseMongoMap<String, Object>> platformCartSkus = platform.getSkus();
+                if (platformCartSkus != null) {
+                    for (int i = platformCartSkus.size() - 1; i >= 0; i--) {
+                        BaseMongoMap<String, Object> s = platformCartSkus.get(i);
+                        // 这里的size取得临时从sku里拆出来（sn专用） 如果其他店有着部分代码逻辑的需求 需要用sku去common里匹配
+                        String skuCode = s.getStringAttribute("skuCode");
+                        if (sn_sxsku_unknow.equals(sizeSxMap.get(skuCode))) {
+                            platformCartSkus.remove(i);
+                        }
+                    }
+                }
+            }
+
+            // skuList
+            // List<BaseMongoMap<String, Object>> skuList
+            if (skuList != null) {
+                for (int i = skuList.size() - 1; i >= 0; i--) {
+                    BaseMongoMap<String, Object> s = skuList.get(i);
+                    // 这里的size取得临时从sku里拆出来（sn专用） 如果其他店有着部分代码逻辑的需求 需要用sku去common里匹配
+                    String skuCode = s.getStringAttribute("skuCode");
+                    if (sn_sxsku_unknow.equals(sizeSxMap.get(skuCode))) {
+                        skuList.remove(i);
+                    }
+                }
+            }
+        }
+        // 20170413 tom sneakerhead所有的上新用的尺码是"UNKNOW"的sku， 不上新 END
 
         // add by desmond 2016/20/26 start
         // 判断每个Product中是否有重复的sizeSx(有2个以上的sku用同一个sizeSx),如果有的话，上传到天猫/京东等平台会会报"销售属性重复"的错误，
