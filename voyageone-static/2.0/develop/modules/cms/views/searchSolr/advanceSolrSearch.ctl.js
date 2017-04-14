@@ -169,6 +169,8 @@ define([
                 freeTagType: 1,
                 supplierType: 1,
                 brandSelType: 1,
+                productSelType: '1',
+                sizeSelType: '1',
                 shopCatStatus: null,
                 inventory: '',
                 salesStart: null,
