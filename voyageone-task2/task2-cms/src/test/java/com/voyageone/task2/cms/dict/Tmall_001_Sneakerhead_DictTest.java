@@ -210,6 +210,10 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 					rImageIdx.addRuleWord(new TextWord(String.valueOf(iImgIdx)));
 					customModuleParam.setImageIdx(rImageIdx);
 
+					RuleExpression rPaddingImageType = new RuleExpression();
+					rPaddingImageType.addRuleWord(new TextWord("1stProductImage"));
+					customModuleParam.setPaddingImageType(rPaddingImageType);
+
 					CustomWordValueGetProductFieldInfo customWord = new CustomWordValueGetProductFieldInfo();
 					customWord.setUserParam(customModuleParam);
 
@@ -266,6 +270,10 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 					RuleExpression rImageIdx = new RuleExpression();
 					rImageIdx.addRuleWord(new TextWord(String.valueOf(iImgIdx)));
 					customModuleParam.setImageIdx(rImageIdx);
+
+					RuleExpression rPaddingImageType = new RuleExpression();
+					rPaddingImageType.addRuleWord(new TextWord("1stProductImage"));
+					customModuleParam.setPaddingImageType(rPaddingImageType);
 
 					CustomWordValueGetProductFieldInfo customWord = new CustomWordValueGetProductFieldInfo();
 					customWord.setUserParam(customModuleParam);
@@ -336,6 +344,10 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 					rImageIdx.addRuleWord(new TextWord(String.valueOf(iImgIdx)));
 					customModuleParam.setImageIdx(rImageIdx);
 
+					RuleExpression rPaddingImageType = new RuleExpression();
+					rPaddingImageType.addRuleWord(new TextWord("1stProductImage"));
+					customModuleParam.setPaddingImageType(rPaddingImageType);
+
 					CustomWordValueGetProductFieldInfo customWord = new CustomWordValueGetProductFieldInfo();
 					customWord.setUserParam(customModuleParam);
 
@@ -389,6 +401,10 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 					RuleExpression rImageIdx = new RuleExpression();
 					rImageIdx.addRuleWord(new TextWord(String.valueOf(iImgIdx)));
 					customModuleParam.setImageIdx(rImageIdx);
+
+					RuleExpression rPaddingImageType = new RuleExpression();
+					rPaddingImageType.addRuleWord(new TextWord("1stProductImage"));
+					customModuleParam.setPaddingImageType(rPaddingImageType);
 
 					CustomWordValueGetProductFieldInfo customWord = new CustomWordValueGetProductFieldInfo();
 					customWord.setUserParam(customModuleParam);

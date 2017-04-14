@@ -11,6 +11,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
@@ -32,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 
 /**
@@ -109,9 +112,9 @@ public class CmsPlatformActiveLogService extends BaseService {
             //根据group的code取得cms_bt_product信息数据
             List<CmsBtProductModel> prodObjList = cmsBtCombinedProductService.getCmsBtProductModelInfo(cartId, cmsBtProductGroupModel.getProductCodes(), channelId);
 
+
             // 如果该group下有一个code不是被锁状态,则可以执行上下架操作
             if (prodObjList.size() > 0) {
-
                 String apiResult = cmsBtCombinedProductService.getUpperAndLowerRacksApiResult(numIId, shopProp, activeStatus);
                 if (apiResult != null) {
                     errorInfo = new CmsBtOperationLogModel_Msg();
@@ -122,6 +125,7 @@ public class CmsPlatformActiveLogService extends BaseService {
 
                 // 保存调用结果
                 for (CmsBtProductModel prodObj : prodObjList) {
+                    if(prodObj.getPlatform(cartId) == null || StringUtil.isEmpty(prodObj.getPlatform(cartId).getpNumIId())) continue;
                     String prodCode = prodObj.getCommon().getFields().getCode();
                     //根据group的code判断cms_bt_product表是否有异常信息数据
                     String failedComment = failedComment(prodObj, cartId, prodCode, channelId);
