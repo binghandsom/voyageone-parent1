@@ -8,34 +8,34 @@
         http://www.springframework.org/schema/data/solr
         http://www.springframework.org/schema/data/solr/spring-solr-1.0.xsd">
 
-    <solr:solr-server id="cmsProductSolrClient" url="http://10.0.0.44:8983/solr/cms_product" maxConnections="10" timeout="5000" />
-
+    <!--<solr:solr-server id="cmsProductSolrClient" url="http://10.0.0.44:8983/solr/cms_product" maxConnections="10" timeout="5000" />-->
+    <bean id="cmsProductSolrClient" class="com.voyageone.components.solr.VoHttpSolrServerFactoryBean">
+        <property name="url" value="http://10.0.0.44:8983/solr/cms_product"/>
+        <property name="maxConnections" value="10"/>
+        <property name="timeout" value="5000"/>
+    </bean>
     <bean id="cmsProductSolrTemplate" class="org.springframework.data.solr.core.SolrTemplate">
-        <constructor-arg >
-            <bean class="com.voyageone.components.solr.PostProxyHttpSolrServer">
-                <constructor-arg ref="cmsProductSolrClient" />
-            </bean>
-        </constructor-arg>
+        <constructor-arg ref="cmsProductSolrClient"/>
     </bean>
 
-    <solr:solr-server id="cmsProductSolrDistClient" url="http://10.0.0.44:8983/solr/cms_product_d" maxConnections="10" timeout="5000" />
-
+    <!--<solr:solr-server id="cmsProductSolrDistClient" url="http://10.0.0.44:8983/solr/cms_product_d" maxConnections="10" timeout="5000" />-->
+    <bean id="cmsProductSolrDistClient" class="com.voyageone.components.solr.VoHttpSolrServerFactoryBean">
+        <property name="url" value="http://10.0.0.44:8983/solr/cms_product_d"/>
+        <property name="maxConnections" value="10"/>
+        <property name="timeout" value="5000"/>
+    </bean>
     <bean id="cmsProductSolrDistTemplate" class="org.springframework.data.solr.core.SolrTemplate">
-        <constructor-arg >
-            <bean class="com.voyageone.components.solr.PostProxyHttpSolrServer">
-                <constructor-arg ref="cmsProductSolrDistClient" />
-            </bean>
-        </constructor-arg>
+        <constructor-arg ref="cmsProductSolrDistClient"/>
     </bean>
 
-    <solr:solr-server id="cmsBrandCatsSolrDistClient" url="http://10.0.0.44:8983/solr/cms_brand_cats_d" maxConnections="10" timeout="5000" />
-
+    <!--<solr:solr-server id="cmsBrandCatsSolrDistClient" url="http://10.0.0.44:8983/solr/cms_brand_cats_d" maxConnections="10" timeout="5000" />-->
+    <bean id="cmsBrandCatsSolrDistClient" class="com.voyageone.components.solr.VoHttpSolrServerFactoryBean">
+        <property name="url" value="http://10.0.0.44:8983/solr/cms_brand_cats_d"/>
+        <property name="maxConnections" value="10"/>
+        <property name="timeout" value="5000"/>
+    </bean>
     <bean id="cmsBrandCatsSolrDistTemplate" class="org.springframework.data.solr.core.SolrTemplate">
-        <constructor-arg >
-            <bean class="com.voyageone.components.solr.PostProxyHttpSolrServer">
-                <constructor-arg ref="cmsBrandCatsSolrDistClient" />
-            </bean>
-        </constructor-arg>
+        <constructor-arg ref="cmsBrandCatsSolrDistClient"/>
     </bean>
 
 </beans>
