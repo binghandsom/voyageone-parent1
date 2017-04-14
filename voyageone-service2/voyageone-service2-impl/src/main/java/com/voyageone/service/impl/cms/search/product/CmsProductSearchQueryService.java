@@ -50,7 +50,6 @@ public class CmsProductSearchQueryService extends BaseService {
         if ($isDebugEnabled()) {
             $debug(String.format("获取当前查询的product列表 ChannelId=%s, %s", channelId, queryBean.toString()));
         }
-
         Page<CmsProductSearchModel> page = cmsProductSearchService.queryForPage(queryBean, CmsProductSearchModel.class);
         List<String> productCodeList = page.getContent().stream().filter(model -> model.getProductCode() != null).map(CmsProductSearchModel::getProductCode).collect(Collectors.toList());
         result.setProductCodeList(productCodeList);
