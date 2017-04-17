@@ -15,6 +15,7 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.components.tmall.TbBase;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.*;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
@@ -170,7 +171,9 @@ public class TbPromotionService extends TbBase {
     public static class OnMissTbPromotionService implements Condition {
         @Override
         public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-            return context.getBeanFactory().getBean(TbPromotionService.class) != null;
+            ConfigurableListableBeanFactory configurableListableBeanFactory = context.getBeanFactory();
+            String[] namesForType = configurableListableBeanFactory.getBeanNamesForType(TbPromotionService.class);
+            return namesForType.length < 1;
         }
     }
 }
