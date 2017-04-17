@@ -1155,24 +1155,18 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 //        dealInfo.setUser_purchase_limit(jmFields.getIntAttribute("userPurchaseLimit"));
 
         // 判断一下聚美详情， 用哪套模板
-        String strJumeiDetailTemplateName = "聚美详情";
-        if (product.getChannelId().equals("928")) {
+        String strJumeiDetailTemplateName = "聚美详情-非重点";
+        if (ChannelConfigEnums.Channel.USJGJ.getId().equals(product.getChannelId())) {
             if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                 String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
                 if (StringUtils.isEmpty(detailName)) detailName = "";
-                if (detailName.equals("天猫同购描述-重点商品")) {
-                    strJumeiDetailTemplateName = "聚美详情-重点商品";
-                } else if (detailName.equals("天猫同购描述-无属性图")) {
-                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
-                } else if (detailName.equals("天猫同购描述-非重点之英文长描述")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之英文长描述";
-                } else if (detailName.equals("天猫同购描述-非重点之中文长描述")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之中文长描述";
-                } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之中文使用说明";
-                } else if (detailName.equals("天猫同购描述-爆款商品")) {
-                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                if (detailName.equals("天猫同购描述-重点")) {
+                    strJumeiDetailTemplateName = "聚美详情-重点";
+                } else if (detailName.equals("天猫同购描述-非重点")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点";
+                } else if (detailName.equals("天猫同购描述-爆款")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点"; // 注： 这里不是写错了， 确实要这样做
                 }
             }
         }
@@ -1558,24 +1552,18 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
 
         // 判断一下聚美详情， 用哪套模板
-        String strJumeiDetailTemplateName = "聚美详情";
-        if (product.getChannelId().equals("928")) {
+        String strJumeiDetailTemplateName = "聚美详情-非重点";
+        if (ChannelConfigEnums.Channel.USJGJ.getId().equals(product.getChannelId())) {
             if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                 String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
                 if (StringUtils.isEmpty(detailName)) detailName = "";
-                if (detailName.equals("天猫同购描述-重点商品")) {
-                    strJumeiDetailTemplateName = "聚美详情-重点商品";
-                } else if (detailName.equals("天猫同购描述-无属性图")) {
-                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
-                } else if (detailName.equals("天猫同购描述-非重点之英文长描述")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之英文长描述";
-                } else if (detailName.equals("天猫同购描述-非重点之中文长描述")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之中文长描述";
-                } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之中文使用说明";
-                } else if (detailName.equals("天猫同购描述-爆款商品")) {
-                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                if (detailName.equals("天猫同购描述-重点")) {
+                    strJumeiDetailTemplateName = "聚美详情-重点";
+                } else if (detailName.equals("天猫同购描述-非重点")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点";
+                } else if (detailName.equals("天猫同购描述-爆款")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点"; // 注： 这里不是写错了， 确实要这样做
                 }
             }
         }
@@ -2133,24 +2121,18 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 updateDataInfo.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
                 // 本单详情
                 // 判断一下聚美详情， 用哪套模板
-                String strJumeiDetailTemplateName = "聚美详情";
-                if (product.getChannelId().equals("928")) {
+                String strJumeiDetailTemplateName = "聚美详情-非重点";
+                if (ChannelConfigEnums.Channel.USJGJ.getId().equals(product.getChannelId())) {
                     if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                         String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
                         if (StringUtils.isEmpty(detailName)) detailName = "";
-                        if (detailName.equals("天猫同购描述-重点商品")) {
-                            strJumeiDetailTemplateName = "聚美详情-重点商品";
-                        } else if (detailName.equals("天猫同购描述-无属性图")) {
-                            strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
-                        } else if (detailName.equals("天猫同购描述-非重点之英文长描述")) {
-                            strJumeiDetailTemplateName = "聚美详情-非重点之英文长描述";
-                        } else if (detailName.equals("天猫同购描述-非重点之中文长描述")) {
-                            strJumeiDetailTemplateName = "聚美详情-非重点之中文长描述";
-                        } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
-                            strJumeiDetailTemplateName = "聚美详情-非重点之中文使用说明";
-                        } else if (detailName.equals("天猫同购描述-爆款商品")) {
-                            strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                        if (detailName.equals("天猫同购描述-重点")) {
+                            strJumeiDetailTemplateName = "聚美详情-重点";
+                        } else if (detailName.equals("天猫同购描述-非重点")) {
+                            strJumeiDetailTemplateName = "聚美详情-非重点";
+                        } else if (detailName.equals("天猫同购描述-爆款")) {
+                            strJumeiDetailTemplateName = "聚美详情-非重点"; // 注： 这里不是写错了， 确实要这样做
                         }
                     }
                 }
