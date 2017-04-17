@@ -14,6 +14,7 @@ define([
         var tempGroupSelect = new selectRowsFactory(),
             tempProductSelect = new selectRowsFactory();
 
+        this.resetSearchInfo = resetSearchInfo;
         /**
          * 检索product
          */
