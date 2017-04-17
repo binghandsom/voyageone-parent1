@@ -156,6 +156,14 @@ public class CmsBatchUpdateService extends VOAbsLoggable {
                 // 计算指导价
                 try {
                     platformPriceService.updateProductPlatformPrice(newProduct, cartId, false, userName, msg);
+                    // 保存计算结果
+                    JongoUpdate updObj2 = new JongoUpdate();
+                    updObj2.setQuery("{'common.fields.code':#}");
+                    updObj2.setQueryParameters(newProduct.getCommon().getFields().getCode());
+                    updObj2.setUpdate("{$set:{'platforms.P#.skus':#}}");
+                    updObj2.setUpdateParameters(cartId, newProduct.getPlatform(cartId).getSkus());
+                    productService.updateFirstProduct(updObj2, channelId);
+
                 } catch (PriceCalculateException e) {
 
                     $error(String.format("高级检索 批量更新 价格计算错误 channleid=%s, prodcode=%s", channelId, prodCode), e);

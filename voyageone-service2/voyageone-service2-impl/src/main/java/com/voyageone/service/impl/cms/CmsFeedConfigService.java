@@ -61,8 +61,8 @@ public class CmsFeedConfigService extends BaseService {
                 cmsMtFeedConfigBean.setCmsIsCfgVal2Display(bean.getCmsIsCfgVal2Display());
                 cmsMtFeedConfigBean.setCmsIsCfgVal3Display(bean.getCmsIsCfgVal3Display());
                 cmsMtFeedConfigBean.setCreated(bean.getCreated());
-                cmsMtFeedConfigBean.setModifier(userName);
-                cmsMtFeedConfigBean.setModified(new Date());
+                cmsMtFeedConfigBean.setModifier(bean.getModifier());
+                cmsMtFeedConfigBean.setModified(bean.getModified());
             });
         }
         //Feed-Master属性一览

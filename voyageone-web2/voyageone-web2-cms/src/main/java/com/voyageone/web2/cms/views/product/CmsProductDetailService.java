@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.product;
 
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
@@ -842,6 +843,13 @@ public class CmsProductDetailService extends BaseViewService {
                 try {
                     String msg = String.format("产品编辑页面-税号变更.变更前: %s, %s;变更后:%s,%s", oldHsCodePrivate, oldHsCodeCross, newHsCodePrivate, newHsCodeCross);
                     platformPriceService.updateProductPlatformPrice(newProduct, cartId, false, modifier, msg);
+                    // 保存计算结果
+                    JongoUpdate updObj2 = new JongoUpdate();
+                    updObj2.setQuery("{'common.fields.code':#}");
+                    updObj2.setQueryParameters(newProduct.getCommon().getFields().getCode());
+                    updObj2.setUpdate("{$set:{'platforms.P#.skus':#}}");
+                    updObj2.setUpdateParameters(cartId, newProduct.getPlatform(cartId).getSkus());
+                    productService.updateFirstProduct(updObj2, channelId);
                 } catch (PriceCalculateException e) {
                     throw new BusinessException("价格计算错误,cartId:" + cartId + e.getMessage());
                 } catch (IllegalPriceConfigException e) {
