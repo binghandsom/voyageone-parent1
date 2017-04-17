@@ -15,23 +15,20 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.components.tmall.TbBase;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.*;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
  * Created by Administrator on 2015/10/29.
  */
-@Component
 public class TbPromotionService extends TbBase {
 
-    @Value("${cms2.components.tmall.services.promotion.async:false}")
-    private boolean async;
+    private final boolean async;
 
     private final MqSenderService mqSenderService;
 
-    @Autowired
-    public TbPromotionService(MqSenderService mqSenderService) {
+    public TbPromotionService(boolean async, MqSenderService mqSenderService) {
+        this.async = async;
         this.mqSenderService = mqSenderService;
     }
 
@@ -158,6 +155,22 @@ public class TbPromotionService extends TbBase {
 
         OperatingType(int value) {
             this.value = value;
+        }
+    }
+
+    @Configuration
+    public static class AutoConfiguration {
+        @Bean
+        @Conditional(OnMissTbPromotionService.class)
+        public TbPromotionService tbPromotionService(MqSenderService mqSenderService) {
+            return new TbPromotionService(false, mqSenderService);
+        }
+    }
+
+    public static class OnMissTbPromotionService implements Condition {
+        @Override
+        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            return context.getBeanFactory().getBean(TbPromotionService.class) != null;
         }
     }
 }
