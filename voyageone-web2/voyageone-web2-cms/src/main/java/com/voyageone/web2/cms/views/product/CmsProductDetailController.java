@@ -291,10 +291,9 @@ public class CmsProductDetailController extends CmsController {
         Map<String, Object> platform = (Map<String, Object>) params.get("platform");
         Assert.notNull(platform).elseThrowDefaultWithTitle("platform");
 
-
-//        CmsBtProductModel productModel = productService.getProductById(channelId, prodId);
-//        productModel.setPlatform(cartId, );
-        priceService.priceChk(channelId, new CmsBtProductModel_Platform_Cart(platform), cartId);
+        Boolean priceCheck = Boolean.parseBoolean(String.valueOf(params.get("priceCheck")));
+        if(priceCheck)
+            priceService.priceChk(channelId, new CmsBtProductModel_Platform_Cart(platform), cartId);
 
         productPropsEditService.updateSkuPrice(channelId, cartId, prodId, getUser().getUserName(), new CmsBtProductModel_Platform_Cart(platform));
 

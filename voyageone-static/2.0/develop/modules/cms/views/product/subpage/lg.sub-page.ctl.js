@@ -228,7 +228,7 @@ define([
                 return;
             }
 
-            self.confirm(resp.message + ",是否强制保存").then(function () {
+            self.confirm(resp.message + "是否强制保存").then(function () {
                 productDetailService.updateProductPlatform(updateInfo).then(function (resp) {
                     self.vm.platform.modified = resp.data.modified;
                     self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
