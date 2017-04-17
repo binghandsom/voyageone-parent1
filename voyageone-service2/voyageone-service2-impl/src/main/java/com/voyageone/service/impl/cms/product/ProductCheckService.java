@@ -198,17 +198,22 @@ public class ProductCheckService extends BaseService {
 
         // 检测和设置group级别的主商品
         CmsBtProductGroupModel groupInfo = productGroupService.selectProductGroupByCode(productModel.getChannelId(), productCode, 0);
-        if (!groupInfo.getMainProductCode().equals(poMainCode)) {
-            flg = true;
-            errorModel.getErrors().add(String.format("platforms(_id: %s):group(cartId:0)的主商品设置不正确:%s -> %s", productModel.get_id(), groupInfo.getMainProductCode(), poMainCode));
-            groupInfo.setMainProductCode(poMainCode);
-        }
 
-        if (!productCodes.containsAll(groupInfo.getProductCodes())) {
-            flg = true;
-            errorModel.getErrors().add(String.format("platforms(_id: %s):group(cartId:0)的同group的产品设置不正确:%s -> %s", productModel.get_id(), groupInfo.getProductCodes().toArray().toString(), productCodes.toArray().toString()));
-            groupInfo.setProductCodes(productCodes);
-            groupInfo.setMainProductCode(poMainCode);
+        if (groupInfo == null || StringUtils.isEmpty(groupInfo.getMainProductCode())) {
+            errorModel.getErrors().add(String.format("platforms(_id: %s):group(cartId:0)的不存在,或者mainProductCode不存在", productModel.get_id()));
+        } else {
+            if (!groupInfo.getMainProductCode().equals(poMainCode)) {
+                flg = true;
+                errorModel.getErrors().add(String.format("platforms(_id: %s):group(cartId:0)的主商品设置不正确:%s -> %s", productModel.get_id(), groupInfo.getMainProductCode(), poMainCode));
+                groupInfo.setMainProductCode(poMainCode);
+            }
+
+            if (!productCodes.containsAll(groupInfo.getProductCodes())) {
+                flg = true;
+                errorModel.getErrors().add(String.format("platforms(_id: %s):group(cartId:0)的同group的产品设置不正确:%s -> %s", productModel.get_id(), groupInfo.getProductCodes().toArray().toString(), productCodes.toArray().toString()));
+                groupInfo.setProductCodes(productCodes);
+                groupInfo.setMainProductCode(poMainCode);
+            }
         }
 
         // 更新group表
