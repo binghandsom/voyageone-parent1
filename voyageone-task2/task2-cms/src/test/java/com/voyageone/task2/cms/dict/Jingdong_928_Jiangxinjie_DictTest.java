@@ -1,7 +1,16 @@
 package com.voyageone.task2.cms.dict;
 
+import com.voyageone.common.configs.Enums.PlatFormEnums;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.ims.rule_expression.*;
+import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,18 +23,56 @@ import java.util.List;
  * @version 2.1.0
  * @since 2.1.0
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:context-cms-test.xml")
 public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
-
+    @Autowired
+    private SxProductService sxProductService;
     @Test
     public void startupTest() {
-        doCreateJson("京东详情页描述", false, doDict_京东详情页描述(1));
-        doCreateJson("京东详情页描述-重点商品", false, doDict_京东详情页描述(2));
-        doCreateJson("京东详情页描述-无属性图", false, doDict_京东详情页描述(3));
-        doCreateJson("京东详情页描述-非重点之英文长描述", false, doDict_京东详情页描述(4));
-        doCreateJson("京东详情页描述-非重点之中文长描述", false, doDict_京东详情页描述(5));
-        doCreateJson("京东详情页描述-非重点之中文使用说明", false, doDict_京东详情页描述(6));
-        doCreateJson("京东详情页描述-爆款商品", false, doDict_京东详情页描述(7));
+//        doCreateJson("京东详情页描述", false, doDict_京东详情页描述(1));
+//        doCreateJson("京东详情页描述-重点商品", false, doDict_京东详情页描述(2));
+//        doCreateJson("京东详情页描述-无属性图", false, doDict_京东详情页描述(3));
+//        doCreateJson("京东详情页描述-非重点之英文长描述", false, doDict_京东详情页描述(4));
+//        doCreateJson("京东详情页描述-非重点之中文长描述", false, doDict_京东详情页描述(5));
+//        doCreateJson("京东详情页描述-非重点之中文使用说明", false, doDict_京东详情页描述(6));
+//        doCreateJson("京东详情页描述-爆款商品", false, doDict_京东详情页描述(7));
+
+        doCreateJson("京东详情页描述-重点", false, doDict_京东详情页描述(2));
+        doCreateJson("京东详情页描述-非重点", false, doDict_京东详情页描述(4));
+        doCreateJson("京东详情页描述-爆款", false, doDict_京东详情页描述(7));
+
+
     }
+    @Test
+    public void testDict() {
+
+        SxData sxData = sxProductService.getSxProductDataByGroupId("928", 10614204L);
+        sxData.setCartId(28);
+        ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
+        ShopBean shopProp = new ShopBean();
+        shopProp.setApp_url(""); // https://api.jd.com/routerjson
+        shopProp.setAppKey(""); // BFA3102EFD4B981E9EEC2BE32DF1E44E
+        shopProp.setAppSecret(""); // 90742900899f49a5acfaf3ec1040a35c
+        shopProp.setSessionKey(""); // 4326ace5-57d7-4b9e-b24a-3ac2471eabe3
+        shopProp.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
+
+        try {
+            System.out.println("=====================================");
+            System.out.println("字典: 京东详情页描述");
+            String result = sxProductService.resolveDict("京东详情页描述-重点", expressionParser, shopProp, "Jingdong_928_Jiangxinjie", null);
+//            result = "<div style=\"width:790px; margin: 0 auto;\">" + result + "</div>";
+            System.out.println(result);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    private String getTaskName() {
+        return getClass().getName();
+    }
+
 
     private RuleExpression doDict_京东详情页描述(int propType) {
         // 根字典
@@ -92,75 +139,28 @@ public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
             ruleRoot.addRuleWord(new CustomWord(word));
         }
 
-        if (propType == 1 // 参数图 - 普通商品（非重点之英文使用说明）
-                || propType == 4 // 参数图 - 非重点之英文长描述
-                || propType == 5 // 参数图 - 非重点之中文长描述
-                || propType == 6 // 参数图 - 非重点之中文使用说明
-                ) {
+        if (propType == 4) { // 参数图 - 非重点之英文长描述
+            // charis sta
+            String html = "<div style=\"margin-top: -3px; border-width: 0 15px 0 15px; border-color: #f6f2f1 ; border-style: double solid; padding: 50px 20px 20px 20px; width: 720px;font-family:'microsoft yahei'; font-size: 16pt; color: #000000; \">";
+            ruleRoot.addRuleWord(new TextWord(html));
 
-            {
-                // 前缀
-                String html = "<img width=790px src=\"";
-                ruleRoot.addRuleWord(new TextWord(html));
-            }
+            ruleRoot.addRuleWord(new MasterClrHtmlWord("longDesEn")); // 英文长描述
 
-            {
-                // imageTemplate
-                RuleExpression imageTemplate = new RuleExpression();
-                String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/liking-18-790X260?$790X300$&$wenzi=%s";
-                imageTemplate.addRuleWord(new TextWord(htmlTemplate));
-
-                // 参数imageParams
-                List<RuleExpression> imageParams = new ArrayList<>();
-
-                {
-                    // 第一个参数是描述
-                    RuleExpression ruleExpression = new RuleExpression();
-                    switch (propType) {
-                        case 1:
-                            ruleExpression.addRuleWord(new MasterClrHtmlWord("usageEn")); // 英文使用方法
-                            break;
-                        case 4:
-                            ruleExpression.addRuleWord(new MasterClrHtmlWord("longDesEn")); // 英文长描述
-                            break;
-                        case 5:
-                            ruleExpression.addRuleWord(new MasterClrHtmlWord("longDesCn")); // 中文长描述
-                            break;
-                        case 6:
-                            ruleExpression.addRuleWord(new MasterClrHtmlWord("usageCn")); // 非重点之中文使用说明
-                            break;
-                    }
-                    imageParams.add(ruleExpression);
-                }
-
-                CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
-                ruleRoot.addRuleWord(new CustomWord(word));
-            }
-
-            {
-                // 后缀
-                String html = "\">";
-                ruleRoot.addRuleWord(new TextWord(html));
-            }
+            ruleRoot.addRuleWord(new TextWord("</div>"));
+            // charis end
         }
 
         if (propType == 2) {   // 参数图 - 重点商品
 
             {
-                // 前缀
-                String html = "<img width=790px src=\"";
-                ruleRoot.addRuleWord(new TextWord(html));
-            }
+                String tableTem = "<div style=\"margin-top: -3px; border-width: 0 15px 0 15px; border-color: #f6f2f1; border-style: double solid; padding: 50px 20px 20px 20px; width: 720px; \">" +
+                        "<table style=\"width: 720px; font-family: microsoft yahei; font-size: 16pt; color: #000000; cellspacing: 0; cellpadding: 0\">";
+                int columnCount = 2;
+                RuleExpression tableTemplate = new RuleExpression();
+                tableTemplate.addRuleWord(new TextWord(tableTem));
 
-            {
-                // imageTemplate
-                RuleExpression imageTemplate = new RuleExpression();
-                String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/liking790X373xinxi?$790X373$&$1=%s&$2=%s&$3=%s&$4=%s&$5=%s&$6=%s&$7=%s&$8=%s&$9=%s&$10=%s&$11=%s&$12=%s&$13=%s&$14=%s&$15=%s&$16=%s";
-                imageTemplate.addRuleWord(new TextWord(htmlTemplate));
-
-                // 参数imageParams
-                List<RuleExpression> imageParams = new ArrayList<>();
-
+                // 参数tableParams
+                List<RuleExpression> tableParams = new ArrayList<>();
                 {
                     // 共7个属性
                     for (int index = 0; index < 16; index++) {
@@ -168,18 +168,12 @@ public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
                         ruleExpression.addRuleWord(new FeedCnWord(true, index));
                         ruleExpression.addRuleWord(new TextWord("   "));
                         ruleExpression.addRuleWord(new FeedCnWord(false, index));
-                        imageParams.add(ruleExpression);
+                        tableParams.add(ruleExpression);
                     }
                 }
 
-                CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
+                CustomWordValueTableWithParam word = new CustomWordValueTableWithParam(tableTemplate, columnCount, tableParams);
                 ruleRoot.addRuleWord(new CustomWord(word));
-            }
-
-            {
-                // 后缀
-                String html = "\">";
-                ruleRoot.addRuleWord(new TextWord(html));
             }
         }
 

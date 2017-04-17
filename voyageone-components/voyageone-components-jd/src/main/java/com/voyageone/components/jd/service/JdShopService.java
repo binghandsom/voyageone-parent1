@@ -126,8 +126,9 @@ public class JdShopService extends JdBase {
             SellerCatDeleteResponse response = reqApi(shop, request);
 
             if (response != null) {
-                // 京东返回异常的场合
-                if (!JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                // 京东返回异常的场合, 并且error_code != 12300008:需要删除的店铺分类不存在时, 抛出异常
+                if (!JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())
+                        && !"12300008".equals(response.getCode())) {
                     logger.error("调用京东API删除前台展示的商家自定义店内分类信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
                     throw new BusinessException(shop.getShop_name() + "删除前台展示的商家自定义店内分类信息失败 " +  response.getMsg());
                 }
