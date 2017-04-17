@@ -588,6 +588,7 @@ public class PlatformPriceService extends VOAbsLoggable {
 
                 try {
 
+                    updateProductPlatformPrice(productModel, cartId, false, userName, msg);
                     // 保存计算结果
                     JongoUpdate updObj = new JongoUpdate();
                     updObj.setQuery("{'common.fields.code':#}");
@@ -597,8 +598,6 @@ public class PlatformPriceService extends VOAbsLoggable {
                     WriteResult rs = productService.updateFirstProduct(updObj, channelId);
                     $debug("CmsProductVoRateUpdateService 保存计算结果 " + rs.toString());
 
-
-                    updateProductPlatformPrice(productModel, cartId, false, userName, msg);
                 } catch (Exception exp) {
 
                     $error(String.format("CmsProductVoRateUpdateService 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channelId, code, cartId, exp.getMessage()), exp);
@@ -758,7 +757,7 @@ public class PlatformPriceService extends VOAbsLoggable {
         Map<String, Object> params = mqMessageBody.getParams();
 
         // 检查商品价格 notChkPrice=1时表示忽略价格超过阈值
-        Integer notChkPriceFlg = (Integer) params.get("notChkPrice");
+        Integer notChkPriceFlg = (Integer) params.get("notChkPriceFlg");
         String priceType = StringUtils.trimToNull((String) params.get("priceType"));
         String optionType = StringUtils.trimToNull((String) params.get("optionType"));
         String priceValue = StringUtils.trimToNull((String) params.get("priceValue"));
@@ -935,7 +934,9 @@ public class PlatformPriceService extends VOAbsLoggable {
                     skuObj.setAttribute("priceDiffFlg", diffFlg);
 
                     // 价格变更check
-                    priceService.priceCheck(skuObj, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
+                    if(notChkPriceFlg == null || 1 != notChkPriceFlg) {
+                        priceService.priceCheck(skuObj, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
+                    }
 
                     CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
                     cmsBtPriceLogModel.setChannelId(channelId);
@@ -1004,6 +1005,10 @@ public class PlatformPriceService extends VOAbsLoggable {
         int cnt = cmsBtPriceLogService.addLogListAndCallSyncPriceJob(priceLogList);
         $debug("批量修改商品价格 记入价格变更履历结束 结果=" + cnt + " 耗时" + (System.currentTimeMillis() - sta));
 
+        // jw旗舰店天猫国际的价格发生变化 同步到liking 因为liking店的价格取决与旗舰店的价格
+        if(channelId.equals("010") && cartId == 23) {
+            sxProductService.insertSxWorkLoad(channelId, productCodes, 928, userName);
+        }
         return errorInfos;
     }
 

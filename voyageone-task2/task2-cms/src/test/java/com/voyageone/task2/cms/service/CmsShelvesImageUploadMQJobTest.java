@@ -23,7 +23,7 @@ public class CmsShelvesImageUploadMQJobTest {
     @Test
     public void onStartup() throws Exception {
         CmsShelvesImageUploadMQMessageBody map = new CmsShelvesImageUploadMQMessageBody();
-        map.setShelvesId(1);
+        map.setShelvesId(29);
         cmsShelvesImageUploadMQJob.onStartup(map);
     }
     @Test

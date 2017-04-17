@@ -266,7 +266,7 @@ define([
                 return;
             }
 
-            self.confirm(resp.message + ",是否强制保存").then(function () {
+            self.confirm(resp.message + "是否强制保存").then(function () {
                 productDetailService.updateProductPlatform(updateInfo).then(function (resp) {
                     self.vm.platform.modified = resp.data.modified;
                     self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
@@ -330,17 +330,26 @@ define([
      */
     SpFxController.prototype.updateSkuPrice = function () {
         var self = this,
-            $scope = self.$scope;
-
-        self.confirm("您是否确认要刷新sku价格").then(function () {
-            self.productDetailService.updateSkuPrice({
+            $scope = self.$scope,
+            upEntity = {
                 cartId: $scope.cartInfo.value,
                 prodId: $scope.productInfo.productId,
                 platform: self.vm.platform
-            }).then(function () {
+            };
+
+        self.confirm("您是否确认要刷新sku价格").then(function () {
+            self.productDetailService.updateSkuPrice(_.extend(upEntity, {priceCheck: true})).then(function () {
                 self.notify.success("TXT_MSG_UPDATE_SUCCESS");
             }, function (res) {
-                self.alert(res.message);
+                if (res.code != "4000094")
+                    return;
+
+                self.confirm(res.message + "是否强制保存").then(function () {
+                    self.productDetailService.updateSkuPrice(_.extend(upEntity, {priceCheck: false})).then(function () {
+                        self.notify.success("TXT_MSG_UPDATE_SUCCESS");
+                    });
+
+                });
             });
         });
     };

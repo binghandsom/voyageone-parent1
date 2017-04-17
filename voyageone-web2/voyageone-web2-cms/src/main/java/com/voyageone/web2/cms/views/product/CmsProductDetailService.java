@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.product;
 
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
@@ -38,6 +39,7 @@ import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
+import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
@@ -579,7 +581,7 @@ public class CmsProductDetailService extends BaseViewService {
         List<String> prodCodes = null;
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            prodCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+            prodCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (Map<String, Object>) requestMap.get("searchInfo"));
         } else {
             prodCodes = (List<String>) requestMap.get("prodIds");
         }
@@ -602,7 +604,7 @@ public class CmsProductDetailService extends BaseViewService {
         return resultMap;
     }
 
-    public Map<String, Object> refreshProductCategory(Map requestMap, UserSessionBean userInfo, CmsSessionBean cmsSession) {
+    public Map<String, Object> refreshProductCategory(Map requestMap, UserSessionBean userInfo) {
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -613,7 +615,7 @@ public class CmsProductDetailService extends BaseViewService {
         List<String> prodCodes = null;
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            prodCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+            prodCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (Map<String, Object>)requestMap.get("searchInfo"));
         } else {
             prodCodes = (List<String>) requestMap.get("prodIds");
         }
@@ -841,6 +843,13 @@ public class CmsProductDetailService extends BaseViewService {
                 try {
                     String msg = String.format("产品编辑页面-税号变更.变更前: %s, %s;变更后:%s,%s", oldHsCodePrivate, oldHsCodeCross, newHsCodePrivate, newHsCodeCross);
                     platformPriceService.updateProductPlatformPrice(newProduct, cartId, false, modifier, msg);
+                    // 保存计算结果
+                    JongoUpdate updObj2 = new JongoUpdate();
+                    updObj2.setQuery("{'common.fields.code':#}");
+                    updObj2.setQueryParameters(newProduct.getCommon().getFields().getCode());
+                    updObj2.setUpdate("{$set:{'platforms.P#.skus':#}}");
+                    updObj2.setUpdateParameters(cartId, newProduct.getPlatform(cartId).getSkus());
+                    productService.updateFirstProduct(updObj2, channelId);
                 } catch (PriceCalculateException e) {
                     throw new BusinessException("价格计算错误,cartId:" + cartId + e.getMessage());
                 } catch (IllegalPriceConfigException e) {
@@ -902,7 +911,7 @@ public class CmsProductDetailService extends BaseViewService {
                 if (temp != null && temp.size() > 0 && !StringUtil.isEmpty(temp.get(0).getCatId())) {
                     platform.setpCatId(temp.get(0).getCatId());
                     platform.setpCatPath(temp.get(0).getCatPath());
-                    productPlatformService.updateProductPlatformWithSx(oldProduct.getChannelId(), oldProduct.getProdId(), platform, modifier, "变更主类目-关联平台类目变更", false);
+                    productPlatformService.updateProductPlatformWithSx(oldProduct.getChannelId(), oldProduct.getProdId(), platform, modifier, "变更主类目-关联平台类目变更", false, 1);
                 }
             }
         });

@@ -28,6 +28,7 @@ import com.voyageone.components.jumei.service.JumeiSaleService;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.*;
 import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
 import com.voyageone.service.bean.cms.product.DelistingParameter;
+import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
@@ -37,10 +38,8 @@ import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
-import com.voyageone.service.impl.cms.product.CmsBtCombinedProductService;
-import com.voyageone.service.impl.cms.product.ProductGroupService;
-import com.voyageone.service.impl.cms.product.ProductPlatformService;
-import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.*;
+import com.voyageone.service.impl.cms.sx.PlatformWorkloadAttribute;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -60,6 +59,10 @@ import java.util.stream.Collectors;
 @Service
 public class CmsProductPlatformDetailService extends BaseViewService {
     @Autowired
+    PriceService priceService;
+    @Autowired
+    JumeiSaleService jmSaleService;
+    @Autowired
     private ProductService productService;
     @Autowired
     private ProductGroupService productGroupService;
@@ -76,11 +79,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     @Autowired
     private CmsProductDetailService cmsProductDetailService;
     @Autowired
-    PriceService priceService;
-    @Autowired
     private ProductPlatformService productPlatformService;
-    @Autowired
-    JumeiSaleService jmSaleService;
     @Autowired
     private CmsBtCombinedProductService cmsBtCombinedProductService;
     @Autowired
@@ -89,6 +88,8 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     private CmsBtPlatformActiveLogDao platformActiveLogDao;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private ProductStatusHistoryService productStatusHistoryService;
 
     //设置isSale
     public void setCartSkuIsSale(SetCartSkuIsSaleParameter parameter, String channelId, String userName) {
@@ -106,7 +107,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             f.setAttribute("isSale", parameter.getIsSale());
         });
         // 根据商品情况,判断上新是否做上新操作
-        productPlatformService.updateProductPlatformWithSx(channelId, parameter.getProdId(), platform, userName, "设置sku的isSale状态", false);
+        productPlatformService.updateProductPlatformWithSx(channelId, parameter.getProdId(), platform, userName, "设置sku的isSale状态", false, 1);
 
     }
 
@@ -352,7 +353,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 CmsBtProductModel_Platform_Cart mainPlatform = mainProduct.getPlatform(cartId);
                 if (mainPlatform == null || StringUtil.isEmpty(mainPlatform.getpCatId())) {
 //                    throw new BusinessException(CartEnums.Cart.getValueByID(cartId + "") + "该商品的主商品类目没有设置，请先设置主商品：" + mainProduct.getCommon().getFields().getCode());
-                }else{
+                } else {
                     platformCart.setpCatPath(mainPlatform.getpCatPath());
                     platformCart.setpCatId(mainPlatform.getpCatId());
                 }
@@ -515,9 +516,10 @@ public class CmsProductPlatformDetailService extends BaseViewService {
      * @param platform
      * @param modifier
      * @param blnSmartSx
+     * @param platformWorkloadAttributes  部分属性上新  DESCRIPTION	TITLE	ITEM_IMAGES	    SELLER_CIDS	    SELL_POINTS	    WIRELESS_DESC
      * @return
      */
-    public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier, Boolean blnSmartSx) {
+    public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier, Boolean blnSmartSx, List<String> platformWorkloadAttributes) {
         /**保存类型*/
         String saveType = null;
         if (platform.get("saveType") != null) {
@@ -534,11 +536,10 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
 
         Boolean isCatPathChg = false;
-        CmsBtProductModel cmsBtProductModel = null;
+        CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, prodId);;
         String modified;
         // 天猫的场合如果平台类目发生变化 清空platforms.Pxx.pProductId    CMSDOC-262
         if (platformModel.getCartId() == CartEnums.Cart.TG.getValue() || platformModel.getCartId() == CartEnums.Cart.TM.getValue()) {
-            cmsBtProductModel = productService.getProductById(channelId, prodId);
             CmsBtProductModel_Platform_Cart oldPlatForm = cmsBtProductModel.getPlatform(platformModel.getCartId());
             modified = oldPlatForm.getModified();
             if (platformModel.getpCatId() != null && !platformModel.getpCatId().equalsIgnoreCase(oldPlatForm.getpCatId())) {
@@ -554,12 +555,36 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             } else {
                 comment = "京东&聚美-产品编辑页-普通上新";
             }
-            modified = productPlatformService.updateProductPlatformWithSmartSx(channelId, prodId, platformModel, modifier, comment, true);
-        } else
-            modified = productPlatformService.updateProductPlatformWithSx(channelId, prodId, platformModel, modifier, "产品编辑页-普通上新", true);
-
+            if(ListUtils.isNull(platformWorkloadAttributes)){
+                modified = productPlatformService.updateProductPlatformWithSmartSx(channelId, prodId, platformModel, modifier, comment, true, 1);
+            }else{
+                modified = productPlatformService.updateProductPlatformWithSmartSx(channelId, prodId, platformModel, modifier, comment, true, 0);
+                platformWorkloadAttributes.forEach(workload->{
+                    PlatformWorkloadAttribute platformWorkloadAttribute = PlatformWorkloadAttribute.get(workload);
+                    if(platformWorkloadAttribute != null){
+                        sxProductService.insertPlatformWorkload(channelId, platformModel.getCartId(), platformWorkloadAttribute, Arrays.asList(cmsBtProductModel.getCommon().getFields().getCode()), modifier);
+                    }
+                });
+            }
+        } else {
+            if (ListUtils.isNull(platformWorkloadAttributes)) {
+                modified = productPlatformService.updateProductPlatformWithSx(channelId, prodId, platformModel, modifier, "产品编辑页-普通上新", true, 1);
+            }else{
+                modified = productPlatformService.updateProductPlatformWithSx(channelId, prodId, platformModel, modifier, "产品编辑页-普通上新", true, 0);
+                platformWorkloadAttributes.forEach(workload->{
+                    PlatformWorkloadAttribute platformWorkloadAttribute = PlatformWorkloadAttribute.get(workload);
+                    if(platformWorkloadAttribute != null){
+                        sxProductService.insertPlatformWorkload(channelId, platformModel.getCartId(), platformWorkloadAttribute, Arrays.asList(cmsBtProductModel.getCommon().getFields().getCode()), modifier);
+                    }
+                });
+            }
+        }
         if (isCatPathChg) {
             productService.resetProductAndGroupPlatformPid(channelId, platformModel.getCartId(), cmsBtProductModel.getCommon().getFields().getCode());
+        }
+
+        if (channelId.equals("010") && platformModel.getCartId() == CartEnums.Cart.TG.getValue()){
+            sxProductService.insertSxWorkLoad(channelId, cmsBtProductModel.getCommon().getFields().getCode(), 928, modifier);
         }
         return modified;
 
@@ -568,12 +593,12 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     /**
      * 产品编辑页保存包含类型判断
      */
-    public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier, Boolean blnSmartSx, String saveType) {
+    public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier, Boolean blnSmartSx, String saveType, List<String> platformWorkloadAttributes) {
         if (saveType != null) {
             platform.put("saveType", saveType);
         }
 
-        return updateProductPlatform(channelId, prodId, platform, modifier, blnSmartSx);
+        return updateProductPlatform(channelId, prodId, platform, modifier, blnSmartSx, platformWorkloadAttributes);
     }
 
     /**
@@ -735,22 +760,22 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 System.out.println(s);
                 if (platform.getFields().get(s) == null || StringUtils.isEmpty(platform.getFields().get(s).toString())) {
                     // 天猫的场合 属性ID是 sku darwin_sku不复制
-                    if(cartId == CartEnums.Cart.TG.getValue()) {
+                    if (cartId == CartEnums.Cart.TG.getValue()) {
                         if (!"sku".equalsIgnoreCase(s) && !"darwin_sku".equalsIgnoreCase(s)) {
                             platform.getFields().put(s, o);
                         }
-                    }else{
+                    } else {
                         platform.getFields().put(s, o);
                     }
                 }
             } else {
                 if (platform.getFields().get(s) == null || StringUtils.isEmpty(platform.getFields().get(s).toString())) {
                     // 天猫的场合 属性ID是 sku darwin_sku不复制
-                    if(cartId == CartEnums.Cart.TG.getValue()) {
+                    if (cartId == CartEnums.Cart.TG.getValue()) {
                         if (!"sku".equalsIgnoreCase(s) && !"darwin_sku".equalsIgnoreCase(s)) {
                             platform.getFields().put(s, o);
                         }
-                    }else{
+                    } else {
                         platform.getFields().put(s, o);
                     }
                 }
@@ -874,6 +899,15 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         bulkList.add(model);
 
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+
+        //插入商品修改历史
+        CmsBtProductModel productModel = productService.getProductById(channelId, prodId);
+        productStatusHistoryService.insert(channelId,
+                productModel.getCommon().getFields().getCode(),
+                productModel.getPlatform(cartId).getStatus(),
+                cartId, EnumProductOperationType.UpdatePlatformLock,
+                String.format("%s,触发%s操作", CartEnums.Cart.getValueByID(cartId.toString()), lock == 1 ? "锁" : "解锁"),
+                userBean.getUserName());
     }
 
     //更新cmsBtProduct

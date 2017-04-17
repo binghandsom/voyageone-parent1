@@ -47,6 +47,7 @@ define([
             channelId: "",
             columnArrow: {}
         };
+        $scope.searchInfoBefo;
         $scope.exportStatus = ["正在生成", "完成", "失败"];
         $scope.initialize = initialize;
         $scope.clear = clear;
@@ -252,6 +253,7 @@ define([
             }
 
             $scope.vm.searchInfo.custAttrMap = angular.copy($scope.vm.custAttrList);
+            $scope.searchInfoBefo = angular.copy($scope.vm.searchInfo);
             searchAdvanceSolrService.search($scope.vm.searchInfo, $scope.vm.productPageOption).then(function (res) {
                 $scope.vm.customProps = res.data.customProps;
                 var sumCustomProps = [];
@@ -417,6 +419,7 @@ define([
                     });
                 }
                 context.productCodes = productIds;
+                context.searchInfo = $scope.searchInfoBefo;
                 shelvesService.addProduct(context).then(function () {
                     notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
                     $scope.search();
@@ -459,6 +462,7 @@ define([
                 }
                 context.selCnt = selCnt;
                 context.autoSynPrice = $scope.vm.masterData.autoApprovePrice;
+                context.searchInfo = $scope.searchInfoBefo;
                 openFieldEdit(selList, context).then(function () {
                     $scope.search();
                 })
@@ -479,7 +483,8 @@ define([
 
                 productDetailService.refreshProductCategory({
                     prodIds: productIds,
-                    isSelAll: $scope.vm._selall ? 1 : 0
+                    isSelAll: $scope.vm._selall ? 1 : 0,
+                    searchInfo: $scope.searchInfoBefo
                 }).then(function () {
                     notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     $scope.search();
@@ -533,7 +538,8 @@ define([
                         sizeTypeCn: selectedCat.sizeTypeCn,
                         hscodeName8: selectedCat.hscodeName8,
                         hscodeName10: selectedCat.hscodeName10,
-                        isSelAll: $scope.vm._selall ? 1 : 0
+                        isSelAll: $scope.vm._selall ? 1 : 0,
+                        searchInfo: $scope.searchInfoBefo
                     };
                     productDetailService.changeCategory(data).then(function (res) {
                         if (res.data.isChangeCategory) {
@@ -723,7 +729,8 @@ define([
                     'tagTypeSel': '4',
                     'cartId': $scope.vm.searchInfo.cartId,
                     'productIds': productIds,
-                    'selAllFlg': $scope.vm._selall ? 1 : 0
+                    'selAllFlg': $scope.vm._selall ? 1 : 0,
+                    'searchInfo': $scope.searchInfoBefo
                 }).then(function (res) {
                     // 设置自由标签
                     var msg = '';
@@ -744,7 +751,8 @@ define([
                                 "tagPathList": freeTags,
                                 "prodIdList": productIds,
                                 "isSelAll": $scope.vm._selall ? 1 : 0,
-                                "orgDispTagList": res.orgDispTagList
+                                "orgDispTagList": res.orgDispTagList,
+                                'searchInfo':$scope.searchInfoBefo
                             };
                             $searchAdvanceService2.addFreeTag(data).then(function () {
                                 notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
@@ -821,7 +829,8 @@ define([
                     cartId: cartId,
                     _option: 'putonoff',
                     productIds: productIds,
-                    isSelAll: $scope.vm._selall ? 1 : 0
+                    isSelAll: $scope.vm._selall ? 1 : 0,
+                    searchInfo: $scope.searchInfoBefo
                 }).then(
                     function () {
                         $scope.search();
@@ -851,7 +860,8 @@ define([
                     $fieldEditService.intelligentPublish({
                         cartId: cartId,
                         productIds: productIds,
-                        isSelectAll: $scope.vm._selall ? 1 : 0
+                        isSelectAll: $scope.vm._selall ? 1 : 0,
+                        searchInfo: $scope.searchInfoBefo
                     }).then(function () {
                         alert('已完成商品的智能上新！');
                         $scope.search();
@@ -882,7 +892,8 @@ define([
                         cartId: cartId,
                         _option: 'approval',
                         productIds: productIds,
-                        isSelAll: $scope.vm._selall ? 1 : 0
+                        isSelAll: $scope.vm._selall ? 1 : 0,
+                        searchInfo: $scope.searchInfoBefo
                     };
 
                     check(property);
@@ -948,6 +959,7 @@ define([
                 }
                 var property = {'cartId': cartId, '_option': 'saleprice', 'productIds': productIds};
                 property.isSelAll = $scope.vm._selall ? 1 : 0;
+                property.searchInfo = $scope.searchInfoBefo;
 
                 var config = $scope.vm.masterData.autoApprovePrice["0"];
                 if ($scope.vm.masterData.autoApprovePrice[cartId]) {
@@ -1073,7 +1085,10 @@ define([
          * @param openCategoryEdit
          */
         function openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit, cartId) {
-            _chkProductSel(cartId, _openAddChannelCategory, {'isSelAll': $scope.vm._selall ? 1 : 0});
+            _chkProductSel(cartId, _openAddChannelCategory, {
+                'isSelAll': $scope.vm._selall ? 1 : 0,
+                "searchInfo": $scope.searchInfoBefo
+            });
 
             function _openAddChannelCategory(cartId, selList, context) {
                 openAddChannelCategoryEdit(selList, cartId, context).then(function (res) {
@@ -1083,6 +1098,7 @@ define([
                     });
                     res.productIds = productIds;
                     res.isSelAll = $scope.vm._selall ? 1 : 0;
+                    res.searchInfo = $scope.searchInfoBefo;
                     $addChannelCategoryService.save(res).then(function () {
                         notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
                         $scope.search();
@@ -1217,7 +1233,8 @@ define([
                         'cartId': cartId,
                         _option: 'retailprice',
                         productIds: productIds,
-                        isSelAll: $scope.vm._selall ? 1 : 0
+                        isSelAll: $scope.vm._selall ? 1 : 0,
+                        searchInfo: $scope.searchInfoBefo
                     }).then(function (res) {
                         if (res.data == null || res.data.ecd == null || res.data.ecd == undefined) {
                             alert($translate.instant('TXT_COMMIT_ERROR'));
@@ -1233,6 +1250,33 @@ define([
                     });
                 });
             }
+        };
+
+        /**
+         * 客户建议售价变更确认
+         * @param cartObj 平台信息
+         */
+        $scope.clientMsrpConfirm = function () {
+            _chkProductSel('0', function (cartId, _selProdList) {
+
+                confirm('即将对选中的商品全店铺批量确认指导价变更').then(function () {
+
+                    $fieldEditService.bulkConfClientMsrp({
+                        productIds: _.pluck(_selProdList, 'code'),
+                        isSelAll: $scope.vm._selall ? 1 : 0,
+                        searchInfo: $scope.searchInfoBefo
+                    }).then(function (res) {
+
+                        if (res.data) {
+                            $scope.search();
+                            notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        }
+
+                    });
+
+                });
+
+            });
         };
 
         /**
@@ -1267,7 +1311,8 @@ define([
                                 "productIds": context.selList,
                                 "cartId": +context.cartId,
                                 "pCatPath": data.selected.catPath,
-                                "pCatId": data.selected.catId
+                                "pCatId": data.selected.catId,
+                                "searchInfo": $scope.searchInfoBefo
                             }).then(function () {
                                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                                 $scope.search();
@@ -1292,7 +1337,8 @@ define([
                 popups.popupPlatformPopOptions({
                     productIds: context.selList,
                     isSelAll: $scope.vm._selall,
-                    cartId: context.cartId
+                    cartId: context.cartId,
+                    searchInfo: $scope.searchInfoBefo
                 });
 
             }
@@ -1331,7 +1377,8 @@ define([
                         cartId: cartId,
                         _option: 'refreshRetailPrice',
                         productIds: productIds,
-                        isSelAll: $scope.vm._selall ? 1 : 0
+                        isSelAll: $scope.vm._selall ? 1 : 0,
+                        searchInfo: $scope.searchInfoBefo
                     }).then(function (res) {
                         if (res.data == null || res.data.ecd == null || res.data.ecd == undefined) {
                             alert($translate.instant('TXT_COMMIT_ERROR'));
@@ -1357,7 +1404,8 @@ define([
             _chkProductSel(cartBean.value, function (cartId, selList, context) {
                 popups.openJoinPromotion(_.extend({
                     cartBean: cartBean,
-                    selList: selList
+                    selList: selList,
+                    searchInfo: $scope.searchInfoBefo
                 }, context)).then(function (context) {
 
                 });

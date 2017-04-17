@@ -86,8 +86,8 @@ public class ProductPlatformService extends BaseService {
      * @param isModifiedChk
      * @return
      */
-    public String updateProductPlatformWithSmartSx(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, String Comment, boolean isModifiedChk) {
-        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.IntelligentPublish, Comment, true, 1);
+    public String updateProductPlatformWithSmartSx(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, String Comment, boolean isModifiedChk, Integer isSx) {
+        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.IntelligentPublish, Comment, true, isSx);
     }
 
     /**
@@ -101,7 +101,10 @@ public class ProductPlatformService extends BaseService {
      * @return
      */
     public String updateProductPlatformWithSx(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, String Comment, boolean isModifiedChk) {
-        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.WebEdit, Comment, false, 1);
+        return updateProductPlatformWithSx(channelId, prodId, platformModel, modifier, Comment, isModifiedChk, 1);
+    }
+    public String updateProductPlatformWithSx(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, String Comment, boolean isModifiedChk, Integer isSx) {
+        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.WebEdit, Comment, false, isSx);
     }
 
     /**

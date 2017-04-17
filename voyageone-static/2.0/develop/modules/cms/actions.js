@@ -499,12 +499,6 @@ define(function () {
                 }
             },
             "pop": {
-                "$addToPromotionService": {
-                    "root": "/cms/pop/add_to_promotion",
-                    "getPromotionTags": "getPromotionTags",
-                    "addToPromotion": "addToPromotion",
-                    "checkPromotionTags": "checkPromotionTags"
-                },
                 "addProductToPromotionService": {
                     "root": "/cms/pop/add_product_to_promotion",
                     "init": "init",
@@ -519,7 +513,8 @@ define(function () {
                     bulkSetPlatformFields: "bulkSetPlatformFields",
                     getPlatfromPopOptions: "getPlatfromPopOptions",
                     intelligentPublish: "intelligentPublish",
-                    bulkLockProducts: "bulkLockProducts"
+                    bulkLockProducts: "bulkLockProducts",
+                    bulkConfClientMsrp:"bulkConfClientMsrp"
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",
@@ -697,7 +692,7 @@ define(function () {
                         "import": "import",
                         "delete": "delete",
                         "saveFeed": "saveFeed",
-                        "createFeed": "createFeed",
+                        "createFeed": "createFeed"
                     }
                 }
             },

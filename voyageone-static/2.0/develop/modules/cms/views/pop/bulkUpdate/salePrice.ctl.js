@@ -2,10 +2,10 @@
  * Created by sofia on 6/7/2016.
  */
 define([
-    'angularAMD',
+    'cms',
     'modules/cms/controller/popup.ctl'
-], function (angularAMD) {
-    angularAMD.controller('popSalePriceCtl', function ($scope, $fieldEditService, $translate, $modalInstance, $filter, confirm, notify, alert, context, cActions) {
+], function (cms) {
+    cms.controller('popSalePriceCtl', function ($scope, $fieldEditService, $translate, $modalInstance, $filter, confirm, notify, alert, context, cActions) {
 
         $scope.vm = {
             property: context.property,
@@ -54,6 +54,7 @@ define([
             $scope.vm.property.priceValue = $scope.vm.priceValue;
             $scope.vm.property.roundType = parseInt($scope.vm.roundType);
             $scope.vm.property.skuUpdType = parseInt($scope.vm.skuUpdType);
+            $scope.vm.property.notChkPriceFlg = true == $scope.vm.notChkPriceFlg?1:0;
             confirm($translate.instant('TXT_BULK_SETSALEPRICE')).then(function(){
                 _setProductFields($scope.vm.property);
             });
@@ -69,23 +70,6 @@ define([
                         alert($translate.instant('未选择商品，请选择后再操作'));
                         return;
                     }
-                    //if (res.data.ecd == 2) {　下面注释掉的代码暂时保留，将来可能会有用
-                    //    // 低于指导价
-                    //    alert("商品[code=" + res.data.prodCode + ", sku=" + res.data.skuCode + "]的最终售价[" + $filter('number')(res.data.priceSale, 2) + "]低于指导价[" + $filter('number')(res.data.priceLimit, 2) + "]，请重新输入。");
-                    //    return;
-                    //}
-                    //if (res.data.ecd == 3) {
-                    //    // 大于阀值
-                    //    var errMsg = "商品[code=" + res.data.prodCode + ", sku=" + res.data.skuCode + "]的最终售价[" + $filter('number')(res.data.priceSale, 2) + "]超过阈值[" + $filter('number')(res.data.priceLimit, 2) + "]，请确认。";
-                    //    errMsg += "<br><br>点击[" + $translate.instant('BTN_OK') + "]按钮将跳过所有此类问题，不更新最终售价，";
-                    //    errMsg += "<br>点击[" + $translate.instant('BTN_CANCEL') + "]按钮将退出更新。";
-                    //
-                    //    confirm(errMsg).then(function () {
-                    //        $scope.vm.property.notChkPrice = 1;
-                    //        _setProductFields($scope.vm.property);
-                    //    });
-                    //    return;
-                    //}
                     if (res.data.ecd == 6) {
                         // 数据错误
                         alert("商品[code=" + res.data.prodCode + "]的数据错误，没有skuCode。");
@@ -136,7 +120,7 @@ define([
                 }
             }
             $.download.post(cActions.cms.pop.$fieldEditService.root + '/' + cActions.cms.pop.$fieldEditService.dldUnProcCode4PriceSale, {}, _exportFileCallback);
-        }
+        };
 
         // 选择表达式时的画面检查
         $scope.chkOptionType = function () {
@@ -180,5 +164,6 @@ define([
                 // $scope.vm.skuUpdType = "1";
             }
         };
+
     });
 });

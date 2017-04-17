@@ -1,0 +1,40 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h5 class="modal-title"><i class="fa fa-gear"></i></h5>
+    </div>
+
+    <div class="modal-body wrapper">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <colgroup>
+                    <col class="col-xs-1">
+                    <col class="col-xs-7">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th class="col-md-8">属性</th>
+                        <th class="col-md-4 text-center">是否更新</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="attribute in ctrl.context.attribute">
+                        <td class="col-md-8">
+                            <code>{{ctrl.attibuteName[attribute]}}</code>
+                        </td>
+                        <td class="col-md-4 text-center">
+                            <input type="checkbox" ng-model="ctrl.targetAttr[attribute]">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-success" ng-click="ctrl.ok()"><i class="fa fa-check "></i>&nbsp;确认</button>
+    </div>
+</div>

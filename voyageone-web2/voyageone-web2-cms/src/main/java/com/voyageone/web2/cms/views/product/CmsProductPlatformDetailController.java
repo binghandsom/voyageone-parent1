@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -114,6 +115,8 @@ public class CmsProductPlatformDetailController extends CmsController {
 
         Map<String, Object> platform = (Map<String, Object>) params.get("platform");
 
+        List<String> platformWorkloadAttributes = (List<String>) params.get("platformWorkloadAttributes");
+
         String channelId = getUser().getSelChannelId(),
                 cartId = platform.get("cartId").toString();
 
@@ -125,7 +128,7 @@ public class CmsProductPlatformDetailController extends CmsController {
 
         Boolean blnSmartSx = CartEnums.Cart.isJdSeries(_cartEnum) || CartEnums.Cart.JM.equals(_cartEnum) || type.equals("intel");
 
-        result.put("modified", cmsProductPlatformDetailService.updateProductPlatform(channelId, prodId, platform, getUser().getUserName(), blnSmartSx, type));
+        result.put("modified", cmsProductPlatformDetailService.updateProductPlatform(channelId, prodId, platform, getUser().getUserName(), blnSmartSx, type, platformWorkloadAttributes));
 
         return success(result);
     }

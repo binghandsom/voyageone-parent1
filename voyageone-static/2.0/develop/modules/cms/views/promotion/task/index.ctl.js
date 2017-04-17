@@ -24,9 +24,9 @@ define([
     
         TaskIndexController.prototype = {
             init: function () {
-                var ttt = this;
-                ttt.taskService.page(ttt.searchInfo).then(function(res){
-                    ttt.tasks = res.data;
+                var self = this;
+                self.taskService.page(self.searchInfo).then(function(res){
+                    self.tasks = res.data;
                 });
             },
 
@@ -43,27 +43,27 @@ define([
                 }
             },
             search: function(){
-                var ttt = this;
+                var self = this;
                 this.taskService.page(this.searchInfo).then(function(res){
-                    ttt.tasks = res.data;
+                    self.tasks = res.data;
                 });
             },
             clear: function(){
                 this.searchInfo={};
             },
             delete: function(task){
-                var ttt = this;
-                ttt.confirm('TXT_MSG_DO_DELETE').then(function () {
+                var self = this;
+                self.confirm('TXT_MSG_DO_DELETE').then(function () {
                     // 库存隔离
                     if (task.taskType == '2') {
-                        ttt.taskStockService.delTask({
+                        self.taskStockService.delTask({
                             "taskId" : task.id
                         }).then(function (res) {
-                            ttt.notify.success('TXT_MSG_DELETE_SUCCESS');
-                            ttt.search();
+                            self.notify.success('TXT_MSG_DELETE_SUCCESS');
+                            self.search();
                         }, function (err) {
                             if (err.displayType == null) {
-                                ttt.alert('TXT_MSG_DELETE_FAIL');
+                                self.alert('TXT_MSG_DELETE_FAIL');
                             }
                         })
                     }
