@@ -582,6 +582,10 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         if (isCatPathChg) {
             productService.resetProductAndGroupPlatformPid(channelId, platformModel.getCartId(), cmsBtProductModel.getCommon().getFields().getCode());
         }
+
+        if (channelId.equals("010") && platformModel.getCartId() == CartEnums.Cart.TG.getValue()){
+            sxProductService.insertSxWorkLoad(channelId, cmsBtProductModel.getCommon().getFields().getCode(), 928, modifier);
+        }
         return modified;
 
     }

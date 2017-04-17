@@ -1006,6 +1006,10 @@ public class PlatformPriceService extends VOAbsLoggable {
         int cnt = cmsBtPriceLogService.addLogListAndCallSyncPriceJob(priceLogList);
         $debug("批量修改商品价格 记入价格变更履历结束 结果=" + cnt + " 耗时" + (System.currentTimeMillis() - sta));
 
+        // jw旗舰店天猫国际的价格发生变化 同步到liking 因为liking店的价格取决与旗舰店的价格
+        if(channelId.equals("010") && cartId == 23) {
+            sxProductService.insertSxWorkLoad(channelId, productCodes, 928, userName);
+        }
         return errorInfos;
     }
 

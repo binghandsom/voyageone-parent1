@@ -268,7 +268,11 @@ public class PriceService extends BaseService {
 
         switch (priceCalculator) {
             case PRICE_CALCULATOR_SYSTEM:
-                setPriceBySystem(product, cartId, synSalePriceFlg, priceCalculatorConfig);
+                if("928".equals(product.getChannelId()) && "010".equals(product.getOrgChannelId())){
+                    setPriceBySystemFormula(product,cartId);
+                }else{
+                    setPriceBySystem(product, cartId, synSalePriceFlg, priceCalculatorConfig);
+                }
                 break;
             case PRICE_CALCULATOR_FORMULA:
                 setPriceByFormula(product, cartId, synSalePriceFlg, priceCalculatorConfig);
@@ -740,7 +744,31 @@ public class PriceService extends BaseService {
         // 设置中国建议售价
         unifySkuPriceMsrp(unifySkus, channelId, cartId);
     }
+    /**
+     * 通过SYSTEM的价格公式计算价格
+     * @param product 产品信息
+     * @param cartId  平台Id
+     * @throws PriceCalculateException
+     * @throws IllegalPriceConfigException
+     */
+    private void setPriceBySystemFormula(CmsBtProductModel product, Integer cartId)  {
+        CmsBtProductModel_Platform_Cart platform = product.getPlatform(cartId);
+        Map<String, CmsBtProductModel_Sku> commonSku = product.getCommonNotNull().getSkus().stream().collect(toMap(CmsBtProductModel_Sku::getSkuCode, sku->sku));
 
+        platform.getSkus().forEach(sku->{
+            if(commonSku.containsKey(sku.getStringAttribute("skuCode"))){
+                CmsBtProductModel_Sku comsku = commonSku.get(sku.getStringAttribute("skuCode"));
+                sku.put(priceMsrp.name(), comsku.getClientMsrpPrice());
+                sku.put(priceRetail.name(), sku.getDoubleAttribute(priceRetail.name()) + 10.0 > comsku.getClientRetailPrice()? sku.getDoubleAttribute(priceRetail.name()) + 10.0 : comsku.getClientRetailPrice());
+                sku.put(priceSale.name(), sku.getDoubleAttribute(priceSale.name()) + 10.0 > comsku.getClientRetailPrice()? sku.getDoubleAttribute(priceSale.name()) + 10.0 : comsku.getClientRetailPrice());
+                // 最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，向下击穿警告:5）
+                sku.put(priceDiffFlg.name(), "1");
+                sku.put(priceChgFlg.name(),"0");
+            }
+        });
+
+
+    }
     /**
      * 使用固定公式计算价格, 并保存到商品模型上
      *
