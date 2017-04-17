@@ -757,7 +757,7 @@ public class PlatformPriceService extends VOAbsLoggable {
         Map<String, Object> params = mqMessageBody.getParams();
 
         // 检查商品价格 notChkPrice=1时表示忽略价格超过阈值
-        Integer notChkPriceFlg = (Integer) params.get("notChkPrice");
+        Integer notChkPriceFlg = (Integer) params.get("notChkPriceFlg");
         String priceType = StringUtils.trimToNull((String) params.get("priceType"));
         String optionType = StringUtils.trimToNull((String) params.get("optionType"));
         String priceValue = StringUtils.trimToNull((String) params.get("priceValue"));
@@ -934,7 +934,7 @@ public class PlatformPriceService extends VOAbsLoggable {
                     skuObj.setAttribute("priceDiffFlg", diffFlg);
 
                     // 价格变更check
-                    if(1 != notChkPriceFlg) {
+                    if(notChkPriceFlg == null || 1 != notChkPriceFlg) {
                         priceService.priceCheck(skuObj, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
                     }
 
