@@ -18,6 +18,8 @@ import com.voyageone.components.tmall.TbBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 /**
  * Created by Administrator on 2015/10/29.
  */
@@ -30,6 +32,7 @@ public class TbPromotionService extends TbBase {
 
     @Autowired(required = false)
     public TbPromotionService(MqSenderService mqSenderService, Async async) {
+        Objects.nonNull(mqSenderService);
         this.mqSenderService = mqSenderService;
         this.async = async != null && async.async;
     }
