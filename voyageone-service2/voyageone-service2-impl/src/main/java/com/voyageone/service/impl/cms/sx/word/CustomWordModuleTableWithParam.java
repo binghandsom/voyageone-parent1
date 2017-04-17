@@ -50,6 +50,11 @@ public class CustomWordModuleTableWithParam extends CustomWordModule {
 //            }
             tableParams.add(tableParam);
         }
+
+        // 获取列宽
+        int columnWidth = 100 / columnCount;
+        String tdStyle = "width: " + columnWidth + "%; vertical-align: top;";
+
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(tableTemplate);
         for (int paramIdx = 0; paramIdx < tableParams.size();) {
@@ -61,7 +66,7 @@ public class CustomWordModuleTableWithParam extends CustomWordModule {
                 } else {
                     tableParamItem = tableParams.get(paramIdx);
                 }
-                stringBuffer.append(String.format("<td>%s</td>", tableParamItem));
+                stringBuffer.append(String.format("<td style=\"%s\">%s</td>", tdStyle, tableParamItem));
                 paramIdx++;
             }
             stringBuffer.append("</tr>");
