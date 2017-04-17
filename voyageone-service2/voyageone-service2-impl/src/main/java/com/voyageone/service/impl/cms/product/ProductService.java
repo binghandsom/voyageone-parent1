@@ -1035,7 +1035,6 @@ public class ProductService extends BaseService {
                         .append(",'modifier':#")
                         .append("}}");
 
-
                 JongoUpdate updateObj = new JongoUpdate();
                 updateObj.setQuery("{'common.fields.code':#}");
                 updateObj.setQueryParameters(productCode);

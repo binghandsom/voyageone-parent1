@@ -903,7 +903,7 @@ public class CmsProductDetailService extends BaseViewService {
                 if (temp != null && temp.size() > 0 && !StringUtil.isEmpty(temp.get(0).getCatId())) {
                     platform.setpCatId(temp.get(0).getCatId());
                     platform.setpCatPath(temp.get(0).getCatPath());
-                    productPlatformService.updateProductPlatformWithSx(oldProduct.getChannelId(), oldProduct.getProdId(), platform, modifier, "变更主类目-关联平台类目变更", false);
+                    productPlatformService.updateProductPlatformWithSx(oldProduct.getChannelId(), oldProduct.getProdId(), platform, modifier, "变更主类目-关联平台类目变更", false, 1);
                 }
             }
         });
