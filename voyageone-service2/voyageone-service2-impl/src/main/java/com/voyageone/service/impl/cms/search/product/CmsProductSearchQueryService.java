@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.search.product;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.components.solr.bean.CmsProductSearchModel;
 import com.voyageone.components.solr.query.SimpleQueryBean;
@@ -246,8 +247,12 @@ public class CmsProductSearchQueryService extends BaseService {
         }
 
         // 获取 master category
-        if (StringUtils.isNotEmpty(searchValue.getmCatPath())) {
-            criteria = criteria.and("catPath").contains(searchValue.getmCatPath());
+        if (ListUtils.notNull(searchValue.getmCatPath())) {
+            if(searchValue.getmCatPathType() == 1) {
+                criteria = criteria.and("catPath").contains(searchValue.getmCatPath());
+            }else{
+                criteria = criteria.and("catPath").contains(searchValue.getmCatPath()).not();
+            }
         }
 
         if (StringUtils.isNotEmpty(searchValue.getCreateTimeStart())) {

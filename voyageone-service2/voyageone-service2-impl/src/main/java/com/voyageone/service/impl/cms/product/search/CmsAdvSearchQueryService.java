@@ -8,6 +8,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.WmsBtInventoryCenterLogicDaoExt;
@@ -17,6 +18,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -367,33 +369,83 @@ public class CmsAdvSearchQueryService extends BaseService {
      */
     private void getSearchValueForMongo(CmsSearchInfoBean2 searchValue, JongoQuery queryObject) {
         // 获取 feed category
+        // 获取 feed category
         if (searchValue.getfCatPathList() != null && searchValue.getfCatPathList().size() > 0) {
-            StringBuilder fCatPathStr = new StringBuilder("{$or:[");
-            int idx = 0;
-            List<String> parameters = new ArrayList<>();
-            for (String fCatPath : searchValue.getfCatPathList()) {
-            	//fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
-                if (idx == 0) {
-                    fCatPathStr.append("{\"feed.catPath\":{\"$regex\":#}}");
-                    idx ++;
-                } else {
-                    fCatPathStr.append(",{\"feed.catPath\":{\"$regex\":#}}");
+            searchValue.setfCatPathList(searchValue.getfCatPathList().stream().map(str->str.trim()).collect(Collectors.toList()));
+            if(searchValue.getfCatPathType() == 1) {
+                StringBuilder fCatPathStr = new StringBuilder("{$or:[");
+                int idx = 0;
+                List<String> parameters = new ArrayList<>();
+                for (String fCatPath : searchValue.getfCatPathList()) {
+                    //fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
+                    if (idx == 0) {
+                        fCatPathStr.append("{\"feed.catPath\":{\"$regex\":#}}");
+                        idx++;
+                    } else {
+                        fCatPathStr.append(",{\"feed.catPath\":{\"$regex\":#}}");
+                    }
+                    parameters.add("^" + fCatPath);
                 }
-                parameters.add("^" + fCatPath);
+                fCatPathStr.append("]}");
+                queryObject.addQuery(fCatPathStr.toString());
+                queryObject.addParameters(parameters.toArray());
+            }else{
+                StringBuilder fCatPathStr = new StringBuilder("{$or:[{$and:[");
+                int idx = 0;
+                List<String> parameters = new ArrayList<>();
+                for (String fCatPath : searchValue.getfCatPathList()) {
+                    //fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
+                    if (idx == 0) {
+                        fCatPathStr.append("{\"feed.catPath\":{\"$regex\":#}}");
+                        idx++;
+                    } else {
+                        fCatPathStr.append(",{\"feed.catPath\":{\"$regex\":#}}");
+                    }
+                    parameters.add(String.format("^((?!%s).)*$",fCatPath));
+                }
+                fCatPathStr.append("]},{\"feed.catPath\":{\"$in\":[null,'']}}]}");
+                queryObject.addQuery(fCatPathStr.toString());
+                queryObject.addParameters(parameters.toArray());
             }
-            for (String fCatPath : searchValue.getfCatPathList()) {
-                fCatPathStr.append(",{\"feed.subCategories\":{\"$regex\":#}}");
-                parameters.add("^" + fCatPath);
-            }
-            fCatPathStr.append("]}");
-            queryObject.addQuery(fCatPathStr.toString());
-            queryObject.addParameters(parameters.toArray());
         }
 
         // 获取 master category
-        if (StringUtils.isNotEmpty(searchValue.getmCatPath())) {
-            queryObject.addQuery("{'common.catPath':{'$regex':#}}");
-            queryObject.addParameters("^" + searchValue.getmCatPath());
+        if (searchValue.getmCatPath() != null && searchValue.getmCatPath().size() > 0) {
+            if(searchValue.getmCatPathType() == 1) {
+                StringBuilder mCatPathStr = new StringBuilder("{$or:[");
+                int idx = 0;
+                List<String> parameters = new ArrayList<>();
+                for (String mCatPath : searchValue.getmCatPath()) {
+                    //fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
+                    if (idx == 0) {
+                        mCatPathStr.append("{\"common.catPath\":{\"$regex\":#}}");
+                        idx++;
+                    } else {
+                        mCatPathStr.append(",{\"common.catPath\":{\"$regex\":#}}");
+                    }
+                    parameters.add("^" + mCatPath);
+                }
+                mCatPathStr.append("]}");
+                queryObject.addQuery(mCatPathStr.toString());
+                queryObject.addParameters(parameters.toArray());
+            }else{
+                StringBuilder mCatPathStr = new StringBuilder("{$or:[{$and:[");
+                int idx = 0;
+                List<String> parameters = new ArrayList<>();
+                for (String mCatPath : searchValue.getmCatPath()) {
+                    //fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
+                    if (idx == 0) {
+                        mCatPathStr.append("{\"common.catPath\":{\"$regex\":#}}");
+                        idx++;
+                    } else {
+                        mCatPathStr.append(",{\"common.catPath\":{\"$regex\":#}}");
+                    }
+                    parameters.add(String.format("^((?!%s).)*$",mCatPath));
+                }
+                mCatPathStr.append("]},{\"common.catPath\":{\"$in\":[null,'']}}]}");
+                queryObject.addQuery(mCatPathStr.toString());
+                queryObject.addParameters(parameters.toArray());
+            }
         }
 
         if (StringUtils.isNotEmpty(searchValue.getCreateTimeStart())) {
