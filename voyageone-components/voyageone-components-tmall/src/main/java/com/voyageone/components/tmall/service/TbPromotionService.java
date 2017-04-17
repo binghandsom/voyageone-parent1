@@ -15,7 +15,7 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.components.tmall.TbBase;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,13 +24,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class TbPromotionService extends TbBase {
 
-    @Value("${cms2.components.tmall.services.promotion.async:false}")
     private boolean async;
 
     private final MqSenderService mqSenderService;
 
-    public TbPromotionService(MqSenderService mqSenderService) {
+    @Autowired(required = false)
+    public TbPromotionService(MqSenderService mqSenderService, Async async) {
         this.mqSenderService = mqSenderService;
+        this.async = async != null && async.async;
     }
 
     public TmallPromotionTipItemAddResponse addPromotion(ShopBean shopBean, TipItemPromDTO ItemProm) throws ApiException {
@@ -156,6 +157,14 @@ public class TbPromotionService extends TbBase {
 
         OperatingType(int value) {
             this.value = value;
+        }
+    }
+
+    public static class Async {
+        private boolean async;
+
+        public Async(boolean async) {
+            this.async = async;
         }
     }
 }
