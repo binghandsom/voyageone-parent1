@@ -238,18 +238,37 @@ public class CmsAdvSearchQueryService extends BaseService {
 
             // 获取platform category
             if (searchValue.getpCatPathList() != null && searchValue.getpCatPathList().size() > 0) {
-                StringBuilder pCatPathStr = new StringBuilder("{$or:[");
-                int idx = 0;
-                for (String pCatPath : searchValue.getpCatPathList()) {
-                    if (idx == 0) {
-                        pCatPathStr.append("{'platforms.P" + cartId + ".pCatPath':{'$regex':'^" + pCatPath + "'}}");
-                        idx ++;
-                    } else {
-                        pCatPathStr.append(",{'platforms.P" + cartId + ".pCatPath':{'$regex':'^" + pCatPath + "'}}");
+                if(searchValue.getpCatPathType() == 1) {
+                    StringBuilder pCatPathStr = new StringBuilder("{$or:[");
+                    int idx = 0;
+                    for (String pCatPath : searchValue.getpCatPathList()) {
+                        if (idx == 0) {
+                            pCatPathStr.append("{'platforms.P" + cartId + ".pCatPath':{'$regex':'^" + pCatPath + "'}}");
+                            idx++;
+                        } else {
+                            pCatPathStr.append(",{'platforms.P" + cartId + ".pCatPath':{'$regex':'^" + pCatPath + "'}}");
+                        }
                     }
+                    pCatPathStr.append("]}");
+                    queryObject.addQuery(pCatPathStr.toString());
+                }else{
+                    StringBuilder pCatPathStr = new StringBuilder("{$or:[{$and:[");
+                    int idx = 0;
+                    List<String> parameters = new ArrayList<>();
+                    for (String pCatPath : searchValue.getpCatPathList()) {
+                        //fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
+                        if (idx == 0) {
+                            pCatPathStr.append("{'platforms.P" + cartId + ".pCatPath':{'$regex':#}}");
+                            idx++;
+                        } else {
+                            pCatPathStr.append(",{'platforms.P" + cartId + ".pCatPath':{'$regex':#}}");
+                        }
+                        parameters.add(String.format("^((?!%s).)*$",pCatPath));
+                    }
+                    pCatPathStr.append("]},{'platforms.P" + cartId + ".pCatPath':{\"$in\":[null,'']}}]}");
+                    queryObject.addQuery(pCatPathStr.toString());
+                    queryObject.addParameters(parameters.toArray());
                 }
-                pCatPathStr.append("]}");
-                queryObject.addQuery(pCatPathStr.toString());
             }
             // 平台类目是否未设置
             if (searchValue.getPCatStatus() == 1) {
@@ -271,7 +290,11 @@ public class CmsAdvSearchQueryService extends BaseService {
             }
             // 获取店铺内分类查询条件
             if (searchValue.getCidValue() !=  null && searchValue.getCidValue().size() > 0) {
-                queryObject.addQuery("{'platforms.P#.sellerCats.cId':{$in:#}}");
+                if(1 == searchValue.getShopCatType()) {
+                    queryObject.addQuery("{'platforms.P#.sellerCats.cId':{$in:#}}");
+                }else{
+                    queryObject.addQuery("{'platforms.P#.sellerCats.cId':{$nin:#}}");
+                }
                 queryObject.addParameters(cartId, searchValue.getCidValue());
             }
             // 店铺内分类未设置

@@ -195,7 +195,11 @@ public class CmsProductSearchQueryService extends BaseService {
 
             // 获取店铺内分类查询条件
             if (searchValue.getCidValue() !=  null && searchValue.getCidValue().size() > 0) {
-                criteria = criteria.and("P"+cartId+"_sellerCats").in(searchValue.getCidValue());
+                if(1 == searchValue.getShopCatType()) {
+                    criteria = criteria.and("P" + cartId + "_sellerCats").in(searchValue.getCidValue());
+                }else{
+                    criteria = criteria.and("P" + cartId + "_sellerCats").in(searchValue.getCidValue()).not();
+                }
             }
 
             // 查询价格变动(指导售价)
@@ -243,7 +247,12 @@ public class CmsProductSearchQueryService extends BaseService {
 
         // 获取 feed category
         if (searchValue.getfCatPathList() != null && searchValue.getfCatPathList().size() > 0) {
-            criteria = criteria.and("feedCat").in(searchValue.getfCatPathList());
+            searchValue.setfCatPathList(searchValue.getfCatPathList().stream().map(str->str.trim()).collect(Collectors.toList()));
+            if(searchValue.getfCatPathType() == 1) {
+                criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList());
+            }else {
+                criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList()).not();
+            }
         }
 
         // 获取 master category
