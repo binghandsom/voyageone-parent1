@@ -39,6 +39,7 @@ import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
+import com.voyageone.service.impl.cms.sx.PlatformWorkloadAttribute;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -58,6 +59,10 @@ import java.util.stream.Collectors;
 @Service
 public class CmsProductPlatformDetailService extends BaseViewService {
     @Autowired
+    PriceService priceService;
+    @Autowired
+    JumeiSaleService jmSaleService;
+    @Autowired
     private ProductService productService;
     @Autowired
     private ProductGroupService productGroupService;
@@ -74,11 +79,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     @Autowired
     private CmsProductDetailService cmsProductDetailService;
     @Autowired
-    PriceService priceService;
-    @Autowired
     private ProductPlatformService productPlatformService;
-    @Autowired
-    JumeiSaleService jmSaleService;
     @Autowired
     private CmsBtCombinedProductService cmsBtCombinedProductService;
     @Autowired
