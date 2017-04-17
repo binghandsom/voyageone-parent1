@@ -179,7 +179,7 @@ public class Jumei_928_Common_DictTest {
 
             if (propType == 4 ) {  // 参数图 - 非重点之英文长描述
                 // charis sta
-                String html = "<div style=\"margin-top: -3px; border-width: 0 15px 0 15px; border-color: #f6f2f1 ; border-style: double solid; padding: 50px 20px 20px 20px; width: 720px;font-family:'microsoft yahei'; font-size: 16pt; color: #000000; \">";
+                String html = "<div style=\"margin-top: -3px; border-width: 0 15px 0 15px; border-color: #f6f2f1 ; border-style: double solid; padding: 50px 20px 20px 20px; width: 720px;font-family:'microsoft yahei'; font-size: 13pt; color: #000000; \">";
                 ruleRoot.addRuleWord(new TextWord(html));
 
                 ruleRoot.addRuleWord(new MasterClrHtmlWord("longDesEn")); // 英文长描述
@@ -191,7 +191,7 @@ public class Jumei_928_Common_DictTest {
             if (propType == 2) {   // 参数图 - 重点商品
 
                 String tableTem = "<div style=\"margin-top: -3px; border-width: 0 15px 0 15px; border-color: #f6f2f1; border-style: double solid; padding: 50px 20px 20px 20px; width: 720px; \">" +
-                        "<table style=\"width: 720px; font-family: microsoft yahei; font-size: 16pt; color: #000000;\">";
+                        "<table style=\"width: 720px; font-family: microsoft yahei; font-size: 13pt; color: #000000;\">";
                 int columnCount = 2;
                 RuleExpression tableTemplate = new RuleExpression();
                 tableTemplate.addRuleWord(new TextWord(tableTem));
