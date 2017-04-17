@@ -70,9 +70,9 @@ public class Jumei_928_Common_DictTest {
 //        shopProp.setCart_id("27");
         shopProp.setOrder_channel_id("928");
         shopProp.setApp_url("http://openapi.ext.jumei.com/");
-        shopProp.setAppKey(""); // 131
-        shopProp.setAppSecret("");  // 0f9e3437ca010f63f2c4f3a216b7f4bc9698f071
-        shopProp.setSessionKey(""); // 7e059a48c30c67d2693be14275c2d3be
+        shopProp.setAppKey("");
+        shopProp.setAppSecret("");
+        shopProp.setSessionKey("");
         shopProp.setPlatform_id(PlatFormEnums.PlatForm.JM.getId());
 
         // 最终测试结果是这样的 ======================================== START

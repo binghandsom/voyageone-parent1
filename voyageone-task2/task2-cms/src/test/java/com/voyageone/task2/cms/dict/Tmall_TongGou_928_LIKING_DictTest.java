@@ -60,9 +60,9 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
         ShopBean shopProp = new ShopBean();
         shopProp.setApp_url("http://gw.api.taobao.com/router/rest");
-        shopProp.setAppKey(""); // 23583061
-        shopProp.setAppSecret(""); // 796955b61f045769345d47e18b29cf22
-        shopProp.setSessionKey(""); // 6201c0788f407f9ZZfb038a14a52618b42fa10991ace5313081276392
+        shopProp.setAppKey("");
+        shopProp.setAppSecret("");
+        shopProp.setSessionKey("");
         shopProp.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
 
         try {

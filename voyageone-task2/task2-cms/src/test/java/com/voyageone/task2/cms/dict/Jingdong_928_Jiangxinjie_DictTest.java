@@ -52,9 +52,9 @@ public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
         ShopBean shopProp = new ShopBean();
         shopProp.setApp_url(""); // https://api.jd.com/routerjson
-        shopProp.setAppKey(""); // BFA3102EFD4B981E9EEC2BE32DF1E44E
-        shopProp.setAppSecret(""); // 90742900899f49a5acfaf3ec1040a35c
-        shopProp.setSessionKey(""); // 4326ace5-57d7-4b9e-b24a-3ac2471eabe3
+        shopProp.setAppKey("");
+        shopProp.setAppSecret("");
+        shopProp.setSessionKey("");
         shopProp.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
 
         try {
