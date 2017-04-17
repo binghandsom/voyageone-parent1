@@ -160,7 +160,7 @@ public class CmsProductSearchQueryService extends BaseService {
             // 设置platform检索条件
             // 获取platform/lock
             if (StringUtils.isNotEmpty(searchValue.getpLockFlg())) {
-                if ("1".equals(searchValue.getLockFlg())) {
+                if ("1".equals(searchValue.getpLockFlg())) {
                     criteria = criteria.and("P"+cartId+"_lock").is("1");
                 } else {
                     criteria = criteria.and("P"+cartId+"_lock").is("1").not();

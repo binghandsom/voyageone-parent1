@@ -34,7 +34,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.reducing;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -318,6 +317,12 @@ public class FeedToCmsService extends BaseService {
                 if (triggerPrice) {
                     priceService.setFeedPrice(orgFeedInfo);
                 }
+
+                // 原feed数据导入成功或者导入失败,则自动重新导入一次
+                if (CmsConstants.FeedUpdFlgStatus.Succeed == orgFeedInfo.getUpdFlg()
+                        || CmsConstants.FeedUpdFlgStatus.Fail == orgFeedInfo.getUpdFlg())
+                    orgFeedInfo.setUpdFlg(CmsConstants.FeedUpdFlgStatus.Pending);
+
                 feedInfoService.updateFeedInfo(orgFeedInfo);
 
                 CmsBtOperationLogModel_Msg _successMsg = new CmsBtOperationLogModel_Msg();
