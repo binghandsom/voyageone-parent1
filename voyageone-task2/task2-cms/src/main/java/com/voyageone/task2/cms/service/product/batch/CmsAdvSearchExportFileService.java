@@ -7,7 +7,6 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
@@ -56,6 +55,51 @@ import java.util.stream.Collectors;
 @Service
 public class CmsAdvSearchExportFileService extends BaseService {
 
+    // excel cell的内容长度限制
+    private final static int CELL_LENGTH_LIMIT = 2000;
+    // DB检索页大小
+    private final static int SELECT_PAGE_SIZE = 100;
+    /*group级导出时和平台无关的固定列：英文和中文列头名称*/
+    private final static String[] _GROUP_STATIC_COLS = {"model", "brand", "supplier", "category", "productNameEn", "originalTitleCn", "mainCode", "feeCatPath", "origSizeType"};
+    private final static String[] _GROUP_STATIC_COLS_ZN = {"款号", "品牌", "供应商", "主类目", "产品名称英语", "产品名称中文", "主商品编码", "feed分类", "原始尺码类型"};
+    //common.fields.origSizeType
+    /*code级导出时和平台无关的固定列：英文和中文列头名称*/
+    private final static String[] _CODE_STATIC_COLS = {"code", "brand", "supplier", "category", "productNameEn", "originalTitleCn", "model", "color", "feeCatPath", "origSizeType", "quantity"};
+    private final static String[] _CODE_STATIC_COLS_ZN = {"商品编码", "品牌", "供应商", "主类目", "产品名称英语", "产品名称中文", "款号", "颜色/口味/香型等", "feed分类", "原始尺码类型", "库存"};
+    /*sku级导出时和平台无关的固定列：英文和中文列头名称*/
+    private final static String[] _SKU_STATIC_COLS = {
+            "code", "barcode", "clientSKU", "brand", "supplier", "category", "productNameEn",
+            "originalTitleCn", "model", "code", "inventory", "color", "clientSize",
+            "size", "clientPriceMsrp", "clientPriceRetail", "clientPriceCost", "weightCalc", "feeCatPath", "origSizeType"};
+    private final static String[] _SKU_STATIC_COLS_ZN = {
+            "sku", "条形码", "客户原始SKU", "品牌", "供应商", "主类目", "产品名称英语",
+            "产品名称中文", "款号", "商品编码", "库存", "颜色/口味/香型等", "客户原始Size",
+            "转换后Size", "客户建议售价", "客户指导价", "客户成本价", "重量（lb）", "feed分类", "原始尺码类型"};
+    // 各平台固定输出列
+    private final static String[] _DynColGroup = {"URL", "Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice"};
+    private final static String[] _DynColCNGroup = {"URL", "Numiid", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)"};
+    private final static String[] _DynColJMGroup = {"MallURL", "MallId", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice"};
+    private final static String[] _DynColCNJMGroup = {"MallURL", "MallId", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)"};
+    private final static String[] _DynCol = {"URL","qty","Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify","lock"};
+    private final static String[] _DynColCN = {"URL","可售库存", "Numiid", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类","锁定"};
+    private final static String[] _DynColJM = {"MallURL","qty", "MallId", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify","lock"};
+    private final static String[] _DynColCNJM = {"MallURL","可售库存", "MallId", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类","锁定"};
+    // SKU级动态输出列
+    private final static String[] _DynColSKU = {"URL", "Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify", "Live"};
+    private final static String[] _DynColCNSKU = {"URL", "Numiid", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类", "是否可售"};
+    // 京东SKU级动态输出列
+    private final static String[] _DynColJDSKU = {"URL", "Numiid", "Name", "Category", "JdSkuNo", "MSRP", "RetailPrice", "SalePrice", "StoreClassify", "Live"};
+    private final static String[] _DynColCNJDSKU = {"URL", "Numiid", "商品名称", "类目", "JdSkuNo", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类", "是否可售"};
+    // 聚美SKU级动态输出列
+    private final static String[] _DynColJMSKU = {"MallURL", "MallId", "SkuNo", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify", "Live"};
+    private final static String[] _DynColCNJMSKU = {"MallURL", "MallId", "SkuNo", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类", "是否可售"};
+    // 产品数据（code级）固定输出列，用于过滤自定义显示列中相同项目
+    private final static String[] _prodCol = {"code", "brand", "category", "productNameEn", "originalTitleCn", "mainCode", "model", "quantity", "color"};
+    /*聚美上新SKU导出列*/
+    private final static String[] _shoemetroColJMSKU = {"Child SKU", "Brand", "Parent SKU", "Color", "Size", "VO Price", "Final RMB Price", "URL Link", "Inventory"};
+    /*报备数据导出文件列*/
+    private final static String[] _filingSkuCol = {"SKU", "Code", "model", "SIZE", "欧码", "英文标题", "中文标题", "产品图片链接", "性别", "材质", "产地", "颜色", "品牌", "重量", "UPC", "英文描述", "中文描述", "类目", "HSCode", "HSCodePU", "Price (RMB)"};
+    private static Map<String, String> lockStatusMap = null;
     @Autowired
     private ProductService productService;
     @Autowired
@@ -70,62 +114,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private CmsBtExportTaskService cmsBtExportTaskService;
     @Autowired
     private InventoryDao inventoryDao;
-
-    // excel cell的内容长度限制
-    private final static int CELL_LENGTH_LIMIT = 2000;
-    // DB检索页大小
-    private final static int SELECT_PAGE_SIZE = 100;
-
-    /*group级导出时和平台无关的固定列：英文和中文列头名称*/
-    private final static String[] _GROUP_STATIC_COLS = {"model", "brand", "supplier", "category", "productNameEn", "originalTitleCn", "mainCode", "feeCatPath", "origSizeType"};
-    private final static String[] _GROUP_STATIC_COLS_ZN = {"款号", "品牌", "供应商", "主类目", "产品名称英语", "产品名称中文", "主商品编码", "feed分类", "原始尺码类型"};
-    //common.fields.origSizeType
-    /*code级导出时和平台无关的固定列：英文和中文列头名称*/
-    private final static String[] _CODE_STATIC_COLS = {"code", "brand", "supplier", "category", "productNameEn", "originalTitleCn", "model", "color", "feeCatPath", "origSizeType", "quantity"};
-    private final static String[] _CODE_STATIC_COLS_ZN = {"商品编码", "品牌", "供应商", "主类目", "产品名称英语", "产品名称中文", "款号", "颜色/口味/香型等", "feed分类", "原始尺码类型", "库存"};
-
-    /*sku级导出时和平台无关的固定列：英文和中文列头名称*/
-    private final static String[] _SKU_STATIC_COLS = {
-            "code", "barcode", "clientSKU", "brand", "supplier", "category", "productNameEn",
-            "originalTitleCn", "model", "code", "inventory", "color", "clientSize",
-            "size", "clientPriceMsrp", "clientPriceRetail", "clientPriceCost", "weightCalc", "feeCatPath", "origSizeType"};
-    private final static String[] _SKU_STATIC_COLS_ZN = {
-            "sku", "条形码", "客户原始SKU", "品牌", "供应商", "主类目", "产品名称英语",
-            "产品名称中文", "款号", "商品编码", "库存", "颜色/口味/香型等", "客户原始Size",
-            "转换后Size", "客户建议售价", "客户指导价", "客户成本价", "重量（lb）", "feed分类", "原始尺码类型"};
-
-
-    // 各平台固定输出列
-    private final static String[] _DynColGroup = {"URL", "Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice"};
-    private final static String[] _DynColCNGroup = {"URL", "Numiid", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)"};
-    private final static String[] _DynColJMGroup = {"MallURL", "MallId", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice"};
-    private final static String[] _DynColCNJMGroup = {"MallURL", "MallId", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)"};
-
-    private final static String[] _DynCol = {"URL","qty","Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify","lock"};
-    private final static String[] _DynColCN = {"URL","可售库存", "Numiid", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类","锁定"};
-    private final static String[] _DynColJM = {"MallURL","qty", "MallId", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify","lock"};
-    private final static String[] _DynColCNJM = {"MallURL","可售库存", "MallId", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类","锁定"};
-
-    // SKU级动态输出列
-    private final static String[] _DynColSKU = {"URL", "Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify", "Live"};
-    private final static String[] _DynColCNSKU = {"URL", "Numiid", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类", "是否可售"};
-
-    // 京东SKU级动态输出列
-    private final static String[] _DynColJDSKU = {"URL", "Numiid", "Name", "Category", "JdSkuNo", "MSRP", "RetailPrice", "SalePrice", "StoreClassify", "Live"};
-    private final static String[] _DynColCNJDSKU = {"URL", "Numiid", "商品名称", "类目", "JdSkuNo", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类", "是否可售"};
-
-    // 聚美SKU级动态输出列
-    private final static String[] _DynColJMSKU = {"MallURL", "MallId", "SkuNo", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice", "StoreClassify", "Live"};
-    private final static String[] _DynColCNJMSKU = {"MallURL", "MallId", "SkuNo", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)", "店铺内分类", "是否可售"};
-
-    // 产品数据（code级）固定输出列，用于过滤自定义显示列中相同项目
-    private final static String[] _prodCol = {"code", "brand", "category", "productNameEn", "originalTitleCn", "mainCode", "model", "quantity", "color"};
-
-    /*聚美上新SKU导出列*/
-    private final static String[] _shoemetroColJMSKU = {"Child SKU", "Brand", "Parent SKU", "Color", "Size", "VO Price", "Final RMB Price", "URL Link", "Inventory"};
-
-    /*报备数据导出文件列*/
-    private final static String[] _filingSkuCol = {"SKU", "Code", "model", "SIZE", "欧码", "英文标题", "中文标题", "产品图片链接", "性别", "材质", "产地", "颜色", "品牌", "重量", "UPC", "英文描述", "中文描述", "类目", "HSCode", "HSCodePU", "Price (RMB)"};
 
     public List<CmsBtOperationLogModel_Msg> export(AdvSearchExportMQMessageBody messageBody) throws Exception {
         $debug("高级检索 文件下载任务 param=" + JacksonUtil.bean2Json(messageBody));
@@ -727,12 +715,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 codesMap.computeIfAbsent(item.getOrgChannelId(), k -> new HashSet<>());
                 codesMap.get(item.getOrgChannelId()).add(fields.getOriginalCode());
             }
-            Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = getSkuInventoryMap(codesMap);
-            int codeQty = 0;
-            for (Integer qty : skuInventoryMap.values()) {
-                codeQty = codeQty + qty;
-            }
-            FileUtils.cell(row, index++, unlock).setCellValue(codeQty);
+            FileUtils.cell(row, index++, unlock).setCellValue(fields.getQuantity());
 
             /**平台级内容输出*/
             for (TypeChannelBean cartObj : cartList) {
@@ -751,15 +734,10 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 //取得库存
                 int qty = 0;
                 for (BaseMongoMap<String, Object> map : ptfObj.getSkus()) {
-                    String sku = (String) map.get("skuCode");
                     Boolean isSale = (Boolean) map.get("isSale");
+                    int skuQty = map.getIntAttribute("qty");
                     if(isSale !=null && isSale){
-                        SkuInventoryForCmsBean skuBeanObj = skuInventoryMap.keySet().stream().filter(skuBean -> sku.equalsIgnoreCase(skuBean.getSku())).findFirst().orElse(null);
-                        if (skuBeanObj != null) {
-                            if (skuInventoryMap.get(skuBeanObj) != null) {
-                                qty = qty + skuInventoryMap.get(skuBeanObj);
-                            }
-                        }
+                        qty = qty + skuQty;
                     }
                 }
                 if (org.apache.commons.lang3.StringUtils.isNotEmpty(ptfObj.getpNumIId())) {
@@ -1062,8 +1040,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
             products.add(item);
         }
-        //取得sku级别的库存
-        Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = getSkuInventoryMap(codesMap);
 
         CellStyle unlock = FileUtils.createUnLockStyle(book);
 
@@ -1088,8 +1064,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getModel()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getCode()));
-                SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuItem.getSkuCode());
-                FileUtils.cell(row, index++, unlock).setCellValue(skuInventoryMap.get(temp) == null ? "0" : String.valueOf(skuInventoryMap.get(temp)));
+                FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getQty() == null ? "0" : String.valueOf(skuItem.getQty()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getColor()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSize()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getSize()));
@@ -1211,22 +1186,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
         return total - SELECT_PAGE_SIZE;
     }
 
-    //取得sku级别的库存
-    private Map<SkuInventoryForCmsBean, Integer> getSkuInventoryMap(Map<String, Set<String>> codesMap) {
-        Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<>();
-        codesMap.keySet().stream()
-                .filter(channel -> codesMap.get(channel).size() > 0)
-                .forEach(channel -> {
-                    List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(channel, new ArrayList<>(codesMap.get(channel)));
-                    if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
-                        for (SkuInventoryForCmsBean skuInventory : inventoryForCmsBeanList) {
-                            skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
-                        }
-                    }
-                });
-        return skuInventoryMap;
-    }
-
     /**
      * 导出聚美上新SKU级数据
      *
@@ -1272,15 +1231,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
             products.add(item);
         }
-        Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<>();
-        if (!codes.isEmpty()) {
-            List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(ChannelConfigEnums.Channel.ShoeMetro.getId(), new ArrayList<>(codes));
-            if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
-                for (SkuInventoryForCmsBean skuInventory : inventoryForCmsBeanList) {
-                    skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
-                }
-            }
-        }
         String jmUrlPrefix = platformService.getPlatformProductUrl(CartEnums.Cart.JM.getId());
         // 写入导出数据
         Sheet sheet = book.getSheetAt(0);
@@ -1317,7 +1267,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 // JmURL
                 FileUtils.cell(row, index++, unlock).setCellValue(jmUrlPrefix + cart.getpPlatformMallId() + ".html");
                 SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuCode);
-                FileUtils.cell(row, index++, unlock).setCellValue(skuInventoryMap.get(temp) == null ? "0" : String.valueOf(skuInventoryMap.get(temp)));
+                FileUtils.cell(row, index++, unlock).setCellValue(skuMap.get("qty") == null ? "0" : String.valueOf(skuMap.get("qty")));
                 total++;
             }
         }
@@ -1451,8 +1401,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
         }
         return output;
     }
-
-    private static Map<String, String> lockStatusMap = null;
 
     /**
      * 转换锁定状态，从code转到文字

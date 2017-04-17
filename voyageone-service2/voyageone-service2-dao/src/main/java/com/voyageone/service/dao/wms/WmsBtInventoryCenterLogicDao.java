@@ -16,9 +16,9 @@ import java.util.Map;
 @Repository
 public class WmsBtInventoryCenterLogicDao extends com.voyageone.service.dao.ServiceBaseDao {
 
-    public List<WmsBtInventoryCenterLogicModel> selectItemDetailByCode(Map params){
-        return selectList("wms_bt_inventory_center_logic_selectLogicInventory", params);
-    }
+//    public List<WmsBtInventoryCenterLogicModel> selectItemDetailByCode(Map params){
+//        return selectList("wms_bt_inventory_center_logic_selectLogicInventory", params);
+//    }
 
     public WmsBtInventoryCenterLogicModel selectItemDetailBySku(Map params){
         return selectOne("wms_bt_inventory_center_logic_selectLogicInventory", params);

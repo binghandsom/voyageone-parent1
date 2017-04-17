@@ -14,7 +14,6 @@ import com.voyageone.service.impl.cms.jumei2.JuMeiProductPlatform3Service;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +92,7 @@ public class JuMeiProductPlatform3ServiceTest {
                 Map<String, String> queryMap = new HashMap<>();
                 queryMap.put("channelId", product.getOrgChannelId());
                 queryMap.put("code", product.getCommon().getFields().getCode());
-                List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailByCode(queryMap);
+//                List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailByCode(queryMap);
 
 //                List<jmHtDealCopyDealSkusData> skuList = new ArrayList<>();
                 product.getPlatform(27).getSkus()
@@ -112,9 +111,10 @@ public class JuMeiProductPlatform3ServiceTest {
 
                                 if (!StringUtil.isEmpty(promotionSkuMap.get("jmSkuNo"))) {
 
-                                    inventoryList.forEach(inventoryInfo -> {
-                                        if (inventoryInfo.getSku().equals(skuCode)
-                                                && inventoryInfo.getQtyChina() > 0) {
+                                    product.getPlatform(27).getSkus().forEach(sku -> {
+
+                                        if (sku.getStringAttribute("skuCode").equals(skuCode)
+                                                && sku.getIntAttribute("qty") > 0) {
                                             sb.append(String.valueOf(promotionSkuMap.get("jmSkuNo")) + ",");
                                         }
                                     });

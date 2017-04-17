@@ -30,7 +30,6 @@ import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +46,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class JuMeiProductPlatform3Service extends BaseService {
+    private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductPlatform3Service.class);
     @Autowired
     CmsBtJmPromotionDao daoCmsBtJmPromotion;
     @Autowired
@@ -59,7 +59,6 @@ public class JuMeiProductPlatform3Service extends BaseService {
    // JuMeiProductUpdateService service;
     @Autowired
     JumeiHtDealService serviceJumeiHtDeal;
-
     @Autowired
     CmsBtJmProductDaoExt daoExtCmsBtJmProduct;
     @Autowired
@@ -76,11 +75,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
     ProductPlatformService productPlatformService;
     @Autowired
     WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
-
-
     private List<String> newJmDealSkuNoList = new ArrayList<>();
-
-    private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductPlatform3Service.class);
 
     public  List<OperationResult> updateJmByPromotionId(int promotionId) {
         List<OperationResult> listOperationResult = new ArrayList<>();
@@ -131,7 +126,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
             Map<String, String> queryMap = new HashMap<>();
             queryMap.put("channelId", product.getOrgChannelId());
             queryMap.put("code", product.getCommon().getFields().getCode());
-            List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailByCode(queryMap);
+//            List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailByCode(queryMap);
 
             List<jmHtDealCopyDealSkusData> skuList = new ArrayList<>();
             product.getPlatform(27).getSkus()
@@ -149,23 +144,18 @@ public class JuMeiProductPlatform3Service extends BaseService {
                             Map<String, String> promotionSkuMap = (Map<String, String>)promotionSkuList.get(0);
 
                             if (!StringUtil.isEmpty(promotionSkuMap.get("jmSkuNo"))) {
+                                if (skuInfo.getIntAttribute("qty") > 0
+                                        && newJmDealSkuNoList.contains(String.valueOf(promotionSkuMap.get("jmSkuNo")))) {
+                                    jmHtDealCopyDealSkusData dealCopyDealSkuData = new jmHtDealCopyDealSkusData();
+                                    dealCopyDealSkuData.setStocks(String.valueOf(skuInfo.getIntAttribute("qty")));
+                                    dealCopyDealSkuData.setSku_no(String.valueOf(promotionSkuMap.get("jmSkuNo")));
+                                    dealCopyDealSkuData.setDeal_price(String.valueOf(promotionSkuMap.get("dealPrice")));
+                                    dealCopyDealSkuData.setMarket_price(String.valueOf(promotionSkuMap.get("marketPrice")));
+                                    skuList.add(dealCopyDealSkuData);
 
-                                inventoryList.forEach(inventoryInfo -> {
-                                    if (inventoryInfo.getSku().equals(skuCode)
-                                            && inventoryInfo.getQtyChina() > 0
-                                            && newJmDealSkuNoList.contains(String.valueOf(promotionSkuMap.get("jmSkuNo")))) {
-                                        jmHtDealCopyDealSkusData dealCopyDealSkuData = new jmHtDealCopyDealSkusData();
-                                        dealCopyDealSkuData.setStocks(String.valueOf(inventoryInfo.getQtyChina()));
-                                        dealCopyDealSkuData.setSku_no(String.valueOf(promotionSkuMap.get("jmSkuNo")));
-                                        dealCopyDealSkuData.setDeal_price(String.valueOf(promotionSkuMap.get("dealPrice")));
-                                        dealCopyDealSkuData.setMarket_price(String.valueOf(promotionSkuMap.get("marketPrice")));
-                                        skuList.add(dealCopyDealSkuData);
-
-                                        // 去掉正常的jmSkuNo
-                                        newJmDealSkuNoList.remove(String.valueOf(promotionSkuMap.get("jmSkuNo")));
-                                    }
-                                });
-
+                                    // 去掉正常的jmSkuNo
+                                    newJmDealSkuNoList.remove(String.valueOf(promotionSkuMap.get("jmSkuNo")));
+                                }
                             }
                         }
                     });

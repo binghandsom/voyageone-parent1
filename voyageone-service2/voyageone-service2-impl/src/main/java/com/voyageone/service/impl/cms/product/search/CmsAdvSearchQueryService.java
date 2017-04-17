@@ -10,7 +10,6 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.daoext.cms.WmsBtInventoryCenterLogicDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -29,19 +28,16 @@ import java.util.stream.Collectors;
 @Service
 public class CmsAdvSearchQueryService extends BaseService {
 
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
-    @Autowired
-    private WmsBtInventoryCenterLogicDaoExt wmsBtInventoryDaoExt;
-
     // 查询产品信息时的缺省输出列
     public final static String searchItems = "channelId;prodId;created;creater;modified;orgChannelId;modifier;freeTags;sales;bi;platforms;lock;" +
             "common.skus.skuCode;common.skus.qty;common.skus.size;common.fields.originalCode;common.fields.originalTitleCn;common.catPath;common.fields.productNameEn;common.fields.brand;common.fields.code;" +
             "common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.images5;common.fields.images6;common.fields.images7;common.fields.images8;common.fields.images9;" +
             "common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
             "common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;usPlatforms;";
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
 
     /**
      * 获取当前查询的product列表（查询条件从画面而来）<br>
@@ -799,9 +795,18 @@ public class CmsAdvSearchQueryService extends BaseService {
     /**
      * 取得SKU级的库存属性
      */
-	public List<Map<String, Object>> getSkuInventoryList(String channelId, String code) {
-		return wmsBtInventoryDaoExt.selectSkuInventoryList(channelId, code);
-	}
+    public List<Map<String, Object>> getSkuInventoryList(CmsBtProductModel cmsBtProductModel) {
+
+        List<Map<String, Object>> qtyList = new ArrayList<>();
+        cmsBtProductModel.getCommon().getSkus().forEach(sku -> {
+            Map<String, Object> skuMap = new HashMap<String, Object>();
+            skuMap.put("sku", sku.getSkuCode());
+            skuMap.put("code", cmsBtProductModel.getCommon().getFields().getCode());
+            skuMap.put("qtyChina", sku.getQty());
+            qtyList.add(skuMap);
+        });
+        return qtyList;
+    }
 
 
 }

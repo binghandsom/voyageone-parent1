@@ -7,6 +7,7 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -19,8 +20,8 @@ public class EwmsMQUpdateProductMessageBody  extends BaseMQMessageBody {
     private String channelId;
     private Integer cartId;
     private String groupSku;
-    private Double groupSkuPrice;
-    private List<Map<String, Object>> sku;
+    private Double groupPrice;
+    private List<Map<String, BigDecimal>> sku;
     private String groupKind;
     private String numIid;
     private String userName;
@@ -50,19 +51,19 @@ public class EwmsMQUpdateProductMessageBody  extends BaseMQMessageBody {
         this.groupSku = groupSku;
     }
 
-    public Double getGroupSkuPrice() {
-        return groupSkuPrice;
+    public Double getGroupPrice() {
+        return groupPrice;
     }
 
-    public void setGroupSkuPrice(Double groupSkuPrice) {
-        this.groupSkuPrice = groupSkuPrice;
+    public void setGroupPrice(Double groupPrice) {
+        this.groupPrice = groupPrice;
     }
 
-    public List<Map<String, Object>> getSku() {
+    public List<Map<String, BigDecimal>> getSku() {
         return sku;
     }
 
-    public void setSku(List<Map<String, Object>> sku) {
+    public void setSku(List<Map<String, BigDecimal>> sku) {
         this.sku = sku;
     }
 

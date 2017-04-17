@@ -55,6 +55,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -596,12 +597,11 @@ public class CmsBtCombinedProductService extends BaseService {
                     .filter(cmsBtCombinedProductModel_Sku -> cmsBtCombinedProductModel_Sku.getSkuItems().size() > 0)
                     .forEach(sku -> {
                         ewmsMQUpdateProductMessageBody.setGroupSku(sku.getSuitSkuCode());
-                        ewmsMQUpdateProductMessageBody.setGroupSkuPrice(sku.getSuitSellingPriceCn());
-                        List<Map<String, Object>> skus = new ArrayList<>();
+                        ewmsMQUpdateProductMessageBody.setGroupPrice(sku.getSuitSellingPriceCn());
+                        List<Map<String, BigDecimal>> skus = new ArrayList<>();
                         sku.getSkuItems().forEach(subSku -> {
-                            Map<String, Object> skuMap = new HashMap<>();
-                            skuMap.put("sku", subSku.getSkuCode());
-                            skuMap.put("price", subSku.getSellingPriceCn());
+                            Map<String, BigDecimal> skuMap = new HashMap<>();
+                            skuMap.put(subSku.getSkuCode(), BigDecimal.valueOf(subSku.getSellingPriceCn()));
                             skus.add(skuMap);
                         });
                         ewmsMQUpdateProductMessageBody.setSku(skus);
