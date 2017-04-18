@@ -254,6 +254,7 @@ define([
 
             $scope.vm.searchInfo.custAttrMap = angular.copy($scope.vm.custAttrList);
             $scope.searchInfoBefo = angular.copy($scope.vm.searchInfo);
+            $scope.searchInfoBefo = searchAdvanceSolrService.resetSearchInfo($scope.searchInfoBefo);
             searchAdvanceSolrService.search($scope.vm.searchInfo, $scope.vm.productPageOption).then(function (res) {
                 $scope.vm.customProps = res.data.customProps;
                 var sumCustomProps = [];
@@ -375,6 +376,8 @@ define([
          * 分页处理product数据
          */
         function getProductList() {
+            $scope.searchInfoBefo = angular.copy($scope.vm.searchInfo);
+            $scope.searchInfoBefo = searchAdvanceSolrService.resetSearchInfo($scope.searchInfoBefo);
             searchAdvanceSolrService.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType, $scope.vm.selBiDataList)
                 .then(function (res) {
                     $scope.vm.productList = res.data.productList == null ? [] : res.data.productList;
