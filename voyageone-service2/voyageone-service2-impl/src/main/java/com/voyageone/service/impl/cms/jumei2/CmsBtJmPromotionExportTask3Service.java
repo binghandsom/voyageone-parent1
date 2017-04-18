@@ -149,6 +149,9 @@ public class CmsBtJmPromotionExportTask3Service {
         info.addExcelColumn("使用方法_产品介绍", "productDesCn", "cms_bt_jm_product");
         info.addExcelColumn("聚美MallId", "jumeiMallId", "cms_bt_jm_product");
         info.addExcelColumn("聚美HID", "jmHashId", "cms_bt_jm_product");
+        info.addExcelColumn("品牌", "brandName", "cms_bt_jm_product");
+        info.addExcelColumn("错误信息", "errorMsg", "cms_bt_jm_promotion_product");
+
         if (isErrorColumn) {
             info.addExcelColumn(info.getErrorColumn());
         }

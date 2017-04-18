@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.jm;
 
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.JMPromotionProduct.UpdateRemarkParameter;
 import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo;
@@ -17,6 +18,7 @@ import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
+import com.voyageone.service.model.util.MapModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(
@@ -191,12 +194,25 @@ public class CmsJmPromotionDetailController extends CmsController {
     }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchUpdateSkuDealPrice)
     public AjaxResponse batchUpdateSkuDealPrice(@RequestBody BatchUpdateSkuPriceParameterBean parameter) {
+        if(parameter.isSelAll()){
+            List<MapModel> mapModels = cmsBtJmPromotionProductService.getPageByWhere(parameter.getSearchInfo());
+            if(ListUtils.notNull(mapModels)){
+                parameter.setListPromotionProductId(mapModels.stream().map(item->(Integer)item.get("id")).collect(Collectors.toList()));
+            }
+        }
+
         CallResult result = service3.batchUpdateSkuDealPrice(parameter,getUser().getUserName());
         return success(result);
     }
     //批量同步商城价格
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchSynchMallPrice)
     public AjaxResponse batchSyncMallPrice(@RequestBody CmsJmMallPromotionPriceSyncMQMessageBody parameter) {
+        if(parameter.isSelAll()){
+            List<MapModel> mapModels = cmsBtJmPromotionProductService.getPageByWhere(parameter.getSearchInfo());
+            if(ListUtils.notNull(mapModels)){
+                parameter.setProductCodes(mapModels.stream().map(item->item.get("productCode").toString()).collect(Collectors.toList()));
+            }
+        }
         parameter.setChannelId(getUser().getSelChannelId());
         parameter.setSender(getUser().getUserName());
         cmsMqSenderService.sendMessage(parameter);
@@ -205,6 +221,12 @@ public class CmsJmPromotionDetailController extends CmsController {
     //批量同步价格
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchSynchPrice)
     public AjaxResponse batchSyncPrice(@RequestBody BatchSynchPriceParameter parameter) {
+        if(parameter.isSelAll()){
+            List<MapModel> mapModels = cmsBtJmPromotionProductService.getPageByWhere(parameter.getSearchInfo());
+            if(ListUtils.notNull(mapModels)){
+                parameter.setListPromotionProductId(mapModels.stream().map(item->Long.parseLong(item.get("id").toString())).collect(Collectors.toList()));
+            }
+        }
         service3.batchSynchPrice(parameter);
         service3.sendMessage(parameter.getPromotionId(), getUser().getUserName(), getUser().getSelChannelId());
         CallResult result = new CallResult();
@@ -286,6 +308,12 @@ public class CmsJmPromotionDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdatePromotionListProductTag)
     public int updatePromotionListProductTag(@RequestBody UpdateListPromotionProductTagParameter parameter) {
         UserSessionBean userSessionBean=getUser();
+        if(parameter.isSelAll()){
+            List<MapModel> mapModels = cmsBtJmPromotionProductService.getPageByWhere(parameter.getSearchInfo());
+            if(ListUtils.notNull(mapModels)){
+                parameter.setListPromotionProductId(mapModels.stream().map(item->(Integer)item.get("id")).collect(Collectors.toList()));
+            }
+        }
         return service3.updatePromotionListProductTag(parameter,userSessionBean.getSelChannelId(), userSessionBean.getUserName());
     }
 

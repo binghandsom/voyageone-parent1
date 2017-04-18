@@ -26,6 +26,7 @@ public class CmsJmPromotionExportMQJob extends TBaseMQCmsService<JmPromotionExpo
     @Override
     public void onStartup(JmPromotionExportMQMessageBody messageBody) {
 
+        if(taskControlList == null) initControls();
         // 获取Mq的配置信息
         TaskControlBean taskControlBean = getTaskControlBean(taskControlList, "cms.jm.export.path");
         if (taskControlBean == null) {
