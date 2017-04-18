@@ -1155,8 +1155,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 //        dealInfo.setUser_purchase_limit(jmFields.getIntAttribute("userPurchaseLimit"));
 
         // 判断一下聚美详情， 用哪套模板
-        String strJumeiDetailTemplateName = "聚美详情-非重点";
+        String strJumeiDetailTemplateName = "聚美详情";
         if (ChannelConfigEnums.Channel.USJGJ.getId().equals(product.getChannelId())) {
+            strJumeiDetailTemplateName = "聚美详情-非重点";
             if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                 String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
@@ -1552,8 +1553,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
 
         // 判断一下聚美详情， 用哪套模板
-        String strJumeiDetailTemplateName = "聚美详情-非重点";
+        String strJumeiDetailTemplateName = "聚美详情";
         if (ChannelConfigEnums.Channel.USJGJ.getId().equals(product.getChannelId())) {
+            strJumeiDetailTemplateName = "聚美详情-非重点";
             if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                 String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
@@ -2121,8 +2123,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 updateDataInfo.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
                 // 本单详情
                 // 判断一下聚美详情， 用哪套模板
-                String strJumeiDetailTemplateName = "聚美详情-非重点";
+                String strJumeiDetailTemplateName = "聚美详情";
                 if (ChannelConfigEnums.Channel.USJGJ.getId().equals(product.getChannelId())) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点";
                     if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                         String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
