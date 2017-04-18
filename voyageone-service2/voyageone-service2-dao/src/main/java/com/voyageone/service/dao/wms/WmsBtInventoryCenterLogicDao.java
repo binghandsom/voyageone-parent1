@@ -16,26 +16,50 @@ import java.util.Map;
 @Repository
 public class WmsBtInventoryCenterLogicDao extends com.voyageone.service.dao.ServiceBaseDao {
 
-//    public List<WmsBtInventoryCenterLogicModel> selectItemDetailByCode(Map params){
-//        return selectList("wms_bt_inventory_center_logic_selectLogicInventory", params);
-//    }
-
-    public WmsBtInventoryCenterLogicModel selectItemDetailBySku(Map params){
-        return selectOne("wms_bt_inventory_center_logic_selectLogicInventory", params);
-    }
-
+    /**
+     * todo 用于库存隔离使用,以后库存隔离重新设计的时候再删除,目前不会用到
+     *
+     * @param params
+     * @return
+     */
+    @Deprecated
     public List<WmsBtInventoryCenterLogicModel> selectItemDetail(Map params){
         return selectList("wms_bt_inventory_center_logic_selectLogicInventory", params);
     }
 
+    /**
+     * todo 用于库存隔离使用,以后库存隔离重新设计的时候再删除,目前不会用到
+     *
+     * @param channelId
+     * @param skuList
+     * @return
+     */
+    @Deprecated
     public List<WmsBtInventoryCenterLogicModel> selectItemDetailBySkuList(String channelId, List<String> skuList){
         return selectList("wms_bt_inventory_center_logic_selectLogicInventory", parameters("channelId", channelId, "skuList", skuList));
     }
 
+    /**
+     * todo 用于库存隔离使用,以后库存隔离重新设计的时候再删除,目前不会用到
+     *
+     * @param param
+     * @return
+     */
+    @Deprecated
     public Integer selectLogicInventoryCnt(Map<String, Object> param) {
         return selectOne("wms_bt_inventory_center_logic_selectLogicInventoryCnt", param);
     }
 
+    /**
+     * todo 用于库存隔离使用,以后库存隔离重新设计的时候再删除,目前不会用到
+     * @param channelId
+     * @param itemCodeOld
+     * @param skuList
+     * @param itemCodeNew
+     * @param modifier
+     * @return
+     */
+    @Deprecated
     public int updateCodeForMove(String channelId, String itemCodeOld, List<String> skuList, String itemCodeNew, String modifier) {
         Map<String, Object> params = new HashMap<>();
         params.put("channelId", channelId);
@@ -46,6 +70,13 @@ public class WmsBtInventoryCenterLogicDao extends com.voyageone.service.dao.Serv
         return update("wms_bt_inventory_center_logic_updateCodeForMove", params);
     }
 
+    /**
+     * todo 用于库存隔离使用,以后库存隔离重新设计的时候再删除,目前不会用到
+     * @param channelId
+     * @param codeList
+     * @return
+     */
+    @Deprecated
     public List<WmsBtInventoryCenterLogicModel> getInventoryByCode(String channelId, List<ProductImportBean> codeList) {
         Map<String, Object> params = new HashMap<>();
         params.put("channelId", channelId);

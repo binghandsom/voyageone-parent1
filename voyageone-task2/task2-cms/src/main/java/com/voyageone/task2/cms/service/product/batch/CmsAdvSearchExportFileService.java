@@ -33,7 +33,6 @@ import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.cms.bean.SkuInventoryForCmsBean;
-import com.voyageone.task2.cms.dao.InventoryDao;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -114,8 +113,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private PlatformService platformService;
     @Autowired
     private CmsBtExportTaskService cmsBtExportTaskService;
-    @Autowired
-    private InventoryDao inventoryDao;
     @Autowired
     private TagService tagService;
 

@@ -34,14 +34,11 @@ import com.voyageone.service.impl.cms.CmsMtEtkHsCodeService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.wms.InventoryCenterLogicService;
-import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
 import com.voyageone.service.model.cms.CmsMtEtkHsCodeModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.collections.Predicate;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -51,7 +48,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
-import static org.apache.flume.tools.VersionInfo.getUser;
 
 /**
  * product Service
@@ -756,15 +752,7 @@ public class ProductService extends BaseService {
                     priceSale = skuInfo.getDoubleAttribute("priceSale");
                 }
                 bean.setPricePerUnit(String.valueOf(priceSale));
-                // TODO 目前无法取得库存值
-                Map<String, Object> param = new HashMap<>();
-                param.put("channelId", product.getOrgChannelId());
-                param.put("sku", skuCode);
-                WmsBtInventoryCenterLogicModel skuInventory = wmsBtInventoryCenterLogicDao.selectItemDetailBySku(param);
-
-                if (skuInventory != null) {
-                    bean.setInventory(String.valueOf(skuInventory.getQtyChina()));
-                }
+                bean.setInventory(String.valueOf(skuInfo.getIntAttribute("qty")));
                 String imagePath = "";
                 if (!product.getCommon().getFields().getImages1().isEmpty()) {
                     if (!StringUtils.isEmpty(product.getCommon().getFields().getImages1().get(0).getName()))
@@ -831,27 +819,6 @@ public class ProductService extends BaseService {
         updateMap.put("$set", rsMap);
 
         cmsBtProductDao.update(channelId, paraMap, updateMap);
-    }
-
-    /**
-     * 获取Sku的库存信息
-     */
-    public Map<String, Integer> getProductSkuQty(String channelId, String productCode) {
-        Map<String, String> queryMap = new HashMap<>();
-        queryMap.put("channelId", channelId);
-        queryMap.put("code", productCode);
-
-        List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailByCode(queryMap);
-
-        Map<String, Integer> result = new HashMap<>();
-        for (WmsBtInventoryCenterLogicModel inventory : inventoryList) {
-            if(channelId.equals("001")){
-                result.put(inventory.getSku().toLowerCase(), inventory.getQtyChina());
-            }else{
-                result.put(inventory.getSku(), inventory.getQtyChina());
-            }
-        }
-        return result;
     }
 
     /**

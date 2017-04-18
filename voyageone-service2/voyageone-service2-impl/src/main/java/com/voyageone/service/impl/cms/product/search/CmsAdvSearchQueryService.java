@@ -39,8 +39,6 @@ public class CmsAdvSearchQueryService extends BaseService {
     private ProductService productService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
-    @Autowired
-    private WmsBtInventoryCenterLogicDaoExt wmsBtInventoryDaoExt;
 
     /**
      * 获取当前查询的product列表（查询条件从画面而来）<br>

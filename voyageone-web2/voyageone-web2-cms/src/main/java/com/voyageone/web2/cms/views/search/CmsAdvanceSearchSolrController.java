@@ -553,7 +553,7 @@ public class CmsAdvanceSearchSolrController extends CmsController {
     public AjaxResponse getSkuInventoryList(@RequestBody String code) {
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode(getUser().getSelChannelId(), code);
         if (cmsBtProductModel != null) {
-            return success(advSearchQueryService.getSkuInventoryList(cmsBtProductModel.getOrgChannelId(), code));
+            return success(advSearchQueryService.getSkuInventoryList(cmsBtProductModel));
         } else {
             throw new BusinessException(code + "：该商品不存在");
         }
