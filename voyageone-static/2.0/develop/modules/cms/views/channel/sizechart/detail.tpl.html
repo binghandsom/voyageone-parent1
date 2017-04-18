@@ -92,14 +92,18 @@
                             <button title="保存" class="btn btn-vo m-r-xs" ng-click="saveSize()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
                         </div>
                     </div>
-                    <table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px"
-                           ng-controller="popupCtrl">
+                    <table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px" ng-controller="popupCtrl">
                         <thead>
                         <tr>
                             <th class="mfb-xt text-center">{{'TXT_INDEX' | translate}}</th>
                             <th class="mfb-xxt text-center">{{'TXT_SIZE_CHART_ORIGINAL_SIZE' | translate}}</th>
                             <th class="mfb-xxt text-center">{{'TXT_SIZE_CHART_ADJUST_SIZE' | translate}}</th>
-                            <th class="mfb-xxt text-center">{{'TXT_SIZE_CHART_COMMON_SIZE' | translate}}</th>
+                            <th class="mfb-xxt text-center">
+                                <label class="v-middle">
+                                    <input type="checkbox" ng-model="vm.canUsual" ng-click="checkUsual()">
+                                </label>&nbsp;
+                                {{'TXT_SIZE_CHART_COMMON_SIZE' | translate}}
+                            </th>
                             <th class="mfb-xxt text-center">{{'TXT_ACTION' | translate}}</th>
                         </tr>
                         </thead>
@@ -108,7 +112,11 @@
                                 <td class="mfb-xt text-center">{{$index + 1}}</td>
                                 <td class="mfb-xxt text-center-xs"><input type="text" class="form-control" style="width:100px;margin: 0px auto;" ng-model="sizeInfo.originalSize"></td>
                                 <td class="mfb-xxt text-center-xs"><input type="text" class="form-control" style="width:100px;margin: 0px auto;" ng-model="sizeInfo.adjustSize"></td>
-                                <td class="mfb-xxt text-center"><label class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="sizeInfo.usual"><span class="fa fa-check"></span></label></td>
+                                <td class="mfb-xxt text-center">
+                                    <label class="v-middle">
+                                        <input type="checkbox" ng-model="sizeInfo.usual">
+                                    </label>
+                                </td>
                                 <td class="mfb-xxt text-center">
                                     <button title="删除" class="btn btn-danger btn-xs" ng-click="delSize($index)"><i class="fa  fa-trash-o"></i></button>
                                 </td>

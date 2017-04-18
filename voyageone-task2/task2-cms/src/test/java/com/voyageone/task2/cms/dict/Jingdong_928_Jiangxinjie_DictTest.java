@@ -52,9 +52,9 @@ public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
         ShopBean shopProp = new ShopBean();
         shopProp.setApp_url(""); // https://api.jd.com/routerjson
-        shopProp.setAppKey(""); // BFA3102EFD4B981E9EEC2BE32DF1E44E
-        shopProp.setAppSecret(""); // 90742900899f49a5acfaf3ec1040a35c
-        shopProp.setSessionKey(""); // 4326ace5-57d7-4b9e-b24a-3ac2471eabe3
+        shopProp.setAppKey("");
+        shopProp.setAppSecret("");
+        shopProp.setSessionKey("");
         shopProp.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
 
         try {
@@ -141,7 +141,7 @@ public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
 
         if (propType == 4) { // 参数图 - 非重点之英文长描述
             // charis sta
-            String html = "<div style=\"margin-top: -3px; border-width: 0 15px 0 15px; border-color: #f6f2f1 ; border-style: double solid; padding: 50px 20px 20px 20px; width: 720px;font-family:'microsoft yahei'; font-size: 16pt; color: #000000; \">";
+            String html = "<div style=\"margin-top: -3px; border-width: 0 15px 0 15px; border-color: #f6f2f1 ; border-style: double solid; padding: 50px 20px 20px 20px; width: 720px;font-family:'microsoft yahei'; font-size: 13pt; color: #000000; \">";
             ruleRoot.addRuleWord(new TextWord(html));
 
             ruleRoot.addRuleWord(new MasterClrHtmlWord("longDesEn")); // 英文长描述
@@ -154,7 +154,7 @@ public class Jingdong_928_Jiangxinjie_DictTest extends BaseDictTest {
 
             {
                 String tableTem = "<div style=\"margin-top: -3px; border-width: 0 15px 0 15px; border-color: #f6f2f1; border-style: double solid; padding: 50px 20px 20px 20px; width: 720px; \">" +
-                        "<table style=\"width: 720px; font-family: microsoft yahei; font-size: 16pt; color: #000000; cellspacing: 0; cellpadding: 0\">";
+                        "<table style=\"width: 720px; font-family: microsoft yahei; font-size: 13pt; color: #000000; cellspacing: 0; cellpadding: 0\">";
                 int columnCount = 2;
                 RuleExpression tableTemplate = new RuleExpression();
                 tableTemplate.addRuleWord(new TextWord(tableTem));

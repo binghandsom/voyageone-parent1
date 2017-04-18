@@ -25,7 +25,7 @@ public class CmsProductTotalImportToSearchServiceTest {
     public void testImportDataToSearchFromMongo() {
 //        CmsBtProductModel cmsBtProductModel = productService.getProductByObjectId("018","5784e205b48b2a3c51e41aa6");
 
-        String channelId = "007";
+        String channelId = "018";
         cmsProductTotalImportToSearchService.importDataToSearchFromMongo(channelId);
     }
 
