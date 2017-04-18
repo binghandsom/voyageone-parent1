@@ -25,6 +25,10 @@ define([
                 freeTagType: 1,
                 supplierType: 1,
                 brandSelType: 1,
+                mCatPathType:1,
+                fCatPathType:1,
+                shopCatType:1,
+                pCatPathType:1,
                 productSelType: '1',
                 sizeSelType: '1',
                 salesType: 'All',
@@ -173,6 +177,10 @@ define([
                 freeTagType: 1,
                 supplierType: 1,
                 brandSelType: 1,
+                mCatPathType:1,
+                fCatPathType:1,
+                shopCatType:1,
+                pCatPathType:1,
                 shopCatStatus: null,
                 inventory: '',
                 salesStart: null,
@@ -1059,10 +1067,16 @@ define([
                 .then(function (res) {
                     popupCategoryFnc({
                         categories: res.data,
-                        from: $scope.vm.searchInfo.mCatPath
+                        from: ""
                     }).then(function (res) {
-                        $scope.vm.searchInfo.mCatPath = res.selected.catPath;
-                        $scope.vm.searchInfo.mCatId = res.selected.catId;
+                        if(!$scope.vm.searchInfo.mCatPath){
+                            $scope.vm.searchInfo.mCatPath = [];
+                            $scope.vm.searchInfo.mCatPath.push(res.selected.catPath)
+                        }else{
+                            if($scope.vm.searchInfo.mCatPath.indexOf($scope.vm.searchInfo.mCatPath)<0){
+                                $scope.vm.searchInfo.mCatPath.push(res.selected.catPath)
+                            }
+                        }
                     });
                 });
         }
