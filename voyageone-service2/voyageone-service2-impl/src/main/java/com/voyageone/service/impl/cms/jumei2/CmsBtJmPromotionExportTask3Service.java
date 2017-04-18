@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.jumei2;
 
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
@@ -11,21 +12,27 @@ import com.voyageone.common.util.excel.ExcelException;
 import com.voyageone.common.util.excel.ExportExcelInfo;
 import com.voyageone.common.util.excel.ExportFileExcelUtil;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionExportTaskDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtProdSalesHisDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductImagesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionExportTaskDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionExportMQMessageBody;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionProductService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel;
+import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
+import com.voyageone.service.model.cms.CmsMtProdSalesHisModel;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,7 +41,7 @@ import java.util.stream.Collectors;
  * Created by dell on 2016/3/18.
  */
 @Service
-public class CmsBtJmPromotionExportTask3Service {
+public class CmsBtJmPromotionExportTask3Service extends BaseService {
     @Autowired
     CmsBtJmPromotionExportTaskDao dao;
     @Autowired
@@ -49,6 +56,10 @@ public class CmsBtJmPromotionExportTask3Service {
     CmsBtJmPromotionProductService cmsBtJmPromotionProductService;
     @Autowired
     CmsMqSenderService cmsMqSenderService;
+    @Autowired
+    CmsMtProdSalesHisDao cmsMtProdSalesHisDao;
+    @Autowired
+    CmsBtJmPromotion3Service cmsBtJmPromotion3Service;
 
     public CmsBtJmPromotionExportTaskModel get(int id) {
         return dao.select(id);
@@ -81,6 +92,15 @@ public class CmsBtJmPromotionExportTask3Service {
             List<Map<String, Object>> listProduct = daoExtCmsBtJmPromotionProduct.selectExportListByPromotionId(model.getCmsBtJmPromotionId(), codes);
             List<Map<String, Object>> listSku = daoExtCmsBtJmPromotionSku.selectExportListByPromotionId(model.getCmsBtJmPromotionId(), codes);
 
+            Map<String, Integer>saleMap = getPromotionSale(model.getCmsBtJmPromotionId());
+            if(saleMap.size() > 0){
+                listSku.forEach(sku->{
+                    Integer saleQty = saleMap.get(sku.get("skuCode"));
+                    if(saleQty != null){
+                        sku.put("saleQty", saleQty);
+                    }
+                });
+            }
             export(filePath, listProduct, listSku, false);
             model.setSuccessRows(listProduct.size());
             if (listProduct.isEmpty()) {
@@ -252,5 +272,32 @@ public class CmsBtJmPromotionExportTask3Service {
         }
     }
 
+    // 计算活动期间的sku的销量
+    public Map getPromotionSale(Integer jmPromotionId){
+        CmsBtJmPromotionModel cmsBtJmPromotionModel = cmsBtJmPromotion3Service.get(jmPromotionId);
+        Map<String, Integer>saleMap = new HashMap<>();
+        try {
+            String startDate = DateTimeUtil.format(cmsBtJmPromotionModel.getActivityStart(), "yyyy-MM-dd");
+            String endDate = DateTimeUtil.format(cmsBtJmPromotionModel.getActivityEnd(), "yyyy-MM-dd");
+            JongoQuery queryObject = new JongoQuery();
+            Criteria criteria = new Criteria("cart_id").is(27).and("channel_id").is(cmsBtJmPromotionModel.getChannelId()).and("date").gte(startDate).lte(endDate);
+            queryObject.setQuery(criteria);
+            if (cmsBtJmPromotionModel != null) {
+                List<CmsMtProdSalesHisModel> cmsMtProdSalesHisModels = cmsMtProdSalesHisDao.select(queryObject);
+                if (ListUtils.notNull(cmsMtProdSalesHisModels)) {
+                    for (CmsMtProdSalesHisModel item : cmsMtProdSalesHisModels) {
+                        if (saleMap.containsKey(item.getSku())) {
+                            saleMap.put(item.getSku(), saleMap.get(item.getSku()) + item.getQty());
+                        } else {
+                            saleMap.put(item.getSku(), item.getQty());
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+            $error(e.getMessage());
+        }
+        return saleMap;
+    }
 }
 
