@@ -79,7 +79,8 @@ define([
                 cartId: self.cartBean.value,
                 isSelAll: self.context.isSelAll,
                 activityStart: self.groupInfo.startTime,
-                activityEnd: self.groupInfo.endTime
+                activityEnd: self.groupInfo.endTime,
+                searchInfo:self.context.searchInfo
             }).then(function (res) {
                 self.listTreeNode = res.data.listTreeNode;
 
@@ -115,15 +116,10 @@ define([
 
             if (entity.children && entity.children.length > 0 && checkNodes[entity.id]) {
 
-                var exit = _.some(entity.children, function (item) {
+                _.some(entity.children, function (item) {
                     //只判断全选状态
                     return item.checked == 2;
                 });
-
-                if (!exit) {
-                    alert("至少勾选一个活动标签！");
-                    return;
-                }
             }
         };
 
@@ -225,7 +221,8 @@ define([
                 isSelAll: context.isSelAll,
                 codeList: self.getCodeList(),
                 idList: self.getProductIdList(),
-                listTagTreeNode: self.listTreeNode
+                listTagTreeNode: self.listTreeNode,
+                searchInfo:context.searchInfo
             }, groupInfo)).then(function () {
                 notify.success("添加成功！");
                 $uibModalInstance.close();

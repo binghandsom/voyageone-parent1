@@ -32,6 +32,7 @@ public class CmsBtOperationLogServiceTest {
     private String jobName = "jobName";
     private String jobTitle = "jobTitle";
     private String userName = "edward";
+    private String channelId = "928";
     private BusinessException exception = new BusinessException("测试异常");
     private List<CmsBtOperationLogModel_Msg> msgList = new ArrayList<>();
 
@@ -57,7 +58,7 @@ public class CmsBtOperationLogServiceTest {
 
     @Test
     public void testLog2() throws Exception {
-        cmsBtOperationLogService.log(jobName, jobTitle, OperationLog_Type.unknownException, msgList, userName);
+        cmsBtOperationLogService.log(jobName, jobTitle, OperationLog_Type.unknownException, msgList, userName, channelId);
     }
 
     @Test

@@ -7,6 +7,8 @@ import com.voyageone.service.bean.cms.businessmodel.CmsPromotionDetail.SaveSkuPr
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductTagParameter;
 import com.voyageone.service.impl.cms.promotion.PromotionCodesTagService;
 import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsSneakerHeadAddPromotionMQMessageBody;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
@@ -41,6 +43,8 @@ public class CmsPromotionDetailController extends CmsController {
     private CmsPromotionDetailService cmsPromotionDetailService;
     @Autowired
     private PromotionSkuService promotionSkuService;
+    @Autowired
+    private  CmsMqSenderService cmsMqSenderService;
 
     @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_GROUP)
     public AjaxResponse getPromotionGroup(@RequestBody Map<String, Object> params) {
@@ -161,5 +165,16 @@ public class CmsPromotionDetailController extends CmsController {
             throws Exception {
         byte[] data = cmsPromotionDetailService.getTMallPromotionExport(promotionId, getUser().getSelChannelId());
         return genResponseEntityFromBytes(String.format("%s(官方活动(A类))-%s.xls", promotionName, DateTimeUtil.getLocalTime(getUserTimeZone(), "MMddHHmmss"), ".xlsx"), data);
+    }
+
+    @RequestMapping("addPromotionByGroup")
+    public AjaxResponse addPromotionByGroup(@RequestBody Integer promotionId) {
+
+        CmsSneakerHeadAddPromotionMQMessageBody cmsSneakerHeadAddPromotionMQMessageBody = new CmsSneakerHeadAddPromotionMQMessageBody();
+        cmsSneakerHeadAddPromotionMQMessageBody.setPromotionId(promotionId);
+        cmsSneakerHeadAddPromotionMQMessageBody.setChannelId(getUser().getSelChannelId());
+        cmsSneakerHeadAddPromotionMQMessageBody.setSender(getUser().getUserName());
+        cmsMqSenderService.sendMessage(cmsSneakerHeadAddPromotionMQMessageBody);
+        return success(true);
     }
 }

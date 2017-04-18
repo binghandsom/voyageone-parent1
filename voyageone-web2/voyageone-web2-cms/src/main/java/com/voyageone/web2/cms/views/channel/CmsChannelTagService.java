@@ -43,7 +43,7 @@ public class CmsChannelTagService extends BaseViewService {
      * @param lang
      * @return result
      */
-    public Map<String, Object> getInitTagInfo(Map param, CmsSessionBean sessionBean, String lang) {
+    public Map<String, Object> getInitTagInfo(Map param, String lang) {
         Map<String, Object> result = new HashMap<>();
         List<CmsBtTagBean> tagsList = getTagInfoByChannelId(param);
         List<CmsBtTagBean> categoryList = convertToTree(tagsList);
@@ -67,7 +67,7 @@ public class CmsChannelTagService extends BaseViewService {
             List<String> prodCodes = null;
             if (isSelAll == 1) {
                 // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-                prodCodes = advanceSearchService.getProductCodeList((String) param.get("channelId"), sessionBean);
+                prodCodes = advanceSearchService.getProductCodeList((String) param.get("channelId"), (Map<String, Object>) param.get("searchInfo"));
             } else {
                 prodCodes = (List<String>) param.get("productIds");
             }

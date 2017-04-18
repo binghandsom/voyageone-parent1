@@ -181,7 +181,7 @@ define([
                 "backdrop": 'static',
                 "size": 'md'
             },
-            "addValue":{
+            "addValue": {
                 "templateUrl": "views/pop/custom/addValue.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/custom/addValue.ctl",
                 "controller": 'popAddValueCtl as ctrl'
@@ -616,6 +616,11 @@ define([
                 "templateUrl": "views/pop/product/upload-images.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/upload-images.ctl",
                 "controller": 'uploadImagesController as ctrl'
+            },
+            "loadAttribute": {
+                "templateUrl": "views/pop/product/loadAttribute.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/loadAttribute.ctl",
+                "controller": 'loadAttributeController as ctrl'
             }
         },
         "shelves": {
@@ -640,6 +645,12 @@ define([
             templateUrl: "views/pop/platformMapping/confirmProductRefresh.html",
             controllerUrl: "modules/cms/views/pop/platformMapping/confirmProductRefresh.controller",
             controller: 'ConfirmProductRefreshController as $ctrl',
+            size: 'md'
+        },
+        mqSkuCodeError: {
+            templateUrl: "views/pop/error/mqSkuCodeError.html",
+            controllerUrl: "modules/cms/views/pop/error/mqSkuCodeError.ctl",
+            controller: 'mqSkuCodeErrorController as ctrl',
             size: 'md'
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
@@ -1121,7 +1132,7 @@ define([
                 productIds.push(object.code);
             });
             if (context && context.isSelAll) {
-                data = {"productIds": [], "cartId": cartId, 'isSelAll': context.isSelAll};
+                data = {"productIds": [], "cartId": cartId, 'isSelAll': context.isSelAll,"searchInfo":context.searchInfo};
             } else if (selList.length > 0 && selList[0].plateSchema) {
                 data = {
                     "productIds": productIds,
@@ -1488,6 +1499,20 @@ define([
         /**产品详情页图片上传*/
         $scope.openUploadImages = function openUploadImages(context) {
             return openModal(popActions.product.uploadImages, context);
+        };
+
+        /**
+         * MQ:sku-code 错误列表
+         */
+        $scope.openMqSkuCodeError = function openMqSkuCodeError(context) {
+            return openModal(popActions.mqSkuCodeError, context);
+        };
+
+        /**
+         * 产品详情页更新部分属性
+         */
+        $scope.openLoadAttribute = function openLoadAttribute(context) {
+            return openModal(popActions.product.loadAttribute, context)
         }
 
     }).factory('popups', function ($controller, $rootScope) {

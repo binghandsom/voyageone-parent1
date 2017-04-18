@@ -26,7 +26,8 @@
                     <div class="vo_prodGallery" style="border-bottom: 1px solid #ddd;">
                         <div class="imageContainer">
                             <div class="imageWrapper">
-                                <img class="imageWrapper" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrl.vm.model.image1}}">
+                                <img class="imageWrapper" style="max-width: 330px; max-height: 200px;"
+                                     ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrl.vm.model.image1}}">
                             </div>
                         </div>
                     </div>
@@ -117,13 +118,21 @@
                                 <td class="mfb-xxt text-right">{{item.clientMsrpPrice}}</td>
                                 <td class="mfb-xxt text-right">{{item.clientNetPrice}}</td>
                                 <td class="mfb-xxt text-right">
-                                    <price prices = "[item.priceMsrpSt,item.priceMsrpEd]"></price>
+                                    <price prices = "[item.priceMsrpSt,item.priceMsrpEd]"></price> &nbsp;&nbsp;
+                                    <span style="color: red"
+                                          ng-if="item.priceMsrp && item.priceMsrpSt != item.priceMsrp">
+                                        【{{item.priceMsrp}}】
+                                    </span>
                                 </td>
                                 <td class="mfb-xxt text-right">
                                     <price prices = "[item.priceRetailSt,item.priceRetailEd]"></price>
                                 </td>
                                 <td class="mfb-xxt text-right">
                                     <price prices = "[item.priceSaleSt,item.priceSaleEd]"></price>
+                                    <span style="color: red"
+                                          ng-if="item.priceSale && item.priceSaleSt != item.priceSale">
+                                        【{{item.priceSale}}】
+                                    </span>
                                 </td>
                                 <td class="mfb-xxt text-center">
                                     <input type="number" class="form-control text-right" ng-disabled="item.autoSyncPriceMsrp == 1"  ng-model="item.priceMsrp"  placeholder="中国建议售价" scale="15,2"/>

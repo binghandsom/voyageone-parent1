@@ -29,8 +29,9 @@ import java.util.stream.Collectors;
 public class CmsAdvSearchQueryService extends BaseService {
 
     // 查询产品信息时的缺省输出列
+    // sku 添加clientMsrpPrice & clientMsrpPriceChgFlg added by piao
     public final static String searchItems = "channelId;prodId;created;creater;modified;orgChannelId;modifier;freeTags;sales;bi;platforms;lock;" +
-            "common.skus.skuCode;common.skus.qty;common.skus.size;common.fields.originalCode;common.fields.originalTitleCn;common.catPath;common.fields.productNameEn;common.fields.brand;common.fields.code;" +
+            "common.skus.skuCode;common.skus.clientNetPriceChgFlg;common.skus.qty;common.skus.size;common.skus.clientMsrpPrice;common.skus.clientMsrpPriceChgFlg;common.fields.originalCode;common.fields.originalTitleCn;common.catPath;common.fields.productNameEn;common.fields.brand;common.fields.code;" +
             "common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.images5;common.fields.images6;common.fields.images7;common.fields.images8;common.fields.images9;" +
             "common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
             "common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;usPlatforms;";
@@ -38,6 +39,8 @@ public class CmsAdvSearchQueryService extends BaseService {
     private ProductService productService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private WmsBtInventoryCenterLogicDaoExt wmsBtInventoryDaoExt;
 
     /**
      * 获取当前查询的product列表（查询条件从画面而来）<br>
@@ -524,15 +527,27 @@ public class CmsAdvSearchQueryService extends BaseService {
 
         // 获取模糊查询条件，用于检索产品名，描述
         if (StringUtils.isNotEmpty(searchValue.getFuzzyStr())) {
-            List<String> orSearch = new ArrayList<>();
             // 英文查询内容
             String fuzzyStr = searchValue.getFuzzyStr();
             queryObject.addQuery("{$or:[{'common.fields.productNameEn':{$regex:#, $options:\"i\"}},{'common.fields.longDesEn':{$regex:#, $options:\"i\"}},{'common.fields.shortDesEn':{$regex:#, $options:\"i\"}},{'common.fields.originalTitleCn':{$regex:#, $options:\"i\"}},{'common.fields.shortDesCn':{$regex:#, $options:\"i\"}},{'common.fields.longDesCn':{$regex:#, $options:\"i\"}}]}");
             queryObject.addParameters(fuzzyStr, fuzzyStr, fuzzyStr, fuzzyStr, fuzzyStr, fuzzyStr);
         }
 
+        // 获取模糊查询条件，用于检索产品名，描述
+        if (StringUtils.isNotEmpty(searchValue.getProductNameCn())) {
+            // 英文查询内容
+            queryObject.addQuery("{'common.fields.originalTitleCn':{$regex:#, $options:\"i\"}}");
+            queryObject.addParameters(searchValue.getProductNameCn());
+        }
+
         if(searchValue.getNoSale() != null && searchValue.getNoSale()){
             queryObject.addQuery("{'platforms.P20.pNumIId':{$in:['',null]}, 'platforms.P21.pNumIId':{$in:['',null]}, 'platforms.P22.pNumIId':{$in:['',null]}, 'platforms.P23.pNumIId':{$in:['',null]}, 'platforms.P24.pNumIId':{$in:['',null]}, 'platforms.P25.pNumIId':{$in:['',null]}, 'platforms.P26.pNumIId':{$in:['',null]}, 'platforms.P27.pNumIId':{$in:['',null]}}");
+        }
+
+        // 客户建议售价状态
+        if (StringUtils.isNotEmpty(searchValue.getClientMsrpPriceChgFlg())) {
+            queryObject.addQuery("{'common.skus.clientMsrpPriceChgFlg':{$regex:#}}");
+            queryObject.addParameters(searchValue.getClientMsrpPriceChgFlg());
         }
 
         // 获取自定义查询条件

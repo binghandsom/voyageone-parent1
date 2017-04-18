@@ -192,6 +192,23 @@ define([
     };
 
     /**
+     * @description 部分属性上新
+     */
+    SpJmController.prototype.loadAttribute = function () {
+        var self = this;
+
+        self.popups.openLoadAttribute({
+            attribute: ['description', 'title', 'item_images']
+        }).then(function (res) {
+            self.approveAttr = null;
+            self.approveAttr = res;
+
+            self.saveProduct();
+        });
+
+    };
+
+    /**
      * @description 保存前判断数据的有效性
      * @param mark 标识字段
      */
@@ -275,21 +292,38 @@ define([
                 platform: self.vm.platform,
                 type: mark
             };
+
+        if (self.approveAttr)
+            _.extend(updateInfo, {
+                platformWorkloadAttributes: self.approveAttr
+            });
+
         /**判断价格*/
         self.productDetailService.updateProductPlatformChk(updateInfo).then(function (resp) {
             self.vm.platform.modified = resp.data.modified;
             self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
 
+            /**生成共通部分，商品状态*/
+            self.productDetailService.createPstatus(self.element.find("#platform-status"),
+                self.$scope.$new(),
+                self.vm.platform
+            );
         }, function (resp) {
             if (resp.code != "4000091" && resp.code != "4000092") {
                 self.vm.status = self.vm.preStatus;
                 return;
             }
 
-            self.confirm(resp.message + ",是否强制保存").then(function () {
+            self.confirm(resp.message + "是否强制保存").then(function () {
                 self.productDetailService.updateProductPlatform(updateInfo).then(function (resp) {
                     self.vm.platform.modified = resp.data.modified;
                     self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+
+                    /**生成共通部分，商品状态*/
+                    self.productDetailService.createPstatus(self.element.find("#platform-status"),
+                        self.$scope.$new(),
+                        self.vm.platform
+                    );
                 });
             }, function () {
                 if (mark != 'temporary')
@@ -335,17 +369,26 @@ define([
      * 刷新价格实际操作
      */
     SpJmController.prototype.updateSkuPrice = function () {
-        var self = this, $scope = self.$scope;
-
-        self.confirm("您是否确认要刷新sku价格").then(function () {
-            self.productDetailService.updateSkuPrice({
+        var self = this, $scope = self.$scope,
+            upEntity = {
                 cartId: $scope.cartInfo.value,
                 prodId: $scope.productInfo.productId,
                 platform: self.vm.platform
-            }).then(function () {
+            };
+
+        self.confirm("您是否确认要刷新sku价格").then(function () {
+            self.productDetailService.updateSkuPrice(_.extend(upEntity, {priceCheck: true})).then(function () {
                 self.notify.success("TXT_MSG_UPDATE_SUCCESS");
             }, function (res) {
-                self.alert(res.message);
+                if (res.code != "4000094")
+                    return;
+
+                self.confirm(res.message + "是否强制保存").then(function () {
+                    self.productDetailService.updateSkuPrice(_.extend(upEntity, {priceCheck: false})).then(function () {
+                        self.notify.success("TXT_MSG_UPDATE_SUCCESS");
+                    });
+
+                });
             });
         });
     };
@@ -536,16 +579,16 @@ define([
     /**
      * 产品详情上下架
      */
-    SpJmController.prototype.upperAndLowerFrame = function(mark) {
+    SpJmController.prototype.upperAndLowerFrame = function (mark) {
         var self = this,
             $translate = self.$translate,
-            msg = mark === 'ToOnSale'? '上架':'下架';
+            msg = mark === 'ToOnSale' ? '上架' : '下架';
 
-        self.confirm('您是否执行'　+ msg +'操作？').then(function(){
+        self.confirm('您是否执行' + msg + '操作？').then(function () {
             self.productDetailService.upperLowerFrame({
                 cartId: self.$scope.cartInfo.value,
                 productCode: self.vm.mastData.productCode,
-                pStatus:mark
+                pStatus: mark
             }).then(function () {
                 self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 self.getPlatformData();

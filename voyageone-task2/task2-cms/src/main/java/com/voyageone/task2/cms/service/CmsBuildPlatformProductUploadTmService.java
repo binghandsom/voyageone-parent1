@@ -120,29 +120,140 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
     @Override
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        // 获取该任务可以运行的销售渠道
-        List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
+//        // 获取该任务可以运行的销售渠道
+//        List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
+//
+//        // 循环所有销售渠道
+//        if (channelIdList != null && channelIdList.size() > 0) {
+//            for (String channelId : channelIdList) {
+//                // TODO 虽然workload表里不想上新的渠道，不会有数据，这里的循环稍微有点效率问题，后面再改
+//                // 天猫平台商品信息新增或更新(天猫)
+//                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TM.getId()));
+//                // 天猫国际商品信息新增或更新(天猫国际)
+//                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TG.getId()));
+//                // 淘宝商品信息新增或更新(淘宝)
+////                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TB.getId()));
+//                // 天猫MiniMall商品信息新增或更新(天猫MiniMall)
+////                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TMM.getId()));
+//            }
+//        }
 
-        // 循环所有销售渠道
-        if (channelIdList != null && channelIdList.size() > 0) {
-            for (String channelId : channelIdList) {
-                // TODO 虽然workload表里不想上新的渠道，不会有数据，这里的循环稍微有点效率问题，后面再改
-                // 天猫平台商品信息新增或更新(天猫)
-                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TM.getId()));
-                // 天猫国际商品信息新增或更新(天猫国际)
-                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TG.getId()));
-                // 淘宝商品信息新增或更新(淘宝)
-//                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TB.getId()));
-                // 天猫MiniMall商品信息新增或更新(天猫MiniMall)
-//                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TMM.getId()));
-            }
-        }
+		doUploadMain(taskControlList);
 
         // 正常结束
         $info("正常结束");
     }
 
-    /**
+	public void doUploadMain(List<TaskControlBean> taskControlList) {
+		// 由于这个方法可能会自己调用自己循环很多很多次， 不一定会跳出循环， 但又希望能获取到最新的TaskControl的信息， 所以不使用基类里的这个方法了
+		// 为了调试方便， 允许作为参数传入， 但是理想中实际运行中， 基本上还是自主获取的场合比较多
+		if (taskControlList == null) {
+			taskControlList = taskDao.getTaskControlList(getTaskName());
+
+			if (taskControlList.isEmpty()) {
+//                $info("没有找到任何配置。");
+				logIssue("没有找到任何配置！！！", getTaskName());
+				return;
+			}
+
+			// 是否可以运行的判断
+			if (!TaskControlUtils.isRunnable(taskControlList)) {
+				$info("Runnable is false");
+				return;
+			}
+
+		}
+
+		// 获取该任务可以运行的销售渠道
+		List<TaskControlBean> taskControlBeanList = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.order_channel_id);
+
+		// 准备按组分配线程（相同的组， 会共用相同的一组线程通道， 不同的组， 线程通道互不干涉）
+		Map<String, List<String>> mapTaskControl = new HashMap<>();
+		taskControlBeanList.forEach((l)->{
+			String key = l.getCfg_val2();
+			if (StringUtils.isEmpty(key)) {
+				key = "0";
+			}
+			if (mapTaskControl.containsKey(key)) {
+				mapTaskControl.get(key).add(l.getCfg_val1());
+			} else {
+				List<String> channelList = new ArrayList<>();
+				channelList.add(l.getCfg_val1());
+				mapTaskControl.put(key, channelList);
+			}
+		});
+
+		Map<String, ExecutorService> mapThread = new HashMap<>();
+
+		while (true) {
+
+			mapTaskControl.forEach((k, v)->{
+				boolean blnCreateThread = false;
+
+				if (mapThread.containsKey(k)) {
+					ExecutorService t = mapThread.get(k);
+					if (t.isTerminated()) {
+						// 可以新做一个线程
+						blnCreateThread = true;
+					}
+				} else {
+					// 可以新做一个线程
+					blnCreateThread = true;
+				}
+
+				if (blnCreateThread) {
+					ExecutorService t = Executors.newSingleThreadExecutor();
+
+					List<String> channelIdList = v;
+					if (channelIdList != null) {
+						for (String channelId : channelIdList) {
+							t.execute(() -> {
+								try {
+									doProductUpload(channelId, CartEnums.Cart.TM.getValue());
+									doProductUpload(channelId, CartEnums.Cart.TG.getValue());
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							});
+
+						}
+					}
+					t.shutdown();
+
+					mapThread.put(k, t);
+
+				}
+			});
+
+			boolean blnAllOver = true;
+			for (Map.Entry<String, ExecutorService> entry : mapThread.entrySet()) {
+				if (!entry.getValue().isTerminated()) {
+					blnAllOver = false;
+					break;
+				}
+			}
+			if (blnAllOver) {
+				break;
+			}
+			try {
+				Thread.sleep(1000 * 10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		// TODO: 所有渠道处理总件数为0的场合， 就跳出不继续做了。 以外的场合， 说明可能还有别的未完成的数据， 继续自己调用自己一下
+		try {
+			Thread.sleep(1000 * 10);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		doUploadMain(null);
+
+	}
+
+	/**
      * 平台产品上新主处理
      *
      * @param channelId String 渠道ID
@@ -498,6 +609,12 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
             // delete by morse.lu 2016/06/06 end
             // 天猫商品上新处理
             try {
+                // 新增更新标记
+                boolean isNewFlag = false;
+                if (StringUtils.isEmpty(numIId)) {
+                    isNewFlag = true;
+                }
+
                 // 新增或更新商品信息到天猫平台
                 numIId = uploadTmItemService.uploadItem(expressionParser, platformProductId, cmsMtPlatformCategorySchemaModel, cmsMtPlatformMappingModel, shopProp, getTaskName());
                 // 新增或更新商品结果判断
@@ -509,8 +626,15 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                         // 自动设置天猫商品全链路库存管理（函数里会自动判断当前店铺是否需要处理全链路）
                         taobaoScItemService.doSetScItem(shopProp, sxData.getMainProduct(), Long.parseLong(numIId));
 
+                        // 20170413 tom 如果是新建的场合， 需要根据配置来设置上下架状态 START
+                        CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
+                        if (isNewFlag) {
+                            platformActive = sxProductService.getDefaultPlatformActiveConfigByChannelCart(channelId, String.valueOf(cartId));
+                        }
+                        // 20170413 tom 如果是新建的场合， 需要根据配置来设置上下架状态 END
+
                         // 如果action是onsale的场合， 再做一次上架
-                        if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
+                        if (CmsConstants.PlatformActive.ToOnSale.equals(platformActive)) {
                             tbSaleService.doWareUpdateListing(shopProp, numIId);
                         }
                     }

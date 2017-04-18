@@ -2,9 +2,6 @@ package com.voyageone.components.rabbitmq.bean;
 
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 
-/**
- * Created by dell on 2016/12/20.
- */
 public abstract class BaseMQMessageBody implements IMQMessageBody {
     //消费者重试次数
     private int consumerRetryTimes = 0;
@@ -17,6 +14,9 @@ public abstract class BaseMQMessageBody implements IMQMessageBody {
 
     //发送者
     private String sender;
+
+    //店铺Id
+    private String channelId;
 
     public int getConsumerRetryTimes() {
         return consumerRetryTimes;
@@ -50,6 +50,14 @@ public abstract class BaseMQMessageBody implements IMQMessageBody {
 
     public void setSender(String sender) {
         this.sender = sender;
+    }
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
     }
 
     public abstract void check() throws MQMessageRuleException;

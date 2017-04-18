@@ -94,7 +94,9 @@ public class ExpressionParser extends VOAbsLoggable {
             case TEXT:
                 plainValue = textWordParser.parse(ruleWord);
                 if (((TextWord)ruleWord).isUrl()) {
-                    if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
+                    if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())
+                            || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())
+                            || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())) {
 //                                plainValue = sxProductService.encodeImageUrl(plainValue);
                         Set<String> url = new HashSet<>();
                         url.add(plainValue);

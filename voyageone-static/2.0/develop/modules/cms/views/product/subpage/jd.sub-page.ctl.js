@@ -34,32 +34,38 @@ define([
     }
 
     function SpJdController($scope, productDetailService, $translate, notify, confirm, $compile, alert, popups, $fieldEditService, $document, $templateRequest) {
-        this.$scope = $scope;
-        this.productDetailService = productDetailService;
-        this.$translate = $translate;
-        this.notify = notify;
-        this.confirm = confirm;
-        this.$compile = $compile;
-        this.alert = alert;
-        this.popups = popups;
-        this.$fieldEditService = $fieldEditService;
-        this.$document = $document;
-        this.$templateRequest = $templateRequest;
-        this.vm = {
+        var self = this;
+        self.$scope = $scope;
+        self.productDetailService = productDetailService;
+        self.$translate = $translate;
+        self.notify = notify;
+        self.confirm = confirm;
+        self.$compile = $compile;
+        self.alert = alert;
+        self.popups = popups;
+        self.$fieldEditService = $fieldEditService;
+        self.$document = $document;
+        self.$templateRequest = $templateRequest;
+        self.vm = {
             productDetails: null,
             productCode: "",
             mastData: null,
             platform: null,
             status: "Pending",
             skuTemp: {},
-            checkFlag: {translate: 0, tax: 0, category: 0, attribute: 0},
+            checkFlag: self.$scope.cartInfo.value == 24 ? {translate: 0, category: 0, attribute: 0} : {
+                    translate: 0,
+                    tax: 0,
+                    category: 0,
+                    attribute: 0
+                },
             resultFlag: 0,
             sellerCats: [],
             productUrl: "",
             preStatus: null,
             noMaterMsg: null
         };
-        this.panelShow = true;
+        self.panelShow = true;
     }
 
     SpJdController.prototype.init = function (element) {
@@ -72,7 +78,8 @@ define([
         //监控税号和翻译状态和锁定状态
         var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
             check.translate = $scope.productInfo.translateStatus;
-            check.tax = $scope.productInfo.hsCodeStatus;
+            if ($scope.cartInfo.value != 24)
+                check.tax = $scope.productInfo.hsCodeStatus;
         });
 
         //监控主类目
@@ -150,7 +157,7 @@ define([
             productDetailService = self.productDetailService,
             $scope = self.$scope;
 
-        if (self.vm.platform.pNumIId != '') {
+        if (self.vm.platform.pNumIId) {
             self.alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
             return;
         }
@@ -229,6 +236,23 @@ define([
         } else {
             self.saveProductAction(mark);
         }
+    };
+
+    /**
+     * @description 部分属性上新
+     */
+    SpJdController.prototype.loadAttribute = function(){
+        var self = this;
+
+        self.popups.openLoadAttribute({
+            attribute: ['description', 'title', 'seller_cids']
+        }).then(function (res) {
+            self.approveAttr = null;
+            self.approveAttr = res;
+
+            self.saveProduct();
+        });
+
     };
 
     /**
@@ -333,21 +357,36 @@ define([
                 type: mark
             };
 
-        productDetailService.updateProductPlatformChk(updateInfo).then(function (resp) {
+        if(self.approveAttr)
+            _.extend(updateInfo,{
+                platformWorkloadAttributes:self.approveAttr
+            });
 
+        productDetailService.updateProductPlatformChk(updateInfo).then(function (resp) {
             self.vm.platform.modified = resp.data.modified;
             self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
 
+            /**生成共通部分，商品状态*/
+            self.productDetailService.createPstatus(self.element.find("#platform-status"),
+                self.$scope.$new(),
+                self.vm.platform
+            );
         }, function (resp) {
-            if (resp.code != "4000091" && resp.code != "4000092") {
+            if (resp.code != "4000091" && resp.code != "4000092" && resp.code != "4000094") {
                 self.vm.status = self.vm.preStatus;
                 return;
             }
 
-            self.confirm(resp.message + ",是否强制保存").then(function () {
+            self.confirm(resp.message + "是否强制保存").then(function () {
                 productDetailService.updateProductPlatform(updateInfo).then(function (resp) {
                     self.vm.platform.modified = resp.data.modified;
                     self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+
+                    /**生成共通部分，商品状态*/
+                    self.productDetailService.createPstatus(self.element.find("#platform-status"),
+                        self.$scope.$new(),
+                        self.vm.platform
+                    );
                 });
             }, function () {
                 if (mark != 'temporary')
@@ -373,7 +412,7 @@ define([
 
             self.vm.preStatus = angular.copy(self.vm.status);
             //设置智能上新状态,如果pStatus已经存在则保留原来状态
-            platform.pStatus = platform.pStatus == "" ? "WaitingPublish" :platform.pStatus;
+            platform.pStatus = platform.pStatus == "" ? "WaitingPublish" : platform.pStatus;
             platform.status = self.vm.status = 'Approved';
 
             self.callSave('intel');
@@ -446,17 +485,26 @@ define([
      */
     SpJdController.prototype.updateSkuPrice = function () {
         var self = this,
-            $scope = self.$scope;
-
-        self.confirm("您是否确认要刷新sku价格").then(function () {
-            self.productDetailService.updateSkuPrice({
+            $scope = self.$scope,
+            upEntity = {
                 cartId: $scope.cartInfo.value,
                 prodId: $scope.productInfo.productId,
                 platform: self.vm.platform
-            }).then(function () {
+            };
+
+        self.confirm("您是否确认要刷新sku价格").then(function () {
+            self.productDetailService.updateSkuPrice(_.extend(upEntity, {priceCheck: true})).then(function () {
                 self.notify.success("TXT_MSG_UPDATE_SUCCESS");
             }, function (res) {
-                self.alert(res.message);
+                if (res.code != "4000094")
+                    return;
+
+                self.confirm(res.message + "是否强制保存").then(function () {
+                    self.productDetailService.updateSkuPrice(_.extend(upEntity, {priceCheck: false})).then(function () {
+                        self.notify.success("TXT_MSG_UPDATE_SUCCESS");
+                    });
+
+                });
             });
         });
     };
@@ -615,19 +663,29 @@ define([
             $compile(modal)(modalChildScope);
         });
     };
+
+    /**
+     * @description 判断Ready和Approved的button激活状态
+     */
+    SpJdController.prototype.btnDisabled = function () {
+        return _.every(this.vm.checkFlag, function (ele) {
+            return ele == true ? 1 : 0;
+        });
+    };
+
     /**
      * 产品详情上下架
      */
-    SpJdController.prototype.upperAndLowerFrame = function(mark) {
+    SpJdController.prototype.upperAndLowerFrame = function (mark) {
         var self = this,
             $translate = self.$translate,
-            msg = mark === 'ToOnSale'? '上架':'下架';
+            msg = mark === 'ToOnSale' ? '上架' : '下架';
 
-        self.confirm('您是否执行'　+ msg +'操作？').then(function(){
+        self.confirm('您是否执行' + msg + '操作？').then(function () {
             self.productDetailService.upperLowerFrame({
                 cartId: self.$scope.cartInfo.value,
                 productCode: self.vm.mastData.productCode,
-                pStatus:mark
+                pStatus: mark
             }).then(function () {
                 self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 self.getPlatformData();
@@ -647,7 +705,7 @@ define([
             cartId: self.$scope.cartInfo.value,
             productId: self.$scope.productInfo.productId,
             platform: self.vm.platform,
-            showArr:['image1','image6','image7','image4','image5']
+            showArr: ['image1', 'image6', 'image7', 'image4', 'image5']
         }).then(function (platform) {
             self.vm.platform = platform;
         });

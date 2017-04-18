@@ -12,6 +12,7 @@ import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class CmsBtOperationLogService {
         String stackTrace = "";
         String msgBody = JsonUtil.bean2Json(messageBody);
         comment = voQueue.value() + ":" + comment;
-        log(jobName, jobTitle, operationLog_type, msgBody, null, stackTrace, comment, messageBody.getSender());
+        log(jobName, jobTitle, operationLog_type, msgBody, null, stackTrace, comment, messageBody.getSender(), messageBody.getChannelId());
     }
 
     /**
@@ -63,7 +64,7 @@ public class CmsBtOperationLogService {
             stackTrace = ExceptionUtil.getStackTrace(ex);
             comment = voQueue.value() + ":" + ex.getMessage();
         }
-        log(jobName, jobTitle, OperationLog_Type.unknownException, msgBody, null, stackTrace, comment, messageBody.getSender());
+        log(jobName, jobTitle, OperationLog_Type.unknownException, msgBody, null, stackTrace, comment, messageBody.getSender(), messageBody.getChannelId());
     }
 
     /**
@@ -84,7 +85,7 @@ public class CmsBtOperationLogService {
             stackTrace = ExceptionUtil.getStackTrace(ex);
             comment = voQueue.value() + ":" + ex.getMessage();
         }
-        log(jobName, jobTitle, operationLog_type, msgBody, null, stackTrace, comment, messageBody.getSender());
+        log(jobName, jobTitle, operationLog_type, msgBody, null, stackTrace, comment, messageBody.getSender(), messageBody.getChannelId());
     }
 
     /**
@@ -98,7 +99,7 @@ public class CmsBtOperationLogService {
      */
     public void log(String jobName, String jobTitle, IMQMessageBody messageBody, OperationLog_Type operationLog_type, String comment, List<CmsBtOperationLogModel_Msg> msg) {
         final VOMQQueue voQueue = AnnotationUtils.findAnnotation(messageBody.getClass(), VOMQQueue.class);
-        log(jobName, jobTitle, operationLog_type, JsonUtil.bean2Json(messageBody), msg, "", voQueue.value() + ":" + comment, messageBody.getSender());
+        log(jobName, jobTitle, operationLog_type, JsonUtil.bean2Json(messageBody), msg, "", voQueue.value() + ":" + comment, messageBody.getSender(), messageBody.getChannelId());
     }
 
     /**
@@ -109,8 +110,8 @@ public class CmsBtOperationLogService {
      * @param msg 错误信息列表
      * @param creator 操作者
      */
-    public void log(String jobName, String jobTitle, OperationLog_Type operationLog_type, List<CmsBtOperationLogModel_Msg> msg, String creator) {
-        log(jobName, jobTitle, operationLog_type, "", msg, "", "", creator);
+    public void log(String jobName, String jobTitle, OperationLog_Type operationLog_type, List<CmsBtOperationLogModel_Msg> msg, String creator, String channelId) {
+        log(jobName, jobTitle, operationLog_type, "", msg, "", "", creator, channelId);
     }
 
     /**
@@ -124,10 +125,12 @@ public class CmsBtOperationLogService {
      * @param comment 备注
      * @param creator 操作者
      */
-    private void log(String name, String title, OperationLog_Type operationLog_type, String messageBody, List<CmsBtOperationLogModel_Msg> msg, String stackTrace, String comment, String creator) {
+    private void log(String name, String title, OperationLog_Type operationLog_type, String messageBody, List<CmsBtOperationLogModel_Msg> msg
+            , String stackTrace, String comment, String creator, String channelId) {
         CmsBtOperationLogModel model = new CmsBtOperationLogModel();
         model.setName(name);
         model.setTitle(title);
+        model.setChannelId(channelId);
         model.setMessageBody(messageBody);
         model.setMsg(msg);
         model.setComment(comment);
@@ -175,17 +178,23 @@ public class CmsBtOperationLogService {
         String title = params.get("title") != null ? String.valueOf(params.get("title")) : "";
         String name = params.get("name") != null ? String.valueOf(params.get("name")) : "";
         String userName = params.get("userName") != null ? String.valueOf(params.get("userName")) : "";
-        if ("0".equals(userName))
-            userName = "";
+        String channelId = params.get("channelId") != null ? String.valueOf(params.get("channelId")) : "";
 
-        List type = (List) params.get("typeValue");
-        if (type != null && type.size() > 0) {
-            queryObject.setQuery("{\"name\": {$regex: #}, \"title\": {$regex: #}, \"modifier\": {$regex: #}, \"type\": {$in: #}}");
-            queryObject.setParameters(name, title, userName, type);
-        } else {
-            queryObject.setQuery("{\"name\": {$regex: #}, \"title\": {$regex: #}, \"modifier\": {$regex: #}}");
-            queryObject.setParameters(name, title, userName);
+        Criteria criteria = new Criteria("channelId").is(channelId);
+        criteria = criteria.and("name").regex(name);
+        criteria = criteria.and("title").regex(title);
+        if (!"0".equals(userName))
+            criteria = criteria.and("modifier").is(userName);
+        else
+            criteria = criteria.and("modifier").exists(true);
+        List<Integer> newType = new ArrayList<>();
+        for (String s : (ArrayList<String>) params.get("typeValue")) {
+            newType.add(Integer.valueOf(s));
         }
+        if (newType != null && newType.size() > 0) {
+            criteria = criteria.and("type").in(newType);
+        }
+        queryObject.setQuery(criteria);
         return queryObject;
     }
 }

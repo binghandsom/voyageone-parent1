@@ -16,16 +16,7 @@ import java.util.List;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_FEED_IMPORT_MQ_JOB)
 public class CmsFeedImportMQMessageBody extends BaseMQMessageBody {
 
-    String channelId;
     List<CmsBtFeedInfoModel> cmsBtFeedInfoModels;
-
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 
     public List<CmsBtFeedInfoModel> getCmsBtFeedInfoModels() {
         return cmsBtFeedInfoModels;
@@ -37,7 +28,7 @@ public class CmsFeedImportMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
-        if(StringUtil.isEmpty(channelId) || ListUtils.isNull(cmsBtFeedInfoModels)){
+        if (StringUtil.isEmpty(super.getChannelId()) || ListUtils.isNull(cmsBtFeedInfoModels)) {
             throw new MQMessageRuleException("没有数据");
         }
     }

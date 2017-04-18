@@ -870,20 +870,20 @@ public class CmsBtCombinedProductService extends BaseService {
                 // 上架
                 ItemUpdateListingResponse response = tbSaleService.doWareUpdateListing(shopProp, numIId);
                 if (response == null) {
-                    resultMap = "调用天猫系商品上架API失败";
+                    resultMap = "调用天猫系商品上架API失败(response=null)";
                 } else {
                     if (!StringUtils.isEmpty(response.getErrorCode())) {
-                        resultMap = "调用天猫系商品上架API失败";
+                        resultMap = "调用天猫系商品上架API失败:" + response.getSubCode() + "-" + response.getSubMsg();
                     }
                 }
             } else if (CmsConstants.PlatformActive.ToInStock.name().equals(status)) {
                 // 下架
                 ItemUpdateDelistingResponse response = tbSaleService.doWareUpdateDelisting(shopProp, numIId);
                 if (response == null) {
-                    resultMap = "调用天猫系商品下架API失败";
+                    resultMap = "调用天猫系商品下架API失败(response=null)";
                 } else {
                     if (!StringUtils.isEmpty(response.getErrorCode())) {
-                        resultMap = "调用天猫系商品下架API失败";
+                        resultMap = "调用天猫系商品下架API失败:" + response.getSubCode() + "-" + response.getSubMsg();
                     }
                 }
             }
@@ -896,7 +896,7 @@ public class CmsBtCombinedProductService extends BaseService {
                     resultMap = "调用京东商品上架API失败";
                 } else {
                     if (!"0".equals(response.getCode())) {
-                        resultMap = "调用京东商品上架API失败";
+                        resultMap = "调用京东商品上架API失败:" + response.getCode() + "-" + response.getMsg();
                     }
                 }
             } else if (CmsConstants.PlatformActive.ToInStock.name().equals(status)) {
@@ -906,7 +906,7 @@ public class CmsBtCombinedProductService extends BaseService {
                     resultMap = "调用京东商品下架API失败";
                 } else {
                     if (!"0".equals(response.getCode())) {
-                        resultMap = "调用京东商品下架API失败";
+                        resultMap = "调用京东商品下架API失败:" + response.getCode() + "-" + response.getMsg();
                     }
                 }
             }
@@ -931,7 +931,7 @@ public class CmsBtCombinedProductService extends BaseService {
                     if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
                         resultMap = "调用聚美商品上架API失败";
                     } else {
-                        resultMap = "调用聚美商品下架API失败";
+                        resultMap = "调用聚美商品下架API失败:" + response.getError_code() + "-" + response.getErrorMsg();
                     }
                 }
             }

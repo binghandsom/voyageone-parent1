@@ -48,6 +48,16 @@
                                             </div>
                                             <div class="form-horizontal">
                                                 <div class="form-group">
+                                                    <label class="col-sm-3 control-label">模糊查询产品名称中文</label>
+
+                                                    <div class="col-sm-8">
+                                                        <textarea class="form-control inherited" style="resize: none;" rows="2"
+                                                                  ng-model="vm.searchInfo.productNameCn"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-horizontal">
+                                                <div class="form-group">
                                                     <label class="col-sm-3 control-label">款号/Code/SKU</label>
                                                     <div class="col-sm-8">
                                                         <textarea class="form-control inherited no-resize" rows="3" ng-model="vm.searchInfo.codeList" ></textarea>
@@ -168,13 +178,14 @@
                                                 </div>
                                             </div>
                                             <div class="form-group" ng-if="vm.masterData.isminimall == 1" style="margin-top:0px">
-                                                <div class="col-sm-3"></div>
-                                                <div class="col-sm-8"><div class="col-sm-10">
-                                                    <select multiple chosen style="'width:100%'" class="form-control" ng-model="vm.searchInfo.supplierList"
-                                                            ng-options="orgChaInfo.order_channel_id as orgChaInfo.full_name for orgChaInfo in vm.masterData.channelList">
-                                                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                                    </select>
-                                                </div></div>
+                                                <div class="col-sm-8 col-sm-offset-3">
+                                                    <div class="col-sm-10">
+                                                        <select multiple chosen style="'width:100%'" class="form-control" ng-model="vm.searchInfo.supplierList"
+                                                                ng-options="orgChaInfo.order_channel_id as orgChaInfo.full_name for orgChaInfo in vm.masterData.channelList">
+                                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -250,8 +261,12 @@
                                             </div>
                                             <div class="form-group"><!-- 查询自由标签输出区 -->
                                                 <div ng-model="vm.searchInfo.freeTags" style="width:58%;float:left;min-height:40px;max-height:160px;background: #EEEEEE; border: 1px solid #C8C2C2; overflow: auto;margin-left:25.7%;">
-                                                    <label class="label label-default m-r-xxs" ng-repeat="freeTag in vm._freeTags" style="display: inline-block;">{{freeTag.tagPathName}}</label>
+                                                    <label ng-repeat="freeTag in vm._freeTags">
+                                                        <label class="label label-default m-r-xxs" >{{freeTag.tagPathName}}</label>{{$last?'':'&nbsp;&nbsp;'}}
+                                                    </label>
+
                                                 </div>
+
                                                 <button class="btn btn-default btn-md" style="margin-left:-1px" type="button" translate="BTN_RESET" ng-click="dismiss('freeTag')"></button>
                                             </div>
                                             <div class="form-group" style="margin-bottom:0px"><!-- 适用人群 -->
@@ -275,6 +290,19 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">客户建议售价状态</label>
+                                            <div class="col-sm-8">
+                                                <div>
+                                                    <select class="form-control" ng-model="vm.searchInfo.clientMsrpPriceChgFlg">
+                                                        <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                        <option value="U">客户建议售价涨价</option>
+                                                        <option value="D">客户建议售价降价</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -723,6 +751,9 @@
                                     <a href="javascript:void(0)" ng-click="cfmRetailPrice(null)">全店铺指导价变更确认</a>
                                 </li>
                                 <li>
+                                    <a href="javascript:void(0)" ng-click="clientMsrpConfirm()">客户建议售价确认</a>
+                                </li>
+                                <li>
                                     <a href="javascript:void(0)" ng-click="_openPutOnOff(openPutOnOff)">{{'TXT_ALL_PUT_ON|OFF'|translate}}</a>
                                 </li>
                                 <!--<li> edward 2017.02.06 取消全店铺批量Approve,原因: 该功能基本不使用,而且如果开发该功能,在mq中返回哪些不能approve的商品处理的实现有点麻烦-->
@@ -887,8 +918,8 @@
                                 <tbody>
                                     <tr><td colspan="14" if-no-rows="vm.productList.length"></td></tr>
                                 </tbody>
-                                <tbody class="box-body" ng-repeat="productInfo in vm.productList" style="border-bottom: 1px solid #ddd; height: 80px;">
-                                    <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
+                                <tbody class="box-body" ng-repeat="productInfo in vm.productList" style="border-bottom: 1px solid #ddd;">
+                                    <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="border-bottom:1px solid #ddd;border-top:1px solid #ddd;height: 40px">
                                         <td class="text-center" rowspan="2">
                                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
                                                 <input ng-model="vm.productSelList.selFlag[productInfo.prodId]" type="checkbox"
@@ -902,7 +933,7 @@
                                                 <img image="{{productInfo.common.fields.images6 && productInfo.common.fields.images6[0].image6?productInfo.common.fields.images6[0].image6:productInfo.common.fields.images1[0].image1}}" alt="{{productInfo.common.fields.code}}" class="thumb-sm-search"/>
                                             </a>
                                         </td>
-                                        <td colspan="{{productInfo.commArr.length + productInfo.custArr.length + productInfo.selSalesTyeArr.length + productInfo.selBiDataArr.length + 8}}" class="control-label text-left form-inline" style="height:27px; ">
+                                        <td colspan="{{productInfo.commArr.length + productInfo.custArr.length + productInfo.selSalesTyeArr.length + productInfo.selBiDataArr.length + 9}}" class="control-label text-left form-inline" style="height:27px; ">
                                             <!--Todo 活动详情pop的数据取得-->
                                             <button ng-controller="showPopoverCtrl" popover-html="popoverPromotionDetail(productInfo.common.fields.code, productInfo)"
                                                     uib-popover-template="templateAction.promotionDetailPopover.templateUrl"
@@ -941,7 +972,7 @@
                                             </span>
                                         </td>
                                     </tr>
-                                    <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray">
+                                    <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="height: 66px;">
                                         <td class="text-left">
                                             <a ng-href="#/product/detail/{{productInfo.prodId}}" target="_blank" ng-bind="productInfo.common.fields.code"></a>
                                         </td>
@@ -1005,8 +1036,11 @@
                                             </button>
                                         </td>
                                         <td class="text-left" ng-repeat="prop1 in productInfo.commArr">
-                                            <span ng-if="prop1.value.length > 50"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
-                                            <span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
+                                            <span ng-if = "prop1.value.length <= 50 && prop1.value != 'clientMsrpPrice'">{{prop1.value}}</span>
+                                            <span ng-if = "prop1.value.length > 50 && prop1.value != 'clientMsrpPrice'"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
+                                            <span ng-if = "prop1.value == 'clientMsrpPrice'">
+                                                <client-msrp-price data="productInfo.common.skus"></client-msrp-price>
+                                            </span>
                                         </td>
                                         <td class="text-left" ng-repeat="prop2 in productInfo.custArr" title="{{prop2.value}}">
                                             <span ng-if="prop2.value.length > 50"><popover-text content="prop2.value" direct="left" size="50"></popover-text></span>

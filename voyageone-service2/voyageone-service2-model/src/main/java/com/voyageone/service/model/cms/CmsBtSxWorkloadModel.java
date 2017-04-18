@@ -21,6 +21,26 @@ public class CmsBtSxWorkloadModel extends BaseModel {
 
     protected Integer cartId;
 
+    protected String workloadName;
+
+    protected Integer priority_order;
+
+    public Integer getPriority_order() {
+        return priority_order;
+    }
+
+    public void setPriority_order(Integer priority_order) {
+        this.priority_order = priority_order;
+    }
+
+    public String getWorkloadName() {
+        return workloadName;
+    }
+
+    public void setWorkloadName(String workloadName) {
+        this.workloadName = workloadName;
+    }
+
     public String getChannelId() {
         return channelId;
     }

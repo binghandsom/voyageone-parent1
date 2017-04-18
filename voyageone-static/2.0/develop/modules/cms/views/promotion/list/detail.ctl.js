@@ -145,7 +145,7 @@ define([
         };
 
         $scope.delSelPromotion = function(){
-            if($scope.vm.tabIndex == 0){
+            if($scope.vm.tabIndex == 1){
                 if($scope.vm.groupSelList.selList.length>0){
                     confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                         .then(function () {
@@ -162,7 +162,7 @@ define([
                 } else {
                     alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 }
-            } else if($scope.vm.tabIndex == 1){
+            } else if($scope.vm.tabIndex == 0){
                 if($scope.vm.codeSelList.selList.length>0) {
                     confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                         .then(function () {
@@ -223,6 +223,12 @@ define([
 
             $.download.post(cActions.cms.promotion.promotionDetailService.root + "/" + cActions.cms.promotion.promotionDetailService.tmallPromotionExport, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
         };
+
+        $scope.addPromotionByGroup = function () {
+            promotionDetailService.addPromotionByGroup($scope.vm.promotion.id).then(function (res) {
+                notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+            })
+        }
 
 
 

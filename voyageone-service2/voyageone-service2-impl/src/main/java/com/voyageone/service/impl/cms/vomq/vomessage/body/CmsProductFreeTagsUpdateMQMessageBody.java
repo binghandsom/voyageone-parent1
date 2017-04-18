@@ -3,6 +3,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.components.rabbitmq.namesub.IMQMessageSubBeanName;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import org.apache.commons.collections.CollectionUtils;
@@ -18,10 +19,8 @@ import java.util.List;
  * @since 2.0.0
  */
 @VOMQQueue(value = CmsMqRoutingKey.CMS_UPDATE_PRODUCT_FREE_TAGS)
-public class CmsProductFreeTagsUpdateMQMessageBody extends BaseMQMessageBody {
+public class CmsProductFreeTagsUpdateMQMessageBody extends BaseMQMessageBody  implements IMQMessageSubBeanName {
 
-    //channelId
-    String channelId;
     //是否全量
     boolean isSelAll;
     //product code List
@@ -73,18 +72,10 @@ public class CmsProductFreeTagsUpdateMQMessageBody extends BaseMQMessageBody {
         this.isSelAll = isSelAll;
     }
 
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
-
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isEmpty(channelId)) {
+        if (StringUtils.isEmpty(super.getChannelId())) {
             throw new MQMessageRuleException("高级搜索-批量设置自由标签MQ发送异常, 参数channelId为空.");
         }
         if (!isSelAll && CollectionUtils.isEmpty(prodCodeList)) {
@@ -96,5 +87,10 @@ public class CmsProductFreeTagsUpdateMQMessageBody extends BaseMQMessageBody {
         if (StringUtils.isEmpty(getSender())) {
             throw new MQMessageRuleException("高级检索-批量设置自由标签MQ发送异常, 发送者为空.");
         }
+    }
+
+    @Override
+    public String getSubBeanName() {
+        return getChannelId();
     }
 }

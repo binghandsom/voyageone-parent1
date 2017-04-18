@@ -16,12 +16,14 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
+import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.ImagesService;
 import com.voyageone.service.impl.cms.PlatformService;
+import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
@@ -64,8 +66,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private final static String[] _GROUP_STATIC_COLS_ZN = {"款号", "品牌", "供应商", "主类目", "产品名称英语", "产品名称中文", "主商品编码", "feed分类", "原始尺码类型"};
     //common.fields.origSizeType
     /*code级导出时和平台无关的固定列：英文和中文列头名称*/
-    private final static String[] _CODE_STATIC_COLS = {"code", "brand", "supplier", "category", "productNameEn", "originalTitleCn", "model", "color", "feeCatPath", "origSizeType", "quantity"};
-    private final static String[] _CODE_STATIC_COLS_ZN = {"商品编码", "品牌", "供应商", "主类目", "产品名称英语", "产品名称中文", "款号", "颜色/口味/香型等", "feed分类", "原始尺码类型", "库存"};
+    private final static String[] _CODE_STATIC_COLS = {"code", "brand", "supplier", "category", "productNameEn", "originalTitleCn", "model", "color", "feeCatPath", "origSizeType", "quantity","freeTags"};
+    private final static String[] _CODE_STATIC_COLS_ZN = {"商品编码", "品牌", "供应商", "主类目", "产品名称英语", "产品名称中文", "款号", "颜色/口味/香型等", "feed分类", "原始尺码类型", "库存","自由标签"};
     /*sku级导出时和平台无关的固定列：英文和中文列头名称*/
     private final static String[] _SKU_STATIC_COLS = {
             "code", "barcode", "clientSKU", "brand", "supplier", "category", "productNameEn",
@@ -114,6 +116,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private CmsBtExportTaskService cmsBtExportTaskService;
     @Autowired
     private InventoryDao inventoryDao;
+    @Autowired
+    private TagService tagService;
 
     public List<CmsBtOperationLogModel_Msg> export(AdvSearchExportMQMessageBody messageBody) throws Exception {
         $debug("高级检索 文件下载任务 param=" + JacksonUtil.bean2Json(messageBody));
@@ -391,6 +395,11 @@ public class CmsAdvSearchExportFileService extends BaseService {
         // 固定列长度
         int index = size;
         for (TypeChannelBean cartObj : cartList) {
+
+            // 如果平台为928的不导出
+            if (CartEnums.Cart.USJGJ.getId().equals(cartObj.getValue()))
+                continue;
+
             if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
                 for (String prop : _DynColJM) {
                     FileUtils.cell(row1, index++, style1).setCellValue(cartObj.getName() + prop);
@@ -430,6 +439,11 @@ public class CmsAdvSearchExportFileService extends BaseService {
         // 固定列长度
         index = size;
         for (TypeChannelBean cartObj : cartList) {
+
+            // 如果平台为928的不导出
+            if (CartEnums.Cart.USJGJ.getId().equals(cartObj.getValue()))
+                continue;
+
             if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
                 for (String prop : _DynColCNJM) {
                     FileUtils.cell(row2, index++, style2).setCellValue(cartObj.getName() + prop);
@@ -489,6 +503,11 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
         int index = size;
         for (TypeChannelBean cartObj : cartList) {
+
+            // 如果平台为928的不导出
+            if (CartEnums.Cart.USJGJ.getId().equals(cartObj.getValue()))
+                continue;
+
             if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
                 for (String prop : _DynColJMGroup) {
                     FileUtils.cell(row1, index++, style1).setCellValue(cartObj.getName() + prop);
@@ -501,6 +520,11 @@ public class CmsAdvSearchExportFileService extends BaseService {
         }
         index = size;
         for (TypeChannelBean cartObj : cartList) {
+
+            // 如果平台为928的不导出
+            if (CartEnums.Cart.USJGJ.getId().equals(cartObj.getValue()))
+                continue;
+
             if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
                 for (String prop : _DynColCNJMGroup) {
                     FileUtils.cell(row2, index++, style2).setCellValue(cartObj.getName() + prop);
@@ -534,6 +558,11 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
         int index = size;
         for (TypeChannelBean cartObj : cartList) {
+
+            // 如果平台为928的不导出
+            if (CartEnums.Cart.USJGJ.getId().equals(cartObj.getValue()))
+                continue;
+
             if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
                 for (String prop : _DynColJMSKU) {
                     FileUtils.cell(row1, index++, style1).setCellValue(cartObj.getName() + prop);
@@ -552,6 +581,11 @@ public class CmsAdvSearchExportFileService extends BaseService {
         FileUtils.cell(row1, index++, style1).setCellValue("Lock");
         index = size;
         for (TypeChannelBean cartObj : cartList) {
+
+            // 如果平台为928的不导出
+            if (CartEnums.Cart.USJGJ.getId().equals(cartObj.getValue()))
+                continue;
+
             if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
                 for (String prop : _DynColCNJMSKU) {
                     FileUtils.cell(row2, index++, style2).setCellValue(cartObj.getName() + prop);
@@ -688,6 +722,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         CellStyle cs = book.createCellStyle();
         cs.setWrapText(true);
         int nowIdx = 0;
+        Map<String, CmsBtTagBean> cachTag = new HashMap<>();
         for (CmsBtProductBean item : items) {
             if (item.getCommon() == null) {
                 continue;
@@ -717,8 +752,40 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
             FileUtils.cell(row, index++, unlock).setCellValue(fields.getQuantity());
 
+
+            // 取得自由标签
+            List<CmsBtTagBean> tagModelList = new ArrayList<>();
+            List<String> temp = new ArrayList<>();
+            for(String tag: item.getFreeTags()){
+                if (cachTag.containsKey(tag)) {
+                    tagModelList.add(cachTag.get(tag));
+                } else {
+                    temp.add(tag);
+                }
+            }
+            if (temp.size() > 0) {
+                List<CmsBtTagBean> ts = tagService.getTagPathNameByTagPath(channelId, temp);
+                if (!ListUtils.isNull(ts)) {
+                    for(CmsBtTagBean cmsBtTagBean : ts){
+                        cachTag.put(cmsBtTagBean.getTagPath(), cmsBtTagBean);
+                        tagModelList.add(cmsBtTagBean);
+                    }
+                }
+            }
+            String tag ="";
+            if(!ListUtils.isNull(tagModelList)) {
+                tag = tagModelList.stream().map(CmsBtTagBean::getTagChildrenName).collect(Collectors.joining(","));
+            }
+            FileUtils.cell(row, index++, unlock).setCellValue(tag);
+
+
             /**平台级内容输出*/
             for (TypeChannelBean cartObj : cartList) {
+
+                // 如果平台为928的不导出
+                if (CartEnums.Cart.USJGJ.getId().equals(cartObj.getValue()))
+                    continue;
+
                 CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
                 if (ptfObj == null) {
                     // 没有设值时也要输出,不然就会错位
@@ -743,15 +810,21 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 if (org.apache.commons.lang3.StringUtils.isNotEmpty(ptfObj.getpNumIId())) {
                     if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
                         // JmMallURL
-                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpPlatformMallId() + ".html");
+                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpPlatformMallId()));
                         // 设置Jm库存
                         FileUtils.cell(row, index++, unlock).setCellValue(qty);
                         // JmMallID
                         FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpPlatformMallId()));
                         // JmURL
-                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpNumIId() + ".html");
+                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
                     } else {
-                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpNumIId());
+                        if (CartEnums.Cart.JD.getId().equals(cartObj.getValue())
+                                || CartEnums.Cart.JG.getId().equals(cartObj.getValue())
+                                || CartEnums.Cart.JGY.getId().equals(cartObj.getValue())
+                                || CartEnums.Cart.JGJ.getId().equals(cartObj.getValue())) {
+                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), getJdPlatformSkuId(ptfObj)));
+                        } else
+                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
                         FileUtils.cell(row, index++, unlock).setCellValue(qty);
                     }
                 } else {
@@ -944,6 +1017,11 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
 
             for (TypeChannelBean cartObj : cartList) {
+
+                // 如果平台为928的不导出
+                if (CartEnums.Cart.USJGJ.getId().equals(cartObj.getValue()))
+                    continue;
+
                 CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
                 int columnLength = _DynColGroup.length;
                 if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
@@ -972,13 +1050,19 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     if (org.apache.commons.lang3.StringUtils.isNotEmpty(grpModel.getNumIId())) {
                         if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
                             // JmMallURL
-                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpPlatformMallId() + ".html");
+                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpPlatformMallId()));
                             // JmMallID
                             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpPlatformMallId()));
                             // JmURL
-                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + grpModel.getNumIId() + ".html");
+                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
                         } else {
-                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + grpModel.getNumIId());
+                            if (CartEnums.Cart.JD.getId().equals(cartObj.getValue())
+                                    || CartEnums.Cart.JG.getId().equals(cartObj.getValue())
+                                    || CartEnums.Cart.JGY.getId().equals(cartObj.getValue())
+                                    || CartEnums.Cart.JGJ.getId().equals(cartObj.getValue())) {
+                                FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), getJdPlatformSkuId(ptfObj)));
+                            } else
+                                FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
                         }
                     } else {
                         // 补齐聚头的MallURL和MallID的空白列
@@ -1093,6 +1177,11 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommon().getFields().getOrigSizeType()));
 
                 for (TypeChannelBean cartObj : cartList) {
+
+                    // 如果平台为928的不导出
+                    if (CartEnums.Cart.USJGJ.getId().equals(cartObj.getValue()))
+                        continue;
+
                     CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
                     int columnLength = _DynColSKU.length;
                     if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
@@ -1120,7 +1209,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             if (org.apache.commons.lang3.StringUtils.isNotEmpty(ptfObj.getpNumIId())) {
                                 if (cartObj.getValue().equals(CartEnums.Cart.JM.getId())) {
                                     // JmMallURL
-                                    FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpPlatformMallId() + ".html");
+                                    FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpPlatformMallId()));
                                     // JmMallID
                                     FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpPlatformMallId()));
                                     // JmSkuNo
@@ -1131,9 +1220,15 @@ public class CmsAdvSearchExportFileService extends BaseService {
                                         FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(jmSkus.get(0).getStringAttribute("jmSkuNo")));
                                     }
                                     // JmURL
-                                    FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpNumIId() + ".html");
+                                    FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
                                 } else {
-                                    FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpNumIId());
+                                    if (CartEnums.Cart.JD.getId().equals(cartObj.getValue())
+                                            || CartEnums.Cart.JG.getId().equals(cartObj.getValue())
+                                            || CartEnums.Cart.JGY.getId().equals(cartObj.getValue())
+                                            || CartEnums.Cart.JGJ.getId().equals(cartObj.getValue())) {
+                                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), getJdPlatformSkuId(ptfObj)));
+                                    } else
+                                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
                                 }
                             } else {
                                 // 补齐聚头的MallURL, MallID和SkuNo的空白列
@@ -1306,9 +1401,11 @@ public class CmsAdvSearchExportFileService extends BaseService {
             Map<String, CmsBtProductModel_Platform_Cart> platforms = item.getPlatforms();
             if (platforms != null && platforms.size() > 0) {
                 for (CmsBtProductModel_Platform_Cart platform : platforms.values()) {
-                    if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())) {
-                        skip = false;
-                        break;
+                    if(platform.getCartId() > 10 && platform.getCartId() < 900) {
+                        if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())) {
+                            skip = false;
+                            break;
+                        }
                     }
                 }
             }
@@ -1433,6 +1530,21 @@ public class CmsAdvSearchExportFileService extends BaseService {
             rs = "";
         }
         return rs;
+    }
+
+    /**
+     * 返回jsSkuId
+     *
+     * @param ptfObj
+     * @return
+     */
+    private String getJdPlatformSkuId(CmsBtProductModel_Platform_Cart ptfObj) {
+        for (BaseMongoMap<String, Object> map : ptfObj.getSkus()) {
+            if (!StringUtils.isEmpty(map.getStringAttribute("jdSkuId"))
+                    && Boolean.valueOf(map.getStringAttribute("isSale")))
+                return map.getStringAttribute("jdSkuId");
+        }
+        return "";
     }
 
 }

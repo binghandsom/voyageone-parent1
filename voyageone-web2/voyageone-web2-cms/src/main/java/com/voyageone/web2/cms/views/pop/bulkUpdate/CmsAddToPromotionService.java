@@ -52,7 +52,7 @@ public class CmsAddToPromotionService extends BaseViewService {
 
     public List<CmsBtTagModel> getPromotionTags(Map<String, Object> params) {
         //fix error by holysky
-        int tag_id = (int) Integer.parseInt(String.valueOf(params.get("refTagId")));
+        int tag_id = Integer.parseInt(String.valueOf(params.get("refTagId")));
         return this.selectListByParentTagId(tag_id);
     }
 
@@ -127,7 +127,7 @@ public class CmsAddToPromotionService extends BaseViewService {
         List<Long> productIds = null;
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productIds = advanceSearchService.getProductIdList(userInfo.getSelChannelId(), cmsSession);
+            productIds = advanceSearchService.getProductIdList(userInfo.getSelChannelId(), (Map<String, Object>) params.get("searchInfo"));
         } else {
             productIds = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
         }
@@ -189,7 +189,7 @@ public class CmsAddToPromotionService extends BaseViewService {
         }
 
         // 给产品数据添加活动标签
-        productTagService.addProdTag(channelId, tagInfo.getTagPath(), productIds, modifier);
+        productTagService.addProdTag(channelId, tagInfo.getTagPath(), productIds);
         productIds.forEach(item -> {
             PromotionDetailAddBean request = new PromotionDetailAddBean();
             request.setModifier(modifier);

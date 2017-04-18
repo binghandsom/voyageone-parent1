@@ -75,6 +75,22 @@ define(function () {
                     "getCustSearchList": "getCustSearchList",
                     "getSkuInventory": "getSkuInventory"
                 },
+                "$searchAdvanceSolrService": {
+                    "root": "/cms/search/advanceSearchSolr/",
+                    "init": "init",
+                    "search": "search",
+                    "searchAutoComplete": "searchAutoComplete",
+                    "getGroupList": "getGroupList",
+                    "getProductList": "getProductList",
+                    "exportProducts": "exportProducts",
+                    "exportSearch": "exportSearch",
+                    "exportDownload": "exportDownload",
+                    "getCustColumnsInfo": "getCustColumnsInfo",
+                    "saveCustColumnsInfo": "saveCustColumnsInfo",
+                    "addFreeTag": "addFreeTag",
+                    "getCustSearchList": "getCustSearchList",
+                    "getSkuInventory": "getSkuInventory"
+                },
                 "$feedSearchService": {
                     "root": "/cms/search/feed/",
                     "init": "init",
@@ -246,7 +262,8 @@ define(function () {
                     "tmallPromotionExport": "tmallPromotionExport",
                     "getPromotionSkuList": "getPromotionSkuList",
                     "saveSkuPromotionPrices": "saveSkuPromotionPrices",
-                    "updatePromotionProductTag": "updatePromotionProductTag"
+                    "updatePromotionProductTag": "updatePromotionProductTag",
+                    "addPromotionByGroup":"addPromotionByGroup"
                 }
             },
             "jmpromotion": {
@@ -482,12 +499,6 @@ define(function () {
                 }
             },
             "pop": {
-                "$addToPromotionService": {
-                    "root": "/cms/pop/add_to_promotion",
-                    "getPromotionTags": "getPromotionTags",
-                    "addToPromotion": "addToPromotion",
-                    "checkPromotionTags": "checkPromotionTags"
-                },
                 "addProductToPromotionService": {
                     "root": "/cms/pop/add_product_to_promotion",
                     "init": "init",
@@ -502,7 +513,8 @@ define(function () {
                     bulkSetPlatformFields: "bulkSetPlatformFields",
                     getPlatfromPopOptions: "getPlatfromPopOptions",
                     intelligentPublish: "intelligentPublish",
-                    bulkLockProducts: "bulkLockProducts"
+                    bulkLockProducts: "bulkLockProducts",
+                    bulkConfClientMsrp:"bulkConfClientMsrp"
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",
@@ -680,7 +692,7 @@ define(function () {
                         "import": "import",
                         "delete": "delete",
                         "saveFeed": "saveFeed",
-                        "createFeed": "createFeed",
+                        "createFeed": "createFeed"
                     }
                 }
             },

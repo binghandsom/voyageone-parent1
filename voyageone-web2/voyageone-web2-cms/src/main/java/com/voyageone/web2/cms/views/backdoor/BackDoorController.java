@@ -35,6 +35,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsCartAddMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
@@ -114,7 +115,6 @@ public class BackDoorController extends CmsController {
     private MqSender sender;*/
     @Autowired
     private CmsMqSenderService cmsMqSenderService;
-
 
     /**
      * 临时使用,用于清除聚美下的多个产品在一个group的数据(/cms/backdoor/splitGroup/015)
@@ -1117,16 +1117,15 @@ public class BackDoorController extends CmsController {
      * @return
      */
     @RequestMapping(value = "updateProductJMHashId", method = RequestMethod.GET)
-    public Object updateProductJMHashId(@RequestParam("channelId") String channelId, @RequestParam("flg") String flg) {
+    public Object updateProductJMHashId(@RequestParam("channelId") String channelId, @RequestParam("productCode") String productCode, @RequestParam("flg") String flg) {
 
         List<String> codes = new ArrayList<>();
 
         List<MapModel> promotionCodes = new ArrayList<>();
         if ("1".equals(flg))
-            promotionCodes = cmsBtJmPromotionDaoExt.selectMaxJmHashId(channelId);
+            promotionCodes = cmsBtJmPromotionDaoExt.selectMaxJmHashId(channelId, productCode);
         else if ("2".equals(flg))
-            promotionCodes = cmsBtJmPromotionDaoExt.selectJmProductHashId(channelId);
-
+            promotionCodes = cmsBtJmPromotionDaoExt.selectJmProductHashId(channelId, productCode);
 
             if ("1".equals(flg) || "2".equals(flg)) {
                 promotionCodes.forEach(promtionCode -> {
@@ -1856,6 +1855,7 @@ public class BackDoorController extends CmsController {
 
         return builder.toString();
     }
+
     @RequestMapping(value = "procductPriceUpdate", method = RequestMethod.GET)
     public Object procductPriceUpdate (@RequestParam("channelId") String channelId, @RequestParam("cartId") Integer cartId) {
         JongoQuery query = new JongoQuery();
@@ -1877,6 +1877,7 @@ public class BackDoorController extends CmsController {
         }
         return "finish";
     }
+
     @RequestMapping(value = "updateErrorTranslateInfo", method = RequestMethod.GET)
     public Object updateErrorTranslateInfo (@RequestParam("channelId") String channelId, @RequestParam("code") String code, @RequestParam("regex") String regex) {
         JongoQuery query = new JongoQuery();
@@ -1919,6 +1920,16 @@ public class BackDoorController extends CmsController {
         builder.append("</body>");
 
         return builder.toString();
+    }
+
+    @RequestMapping(value = "addNewCart", method = RequestMethod.GET)
+    public void addNewCart(@RequestParam("channelId") String channelId, @RequestParam("cartId") Integer cartId, @RequestParam("isSingle") Boolean isSingle) {
+        CmsCartAddMQMessageBody map = new CmsCartAddMQMessageBody();
+        map.setChannelId(channelId);
+        map.setCartId(cartId);
+        map.setSingle(isSingle);
+        map.setSender(getUser().getUserName());
+        cmsMqSenderService.sendMessage(map);
     }
 
     public class skuPlatformSizeAndQty {

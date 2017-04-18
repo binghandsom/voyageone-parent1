@@ -36,6 +36,7 @@ define([
                 params.productIds = context.productIds;
                 params.isSelAll = context.selAllFlg;
             }
+            params.searchInfo = context.searchInfo;
 
             self.channelTagService.init(params).then(function (res) {
                 self.orgTagTree = res.data.tagTree;

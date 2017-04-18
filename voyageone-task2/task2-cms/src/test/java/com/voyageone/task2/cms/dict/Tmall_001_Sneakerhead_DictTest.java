@@ -36,18 +36,124 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 		}
 
 		// 京东
-		doCreateJson("详情页描述", false, doDict_详情页描述(24));
+		doCreateJson("京东详情页描述", false, doDict_详情页描述(24));
 		for (int i = 0; i < 10; i++) {
 			doCreateJson("商品标题与图片-" + i, false, doDict_商品标题与图片(24, i));
 		}
 		// 京东国际
-		doCreateJson("详情页描述", false, doDict_详情页描述(26));
+		doCreateJson("京东详情页描述", false, doDict_详情页描述(26));
 		for (int i = 0; i < 10; i++) {
 			doCreateJson("商品标题与图片-" + i, false, doDict_商品标题与图片(26, i));
 		}
 
 //		doJM(); // 聚美
+//		 临时添加一套全自定义图片模板（天猫，京东）
+		doCreateJson("详情页描述_全自定义_PC", false, doDict_详情页描述_全自定义_PC()); // pc
 
+		doCreateJson("详情页描述_全自定义_APP", false, doDict_详情页描述_全自定义_APP()); // app
+
+	}
+
+	private RuleExpression doDict_详情页描述_全自定义_PC() {
+
+		RuleExpression ruleRoot = new RuleExpression();
+
+		for (int i = 0; i < 20; i++) {
+			// 自定义图
+			RuleExpression htmlTemplate = new RuleExpression();
+			htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG));
+
+			RuleExpression imageTemplate = null;
+
+			RuleExpression imageType = new RuleExpression();
+			imageType.addRuleWord(new TextWord(C_自定义图片));
+
+			RuleExpression viewType = new RuleExpression();
+			viewType.addRuleWord(new TextWord("1"));
+
+			RuleExpression imageIndex = new RuleExpression();
+			imageIndex.addRuleWord(new TextWord(String.valueOf(i)));
+
+			RuleExpression useOriUrl = new RuleExpression();
+			useOriUrl.addRuleWord(new TextWord("1"));
+
+			CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, viewType, null, imageIndex);
+			ruleRoot.addRuleWord(new CustomWord(word));
+		}
+		return ruleRoot;
+	}
+
+	private RuleExpression doDict_详情页描述_全自定义_APP() {
+
+		// 根字典
+		RuleExpression ruleRoot = new RuleExpression();
+		{
+			// start
+			String kv = "{\"wireless_desc\":{";
+			TextWord word = new TextWord(kv);
+			ruleRoot.addRuleWord(word);
+		}
+
+		{
+			// item_info 商品信息
+			String kv = "\"item_info\":{\"item_info_enable\":\"false\"},";
+			TextWord word = new TextWord(kv);
+			ruleRoot.addRuleWord(word);
+		}
+
+		{
+			// coupon 优惠
+			String kv = "\"coupon\":{\"coupon_enable\":\"true\",\"coupon_id\":\"1305964\"},";
+			TextWord word = new TextWord(kv);
+			ruleRoot.addRuleWord(word);
+		}
+
+		{
+			// hot_recommanded 同店推荐
+			String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"true\",\"hot_recommanded_id\":\"";
+			TextWord word = new TextWord(kv);
+			ruleRoot.addRuleWord(word);
+
+			// 同店推荐的field_id
+			MasterWord masterWord = new MasterWord("hot_recommanded_id");
+			ruleRoot.addRuleWord(masterWord);
+
+			kv = "\"},";
+			word = new TextWord(kv);
+			ruleRoot.addRuleWord(word);
+		}
+
+		{
+			// shop_discount 店铺活动
+			String kv = "\"shop_discount\":{\"shop_discount_enable\":\"true\",\"shop_discount_id\":\"1305997\"},";
+			TextWord word = new TextWord(kv);
+			ruleRoot.addRuleWord(word);
+		}
+
+		{
+			// item_picture 商品图片
+			String kv = "\"item_picture\":{\"item_picture_enable\":\"true\"";
+			TextWord word = new TextWord(kv);
+			ruleRoot.addRuleWord(word);
+
+			for (int i = 0; i < 20; i++) {
+				// 20张自定义图
+				do处理无线端20张图片(i, ruleRoot, new DictWord("无线自定义图片-" + (i + 1))); // 原图，参照target
+			}
+
+			// end
+			String endStr = "}";
+			TextWord endWord = new TextWord(endStr);
+			ruleRoot.addRuleWord(endWord);
+		}
+		{
+			// end
+			String kv = "}}";
+			TextWord word = new TextWord(kv);
+			ruleRoot.addRuleWord(word);
+		}
+//
+		return ruleRoot;
 	}
 
 	private RuleExpression doDict_商品标题与图片(int cartId, int idx) {
@@ -103,6 +209,10 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 					RuleExpression rImageIdx = new RuleExpression();
 					rImageIdx.addRuleWord(new TextWord(String.valueOf(iImgIdx)));
 					customModuleParam.setImageIdx(rImageIdx);
+
+					RuleExpression rPaddingImageType = new RuleExpression();
+					rPaddingImageType.addRuleWord(new TextWord("1stProductImage"));
+					customModuleParam.setPaddingImageType(rPaddingImageType);
 
 					CustomWordValueGetProductFieldInfo customWord = new CustomWordValueGetProductFieldInfo();
 					customWord.setUserParam(customModuleParam);
@@ -160,6 +270,10 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 					RuleExpression rImageIdx = new RuleExpression();
 					rImageIdx.addRuleWord(new TextWord(String.valueOf(iImgIdx)));
 					customModuleParam.setImageIdx(rImageIdx);
+
+					RuleExpression rPaddingImageType = new RuleExpression();
+					rPaddingImageType.addRuleWord(new TextWord("1stProductImage"));
+					customModuleParam.setPaddingImageType(rPaddingImageType);
 
 					CustomWordValueGetProductFieldInfo customWord = new CustomWordValueGetProductFieldInfo();
 					customWord.setUserParam(customModuleParam);
@@ -230,6 +344,10 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 					rImageIdx.addRuleWord(new TextWord(String.valueOf(iImgIdx)));
 					customModuleParam.setImageIdx(rImageIdx);
 
+					RuleExpression rPaddingImageType = new RuleExpression();
+					rPaddingImageType.addRuleWord(new TextWord("1stProductImage"));
+					customModuleParam.setPaddingImageType(rPaddingImageType);
+
 					CustomWordValueGetProductFieldInfo customWord = new CustomWordValueGetProductFieldInfo();
 					customWord.setUserParam(customModuleParam);
 
@@ -283,6 +401,10 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 					RuleExpression rImageIdx = new RuleExpression();
 					rImageIdx.addRuleWord(new TextWord(String.valueOf(iImgIdx)));
 					customModuleParam.setImageIdx(rImageIdx);
+
+					RuleExpression rPaddingImageType = new RuleExpression();
+					rPaddingImageType.addRuleWord(new TextWord("1stProductImage"));
+					customModuleParam.setPaddingImageType(rPaddingImageType);
 
 					CustomWordValueGetProductFieldInfo customWord = new CustomWordValueGetProductFieldInfo();
 					customWord.setUserParam(customModuleParam);
@@ -340,34 +462,32 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 
 				// 产品信息style div start
 				ruleRoot.addRuleWord(new TextWord("<div style=\"color: #acacac;padding: 0 60.0px 80.0px 60.0px;line-height: 16.0pt;background-color: #0c0c0c;font-family: arial;\">"));
+
+				// 英文长描述
+				ruleRoot.addRuleWord(new MasterWord("longDesEn"));
+				ruleRoot.addRuleWord(new TextWord("</div>"));
 			} else if (cartId == 20) {
 				// 固定图（产品信息）
 				ruleRoot.addRuleWord(new TextWord(String.format(strPlatformTemplate, "https://img.alicdn.com/imgextra/i1/907029661/TB24yAvc9FjpuFjSspbXXXagVXa-907029661.jpg")));
 
 				// 产品信息style div start
 				ruleRoot.addRuleWord(new TextWord("<div style=\"color: #acacac;padding: 0 60.0px 80.0px 60.0px;line-height: 16.0pt;font-family: arial;\">"));
-			} else if (cartId == 24) {
-				// 固定图（产品信息）
-				ruleRoot.addRuleWord(new TextWord(String.format(strPlatformTemplate, "http://img10.360buyimg.com/imgzone/jfs/t3112/87/5788074319/34714/6977432/58844413N02924d00.jpg")));
 
-				// 产品信息style div start
-				ruleRoot.addRuleWord(new TextWord("<div style=\"width:990px; background-color:#0c0c0c; padding-bottom:5em; font-size:1.2em; color:#acacac;line-height:33px; font-family:arial;\"><p style=\"padding-left:2em; padding-right:2em; text-align:left; word-break:normal;\">"));
-			} else if (cartId == 26) {
-				// 固定图（产品信息）
-				ruleRoot.addRuleWord(new TextWord(String.format(strPlatformTemplate, "https://img10.360buyimg.com/imgzone/jfs/t3112/87/5788074319/34714/6977432/58844413N02924d00.jpg")));
-
-				// 产品信息style div start
-				ruleRoot.addRuleWord(new TextWord("<div style=\"width:990px; background-color:#0c0c0c; padding-bottom:5em; font-size:1.2em; color:#acacac;line-height:33px; font-family:arial;\"><p style=\"padding-left:2em; padding-right:2em; text-align:left; word-break:normal;\">"));
-			}
-
-			// 英文长描述
-			ruleRoot.addRuleWord(new MasterWord("longDesEn"));
-
-			// 产品信息style div end
-			if (cartId == 23 || cartId == 20) {
+				// 英文长描述
+				ruleRoot.addRuleWord(new MasterWord("longDesEn"));
 				ruleRoot.addRuleWord(new TextWord("</div>"));
-			} else if (cartId == 24 || cartId == 26) {
-				ruleRoot.addRuleWord(new TextWord("</p></div>"));
+//			} else if (cartId == 24) {
+//				// 固定图（产品信息）
+//				ruleRoot.addRuleWord(new TextWord(String.format(strPlatformTemplate, "http://img10.360buyimg.com/imgzone/jfs/t3112/87/5788074319/34714/6977432/58844413N02924d00.jpg")));
+//
+//				// 产品信息style div start
+//				ruleRoot.addRuleWord(new TextWord("<div style=\"width:990px; background-color:#0c0c0c; padding-bottom:5em; font-size:1.2em; color:#acacac;line-height:33px; font-family:arial;\"><p style=\"padding-left:2em; padding-right:2em; text-align:left; word-break:normal;\">"));
+//			} else if (cartId == 26) {
+//				// 固定图（产品信息）
+//				ruleRoot.addRuleWord(new TextWord(String.format(strPlatformTemplate, "https://img10.360buyimg.com/imgzone/jfs/t3112/87/5788074319/34714/6977432/58844413N02924d00.jpg")));
+//
+//				// 产品信息style div start
+//				ruleRoot.addRuleWord(new TextWord("<div style=\"width:990px; background-color:#0c0c0c; padding-bottom:5em; font-size:1.2em; color:#acacac;line-height:33px; font-family:arial;\"><p style=\"padding-left:2em; padding-right:2em; text-align:left; word-break:normal;\">"));
 			}
 
 			if (cartId == 23) {

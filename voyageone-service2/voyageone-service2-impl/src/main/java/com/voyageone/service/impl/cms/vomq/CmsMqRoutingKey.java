@@ -37,6 +37,9 @@ public class CmsMqRoutingKey {
     // 高级检索 - 批量确认中国指导价变更
     public static final String CMS_CONFIRM_PLATFORM_RETAIL_PRICE = "VOCmsConfirmPlatformRetailPriceQueue";
 
+    // 高级检索 - 批量确认美元MSRP价格变更
+    public static final String CMS_CONFIRM_CLIENT_MSRP_PRICE = "VOCmsConfirmClientMsrpPriceQueue";
+
     // 高级检索 - 批量设置店铺分类
     public static final String CMS_UPDATE_PRODUCT_PLATFORM_CHANNEL_CATEGORY = "VOCmsUpdateProductPlatformChannelCategoryQueue";
 
@@ -60,6 +63,9 @@ public class CmsMqRoutingKey {
 
     // 高级检索 - 异步生成文件
     public static final String CMS_EXPORT_PRODUCT_INFO = "VOCmsExportProductInfoQueue";
+
+    // 高级检索 - 批量设置主类目
+    public static final String CMS_BATCH_SET_MAIN_CATEGORY = "VOCmsBatchSetMainCategoryQueue";
 
     // Feed检索 - 异步生成Feed导出文件
     public static final String CMS_EXPORT_FEED_INFO = "VOCmsExportFeedInfoQueue";
@@ -94,6 +100,12 @@ public class CmsMqRoutingKey {
     // feed数据导入接口
     public static final String CMS_FEED_IMPORT_MQ_JOB = "CmsFeedImportMQJobQueue";
 
+    // VMS价格和库存变更 通知CMS更新feedInfo
+    public static final String CMS_FEED_SKU_PQ_MQ_JOB = "CmsFeedSkuPqMQJobQueue";
+
+    //sneakerHead根据活动里面的产品找出同一group的商品加入活动
+    public static final String CMS_SNEAKERHEAD_ADD_PROMOTION = "CmsSneakerheadAddPromotionMQJobQueue";
+
     //批量lock平台    added by piao
     public static final String  CMS_ADV_SEARCH_LOCK_PRODUCTS = "VOCmsAdvSearchLockProductsMQJobQueue";
 
@@ -109,8 +121,6 @@ public class CmsMqRoutingKey {
      * image create task
      */
     public static final String CMS_BATCH_CmsMtImageCreateTaskJob = "voyageone_cms_batchjob_CmsMtImageCreateTaskJob_queue";
-
-    public static final String CMS_BATCH_CmsBatchSetMainCategoryJob = "voyageone_cms_batchjob_SetMainCategoryJob_queue";
 
     public static final String CMS_BATCH_CmsBatchRefreshMainCategoryJob = "voyageone_cms_batchjob_RefreshMainCategoryJob_queue";
     /**

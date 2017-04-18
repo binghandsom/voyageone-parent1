@@ -144,6 +144,7 @@ public class PromotionDetailService extends BaseService {
             $warn("addPromotionDetail product sku不存在 参数:" + bean.toString() + " 商品:" + productInfo.toString());
             throw new BusinessException("商品Sku数据不存在");
         }
+        bean.setOrgChannelId(productInfo.getOrgChannelId());
         bean.setProductInfo(productInfo);
         bean.setGroupModel(groupModel);
         return true;
@@ -298,7 +299,7 @@ public class PromotionDetailService extends BaseService {
         }
 
         // 统计code级别的库存
-        List<String> skuList = productInfo.getPlatform(27).getSkus()
+        List<String> skuList = productInfo.getPlatform(cartId).getSkus()
                 .stream()
                 .filter(sku -> Boolean.valueOf(sku.getStringAttribute("isSale")))
                 .map(sku -> sku.getStringAttribute("skuCode")).collect(Collectors.toList());

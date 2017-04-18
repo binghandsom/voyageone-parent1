@@ -44,6 +44,12 @@
         <!-- 聚美上新 -->
         <task:scheduled ref="CmsBuildPlatformProductUploadJMJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
+        <!-- 各个平台增量更新 -->
+        <task:scheduled ref="CmsBuildPlatformAttributeUpdateTmJob" method="run" cron="0 0/1 0-23 * * ?"/>
+        <task:scheduled ref="CmsBuildPlatformAttributeUpdateTmTongGouJob" method="run" cron="0 0/1 0-23 * * ?"/>
+        <task:scheduled ref="CmsBuildPlatformAttributeUpdateJdJob" method="run" cron="0 0/1 0-23 * * ?"/>
+        <task:scheduled ref="CmsBuildPlatformAttributeUpdateJmJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
         <!-- 取得平台类目:手动batch -->
         <task:scheduled ref="getPlatformCategoryTreesTask" method="run" cron="0 0/1 0-23 * * ?"/>
 
@@ -69,8 +75,8 @@
         <task:scheduled ref="CmsPromotionJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!-- 库存数据导入 cms2 -->
-        <!--<task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="25 30 0/1 * * ?"/>-->
-        <task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="0 0/1 * * * ?"/>
+        <task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="25 30 0/1 * * ?"/>
+        <!--<task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="0 5 * * * ?"/>-->
 
         <!-- Jewelry feed 导入 cms2 -->
         <task:scheduled ref="CmsJEAnalysisJob" method="run" cron="0 0/1 * * * ?"/>
@@ -195,7 +201,7 @@
         <task:scheduled ref="CmsSynJmPromotionDealPriceJob" method="run" cron="0 0 17 * * ?"/>
 
         <!-- 每天同步聚美活动里面的价格 -->
-        <task:scheduled ref="CmsGetAllPlatformsInfoJob" method="run" cron="0 0 5 * * ?"/>
+        <task:scheduled ref="CmsGetAllPlatformsInfoJob" method="run" cron="0 30 3 * * ?"/>
 
         <!-- 独立域名上新xml准备（每分钟一次） -->
         <task:scheduled ref="CmsBuildPlatformProductUploadCnPrepareJob" method="run" cron="0 0/1 0-23 * * ?"/>
@@ -213,6 +219,11 @@
         <task:scheduled ref="CmsTargetStautsJob" method="run" cron="0 20 0/1 * * ?"/>
 
         <task:scheduled ref="CmsDfoStatusJob" method="run" cron="1 0/1 * * * ?"/>
+
+        <task:scheduled ref="CmsEdcStatusJob" method="run" cron="1 0/1 * * * ?"/>
+
+        <task:scheduled ref="CmsLuckyVitaminSkuStatusJob" method="run" cron="1 0/1 * * * ?"/>
+
 
         <!-- CmsUsCategorySyncJob: 获取 sneakerhead 在美国 cms 的类目结构和 product 的挂靠关系 vantis -->
         <task:scheduled ref="CmsUsCategorySyncJob" method="run" cron="0 45 0/1 * * ?"/>
@@ -236,7 +247,7 @@
         <task:scheduled ref="CmsBuildPlatformProductSellercatCnTmpJob" method="run" cron="0 0/5 0-23 * * ?"/>
 
         <!-- 被迫下架的商品 自动上架（每5分钟一次） -->
-        <task:scheduled ref="platformForcedInStockProduct_AutoOnSaleJob" method="run" cron="0 0/5 0-23 * * ?" />
+        <task:scheduled ref="platformForcedInStockProduct_AutoOnSaleJob" method="run" cron="0 5 18 * * ?" />
 
         <!-- 分销上新（每3分钟一次） -->
         <task:scheduled ref="CmsBuildPlatformProductUploadDtJob" method="run" cron="0 0/3 0-23 * * ?"/>
@@ -244,7 +255,7 @@
         <!-- Liking新独立域名上新（每3分钟一次） -->
         <task:scheduled ref="CmsBuildPlatformProductUploadCnnJob" method="run" cron="0 0/3 0-23 * * ?"/>
 
-        <!-- Liking新独立域名上新（每3分钟一次） -->
+        <!-- 检查善品数据是否正确（每天执行一次） -->
         <task:scheduled ref="CmsCheckProductIsRightJob" method="run" cron="0 0/30 0-23 * * ?"/>
 
     </task:scheduled-tasks>

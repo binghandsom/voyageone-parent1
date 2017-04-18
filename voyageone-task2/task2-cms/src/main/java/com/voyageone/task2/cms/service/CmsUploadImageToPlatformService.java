@@ -389,7 +389,7 @@ public class CmsUploadImageToPlatformService extends BaseCronTaskService {
             if (StringUtils.isEmpty(platformUrl)) {
                 // 新建的场合
                 imageName = originUrl.substring(originUrl.lastIndexOf("/") + 1);
-                uploadResponse = jdImgzoneService.uploadPicture(shopBean, bytes, categoryId, imageName);
+                uploadResponse = jdImgzoneService.uploadPicture("COMMONIMG", originUrl, shopBean, bytes, categoryId, imageName);
             } else {
                 // 更新(替换图片)的场合
                 uploadResponse = jdImgzoneService.replacePicture(shopBean, bytes, String.valueOf(image.getPlatformImageId()));

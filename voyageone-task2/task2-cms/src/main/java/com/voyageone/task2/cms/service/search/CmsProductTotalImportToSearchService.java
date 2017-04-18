@@ -1,8 +1,11 @@
 package com.voyageone.task2.cms.service.search;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.OrderChannelBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.components.solr.bean.CommIdSearchModel;
 import com.voyageone.components.solr.bean.SolrUpdateBean;
 import com.voyageone.components.solr.query.SimpleQueryCursor;
@@ -16,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,25 +46,31 @@ public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+
         // 取得所有Channel
         List<OrderChannelBean> list = channelService.getChannelListBy(null, null, -1, "1");
         if (list == null || list.isEmpty()) {
             return;
         }
+        List<String> cart = Arrays.asList("928");
         for (OrderChannelBean bean: list) {
-            String channelId = bean.getOrder_channel_id();
-            logger.info("CmsProductSearchImportService.onStartup start channelId:{}", channelId);
-            importDataToSearchFromMongo(channelId);
-            logger.info("CmsProductSearchImportService.onStartup end channelId:{}", channelId);
+            List<TypeChannelBean> typeChannelBeans = TypeChannels.getTypeListSkuCarts(bean.getOrder_channel_id(), Constants.comMtTypeChannel.SKU_CARTS_53_A,"en");
+           if(typeChannelBeans.stream().anyMatch(typeChannelBean -> !cart.contains(typeChannelBean.getValue()))) {
+                String channelId = bean.getOrder_channel_id();
+                logger.info("CmsProductSearchImportService.onStartup start channelId:{}", channelId);
+                importDataToSearchFromMongo(channelId);
+                logger.info("CmsProductSearchImportService.onStartup end channelId:{}", channelId);
+            }else{
+                logger.info("channelId:{} 不需要做", bean.getOrder_channel_id());
+            }
         }
     }
     /**
      * 全量导入
      */
-    void importDataToSearchFromMongo(String channelId) {
+    public void importDataToSearchFromMongo(String channelId) {
         long currentTime = System.currentTimeMillis();
         JongoQuery queryObject = new JongoQuery();
-        queryObject.setProjection("{'_id':1, 'channelId':1, 'common.fields.code':1, 'common.fields.model':1, 'common.skus.skuCode':1}");
         Iterator<CmsBtProductModel> it = cmsBtProductDao.selectCursor(queryObject, channelId);
 
         List<SolrUpdateBean> beans = new ArrayList<>();
@@ -89,29 +99,30 @@ public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
             cmsProductSearchService.commit();
         }
 
-        index = 1;
-        List<String> removeIdList = new ArrayList<>();
-        //删除数据
-        SimpleQueryCursor<CommIdSearchModel> productSearchCursor = cmsProductSearchService.queryIdsForCursorNotLastVer(channelId, currentTime);
-        //noinspection Duplicates
-        while (productSearchCursor.hasNext()) {
-            CommIdSearchModel model = productSearchCursor.next();
-            if (model != null && model.getId() != null) {
-                removeIdList.add(model.getId());
-            }
-            // 删除数据
-            if (index % IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE == 0) {
-                cmsProductSearchService.deleteByIds(removeIdList);
-                removeIdList = new ArrayList<>();
-                cmsProductSearchService.commit();
-            }
-            index++;
-        }
-        // 删除数据
-        if (!removeIdList.isEmpty()) {
-            cmsProductSearchService.deleteByIds(removeIdList);
-            cmsProductSearchService.commit();
-        }
+        // 因为增量job以运行 避免删除增量误删除
+//        index = 1;
+//        List<String> removeIdList = new ArrayList<>();
+//        //删除数据
+//        SimpleQueryCursor<CommIdSearchModel> productSearchCursor = cmsProductSearchService.queryIdsForCursorNotLastVer(channelId, currentTime);
+//        //noinspection Duplicates
+//        while (productSearchCursor.hasNext()) {
+//            CommIdSearchModel model = productSearchCursor.next();
+//            if (model != null && model.getId() != null) {
+//                removeIdList.add(model.getId());
+//            }
+//            // 删除数据
+//            if (index % IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE == 0) {
+//                cmsProductSearchService.deleteByIds(removeIdList);
+//                removeIdList = new ArrayList<>();
+//                cmsProductSearchService.commit();
+//            }
+//            index++;
+//        }
+//        // 删除数据
+//        if (!removeIdList.isEmpty()) {
+//            cmsProductSearchService.deleteByIds(removeIdList);
+//            cmsProductSearchService.commit();
+//        }
 
         cmsProductSearchService.optimize();
     }

@@ -43,7 +43,15 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public Integer getCodeSum7(Integer cart) {
         Map<String, Object> codeSum = getAttribute(CODE_SUM_7);
         if (codeSum != null) {
-            return codeSum.get(CARTID + cart) != null ? (Integer) codeSum.get(CARTID + cart) : 0;
+            if(codeSum.get(CARTID + cart) != null){
+                if(codeSum.get(CARTID + cart) instanceof Double){
+                    return ((Double)codeSum.get(CARTID + cart)).intValue();
+                }else{
+                    return (Integer) codeSum.get(CARTID + cart);
+                }
+            }else{
+                return 0;
+            }
         }
         return 0;
     }
@@ -58,7 +66,15 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public Integer getCodeSum30(Integer cart) {
         Map<String, Object> codeSum = getAttribute(CODE_SUM_30);
         if (codeSum != null) {
-            return codeSum.get(CARTID + cart) != null ? (Integer) codeSum.get(CARTID + cart) : 0;
+            if(codeSum.get(CARTID + cart) != null){
+                if(codeSum.get(CARTID + cart) instanceof Double){
+                    return ((Double)codeSum.get(CARTID + cart)).intValue();
+                }else{
+                    return (Integer) codeSum.get(CARTID + cart);
+                }
+            }else{
+                return 0;
+            }
         }
         return 0;
     }
@@ -159,7 +175,15 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public Integer getCodeSumYear(Integer cart) {
         Map<String, Object> codeSum = getAttribute(CODE_SUM_YEAR);
         if (codeSum != null) {
-            return codeSum.get(CARTID + cart) != null ? (Integer) codeSum.get(CARTID + cart) : 0;
+            if(codeSum.get(CARTID + cart) != null){
+                if(codeSum.get(CARTID + cart) instanceof Double){
+                    return ((Double)codeSum.get(CARTID + cart)).intValue();
+                }else{
+                    return (Integer) codeSum.get(CARTID + cart);
+                }
+            }else{
+                return 0;
+            }
         }
         return 0;
     }

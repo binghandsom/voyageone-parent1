@@ -76,7 +76,7 @@
         MAX(modified) as modified
         FROM voyageone_cms2.cms_bt_sx_workload
         WHERE
-        (publish_status=0)
+        (publish_status=3)
         <if test="channelIdList != null and channelIdList.size() > 0">
             AND channel_id IN
             <foreach collection="channelIdList" item="channelId" open="(" separator="," close=")">#{channelId} </foreach>
@@ -171,6 +171,38 @@
         </foreach>
     </insert>
 
+    <insert id="cms_insert_platform_workloads" parameterType="java.util.List">
+        insert into voyageone_cms2.cms_bt_platform_workload
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            channel_id,
+            cart_id,
+            workload_name,
+            publish_status,
+            group_id,
+            priority_order,
+            created,
+            creater,
+            modified,
+            modifier
+        </trim>
+        value
+        <foreach collection="list" item="item" separator="," >
+            (
+            #{item.channelId,jdbcType=VARCHAR},
+            #{item.cartId,jdbcType=INTEGER},
+            #{item.workloadName,jdbcType=VARCHAR},
+            0,
+            #{item.groupId,jdbcType=VARCHAR},
+            #{item.priority_order,jdbcType=INTEGER},
+            now(),
+            #{item.creater,jdbcType=VARCHAR},
+            now(),
+            #{item.modifier,jdbcType=VARCHAR}
+            )
+        </foreach>
+
+    </insert>
+
     <update id="update_publish_status" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
         <![CDATA[
         UPDATE
@@ -187,6 +219,29 @@
         cart_id = #{cartId}
         AND
         group_id = #{groupId}
+        AND
+         (publish_status=0 or publish_status=3)
+         ]]>
+    </update>
+
+    <update id="update_publish_status_platformWorkload" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
+        <![CDATA[
+        UPDATE
+        voyageone_cms2.cms_bt_platform_workload
+        SET
+        publish_status=#{publishStatus},
+        modifier=#{modifier},
+        modified=now()
+        WHERE
+        modified <= #{modified}
+        AND
+        channel_id = #{channelId}
+        AND
+        cart_id = #{cartId}
+        AND
+        group_id = #{groupId}
+        AND
+        workload_name = #{workloadName}
         AND
          (publish_status=0 or publish_status=3)
          ]]>
@@ -212,4 +267,37 @@
          (publish_status=0 or publish_status=3)
          ]]>
     </update>
+
+    <select id="cms_select_platform_workload" resultType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
+        SELECT
+        id as id,
+        channel_id as channelId,
+        cart_id as cartId,
+        workload_name as workloadName,
+        publish_status as publishStatus,
+        group_id as groupId,
+        priority_order as priorityOrder,
+        creater,
+        created,
+        modifier,
+        modified
+        FROM voyageone_cms2.cms_bt_platform_workload
+        WHERE
+        publish_status = 0
+        <if test="cartList != null and cartList.size() > 0">
+            AND
+            cart_id in
+            <foreach collection="cartList" item="cartId" open="(" separator="," close=")">#{cartId} </foreach>
+        </if>
+        <if test="channelIdList != null and channelIdList.size() > 0">
+            AND
+            channel_id in
+            <foreach collection="channelIdList" item="channelId" open="(" separator="," close=")">#{channelId} </foreach>
+        </if>
+
+        order by priority_order ASC ,created ASC
+        <if test="record_count != null">
+            limit 0,#{record_count}
+        </if>
+    </select>
 </mapper>

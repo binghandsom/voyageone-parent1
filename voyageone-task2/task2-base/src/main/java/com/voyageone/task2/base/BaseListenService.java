@@ -1,8 +1,10 @@
 package com.voyageone.task2.base;
 
+import com.mongodb.MongoQueryException;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
+import org.apache.log4j.MDC;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -26,6 +28,11 @@ public abstract class BaseListenService extends BaseTaskService implements Appli
 
     @Override
     public void startup() {
+
+        String taskName = getTaskName();
+        MDC.put("taskName", taskName);
+        MDC.put("subSystem", getSubSystem().name().toLowerCase());
+
         if (running) {
             $info(getTaskName() + "正在运行，忽略");
             return;
@@ -62,6 +69,8 @@ public abstract class BaseListenService extends BaseTaskService implements Appli
             logIssue(e);
             $error("出现异常，任务退出", e);
         }
+        MDC.remove("taskName");
+        MDC.remove("subSystem");
     }
 
     /**
@@ -91,7 +100,10 @@ public abstract class BaseListenService extends BaseTaskService implements Appli
             } catch (BeanCreationException bce) {
                 $error("出现业务异常，任务退出 " + bce.getMessage());
                 throw bce;
-            } catch (Exception e) {
+            } catch (MongoQueryException e) {
+                $error(" MongoQueryException 出现异常，任务退出", e);
+                eventObj = onListen(taskControlList);
+            }catch (Exception e) {
                 logIssue(e);
                 $error("出现异常，任务退出", e);
                 throw e;

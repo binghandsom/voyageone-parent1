@@ -4,7 +4,6 @@ import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -19,17 +18,8 @@ import java.util.List;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_CONFIRM_PLATFORM_RETAIL_PRICE)
 public class AdvSearchConfirmRetailPriceMQMessageBody extends BaseMQMessageBody {
 
-    private String channelId;
     private Integer cartId;
     private List<String> codeList;
-
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 
     public Integer getCartId() {
         return cartId;
@@ -49,7 +39,7 @@ public class AdvSearchConfirmRetailPriceMQMessageBody extends BaseMQMessageBody 
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isBlank(channelId)) {
+        if (StringUtils.isBlank(super.getChannelId())) {
             throw new MQMessageRuleException("高级检索-批量确认中国指导价变更MQ发送异常, 参数channelId为空.");
         }
         if (cartId == null) {

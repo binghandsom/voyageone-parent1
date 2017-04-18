@@ -17,6 +17,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.components.jumei.*;
 import com.voyageone.components.jumei.bean.*;
 import com.voyageone.components.jumei.reponse.*;
@@ -306,6 +307,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             //取库存
             Map<String, Integer> skuLogicQtyMap = productService.getLogicQty(StringUtils.isNullOrBlank2(product.getOrgChannelId())? channelId :  product.getOrgChannelId(), jmCart.getSkus().stream().map(w->w.getStringAttribute("skuCode")).collect(Collectors.toList()));
 
+            //是否为智能上新
+            boolean blnIsSmartSx = sxProductService.isSmartSx(shop.getOrder_channel_id(), Integer.parseInt(shop.getCart_id()));
             if (StringUtils.isNullOrBlank2(originHashId)) {
                 //如果OriginHashId不存在，则创建新商品
 
@@ -315,7 +318,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 cmsBtJmSkuModelList = fillCmsBtJmSkuModelList(cmsBtJmSkuModelList, product);
 
                 //填充JmProductBean
-                JmProductBean bean = fillJmProductBean(product, expressionParser, shop, skuLogicQtyMap);
+                JmProductBean bean = fillJmProductBean(product, expressionParser, shop, skuLogicQtyMap, blnIsSmartSx);
 
                 HtProductAddRequest htProductAddRequest = new HtProductAddRequest();
                 htProductAddRequest.setJmProduct(bean);
@@ -616,7 +619,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 }
                 jmProductModel = fillCmsBtJmProductModel(jmProductModel, product);
 
-                HtProductUpdateRequest htProductUpdateRequest = fillHtProductUpdateRequest(product, expressionParser, shop);
+                HtProductUpdateRequest htProductUpdateRequest = fillHtProductUpdateRequest(product, expressionParser, shop, blnIsSmartSx);
                 HtProductUpdateResponse htProductUpdateResponse = jumeiHtProductService.update(shop, htProductUpdateRequest);
 
                 if (htProductUpdateResponse != null && htProductUpdateResponse.getIs_Success()) {
@@ -892,7 +895,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                     String hashId = jmHashIdList.get(0);
 //                    for (String hashId : jmHashIdList) {
                         $info("更新Deal的hashId:" + hashId);
-                        HtDealUpdateRequest htDealUpdateRequest = fillHtDealUpdateRequest(product,hashId,expressionParser,shop);
+                        HtDealUpdateRequest htDealUpdateRequest = fillHtDealUpdateRequest(product,hashId,expressionParser,shop, blnIsSmartSx);
                         HtDealUpdateResponse htDealUpdateResponse = jumeiHtDealService.update(shop, htDealUpdateRequest);
                         if (htDealUpdateResponse != null && htDealUpdateResponse.is_Success()) {
                             $info("聚美更新Deal成功！[ProductId:%s]", product.getProdId());
@@ -1056,52 +1059,114 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      * @return
      * @throws Exception
      */
-    private HtDealUpdateRequest fillHtDealUpdateRequest(CmsBtProductModel product, String hashId, ExpressionParser expressionParser, ShopBean shopProp) throws Exception {
+    private HtDealUpdateRequest fillHtDealUpdateRequest(CmsBtProductModel product, String hashId, ExpressionParser expressionParser,
+                                                        ShopBean shopProp, boolean blnIsSmartSx) throws Exception {
         String channelId = product.getOrgChannelId();
+        CmsBtProductModel_Field fields = product.getCommon().getFields();
         BaseMongoMap<String, Object> jmFields = product.getPlatform(CART_ID).getFields();
-
+        String productCode = fields.getCode();
+        //商品共通属性 - 产品名称
+        String commonTitle = fields.getOriginalTitleCn();
+        String pBrandName = product.getPlatform(CART_ID).getpBrandName();
+        if(StringUtils.isEmpty(pBrandName)) {
+            pBrandName = fields.getBrand();
+        }
+        String suitPeople;
+        String productType;
+        if (!StringUtils.isEmpty(fields.getProductTypeCn())) {
+            productType = fields.getProductTypeCn();
+        } else {
+            productType = BaiduTranslateUtil.translate(fields.getProductType());
+        }
+        if (!StringUtils.isEmpty(fields.getSizeTypeCn())) {
+            suitPeople = fields.getSizeTypeCn();
+        } else {
+            suitPeople = BaiduTranslateUtil.translate(fields.getSizeType());
+        }
         HtDealUpdateRequest htDealUpdateRequest = new HtDealUpdateRequest();
         htDealUpdateRequest.setJumei_hash_id(hashId);
         HtDealUpdate_DealInfo dealInfo = new HtDealUpdate_DealInfo();
         // 仓库ID
         String shippingId = Codes.getCode("JUMEI", channelId);
         dealInfo.setShipping_system_id(NumberUtils.toInt(shippingId));
-        // 产品长标题
-        dealInfo.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
-        // 产品中标题
-        dealInfo.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
-        // 产品短标题
-        dealInfo.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
-        // 保质期限
-        dealInfo.setBefore_date(jmFields.getStringAttribute("beforeDate"));
-        // 适用人群
-        dealInfo.setSuit_people(jmFields.getStringAttribute("suitPeople"));
-        // 特殊说明
-        dealInfo.setSpecial_explain(jmFields.getStringAttribute("specialExplain"));
-        // 自定义搜索词
-        dealInfo.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
-//        dealInfo.setAttribute(jmFields.getStringAttribute("attribute"));
+
+        // 产品长标题 charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productLongName"))) {
+            dealInfo.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
+        } else if (blnIsSmartSx) {
+            if(!StringUtils.isEmpty(commonTitle)) {
+                dealInfo.setProduct_long_name(commonTitle);
+            } else {
+                dealInfo.setProduct_long_name(pBrandName + " " + suitPeople + " " + productType + " " + productCode);
+            }
+        }
+        // 产品中标题 charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productMediumName"))) {
+            dealInfo.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
+        } else if (blnIsSmartSx) {
+            if(!StringUtils.isEmpty(commonTitle)) {
+                dealInfo.setProduct_medium_name(commonTitle);
+            } else {
+                dealInfo.setProduct_medium_name(pBrandName + " " + suitPeople + " " + productType + " " + fields.getModel());
+            }
+        }
+        // 产品短标题 charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productShortName"))) {
+            dealInfo.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
+        } else if (blnIsSmartSx) {
+            if(!StringUtils.isEmpty(commonTitle)) {
+                dealInfo.setProduct_short_name(commonTitle);
+            } else {
+                dealInfo.setProduct_short_name(pBrandName + " " + suitPeople + " " + productType + " " + fields.getModel());
+            }
+        }
+        // 保质期限 charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("beforeDate"))) {
+            dealInfo.setBefore_date(jmFields.getStringAttribute("beforeDate"));
+        } else if (blnIsSmartSx) {
+            dealInfo.setBefore_date("无");
+        }
+        // 适用人群 charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("suitPeople"))) {
+            dealInfo.setSuit_people(jmFields.getStringAttribute("suitPeople"));
+        } else if (blnIsSmartSx) {
+            dealInfo.setSuit_people("时尚潮流人士");
+        }
+
+        // 特殊说明 charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("specialExplain"))) {
+            dealInfo.setSpecial_explain(jmFields.getStringAttribute("specialExplain"));
+        } else if (blnIsSmartSx) {
+            dealInfo.setSpecial_explain("自海外直邮发货，物流周期15个工作日左右。");
+        }
+
+        // 自定义搜索词  charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("searchMetaTextCustom"))) {
+            dealInfo.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
+        } else if (blnIsSmartSx) {
+            dealInfo.setSearch_meta_text_custom(pBrandName + "," + productType + "," + suitPeople + "," + fields.getModel());
+        }
+        // 每人限购
         dealInfo.setUser_purchase_limit(jmFields.getIntAttribute("userPurchaseLimit"));
 
+
+
+//        dealInfo.setAttribute(jmFields.getStringAttribute("attribute"));
+//        dealInfo.setUser_purchase_limit(jmFields.getIntAttribute("userPurchaseLimit"));
+
         // 判断一下聚美详情， 用哪套模板
-        String strJumeiDetailTemplateName = "聚美详情";
-        if (product.getChannelId().equals("928")) {
+        String strJumeiDetailTemplateName = "聚美详情-非重点";
+        if (ChannelConfigEnums.Channel.USJGJ.getId().equals(product.getChannelId())) {
             if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                 String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
                 if (StringUtils.isEmpty(detailName)) detailName = "";
-                if (detailName.equals("天猫同购描述-重点商品")) {
-                    strJumeiDetailTemplateName = "聚美详情-重点商品";
-                } else if (detailName.equals("天猫同购描述-无属性图")) {
-                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
-                } else if (detailName.equals("天猫同购描述-非重点之英文长描述")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之英文长描述";
-                } else if (detailName.equals("天猫同购描述-非重点之中文长描述")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之中文长描述";
-                } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之中文使用说明";
-                } else if (detailName.equals("天猫同购描述-爆款商品")) {
-                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                if (detailName.equals("天猫同购描述-重点")) {
+                    strJumeiDetailTemplateName = "聚美详情-重点";
+                } else if (detailName.equals("天猫同购描述-非重点")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点";
+                } else if (detailName.equals("天猫同购描述-爆款")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点"; // 注： 这里不是写错了， 确实要这样做
                 }
             }
         }
@@ -1327,23 +1392,59 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      * @return
      * @throws Exception
      */
-    private HtProductUpdateRequest fillHtProductUpdateRequest(CmsBtProductModel product,
-                                                              ExpressionParser expressionParser, ShopBean shopProp) throws Exception {
+    private HtProductUpdateRequest fillHtProductUpdateRequest(CmsBtProductModel product, ExpressionParser expressionParser,
+                                                              ShopBean shopProp, boolean blnIsSmartSx) throws Exception {
 
         CmsBtProductModel_Field fields = product.getCommon().getFields();
         CmsBtProductModel_Platform_Cart jmCart = product.getPlatform(CART_ID);
         HtProductUpdateRequest htProductUpdateRequest = new HtProductUpdateRequest();
         String productId = jmCart.getpProductId();
+        String productCode = fields.getCode();
+        String pBrandName = product.getPlatform(CART_ID).getpBrandName();
+        if(StringUtils.isEmpty(pBrandName)) {
+            pBrandName = fields.getBrand();
+        }
         BaseMongoMap<String, Object> jmFields = jmCart.getFields();
-        String productName = jmFields.getStringAttribute("productNameCn") + " " + special_symbol.matcher(fields.getCode()).replaceAll("-");
+        //商品共通属性 - 产品名称
+        String commonTitle = fields.getOriginalTitleCn();
+        String suitPeople;
+        String productType;
+        String productName = "";
+        if (!StringUtils.isEmpty(fields.getProductTypeCn())) {
+            productType = fields.getProductTypeCn();
+        } else {
+            productType = BaiduTranslateUtil.translate(fields.getProductType());
+        }
+        if (!StringUtils.isEmpty(fields.getSizeTypeCn())) {
+            suitPeople = fields.getSizeTypeCn();
+        } else {
+            suitPeople = BaiduTranslateUtil.translate(fields.getSizeType());
+        }
+
+
+        // 产品名 charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productNameCn"))) {
+            productName = jmFields.getStringAttribute("productNameCn") + " " +  special_symbol.matcher(fields.getCode()).replaceAll("-");
+        } else if (blnIsSmartSx){
+            if(commonTitle != null && commonTitle.length() > 0) {
+                productName = commonTitle;
+            } else {
+                productName = pBrandName + " " + suitPeople + " " + productType + " " + productCode;
+            }
+        }
+
         htProductUpdateRequest.setJumei_product_name(productName);
         htProductUpdateRequest.setJumei_product_id(productId);
         HtProductUpdate_ProductInfo productInfo = new HtProductUpdate_ProductInfo();
         productInfo.setBrand_id(jmCart.getpBrandId());
         productInfo.setCategory_v3_4_id(jmCart.getpCatId());
-        productInfo.setForeign_language_name(jmFields.get("productNameEn").toString());
+        // 外文名 charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productNameEn"))) {
+            productInfo.setForeign_language_name(jmFields.getStringAttribute("productNameEn"));
+        } else if (blnIsSmartSx) {
+            productInfo.setForeign_language_name(fields.getProductNameEn());
+        }
         productInfo.setName(productName);
-
 
         //商品主图
         String picTemplate = getTemplate("聚美白底方图", expressionParser, shopProp);
@@ -1353,7 +1454,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             productInfo.setNormalImage(picTemplate);
         }
         htProductUpdateRequest.setUpdate_data(productInfo);
-
 
         return htProductUpdateRequest;
     }
@@ -1366,7 +1466,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      * @return
      * @throws Exception
      */
-    private JmProductBean fillJmProductBean(CmsBtProductModel product,ExpressionParser expressionParser, ShopBean shopProp, Map<String, Integer> skuLogicQtyMap) throws Exception {
+    private JmProductBean fillJmProductBean(CmsBtProductModel product,ExpressionParser expressionParser, ShopBean shopProp,
+                                            Map<String, Integer> skuLogicQtyMap, boolean blnIsSmartSx) throws Exception {
+
+
 
         String channelId = product.getOrgChannelId();
         CmsBtProductModel_Platform_Cart jmCart = product.getPlatform(CartEnums.Cart.JM);
@@ -1381,8 +1484,27 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 //        String sizeType = fields.getSizeType();
         // delete by desmond 2016/07/08 end
         String productCode = fields.getCode();
-
         BaseMongoMap<String, Object> jmFields = jmCart.getFields();
+        //商品共通属性 - 产品名称
+        String commonTitle = fields.getOriginalTitleCn();
+        String pBrandName = product.getPlatform(CART_ID).getpBrandName();
+        if(StringUtils.isEmpty(pBrandName)) {
+            pBrandName = fields.getBrand();
+        }
+        String productType;
+        String suitPeople;
+        if (!StringUtils.isEmpty(fields.getSizeTypeCn())) {
+            suitPeople = fields.getSizeTypeCn();
+        } else {
+            suitPeople = BaiduTranslateUtil.translate(fields.getSizeType());
+        }
+        if (!StringUtils.isEmpty(fields.getProductTypeCn())) {
+            productType = fields.getProductTypeCn();
+        } else {
+            productType = BaiduTranslateUtil.translate(fields.getProductType());
+        }
+
+
         // 商品规格编号
         bean.setProduct_spec_number(fields.getCode());
         // update by desmond 2016/09/01 start
@@ -1393,10 +1515,23 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 //        bean.setBrand_id(Integer.valueOf(jmCart.getpBrandId()));
         bean.setBrand_id(NumberUtils.toInt(jmCart.getpBrandId()));
         // update by desmond 2016/09/01 end
-        // 产品名
-        bean.setName(jmFields.getStringAttribute("productNameCn") + " " +  special_symbol.matcher(productCode).replaceAll("-"));
-        // 外文名
-        bean.setForeign_language_name(jmFields.getStringAttribute("productNameEn"));
+        // 产品名 charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productNameCn"))) {
+            bean.setName(jmFields.getStringAttribute("productNameCn") + " " +  special_symbol.matcher(productCode).replaceAll("-"));
+        } else if (blnIsSmartSx){
+            if(!StringUtils.isEmpty(commonTitle)) {
+                bean.setName(commonTitle);
+            } else {
+                bean.setName(pBrandName + " " + suitPeople + " " + productType + " " + productCode);
+            }
+        }
+
+        // 外文名 charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productNameEn"))) {
+            bean.setForeign_language_name(jmFields.getStringAttribute("productNameEn"));
+        } else if (blnIsSmartSx) {
+            bean.setForeign_language_name(fields.getProductNameEn());
+        }
         // 白底方图
         String picTemplate = getTemplate("聚美白底方图", expressionParser, shopProp);
 
@@ -1417,24 +1552,18 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
 
         // 判断一下聚美详情， 用哪套模板
-        String strJumeiDetailTemplateName = "聚美详情";
-        if (product.getChannelId().equals("928")) {
+        String strJumeiDetailTemplateName = "聚美详情-非重点";
+        if (ChannelConfigEnums.Channel.USJGJ.getId().equals(product.getChannelId())) {
             if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                 String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
                 if (StringUtils.isEmpty(detailName)) detailName = "";
-                if (detailName.equals("天猫同购描述-重点商品")) {
-                    strJumeiDetailTemplateName = "聚美详情-重点商品";
-                } else if (detailName.equals("天猫同购描述-无属性图")) {
-                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
-                } else if (detailName.equals("天猫同购描述-非重点之英文长描述")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之英文长描述";
-                } else if (detailName.equals("天猫同购描述-非重点之中文长描述")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之中文长描述";
-                } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之中文使用说明";
-                } else if (detailName.equals("天猫同购描述-爆款商品")) {
-                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                if (detailName.equals("天猫同购描述-重点")) {
+                    strJumeiDetailTemplateName = "聚美详情-重点";
+                } else if (detailName.equals("天猫同购描述-非重点")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点";
+                } else if (detailName.equals("天猫同购描述-爆款")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点"; // 注： 这里不是写错了， 确实要这样做
                 }
             }
         }
@@ -1445,22 +1574,70 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         String jmUseageTemplate = getTemplate("聚美使用方法", expressionParser, shopProp);
         deal.setDescription_usage(jmUseageTemplate);
 
-        // 产品长标题
-        deal.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
-        // 产品中标题
-        deal.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
-        // 产品短标题
-        deal.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
-        // 保质期限
-        deal.setBefore_date(jmFields.getStringAttribute("beforeDate"));
-        // 适用人群
-        deal.setSuit_people(jmFields.getStringAttribute("suitPeople"));
-        // 特殊说明
-        deal.setSpecial_explain(jmFields.getStringAttribute("specialExplain"));
-        // 自定义搜索词
-        deal.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
-        // 生产地区
-        deal.setAddress_of_produce(jmFields.getStringAttribute("originCn"));
+        // 产品长标题 charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productLongName"))) {
+            deal.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
+        } else if (blnIsSmartSx) {
+            if(commonTitle != null && commonTitle.length() > 0) {
+                deal.setProduct_long_name(commonTitle);
+            } else {
+                deal.setProduct_long_name(pBrandName + " " + suitPeople + " " + productType + " " + productCode);
+            }
+        }
+        // 产品中标题 charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productMediumName"))) {
+            deal.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
+        } else if (blnIsSmartSx) {
+            if(commonTitle != null && commonTitle.length() > 0) {
+                deal.setProduct_medium_name(commonTitle);
+            } else {
+                deal.setProduct_medium_name(pBrandName + " " + suitPeople + " " + productType + " " + fields.getModel());
+            }
+        }
+        // 产品短标题 charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productShortName"))) {
+            deal.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
+        } else if (blnIsSmartSx) {
+            if(commonTitle != null && commonTitle.length() > 0) {
+                deal.setProduct_short_name(commonTitle);
+            } else {
+                deal.setProduct_short_name(pBrandName + " " + suitPeople + " " + productType + " " + fields.getModel());
+            }
+        }
+        // 保质期限 charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("beforeDate"))) {
+            deal.setBefore_date(jmFields.getStringAttribute("beforeDate"));
+        } else if (blnIsSmartSx) {
+            deal.setBefore_date("无");
+        }
+
+        // 适用人群 charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("suitPeople"))) {
+            deal.setSuit_people(jmFields.getStringAttribute("suitPeople"));
+        } else if (blnIsSmartSx) {
+            deal.setSuit_people("时尚潮流人士");
+        }
+
+        // 特殊说明 charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("specialExplain"))) {
+            deal.setSpecial_explain(jmFields.getStringAttribute("specialExplain"));
+        } else if (blnIsSmartSx) {
+            deal.setSpecial_explain("自海外直邮发货，物流周期15个工作日左右。");
+        }
+
+        // 自定义搜索词  charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("searchMetaTextCustom"))) {
+            deal.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
+        } else if (blnIsSmartSx) {
+            deal.setSearch_meta_text_custom(pBrandName + "," + productType + "," + suitPeople + "," + fields.getModel());
+        }
+        // 生产地区 charis update
+        if (!StringUtils.isEmpty(jmFields.getStringAttribute("originCn"))) {
+            deal.setAddress_of_produce(jmFields.getStringAttribute("originCn"));
+        } else if (blnIsSmartSx) {
+            deal.setAddress_of_produce("根据生产批次、生产线，详情请见实物包装");
+        }
+
         // Deal开始时间
         deal.setStart_time(System.currentTimeMillis() / 1000);
         // Deal结束时间
@@ -1494,7 +1671,17 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             spu.setUpc_code(addVoToBarcode(jmSku.getStringAttribute("barcode"), channelId, jmSku.getStringAttribute("skuCode")));
             // 规格 :FORMAL 正装 MS 中小样 OTHER 其他
             spu.setPropery(jmSku.getStringAttribute("property"));
-            spu.setAttribute(jmFields.getStringAttribute("attribute"));//Code级
+            // 型号/颜色 charis update
+            if (!StringUtils.isEmpty(jmFields.getStringAttribute("attribute"))) {
+                spu.setAttribute(jmFields.getStringAttribute("attribute"));//Code级
+            } else if (blnIsSmartSx) {
+                if (!StringUtils.isEmpty(fields.getColor())) {
+                    spu.setAttribute(fields.getColor());
+                } else {
+                    spu.setAttribute(fields.getCodeDiff());
+                }
+            }
+
             // update by desmond 2016/07/08 start
             // 容量/尺寸
 //            String size = jmSku.getStringAttribute("size");
@@ -1589,6 +1776,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
 
         for (BaseMongoMap<String, Object> jmSku : jmSkus) {
+            if (Boolean.parseBoolean(jmSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
             //填写CmsBtJMSku
             // update by desmond 2016/07/08 start
 //            String size = jmSku.getStringAttribute("size");
@@ -1597,6 +1785,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             // update by desmond 2016/07/08 end
             CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, jmSku, sizeStr);
             list.add(cmsBtJmSkuModel);
+            }
         }
 
         return list;
@@ -1810,6 +1999,15 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      */
     public void uploadMall(CmsBtProductModel product, ShopBean shopBean, ExpressionParser expressionParser, List<String> addSkuList, Map<String, Integer> skuLogicQtyMap) throws Exception {
         String mallId = product.getPlatform(CART_ID).getpPlatformMallId(); // 聚美Mall Id.
+        List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
+        // 要增加的sku的售卖状态不确定 所以也要更新成isSale = true的sku的价格  charis update
+        // 20170413 charis 聚美商城价格取isSale = true的任何一个 保证价格一致  STA
+        BaseMongoMap<String, Object> isOnSaleSku = skuList.stream()
+                .filter(s -> Boolean.parseBoolean(s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name())))
+                .findFirst()
+                .orElse(new BaseMongoMap<>());
+        // 20170413 charis 聚美商城价格取isSale = true的任何一个 保证价格一致  END
+
         if (StringUtils.isEmpty(mallId)) {
             // 新增
             StringBuffer sb = new StringBuffer("");
@@ -1833,7 +2031,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
             {
                 // 更新mall价格
-                updateMallPrice(product, shopBean, addSkuList);
+                updateMallPrice(product, shopBean, addSkuList, isOnSaleSku);
             }
 
         } else {
@@ -1842,7 +2040,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
             // 追加sku
             if (ListUtils.notNull(addSkuList)) {
-                List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
+//                List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
                 List<CmsBtProductModel_Sku> commonSkus = product.getCommon().getSkus();
                 skuList = mergeSkuAttr(skuList, commonSkus);
                 for (BaseMongoMap<String, Object> sku : skuList) {
@@ -1867,9 +2065,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         // 库存
                         skuInfo.setStocks(stock);
                         // 商城价
-                        skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+                        skuInfo.setMall_price(isOnSaleSku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
                         // 市场价
-                        skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+                        skuInfo.setMarket_price(isOnSaleSku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
 
                         StringBuffer sb = new StringBuffer("");
                         String jumeiSkuNo = jumeiHtMallService.addMallSku(shopBean, mallSkuAddInfo, sb);
@@ -1892,10 +2090,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 }
             }
 
-            {
-                // 更新mall价格
-                updateMallPrice(product, shopBean, addSkuList);
-            }
+
+            // 更新mall价格
+            updateMallPrice(product, shopBean, addSkuList, isOnSaleSku);
+
 
             {
                 // 变更聚美商城商品
@@ -1923,24 +2121,18 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 updateDataInfo.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
                 // 本单详情
                 // 判断一下聚美详情， 用哪套模板
-                String strJumeiDetailTemplateName = "聚美详情";
-                if (product.getChannelId().equals("928")) {
+                String strJumeiDetailTemplateName = "聚美详情-非重点";
+                if (ChannelConfigEnums.Channel.USJGJ.getId().equals(product.getChannelId())) {
                     if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                         String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
                         if (StringUtils.isEmpty(detailName)) detailName = "";
-                        if (detailName.equals("天猫同购描述-重点商品")) {
-                            strJumeiDetailTemplateName = "聚美详情-重点商品";
-                        } else if (detailName.equals("天猫同购描述-无属性图")) {
-                            strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
-                        } else if (detailName.equals("天猫同购描述-非重点之英文长描述")) {
-                            strJumeiDetailTemplateName = "聚美详情-非重点之英文长描述";
-                        } else if (detailName.equals("天猫同购描述-非重点之中文长描述")) {
-                            strJumeiDetailTemplateName = "聚美详情-非重点之中文长描述";
-                        } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
-                            strJumeiDetailTemplateName = "聚美详情-非重点之中文使用说明";
-                        } else if (detailName.equals("天猫同购描述-爆款商品")) {
-                            strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                        if (detailName.equals("天猫同购描述-重点")) {
+                            strJumeiDetailTemplateName = "聚美详情-重点";
+                        } else if (detailName.equals("天猫同购描述-非重点")) {
+                            strJumeiDetailTemplateName = "聚美详情-非重点";
+                        } else if (detailName.equals("天猫同购描述-爆款")) {
+                            strJumeiDetailTemplateName = "聚美详情-非重点"; // 注： 这里不是写错了， 确实要这样做
                         }
                     }
                 }
@@ -2012,10 +2204,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         // add by desmond 2016/10/18 end
     }
 
-    private void updateMallPrice(CmsBtProductModel product, ShopBean shopBean, List<String> addSkuList) throws Exception {
+    private void updateMallPrice(CmsBtProductModel product, ShopBean shopBean,
+                                 List<String> addSkuList, BaseMongoMap<String, Object> isOnSaleSku) throws Exception {
         // 更新mall价格
         List<HtMallSkuPriceUpdateInfo> updateData = new ArrayList<>();
         List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
+
+
         // 聚美批量修改价格一次最多只能修改20个sku，sku个数超过20时所以要循环一下
         String errMsg = "";
         int updateCnt = 0;
@@ -2031,13 +2226,16 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                     // 当jmSkuNo不为空时,才加到updateData中，否则批量修改商城商品价格[MALL]时会报100002：jumei_sku_no,参数错误
                     // add 2016/10/30 由于现在取得聚美的上新Data里面连P27.skus.isSale=false(不在该平台售卖)的sku也抽出来的，
                     // 所以这里也要过滤一下isSale=false的sku,不然会报"skuNo:70118904460不在售卖状态, 请核实"的错误
-                    if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))
-                            && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                    if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))) {
+                            // charis update
+//                            && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                            // charis update
+
                         // 不是新追加的
                         HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
                         skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
-                        skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
-                        skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+                        skuInfo.setMarket_price(isOnSaleSku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+                        skuInfo.setMall_price(isOnSaleSku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
                         updateData.add(skuInfo);
                         // 超过20个暂停加入
                         if (updateData.size() >= 20) {

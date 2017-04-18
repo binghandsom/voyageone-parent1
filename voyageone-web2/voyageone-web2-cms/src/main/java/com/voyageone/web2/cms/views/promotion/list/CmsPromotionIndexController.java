@@ -7,6 +7,8 @@ import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsSneakerHeadAddPromotionMQMessageBody;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;

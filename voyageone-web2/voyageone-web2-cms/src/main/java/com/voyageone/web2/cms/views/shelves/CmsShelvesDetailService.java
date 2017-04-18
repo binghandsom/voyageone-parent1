@@ -72,7 +72,7 @@ class CmsShelvesDetailService extends BaseViewService {
     /**
      * 根据货架Id获取货架里的产品信息
      */
-    List<CmsBtShelvesInfoBean> getShelvesInfo(List<Integer> shelvesIds, Boolean isLoadPromotionPrice, String userName) {
+    List<CmsBtShelvesInfoBean> getShelvesInfo(List<Integer> shelvesIds, Boolean isLoadPromotionPrice, String userName, String channelId) {
 
         List<CmsBtShelvesInfoBean> cmsBtShelvesInfoBanList = new ArrayList<>();
         shelvesIds.forEach(shelvesId -> {
@@ -80,6 +80,7 @@ class CmsShelvesDetailService extends BaseViewService {
             //更新redis监控标志位的超时时间
             if (CacheHelper.getValueOperation().get("ShelvesMonitor_" + shelvesId) == null) {
                 CmsShelvesMonitorMQMessageBody messageMap = new CmsShelvesMonitorMQMessageBody();
+                messageMap.setChannelId(channelId);
                 messageMap.setShelvesId(shelvesId);
                 messageMap.setSender(userName);
                 CacheHelper.getValueOperation().set("ShelvesMonitor_" + shelvesId, shelvesId);
@@ -152,7 +153,7 @@ class CmsShelvesDetailService extends BaseViewService {
         updateShelvesProduct(cmsBtShelvesProductModels);
 
         if(!ListUtils.isNull(prodIdList)){
-            productTagService.addProdTag(cmsBtShelvesModel.getChannelId(), "-"+cmsBtShelvesModel.getRefTagId()+"-", prodIdList, modifier);
+            productTagService.addProdTag(cmsBtShelvesModel.getChannelId(), "-" + cmsBtShelvesModel.getRefTagId() + "-", prodIdList);
         }
     }
 

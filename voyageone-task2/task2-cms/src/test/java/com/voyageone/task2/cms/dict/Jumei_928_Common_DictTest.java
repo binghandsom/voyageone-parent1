@@ -24,8 +24,8 @@ import java.util.List;
  * @version 2.1.0
  * @since 2.1.0
  */
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration("classpath:context-cms-test.xml")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:context-cms-test.xml")
 public class Jumei_928_Common_DictTest {
     @Autowired
     private SxProductService sxProductService;
@@ -37,7 +37,7 @@ public class Jumei_928_Common_DictTest {
     String C_包装图片 = "PACKAGE_IMAGE";
     String C_带角度图片 = "ANGLE_IMAGE";
     String C_自定义图片 = "CUSTOM_IMAGE";
-
+    String C_移动端自定义图片 = "MOBILE_CUSTOM_IMAGE";
     // -------------------------------------------------
     // 切换平台时，下列详情页固定图片URL需要修改
     // -------------------------------------------------
@@ -46,12 +46,8 @@ public class Jumei_928_Common_DictTest {
     public void startupTest() {
 
         // 聚美详情
-        doCreateJson("聚美详情", false, doDict_聚美详情(1));
-        doCreateJson("聚美详情-重点商品", false, doDict_聚美详情(2));
-        doCreateJson("聚美详情-无属性图", false, doDict_聚美详情(3));
-        doCreateJson("聚美详情-非重点之英文长描述", false, doDict_聚美详情(4));
-        doCreateJson("聚美详情-非重点之中文长描述", false, doDict_聚美详情(5));
-        doCreateJson("聚美详情-非重点之中文使用说明", false, doDict_聚美详情(6));
+        doCreateJson("聚美详情-重点", false, doDict_聚美详情(2));
+        doCreateJson("聚美详情-非重点", false, doDict_聚美详情(4));
 
         // 聚美使用方法
         doCreateJson("聚美使用方法", false, doDict_聚美使用方法());
@@ -66,21 +62,32 @@ public class Jumei_928_Common_DictTest {
 
     @Test
     public void dictTest() {
-        SxData sxData = sxProductService.getSxProductDataByGroupId("010", 20893L);
+        SxData sxData = sxProductService.getSxProductDataByGroupId("928", 10614203L);
         sxData.setCartId(27);
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
-        ShopBean shopProp = Shops.getShop("010", 27);
+        ShopBean shopProp = new ShopBean();
+//        ShopBean shopProp = Shops.getShop("928", 27);
 //        shopProp.setCart_id("27");
+        shopProp.setOrder_channel_id("928");
+        shopProp.setApp_url("http://openapi.ext.jumei.com/");
+        shopProp.setAppKey(""); // 131
+        shopProp.setAppSecret("");  // 0f9e3437ca010f63f2c4f3a216b7f4bc9698f071
+        shopProp.setSessionKey(""); // 7e059a48c30c67d2693be14275c2d3be
         shopProp.setPlatform_id(PlatFormEnums.PlatForm.JM.getId());
 
         // 最终测试结果是这样的 ======================================== START
         // 最终测试结果是这样的 ======================================== END
-
         try {
             // 聚美详情
             System.out.println("=====================================");
-            System.out.println("字典: 聚美详情");
-            String result = sxProductService.resolveDict("聚美详情", expressionParser, shopProp, getTaskName(), null);
+            System.out.println("字典: 聚美详情-重点");
+            String result = sxProductService.resolveDict("聚美详情-重点", expressionParser, shopProp, getTaskName(), null);
+            System.out.println(result);
+
+            // 聚美详情
+            System.out.println("=====================================");
+            System.out.println("字典: 聚美详情-非重点");
+            result = sxProductService.resolveDict("聚美详情-非重点", expressionParser, shopProp, getTaskName(), null);
             System.out.println(result);
 
             // 聚美使用方法
@@ -92,19 +99,19 @@ public class Jumei_928_Common_DictTest {
             // 聚美实拍
             System.out.println("=====================================");
             System.out.println("字典: 聚美实拍");
-            result = sxProductService.resolveDict("聚美实拍", expressionParser, shopProp, getTaskName(), null);
+            result = sxProductService.resolveDict("聚美实拍", expressionParser, shopProp, "jumei_928_dictTest", null);
             System.out.println(result);
 
-            // 聚美白底方图
-            System.out.println("=====================================");
-            System.out.println("字典: 聚美白底方图");
-            result = sxProductService.resolveDict("聚美白底方图", expressionParser, shopProp, getTaskName(), null);
-            System.out.println(result);
-            for (String picUrl : result.split(",")) {
-//                String jmPicUrl = sxProductService.uploadImageByUrl_JM(picUrl, shopProp);
-//                System.out.println(jmPicUrl);
-                System.out.println(picUrl);
-            }
+//            // 聚美白底方图
+//            System.out.println("=====================================");
+//            System.out.println("字典: 聚美白底方图");
+//            result = sxProductService.resolveDict("聚美白底方图", expressionParser, shopProp, getTaskName(), null);
+//            System.out.println(result);
+//            for (String picUrl : result.split(",")) {
+////                String jmPicUrl = sxProductService.uploadImageByUrl_JM(picUrl, shopProp);
+////                System.out.println(jmPicUrl);
+//                System.out.println(picUrl);
+//            }
 
 
         } catch (Exception e) {
@@ -125,7 +132,7 @@ public class Jumei_928_Common_DictTest {
      * @param isUrl    生成出来的内容是否是url(一般是图片的话就是true, 其他有文字的都是false)
      * @param ruleRoot rule
      */
-    private void doCreateJson(String title, boolean isUrl, RuleExpression ruleRoot) {
+    protected void doCreateJson(String title, boolean isUrl, RuleExpression ruleRoot) {
 
         DictWord dictRoot = new DictWord();
         dictRoot.setName(title);
@@ -170,95 +177,40 @@ public class Jumei_928_Common_DictTest {
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
 
-            if (propType == 1 // 参数图 - 普通商品（非重点之英文使用说明）
-                    || propType == 4 // 参数图 - 非重点之英文长描述
-                    || propType == 5 // 参数图 - 非重点之中文长描述
-                    || propType == 6 // 参数图 - 非重点之中文使用说明
-                    ) {
+            if (propType == 4 ) {  // 参数图 - 非重点之英文长描述
+                // charis sta
+                String html = "<div style=\"margin-top: -3px; border-width: 0 15px 0 15px; border-color: #f6f2f1 ; border-style: double solid; padding: 50px 20px 20px 20px; width: 720px;font-family:'microsoft yahei'; font-size: 16pt; color: #000000; \">";
+                ruleRoot.addRuleWord(new TextWord(html));
 
-                {
-                    // 前缀
-                    String html = "<img src=\"";
-                    ruleRoot.addRuleWord(new TextWord(html));
-                }
+                ruleRoot.addRuleWord(new MasterClrHtmlWord("longDesEn")); // 英文长描述
 
-                {
-                    // imageTemplate
-                    RuleExpression imageTemplate = new RuleExpression();
-                    String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/jumei790X300wenzi?$790X300$&$wenzi=%s";
-                    imageTemplate.addRuleWord(new TextWord(htmlTemplate));
-
-                    // 参数imageParams
-                    List<RuleExpression> imageParams = new ArrayList<>();
-
-                    {
-                        // 第一个参数是描述
-                        RuleExpression ruleExpression = new RuleExpression();
-                        switch (propType) {
-                            case 1:
-                                ruleExpression.addRuleWord(new MasterClrHtmlWord("usageEn")); // 英文使用方法
-                                break;
-                            case 4:
-                                ruleExpression.addRuleWord(new MasterClrHtmlWord("longDesEn")); // 英文长描述
-                                break;
-                            case 5:
-                                ruleExpression.addRuleWord(new MasterClrHtmlWord("longDesCn")); // 中文长描述
-                                break;
-                            case 6:
-                                ruleExpression.addRuleWord(new MasterClrHtmlWord("usageCn")); // 非重点之中文使用说明
-                                break;
-                        }
-                        imageParams.add(ruleExpression);
-                    }
-
-                    CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
-                    ruleRoot.addRuleWord(new CustomWord(word));
-                }
-
-                {
-                    // 后缀
-                    String html = "\">";
-                    ruleRoot.addRuleWord(new TextWord(html));
-                }
+                ruleRoot.addRuleWord(new TextWord("</div>"));
+                // charis end
             }
 
             if (propType == 2) {   // 参数图 - 重点商品
 
+                String tableTem = "<div style=\"margin-top: -3px; border-width: 0 15px 0 15px; border-color: #f6f2f1; border-style: double solid; padding: 50px 20px 20px 20px; width: 720px; \">" +
+                        "<table style=\"width: 720px; font-family: microsoft yahei; font-size: 16pt; color: #000000;\">";
+                int columnCount = 2;
+                RuleExpression tableTemplate = new RuleExpression();
+                tableTemplate.addRuleWord(new TextWord(tableTem));
+
+                // 参数tableParams
+                List<RuleExpression> tableParams = new ArrayList<>();
                 {
-                    // 前缀
-                    String html = "<img src=\"";
-                    ruleRoot.addRuleWord(new TextWord(html));
-                }
-
-                {
-                    // imageTemplate
-                    RuleExpression imageTemplate = new RuleExpression();
-                    String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/likingjumei790X373?$790X373$&$1=%s&$2=%s&$3=%s&$4=%s&$5=%s&$6=%s&$7=%s&$8=%s&$9=%s&$10=%s&$11=%s&$12=%s&$13=%s&$14=%s&$15=%s&$16=%s";
-                    imageTemplate.addRuleWord(new TextWord(htmlTemplate));
-
-                    // 参数imageParams
-                    List<RuleExpression> imageParams = new ArrayList<>();
-
-                    {
-                        // 共7个属性
-                        for (int index = 0; index < 16; index++) {
-                            RuleExpression ruleExpression = new RuleExpression();
-                            ruleExpression.addRuleWord(new FeedCnWord(true, index));
-                            ruleExpression.addRuleWord(new TextWord("   "));
-                            ruleExpression.addRuleWord(new FeedCnWord(false, index));
-                            imageParams.add(ruleExpression);
-                        }
+                    // 共7个属性
+                    for (int index = 0; index < 16; index++) {
+                        RuleExpression ruleExpression = new RuleExpression();
+                        ruleExpression.addRuleWord(new FeedCnWord(true, index));
+                        ruleExpression.addRuleWord(new TextWord("   "));
+                        ruleExpression.addRuleWord(new FeedCnWord(false, index));
+                        tableParams.add(ruleExpression);
                     }
-
-                    CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
-                    ruleRoot.addRuleWord(new CustomWord(word));
                 }
 
-                {
-                    // 后缀
-                    String html = "\">";
-                    ruleRoot.addRuleWord(new TextWord(html));
-                }
+                CustomWordValueTableWithParam word = new CustomWordValueTableWithParam(tableTemplate, columnCount, tableParams);
+                ruleRoot.addRuleWord(new CustomWord(word));
             }
 
             {
@@ -270,7 +222,7 @@ public class Jumei_928_Common_DictTest {
                 imageTemplate.addRuleWord(new TextWord(""));
 
                 RuleExpression imageType = new RuleExpression();
-                imageType.addRuleWord(new TextWord(C_自定义图片));
+                imageType.addRuleWord(new TextWord(C_移动端自定义图片));
 
                 RuleExpression useOriUrl = new RuleExpression();
                 useOriUrl.addRuleWord(new TextWord("1"));

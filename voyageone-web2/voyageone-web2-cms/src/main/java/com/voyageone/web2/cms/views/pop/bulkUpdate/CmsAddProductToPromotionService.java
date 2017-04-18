@@ -64,7 +64,8 @@ public class CmsAddProductToPromotionService extends BaseViewService {
     void save(TagTreeNode tagTreeNode, AddProductSaveParameter parameter, String userName, CmsSessionBean cmsSession) {
         if (tagTreeNode.getChecked() == 2) {
             //状态变化的tag
-            List<TagTreeNode> tagList = tagTreeNode.getChildren().stream().filter(p -> p.getChecked() != p.getOldChecked()).collect(Collectors.toList());
+//            List<TagTreeNode> tagList = tagTreeNode.getChildren().stream().filter(p -> p.getChecked() != p.getOldChecked()).collect(Collectors.toList());
+            List<TagTreeNode> tagList = tagTreeNode.getChildren();
             if (tagList.size() > 0) {
                 //商品加入活动        tag  checked: 0:删除 商品tag    2 加入商品tag
                 if (parameter.getCartId() == 27) {
@@ -97,7 +98,7 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         List<Long> productIds;
         if (parameter.getIsSelAll() == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productIds = advanceSearchService.getProductIdList(promotion.getChannelId(), cmsSession);
+            productIds = advanceSearchService.getProductIdList(promotion.getChannelId(), parameter.getSearchInfo());
         } else {
             productIds = parameter.getIdList();
         }
@@ -135,7 +136,7 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         List<Long> productIds;
         if (parameter.getIsSelAll() == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productIds = advanceSearchService.getProductIdList(promotion.getChannelId(), cmsSession);
+            productIds = advanceSearchService.getProductIdList(promotion.getChannelId(), parameter.getSearchInfo());
         } else {
             productIds = parameter.getIdList();
         }
@@ -205,7 +206,7 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         List<String> codeList;
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            codeList = advanceSearchService.getProductCodeList(channelId, cmsSession);
+            codeList = advanceSearchService.getProductCodeList(channelId, params.getSearchInfo());
         } else {
             codeList = params.getCodeList();
         }

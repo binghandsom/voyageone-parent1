@@ -2,10 +2,13 @@ package com.voyageone.task2.cms.mqjob.advanced.search;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.components.rabbitmq.annotation.VOSubRabbitListener;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsPlatformCategoryUpdateMQMessageBody;
-import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.task2.cms.mqjob.TBaseMQCmsSubService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +20,18 @@ import java.util.List;
  * Created by james on 2017/1/13.
  */
 @Service
-@RabbitListener()
-public class CmsPlatformCategoryUpdateMQJob extends TBaseMQCmsService<CmsPlatformCategoryUpdateMQMessageBody> {
+@VOSubRabbitListener
+public class CmsPlatformCategoryUpdateMQJob extends TBaseMQCmsSubService<CmsPlatformCategoryUpdateMQMessageBody> {
+
+    private final ProductService productService;
+
+    private final SxProductService sxProductService;
 
     @Autowired
-    private ProductService productService;
+    public CmsPlatformCategoryUpdateMQJob(SxProductService sxProductService, ProductService productService) {
+        this.sxProductService = sxProductService;
+        this.productService = productService;
+    }
 
     @Override
     public void onStartup(CmsPlatformCategoryUpdateMQMessageBody messageBody) throws Exception {
@@ -30,32 +40,41 @@ public class CmsPlatformCategoryUpdateMQJob extends TBaseMQCmsService<CmsPlatfor
         super.count = productCodes.size();
         Integer cartId = messageBody.getCartId();
 
-        List<BulkUpdateModel> bulkList = new ArrayList<>(productCodes.size());
         for (String productCode : productCodes) {
-            HashMap<String, Object> updateMap = new HashMap<>();
-            updateMap.put("platforms.P" + cartId + ".pCatPath", messageBody.getpCatPath());
-            updateMap.put("platforms.P" + cartId + ".pCatId", messageBody.getpCatId());
-            updateMap.put("platforms.P" + cartId + ".pCatStatus", 1);
-            HashMap<String, Object> queryMap = new HashMap<>();
-            queryMap.put("common.fields.code", productCode);
-
-            // 聚美和官网同构,平台类目可无条件更新
-            if (CartEnums.Cart.TT.getValue() != cartId
-                && CartEnums.Cart.LTT.getValue() != cartId
-                && CartEnums.Cart.JM.getValue() != cartId) {
-
-                HashMap<String, Object> queryMap2 = new HashMap<>();
-                queryMap2.put("$in", new String[]{null, ""});
-                queryMap.put("platforms.P" + cartId + ".pCatPath", queryMap2);
+            CmsBtProductModel cmsBtProductModel = productService.getProductByCode(messageBody.getChannelId(), productCode);
+            if(cmsBtProductModel != null && cmsBtProductModel.getPlatform(cartId) != null) {
+                CmsBtProductModel_Platform_Cart platform = cmsBtProductModel.getPlatform(cartId);
+                if (!messageBody.getpCatId().equalsIgnoreCase(platform.getpCatId()) || !messageBody.getpCatPath().equalsIgnoreCase(platform.getpCatPath())) {
+                    if (CartEnums.Cart.TT.getValue() != cartId
+                            && CartEnums.Cart.LTT.getValue() != cartId
+                            && CartEnums.Cart.JM.getValue() != cartId) {
+                        if (!"Approved".equalsIgnoreCase(platform.getStatus())) {
+                            update(productCode, messageBody);
+                        }
+                    } else {
+                        update(productCode, messageBody);
+                        if("Approved".equalsIgnoreCase(platform.getStatus())){
+                            sxProductService.insertSxWorkLoad(messageBody.getChannelId(), productCode, cartId, getTaskName());
+                        }
+                    }
+                }
             }
-
-            BulkUpdateModel model = new BulkUpdateModel();
-            model.setUpdateMap(updateMap);
-            model.setQueryMap(queryMap);
-            bulkList.add(model);
         }
+    }
 
+    private void update(String productCode, CmsPlatformCategoryUpdateMQMessageBody messageBody){
+        Integer cartId = messageBody.getCartId();
+        List<BulkUpdateModel> bulkList = new ArrayList<>(1);
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("platforms.P" + cartId + ".pCatPath", messageBody.getpCatPath());
+        updateMap.put("platforms.P" + cartId + ".pCatId", messageBody.getpCatId());
+        updateMap.put("platforms.P" + cartId + ".pCatStatus", 1);
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("common.fields.code", productCode);
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
         productService.bulkUpdateWithMap(messageBody.getChannelId(), bulkList, messageBody.getSender(), "$set");
-
     }
 }

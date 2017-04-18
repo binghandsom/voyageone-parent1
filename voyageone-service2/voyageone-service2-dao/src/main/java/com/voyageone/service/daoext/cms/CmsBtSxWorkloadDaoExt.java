@@ -55,6 +55,10 @@ public class CmsBtSxWorkloadDaoExt extends ServiceBaseDao {
         return insert("cms_insert_sx_workloads", models);
     }
 
+    public int insertPlatformWorkloadModels(List<CmsBtSxWorkloadModel> models) {
+        return insert("cms_insert_platform_workloads", models);
+    }
+
     /**
      * 如果数据库中存在对应的channelId,groupId,cartId,publishStatus为0的记录那么返回true
      *
@@ -77,8 +81,16 @@ public class CmsBtSxWorkloadDaoExt extends ServiceBaseDao {
         return update("update_publish_status", model);
     }
 
+    public int updatePlatformWorkloadPublishStatus(CmsBtSxWorkloadModel model) {
+        return update("update_publish_status_platformWorkload", model);
+    }
+
     public int delayWorkload(CmsBtSxWorkloadModel model) {
         return update("delay_work_load", model);
+    }
+
+    public List<CmsBtSxWorkloadModel> selectSxWorkloadModelWithChannelIdListCartIdList(int recordCount, List<String> channelIdList, List<String> cartList) {
+        return selectList("cms_select_platform_workload", parameters("record_count", recordCount, "channelIdList", channelIdList, "cartList", cartList));
     }
 
 }
