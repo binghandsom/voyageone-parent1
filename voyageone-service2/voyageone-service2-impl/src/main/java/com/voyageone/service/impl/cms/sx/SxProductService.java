@@ -6004,6 +6004,22 @@ public class SxProductService extends BaseService {
             throw new BusinessException(failCause);
         }
 
+        // 20170418 tom CMSDOC-592 START
+        // 先用Liking的匠心界做试点， 运行一段时间后没发现什么后遗症的话， 再推广到所有店铺
+        if (ChannelConfigEnums.Channel.USJGJ.getId().equals(shopBean.getOrder_channel_id())
+                && CartEnums.Cart.JGJ.getId().equals(shopBean.getCart_id())
+                ) {
+            // s7开头的图片就不用一直保存在京东图片空间里了
+            if (imageUrl[0].startsWith("http://s7d5.scene7.com/")) {
+                // 删除图片
+                jdImgzoneService.deletePictures(shopBean, imageUrl[1]);
+
+                // 图片id无需保存（只需要保存图片地址， 下次可能还能用到）
+                imageUrl[1] = "";
+            }
+        }
+        // 20170418 tom CMSDOC-592 END
+
         return imageUrl;
     }
 
