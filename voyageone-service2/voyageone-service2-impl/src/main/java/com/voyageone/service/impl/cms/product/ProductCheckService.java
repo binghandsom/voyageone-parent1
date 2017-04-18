@@ -434,10 +434,7 @@ public class ProductCheckService extends BaseService {
                         || cartInfo.getpStatus() == null
                         || StringUtils.isEmpty(cartInfo.getpNumIId())
                         || StringUtils.isEmpty(cartInfo.getpReallyStatus())
-                        || ((CartEnums.Cart.TM.getValue() == cartId
-                        || CartEnums.Cart.TG.getValue() == cartId
-                        || CartEnums.Cart.TB.getValue() == cartId
-                        || CartEnums.Cart.JM.getValue() == cartId)
+                        || ((CartEnums.Cart.JM.getValue() == cartId)
                         && StringUtils.isEmpty(cartInfo.getpProductId()))
                         || (CartEnums.Cart.JM.getValue() == cartId
                         && StringUtils.isEmpty(cartInfo.getpPlatformMallId()))) {
@@ -448,10 +445,7 @@ public class ProductCheckService extends BaseService {
 //                cartInfo.setStatus(CmsConstants.ProductStatus.Approved);
                         cartInfo.setpNumIId(mainProduct.getPlatform(cartId).getpNumIId());
 
-                        if (CartEnums.Cart.TM.getValue() == cartId
-                                || CartEnums.Cart.TG.getValue() == cartId
-                                || CartEnums.Cart.TB.getValue() == cartId
-                                || CartEnums.Cart.JM.getValue() == cartId)
+                        if (CartEnums.Cart.JM.getValue() == cartId)
                             cartInfo.setpProductId(!StringUtils.isEmpty(mainProduct.getPlatform(cartId).getpProductId()) ? mainProduct.getPlatform(cartId).getpProductId() : groupInfo.getPlatformPid());
                         else
                             cartInfo.setpProductId("");
