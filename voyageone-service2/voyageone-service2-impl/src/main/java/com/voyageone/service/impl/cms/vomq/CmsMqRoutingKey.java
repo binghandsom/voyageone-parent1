@@ -115,6 +115,11 @@ public class CmsMqRoutingKey {
     /**组合商品推送MQ*/
     public static final String EWMS_MQ_GROUP_SKU = "ewms_mq_group_sku";
 
+    /**
+     * 往wms推送产品信息(新建/更新)
+     */
+    public static final String EWMS_MQ_CREATE_OR_UPDATE_PRODUCT = "ewms_mq_create_or_update_product";
+
     // 未整理的业务内容
 
     /**
