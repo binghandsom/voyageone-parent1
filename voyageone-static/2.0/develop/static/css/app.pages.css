@@ -1165,3 +1165,58 @@ schema .ng-invalid.focus-error {
 .product-shema-detail .btn-nav-pop {
     box-shadow: 1px 1px 2px #ADCAE2;
 }
+
+.product-shema-detail .more-code{
+    font-size: 2em;
+    color: #e67e22;
+    cursor: pointer;
+    -webkit-animation: arrow-jump-up 1.75s infinite;
+    animation: arrow-jump-up 1.75s infinite;
+}
+
+.product-shema-detail .more-code:hover{
+    color: #000;
+}
+
+@keyframes arrow-jump-up {
+    0% {
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+    }
+    10% {
+        -webkit-transform: translateY(-50%);
+        transform: translateY(-50%);
+    }
+    20% {
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+    }
+    30% {
+        -webkit-transform: translateY(-25%);
+        transform: translateY(-25%);
+    }
+    40% {
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+    }
+    50% {
+        -webkit-transform: translateY(-10%);
+        transform: translateY(-10%);
+    }
+    60% {
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+    }
+    70% {
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+    }
+    80% {
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+    }
+    100% {
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+    }
+}
