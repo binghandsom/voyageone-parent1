@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.mqjob.jm;
 
 import com.voyageone.common.configs.MQConfigInitTestUtil;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionExportMQMessageBody;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class CmsJmPromotionExportMQJobTest {
 
     @Test
     public void testOnStartup() throws Exception {
-        MQConfigInitTestUtil.startMQ(service);
+        JmPromotionExportMQMessageBody jmPromotionExportMQMessageBody = new JmPromotionExportMQMessageBody();
+        jmPromotionExportMQMessageBody.setChannelId("928");
+        jmPromotionExportMQMessageBody.setJmBtPromotionExportTaskId(361);
+        service.onStartup(jmPromotionExportMQMessageBody);
     }
 }

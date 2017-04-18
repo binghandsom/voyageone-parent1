@@ -66,7 +66,7 @@
             <uib-accordion-heading>
                 <h5 style="margin:6px 0">
                     <i class="fa {{i.$isOpen?'fa-minus':'fa-plus'}}"></i>&nbsp;<span>{{i.shelvesName}}</span>
-                    <span style="margin-right: 20px;">最后一次上下架状态&平台库存刷新时间：<span ng-if="!i.lastUpdate">--</span><span ng-if="i.lastUpdate">{{i.lastUpdate | date: 'yyyy-MM-dd HH:mm:ss'}}</span></span>
+                    <span style="margin-right: 20px;">最后一次上下架状态&平台库存刷新时间：<span ng-if="!i.lastUpdate">--</span><span ng-if="i.lastUpdate">{{i.lastUpdate |  gmtDate: 'yyyy-MM-dd HH:mm:ss'}}</span></span>
                 </h5>
             </uib-accordion-heading>
             <div class="clearfix button-bar">

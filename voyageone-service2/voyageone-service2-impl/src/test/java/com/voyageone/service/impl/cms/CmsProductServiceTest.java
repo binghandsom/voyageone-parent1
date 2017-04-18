@@ -308,7 +308,7 @@ public class CmsProductServiceTest {
 
         String[] projection = "prodId;channelId;fields;skus;groups".split(";");
 
-        ProductForWmsBean result = cmsProductService.getWmsProductsInfo("024", "024-15060252-000-000", projection);
+        ProductForWmsBean result = cmsProductService.getWmsProductsInfo("928", "037-314192 117 FORCE WHITE 5", projection);
         System.out.println(result);
     }
 

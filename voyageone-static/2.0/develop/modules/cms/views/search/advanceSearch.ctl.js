@@ -266,6 +266,7 @@ define([
 
             $scope.vm.searchInfo.custAttrMap = angular.copy($scope.vm.custAttrList);
             $scope.searchInfoBefo = angular.copy($scope.vm.searchInfo);
+            $scope.searchInfoBefo = searchAdvanceService2.resetSearchInfo($scope.searchInfoBefo);
             searchAdvanceService2.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption).then(function (res) {
                 $scope.vm.customProps = res.data.customProps;
                 var sumCustomProps = [];
@@ -406,6 +407,7 @@ define([
          */
         function getGroupList() {
             $scope.searchInfoBefo = angular.copy($scope.vm.searchInfo);
+            $scope.searchInfoBefo = searchAdvanceService2.resetSearchInfo($scope.searchInfoBefo);
             searchAdvanceService2.getGroupList($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.groupSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType, $scope.vm.selBiDataList)
                 .then(function (res) {
                     $scope.vm.groupList = res.data.groupList == null ? [] : res.data.groupList;
@@ -420,6 +422,7 @@ define([
          */
         function getProductList() {
             $scope.searchInfoBefo = angular.copy($scope.vm.searchInfo);
+            $scope.searchInfoBefo = searchAdvanceService2.resetSearchInfo($scope.searchInfoBefo);
             searchAdvanceService2.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType, $scope.vm.selBiDataList)
                 .then(function (res) {
                     $scope.vm.productList = res.data.productList == null ? [] : res.data.productList;

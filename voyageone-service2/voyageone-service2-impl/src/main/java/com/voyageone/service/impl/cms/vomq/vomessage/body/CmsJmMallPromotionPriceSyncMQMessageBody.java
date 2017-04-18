@@ -7,6 +7,7 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 把聚美活动价同步到商城价
@@ -18,6 +19,9 @@ public class CmsJmMallPromotionPriceSyncMQMessageBody extends BaseMQMessageBody 
     private Integer jmPromotionId;
 
     private List<String> productCodes;
+
+    private Map<String, Object> searchInfo;
+    private boolean selAll;
 
     public Integer getJmPromotionId() {
         return jmPromotionId;
@@ -33,6 +37,22 @@ public class CmsJmMallPromotionPriceSyncMQMessageBody extends BaseMQMessageBody 
 
     public void setProductCodes(List<String> productCodes) {
         this.productCodes = productCodes;
+    }
+
+    public Map<String, Object> getSearchInfo() {
+        return searchInfo;
+    }
+
+    public void setSearchInfo(Map<String, Object> searchInfo) {
+        this.searchInfo = searchInfo;
+    }
+
+    public boolean isSelAll() {
+        return selAll;
+    }
+
+    public void setSelAll(boolean selAll) {
+        this.selAll = selAll;
     }
 
     @Override

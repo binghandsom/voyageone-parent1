@@ -1,6 +1,7 @@
 package com.voyageone.service.bean.cms.jumei;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by dell on 2016/5/31.
@@ -8,6 +9,8 @@ import java.util.List;
 public class BatchCopyDealParameter {
     List<Long> listPromotionProductId;
     int promotionId;
+    Map<String, Object> searchInfo;
+    boolean selAll;
     public int getPromotionId() {
         return promotionId;
     }
@@ -21,5 +24,21 @@ public class BatchCopyDealParameter {
 
     public void setListPromotionProductId(List<Long> listPromotionProductId) {
         this.listPromotionProductId = listPromotionProductId;
+    }
+
+    public Map<String, Object> getSearchInfo() {
+        return searchInfo;
+    }
+
+    public void setSearchInfo(Map<String, Object> searchInfo) {
+        this.searchInfo = searchInfo;
+    }
+
+    public boolean isSelAll() {
+        return selAll;
+    }
+
+    public void setSelAll(boolean selAll) {
+        this.selAll = selAll;
     }
 }
