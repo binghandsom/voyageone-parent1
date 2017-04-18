@@ -271,7 +271,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
 
     public List<String> getProductCodeList(String channelId, Map<String,Object> searchInfo) {
         CmsSearchInfoBean2 cmsSearchInfoBean2 = new CmsSearchInfoBean2();
-        BeanUtils.copyProperties(searchInfo,cmsSearchInfoBean2);
+        cmsSearchInfoBean2 = JacksonUtil.json2Bean(JacksonUtil.bean2Json(searchInfo),CmsSearchInfoBean2.class);
         return getProductCodeList(channelId, cmsSearchInfoBean2);
     }
 
