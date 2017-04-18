@@ -214,6 +214,7 @@ public class CmsBtJmPromotionExportTask3Service extends BaseService {
         info.addExcelColumn("聚美HID", "jmHashId", "cms_bt_jm_product");
         info.addExcelColumn("聚美MallId", "jumeiMallId", "cms_bt_jm_product");
         info.addExcelColumn("聚美SKU", "jmSkuNo", "cms_bt_jm_sku");
+        info.addExcelColumn("活动期间销量", "saleQty", "cms_bt_jm_sku");
         if (isErrorColumn) {
             info.addExcelColumn(info.getErrorColumn());
         }
