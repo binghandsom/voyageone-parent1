@@ -291,10 +291,7 @@ public class ProductCheckService extends BaseService {
             // 检测group的状态(已group的信息为正确依据)
             if (StringUtils.isEmpty(groupInfo.getNumIId())) {
 
-                if (((CartEnums.Cart.TM.getValue() == cartId
-                        || CartEnums.Cart.TG.getValue() == cartId
-                        || CartEnums.Cart.TB.getValue() == cartId
-                        || CartEnums.Cart.JM.getValue() == cartId)
+                if (((CartEnums.Cart.JM.getValue() == cartId)
                         && !StringUtils.isEmpty(groupInfo.getPlatformPid()))
                         || (CartEnums.Cart.JM.getValue() == cartId
                         && !StringUtils.isEmpty(groupInfo.getPlatformMallId()))
@@ -318,10 +315,7 @@ public class ProductCheckService extends BaseService {
 //                }
             } else {
                 groupInfo.setNumIId(mainProduct.getPlatform(cartId).getpNumIId());
-                if ((CartEnums.Cart.TM.getValue() == cartId
-                        || CartEnums.Cart.TG.getValue() == cartId
-                        || CartEnums.Cart.TB.getValue() == cartId
-                        || CartEnums.Cart.JM.getValue() == cartId)) {
+                if (CartEnums.Cart.JM.getValue() == cartId) {
                     if ((StringUtils.isEmpty(groupInfo.getPlatformPid())
                             || (!StringUtils.isEmpty(mainProduct.getPlatform(cartId).getpProductId())
                             && !mainProduct.getPlatform(cartId).getpProductId().equals(groupInfo.getPlatformPid())))) {
