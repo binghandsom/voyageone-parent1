@@ -498,6 +498,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             platform.setAttribute("pProductId", null);
                             platform.setAttribute("pPublishTime","");
                             platform.setAttribute("fields",null);
+                            platform.setAttribute("sellerCats",null);
                             platform.setAttribute("pReallyStatus",null);
                             platform.setSkus(platform.getSkus().stream().map(sku->{
                                 BaseMongoMap<String, Object> newSku = new BaseMongoMap<String, Object>();
@@ -961,6 +962,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 newPlatform.setAttribute("pProductId", null);
                                 newPlatform.setAttribute("pPublishTime","");
                                 newPlatform.setAttribute("fields",null);
+                                newPlatform.setAttribute("sellerCats",null);
                                 newPlatform.setAttribute("pReallyStatus",null);
                                 // 重新设置newPlatform的skus，因为fromPlatform里面过来的是全部的sku，要去掉拆分到其他产品的sku
                                 newPlatform.setSkus(correctPlatformSkus);
