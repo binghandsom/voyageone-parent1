@@ -636,6 +636,8 @@ public class ChannelConfigEnums {
          */
         FAMbrand("038"),
 
+        Ladolcevitae("039"),
+
         /**
          * TestChannel088
          */
@@ -750,6 +752,7 @@ public class ChannelConfigEnums {
                 case "036": return Cinxus;
                 case "037": return SharonShoe;
                 case "038": return FAMbrand;
+                case "039": return Ladolcevitae;
                 case "088": return TestChannel088;
                 case "089": return TestChannel089;
                 case "090": return TestChannel090;
