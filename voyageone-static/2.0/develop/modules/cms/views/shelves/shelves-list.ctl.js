@@ -102,7 +102,6 @@ define([
 
             self.$interval = setInterval(function () {
 
-
                 if (self.count <= 0) {
                     self.resetInterval();
 
