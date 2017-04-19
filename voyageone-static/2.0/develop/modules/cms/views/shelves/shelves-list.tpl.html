@@ -90,7 +90,10 @@
                 </div>
             </div>
 
-            <div id="sv{{$si}}" class="row" sv-root sv-part="i.products" ng-if="i.$e">
+            <div id="sv{{$si}}" class="row" sv-root
+                 sv-on-start = "ctrl.stEditItem()"
+                 sv-on-stop = "ctrl.spEditItem()"
+                 sv-part="i.products" ng-if="i.$e">
                 <div ng-repeat="p in i.products" ng-if="!p.$hide" sv-element="{containment:'#sv{{$si}}'}" class="clearfix pull-left"
                      ng-include="'/modules/cms/views/shelves/shelves-item-edit.tpl.html'">
                 </div>

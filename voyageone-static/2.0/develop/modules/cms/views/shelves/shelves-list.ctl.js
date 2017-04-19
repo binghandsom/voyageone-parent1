@@ -88,17 +88,21 @@ define([
         },
         intervalRefreshInfo: function (ss) {
             var self = this;
-            var count = 30;
             var i = 30 * 1000;
 
-            count--;
+            if(self.count <= 0 || !self.count)
+                self.count = 30;
+            self.count--;
+
             self.getShelvesInfo(ss);
 
             if (self.$interval)
                 return;
 
             self.$interval = setInterval(function () {
-                if (count <= 0) {
+
+
+                if (self.count <= 0) {
                     self.resetInterval();
 
                     self.confirm('自动刷新，已停止。是否继续自动刷新？').then(function () {
@@ -107,9 +111,16 @@ define([
 
                     return;
                 }
-                count--;
+
+                self.count--;
                 self.getShelvesInfo();
             }, i);
+        },
+        stEditItem:function(){
+           this.resetInterval();
+        },
+        spEditItem:function () {
+            this.intervalRefreshInfo();
         },
         getShelvesInfo: function (ss) {
             var self = this;
