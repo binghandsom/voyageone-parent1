@@ -1161,7 +1161,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getModel()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getCode()));
-                SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuItem.getSkuCode());
+                SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuItem.getSkuCode().toLowerCase());
                 FileUtils.cell(row, index++, unlock).setCellValue(skuInventoryMap.get(temp) == null ? "0" : String.valueOf(skuInventoryMap.get(temp)));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getColor()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSize()));
@@ -1304,6 +1304,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(channel, new ArrayList<>(codesMap.get(channel)));
                     if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
                         for (SkuInventoryForCmsBean skuInventory : inventoryForCmsBeanList) {
+                            skuInventory.setSku(skuInventory.getSku().toLowerCase());
                             skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
                         }
                     }
