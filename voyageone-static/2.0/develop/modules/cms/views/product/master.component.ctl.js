@@ -302,8 +302,8 @@ define([
                  * @param flag
                  */
                 function masterSaveAction(flag){
-                    if(!scope.vm.lockStatus.onOffSwitch2){
-                        confirm('是否设置翻译状态为翻译').then(function(){
+                    if(!scope.vm.lockStatus.onOffSwitch2 && $localStorage.user.channel == 928){
+                        confirm('是否设置翻译状态为翻译?').then(function(){
                             scope.vm.lockStatus.onOffSwitch2 = true;
 
                             productDetailService.doTranslateStatus({
