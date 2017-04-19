@@ -33,10 +33,17 @@
                 link: function (scope, element, attrs, ngModelController) {
                     var length = attrs[attrName];
                     if (!length) return;
+
+                    if(checkLength(getByteLength(element.val()), length))
+                        ngModelController.$setValidity(attrName,false);
+                    else
+                        ngModelController.$setValidity(attrName,true);
+
                     ngModelController.$parsers.push(function (viewValue) {
                         ngModelController.$setValidity(attrName, checkLength(getByteLength(viewValue), length));
                         return viewValue;
                     });
+
                 }
             };
         };
