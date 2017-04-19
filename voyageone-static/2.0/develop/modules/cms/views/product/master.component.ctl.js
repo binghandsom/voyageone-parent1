@@ -298,6 +298,35 @@ define([
                 }
 
                 /**
+                 * 保存前判断是否要设置税号
+                 * @param flag
+                 */
+                function masterSaveAction(flag){
+                    if(!scope.vm.lockStatus.onOffSwitch2){
+                        confirm('是否设置翻译状态为翻译').then(function(){
+                            scope.vm.lockStatus.onOffSwitch2 = true;
+
+                            productDetailService.doTranslateStatus({
+                                prodId: scope.productInfo.productId,
+                                translateStatus: lock
+                            }).then(function () {
+                                notify.success(_status ? "翻译已启用" : "翻译已关闭");
+                                initialize();
+                                scope.productInfo.translateStatus = +lock;
+                                //通知子页面
+                                scope.productInfo.checkFlag = new Date().getTime();
+                            });
+
+                            scope.callSaveProduct(flag);
+                        },function () {
+                            callSaveProduct(flag);
+                        });
+                    }else{
+                        callSaveProduct(flag);
+                    }
+                }
+
+                /**
                  * 调用保存接口
                  * @param freshSub boolean 标识是否要刷新平台子页面
                  * */
