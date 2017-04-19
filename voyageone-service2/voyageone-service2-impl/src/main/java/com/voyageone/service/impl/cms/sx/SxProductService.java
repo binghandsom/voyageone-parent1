@@ -6010,7 +6010,7 @@ public class SxProductService extends BaseService {
                 && CartEnums.Cart.JGJ.getId().equals(shopBean.getCart_id())
                 ) {
             // s7开头的图片就不用一直保存在京东图片空间里了
-            if (imageUrl[0].startsWith("http://s7d5.scene7.com/")) {
+            if (picUrl.startsWith("http://s7d5.scene7.com/")) {
                 // 删除图片
                 try {
                     jdImgzoneService.deletePictures(shopBean, imageUrl[1]);
