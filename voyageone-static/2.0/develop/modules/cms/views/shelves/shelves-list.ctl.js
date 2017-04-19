@@ -293,7 +293,11 @@ define([
             var self = this;
             var shelvesService = self.shelvesService;
 
+            self.stEditItem();
+
             if (s.$e) {
+                self.spEditItem();
+
                 var needSaveSort = s.products.some(function (p, index) {
                     return p.sort != index;
                 });
