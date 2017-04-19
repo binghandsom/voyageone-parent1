@@ -492,6 +492,13 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             platform.setpCatPath(null);
                             platform.setpBrandId(null);
                             platform.setpBrandName(null);
+                            platform.setpCatStatus("0");
+                            platform.setAttribute("pStatus", "");
+                            platform.setAttribute("pNumIId", null);
+                            platform.setAttribute("pProductId", null);
+                            platform.setAttribute("pPublishTime","");
+                            platform.setAttribute("fields",null);
+                            platform.setAttribute("pReallyStatus",null);
                             platform.setSkus(platform.getSkus().stream().map(sku->{
                                 BaseMongoMap<String, Object> newSku = new BaseMongoMap<String, Object>();
                                 newSku.setAttribute("skuCode",sku.getStringAttribute("skuCode"));
@@ -948,6 +955,13 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 newPlatform.setpBrandId(null);
                                 newPlatform.setpBrandName(null);
                                 newPlatform.setCartId(cartId);
+                                newPlatform.setpCatStatus("0");
+                                newPlatform.setAttribute("pStatus", "");
+                                newPlatform.setAttribute("pNumIId", null);
+                                newPlatform.setAttribute("pProductId", null);
+                                newPlatform.setAttribute("pPublishTime","");
+                                newPlatform.setAttribute("fields",null);
+                                newPlatform.setAttribute("pReallyStatus",null);
                                 // 重新设置newPlatform的skus，因为fromPlatform里面过来的是全部的sku，要去掉拆分到其他产品的sku
                                 newPlatform.setSkus(correctPlatformSkus);
                                 newPlatform.setSkus(newPlatform.getSkus().stream().map((BaseMongoMap<String, Object> sku) ->{
