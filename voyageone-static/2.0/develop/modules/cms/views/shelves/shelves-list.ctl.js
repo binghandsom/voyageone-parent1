@@ -87,14 +87,15 @@ define([
             }, 0);
         },
         intervalRefreshInfo: function (ss) {
-            var self = this;
-            var i = 30 * 1000;
+            var self = this,
+                i = 30 * 1000;
 
-            if(self.count <= 0 || !self.count)
+            if (self.count <= 0 || !self.count) {
                 self.count = 30;
-            self.count--;
+                self.getShelvesInfo(ss);
+            }
 
-            self.getShelvesInfo(ss);
+            self.count--;
 
             if (self.$interval)
                 return;
@@ -116,10 +117,10 @@ define([
                 self.getShelvesInfo();
             }, i);
         },
-        stEditItem:function(){
-           this.resetInterval();
+        stEditItem: function () {
+            this.resetInterval();
         },
-        spEditItem:function () {
+        spEditItem: function () {
             this.intervalRefreshInfo();
         },
         getShelvesInfo: function (ss) {
@@ -127,8 +128,8 @@ define([
             var shelves = self.shelves;
             var shelvesService = self.shelvesService;
             var opened = ss || shelves.filter(function (_s) {
-                return _s.$isOpen;
-            });
+                    return _s.$isOpen;
+                });
 
             var needInfoShelvesId = opened.map(function (_s) {
                 return _s.id;
