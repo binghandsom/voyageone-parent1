@@ -37,8 +37,8 @@ public class SkuInventoryForCmsBean {
     @Override
     public int hashCode() {
         int result = (channelId == null ? "" : channelId).hashCode();
-        result = 31 * result + (code == null ? "" : code).hashCode();
-        result = 31 * result + (sku == null ? "" : sku).hashCode();
+        result = 31 * result + (code == null ? "" : code).toLowerCase().hashCode();
+        result = 31 * result + (sku == null ? "" : sku).toLowerCase().hashCode();
         return result;
     }
 
