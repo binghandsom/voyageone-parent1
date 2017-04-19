@@ -271,12 +271,10 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
                     var length = attrs[attrName];
                     if (!length) return;
 
-                    if(checkLength(getByteLength(element.val()), length)){
+                    if(checkLength(getByteLength(element.val()), length))
                         ngModelController.$setValidity(attrName,false);
-                    }else{
+                    else
                         ngModelController.$setValidity(attrName,true);
-                    }
-
 
                     ngModelController.$parsers.push(function (viewValue) {
                         ngModelController.$setValidity(attrName, checkLength(getByteLength(viewValue), length));
@@ -2241,6 +2239,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
                                 innerElement.attr('name', name);
                                 innerElement.attr('ng-model', 'field.value.value');
                                 innerElement.attr('width', '"100%"');
+                                innerElement.attr('search-contains',true);
                                 innerElement.attr('title', field.name || field.id);
 
                                 bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');

@@ -277,13 +277,13 @@ define([
                                     results: results
                                 }).then(function (context) {
                                     if (context === 'confirm') {
-                                        callSaveProduct(true);
+                                        masterSaveAction(true);
                                     } else {
                                         hsCode.value.value = _prehsCode;
                                     }
                                 });
                             } else {
-                                callSaveProduct();
+                                masterSaveAction();
                             }
 
                         }, function (res) {
@@ -292,7 +292,7 @@ define([
                         });
 
                     } else {
-                        callSaveProduct();
+                        masterSaveAction();
                     }
 
                 }
@@ -308,16 +308,13 @@ define([
 
                             productDetailService.doTranslateStatus({
                                 prodId: scope.productInfo.productId,
-                                translateStatus: lock
+                                translateStatus: "1"
                             }).then(function () {
-                                notify.success(_status ? "翻译已启用" : "翻译已关闭");
                                 initialize();
-                                scope.productInfo.translateStatus = +lock;
-                                //通知子页面
-                                scope.productInfo.checkFlag = new Date().getTime();
+                                scope.productInfo.translateStatus = 1;
+                                callSaveProduct(flag);
                             });
 
-                            scope.callSaveProduct(flag);
                         },function () {
                             callSaveProduct(flag);
                         });
