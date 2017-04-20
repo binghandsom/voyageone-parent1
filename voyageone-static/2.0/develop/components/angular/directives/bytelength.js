@@ -34,10 +34,15 @@
                     var length = attrs[attrName];
                     if (!length) return;
 
-                    if(checkLength(getByteLength(element.val()), length))
-                        ngModelController.$setValidity(attrName,false);
-                    else
+                    console.log('result:',getByteLength(scope.field.value) + '|' + length);
+                    console.log('real-result:',checkLength(getByteLength(scope.field.value), length));
+
+                    if(checkLength(getByteLength(scope.field.value), length)){
+                        console.log(attrName + "=>" + false);
                         ngModelController.$setValidity(attrName,true);
+                    }else{
+                        ngModelController.$setValidity(attrName,false);
+                    }
 
                     ngModelController.$parsers.push(function (viewValue) {
                         ngModelController.$setValidity(attrName, checkLength(getByteLength(viewValue), length));
