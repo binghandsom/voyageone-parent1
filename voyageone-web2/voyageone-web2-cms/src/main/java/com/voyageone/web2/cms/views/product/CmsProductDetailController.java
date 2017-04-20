@@ -192,7 +192,7 @@ public class CmsProductDetailController extends CmsController {
         //{prodId: "5992", appSwitch: "0"}
         Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
 
-        int appSwitch = ConvertUtil.toInt(requestMap.get("appSwitch"));
+        String appSwitch = (String) requestMap.get("appSwitch");
 
         productService.updateProductAppSwitch(getUser().getSelChannelId(), prodId, appSwitch, getUser().getUserName());
 

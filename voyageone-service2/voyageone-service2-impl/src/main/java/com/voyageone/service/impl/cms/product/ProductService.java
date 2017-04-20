@@ -1074,7 +1074,7 @@ public class ProductService extends BaseService {
 
     }
 
-    public void updateProductAppSwitch(String channelId, Long prodId, int appSwitch, String modifier) {
+    public void updateProductAppSwitch(String channelId, Long prodId, String appSwitch, String modifier) {
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
         List<BulkUpdateModel> bulkList = new ArrayList<>();
