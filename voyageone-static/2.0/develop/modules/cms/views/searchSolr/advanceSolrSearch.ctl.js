@@ -24,6 +24,9 @@ define([
                 freeTagType: 1,
                 supplierType: 1,
                 brandSelType: 1,
+                mCatPathType:1,
+                fCatPathType:1,
+                shopCatType:1,
                 productSelType: '1',
                 sizeSelType: '1',
                 salesType: 'All',
@@ -170,6 +173,9 @@ define([
                 freeTagType: 1,
                 supplierType: 1,
                 brandSelType: 1,
+                mCatPathType:1,
+                fCatPathType:1,
+                shopCatType:1,
                 productSelType: '1',
                 sizeSelType: '1',
                 shopCatStatus: null,
@@ -254,6 +260,7 @@ define([
 
             $scope.vm.searchInfo.custAttrMap = angular.copy($scope.vm.custAttrList);
             $scope.searchInfoBefo = angular.copy($scope.vm.searchInfo);
+            $scope.searchInfoBefo = searchAdvanceSolrService.resetSearchInfo($scope.searchInfoBefo);
             searchAdvanceSolrService.search($scope.vm.searchInfo, $scope.vm.productPageOption).then(function (res) {
                 $scope.vm.customProps = res.data.customProps;
                 var sumCustomProps = [];
@@ -375,6 +382,8 @@ define([
          * 分页处理product数据
          */
         function getProductList() {
+            $scope.searchInfoBefo = angular.copy($scope.vm.searchInfo);
+            $scope.searchInfoBefo = searchAdvanceSolrService.resetSearchInfo($scope.searchInfoBefo);
             searchAdvanceSolrService.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType, $scope.vm.selBiDataList)
                 .then(function (res) {
                     $scope.vm.productList = res.data.productList == null ? [] : res.data.productList;
@@ -1015,10 +1024,16 @@ define([
                 .then(function (res) {
                     popupCategoryFnc({
                         categories: res.data,
-                        from: $scope.vm.searchInfo.mCatPath
+                        from: ""
                     }).then(function (res) {
-                        $scope.vm.searchInfo.mCatPath = res.selected.catPath;
-                        $scope.vm.searchInfo.mCatId = res.selected.catId;
+                        if(!$scope.vm.searchInfo.mCatPath){
+                            $scope.vm.searchInfo.mCatPath = [];
+                            $scope.vm.searchInfo.mCatPath.push(res.selected.catPath)
+                        }else{
+                            if($scope.vm.searchInfo.mCatPath.indexOf($scope.vm.searchInfo.mCatPath)<0){
+                                $scope.vm.searchInfo.mCatPath.push(res.selected.catPath)
+                            }
+                        }
                     });
                 });
         }

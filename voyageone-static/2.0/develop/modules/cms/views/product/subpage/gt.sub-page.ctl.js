@@ -241,7 +241,7 @@ define([
     /**
      * @description 部分属性上新
      */
-    SpGtController.prototype.loadAttribute = function(){
+    SpGtController.prototype.loadAttribute = function () {
         var self = this;
 
         self.popups.openLoadAttribute({
@@ -335,9 +335,9 @@ define([
                 type: mark
             };
 
-        if(self.approveAttr)
-            _.extend(updateInfo,{
-                platformWorkloadAttributes:self.approveAttr
+        if (self.approveAttr)
+            _.extend(updateInfo, {
+                platformWorkloadAttributes: self.approveAttr
             });
 
         /**判断价格*/
@@ -622,16 +622,16 @@ define([
     /**
      * 产品详情上下架
      */
-    SpGtController.prototype.upperAndLowerFrame = function(mark) {
+    SpGtController.prototype.upperAndLowerFrame = function (mark) {
         var self = this,
             $translate = self.$translate,
-            msg = mark === 'ToOnSale'? '上架':'下架';
+            msg = mark === 'ToOnSale' ? '上架' : '下架';
 
-        self.confirm('您是否执行'　+ msg +'操作？').then(function(){
+        self.confirm('您是否执行' + msg + '操作？').then(function () {
             self.productDetailService.upperLowerFrame({
                 cartId: self.$scope.cartInfo.value,
                 productCode: self.vm.mastData.productCode,
-                pStatus:mark
+                pStatus: mark
             }).then(function () {
                 self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 self.getPlatformData();
@@ -651,7 +651,7 @@ define([
             cartId: self.$scope.cartInfo.value,
             productId: self.$scope.productInfo.productId,
             platform: self.vm.platform,
-            showArr:['image1','image6','image7','image2','image3','image4','image5']
+            showArr: ['image1', 'image6', 'image7', 'image2', 'image3', 'image4', 'image5']
         }).then(function (platform) {
             self.vm.platform = platform;
         });
@@ -675,6 +675,29 @@ define([
                 self.vm.platform.lock = lock === '1' ? '0' : '1';
         });
 
+    };
+
+    /**
+     * group info 显示更多图片
+     */
+    SpGtController.prototype.moreCode = function () {
+        var self = this;
+
+        self.moreCodeFlg = !self.moreCodeFlg;
+    };
+
+    SpGtController.prototype.canMoreCode = function () {
+        var self = this;
+
+        if (!self.vm.mastData || !self.vm.mastData.images || self.vm.mastData.images.length == 0)
+            return false;
+
+        return _.some(self.vm.mastData.images, function (element) {
+            return element.qty == 0
+                && !element.isMain
+                && !self.$scope.productInfo
+                && element.productCode != self.$scope.productInfo.masterField.code;
+        });
     };
 
     cms.directive('gtSubPage', function () {

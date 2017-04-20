@@ -116,7 +116,8 @@ define(function () {
         "channel_listing_sizechart_detail": {
             "hash": "/channel/sizechart/detail/:sizeChartId",
             "templateUrl": "views/channel/sizechart/detail.tpl.html",
-            "controllerUrl": "modules/cms/views/channel/sizechart/detail.ctl"
+            "controllerUrl": "modules/cms/views/channel/sizechart/detail.ctl",
+            "controller":"sizeChartDetailCtl"
         },
         "image_product_label_list": {
             "hash": "/image/product_label_list",

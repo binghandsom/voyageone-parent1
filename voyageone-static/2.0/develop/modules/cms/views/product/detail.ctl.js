@@ -71,6 +71,7 @@ define([
                 } else
                     self.defaultCartId = _cartObj;
             }
+
         };
 
         /**锁定操作*/

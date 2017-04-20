@@ -17,6 +17,7 @@ define([
         this.getProductList = getProductList;
         this.exportFile = exportFile;
         this.clearSelList = clearSelList;
+        this.resetSearchInfo = resetSearchInfo;
 
         var tempGroupSelect = new selectRowsFactory();
         var tempProductSelect = new selectRowsFactory();

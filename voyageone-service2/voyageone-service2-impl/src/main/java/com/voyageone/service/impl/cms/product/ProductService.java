@@ -593,7 +593,9 @@ public class ProductService extends BaseService {
 
             CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBeanNoCode(product.getOrgChannelId()
                     , CmsConstants.ChannelConfig.CLIENT_PRICE_UNIT);
-            resultInfo.setClientPriceUnit(channelConfig.getConfigValue1());
+            if(channelConfig != null) {
+                resultInfo.setClientPriceUnit(channelConfig.getConfigValue1());
+            }
 
             // TODO 无法提供,属于主数据的非共通属性
             resultInfo.setWeightkg("");
@@ -1072,7 +1074,7 @@ public class ProductService extends BaseService {
 
     }
 
-    public void updateProductAppSwitch(String channelId, Long prodId, int appSwitch, String modifier) {
+    public void updateProductAppSwitch(String channelId, Long prodId, String appSwitch, String modifier) {
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
         List<BulkUpdateModel> bulkList = new ArrayList<>();
@@ -1088,13 +1090,13 @@ public class ProductService extends BaseService {
         insertProductHistory(channelId, prodId);
     }
 
-    public void updateProductTranslateStatus(String channelId, Long prodId, int translateStatus, String modifier) {
+    public void updateProductTranslateStatus(String channelId, Long prodId, String translateStatus, String modifier) {
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         HashMap<String, Object> updateMap = new HashMap<>();
         updateMap.put("common.fields.translateStatus", translateStatus);
-        if (translateStatus == 1) {
+        if ("1".equals(translateStatus)) {
             updateMap.put("common.fields.translateTime", modifier);
             updateMap.put("common.fields.translator", DateTimeUtil.getNowTimeStamp());
         } else {

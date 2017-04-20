@@ -192,7 +192,7 @@ public class CmsProductDetailController extends CmsController {
         //{prodId: "5992", appSwitch: "0"}
         Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
 
-        int appSwitch = ConvertUtil.toInt(requestMap.get("appSwitch"));
+        String appSwitch = (String) requestMap.get("appSwitch");
 
         productService.updateProductAppSwitch(getUser().getSelChannelId(), prodId, appSwitch, getUser().getUserName());
 
@@ -203,7 +203,7 @@ public class CmsProductDetailController extends CmsController {
         //{prodId: "5992", translateStatus: "0"}
         Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
 
-        int translateStatus = ConvertUtil.toInt(requestMap.get("translateStatus"));
+        String translateStatus = (String) requestMap.get("translateStatus");
 
         productService.updateProductTranslateStatus(getUser().getSelChannelId(), prodId, translateStatus, getUser().getUserName());
 

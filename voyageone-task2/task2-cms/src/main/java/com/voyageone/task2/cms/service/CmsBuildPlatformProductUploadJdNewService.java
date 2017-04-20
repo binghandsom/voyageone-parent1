@@ -252,6 +252,9 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 
         }
 
+        // 每个小组， 最多允许的线程数量
+        int threadCount = NumberUtils.toInt(TaskControlUtils.getVal1WithDefVal(taskControlList, TaskControlEnums.Name.thread_count, "10"));
+
         // 获取该任务可以运行的销售渠道
         List<TaskControlBean> taskControlBeanList = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.order_channel_id);
 
@@ -297,10 +300,10 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                         for (String channelId : channelIdList) {
                             t.execute(() -> {
                                 try {
-                                    doProductUpload(channelId, CartEnums.Cart.JD.getValue());
-									doProductUpload(channelId, CartEnums.Cart.JG.getValue());
-									doProductUpload(channelId, CartEnums.Cart.JGJ.getValue());
-									doProductUpload(channelId, CartEnums.Cart.JGY.getValue());
+                                    doProductUpload(channelId, CartEnums.Cart.JD.getValue(), threadCount);
+									doProductUpload(channelId, CartEnums.Cart.JG.getValue(), threadCount);
+									doProductUpload(channelId, CartEnums.Cart.JGJ.getValue(), threadCount);
+									doProductUpload(channelId, CartEnums.Cart.JGY.getValue(), threadCount);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -349,10 +352,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
      * @param channelId String 渠道ID
      * @param cartId String 平台ID
      */
-    public void doProductUpload(String channelId, int cartId) throws Exception {
-
-        // 默认线程池最大线程数
-        int threadPoolCnt = 10;
+    public void doProductUpload(String channelId, int cartId, int threadPoolCnt) throws Exception {
 
         // 获取店铺信息
         ShopBean shopProp = Shops.getShop(channelId, cartId);
