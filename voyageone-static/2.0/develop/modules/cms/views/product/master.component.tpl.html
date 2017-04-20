@@ -159,11 +159,11 @@
                                                 <label class="control-label"><strong>Group Info</strong></label>
                                             </div>
                                             <div class="form-group">
-                                                <span ng-if="!ctrl.moreCodeFlg && ctrl.canMoreCode()">
-                                                    <i class="fa fa-angle-double-down more-code" ng-click="ctrl.moreCode()"></i>
+                                                <span ng-if="!moreCodeFlg && canMoreCode()">
+                                                    <i class="fa fa-angle-double-down more-code" ng-click="moreCode()"></i>
                                                 </span>
-                                                <span ng-if="ctrl.moreCodeFlg && ctrl.canMoreCode()">
-                                                    <i class="fa fa-angle-double-up more-code" ng-click="ctrl.moreCode()"></i>
+                                                <span ng-if="moreCodeFlg && canMoreCode()">
+                                                    <i class="fa fa-angle-double-up more-code" ng-click="moreCode()"></i>
                                                 </span>
                                             </div>
                                         </div>

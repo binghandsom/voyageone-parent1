@@ -32,12 +32,14 @@
                 scope: false,
                 link: function (scope, element, attrs, ngModelController) {
                     var length = attrs[attrName];
-                    if (!length) return;
+                    if (!length)
+                        return;
 
-                    if(checkLength(getByteLength(element.val()), length))
-                        ngModelController.$setValidity(attrName,false);
-                    else
+                    if(checkLength(getByteLength(scope.field.value), length)){
                         ngModelController.$setValidity(attrName,true);
+                    }else{
+                        ngModelController.$setValidity(attrName,false);
+                    }
 
                     ngModelController.$parsers.push(function (viewValue) {
                         ngModelController.$setValidity(attrName, checkLength(getByteLength(viewValue), length));
