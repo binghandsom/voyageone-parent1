@@ -28,7 +28,7 @@ public class SkuInventoryForCmsBean {
         SkuInventoryForCmsBean that = (SkuInventoryForCmsBean) o;
         if (channelId == null || code == null || sku == null)
             return false;
-        if (channelId.equals(that.channelId) && code.equals(that.code) && sku.equals(that.sku))
+        if (channelId.equals(that.channelId) && code.equalsIgnoreCase(that.code) && sku.equalsIgnoreCase(that.sku))
             return true;
         else
             return false;
@@ -37,8 +37,8 @@ public class SkuInventoryForCmsBean {
     @Override
     public int hashCode() {
         int result = (channelId == null ? "" : channelId).hashCode();
-        result = 31 * result + (code == null ? "" : code).hashCode();
-        result = 31 * result + (sku == null ? "" : sku).hashCode();
+        result = 31 * result + (code == null ? "" : code).toLowerCase().hashCode();
+        result = 31 * result + (sku == null ? "" : sku).toLowerCase().hashCode();
         return result;
     }
 
