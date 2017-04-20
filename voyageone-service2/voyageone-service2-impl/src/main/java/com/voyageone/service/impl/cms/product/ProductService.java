@@ -593,7 +593,9 @@ public class ProductService extends BaseService {
 
             CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBeanNoCode(product.getOrgChannelId()
                     , CmsConstants.ChannelConfig.CLIENT_PRICE_UNIT);
-            resultInfo.setClientPriceUnit(channelConfig.getConfigValue1());
+            if(channelConfig != null) {
+                resultInfo.setClientPriceUnit(channelConfig.getConfigValue1());
+            }
 
             // TODO 无法提供,属于主数据的非共通属性
             resultInfo.setWeightkg("");
