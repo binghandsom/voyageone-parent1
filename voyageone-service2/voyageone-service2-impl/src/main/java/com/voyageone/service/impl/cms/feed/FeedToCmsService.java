@@ -26,7 +26,6 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedSkuPqModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -274,7 +273,7 @@ public class FeedToCmsService extends BaseService {
 
             CmsBtFeedInfoModel_Sku firstSku = skuEntity.getSkus().get(0);
 
-            if (CollectionUtils.isEmpty(skuEntity.getSkus()))
+            if (firstSku == null)
                 continue;
 
             CmsBtFeedInfoModel orgFeedInfo = feedInfoService.getProductByClientSku(channelId, firstSku.getClientSku());
