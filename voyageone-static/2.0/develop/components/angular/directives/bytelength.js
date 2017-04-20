@@ -32,13 +32,10 @@
                 scope: false,
                 link: function (scope, element, attrs, ngModelController) {
                     var length = attrs[attrName];
-                    if (!length) return;
-
-                    console.log('result:',getByteLength(scope.field.value) + '|' + length);
-                    console.log('real-result:',checkLength(getByteLength(scope.field.value), length));
+                    if (!length)
+                        return;
 
                     if(checkLength(getByteLength(scope.field.value), length)){
-                        console.log(attrName + "=>" + false);
                         ngModelController.$setValidity(attrName,true);
                     }else{
                         ngModelController.$setValidity(attrName,false);
