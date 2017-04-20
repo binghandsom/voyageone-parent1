@@ -816,8 +816,8 @@ public class CmsProductDetailService extends BaseViewService {
 
         /**保存时未设置翻译状态，询问后设置翻译状态补全翻译实践 added by piao */
         if ("1".equalsIgnoreCase(commonModel.getFields().getTranslateStatus())
-                && commonModel.getFields().getTranslator() == null
-                && commonModel.getFields().getTranslateTime() == null) {
+                && commonModel.getFields().getTranslator().isEmpty()
+                && commonModel.getFields().getTranslateTime().isEmpty()) {
             commonModel.getFields().setTranslator(modifier);
             commonModel.getFields().setTranslateTime(DateTimeUtil.getNowTimeStamp());
         }
