@@ -500,7 +500,6 @@ define([
                     });
                 }
 
-
                 /**全schema中通过name递归查找field*/
                 function searchField(fieldName, schema) {
 
