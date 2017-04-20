@@ -298,6 +298,15 @@ public class CmsBtCustomPropService extends BaseService {
         List<String> cnCustom = new ArrayList<>();
         Map<String, String> attsName = new HashMap<>();
 
+        Map<String, Boolean> productCustomIsDisp = product.getFeed().getProductCustomIsDisp();
+        if(productCustomIsDisp != null && productCustomIsDisp.size() > 0){
+            cmsBtCustomPropModel.getEntitys().forEach(entity -> {
+                if(productCustomIsDisp.containsKey(entity.getNameEn())){
+                    entity.setChecked(productCustomIsDisp.get(entity.getNameEn()));
+                }
+            });
+        }
+
         // 找出打勾并且有中文值的属性名
         cmsBtCustomPropModel.getEntitys().stream().filter(entity -> entity.getChecked() != null && entity.getChecked() && !StringUtil.isEmpty((String) product.getFeed().getCnAtts().get(entity.getNameEn()))).forEach(entity -> {
             enCustom.add(entity.getNameEn());

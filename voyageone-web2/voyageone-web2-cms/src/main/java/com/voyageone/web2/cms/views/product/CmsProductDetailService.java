@@ -712,6 +712,7 @@ public class CmsProductDetailService extends BaseViewService {
         mastData.put("platformList", platformList);
 
         mastData.put("feedInfo", productService.getCustomProp(cmsBtProduct));
+        mastData.put("productCustomIsDisp", cmsBtProduct.getFeed().getProductCustomIsDisp());
 
         List<Map<String, Object>> inventoryList = getProdSkuCnt(channelId, prodId);
         mastData.put("inventoryList", inventoryList);
