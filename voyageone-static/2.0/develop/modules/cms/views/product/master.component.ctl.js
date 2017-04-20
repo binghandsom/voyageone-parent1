@@ -277,13 +277,13 @@ define([
                                     results: results
                                 }).then(function (context) {
                                     if (context === 'confirm') {
-                                        callSaveProduct(true);
+                                        masterSaveAction(true);
                                     } else {
                                         hsCode.value.value = _prehsCode;
                                     }
                                 });
                             } else {
-                                callSaveProduct();
+                                masterSaveAction();
                             }
 
                         }, function (res) {
@@ -292,9 +292,35 @@ define([
                         });
 
                     } else {
-                        callSaveProduct();
+                        masterSaveAction();
                     }
 
+                }
+
+                /**
+                 * 保存前判断是否要设置税号
+                 * @param flag
+                 */
+                function masterSaveAction(flag){
+                    if(!scope.vm.lockStatus.onOffSwitch2 && $localStorage.user.channel == 928){
+                        confirm('是否设置翻译状态为翻译?').then(function(){
+                            scope.vm.lockStatus.onOffSwitch2 = true;
+
+                            productDetailService.doTranslateStatus({
+                                prodId: scope.productInfo.productId,
+                                translateStatus: "1"
+                            }).then(function () {
+                                initialize();
+                                scope.productInfo.translateStatus = 1;
+                                callSaveProduct(flag);
+                            });
+
+                        },function () {
+                            callSaveProduct(flag);
+                        });
+                    }else{
+                        callSaveProduct(flag);
+                    }
                 }
 
                 /**
@@ -474,6 +500,26 @@ define([
                     });
                 }
 
+
+                /**
+                 * group info 显示更多图片
+                 */
+                scope.moreCode = function () {
+                    scope.moreCodeFlg = !scope.moreCodeFlg;
+                };
+
+                scope.canMoreCode = function () {
+                    _mastData = scope.vm.mastData;
+
+                    if (!_mastData || !_mastData.images || _mastData.images.length === 0)
+                        return false;
+
+                    return _.some(_mastData.images, function (element) {
+                        return element.qty== 0
+                            && !element.isMain
+                            && element.productCode != scope.productInfo.masterField.code
+                    });
+                };
 
                 /**全schema中通过name递归查找field*/
                 function searchField(fieldName, schema) {

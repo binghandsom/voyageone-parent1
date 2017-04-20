@@ -23,13 +23,15 @@ define([
             }
         };
         $scope.ok = function () {
-            if (listPromotionProduct.length == 0) {
+            if (listPromotionProduct.length == 0 && context.selAll == false) {
                 alert("请选择修改tag的商品!");
                 return;
             }
             var parameter = {};
             parameter.listPromotionProductId = $scope.getSelectedPromotionProductIdList(listPromotionProduct);
             parameter.jmPromotionId = jmPromotionId;
+            parameter.searchInfo = context.searchInfo;
+            parameter.selAll = context.selAll;
             var productTagList = [];
             for (var i = 0; i < $scope.vm.tagNameList.length; i++) {
                 var tagName = $scope.vm.tagNameList[i];

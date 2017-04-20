@@ -294,7 +294,9 @@ public class FeedToCmsService extends BaseService {
                  * priceClientMsrp:美金专柜价
                  */
                 if (targetSku != null) {
-                    triggerPrice = targetSku.getPriceNet() == 0 && targetSku.getPriceClientRetail() == 0 && targetSku.getPriceClientMsrp() == 0 ? false : true;
+                    triggerPrice = (targetSku.getPriceNet() == null || targetSku.getPriceNet() == 0)
+                            && (targetSku.getPriceClientRetail() == null || targetSku.getPriceClientRetail() == 0)
+                            && (targetSku.getPriceClientMsrp() == null || targetSku.getPriceClientMsrp() == 0) ? false : true;
 
                     if (targetSku.getPriceNet() != 0)
                         skuInfo.setPriceNet(skuInfo.getPriceNet());
