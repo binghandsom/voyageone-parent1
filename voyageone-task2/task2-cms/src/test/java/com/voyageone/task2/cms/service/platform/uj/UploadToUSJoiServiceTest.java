@@ -1,7 +1,10 @@
 package com.voyageone.task2.cms.service.platform.uj;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.category.match.*;
+import com.voyageone.category.match.FeedQuery;
+import com.voyageone.category.match.MatchResult;
+import com.voyageone.category.match.Searcher;
+import com.voyageone.category.match.Tokenizer;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
@@ -199,9 +202,8 @@ public class UploadToUSJoiServiceTest {
         // 测试主类目匹配接口有没有问题
         String feedCategoryPath = "other";
 
-        StopWordCleaner cleaner = new StopWordCleaner(StopWordCleaner.STOPWORD_LIST);
         Tokenizer tokenizer = new Tokenizer(new ArrayList(){{add("-");}});
-        FeedQuery query = new FeedQuery(feedCategoryPath, cleaner, tokenizer);
+        FeedQuery query = new FeedQuery(feedCategoryPath, null, tokenizer);
         query.setSizeType("womens");
         query.setProductName("Nike Women's Air Exceed Lea White/White Black/Mtllc Silver Training Shoe 6.5 Women US", "Nike");
         query.setProductType("cross-trainer-shoes");
