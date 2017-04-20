@@ -1488,6 +1488,19 @@ define([
             });
         };
 
+        $scope.batchloadAttr = function(cartInfo){
+
+            console.log('cartInfo',cartInfo);
+            popups.openLoadAttribute({
+                attribute: ['description', 'title', 'item_images', 'seller_cids', 'sell_points', 'wireless_desc']
+            }).then(function (res) {
+                self.approveAttr = null;
+                self.approveAttr = res;
+
+                self.saveProduct();
+            });
+        }
+
     }
 
     searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions', 'popups', '$q', 'shelvesService','$localStorage'];
