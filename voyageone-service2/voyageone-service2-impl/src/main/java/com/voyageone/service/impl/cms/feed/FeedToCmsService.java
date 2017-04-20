@@ -26,6 +26,7 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedSkuPqModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -273,7 +274,7 @@ public class FeedToCmsService extends BaseService {
 
             CmsBtFeedInfoModel_Sku firstSku = skuEntity.getSkus().get(0);
 
-            if(firstSku == null)
+            if (CollectionUtils.isEmpty(skuEntity.getSkus()))
                 continue;
 
             CmsBtFeedInfoModel orgFeedInfo = feedInfoService.getProductByClientSku(channelId, firstSku.getClientSku());
@@ -298,14 +299,22 @@ public class FeedToCmsService extends BaseService {
                             && (targetSku.getPriceClientRetail() == null || targetSku.getPriceClientRetail() == 0)
                             && (targetSku.getPriceClientMsrp() == null || targetSku.getPriceClientMsrp() == 0) ? false : true;
 
+                    // 同步价格
                     if (targetSku.getPriceNet() != null && targetSku.getPriceNet() != 0)
                         skuInfo.setPriceNet(skuInfo.getPriceNet());
                     if (targetSku.getPriceClientRetail() != null && targetSku.getPriceClientRetail() != 0)
                         skuInfo.setPriceClientRetail(skuInfo.getPriceClientRetail());
                     if (targetSku.getPriceClientMsrp() != null && targetSku.getPriceClientMsrp() != 0)
                         skuInfo.setPriceClientMsrp(skuInfo.getPriceClientMsrp());
-                    skuInfo.setQty(targetSku.getQty());
-                    skuInfo.setIsSale(targetSku.getIsSale());
+
+                    // 同步库存
+                    if (targetSku.getQty() != null) {
+                        skuInfo.setQty(targetSku.getQty());
+                    }
+
+                    // 同步状态
+                    if (targetSku.getIsSale() != null)
+                        skuInfo.setIsSale(targetSku.getIsSale());
                 }
                 qty += skuInfo.getQty();
             }
