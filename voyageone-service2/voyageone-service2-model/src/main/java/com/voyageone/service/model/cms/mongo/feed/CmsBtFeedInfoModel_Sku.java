@@ -26,8 +26,10 @@ public class CmsBtFeedInfoModel_Sku {
     private String weightCalc;
     private Integer isSale;
     private String mainVid;
+    private Map<String, String> attribute = new HashMap<>();
+    private String errInfo;
 
-    public int getIsSale() {
+    public Integer getIsSale() {
         return isSale == null?1:isSale;
     }
 
@@ -35,8 +37,6 @@ public class CmsBtFeedInfoModel_Sku {
         this.isSale = isSale;
     }
 
-    private Map<String, String> attribute = new HashMap<>();
-    private String errInfo;
     public Double getPriceCurrent() {
         return priceCurrent;
     }
