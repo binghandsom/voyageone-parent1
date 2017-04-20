@@ -310,8 +310,15 @@ define([
                                 prodId: scope.productInfo.productId,
                                 translateStatus: "1"
                             }).then(function () {
-                                initialize();
+                                //改变翻译状态后要设置保存接口的上行参数
+                                //翻译状态是schema中的属性
                                 scope.productInfo.translateStatus = 1;
+
+                                scope.vm.productComm.fields.translateStatus = '1';
+                                var translateStatus = searchField("商品翻译状态", scope.vm.productComm.schemaFields);
+                                if (translateStatus) {
+                                    translateStatus.value.value = '1';
+                                }
                                 callSaveProduct(flag);
                             });
 
@@ -517,7 +524,7 @@ define([
                     return _.some(_mastData.images, function (element) {
                         return element.qty== 0
                             && !element.isMain
-                            && element.productCode != scope.productInfo.masterField.code
+                            && element.productCode != scope.productInfo.masterField.code;
                     });
                 };
 
