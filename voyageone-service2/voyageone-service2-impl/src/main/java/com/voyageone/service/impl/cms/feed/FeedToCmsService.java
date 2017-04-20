@@ -298,11 +298,11 @@ public class FeedToCmsService extends BaseService {
                             && (targetSku.getPriceClientRetail() == null || targetSku.getPriceClientRetail() == 0)
                             && (targetSku.getPriceClientMsrp() == null || targetSku.getPriceClientMsrp() == 0) ? false : true;
 
-                    if (targetSku.getPriceNet() != 0)
+                    if (targetSku.getPriceNet() != null && targetSku.getPriceNet() != 0)
                         skuInfo.setPriceNet(skuInfo.getPriceNet());
-                    if (targetSku.getPriceClientRetail() != 0)
+                    if (targetSku.getPriceClientRetail() != null && targetSku.getPriceClientRetail() != 0)
                         skuInfo.setPriceClientRetail(skuInfo.getPriceClientRetail());
-                    if (targetSku.getPriceClientMsrp() != 0)
+                    if (targetSku.getPriceClientMsrp() != null && targetSku.getPriceClientMsrp() != 0)
                         skuInfo.setPriceClientMsrp(skuInfo.getPriceClientMsrp());
                     skuInfo.setQty(targetSku.getQty());
                     skuInfo.setIsSale(targetSku.getIsSale());
