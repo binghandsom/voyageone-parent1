@@ -87,18 +87,22 @@ define([
             }, 0);
         },
         intervalRefreshInfo: function (ss) {
-            var self = this;
-            var count = 30;
-            var i = 30 * 1000;
+            var self = this,
+                i = 30 * 1000;
 
-            count--;
-            self.getShelvesInfo(ss);
+            if (self.count <= 0 || !self.count) {
+                self.count = 30;
+                self.getShelvesInfo(ss);
+            }
+
+            self.count--;
 
             if (self.$interval)
                 return;
 
             self.$interval = setInterval(function () {
-                if (count <= 0) {
+
+                if (self.count <= 0) {
                     self.resetInterval();
 
                     self.confirm('自动刷新，已停止。是否继续自动刷新？').then(function () {
@@ -107,17 +111,24 @@ define([
 
                     return;
                 }
-                count--;
+
+                self.count--;
                 self.getShelvesInfo();
             }, i);
+        },
+        stEditItem: function () {
+            this.resetInterval();
+        },
+        spEditItem: function () {
+            this.intervalRefreshInfo();
         },
         getShelvesInfo: function (ss) {
             var self = this;
             var shelves = self.shelves;
             var shelvesService = self.shelvesService;
             var opened = ss || shelves.filter(function (_s) {
-                return _s.$isOpen;
-            });
+                    return _s.$isOpen;
+                });
 
             var needInfoShelvesId = opened.map(function (_s) {
                 return _s.id;
@@ -282,7 +293,11 @@ define([
             var self = this;
             var shelvesService = self.shelvesService;
 
+            self.stEditItem();
+
             if (s.$e) {
+                self.spEditItem();
+
                 var needSaveSort = s.products.some(function (p, index) {
                     return p.sort != index;
                 });

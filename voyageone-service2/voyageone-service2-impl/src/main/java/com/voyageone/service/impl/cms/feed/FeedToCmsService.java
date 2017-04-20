@@ -1,7 +1,10 @@
 package com.voyageone.service.impl.cms.feed;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.category.match.*;
+import com.voyageone.category.match.FeedQuery;
+import com.voyageone.category.match.MatchResult;
+import com.voyageone.category.match.Searcher;
+import com.voyageone.category.match.Tokenizer;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -273,7 +276,7 @@ public class FeedToCmsService extends BaseService {
 
             CmsBtFeedInfoModel_Sku firstSku = skuEntity.getSkus().get(0);
 
-            if(firstSku == null)
+            if (firstSku == null)
                 continue;
 
             CmsBtFeedInfoModel orgFeedInfo = feedInfoService.getProductByClientSku(channelId, firstSku.getClientSku());
@@ -294,18 +297,26 @@ public class FeedToCmsService extends BaseService {
                  * priceClientMsrp:美金专柜价
                  */
                 if (targetSku != null) {
-                    triggerPrice = (targetSku.getPriceNet() == null || targetSku.getPriceNet() == 0)
+                    triggerPrice = !((targetSku.getPriceNet() == null || targetSku.getPriceNet() == 0)
                             && (targetSku.getPriceClientRetail() == null || targetSku.getPriceClientRetail() == 0)
-                            && (targetSku.getPriceClientMsrp() == null || targetSku.getPriceClientMsrp() == 0) ? false : true;
+                            && (targetSku.getPriceClientMsrp() == null || targetSku.getPriceClientMsrp() == 0));
 
-                    if (targetSku.getPriceNet() != 0)
+                    // 同步价格
+                    if (targetSku.getPriceNet() != null && targetSku.getPriceNet() != 0)
                         skuInfo.setPriceNet(skuInfo.getPriceNet());
-                    if (targetSku.getPriceClientRetail() != 0)
+                    if (targetSku.getPriceClientRetail() != null && targetSku.getPriceClientRetail() != 0)
                         skuInfo.setPriceClientRetail(skuInfo.getPriceClientRetail());
-                    if (targetSku.getPriceClientMsrp() != 0)
+                    if (targetSku.getPriceClientMsrp() != null && targetSku.getPriceClientMsrp() != 0)
                         skuInfo.setPriceClientMsrp(skuInfo.getPriceClientMsrp());
-                    skuInfo.setQty(targetSku.getQty());
-                    skuInfo.setIsSale(targetSku.getIsSale());
+
+                    // 同步库存
+                    if (targetSku.getQty() != null) {
+                        skuInfo.setQty(targetSku.getQty());
+                    }
+
+                    // 同步状态
+                    if (targetSku.getIsSale() != null)
+                        skuInfo.setIsSale(targetSku.getIsSale());
                 }
                 qty += skuInfo.getQty();
             }
@@ -569,13 +580,12 @@ public class FeedToCmsService extends BaseService {
 
     private void setMainCategory(CmsBtFeedInfoModel feedProduct) {
 
-        StopWordCleaner cleaner = new StopWordCleaner(StopWordCleaner.STOPWORD_LIST);
         // 子店feed类目path分隔符(由于导入feedInfo表时全部替换成用"-"来分隔了，所以这里写固定值就可以了)
         List<String> categoryPathSplit = new ArrayList<>();
         categoryPathSplit.add("-");
         Tokenizer tokenizer = new Tokenizer(categoryPathSplit);
 
-        FeedQuery query = new FeedQuery(feedProduct.getCategory(), cleaner, tokenizer);
+        FeedQuery query = new FeedQuery(feedProduct.getCategory(), null, tokenizer);
         query.setProductType(feedProduct.getProductType());
         query.setSizeType(feedProduct.getSizeType());
         query.setProductName(feedProduct.getName(), feedProduct.getBrand());

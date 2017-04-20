@@ -90,6 +90,8 @@ define([
                             scope.vm.currentImage = $rootScope.imageUrl.replace('%s', _fields.images1[0].image1);
 
                         scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
+                        scope.productInfo.productCustomIsDisp = scope.vm.mastData.productCustomIsDisp;
+
                         scope.vm.lockStatus.onOffSwitch1 = scope.vm.mastData.appSwitch == "1" ? true : false;
                         scope.vm.lockStatus.onOffSwitch2 = scope.vm.mastData.translateStatus == "1" ? true : false;
                         scope.vm.lockStatus.onOffSwitch3 = scope.vm.mastData.lock == "1" ? true : false;
@@ -310,8 +312,15 @@ define([
                                 prodId: scope.productInfo.productId,
                                 translateStatus: "1"
                             }).then(function () {
-                                initialize();
+                                //改变翻译状态后要设置保存接口的上行参数
+                                //翻译状态是schema中的属性
                                 scope.productInfo.translateStatus = 1;
+
+                                scope.vm.productComm.fields.translateStatus = '1';
+                                var translateStatus = searchField("商品翻译状态", scope.vm.productComm.schemaFields);
+                                if (translateStatus) {
+                                    translateStatus.value.value = '1';
+                                }
                                 callSaveProduct(flag);
                             });
 
@@ -517,7 +526,7 @@ define([
                     return _.some(_mastData.images, function (element) {
                         return element.qty== 0
                             && !element.isMain
-                            && element.productCode != scope.productInfo.masterField.code
+                            && element.productCode != scope.productInfo.masterField.code;
                     });
                 };
 

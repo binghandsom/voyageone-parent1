@@ -192,7 +192,7 @@ public class CmsProductDetailController extends CmsController {
         //{prodId: "5992", appSwitch: "0"}
         Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
 
-        int appSwitch = ConvertUtil.toInt(requestMap.get("appSwitch"));
+        String appSwitch = (String) requestMap.get("appSwitch");
 
         productService.updateProductAppSwitch(getUser().getSelChannelId(), prodId, appSwitch, getUser().getUserName());
 
@@ -203,7 +203,7 @@ public class CmsProductDetailController extends CmsController {
         //{prodId: "5992", translateStatus: "0"}
         Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
 
-        int translateStatus = ConvertUtil.toInt(requestMap.get("translateStatus"));
+        String translateStatus = (String) requestMap.get("translateStatus");
 
         productService.updateProductTranslateStatus(getUser().getSelChannelId(), prodId, translateStatus, getUser().getUserName());
 
@@ -215,7 +215,7 @@ public class CmsProductDetailController extends CmsController {
         Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
         if (requestMap.get("feedInfo") != null) {
             List<CustomPropBean> cnProps = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(requestMap.get("feedInfo")), CustomPropBean.class);
-            productService.updateProductAtts(getUser().getSelChannelId(), prodId, cnProps, getUser().getUserName());
+            productService.updateProductAtts(getUser().getSelChannelId(), prodId, cnProps, (Map<String, Boolean>) requestMap.get("productCustomIsDisp"), getUser().getUserName());
         }
         return success(null);
     }

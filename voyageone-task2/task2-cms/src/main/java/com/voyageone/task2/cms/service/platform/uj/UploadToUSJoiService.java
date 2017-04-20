@@ -7,7 +7,10 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.CommonConfigNotFoundException;
-import com.voyageone.category.match.*;
+import com.voyageone.category.match.FeedQuery;
+import com.voyageone.category.match.MatchResult;
+import com.voyageone.category.match.Searcher;
+import com.voyageone.category.match.Tokenizer;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -22,7 +25,6 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
@@ -492,6 +494,14 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             platform.setpCatPath(null);
                             platform.setpBrandId(null);
                             platform.setpBrandName(null);
+                            platform.setpCatStatus("0");
+                            platform.setAttribute("pStatus", "");
+                            platform.setAttribute("pNumIId", null);
+                            platform.setAttribute("pProductId", null);
+                            platform.setAttribute("pPublishTime","");
+                            platform.setAttribute("fields",null);
+                            platform.setAttribute("sellerCats",null);
+                            platform.setAttribute("pReallyStatus",null);
                             platform.setSkus(platform.getSkus().stream().map(sku->{
                                 BaseMongoMap<String, Object> newSku = new BaseMongoMap<String, Object>();
                                 newSku.setAttribute("skuCode",sku.getStringAttribute("skuCode"));
@@ -948,6 +958,14 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 newPlatform.setpBrandId(null);
                                 newPlatform.setpBrandName(null);
                                 newPlatform.setCartId(cartId);
+                                newPlatform.setpCatStatus("0");
+                                newPlatform.setAttribute("pStatus", "");
+                                newPlatform.setAttribute("pNumIId", null);
+                                newPlatform.setAttribute("pProductId", null);
+                                newPlatform.setAttribute("pPublishTime","");
+                                newPlatform.setAttribute("fields",null);
+                                newPlatform.setAttribute("sellerCats",null);
+                                newPlatform.setAttribute("pReallyStatus",null);
                                 // 重新设置newPlatform的skus，因为fromPlatform里面过来的是全部的sku，要去掉拆分到其他产品的sku
                                 newPlatform.setSkus(correctPlatformSkus);
                                 newPlatform.setSkus(newPlatform.getSkus().stream().map((BaseMongoMap<String, Object> sku) ->{
@@ -2038,13 +2056,12 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      */
     private FeedQuery getFeedQuery(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
         // 调用Feed到主数据的匹配程序匹配主类目
-        StopWordCleaner cleaner = new StopWordCleaner(StopWordCleaner.STOPWORD_LIST);
         // 子店feed类目path分隔符(由于导入feedInfo表时全部替换成用"-"来分隔了，所以这里写固定值就可以了)
         List<String> categoryPathSplit = new ArrayList<>();
         categoryPathSplit.add("-");
         Tokenizer tokenizer = new Tokenizer(categoryPathSplit);
 
-        FeedQuery query = new FeedQuery(feedCategoryPath, cleaner, tokenizer);
+        FeedQuery query = new FeedQuery(feedCategoryPath, null, tokenizer);
         query.setProductType(productType);
         query.setSizeType(sizeType);
         query.setProductName(productNameEn, brand);

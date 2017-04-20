@@ -6,7 +6,10 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.CommonConfigNotFoundException;
-import com.voyageone.category.match.*;
+import com.voyageone.category.match.FeedQuery;
+import com.voyageone.category.match.MatchResult;
+import com.voyageone.category.match.Searcher;
+import com.voyageone.category.match.Tokenizer;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Carts;
@@ -949,7 +952,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 if (blnProductExist) {
                     // 修改商品数据
                     // 一般只改改价格神马的
-                    cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
+                    cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, newMapping, feedList.size() > 1, originalFeed.getCode());
                     cmsProduct.getFeed().setCatPath(feed.getCategory());
                     if (feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())) {
                         cmsProduct.getCommon().getFields().setProductNameEn(feed.getName());
@@ -1029,7 +1032,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 } else {
 
                     // 不存在的场合, 新建一个product
-                    cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
+                    cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1, originalFeed.getCode());
 
                     // Champion特殊处理
                     if (feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())) {
@@ -3297,13 +3300,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
          */
         private FeedQuery getFeedQuery(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
             // 调用Feed到主数据的匹配程序匹配主类目
-            StopWordCleaner cleaner = new StopWordCleaner(StopWordCleaner.STOPWORD_LIST);
             // 子店feed类目path分隔符(由于导入feedInfo表时全部替换成用"-"来分隔了，所以这里写固定值就可以了)
             List<String> categoryPathSplit = new ArrayList<>();
             categoryPathSplit.add("-");
             Tokenizer tokenizer = new Tokenizer(categoryPathSplit);
 
-            FeedQuery query = new FeedQuery(feedCategoryPath, cleaner, tokenizer);
+            FeedQuery query = new FeedQuery(feedCategoryPath, null, tokenizer);
             query.setProductType(productType);
             query.setSizeType(sizeType);
             query.setProductName(productNameEn, brand);
