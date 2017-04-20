@@ -42,4 +42,32 @@
                 LIMIT #{offset}, #{size}
               </if>
        </select>
+       <select id="cms_batchSelectInventory2" parameterType="java.util.Map" resultMap="SkuInventoryMap">
+
+              select order_channel_id, code, sku, qty_china
+              FROM
+                     (
+                        select logic.seq
+                        FROM wms_bt_inventory_center_logic logic
+                            <where>
+                                   <choose>
+                                          <when test="order_channel_id=='928'">
+                                                 1=1
+                                          </when>
+                                          <otherwise>
+                                                 order_channel_id = #{order_channel_id}
+                                          </otherwise>
+                                   </choose>
+                                   <if test="codes != null">
+                                          and code in
+                                          <foreach item="item" index="index" collection="codes" open="(" separator="," close=")">
+                                                 #{item}
+                                          </foreach>
+                                   </if>
+                            </where>
+                        LIMIT #{offset}, #{size}
+                     ) tmp
+              ,wms_bt_inventory_center_logic
+              where tmp.seq = wms_bt_inventory_center_logic.seq
+       </select>
 </mapper>

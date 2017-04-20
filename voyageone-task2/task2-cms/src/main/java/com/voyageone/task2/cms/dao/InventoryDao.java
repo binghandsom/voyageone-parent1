@@ -53,7 +53,7 @@ public class InventoryDao extends BaseDao {
             params.put("order_channel_id", order_channel_id);
             params.put("offset", offset);
             params.put("size", size);
-            return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_batchSelectInventory", params);
+            return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_batchSelectInventory2", params);
         }
         return null;
     }
