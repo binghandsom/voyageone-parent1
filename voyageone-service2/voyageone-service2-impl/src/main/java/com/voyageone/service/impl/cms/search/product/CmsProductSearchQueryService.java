@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.search.product;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.components.solr.bean.CmsProductSearchModel;
 import com.voyageone.components.solr.query.SimpleQueryBean;
@@ -50,7 +51,6 @@ public class CmsProductSearchQueryService extends BaseService {
         if ($isDebugEnabled()) {
             $debug(String.format("获取当前查询的product列表 ChannelId=%s, %s", channelId, queryBean.toString()));
         }
-
         Page<CmsProductSearchModel> page = cmsProductSearchService.queryForPage(queryBean, CmsProductSearchModel.class);
         List<String> productCodeList = page.getContent().stream().filter(model -> model.getProductCode() != null).map(CmsProductSearchModel::getProductCode).collect(Collectors.toList());
         result.setProductCodeList(productCodeList);
@@ -161,7 +161,7 @@ public class CmsProductSearchQueryService extends BaseService {
             // 设置platform检索条件
             // 获取platform/lock
             if (StringUtils.isNotEmpty(searchValue.getpLockFlg())) {
-                if ("1".equals(searchValue.getLockFlg())) {
+                if ("1".equals(searchValue.getpLockFlg())) {
                     criteria = criteria.and("P"+cartId+"_lock").is("1");
                 } else {
                     criteria = criteria.and("P"+cartId+"_lock").is("1").not();
@@ -195,7 +195,11 @@ public class CmsProductSearchQueryService extends BaseService {
 
             // 获取店铺内分类查询条件
             if (searchValue.getCidValue() !=  null && searchValue.getCidValue().size() > 0) {
-                criteria = criteria.and("P"+cartId+"_sellerCats").in(searchValue.getCidValue());
+                if(1 == searchValue.getShopCatType()) {
+                    criteria = criteria.and("P" + cartId + "_sellerCats").in(searchValue.getCidValue());
+                }else{
+                    criteria = criteria.and("P" + cartId + "_sellerCats").in(searchValue.getCidValue()).not();
+                }
             }
 
             // 查询价格变动(指导售价)
@@ -243,12 +247,21 @@ public class CmsProductSearchQueryService extends BaseService {
 
         // 获取 feed category
         if (searchValue.getfCatPathList() != null && searchValue.getfCatPathList().size() > 0) {
-            criteria = criteria.and("feedCat").in(searchValue.getfCatPathList());
+            searchValue.setfCatPathList(searchValue.getfCatPathList().stream().map(str->str.trim()).collect(Collectors.toList()));
+            if(searchValue.getfCatPathType() == 1) {
+                criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList());
+            }else {
+                criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList()).not();
+            }
         }
 
         // 获取 master category
-        if (StringUtils.isNotEmpty(searchValue.getmCatPath())) {
-            criteria = criteria.and("catPath").in(searchValue.getmCatPath());
+        if (ListUtils.notNull(searchValue.getmCatPath())) {
+            if(searchValue.getmCatPathType() == 1) {
+                criteria = criteria.and("catPath").contains(searchValue.getmCatPath());
+            }else{
+                criteria = criteria.and("catPath").contains(searchValue.getmCatPath()).not();
+            }
         }
 
         if (StringUtils.isNotEmpty(searchValue.getCreateTimeStart())) {
@@ -371,7 +384,8 @@ public class CmsProductSearchQueryService extends BaseService {
             List<String> orSearch = new ArrayList<>();
             // 英文查询内容
             String fuzzyStr = searchValue.getFuzzyStr();
-            Criteria criteria1 = new Criteria("nameEn").contains(fuzzyStr).or("nameCn").contains(fuzzyStr);
+            fuzzyStr = "*"+fuzzyStr.replaceAll(" ","\\\\ ")+"*";
+            Criteria criteria1 = new Criteria("nameEn").expression(fuzzyStr).or("nameCn").expression(fuzzyStr);
             criteria = criteria.and(criteria1);
         }
 

@@ -81,12 +81,16 @@ public class CmsBtSxWorkloadDaoExt extends ServiceBaseDao {
         return update("update_publish_status", model);
     }
 
+    public int updatePlatformWorkloadPublishStatus(CmsBtSxWorkloadModel model) {
+        return update("update_publish_status_platformWorkload", model);
+    }
+
     public int delayWorkload(CmsBtSxWorkloadModel model) {
         return update("delay_work_load", model);
     }
 
     public List<CmsBtSxWorkloadModel> selectSxWorkloadModelWithChannelIdListCartIdList(int recordCount, List<String> channelIdList, List<String> cartList) {
-        return selectList("cms_select_platform_workload", parameters("record_count", recordCount, "channelIdList", channelIdList, cartList));
+        return selectList("cms_select_platform_workload", parameters("record_count", recordCount, "channelIdList", channelIdList, "cartList", cartList));
     }
 
 }

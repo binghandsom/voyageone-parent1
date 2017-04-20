@@ -223,15 +223,23 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
         }
 
         Map<String, String> map = null;
-        if (!imageSet.isEmpty() && shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
-            map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, imageSet, user);
-        } else if (!imageSet.isEmpty() && shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())) {
+        if (!imageSet.isEmpty() &&
+                  (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())
+                || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())
+                || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())
+                )) {
             map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, imageSet, user);
         }
         if (map != null) {
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 if (!StringUtils.isEmpty(entry.getValue())) {
-                    parseResult = parseResult.replace(entry.getKey(), entry.getValue());
+                    if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
+                        if (!StringUtils.isEmpty(parseResult) && !entry.getValue().startsWith("http")) {
+                            parseResult = parseResult.replace(entry.getKey(), "https://img10.360buyimg.com/imgzone/" + entry.getValue());
+                        }
+                    } else {
+                        parseResult = parseResult.replace(entry.getKey(), entry.getValue());
+                    }
                 } else { // add by desmond 2016/07/13 start
                     // 如果未能取得平台url(源图片去的失败或者上传到平台失败)时，删除原图片url
                     if (htmlTemplate != null) {
@@ -241,8 +249,11 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                     }
                 }
                 // add by desmond 2016/07/13 end
+
             }
         }
+
+
 
         return parseResult;
     }

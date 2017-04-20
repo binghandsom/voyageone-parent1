@@ -54,11 +54,11 @@ define([
             status: "Pending",
             skuTemp: {},
             checkFlag: self.$scope.cartInfo.value == 20 ? {translate: 0, category: 0, attribute: 0} : {
-                    translate: 0,
-                    tax: 0,
-                    category: 0,
-                    attribute: 0
-                },
+                translate: 0,
+                tax: 0,
+                category: 0,
+                attribute: 0
+            },
             resultFlag: 0,
             sellerCats: [],
             productUrl: "",
@@ -249,6 +249,23 @@ define([
     };
 
     /**
+     * @description 部分属性上新
+     */
+    SpTmController.prototype.loadAttribute = function () {
+        var self = this;
+
+        self.popups.openLoadAttribute({
+            attribute: ['description', 'title', 'item_images', 'seller_cids', 'sell_points', 'wireless_desc']
+        }).then(function (res) {
+            self.approveAttr = null;
+            self.approveAttr = res;
+
+            self.saveProduct();
+        });
+
+    };
+
+    /**
      * @description 保存前判断数据的有效性
      * @param mark 标识字段
      */
@@ -348,6 +365,11 @@ define([
                 type: mark
             };
 
+        if (self.approveAttr)
+            _.extend(updateInfo, {
+                platformWorkloadAttributes: self.approveAttr
+            });
+
         /**判断价格*/
         productDetailService.updateProductPlatformChk(updateInfo).then(function (resp) {
             self.vm.platform.modified = resp.data.modified;
@@ -361,12 +383,12 @@ define([
             );
 
         }, function (resp) {
-            if (resp.code != "4000091" && resp.code != "4000092") {
+            if (resp.code != "4000091" && resp.code != "4000092" && resp.code != "4000094") {
                 self.vm.status = self.vm.preStatus;
                 return;
             }
 
-            self.confirm(resp.message + ",是否强制保存").then(function () {
+            self.confirm(resp.message + "是否强制保存").then(function () {
                 productDetailService.updateProductPlatform(updateInfo).then(function (resp) {
                     self.vm.platform.modified = resp.data.modified;
                     self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
@@ -430,17 +452,26 @@ define([
      */
     SpTmController.prototype.updateSkuPrice = function () {
         var self = this,
-            $scope = self.$scope;
-
-        self.confirm("您是否确认要刷新sku价格").then(function () {
-            self.productDetailService.updateSkuPrice({
+            $scope = self.$scope,
+            upEntity = {
                 cartId: $scope.cartInfo.value,
                 prodId: $scope.productInfo.productId,
                 platform: self.vm.platform
-            }).then(function () {
+            };
+
+        self.confirm("您是否确认要刷新sku价格").then(function () {
+            self.productDetailService.updateSkuPrice(_.extend(upEntity, {priceCheck: true})).then(function () {
                 self.notify.success("TXT_MSG_UPDATE_SUCCESS");
             }, function (res) {
-                self.alert(res.message);
+                if (res.code != "4000094")
+                    return;
+
+                self.confirm(res.message + "是否强制保存").then(function () {
+                    self.productDetailService.updateSkuPrice(_.extend(upEntity, {priceCheck: false})).then(function () {
+                        self.notify.success("TXT_MSG_UPDATE_SUCCESS");
+                    });
+
+                });
             });
         });
     };
@@ -611,7 +642,7 @@ define([
     SpTmController.prototype.upperAndLowerFrame = function (mark) {
         var self = this,
             $translate = self.$translate,
-            msg = mark === 'ToOnSale'? '上架':'下架';
+            msg = mark === 'ToOnSale' ? '上架' : '下架';
 
         self.confirm('您是否执行' + msg + '操作？').then(function () {
             self.productDetailService.upperLowerFrame({
@@ -710,6 +741,29 @@ define([
                 self.vm.platform.lock = lock === '1' ? '0' : '1';
         });
 
+    };
+
+    /**
+     * group info 显示更多图片
+     */
+    SpTmController.prototype.moreCode = function () {
+        var self = this;
+
+        self.moreCodeFlg = !self.moreCodeFlg;
+    };
+
+    SpTmController.prototype.canMoreCode = function () {
+        var self = this;
+
+        if (!self.vm.mastData || !self.vm.mastData.images || self.vm.mastData.images.length == 0)
+            return false;
+
+        return _.some(self.vm.mastData.images, function (element) {
+            return element.qty == 0
+                && !element.isMain
+                && !self.$scope.productInfo
+                && element.productCode != self.$scope.productInfo.masterField.code;
+        });
     };
 
     cms.directive('tmSubPage', function () {

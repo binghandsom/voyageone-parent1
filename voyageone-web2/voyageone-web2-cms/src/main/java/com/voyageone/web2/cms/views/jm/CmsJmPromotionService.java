@@ -74,13 +74,13 @@ class CmsJmPromotionService extends BaseViewService {
      */
     Map<String, Object> addProductionToPromotion(List<Long> productIds, CmsBtJmPromotionModel promotion, String channelId,
                                                  Double discount, Integer priceType, String tagName, String tagId,
-                                                 Integer isSelAll, CmsSessionBean cmsSession) {
+                                                 Integer isSelAll, Map searchInfo) {
         if (isSelAll == null) {
             isSelAll = 0;
         }
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productIds = advanceSearchService.getProductIdList(channelId, cmsSession);
+            productIds = advanceSearchService.getProductIdList(channelId, searchInfo);
         }
         Map<String, Object> rsMap = new HashMap<>();
         if (productIds == null || productIds.size() == 0) {

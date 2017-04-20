@@ -252,6 +252,9 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 
         }
 
+        // 每个小组， 最多允许的线程数量
+        int threadCount = NumberUtils.toInt(TaskControlUtils.getVal1WithDefVal(taskControlList, TaskControlEnums.Name.thread_count, "10"));
+
         // 获取该任务可以运行的销售渠道
         List<TaskControlBean> taskControlBeanList = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.order_channel_id);
 
@@ -297,10 +300,10 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                         for (String channelId : channelIdList) {
                             t.execute(() -> {
                                 try {
-                                    doProductUpload(channelId, CartEnums.Cart.JD.getValue());
-									doProductUpload(channelId, CartEnums.Cart.JG.getValue());
-									doProductUpload(channelId, CartEnums.Cart.JGJ.getValue());
-									doProductUpload(channelId, CartEnums.Cart.JGY.getValue());
+                                    doProductUpload(channelId, CartEnums.Cart.JD.getValue(), threadCount);
+									doProductUpload(channelId, CartEnums.Cart.JG.getValue(), threadCount);
+									doProductUpload(channelId, CartEnums.Cart.JGJ.getValue(), threadCount);
+									doProductUpload(channelId, CartEnums.Cart.JGY.getValue(), threadCount);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -349,10 +352,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
      * @param channelId String 渠道ID
      * @param cartId String 平台ID
      */
-    public void doProductUpload(String channelId, int cartId) throws Exception {
-
-        // 默认线程池最大线程数
-        int threadPoolCnt = 40;
+    public void doProductUpload(String channelId, int cartId, int threadPoolCnt) throws Exception {
 
         // 获取店铺信息
         ShopBean shopProp = Shops.getShop(channelId, cartId);
@@ -1062,12 +1062,20 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                 doJdForceWareListing(shopProp, jdWareId, groupId, CmsConstants.PlatformActive.ToInStock, sxCodeList, updateWare, "京东上新SKU总库存为0时强制下架处理");
             } else {
                 // 如果SKU总库存不为0时，根据group表里设置的Action设置上下架状态
-                boolean updateJdWareListing = updateJdWareListing(shopProp, sxData, jdWareId, updateWare);
+
+                // 20170413 tom 如果是新建的场合， 需要根据配置来设置上下架状态 START
+                CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
+                if (!updateWare) {
+                    platformActive = sxProductService.getDefaultPlatformActiveConfigByChannelCart(channelId, String.valueOf(cartId));
+                }
+                // 20170413 tom 如果是新建的场合， 需要根据配置来设置上下架状态 END
+
+                boolean updateJdWareListing = updateJdWareListing(shopProp, sxData, jdWareId, updateWare, platformActive);
                 // 新增或更新商品，只有在商品上架/下架操作成功之后才回写platformStatus，失败不回写状态(新增商品时除外)
                 if (updateJdWareListing) {
                     // 上架/下架操作成功时
                     // platformActive平台上新状态类型(ToOnSale/ToInStock)
-                    if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
+                    if (CmsConstants.PlatformActive.ToOnSale.equals(platformActive)) {
                         // platformActive是(ToOnSale)时，把platformStatus更新成"OnSale"
                         platformStatus = CmsConstants.PlatformStatus.OnSale;
                     } else {
@@ -2534,13 +2542,14 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
      * @param sxData SxData 上新数据
      * @param wareId long 商品id
      * @param updateFlg boolean 新增/更新商品flg
+     * @param platformActive 上下架的动作
      */
-    private boolean updateJdWareListing(ShopBean shop, SxData sxData, long wareId, boolean updateFlg) {
+    private boolean updateJdWareListing(ShopBean shop, SxData sxData, long wareId, boolean updateFlg, CmsConstants.PlatformActive platformActive) {
         // 商品上架/下架结果
         boolean updateListingResult = false;
 
         // platformActive平台上新状态类型(ToOnSale/ToInStock)
-        if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
+        if (CmsConstants.PlatformActive.ToOnSale.equals(platformActive)) {
             // platformActive是(ToOnSale)时，执行商品上架操作
             updateListingResult = jdSaleService.doWareUpdateListing(shop, wareId, updateFlg);
         } else {

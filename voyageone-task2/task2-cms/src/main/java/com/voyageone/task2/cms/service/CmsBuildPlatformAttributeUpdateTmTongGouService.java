@@ -43,10 +43,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -86,8 +83,6 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-        //获取Workload列表
-        List<CmsBtSxWorkloadModel> groupList = new ArrayList<>();
         // 获取该任务可以运行的销售渠道
         List<String> channels = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
@@ -98,12 +93,12 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
             $error("上新任务表中没有该渠道和平台对应的任务列表信息！[ChannelId:%s] [CartId:%s]", channels, cartList);
             return;
         }
-        for(CmsBtSxWorkloadModel workloadModel : groupList) {
+        for(CmsBtSxWorkloadModel workloadModel : sxWorkloadModels) {
             doTmTongGouAttibuteUpdate(workloadModel);
         }
     }
 
-    public void doTmTongGouAttibuteUpdate(CmsBtSxWorkloadModel work) throws Exception{
+    public void doTmTongGouAttibuteUpdate(CmsBtSxWorkloadModel work){
         String channelId = work.getChannelId();
         int cartId_shop = work.getCartId();
         Long groupId = work.getGroupId();
@@ -112,6 +107,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
         String numIId = "";
         // 开始时间
         long prodStartTime = System.currentTimeMillis();
+        work.setModified(new Date(prodStartTime));
         //读店铺信息
         ShopBean shop = new ShopBean();
         try {
@@ -210,43 +206,34 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
                 errMsg += result;
                 $error(errMsg);
                 throw new BusinessException(errMsg);
+            } else {
+                // 回写workload表(成功1)
+                sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
             }
 
         }catch (Exception e) {
-            // 异常结束时
-            String errMsg = String.format("天猫官网同购更新异常结束，开始记录异常状态！[ChannelId:%s] [CartId:%s] [GroupId:%s] [NumIId:%s] [WorkloadName:%s]",
-                    channelId, cartId_shop, groupId, numIId, workloadName);
-            $error(errMsg);
-
-//            // 把上新失败结果加入到resultMap中
-//            sxProductService.add2ResultMap(resultMap, channelId, cartId_shop, groupId, true, false);
-
             if (sxData == null) {
-                // 回写详细错误信息表(cms_bt_business_log)用
                 sxData = new SxData();
                 sxData.setChannelId(channelId);
                 sxData.setCartId(cartId_shop);
                 sxData.setGroupId(groupId);
-                sxData.setErrorMessage(shop.getShop_name() + " 天猫同购取得更新用的商品数据信息异常,请跟管理员联系! [更新数据为null]");
+                sxData.setErrorMessage(String.format("天猫同购取得商品数据为空！[ChannelId:%s] [GroupId:%s]", channelId, groupId));
             }
+            String errMsg = String.format("天猫同购平台更新商品异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WorkloadName:%s] [%s]",
+                    channelId, cartId_shop, groupId, workloadName, e.getMessage());
+            $error(errMsg);
+            e.printStackTrace();
             // 如果上新数据中的errorMessage为空
             if (StringUtils.isEmpty(sxData.getErrorMessage())) {
-                // nullpoint错误的处理
-                if(StringUtils.isNullOrBlank2(e.getMessage())) {
-                    e.printStackTrace();
-                    sxData.setErrorMessage(shop.getShop_name() + " 天猫同购更新时出现不可预知的错误，请跟管理员联系! "
-                            + e.getStackTrace()[0].toString());
-                } else {
-                    sxData.setErrorMessage(shop.getShop_name() + " " +e.getMessage());
-                }
+                sxData.setErrorMessage(errMsg);
             }
-
-            // 上新出错时状态回写操作
-            sxProductService.doUploadFinalProc(shop, false, sxData, work, "", null, "", getTaskName());
-
-            // 异常结束
-            $error(String.format("天猫官网同购单个商品%s失败！[ChannelId:%s] [CartId:%s] [WorkloadName:%s] [GroupId:%s] [NumIId:%s] [耗时:%s] [errMsg:%s]",
-                    "更新", channelId, cartId_shop, workloadName, groupId, numIId, (System.currentTimeMillis() - prodStartTime), sxData.getErrorMessage()));
+            // 回写workload表(失败2)
+            sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+            // 回写详细错误信息表(cms_bt_business_log)
+            sxProductService.insertBusinessLog(sxData, getTaskName());
+            $error(String.format("天猫同购平台更新商品信息异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [耗时:%s]",
+                    channelId, cartId_shop, groupId, (System.currentTimeMillis() - prodStartTime)));
+            return;
         }
     }
 
@@ -266,7 +253,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
         // 店铺级标题禁用词 20161216 tom START
         // 先临时这样处理
         String notAllowList = getConditionPropValue(sxData, "notAllowTitleList", shop);
-        if (PlatformWorkloadAttribute.TITLE.name().equals(workloadName)) {
+        if (PlatformWorkloadAttribute.TITLE.getValue().equals(workloadName)) {
             // 标题(必填)
             // 商品标题支持英文到中文，韩文到中文的自动翻译，可以在extends字段里面进行设置是否需要翻译
             // 注意：使用测试账号的APPKEY测试时，标题应包含中文"测试请不要拍"
@@ -293,8 +280,8 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
                 }
             }
             // 店铺级标题禁用词 20161216 tom END
-            productInfoMap.put(PlatformWorkloadAttribute.TITLE.name(), valTitle);
-        } else if (PlatformWorkloadAttribute.SELLER_CIDS.equals(workloadName)) {
+            productInfoMap.put(PlatformWorkloadAttribute.TITLE.getValue(), valTitle);
+        } else if (PlatformWorkloadAttribute.SELLER_CIDS.getValue().equals(workloadName)) {
             // 店铺内分类id(非必填)  格式："shop_cats":"111111,222222,333333"
             String extends_shop_cats = "";
             if (mainProductPlatformCart != null
@@ -311,7 +298,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
             }
             productInfoMap.put("extends", extends_shop_cats);
 //            productInfoMap.put("extends", JacksonUtil.bean2Json(paramExtends));
-        } else if (PlatformWorkloadAttribute.DESCRIPTION.equals(workloadName)) {
+        } else if (PlatformWorkloadAttribute.DESCRIPTION.getValue().equals(workloadName)) {
             // 描述(必填)
             // 商品描述支持HTML格式，但是需要将内容变成XML格式。
             // 为了更好的用户体验，建议全部使用图片来做描述内容。描述的图片宽度不超过800像素.
@@ -348,8 +335,8 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
                 }
             }
             // 店铺级标题禁用词 20161216 tom END
-            productInfoMap.put(PlatformWorkloadAttribute.DESCRIPTION.name(), valDescription);
-        } else if (PlatformWorkloadAttribute.ITEM_IMAGES.name().equals(workloadName)) {
+            productInfoMap.put(PlatformWorkloadAttribute.DESCRIPTION.getValue(), valDescription);
+        } else if (PlatformWorkloadAttribute.ITEM_IMAGES.getValue().equals(workloadName)) {
             // 主图(必填)
             // 最少1张，最多5张。多张图片之间，使用英文的逗号进行分割。需要使用alicdn的图片地址。建议尺寸为800*800像素。
             // 格式：<value>http://img.alicdn.com/imgextra/i1/2640015666/TB2PTFYkXXXXXaUXpXXXXXXXXXX_!!2640015666.jpg,

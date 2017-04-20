@@ -14,6 +14,7 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
@@ -268,15 +269,13 @@ public class CmsAdvanceSearchService extends BaseViewService {
         return productService.countByQuery(queryObject.getQuery(), queryObject.getParameters(), userInfo.getSelChannelId());
     }
 
-    /**
-     * 获取当前查询的product code列表（查询条件从session而来）
-     */
-    public List<String> getProductCodeList(String channelId, CmsSessionBean cmsSessionBean) {
-        CmsSearchInfoBean2 searchValue = (CmsSearchInfoBean2) cmsSessionBean.getAttribute("_adv_search_params");
-        return getProductCodeList(channelId, searchValue);
+    public List<String> getProductCodeList(String channelId, Map<String,Object> searchInfo) {
+        CmsSearchInfoBean2 cmsSearchInfoBean2 = new CmsSearchInfoBean2();
+        cmsSearchInfoBean2 = JacksonUtil.json2Bean(JacksonUtil.bean2Json(searchInfo),CmsSearchInfoBean2.class);
+        return getProductCodeList(channelId, cmsSearchInfoBean2);
     }
 
-    private List<String> getProductCodeList(String channelId, CmsSearchInfoBean2 searchValue) {
+    public List<String> getProductCodeList(String channelId, CmsSearchInfoBean2 searchValue) {
         if (searchValue == null) {
             $warn("高级检索 getProductCodeList session中的查询条件为空");
             return new ArrayList<>(0);
@@ -301,8 +300,9 @@ public class CmsAdvanceSearchService extends BaseViewService {
     /**
      * 获取当前查询的product id列表（查询条件从session而来）
      */
-    public List<Long> getProductIdList(String channelId, CmsSessionBean cmsSessionBean) {
-        CmsSearchInfoBean2 searchValue = (CmsSearchInfoBean2) cmsSessionBean.getAttribute("_adv_search_params");
+    public List<Long> getProductIdList(String channelId, Map<String,Object> searchInfo) {
+        CmsSearchInfoBean2 searchValue = new CmsSearchInfoBean2();
+        BeanUtils.copyProperties(searchInfo,searchValue);
         if (searchValue == null) {
             $warn("高级检索 getProductIdList session中的查询条件为空");
             return new ArrayList<>(0);
@@ -449,7 +449,8 @@ public class CmsAdvanceSearchService extends BaseViewService {
         }
         List<String> prodCodeList;
         if (isSelAll == 1) {
-            CmsSearchInfoBean2 searchValue = (CmsSearchInfoBean2) cmsSession.getAttribute("_adv_search_params");
+            CmsSearchInfoBean2 searchValue = new CmsSearchInfoBean2();
+            BeanUtils.copyProperties((Map<String, Object>) params.get("searchInfo"),searchValue);
             cmsProductFreeTagsUpdateService.sendMessage(channelId, searchValue, tagPathList, orgDispTagList, modifier);
         } else {
             prodCodeList = (List<String>) params.get("prodIdList");

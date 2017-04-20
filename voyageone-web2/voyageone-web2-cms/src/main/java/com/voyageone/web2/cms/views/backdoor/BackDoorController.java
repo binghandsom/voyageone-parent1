@@ -1117,16 +1117,15 @@ public class BackDoorController extends CmsController {
      * @return
      */
     @RequestMapping(value = "updateProductJMHashId", method = RequestMethod.GET)
-    public Object updateProductJMHashId(@RequestParam("channelId") String channelId, @RequestParam("flg") String flg) {
+    public Object updateProductJMHashId(@RequestParam("channelId") String channelId, @RequestParam("productCode") String productCode, @RequestParam("flg") String flg) {
 
         List<String> codes = new ArrayList<>();
 
         List<MapModel> promotionCodes = new ArrayList<>();
         if ("1".equals(flg))
-            promotionCodes = cmsBtJmPromotionDaoExt.selectMaxJmHashId(channelId);
+            promotionCodes = cmsBtJmPromotionDaoExt.selectMaxJmHashId(channelId, productCode);
         else if ("2".equals(flg))
-            promotionCodes = cmsBtJmPromotionDaoExt.selectJmProductHashId(channelId);
-
+            promotionCodes = cmsBtJmPromotionDaoExt.selectJmProductHashId(channelId, productCode);
 
             if ("1".equals(flg) || "2".equals(flg)) {
                 promotionCodes.forEach(promtionCode -> {

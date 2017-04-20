@@ -356,7 +356,8 @@
        b.`creater`,b.`modified`,b.`modifier`,b.`created`,b.`product_long_name`,b.`product_medium_name`,
        b.`product_short_name`,b.`search_meta_text_custom`,b.`msrp_usd`,b.`msrp_rmb`,b.`retail_price`,
         b.`sale_price`,b.`hs_code`,b.`hs_name`,b.`hs_unit`,b.`material_en`,b.`material_cn`,b.`category_name`,
-       b.`comment`,IFNULL(b.`image1`,a.`image1`),IFNULL(b.`foreign_language_name`,a.`product_name_en`) AS foreign_language_name,a.`product_code`,a.`channel_id`,a.`app_id`,a.`pc_id`,a.`limit`,a.promotion_tag,a.jm_hash_id,b.jumei_mall_id
+       b.`comment`,IFNULL(b.`image1`,a.`image1`),IFNULL(b.`foreign_language_name`,a.`product_name_en`) AS foreign_language_name,a.`product_code`,a.`channel_id`,a.`app_id`,a.`pc_id`,a.`limit`,a.promotion_tag,a.jm_hash_id,b.jumei_mall_id,
+        a.error_msg
         FROM `cms_bt_jm_promotion_product`  AS a
         Left JOIN `cms_bt_jm_product`  AS b  ON a.`channel_id`=b.`channel_id` AND  a.`product_code`=b.`product_code`
         WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}
@@ -598,4 +599,20 @@ WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
                 SELECT *
         FROM cms_bt_jm_promotion_product where cms_bt_jm_promotion_id = #{promotionProductId}
     </select>
+
+    <update id="updatePromotionTag">
+UPDATE cms_bt_jm_promotion_product a
+  INNER JOIN (SELECT
+                a.cms_bt_jm_promotion_product_id,
+                GROUP_CONCAT(DISTINCT a.tag_name ORDER BY a.cms_bt_tag_id DESC SEPARATOR '|') AS tag_names
+              FROM cms_bt_jm_promotion_tag_product a
+                INNER JOIN cms_bt_jm_promotion_product b
+                  ON a.cms_bt_jm_promotion_product_id = b.id AND b.cms_bt_jm_promotion_id = #{jmPromotionId} AND
+                     a.channel_id = b.channel_id
+              WHERE a.channel_id = #{channelId}
+              GROUP BY a.cms_bt_jm_promotion_product_id) b ON a.id = b.cms_bt_jm_promotion_product_id
+SET a.promotion_tag = b.tag_names
+WHERE a.cms_bt_jm_promotion_id = #{jmPromotionId}
+      AND a.promotion_tag != b.tag_names
+    </update>
 </mapper>

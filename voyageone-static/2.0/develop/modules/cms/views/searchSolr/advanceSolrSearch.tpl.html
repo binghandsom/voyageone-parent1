@@ -201,11 +201,21 @@
                                                     </button>
                                                 </div>
                                                 <div class="col-sm-8">
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control" ng-model="vm.searchInfo.mCatPath" ng-readonly="true">
-                                                        <span class="input-group-btn"><button class="btn btn-default" type="button" translate="BTN_RESET" ng-click="dismiss('mCatPath')"></button></span>
-                                                    </div>
+                                                    <label class="checkbox-inline c-radio">
+                                                        <input type="radio" name="mCatPathOperation" value="1" ng-model="vm.searchInfo.mCatPathType"><span class="fa fa-check"></span> 包含
+                                                    </label>
+                                                    <label class="checkbox-inline c-radio">
+                                                        <input type="radio" name="mCatPathOperation" value="2" ng-model="vm.searchInfo.mCatPathType"><span class="fa fa-check"></span> 不包含
+                                                    </label>
                                                 </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div style="width:58%;float:left;min-height:40px;max-height:160px;background: #EEEEEE; border: 1px solid #C8C2C2; overflow: auto;margin-left:25.7%;">
+                                                    <label ng-repeat="mCatPath in vm.searchInfo.mCatPath">
+                                                        <label class="label label-default m-r-xxs" >{{mCatPath}}</label>{{$last?'':'&nbsp;&nbsp;'}}
+                                                    </label>
+                                                </div>
+                                                <button class="btn btn-default btn-md" style="margin-left:-1px" type="button" translate="BTN_RESET" ng-click="dismiss('mCatPath')"></button>
                                             </div>
                                             <div class="form-group"><!-- 查询Feed类目 -->
                                                 <div class="col-sm-3 text-right">
@@ -214,14 +224,23 @@
                                                     </button>
                                                 </div>
                                                 <div class="col-sm-8">
-                                                    <div class="input-group">
-                                                        <select  multiple chosen class="form-control m-r-xs" ng-model="vm.searchInfo.fCatPathList"
-                                                                 ng-options="cat as cat for cat in vm.searchInfo.fCatPathList"
-                                                                 width="'100%'">
-                                                        </select>
-                                                        <span class="input-group-btn"><button class="btn btn-default" type="button" translate="BTN_RESET" ng-click="dismiss('fCatPathList')"></button></span>
-                                                    </div>
+                                                    <label class="checkbox-inline c-radio">
+                                                        <input type="radio" name="fCatPathOperation" value="1" ng-model="vm.searchInfo.fCatPathType"><span class="fa fa-check"></span> 包含
+                                                    </label>
+                                                    <label class="checkbox-inline c-radio">
+                                                        <input type="radio" name="fCatPathOperation" value="2" ng-model="vm.searchInfo.fCatPathType"><span class="fa fa-check"></span> 不包含
+                                                    </label>
                                                 </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-3"></div>
+                                                <div class="col-sm-8">
+                                                    <select multiple chosen width="'100%'" class="form-control" ng-model="vm.searchInfo.fCatPathList"
+                                                            ng-options="cat as cat for cat in vm.searchInfo.fCatPathList">
+                                                        <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
+                                                    </select>
+                                                </div>
+                                                <button class="btn btn-default btn-md" style="margin-left:-1px" type="button" translate="BTN_RESET" ng-click="dismiss('fCatPathList')"></button>
                                             </div>
                                             <div class="form-group"><!-- 查询自由标签 -->
                                                 <div class="col-sm-3 text-right">
@@ -327,7 +346,7 @@
                                 </div>
                                 <div class="col-sm-4" ng-controller="popupCtrl">
                                     <div class="form-horizontal">
-                                        <div class="form-group" ng-if="vm._cart_display&&vm._mmmcart_display"><!-- 锁定商品 -->
+                                        <div class="form-group" ng-if="vm._cart_display"><!-- 锁定商品 -->
                                             <label class="col-sm-3 control-label" >锁定商品</label>
                                             <div class="col-sm-8">
                                                 <div class="col-sm-10">
@@ -352,6 +371,14 @@
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_TAG_STORE_CLASSIFY' | translate}}
                                                     </button>
                                                 </div>
+                                            </div>
+                                            <div>
+                                                <label class="checkbox-inline c-radio">
+                                                    <input type="radio" name="shopCatOperation" value="1" ng-model="vm.searchInfo.shopCatType"><span class="fa fa-check"></span> 包含
+                                                </label>
+                                                <label class="checkbox-inline c-radio">
+                                                    <input type="radio" name="shopCatOperation" value="2" ng-model="vm.searchInfo.shopCatType"><span class="fa fa-check"></span> 不包含
+                                                </label>
                                             </div>
                                             <div class="col-sm-6" style="min-height: 42px; max-height: 160px;background: #EEEEEE; border: 1px solid #C8C2C2;overflow: auto;margin:8px 0px 0px 4px">
                                                 <label class="label label-default m-r-xs m-t-xs" ng-repeat="shopCat in vm._shopCatValues" style="display: inline-block;">{{shopCat}}</label>
@@ -471,9 +498,11 @@
                                     <a href="javascript:void(0)" ng-click="cfmRetailPrice(null)">全店铺指导价变更确认</a>
                                 </li>
                                 <li>
+                                    <a href="javascript:void(0)" ng-click="clientMsrpConfirm()">客户建议售价确认</a>
+                                </li>
+                                <li>
                                     <a href="javascript:void(0)" ng-click="_openPutOnOff(openPutOnOff)">{{'TXT_ALL_PUT_ON|OFF'|translate}}</a>
                                 </li>
-
                                 <li>
                                     <a href="javascript:void(0)" ng-click="refreshRetailPrice(null)">重新计算价格</a>
                                 </li>
@@ -739,8 +768,11 @@
                                             </button>
                                         </td>
                                         <td class="text-left" ng-repeat="prop1 in productInfo.commArr">
-                                            <span ng-if="prop1.value.length > 50"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
-                                            <span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
+                                            <span ng-if = "prop1.value.length <= 50 && prop1.value != 'clientMsrpPrice'">{{prop1.value}}</span>
+                                            <span ng-if = "prop1.value.length > 50 && prop1.value != 'clientMsrpPrice'"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
+                                            <span ng-if = "prop1.value == 'clientMsrpPrice'">
+                                                <client-msrp-price data="productInfo.common.skus"></client-msrp-price>
+                                            </span>
                                         </td>
                                         <td class="text-left" ng-repeat="prop2 in productInfo.custArr" title="{{prop2.value}}">
                                             <span ng-if="prop2.value.length > 50"><popover-text content="prop2.value" direct="left" size="50"></popover-text></span>

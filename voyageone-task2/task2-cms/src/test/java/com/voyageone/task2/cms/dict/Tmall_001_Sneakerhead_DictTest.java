@@ -47,7 +47,113 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 		}
 
 //		doJM(); // 聚美
+//		 临时添加一套全自定义图片模板（天猫，京东）
+		doCreateJson("详情页描述_全自定义_PC", false, doDict_详情页描述_全自定义_PC()); // pc
 
+		doCreateJson("详情页描述_全自定义_APP", false, doDict_详情页描述_全自定义_APP()); // app
+
+	}
+
+	private RuleExpression doDict_详情页描述_全自定义_PC() {
+
+		RuleExpression ruleRoot = new RuleExpression();
+
+		for (int i = 0; i < 20; i++) {
+			// 自定义图
+			RuleExpression htmlTemplate = new RuleExpression();
+			htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG));
+
+			RuleExpression imageTemplate = null;
+
+			RuleExpression imageType = new RuleExpression();
+			imageType.addRuleWord(new TextWord(C_自定义图片));
+
+			RuleExpression viewType = new RuleExpression();
+			viewType.addRuleWord(new TextWord("1"));
+
+			RuleExpression imageIndex = new RuleExpression();
+			imageIndex.addRuleWord(new TextWord(String.valueOf(i)));
+
+			RuleExpression useOriUrl = new RuleExpression();
+			useOriUrl.addRuleWord(new TextWord("1"));
+
+			CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, viewType, null, imageIndex);
+			ruleRoot.addRuleWord(new CustomWord(word));
+		}
+		return ruleRoot;
+	}
+
+	private RuleExpression doDict_详情页描述_全自定义_APP() {
+
+		// 根字典
+		RuleExpression ruleRoot = new RuleExpression();
+		{
+			// start
+			String kv = "{\"wireless_desc\":{";
+			TextWord word = new TextWord(kv);
+			ruleRoot.addRuleWord(word);
+		}
+
+		{
+			// item_info 商品信息
+			String kv = "\"item_info\":{\"item_info_enable\":\"false\"},";
+			TextWord word = new TextWord(kv);
+			ruleRoot.addRuleWord(word);
+		}
+
+		{
+			// coupon 优惠
+			String kv = "\"coupon\":{\"coupon_enable\":\"true\",\"coupon_id\":\"1305964\"},";
+			TextWord word = new TextWord(kv);
+			ruleRoot.addRuleWord(word);
+		}
+
+		{
+			// hot_recommanded 同店推荐
+			String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"true\",\"hot_recommanded_id\":\"";
+			TextWord word = new TextWord(kv);
+			ruleRoot.addRuleWord(word);
+
+			// 同店推荐的field_id
+			MasterWord masterWord = new MasterWord("hot_recommanded_id");
+			ruleRoot.addRuleWord(masterWord);
+
+			kv = "\"},";
+			word = new TextWord(kv);
+			ruleRoot.addRuleWord(word);
+		}
+
+		{
+			// shop_discount 店铺活动
+			String kv = "\"shop_discount\":{\"shop_discount_enable\":\"true\",\"shop_discount_id\":\"1305997\"},";
+			TextWord word = new TextWord(kv);
+			ruleRoot.addRuleWord(word);
+		}
+
+		{
+			// item_picture 商品图片
+			String kv = "\"item_picture\":{\"item_picture_enable\":\"true\"";
+			TextWord word = new TextWord(kv);
+			ruleRoot.addRuleWord(word);
+
+			for (int i = 0; i < 20; i++) {
+				// 20张自定义图
+				do处理无线端20张图片(i, ruleRoot, new DictWord("无线自定义图片-" + (i + 1))); // 原图，参照target
+			}
+
+			// end
+			String endStr = "}";
+			TextWord endWord = new TextWord(endStr);
+			ruleRoot.addRuleWord(endWord);
+		}
+		{
+			// end
+			String kv = "}}";
+			TextWord word = new TextWord(kv);
+			ruleRoot.addRuleWord(word);
+		}
+//
+		return ruleRoot;
 	}
 
 	private RuleExpression doDict_商品标题与图片(int cartId, int idx) {
@@ -103,6 +209,10 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 					RuleExpression rImageIdx = new RuleExpression();
 					rImageIdx.addRuleWord(new TextWord(String.valueOf(iImgIdx)));
 					customModuleParam.setImageIdx(rImageIdx);
+
+					RuleExpression rPaddingImageType = new RuleExpression();
+					rPaddingImageType.addRuleWord(new TextWord("1stProductImage"));
+					customModuleParam.setPaddingImageType(rPaddingImageType);
 
 					CustomWordValueGetProductFieldInfo customWord = new CustomWordValueGetProductFieldInfo();
 					customWord.setUserParam(customModuleParam);
@@ -160,6 +270,10 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 					RuleExpression rImageIdx = new RuleExpression();
 					rImageIdx.addRuleWord(new TextWord(String.valueOf(iImgIdx)));
 					customModuleParam.setImageIdx(rImageIdx);
+
+					RuleExpression rPaddingImageType = new RuleExpression();
+					rPaddingImageType.addRuleWord(new TextWord("1stProductImage"));
+					customModuleParam.setPaddingImageType(rPaddingImageType);
 
 					CustomWordValueGetProductFieldInfo customWord = new CustomWordValueGetProductFieldInfo();
 					customWord.setUserParam(customModuleParam);
@@ -230,6 +344,10 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 					rImageIdx.addRuleWord(new TextWord(String.valueOf(iImgIdx)));
 					customModuleParam.setImageIdx(rImageIdx);
 
+					RuleExpression rPaddingImageType = new RuleExpression();
+					rPaddingImageType.addRuleWord(new TextWord("1stProductImage"));
+					customModuleParam.setPaddingImageType(rPaddingImageType);
+
 					CustomWordValueGetProductFieldInfo customWord = new CustomWordValueGetProductFieldInfo();
 					customWord.setUserParam(customModuleParam);
 
@@ -283,6 +401,10 @@ public class Tmall_001_Sneakerhead_DictTest extends BaseDictTest {
 					RuleExpression rImageIdx = new RuleExpression();
 					rImageIdx.addRuleWord(new TextWord(String.valueOf(iImgIdx)));
 					customModuleParam.setImageIdx(rImageIdx);
+
+					RuleExpression rPaddingImageType = new RuleExpression();
+					rPaddingImageType.addRuleWord(new TextWord("1stProductImage"));
+					customModuleParam.setPaddingImageType(rPaddingImageType);
 
 					CustomWordValueGetProductFieldInfo customWord = new CustomWordValueGetProductFieldInfo();
 					customWord.setUserParam(customModuleParam);

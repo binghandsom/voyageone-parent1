@@ -8,6 +8,7 @@ package com.voyageone.ims.rule_expression;
  * @propName 当数据类型是text的场合， 这个项目就是common里的属性名称
  * @imageType 当数据类型是image的场合， 这个项目就是指图片类型（商品图之类的）
  * @imageIdx 当数据类型是image的场合， 第几张图片
+ * @paddingImageType 当数据类型是image的场合， 第几张图片不存在的时候， 用什么方式来补（不设置就是不补）
  */
 public class CustomModuleUserParamGetProductFieldInfo extends CustomModuleUserParam {
     //user param
@@ -17,6 +18,7 @@ public class CustomModuleUserParamGetProductFieldInfo extends CustomModuleUserPa
     private RuleExpression propName;
     private RuleExpression imageType;
     private RuleExpression imageIdx;
+    private RuleExpression paddingImageType;
 
     public CustomModuleUserParamGetProductFieldInfo() {}
 
@@ -25,13 +27,15 @@ public class CustomModuleUserParamGetProductFieldInfo extends CustomModuleUserPa
                                                     RuleExpression dataType,
                                                     RuleExpression propName,
                                                     RuleExpression imageType,
-                                                    RuleExpression imageIdx) {
+                                                    RuleExpression imageIdx,
+                                                    RuleExpression paddingImageType) {
         this.isMain = isMain;
         this.codeIdx = codeIdx;
         this.dataType = dataType;
         this.propName = propName;
         this.imageType = imageType;
         this.imageIdx = imageIdx;
+        this.paddingImageType = paddingImageType;
     }
 
     public RuleExpression getIsMain() {
@@ -80,5 +84,13 @@ public class CustomModuleUserParamGetProductFieldInfo extends CustomModuleUserPa
 
     public void setImageIdx(RuleExpression imageIdx) {
         this.imageIdx = imageIdx;
+    }
+
+    public RuleExpression getPaddingImageType() {
+        return paddingImageType;
+    }
+
+    public void setPaddingImageType(RuleExpression paddingImageType) {
+        this.paddingImageType = paddingImageType;
     }
 }

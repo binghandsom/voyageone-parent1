@@ -69,12 +69,12 @@
 
                                         <div class="col-sm-8 form-inline">
                                             <div class="input-group col-sm-4">
-                                                <input type="number" value=""  style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}" class="form-control" ng-model="searchInfo.beginDiscount"
-                                                                                     placeholder="from"></div>
+                                                <input type="number" value="" style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}" class="form-control" ng-model="searchInfo.beginDiscount"
+                                                       placeholder="from"></div>
                                             &nbsp;~&nbsp;
                                             <div class="input-group col-sm-4">
-                                                <input type="number" value=""  style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}" class="form-control" ng-model="searchInfo.endDiscount"
-                                                                                     placeholder="to"></div>
+                                                <input type="number" value="" style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}" class="form-control" ng-model="searchInfo.endDiscount"
+                                                       placeholder="to"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -163,153 +163,160 @@
             </div>
         </div>
 
-            <div class="text-right">
-                <button class="btn btn-default" ng-click="openJmPromotionProductImportWin()" ng-hide="vm.isEnd"><i class="fa fa-reply-all"></i>&nbsp;导入 </button>
-                <!--<div class="btn-group dropdown" uib-dropdown=""  ng-if="vm.modelList.length">-->
-                    <!--<button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">-->
-                        <!--<i class="glyphicon glyphicon-share-alt"></i>&nbsp;导出&nbsp;<span class="caret"></span>-->
-                    <!--</button>-->
-                    <!--<ul uib-dropdown-menu="" class="ng-scope dropdown-menu">-->
-                        <!--<li><a href="" ng-click="addExport(0)">按上新模板</a></li>-->
-                    <!--</ul>-->
-                <!--</div>-->
-                <div class="btn-group dropdown" uib-dropdown="">
-                    <button ng-disabled="!vm.modelList.length" type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-arrow-circle-right"></i>&nbsp;全量操作&nbsp;<span class="caret"></span>
-                    </button>
-                    <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
-                        <li><a href="" ng-click="deleteAllProduct();" ng-if="!vm.isBegin&&!vm.isEnd">全量清空</a></li>
-                        <li><a href="" ng-click="copyDealAll()" ng-if="!vm.isBegin&&!vm.isEnd&&vm.isUpdateJM">全量上传</a></li>
-                        <li><a href="" ng-click="synchAllMallPrice()" ng-if="!vm.isBegin&&!vm.isEnd&&vm.isUpdateJM && true == vm.spDataService.editModel.model.promotionScene[2]">全量同步商城价格</a></li>
-                        <li><a href="" ng-click="synchAllPrice()" ng-if="!vm.isBegin&&!vm.isEnd&&vm.isUpdateJM && true == vm.spDataService.editModel.model.promotionScene[1]">全量同步活动价格</a></li>
-                        <li><a href="" ng-click="openDealExtensionWin()" ng-hide="!vm.isUpdateJM&&!vm.isEnd">全量Deal延期</a></li>
-                    </ul>
-                </div>
-                <div class="btn-group dropdown" uib-dropdown="" >
-                    <button ng-disabled="!vm.modelList.length" type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-arrow-circle-right"></i>&nbsp;批量操作&nbsp;<span class="caret"></span>
-                    </button>
-                    <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
-                        <li><a href="" ng-click="batchDeleteProduct()">批量清空</a></li>
-                        <li><a href="" ng-click="batchCopyDeal()" ng-if="!vm.isEnd && vm.isUpdateJM">批量上传</a></li>
-                        <li><a href="" ng-click="batchSynchMallPrice()" ng-if="!vm.isEnd && vm.isUpdateJM && true == vm.spDataService.editModel.model.promotionScene[2]">批量同步商城价格</a></li>
-                        <li><a href="" ng-click="batchSynchPrice()" ng-if="!vm.isEnd && vm.isUpdateJM && true == vm.spDataService.editModel.model.promotionScene[1]">批量同步活动价格</a></li>
-                        <li><a href="" ng-click="openPriceModifyWin()" ng-if="!vm.isEnd">批量变更价格</a></li>
-                        <li><a href="" ng-click="openTagModifyWin()" ng-if="!vm.isEnd && vm.isUpdateJM">批量修改Tag</a></li>
-                    </ul>
-                </div>
+        <div class="text-right" style="padding-right: 80px;padding-bottom: 5px;">
+            <label class="checkbox-inline c-checkbox" style="margin-top:12px">
+                <input type="checkbox"  ng-model="vm._selall">
+                <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;检索结果全量&nbsp;
+            </label>
+            <button class="btn btn-default" ng-click="openJmPromotionProductImportWin()" ng-hide="vm.isEnd"><i class="fa fa-reply-all"></i>&nbsp;导入
+            </button>
+            <div class="btn-group dropdown" uib-dropdown="">
+                <button ng-disabled="!vm.modelList.length" type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle=""
+                        aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-arrow-circle-right"></i>&nbsp;全量操作&nbsp;<span class="caret"></span>
+                </button>
+                <ul uib-dropdown-menu="" class="ng-scope dropdown-menu" style="padding-left: 5px;">
+                    <li><a href="" ng-click="deleteAllProduct();" ng-if="!vm.isBegin&&!vm.isEnd">全量清空</a></li>
+                    <li><a href="" ng-click="copyDealAll()" ng-if="!vm.isBegin&&!vm.isEnd&&vm.isUpdateJM">全量上传</a></li>
+                    <li><a href="" ng-click="synchAllMallPrice()"
+                           ng-if="!vm.isBegin&&!vm.isEnd&&vm.isUpdateJM && true == vm.spDataService.editModel.model.promotionScene[2]">全量同步商城价格</a>
+                    </li>
+                    <li><a href="" ng-click="synchAllPrice()"
+                           ng-if="!vm.isBegin&&!vm.isEnd&&vm.isUpdateJM && true == vm.spDataService.editModel.model.promotionScene[1]">全量同步活动价格</a>
+                    </li>
+                    <li><a href="" ng-click="openDealExtensionWin()" ng-hide="!vm.isUpdateJM&&!vm.isEnd">全量Deal延期</a></li>
+                </ul>
             </div>
-            <div class="table-responsive">
-                <table class="table table-hover-new table-hover" style="table-layout: fixed; width: 1850px">
-                    <thead>
-                    <tr>
-                        <th class="mfb-xt3 text-left">
-                            <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox"  ng-click="selectAll($event)" ng-true-value="true" ng-false-value="false"/>
-                                <span class="fa fa-check"></span></label>
-                        </th>
-                        <th class="text-left">Product Image</th>
-                        <th class="text-left">商品代码</th>
-                        <th class="text-left">聚美商品名称</th>
-                        <th class="text-left">Tag Name</th>
-                        <th class="text-left">Color</th>
-                        <th class="text-right" style="width: 170px">Price</th>
-                        <th class="text-right" style="width: 150px">聚美价格</th>
-                        <th class="text-left">聚美MallId</th>
-                        <th class="text-left">聚美Hash ID</th>
-                        <th class="text-center">折扣</th>
-                        <th class="text-center">SKU数</th>
-                        <th class="text-left">错误消息</th>
-                        <th class="text-center">库存数</th>
-                        <th class="text-left">备注</th>
-                        <th class="text-left">变更情况</th>
-                        <th class="text-left">Status</th>
-                        <th class="text-center" style="width: 100px;">Action</th>
-                    </tr>
-                    </thead>
-                    <tbody ng-if="vm.modelList.length">
-                    <tr ng-repeat="model in vm.modelList" >
-                        <td class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"
-                                                                                                       ng-true-value="true"
-                                                                                                       ng-false-value="false"
-                                                                                                       ng-model="model.isChecked"><span
-                                class="fa fa-check"></span></label></td>
-                        <td><img image="{{model.image1}}"class="thumb-sm-search pull-left m-r" /></td>
-                        <td class="text-left yellowLink"><a href="javascript:void(0)"  ng-click="openJmProductDetailWin(model)">
-                            {{model.productCode}}  </a>
-                        </td>
-                        <td class="text-left yellowLink"><a href="javascript:void(0)"  ng-click="openProductDetailWin(model)"> {{model.productLongName}} </a></td>
-                        <td>
-                            <select multiple chosen class="form-control" width="'100%'"  ng-change="changeSelectTag(model,{{model.tagNameList}})" ng-model="model.tagNameList"
-                                    ng-options="m.tagName as m.tagName for m in vm.tagList">
-                            </select>
-                        </td>
-
-                        <td class="text-left">
-                            <div class="table_main">
-                                <ul>
-                                    <li>{{model.colorEn}}</li>
-                                    <li>{{model.attribute}}</li>
-                                </ul>
-                            </div>
-                        </td>
-                        <td class="text-right">
-                            <div class="table_main">
-                                <ul>
-                                    <li>海外官网价格:{{getMinMaxPrice(model.minMsrpUsd,model.maxMsrpUsd)}}</li>
-                                    <li>中国建议售价:{{getMinMaxPrice(model.minMsrpRmb,model.maxMsrpRmb)}}</li>
-                                    <li>中国指导售价:{{getMinMaxPrice(model.minRetailPrice,model.maxRetailPrice)}}</li>
-                                    <li>中国最终售价:{{getMinMaxPrice(model.minSalePrice,model.maxSalePrice)}}</li>
-                                </ul>
-                            </div>
-                        </td>
-                        <td class="text-right" style="width: 130px;">
-                            <div class="table_main">
-                                <ul>
-                                    <li>市场价:{{getMarketPrice(model)}}</li>
-                                    <li>团购价:{{getDealPrice(model)}}</li>
-                                </ul>
-                            </div>
-                        </td>
-                        <td class="text-left yellowLink" style="word-break: break-all">
-                            <a ng-if="model.jumeiMallId" ng-href="{{vm.productUrl}}{{model.jumeiMallId}}.html" target="_blank" ng-bind="model.jumeiMallId"></a>
-                        </td>
-                        <td class="text-left yellowLink" style="word-break: break-all">
-                            <a ng-if="model.jmHashId" ng-href="{{vm.productUrl}}{{model.jmHashId}}.html" target="_blank" ng-bind="model.jmHashId"></a></td>
-                        <td class="text-center">{{model.discount == 0 || model.discount == undefined ? '0折' : (model.discount*10).toFixed(2) + '折'}}</td>
-                        <td class="text-center">
-                            {{model.skuCount}}
-                        </td>
-                        <td>
-                            <a ng-controller="showPopoverCtrl" popover-html="showInfo('{{model.errorMsg}}')"
-                               popover-placement="left" class="ng-scope">
-                                <div class="table_main">
-                                    <ul>
-                                        <li>{{getErrorMsg(model.errorMsg)}}</li>
-                                    </ul>
-                                </div>
-                            </a>
-                        </td>
-                        <td class="text-center">{{model.quantity}}</td>
-                        <td><textarea ng-model="model.remark" ng-blur="updateRemark(model)" class="form-control"></textarea></td>
-                        <td >{{getUpdateStatus(model)}}</td>
-                        <td >{{getStatus(model)}}</td>
-                        <td class="text-center">
-                            <button title="重刷" class="btn btn-success btn-xs" ng-click="updateJM(model.id)"><i class="fa fa-refresh"></i>
-                            </button>
-                            <button title="编辑" class="btn btn-success btn-xs"
-                                    ng-click="openJmProductDetailWin(model)">
-                                <i class="fa fa-pencil"></i></button>
-                            <button title="删除" class="btn btn-danger btn-xs" ng-click="del(model)"><i class="fa fa-trash-o"></i></button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div if-no-rows="vm.modelList.length"></div>
+            <div class="btn-group dropdown" uib-dropdown="" style="padding-left: 5px;">
+                <button ng-disabled="!vm.modelList.length" type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle=""
+                        aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-arrow-circle-right"></i>&nbsp;批量操作&nbsp;<span class="caret"></span>
+                </button>
+                <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
+                    <li><a href="" ng-click="batchDeleteProduct()">批量清空</a></li>
+                    <li><a href="" ng-click="batchCopyDeal()" ng-if="!vm.isEnd && vm.isUpdateJM">批量上传</a></li>
+                    <li><a href="" ng-click="batchSynchMallPrice()"
+                           ng-if="!vm.isEnd && vm.isUpdateJM && true == vm.spDataService.editModel.model.promotionScene[2]">批量同步商城价格</a></li>
+                    <li><a href="" ng-click="batchSynchPrice()"
+                           ng-if="!vm.isEnd && vm.isUpdateJM && true == vm.spDataService.editModel.model.promotionScene[1]">批量同步活动价格</a></li>
+                    <li><a href="" ng-click="openPriceModifyWin()" ng-if="!vm.isEnd">批量变更价格</a></li>
+                    <li><a href="" ng-click="openTagModifyWin()" ng-if="!vm.isEnd && vm.isUpdateJM">批量修改Tag</a></li>
+                </ul>
             </div>
-            <vpagination config="dataPageOption"></vpagination>
         </div>
+        <div class="table-responsive">
+            <table class="table table-hover-new table-hover" style="table-layout: fixed; width: 1850px">
+                <thead>
+                <tr>
+                    <th class="mfb-xt3 text-left">
+                        <label class="checkbox-inline c-checkbox">
+                            <input type="checkbox" ng-click="selectAll($event)" ng-true-value="true" ng-false-value="false"/>
+                            <span class="fa fa-check"></span></label>
+                    </th>
+                    <th class="text-left">Product Image</th>
+                    <th class="text-left">商品代码</th>
+                    <th class="text-left">聚美商品名称</th>
+                    <th class="text-left">Tag Name</th>
+                    <th class="text-left">Color</th>
+                    <th class="text-right" style="width: 170px">Price</th>
+                    <th class="text-right" style="width: 150px">聚美价格</th>
+                    <th class="text-left">聚美MallId</th>
+                    <th class="text-left">聚美Hash ID</th>
+                    <th class="text-center">折扣</th>
+                    <th class="text-center">SKU数</th>
+                    <th class="text-left">错误消息</th>
+                    <th class="text-center">库存数</th>
+                    <th class="text-left">备注</th>
+                    <th class="text-left">变更情况</th>
+                    <th class="text-left">Status</th>
+                    <th class="text-center" style="width: 100px;">Action</th>
+                </tr>
+                </thead>
+                <tbody ng-if="vm.modelList.length">
+                <tr ng-repeat="model in vm.modelList">
+                    <td class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"
+                                                                                                   ng-true-value="true"
+                                                                                                   ng-false-value="false"
+                                                                                                   ng-model="model.isChecked"><span
+                            class="fa fa-check"></span></label></td>
+                    <td><img image="{{model.image1}}" class="thumb-sm-search pull-left m-r"/></td>
+                    <td class="text-left yellowLink"><a href="javascript:void(0)" ng-click="openJmProductDetailWin(model)">
+                        {{model.productCode}} </a>
+                    </td>
+                    <td class="text-left yellowLink"><a href="javascript:void(0)" ng-click="openProductDetailWin(model)">
+                        {{model.productLongName}} </a></td>
+                    <td>
+                        <select multiple chosen class="form-control" width="'100%'" ng-change="changeSelectTag(model,{{model.tagNameList}})"
+                                ng-model="model.tagNameList"
+                                ng-options="m.tagName as m.tagName for m in vm.tagList">
+                        </select>
+                    </td>
 
+                    <td class="text-left">
+                        <div class="table_main">
+                            <ul>
+                                <li>{{model.colorEn}}</li>
+                                <li>{{model.attribute}}</li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <div class="table_main">
+                            <ul>
+                                <li>海外官网价格:{{getMinMaxPrice(model.minMsrpUsd,model.maxMsrpUsd)}}</li>
+                                <li>中国建议售价:{{getMinMaxPrice(model.minMsrpRmb,model.maxMsrpRmb)}}</li>
+                                <li>中国指导售价:{{getMinMaxPrice(model.minRetailPrice,model.maxRetailPrice)}}</li>
+                                <li>中国最终售价:{{getMinMaxPrice(model.minSalePrice,model.maxSalePrice)}}</li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td class="text-right" style="width: 130px;">
+                        <div class="table_main">
+                            <ul>
+                                <li>市场价:{{getMarketPrice(model)}}</li>
+                                <li>团购价:{{getDealPrice(model)}}</li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td class="text-left yellowLink" style="word-break: break-all">
+                        <a ng-if="model.jumeiMallId" ng-href="{{vm.productUrl}}{{model.jumeiMallId}}.html" target="_blank"
+                           ng-bind="model.jumeiMallId"></a>
+                    </td>
+                    <td class="text-left yellowLink" style="word-break: break-all">
+                        <a ng-if="model.jmHashId" ng-href="{{vm.productUrl}}{{model.jmHashId}}.html" target="_blank" ng-bind="model.jmHashId"></a>
+                    </td>
+                    <td class="text-center">{{model.discount == 0 || model.discount == undefined ? '0折' : (model.discount*10).toFixed(2) + '折'}}</td>
+                    <td class="text-center">
+                        {{model.skuCount}}
+                    </td>
+                    <td>
+                        <a ng-controller="showPopoverCtrl" popover-html="showInfo('{{model.errorMsg}}')"
+                           popover-placement="left" class="ng-scope">
+                            <div class="table_main">
+                                <ul>
+                                    <li>{{getErrorMsg(model.errorMsg)}}</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </td>
+                    <td class="text-center">{{model.quantity}}</td>
+                    <td><textarea ng-model="model.remark" ng-blur="updateRemark(model)" class="form-control"></textarea></td>
+                    <td>{{getUpdateStatus(model)}}</td>
+                    <td>{{getStatus(model)}}</td>
+                    <td class="text-center">
+                        <button title="重刷" class="btn btn-success btn-xs" ng-click="updateJM(model.id)"><i class="fa fa-refresh"></i>
+                        </button>
+                        <button title="编辑" class="btn btn-success btn-xs"
+                                ng-click="openJmProductDetailWin(model)">
+                            <i class="fa fa-pencil"></i></button>
+                        <button title="删除" class="btn btn-danger btn-xs" ng-click="del(model)"><i class="fa fa-trash-o"></i></button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div if-no-rows="vm.modelList.length"></div>
+        </div>
+        <vpagination config="dataPageOption"></vpagination>
     </div>
 
     <sticky top-fix="208" style="position: absolute; top: 300px; left: 90%; z-index:9" drag>

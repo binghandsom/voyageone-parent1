@@ -18,7 +18,7 @@ public class CmsSearchInfoBean2 implements Serializable {
     private Integer productPageSize = 0;
 
     // ** 共通搜索条件 **
-    private String mCatPath;
+    private List<String> mCatPath;
     private List<String> fCatPathList;
 
     private String mCatStatus;
@@ -92,6 +92,11 @@ public class CmsSearchInfoBean2 implements Serializable {
     private String sortThreeName;
     private String sortThreeType;
 
+    private Integer mCatPathType;
+    private Integer fCatPathType;
+    private Integer shopCatType;
+    private Integer pCatPathType;
+
     // 自定义查询条件
     private List<Map<String, Object>> custAttrMap;
 
@@ -110,6 +115,17 @@ public class CmsSearchInfoBean2 implements Serializable {
     private Boolean noSale;
 
     private String pLockFlg;
+
+    // 客户建议售价状态
+    private String clientMsrpPriceChgFlg;
+
+    public String getClientMsrpPriceChgFlg() {
+        return clientMsrpPriceChgFlg;
+    }
+
+    public void setClientMsrpPriceChgFlg(String clientMsrpPriceChgFlg) {
+        this.clientMsrpPriceChgFlg = clientMsrpPriceChgFlg;
+    }
 
     public String getpLockFlg() {
         return pLockFlg;
@@ -519,11 +535,11 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.pCatStatus = pCatStatus;
     }
 
-    public String getmCatPath() {
+    public List<String> getmCatPath() {
         return mCatPath;
     }
 
-    public void setmCatPath(String mCatPath) {
+    public void setmCatPath(List<String> mCatPath) {
         this.mCatPath = mCatPath;
     }
 
@@ -634,5 +650,37 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     public void setProductNameCn(String productNameCn) {
         this.productNameCn = productNameCn;
+    }
+
+    public Integer getmCatPathType() {
+        return mCatPathType;
+    }
+
+    public void setmCatPathType(Integer mCatPathType) {
+        this.mCatPathType = mCatPathType;
+    }
+
+    public Integer getfCatPathType() {
+        return fCatPathType;
+    }
+
+    public void setfCatPathType(Integer fCatPathType) {
+        this.fCatPathType = fCatPathType;
+    }
+
+    public Integer getShopCatType() {
+        return shopCatType;
+    }
+
+    public void setShopCatType(Integer shopCatType) {
+        this.shopCatType = shopCatType;
+    }
+
+    public Integer getpCatPathType() {
+        return pCatPathType;
+    }
+
+    public void setpCatPathType(Integer pCatPathType) {
+        this.pCatPathType = pCatPathType;
     }
 }

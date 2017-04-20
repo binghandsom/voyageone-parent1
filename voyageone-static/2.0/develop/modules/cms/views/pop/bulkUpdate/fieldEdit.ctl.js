@@ -14,7 +14,8 @@ define([
                 property: {},
                 productIds: context.productIds,
                 isSelAll: context.isSelAll,
-                cartId: context.cartId
+                cartId: context.cartId,
+                searchInfo:context.searchInfo
             },
             properties: [],
             selCnt: context.selCnt,

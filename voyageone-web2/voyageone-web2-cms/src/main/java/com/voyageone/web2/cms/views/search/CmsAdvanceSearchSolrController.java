@@ -159,7 +159,7 @@ public class CmsAdvanceSearchSolrController extends CmsController {
         resultBean.put("productUrl", platformService.getPlatformProductUrl(cartId.toString()));
 
         // 查询商品其它画面显示用的信息
-        List[] infoArr = advSearchOtherService.getGroupExtraInfo(prodInfoList, userInfo.getSelChannelId(), cartId, false);
+        List[] infoArr = advSearchOtherService.getProductExtraInfo(prodInfoList, userInfo.getSelChannelId(), cartId);
         resultBean.put("prodOrgChaNameList", infoArr[0]);
         resultBean.put("freeTagsList", infoArr[1]);
 
@@ -282,7 +282,7 @@ public class CmsAdvanceSearchSolrController extends CmsController {
         resultBean.put("productListTotal", productListTotal);
 
         // 查询商品其它画面显示用的信息
-        List[] infoArr = advSearchOtherService.getGroupExtraInfo(prodInfoList, userInfo.getSelChannelId(), cartId, false);
+        List[] infoArr = advSearchOtherService.getProductExtraInfo(prodInfoList, userInfo.getSelChannelId(), cartId);
         resultBean.put("prodOrgChaNameList", infoArr[0]);
         resultBean.put("freeTagsList", infoArr[1]);
 

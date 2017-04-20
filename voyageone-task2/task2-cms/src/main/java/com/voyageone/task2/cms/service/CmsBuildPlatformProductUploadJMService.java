@@ -1156,23 +1156,18 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
         // 判断一下聚美详情， 用哪套模板
         String strJumeiDetailTemplateName = "聚美详情";
-        if (product.getChannelId().equals("928")) {
+        if (ChannelConfigEnums.Channel.USJGJ.getId().equals(product.getChannelId())) {
+            strJumeiDetailTemplateName = "聚美详情-非重点";
             if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                 String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
                 if (StringUtils.isEmpty(detailName)) detailName = "";
-                if (detailName.equals("天猫同购描述-重点商品")) {
-                    strJumeiDetailTemplateName = "聚美详情-重点商品";
-                } else if (detailName.equals("天猫同购描述-无属性图")) {
-                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
-                } else if (detailName.equals("天猫同购描述-非重点之英文长描述")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之英文长描述";
-                } else if (detailName.equals("天猫同购描述-非重点之中文长描述")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之中文长描述";
-                } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之中文使用说明";
-                } else if (detailName.equals("天猫同购描述-爆款商品")) {
-                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                if (detailName.equals("天猫同购描述-重点")) {
+                    strJumeiDetailTemplateName = "聚美详情-重点";
+                } else if (detailName.equals("天猫同购描述-非重点")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点";
+                } else if (detailName.equals("天猫同购描述-爆款")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点"; // 注： 这里不是写错了， 确实要这样做
                 }
             }
         }
@@ -1559,23 +1554,18 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
         // 判断一下聚美详情， 用哪套模板
         String strJumeiDetailTemplateName = "聚美详情";
-        if (product.getChannelId().equals("928")) {
+        if (ChannelConfigEnums.Channel.USJGJ.getId().equals(product.getChannelId())) {
+            strJumeiDetailTemplateName = "聚美详情-非重点";
             if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                 String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
                 if (StringUtils.isEmpty(detailName)) detailName = "";
-                if (detailName.equals("天猫同购描述-重点商品")) {
-                    strJumeiDetailTemplateName = "聚美详情-重点商品";
-                } else if (detailName.equals("天猫同购描述-无属性图")) {
-                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
-                } else if (detailName.equals("天猫同购描述-非重点之英文长描述")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之英文长描述";
-                } else if (detailName.equals("天猫同购描述-非重点之中文长描述")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之中文长描述";
-                } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之中文使用说明";
-                } else if (detailName.equals("天猫同购描述-爆款商品")) {
-                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                if (detailName.equals("天猫同购描述-重点")) {
+                    strJumeiDetailTemplateName = "聚美详情-重点";
+                } else if (detailName.equals("天猫同购描述-非重点")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点";
+                } else if (detailName.equals("天猫同购描述-爆款")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点"; // 注： 这里不是写错了， 确实要这样做
                 }
             }
         }
@@ -1788,6 +1778,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
 
         for (BaseMongoMap<String, Object> jmSku : jmSkus) {
+            if (Boolean.parseBoolean(jmSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
             //填写CmsBtJMSku
             // update by desmond 2016/07/08 start
 //            String size = jmSku.getStringAttribute("size");
@@ -1796,6 +1787,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             // update by desmond 2016/07/08 end
             CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, jmSku, sizeStr);
             list.add(cmsBtJmSkuModel);
+            }
         }
 
         return list;
@@ -2009,6 +2001,15 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      */
     public void uploadMall(CmsBtProductModel product, ShopBean shopBean, ExpressionParser expressionParser, List<String> addSkuList, Map<String, Integer> skuLogicQtyMap) throws Exception {
         String mallId = product.getPlatform(CART_ID).getpPlatformMallId(); // 聚美Mall Id.
+        List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
+        // 要增加的sku的售卖状态不确定 所以也要更新成isSale = true的sku的价格  charis update
+        // 20170413 charis 聚美商城价格取isSale = true的任何一个 保证价格一致  STA
+        BaseMongoMap<String, Object> isOnSaleSku = skuList.stream()
+                .filter(s -> Boolean.parseBoolean(s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name())))
+                .findFirst()
+                .orElse(new BaseMongoMap<>());
+        // 20170413 charis 聚美商城价格取isSale = true的任何一个 保证价格一致  END
+
         if (StringUtils.isEmpty(mallId)) {
             // 新增
             StringBuffer sb = new StringBuffer("");
@@ -2032,7 +2033,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
             {
                 // 更新mall价格
-                updateMallPrice(product, shopBean, addSkuList);
+                updateMallPrice(product, shopBean, addSkuList, isOnSaleSku);
             }
 
         } else {
@@ -2041,7 +2042,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
             // 追加sku
             if (ListUtils.notNull(addSkuList)) {
-                List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
+//                List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
                 List<CmsBtProductModel_Sku> commonSkus = product.getCommon().getSkus();
                 skuList = mergeSkuAttr(skuList, commonSkus);
                 for (BaseMongoMap<String, Object> sku : skuList) {
@@ -2066,9 +2067,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         // 库存
                         skuInfo.setStocks(stock);
                         // 商城价
-                        skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+                        skuInfo.setMall_price(isOnSaleSku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
                         // 市场价
-                        skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+                        skuInfo.setMarket_price(isOnSaleSku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
 
                         StringBuffer sb = new StringBuffer("");
                         String jumeiSkuNo = jumeiHtMallService.addMallSku(shopBean, mallSkuAddInfo, sb);
@@ -2091,10 +2092,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 }
             }
 
-            {
-                // 更新mall价格
-                updateMallPrice(product, shopBean, addSkuList);
-            }
+
+            // 更新mall价格
+            updateMallPrice(product, shopBean, addSkuList, isOnSaleSku);
+
 
             {
                 // 变更聚美商城商品
@@ -2123,23 +2124,18 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 // 本单详情
                 // 判断一下聚美详情， 用哪套模板
                 String strJumeiDetailTemplateName = "聚美详情";
-                if (product.getChannelId().equals("928")) {
+                if (ChannelConfigEnums.Channel.USJGJ.getId().equals(product.getChannelId())) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点";
                     if (product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                         String detailName = product.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
                         if (StringUtils.isEmpty(detailName)) detailName = "";
-                        if (detailName.equals("天猫同购描述-重点商品")) {
-                            strJumeiDetailTemplateName = "聚美详情-重点商品";
-                        } else if (detailName.equals("天猫同购描述-无属性图")) {
-                            strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
-                        } else if (detailName.equals("天猫同购描述-非重点之英文长描述")) {
-                            strJumeiDetailTemplateName = "聚美详情-非重点之英文长描述";
-                        } else if (detailName.equals("天猫同购描述-非重点之中文长描述")) {
-                            strJumeiDetailTemplateName = "聚美详情-非重点之中文长描述";
-                        } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
-                            strJumeiDetailTemplateName = "聚美详情-非重点之中文使用说明";
-                        } else if (detailName.equals("天猫同购描述-爆款商品")) {
-                            strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                        if (detailName.equals("天猫同购描述-重点")) {
+                            strJumeiDetailTemplateName = "聚美详情-重点";
+                        } else if (detailName.equals("天猫同购描述-非重点")) {
+                            strJumeiDetailTemplateName = "聚美详情-非重点";
+                        } else if (detailName.equals("天猫同购描述-爆款")) {
+                            strJumeiDetailTemplateName = "聚美详情-非重点"; // 注： 这里不是写错了， 确实要这样做
                         }
                     }
                 }
@@ -2211,10 +2207,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         // add by desmond 2016/10/18 end
     }
 
-    private void updateMallPrice(CmsBtProductModel product, ShopBean shopBean, List<String> addSkuList) throws Exception {
+    private void updateMallPrice(CmsBtProductModel product, ShopBean shopBean,
+                                 List<String> addSkuList, BaseMongoMap<String, Object> isOnSaleSku) throws Exception {
         // 更新mall价格
         List<HtMallSkuPriceUpdateInfo> updateData = new ArrayList<>();
         List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
+
+
         // 聚美批量修改价格一次最多只能修改20个sku，sku个数超过20时所以要循环一下
         String errMsg = "";
         int updateCnt = 0;
@@ -2230,13 +2229,16 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                     // 当jmSkuNo不为空时,才加到updateData中，否则批量修改商城商品价格[MALL]时会报100002：jumei_sku_no,参数错误
                     // add 2016/10/30 由于现在取得聚美的上新Data里面连P27.skus.isSale=false(不在该平台售卖)的sku也抽出来的，
                     // 所以这里也要过滤一下isSale=false的sku,不然会报"skuNo:70118904460不在售卖状态, 请核实"的错误
-                    if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))
-                            && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                    if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))) {
+                            // charis update
+//                            && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                            // charis update
+
                         // 不是新追加的
                         HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
                         skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
-                        skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
-                        skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+                        skuInfo.setMarket_price(isOnSaleSku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+                        skuInfo.setMall_price(isOnSaleSku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
                         updateData.add(skuInfo);
                         // 超过20个暂停加入
                         if (updateData.size() >= 20) {

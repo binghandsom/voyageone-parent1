@@ -310,7 +310,7 @@ public class CmsBtJmPromotionService extends BaseService {
                 setJmPromotionStepStatus(parameter.getModel().getId(), JmPromotionStepNameEnum.PromotionDetail, JmPromotionStepStatusEnum.Error, userName);
             }
             parameter.getModel().setModifier(userName);
-            updateModel(parameter);
+            updateModel(parameter, userName);
             saveCmsBtPromotion(parameter.getModel());
             if (parameter.isHasExt()) {
                 // 活动详情编辑
@@ -394,12 +394,12 @@ public class CmsBtJmPromotionService extends BaseService {
         CmsBtPromotionModel promotion = daoCmsBtPromotion.selectOne(map);
         if (promotion == null) {
             promotion = new CmsBtPromotionModel();
+            promotion.setChannelId(model.getChannelId());
+            promotion.setCreater(model.getCreater());
         }
         promotion.setPromotionId(model.getId());
         promotion.setRefTagId(model.getRefTagId());
-        promotion.setChannelId(model.getChannelId());
         promotion.setModifier(model.getModifier());
-        promotion.setCreater(model.getCreater());
         promotion.setActive(model.getActive());
         if (model.getActivityStart() != null) {
             promotion.setActivityStart(DateTimeUtil.getDateTime(model.getActivityStart(), "yyyy-MM-dd HH:mm:ss"));
@@ -428,7 +428,7 @@ public class CmsBtJmPromotionService extends BaseService {
         return promotion.getId();
     }
 
-    private int updateModel(CmsBtJmPromotionSaveBean parameter) {
+    private int updateModel(CmsBtJmPromotionSaveBean parameter, String userName) {
         CmsBtJmPromotionModel jmPromotionModel = parameter.getModel();
 
         if (jmPromotionModel.getRefTagId() == 0) {
@@ -461,6 +461,8 @@ public class CmsBtJmPromotionService extends BaseService {
                             if (module.getModuleTitle() != tagModel.getTagName()) {
                                 module.setModuleTitle(tagModel.getTagName());
                                 tagService.updateTagModel(module);
+                                // 更新promotionTag中的tag名称
+                                cmsBtJmPromotionTagProductDaoExt.updatePromotionTagName(tagModel.getTagName(), userName, tagModel.getId());
                             }
                         }
                     } else {
@@ -472,6 +474,9 @@ public class CmsBtJmPromotionService extends BaseService {
 
                 }).filter(f -> f != null)
                 .collect(toList());
+
+        // 如果有一个tag名称发生变更,则需要更新所有product的promotion_tag
+        cmsBtJmPromotionProductDaoExt.updatePromotionTag(jmPromotionModel.getId(), jmPromotionModel.getChannelId());
 
         // 更新飘窗
         CmsBtJmBayWindowModel jmBayWindowModel = cmsBtJmBayWindowService.getBayWindowByJmPromotionId(jmPromotionModel.getId());

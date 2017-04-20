@@ -14,6 +14,7 @@ define([
         var tempGroupSelect = new selectRowsFactory(),
             tempProductSelect = new selectRowsFactory();
 
+        this.resetSearchInfo = resetSearchInfo;
         /**
          * 检索product
          */
@@ -143,24 +144,31 @@ define([
             var commArr = [];
             _.forEach(commonProps, function (data) {
                 var itemVal = '';
-                if ("comment" == data.propId) {
-                    itemVal = prodInfo.common.comment;
-                } else if ('created' == data.propId) {
-                    itemVal = prodInfo.created;
-                } else {
-                    itemVal = prodInfo.common.fields[data.propId];
+
+                switch (data.propId) {
+                    case "comment":
+                        itemVal = prodInfo.common.comment;
+                        break;
+                    case "created":
+                        itemVal = prodInfo.created;
+                        break;
+                    case  "clientMsrpPrice":
+                        itemVal = data.propId;
+                        break;
+                    case "isMasterMain":
+                        // 原始主商品的转换
+                        if (itemVal == 1)
+                            itemVal = '是';
+                        else if (itemVal == 0)
+                            itemVal = '否';
+                        break;
+                    default:
+                        itemVal = prodInfo.common.fields[data.propId];
                 }
-                // 原始主商品的转换
-                if (data.propId == 'isMasterMain') {
-                    if (itemVal == 1) {
-                        itemVal = '是';
-                    } else if (itemVal == 0) {
-                        itemVal = '否';
-                    }
-                }
-                if (itemVal == undefined) {
+
+                if (itemVal == undefined)
                     itemVal = "";
-                }
+
                 commArr.push({value: itemVal.toString()});
             });
             prodInfo.commArr = commArr;

@@ -109,17 +109,17 @@ define(['underscore'], function (_) {
         /**
          * 京东匠心界
          */
-        USJGJ: new Cart('USJGJ', 928, 'USJOI匠心界', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
+        USJGJ: new Cart('USJGJ', 928, 'USJOI匠心界', ''),
 
         /**
          * 京东悦境
          */
-        USJGY: new Cart('USJGY', 929, 'USJOI悦境', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
+        USJGY: new Cart('USJGY', 929, 'USJOI悦境', ''),
 
         /**
          * 测试USJOI
          */
-        USJGT: new Cart('USJGT', 998, 'USJOI测试京东', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
+        USJGT: new Cart('USJGT', 998, 'USJOI测试京东', ''),
 
         /**
          * 京东匠心界
@@ -134,7 +134,7 @@ define(['underscore'], function (_) {
         /**
          * 测试USJOI
          */
-        JGT: new Cart('JGT', 98, 'USJOI测试', 'https://detail.tmall.hk/hk/item.htm?id='),
+        JGT: new Cart('JGT', 98, 'USJOI测试', ''),
 
         /**
          * Mini Mall

@@ -137,7 +137,7 @@ public class CmsProductDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.REFRESH_PRODUCT_CATEGORY)
     public AjaxResponse doRefreshProductCategory(@RequestBody Map requestMap) {
 
-        Map<String, Object> resultMap = productPropsEditService.refreshProductCategory(requestMap, getUser(), getCmsSession());
+        Map<String, Object> resultMap = productPropsEditService.refreshProductCategory(requestMap, getUser());
 
         return success(resultMap);
     }
@@ -192,7 +192,7 @@ public class CmsProductDetailController extends CmsController {
         //{prodId: "5992", appSwitch: "0"}
         Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
 
-        int appSwitch = ConvertUtil.toInt(requestMap.get("appSwitch"));
+        String appSwitch = (String) requestMap.get("appSwitch");
 
         productService.updateProductAppSwitch(getUser().getSelChannelId(), prodId, appSwitch, getUser().getUserName());
 
@@ -203,7 +203,7 @@ public class CmsProductDetailController extends CmsController {
         //{prodId: "5992", translateStatus: "0"}
         Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
 
-        int translateStatus = ConvertUtil.toInt(requestMap.get("translateStatus"));
+        String translateStatus = (String) requestMap.get("translateStatus");
 
         productService.updateProductTranslateStatus(getUser().getSelChannelId(), prodId, translateStatus, getUser().getUserName());
 
@@ -215,7 +215,7 @@ public class CmsProductDetailController extends CmsController {
         Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
         if (requestMap.get("feedInfo") != null) {
             List<CustomPropBean> cnProps = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(requestMap.get("feedInfo")), CustomPropBean.class);
-            productService.updateProductAtts(getUser().getSelChannelId(), prodId, cnProps, getUser().getUserName());
+            productService.updateProductAtts(getUser().getSelChannelId(), prodId, cnProps, (Map<String, Boolean>) requestMap.get("productCustomIsDisp"), getUser().getUserName());
         }
         return success(null);
     }
@@ -291,10 +291,9 @@ public class CmsProductDetailController extends CmsController {
         Map<String, Object> platform = (Map<String, Object>) params.get("platform");
         Assert.notNull(platform).elseThrowDefaultWithTitle("platform");
 
-
-//        CmsBtProductModel productModel = productService.getProductById(channelId, prodId);
-//        productModel.setPlatform(cartId, );
-        priceService.priceChk(channelId, new CmsBtProductModel_Platform_Cart(platform), cartId);
+        Boolean priceCheck = Boolean.parseBoolean(String.valueOf(params.get("priceCheck")));
+        if(priceCheck)
+            priceService.priceChk(channelId, new CmsBtProductModel_Platform_Cart(platform), cartId);
 
         productPropsEditService.updateSkuPrice(channelId, cartId, prodId, getUser().getUserName(), new CmsBtProductModel_Platform_Cart(platform));
 

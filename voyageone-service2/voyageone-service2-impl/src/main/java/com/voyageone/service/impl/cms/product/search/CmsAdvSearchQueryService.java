@@ -8,6 +8,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.WmsBtInventoryCenterLogicDaoExt;
@@ -17,6 +18,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -30,8 +32,9 @@ import java.util.stream.Collectors;
 public class CmsAdvSearchQueryService extends BaseService {
 
     // 查询产品信息时的缺省输出列
+    // sku 添加clientMsrpPrice & clientMsrpPriceChgFlg added by piao
     public final static String searchItems = "channelId;prodId;created;creater;modified;orgChannelId;modifier;freeTags;sales;bi;platforms;lock;" +
-            "common.skus.skuCode;common.skus.qty;common.skus.size;common.fields.originalCode;common.fields.originalTitleCn;common.catPath;common.fields.productNameEn;common.fields.brand;common.fields.code;" +
+            "common.skus.skuCode;common.skus.clientNetPriceChgFlg;common.skus.qty;common.skus.size;common.skus.clientMsrpPrice;common.skus.clientMsrpPriceChgFlg;common.fields.originalCode;common.fields.originalTitleCn;common.catPath;common.fields.productNameEn;common.fields.brand;common.fields.code;" +
             "common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.images5;common.fields.images6;common.fields.images7;common.fields.images8;common.fields.images9;" +
             "common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
             "common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;usPlatforms;";
@@ -236,18 +239,37 @@ public class CmsAdvSearchQueryService extends BaseService {
 
             // 获取platform category
             if (searchValue.getpCatPathList() != null && searchValue.getpCatPathList().size() > 0) {
-                StringBuilder pCatPathStr = new StringBuilder("{$or:[");
-                int idx = 0;
-                for (String pCatPath : searchValue.getpCatPathList()) {
-                    if (idx == 0) {
-                        pCatPathStr.append("{'platforms.P" + cartId + ".pCatPath':{'$regex':'^" + pCatPath + "'}}");
-                        idx ++;
-                    } else {
-                        pCatPathStr.append(",{'platforms.P" + cartId + ".pCatPath':{'$regex':'^" + pCatPath + "'}}");
+                if(searchValue.getpCatPathType() == 1) {
+                    StringBuilder pCatPathStr = new StringBuilder("{$or:[");
+                    int idx = 0;
+                    for (String pCatPath : searchValue.getpCatPathList()) {
+                        if (idx == 0) {
+                            pCatPathStr.append("{'platforms.P" + cartId + ".pCatPath':{'$regex':'^" + pCatPath + "'}}");
+                            idx++;
+                        } else {
+                            pCatPathStr.append(",{'platforms.P" + cartId + ".pCatPath':{'$regex':'^" + pCatPath + "'}}");
+                        }
                     }
+                    pCatPathStr.append("]}");
+                    queryObject.addQuery(pCatPathStr.toString());
+                }else{
+                    StringBuilder pCatPathStr = new StringBuilder("{$or:[{$and:[");
+                    int idx = 0;
+                    List<String> parameters = new ArrayList<>();
+                    for (String pCatPath : searchValue.getpCatPathList()) {
+                        //fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
+                        if (idx == 0) {
+                            pCatPathStr.append("{'platforms.P" + cartId + ".pCatPath':{'$regex':#}}");
+                            idx++;
+                        } else {
+                            pCatPathStr.append(",{'platforms.P" + cartId + ".pCatPath':{'$regex':#}}");
+                        }
+                        parameters.add(String.format("^((?!%s).)*$",pCatPath));
+                    }
+                    pCatPathStr.append("]},{'platforms.P" + cartId + ".pCatPath':{\"$in\":[null,'']}}]}");
+                    queryObject.addQuery(pCatPathStr.toString());
+                    queryObject.addParameters(parameters.toArray());
                 }
-                pCatPathStr.append("]}");
-                queryObject.addQuery(pCatPathStr.toString());
             }
             // 平台类目是否未设置
             if (searchValue.getPCatStatus() == 1) {
@@ -269,7 +291,11 @@ public class CmsAdvSearchQueryService extends BaseService {
             }
             // 获取店铺内分类查询条件
             if (searchValue.getCidValue() !=  null && searchValue.getCidValue().size() > 0) {
-                queryObject.addQuery("{'platforms.P#.sellerCats.cId':{$in:#}}");
+                if(1 == searchValue.getShopCatType()) {
+                    queryObject.addQuery("{'platforms.P#.sellerCats.cId':{$in:#}}");
+                }else{
+                    queryObject.addQuery("{'platforms.P#.sellerCats.cId':{$nin:#}}");
+                }
                 queryObject.addParameters(cartId, searchValue.getCidValue());
             }
             // 店铺内分类未设置
@@ -367,33 +393,83 @@ public class CmsAdvSearchQueryService extends BaseService {
      */
     private void getSearchValueForMongo(CmsSearchInfoBean2 searchValue, JongoQuery queryObject) {
         // 获取 feed category
+        // 获取 feed category
         if (searchValue.getfCatPathList() != null && searchValue.getfCatPathList().size() > 0) {
-            StringBuilder fCatPathStr = new StringBuilder("{$or:[");
-            int idx = 0;
-            List<String> parameters = new ArrayList<>();
-            for (String fCatPath : searchValue.getfCatPathList()) {
-            	//fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
-                if (idx == 0) {
-                    fCatPathStr.append("{\"feed.catPath\":{\"$regex\":#}}");
-                    idx ++;
-                } else {
-                    fCatPathStr.append(",{\"feed.catPath\":{\"$regex\":#}}");
+            searchValue.setfCatPathList(searchValue.getfCatPathList().stream().map(str->str.trim()).collect(Collectors.toList()));
+            if(searchValue.getfCatPathType() == 1) {
+                StringBuilder fCatPathStr = new StringBuilder("{$or:[");
+                int idx = 0;
+                List<String> parameters = new ArrayList<>();
+                for (String fCatPath : searchValue.getfCatPathList()) {
+                    //fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
+                    if (idx == 0) {
+                        fCatPathStr.append("{\"feed.catPath\":{\"$regex\":#}}");
+                        idx++;
+                    } else {
+                        fCatPathStr.append(",{\"feed.catPath\":{\"$regex\":#}}");
+                    }
+                    parameters.add("^" + fCatPath);
                 }
-                parameters.add("^" + fCatPath);
+                fCatPathStr.append("]}");
+                queryObject.addQuery(fCatPathStr.toString());
+                queryObject.addParameters(parameters.toArray());
+            }else{
+                StringBuilder fCatPathStr = new StringBuilder("{$or:[{$and:[");
+                int idx = 0;
+                List<String> parameters = new ArrayList<>();
+                for (String fCatPath : searchValue.getfCatPathList()) {
+                    //fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
+                    if (idx == 0) {
+                        fCatPathStr.append("{\"feed.catPath\":{\"$regex\":#}}");
+                        idx++;
+                    } else {
+                        fCatPathStr.append(",{\"feed.catPath\":{\"$regex\":#}}");
+                    }
+                    parameters.add(String.format("^((?!%s).)*$",fCatPath));
+                }
+                fCatPathStr.append("]},{\"feed.catPath\":{\"$in\":[null,'']}}]}");
+                queryObject.addQuery(fCatPathStr.toString());
+                queryObject.addParameters(parameters.toArray());
             }
-            for (String fCatPath : searchValue.getfCatPathList()) {
-                fCatPathStr.append(",{\"feed.subCategories\":{\"$regex\":#}}");
-                parameters.add("^" + fCatPath);
-            }
-            fCatPathStr.append("]}");
-            queryObject.addQuery(fCatPathStr.toString());
-            queryObject.addParameters(parameters.toArray());
         }
 
         // 获取 master category
-        if (StringUtils.isNotEmpty(searchValue.getmCatPath())) {
-            queryObject.addQuery("{'common.catPath':{'$regex':#}}");
-            queryObject.addParameters("^" + searchValue.getmCatPath());
+        if (searchValue.getmCatPath() != null && searchValue.getmCatPath().size() > 0) {
+            if(searchValue.getmCatPathType() == 1) {
+                StringBuilder mCatPathStr = new StringBuilder("{$or:[");
+                int idx = 0;
+                List<String> parameters = new ArrayList<>();
+                for (String mCatPath : searchValue.getmCatPath()) {
+                    //fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
+                    if (idx == 0) {
+                        mCatPathStr.append("{\"common.catPath\":{\"$regex\":#}}");
+                        idx++;
+                    } else {
+                        mCatPathStr.append(",{\"common.catPath\":{\"$regex\":#}}");
+                    }
+                    parameters.add("^" + mCatPath);
+                }
+                mCatPathStr.append("]}");
+                queryObject.addQuery(mCatPathStr.toString());
+                queryObject.addParameters(parameters.toArray());
+            }else{
+                StringBuilder mCatPathStr = new StringBuilder("{$or:[{$and:[");
+                int idx = 0;
+                List<String> parameters = new ArrayList<>();
+                for (String mCatPath : searchValue.getmCatPath()) {
+                    //fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
+                    if (idx == 0) {
+                        mCatPathStr.append("{\"common.catPath\":{\"$regex\":#}}");
+                        idx++;
+                    } else {
+                        mCatPathStr.append(",{\"common.catPath\":{\"$regex\":#}}");
+                    }
+                    parameters.add(String.format("^((?!%s).)*$",mCatPath));
+                }
+                mCatPathStr.append("]},{\"common.catPath\":{\"$in\":[null,'']}}]}");
+                queryObject.addQuery(mCatPathStr.toString());
+                queryObject.addParameters(parameters.toArray());
+            }
         }
 
         if (StringUtils.isNotEmpty(searchValue.getCreateTimeStart())) {
@@ -542,6 +618,12 @@ public class CmsAdvSearchQueryService extends BaseService {
 
         if(searchValue.getNoSale() != null && searchValue.getNoSale()){
             queryObject.addQuery("{'platforms.P20.pNumIId':{$in:['',null]}, 'platforms.P21.pNumIId':{$in:['',null]}, 'platforms.P22.pNumIId':{$in:['',null]}, 'platforms.P23.pNumIId':{$in:['',null]}, 'platforms.P24.pNumIId':{$in:['',null]}, 'platforms.P25.pNumIId':{$in:['',null]}, 'platforms.P26.pNumIId':{$in:['',null]}, 'platforms.P27.pNumIId':{$in:['',null]}}");
+        }
+
+        // 客户建议售价状态
+        if (StringUtils.isNotEmpty(searchValue.getClientMsrpPriceChgFlg())) {
+            queryObject.addQuery("{'common.skus.clientMsrpPriceChgFlg':{$regex:#}}");
+            queryObject.addParameters(searchValue.getClientMsrpPriceChgFlg());
         }
 
         // 获取自定义查询条件

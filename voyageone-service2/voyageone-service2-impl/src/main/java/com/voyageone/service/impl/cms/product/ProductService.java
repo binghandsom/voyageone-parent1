@@ -15,6 +15,7 @@ import com.voyageone.category.match.Searcher;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.CartEnums.Cart;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -96,6 +97,8 @@ public class ProductService extends BaseService {
     @Autowired
     private Searcher searcher;
 
+    @Autowired
+    private ProductStatusHistoryService productStatusHistoryService;
     /**
      * 获取商品 根据ID获
      */
@@ -590,7 +593,9 @@ public class ProductService extends BaseService {
 
             CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBeanNoCode(product.getOrgChannelId()
                     , CmsConstants.ChannelConfig.CLIENT_PRICE_UNIT);
-            resultInfo.setClientPriceUnit(channelConfig.getConfigValue1());
+            if(channelConfig != null) {
+                resultInfo.setClientPriceUnit(channelConfig.getConfigValue1());
+            }
 
             // TODO 无法提供,属于主数据的非共通属性
             resultInfo.setWeightkg("");
@@ -966,6 +971,14 @@ public class ProductService extends BaseService {
                 if (cartId < CmsConstants.ACTIVE_CARTID_MIN)
                     return;
 
+                //插入商品修改历史
+                productStatusHistoryService.insert(channelId,
+                        _productInfo.getCommon().getFields().getCode(),
+                        platform.getStatus(),
+                        platform.getCartId(), EnumProductOperationType.UpdateCommonLock,
+                        String.format("%s,触发%s操作", CartEnums.Cart.getValueByID(platform.getCartId().toString()), lock.equals("1") ? "锁" : "解锁"),
+                        modifier);
+
                 updateMap.put(String.format("platforms.P%s.lock", cartId), lock);
 
             });
@@ -1024,19 +1037,27 @@ public class ProductService extends BaseService {
                         .append(",'modifier':#")
                         .append("}}");
 
-
                 JongoUpdate updateObj = new JongoUpdate();
                 updateObj.setQuery("{'common.fields.code':#}");
                 updateObj.setQueryParameters(productCode);
                 updateObj.setUpdate(updateStr.toString());
                 updateObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), creator);
 
-                // 添加秕处理执行语句
+                /**插入商品修改历史 added by piao*/
+                CmsBtProductModel_Platform_Cart cartPlatform = product.getPlatform(cartId);
+                productStatusHistoryService.insert(channelId,
+                        product.getCommon().getFields().getCode(),
+                        cartPlatform.getStatus(),
+                        cartPlatform.getCartId(), EnumProductOperationType.BatchUpdatePlatformLock,
+                        String.format("%s,触发%s操作", CartEnums.Cart.getValueByID(cartId.toString()), lock.equals("1") ? "锁" : "解锁"),
+                        creator);
+
+                // 添加批处理执行语句
                 productBulkList.addBulkJongo(updateObj);
 
             }
 
-            // 执行智能上新批处理
+            // 执行批处理
             BulkWriteResult rs = productBulkList.execute();
 
             if (rs != null) {
@@ -1053,7 +1074,7 @@ public class ProductService extends BaseService {
 
     }
 
-    public void updateProductAppSwitch(String channelId, Long prodId, int appSwitch, String modifier) {
+    public void updateProductAppSwitch(String channelId, Long prodId, String appSwitch, String modifier) {
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
         List<BulkUpdateModel> bulkList = new ArrayList<>();
@@ -1069,13 +1090,13 @@ public class ProductService extends BaseService {
         insertProductHistory(channelId, prodId);
     }
 
-    public void updateProductTranslateStatus(String channelId, Long prodId, int translateStatus, String modifier) {
+    public void updateProductTranslateStatus(String channelId, Long prodId, String translateStatus, String modifier) {
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         HashMap<String, Object> updateMap = new HashMap<>();
         updateMap.put("common.fields.translateStatus", translateStatus);
-        if (translateStatus == 1) {
+        if ("1".equals(translateStatus)) {
             updateMap.put("common.fields.translateTime", modifier);
             updateMap.put("common.fields.translator", DateTimeUtil.getNowTimeStamp());
         } else {
@@ -1295,7 +1316,7 @@ public class ProductService extends BaseService {
         return props;
     }
 
-    public String updateProductAtts(String channelId, Long prodId, List<CustomPropBean> cnProps, String modifier) {
+    public String updateProductAtts(String channelId, Long prodId, List<CustomPropBean> cnProps,Map<String, Boolean> productCustomIsDisp, String modifier) {
 
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
@@ -1308,6 +1329,7 @@ public class ProductService extends BaseService {
             rsMap.put("feed.customIdsCn", cnProps.stream().filter(CustomPropBean::isCustomPropActive).map(CustomPropBean::getFeedAttrCn).collect(Collectors.toList()));
             rsMap.put("feed.orgAtts", cnProps.stream().filter(customPropBean -> !StringUtil.isEmpty(customPropBean.getFeedAttrCn())).collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueEn)));
             rsMap.put("feed.cnAtts", cnProps.stream().filter(customPropBean -> !StringUtil.isEmpty(customPropBean.getFeedAttrCn())).collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueCn)));
+            rsMap.put("feed.productCustomIsDisp", productCustomIsDisp);
         }
 
         Map<String, Object> updateMap = new HashMap<>();
@@ -1316,7 +1338,7 @@ public class ProductService extends BaseService {
         cmsBtProductDao.update(channelId, queryMap, updateMap);
         // 更新workLoad表
         sxProductService.insertSxWorkLoad(getProductById(channelId, prodId), modifier);
-        insertProductHistory(channelId, prodId);
+//        insertProductHistory(channelId, prodId);
         return modified;
     }
 

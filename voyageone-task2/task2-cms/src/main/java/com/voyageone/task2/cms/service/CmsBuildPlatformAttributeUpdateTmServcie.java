@@ -39,10 +39,7 @@ import com.voyageone.task2.base.util.TaskControlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -58,10 +55,10 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
     private final static List<String> cartList = Lists.newArrayList("20","23");
     // 天猫增量更新支持的属性 -> 对应系统任务名(workloadName)
     private final static List<String> IncrementAttrList = Lists.newArrayList(
-                        PlatformWorkloadAttribute.SELLER_CIDS.name(), PlatformWorkloadAttribute.ITEM_IMAGES.name(),
-                        PlatformWorkloadAttribute.DESCRIPTION.name(), PlatformWorkloadAttribute.TITLE.name(),
-                        PlatformWorkloadAttribute.SELL_POINTS.name(), PlatformWorkloadAttribute.WHITE_BG_IMAGE.name(),
-                        PlatformWorkloadAttribute.WIRELESS_DESC.name());
+                        PlatformWorkloadAttribute.SELLER_CIDS.getValue(), PlatformWorkloadAttribute.ITEM_IMAGES.getValue(),
+                        PlatformWorkloadAttribute.DESCRIPTION.getValue(), PlatformWorkloadAttribute.TITLE.getValue(),
+                        PlatformWorkloadAttribute.SELL_POINTS.getValue(), PlatformWorkloadAttribute.WHITE_BG_IMAGE.getValue(),
+                        PlatformWorkloadAttribute.WIRELESS_DESC.getValue());
 
     @Autowired
     private PlatformMappingDeprecatedService platformMappingDeprecatedService;
@@ -87,8 +84,6 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
     @Override
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        //获取Workload列表
-        List<CmsBtSxWorkloadModel> groupList = new ArrayList<>();
         // 获取该任务可以运行的销售渠道
         List<String> channels = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
@@ -100,12 +95,12 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
             return;
         }
 
-        for(CmsBtSxWorkloadModel workloadModel : groupList) {
+        for(CmsBtSxWorkloadModel workloadModel : sxWorkloadModels) {
             doTmAttibuteUpdate(workloadModel);
         }
     }
 
-    public void doTmAttibuteUpdate(CmsBtSxWorkloadModel work) {
+    public void doTmAttibuteUpdate(CmsBtSxWorkloadModel work){
         String channelId = work.getChannelId();
         int cartId = work.getCartId();
         Long groupId = work.getGroupId();
@@ -114,6 +109,7 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
         ShopBean shop = new ShopBean();
         // 开始时间
         long prodStartTime = System.currentTimeMillis();
+        work.setModified(new Date(prodStartTime));
         try {
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
 
@@ -160,34 +156,39 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
             // 根据任务名称判断要选用天猫的增量还是全量更新
             if (IncrementAttrList.contains(workloadName)) {
                 // 增量接口更新
-                incrementUpdateItem(sxData, shop, workloadName, numIId, expressionParser, cmsMtPlatformMappingModel);
+                incrementUpdateItem(sxData, shop, workloadName, numIId, work, expressionParser, cmsMtPlatformMappingModel);
             } else {
                 // 全量接口更新
-                allUpdateItem(sxData, shop, workloadName, numIId, expressionParser, cmsMtPlatformMappingModel);
+                allUpdateItem(sxData, shop, workloadName, numIId, work, expressionParser, cmsMtPlatformMappingModel);
             }
 
         } catch(Exception ex) {
-            // 取得sxData为空
             if (sxData == null) {
                 sxData = new SxData();
                 sxData.setChannelId(channelId);
                 sxData.setCartId(cartId);
                 sxData.setGroupId(groupId);
-                sxData.setErrorMessage(String.format("取得上新用的商品数据信息失败！[ChannelId:%s] [GroupId:%s]", channelId, groupId));
+                sxData.setErrorMessage(String.format("天猫取得商品数据为空！[ChannelId:%s] [GroupId:%s]", channelId, groupId));
+            }
+            String errMsg = String.format("天猫平台更新商品异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WorkloadName:%s] [%s]",
+                    channelId, cartId, groupId, workloadName, ex.getMessage());
+            $error(errMsg);
+            ex.printStackTrace();
+            // 如果上新数据中的errorMessage为空
+            if (StringUtils.isEmpty(sxData.getErrorMessage())) {
+                sxData.setErrorMessage(errMsg);
             }
             // 回写workload表(失败2)
-            sxProductService.updateSxWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+            sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, getTaskName());
-            // 上新出错时状态回写操作
-            sxProductService.doUploadFinalProc(shop, false, sxData, work, "", null, "", getTaskName());
-            $error(String.format("天猫平台单个产品和商品新增或更新信息异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [耗时:%s]",
+            $error(String.format("天猫平台更新商品信息异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [耗时:%s]",
                     channelId, cartId, groupId, (System.currentTimeMillis() - prodStartTime)));
             return;
         }
     }
 
-    public void incrementUpdateItem(SxData sxData, ShopBean shop, String workloadName, String numIId,
+    public void incrementUpdateItem(SxData sxData, ShopBean shop, String workloadName, String numIId, CmsBtSxWorkloadModel work,
                                     ExpressionParser expressionParser, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel) throws Exception{
         // 调用天猫增量更新商品规则API获取当前商品id对应的商品规则
         List<Field> fields = null;
@@ -266,9 +267,10 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
             $error(errMsg);
             sxData.setErrorMessage(errMsg);
             throw new BusinessException(errMsg);
+        } else {
+            // 回写workload表(成功1)
+            sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
         }
-        $info("success");
-
     }
 
     public List<Field> getIncrementUpdateSchema(ShopBean shop, String numIId) {
@@ -415,7 +417,7 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
     }
 
 
-    public void allUpdateItem(SxData sxData, ShopBean shop, String workloadName, String numIId,
+    public void allUpdateItem(SxData sxData, ShopBean shop, String workloadName, String numIId, CmsBtSxWorkloadModel work,
                               ExpressionParser expressionParser, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel) throws Exception {
         // 获取天猫全量更新商品的规则
         String updateItemRuleSchema = getUpdateSchema(numIId, shop, sxData);
@@ -472,6 +474,12 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
             try {
                 $debug("updateTmallItem: [numIId:" + numIId + "]");
                 numIId = updateTmallItemSchema(numIId, fields, shop);
+
+                if (!StringUtils.isEmpty(numIId)) {
+                    // 回写workload表(成功1)
+                    sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
+                }
+
             } catch (ApiException e) {
                 if (retry == 0 &&
                         (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin") || e.getMessage().contains("isv.invalid-parameter:isXinpin"))) {

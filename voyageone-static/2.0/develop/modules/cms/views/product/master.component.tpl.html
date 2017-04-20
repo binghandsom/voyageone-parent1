@@ -145,7 +145,7 @@
                             </div>
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>平台状态</strong></label>
-                                <div class="col-md-8">
+                                <div class="col-md-8 m-l-35">
                                     <span ng-repeat='entity in vm.mastData.platformList'>
                                            <platform-status data="entity"></platform-status>
                                     </span>
@@ -154,19 +154,39 @@
                             <div class="row form-group">
                                 <div class="col-md-2">
                                     <div class="row text-right">
-                                        <label class="control-label" style="min-height:107px;"><strong>Group Info</strong></label>
+                                        <div class="form-horizontal">
+                                            <div class="form-group">
+                                                <label class="control-label"><strong>Group Info</strong></label>
+                                            </div>
+                                            <div class="form-group">
+                                                <span ng-if="!moreCodeFlg && canMoreCode()">
+                                                    <i class="fa fa-angle-double-down more-code" ng-click="moreCode()"></i>
+                                                </span>
+                                                <span ng-if="moreCodeFlg && canMoreCode()">
+                                                    <i class="fa fa-angle-double-up more-code" ng-click="moreCode()"></i>
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
+                                </div>
+                                <div class="col-md-1" style="width: 35px;">
+                                    <span notice-direction="bottom" notice-content="点击跳动图标展开更多code！"
+                                          notice-tip class="text-warnings cur-p"><i
+                                            class="icon fa fa-question-circle text-md"></i></span>
                                 </div>
                                 <div class="col-md-8">
                                     <div class="row">
-                                        <div class="col-xs-6 col-md-2"  ng-repeat="image in vm.mastData.images">
-                                            <a href="javascript:void(0)" class="thumbnail current clear-margin-bottom" ng-if="image.productCode == productInfo.masterField.code" style="min-height: 80px;">
-                                                <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
-                                                <img class="thumb-group" ng-src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
-                                            </a>
-                                            <!--不是当前商品的话可以跳转到图片对应产品详情页-->
-                                            <a ng-href="#/product/detail/{{image.prodId}}" class="thumbnail clear-margin-bottom" ng-if="image.productCode != productInfo.masterField.code" target="_blank" style="min-height: 80px;">
-                                                <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
+                                        <div class="col-xs-6 col-md-2"  ng-repeat="image in vm.mastData.images"
+                                             ng-init = "$currentCode = (image.productCode == productInfo.masterField.code)"
+                                             ng-if="image.productCode == productInfo.masterField.code || moreCodeFlg || image.isMain || image.qty > 0">
+                                            <a href="javascript:void(0)" class="thumbnail clear-margin-bottom"
+                                               ng-href="{{$currentCode ? 'javascript:void(0)' : '#/product/detail/'+image.prodId}}"
+                                               ng-class="{'current' : $currentCode}"
+                                               target="{{$currentCode ? '_self':'_blank'}}"
+                                               style="min-height: 80px;">
+                                                <strong class="main" ng-if="image.isMain == true">
+                                                    <span class="label label-danger">&nbsp;M&nbsp;</span>
+                                                </strong>
                                                 <img class="thumb-group" ng-src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
                                             </a>
                                             <div class="thumbInfo">
@@ -180,30 +200,32 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                    <button class="col-md-2 btn btn-default" ng-disabled="vm.channelId != '928'" ng-controller="popupCtrl" ng-click="masterCategoryMapping(popupCategoryNew)" ><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
+                                <button class="col-md-2 btn btn-default" ng-disabled="vm.channelId != '928'" ng-controller="popupCtrl" ng-click="masterCategoryMapping(popupCategoryNew)" ><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
                                 </button>
+                                <div class="col-md-1" style="width: 35px;">
+                                    <span notice-direction="bottom" notice-content="切换平台类目将影响整个Group中的所有商品，请慎重！"
+                                          notice-tip class="text-warnings cur-p"><i
+                                            class="icon fa fa-question-circle text-md"></i></span>
+                                </div>
                                 <div class="col-md-8">
                                     <input class="form-control"  ng-model="vm.productComm.catPath" readonly>
-                                    <div class="text-warnings" style="padding-left:0px">
-                                        <i class="icon fa fa-bell-o"></i>&nbsp;切换平台类目将影响整个Group中的所有商品，请慎重！
-                                    </div>
                                 </div>
                             </div>
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>Model</strong></label>
-                                <div class="col-md-8 control-label text-left">
+                                <div class="col-md-8  m-l-35 control-label text-left">
                                     {{vm.productComm.fields.model}}
                                 </div>
                             </div>
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>Product Code</strong></label>
-                                <div class="col-md-8 control-label text-left">
+                                <div class="col-md-8 m-l-35 control-label text-left">
                                     {{vm.productComm.fields.code}}
                                 </div>
                             </div>
                             <div class="row form-group">
                                 <button class="col-md-2 btn btn-default" disabled><span>Master Brand</span></button>
-                                <div class="col-md-8">
+                                <div class="col-md-8  m-l-35">
                                     <input class="form-control" ng-model="vm.productComm.fields.brand" readonly>
                                 </div>
                             </div>
@@ -236,7 +258,7 @@
                                 <div class="vo_prodGallery">
                                     <div class="imageContainer">
                                         <div class="imageWrapper">
-                                            <img  class="imageWrapper" style="cursor: pointer;" ng-src="{{vm.currentImage}}" title="【click me】" ng-click="goDetail()">
+                                            <img  class="imageWrapper" style="cursor: pointer;max-width: 330px; max-height: 200px;" ng-src="{{vm.currentImage}}" title="【click me】" ng-click="goDetail()">
                                         </div>
                                     </div>
                                 </div>

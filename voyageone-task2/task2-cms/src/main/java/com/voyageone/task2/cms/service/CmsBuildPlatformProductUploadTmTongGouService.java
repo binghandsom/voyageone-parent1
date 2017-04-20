@@ -673,35 +673,45 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 saveCmsBtTmScItem_Liking(sxData.getMainProduct().getOrgChannelId(), cartId, skuMapList);
             }
 
-            // 看看总库存
-            int qty = 0;
-            List<CmsBtProductModel> productModelList = sxData.getProductList();
-            for (CmsBtProductModel productModel : productModelList) {
-                List<BaseMongoMap<String, Object>> productPlatformSku = productModel.getPlatformNotNull(sxData.getCartId()).getSkus();
+            // 20170413 tom 在上新的时候已经判断过是否上架了， 所以这里只需要用之前的那个判断结果就行了 START
+//            // 看看总库存
+//            int qty = 0;
+//            List<CmsBtProductModel> productModelList = sxData.getProductList();
+//            for (CmsBtProductModel productModel : productModelList) {
+//                List<BaseMongoMap<String, Object>> productPlatformSku = productModel.getPlatformNotNull(sxData.getCartId()).getSkus();
+//
+//                if (productPlatformSku != null) {
+//                    for (BaseMongoMap<String, Object> sku : productPlatformSku) {
+//                        if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+//                            String skucode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+//                            if (skuLogicQtyMap.containsKey(skucode)) {
+//                                qty = qty + skuLogicQtyMap.get(skucode);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+//            // 调用淘宝商品上下架操作(新增的时候默认为下架，只有更新的时候才根据group里面platformActive调用上下架操作)
+//            // 回写用商品上下架状态(OnSale/InStock)
+//            CmsConstants.PlatformStatus platformStatus = null;
+//            CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
+//            // 更新商品并且PlatformActive=ToOnSale时,执行商品上架；新增商品或PlatformActive=ToInStock时，执行下架功能
+//            // 库存大于0才能上架， 否则自动设为在库
+//            if (updateWare && platformActive == CmsConstants.PlatformActive.ToOnSale && qty > 0) {
+//                platformStatus = CmsConstants.PlatformStatus.OnSale;   // 上架
+//            } else {
+//                platformStatus = CmsConstants.PlatformStatus.InStock;   // 在库
+//            }
 
-                if (productPlatformSku != null) {
-                    for (BaseMongoMap<String, Object> sku : productPlatformSku) {
-                        if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
-                            String skucode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
-                            if (skuLogicQtyMap.containsKey(skucode)) {
-                                qty = qty + skuLogicQtyMap.get(skucode);
-                            }
-                        }
-                    }
-                }
+            // status：0（上架）， status：2（下架）
+            CmsConstants.PlatformStatus platformStatus = CmsConstants.PlatformStatus.InStock;
+            if ("0".equals(productInfoMap.get("status"))) {
+                // 商品上架
+                platformStatus = CmsConstants.PlatformStatus.InStock;
             }
 
-            // 调用淘宝商品上下架操作(新增的时候默认为下架，只有更新的时候才根据group里面platformActive调用上下架操作)
-            // 回写用商品上下架状态(OnSale/InStock)
-            CmsConstants.PlatformStatus platformStatus = null;
-            CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
-            // 更新商品并且PlatformActive=ToOnSale时,执行商品上架；新增商品或PlatformActive=ToInStock时，执行下架功能
-            // 库存大于0才能上架， 否则自动设为在库
-            if (updateWare && platformActive == CmsConstants.PlatformActive.ToOnSale && qty > 0) {
-                platformStatus = CmsConstants.PlatformStatus.OnSale;   // 上架
-            } else {
-                platformStatus = CmsConstants.PlatformStatus.InStock;   // 在库
-            }
+            // 20170413 tom 在上新的时候已经判断过是否上架了， 所以这里只需要用之前的那个判断结果就行了 END
 
             // 回写PXX.pCatId, PXX.pCatPath等信息
             Map<String, String> pCatInfoMap = getSimpleItemCatInfo(shopProp, numIId);
@@ -1004,6 +1014,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             // 如果不是下面这些类目，统一设置成"50026470"
             if (!StringUtils.isEmpty(strCategoryPath)
                     && !strCategoryPath.startsWith("孕妇装/孕产妇用品/营养")
+                    && !strCategoryPath.startsWith("童鞋/婴儿鞋/亲子鞋")
                     && !strCategoryPath.startsWith("奶粉/辅食/营养品/零食")) {
                 Map<String, Object> paramCategory = new HashMap<>();
                 paramCategory.put("cat_id", "50026470"); // 孕妇装/孕产妇用品/营养>孕产妇营养品>其它
@@ -1333,9 +1344,21 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
         // 商品上下架
         CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
+
+        // 20170413 tom 如果是新建的场合， 需要根据配置来设置上下架状态 START
+        if (!updateWare) {
+            // 新增的场合， 看一下配置
+            platformActive = sxProductService.getDefaultPlatformActiveConfigByChannelCart(sxData.getChannelId(), String.valueOf(sxData.getCartId()));
+        }
+        if (qty == 0) {
+            // 库存为0则自动设置为下架
+            platformActive = CmsConstants.PlatformActive.ToInStock;
+        }
+        // 20170413 tom 如果是新建的场合， 需要根据配置来设置上下架状态 END
+
         // 更新商品并且PlatformActive=ToOnSale时,执行商品上架；新增商品或PlatformActive=ToInStock时，执行下架功能
         // 库存大于0才能上架， 否则自动设为在库
-        if (updateWare && platformActive == CmsConstants.PlatformActive.ToOnSale && qty > 0) {
+        if (platformActive == CmsConstants.PlatformActive.ToOnSale) {
             productInfoMap.put("status", "0");   // 商品上架
         } else {
             productInfoMap.put("status", "2");   // 商品在库

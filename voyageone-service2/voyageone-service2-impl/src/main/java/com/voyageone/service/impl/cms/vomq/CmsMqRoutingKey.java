@@ -37,6 +37,9 @@ public class CmsMqRoutingKey {
     // 高级检索 - 批量确认中国指导价变更
     public static final String CMS_CONFIRM_PLATFORM_RETAIL_PRICE = "VOCmsConfirmPlatformRetailPriceQueue";
 
+    // 高级检索 - 批量确认美元MSRP价格变更
+    public static final String CMS_CONFIRM_CLIENT_MSRP_PRICE = "VOCmsConfirmClientMsrpPriceQueue";
+
     // 高级检索 - 批量设置店铺分类
     public static final String CMS_UPDATE_PRODUCT_PLATFORM_CHANNEL_CATEGORY = "VOCmsUpdateProductPlatformChannelCategoryQueue";
 

@@ -1,7 +1,6 @@
 package com.voyageone.service.daoext.cms;
 
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
-import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -28,9 +27,9 @@ public interface CmsBtJmPromotionDaoExt {
 
     List<CmsBtJmPromotionModel> selectEndList(Date nowDate);
 
-    List<MapModel> selectMaxJmHashId(String channelId);
+    List<MapModel> selectMaxJmHashId(@Param("channelId") String channelId, @Param("productCode") String productCode);
 
-    List<MapModel> selectJmProductHashId(String channelId);
+    List<MapModel> selectJmProductHashId(@Param("channelId") String channelId, @Param("productCode") String productCode);
 
     int updateSumbrandById(int id);
 

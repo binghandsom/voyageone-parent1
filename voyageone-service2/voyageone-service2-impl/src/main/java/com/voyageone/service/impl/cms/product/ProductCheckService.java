@@ -92,16 +92,16 @@ public class ProductCheckService extends BaseService {
      */
     private void checkCommonIsExists (CmsBtProductModel productModel) {
         if (productModel.getCommon() == null) {
-            throw new BusinessException(String.format("该产品_id:%d的common属性为空", productModel.get_id()));
+            throw new BusinessException(String.format("该产品_id:%s的common属性为空", productModel.get_id()));
         } else if (productModel.getCommon().getFields() == null ) {
-            throw new BusinessException(String.format("该产品_id:%d的common.fields属性为空", productModel.get_id()));
+            throw new BusinessException(String.format("该产品_id:%s的common.fields属性为空", productModel.get_id()));
         } else if (productModel.getCommon().getSkus() == null) {
-            throw new BusinessException(String.format("该产品_id:%d的common.skus属性为空", productModel.get_id()));
+            throw new BusinessException(String.format("该产品_id:%s的common.skus属性为空", productModel.get_id()));
         } else if (StringUtils.isAnyEmpty(productModel.getChannelId()
                 , productModel.getOrgChannelId()
                 , String.valueOf(productModel.getProdId())
                 , productModel.getCommon().getFields().getCode())) {
-            throw new BusinessException(String.format("该产品_id:%d的channelId/orgChannelId/prodId/code属性为空", productModel.get_id()));
+            throw new BusinessException(String.format("该产品_id:%s的channelId/orgChannelId/prodId/code属性为空", productModel.get_id()));
         }
     }
 
@@ -161,7 +161,7 @@ public class ProductCheckService extends BaseService {
         Boolean flg = false;
 
         if (productModel.getPlatform(0) == null) {
-            throw new BusinessException(String.format("该产品_id:%d的platforms.P0为空", productModel.get_id()));
+            throw new BusinessException(String.format("该产品_id:%s的platforms.P0为空", productModel.get_id()));
         }
 
         // 获取P0的主商品code
@@ -170,7 +170,7 @@ public class ProductCheckService extends BaseService {
         List<String> productCodes = productList.stream().map(product -> product.getCommon().getFields().getCode()).collect(Collectors.toList());
 
         if (StringUtils.isEmpty(poMainCode))
-            throw new BusinessException(String.format("该产品_id:%d的获取原始主商品code为空", productModel.get_id()));
+            throw new BusinessException(String.format("该产品_id:%s的获取原始主商品code为空", productModel.get_id()));
 
         // check默认设置是否正确,并且修改数据
         String mainProductCode = productModel.getPlatform(0).getMainProductCode();
@@ -198,17 +198,22 @@ public class ProductCheckService extends BaseService {
 
         // 检测和设置group级别的主商品
         CmsBtProductGroupModel groupInfo = productGroupService.selectProductGroupByCode(productModel.getChannelId(), productCode, 0);
-        if (!groupInfo.getMainProductCode().equals(poMainCode)) {
-            flg = true;
-            errorModel.getErrors().add(String.format("platforms(_id: %s):group(cartId:0)的主商品设置不正确:%s -> %s", productModel.get_id(), groupInfo.getMainProductCode(), poMainCode));
-            groupInfo.setMainProductCode(poMainCode);
-        }
 
-        if (!productCodes.containsAll(groupInfo.getProductCodes())) {
-            flg = true;
-            errorModel.getErrors().add(String.format("platforms(_id: %s):group(cartId:0)的同group的产品设置不正确:%s -> %s", productModel.get_id(), groupInfo.getProductCodes().toArray().toString(), productCodes.toArray().toString()));
-            groupInfo.setProductCodes(productCodes);
-            groupInfo.setMainProductCode(poMainCode);
+        if (groupInfo == null || StringUtils.isEmpty(groupInfo.getMainProductCode())) {
+            errorModel.getErrors().add(String.format("platforms(_id: %s):group(cartId:0)的不存在,或者mainProductCode不存在", productModel.get_id()));
+        } else {
+            if (!groupInfo.getMainProductCode().equals(poMainCode)) {
+                flg = true;
+                errorModel.getErrors().add(String.format("platforms(_id: %s):group(cartId:0)的主商品设置不正确:%s -> %s", productModel.get_id(), groupInfo.getMainProductCode(), poMainCode));
+                groupInfo.setMainProductCode(poMainCode);
+            }
+
+            if (!productCodes.containsAll(groupInfo.getProductCodes())) {
+                flg = true;
+                errorModel.getErrors().add(String.format("platforms(_id: %s):group(cartId:0)的同group的产品设置不正确:%s -> %s", productModel.get_id(), groupInfo.getProductCodes().toArray().toString(), productCodes.toArray().toString()));
+                groupInfo.setProductCodes(productCodes);
+                groupInfo.setMainProductCode(poMainCode);
+            }
         }
 
         // 更新group表
@@ -235,14 +240,14 @@ public class ProductCheckService extends BaseService {
         if (productModel.getPlatform(cartId) == null || productModel.getPlatform(cartId).getSkus() == null) {
             if (productModel.getPlatform(cartId) != null && productModel.getPlatform(cartId).getSkus() == null)
                 productModel.getPlatforms().remove("P"+ cartId);
-            errorModel.getErrors().add(String.format("该产品_id:%s的platforms.P%d为空", productModel.get_id(), cartId));
+            errorModel.getErrors().add(String.format("该产品_id:%s的platforms.P%s为空", productModel.get_id(), cartId));
         } else {
             String mainProductCode = productModel.getPlatform(cartId).getMainProductCode();
 
             // 检测和设置group级别的主商品
             CmsBtProductGroupModel groupInfo = productGroupService.selectProductGroupByCode(productModel.getChannelId(), productCode, cartId);
             if (groupInfo == null) {
-                errorModel.getErrors().add(String.format("该产品对应的group不存在, code:%s, cartId:%d", productCode, cartId));
+                errorModel.getErrors().add(String.format("该产品对应的group不存在, code:%s, cartId:%s", productCode, cartId));
                 try {
                     groupInfo = productGroupService.creatOrUpdateGroup(productModel.getChannelId(), cartId, productModel.getCommon().getFields().getCode(), productModel.getPlatform(cartId).getMainProductCode(), false);
 //                    groupInfo.setChannelId("999");
@@ -253,12 +258,12 @@ public class ProductCheckService extends BaseService {
             }
 
             if (StringUtils.isEmpty(groupInfo.getMainProductCode())) {
-                throw new BusinessException(String.format("该产品对应的group的_id:%d的获取原始主商品code为空", groupInfo.get_id()));
+                throw new BusinessException(String.format("该产品对应的group的_id:%s的获取原始主商品code为空", groupInfo.get_id()));
             }
 
             // 设置platforms的主商品
             if (!groupInfo.getMainProductCode().equals(mainProductCode)) {
-                errorModel.getErrors().add(String.format("platforms:mainProductCode(_id:%s,cartId:%d)的主商品设置不正确:%s -> %s", productModel.get_id(), cartId, mainProductCode, groupInfo.getMainProductCode()));
+                errorModel.getErrors().add(String.format("platforms:mainProductCode(_id:%s,cartId:%s)的主商品设置不正确:%s -> %s", productModel.get_id(), cartId, mainProductCode, groupInfo.getMainProductCode()));
                 productModel.getPlatform(cartId).setMainProductCode(groupInfo.getMainProductCode());
                 productModel.getPlatform(cartId).setpIsMain(groupInfo.getMainProductCode().equals(productModel.getPlatform(cartId).getMainProductCode())? 1: 0);
             }
@@ -286,10 +291,7 @@ public class ProductCheckService extends BaseService {
             // 检测group的状态(已group的信息为正确依据)
             if (StringUtils.isEmpty(groupInfo.getNumIId())) {
 
-                if (((CartEnums.Cart.TM.getValue() == cartId
-                        || CartEnums.Cart.TG.getValue() == cartId
-                        || CartEnums.Cart.TB.getValue() == cartId
-                        || CartEnums.Cart.JM.getValue() == cartId)
+                if (((CartEnums.Cart.JM.getValue() == cartId)
                         && !StringUtils.isEmpty(groupInfo.getPlatformPid()))
                         || (CartEnums.Cart.JM.getValue() == cartId
                         && !StringUtils.isEmpty(groupInfo.getPlatformMallId()))
@@ -313,18 +315,15 @@ public class ProductCheckService extends BaseService {
 //                }
             } else {
                 groupInfo.setNumIId(mainProduct.getPlatform(cartId).getpNumIId());
-                if ((CartEnums.Cart.TM.getValue() == cartId
-                        || CartEnums.Cart.TG.getValue() == cartId
-                        || CartEnums.Cart.TB.getValue() == cartId
-                        || CartEnums.Cart.JM.getValue() == cartId)
-                        && (StringUtils.isEmpty(groupInfo.getPlatformPid())
-                        || (!StringUtils.isEmpty(mainProduct.getPlatform(cartId).getpProductId())
-                        && !mainProduct.getPlatform(cartId).getpProductId().equals(groupInfo.getPlatformPid())))) {
-                    flg = true;
-                    errorModel.getErrors().add(String.format("group(grup_id: %s, cartId: %d),该group已上新,但是平台PlatformPid为空或不正确(%s)", groupInfo.get_id(), cartId, mainProduct.getPlatform(cartId).getpProductId()));
-                    groupInfo.setPlatformPid(mainProduct.getPlatform(cartId).getpProductId());
-                }
-                else if (!StringUtils.isEmpty(groupInfo.getPlatformPid())) {
+                if (CartEnums.Cart.JM.getValue() == cartId) {
+                    if ((StringUtils.isEmpty(groupInfo.getPlatformPid())
+                            || (!StringUtils.isEmpty(mainProduct.getPlatform(cartId).getpProductId())
+                            && !mainProduct.getPlatform(cartId).getpProductId().equals(groupInfo.getPlatformPid())))) {
+                        flg = true;
+                        errorModel.getErrors().add(String.format("group(grup_id: %s, cartId: %s),该group已上新,但是平台PlatformPid为空或不正确(%s)", groupInfo.get_id(), cartId, mainProduct.getPlatform(cartId).getpProductId()));
+                        groupInfo.setPlatformPid(mainProduct.getPlatform(cartId).getpProductId());
+                    }
+                } else {
 
                     flg = true;
                     groupInfo.setPlatformPid("");
@@ -335,7 +334,7 @@ public class ProductCheckService extends BaseService {
                         || (!StringUtils.isEmpty(mainProduct.getPlatform(cartId).getpPlatformMallId())
                         && !mainProduct.getPlatform(cartId).getpPlatformMallId().equals(groupInfo.getPlatformMallId())))) {
                     flg = true;
-                    errorModel.getErrors().add(String.format("group(grup_id: %s, cartId: %d),该group已上新,但是平台PlatformMallId为空或不正确(%s)", groupInfo.get_id(), cartId, mainProduct.getPlatform(cartId).getpPlatformMallId()));
+                    errorModel.getErrors().add(String.format("group(grup_id: %s, cartId: %s),该group已上新,但是平台PlatformMallId为空或不正确(%s)", groupInfo.get_id(), cartId, mainProduct.getPlatform(cartId).getpPlatformMallId()));
                     groupInfo.setPlatformMallId(mainProduct.getPlatform(cartId).getpPlatformMallId());
                 } else if (CartEnums.Cart.JM.getValue() != cartId && !StringUtils.isEmpty(groupInfo.getPlatformMallId())) {
                     flg = true;
@@ -361,7 +360,7 @@ public class ProductCheckService extends BaseService {
             if (!CmsConstants.ProductStatus.Approved.name().equals(cartInfo.getStatus())
                     && !CmsConstants.ProductStatus.Pending.name().equals(cartInfo.getStatus())
                     && !CmsConstants.ProductStatus.Ready.name().equals(cartInfo.getStatus())) {
-                errorModel.getErrors().add(String.format("platform(_id: %s, cartId: %d), 该商品平台状态不在正确的状态值内(%s)", productModel.get_id(), cartId, cartInfo.getStatus()));
+                errorModel.getErrors().add(String.format("platform(_id: %s, cartId: %s), 该商品平台状态不在正确的状态值内(%s)", productModel.get_id(), cartId, cartInfo.getStatus()));
                 productModel.getPlatform(cartId).setStatus(CmsConstants.ProductStatus.Pending);
             }
 
@@ -381,7 +380,7 @@ public class ProductCheckService extends BaseService {
                             && !StringUtils.isEmpty(cartInfo.getpProductId()))
                             || (CartEnums.Cart.JM.getValue() == cartId
                             && !StringUtils.isEmpty(cartInfo.getpPlatformMallId()))) {
-                        errorModel.getErrors().add(String.format("platform(_id: %s, cartId: %d), 该商品平台状态不为Approved的时候,商品相关状态属性不在正确的值内(%s)", productModel.get_id(), cartId, cartInfo.getStatus()));
+                        errorModel.getErrors().add(String.format("platform(_id: %s, cartId: %s), 该商品平台状态不为Approved的时候,商品相关状态属性不在正确的值内(%s)", productModel.get_id(), cartId, cartInfo.getStatus()));
                         cartInfo.setpProductId("");
                         cartInfo.setpPlatformMallId("");
                         cartInfo.setpPublishTime("");
@@ -404,7 +403,7 @@ public class ProductCheckService extends BaseService {
                             && StringUtils.isEmpty(cartInfo.getpProductId()))
                             || (CartEnums.Cart.JM.getValue() == cartId
                             && StringUtils.isEmpty(cartInfo.getpPlatformMallId()))) {
-                        errorModel.getErrors().add(String.format("platform(_id: %s, cartId: %d), 该商品平台状态不为Approved,但是已经有numIId,商品相关状态属性不在正确的值内(%s)", productModel.get_id(), cartId, cartInfo.getStatus()));
+                        errorModel.getErrors().add(String.format("platform(_id: %s, cartId: %s), 该商品平台状态不为Approved,但是已经有numIId,商品相关状态属性不在正确的值内(%s)", productModel.get_id(), cartId, cartInfo.getStatus()));
                         cartInfo.setStatus(CmsConstants.ProductStatus.Approved);
 
                         if (CartEnums.Cart.TM.getValue() == cartId
@@ -435,24 +434,18 @@ public class ProductCheckService extends BaseService {
                         || cartInfo.getpStatus() == null
                         || StringUtils.isEmpty(cartInfo.getpNumIId())
                         || StringUtils.isEmpty(cartInfo.getpReallyStatus())
-                        || ((CartEnums.Cart.TM.getValue() == cartId
-                        || CartEnums.Cart.TG.getValue() == cartId
-                        || CartEnums.Cart.TB.getValue() == cartId
-                        || CartEnums.Cart.JM.getValue() == cartId)
+                        || ((CartEnums.Cart.JM.getValue() == cartId)
                         && StringUtils.isEmpty(cartInfo.getpProductId()))
                         || (CartEnums.Cart.JM.getValue() == cartId
                         && StringUtils.isEmpty(cartInfo.getpPlatformMallId()))) {
 
                     if (!"Error".equals(cartInfo.getpPublishError())) {
 
-                        errorModel.getErrors().add(String.format("platform(_id: %s, cartId: %d), 该商品平台状态为Approved,但是商品相关状态属性不在正确的值内(%s)", productModel.get_id(), cartId, cartInfo.getStatus()));
+                        errorModel.getErrors().add(String.format("platform(_id: %s, cartId: %s), 该商品平台状态为Approved,但是商品相关状态属性不在正确的值内(%s)", productModel.get_id(), cartId, cartInfo.getStatus()));
 //                cartInfo.setStatus(CmsConstants.ProductStatus.Approved);
                         cartInfo.setpNumIId(mainProduct.getPlatform(cartId).getpNumIId());
 
-                        if (CartEnums.Cart.TM.getValue() == cartId
-                                || CartEnums.Cart.TG.getValue() == cartId
-                                || CartEnums.Cart.TB.getValue() == cartId
-                                || CartEnums.Cart.JM.getValue() == cartId)
+                        if (CartEnums.Cart.JM.getValue() == cartId)
                             cartInfo.setpProductId(!StringUtils.isEmpty(mainProduct.getPlatform(cartId).getpProductId()) ? mainProduct.getPlatform(cartId).getpProductId() : groupInfo.getPlatformPid());
                         else
                             cartInfo.setpProductId("");
@@ -475,7 +468,7 @@ public class ProductCheckService extends BaseService {
 
             // 检测product的各平台Sku的数量是否和common.skus的数量是否一致
             if (productModel.getCommon().getSkus().size() != cartInfo.getSkus().size()) {
-                errorModel.getErrors().add(String.format("platform:(_id: %s, cartId: %d)的sku数量和common里面的数量不一致", productModel.get_id(), cartId));
+                errorModel.getErrors().add(String.format("platform:(_id: %s, cartId: %s)的sku数量和common里面的数量不一致", productModel.get_id(), cartId));
                 cartInfo.setSkus(addPlatformSkus(productModel.getCommon().getSkus(), cartInfo.getSkus()));
             }
 

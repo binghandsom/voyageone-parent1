@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.configs.Codes;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.beans.PlatformBean;
 import com.voyageone.common.configs.dao.PlatformDao;
 import com.voyageone.service.impl.BaseService;
@@ -37,5 +38,27 @@ public class PlatformService extends BaseService {
         if (commonTemplateId == null && !"0".equals(cartId) && !"1".equals(cartId))
             return "";
         return commonTemplateId;
+    }
+
+    /**
+     * 返回真实的平台URL
+     *
+     * @param cartId
+     * @param numIid
+     * @return
+     */
+    public String getPlatformProductUrl(String cartId, String numIid) {
+        String productUrl = getPlatformProductUrl(cartId);
+
+        if (CartEnums.Cart.JM.getId().equals(cartId)
+                || CartEnums.Cart.JD.getId().equals(cartId)
+                || CartEnums.Cart.JG.getId().equals(cartId)
+                || CartEnums.Cart.JGY.getId().equals(cartId)
+                || CartEnums.Cart.JGJ.getId().equals(cartId)
+                || CartEnums.Cart.LCN.getId().equals(cartId)) {
+            return productUrl + numIid + ".html";
+        } else {
+            return productUrl + numIid;
+        }
     }
 }

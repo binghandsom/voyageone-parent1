@@ -821,15 +821,21 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 if (org.apache.commons.lang3.StringUtils.isNotEmpty(ptfObj.getpNumIId())) {
                     if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
                         // JmMallURL
-                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpPlatformMallId() + ".html");
+                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpPlatformMallId()));
                         // 设置Jm库存
                         FileUtils.cell(row, index++, unlock).setCellValue(qty);
                         // JmMallID
                         FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpPlatformMallId()));
                         // JmURL
-                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpNumIId() + ".html");
+                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
                     } else {
-                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpNumIId());
+                        if (CartEnums.Cart.JD.getId().equals(cartObj.getValue())
+                                || CartEnums.Cart.JG.getId().equals(cartObj.getValue())
+                                || CartEnums.Cart.JGY.getId().equals(cartObj.getValue())
+                                || CartEnums.Cart.JGJ.getId().equals(cartObj.getValue())) {
+                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), getJdPlatformSkuId(ptfObj)));
+                        } else
+                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
                         FileUtils.cell(row, index++, unlock).setCellValue(qty);
                     }
                 } else {
@@ -1055,13 +1061,19 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     if (org.apache.commons.lang3.StringUtils.isNotEmpty(grpModel.getNumIId())) {
                         if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
                             // JmMallURL
-                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpPlatformMallId() + ".html");
+                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpPlatformMallId()));
                             // JmMallID
                             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpPlatformMallId()));
                             // JmURL
-                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + grpModel.getNumIId() + ".html");
+                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
                         } else {
-                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + grpModel.getNumIId());
+                            if (CartEnums.Cart.JD.getId().equals(cartObj.getValue())
+                                    || CartEnums.Cart.JG.getId().equals(cartObj.getValue())
+                                    || CartEnums.Cart.JGY.getId().equals(cartObj.getValue())
+                                    || CartEnums.Cart.JGJ.getId().equals(cartObj.getValue())) {
+                                FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), getJdPlatformSkuId(ptfObj)));
+                            } else
+                                FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
                         }
                     } else {
                         // 补齐聚头的MallURL和MallID的空白列
@@ -1149,7 +1161,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getModel()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getCode()));
-                SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuItem.getSkuCode());
+                SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuItem.getSkuCode().toLowerCase());
                 FileUtils.cell(row, index++, unlock).setCellValue(skuInventoryMap.get(temp) == null ? "0" : String.valueOf(skuInventoryMap.get(temp)));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getColor()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSize()));
@@ -1211,7 +1223,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             if (org.apache.commons.lang3.StringUtils.isNotEmpty(ptfObj.getpNumIId())) {
                                 if (cartObj.getValue().equals(CartEnums.Cart.JM.getId())) {
                                     // JmMallURL
-                                    FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpPlatformMallId() + ".html");
+                                    FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpPlatformMallId()));
                                     // JmMallID
                                     FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpPlatformMallId()));
                                     // JmSkuNo
@@ -1222,9 +1234,15 @@ public class CmsAdvSearchExportFileService extends BaseService {
                                         FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(jmSkus.get(0).getStringAttribute("jmSkuNo")));
                                     }
                                     // JmURL
-                                    FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpNumIId() + ".html");
+                                    FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
                                 } else {
-                                    FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpNumIId());
+                                    if (CartEnums.Cart.JD.getId().equals(cartObj.getValue())
+                                            || CartEnums.Cart.JG.getId().equals(cartObj.getValue())
+                                            || CartEnums.Cart.JGY.getId().equals(cartObj.getValue())
+                                            || CartEnums.Cart.JGJ.getId().equals(cartObj.getValue())) {
+                                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), getJdPlatformSkuId(ptfObj)));
+                                    } else
+                                        FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue(), ptfObj.getpNumIId()));
                                 }
                             } else {
                                 // 补齐聚头的MallURL, MallID和SkuNo的空白列
@@ -1286,6 +1304,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(channel, new ArrayList<>(codesMap.get(channel)));
                     if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
                         for (SkuInventoryForCmsBean skuInventory : inventoryForCmsBeanList) {
+                            skuInventory.setSku(skuInventory.getSku().toLowerCase());
                             skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
                         }
                     }
@@ -1551,6 +1570,21 @@ public class CmsAdvSearchExportFileService extends BaseService {
             rs = "";
         }
         return rs;
+    }
+
+    /**
+     * 返回jsSkuId
+     *
+     * @param ptfObj
+     * @return
+     */
+    private String getJdPlatformSkuId(CmsBtProductModel_Platform_Cart ptfObj) {
+        for (BaseMongoMap<String, Object> map : ptfObj.getSkus()) {
+            if (!StringUtils.isEmpty(map.getStringAttribute("jdSkuId"))
+                    && Boolean.valueOf(map.getStringAttribute("isSale")))
+                return map.getStringAttribute("jdSkuId");
+        }
+        return "";
     }
 
 }

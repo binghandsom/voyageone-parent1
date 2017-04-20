@@ -166,22 +166,22 @@
                             <!----------------------------------check 状态------------------------------------------>
                             <ul class="nav nav-pills">
                                 <li>
-                                        <span ng-class="{tagFlag:ctrl.vm.checkFlag.translate != 1}">{{'TXT_TRANSSTS_ATTRIBUTE' | translate}}&emsp;
-                                            <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.translate == 1"></i>
-                                            <i class="fa fa-times" ng-if="ctrl.vm.checkFlag.translate != 1"></i>
-                                        </span>
+                                    <span ng-class="{tagFlag:ctrl.vm.checkFlag.translate != 1}">{{'TXT_TRANSSTS_ATTRIBUTE' | translate}}&emsp;
+                                        <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.translate == 1"></i>
+                                        <i class="fa fa-times" ng-if="ctrl.vm.checkFlag.translate != 1"></i>
+                                    </span>
                                 </li>
                                 <li ng-if="cartInfo.value != 20">
-                                        <span ng-class="{tagFlag:ctrl.vm.checkFlag.tax != 1}">{{'TXT_HS_CODE_STATUS' | translate}}&emsp;
-                                            <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.tax == 1"></i>
-                                            <i class="fa fa-times" ng-if="ctrl.vm.checkFlag.tax != 1"></i>
-                                        </span>
+                                    <span ng-class="{tagFlag:ctrl.vm.checkFlag.tax != 1}">{{'TXT_HS_CODE_STATUS' | translate}}&emsp;
+                                        <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.tax == 1"></i>
+                                        <i class="fa fa-times" ng-if="ctrl.vm.checkFlag.tax != 1"></i>
+                                    </span>
                                 </li>
                                 <li>
-                                        <span ng-class="{tagFlag:ctrl.vm.checkFlag.category != 1}">{{'TXT_PLATFORM_CATEGORY' | translate}}&emsp;
-                                            <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.category == 1"></i>
-                                            <i class="fa fa-times" ng-if="ctrl.vm.checkFlag.category != 1"></i>
-                                        </span>
+                                    <span ng-class="{tagFlag:ctrl.vm.checkFlag.category != 1}">{{'TXT_PLATFORM_CATEGORY' | translate}}&emsp;
+                                        <i class="fa fa-check" ng-if="ctrl.vm.checkFlag.category == 1"></i>
+                                        <i class="fa fa-times" ng-if="ctrl.vm.checkFlag.category != 1"></i>
+                                    </span>
                                 </li>
                                 <!-----------------------------添加聚焦提示------------------------>
                                 <li ng-click="ctrl.focusError()"
@@ -203,12 +203,23 @@
                         <div class="col-md-4">
                             <!--应运营要求，保存按钮跳过check，一直为pending状态，除了平台类目为必选-->
                             <div class="row">
-                                <div class="pull-right m-t-xs m-r-xs"
+                                <div class="pull-right m-t-xs m-r-xs" uib-dropdown
                                      ng-if="ctrl.vm.status == 'Ready' || ctrl.vm.status == 'Approved' || isPublishSucceed">
-                                    <button class="btn btn-vo" ng-click="ctrl.saveProduct()"
-                                            ng-disabled="!ctrl.btnDisabled()">
-                                        <i class="glyphicon glyphicon-floppy-disk"></i>Approved
+                                    <button class="btn btn-vo" uib-dropdown-toggle ng-disabled="!ctrl.btnDisabled()">
+                                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Approved &nbsp;<span class="caret"></span>
                                     </button>
+                                    <ul uib-dropdown-menu>
+                                        <li>
+                                            <a href="javascript:void(0)" ng-click="ctrl.saveProduct()">
+                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;普通上新
+                                            </a>
+                                        </li>
+                                        <li ng-if="ctrl.vm.platform.pNumIId">
+                                            <a href="javascript:void(0)" ng-click="ctrl.loadAttribute()">
+                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;部分上新
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </div>
                                 <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Pending'">
                                     <button class="btn btn-vo" ng-click="ctrl.saveProduct('ready')"
@@ -261,28 +272,37 @@
                             <div class="row form-group">
                                 <div class="col-md-2">
                                     <div class="row text-right">
-                                        <label class="control-label" style="min-height:107px;"><strong>Group
-                                            Info</strong></label>
+                                        <div class="form-horizontal">
+                                            <div class="form-group">
+                                                <label class="control-label"><strong>Group Info</strong></label>
+                                            </div>
+                                            <div class="form-group">
+                                                <span ng-if="!ctrl.moreCodeFlg && ctrl.canMoreCode()">
+                                                    <i class="fa fa-angle-double-down more-code" ng-click="ctrl.moreCode()"></i>
+                                                </span>
+                                                <span ng-if="ctrl.moreCodeFlg && ctrl.canMoreCode()">
+                                                    <i class="fa fa-angle-double-up more-code" ng-click="ctrl.moreCode()"></i>
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-8 m-l-35">
+                                <div class="col-md-1" style="width: 35px;">
+                                    <span notice-direction="bottom" notice-content="点击跳动图标展开更多code！"
+                                          notice-tip class="text-warnings cur-p"><i
+                                            class="icon fa fa-question-circle text-md"></i></span>
+                                </div>
+                                <div class="col-md-8">
                                     <div class="row">
-                                        <div class="col-xs-6 col-md-2" ng-repeat="image in ctrl.vm.mastData.images">
-                                            <a href="javascript:void(0)" class="thumbnail current clear-margin-bottom"
-                                               ng-if="image.productCode == productInfo.masterField.code"
+                                        <div class="col-xs-6 col-md-2" ng-repeat="image in ctrl.vm.mastData.images"
+                                             ng-init = "$currentCode = (image.productCode == productInfo.masterField.code)"
+                                             ng-if="image.productCode == productInfo.masterField.code || ctrl.moreCodeFlg || image.isMain || image.qty > 0">
+                                            <a class="thumbnail clear-margin-bottom"
+                                               ng-href="{{$currentCode ? 'javascript:void(0)' : '#/product/detail/'+image.prodId}}"
+                                               ng-class="{'current' : $currentCode}"
+                                               target="{{$currentCode ? '_self':'_blank'}}"
                                                style="height: 115px;">
-                                                <strong class="main" ng-if="image.isMain == true"><span
-                                                        class="label label-danger">&nbsp;M&nbsp;</span></strong>
-                                                <img class="thumb-group"
-                                                     src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}"
-                                                     title="{{image.productCode}}">
-                                            </a>
-                                            <!--不是当前商品的话可以跳转到图片对应产品详情页-->
-                                            <a ng-href="#/product/detail/{{image.prodId}}"
-                                               class="thumbnail clear-margin-bottom"
-                                               ng-if="image.productCode != productInfo.masterField.code" target="_blank"
-                                               style="height: 115px;">
-                                                <strong class="main" ng-if="image.isMain == true"><span
+                                                <strong class="main" ng-if="image.isMain"><span
                                                         class="label label-danger">&nbsp;M&nbsp;</span></strong>
                                                 <img class="thumb-group"
                                                      src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}"
@@ -290,8 +310,8 @@
                                             </a>
                                             <div class="thumbInfo">
                                                 <div class="row">
-                                                    <div class="col-md-4"><strong title="中国最终售价"
-                                                                                  style="cursor: help">￥:</strong></div>
+                                                    <div class="col-md-4">
+                                                        <strong title="中国最终售价" style="cursor: help">￥:</strong></div>
                                                     <div class="col-md-8 text-right">
                                                         <span class="text-wrap">
                                                             <span ng-if="image.priceSaleSt == image.priceSaleEd">{{image.priceSaleSt | currency:''}}</span>
