@@ -2869,10 +2869,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         // 不存在的场合: 插入数据库
                         itemDetailsDao.insertItemDetails(itemDetailsBean, getTaskName());
 
-                        Map<String,Object> data = new HashMap<>();
-                        data.put("order_channel_id",channelId);
-                        data.put("skulist", Collections.singletonList(itemDetailsBean.getClient_sku()));
-                        sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_CA_Update_Quantity, data);
+                        if(usjoi) {
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("order_channel_id", channelId);
+                            data.put("skulist", Collections.singletonList(itemDetailsBean.getClient_sku()));
+                            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_CA_Update_Quantity, data);
+                        }
 
                     }
                 } catch (Exception e) {
