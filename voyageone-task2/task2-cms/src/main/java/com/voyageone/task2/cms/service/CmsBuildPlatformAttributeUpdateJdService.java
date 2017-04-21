@@ -129,8 +129,10 @@ public class CmsBuildPlatformAttributeUpdateJdService extends BaseCronTaskServic
                 // 根据京东商品id取得京东平台上的sku信息列表
                 List<Sku> skuList = jdSkuService.getSkusByWareId(shop, numIId, failCause);
                 if (ListUtils.isNull(skuList)) {
-                    // 忽略这条数据  等待下次继续执行
-                    return;
+
+                    String errorMsg = String.format("取得页面skuList为空！请检查该商品！[numIId:%s]:", numIId);
+                    $error(errorMsg);
+                    throw new BusinessException(errorMsg);
                 } else {
                     // 回写workload表(成功1)
                     sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
@@ -209,8 +211,15 @@ public class CmsBuildPlatformAttributeUpdateJdService extends BaseCronTaskServic
                 sxData.setGroupId(groupId);
                 sxData.setErrorMessage(String.format("京东取得商品数据为空！[ChannelId:%s] [GroupId:%s]", channelId, groupId));
             }
-            String errMsg = String.format("京东平台更新商品异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WorkloadName:%s] [%s]",
-                    channelId, cartId, groupId, workloadName, e.getMessage());
+            String errMsg;
+            if (PlatformWorkloadAttribute.JD_SKUID.getValue().equals(workloadName)) {
+                errMsg = String.format("获取页面上skuId异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WorkloadName:%s] [%s]",
+                        channelId, cartId, groupId, workloadName, e.getMessage());
+            } else {
+                errMsg = String.format("京东平台更新商品异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WorkloadName:%s] [%s]",
+                        channelId, cartId, groupId, workloadName, e.getMessage());
+            }
+
             $error(errMsg);
             e.printStackTrace();
             // 如果上新数据中的errorMessage为空
