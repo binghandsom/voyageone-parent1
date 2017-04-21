@@ -52,7 +52,9 @@ import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
+import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
@@ -156,6 +158,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
     private CmsBtTranslateService cmsBtTranslateService;
     @Autowired
     private Searcher searcher;
+    @Autowired
+    private MqSender sender;
 
 
     /**
@@ -2867,6 +2871,13 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     } else {
                         // 不存在的场合: 插入数据库
                         itemDetailsDao.insertItemDetails(itemDetailsBean, getTaskName());
+
+                        if(usjoi) {
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("order_channel_id", channelId);
+                            data.put("skulist", Collections.singletonList(itemDetailsBean.getClient_sku()));
+                            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_CA_Update_Quantity, data);
+                        }
 
                     }
                 } catch (Exception e) {

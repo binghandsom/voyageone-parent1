@@ -3605,6 +3605,14 @@ public class SxProductService extends BaseService {
             throw new BusinessException(errMsg);
         }
     }
+    public String generateStyleCode(CmsBtProductModel mainProduct, int cartId) {
+        // 画面上可以填了,没填的话还是用model
+        String styleCode = (String) mainProduct.getPlatformNotNull(cartId).getFieldsNotNull().get("productModel");
+        if (StringUtils.isEmpty(styleCode)) {
+            styleCode = mainProduct.getCommonNotNull().getFieldsNotNull().getModel();
+        }
+        return styleCode;
+    }
 
     /**
      * 更新天猫货品id(关联商品)
