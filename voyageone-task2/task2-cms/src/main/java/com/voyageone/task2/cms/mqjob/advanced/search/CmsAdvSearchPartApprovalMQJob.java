@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * Created by james on 2017/4/21.
- * 批量部分字段上新
+ * 批量平台部分上新
  */
 @Service
 @VOSubRabbitListener
