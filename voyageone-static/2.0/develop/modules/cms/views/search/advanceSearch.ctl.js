@@ -1520,7 +1520,6 @@ define([
                         break;
                 }
 
-
                 popups.openLoadAttribute({
                     attribute: attribute
                 }).then(function (res) {
@@ -1529,7 +1528,7 @@ define([
 
                     $fieldEditService.setProductFields({
                         cartId: cartId,
-                        _option: 'approval',
+                        _option: 'partApproval',
                         productIds:  _.pluck(_selProdList, 'code'),
                         isSelAll: $scope.vm._selall ? 1 : 0,
                         searchInfo: $scope.searchInfoBefo,
