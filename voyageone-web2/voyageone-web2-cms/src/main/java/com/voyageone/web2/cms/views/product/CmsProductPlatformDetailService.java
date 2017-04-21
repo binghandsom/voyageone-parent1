@@ -396,7 +396,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 }
             }
             // added by morse.lu 2016/09/13 end
-            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), platformCart.getpCatId(), channelId, cartId, prodId, language, null, platformCart.getpBrandId(), platformCart.getMainProductCode()));
+            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), platformCart.getpCatId(), channelId, cartId, prodId, language, null, platformCart.getpBrandId(), sxProductService.generateStyleCode(cmsBtProduct, cartId)));
         }
         return platformCart;
     }
@@ -473,7 +473,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getPlatform(cartId);
         if (platformCart != null) {
             if (platformCart.getFields() == null) platformCart.setFields(new BaseMongoMap<>());
-            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, prodId, language, catPath, platformCart.getpBrandId(), platformCart.getMainProductCode()));
+            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, prodId, language, catPath, platformCart.getpBrandId(), sxProductService.generateStyleCode(cmsBtProduct, cartId)));
             platformCart.setpCatId(catId);
             // platform 品牌名
 //            if (StringUtil.isEmpty(platformCart.getpBrandId()) || StringUtil.isEmpty(platformCart.getpBrandName())) {
@@ -491,7 +491,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         } else {
             platformCart = new CmsBtProductModel_Platform_Cart();
             if (platformCart.getFields() == null) platformCart.setFields(new BaseMongoMap<>());
-            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, prodId, language, catPath, platformCart.getpBrandId(), platformCart.getMainProductCode()));
+            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, prodId, language, catPath, platformCart.getpBrandId(), sxProductService.generateStyleCode(cmsBtProduct, cartId)));
 
             Map<String, Object> parm = new HashMap<>();
             parm.put("channelId", channelId);
@@ -782,7 +782,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             }
         });
 
-        platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId, prodId, language, platform.getpCatPath(), platform.getpBrandId(), platform.getMainProductCode()));
+        platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId, prodId, language, platform.getpCatPath(), platform.getpBrandId(), sxProductService.generateStyleCode(cmsBtProductModel, cartId)));
 
         return platform;
     }
