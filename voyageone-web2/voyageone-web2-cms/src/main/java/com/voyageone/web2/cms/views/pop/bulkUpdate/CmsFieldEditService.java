@@ -265,7 +265,7 @@ public class CmsFieldEditService extends BaseViewService {
             JongoUpdate updObj = new JongoUpdate();
             updObj.setQuery("{'common.fields.code':{$in:#}}");
             updObj.setQueryParameters(productCodes);
-            updObj.setUpdate("{$set:{'common.fields." + prop_id + "':#}}");
+            updObj.setUpdate("{$set:{'common.catConf':'1','common.fields." + prop_id + "':#}}");
             updObj.setUpdateParameters(stsCode);
 
             WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
