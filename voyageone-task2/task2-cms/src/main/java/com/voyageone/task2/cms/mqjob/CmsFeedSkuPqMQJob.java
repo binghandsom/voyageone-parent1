@@ -7,6 +7,7 @@ import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class CmsFeedSkuPqMQJob extends TBaseMQCmsService<CmsFeedSkuPqMQMessageBo
     @Override
     public void onStartup(CmsFeedSkuPqMQMessageBody messageBody) throws Exception {
 
-        Map<String, List<CmsBtOperationLogModel_Msg>> result = feedToCmsService.updateFeedSkuPrice(messageBody.getChannelId(), messageBody.getSkuInfo(), messageBody.getSender());
+        Map<String, List<CmsBtOperationLogModel_Msg>> result = feedToCmsService.updateFeedSkuPrice(messageBody.getChannelId(), messageBody.getSkuList(), messageBody.getSender());
 
         List<CmsBtOperationLogModel_Msg> success = result.get("success"),
                 failed = result.get("failed");
@@ -39,7 +40,7 @@ public class CmsFeedSkuPqMQJob extends TBaseMQCmsService<CmsFeedSkuPqMQMessageBo
         /** 写入错误信息日志 */
         if (result.get("failed").size() > 0) {
             String comment = String.format("处理总数(%s), 处理成功数(%s),处理失败数(%s)",
-                    messageBody.getSkuInfo().size(),
+                    messageBody.getSkuList().size(),
                     success.size(),
                     failed.size());
 
