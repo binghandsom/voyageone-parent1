@@ -93,4 +93,8 @@ public class CmsBtSxWorkloadDaoExt extends ServiceBaseDao {
         return selectList("cms_select_platform_workload", parameters("record_count", recordCount, "channelIdList", channelIdList, "cartList", cartList));
     }
 
+    public List<CmsBtSxWorkloadModel> selectSxWorkloadModelByChannelIdCartIdWorkloadName(int recordCount, List<String> channelIdList, List<String> cartList, String workloadName) {
+        return selectList("cms_select_platform_workload_by_name", parameters("record_count", recordCount, "channelIdList", channelIdList, "cartList", cartList, "workloadName", workloadName));
+    }
+
 }
