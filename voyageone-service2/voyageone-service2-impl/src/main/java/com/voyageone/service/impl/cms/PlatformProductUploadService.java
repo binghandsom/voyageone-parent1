@@ -72,16 +72,4 @@ public class PlatformProductUploadService extends BaseService {
         return sxWorkloadDao.selectSxWorkloadModelWithChannelIdListCartIdList(recordCount, channelIdList, cartList);
     }
 
-    /**
-     * 获取平台ID对应的更新数据
-     *
-     * @param recordCount  int     更新的任务表中一次数据抽出最大件数
-     * @param channelIdList    String  店铺ID
-     * @param cartList       String  渠道ID
-     * @return List<CmsBtSxWorkloadModel>    上新任务模型列表
-     */
-    public List<CmsBtSxWorkloadModel> getSxWorkloadByChannelIdCartIdWorkloadName(int recordCount, List<String> channelIdList, List<String> cartList, String workloadName) {
-        return sxWorkloadDao.selectSxWorkloadModelByChannelIdCartIdWorkloadName(recordCount, channelIdList, cartList, workloadName);
-    }
-
 }
