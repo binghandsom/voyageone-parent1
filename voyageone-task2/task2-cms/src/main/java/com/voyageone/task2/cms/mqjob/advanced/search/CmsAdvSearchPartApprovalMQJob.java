@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.components.rabbitmq.annotation.VOSubRabbitListener;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -38,20 +39,24 @@ public class CmsAdvSearchPartApprovalMQJob extends TBaseMQCmsSubService<AdvSearc
     public void onStartup(AdvSearchPartApprovalMQMessageBody messageBody) throws Exception {
         List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
         for(String code : messageBody.getCodeList()){
-            CmsBtProductModel cmsBtProductModel = productService.getProductByCode(messageBody.getChannelId(), code);
-            CmsBtProductModel_Platform_Cart platform = cmsBtProductModel.getPlatform(messageBody.getCartId());
-            if(platform == null || StringUtil.isEmpty(platform.getpNumIId())){
+            try {
+                CmsBtProductModel cmsBtProductModel = productService.getProductByCode(messageBody.getChannelId(), code);
+                CmsBtProductModel_Platform_Cart platform = cmsBtProductModel.getPlatform(messageBody.getCartId());
+                if (platform == null || StringUtil.isEmpty(platform.getpNumIId())) {
+                    throw new BusinessException("numIId 为空 请先上新");
+                } else {
+                    messageBody.getPlatformWorkloadAttributes().forEach(workload -> {
+                        PlatformWorkloadAttribute platformWorkloadAttribute = PlatformWorkloadAttribute.get(workload);
+                        if (platformWorkloadAttribute != null) {
+                            sxProductService.insertPlatformWorkload(messageBody.getChannelId(), messageBody.getCartId(), platformWorkloadAttribute, Collections.singletonList(code), messageBody.getSender());
+                        }
+                    });
+                }
+            }catch (Exception e){
                 CmsBtOperationLogModel_Msg fail = new CmsBtOperationLogModel_Msg();
                 fail.setSkuCode(code);
-                fail.setMsg("numIId 为空 请先上新");
+                fail.setMsg(e.getMessage());
                 failList.add(fail);
-            }else{
-                messageBody.getPlatformWorkloadAttributes().forEach(workload->{
-                    PlatformWorkloadAttribute platformWorkloadAttribute = PlatformWorkloadAttribute.get(workload);
-                    if(platformWorkloadAttribute != null){
-                        sxProductService.insertPlatformWorkload(messageBody.getChannelId(), messageBody.getCartId(), platformWorkloadAttribute, Collections.singletonList(code), messageBody.getSender());
-                    }
-                });
             }
         }
         if (failList.size() > 0) {
