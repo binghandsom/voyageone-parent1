@@ -935,7 +935,7 @@ define([
              * @param openUpdateApprovalFnc
              * @param cartId
              */
-            function openApproval(openUpdateApprovalFnc, cartId) {
+            function openApproval(cartId) {
                 _chkProductSel(parseInt(cartId), function (cartId, _selProdList) {
 
                     confirm($translate.instant('TXT_BULK_APPROVAL')).then(function () {
@@ -988,7 +988,7 @@ define([
                 }
                 if (res.data.ecd == 3) {
                     // 商品价格有问题
-                    return openUpdateApprovalFnc({
+                    popups.openUpdateApproval({
                         'resData': res.data,
                         'propertyInfo': property
                     }).then(function (data) {
@@ -1498,7 +1498,11 @@ define([
                 return [23, 20, 24, 26, 27, 30, 31].indexOf(Number(cartId)) > -1;
             };
 
-            $scope.batchLoadAttr = function (cartInfo) {
+        /**
+         * 部分上新操作
+         * @param cartInfo 平台信息
+         */
+        $scope.batchLoadAttr = function (cartInfo) {
 
                 _chkProductSel('0', function (cartId, _selProdList) {
                     var attribute = [];
