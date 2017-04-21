@@ -60,6 +60,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -71,7 +72,7 @@ import static java.util.stream.Collectors.toList;
 
 /**
  * 子店->USJOI主店产品导入服务
- *
+ * <p>
  * 可以把USJOI主店(京东国际匠心界(928,28)，京东国际悦境(929,29))理解成为一个虚拟的销售平台，
  * 本服务是把子店(如：017 LuckyVitamin)的产品导入（复制）到USJOI主店里面，变成主店的产品（例：928,28的产品）。
  * 如果主店里面没有该商品，新增的时候，所有的产品属性都会设置；
@@ -80,7 +81,6 @@ import static java.util.stream.Collectors.toList;
  *
  * @author desmond
  * @author james.li on 2016/4/6.
- * @version 2.4.0
  * @version 2.0.0
  */
 @Service
@@ -168,8 +168,6 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         }
 
 
-
-
         // 默认线程池最大线程数(目前最后只有2个USJOI的channelId 928, 929)
         int threadPoolCnt = 2;
         // 保存每个channel最终导入结果(成功失败件数信息)
@@ -201,7 +199,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         $info("=================子店->USJOI主店导入  最终结果=====================");
         resultMap.entrySet().stream()
                 .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
-                .forEach(p ->  $info(p.getValue()));
+                .forEach(p -> $info(p.getValue()));
         $info("=================子店->USJOI主店导入  主线程结束====================");
 
     }
@@ -257,7 +255,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         if (ListUtils.notNull(approveCartList)) {
             // 取得配置表中可售卖的非空cartId列表
             approveCartList.forEach(p -> {
-                if(!StringUtils.isEmpty(p.getValue()))
+                if (!StringUtils.isEmpty(p.getValue()))
                     cartIds.add(NumberUtils.toInt(p.getValue()));
             });
         }
@@ -419,7 +417,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                             movedPrList.stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.joining(",")));
                                     $error(errMsg);
                                     throw new BusinessException(errMsg);
-                                } else if (movedPrList.size() == 1){
+                                } else if (movedPrList.size() == 1) {
                                     // 把子店产品中每个skuCode对应的主店产品都加入到更新列表中去
                                     prList.add(movedPrList.get(0));
                                 }
@@ -455,14 +453,21 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                         throw new BusinessException(errMsg);
                     }
 
-                    if(StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOrigProductType())) {
+                    if (StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOrigProductType())) {
                         productModel.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
                     }
-                    if(StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType())) {
+                    if (StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType())) {
                         productModel.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
                     }
 
                     doSetMainCategory(productModel.getCommon(), productModel.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
+
+                    // 设置sku的重量
+                    for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
+                        if ((sku.getWeight() == null || sku.getWeight() == 0.0D)
+                                && productModel.getCommon().getFields().getWeightLb() != 0.0D)
+                            sku.setWeight(productModel.getCommon().getFields().getWeightLb());
+                    }
 
                     // 产品不存在，新增
                     productModel.setChannelId(usJoiChannelId);
@@ -479,7 +484,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
                     // platform对应 从子店的platform.p928 929 中的数据生成usjoi的platform
                     CmsBtProductModel_Platform_Cart fromPlatform = productModel.getPlatform(sxWorkLoadBean.getCartId());
-                    if(ChannelConfigEnums.Channel.JEWELRY.getId().equals(sxWorkLoadBean.getChannelId())){
+                    if (ChannelConfigEnums.Channel.JEWELRY.getId().equals(sxWorkLoadBean.getChannelId())) {
                         fromPlatform = productModel.getPlatform(CartEnums.Cart.TG);
                     }
                     productModel.platformsClear();
@@ -504,13 +509,13 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             platform.setAttribute("pReallyStatus",null);
                             platform.setSkus(platform.getSkus().stream().map(sku->{
                                 BaseMongoMap<String, Object> newSku = new BaseMongoMap<String, Object>();
-                                newSku.setAttribute("skuCode",sku.getStringAttribute("skuCode"));
-                                newSku.setAttribute("isSale",sku.get("isSale"));
-                                newSku.setAttribute("sizeNick",sku.get("sizeNick"));
-                                if(ChannelConfigEnums.Channel.JEWELRY.getId().equals(sxWorkLoadBean.getChannelId())){
-                                    newSku.setAttribute("priceMsrp",sku.getStringAttribute("priceMsrp"));
-                                    newSku.setAttribute("priceRetail",sku.get("priceRetail"));
-                                    newSku.setAttribute("priceSale",sku.get("priceSale"));
+                                newSku.setAttribute("skuCode", sku.getStringAttribute("skuCode"));
+                                newSku.setAttribute("isSale", sku.get("isSale"));
+                                newSku.setAttribute("sizeNick", sku.get("sizeNick"));
+                                if (ChannelConfigEnums.Channel.JEWELRY.getId().equals(sxWorkLoadBean.getChannelId())) {
+                                    newSku.setAttribute("priceMsrp", sku.getStringAttribute("priceMsrp"));
+                                    newSku.setAttribute("priceRetail", sku.get("priceRetail"));
+                                    newSku.setAttribute("priceSale", sku.get("priceSale"));
                                 }
                                 sku = newSku;
                                 return sku;
@@ -552,13 +557,13 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     productModel.getPlatforms().put("P0", p0);
 
 
-                    if(!StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff()) && StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getColor())){
+                    if (!StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff()) && StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getColor())) {
                         String color = cmsBtTranslateService.translate("928", CmsBtCustomPropModel.CustomPropType.Common.getValue(), "com_color", productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff());
-                        if(!StringUtil.isEmpty(color)) productModel.getCommonNotNull().getFieldsNotNull().setColor(color);
+                        if (!StringUtil.isEmpty(color)) productModel.getCommonNotNull().getFieldsNotNull().setColor(color);
                     }
 
-                    CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(productModel.getOrgChannelId(),productModel.getCommon().getFields().getOriginalCode());
-                    if(cmsBtFeedInfoModel != null) {
+                    CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(productModel.getOrgChannelId(), productModel.getCommon().getFields().getOriginalCode());
+                    if (cmsBtFeedInfoModel != null) {
                         setSellerCats(cmsBtFeedInfoModel, productModel);
                     }
                     productService.createProduct(usJoiChannelId, productModel, sxWorkLoadBean.getModifier());
@@ -600,7 +605,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             prCommonFields.setImages1(productModel.getCommon().getFields().getImages1());
 
 
-                            if(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId().equalsIgnoreCase(pr.getOrgChannelId())) {
+                            if (ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId().equalsIgnoreCase(pr.getOrgChannelId())) {
                                 for (CmsBtProductConstants.FieldImageType imageType : CmsBtProductConstants.FieldImageType.values()) {
                                     if (imageType != CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE) {
                                         List<CmsBtProductModel_Field_Image> images = prCommonFields.getImages(imageType);
@@ -660,9 +665,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             // 更新税号设置状态
                             String oldHsCodeStatus = prCommonFields.getHsCodeStatus();
                             prCommonFields.setHsCodeStatus(StringUtil.isEmpty(prCommonFields.getHsCodePrivate()) ? "0" : "1");
-                            if(!prCommonFields.getHsCodeStatus().equalsIgnoreCase(oldHsCodeStatus)){
+                            if (!prCommonFields.getHsCodeStatus().equalsIgnoreCase(oldHsCodeStatus)) {
                                 // 如果状态有变更且变成1时，记录更新时间
-                                if(prCommonFields.getHsCodeStatus().equalsIgnoreCase("1")){
+                                if (prCommonFields.getHsCodeStatus().equalsIgnoreCase("1")) {
                                     prCommonFields.setHsCodeSetTime(DateTimeUtil.getNowTimeStamp());
                                     prCommonFields.setHsCodeSetter(getTaskName());
                                 }
@@ -743,7 +748,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             // 材质英文(common.fields.materialEn)
 //                            if (StringUtil.isEmpty(prCommonFields.getMaterialEn())
 //                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getMaterialEn())) {
-                                prCommonFields.setMaterialEn(productModel.getCommonNotNull().getFieldsNotNull().getMaterialEn());
+                            prCommonFields.setMaterialEn(productModel.getCommonNotNull().getFieldsNotNull().getMaterialEn());
 //                            }
 
                             // 材质中文(common.fields.materialCn)
@@ -838,7 +843,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             // 商品特质英文（颜色/口味/香型等）(common.fields.codeDiff)
 //                            if (StringUtil.isEmpty(prCommonFields.getCodeDiff())
 //                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff())) {
-                                prCommonFields.setCodeDiff(productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff());
+                            prCommonFields.setCodeDiff(productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff());
 //                            }
 
                             // 使用说明英语(common.fields.usageEn)
@@ -869,23 +874,23 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                         // CMSDOC-365,CMCDOC-414 如果common.catConf="0"(非人工匹配主类目)时，自动匹配商品主类目
                         // TODO 2016/12/30暂时这样更新，以后要改
 //                        if ("0".equals(pr.getCommonNotNull().getCatConf())) {
-                            // 自动匹配商品主类目
-                            if(StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOrigProductType())){
-                                pr.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
-                            }else{
-                                pr.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getOrigProductType());
-                            }
+                        // 自动匹配商品主类目
+                        if (StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOrigProductType())) {
+                            pr.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
+                        } else {
+                            pr.getCommonNotNull().getFieldsNotNull().setOrigProductType(productModel.getCommonNotNull().getFieldsNotNull().getOrigProductType());
+                        }
 
-                            if(StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType())){
-                                pr.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
-                            }else{
-                                pr.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType());
-                            }
+                        if (StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType())) {
+                            pr.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
+                        } else {
+                            pr.getCommonNotNull().getFieldsNotNull().setOrigSizeType(productModel.getCommonNotNull().getFieldsNotNull().getOrigSizeType());
+                        }
 
-                            if(!StringUtil.isEmpty(productModel.getFeed().getCatPath())) {
-                                pr.getFeed().setCatPath(productModel.getFeed().getCatPath());
-                            }
-                            doSetMainCategory(pr.getCommon(), pr.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
+                        if (!StringUtil.isEmpty(productModel.getFeed().getCatPath())) {
+                            pr.getFeed().setCatPath(productModel.getFeed().getCatPath());
+                        }
+                        doSetMainCategory(pr.getCommon(), pr.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
 //                        }
                         // 产品名称中文(common.fields.originalTitleCn)
                         if ("0".equals(prCommonFields.getTranslateStatus())
@@ -906,7 +911,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                             CmsBtProductModel_Sku prodCommonSku = prodCommonSkusObj.stream().filter(p -> sku.getSkuCode().equals(p.getSkuCode())).findFirst().get();
                                             if (prodCommonSku != null) {
                                                 // 把子店产品中common.skus.sku更新到总店拆分后的产品(例：P2, P3)
-                                                updateCommonSku(sku, prodCommonSku);
+                                                updateCommonSku(sku, prodCommonSku, pr.getCommon().getFields().getWeightLb());
                                                 updateFlg = true;
                                                 // 正常情况下，一个skuCode应该只存在一个产品中,所以找到就退出
                                                 break;
@@ -918,7 +923,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 if (!updateFlg) pr.getCommon().getSkus().add(sku);
                             } else {
                                 // 把子店产品中common.skus.sku更新到总店产品
-                                updateCommonSku(sku, oldSku);
+                                updateCommonSku(sku, oldSku, pr.getCommon().getFields().getWeightLb());
                             }
                         }
 
@@ -936,7 +941,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                         // 取得子店的平台(P928)数据
                         CmsBtProductModel_Platform_Cart fromPlatform = finalProductModel1.getPlatform(sxWorkLoadBean.getCartId());
                         // jewelry 的价格来自与子店的天猫国际
-                        if(ChannelConfigEnums.Channel.JEWELRY.getId().equals(sxWorkLoadBean.getChannelId())){
+                        if (ChannelConfigEnums.Channel.JEWELRY.getId().equals(sxWorkLoadBean.getChannelId())) {
                             fromPlatform = finalProductModel1.getPlatform(CartEnums.Cart.TG);
                         }
                         fromPlatform.getSkus().forEach(p -> {
@@ -968,15 +973,15 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 newPlatform.setAttribute("pReallyStatus",null);
                                 // 重新设置newPlatform的skus，因为fromPlatform里面过来的是全部的sku，要去掉拆分到其他产品的sku
                                 newPlatform.setSkus(correctPlatformSkus);
-                                newPlatform.setSkus(newPlatform.getSkus().stream().map((BaseMongoMap<String, Object> sku) ->{
+                                newPlatform.setSkus(newPlatform.getSkus().stream().map((BaseMongoMap<String, Object> sku) -> {
                                     BaseMongoMap<String, Object> newSku = new BaseMongoMap<String, Object>();
-                                    newSku.setAttribute("skuCode",sku.getStringAttribute("skuCode"));
-                                    newSku.setAttribute("isSale",sku.get("isSale"));
-                                    newSku.setAttribute("sizeNick",sku.get("sizeNick"));
-                                    if(ChannelConfigEnums.Channel.JEWELRY.getId().equals(sxWorkLoadBean.getChannelId())){
-                                        newSku.setAttribute("priceMsrp",sku.getStringAttribute("priceMsrp"));
-                                        newSku.setAttribute("priceRetail",sku.get("priceRetail"));
-                                        newSku.setAttribute("priceSale",sku.get("priceSale"));
+                                    newSku.setAttribute("skuCode", sku.getStringAttribute("skuCode"));
+                                    newSku.setAttribute("isSale", sku.get("isSale"));
+                                    newSku.setAttribute("sizeNick", sku.get("sizeNick"));
+                                    if (ChannelConfigEnums.Channel.JEWELRY.getId().equals(sxWorkLoadBean.getChannelId())) {
+                                        newSku.setAttribute("priceMsrp", sku.getStringAttribute("priceMsrp"));
+                                        newSku.setAttribute("priceRetail", sku.get("priceRetail"));
+                                        newSku.setAttribute("priceSale", sku.get("priceSale"));
                                     }
                                     sku = newSku;
                                     return sku;
@@ -988,7 +993,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 if (group == null) {
                                     newPlatform.setpIsMain(0);
                                     CmsBtProductGroupModel cmsBtProductGroupModel = productGroupService.selectProductGroupByCode(usJoiChannelId, pr.getCommonNotNull().getFieldsNotNull().getCode(), cartId);
-                                    if(cmsBtProductGroupModel != null){
+                                    if (cmsBtProductGroupModel != null) {
                                         newPlatform.setMainProductCode(cmsBtProductGroupModel.getMainProductCode());
                                     }
                                 } else {
@@ -1096,13 +1101,13 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                         }
                                     }
                                 }
-                                if(ChannelConfigEnums.Channel.JEWELRY.getId().equals(sxWorkLoadBean.getChannelId())){
-                                    for(BaseMongoMap<String, Object> prSku : platformCart.getSkus()){
-                                        fromPlatform.getSkus().forEach(formSku->{
-                                            if(formSku.getStringAttribute("skuCode").equals(prSku.getStringAttribute("skuCode"))){
-                                                prSku.setAttribute("priceMsrp",formSku.getStringAttribute("priceMsrp"));
-                                                prSku.setAttribute("priceRetail",formSku.get("priceRetail"));
-                                                prSku.setAttribute("priceSale",formSku.get("priceSale"));
+                                if (ChannelConfigEnums.Channel.JEWELRY.getId().equals(sxWorkLoadBean.getChannelId())) {
+                                    for (BaseMongoMap<String, Object> prSku : platformCart.getSkus()) {
+                                        fromPlatform.getSkus().forEach(formSku -> {
+                                            if (formSku.getStringAttribute("skuCode").equals(prSku.getStringAttribute("skuCode"))) {
+                                                prSku.setAttribute("priceMsrp", formSku.getStringAttribute("priceMsrp"));
+                                                prSku.setAttribute("priceRetail", formSku.get("priceRetail"));
+                                                prSku.setAttribute("priceSale", formSku.get("priceSale"));
                                             }
                                         });
                                     }
@@ -1123,13 +1128,13 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
                         // 更新产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
                         // productService.updateProduct(channelId, requestModel);
-                        if(!StringUtil.isEmpty(pr.getCommonNotNull().getFieldsNotNull().getCodeDiff()) && StringUtil.isEmpty(pr.getCommonNotNull().getFieldsNotNull().getColor())){
+                        if (!StringUtil.isEmpty(pr.getCommonNotNull().getFieldsNotNull().getCodeDiff()) && StringUtil.isEmpty(pr.getCommonNotNull().getFieldsNotNull().getColor())) {
                             String color = cmsBtTranslateService.translate("928", CmsBtCustomPropModel.CustomPropType.Common.getValue(), "com_color", pr.getCommonNotNull().getFieldsNotNull().getCodeDiff());
-                            if(!StringUtil.isEmpty(color)) pr.getCommonNotNull().getFieldsNotNull().setColor(color);
+                            if (!StringUtil.isEmpty(color)) pr.getCommonNotNull().getFieldsNotNull().setColor(color);
                         }
 
-                        CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(pr.getOrgChannelId(),pr.getCommon().getFields().getOriginalCode());
-                        if(cmsBtFeedInfoModel != null) {
+                        CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(pr.getOrgChannelId(), pr.getCommon().getFields().getOriginalCode());
+                        if (cmsBtFeedInfoModel != null) {
                             setSellerCats(cmsBtFeedInfoModel, pr);
                         }
 
@@ -1152,7 +1157,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     if (ListUtils.notNull(originalCodeProductList)) {
                         originalCodeProductList.forEach(p -> {
                             // 更新拆分后的产品的价格相关项目p
-                            Integer chg =  doSetPrice(p);
+                            Integer chg = doSetPrice(p);
 
                             // 更新拆分后的产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
                             productService.updateProductFeedToMaster(usJoiChannelId, p, getTaskName(), "子店->USJOI主店导入:更新拆分后的产品:");
@@ -1302,9 +1307,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      * 如果已经存在, 返回 找到了的那个group id
      * 如果不存在, 返回 -1
      *
-     * @param channelId channel id
-     * @param modelCode 品牌方给的model
-     * @param cartId    cart id
+     * @param channelId    channel id
+     * @param modelCode    品牌方给的model
+     * @param cartId       cart id
      * @param orgChannelId 子店channelId
      * @return group id
      */
@@ -1317,8 +1322,8 @@ public class UploadToUSJoiService extends BaseCronTaskService {
     /**
      * 设置group(新规和更新)
      *
-     * @param cmsBtProductModel CmsBtProductModel 产品信息
-     * @param usJoiChannel String USJOI店channel(929,928)
+     * @param cmsBtProductModel        CmsBtProductModel 产品信息
+     * @param usJoiChannel             String USJOI店channel(929,928)
      * @param usjoiTypeChannelBeanList USJOI店展示用平台cartId（如:0,28或0,29等）
      * @return NumID是否都是空 1：是 2：否
      */
@@ -1461,7 +1466,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
     /**
      * 新规作成P0平台信息
      *
-     * @param groupModel CmsBtProductGroupModel group信息
+     * @param groupModel   CmsBtProductGroupModel group信息
      * @param productModel CmsBtProductModel product信息
      * @return P0 CmsBtProductModel_Platform_Cart P0平台信息
      */
@@ -1489,8 +1494,8 @@ public class UploadToUSJoiService extends BaseCronTaskService {
     /**
      * 如果Synship.com_mt_value_channel表中没有usjoi channel(928,929)对应的品牌信息，则插入该信息
      *
-     * @param usjoiChannelId String usjoi channel id
-     * @param mapBrandMapping Map<String, String> 品牌mapping一览
+     * @param usjoiChannelId     String usjoi channel id
+     * @param mapBrandMapping    Map<String, String> 品牌mapping一览
      * @param usjoiProductModels List<CmsBtProductBean> 产品列表
      */
     private void insertMtValueChannelInfo(String usjoiChannelId, Map<String, String> mapBrandMapping, List<CmsBtProductModel> usjoiProductModels) {
@@ -1535,7 +1540,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      * 取得该渠道的PlatformActive初始值
      *
      * @param channelId String channel id
-     * @param cartId int 平台id
+     * @param cartId    int 平台id
      * @return platformActive CmsConstants.PlatformActive 上新的动作初始值
      */
     private CmsConstants.PlatformActive getPlatformActive(String channelId, Integer cartId) {
@@ -1578,13 +1583,13 @@ public class UploadToUSJoiService extends BaseCronTaskService {
     /**
      * 出错的时候将错误信息回写到cms_bt_business_log表
      *
-     * @param channelId String 子店渠道id
-     * @param cartId String 平台id
-     * @param groupId String GroupId
+     * @param channelId   String 子店渠道id
+     * @param cartId      String 平台id
+     * @param groupId     String GroupId
      * @param productCode String 产品code
-     * @param errCode String 错误code
-     * @param errMsg String 错误消息
-     * @param modifier String 更新者
+     * @param errCode     String 错误code
+     * @param errMsg      String 错误消息
+     * @param modifier    String 更新者
      */
     private void insertBusinessLog(String channelId, Integer cartId, String groupId, String productCode, String errCode, String errMsg, String modifier) {
         CmsBtBusinessLogModel businessLogModel = new CmsBtBusinessLogModel();
@@ -1660,10 +1665,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
     /**
      * 取得cms_mt_channel_config配置表中配置的值集合
      *
-     * @param channelId String LIKING渠道id
+     * @param channelId             String LIKING渠道id
      * @param channelConfigValueMap 返回cms_mt_channel_config配置表中配置的值集合用
      */
-    public void doChannelConfigInit(String channelId,  Map<String, String> channelConfigValueMap) {
+    public void doChannelConfigInit(String channelId, Map<String, String> channelConfigValueMap) {
 
         // 从配置表(cms_mt_channel_config)表中取得子店->USJOI总店的品牌方商品图(images1)以外的图片复制方式(LIKING__IMAGE_COPY_FLG_0)
         String likingImageCopyFlgKey = CmsConstants.ChannelConfig.LIKING_IMAGE_COPY_FLG + "_0";
@@ -1674,8 +1679,8 @@ public class UploadToUSJoiService extends BaseCronTaskService {
     /**
      * 取得cms_mt_channel_config配置表中配置的值
      *
-     * @param channelId String 渠道id
-     * @param configKey CmsConstants.ChannelConfig ConfigKey
+     * @param channelId  String 渠道id
+     * @param configKey  CmsConstants.ChannelConfig ConfigKey
      * @param configCode String ConfigCode
      * @return String cms_mt_channel_config配置表中配置的值
      */
@@ -1702,9 +1707,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      * 从子店产品中复制图片到总店产品
      *
      * @param likingImageCopyFlg String 子店到总店时图片复制方式(空或0：不复制，1:以UNION方式复制，2：以主店优先方式复制)
-     * @param imagesNo String 图片No
-     * @param productModel CmsBtProductModel子店产品
-     * @param pr CmsBtProductModel 主店产品
+     * @param imagesNo           String 图片No
+     * @param productModel       CmsBtProductModel子店产品
+     * @param pr                 CmsBtProductModel 主店产品
      */
     public void copyImageToUsjoi(String likingImageCopyFlg, int imagesNo, CmsBtProductModel productModel, CmsBtProductModel pr) {
         if (!"1".equals(likingImageCopyFlg) && !"2".equals(likingImageCopyFlg)) return;
@@ -1871,17 +1876,16 @@ public class UploadToUSJoiService extends BaseCronTaskService {
     /**
      * 把子店产品中common.skus.sku更新到总店产品
      *
-     * @param fromSku String  子店产品的common.skus.sku
+     * @param fromSku  String  子店产品的common.skus.sku
      * @param usjoiSku String 主店产品的common.skus.sku
      */
-    protected void updateCommonSku(CmsBtProductModel_Sku fromSku, CmsBtProductModel_Sku usjoiSku) {
+    protected void updateCommonSku(CmsBtProductModel_Sku fromSku, CmsBtProductModel_Sku usjoiSku, Double weight) {
         // 如果在usjoi产品的commom.skus找到子店对应的skuCode时
         // 跟feed->master统一，无条件更新尺码等共通sku属性
         usjoiSku.setBarcode(fromSku.getBarcode());
         usjoiSku.setClientSkuCode(fromSku.getClientSkuCode());
         usjoiSku.setClientSize(fromSku.getClientSize());
         usjoiSku.setSize(fromSku.getSize());
-        usjoiSku.setWeight((fromSku.getWeight()));  // 重量(单位：磅)
 
         // 更新该sku价格
         // 美金专柜价
@@ -1895,15 +1899,25 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         // 人民币指导价(后面价格计算要用到，因为010,018等店铺不用新价格体系，还是用老的价格公式)
         usjoiSku.setPriceRetail(fromSku.getPriceRetail());
 
+        // 设置重量
+        if ((fromSku.getWeight() == null || fromSku.getWeight() == 0.0D)
+                && weight != 0.0D) {
+            usjoiSku.setWeight(weight);
+            usjoiSku.setWeightUnit("lb");
+        } else {
+            usjoiSku.setWeight((fromSku.getWeight()));  // 重量(单位：磅)
+            usjoiSku.setWeightUnit(fromSku.getWeightUnit());
+        }
+
     }
 
     /**
      * 自动匹配商品主类目
      *
-     * @param prodCommon 产品共通属性
+     * @param prodCommon       产品共通属性
      * @param feedCategoryPath feed类目Path
-     * @param channelId channelId
-//     * @param blnAddFlg 是否新增商品(true:新增 false:更新)
+     * @param channelId        channelId
+     *                         //     * @param blnAddFlg 是否新增商品(true:新增 false:更新)
      */
     protected void doSetMainCategory(CmsBtProductModel_Common prodCommon, String feedCategoryPath, String channelId) {
         if (prodCommon == null || StringUtils.isEmpty(feedCategoryPath)) return;
@@ -1920,7 +1934,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 prodCommonField.getBrand());
         if (searchResult != null) {
             $info(String.format("调用主类目匹配接口取得主类目和适用人群正常结束！[耗时:%s] [feedCategoryPath:%s] [productType:%s] " +
-                    "[sizeType:%s] [productNameEn:%s] [brand:%s]", (System.currentTimeMillis() - beginTime), feedCategoryPath,
+                            "[sizeType:%s] [productNameEn:%s] [brand:%s]", (System.currentTimeMillis() - beginTime), feedCategoryPath,
                     prodCommonField.getProductType(), prodCommonField.getSizeType(), prodCommonField.getProductNameEn(), prodCommonField.getBrand()));
 
             // 先备份原来的productType和sizeType
@@ -1945,6 +1959,16 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             // 主类目path(英文)
             if (!StringUtils.isEmpty(searchResult.getEnName()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommon.getCatPathEn()))) {
                 prodCommon.setCatPathEn(searchResult.getEnName());
+            }
+
+            // 根据主类目设置商品重量
+            if (searchResult.getWeight() != 0.0D
+                    && (prodCommonField.getWeightLb() == null || prodCommonField.getWeightLb() == 0.0)) {
+                prodCommonField.setWeightLb(searchResult.getWeight());
+                BigDecimal b = new BigDecimal(searchResult.getWeight() * 453.59237);
+                prodCommonField.setWeightG(b.setScale(0, BigDecimal.ROUND_HALF_UP).intValue());
+                b = new BigDecimal(searchResult.getWeight() * 453.59237 / 1000.0);
+                prodCommonField.setWeightKG(b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             }
 //                // 主类目id(就是主类目path中文的MD5码)
 //                if (!StringUtils.isEmpty(searchResult.getCnName())) {
@@ -1986,7 +2010,8 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 }
             }
             // 税号跨境申报（10位）
-            if (!StringUtils.isEmpty(searchResult.getTaxDeclare()) || !"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getHsCodeCross()))      prodCommonField.setHsCodeCross(searchResult.getTaxDeclare());
+            if (!StringUtils.isEmpty(searchResult.getTaxDeclare()) || !"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getHsCodeCross()))
+                prodCommonField.setHsCodeCross(searchResult.getTaxDeclare());
 
             // 商品中文名称(如果已翻译，则不设置)
             // 临时特殊处理 017的名称不根据主类目自动翻译,如果后续有这个需求再改正
@@ -2008,8 +2033,8 @@ public class UploadToUSJoiService extends BaseCronTaskService {
     /**
      * 根据自动匹配商品主类目取得商品中文名称
      *
-     * @param brand 品牌
-     * @param sizeTypeCn 适合人群(中文)
+     * @param brand              品牌
+     * @param sizeTypeCn         适合人群(中文)
      * @param leafCategoryCnName 主类目叶子级中文名称
      * @return String 商品中文名称(品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称)
      */
@@ -2021,10 +2046,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      * 调用Feed到主数据的匹配接口匹配主类目,返回匹配度最高的第一个查询结果
      *
      * @param feedCategoryPath feed类目Path
-     * @param productType 产品分类
-     * @param sizeType 适合人群(英文)
-     * @param productNameEn 产品名称（英文）
-     * @param brand 产品品牌
+     * @param productType      产品分类
+     * @param sizeType         适合人群(英文)
+     * @param productNameEn    产品名称（英文）
+     * @param brand            产品品牌
      * @return SearchResult 匹配度最高的第一个查询结果
      */
     public MatchResult getMainCatInfo(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
@@ -2048,10 +2073,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      * 取得查询条件
      *
      * @param feedCategoryPath feed类目Path
-     * @param productType 产品分类
-     * @param sizeType 适合人群(英文)
-     * @param productNameEn 产品名称（英文）
-     * @param brand 产品品牌
+     * @param productType      产品分类
+     * @param sizeType         适合人群(英文)
+     * @param productNameEn    产品名称（英文）
+     * @param brand            产品品牌
      * @return FeedQuer 查询条件
      */
     private FeedQuery getFeedQuery(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
@@ -2072,7 +2097,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
     /**
      * 插入尺码表(不存在插入，存在不更新)
      *
-     * @param channelId 渠道id
+     * @param channelId  渠道id
      * @param cmsProduct 产品对象
      */
     public void insertCmsBtFeedImportSize(String channelId, CmsBtProductModel cmsProduct) {
@@ -2090,7 +2115,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
     }
 
     private void checkProduct(CmsBtProductModel cmsProduct) {
-        if(!ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId().equals(cmsProduct.getOrgChannelId())){
+        if (!ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId().equals(cmsProduct.getOrgChannelId())) {
             if (StringUtil.isEmpty(cmsProduct.getCommonNotNull().getCatPath())) {
                 throw new BusinessException("主类目没有计算成功");
             }

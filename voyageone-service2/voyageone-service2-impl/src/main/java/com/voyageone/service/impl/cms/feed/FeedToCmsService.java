@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.feed;
 
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.category.match.FeedQuery;
 import com.voyageone.category.match.MatchResult;
@@ -27,7 +28,6 @@ import com.voyageone.service.model.cms.CmsMtChannelValuesModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedSkuPqModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -262,33 +262,34 @@ public class FeedToCmsService extends BaseService {
     /**
      * VMS的sku的库存和价格改变时，更新cms系统中的信息
      * @param channelId
-     * @param products
+     * @param skuList
      * @param modifier
-     * @return
+     * @return Map<String, List<CmsBtOperationLogModel_Msg>>
      */
-    public Map<String, List<CmsBtOperationLogModel_Msg>> updateFeedSkuPrice(String channelId, List<CmsBtFeedSkuPqModel> products,
+    public Map<String, List<CmsBtOperationLogModel_Msg>> updateFeedSkuPrice(String channelId, List<CmsBtFeedInfoModel_Sku> skuList,
                                                                             String modifier) {
 
         List<CmsBtOperationLogModel_Msg> success = new ArrayList<>(),
                 failed = new ArrayList<>();
 
-        for (CmsBtFeedSkuPqModel skuEntity : products) {
+        List<String> skuCodeList = skuList.stream().map(sku -> sku.getClientSku()).collect(Collectors.toList());
 
-            CmsBtFeedInfoModel_Sku firstSku = skuEntity.getSkus().get(0);
+        JongoQuery query = new JongoQuery();
+        query.setQuery("{\"skus.clientSku\": {$in: #}}");
+        query.setParameters(skuCodeList);
+        List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, query);
 
-            if (firstSku == null)
-                continue;
+        feedList.forEach(orgFeedInfo -> {
 
-            CmsBtFeedInfoModel orgFeedInfo = feedInfoService.getProductByClientSku(channelId, firstSku.getClientSku());
+            Integer qty = 0;
             /**标识是否要触发价格公式，
              * 当判断中的3个价格都没有值时，不会触发价格公式
              * */
-            boolean triggerPrice = false;
 
-            /**code 库存计算*/
-            Integer qty = 0;
+            boolean triggerPrice = false;
             for (CmsBtFeedInfoModel_Sku skuInfo : orgFeedInfo.getSkus()) {
-                CmsBtFeedInfoModel_Sku targetSku = filterSku(skuEntity.getSkus(), skuInfo);
+
+                CmsBtFeedInfoModel_Sku targetSku = filterSku(skuList, skuInfo.getClientSku());
 
                 /**
                  * 比较一下客户价格
@@ -350,7 +351,8 @@ public class FeedToCmsService extends BaseService {
                 _failedMsg.setMsg(e.getMessage());
                 failed.add(_failedMsg);
             }
-        }
+
+        });
 
         Map<String, List<CmsBtOperationLogModel_Msg>> response = new HashMap<>();
         response.put("success", success);
@@ -362,15 +364,15 @@ public class FeedToCmsService extends BaseService {
     /**
      * 找出符合条件的sku
      *
-     * @param skus     feed当中的sku
-     * @param matchSku 要匹配的sku模型
+     * @param skuList       feed当中的sku
+     * @param clientSkuCode 要匹配的sku模型
      */
-    private CmsBtFeedInfoModel_Sku filterSku(List<CmsBtFeedInfoModel_Sku> skus, CmsBtFeedInfoModel_Sku matchSku) {
+    private CmsBtFeedInfoModel_Sku filterSku(List<CmsBtFeedInfoModel_Sku> skuList, String clientSkuCode) {
 
         CmsBtFeedInfoModel_Sku targetSku = null;
 
-        for (CmsBtFeedInfoModel_Sku entity : skus) {
-            if (entity.getClientSku().equals(matchSku.getClientSku())) {
+        for (CmsBtFeedInfoModel_Sku entity : skuList) {
+            if (entity.getClientSku().equals(clientSkuCode)) {
                 targetSku = entity;
                 break;
             }

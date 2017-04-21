@@ -11,7 +11,6 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.category.match.Searcher;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -93,9 +92,6 @@ public class ProductService extends BaseService {
 
     @Autowired
     private CmsBtCustomPropService cmsBtCustomPropService;
-
-    @Autowired
-    private Searcher searcher;
 
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;

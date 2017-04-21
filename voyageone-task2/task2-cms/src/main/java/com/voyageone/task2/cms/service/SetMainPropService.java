@@ -52,7 +52,9 @@ import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
+import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
@@ -156,6 +158,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
     private CmsBtTranslateService cmsBtTranslateService;
     @Autowired
     private Searcher searcher;
+    @Autowired
+    private MqSender sender;
 
 
     /**
@@ -994,6 +998,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 //                        cmsBtFeedInfoDao.update(originalFeed);
 //                        return;
                     }
+
+                    //james g kg 计算
+                    weightCalculate(cmsProduct);
+
                     // tom 20160510 追加 END
 
                     // TODO: 没有设置的fields里的内容, 不会被清除? 这个应该是在共通里做掉的吧, 要是共通里不做的话就要自己写了
@@ -1013,8 +1021,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                     // 设置sku数
                     cmsProduct.getCommon().getFields().setSkuCnt(cmsProduct.getCommon().getSkus().size());
-                    //james g kg 计算
-                    weightCalculate(cmsProduct);
 
                     // productService.updateProduct(channelId, requestModel);
                     // 更新产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
@@ -1063,6 +1069,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                     platFromAttributeCopyFromMainProduct(cmsProduct);
 
+                    //james g kg 计算
+                    weightCalculate(cmsProduct);
+
                     // 计算主类目
                     if (usjoi) {
                         doSetMainCategory(cmsProduct.getCommon(), feed);
@@ -1074,9 +1083,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // 设置店铺共通的店铺内分类信息
                     setSellerCats(feed, cmsProduct);
                     $debug("setSellerCats:" + (System.currentTimeMillis() - startTime));
-
-                    //james g kg 计算
-                    weightCalculate(cmsProduct);
 
                     // 设置sku数
                     cmsProduct.getCommon().getFields().setSkuCnt(cmsProduct.getCommon().getSkus().size());
@@ -2868,6 +2874,13 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         // 不存在的场合: 插入数据库
                         itemDetailsDao.insertItemDetails(itemDetailsBean, getTaskName());
 
+                        if(usjoi) {
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("order_channel_id", channelId);
+                            data.put("skulist", Collections.singletonList(itemDetailsBean.getClient_sku()));
+                            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_CA_Update_Quantity, data);
+                        }
+
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -3214,6 +3227,24 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 } else {
                     prodCommonField.setCategoryStatus("0");
                 }
+
+                // 根据主类目设置商品重量
+                if (searchResult.getWeight() != 0.0D
+                        && (prodCommonField.getWeightLb() == null || prodCommonField.getWeightLb() == 0.0)) {
+                    prodCommonField.setWeightLb(searchResult.getWeight());
+                    BigDecimal b = new BigDecimal(searchResult.getWeight() * 453.59237);
+                    prodCommonField.setWeightG(b.setScale(0, BigDecimal.ROUND_HALF_UP).intValue());
+                    b = new BigDecimal(searchResult.getWeight() * 453.59237 / 1000.0);
+                    prodCommonField.setWeightKG(b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                }
+
+                // 如果sku的重量不存在,则设置成默认重量
+                prodCommon.getSkus().forEach(sku -> {
+                    if ((sku.getWeight() == null || sku.getWeight() == 0.0D)
+                            && searchResult.getWeight() != 0.0D)
+                        sku.setWeight(searchResult.getWeight());
+                });
+
                 // 产品分类(英文)
                 if (!StringUtils.isEmpty(searchResult.getProductTypeEn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getProductType())))
                     prodCommonField.setProductType(searchResult.getProductTypeEn().toLowerCase());
