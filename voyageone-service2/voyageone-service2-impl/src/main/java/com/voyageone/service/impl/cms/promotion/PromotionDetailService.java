@@ -636,7 +636,7 @@ public class PromotionDetailService extends BaseService {
 
             addPromotionDetail(request);
 
-            if (isUpdateAllPromotionTask(cmsBtPromotionCodesBean)) {
+            if (isUpdateAllPromotionTask(cmsBtPromotionCodesBean) || "928".equals(cmsBtPromotionCodesBean.getChannelId())) {
                 cmsBtPromotionTask.setSynFlg(1);
             }
             if (cmsPromotionTaskDao.updatePromotionTask(cmsBtPromotionTask) == 0) {
