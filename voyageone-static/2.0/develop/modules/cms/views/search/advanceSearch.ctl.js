@@ -1498,7 +1498,7 @@ define([
             return [23, 20, 24, 26, 27, 30, 31].indexOf(Number(cartId)) > -1;
         };
 
-        $scope.batchloadAttr = function (cartInfo) {
+        $scope.batchLoadAttr = function (cartInfo) {
 
             _chkProductSel('0', function (cartId, _selProdList) {
                 var attribute = [];
