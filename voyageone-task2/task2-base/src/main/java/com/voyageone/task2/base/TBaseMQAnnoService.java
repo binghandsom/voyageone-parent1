@@ -108,7 +108,7 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
     /**
      * 获取配置
      */
-    private void initControls() {
+    public void initControls() {
         if (taskControlList == null) {
             taskControlList = getControls();
             if (taskControlList == null) {

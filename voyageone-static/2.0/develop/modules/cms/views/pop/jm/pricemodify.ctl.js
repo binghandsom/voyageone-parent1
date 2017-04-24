@@ -32,7 +32,7 @@ define([
 
         $scope.ok = function () {
 
-            if (listPromotionProduct.length == 0) {
+            if (listPromotionProduct.length == 0 && context.selAll == false) {
                 alert("请选择修改价格的商品!");
                 return;
             }
@@ -63,7 +63,7 @@ define([
             }
             //  if(预热已开始&&synch_status==2)//包含已上新的商品 提示
             var isSynchStatus2 = false
-            if (isBegin) {
+            if (isBegin && context.selAll == false) {
                 for (var i = 0; i < listPromotionProduct.length; i++) {
                     if (listPromotionProduct[i].synchStatus == 2) {
                         isSynchStatus2 = true;
@@ -91,6 +91,8 @@ define([
             parameter.skuUpdType=$scope.vm.skuUpdType;
             parameter.optType=$scope.vm.optType;
             parameter.roundType=$scope.vm.roundType;
+            parameter.searchInfo = context.searchInfo;
+            parameter.selAll = context.selAll;
 
             jmPromotionDetailService.batchUpdateSkuDealPrice(parameter).then(function (res) {
                 if (!res.data.result) {
