@@ -13,76 +13,39 @@ define([
             customProps: [],
             commonProps: []
         };
+        $scope.chkItemStatus = chkItemStatus;
 
         $scope.init = function () {
             $searchAdvanceService2.getCustColumnsInfo().then(function (res) {
-
+                console.log('返回结果',res.data);
                 $scope.vm.customProps = res.data.customProps;
                 $scope.vm.commonProps = res.data.commonProps;
                 $scope.vm.salesTypeList = res.data.salesTypeList;
                 $scope.vm.biDataList = res.data.biDataList;
                 $scope.vm.platformDataList = res.data.platformDataList;
 
-                _.forEach($scope.vm.customProps, function (data) {
+                _.each($scope.vm.customProps, function (data) {
                     data.isChk = _.contains(res.data.custAttrList, data.feed_prop_original);
                 });
-                _.forEach($scope.vm.commonProps, function (data) {
+
+                _.each($scope.vm.commonProps, function (data) {
                     data.isChk = _.contains(res.data.commList, data.propId);
                 });
-                _.forEach($scope.vm.salesTypeList, function (data) {
+
+                _.each($scope.vm.salesTypeList, function (data) {
                     data.isChk = _.contains(res.data.selSalesTypeList, data.value);
                 });
-                _.forEach($scope.vm.biDataList, function (data) {
+
+                _.each($scope.vm.biDataList, function (data) {
                     data.isChk = _.contains(res.data.selBiDataList, data.value);
                 });
 
+                _.each($scope.vm.platformDataList, function (item) {
+                    item.isChk = _.contains(res.data.platformProps, item.value);
+                });
                 // 检查全选框
-                var chkSts = false;
-                if ($scope.vm.commonProps && $scope.vm.commonProps.length > 0) {
-                    for (keyIdx in $scope.vm.commonProps) {
-                        if (!$scope.vm.commonProps[keyIdx].isChk) {
-                            chkSts = true;
-                        }
-                    }
-                    $scope.vm.all_commonData = !chkSts;
-                } else {
-                    $scope.vm.all_commonData = false;
-                }
-
-                chkSts = false;
-                if ($scope.vm.customProps && $scope.vm.customProps.length > 0) {
-                    for (keyIdx in $scope.vm.customProps) {
-                        if (!$scope.vm.customProps[keyIdx].isChk) {
-                            chkSts = true;
-                        }
-                    }
-                    $scope.vm.all_customData = !chkSts;
-                } else {
-                    $scope.vm.all_customData = false;
-                }
-
-                chkSts = false;
-                if ($scope.vm.salesTypeList && $scope.vm.salesTypeList.length > 0) {
-                    for (keyIdx in $scope.vm.salesTypeList) {
-                        if (!$scope.vm.salesTypeList[keyIdx].isChk) {
-                            chkSts = true;
-                        }
-                    }
-                    $scope.vm.all_salesType = !chkSts;
-                } else {
-                    $scope.vm.all_salesType = false;
-                }
-
-                chkSts = false;
-                if ($scope.vm.biDataList && $scope.vm.biDataList.length > 0) {
-                    for (keyIdx in $scope.vm.biDataList) {
-                        if (!$scope.vm.biDataList[keyIdx].isChk) {
-                            chkSts = true;
-                        }
-                    }
-                    $scope.vm.all_biData = !chkSts;
-                } else {
-                    $scope.vm.all_biData = false;
+                for (var i = 1; i <= 6; i++) {
+                    chkItemStatus(i);
                 }
             })
         };
@@ -103,6 +66,9 @@ define([
                 case 4:
                     tmpSource = $scope.vm.biDataList;
                     break;
+                case 5:
+                    tmpSource = $scope.vm.platformDataList;
+                    break;
             }
             _.each(tmpSource, function (ele) {
                 ele.isChk = $scope.vm[checkName];
@@ -110,7 +76,7 @@ define([
 
         };
 
-        $scope.chkItemStatus = function (stsType) {
+        function chkItemStatus(stsType) {
 
             switch (stsType) {
                 case 1:
@@ -132,10 +98,14 @@ define([
                     $scope.vm.all_biData = _.every($scope.vm.biDataList, function (item) {
                         return item.isChk;
                     });
+                case 5:
+                    $scope.vm.all_platformData = _.every($scope.vm.platformDataList, function (item) {
+                        return item.isChk;
+                    });
                     break;
             }
 
-        };
+        }
 
         $scope.confirm = function () {
 
@@ -143,9 +113,10 @@ define([
                 customProps: contructData($scope.vm.customProps, 'feed_prop_original'),
                 commonProps: contructData($scope.vm.commonProps, 'propId'),
                 selSalesTypeList: contructData($scope.vm.salesTypeList, 'value'),
-                selBiDataList: contructData($scope.vm.biDataList, 'value')
+                selBiDataList: contructData($scope.vm.biDataList, 'value'),
+                platformDataList: contructData($scope.vm.platformDataList, 'value')
             }).then(function () {
-                $modalInstance.close();
+                //$modalInstance.close();
             });
         };
 
