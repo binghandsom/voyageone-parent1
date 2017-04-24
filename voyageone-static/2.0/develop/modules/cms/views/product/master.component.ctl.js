@@ -279,13 +279,13 @@ define([
                                     results: results
                                 }).then(function (context) {
                                     if (context === 'confirm') {
-                                        callSaveProduct(true);
+                                        masterSaveAction(true);
                                     } else {
                                         hsCode.value.value = _prehsCode;
                                     }
                                 });
                             } else {
-                                callSaveProduct();
+                                masterSaveAction();
                             }
 
                         }, function (res) {
@@ -294,9 +294,42 @@ define([
                         });
 
                     } else {
-                        callSaveProduct();
+                        masterSaveAction();
                     }
 
+                }
+
+                /**
+                 * 保存前判断是否要设置税号
+                 * @param flag
+                 */
+                function masterSaveAction(flag){
+                    if(!scope.vm.lockStatus.onOffSwitch2 && $localStorage.user.channel == 928){
+                        confirm('是否设置翻译状态为翻译?').then(function(){
+                            scope.vm.lockStatus.onOffSwitch2 = true;
+
+                            productDetailService.doTranslateStatus({
+                                prodId: scope.productInfo.productId,
+                                translateStatus: "1"
+                            }).then(function () {
+                                //改变翻译状态后要设置保存接口的上行参数
+                                //翻译状态是schema中的属性
+                                scope.productInfo.translateStatus = 1;
+
+                                scope.vm.productComm.fields.translateStatus = '1';
+                                var translateStatus = searchField("商品翻译状态", scope.vm.productComm.schemaFields);
+                                if (translateStatus) {
+                                    translateStatus.value.value = '1';
+                                }
+                                callSaveProduct(flag);
+                            });
+
+                        },function () {
+                            callSaveProduct(flag);
+                        });
+                    }else{
+                        callSaveProduct(flag);
+                    }
                 }
 
                 /**
@@ -493,7 +526,7 @@ define([
                     return _.some(_mastData.images, function (element) {
                         return element.qty== 0
                             && !element.isMain
-                            && element.productCode != scope.productInfo.masterField.code
+                            && element.productCode != scope.productInfo.masterField.code;
                     });
                 };
 
