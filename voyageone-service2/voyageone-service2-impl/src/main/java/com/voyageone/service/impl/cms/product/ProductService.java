@@ -1317,7 +1317,7 @@ public class ProductService extends BaseService {
         return props;
     }
 
-    public String updateProductAtts(String channelId, Long prodId, List<CustomPropBean> cnProps, String modifier) {
+    public String updateProductAtts(String channelId, Long prodId, List<CustomPropBean> cnProps,Map<String, Boolean> productCustomIsDisp, String modifier) {
 
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
@@ -1330,6 +1330,7 @@ public class ProductService extends BaseService {
             rsMap.put("feed.customIdsCn", cnProps.stream().filter(CustomPropBean::isCustomPropActive).map(CustomPropBean::getFeedAttrCn).collect(Collectors.toList()));
             rsMap.put("feed.orgAtts", cnProps.stream().filter(customPropBean -> !StringUtil.isEmpty(customPropBean.getFeedAttrCn())).collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueEn)));
             rsMap.put("feed.cnAtts", cnProps.stream().filter(customPropBean -> !StringUtil.isEmpty(customPropBean.getFeedAttrCn())).collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueCn)));
+            rsMap.put("feed.productCustomIsDisp", productCustomIsDisp);
         }
 
         Map<String, Object> updateMap = new HashMap<>();
@@ -1338,7 +1339,7 @@ public class ProductService extends BaseService {
         cmsBtProductDao.update(channelId, queryMap, updateMap);
         // 更新workLoad表
         sxProductService.insertSxWorkLoad(getProductById(channelId, prodId), modifier);
-        insertProductHistory(channelId, prodId);
+//        insertProductHistory(channelId, prodId);
         return modified;
     }
 
