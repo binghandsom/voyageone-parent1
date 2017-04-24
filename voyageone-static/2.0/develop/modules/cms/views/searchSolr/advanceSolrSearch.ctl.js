@@ -342,19 +342,26 @@ define([
             }
             console.log('fileType',typeof fileType);
 
-            if (fileType == 1) {
-                msg = '即将导出Code级的搜索结果，请确认。' + msg;
-            } else if (fileType == 2) {
-                msg = '即将导出Group级的搜索结果，请确认。' + msg;
-            } else if (fileType == 3) {
-                msg = '即将导出SKU级的搜索结果，请确认。' + msg;
-            } else if (fileType == 4) {
-                msg = '即将导出聚美上新SKU级的搜索结果，请确认。' + msg;
-            } else if (fileType == 5) {
-                msg = "即将根据搜索结果导出报备文件，请确认。" + msg;
+            switch (fileType){
+                case 1:
+                    msg = '即将导出Code级的搜索结果，请确认。' + msg;
+                    break;
+                case 2:
+                    msg = '即将导出Group级的搜索结果，请确认。' + msg;
+                    break;
+                case 3:
+                    msg = '即将导出SKU级的搜索结果，请确认。' + msg;
+                    break;
+                case 4:
+                    msg = '即将导出聚美上新SKU级的搜索结果，请确认。' + msg;
+                    break;
+                case 5:
+                    msg = "即将根据搜索结果导出报备文件，请确认。" + msg;
+                    break;
             }
 
             popups.openColumnForDownLoad().then(function(response){
+
                 confirm(msg).then(function () {
                     $scope.vm.searchInfo.fileType = fileType;
                     searchAdvanceSolrService.exportFile($scope.vm.searchInfo).then(function (res) {
@@ -371,7 +378,6 @@ define([
                     });
                 });
             });
-
 
         }
 
