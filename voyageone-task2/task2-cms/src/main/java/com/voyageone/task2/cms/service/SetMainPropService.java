@@ -1217,7 +1217,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             }
             // jeff 2016/05 add end
 
-            if (newFlg || StringUtils.isEmpty(productCommonField.getBrand()) || "1".equals(feed.getIsFeedReImport())) {
+            // edward 2017/04/24 brand无条件同步
+            if (((newFlg || StringUtils.isEmpty(productCommonField.getBrand()) || "1".equals(feed.getIsFeedReImport()))
+                    && !"001".equals(this.channel.getOrder_channel_id()))
+                    || "001".equals(this.channel.getOrder_channel_id())) {
                 // 插入的品牌名称为feed中的品牌名称的小写值
                 String feedBrandLowerCase = feed.getBrand().toLowerCase().trim();
                 if (mapBrandMapping.containsKey(feedBrandLowerCase)) {
@@ -1238,7 +1241,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // add by desmond 2016/07/18 end
                 }
             }
-
 
             // 产品名称（英文）
             if (newFlg || StringUtils.isEmpty(productCommonField.getProductNameEn()) || "1".equals(feed.getIsFeedReImport())) {

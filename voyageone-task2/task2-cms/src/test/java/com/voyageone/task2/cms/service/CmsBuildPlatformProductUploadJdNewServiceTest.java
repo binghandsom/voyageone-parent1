@@ -114,7 +114,7 @@ public class CmsBuildPlatformProductUploadJdNewServiceTest {
         shopBean.setShop_name("京东国际匠心界全球购专营店");
 
         String numIId = "1956342136";
-        uploadJdService.updateSkuIds(shopBean, numIId, true);
+        uploadJdService.updateSkuIds(shopBean, numIId, true, 0L);
     }
 
 //    @Test

@@ -905,19 +905,20 @@ public class ProductService extends BaseService {
         common.setModified(DateTimeUtil.getNowTimeStamp());
         common.setModifier(modifier);
         common.getFields().setHsCodeStatus(StringUtil.isEmpty(common.getFields().getHsCodePrivate()) ? "0" : "1");
-        if (!common.getFields().getHsCodeStatus().equalsIgnoreCase(oldProduct.getCommon().getCatId())) {
-            if (common.getFields().getHsCodeStatus().equalsIgnoreCase("1")) {
+        if (common.getFields().getHsCodeStatus().equalsIgnoreCase("1")) {
+            if (!common.getFields().getHsCodePrivate().equalsIgnoreCase(oldProduct.getCommonNotNull().getFields().getHsCodePrivate())) {
                 common.getFields().setHsCodeSetTime(DateTimeUtil.getNowTimeStamp());
                 common.getFields().setHsCodeSetter(modifier);
             }
         }
         common.getFields().setCategoryStatus(StringUtil.isEmpty(common.getCatId()) ? "0" : "1");
-        if (!common.getFields().getCategoryStatus().equalsIgnoreCase(oldProduct.getCommon().getCatId())) {
-            if (common.getFields().getCategoryStatus().equalsIgnoreCase("1")) {
+        if (common.getFields().getCategoryStatus().equalsIgnoreCase("1")) {
+            if (!common.getCatId().equalsIgnoreCase(oldProduct.getCommonNotNull().getCatId())) {
                 common.getFields().setCategorySetTime(DateTimeUtil.getNowTimeStamp());
                 common.getFields().setCategorySetter(modifier);
             }
         }
+
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
 
