@@ -46,6 +46,8 @@ import com.voyageone.service.dao.cms.mongo.CmsBtCombinedProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtCombinedProductLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.EwmsMQUpdateProductMessageBody;
 import com.voyageone.service.model.cms.enums.PlatformType;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -53,6 +55,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -86,6 +89,8 @@ public class CmsBtCombinedProductService extends BaseService {
     private DtWareService dtWareService;
     @Autowired
     private CnnWareService cnnWareService;
+    @Autowired
+    private CmsMqSenderService cmsMqSenderService;
 
     /**
      * 获取平台组合套装商品数据
@@ -476,9 +481,7 @@ public class CmsBtCombinedProductService extends BaseService {
      * @param channelId
      */
     public void deleteCombinedProduct(CmsBtCombinedProductBean modelBean, String user, String channelId) {
-        /*String query = String.format("{'numID':'%s', 'channelId':'%s'}", modelBean.getNumID(), channelId);
-        CmsBtCombinedProductModel target = cmsBtCombinedProductDao.selectOneWithQuery(query);*/
-        CmsBtCombinedProductModel target = null;
+        CmsBtCombinedProductModel target;
         if (modelBean == null || StringUtils.isBlank(modelBean.get_id()) || (target = cmsBtCombinedProductDao.selectById(modelBean.get_id())) == null) {
             throw new BusinessException("要删除的组合套装商品不存在！");
         }
@@ -504,6 +507,7 @@ public class CmsBtCombinedProductService extends BaseService {
         logModel.setStatus(modelBean.getStatus());
         logModel.setPlatformStatus(modelBean.getPlatformStatus());
         WriteResult rs_log = cmsBtCombinedProductLogDao.insert(logModel);
+        sendMqMessage(modelBean, channelId, user, "2");
         $debug("删除 组合套装商品操作日志 结果 " + rs_log.toString());
     }
 
@@ -563,9 +567,48 @@ public class CmsBtCombinedProductService extends BaseService {
         logModel.setStatus(model.getStatus());
         logModel.setPlatformStatus(model.getPlatformStatus());
         WriteResult rs_log = cmsBtCombinedProductLogDao.insert(logModel);
+        if (model.getStatus() == null){
+            sendMqMessage(model,channelId,user,"1");
+        }
         $debug("编辑 组合套装商品操作日志 结果 " + rs_log.toString());
     }
 
+
+    /**
+     * 组合商品推送MQ
+     *
+     * @param model     model
+     * @param channelId channelId
+     * @param user      user
+     * @param type      type
+     */
+    private  void sendMqMessage(CmsBtCombinedProductModel model, String channelId, String user,String type){
+
+        EwmsMQUpdateProductMessageBody ewmsMQUpdateProductMessageBody = new EwmsMQUpdateProductMessageBody();
+        ewmsMQUpdateProductMessageBody.setChannelId(channelId);
+        ewmsMQUpdateProductMessageBody.setCartId(model.getCartId());
+        ewmsMQUpdateProductMessageBody.setGroupKind("1");
+        ewmsMQUpdateProductMessageBody.setNumIid(model.getNumID());
+        ewmsMQUpdateProductMessageBody.setUserName(user);
+        ewmsMQUpdateProductMessageBody.setType(type);
+        if (model.getSkus().size() > 0) {
+
+            model.getSkus().stream()
+                    .filter(cmsBtCombinedProductModel_Sku -> cmsBtCombinedProductModel_Sku.getSkuItems().size() > 0)
+                    .forEach(sku -> {
+                        ewmsMQUpdateProductMessageBody.setGroupSku(sku.getSuitSkuCode());
+                        ewmsMQUpdateProductMessageBody.setGroupPrice(sku.getSuitSellingPriceCn());
+                        List<Map<String, BigDecimal>> skus = new ArrayList<>();
+                        sku.getSkuItems().forEach(subSku -> {
+                            Map<String, BigDecimal> skuMap = new HashMap<>();
+                            skuMap.put(subSku.getSkuCode(), BigDecimal.valueOf(subSku.getSellingPriceCn()));
+                            skus.add(skuMap);
+                        });
+                        ewmsMQUpdateProductMessageBody.setSku(skus);
+                        cmsMqSenderService.sendMessage(ewmsMQUpdateProductMessageBody);
+                    });
+        }
+  }
     /**
      * 新增或者编辑时校验组合套装商品
      *
