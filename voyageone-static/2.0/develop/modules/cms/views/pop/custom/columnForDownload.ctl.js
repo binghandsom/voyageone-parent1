@@ -115,22 +115,22 @@ define([
             switch (stsType) {
                 case 1:
                     $scope.vm.all_commonData = _.every($scope.vm.commonProps, function (item) {
-                        return item.isChk === true;
+                        return item.isChk;
                     });
                     break;
                 case 2:
                     $scope.vm.all_customData = _.every($scope.vm.customProps, function (item) {
-                        return item.isChk === true;
+                        return item.isChk;
                     });
                     break;
                 case 3:
                     $scope.vm.all_salesType = _.every($scope.vm.salesTypeList, function (item) {
-                        return item.isChk === true;
+                        return item.isChk;
                     });
                     break;
                 case 4:
                     $scope.vm.all_biData = _.every($scope.vm.biDataList, function (item) {
-                        return item.isChk === true;
+                        return item.isChk;
                     });
                     break;
             }
@@ -138,46 +138,25 @@ define([
         };
 
         $scope.confirm = function () {
-            var customProps = _($scope.vm.customProps)
+
+            $searchAdvanceService2.saveCustColumnsInfo({
+                customProps: contructData($scope.vm.customProps, 'feed_prop_original'),
+                commonProps: contructData($scope.vm.commonProps, 'propId'),
+                selSalesTypeList: contructData($scope.vm.salesTypeList, 'value'),
+                selBiDataList: contructData($scope.vm.biDataList, 'value')
+            }).then(function () {
+                $modalInstance.close();
+            });
+        };
+
+        function contructData(dataList, attrName) {
+            return _(dataList)
                 .chain()
                 .filter(function (item) {
                     return item.isChk;
                 })
-                .pluck('feed_prop_original')
+                .pluck(attrName)
                 .value();
-
-            /*            _.forEach($scope.cus.customProps, function (data) {
-             if (data.isChk != undefined && data.isChk) {
-             customProps.push(data.feed_prop_original);
-             }
-             });
-             var commonProps = [];
-             _.forEach($scope.cus.commonProps, function (data) {
-             if (data.isChk != undefined && data.isChk) {
-             commonProps.push(data.propId);
-             }
-             });
-             var selSalesTypeList = [];
-             _.forEach($scope.cus.salesTypeList, function (data) {
-             if (data.isChk != undefined && data.isChk) {
-             selSalesTypeList.push(data.value);
-             }
-             });
-             var selBiDataList = [];
-             _.forEach($scope.cus.biDataList, function (data) {
-             if (data.isChk != undefined && data.isChk) {
-             selBiDataList.push(data.value);
-             }
-             });
-
-             var params = {};
-             params.customProps = customProps;
-             params.commonProps = commonProps;
-             params.selSalesTypeList = selSalesTypeList;
-             params.selBiDataList = selBiDataList;
-             $searchAdvanceService2.saveCustColumnsInfo(params).then(function () {
-             $modalInstance.close('');
-             });*/
         }
 
     });
