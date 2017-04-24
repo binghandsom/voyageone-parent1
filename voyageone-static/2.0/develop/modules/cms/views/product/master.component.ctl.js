@@ -477,6 +477,26 @@ define([
                 }
 
 
+                /**
+                 * group info 显示更多图片
+                 */
+                scope.moreCode = function () {
+                    scope.moreCodeFlg = !scope.moreCodeFlg;
+                };
+
+                scope.canMoreCode = function () {
+                    _mastData = scope.vm.mastData;
+
+                    if (!_mastData || !_mastData.images || _mastData.images.length === 0)
+                        return false;
+
+                    return _.some(_mastData.images, function (element) {
+                        return element.qty== 0
+                            && !element.isMain
+                            && element.productCode != scope.productInfo.masterField.code
+                    });
+                };
+
                 /**全schema中通过name递归查找field*/
                 function searchField(fieldName, schema) {
 
