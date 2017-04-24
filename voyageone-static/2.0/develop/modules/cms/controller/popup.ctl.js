@@ -209,7 +209,7 @@ define([
             "columnForDownLoad": {
                 "templateUrl": "views/pop/custom/columnForDownload.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/custom/columnForDownload.ctl",
-                "controller": 'popColumnForDownloadCtl as ctrl',
+                "controller": 'popColumnForDownloadCtl',
                 "size":'lg'
             }
         },
