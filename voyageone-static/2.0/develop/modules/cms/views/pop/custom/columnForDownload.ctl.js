@@ -16,7 +16,7 @@ define([
 
         $scope.init = function () {
             $searchAdvanceService2.getCustColumnsInfo().then(function (res) {
-                console.log('返回叔叔',res);
+
                 $scope.vm.customProps = res.data.customProps;
                 $scope.vm.commonProps = res.data.commonProps;
                 $scope.vm.salesTypeList = res.data.salesTypeList;
@@ -83,6 +83,29 @@ define([
                     $scope.vm.all_biData = false;
                 }
             })
+        };
+
+        // 全选框的操作
+        $scope.chkSelStatus = function (stsType,checkName) {
+            var tmpSource = [];
+            switch (stsType){
+                case 1:
+                    tmpSource = $scope.vm.commonProps;
+                    break;
+                case 2:
+                    tmpSource = $scope.vm.customProps;
+                    break;
+                case 3:
+                    tmpSource = $scope.vm.salesTypeList;
+                    break;
+                case 4:
+                    tmpSource = $scope.vm.biDataList;
+                    break;
+            }
+            _.each(tmpSource, function (ele) {
+                ele.isChk = $scope.vm[checkName];
+            });
+
         };
 
         $scope.confirm = function(){

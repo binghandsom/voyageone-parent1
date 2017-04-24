@@ -127,7 +127,7 @@ define([
 
         $scope.close = function () {
             $modalInstance.dismiss();
-        }
+        };
 
         // 全选框的操作
         $scope.chkSelStatus = function (stsType) {
