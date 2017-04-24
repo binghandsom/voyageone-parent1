@@ -1,7 +1,6 @@
 /**
- * @description 高级检索自定义列
- * @author edward.
- * @date 2015-12-7
+ * @description 自定义下载
+ * @author piao.
  */
 define([
     'cms'
@@ -42,6 +41,7 @@ define([
                 _.each($scope.vm.platformDataList, function (item) {
                     item.isChk = _.contains(res.data.platformProps, item.value);
                 });
+
                 // 检查全选框
                 for (var i = 1; i <= 6; i++) {
                     chkItemStatus(i);
@@ -106,6 +106,9 @@ define([
 
         }
 
+        /**
+         * 保存勾中结果
+         */
         $scope.confirm = function () {
 
             $searchAdvanceService2.saveCustColumnsInfo({
@@ -119,9 +122,11 @@ define([
             });
         };
 
+        /**
+         * 过滤住勾中对象的指定属性值
+         */
         function contructData(dataList, attrName) {
-            return _(dataList)
-                .chain()
+            return _(dataList).chain()
                 .filter(function (item) {
                     return item.isChk;
                 })
