@@ -123,7 +123,7 @@
         <div class="col-sm-3">
               <h4 class="m-l-xss text-vo">
                   <label class="checkbox-inline c-checkbox m-t-sm" style="margin-left: 0px;">
-                      <input type="checkbox" ng-model="vm.all_biData" ng-change="chkSelStatus(5)"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
+                      <input type="checkbox" ng-model="vm.all_platformData" ng-change="chkSelStatus(5,'all_platformData')"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
                   </label>
                   平台基础数据
               </h4>
@@ -136,15 +136,14 @@
                               </div>
                               <input type="text" class="form-control" ng-model="platformDataName">
                           </div>
-                          <!-- /.input-group -->
                       </div>
                   </div>
               </h4>
               <div class="column_overflow column_overflow_download">
-                  <div ng-repeat="biData in vm.biDataList | filter:{name:platformDataName}" class="m-t-xs">
+                  <div ng-repeat="platformData in vm.platformDataList | filter:{name:platformDataName}" class="m-t-xs">
                       <label class="checkbox-inline c-checkbox">
-                          <input type="checkbox" name="biDataSels" value="{{biData.value}}" ng-model="biData.isChk" ng-change="chkItemStatus(4)">
-                          <span class="fa fa-check"></span>&nbsp;{{biData.name}}</label>
+                          <input type="checkbox" name="biDataSels" value="{{platformData.value}}" ng-model="platformData.isChk" ng-change="chkItemStatus(4)">
+                          <span class="fa fa-check"></span>&nbsp;{{platformData.name}}</label>
                   </div>
               </div>
           </div>

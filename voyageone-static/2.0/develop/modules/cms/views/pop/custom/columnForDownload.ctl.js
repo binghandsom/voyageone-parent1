@@ -7,11 +7,11 @@ define([
     'cms'
 ], function (cms) {
 
-    cms.controller('popColumnForDownloadCtl', function($scope, $searchAdvanceService2, $modalInstance){
+    cms.controller('popColumnForDownloadCtl', function ($scope, $searchAdvanceService2, $modalInstance) {
 
         $scope.vm = {
-            customProps:[],
-            commonProps:[]
+            customProps: [],
+            commonProps: []
         };
 
         $scope.init = function () {
@@ -21,6 +21,7 @@ define([
                 $scope.vm.commonProps = res.data.commonProps;
                 $scope.vm.salesTypeList = res.data.salesTypeList;
                 $scope.vm.biDataList = res.data.biDataList;
+                $scope.vm.platformDataList = res.data.platformDataList;
 
                 _.forEach($scope.vm.customProps, function (data) {
                     data.isChk = _.contains(res.data.custAttrList, data.feed_prop_original);
@@ -34,6 +35,7 @@ define([
                 _.forEach($scope.vm.biDataList, function (data) {
                     data.isChk = _.contains(res.data.selBiDataList, data.value);
                 });
+
                 // 检查全选框
                 var chkSts = false;
                 if ($scope.vm.commonProps && $scope.vm.commonProps.length > 0) {
@@ -85,10 +87,10 @@ define([
             })
         };
 
-        // 全选框的操作
-        $scope.chkSelStatus = function (stsType,checkName) {
+        /**全选框的操作*/
+        $scope.chkSelStatus = function (stsType, checkName) {
             var tmpSource = [];
-            switch (stsType){
+            switch (stsType) {
                 case 1:
                     tmpSource = $scope.vm.commonProps;
                     break;
@@ -108,8 +110,67 @@ define([
 
         };
 
-        $scope.confirm = function(){
-            $modalInstance.close();
+        $scope.chkItemStatus = function (stsType) {
+
+            switch (stsType){
+                case 1:
+                    $scope.vm.all_commonData = _.every($scope.vm.commonProps, function (item) {
+                        return item.isChk === true;
+                    });
+                    break;
+                case 2:
+                    $scope.vm.all_customData = _.every($scope.vm.customProps, function (item) {
+                        return item.isChk === true;
+                    });
+                    break;
+                case 3:
+                    $scope.vm.all_salesType = _.every($scope.vm.salesTypeList, function (item) {
+                        return item.isChk === true;
+                    });
+                    break;
+                case 4:
+                    $scope.vm.all_biData = _.every($scope.vm.biDataList, function (item) {
+                        return item.isChk === true;
+                    });
+                    break;
+            }
+
+        };
+
+        $scope.confirm = function () {
+            var customProps = [];
+            _.forEach($scope.cus.customProps, function (data) {
+                if (data.isChk != undefined && data.isChk) {
+                    customProps.push(data.feed_prop_original);
+                }
+            });
+            var commonProps = [];
+            _.forEach($scope.cus.commonProps, function (data) {
+                if (data.isChk != undefined && data.isChk) {
+                    commonProps.push(data.propId);
+                }
+            });
+            var selSalesTypeList = [];
+            _.forEach($scope.cus.salesTypeList, function (data) {
+                if (data.isChk != undefined && data.isChk) {
+                    selSalesTypeList.push(data.value);
+                }
+            });
+            var selBiDataList = [];
+            _.forEach($scope.cus.biDataList, function (data) {
+                if (data.isChk != undefined && data.isChk) {
+                    selBiDataList.push(data.value);
+                }
+            });
+
+            var params = {};
+            params.customProps = customProps;
+            params.commonProps = commonProps;
+            params.selSalesTypeList = selSalesTypeList;
+            params.selBiDataList = selBiDataList;
+            $searchAdvanceService2.saveCustColumnsInfo(params).then(function () {
+                $modalInstance.close('');
+            });
         }
 
     });
