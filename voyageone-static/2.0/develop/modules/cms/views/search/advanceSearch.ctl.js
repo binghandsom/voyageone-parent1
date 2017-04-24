@@ -6,9 +6,9 @@ define([
     'modules/cms/service/search.advance2.service',
     'modules/cms/service/product.detail.service',
     './advance.search.append.ctl'
-], function (_,carts) {
+], function (_, carts) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions, popups, $q, shelvesService,$localStorage) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions, popups, $q, shelvesService, $localStorage) {
 
         $scope.vm = {
             searchInfo: {
@@ -36,7 +36,7 @@ define([
             exportPageOption: {curr: 1, size: 10, total: 0, fetch: exportSearch},
             groupList: [],
             productList: [],
-            codeMap:[],
+            codeMap: [],
             currTab: "product",
             status: {open: true},
             groupSelList: {selList: []},
@@ -48,7 +48,7 @@ define([
             feedCat: {catPath: null},
             channelInner: {catPath: null},
             _cart_tab_act: false,
-            channelId:""
+            channelId: ""
         };
         $scope.searchInfoBefo;
         $scope.exportStatus = ["正在生成", "完成", "失败"];
@@ -299,7 +299,7 @@ define([
 
                 $scope.vm.fstShowGrpFlg = true;
 
-                contructQty($scope.vm.productList,$scope.vm.codeMap);
+                contructQty($scope.vm.productList, $scope.vm.codeMap);
 
                 // 计算表格宽度
                 $scope.vm.tblWidth = ($scope.vm.commonProps.length * 170 + $scope.vm.sumCustomProps.length * 100 + $scope.vm.selSalesType.length * 150 + $scope.vm.selBiDataList.length * 150 + 400) + 'px';
@@ -307,21 +307,21 @@ define([
             })
         }
 
-        function contructQty(productList,codeMap){
-            _.map(productList,function(element){
-                element.saleQty = (function(){
+        function contructQty(productList, codeMap) {
+            _.map(productList, function (element) {
+                element.saleQty = (function () {
                     var qtyArr = codeMap[element.common.fields.code],
                         _cartId = $scope.vm.searchInfo.cartId,
-                        result1 = [],result2 = [];
+                        result1 = [], result2 = [];
 
-                    _.each(qtyArr,function(value,key){
-                        if(_cartId && key == carts.valueOf($scope.vm.searchInfo.cartId).name){
+                    _.each(qtyArr, function (value, key) {
+                        if (_cartId && key == carts.valueOf($scope.vm.searchInfo.cartId).name) {
                             result1.push(key + ":" + value);
-                        }else{
+                        } else {
                             result2.push(key + ":" + value);
                         }
                     });
-                    if(_cartId)
+                    if (_cartId)
                         return result1.concat(result2);
                     else
                         return result2;
@@ -343,39 +343,47 @@ define([
 
             if (selList.length > 0 && !$scope.vm._selall) {
                 msg = '<br>仅导出选中的记录，如需导出全部记录，请回到一览画面取消选择。';
-                _.forEach(selList, function (object) {
-                    $scope.vm.searchInfo._selCodeList.push(object.code);
-                });
+                $scope.vm.searchInfo._selCodeList = _.pluck(selList, 'code');
             } else {
                 msg = '<br>将导出所有的商品记录，如需只导出部分商品，请回到一览画面选择指定商品。';
             }
 
-            if (fileType == 1) {
-                msg = '即将导出Code级的搜索结果，请确认。' + msg;
-            } else if (fileType == 2) {
-                msg = '即将导出Group级的搜索结果，请确认。' + msg;
-            } else if (fileType == 3) {
-                msg = '即将导出SKU级的搜索结果，请确认。' + msg;
-            } else if (fileType == 4) {
-                msg = '即将导出聚美上新SKU级的搜索结果，请确认。' + msg;
-            } else if (fileType == 5) {
-                msg = "即将根据搜索结果导出报备文件，请确认。" + msg;
+            switch (fileType) {
+                case 1:
+                    msg = '即将导出Code级的搜索结果，请确认。' + msg;
+                    break;
+                case 2:
+                    msg = '即将导出Group级的搜索结果，请确认。' + msg;
+                    break;
+                case 3:
+                    msg = '即将导出SKU级的搜索结果，请确认。' + msg;
+                    break;
+                case 4:
+                    msg = '即将导出聚美上新SKU级的搜索结果，请确认。' + msg;
+                    break;
+                case 5:
+                    msg = "即将根据搜索结果导出报备文件，请确认。" + msg;
+                    break;
             }
-            confirm(msg).then(function () {
-                $scope.vm.searchInfo.fileType = fileType;
-                searchAdvanceService2.exportFile($scope.vm.searchInfo).then(function (res) {
-                    var ecd = res.data.ecd;
-                    if (ecd == undefined || ecd == '4003') {
-                        alert("创建文件时出错。");
-                    } else if (ecd == '4002') {
-                        alert("未选择导出文件类型。");
-                    } else if (ecd == '4004') {
-                        alert("已经有一个任务还没有执行完毕。请稍后再导出");
-                    } else if (ecd == '0') {
-                        notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
-                    }
+
+            popups.openColumnForDownLoad().then(function () {
+                confirm(msg).then(function () {
+                    $scope.vm.searchInfo.fileType = fileType;
+                    searchAdvanceService2.exportFile($scope.vm.searchInfo).then(function (res) {
+                        var ecd = res.data.ecd;
+                        if (ecd == undefined || ecd == '4003') {
+                            alert("创建文件时出错。");
+                        } else if (ecd == '4002') {
+                            alert("未选择导出文件类型。");
+                        } else if (ecd == '4004') {
+                            alert("已经有一个任务还没有执行完毕。请稍后再导出");
+                        } else if (ecd == '0') {
+                            notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
+                        }
+                    });
                 });
             });
+
         }
 
         /**
@@ -426,7 +434,7 @@ define([
                         var prodObj = $scope.vm.productList[idx];
                         prodObj._freeTagsInfo = res.data.freeTagsList[idx];
                     }
-                    contructQty($scope.vm.productList,$scope.vm.codeMap);
+                    contructQty($scope.vm.productList, $scope.vm.codeMap);
                 });
         }
 
@@ -523,7 +531,7 @@ define([
                 var data = {
                     prodIds: productIds,
                     isSelAll: $scope.vm._selall ? 1 : 0,
-                    searchInfo:$scope.searchInfoBefo
+                    searchInfo: $scope.searchInfoBefo
                 };
                 productDetailService.refreshProductCategory(data).then(function (res) {
                     notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
@@ -572,14 +580,14 @@ define([
                         catPath: selectedCat.catPath,
                         catPathEn: selectedCat.catPathEn,
                         pCatList: pCatList,
-                        productType:selectedCat.productTypeEn,
-                        sizeType:selectedCat.sizeTypeEn,
-                        productTypeCn:selectedCat.productTypeCn,
-                        sizeTypeCn:selectedCat.sizeTypeCn,
-                        hscodeName8:selectedCat.hscodeName8,
-                        hscodeName10:selectedCat.hscodeName10,
+                        productType: selectedCat.productTypeEn,
+                        sizeType: selectedCat.sizeTypeEn,
+                        productTypeCn: selectedCat.productTypeCn,
+                        sizeTypeCn: selectedCat.sizeTypeCn,
+                        hscodeName8: selectedCat.hscodeName8,
+                        hscodeName10: selectedCat.hscodeName10,
                         isSelAll: $scope.vm._selall ? 1 : 0,
-                        searchInfo:$scope.searchInfoBefo
+                        searchInfo: $scope.searchInfoBefo
                     };
                     productDetailService.changeCategory(data).then(function (res) {
                         if (res.data.isChangeCategory) {
@@ -782,7 +790,7 @@ define([
                     'cartId': $scope.vm.searchInfo.cartId,
                     'productIds': productIds,
                     'selAllFlg': $scope.vm._selall ? 1 : 0,
-                    'searchInfo':$scope.searchInfoBefo
+                    'searchInfo': $scope.searchInfoBefo
                 }).then(function (res) {
                     // 设置自由标签
                     var msg = '';
@@ -804,7 +812,7 @@ define([
                                 "prodIdList": productIds,
                                 "isSelAll": $scope.vm._selall ? 1 : 0,
                                 "orgDispTagList": res.orgDispTagList,
-                                'searchInfo':$scope.searchInfoBefo
+                                'searchInfo': $scope.searchInfoBefo
                             };
                             $searchAdvanceService2.addFreeTag(data).then(function () {
                                 notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
@@ -822,14 +830,14 @@ define([
                 return;
             }
             var picList = [];
-            for(var i=1;i<=9;i++){
-                if(item.common.fields["images"+i]){
-                    var image = _.map(item.common.fields["images"+i], function (entity) {
+            for (var i = 1; i <= 9; i++) {
+                if (item.common.fields["images" + i]) {
+                    var image = _.map(item.common.fields["images" + i], function (entity) {
                         var imageKeyName = "image" + i;
                         return entity[imageKeyName] != null ? entity[imageKeyName] : "";
                     });
                     picList.push(image);
-                }else{
+                } else {
                     picList.push([""]);
                 }
             }
@@ -876,7 +884,12 @@ define([
                         productIds.push(object.code);
                     });
                 }
-                var property = {'cartId': cartId, '_option': 'putonoff', 'productIds': productIds, 'searchInfo':$scope.searchInfoBefo};
+                var property = {
+                    'cartId': cartId,
+                    '_option': 'putonoff',
+                    'productIds': productIds,
+                    'searchInfo': $scope.searchInfoBefo
+                };
                 property.isSelAll = $scope.vm._selall ? 1 : 0;
                 openPutOnOffFnc(property).then(
                     function () {
@@ -892,28 +905,28 @@ define([
             function __openIntelligentPublish(cartId, _selProdList) {
                 var _confirmMsg;
 
-                if(cartId != 27)
+                if (cartId != 27)
                     _confirmMsg = '以下2种属性未完成的商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台品牌';
                 else
                     _confirmMsg = '以下3种属性未完成的商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台类目&nbsp;（3）平台品牌';
 
                 confirm(_confirmMsg).then(function () {
-                        var productIds = [];
-                        if (_selProdList && _selProdList.length) {
-                            _.forEach(_selProdList, function (object) {
-                                productIds.push(object.code);
-                            });
-                        }
-                        $fieldEditService.intelligentPublish({
-                            cartId: cartId,
-                            productIds: productIds,
-                            isSelectAll: $scope.vm._selall ? 1 : 0,
-                            searchInfo:$scope.searchInfoBefo
-                        }).then(function () {
-                            alert('已完成商品的智能上新！');
-                            $scope.search();
+                    var productIds = [];
+                    if (_selProdList && _selProdList.length) {
+                        _.forEach(_selProdList, function (object) {
+                            productIds.push(object.code);
                         });
+                    }
+                    $fieldEditService.intelligentPublish({
+                        cartId: cartId,
+                        productIds: productIds,
+                        isSelectAll: $scope.vm._selall ? 1 : 0,
+                        searchInfo: $scope.searchInfoBefo
+                    }).then(function () {
+                        alert('已完成商品的智能上新！');
+                        $scope.search();
                     });
+                });
             }
         }
 
@@ -940,7 +953,7 @@ define([
                         _option: 'approval',
                         productIds: productIds,
                         isSelAll: $scope.vm._selall ? 1 : 0,
-                        searchInfo:$scope.searchInfoBefo
+                        searchInfo: $scope.searchInfoBefo
                     };
 
                     check(property);
@@ -1009,7 +1022,7 @@ define([
                 property.searchInfo = $scope.searchInfoBefo;
 
                 var config = $scope.vm.masterData.autoApprovePrice["0"];
-                if($scope.vm.masterData.autoApprovePrice[cartId]){
+                if ($scope.vm.masterData.autoApprovePrice[cartId]) {
                     config = $scope.vm.masterData.autoApprovePrice[cartId];
                 }
 
@@ -1132,7 +1145,10 @@ define([
          * @param openCategoryEdit
          */
         function openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit, cartId) {
-            _chkProductSel(cartId, _openAddChannelCategory, {'isSelAll': $scope.vm._selall ? 1 : 0, "searchInfo":$scope.searchInfoBefo});
+            _chkProductSel(cartId, _openAddChannelCategory, {
+                'isSelAll': $scope.vm._selall ? 1 : 0,
+                "searchInfo": $scope.searchInfoBefo
+            });
 
             function _openAddChannelCategory(cartId, selList, context) {
                 openAddChannelCategoryEdit(selList, cartId, context).then(function (res) {
@@ -1331,7 +1347,7 @@ define([
                             "cartId": +context.cartId,
                             "pCatPath": data.selected.catPath,
                             "pCatId": data.selected.catId,
-                            "searchInfo":$scope.searchInfoBefo
+                            "searchInfo": $scope.searchInfoBefo
                         }).then(function () {
                             notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                             $scope.search();
@@ -1357,7 +1373,7 @@ define([
                     productIds: context.selList,
                     isSelAll: $scope.vm._selall,
                     cartId: context.cartId,
-                    searchInfo:$scope.searchInfoBefo
+                    searchInfo: $scope.searchInfoBefo
                 });
 
             }
@@ -1391,7 +1407,12 @@ define([
                             productIds.push(object.code);
                         });
                     }
-                    var property = {'cartId': cartId, '_option': 'refreshRetailPrice', 'productIds': productIds, 'searchInfo':$scope.searchInfoBefo};
+                    var property = {
+                        'cartId': cartId,
+                        '_option': 'refreshRetailPrice',
+                        'productIds': productIds,
+                        'searchInfo': $scope.searchInfoBefo
+                    };
                     property.isSelAll = $scope.vm._selall ? 1 : 0;
                     $fieldEditService.setProductFields(property).then(function (res) {
                         if (res.data == null || res.data.ecd == null || res.data.ecd == undefined) {
@@ -1419,7 +1440,7 @@ define([
                 popups.openJoinPromotion(_.extend({
                     cartBean: cartBean,
                     selList: selList,
-                    searchInfo:$scope.searchInfoBefo
+                    searchInfo: $scope.searchInfoBefo
                 }, context)).then(function (context) {
 
                 });
@@ -1430,18 +1451,18 @@ define([
 
         $scope.getAutoSyncPriceSale = function (cartBean) {
 
-            var configValue1=null;
-            if($scope.vm.masterData.autoApprovePrice){
-                if($scope.vm.masterData.autoApprovePrice[cartBean.value]){
+            var configValue1 = null;
+            if ($scope.vm.masterData.autoApprovePrice) {
+                if ($scope.vm.masterData.autoApprovePrice[cartBean.value]) {
                     configValue1 = $scope.vm.masterData.autoApprovePrice[cartBean.value].configValue1;
                 }
 
-                if(!configValue1 && $scope.vm.masterData.autoApprovePrice[0]){
+                if (!configValue1 && $scope.vm.masterData.autoApprovePrice[0]) {
                     configValue1 = $scope.vm.masterData.autoApprovePrice[0].configValue1;
                 }
 
-                if("1"==configValue1) return true;
-            }else{
+                if ("1" == configValue1) return true;
+            } else {
                 return false;
             }
 
@@ -1476,6 +1497,6 @@ define([
 
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions', 'popups', '$q', 'shelvesService','$localStorage'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions', 'popups', '$q', 'shelvesService', '$localStorage'];
     return searchIndex;
 });
