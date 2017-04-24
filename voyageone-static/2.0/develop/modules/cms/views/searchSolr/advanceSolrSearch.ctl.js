@@ -340,7 +340,6 @@ define([
             } else {
                 msg = '<br>将导出所有的商品记录，如需只导出部分商品，请回到一览画面选择指定商品。';
             }
-            console.log('fileType',typeof fileType);
 
             switch (fileType){
                 case 1:
@@ -360,7 +359,7 @@ define([
                     break;
             }
 
-            popups.openColumnForDownLoad().then(function(response){
+            popups.openColumnForDownLoad().then(function(){
 
                 confirm(msg).then(function () {
                     $scope.vm.searchInfo.fileType = fileType;

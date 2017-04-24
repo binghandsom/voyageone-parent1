@@ -17,7 +17,6 @@ define([
 
         $scope.init = function () {
             $searchAdvanceService2.getCustColumnsInfo().then(function (res) {
-                console.log('返回结果',res.data);
                 $scope.vm.customProps = res.data.customProps;
                 $scope.vm.commonProps = res.data.commonProps;
                 $scope.vm.salesTypeList = res.data.salesTypeList;
