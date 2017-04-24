@@ -34,6 +34,8 @@ public class CmsBtProductModel_Feed  {
 
     private List<String> subCategories = new ArrayList<>();
 
+    private Map<String, Boolean> productCustomIsDisp;
+
     //catId
     public String getCatPath() {
         return catPath;
@@ -104,5 +106,13 @@ public class CmsBtProductModel_Feed  {
 
     public void setAttsName(Map<String, String> attsName) {
         this.attsName = attsName;
+    }
+
+    public Map<String, Boolean> getProductCustomIsDisp() {
+        return productCustomIsDisp;
+    }
+
+    public void setProductCustomIsDisp(Map<String, Boolean> productCustomIsDisp) {
+        this.productCustomIsDisp = productCustomIsDisp;
     }
 }

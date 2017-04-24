@@ -186,9 +186,9 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
             var skuDetails = [],
                 skuInventories = resp.data;
             _.forEach(skus, function(sku) {
-                var inventory = null;
+                var inventory = 0;
                 _.forEach(skuInventories, function(skuInventory) {
-                    if (skuInventory.sku == sku.skuCode) {
+                    if (skuInventory.sku.toLowerCase() == sku.skuCode.toLowerCase()) {
                         inventory = skuInventory.qtyChina;
                         return false;
                     }
@@ -269,11 +269,20 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
                 scope: false,
                 link: function (scope, element, attrs, ngModelController) {
                     var length = attrs[attrName];
-                    if (!length) return;
+                    if (!length)
+                        return;
+
+                    if(checkLength(getByteLength(scope.field.value), length)){
+                        ngModelController.$setValidity(attrName,true);
+                    }else{
+                        ngModelController.$setValidity(attrName,false);
+                    }
+
                     ngModelController.$parsers.push(function (viewValue) {
                         ngModelController.$setValidity(attrName, checkLength(getByteLength(viewValue), length));
                         return viewValue;
                     });
+
                 }
             };
         };
@@ -2232,6 +2241,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
                                 innerElement.attr('name', name);
                                 innerElement.attr('ng-model', 'field.value.value');
                                 innerElement.attr('width', '"100%"');
+                                innerElement.attr('search-contains',true);
                                 innerElement.attr('title', field.name || field.id);
 
                                 bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');

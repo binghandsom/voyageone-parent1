@@ -3,9 +3,11 @@ package com.voyageone.service.impl.cms.jumei2;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.Initializer;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.JMPromotionProduct.UpdateRemarkParameter;
@@ -16,6 +18,7 @@ import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionTagProductDao;
 import com.voyageone.service.daoext.cms.*;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionProductService;
 import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
@@ -28,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -70,6 +74,8 @@ public class CmsBtJmPromotionProduct3Service {
     CmsBtPromotionSkusDaoExtCamel daoExtCamelCmsBtPromotionSkus;
     @Autowired
     CmsMqSenderService cmsMqSenderService;
+    @Autowired
+    CmsBtJmPromotionProductService cmsBtJmPromotionProductService;
 
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
@@ -214,6 +220,12 @@ public class CmsBtJmPromotionProduct3Service {
     //批量上传
     //批量再售 1. if未上传  then synch_status=1  2.if已上传&预热未开始  then price_status=1
     public void batchCopyDeal(BatchCopyDealParameter parameter) {
+        if(parameter.isSelAll()){
+            List<MapModel> mapModels = cmsBtJmPromotionProductService.getPageByWhere(parameter.getSearchInfo());
+            if(ListUtils.notNull(mapModels)){
+                parameter.setListPromotionProductId(mapModels.stream().map(item->Long.parseLong(item.get("id").toString())).collect(Collectors.toList()));
+            }
+        }
         if (parameter.getListPromotionProductId().isEmpty()) return;
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
 
@@ -252,6 +264,13 @@ public class CmsBtJmPromotionProduct3Service {
         // 2.7.1
         if (model.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()) {
             throw new BusinessException("预热已经开始,不能批量删除!");
+        }
+        if(parameter.isSelAll()){
+            List<MapModel> mapModels = cmsBtJmPromotionProductService.getPageByWhere(parameter.getSearchInfo());
+            if(ListUtils.notNull(mapModels)){
+                parameter.setListPromotionProductId(mapModels.stream().map(item->(Integer)item.get("id")).collect(Collectors.toList()));
+                parameter.setListProductCode(mapModels.stream().map(item->(String)item.get("productCode")).collect(Collectors.toList()));
+            }
         }
         //获取未上传的jmproduct
         List<CmsBtJmPromotionProductModel> listNotSych = daoExt.selectNotSynchListByPromotionProductIds(parameter.getListPromotionProductId());

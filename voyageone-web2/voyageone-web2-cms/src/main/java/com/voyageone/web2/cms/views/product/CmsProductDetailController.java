@@ -215,7 +215,7 @@ public class CmsProductDetailController extends CmsController {
         Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
         if (requestMap.get("feedInfo") != null) {
             List<CustomPropBean> cnProps = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(requestMap.get("feedInfo")), CustomPropBean.class);
-            productService.updateProductAtts(getUser().getSelChannelId(), prodId, cnProps, getUser().getUserName());
+            productService.updateProductAtts(getUser().getSelChannelId(), prodId, cnProps, (Map<String, Boolean>) requestMap.get("productCustomIsDisp"), getUser().getUserName());
         }
         return success(null);
     }
