@@ -26,7 +26,10 @@ public enum PlatformWorkloadAttribute {
     SELL_POINTS("sell_points"),
 
     // 商品APP描述
-    WIRELESS_DESC("wireless_desc");
+    WIRELESS_DESC("wireless_desc"),
+
+    // 京东skuId
+    JD_SKUID("jd_skuId");
 
     String name;
     PlatformWorkloadAttribute(String name){

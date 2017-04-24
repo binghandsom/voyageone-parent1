@@ -22,7 +22,7 @@ public class CmsAdvSearchPartApprovalMQJobTest {
 
     @Test
     public void onStartup() throws Exception {
-        String json ="{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"edward\",\"channelId\":\"001\",\"codeList\":[\"d69225\"],\"cartId\":0,\"platformWorkloadAttributes\":[\"description\",\"wireless_desc\"],\"subBeanName\":\"001\"}";
+        String json ="{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"james\",\"channelId\":\"018\",\"codeList\":[\"14009927\",\"14009928\",\"14009929-PURPLE\"],\"cartId\":23,\"platformWorkloadAttributes\":[\"description\",\"title\",\"item_images\"],\"subBeanName\":\"018\"}";
         cmsAdvSearchPartApprovalMQJob.onStartup(JacksonUtil.json2Bean(json, AdvSearchPartApprovalMQMessageBody.class));
     }
 
