@@ -176,6 +176,7 @@ public class CmsAdvSearchCustColumnService extends BaseViewService {
             rsMap.put("commList", commStr.split(","));
         }
 
+        rsMap.put("platformDataList", advSearchQueryService.getPlatformList(userInfo.getSelChannelId(), language));
         return rsMap;
     }
 
