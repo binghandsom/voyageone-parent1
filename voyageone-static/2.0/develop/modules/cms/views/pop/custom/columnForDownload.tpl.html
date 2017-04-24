@@ -26,7 +26,7 @@
                     </div>
                 </div>
             </h4>
-            <div class="column_overflow column_overflow_2">
+            <div class="column_overflow column_overflow_download">
                 <div ng-repeat="commonData in vm.commonProps | filter:{propName:commonName}" class="m-t-xs">
                 	<div ng-if="commonData.propId != 'skuCnt'">
 	                    <label class="checkbox-inline c-checkbox">
@@ -56,7 +56,7 @@
                     </div>
                 </div>
             </h4>
-            <div class="column_overflow column_overflow_2">
+            <div class="column_overflow column_overflow_download">
                 <div ng-repeat="customData in vm.customProps | filter:{feed_prop_translation:feedTranslation}" class="m-t-xs">
                     <label class="checkbox-inline c-checkbox">
                     <input type="checkbox" name="custAttrSels" value="{{customData.feed_prop_original}}" ng-model="customData.isChk" ng-change="chkItemStatus(2)">
@@ -69,7 +69,7 @@
               <label class="checkbox-inline c-checkbox m-t-sm" style="margin-left: 0px;">
                   <input type="checkbox" ng-model="vm.all_salesType" ng-change="chkSelStatus(3)"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
               </label>
-              销量显示选择
+              销量显示
           </h4>
           <h4 class="m-l-xss">
                 <div class="row">
@@ -84,7 +84,7 @@
                     </div>
                 </div>
           </h4>
-          <div class="column_overflow column_overflow_2">
+          <div class="column_overflow column_overflow_download">
               <div ng-repeat="salesType in vm.salesTypeList | filter:{name:salesTypeName}" class="m-t-xs">
                   <label class="checkbox-inline c-checkbox">
                   <input type="checkbox" name="salesTypeSels" value="{{salesType.value}}" ng-model="salesType.isChk" ng-change="chkItemStatus(3)">
@@ -92,12 +92,12 @@
               </div>
           </div>
         </div>
-          <div class="col-sm-3">
+        <div class="col-sm-3">
               <h4 class="m-l-xss text-vo">
                   <label class="checkbox-inline c-checkbox m-t-sm" style="margin-left: 0px;">
                       <input type="checkbox" ng-model="vm.all_biData" ng-change="chkSelStatus(4)"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
                   </label>
-                  BI数据显示选择
+                  BI数据显示
               </h4>
               <h4 class="m-l-xss">
                   <div class="row">
@@ -112,7 +112,35 @@
                       </div>
                   </div>
               </h4>
-              <div class="column_overflow column_overflow_2">
+              <div class="column_overflow column_overflow_download">
+                  <div ng-repeat="biData in vm.biDataList | filter:{name:biDataName}" class="m-t-xs">
+                      <label class="checkbox-inline c-checkbox">
+                          <input type="checkbox" name="biDataSels" value="{{biData.value}}" ng-model="biData.isChk" ng-change="chkItemStatus(4)">
+                          <span class="fa fa-check"></span>&nbsp;{{biData.name}}</label>
+                  </div>
+              </div>
+          </div>
+        <div class="col-sm-3">
+              <h4 class="m-l-xss text-vo">
+                  <label class="checkbox-inline c-checkbox m-t-sm" style="margin-left: 0px;">
+                      <input type="checkbox" ng-model="vm.all_biData" ng-change="chkSelStatus(4)"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
+                  </label>
+                  平台基础数据
+              </h4>
+              <h4 class="m-l-xss">
+                  <div class="row">
+                      <div class="col-lg-10">
+                          <div class="input-group">
+                              <div class="input-group-btn">
+                                  <button type="button" class="btn btn-default"  disabled><span class="fa fa-filter"></span></button>
+                              </div>
+                              <input type="text" class="form-control" ng-model="biDataName">
+                          </div>
+                          <!-- /.input-group -->
+                      </div>
+                  </div>
+              </h4>
+              <div class="column_overflow column_overflow_download">
                   <div ng-repeat="biData in vm.biDataList | filter:{name:biDataName}" class="m-t-xs">
                       <label class="checkbox-inline c-checkbox">
                           <input type="checkbox" name="biDataSels" value="{{biData.value}}" ng-model="biData.isChk" ng-change="chkItemStatus(4)">
