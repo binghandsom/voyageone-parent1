@@ -14,7 +14,7 @@ define([
             commonProps:[]
         };
 
-        $scope.initialize = function () {
+        $scope.init = function () {
             $searchAdvanceService2.getCustColumnsInfo().then(function (res) {
                 console.log('返回叔叔',res);
                 $scope.vm.customProps = res.data.customProps;
