@@ -8,6 +8,7 @@ define([
 ], function (cms) {
 
     cms.controller('popCustomColumnCtl', function ($scope, $searchAdvanceService2, $modalInstance) {
+        // 从后台取得的全部列
         $scope.cus = {
             customProps:[],
             commonProps:[]
@@ -22,7 +23,6 @@ define([
                 $scope.cus.commonProps = res.data.commonProps;
                 $scope.cus.salesTypeList = res.data.salesTypeList;
                 $scope.cus.biDataList = res.data.biDataList;
-
                 _.forEach($scope.cus.customProps, function (data) {
                     data.isChk = _.contains(res.data.custAttrList, data.feed_prop_original);
                 });
@@ -38,7 +38,7 @@ define([
                 // 检查全选框
                 var chkSts = false;
                 if ($scope.cus.commonProps && $scope.cus.commonProps.length > 0) {
-                    for (var keyIdx in $scope.cus.commonProps) {
+                    for (keyIdx in $scope.cus.commonProps) {
                         if (!$scope.cus.commonProps[keyIdx].isChk) {
                             chkSts = true;
                         }
@@ -50,7 +50,7 @@ define([
 
                 chkSts = false;
                 if ($scope.cus.customProps && $scope.cus.customProps.length > 0) {
-                    for (var keyIdx in $scope.cus.customProps) {
+                    for (keyIdx in $scope.cus.customProps) {
                         if (!$scope.cus.customProps[keyIdx].isChk) {
                             chkSts = true;
                         }
@@ -62,7 +62,7 @@ define([
 
                 chkSts = false;
                 if ($scope.cus.salesTypeList && $scope.cus.salesTypeList.length > 0) {
-                    for (var keyIdx in $scope.cus.salesTypeList) {
+                    for (keyIdx in $scope.cus.salesTypeList) {
                         if (!$scope.cus.salesTypeList[keyIdx].isChk) {
                             chkSts = true;
                         }
@@ -74,7 +74,7 @@ define([
 
                 chkSts = false;
                 if ($scope.cus.biDataList && $scope.cus.biDataList.length > 0) {
-                    for (var keyIdx in $scope.cus.biDataList) {
+                    for (keyIdx in $scope.cus.biDataList) {
                         if (!$scope.cus.biDataList[keyIdx].isChk) {
                             chkSts = true;
                         }
@@ -127,7 +127,7 @@ define([
 
         $scope.close = function () {
             $modalInstance.dismiss();
-        }
+        };
 
         // 全选框的操作
         $scope.chkSelStatus = function (stsType) {
