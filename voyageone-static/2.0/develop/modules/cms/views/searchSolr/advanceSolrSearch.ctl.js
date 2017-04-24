@@ -24,9 +24,9 @@ define([
                 freeTagType: 1,
                 supplierType: 1,
                 brandSelType: 1,
-                mCatPathType:1,
-                fCatPathType:1,
-                shopCatType:1,
+                mCatPathType: 1,
+                fCatPathType: 1,
+                shopCatType: 1,
                 productSelType: '1',
                 sizeSelType: '1',
                 salesType: 'All',
@@ -173,9 +173,9 @@ define([
                 freeTagType: 1,
                 supplierType: 1,
                 brandSelType: 1,
-                mCatPathType:1,
-                fCatPathType:1,
-                shopCatType:1,
+                mCatPathType: 1,
+                fCatPathType: 1,
+                shopCatType: 1,
                 productSelType: '1',
                 sizeSelType: '1',
                 shopCatStatus: null,
@@ -761,7 +761,7 @@ define([
                                 "prodIdList": productIds,
                                 "isSelAll": $scope.vm._selall ? 1 : 0,
                                 "orgDispTagList": res.orgDispTagList,
-                                'searchInfo':$scope.searchInfoBefo
+                                'searchInfo': $scope.searchInfoBefo
                             };
                             $searchAdvanceService2.addFreeTag(data).then(function () {
                                 notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
@@ -884,12 +884,11 @@ define([
          * @param openUpdateApprovalFnc
          * @param cartId
          */
-        function openApproval(openUpdateApprovalFnc, cartId) {
+        function openApproval(cartId) {
             _chkProductSel(parseInt(cartId), function (cartId, _selProdList) {
 
                 confirm($translate.instant('TXT_BULK_APPROVAL')).then(function () {
-                    var productIds = [],
-                        property;
+                    var productIds = [];
 
                     if (_selProdList && _selProdList.length) {
                         _.forEach(_selProdList, function (object) {
@@ -897,62 +896,56 @@ define([
                         });
                     }
 
-                    property = {
+                    $fieldEditService.setProductFields({
                         cartId: cartId,
                         _option: 'approval',
                         productIds: productIds,
                         isSelAll: $scope.vm._selall ? 1 : 0,
                         searchInfo: $scope.searchInfoBefo
-                    };
-
-                    check(property);
-
-                    function check(propParams) {
-                        return $fieldEditService.setProductFields(propParams).then(callback);
-                    }
-
-                    function callback(res) {
-                        if (res.data == null || res.data.ecd == null || res.data.ecd == undefined) {
-                            alert("提交请求时出现错误");
-                            return;
-                        }
-                        if (res.data.ecd == 1) {
-                            alert("未选择商品，请选择后再操作。");
-                            return;
-                        }
-                        if (res.data.ecd == 2) {
-                            // 存在未ready状态
-                            var errMsg;
-
-                            if (res.data.codeList.length > 10) {
-                                errMsg = res.data.codeList.slice(0, 9).join('， ') + ' ．．．．．．';
-                            } else {
-                                errMsg = res.data.codeList.join('， ');
-                            }
-
-                            if (res.data.ts)
-                                alert("下列商品没有设置税号，无法审批，请修改。以下是商品CODE列表:<br><br>" + errMsg);
-                            else
-                                alert("下列商品pending状态，无法审批，请修改。以下是商品CODE列表:<br><br>" + errMsg);
-
-                            return;
-                        }
-                        if (res.data.ecd == 3) {
-                            // 商品价格有问题
-                            return openUpdateApprovalFnc({
-                                'resData': res.data,
-                                'propertyInfo': property
-                            }).then(function (data) {
-                                return check(data);
-                            });
-                        }
-                        $scope.search();
-                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                    }
+                    }).then(approveCallback);
 
                 });
             });
 
+        }
+
+        function approveCallback(res) {
+            if (res.data == null || res.data.ecd == null || res.data.ecd == undefined) {
+                alert("提交请求时出现错误");
+                return;
+            }
+            if (res.data.ecd == 1) {
+                alert("未选择商品，请选择后再操作。");
+                return;
+            }
+            if (res.data.ecd == 2) {
+                // 存在未ready状态
+                var errMsg;
+
+                if (res.data.codeList.length > 10) {
+                    errMsg = res.data.codeList.slice(0, 9).join('， ') + ' ．．．．．．';
+                } else {
+                    errMsg = res.data.codeList.join('， ');
+                }
+
+                if (res.data.ts)
+                    alert("下列商品没有设置税号，无法审批，请修改。以下是商品CODE列表:<br><br>" + errMsg);
+                else
+                    alert("下列商品pending状态，无法审批，请修改。以下是商品CODE列表:<br><br>" + errMsg);
+
+                return;
+            }
+            if (res.data.ecd == 3) {
+                // 商品价格有问题
+                return popups.openUpdateApproval({
+                    'resData': res.data,
+                    'propertyInfo': property
+                }).then(function (data) {
+                    return check(data);
+                });
+            }
+            $scope.search();
+            notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
         }
 
         // 设置最终售价
@@ -1026,11 +1019,11 @@ define([
                         categories: res.data,
                         from: ""
                     }).then(function (res) {
-                        if(!$scope.vm.searchInfo.mCatPath){
+                        if (!$scope.vm.searchInfo.mCatPath) {
                             $scope.vm.searchInfo.mCatPath = [];
                             $scope.vm.searchInfo.mCatPath.push(res.selected.catPath)
-                        }else{
-                            if($scope.vm.searchInfo.mCatPath.indexOf($scope.vm.searchInfo.mCatPath)<0){
+                        } else {
+                            if ($scope.vm.searchInfo.mCatPath.indexOf($scope.vm.searchInfo.mCatPath) < 0) {
                                 $scope.vm.searchInfo.mCatPath.push(res.selected.catPath)
                             }
                         }
@@ -1612,6 +1605,57 @@ define([
                 cartId: _sale[1].split("cartId")[1],
                 sum: _sale[0].split("codeSum")[1]
             });
+        }
+
+        $scope.canPartAprroval = function (cartId) {
+            return [23, 20, 24, 26, 27, 30, 31].indexOf(Number(cartId)) > -1;
+        };
+
+        /**
+         * 部分上新操作
+         * @param cartInfo 平台信息
+         */
+        $scope.batchLoadAttr = function (cartInfo) {
+
+            _chkProductSel(cartInfo.value, function (cartId, _selProdList) {
+                var attribute = [];
+                switch (Number(cartInfo.value)) {
+                    case 20:
+                    case 23:
+                        attribute = ['description', 'title', 'item_images', 'seller_cids', 'sell_points', 'wireless_desc'];
+                        break;
+                    case 24:
+                    case 26:
+                        attribute = ['description', 'title', 'seller_cids'];
+                        break;
+                    case 27:
+                        attribute = ['description', 'title', 'item_images'];
+                        break;
+                    case 30:
+                    case 31:
+                        attribute = ['description', 'title', 'item_images', 'seller_cids'];
+                        break;
+                }
+
+                popups.openLoadAttribute({
+                    attribute: attribute
+                }).then(function (res) {
+                    $scope.approveAttr = null;
+                    $scope.approveAttr = res;
+
+                    $fieldEditService.setProductFields({
+                        cartId: cartId,
+                        _option: 'partApproval',
+                        productIds: _.pluck(_selProdList, 'code'),
+                        isSelAll: $scope.vm._selall ? 1 : 0,
+                        searchInfo: $scope.searchInfoBefo,
+                        platformWorkloadAttributes: $scope.approveAttr
+                    }).then(approveCallback);
+
+                });
+
+            });
+
         }
     });
 

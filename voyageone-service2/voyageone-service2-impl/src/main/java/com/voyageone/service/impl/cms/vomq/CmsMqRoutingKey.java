@@ -31,6 +31,9 @@ public class CmsMqRoutingKey {
     // 高级检索 - 批量重新计算中国指导价
     public static final String CMS_REFRESH_PLATFORM_RETAIL_PRICE = "VOCmsRefreshPlatformRetailPriceQueue";
 
+    // 高级检索 - 批量部分上新
+    public static final String CMS_PART_APPROVAL = "VOCmsPartApprovalQueue";
+
     // 高级检索 - 批量更新商品vo扣点
     public static final String CMS_UPDATE_PRODUCT_VO_RATE = "VOCmsUpdateProductVoRateQueue";
 

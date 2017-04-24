@@ -164,13 +164,15 @@ define(function () {
         "search_advance_new": {
             "hash": "/search/advanceSearch",
             "templateUrl": "views/search/advanceSearch.tpl.html",
-            "controllerUrl": "modules/cms/views/search/advanceSearch.ctl"
+            "controllerUrl": "modules/cms/views/search/advanceSearch.ctl",
+            "controller":"advanceSearchController"
         },
         "search_advance_param": {
             "url": "/search/advanceSearch/",
             "hash": "/search/advanceSearch/:type/:value1/:value2?/:value3?",
             "templateUrl": "views/search/advanceSearch.tpl.html",
-            "controllerUrl": "modules/cms/views/search/advanceSearch.ctl"
+            "controllerUrl": "modules/cms/views/search/advanceSearch.ctl",
+            "controller":"advanceSearchController"
         },
         "search_advance_solr":{
             "url": "/searchSolr/advanceSearch/",
