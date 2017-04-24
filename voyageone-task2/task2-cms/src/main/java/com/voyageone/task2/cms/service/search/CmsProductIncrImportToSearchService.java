@@ -8,6 +8,8 @@ import com.mongodb.CursorType;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
+import com.voyageone.common.components.issueLog.IssueLog;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.spring.SpringContext;
@@ -91,6 +93,7 @@ public class CmsProductIncrImportToSearchService extends BaseListenService {
                     .noCursorTimeout(true).iterator();
         }catch (Exception e){
             $info(e.getMessage());
+            issueLog.log(e, ErrorType.BatchJob,SubSystem.CMS);
             throw e;
         }
 
