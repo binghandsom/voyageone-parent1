@@ -204,18 +204,18 @@ public class CmsBuildPlatformAttributeUpdateJdService extends BaseCronTaskServic
         }
         catch (Exception e) {
 
-            if (sxData == null) {
-                sxData = new SxData();
-                sxData.setChannelId(channelId);
-                sxData.setCartId(cartId);
-                sxData.setGroupId(groupId);
-                sxData.setErrorMessage(String.format("京东取得商品数据为空！[ChannelId:%s] [GroupId:%s]", channelId, groupId));
-            }
             String errMsg;
             if (PlatformWorkloadAttribute.JD_SKUID.getValue().equals(workloadName)) {
                 errMsg = String.format("获取页面上skuId异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WorkloadName:%s] [%s]",
                         channelId, cartId, groupId, workloadName, e.getMessage());
             } else {
+                if (sxData == null) {
+                    sxData = new SxData();
+                    sxData.setChannelId(channelId);
+                    sxData.setCartId(cartId);
+                    sxData.setGroupId(groupId);
+                    sxData.setErrorMessage(String.format("京东取得商品数据为空！[ChannelId:%s] [GroupId:%s]", channelId, groupId));
+                }
                 errMsg = String.format("京东平台更新商品异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WorkloadName:%s] [%s]",
                         channelId, cartId, groupId, workloadName, e.getMessage());
             }
