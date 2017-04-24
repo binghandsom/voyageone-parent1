@@ -1,12 +1,13 @@
 /**
- * Created by linanbin on 15/12/7.
+ * @description 高级检索自定义列
+ * @author edward.
+ * @date 2015-12-7
  */
 define([
-    'angularAMD'
-], function (angularAMD) {
+    'cms'
+], function (cms) {
 
-    angularAMD.controller('popCustomColumnCtl', function ($scope, $searchAdvanceService2, $modalInstance) {
-        // 从后台取得的全部列
+    cms.controller('popCustomColumnCtl', function ($scope, $searchAdvanceService2, $modalInstance) {
         $scope.cus = {
             customProps:[],
             commonProps:[]
@@ -21,6 +22,7 @@ define([
                 $scope.cus.commonProps = res.data.commonProps;
                 $scope.cus.salesTypeList = res.data.salesTypeList;
                 $scope.cus.biDataList = res.data.biDataList;
+
                 _.forEach($scope.cus.customProps, function (data) {
                     data.isChk = _.contains(res.data.custAttrList, data.feed_prop_original);
                 });
@@ -36,7 +38,7 @@ define([
                 // 检查全选框
                 var chkSts = false;
                 if ($scope.cus.commonProps && $scope.cus.commonProps.length > 0) {
-                    for (keyIdx in $scope.cus.commonProps) {
+                    for (var keyIdx in $scope.cus.commonProps) {
                         if (!$scope.cus.commonProps[keyIdx].isChk) {
                             chkSts = true;
                         }
@@ -48,7 +50,7 @@ define([
 
                 chkSts = false;
                 if ($scope.cus.customProps && $scope.cus.customProps.length > 0) {
-                    for (keyIdx in $scope.cus.customProps) {
+                    for (var keyIdx in $scope.cus.customProps) {
                         if (!$scope.cus.customProps[keyIdx].isChk) {
                             chkSts = true;
                         }
@@ -60,7 +62,7 @@ define([
 
                 chkSts = false;
                 if ($scope.cus.salesTypeList && $scope.cus.salesTypeList.length > 0) {
-                    for (keyIdx in $scope.cus.salesTypeList) {
+                    for (var keyIdx in $scope.cus.salesTypeList) {
                         if (!$scope.cus.salesTypeList[keyIdx].isChk) {
                             chkSts = true;
                         }
@@ -72,7 +74,7 @@ define([
 
                 chkSts = false;
                 if ($scope.cus.biDataList && $scope.cus.biDataList.length > 0) {
-                    for (keyIdx in $scope.cus.biDataList) {
+                    for (var keyIdx in $scope.cus.biDataList) {
                         if (!$scope.cus.biDataList[keyIdx].isChk) {
                             chkSts = true;
                         }
@@ -152,28 +154,28 @@ define([
         $scope.chkItemStatus = function (stsType) {
             var chkSts = false;
             if (stsType == 1) {
-                for (keyIdx in $scope.cus.commonProps) {
+                for (var keyIdx in $scope.cus.commonProps) {
                     if (!$scope.cus.commonProps[keyIdx].isChk) {
                         chkSts = true;
                     }
                 }
                 $scope.cus.all_commonData = !chkSts;
             } else if (stsType == 2) {
-                for (keyIdx in $scope.cus.customProps) {
+                for (var keyIdx in $scope.cus.customProps) {
                     if (!$scope.cus.customProps[keyIdx].isChk) {
                         chkSts = true;
                     }
                 }
                 $scope.cus.all_customData = !chkSts;
             } else if (stsType == 3) {
-                for (keyIdx in $scope.cus.salesTypeList) {
+                for (var keyIdx in $scope.cus.salesTypeList) {
                     if (!$scope.cus.salesTypeList[keyIdx].isChk) {
                         chkSts = true;
                     }
                 }
                 $scope.cus.all_salesType = !chkSts;
             } else if (stsType == 4) {
-                for (keyIdx in $scope.cus.biDataList) {
+                for (var keyIdx in $scope.cus.biDataList) {
                     if (!$scope.cus.biDataList[keyIdx].isChk) {
                         chkSts = true;
                     }
