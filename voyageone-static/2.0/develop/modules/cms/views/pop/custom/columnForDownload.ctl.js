@@ -114,9 +114,9 @@ define([
                 commonProps: contructData($scope.vm.commonProps, 'propId'),
                 selSalesTypeList: contructData($scope.vm.salesTypeList, 'value'),
                 selBiDataList: contructData($scope.vm.biDataList, 'value'),
-                platformDataList: contructData($scope.vm.platformDataList, 'value')
+                platformProps: contructData($scope.vm.platformDataList, 'value')
             }).then(function () {
-                //$modalInstance.close();
+                $modalInstance.close();
             });
         };
 
