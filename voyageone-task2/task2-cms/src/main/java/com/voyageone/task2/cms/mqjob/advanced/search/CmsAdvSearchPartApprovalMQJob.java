@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * Created by james on 2017/4/21.
- * 批量部分字段上新
+ * 批量平台部分上新
  */
 @Service
 @VOSubRabbitListener
@@ -39,10 +39,12 @@ public class CmsAdvSearchPartApprovalMQJob extends TBaseMQCmsSubService<AdvSearc
     public void onStartup(AdvSearchPartApprovalMQMessageBody messageBody) throws Exception {
         List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
         for(String code : messageBody.getCodeList()){
+            $info(code);
             try {
                 CmsBtProductModel cmsBtProductModel = productService.getProductByCode(messageBody.getChannelId(), code);
                 CmsBtProductModel_Platform_Cart platform = cmsBtProductModel.getPlatform(messageBody.getCartId());
                 if (platform == null || StringUtil.isEmpty(platform.getpNumIId())) {
+                    $error(code +": numIId 为空 请先上新");
                     throw new BusinessException("numIId 为空 请先上新");
                 } else {
                     messageBody.getPlatformWorkloadAttributes().forEach(workload -> {

@@ -1617,7 +1617,7 @@ define([
          */
         $scope.batchLoadAttr = function (cartInfo) {
 
-            _chkProductSel('0', function (cartId, _selProdList) {
+            _chkProductSel(cartInfo.value, function (cartId, _selProdList) {
                 var attribute = [];
                 switch (Number(cartInfo.value)) {
                     case 20:
