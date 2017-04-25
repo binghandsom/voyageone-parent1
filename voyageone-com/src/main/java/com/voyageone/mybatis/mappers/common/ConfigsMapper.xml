@@ -96,6 +96,112 @@
         mt_value.value
     </select>
 
+    <select id="com_mt_value_channel_by_typeId" resultType="hashmap">
+        SELECT * from (
+        SELECT
+        mt_value.id,
+        mt_value.channel_id,
+        mt_value.type_id,
+        mt_value.`value`,
+        mt_value.`name`,
+        mt_value.add_name1,
+        mt_value.add_name2,
+        mt_value.lang_id,
+        mt_value.display_order,
+        case IFNULL(block.brand,'')
+        when '' then false
+        else TRUE
+        end as blocked
+        FROM
+        Synship.com_mt_value_channel mt_value
+        LEFT JOIN (
+        SELECT
+        channel_id,
+        brand
+        FROM
+        voyageone_cms2.cms_bt_brand_block
+        WHERE
+        channel_id = #{channelId}
+        AND cart_id = 0
+        AND type = 1
+        ) block ON mt_value.`value` = block.brand
+        <where>
+            <if test="channelId !=null">mt_value.channel_id = #{channelId}
+        </if>
+        <if
+                test="
+                    typeId !=null">
+            and mt_value.type_id = #{typeId}
+        </if>
+        <if test="value !=null  and value != ''">
+            and mt_value.`VALUE` = #{value}
+        </if>
+            AND lang_id =
+            'cn'
+        </where>
+    ) t
+        <where>
+            <if test="status !=null">
+                t.blocked = #{status}
+            </if>
+        </where>
+    ORDER BY
+        t.type_id,
+        t.display_order,
+        t.`value`
+        <if test="start != null and length != null">
+            LIMIT #{start}, #{length}
+        </if>
+    </select>
+    <select id="com_mt_value_channel_by_typeId_cnt" resultType="integer">
+        SELECT count(1) from (
+        SELECT
+        mt_value.id,
+        mt_value.channel_id,
+        mt_value.type_id,
+        mt_value.`VALUE`,
+        mt_value.`NAME`,
+        mt_value.add_name1,
+        mt_value.add_name2,
+        mt_value.lang_id,
+        mt_value.display_order,
+        case IFNULL(block.brand,'')
+        when '' then false
+        else TRUE
+        end as blocked
+        FROM
+        Synship.com_mt_value_channel mt_value
+        LEFT JOIN (
+        SELECT
+        channel_id,
+        brand
+        FROM
+        voyageone_cms2.cms_bt_brand_block
+        WHERE
+        channel_id = #{channelId}
+        AND cart_id = 0
+        AND type = 1
+        ) block ON mt_value.`VALUE` = block.brand
+        <where>
+            <if test="channelId !=null">
+                mt_value.channel_id = #{channelId}
+            </if>
+            <if test="typeId !=null">
+                and mt_value.type_id = #{typeId}
+            </if>
+            <if test="value !=null and value != ''">
+                and mt_value.`VALUE` = #{value}
+            </if>
+            AND lang_id = 'cn'
+        </where>
+        ) t
+        <where>
+            <if test="status !=null">
+                blocked  = #{status}
+            </if>
+        </where>
+    </select>
+
     <select id="tm_discount_rate_getDiscountRate" resultType="com.voyageone.common.configs.beans.DiscountRateBean">
         select * from Synship.tm_discount_rate order by order_channel_id,ship_channel
     </select>

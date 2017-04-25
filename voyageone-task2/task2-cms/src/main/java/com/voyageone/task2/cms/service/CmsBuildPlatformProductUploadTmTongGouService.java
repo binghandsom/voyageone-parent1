@@ -921,6 +921,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 Map<String, Object> paramCategory = new HashMap<>();
                 paramCategory.put("cat_id", "50050237"); // 保健食品/膳食营养补充食品>海外膳食营养补充食品>其他膳食营养补充食品>其他膳食营养补充剂
                 valCategory = JacksonUtil.bean2Json(paramCategory);
+            } else if (ChannelConfigEnums.Channel.KitBag.getId().equals(sxData.getChannelId())) {
+                // Kitbag默认固定
+                valCategory = "运动/瑜伽/健身/球迷用品";
             } else {
                 // 主产品主类目path
                 String mainCatPath = mainProduct.getCommonNotNull().getCatPathEn();
