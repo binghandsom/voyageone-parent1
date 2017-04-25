@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.channel;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.configs.dao.TypeChannelDao;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
@@ -44,13 +45,16 @@ class CmsBlackBrandViewService extends BaseViewService {
 
     private final CmsBtJmMasterBrandService jmMasterBrandService;
 
+    private final TypeChannelDao typeChannelDao;
+
     @Autowired
     public CmsBlackBrandViewService(CmsMtChannelValuesService channelValuesService, CmsMtPlatformBrandService platformBrandService,
-                                    CmsBtBrandBlockService brandBlockService, CmsBtJmMasterBrandService jmMasterBrandService) {
+                                    CmsBtBrandBlockService brandBlockService, CmsBtJmMasterBrandService jmMasterBrandService, TypeChannelDao typeChannelDao) {
         this.channelValuesService = channelValuesService;
         this.platformBrandService = platformBrandService;
         this.brandBlockService = brandBlockService;
         this.jmMasterBrandService = jmMasterBrandService;
+        this.typeChannelDao = typeChannelDao;
     }
 
     Map<String, Object> searchBrandListPage(CmsBlackBrandParamBean blackBrandParamBean, String langId, UserSessionBean user) {
@@ -69,12 +73,15 @@ class CmsBlackBrandViewService extends BaseViewService {
 
         Stream<CmsBlackBrandViewBean> stream;
 
+        int count = 0;
+        List<CmsBlackBrandViewBean> data;
         switch (brandType) {
             case CmsBtBrandBlockService.BRAND_TYPE_FEED:
                 stream = getFeedBrandStream(channelId);
                 break;
             case CmsBtBrandBlockService.BRAND_TYPE_MASTER:
-                stream = getMasterBrandStream(channelId, langId);
+                count = typeChannelDao.getByChannelTypeIdCnt(channelId,TypeConfigEnums.MastType.brand.getId(), brand, status);
+                stream = getMasterBrandStream(channelId,brand, status, offset, limit);
                 break;
             case CmsBtBrandBlockService.BRAND_TYPE_PLATFORM:
                 stream = getPlatformBrandStream(channelId, cartIdList);
@@ -85,17 +92,27 @@ class CmsBlackBrandViewService extends BaseViewService {
                 return result;
         }
 
-        if (status != null)
-            stream = stream.filter(i -> status.equals(i.isBlocked()));
+        if(brandType != CmsBtBrandBlockService.BRAND_TYPE_MASTER) {
+            if (status != null)
+                stream = stream.filter(i -> status.equals(i.isBlocked()));
 
-        if (!StringUtils.isEmpty(brand)) {
-            String lowerCase = brand.toLowerCase();
-            stream = stream.filter(i -> i.getBrandName().toLowerCase().contains(lowerCase));
+            if (!StringUtils.isEmpty(brand)) {
+                String lowerCase = brand.toLowerCase();
+                stream = stream.filter(i -> i.getBrandName().toLowerCase().contains(lowerCase));
+            }
+
+            List<CmsBlackBrandViewBean> filtered = stream.collect(toList());
+
+            count = filtered.size();
+
+            data = filtered
+                    .stream()
+                    .skip(offset)
+                    .limit(limit)
+                    .collect(toList());
+        }else {
+            data = stream.collect(toList());
         }
-
-        List<CmsBlackBrandViewBean> filtered = stream.collect(toList());
-
-        int count = filtered.size();
 
         if (count == 0) {
             result.put("count", 0);
@@ -103,11 +120,7 @@ class CmsBlackBrandViewService extends BaseViewService {
             return result;
         }
 
-        List<CmsBlackBrandViewBean> data = filtered
-                .stream()
-                .skip(offset)
-                .limit(limit)
-                .collect(toList());
+
 
         result.put("count", count);
         result.put("data", data);
@@ -192,8 +205,8 @@ class CmsBlackBrandViewService extends BaseViewService {
         return viewBean;
     }
 
-    private Stream<CmsBlackBrandViewBean> getMasterBrandStream(String channelId, String langId) {
-        List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeWithLang(TypeConfigEnums.MastType.brand.name(), channelId, langId);
+    private Stream<CmsBlackBrandViewBean> getMasterBrandStream(String channelId, String value, Boolean status, Integer start, Integer length) {
+        List<Map<String, Object>> typeChannelBeanList = typeChannelDao.getByChannelTypeId(channelId, TypeConfigEnums.MastType.brand.getId(), value, status, start, length);
         return typeChannelBeanList.stream().map(this::toBlackBrandViewBean);
     }
 
@@ -214,6 +227,21 @@ class CmsBlackBrandViewService extends BaseViewService {
         viewBean.setBrand(platformBrandsModel.getBrandId());
         viewBean.setBrandName(platformBrandsModel.getBrandName());
         viewBean.setBlocked(brandBlockService.isBlocked(viewBean));
+
+        return viewBean;
+    }
+
+    private CmsBlackBrandViewBean toBlackBrandViewBean(Map<String, Object> typeChannelBean) {
+
+        CmsBlackBrandViewBean viewBean = new CmsBlackBrandViewBean();
+
+        viewBean.setChannelId((String) typeChannelBean.get("channel_id"));
+        viewBean.setCartId(0);
+        viewBean.setType(CmsBtBrandBlockService.BRAND_TYPE_MASTER);
+        viewBean.setBrand((String) typeChannelBean.get("value"));
+        viewBean.setBrandName((String) typeChannelBean.get("name"));
+        Integer blocked = (Integer) typeChannelBean.get("blocked");
+        viewBean.setBlocked(blocked == 1? true:false);
 
         return viewBean;
     }
