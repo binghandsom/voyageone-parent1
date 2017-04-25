@@ -368,7 +368,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
     /**
      * 取得销量数据显示列
      */
-    public List<Map<String, String>> getPlatformList(String channelId, String language) {
+    public List<Map<String, String>> getPlatformList(String channelId, String language,List<String> filterList) {
         List<Map<String, String>> dataSumList = new ArrayList<>();
 
         // 设置显示列排序
@@ -412,8 +412,25 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                 }
             }
         }
+
+        if(filterList != null || filterList.size() > 0){
+            return filterSelList(dataSumList,filterList);
+        }
+
         return dataSumList;
     }
+
+    private List<Map<String, String>> filterSelList(List<Map<String, String>> orgList,List<String> filterList){
+        List<Map<String, String>> resultList = new ArrayList<>();
+        for (Map<String, String> sumObj : orgList) {
+            if (filterList.contains(sumObj.get("value"))) {
+                resultList.add(sumObj);
+            }
+        }
+
+        return resultList;
+    }
+
     /**
      * 取得BI数据显示列
      */
@@ -462,15 +479,10 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             }
         }
 
-        if (filterList != null) {
-            List<Map<String, String>> sumAllList = new ArrayList<>();
-            for (Map<String, String> sumObj : dataSumList) {
-                if (filterList.contains(sumObj.get("value"))) {
-                    sumAllList.add(sumObj);
-                }
-            }
-            return sumAllList;
+        if (filterList != null || filterList.size() > 0) {
+            return filterSelList(dataSumList,filterList);
         }
+
         return dataSumList;
     }
 }

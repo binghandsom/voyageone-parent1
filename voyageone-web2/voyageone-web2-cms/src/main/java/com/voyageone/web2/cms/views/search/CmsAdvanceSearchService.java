@@ -500,6 +500,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
             sessionBean.put("_adv_search_selSalesType", cmsSessionBean.getAttribute("_adv_search_selSalesType"));
             sessionBean.put("_adv_search_selBiDataList", cmsSessionBean.getAttribute("_adv_search_selBiDataList"));
             searchValue.put("_sessionBean", sessionBean);
+
             AdvSearchExportMQMessageBody advSearchExportMQMessageBody = new AdvSearchExportMQMessageBody();
             advSearchExportMQMessageBody.setChannelId(userInfo.getSelChannelId());
             advSearchExportMQMessageBody.setCmsBtExportTaskId(taskModel.getId());

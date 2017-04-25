@@ -183,7 +183,7 @@ public class CmsAdvSearchCustColumnService extends BaseViewService {
             String custAttrStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) colMap2.get("cfg_val1"));
             rsMap.put("platformProps", custAttrStr.split(","));
         }
-        rsMap.put("platformDataList", advSearchQueryService.getPlatformList(userInfo.getSelChannelId(), language));
+        rsMap.put("platformDataList", advSearchQueryService.getPlatformList(userInfo.getSelChannelId(), language,null));
         return rsMap;
     }
 
@@ -285,7 +285,7 @@ public class CmsAdvSearchCustColumnService extends BaseViewService {
             $error("保存BI数据显示设置不成功 userid=" + userInfo.getUserId());
         }
 
-
+        // 保存 平台列
         raMap = commonPropService.getCustColumnsByUserId(userInfo.getUserId(), "cms_prod_cust_col_platform");
         if (platformDataList == null || platformDataList.isEmpty()) {
             selStr = "";
@@ -301,7 +301,10 @@ public class CmsAdvSearchCustColumnService extends BaseViewService {
             $error("保存BI数据显示设置不成功 userid=" + userInfo.getUserId());
         }
 
-        cmsSessionBean.putAttribute("_adv_search_selBiDataList", advSearchQueryService.getBiDataList(userInfo.getSelChannelId(), language, selBiDataList));
+        //cms_prod_cust_col_bidata
+        cmsSessionBean.putAttribute("_adv_search_selBiDataList", advSearchQueryService.getBiDataList(userInfo.getSelChannelId(), language, platformDataList));
+        //自定义下载 平台列
+        cmsSessionBean.putAttribute("_adv_search_selPlatformDataList", advSearchQueryService.getPlatformList(userInfo.getSelChannelId(), language, selBiDataList));
     }
 
 }
