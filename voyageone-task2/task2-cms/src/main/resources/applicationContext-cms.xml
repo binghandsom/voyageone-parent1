@@ -200,8 +200,8 @@
         <!-- 聚美活动结束 把商城的价格回复 -->
         <task:scheduled ref="CmsSynJmPromotionDealPriceJob" method="run" cron="0 0 17 * * ?"/>
 
-        <!-- 每天同步聚美活动里面的价格 -->
-        <task:scheduled ref="CmsGetAllPlatformsInfoJob" method="run" cron="0 00 6 * * ?"/>
+        <!-- 每天拉取各个平台的类目树和类目属性 -->
+        <task:scheduled ref="CmsGetAllPlatformsInfoJob" method="run" cron="0 30 16 * * ?"/>
 
         <!-- 独立域名上新xml准备（每分钟一次） -->
         <task:scheduled ref="CmsBuildPlatformProductUploadCnPrepareJob" method="run" cron="0 0/1 0-23 * * ?"/>
