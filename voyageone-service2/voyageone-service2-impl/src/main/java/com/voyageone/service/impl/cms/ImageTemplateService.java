@@ -347,7 +347,7 @@ public class ImageTemplateService extends BaseService {
      * 根据imageName返回图片生成返回的url
      *
      * @param imageName 图片名称
-     * @return 完整s7路径的图片地址(http://image.sneakerhead.com/is/image/sneakerhead/xxxx-xxx)
+     * @return 完整s7路径的图片地址(http://image.voyageone.com.cn/is/image/sneakerhead/xxxx-xxx)
      */
     public String getImageUrl(String imageName) {
 
@@ -365,7 +365,7 @@ public class ImageTemplateService extends BaseService {
     }
 
     /**
-     * 取得显示用图片的url,其中图片名字的%s保留(http://image.sneakerhead.com/is/image/sneakerhead/%s)
+     * 取得显示用图片的url,其中图片名字的%s保留(http://image.voyageone.com.cn/is/image/sneakerhead/%s)
      */
     public String getDefaultImageUrl() {
 
