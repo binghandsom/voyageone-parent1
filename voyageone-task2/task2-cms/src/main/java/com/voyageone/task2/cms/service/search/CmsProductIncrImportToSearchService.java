@@ -94,9 +94,13 @@ public class CmsProductIncrImportToSearchService extends BaseListenService {
         }catch (Exception e){
             $info(e.getMessage());
             issueLog.log(e, ErrorType.BatchJob,SubSystem.CMS);
-            throw e;
+            try {
+                Thread.sleep(1000L);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+            return onListen(taskControlList);
         }
-
     }
 
     @Override
