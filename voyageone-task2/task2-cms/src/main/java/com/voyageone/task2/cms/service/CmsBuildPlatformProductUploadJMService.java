@@ -13,10 +13,7 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.DateTimeUtilBeijing;
-import com.voyageone.common.util.ListUtils;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.components.jumei.*;
 import com.voyageone.components.jumei.bean.*;
@@ -30,6 +27,7 @@ import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtJmProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
 import com.voyageone.service.dao.cms.CmsBtPlatformImagesDao;
+import com.voyageone.service.dao.cms.CmsMtChannelConditionMappingConfigDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
@@ -43,6 +41,7 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmSkuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.CmsMtChannelConditionMappingConfigModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
@@ -150,6 +149,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
     @Autowired
     private JumeiSaleService jmSaleService;
+
+    @Autowired
+    private CmsMtChannelConditionMappingConfigDao cmsMtChannelConditionMappingConfigDao;
 
     @Override
     public SubSystem getSubSystem() {
@@ -309,6 +311,52 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
             //是否为智能上新
             boolean blnIsSmartSx = sxProductService.isSmartSx(shop.getOrder_channel_id(), Integer.parseInt(shop.getCart_id()));
+
+            // 如果没有设置过平台类目， 并且是智能上新的场合， 自动匹配一下主类目 START
+            if (blnIsSmartSx && StringUtils.isEmpty(jmCart.getpCatId())) {
+
+                // 从cms_mt_channel_condition_mapping_config表中取得当前渠道的取得产品主类目与天猫平台叶子类目(或者平台一级类目)，以及feed类目id和天猫平台类目之间的mapping关系数据
+                Map<String, List<Map<String, String>>> categoryMappingListMap = getCategoryMapping(channelId, Integer.parseInt(shop.getCart_id()));
+
+                String platformCategoryId = null;
+                // 先判断一下必要的条件
+                // 主产品主类目path
+                String mainCatPath = product.getCommonNotNull().getCatPathEn();
+                if (!StringUtils.isEmpty(mainCatPath) && MapUtils.isNotEmpty(categoryMappingListMap)) {
+                    String brand = product.getCommonNotNull().getFieldsNotNull().getBrand();
+                    String sizeType = product.getCommonNotNull().getFieldsNotNull().getSizeType();
+
+                    // 匹配优先顺序：
+                    // 1.主类目+品牌+适用人群
+                    // 2.主类目+品牌
+                    // 3.主类目+适用人群
+                    // 4.主类目
+                    String valCategory = getMainCategoryMappingInfo(mainCatPath, brand, sizeType, CmsBuildPlatformProductUploadTmTongGouService.TtPropName.tt_main_category, categoryMappingListMap);
+                    if (StringUtils.isEmpty(valCategory)) {
+                        valCategory = getMainCategoryMappingInfo(mainCatPath, brand, null, CmsBuildPlatformProductUploadTmTongGouService.TtPropName.tt_main_category, categoryMappingListMap);
+                    }
+                    if (StringUtils.isEmpty(valCategory)) {
+                        valCategory = getMainCategoryMappingInfo(mainCatPath, null, sizeType, CmsBuildPlatformProductUploadTmTongGouService.TtPropName.tt_main_category, categoryMappingListMap);
+                    }
+                    if (StringUtils.isEmpty(valCategory)) {
+                        valCategory = getMainCategoryMappingInfo(mainCatPath, null, null, CmsBuildPlatformProductUploadTmTongGouService.TtPropName.tt_main_category, categoryMappingListMap);
+                    }
+
+                    if (!StringUtils.isEmpty(valCategory)) {
+                        platformCategoryId = valCategory;
+                    }
+
+                }
+
+                if (StringUtils.isEmpty(platformCategoryId)) {
+                    $error("未设置平台类目， 并且也没有自动匹配上类目");
+                    throw new BusinessException("未设置平台类目， 并且也没有自动匹配上类目");
+                }
+
+                jmCart.setpCatId(platformCategoryId);
+            }
+            // 如果没有设置过平台类目， 并且是智能上新的场合， 自动匹配一下主类目 END
+
             if (StringUtils.isNullOrBlank2(originHashId)) {
                 //如果OriginHashId不存在，则创建新商品
 
@@ -2883,5 +2931,135 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             }
         }
     }
+
+    /**
+     * 取得主类目到天猫一级类目的匹配结果
+     *
+     * @param mainCatPath 主类目
+     * @param brand 品牌
+     * @param sizeType 适用人群
+     * @param ttPropName 匹配方式
+     * @param categoryMappingListMap 当前渠道和平台设置类目和天猫平台类目(叶子类目或平台一级类目)匹配信息列表map
+     * @return List<CmsMtChannelConditionMappingConfigModel> 表中的配置mapping信息
+     */
+    protected String getMainCategoryMappingInfo(String mainCatPath, String brand, String sizeType,
+                                                CmsBuildPlatformProductUploadTmTongGouService.TtPropName ttPropName, Map<String, List<Map<String, String>>> categoryMappingListMap) {
+        if (mainCatPath == null
+                || ttPropName == null
+                || MapUtils.isEmpty(categoryMappingListMap)
+                || !categoryMappingListMap.containsKey(ttPropName.name())
+                || ListUtils.isNull(categoryMappingListMap.get(ttPropName.name()))) return null;
+
+        Map<String, String> resultMap = categoryMappingListMap.get(ttPropName.name()).stream()
+                .filter(m -> mainCatPath.equalsIgnoreCase(m.get(CmsBuildPlatformProductUploadTmTongGouService.TtItemName.t_key_category.name())))
+                .filter(m -> (StringUtils.isEmpty(brand) || brand.equalsIgnoreCase(m.get(CmsBuildPlatformProductUploadTmTongGouService.TtItemName.t_key_brand.name()))))
+                .filter(m -> (StringUtils.isEmpty(sizeType) || sizeType.equalsIgnoreCase(m.get(CmsBuildPlatformProductUploadTmTongGouService.TtItemName.t_key_sizeType.name()))))
+                .findFirst()
+                .orElse(null);
+
+        if (MapUtils.isNotEmpty(resultMap)) {
+            return resultMap.get(CmsBuildPlatformProductUploadTmTongGouService.TtItemName.t_value_category.name());
+        }
+
+        return null;
+    }
+
+    /**
+     * 取得产品主类目与天猫平台叶子类目(或者平台一级类目)，以及feed类目id和天猫平台类目之间的mapping关系数据
+     *
+     * @param channelId 渠道id
+     * @param cartId 平台id
+     * @return Map<String, List<Map<String, String>>> 表中的配置mapping信息
+     */
+    protected Map<String, List<Map<String, String>>> getCategoryMapping(String channelId, int cartId) {
+
+        Map<String, List<Map<String, String>>> categoryMapping = new HashMap<>();
+        // 取得主类目与天猫平台叶子类目之间的mapping关系数据
+        // key:主类目String     value:天猫平台叶子类目String
+        List<CmsMtChannelConditionMappingConfigModel> mainLeafList = getChannelConditionMappingInfo(channelId, cartId, CmsBuildPlatformProductUploadTmTongGouService.TtPropName.tt_main_category_leaf.name());
+        if (ListUtils.notNull(mainLeafList)) {
+            List<Map<String, String>> conditionMappingMapList = new ArrayList<>();
+            mainLeafList.forEach(p -> {
+                Map<String, String> leafMap = new LinkedHashMap<>();
+                leafMap.put(CmsBuildPlatformProductUploadTmTongGouService.TtItemName.t_key_category.name(), p.getMapKey());
+                leafMap.put(CmsBuildPlatformProductUploadTmTongGouService.TtItemName.t_value_category.name(), p.getMapValue());
+                conditionMappingMapList.add(leafMap);
+            });
+            categoryMapping.put(CmsBuildPlatformProductUploadTmTongGouService.TtPropName.tt_main_category_leaf.name(), conditionMappingMapList);
+        }
+
+        // 取得主类目与天猫平台一级类目之间的mapping关系数据
+        // key:包含主类目，品牌，适用人群等的json     value:天猫平台一级类目String
+        List<CmsMtChannelConditionMappingConfigModel> mainCategoryList = getChannelConditionMappingInfo(channelId, cartId, CmsBuildPlatformProductUploadTmTongGouService.TtPropName.tt_main_category.name());
+        if (ListUtils.notNull(mainCategoryList)) {
+            List<Map<String, String>> conditionMappingMapList = new ArrayList<>();
+            List<String> errKeyList = new ArrayList<>();
+            mainCategoryList.forEach(p -> {
+                // 如果匹配key项目值为空或者不是json,报出错误
+                if (StringUtils.isEmpty(p.getMapKey())
+                        || !(p.getMapKey().startsWith("{") && p.getMapKey().endsWith("}"))) {
+                    errKeyList.add(p.getMapKey());
+                } else {
+                    Map<String, String> categoryMap = new LinkedHashMap<>();
+                    // 如果匹配key项目值是json格式的时候，解析出json中配置的多个项目值并分别加到map中
+                    Map<String, String> keyMap = JacksonUtil.json2Bean(p.getMapKey(), HashMap.class);
+                    categoryMap.putAll(keyMap);   // json中解析出来的项目名称应该跟TtItemName中定义的一致
+                    // 再把匹配value项目值也放进map中
+                    categoryMap.put(CmsBuildPlatformProductUploadTmTongGouService.TtItemName.t_value_category.name(), p.getMapValue());
+                    conditionMappingMapList.add(categoryMap);
+                }
+            });
+            if (ListUtils.notNull(errKeyList)) {
+                String errMsg = String.format("从cms_mt_channel_condition_mapping_config表中取得的%s条主类目到天猫一级类目" +
+                                "的匹配(%s)关系的匹配key项目不是json格式的，请把数据线修改成json格式之后再次重试！[错误key:%s]",
+                        errKeyList.size(), CmsBuildPlatformProductUploadTmTongGouService.TtPropName.tt_main_category.name(), Joiner.on(",").join(errKeyList));
+                $error(errMsg);
+                throw new BusinessException(errMsg);
+            }
+            categoryMapping.put(CmsBuildPlatformProductUploadTmTongGouService.TtPropName.tt_main_category.name(), conditionMappingMapList);
+        }
+
+        // 取得feed类目与天猫平台一级类目之间的mapping关系数据
+        List<CmsMtChannelConditionMappingConfigModel> feedCategoryList = getChannelConditionMappingInfo(channelId, cartId, CmsBuildPlatformProductUploadTmTongGouService.TtPropName.tt_category.name());
+        if (ListUtils.notNull(feedCategoryList)) {
+            List<Map<String, String>> conditionMappingMapList = new ArrayList<>();
+            feedCategoryList.forEach(p -> {
+                Map<String, String> feedMap = new LinkedHashMap<>();
+                feedMap.put(CmsBuildPlatformProductUploadTmTongGouService.TtItemName.t_key_category.name(), p.getMapKey());
+                feedMap.put(CmsBuildPlatformProductUploadTmTongGouService.TtItemName.t_value_category.name(), p.getMapValue());
+                conditionMappingMapList.add(feedMap);
+            });
+            categoryMapping.put(CmsBuildPlatformProductUploadTmTongGouService.TtPropName.tt_category.name(), conditionMappingMapList);
+        }
+
+        return categoryMapping;
+    }
+
+    /**
+     * 从cms_mt_channel_condition_mapping_config表中取得该渠道，平台对应的客户过来的类目id和天猫平台类目之间的mapping关系数据
+     *
+     * @param channelId 渠道id
+     * @param cartId 平台id
+     * @param propName 查询mapping分类(tt_main_category_leaf:主类目与平台叶子类目, tt_main_category:主类目与平台一级类目, tt_category:feed类目与平台一级类目)
+     * @return List<CmsMtChannelConditionMappingConfigModel> 表中的配置mapping信息
+     */
+    protected List<CmsMtChannelConditionMappingConfigModel> getChannelConditionMappingInfo(String channelId, Integer cartId, String propName) {
+
+        // 从cms_mt_channel_condition_mapping_config表中取得该渠道，平台对应的客户过来的类目id和天猫平台一级类目之间的mapping关系数据
+        Map<String, String> conditionMappingParamMap = new HashMap<>();
+        if (!StringUtils.isEmpty(channelId)) conditionMappingParamMap.put("channelId", channelId);
+        if (cartId != null) conditionMappingParamMap.put("cartId", StringUtils.toString(cartId));
+        if (!StringUtils.isEmpty(propName))  conditionMappingParamMap.put("propName", propName);   // 查询mapping分类
+        List<CmsMtChannelConditionMappingConfigModel> conditionMappingConfigModels =
+                cmsMtChannelConditionMappingConfigDao.selectList(conditionMappingParamMap);
+        if (ListUtils.isNull(conditionMappingConfigModels)) {
+//            $warn("cms_mt_channel_condition_mapping_config表中没有该渠道和平台对应的天猫平台类目匹配信息！[ChannelId:%s] " +
+//                    "[CartId:%s] [propName:%s]", channelId, cartId, propName);
+            return null;
+        }
+
+        return conditionMappingConfigModels;
+    }
+
 }
 
