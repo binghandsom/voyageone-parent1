@@ -4,7 +4,12 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.CmsConstants.PlatformStatus;
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.JsonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -191,6 +196,16 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
      */
     private List<CmsBtOperationLogModel_Msg> blockFeedBrand(CmsBtBrandBlockModel brandBlockModel) {
 
+
+        boolean isChildren = false;
+        List<TypeChannelBean> typeChannelBeans = TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.SKU_CARTS_53, brandBlockModel.getChannelId(), "cn");
+        for(TypeChannelBean typeChannelBean : typeChannelBeans){
+            if ("928".equals(typeChannelBean.getValue())) {
+                isChildren = true;
+                break;
+            }
+        };
+
         List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
 
         String channelId = brandBlockModel.getChannelId();
@@ -215,30 +230,45 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
 
             if (productModel == null)
                 continue;
+            // 旗舰店的商品下架
+            failList.addAll(offThem(channelId, feedInfoModel, productModel));
 
-            OffShelfHelper offShelfHelper = new OffShelfHelper(channelId);
-            offShelfHelper.addProduct(productModel);
-            try {
-                offShelfHelper.offThem();
-            } catch (BlockBrandOffShelfFailException e) {
-                // 下架失败
-                // 跳过锁定
-                logIssue(e.getCause());
-                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
-                errorInfo.setSkuCode(JsonUtil.bean2Json(offShelfHelper.getCodeList()));
-                errorInfo.setMsg(e.getMessage());
-                failList.add(errorInfo);
-                continue;
+            // liking的商品下架
+            if(isChildren){
+                List<CmsBtProductModel> productModels = productService.getProductByOriginalCode("928", channelId, code);
+                if(ListUtils.notNull(productModels)){
+                    productModels.forEach(item->{
+                        failList.addAll(offThem("928", feedInfoModel, item));
+                    });
+                }
             }
-            // 在下架完成之后
-            // 锁定商品
-            lockProduct(feedInfoModel.getCode(), channelId);
-            lockOrUnlockProductPlatform(productModel, "1", 0);
         }
 
         return failList;
     }
 
+    private List<CmsBtOperationLogModel_Msg> offThem(String channelId, CmsBtFeedInfoModel feedInfoModel, CmsBtProductModel productModel){
+        List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
+        OffShelfHelper offShelfHelper = new OffShelfHelper(channelId);
+        offShelfHelper.addProduct(productModel);
+        try {
+            offShelfHelper.offThem();
+        } catch (BlockBrandOffShelfFailException e) {
+            // 下架失败
+            // 跳过锁定
+            logIssue(e.getCause());
+            CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+            errorInfo.setSkuCode(JsonUtil.bean2Json(offShelfHelper.getCodeList()));
+            errorInfo.setMsg(e.getMessage());
+            failList.add(errorInfo);
+            return failList;
+        }
+        // 在下架完成之后
+        // 锁定商品
+        lockProduct(feedInfoModel.getCode(), channelId);
+        lockOrUnlockProductPlatform(productModel, "1", 0);
+        return failList;
+    }
     /**
      * 解除主数据品牌的屏蔽，解锁这些品牌的商品
      *
@@ -268,6 +298,15 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
 
         String channelId = brandBlockModel.getChannelId();
 
+        boolean isChildren = false;
+        List<TypeChannelBean> typeChannelBeans = TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.SKU_CARTS_53, brandBlockModel.getChannelId(), "cn");
+        for(TypeChannelBean typeChannelBean : typeChannelBeans){
+            if ("928".equals(typeChannelBean.getValue())) {
+                isChildren = true;
+                break;
+            }
+        };
+
         List<CmsBtFeedInfoModel> feedInfoModelList = feedInfoService.getList(channelId, JongoQuery.simple("brand", brandBlockModel.getBrand()));
 
         if (feedInfoModelList == null || feedInfoModelList.isEmpty())
@@ -290,6 +329,18 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
                 unlockProduct(code, channelId);
                 lockOrUnlockProductPlatform(productModel, "0", 0);
             }
+
+
+            if(isChildren){
+                List<CmsBtProductModel> productModels = productService.getProductByOriginalCode("928", channelId, code);
+                if(ListUtils.notNull(productModels)){
+                    productModels.forEach(item->{
+                        unlockProduct(item.getCommon().getFields().getCode(), "928");
+                        lockOrUnlockProductPlatform(item, "0", 0);
+                    });
+                }
+            }
+
 
             feedInfoService.updateFeedInfo(feedInfoModel);
         }
