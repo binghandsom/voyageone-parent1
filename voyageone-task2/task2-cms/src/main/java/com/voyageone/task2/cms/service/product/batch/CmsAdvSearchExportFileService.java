@@ -1039,53 +1039,36 @@ public class CmsAdvSearchExportFileService extends BaseService {
      * @param attrName
      */
     private int contructPlatCell(String key, Row row, int index, CellStyle unlock, String _cartId, CmsBtProductModel_Platform_Cart _platform, String attrName) {
-        int orgNumber = index;
 
-        if (CartEnums.Cart.JM.getId().equals(_cartId)) {
-            if ("MallURL".equals(attrName)) {
-                FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(_cartId, _platform.getpPlatformMallId()));
-            } else if ("pMallId".equals(attrName)) {
-                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(_platform.getpPlatformMallId()));
-            } else if ("URL".equals(attrName)) {
+        if ("MallURL".equals(attrName)) {
+            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(_cartId, _platform.getpPlatformMallId()));
+        } else if ("pMallId".equals(attrName)) {
+            FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(_platform.getpPlatformMallId()));
+        } else if ("URL".equals(attrName)) {
+            if (CartEnums.Cart.JD.getId().equals(_cartId)
+                    || CartEnums.Cart.JG.getId().equals(_cartId)
+                    || CartEnums.Cart.JGY.getId().equals(_cartId)
+                    || CartEnums.Cart.JGJ.getId().equals(_cartId)) {
+                FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(_cartId, getJdPlatformSkuId(_platform)));
+            } else
                 FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(_cartId, _platform.getpNumIId()));
-            } else if ("pNumIId".equals(attrName)) {
-                key.replace("pNumIId", "HashID");
-            }
-
+        } else if ("title".equals(attrName)) {
+            FileUtils.cell(row, index++, unlock).setCellValue(getPlatformProdName(_cartId, _platform.getFieldsNotNull()));
+        } else if ("pCatPath".equals(attrName)) {
+            FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(_platform.getpCatPath()));
+        } else if ("pPriceMsrpEd".equals(attrName)) {
+            FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(_platform.getpPriceMsrpSt(), _platform.getpPriceMsrpEd()));
+        } else if ("pPriceRetailEd".equals(attrName)) {
+            FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(_platform.getpPriceRetailSt(), _platform.getpPriceRetailEd()));
+        } else if ("pPriceSaleEd".equals(attrName)) {
+            FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(_platform.getpPriceSaleSt(), _platform.getpPriceSaleEd()));
         } else {
-            if ("URL".equals(attrName)) {
-                if (CartEnums.Cart.JD.getId().equals(_cartId)
-                        || CartEnums.Cart.JG.getId().equals(_cartId)
-                        || CartEnums.Cart.JGY.getId().equals(_cartId)
-                        || CartEnums.Cart.JGJ.getId().equals(_cartId)) {
-                    FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(_cartId, getJdPlatformSkuId(_platform)));
-                } else
-                    FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(_cartId, _platform.getpNumIId()));
-            } else if ("pNumIId".equals(attrName)) {
-                key.replace("pNumIId", "Numiid");
-            }
-
-        }
-
-        if(index == orgNumber){
-            if ("title".equals(attrName)) {
-                FileUtils.cell(row, index++, unlock).setCellValue(getPlatformProdName(_cartId, _platform.getFieldsNotNull()));
-            } else if ("pCatPath".equals(attrName)) {
-                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(_platform.getpCatPath()));
-            } else if ("pPriceMsrpEd".equals(attrName)) {
-                FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(_platform.getpPriceMsrpSt(), _platform.getpPriceMsrpEd()));
-            } else if ("pPriceRetailEd".equals(attrName)) {
-                FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(_platform.getpPriceRetailSt(), _platform.getpPriceRetailEd()));
-            } else if ("pPriceSaleEd".equals(attrName)) {
-                FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(_platform.getpPriceSaleSt(), _platform.getpPriceSaleEd()));
+            key = key.split(_cartId)[1].substring(1);
+            Object salesVal = _platform.getSubNode(key.split("\\."));
+            if (salesVal == null) {
+                FileUtils.cell(row, index++, unlock).setCellValue("");
             } else {
-                key = key.split(_cartId)[1].substring(1);
-                Object salesVal = _platform.getSubNode(key.split("\\."));
-                if (salesVal == null) {
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                } else {
-                    FileUtils.cell(row, index++, unlock).setCellValue(salesVal.toString());
-                }
+                FileUtils.cell(row, index++, unlock).setCellValue(salesVal.toString());
             }
         }
         return index;
