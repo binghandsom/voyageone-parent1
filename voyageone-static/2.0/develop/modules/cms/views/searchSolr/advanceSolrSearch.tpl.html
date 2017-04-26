@@ -638,6 +638,9 @@
                                         </th>
                                         <th class="text-left" ng-repeat="prop1 in vm.commonProps">
                                             {{prop1.propName}}&emsp;
+                                            <button class="opacityBtn"
+                                                    ng-if="vm.productList.length && prop1.propName == '商品创建时间'"
+                                                    ng-click="columnOrder(prop1.propId)"><i class="fa fa-{{getArrowName(prop1.propId)}}"></i></button>
                                         </th>
                                         <th class="text-left" ng-repeat="prop2 in vm.sumCustomProps">{{prop2.name}}</th>
                                         <th class="text-center" ng-repeat="prop3 in vm.selSalesType">

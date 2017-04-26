@@ -1296,6 +1296,15 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         // jmSkus里面只有画面上勾选的sku，没有没选的sku
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         for (BaseMongoMap<String, Object> sku : jmSkus) {
+
+            // 20170425 tom 由于只回写jmSpuNo和jmSkuNo， 那么如果是空的， 那么这个sku就没必须回写了 START
+            if (StringUtils.isEmpty(sku.getStringAttribute("jmSpuNo"))
+                    && StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))
+                    ) {
+                continue;
+            }
+            // 20170425 tom 由于只回写jmSpuNo和jmSkuNo， 那么如果是空的， 那么这个sku就没必须回写了 END
+
             // 更新条件
             HashMap<String, Object> queryMap = new HashMap<>();
             queryMap.put("platforms.P" + CART_ID + ".skus.skuCode", sku.getStringAttribute("skuCode"));
@@ -1308,8 +1317,17 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 //            updateMap.put("platforms.P" + CART_ID + ".skus.$.priceChgFlg", sku.getStringAttribute("priceChgFlg"));
 //            updateMap.put("platforms.P" + CART_ID + ".skus.$.priceDiffFlg", sku.getStringAttribute("priceDiffFlg"));
 //            updateMap.put("platforms.P" + CART_ID + ".skus.$.isSale", sku.getAttribute("isSale"));
-            updateMap.put("platforms.P" + CART_ID + ".skus.$.jmSpuNo", sku.getStringAttribute("jmSpuNo"));
-            updateMap.put("platforms.P" + CART_ID + ".skus.$.jmSkuNo", sku.getStringAttribute("jmSkuNo"));
+
+            // 20170425 tom 由于只回写jmSpuNo和jmSkuNo， 那么如果是空的， 那么这个sku就没必须回写了 START
+            if (!StringUtils.isEmpty(sku.getStringAttribute("jmSpuNo"))) {
+                updateMap.put("platforms.P" + CART_ID + ".skus.$.jmSpuNo", sku.getStringAttribute("jmSpuNo"));
+            }
+
+            if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))) {
+                updateMap.put("platforms.P" + CART_ID + ".skus.$.jmSkuNo", sku.getStringAttribute("jmSkuNo"));
+            }
+            // 20170425 tom 由于只回写jmSpuNo和jmSkuNo， 那么如果是空的， 那么这个sku就没必须回写了 END
+
 //            updateMap.put("platforms.P" + CART_ID + ".skus.$.property", sku.getStringAttribute("property"));
 //            updateMap.put("platforms.P" + CART_ID + ".skus.$.originalPriceMsrp", sku.getDoubleAttribute("originalPriceMsrp"));
 //            updateMap.put("platforms.P" + CART_ID + ".skus.$.priceMsrpFlg", sku.getStringAttribute("priceMsrpFlg"));
@@ -2765,6 +2783,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      */
     protected void insertOrUpdateCmsBtJmSku(CmsBtJmSkuModel jmsku, String channelId, String productCode) {
         if (jmsku == null || StringUtils.isEmpty(jmsku.getSkuCode())) return;
+
+        // 20170425 tom 由于只回写jmSpuNo和jmSkuNo， 那么如果是空的， 那么这个sku就没必须回写了 START
+        if (StringUtils.isEmpty(jmsku.getJmSpuNo()) && StringUtils.isEmpty(jmsku.getJmSkuNo())) return;
+        // 20170425 tom 由于只回写jmSpuNo和jmSkuNo， 那么如果是空的， 那么这个sku就没必须回写了 END
 
         // 查询mySql表中的sku列表(一个产品查询一次，如果每个sku更新/新增的时候都去查的话，效率太低了)
         CmsBtJmSkuModel currentCmsBtJmSku = getCmsBtJmSkuModel(channelId, productCode, jmsku.getSkuCode());

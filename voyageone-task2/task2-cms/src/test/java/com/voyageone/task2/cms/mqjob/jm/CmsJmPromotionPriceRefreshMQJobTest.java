@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.mqjob.jm;
 
-import com.voyageone.common.configs.MQConfigInitTestUtil;
+import com.voyageone.common.util.JsonUtil;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JMRefreshPriceMQMessageBody;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class CmsJmPromotionPriceRefreshMQJobTest {
 
     @Test
     public void testOnStartup() throws InterruptedException {
-        MQConfigInitTestUtil.startMQ(serviceJob);
+//        MQConfigInitTestUtil.startMQ(serviceJob);
+        String msg = "{\"cmsBtJmPromotionId\":1407,\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"edward\"}";
+        JMRefreshPriceMQMessageBody messageBody = JsonUtil.jsonToBean(msg, JMRefreshPriceMQMessageBody.class);
+        serviceJob.onStartup(messageBody);
     }
 }

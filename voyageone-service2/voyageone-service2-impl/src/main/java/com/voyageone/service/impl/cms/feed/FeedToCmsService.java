@@ -268,9 +268,10 @@ public class FeedToCmsService extends BaseService {
      */
     public Map<String, List<CmsBtOperationLogModel_Msg>> updateFeedSkuPrice(String channelId, List<CmsBtFeedInfoModel_Sku> skuList,
                                                                             String modifier) {
+        {
 
-        List<CmsBtOperationLogModel_Msg> success = new ArrayList<>(),
-                failed = new ArrayList<>();
+            List<CmsBtOperationLogModel_Msg> success = new ArrayList<>(),
+                    failed = new ArrayList<>();
 
         List<String> skuCodeList = skuList.stream().map(sku -> sku.getClientSku()).collect(Collectors.toList());
 
@@ -302,47 +303,47 @@ public class FeedToCmsService extends BaseService {
                             && (targetSku.getPriceClientRetail() == null || targetSku.getPriceClientRetail() == 0)
                             && (targetSku.getPriceClientMsrp() == null || targetSku.getPriceClientMsrp() == 0));
 
-                    // 同步价格
-                    if (targetSku.getPriceNet() != null && targetSku.getPriceNet() != 0)
-                        skuInfo.setPriceNet(skuInfo.getPriceNet());
-                    if (targetSku.getPriceClientRetail() != null && targetSku.getPriceClientRetail() != 0)
-                        skuInfo.setPriceClientRetail(skuInfo.getPriceClientRetail());
-                    if (targetSku.getPriceClientMsrp() != null && targetSku.getPriceClientMsrp() != 0)
-                        skuInfo.setPriceClientMsrp(skuInfo.getPriceClientMsrp());
+                        // 同步价格
+                        if (targetSku.getPriceNet() != null && targetSku.getPriceNet() != 0)
+                            skuInfo.setPriceNet(skuInfo.getPriceNet());
+                        if (targetSku.getPriceClientRetail() != null && targetSku.getPriceClientRetail() != 0)
+                            skuInfo.setPriceClientRetail(skuInfo.getPriceClientRetail());
+                        if (targetSku.getPriceClientMsrp() != null && targetSku.getPriceClientMsrp() != 0)
+                            skuInfo.setPriceClientMsrp(skuInfo.getPriceClientMsrp());
 
-                    // 同步库存
-                    if (targetSku.getQty() != null) {
-                        skuInfo.setQty(targetSku.getQty());
+                        // 同步库存
+                        if (targetSku.getQty() != null) {
+                            skuInfo.setQty(targetSku.getQty());
+                        }
+
+                        // 同步状态
+                        if (targetSku.getIsSale() != null)
+                            skuInfo.setIsSale(targetSku.getIsSale());
+                    }
+                    qty += skuInfo.getQty();
+                }
+
+                try {
+                    orgFeedInfo.setModified(DateTimeUtil.getNowTimeStamp());
+                    orgFeedInfo.setModifier(modifier);
+                    orgFeedInfo.setQty(qty);
+
+                    // 计算人民币价格
+                    if (triggerPrice) {
+                        priceService.setFeedPrice(orgFeedInfo);
                     }
 
-                    // 同步状态
-                    if (targetSku.getIsSale() != null)
-                        skuInfo.setIsSale(targetSku.getIsSale());
-                }
-                qty += skuInfo.getQty();
-            }
+                    // 原feed数据导入成功或者导入失败,则自动重新导入一次
+                    if (CmsConstants.FeedUpdFlgStatus.Succeed == orgFeedInfo.getUpdFlg()
+                            || CmsConstants.FeedUpdFlgStatus.Fail == orgFeedInfo.getUpdFlg())
+                        orgFeedInfo.setUpdFlg(CmsConstants.FeedUpdFlgStatus.Pending);
 
-            try {
-                orgFeedInfo.setModified(DateTimeUtil.getNowTimeStamp());
-                orgFeedInfo.setModifier(modifier);
-                orgFeedInfo.setQty(qty);
+                    feedInfoService.updateFeedInfo(orgFeedInfo);
 
-                // 计算人民币价格
-                if (triggerPrice) {
-                    priceService.setFeedPrice(orgFeedInfo);
-                }
-
-                // 原feed数据导入成功或者导入失败,则自动重新导入一次
-                if (CmsConstants.FeedUpdFlgStatus.Succeed == orgFeedInfo.getUpdFlg()
-                        || CmsConstants.FeedUpdFlgStatus.Fail == orgFeedInfo.getUpdFlg())
-                    orgFeedInfo.setUpdFlg(CmsConstants.FeedUpdFlgStatus.Pending);
-
-                feedInfoService.updateFeedInfo(orgFeedInfo);
-
-                CmsBtOperationLogModel_Msg _successMsg = new CmsBtOperationLogModel_Msg();
-                _successMsg.setSkuCode(orgFeedInfo.getCode());
-                _successMsg.setMsg("修改feed信息完毕");
-                success.add(_successMsg);
+                    CmsBtOperationLogModel_Msg _successMsg = new CmsBtOperationLogModel_Msg();
+                    _successMsg.setSkuCode(orgFeedInfo.getCode());
+                    _successMsg.setMsg("修改feed信息完毕");
+                    success.add(_successMsg);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -354,11 +355,12 @@ public class FeedToCmsService extends BaseService {
 
         });
 
-        Map<String, List<CmsBtOperationLogModel_Msg>> response = new HashMap<>();
-        response.put("success", success);
-        response.put("failed", failed);
-        return response;
+            Map<String, List<CmsBtOperationLogModel_Msg>> response = new HashMap<>();
+            response.put("success", success);
+            response.put("failed", failed);
+            return response;
 
+        }
     }
 
     /**

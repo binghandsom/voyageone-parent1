@@ -7,6 +7,7 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
  * Created by Jonas on 4/14/2015.
  */
 public class ChannelConfigEnums {
+
     /**
      * 对应 tm_order_channel_config 表中存在的所有配置名称
      *
@@ -697,6 +698,117 @@ public class ChannelConfigEnums {
             this.id = id;
         }
 
+        public static Channel valueOfId(String id) {
+            if (id == null)
+                return null;
+
+            switch (id) {
+                case "000":
+                    return NONE;
+                case "001":
+                    return SN;
+                case "002":
+                    return PA;
+                case "003":
+                    return GL;
+                case "004":
+                    return JC;
+                case "005":
+                    return SP;
+                case "006":
+                    return BHFO;
+                case "007":
+                    return CHAMPION;
+                case "008":
+                    return REAL_MADRID;
+                case "009":
+                    return SWISSWATCH;
+                case "010":
+                    return JEWELRY;
+                case "012":
+                    return BCBG;
+                case "013":
+                    return SEARS;
+                case "014":
+                    return WMF;
+                case "015":
+                    return GILT;
+                case "016":
+                    return SHOE_CITY;
+                case "017":
+                    return LUCKY_VITAMIN;
+                case "018":
+                    return TARGET;
+                case "019":
+                    return SUMMERGURU;
+                case "020":
+                    return EDCSKINCARE;
+                case "021":
+                    return BHFO_MINIMALL;
+                case "022":
+                    return DFO;
+                case "023":
+                    return ShoeZoo;
+                case "024":
+                    return OverStock;
+                case "025":
+                    return FragranceNet;
+                case "026":
+                    return LightHouse;
+                case "027":
+                    return Yogademocracy;
+                case "028":
+                    return ShoeMetro;
+                case "029":
+                    return Modotex;
+                case "030":
+                    return Wella;
+                case "031":
+                    return Woodland;
+                case "032":
+                    return Frye;
+                case "033":
+                    return KitBag;
+                case "034":
+                    return Coty;
+                case "035":
+                    return LikingBuyer;
+                case "036":
+                    return Cinxus;
+                case "037":
+                    return SharonShoe;
+                case "038":
+                    return FAMbrand;
+                case "039":
+                    return Ladolcevitae;
+                case "088":
+                    return TestChannel088;
+                case "089":
+                    return TestChannel089;
+                case "090":
+                    return TestChannel090;
+                case "091":
+                    return TestChannel091;
+                case "092":
+                    return TestChannel092;
+                case "093":
+                    return TestChannel093;
+                case "928":
+                    return USJGJ;
+                case "929":
+                    return USJGY;
+                case "997":
+                    return VOYAGEONE;
+                case "996":
+                    return TEST;
+                case "998":
+                    return USJGT;
+                default:
+                    DynamicEnum.addEnum(ChannelConfigEnums.Channel.class, "Supply" + id, new Class[]{String.class}, new Object[]{id});
+                    return Channel.valueOf("Supply" + id);
+            }
+        }
+
         public String getId() {
             return id;
         }
@@ -707,65 +819,6 @@ public class ChannelConfigEnums {
 
         public String getFullName() {
             return getBean().getFull_name();
-        }
-
-        public static Channel valueOfId(String id) {
-            if (id == null)
-                return null;
-
-            switch (id) {
-                case "000": return NONE;
-                case "001": return SN;
-                case "002": return PA;
-                case "003": return GL;
-                case "004": return JC;
-                case "005": return SP;
-                case "006": return BHFO;
-                case "007": return CHAMPION;
-                case "008": return REAL_MADRID;
-                case "009": return SWISSWATCH;
-                case "010": return JEWELRY;
-                case "012": return BCBG;
-                case "013": return SEARS;
-                case "014": return WMF;
-                case "015": return GILT;
-                case "016": return SHOE_CITY;
-                case "017": return LUCKY_VITAMIN;
-                case "018": return TARGET;
-                case "019": return SUMMERGURU;
-                case "020": return EDCSKINCARE;
-                case "021": return BHFO_MINIMALL;
-                case "022": return DFO;
-                case "023": return ShoeZoo;
-                case "024": return OverStock;
-                case "025": return FragranceNet;
-                case "026": return LightHouse;
-                case "027": return Yogademocracy;
-                case "028": return ShoeMetro;
-                case "029": return Modotex;
-                case "030": return Wella;
-                case "031": return Woodland;
-                case "032": return Frye;
-                case "033": return KitBag;
-                case "034": return Coty;
-                case "035": return LikingBuyer;
-                case "036": return Cinxus;
-                case "037": return SharonShoe;
-                case "038": return FAMbrand;
-                case "039": return Ladolcevitae;
-                case "088": return TestChannel088;
-                case "089": return TestChannel089;
-                case "090": return TestChannel090;
-                case "091": return TestChannel091;
-                case "092": return TestChannel092;
-                case "093": return TestChannel093;
-                case "928": return USJGJ;
-                case "929": return USJGY;
-                case "997": return VOYAGEONE;
-                case "996": return TEST;
-                case "998": return USJGT;
-                default: return null;
-            }
         }
     }
 

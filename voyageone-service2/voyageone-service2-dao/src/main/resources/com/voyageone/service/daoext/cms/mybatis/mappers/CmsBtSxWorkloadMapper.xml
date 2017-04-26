@@ -276,7 +276,7 @@
         workload_name as workloadName,
         publish_status as publishStatus,
         group_id as groupId,
-        priority_order as priorityOrder,
+        priority_order as priority_order,
         creater,
         created,
         modifier,
@@ -300,4 +300,5 @@
             limit 0,#{record_count}
         </if>
     </select>
+
 </mapper>
