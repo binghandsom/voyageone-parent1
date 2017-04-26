@@ -389,12 +389,8 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                 $error("CmsAdvSearchOtherService 获取到店铺信息失败(shopProp == null)! [ChannelId:%s] [CartId:%s]", channelId, cartId);
                 continue;
             }
-            if (!PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id()) && !PlatFormEnums.PlatForm.JD.getId().equals(shopProp.getPlatform_id())) {
-                $info("CmsAdvSearchOtherService 目前只有淘宝和京东有bi数据，其他平台都忽略 [ChannelId:%s] [CartId:%s]", channelId, cartId);
-                continue;
-            }
 
-            if(PlatFormEnums.PlatForm.JM.equals(shopProp.getPlatform_id())){
+            if(PlatFormEnums.PlatForm.JM.getId().equals(shopProp.getPlatform_id())){
                 // 添加各平台的排序字段
                 for (String[] platformItem : platformItemsJM) {
                     Map<String, String> keySumMap = new HashMap<>();
