@@ -465,8 +465,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     // 设置sku的重量
                     for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
                         if ((sku.getWeight() == null || sku.getWeight() == 0.0D)
-                                && productModel.getCommon().getFields().getWeightLb() != 0.0D)
+                                && productModel.getCommon().getFields().getWeightLb() != 0.0D) {
                             sku.setWeight(productModel.getCommon().getFields().getWeightLb());
+                            sku.setWeightUnit("lb");
+                        }
                     }
 
                     // 产品不存在，新增
@@ -673,6 +675,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 }
                             }
 
+                            // 磅(common.fields.weightLb)
+                            if (productModel.getCommon().getFields().getWeightLb() != 0)
+                                prCommonFields.setWeightLb(productModel.getCommon().getFields().getWeightLb());
                             // 克(common.fields.weightG)
                             if (productModel.getCommon().getFields().getWeightG() != 0)
                                 prCommonFields.setWeightG(productModel.getCommon().getFields().getWeightG());

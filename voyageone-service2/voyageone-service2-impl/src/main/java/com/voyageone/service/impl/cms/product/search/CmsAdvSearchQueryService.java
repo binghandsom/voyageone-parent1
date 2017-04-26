@@ -11,7 +11,6 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.daoext.cms.WmsBtInventoryCenterLogicDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -42,8 +41,6 @@ public class CmsAdvSearchQueryService extends BaseService {
     private ProductService productService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
-    @Autowired
-    private WmsBtInventoryCenterLogicDaoExt wmsBtInventoryDaoExt;
 
     /**
      * 获取当前查询的product列表（查询条件从画面而来）<br>
@@ -886,9 +883,18 @@ public class CmsAdvSearchQueryService extends BaseService {
     /**
      * 取得SKU级的库存属性
      */
-	public List<Map<String, Object>> getSkuInventoryList(String channelId, String code) {
-		return wmsBtInventoryDaoExt.selectSkuInventoryList(channelId, code);
-	}
+    public List<Map<String, Object>> getSkuInventoryList(CmsBtProductModel cmsBtProductModel) {
+
+        List<Map<String, Object>> qtyList = new ArrayList<>();
+        cmsBtProductModel.getCommon().getSkus().forEach(sku -> {
+            Map<String, Object> skuMap = new HashMap<String, Object>();
+            skuMap.put("sku", sku.getSkuCode());
+            skuMap.put("code", cmsBtProductModel.getCommon().getFields().getCode());
+            skuMap.put("qtyChina", sku.getQty());
+            qtyList.add(skuMap);
+        });
+        return qtyList;
+    }
 
 
 }

@@ -19,6 +19,7 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
+import com.voyageone.web2.sdk.api.response.wms.GetStoreStockDetailResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -308,7 +309,8 @@ public class CmsProductDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_SKU_STOCK_INFO)
     public AjaxResponse getSkuStockInfo(@RequestBody String productId) {
     	Preconditions.checkArgument(StringUtils.isNotBlank(productId));
-    	WmsCodeStoreInvBean skuStock = productService.getStockInfoBySku(getUser().getSelChannelId(), Long.valueOf(productId));
+
+        GetStoreStockDetailResponse skuStock = productPropsEditService.getStockInfoBySku(getUser().getSelChannelId(), Long.valueOf(productId));
     	return success(skuStock);
     }
 

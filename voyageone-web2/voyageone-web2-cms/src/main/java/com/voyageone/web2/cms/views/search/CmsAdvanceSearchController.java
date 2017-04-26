@@ -23,7 +23,6 @@ import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryServic
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -550,7 +549,7 @@ public class CmsAdvanceSearchController extends CmsController {
     public AjaxResponse getSkuInventoryList(@RequestBody String code) {
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode(getUser().getSelChannelId(), code);
         if (cmsBtProductModel != null) {
-            return success(advSearchQueryService.getSkuInventoryList(cmsBtProductModel.getOrgChannelId(), code));
+            return success(advSearchQueryService.getSkuInventoryList(cmsBtProductModel));
         } else {
             throw new BusinessException(code + "：该商品不存在");
         }

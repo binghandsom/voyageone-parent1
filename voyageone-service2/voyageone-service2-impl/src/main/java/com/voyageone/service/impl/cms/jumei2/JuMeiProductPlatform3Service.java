@@ -31,7 +31,6 @@ import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,7 +130,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
             Map<String, String> queryMap = new HashMap<>();
             queryMap.put("channelId", product.getOrgChannelId());
             queryMap.put("code", product.getCommon().getFields().getCode());
-            List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailByCode(queryMap);
+//            List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailByCode(queryMap);
 
             List<jmHtDealCopyDealSkusData> skuList = new ArrayList<>();
             product.getPlatform(27).getSkus()
@@ -156,13 +155,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
                                 if (!StringUtil.isEmpty(promotionSkuMap.get("jmSkuNo"))) {
 
                                     dealCopyDealSkuData.setStocks(String.valueOf("1"));
-                                    inventoryList.forEach(inventoryInfo -> {
-                                        if (inventoryInfo.getSku().equals(skuCode)
-                                                && inventoryInfo.getQtyChina() > 0) {
-                                            dealCopyDealSkuData.setStocks(String.valueOf(inventoryInfo.getQtyChina()));
-                                            return;
-                                        }
-                                    });
+                                    if (skuInfo.getIntAttribute("qty") > 0) {
+                                        dealCopyDealSkuData.setStocks(skuInfo.getStringAttribute("qty"));
+                                    }
                                     dealCopyDealSkuData.setSku_no(String.valueOf(promotionSkuMap.get("jmSkuNo")));
                                     dealCopyDealSkuData.setDeal_price(String.valueOf(promotionSkuMap.get("dealPrice")));
                                     dealCopyDealSkuData.setMarket_price(String.valueOf(promotionSkuMap.get("marketPrice")));

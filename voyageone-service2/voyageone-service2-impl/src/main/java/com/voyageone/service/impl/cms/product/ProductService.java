@@ -33,14 +33,11 @@ import com.voyageone.service.impl.cms.CmsMtEtkHsCodeService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.wms.InventoryCenterLogicService;
-import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
 import com.voyageone.service.model.cms.CmsMtEtkHsCodeModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.collections.Predicate;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -753,15 +750,7 @@ public class ProductService extends BaseService {
                     priceSale = skuInfo.getDoubleAttribute("priceSale");
                 }
                 bean.setPricePerUnit(String.valueOf(priceSale));
-                // TODO 目前无法取得库存值
-                Map<String, Object> param = new HashMap<>();
-                param.put("channelId", product.getOrgChannelId());
-                param.put("sku", skuCode);
-                WmsBtInventoryCenterLogicModel skuInventory = wmsBtInventoryCenterLogicDao.selectItemDetailBySku(param);
-
-                if (skuInventory != null) {
-                    bean.setInventory(String.valueOf(skuInventory.getQtyChina()));
-                }
+                bean.setInventory(String.valueOf(skuInfo.getIntAttribute("qty")));
                 String imagePath = "";
                 if (!product.getCommon().getFields().getImages1().isEmpty()) {
                     if (!StringUtils.isEmpty(product.getCommon().getFields().getImages1().get(0).getName()))
@@ -828,27 +817,6 @@ public class ProductService extends BaseService {
         updateMap.put("$set", rsMap);
 
         cmsBtProductDao.update(channelId, paraMap, updateMap);
-    }
-
-    /**
-     * 获取Sku的库存信息
-     */
-    public Map<String, Integer> getProductSkuQty(String channelId, String productCode) {
-        Map<String, String> queryMap = new HashMap<>();
-        queryMap.put("channelId", channelId);
-        queryMap.put("code", productCode);
-
-        List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailByCode(queryMap);
-
-        Map<String, Integer> result = new HashMap<>();
-        for (WmsBtInventoryCenterLogicModel inventory : inventoryList) {
-            if(channelId.equals("001")){
-                result.put(inventory.getSku().toLowerCase(), inventory.getQtyChina());
-            }else{
-                result.put(inventory.getSku(), inventory.getQtyChina());
-            }
-        }
-        return result;
     }
 
     /**
@@ -1471,49 +1439,6 @@ public class ProductService extends BaseService {
 
     public void removeTagByCodes(String channelId, List<String> codes, int tagId) {
         cmsBtProductDao.removeTagByCodes(channelId, codes, tagId);
-    }
-
-    /**
-     * 查询商品的库存信息（合并SKU与库存信息）
-     */
-    public WmsCodeStoreInvBean getStockInfoBySku(String channelId, long productId) {
-        // 查询商品信息
-        CmsBtProductModel productInfo = getProductById(channelId, productId);
-        if (productInfo == null) {
-            throw new BusinessException("找不到商品信息, channelId=" + channelId + ", productId=" + productId);
-        }
-        // 查询商品的库存信息
-        String code = productInfo.getCommon().getFields().getCode();
-        WmsCodeStoreInvBean stockDetail = inventoryCenterLogicService.getCodeStockDetails(productInfo.getOrgChannelId(), code);
-
-        // 取得SKU的平台尺寸信息
-        List<CmsBtProductModel_Sku> skus = productInfo.getCommon().getSkus();
-        Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, productInfo.getCommon().getFields().getBrand(),
-                productInfo.getCommon().getFields().getProductType(), productInfo.getCommon().getFields().getSizeType());
-        if (MapUtils.isNotEmpty(sizeMap)) {
-            skus.forEach(sku -> {
-                sku.setAttribute("platformSize", sizeMap.get(sku.getSize()));
-            });
-        }
-
-        // 更新商品库存中的SKU尺寸信息
-        if (CollectionUtils.isNotEmpty(stockDetail.getStocks())) {
-            stockDetail.getStocks().forEach(stock -> {
-                CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku) CollectionUtils.find(skus, new Predicate() {
-                    @Override
-                    public boolean evaluate(Object object) {
-                        CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku) object;
-                        return sku.getSkuCode().equalsIgnoreCase(stock.getBase().getSku());
-                    }
-                });
-                if (sku != null) {
-                    stock.getBase().setOrigSize(sku.getSize());
-                    stock.getBase().setSaleSize(sku.getAttribute("platformSize"));
-                }
-            });
-        }
-
-        return stockDetail;
     }
 
     //更新mongo product  tag
