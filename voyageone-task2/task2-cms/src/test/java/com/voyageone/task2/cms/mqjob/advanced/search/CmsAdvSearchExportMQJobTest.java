@@ -33,7 +33,7 @@ public class CmsAdvSearchExportMQJobTest {
     @Test
     public void onStartup() throws Exception {
         String json = "{\n" +
-                "    \"cmsBtExportTaskId\": 280,\n" +
+                "    \"cmsBtExportTaskId\": 282,\n" +
                 "    \"searchValue\": {\n" +
                 "        \"tags\": [],\n" +
                 "        \"priceChgFlg\": \"\",\n" +
@@ -50,13 +50,14 @@ public class CmsAdvSearchExportMQJobTest {
                 "        \"sizeSelType\": \"1\",\n" +
                 "        \"salesType\": \"All\",\n" +
                 "        \"custGroupType\": \"1\",\n" +
+                "        \"codeList\": [\"022-RA51289601155\"],\n" +
                 "        \"custAttrMap\": [{\n" +
                 "            \"inputVal\": \"\",\n" +
                 "            \"inputOpts\": \"\",\n" +
                 "            \"inputOptsKey\": \"\"\n" +
                 "        }],\n" +
-                "        \"_selCodeList\": [\"1117446288\"],\n" +
-                "        \"fileType\": 3,\n" +
+                "        \"_selCodeList\": [\"022-RA51289601155\"],\n" +
+                "        \"fileType\": 1,\n" +
                 "        \"productStatus\": [],\n" +
                 "        \"platformStatus\": [],\n" +
                 "        \"pRealStatus\": [],\n" +
@@ -65,7 +66,7 @@ public class CmsAdvSearchExportMQJobTest {
                 "        \"_channleId\": \"928\",\n" +
                 "        \"_userName\": \"edward\",\n" +
                 "        \"_language\": \"cn\",\n" +
-                "        \"_taskId\": 280,\n" +
+                "        \"_taskId\": 282,\n" +
                 "        \"_sessionBean\": {\n" +
                 "            \"_adv_search_customProps\": [{\n" +
                 "                \"feed_prop_translation\": \"品牌\",\n" +
@@ -77,6 +78,12 @@ public class CmsAdvSearchExportMQJobTest {
                 "            }, {\n" +
                 "                \"name\": \"聚美优品MallId\",\n" +
                 "                \"value\": \"platforms.P27.pMallId\"\n" +
+                "            }, {\n" +
+                "                \"name\": \"聚美优品URL\",\n" +
+                "                \"value\": \"platforms.P27.URL\"\n" +
+                "            }, {\n" +
+                "                \"name\": \"聚美优品HashID\",\n" +
+                "                \"value\": \"platforms.P27.pNumIId\"\n" +
                 "            }, {\n" +
                 "                \"name\": \"匠心界URL\",\n" +
                 "                \"value\": \"platforms.P28.URL\"\n" +
