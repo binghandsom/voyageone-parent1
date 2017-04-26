@@ -24,7 +24,7 @@ import java.util.Map;
  */
 @Service
 @RabbitListener()
-public class CmsFeedSkuPqMQJob extends TBaseMQCmsService<CmsFeedSkuPqMQMessageBody> {
+public class CmsFeedSkuPqMQJob extends TBaseMQCmsSubService<CmsFeedSkuPqMQMessageBody> {
 
     @Autowired
     FeedToCmsService feedToCmsService;

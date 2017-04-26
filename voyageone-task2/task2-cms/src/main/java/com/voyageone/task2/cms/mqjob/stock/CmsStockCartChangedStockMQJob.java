@@ -3,10 +3,11 @@ package com.voyageone.task2.cms.mqjob.stock;
 import com.voyageone.service.impl.cms.product.ProductStockService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.stock.CmsStockCartChangedStockMQMessageBody;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
-import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
+import com.voyageone.task2.cms.mqjob.TBaseMQCmsSubService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ import java.util.List;
  */
 @Service
 @RabbitListener
-public class CmsStockCartChangedStockMQJob extends TBaseMQCmsService<CmsStockCartChangedStockMQMessageBody> {
+public class CmsStockCartChangedStockMQJob extends TBaseMQCmsSubService<CmsStockCartChangedStockMQMessageBody> {
 
     @Autowired
     ProductStockService productStockService;
