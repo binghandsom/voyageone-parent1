@@ -33,7 +33,7 @@ public class CmsAdvSearchExportMQJobTest {
     @Test
     public void onStartup() throws Exception {
         String json = "{\n" +
-                "    \"cmsBtExportTaskId\": 275,\n" +
+                "    \"cmsBtExportTaskId\": 276,\n" +
                 "    \"searchValue\": {\n" +
                 "        \"tags\": [],\n" +
                 "        \"priceChgFlg\": \"\",\n" +
@@ -56,7 +56,7 @@ public class CmsAdvSearchExportMQJobTest {
                 "            \"inputOptsKey\": \"\"\n" +
                 "        }],\n" +
                 "        \"_selCodeList\": [\"1117446288\"],\n" +
-                "        \"fileType\": 2,\n" +
+                "        \"fileType\": 3,\n" +
                 "        \"productStatus\": [],\n" +
                 "        \"platformStatus\": [],\n" +
                 "        \"pRealStatus\": [],\n" +
@@ -65,7 +65,7 @@ public class CmsAdvSearchExportMQJobTest {
                 "        \"_channleId\": \"928\",\n" +
                 "        \"_userName\": \"edward\",\n" +
                 "        \"_language\": \"cn\",\n" +
-                "        \"_taskId\": 275,\n" +
+                "        \"_taskId\": 276,\n" +
                 "        \"_sessionBean\": {\n" +
                 "            \"_adv_search_customProps\": [{\n" +
                 "                \"feed_prop_translation\": \"品牌\",\n" +
