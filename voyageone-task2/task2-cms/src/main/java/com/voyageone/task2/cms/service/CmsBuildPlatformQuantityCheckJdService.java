@@ -65,35 +65,41 @@ public class CmsBuildPlatformQuantityCheckJdService extends BaseCronTaskService 
      * @param cartId    平台ID
      */
     public void checkProduct(String channelId, int cartId) {
+        List<String> onSaleWareIdList = null;
+        ShopBean shopProp = null;
+
         try {
             // 获取店铺配置信息
-            ShopBean shopProp = Shops.getShop(channelId, cartId);
+            shopProp = Shops.getShop(channelId, cartId);
             if (shopProp == null) {
-                $error("该店铺不在此平台销售! [ChannelId:%s] [CartId:%s]", channelId, cartId);
-                throw new BusinessException(String.format("该店铺不在此平台销售! [ChannelId:%s] [CartId:%s]", channelId, cartId));
+                return;
             }
             $info("获取店铺信息成功! [channelId:%s] [cartId:%s]", channelId, cartId);
 
             // 获取该店铺下该平台在售且总库存为0的商品WareId
-            List<String> onSaleWareIdList = jdSaleService.getJdWareIdList(channelId, String.valueOf(cartId),
+            onSaleWareIdList = jdSaleService.getJdWareIdList(channelId, String.valueOf(cartId),
                     CmsConstants.PlatformStatus.OnSale.name(), CHECKSTOCKNUM);
 
-            if (onSaleWareIdList.size() <= 0) {
-                String errorMsg = String.format("获取在售零库存的商品wareId失败或者是在售商品都有库存！(onSaleWareIdList为空!) [channelId:%s] [cartId:%s]", channelId, cartId);
-                $error(errorMsg);
-                throw new BusinessException(errorMsg);
+            if (onSaleWareIdList.size() == 0) {
+                return;
             }
             $info("获取在售零库存的商品wareId成功! [channelId:%s] [cartId:%s] [零库存商品Count:%s]", channelId, cartId, onSaleWareIdList.size());
-
-            // 对在售且总库存为0的商品进行下架处理
-            for (String wareId : onSaleWareIdList) {
-                jdSaleService.doWareUpdateDelisting(shopProp, Long.parseLong(wareId), true);
-                $info("零库存商品下架成功 -> [wareId:%s]", wareId);
-            }
-
         } catch(Exception e) {
             String err = String.format("对该平台在售零库存的商品下架处理失败！[channelId:%s] [cartId:%s] [message:%s]", channelId, cartId, e.getMessage());
             $error(err);
+            return;
         }
+
+            // 对在售且总库存为0的商品进行下架处理
+        for (String wareId : onSaleWareIdList) {
+            try
+            {
+                jdSaleService.doWareUpdateDelisting(shopProp, Long.parseLong(wareId), true);
+                $info("零库存商品下架成功 -> [wareId:%s]", wareId);
+            } catch(Exception e) {
+                $error("零库存商品下架失败 -> [wareId:%s]%s", wareId, e.getMessage());
+            }
+        }
+
     }
 }
