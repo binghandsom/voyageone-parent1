@@ -7,8 +7,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by james on 2016/12/5.
  */
@@ -22,6 +20,11 @@ public class BackDoorControllerTest {
     @Test
     public void procductPriceUpdate() throws Exception {
         backDoorController.procductPriceUpdate("028",27);
+    }
+
+    @Test
+    public void addNewGroup() {
+        backDoorController.addNewGroup("024", 0, null, false);
     }
 
 }
