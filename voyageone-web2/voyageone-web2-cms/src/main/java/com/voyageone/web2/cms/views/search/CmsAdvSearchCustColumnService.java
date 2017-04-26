@@ -302,9 +302,9 @@ public class CmsAdvSearchCustColumnService extends BaseViewService {
         }
 
         //cms_prod_cust_col_bidata
-        cmsSessionBean.putAttribute("_adv_search_selBiDataList", advSearchQueryService.getBiDataList(userInfo.getSelChannelId(), language, platformDataList));
+        cmsSessionBean.putAttribute("_adv_search_selBiDataList", advSearchQueryService.getBiDataList(userInfo.getSelChannelId(), language, selBiDataList));
         //自定义下载 平台列
-        cmsSessionBean.putAttribute("_adv_search_selPlatformDataList", advSearchQueryService.getPlatformList(userInfo.getSelChannelId(), language, selBiDataList));
+        cmsSessionBean.putAttribute("_adv_search_selPlatformDataList", advSearchQueryService.getPlatformList(userInfo.getSelChannelId(), language, platformDataList));
     }
 
 }

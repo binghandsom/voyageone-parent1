@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.google.gson.Gson;
 import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.CmsConstants;
@@ -499,6 +500,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
             sessionBean.put("_adv_search_commonProps", cmsSessionBean.getAttribute("_adv_search_commonProps"));
             sessionBean.put("_adv_search_selSalesType", cmsSessionBean.getAttribute("_adv_search_selSalesType"));
             sessionBean.put("_adv_search_selBiDataList", cmsSessionBean.getAttribute("_adv_search_selBiDataList"));
+            sessionBean.put("_adv_search_selPlatformDataList", cmsSessionBean.getAttribute("_adv_search_selPlatformDataList"));
             searchValue.put("_sessionBean", sessionBean);
 
             AdvSearchExportMQMessageBody advSearchExportMQMessageBody = new AdvSearchExportMQMessageBody();
@@ -507,6 +509,12 @@ public class CmsAdvanceSearchService extends BaseViewService {
             advSearchExportMQMessageBody.setSearchValue(searchValue);
             advSearchExportMQMessageBody.setChannelIdMap(channelIdMap);
             advSearchExportMQMessageBody.setSender(userInfo.getUserName());
+
+            Gson gson = new Gson();
+            String strAdvSearchExportMQMessageBody = gson.toJson(advSearchExportMQMessageBody);
+            System.out.print("###############################");
+            System.out.println(strAdvSearchExportMQMessageBody);
+            System.out.print("###############################");
 
             cmsMqSenderService.sendMessage(advSearchExportMQMessageBody);
             return true;

@@ -413,7 +413,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             }
         }
 
-        if(filterList != null || filterList.size() > 0){
+        if(filterList != null && filterList.size() > 0){
             return filterSelList(dataSumList,filterList);
         }
 
@@ -479,7 +479,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             }
         }
 
-        if (filterList != null || filterList.size() > 0) {
+        if (filterList != null && filterList.size() > 0) {
             return filterSelList(dataSumList,filterList);
         }
 
