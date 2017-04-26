@@ -302,10 +302,10 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     writeCodeHead(book, cmsSessionBean, cartList);
                     break;
                 case 2:
-                    writeGroupHead(book, cartList,cmsSessionBean);
+                    writeGroupHead(book, cartList, cmsSessionBean);
                     break;
                 case 3:
-                    writeSkuHead(book, cartList,cmsSessionBean);
+                    writeSkuHead(book, cartList, cmsSessionBean);
                     break;
                 case 4:
                     writePublishJMSkuHead(book);
@@ -485,7 +485,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
     /**
      * group级数据下载，设置每列标题(包含动态列)
      */
-    private void writeGroupHead(Workbook book, List<TypeChannelBean> cartList,Map cmsSession) {
+    private void writeGroupHead(Workbook book, List<TypeChannelBean> cartList, Map cmsSession) {
         book.createSheet("group");
         Sheet sheet = book.getSheetAt(0);
         Row row1 = FileUtils.row(sheet, 0); // 第一行，英文标题
@@ -521,7 +521,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
     /**
      * sku级数据下载，设置每列标题(包含动态列)
      */
-    private void writeSkuHead(Workbook book, List<TypeChannelBean> cartList,Map cmsSession) {
+    private void writeSkuHead(Workbook book, List<TypeChannelBean> cartList, Map cmsSession) {
         book.createSheet("sku");
         Sheet sheet = book.getSheetAt(0);
         Row row1 = FileUtils.row(sheet, 0); // 第一行，英文标题
@@ -817,13 +817,14 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     }
 
                     CmsBtProductModel_Platform_Cart _platform = item.getPlatform(Integer.valueOf(_cartId));
-                    key = key.split(_cartId)[1].substring(1);
-                    Object salesVal = _platform.getSubNode(key.split("\\."));
-                    if (salesVal == null) {
+
+                    if (_platform == null) {
                         FileUtils.cell(row, index++, unlock).setCellValue("");
-                    } else {
-                        FileUtils.cell(row, index++, unlock).setCellValue(salesVal.toString());
+                        continue;
                     }
+
+                    index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
+
                 }
             }
         }
@@ -899,13 +900,14 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     }
 
                     CmsBtProductModel_Platform_Cart _platform = item.getPlatform(Integer.valueOf(_cartId));
-                    key = key.split(_cartId)[1].substring(1);
-                    Object salesVal = _platform.getSubNode(key.split("\\."));
-                    if (salesVal == null) {
+
+                    if (_platform == null) {
                         FileUtils.cell(row, index++, unlock).setCellValue("");
-                    } else {
-                        FileUtils.cell(row, index++, unlock).setCellValue(salesVal.toString());
+                        continue;
                     }
+
+                    index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
+
                 }
             }
 
@@ -1008,13 +1010,14 @@ public class CmsAdvSearchExportFileService extends BaseService {
                         }
 
                         CmsBtProductModel_Platform_Cart _platform = item.getPlatform(Integer.valueOf(_cartId));
-                        key = key.split(_cartId)[1].substring(1);
-                        Object salesVal = _platform.getSubNode(key.split("\\."));
-                        if (salesVal == null) {
+
+                        if (_platform == null) {
                             FileUtils.cell(row, index++, unlock).setCellValue("");
-                        } else {
-                            FileUtils.cell(row, index++, unlock).setCellValue(salesVal.toString());
+                            continue;
                         }
+
+                        index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
+
                     }
                 }
 
@@ -1023,6 +1026,69 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
         }
         return total - SELECT_PAGE_SIZE;
+    }
+
+    /**
+     * 构建excel内容中的平台信息
+     * @param key
+     * @param row
+     * @param index
+     * @param unlock
+     * @param _cartId
+     * @param _platform
+     * @param attrName
+     */
+    private int contructPlatCell(String key, Row row, int index, CellStyle unlock, String _cartId, CmsBtProductModel_Platform_Cart _platform, String attrName) {
+        int orgNumber = index;
+
+        if (CartEnums.Cart.JM.getId().equals(_cartId)) {
+            if ("MallURL".equals(attrName)) {
+                FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(_cartId, _platform.getpPlatformMallId()));
+            } else if ("pMallId".equals(attrName)) {
+                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(_platform.getpPlatformMallId()));
+            } else if ("URL".equals(attrName)) {
+                FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(_cartId, _platform.getpNumIId()));
+            } else if ("pNumIId".equals(attrName)) {
+                key.replace("pNumIId", "HashID");
+            }
+
+        } else {
+            if ("URL".equals(attrName)) {
+                if (CartEnums.Cart.JD.getId().equals(_cartId)
+                        || CartEnums.Cart.JG.getId().equals(_cartId)
+                        || CartEnums.Cart.JGY.getId().equals(_cartId)
+                        || CartEnums.Cart.JGJ.getId().equals(_cartId)) {
+                    FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(_cartId, getJdPlatformSkuId(_platform)));
+                } else
+                    FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(_cartId, _platform.getpNumIId()));
+            } else if ("pNumIId".equals(attrName)) {
+                key.replace("pNumIId", "Numiid");
+            }
+
+        }
+
+        if(index == orgNumber){
+            if ("title".equals(attrName)) {
+                FileUtils.cell(row, index++, unlock).setCellValue(getPlatformProdName(_cartId, _platform.getFieldsNotNull()));
+            } else if ("pCatPath".equals(attrName)) {
+                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(_platform.getpCatPath()));
+            } else if ("pPriceMsrpEd".equals(attrName)) {
+                FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(_platform.getpPriceMsrpSt(), _platform.getpPriceMsrpEd()));
+            } else if ("pPriceRetailEd".equals(attrName)) {
+                FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(_platform.getpPriceRetailSt(), _platform.getpPriceRetailEd()));
+            } else if ("pPriceSaleEd".equals(attrName)) {
+                FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(_platform.getpPriceSaleSt(), _platform.getpPriceSaleEd()));
+            } else {
+                key = key.split(_cartId)[1].substring(1);
+                Object salesVal = _platform.getSubNode(key.split("\\."));
+                if (salesVal == null) {
+                    FileUtils.cell(row, index++, unlock).setCellValue("");
+                } else {
+                    FileUtils.cell(row, index++, unlock).setCellValue(salesVal.toString());
+                }
+            }
+        }
+        return index;
     }
 
     //取得sku级别的库存

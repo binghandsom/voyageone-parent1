@@ -33,7 +33,7 @@ public class CmsAdvSearchExportMQJobTest {
     @Test
     public void onStartup() throws Exception {
         String json = "{\n" +
-                "    \"cmsBtExportTaskId\": 276,\n" +
+                "    \"cmsBtExportTaskId\": 280,\n" +
                 "    \"searchValue\": {\n" +
                 "        \"tags\": [],\n" +
                 "        \"priceChgFlg\": \"\",\n" +
@@ -65,13 +65,19 @@ public class CmsAdvSearchExportMQJobTest {
                 "        \"_channleId\": \"928\",\n" +
                 "        \"_userName\": \"edward\",\n" +
                 "        \"_language\": \"cn\",\n" +
-                "        \"_taskId\": 276,\n" +
+                "        \"_taskId\": 280,\n" +
                 "        \"_sessionBean\": {\n" +
                 "            \"_adv_search_customProps\": [{\n" +
                 "                \"feed_prop_translation\": \"品牌\",\n" +
                 "                \"feed_prop_original\": \"brand\"\n" +
                 "            }],\n" +
                 "            \"_adv_search_selPlatformDataList\": [{\n" +
+                "                \"name\": \"聚美优品MallURL\",\n" +
+                "                \"value\": \"platforms.P27.MallURL\"\n" +
+                "            }, {\n" +
+                "                \"name\": \"聚美优品MallId\",\n" +
+                "                \"value\": \"platforms.P27.pMallId\"\n" +
+                "            }, {\n" +
                 "                \"name\": \"匠心界URL\",\n" +
                 "                \"value\": \"platforms.P28.URL\"\n" +
                 "            }, {\n" +
@@ -95,151 +101,7 @@ public class CmsAdvSearchExportMQJobTest {
                 "            }],\n" +
                 "            \"_adv_search_props_searchItems\": \"feed.cnAtts.brand;feed.orgAtts.brand;common.fields.clientMsrpPrice;common.fields.clientNetPrice;\",\n" +
                 "            \"_adv_search_selSalesType\": [],\n" +
-                "            \"_adv_search_selBiDataList\": [{\n" +
-                "                \"name\": \"匠心界1浏览量\",\n" +
-                "                \"value\": \"bi.sum1.pv.cartId28\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"匠心界1访客数\",\n" +
-                "                \"value\": \"bi.sum1.uv.cartId28\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"匠心界1加购件数\",\n" +
-                "                \"value\": \"bi.sum1.gwc.cartId28\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"匠心界1收藏人数\",\n" +
-                "                \"value\": \"bi.sum1.scs.cartId28\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"匠心界7浏览量\",\n" +
-                "                \"value\": \"bi.sum7.pv.cartId28\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"匠心界7访客数\",\n" +
-                "                \"value\": \"bi.sum7.uv.cartId28\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"匠心界7加购件数\",\n" +
-                "                \"value\": \"bi.sum7.gwc.cartId28\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"匠心界7收藏人数\",\n" +
-                "                \"value\": \"bi.sum7.scs.cartId28\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"匠心界30浏览量\",\n" +
-                "                \"value\": \"bi.sum30.pv.cartId28\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"匠心界30访客数\",\n" +
-                "                \"value\": \"bi.sum30.uv.cartId28\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"匠心界30加购件数\",\n" +
-                "                \"value\": \"bi.sum30.gwc.cartId28\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"匠心界30收藏人数\",\n" +
-                "                \"value\": \"bi.sum30.scs.cartId28\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"匠心界商品发布时间\",\n" +
-                "                \"value\": \"platforms.P28.pPublishTime\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"匠心界中国建议售价\",\n" +
-                "                \"value\": \"platforms.P28.pPriceMsrpEd\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"匠心界中国指导售价\",\n" +
-                "                \"value\": \"platforms.P28.pPriceRetailSt\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"匠心界中国最终售价\",\n" +
-                "                \"value\": \"platforms.P28.pPriceSaleEd\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"官网同购1浏览量\",\n" +
-                "                \"value\": \"bi.sum1.pv.cartId31\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"官网同购1访客数\",\n" +
-                "                \"value\": \"bi.sum1.uv.cartId31\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"官网同购1加购件数\",\n" +
-                "                \"value\": \"bi.sum1.gwc.cartId31\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"官网同购1收藏人数\",\n" +
-                "                \"value\": \"bi.sum1.scs.cartId31\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"官网同购7浏览量\",\n" +
-                "                \"value\": \"bi.sum7.pv.cartId31\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"官网同购7访客数\",\n" +
-                "                \"value\": \"bi.sum7.uv.cartId31\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"官网同购7加购件数\",\n" +
-                "                \"value\": \"bi.sum7.gwc.cartId31\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"官网同购7收藏人数\",\n" +
-                "                \"value\": \"bi.sum7.scs.cartId31\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"官网同购30浏览量\",\n" +
-                "                \"value\": \"bi.sum30.pv.cartId31\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"官网同购30访客数\",\n" +
-                "                \"value\": \"bi.sum30.uv.cartId31\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"官网同购30加购件数\",\n" +
-                "                \"value\": \"bi.sum30.gwc.cartId31\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"官网同购30收藏人数\",\n" +
-                "                \"value\": \"bi.sum30.scs.cartId31\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"官网同购商品发布时间\",\n" +
-                "                \"value\": \"platforms.P31.pPublishTime\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"官网同购中国建议售价\",\n" +
-                "                \"value\": \"platforms.P31.pPriceMsrpEd\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"官网同购中国指导售价\",\n" +
-                "                \"value\": \"platforms.P31.pPriceRetailSt\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"官网同购中国最终售价\",\n" +
-                "                \"value\": \"platforms.P31.pPriceSaleEd\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"悦境1浏览量\",\n" +
-                "                \"value\": \"bi.sum1.pv.cartId29\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"悦境1访客数\",\n" +
-                "                \"value\": \"bi.sum1.uv.cartId29\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"悦境1加购件数\",\n" +
-                "                \"value\": \"bi.sum1.gwc.cartId29\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"悦境1收藏人数\",\n" +
-                "                \"value\": \"bi.sum1.scs.cartId29\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"悦境7浏览量\",\n" +
-                "                \"value\": \"bi.sum7.pv.cartId29\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"悦境7访客数\",\n" +
-                "                \"value\": \"bi.sum7.uv.cartId29\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"悦境7加购件数\",\n" +
-                "                \"value\": \"bi.sum7.gwc.cartId29\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"悦境7收藏人数\",\n" +
-                "                \"value\": \"bi.sum7.scs.cartId29\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"悦境30浏览量\",\n" +
-                "                \"value\": \"bi.sum30.pv.cartId29\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"悦境30访客数\",\n" +
-                "                \"value\": \"bi.sum30.uv.cartId29\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"悦境30加购件数\",\n" +
-                "                \"value\": \"bi.sum30.gwc.cartId29\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"悦境30收藏人数\",\n" +
-                "                \"value\": \"bi.sum30.scs.cartId29\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"悦境商品发布时间\",\n" +
-                "                \"value\": \"platforms.P29.pPublishTime\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"悦境中国建议售价\",\n" +
-                "                \"value\": \"platforms.P29.pPriceMsrpEd\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"悦境中国指导售价\",\n" +
-                "                \"value\": \"platforms.P29.pPriceRetailSt\"\n" +
-                "            }, {\n" +
-                "                \"name\": \"悦境中国最终售价\",\n" +
-                "                \"value\": \"platforms.P29.pPriceSaleEd\"\n" +
-                "            }]\n" +
+                "            \"_adv_search_selBiDataList\": []\n" +
                 "        }\n" +
                 "    },\n" +
                 "    \"channelIdMap\": {\n" +
