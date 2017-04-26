@@ -374,11 +374,11 @@ public class CmsAdvSearchProductApprovalService extends BaseService {
                 }
 
                 // 检测该JGJ和JGY的平台以外的时候 平台类目是否设置
-                if (cartId != 28 && cartId != 29) {
+                if (cartId != 28 && cartId != 29 && cartId != 27) {
                     if (StringUtils.isEmpty(product.getPlatformNotNull(cartId).getpCatId())) {
                         CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
                         errorInfo.setSkuCode(productCode);
-                        errorInfo.setMsg("该商品不属于Liking的京东系, 平台类目未设置");
+                        errorInfo.setMsg("该商品不属于Liking的京东系和聚美, 平台类目未设置");
                         errorList.add(errorInfo);
                         continue;
                     }
