@@ -302,10 +302,10 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     writeCodeHead(book, cmsSessionBean, cartList);
                     break;
                 case 2:
-                    writeGroupHead(book, cartList);
+                    writeGroupHead(book, cartList,cmsSessionBean);
                     break;
                 case 3:
-                    writeSkuHead(book, cartList);
+                    writeSkuHead(book, cartList,cmsSessionBean);
                     break;
                 case 4:
                     writePublishJMSkuHead(book);
@@ -416,7 +416,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
         // 固定列长度
         int index = size;
-        for (TypeChannelBean cartObj : cartList) {
+/*        for (TypeChannelBean cartObj : cartList) {
 
             // 如果平台为928的不导出
             if (CartEnums.Cart.USJGJ.getId().equals(cartObj.getValue()))
@@ -431,8 +431,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     FileUtils.cell(row1, index++, style1).setCellValue(cartObj.getName() + prop);
                 }
             }
-        }
-        FileUtils.cell(row1, index++, style1).setCellValue("Images");
+        }*/
+
         FileUtils.cell(row1, index++, style1).setCellValue("Lock");
         if (commonProps != null) {
             for (Map<String, String> prop : commonProps) {
@@ -465,7 +465,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         }
         // 固定列长度
         index = size;
-        for (TypeChannelBean cartObj : cartList) {
+/*        for (TypeChannelBean cartObj : cartList) {
 
             // 如果平台为928的不导出
             if (CartEnums.Cart.USJGJ.getId().equals(cartObj.getValue()))
@@ -480,9 +480,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     FileUtils.cell(row2, index++, style2).setCellValue(cartObj.getName() + prop);
                 }
             }
-        }
+        }*/
 
-        FileUtils.cell(row2, index++, style2).setCellValue("商品原图地址");
         FileUtils.cell(row2, index++, style2).setCellValue("是否被锁定");
         if (commonProps != null) {
             for (Map<String, String> prop : commonProps) {
@@ -510,7 +509,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         }
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
-                FileUtils.cell(row1, index++, style1).setCellValue(prop.get("name"));
+                FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
             }
         }
     }
@@ -518,7 +517,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
     /**
      * group级数据下载，设置每列标题(包含动态列)
      */
-    private void writeGroupHead(Workbook book, List<TypeChannelBean> cartList) {
+    private void writeGroupHead(Workbook book, List<TypeChannelBean> cartList,Map cmsSession) {
         book.createSheet("group");
         Sheet sheet = book.getSheetAt(0);
         Row row1 = FileUtils.row(sheet, 0); // 第一行，英文标题
@@ -533,47 +532,28 @@ public class CmsAdvSearchExportFileService extends BaseService {
             FileUtils.cell(row2, i, style2).setCellValue(_GROUP_STATIC_COLS_ZN[i]);
         }
 
+        List<Map<String, String>> platformDataList = (List<Map<String, String>>) cmsSession.get("_adv_search_selPlatformDataList");
+
         int index = size;
-        for (TypeChannelBean cartObj : cartList) {
-
-            // 如果平台为928的不导出
-            if (CartEnums.Cart.USJGJ.getId().equals(cartObj.getValue()))
-                continue;
-
-            if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
-                for (String prop : _DynColJMGroup) {
-                    FileUtils.cell(row1, index++, style1).setCellValue(cartObj.getName() + prop);
-                }
-            } else {
-                for (String prop : _DynColGroup) {
-                    FileUtils.cell(row1, index++, style1).setCellValue(cartObj.getName() + prop);
-                }
+        if (platformDataList != null) {
+            for (Map<String, String> prop : platformDataList) {
+                FileUtils.cell(row1, index++, style1).setCellValue(prop.get("name"));
+                FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
             }
         }
-        index = size;
-        for (TypeChannelBean cartObj : cartList) {
+/*        index = size;
+        if (platformDataList != null) {
+            for (Map<String, String> prop : platformDataList) {
 
-            // 如果平台为928的不导出
-            if (CartEnums.Cart.USJGJ.getId().equals(cartObj.getValue()))
-                continue;
-
-            if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
-                for (String prop : _DynColCNJMGroup) {
-                    FileUtils.cell(row2, index++, style2).setCellValue(cartObj.getName() + prop);
-                }
-            } else {
-                for (String prop : _DynColCNGroup) {
-                    FileUtils.cell(row2, index++, style2).setCellValue(cartObj.getName() + prop);
-                }
             }
-        }
+        }*/
 
     }
 
     /**
      * sku级数据下载，设置每列标题(包含动态列)
      */
-    private void writeSkuHead(Workbook book, List<TypeChannelBean> cartList) {
+    private void writeSkuHead(Workbook book, List<TypeChannelBean> cartList,Map cmsSession) {
         book.createSheet("sku");
         Sheet sheet = book.getSheetAt(0);
         Row row1 = FileUtils.row(sheet, 0); // 第一行，英文标题
@@ -907,7 +887,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(getLockStatusTxt(ptfObj.getLock()));
 
             }*/
-            nowIdx = index++;
+/*            nowIdx = index++;
             Cell cell = FileUtils.cell(row, nowIdx, unlock);
             cell.setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty((String) codeImgMap.get(fields.getCode())));
             cell.setCellStyle(cs);
@@ -915,7 +895,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
             Integer imgCnt = (Integer) codeImgMap.get(fields.getCode() + "_img_cnt");
             if (imgCnt != null && imgCnt > 1) {
                 row.setHeightInPoints(imgCnt * sheet.getDefaultRowHeightInPoints());
-            }
+            }*/
 
             FileUtils.cell(row, index++, unlock).setCellValue(getLockStatusTxt(item.getLock()));
 
