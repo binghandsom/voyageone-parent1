@@ -1,10 +1,10 @@
 package com.voyageone.task2.cms.mqjob;
 
 
+import com.voyageone.components.rabbitmq.annotation.VOSubRabbitListener;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsFeedSkuPqMQMessageBody;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +23,7 @@ import java.util.Map;
  * @author  piao
  */
 @Service
-@RabbitListener()
+@VOSubRabbitListener
 public class CmsFeedSkuPqMQJob extends TBaseMQCmsSubService<CmsFeedSkuPqMQMessageBody> {
 
     @Autowired
