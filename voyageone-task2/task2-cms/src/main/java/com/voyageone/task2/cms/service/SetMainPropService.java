@@ -1029,6 +1029,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                     // 判断是否更新平台价格 如果要更新直接更新
                     platformPriceService.publishPlatFormPrice(usjoi ? "928" : channelId, chg, cmsProduct, getTaskName(), true);
+                    // 插入尺码表
+                    insertCmsBtFeedImportSize(usjoi ? "928" : channelId, cmsProduct);
 
                 } else {
 
@@ -1102,7 +1104,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 }
 
                 // 插入尺码表
-                insertCmsBtFeedImportSize(channelId, cmsProduct);
+                insertCmsBtFeedImportSize(usjoi ? "928" : channelId, cmsProduct);
 
                 insertWorkload(cmsProduct);
 
