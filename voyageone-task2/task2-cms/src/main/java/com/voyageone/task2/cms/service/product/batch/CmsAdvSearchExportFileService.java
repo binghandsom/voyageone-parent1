@@ -538,15 +538,15 @@ public class CmsAdvSearchExportFileService extends BaseService {
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
                 FileUtils.cell(row1, index++, style1).setCellValue(prop.get("name"));
+
+            }
+        }
+        index = size;
+        if (platformDataList != null) {
+            for (Map<String, String> prop : platformDataList) {
                 FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
             }
         }
-/*        index = size;
-        if (platformDataList != null) {
-            for (Map<String, String> prop : platformDataList) {
-
-            }
-        }*/
 
     }
 
