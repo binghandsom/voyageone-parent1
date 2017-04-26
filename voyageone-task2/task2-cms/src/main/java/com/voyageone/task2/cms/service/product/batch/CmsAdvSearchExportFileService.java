@@ -568,8 +568,16 @@ public class CmsAdvSearchExportFileService extends BaseService {
             FileUtils.cell(row2, i, style2).setCellValue(_SKU_STATIC_COLS_ZN[i]);
         }
 
+        List<Map<String, String>> platformDataList = (List<Map<String, String>>) cmsSession.get("_adv_search_selPlatformDataList");
+
         int index = size;
-        for (TypeChannelBean cartObj : cartList) {
+        if (platformDataList != null) {
+            for (Map<String, String> prop : platformDataList) {
+                FileUtils.cell(row1, index++, style1).setCellValue(prop.get("name"));
+
+            }
+        }
+/*        for (TypeChannelBean cartObj : cartList) {
 
             // 如果平台为928的不导出
             if (CartEnums.Cart.USJGJ.getId().equals(cartObj.getValue()))
@@ -589,10 +597,10 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     FileUtils.cell(row1, index++, style1).setCellValue(cartObj.getName() + prop);
                 }
             }
-        }
+        }*/
         FileUtils.cell(row1, index++, style1).setCellValue("Lock");
         index = size;
-        for (TypeChannelBean cartObj : cartList) {
+       /* for (TypeChannelBean cartObj : cartList) {
 
             // 如果平台为928的不导出
             if (CartEnums.Cart.USJGJ.getId().equals(cartObj.getValue()))
@@ -611,6 +619,11 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 for (String prop : _DynColCNSKU) {
                     FileUtils.cell(row2, index++, style2).setCellValue(cartObj.getName() + prop);
                 }
+            }
+        }*/
+        if (platformDataList != null) {
+            for (Map<String, String> prop : platformDataList) {
+                FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
             }
         }
         FileUtils.cell(row2, index++, style2).setCellValue("是否被锁定");
