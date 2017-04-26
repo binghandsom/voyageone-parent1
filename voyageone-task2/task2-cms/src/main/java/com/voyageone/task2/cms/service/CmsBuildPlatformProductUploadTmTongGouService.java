@@ -458,7 +458,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             // 20170417 全链路库存改造 charis STA
             // 判断一下是否需要做货品绑定
             String storeCode = taobaoScItemService.doGetLikingStoreCode(shopProp, sxData.getMainProduct().getOrgChannelId());
-            if (!StringUtils.isEmpty(storeCode)) {
+            if (!StringUtils.isEmpty(storeCode) && !channelId.equals("928")) {
                 String title = getTitleForTongGou(mainProduct, sxData, shopProp);
                 Map<String, ScItem> scItemMap = new HashMap<>();
                 for (String sku_outerId : strSkuCodeList) {
@@ -667,6 +667,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 					blnDoScitemMap = true;
 				}
 			}
+            if (!StringUtils.isEmpty(storeCode) && !channelId.equals("928")) {
+                blnDoScitemMap = true;
+            }
             if (blnDoScitemMap) {
                 // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
                 // 获取skuId
