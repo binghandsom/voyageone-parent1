@@ -1,8 +1,10 @@
 package com.voyageone.web2.cms.views.backdoor;
 
+import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
@@ -1926,6 +1928,80 @@ public class BackDoorController extends CmsController {
         map.setSingle(isSingle);
         map.setSender(getUser().getUserName());
         cmsMqSenderService.sendMessage(map);
+    }
+
+    @RequestMapping(value = "addNewGroup", method = RequestMethod.GET)
+    public void addNewGroup(@RequestParam("channelId") String channelId, @RequestParam("cartId") Integer cartId, @RequestParam("code") String productCode, @RequestParam("isSingle") Boolean isSingle) {
+
+        Integer PAGE_SIZE = 100;
+        long sumCnt;
+        if (!StringUtils.isEmpty(productCode))
+            sumCnt = productService.countByQuery("{\"common.fields.code\": \"" + productCode + "\"}", null, channelId);
+        else
+            sumCnt = productService.countByQuery("{}", null, channelId);
+
+        long pageCnt = sumCnt / PAGE_SIZE + (sumCnt % PAGE_SIZE > 0 ? 1 : 0);
+        BulkJongoUpdateList grpBulkList = new BulkJongoUpdateList(1000, cmsBtProductGroupDao, channelId);
+
+        for (int pageNum = 1; pageNum <= pageCnt; pageNum++) {
+            JongoQuery jongoQuery = new JongoQuery();
+            jongoQuery.setSkip((pageNum - 1) * PAGE_SIZE);
+            jongoQuery.setLimit(PAGE_SIZE);
+            if (!StringUtils.isEmpty(productCode)) {
+                jongoQuery.setQuery("{\"common.fields.code\": #}");
+                jongoQuery.setParameters(productCode);
+            }
+            List<CmsBtProductModel> cmsBtProductModels = productService.getList(channelId, jongoQuery);
+            for (int i = 0; i < cmsBtProductModels.size(); i++) {
+                CmsBtProductModel product = cmsBtProductModels.get(i);
+
+                String code = product.getCommon().getFields().getCode();
+                String mainProductCode = product.getPlatform(cartId).getMainProductCode();
+
+                // 判断该code对应的group是否存在
+                JongoQuery query1 = new JongoQuery();
+                query1.setQuery("{\"productCodes\": #, \"cartId\": #}");
+                query1.setParameters(code, cartId);
+                CmsBtProductGroupModel mainGroupCode1 = productGroupService.getProductGroupByQuery(channelId, query1);
+
+                // 如果不存在, 获取该code对应的mainProductCode的group
+                if (mainGroupCode1 == null) {
+                    JongoQuery query2 = new JongoQuery();
+                    query2.setQuery("{\"mainProductCode\": #, \"cartId\": #}");
+                    query2.setParameters(mainProductCode, cartId);
+                    CmsBtProductGroupModel mainGroupCode2 = productGroupService.getProductGroupByQuery(channelId, query2);
+
+                    // 该code对应的mainProductCode的group存在,但是productCodes中无该code
+                    if (mainGroupCode2 != null && !mainGroupCode2.getProductCodes().contains(code)) {
+
+                        // 将该code加入到该group中
+                        JongoUpdate grpUpdObj = new JongoUpdate();
+                        grpUpdObj.setQuery("{\"mainProductCode\": #, \"cartId\": #}");
+                        grpUpdObj.setQueryParameters(mainProductCode, cartId);
+                        grpUpdObj.setUpdate("{$addToSet: {\"productCodes\": #}}");
+                        grpUpdObj.setUpdateParameters(code);
+
+                        BulkWriteResult rs = grpBulkList.addBulkJongo(grpUpdObj);
+                        if (rs != null) {
+                            $debug(String.format("商品(group表) channelId=%s 执行结果=%s", channelId, rs.toString()));
+                        }
+                    }
+                    // 新建一个group
+                    else if (mainGroupCode2 == null) {
+                        CmsBtProductGroupModel group = productGroupService.createNewGroup(channelId, cartId, mainProductCode, isSingle);
+                        group.getProductCodes().add(code);
+                        group.setCreater("backDoorController");
+                        group.setModifier("backDoorController");
+                        cmsBtProductGroupDao.insert(group);
+                    }
+                }
+            }
+
+            BulkWriteResult rs = grpBulkList.execute();
+            if (rs != null) {
+                $debug(String.format("商品(group表) channelId=%s 结果=%s", channelId, rs.toString()));
+            }
+        }
     }
 
     public class skuPlatformSizeAndQty {

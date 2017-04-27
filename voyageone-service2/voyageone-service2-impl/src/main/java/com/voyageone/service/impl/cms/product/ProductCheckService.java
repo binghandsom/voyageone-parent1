@@ -432,7 +432,7 @@ public class ProductCheckService extends BaseService {
                 //
                 if (StringUtils.isEmpty(cartInfo.getpPublishTime())
                         || cartInfo.getpStatus() == null
-                        || StringUtils.isEmpty(cartInfo.getpNumIId())
+                        || (StringUtils.isEmpty(cartInfo.getpNumIId()) && !"928".equals(String.valueOf(cartId)))
                         || StringUtils.isEmpty(cartInfo.getpReallyStatus())
                         || ((CartEnums.Cart.JM.getValue() == cartId)
                         && StringUtils.isEmpty(cartInfo.getpProductId()))

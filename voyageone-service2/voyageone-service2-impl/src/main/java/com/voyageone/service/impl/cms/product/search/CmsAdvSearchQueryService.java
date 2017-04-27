@@ -493,6 +493,7 @@ public class CmsAdvSearchQueryService extends BaseService {
 
         // 获取brand
         if (searchValue.getBrandList() !=  null && searchValue.getBrandList().size() > 0 && searchValue.getBrandSelType() > 0) {
+            searchValue.setBrandList(searchValue.getBrandList().stream().map(String::trim).collect(Collectors.toList()));
             if (searchValue.getBrandSelType() == 1) {
                 queryObject.addQuery("{'common.fields.brand':{$in:#}}");
                 queryObject.addParameters(searchValue.getBrandList());
