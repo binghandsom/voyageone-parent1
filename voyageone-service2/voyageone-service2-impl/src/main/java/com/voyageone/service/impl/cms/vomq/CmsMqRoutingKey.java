@@ -104,10 +104,10 @@ public class CmsMqRoutingKey {
     public static final String  CMS_ADV_SEARCH_LOCK_PRODUCTS = "VOCmsAdvSearchLockProductsMQJobQueue";
 
     // 检测产品数据是否正确
-    public static final String CMS_CHECK_PRODUCT_IS_RIGHT = "VOCmsCheckProductIsRightMqJobQueue";
+    public static final String CMS_CHECK_PRODUCT_IS_RIGHT = "VOCmsCheckProductIsRightQueue";
 
     // 添加新group
-    public static final String CMS_ADD_NEW_GROUP = "VOCmsAddNewGroupMqJobQueue";
+    public static final String CMS_ADD_NEW_GROUP = "VOCmsAddNewGroupQueue";
 
     // feed数据导入接口
     public static final String CMS_FEED_IMPORT_MQ_JOB = "CmsFeedImportMQJobQueue";
