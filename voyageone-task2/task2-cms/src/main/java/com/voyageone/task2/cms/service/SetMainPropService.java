@@ -547,7 +547,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                                 ObjectMapper objectMapper = new ObjectMapper();
                                 HashMap<String, Object> feedInfo = new HashMap<>();
                                 feedInfo.put("orderChannelId", channelId);
-                                feedInfo.put("clientSku", cmsBtFeedInfoModel_Sku.getSku());
+                                feedInfo.put("clientSku", cmsBtFeedInfoModel_Sku.getClientSku());
                                 feedInfo.put("mainClientSku", cmsBtFeedInfoModel_Sku.getMainVid());
                                 List<HashMap<String, Object>> requestList = Arrays.asList(feedInfo);
                                 String json = objectMapper.writeValueAsString(requestList);

@@ -50,8 +50,6 @@ import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
@@ -105,6 +103,20 @@ import java.util.stream.Collectors;
 @Service
 public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
 
+    // 每个channel的feed->master导入默认最大件数
+    private final static int FEED_IMPORT_MAX_500 = 500;
+    @Autowired
+    CategoryTreeService categoryTreeService;
+    @Autowired
+    CategoryTreeAllService categoryTreeAllService;
+    @Autowired
+    CmsBtBrandBlockService cmsBtBrandBlockService;
+    @Autowired
+    CmsMasterBrandMappingService cmsMasterBrandMappingService;
+    @Autowired
+    PromotionService promotionService;
+    @Autowired
+    PromotionCodeService promotionCodeService;
     @Autowired
     private CmsBtFeedMapping2Dao cmsBtFeedMapping2Dao; // DAO: 新的feed->主数据的mapping关系
     @Autowired
@@ -130,10 +142,6 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
     @Autowired
     private FeedInfoService feedInfoService;
     @Autowired
-    CategoryTreeService categoryTreeService;
-    @Autowired
-    CategoryTreeAllService categoryTreeAllService;
-    @Autowired
     private BusinessLogService businessLogService;
     @Autowired
     private ImagesService imagesService;
@@ -148,22 +156,12 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
     @Autowired
     private CmsBtFeedImportSizeService cmsBtFeedImportSizeService;
     @Autowired
-    CmsBtBrandBlockService cmsBtBrandBlockService;
-    @Autowired
-    CmsMasterBrandMappingService cmsMasterBrandMappingService;
-    @Autowired
-    PromotionService promotionService;
-    @Autowired
-    PromotionCodeService promotionCodeService;
-    @Autowired
     private PlatformPriceService platformPriceService;
     @Autowired
     private CmsBtTranslateService cmsBtTranslateService;
-
     @Autowired
     private CmsMqSenderService sender;
-    // 每个channel的feed->master导入默认最大件数
-    private final static int FEED_IMPORT_MAX_500 = 500;
+    private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
 
     @Override
     public SubSystem getSubSystem() {
@@ -174,8 +172,6 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
     public String getTaskName() {
         return "CmsSetMainPropMongoJob";
     }
-
-    private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
 
     /**
      * feed数据 -> 主数据
@@ -246,6 +242,267 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
         $info("=================feed->master导入  主线程结束====================");
     }
 
+    private void weightCalculate(CmsBtProductModel cmsProduct) {
+        Double weight = null;
+        for (CmsBtProductModel_Sku sku : cmsProduct.getCommon().getSkus()) {
+            if (sku.getWeight() != null && (weight == null || weight.compareTo(sku.getWeight()) > 0)) {
+                weight = sku.getWeight();
+            }
+        }
+        //1磅(lb)=453.59237克(g)
+        if (weight != null) {
+            cmsProduct.getCommon().getFields().setWeightLb(weight);
+            BigDecimal b = new BigDecimal(weight * 453.59237);
+            cmsProduct.getCommon().getFields().setWeightG(b.setScale(0, BigDecimal.ROUND_HALF_UP).intValue());
+            b = new BigDecimal(weight * 453.59237 / 1000.0);
+            cmsProduct.getCommon().getFields().setWeightKG(b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        }
+    }
+
+    private void insertCmsBtFeedImportSize(String channelId, CmsBtProductModel cmsProduct) {
+        CmsBtFeedImportSizeModel cmsBtFeedImportSizeModel = new CmsBtFeedImportSizeModel();
+        cmsBtFeedImportSizeModel.setChannelId(channelId);
+        cmsBtFeedImportSizeModel.setBrandName(cmsProduct.getCommon().getFields().getBrand());
+        cmsBtFeedImportSizeModel.setProductType(cmsProduct.getCommon().getFields().getProductType());
+        cmsBtFeedImportSizeModel.setSizeType(cmsProduct.getCommon().getFields().getSizeType());
+        cmsProduct.getCommon().getSkus().forEach(sku -> {
+            cmsBtFeedImportSizeModel.setOriginalSize(sku.getSize());
+            cmsBtFeedImportSizeService.saveCmsBtFeedImportSizeModel(cmsBtFeedImportSizeModel, getTaskName());
+        });
+    }
+
+    private void copyAttributeFromMainProduct(String channelId, CmsBtProductModel_Common common, String mainProductCode) {
+        CmsBtProductModel mainProduct = productService.getProductByCode(channelId, mainProductCode);
+        if (mainProduct != null) {
+            common.setCatId(mainProduct.getCommon().getCatId());
+            common.setCatPath(mainProduct.getCommon().getCatPath());
+
+            common.getFields().setTranslateStatus(mainProduct.getCommon().getFields().getTranslateStatus());
+            common.getFields().setTranslateTime(mainProduct.getCommon().getFields().getTranslateTime());
+            common.getFields().setTranslator(mainProduct.getCommon().getFields().getTranslator());
+
+            common.getFields().setHsCodePrivate(mainProduct.getCommon().getFields().getHsCodePrivate());
+            common.getFields().setHsCodeSetter(mainProduct.getCommon().getFields().getHsCodeSetter());
+            common.getFields().setHsCodeStatus(mainProduct.getCommon().getFields().getHsCodeStatus());
+            common.getFields().setHsCodeSetTime(mainProduct.getCommon().getFields().getHsCodeSetTime());
+            common.getFields().setHsCodeCrop(mainProduct.getCommon().getFields().getHsCodeCrop());
+            common.getFields().setHsCodeCross(mainProduct.getCommon().getFields().getHsCodeCross());
+
+            common.getFields().setCategorySetTime(mainProduct.getCommon().getFields().getCategorySetTime());
+            common.getFields().setCategoryStatus(mainProduct.getCommon().getFields().getCategoryStatus());
+            common.getFields().setCategorySetter(mainProduct.getCommon().getFields().getCategorySetter());
+
+            common.getFields().setShortDesCn(mainProduct.getCommon().getFields().getShortDesCn());
+            common.getFields().setLongDesCn(mainProduct.getCommon().getFields().getLongDesCn());
+            common.getFields().setOriginalTitleCn(mainProduct.getCommon().getFields().getOriginalTitleCn());
+            common.getFields().setMaterialCn(mainProduct.getCommon().getFields().getMaterialCn());
+            common.getFields().setUsageCn(mainProduct.getCommon().getFields().getUsageCn());
+        }
+    }
+
+    /**
+     * 出错的时候将错误信息回写到cms_bt_business_log表
+     *
+     * @param channelId       String 渠道id
+     * @param cartId          String 平台id
+     * @param feedModel       String feed model
+     * @param feedProductCode String feed产品code
+     * @param errCode         String 错误code
+     * @param errMsg          String 错误消息
+     * @param modifier        String 更新者
+     */
+    private void insertBusinessLog(String channelId, String cartId, String feedModel, String feedProductCode, String errCode, String errMsg, String modifier) {
+        CmsBtBusinessLogModel businessLogModel = new CmsBtBusinessLogModel();
+        // 渠道id
+        businessLogModel.setChannelId(channelId);
+        // 平台id
+        if (!StringUtils.isEmpty(cartId)) businessLogModel.setCartId(Integer.parseInt(cartId));
+        // feedModel
+        businessLogModel.setModel(feedModel);
+        // feedProduCode
+        businessLogModel.setCode(feedProductCode);
+        // 错误类型(2:非上新错误)
+        businessLogModel.setErrorTypeId(2);
+        // 错误code
+        businessLogModel.setErrorCode(errCode);
+        // 详细错误信息
+        businessLogModel.setErrorMsg(errMsg);
+        // 状态(0:未处理 1:已处理)
+        businessLogModel.setStatus(0);
+        // 创建者
+        businessLogModel.setCreater(modifier);
+        // 更新者
+        businessLogModel.setModifier(modifier);
+
+        businessLogService.insertBusinessLog(businessLogModel);
+    }
+
+    /**
+     * feed->master导入成功或者失败之后，回写cms_bt_feed_info_cxxx表
+     *
+     * @param feed           CmsBtFeedInfoModel feed信息
+     * @param updFlg         Integer 更新flg(1:feed->master导入失败   2:feed->master导入失败)
+     * @param errMsg         String 失败的错误消息
+     * @param isFeedReImport String 是否强制重新导入
+     */
+    private void updateFeedInfo(CmsBtFeedInfoModel feed, Integer updFlg, String errMsg, String isFeedReImport) {
+        if (feed == null) return;
+
+        Map<String, Object> paraMap = new HashedMap();
+        paraMap.put("code", feed.getCode());
+
+        Map<String, Object> rsMap = new HashedMap();
+        rsMap.put("updFlg", updFlg);
+        rsMap.put("updMessage", errMsg);
+        rsMap.put("modifier", getTaskName());
+        rsMap.put("modified", DateTimeUtil.getNowTimeStamp());
+        if (!StringUtils.isEmpty(isFeedReImport))
+            rsMap.put("isFeedReImport", isFeedReImport);
+        feedInfoService.updateFeedInfo(feed.getChannelId(), paraMap, rsMap);
+    }
+
+    /**
+     * 设置产品各个平台的店铺内分类信息
+     * <p>
+     * 新增或更新产品时，如果字典中解析出来子分类id在产品该平台的店铺内信息中不存在，则新加一条店铺类分类
+     * 存在的话不更新，因为店铺内信息运营有可能已经修改过了
+     * <p>
+     * 从cms_mt_channel_condition_config表中取得该店铺对应的店铺内分类数据字典，
+     * 表里的platformPropId字段的值为：
+     * "seller_cids_"+cartId  例：seller_cats_26
+     * 店铺内分类字典的里面的value值结构如下：
+     * 结构："cId(子分类id)|cIds(父分类id,子分类id)|cName(父分类id,子分类id)|cNames(父分类id,子分类id)"
+     * 例子："1124130584|1124130579,1124130584|系列>彩色宝石|系列,彩色宝石"
+     *
+     * @param feed    CmsBtFeedInfoModel feed信息
+     * @param product CmsBtProductModel 产品信息(兼结果返回用)
+     */
+    public void setSellerCats(CmsBtFeedInfoModel feed, CmsBtProductModel product) {
+
+        if (feed == null || product == null) {
+            $warn("feed->master导入:警告:设置店铺内分类时传入的feed或者product信息为null");
+            return;
+        }
+
+        // 遍历主数据product里的分平台信息，设置店铺内分类
+        for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
+            // P0（主数据）平台跳过
+            if (entry.getValue().getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
+                continue;
+            }
+
+            List<CmsBtProductModel_SellerCat> sellerCatList = entry.getValue().getSellerCats();
+            if (sellerCatList == null) {
+                // 如果该平台上没有店铺内分类项目，则新建一个店铺内分类列表
+                sellerCatList = new ArrayList<CmsBtProductModel_SellerCat>();
+                entry.getValue().setSellerCats(sellerCatList);
+            }
+
+            // 条件表达式表platform_prop_id字段的检索条件为"seller_cids_"加cartId
+            String platformPropId = "seller_cids_" + entry.getValue().getCartId();
+
+            // 构造解析店铺内分类字典必须的一些对象
+            SxData sxData = new SxData();
+            sxData.setMainProduct(product);                  // product信息
+            sxData.setCmsBtFeedInfoModel(feed);              // feed信息
+            sxData.setChannelId(product.getChannelId());     // channelId
+            sxData.setCartId(entry.getValue().getCartId());  // cartId
+            // 构造字典解析子
+            ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
+
+            // 根据channelid和platformPropId取得cms_mt_channel_condition_config表的条件表达式
+            List<ConditionPropValueModel> conditionPropValueModels = null;
+            if (channelConditionConfig.containsKey(product.getChannelId())) {
+                if (channelConditionConfig.get(product.getChannelId()).containsKey(platformPropId)) {
+                    conditionPropValueModels = channelConditionConfig.get(product.getChannelId()).get(platformPropId);
+                }
+            }
+            if (ListUtils.isNull(conditionPropValueModels))
+                continue;
+
+            // 解析cms_mt_channel_condition_config表中取得该平台对应店铺内分类数据字典
+            RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+            for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModels) {
+                String conditionExpressionStr = conditionPropValueModel.getCondition_expression();
+                RuleExpression conditionExpression;
+                String propValue;
+
+                try {
+                    // 带名字字典解析
+                    if (conditionExpressionStr.startsWith("{\"type\":\"DICT\"")) {
+                        DictWord conditionDictWord = (DictWord) ruleJsonMapper.deserializeRuleWord(conditionExpressionStr);
+                        conditionExpression = conditionDictWord.getExpression();
+                    } else if (conditionExpressionStr.startsWith("{\"ruleWordList\"")) {
+                        // 不带名字，只有字典表达式字典解析
+                        conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
+                    } else {
+                        logIssue(getTaskName(), String.format("feed->master导入:警告:店铺内分类数据字典格式不对 [ChannelId:%s]" +
+                                " [CartId:%s])", product.getChannelId(), entry.getValue().getCartId()));
+                        continue;
+                    }
+
+                    // 店铺内分类字典的值（"cId(子分类id)|cIds(父分类id,子分类id)|cName(父分类id,子分类id)|cNames(父分类id,子分类id)"）
+                    // 例："1124130584|1124130579,1124130584|系列>彩色宝石|系列,彩色宝石"
+                    propValue = expressionParser.parse(conditionExpression, null, getTaskName(), null);
+                } catch (Exception e) {
+                    // 因为店铺内分类即使这里不设置，运营也可以手动设置的，所以这里如果解析字典异常时，不算feed->master导入失败
+                    logIssue(getTaskName(), String.format("feed->master导入:警告:解析店铺内分类数据字典出错 [ChannelId:%s]" +
+                            " [CartId:%s])", product.getChannelId(), entry.getValue().getCartId()));
+                    continue;
+                }
+
+                // 如果从字典里面取得店铺内分类为空
+                if (StringUtils.isEmpty(propValue))
+                    continue;
+
+                List<String> sellerCatsList = Arrays.asList(propValue.split("\\|"));
+                // 如果取得的店铺内分类列表为空，继续循环
+                if (ListUtils.isNull(sellerCatsList))
+                    continue;
+
+                // cId(子分类id)
+                String strCId = sellerCatsList.get(0);
+                boolean isSellerCatExists = false;
+                for (CmsBtProductModel_SellerCat sellerCat : sellerCatList) {
+                    if (sellerCat.getcId().equalsIgnoreCase(strCId)) {
+                        // 如果在产品已经存在该子分类id的店铺内分类信息
+                        isSellerCatExists = true;
+                        break;
+                    }
+                }
+                // 新增或更新产品时，如果字典中解析出来子分类id在产品该平台的店铺内信息中不存在，则新加一条店铺类分类
+                // 存在的话不更新，因为店铺内信息运营有可能已经修改过了
+                if (isSellerCatExists)
+                    continue;
+
+                // 不存在时新加一条店铺内分类信息
+                CmsBtProductModel_SellerCat sellerCatFromDict = new CmsBtProductModel_SellerCat();
+                // cId(子分类id)           例："1124130584"
+                sellerCatFromDict.setcId(sellerCatsList.get(0));
+                // cIds(父分类id,子分类id)  例："1124130579,1124130584"
+                if (sellerCatsList.size() > 1) {
+                    List<String> cidsList = Arrays.asList(sellerCatsList.get(1).split(","));
+                    if (ListUtils.notNull(cidsList)) {
+                        sellerCatFromDict.setcIds(cidsList);
+                    }
+                }
+                // cName(父分类id,子分类id)  例："系列>彩色宝石"
+                if (sellerCatsList.size() > 2) {
+                    sellerCatFromDict.setcName(sellerCatsList.get(2));
+                }
+                // cNames(父分类id,子分类id) 例："系列,彩色宝石"
+                if (sellerCatsList.size() > 3) {
+                    List<String> cNamesList = Arrays.asList(sellerCatsList.get(3).split(","));
+                    if (ListUtils.notNull(cNamesList)) {
+                        sellerCatFromDict.setcNames(cNamesList);
+                    }
+                }
+
+                sellerCatList.add(sellerCatFromDict);
+            }
+        }
+    }
+
     /**
      * 按渠道进行设置
      */
@@ -256,15 +513,6 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
         int currentIndex = 0;
         int feedListCnt = 0;
         long startTime;
-        private OrderChannelBean channel;
-        private boolean skip_mapping_check;
-        // jeff 2016/04 change start
-//        // 前一次的价格强制击穿时间
-//        private String priceBreakTime;
-        private int m_mulitComplex_index = 0; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
-        // jeff 2016/04 change end
-        private boolean m_mulitComplex_run = false; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
-
         // --------------------------------------------------------------------------------------------
         // synship.com_mt_value_channel表共通信息
         // 品牌mapping表
@@ -299,9 +547,16 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
         List<TypeChannelBean> typeChannelBeanListApprove = null;
         // 允许展示的cart列表
         List<TypeChannelBean> typeChannelBeanListDisplay = null;
-        // --------------------------------------------------------------------------------------------
-
         Map<String, String> mastBrand = null;
+        private OrderChannelBean channel;
+        private boolean skip_mapping_check;
+        // jeff 2016/04 change start
+//        // 前一次的价格强制击穿时间
+//        private String priceBreakTime;
+        private int m_mulitComplex_index = 0; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
+        // --------------------------------------------------------------------------------------------
+        // jeff 2016/04 change end
+        private boolean m_mulitComplex_run = false; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
 
         // public setMainProp(String orderChannelId, boolean skip_mapping_check) {
 //        public setMainProp(String orderChannelId, boolean skip_mapping_check, String priceBreakTime) {
@@ -560,15 +815,15 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
                         feed.setSkus(skus);
                         // feed->master导入主处理
                         doSaveProductMainProp(feed, channelId, categoryTreeAllList);
-                        for( CmsBtFeedInfoModel_Sku cmsBtFeedInfoModel_Sku: feed.getSkus()){
-                            if(!StringUtils.isEmpty(cmsBtFeedInfoModel_Sku.getMainVid())){
+                        for (CmsBtFeedInfoModel_Sku cmsBtFeedInfoModel_Sku : feed.getSkus()) {
+                            if (!StringUtils.isEmpty(cmsBtFeedInfoModel_Sku.getMainVid())) {
                                 HttpHeaders httpHeaders = new HttpHeaders();
                                 httpHeaders.setContentType(MediaType.parseMediaType("application/json;charset=UTF-8"));
                                 ObjectMapper objectMapper = new ObjectMapper();
-                                HashMap<String, Object> feedInfo  = new HashMap<>();
-                                feedInfo.put("orderChannelId",channelId);
-                                feedInfo.put("clientSku",cmsBtFeedInfoModel_Sku.getSku());
-                                feedInfo.put("mainClientSku",cmsBtFeedInfoModel_Sku.getMainVid());
+                                HashMap<String, Object> feedInfo = new HashMap<>();
+                                feedInfo.put("orderChannelId", channelId);
+                                feedInfo.put("clientSku", cmsBtFeedInfoModel_Sku.getClientSku());
+                                feedInfo.put("mainClientSku", cmsBtFeedInfoModel_Sku.getMainVid());
                                 List<HashMap<String, Object>> requestList = Arrays.asList(feedInfo);
                                 String json = objectMapper.writeValueAsString(requestList);
                                 httpHeaders.set("Authorization", "Basic " + MD5.getMD5(json + System.currentTimeMillis() / TimeUnit.MINUTES.toMillis(30)));
@@ -941,11 +1196,7 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
                         blnProductExist = true;
                     } else {
                         cmsProduct = oldCmsProduct;
-                        if (cmsProduct == null) {
-                            blnProductExist = false;
-                        } else {
-                            blnProductExist = true;
-                        }
+                        blnProductExist = cmsProduct != null;
                     }
                 }
 
@@ -1052,7 +1303,7 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
                     // 一般只改改价格神马的
 //                    cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
-                    if(feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())){
+                    if (feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())) {
                         cmsProduct.getCommon().getFields().setProductNameEn(feed.getName());
                         cmsProduct.getCommon().getFields().setOriginalTitleCn(feed.getName());
                         cmsProduct.getCommon().getFields().setLongDesEn(feed.getLongDescription());
@@ -1064,7 +1315,7 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
                         cmsProduct.getCommon().getFields().setOrigin(feed.getOrigin());
                         cmsProduct.getCommon().getFields().setCodeDiff(feed.getColor());
                         cmsProduct.getCommon().getFields().setBrand(feed.getBrand());
-                        if(!StringUtil.isEmpty(feed.getColor())){
+                        if (!StringUtil.isEmpty(feed.getColor())) {
                             cmsProduct.getCommon().getFields().setColor(feed.getColor().split("-")[0]);
                         }
                     }
@@ -1138,12 +1389,12 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
 //                    cmsProduct = doCreateCmsBtProductModel(feed, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
 
-                    if(feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())){
+                    if (feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())) {
                         cmsProduct.getCommon().getFields().setOriginalTitleCn(feed.getName());
                         cmsProduct.getCommon().getFields().setShortDesCn(feed.getShortDescription());
                         cmsProduct.getCommon().getFields().setLongDesCn(feed.getLongDescription());
                         cmsProduct.getCommon().getFields().setMaterialCn(feed.getMaterial());
-                        if(!StringUtil.isEmpty(feed.getColor())){
+                        if (!StringUtil.isEmpty(feed.getColor())) {
                             cmsProduct.getCommon().getFields().setColor(feed.getColor().split("-")[0]);
                         }
                         cmsProduct.getCommon().getFields().setTranslateStatus("1");
@@ -1460,9 +1711,9 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
                 productCommonField.setCodeDiff(feed.getColor());
             }
 
-            if(!"007".equals(feed.getChannelId()) && !StringUtil.isEmpty(productCommonField.getCodeDiff()) && StringUtil.isEmpty(productCommonField.getColor())){
+            if (!"007".equals(feed.getChannelId()) && !StringUtil.isEmpty(productCommonField.getCodeDiff()) && StringUtil.isEmpty(productCommonField.getColor())) {
                 String color = cmsBtTranslateService.translate(feed.getChannelId(), CmsBtCustomPropModel.CustomPropType.Common.getValue(), "com_color", productCommonField.getCodeDiff());
-                if(!StringUtil.isEmpty(color)) productCommonField.setColor(color);
+                if (!StringUtil.isEmpty(color)) productCommonField.setColor(color);
             }
             // update desmond 2016/07/05 end
             // 产地
@@ -1620,7 +1871,7 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
             List<Map<String, Object>> multiComplex2 = new LinkedList<>();
             List<Map<String, Object>> multiComplex6 = new LinkedList<>();
 
-            if(!feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())) {
+            if (!feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())) {
                 // jeff 2016/05 change start
                 //  List<String> lstImageOrg = feed.getImage();
                 List<String> lstImageOrg = null;
@@ -1666,7 +1917,7 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
 //            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
 //            if (cmsChannelConfigBean != null && cmsChannelConfigBean.getChannelId() != null
 //                    && feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())) {
-            if(feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.SN.getId())){
+            if (feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.SN.getId())) {
                 if (feed.getAttribute() != null && feed.getAttribute().get("boximages") != null) {
                     for (String images : feed.getAttribute().get("boximages")) {
                         Map<String, Object> multiComplexChildren = new HashMap<>();
@@ -2644,7 +2895,7 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
                         }
                         entry.getValue().getSkus().add(skuInfo);
                         // 已经approved的商品如果用新的sku的场合 platforms.Pxx.isNewSku = "1" james CMSDOC-340
-                        if(entry.getValue().getCartId() != 928 && CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(entry.getValue().getStatus())){
+                        if (entry.getValue().getCartId() != 928 && CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(entry.getValue().getStatus())) {
                             entry.getValue().setIsNewSku("1");
                         }
                     }
@@ -3492,7 +3743,7 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
             double minClientMsrpPrice = 0;
             double maxClientNetPrice = 0;
             double minClientNetPrice = 0;
-            boolean isFirst=true;
+            boolean isFirst = true;
             // 设置common.skus里面的价格
             for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
                 CmsBtProductModel_Sku commonSku = null;
@@ -3538,32 +3789,28 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
                     //clientMsrpPrice
                     if (commonSku.getClientMsrpPrice() > maxClientMsrpPrice) {
                         maxClientMsrpPrice = commonSku.getClientMsrpPrice();
-                    }
-                    else if (commonSku.getClientMsrpPrice() < minClientMsrpPrice) {
+                    } else if (commonSku.getClientMsrpPrice() < minClientMsrpPrice) {
                         minClientMsrpPrice = commonSku.getClientMsrpPrice();
                     }
 
                     //clientNetPrice
                     if (commonSku.getClientNetPrice() > maxClientNetPrice) {
                         maxClientNetPrice = commonSku.getClientNetPrice();
-                    }
-                    else if (commonSku.getClientNetPrice() < minClientNetPrice) {
+                    } else if (commonSku.getClientNetPrice() < minClientNetPrice) {
                         minClientNetPrice = commonSku.getClientNetPrice();
                     }
                 }
             }
 
-            if(minClientMsrpPrice==maxClientMsrpPrice) {
+            if (minClientMsrpPrice == maxClientMsrpPrice) {
                 cmsProduct.getCommon().getFields().setClientMsrpPrice(String.format("%s", minClientMsrpPrice));
-            }
-            else {
+            } else {
                 cmsProduct.getCommon().getFields().setClientMsrpPrice(String.format("%s~%s", minClientMsrpPrice, maxClientMsrpPrice));
             }
 
-            if(maxClientNetPrice==minClientNetPrice) {
+            if (maxClientNetPrice == minClientNetPrice) {
                 cmsProduct.getCommon().getFields().setClientNetPrice(String.format("%s", minClientNetPrice));
-            }
-            else {
+            } else {
                 cmsProduct.getCommon().getFields().setClientNetPrice(String.format("%s~%s", minClientNetPrice, maxClientNetPrice));
             }
 
@@ -3764,267 +4011,6 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
             } else if (ListUtils.notNull(ccAutoSyncCartList)) {
                 // 变更自动同步到指定平台(用逗号分隔 如:"28,29")时
                 sxProductService.insertSxWorkLoad(cmsProduct, ccAutoSyncCartList, getTaskName());
-            }
-        }
-    }
-
-    private void weightCalculate(CmsBtProductModel cmsProduct) {
-        Double weight = null;
-        for (CmsBtProductModel_Sku sku : cmsProduct.getCommon().getSkus()) {
-            if (sku.getWeight() != null && (weight == null || weight.compareTo(sku.getWeight()) > 0)) {
-                weight = sku.getWeight();
-            }
-        }
-        //1磅(lb)=453.59237克(g)
-        if (weight != null) {
-            cmsProduct.getCommon().getFields().setWeightLb(weight);
-            BigDecimal b = new BigDecimal(weight * 453.59237);
-            cmsProduct.getCommon().getFields().setWeightG(b.setScale(0, BigDecimal.ROUND_HALF_UP).intValue());
-            b = new BigDecimal(weight * 453.59237 / 1000.0);
-            cmsProduct.getCommon().getFields().setWeightKG(b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-        }
-    }
-
-    private void insertCmsBtFeedImportSize(String channelId, CmsBtProductModel cmsProduct) {
-        CmsBtFeedImportSizeModel cmsBtFeedImportSizeModel = new CmsBtFeedImportSizeModel();
-        cmsBtFeedImportSizeModel.setChannelId(channelId);
-        cmsBtFeedImportSizeModel.setBrandName(cmsProduct.getCommon().getFields().getBrand());
-        cmsBtFeedImportSizeModel.setProductType(cmsProduct.getCommon().getFields().getProductType());
-        cmsBtFeedImportSizeModel.setSizeType(cmsProduct.getCommon().getFields().getSizeType());
-        cmsProduct.getCommon().getSkus().forEach(sku -> {
-            cmsBtFeedImportSizeModel.setOriginalSize(sku.getSize());
-            cmsBtFeedImportSizeService.saveCmsBtFeedImportSizeModel(cmsBtFeedImportSizeModel, getTaskName());
-        });
-    }
-
-    private void copyAttributeFromMainProduct(String channelId, CmsBtProductModel_Common common, String mainProductCode) {
-        CmsBtProductModel mainProduct = productService.getProductByCode(channelId, mainProductCode);
-        if (mainProduct != null) {
-            common.setCatId(mainProduct.getCommon().getCatId());
-            common.setCatPath(mainProduct.getCommon().getCatPath());
-
-            common.getFields().setTranslateStatus(mainProduct.getCommon().getFields().getTranslateStatus());
-            common.getFields().setTranslateTime(mainProduct.getCommon().getFields().getTranslateTime());
-            common.getFields().setTranslator(mainProduct.getCommon().getFields().getTranslator());
-
-            common.getFields().setHsCodePrivate(mainProduct.getCommon().getFields().getHsCodePrivate());
-            common.getFields().setHsCodeSetter(mainProduct.getCommon().getFields().getHsCodeSetter());
-            common.getFields().setHsCodeStatus(mainProduct.getCommon().getFields().getHsCodeStatus());
-            common.getFields().setHsCodeSetTime(mainProduct.getCommon().getFields().getHsCodeSetTime());
-            common.getFields().setHsCodeCrop(mainProduct.getCommon().getFields().getHsCodeCrop());
-            common.getFields().setHsCodeCross(mainProduct.getCommon().getFields().getHsCodeCross());
-
-            common.getFields().setCategorySetTime(mainProduct.getCommon().getFields().getCategorySetTime());
-            common.getFields().setCategoryStatus(mainProduct.getCommon().getFields().getCategoryStatus());
-            common.getFields().setCategorySetter(mainProduct.getCommon().getFields().getCategorySetter());
-
-            common.getFields().setShortDesCn(mainProduct.getCommon().getFields().getShortDesCn());
-            common.getFields().setLongDesCn(mainProduct.getCommon().getFields().getLongDesCn());
-            common.getFields().setOriginalTitleCn(mainProduct.getCommon().getFields().getOriginalTitleCn());
-            common.getFields().setMaterialCn(mainProduct.getCommon().getFields().getMaterialCn());
-            common.getFields().setUsageCn(mainProduct.getCommon().getFields().getUsageCn());
-        }
-    }
-
-    /**
-     * 出错的时候将错误信息回写到cms_bt_business_log表
-     *
-     * @param channelId       String 渠道id
-     * @param cartId          String 平台id
-     * @param feedModel       String feed model
-     * @param feedProductCode String feed产品code
-     * @param errCode         String 错误code
-     * @param errMsg          String 错误消息
-     * @param modifier        String 更新者
-     */
-    private void insertBusinessLog(String channelId, String cartId, String feedModel, String feedProductCode, String errCode, String errMsg, String modifier) {
-        CmsBtBusinessLogModel businessLogModel = new CmsBtBusinessLogModel();
-        // 渠道id
-        businessLogModel.setChannelId(channelId);
-        // 平台id
-        if (!StringUtils.isEmpty(cartId)) businessLogModel.setCartId(Integer.parseInt(cartId));
-        // feedModel
-        businessLogModel.setModel(feedModel);
-        // feedProduCode
-        businessLogModel.setCode(feedProductCode);
-        // 错误类型(2:非上新错误)
-        businessLogModel.setErrorTypeId(2);
-        // 错误code
-        businessLogModel.setErrorCode(errCode);
-        // 详细错误信息
-        businessLogModel.setErrorMsg(errMsg);
-        // 状态(0:未处理 1:已处理)
-        businessLogModel.setStatus(0);
-        // 创建者
-        businessLogModel.setCreater(modifier);
-        // 更新者
-        businessLogModel.setModifier(modifier);
-
-        businessLogService.insertBusinessLog(businessLogModel);
-    }
-
-    /**
-     * feed->master导入成功或者失败之后，回写cms_bt_feed_info_cxxx表
-     *
-     * @param feed           CmsBtFeedInfoModel feed信息
-     * @param updFlg         Integer 更新flg(1:feed->master导入失败   2:feed->master导入失败)
-     * @param errMsg         String 失败的错误消息
-     * @param isFeedReImport String 是否强制重新导入
-     */
-    private void updateFeedInfo(CmsBtFeedInfoModel feed, Integer updFlg, String errMsg, String isFeedReImport) {
-        if (feed == null) return;
-
-        Map<String, Object> paraMap = new HashedMap();
-        paraMap.put("code", feed.getCode());
-
-        Map<String, Object> rsMap = new HashedMap();
-        rsMap.put("updFlg", updFlg);
-        rsMap.put("updMessage", errMsg);
-        rsMap.put("modifier", getTaskName());
-        rsMap.put("modified", DateTimeUtil.getNowTimeStamp());
-        if (!StringUtils.isEmpty(isFeedReImport))
-            rsMap.put("isFeedReImport", isFeedReImport);
-        feedInfoService.updateFeedInfo(feed.getChannelId(), paraMap, rsMap);
-    }
-
-    /**
-     * 设置产品各个平台的店铺内分类信息
-     * <p>
-     * 新增或更新产品时，如果字典中解析出来子分类id在产品该平台的店铺内信息中不存在，则新加一条店铺类分类
-     * 存在的话不更新，因为店铺内信息运营有可能已经修改过了
-     * <p>
-     * 从cms_mt_channel_condition_config表中取得该店铺对应的店铺内分类数据字典，
-     * 表里的platformPropId字段的值为：
-     * "seller_cids_"+cartId  例：seller_cats_26
-     * 店铺内分类字典的里面的value值结构如下：
-     * 结构："cId(子分类id)|cIds(父分类id,子分类id)|cName(父分类id,子分类id)|cNames(父分类id,子分类id)"
-     * 例子："1124130584|1124130579,1124130584|系列>彩色宝石|系列,彩色宝石"
-     *
-     * @param feed    CmsBtFeedInfoModel feed信息
-     * @param product CmsBtProductModel 产品信息(兼结果返回用)
-     */
-    public void setSellerCats(CmsBtFeedInfoModel feed, CmsBtProductModel product) {
-
-        if (feed == null || product == null) {
-            $warn("feed->master导入:警告:设置店铺内分类时传入的feed或者product信息为null");
-            return;
-        }
-
-        // 遍历主数据product里的分平台信息，设置店铺内分类
-        for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
-            // P0（主数据）平台跳过
-            if (entry.getValue().getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
-                continue;
-            }
-
-            List<CmsBtProductModel_SellerCat> sellerCatList = entry.getValue().getSellerCats();
-            if (sellerCatList == null) {
-                // 如果该平台上没有店铺内分类项目，则新建一个店铺内分类列表
-                sellerCatList = new ArrayList<CmsBtProductModel_SellerCat>();
-                entry.getValue().setSellerCats(sellerCatList);
-            }
-
-            // 条件表达式表platform_prop_id字段的检索条件为"seller_cids_"加cartId
-            String platformPropId = "seller_cids_" + entry.getValue().getCartId();
-
-            // 构造解析店铺内分类字典必须的一些对象
-            SxData sxData = new SxData();
-            sxData.setMainProduct(product);                  // product信息
-            sxData.setCmsBtFeedInfoModel(feed);              // feed信息
-            sxData.setChannelId(product.getChannelId());     // channelId
-            sxData.setCartId(entry.getValue().getCartId());  // cartId
-            // 构造字典解析子
-            ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
-
-            // 根据channelid和platformPropId取得cms_mt_channel_condition_config表的条件表达式
-            List<ConditionPropValueModel> conditionPropValueModels = null;
-            if (channelConditionConfig.containsKey(product.getChannelId())) {
-                if (channelConditionConfig.get(product.getChannelId()).containsKey(platformPropId)) {
-                    conditionPropValueModels = channelConditionConfig.get(product.getChannelId()).get(platformPropId);
-                }
-            }
-            if (ListUtils.isNull(conditionPropValueModels))
-                continue;
-
-            // 解析cms_mt_channel_condition_config表中取得该平台对应店铺内分类数据字典
-            RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-            for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModels) {
-                String conditionExpressionStr = conditionPropValueModel.getCondition_expression();
-                RuleExpression conditionExpression;
-                String propValue;
-
-                try {
-                    // 带名字字典解析
-                    if (conditionExpressionStr.startsWith("{\"type\":\"DICT\"")) {
-                        DictWord conditionDictWord = (DictWord) ruleJsonMapper.deserializeRuleWord(conditionExpressionStr);
-                        conditionExpression = conditionDictWord.getExpression();
-                    } else if (conditionExpressionStr.startsWith("{\"ruleWordList\"")) {
-                        // 不带名字，只有字典表达式字典解析
-                        conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
-                    } else {
-                        logIssue(getTaskName(), String.format("feed->master导入:警告:店铺内分类数据字典格式不对 [ChannelId:%s]" +
-                                " [CartId:%s])", product.getChannelId(), entry.getValue().getCartId()));
-                        continue;
-                    }
-
-                    // 店铺内分类字典的值（"cId(子分类id)|cIds(父分类id,子分类id)|cName(父分类id,子分类id)|cNames(父分类id,子分类id)"）
-                    // 例："1124130584|1124130579,1124130584|系列>彩色宝石|系列,彩色宝石"
-                    propValue = expressionParser.parse(conditionExpression, null, getTaskName(), null);
-                } catch (Exception e) {
-                    // 因为店铺内分类即使这里不设置，运营也可以手动设置的，所以这里如果解析字典异常时，不算feed->master导入失败
-                    logIssue(getTaskName(), String.format("feed->master导入:警告:解析店铺内分类数据字典出错 [ChannelId:%s]" +
-                            " [CartId:%s])", product.getChannelId(), entry.getValue().getCartId()));
-                    continue;
-                }
-
-                // 如果从字典里面取得店铺内分类为空
-                if (StringUtils.isEmpty(propValue))
-                    continue;
-
-                List<String> sellerCatsList = Arrays.asList(propValue.split("\\|"));
-                // 如果取得的店铺内分类列表为空，继续循环
-                if (ListUtils.isNull(sellerCatsList))
-                    continue;
-
-                // cId(子分类id)
-                String strCId = sellerCatsList.get(0);
-                boolean isSellerCatExists = false;
-                for (CmsBtProductModel_SellerCat sellerCat : sellerCatList) {
-                    if (sellerCat.getcId().equalsIgnoreCase(strCId)) {
-                        // 如果在产品已经存在该子分类id的店铺内分类信息
-                        isSellerCatExists = true;
-                        break;
-                    }
-                }
-                // 新增或更新产品时，如果字典中解析出来子分类id在产品该平台的店铺内信息中不存在，则新加一条店铺类分类
-                // 存在的话不更新，因为店铺内信息运营有可能已经修改过了
-                if (isSellerCatExists)
-                    continue;
-
-                // 不存在时新加一条店铺内分类信息
-                CmsBtProductModel_SellerCat sellerCatFromDict = new CmsBtProductModel_SellerCat();
-                // cId(子分类id)           例："1124130584"
-                sellerCatFromDict.setcId(sellerCatsList.get(0));
-                // cIds(父分类id,子分类id)  例："1124130579,1124130584"
-                if (sellerCatsList.size() > 1) {
-                    List<String> cidsList = Arrays.asList(sellerCatsList.get(1).split(","));
-                    if (ListUtils.notNull(cidsList)) {
-                        sellerCatFromDict.setcIds(cidsList);
-                    }
-                }
-                // cName(父分类id,子分类id)  例："系列>彩色宝石"
-                if (sellerCatsList.size() > 2) {
-                    sellerCatFromDict.setcName(sellerCatsList.get(2));
-                }
-                // cNames(父分类id,子分类id) 例："系列,彩色宝石"
-                if (sellerCatsList.size() > 3) {
-                    List<String> cNamesList = Arrays.asList(sellerCatsList.get(3).split(","));
-                    if (ListUtils.notNull(cNamesList)) {
-                        sellerCatFromDict.setcNames(cNamesList);
-                    }
-                }
-
-                sellerCatList.add(sellerCatFromDict);
             }
         }
     }
