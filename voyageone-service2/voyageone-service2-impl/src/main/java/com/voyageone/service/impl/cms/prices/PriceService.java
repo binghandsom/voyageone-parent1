@@ -633,6 +633,10 @@ public class PriceService extends BaseService {
                 $error(hsCode + " " + shippingTypeConfig.getConfigValue1() + " 没有找到税率");
             }
         }
+        // LUCKY_VITAMIN 天猫平台关税=0 因为走菜鸟
+        if(channelId == "017" && cartId == 30){
+            taxRate = 0d;
+        }
 
         Double catCostRate = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_CATEGORY_COST);
         if (catCostRate == null || catCostRate.doubleValue() < 0) {
