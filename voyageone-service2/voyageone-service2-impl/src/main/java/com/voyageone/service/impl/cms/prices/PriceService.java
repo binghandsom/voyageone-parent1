@@ -634,7 +634,7 @@ public class PriceService extends BaseService {
             }
         }
         // LUCKY_VITAMIN 天猫平台关税=0 因为走菜鸟
-        if(channelId == "017" && cartId == 30){
+        if("017".equals(channelId) && cartId == 30){
             taxRate = 0d;
         }
 
