@@ -3083,7 +3083,7 @@ public class SxProductService extends BaseService {
                         String scProductId = updateTmScProductId(shopBean,
                                             mainSxProduct,
                                             skuCode,
-                                            getProductValueByMasterMapping("title", shopBean, expressionParser, user),
+                                            sxData,
                                             skuInventoryMap.get(skuCode) != null ? Integer.toString(skuInventoryMap.get(skuCode)) : "0"
                         );
                         inputField.setValue(scProductId);
@@ -3617,13 +3617,13 @@ public class SxProductService extends BaseService {
     /**
      * 更新天猫货品id(关联商品)
      */
-    public String updateTmScProductId(ShopBean shopBean, CmsBtProductModel productModel, String skuCode, String title, String qty) {
+    public String updateTmScProductId(ShopBean shopBean, CmsBtProductModel productModel, String skuCode, SxData sxData, String qty) {
         if (StringUtils.isEmpty(taobaoScItemService.doCheckNeedSetScItem(shopBean, productModel))) {
             // 不要关联商品
             return null;
         }
         try {
-            String scProductId = taobaoScItemService.doCreateScItem(shopBean, productModel, skuCode, title, qty);
+            String scProductId = taobaoScItemService.doCreateScItem(shopBean, productModel, skuCode, sxData, qty);
 			// 临时忽略检查
 //            if (StringUtils.isEmpty(scProductId)) {
 //                throw new BusinessException(String.format("自动设置天猫商品全链路库存管理时,发生不明异常!skuCode:%s", skuCode));

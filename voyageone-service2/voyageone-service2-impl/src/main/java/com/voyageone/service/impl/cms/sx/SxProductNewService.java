@@ -2980,10 +2980,10 @@ public class SxProductNewService extends BaseService {
                         // 外部填写的时候，只有一个code，一个sku，这个check在商品外部编码(outer_id)的逻辑里有了，这里就不再做了
                         String skuCode = mainSxProduct.getCommon().getSkus().get(0).getSkuCode();
                         String scProductId = updateTmScProductId(shopBean,
-                                            mainSxProduct,
-                                            skuCode,
-                                            getProductValueByMasterMapping("title", shopBean, expressionParser, user),
-                                            skuInventoryMap.get(skuCode) != null ? Integer.toString(skuInventoryMap.get(skuCode)) : "0"
+                                mainSxProduct,
+                                skuCode,
+                                sxData,
+                                skuInventoryMap.get(skuCode) != null ? Integer.toString(skuInventoryMap.get(skuCode)) : "0"
                         );
                         inputField.setValue(scProductId);
                         // modified by morse.lu 2016/10/17 end
@@ -3485,13 +3485,13 @@ public class SxProductNewService extends BaseService {
     /**
      * 更新天猫货品id(关联商品)
      */
-    public String updateTmScProductId(ShopBean shopBean, CmsBtProductModel productModel, String skuCode, String title, String qty) {
+    public String updateTmScProductId(ShopBean shopBean, CmsBtProductModel productModel, String skuCode, SxData sxData, String qty) {
         if (StringUtils.isEmpty(taobaoScItemService.doCheckNeedSetScItem(shopBean, productModel))) {
             // 不要关联商品
             return null;
         }
         try {
-            String scProductId = taobaoScItemService.doCreateScItem(shopBean, productModel, skuCode, title, qty);
+            String scProductId = taobaoScItemService.doCreateScItem(shopBean, productModel, skuCode, sxData, qty);
 			// 临时忽略检查
 //            if (StringUtils.isEmpty(scProductId)) {
 //                throw new BusinessException(String.format("自动设置天猫商品全链路库存管理时,发生不明异常!skuCode:%s", skuCode));
