@@ -231,14 +231,14 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
             if (productModel == null)
                 continue;
             // 旗舰店的商品下架
-            failList.addAll(offThem(channelId, feedInfoModel, productModel));
+            failList.addAll(offThem(channelId, productModel));
 
             // liking的商品下架
             if(isChildren){
                 List<CmsBtProductModel> productModels = productService.getProductByOriginalCode("928", channelId, code);
                 if(ListUtils.notNull(productModels)){
                     productModels.forEach(item->{
-                        failList.addAll(offThem("928", feedInfoModel, item));
+                        failList.addAll(offThem("928", item));
                     });
                 }
             }
@@ -247,7 +247,7 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
         return failList;
     }
 
-    private List<CmsBtOperationLogModel_Msg> offThem(String channelId, CmsBtFeedInfoModel feedInfoModel, CmsBtProductModel productModel){
+    private List<CmsBtOperationLogModel_Msg> offThem(String channelId, CmsBtProductModel productModel){
         List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
         OffShelfHelper offShelfHelper = new OffShelfHelper(channelId);
         offShelfHelper.addProduct(productModel);
@@ -265,7 +265,7 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
         }
         // 在下架完成之后
         // 锁定商品
-        lockProduct(feedInfoModel.getCode(), channelId);
+        lockProduct(productModel.getCommonNotNull().getFieldsNotNull().getCode(), channelId);
         lockOrUnlockProductPlatform(productModel, "1", 0);
         return failList;
     }
@@ -442,6 +442,7 @@ public class CmsBrandBlockMQJob extends TBaseMQCmsService<CmsBrandBlockMQMessage
                 return;
             try {
                 for (Integer cartId : cartIdList) {
+                    if(cartId > 900) continue;
                     mqParams.remove("cartIdList", cartIdList);
                     mqParams.put("cartId", cartId);
                     platformActiveLogService.setProductOnSaleOrInStock(mqParams);
