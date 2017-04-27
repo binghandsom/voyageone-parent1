@@ -233,7 +233,7 @@ public class TaobaoScItemService extends BaseService {
 		// 创建关联
 		String outerCodeResult;
         try {
-            if (StringUtils.isEmpty(sku_id)) {
+            if (StringUtils.isEmpty(sku_id) || "null".equals(sku_id)) {
                 outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, null, sku_outerId);
             } else {
                 outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, Long.parseLong(sku_id), sku_outerId);
@@ -346,7 +346,7 @@ public class TaobaoScItemService extends BaseService {
 		String outerCodeResult;
 		try {
 			Thread.sleep(1000); // 一定要睡一会儿， 因为如果商品都已经创建成功并初始化过的话， 就会连续创建关联， 可能会导致IC_OPTIMISTIC_LOCKING_CONFLICT
-			if (StringUtils.isEmpty(sku_id)) {
+			if (StringUtils.isEmpty(sku_id) || "null".equals(sku_id)) {
 				outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, null, sku_outerId);
 			} else {
 				outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, Long.parseLong(sku_id), sku_outerId);
