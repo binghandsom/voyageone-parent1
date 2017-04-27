@@ -6,7 +6,8 @@ define([
     'cms',
     'modules/cms/enums/Carts',
     'modules/cms/directives/platFormStatus.directive',
-    'modules/cms/directives/noticeTip.directive'
+    'modules/cms/directives/noticeTip.directive',
+    'modules/cms/directives/contextMenu.directive'
 ], function (cms, carts) {
 
     var mConfig = {
@@ -32,7 +33,21 @@ define([
                     selectSizeChart: null,
                     lockStatus: {},
                     channelId: $localStorage.user.channel,
-                    panelShow: true
+                    panelShow: true,
+                    copyImgs:[
+                        {
+                            text: 'PC端自拍图',
+                            event: function () {
+
+                            }
+                        },
+                        {
+                            text: 'APP端自拍图',
+                            event: function () {
+
+                            }
+                        }
+                    ]
                 };
 
                 scope.selectSizeChartChange = function () {
