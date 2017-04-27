@@ -666,7 +666,16 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                             DecimalFormat dformat = new DecimalFormat(".00");
                             String priceStr = dformat.format(Math.ceil(skuMap.getDoubleAttribute("clientMsrpPrice")));
                             htSpuUpdateRequest.setAbroad_price(Double.valueOf(priceStr));
-                            htSpuUpdateRequest.setAttribute(jmFields.getStringAttribute("attribute"));
+                            if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("attribute"))) {
+                                htSpuUpdateRequest.setAttribute(jmFields.getStringAttribute("attribute"));
+                            } else if(blnIsSmartSx) {
+                                if (!StringUtils.isEmpty(fields.getColor())) {
+                                    htSpuUpdateRequest.setAttribute(fields.getColor());
+                                } else {
+                                    htSpuUpdateRequest.setAttribute(fields.getCodeDiff());
+                                }
+                            }
+
                             htSpuUpdateRequest.setProperty(skuMap.getStringAttribute("property"));
                             // update by desmond 2016/07/08 start
 //                                    String sizeStr = skuMap.getStringAttribute("size");
@@ -809,7 +818,15 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                             htSpuAddRequest.setArea_code("19");//TODO
                             htSpuAddRequest.setJumei_product_id(jmCart.getpProductId());
                             htSpuAddRequest.setProperty(skuMap.getStringAttribute("property"));
-                            htSpuAddRequest.setAttribute(jmFields.getStringAttribute("attribute"));
+                            if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("attribute"))) {
+                                htSpuAddRequest.setAttribute(jmFields.getStringAttribute("attribute"));
+                            } else if(blnIsSmartSx) {
+                                if (!StringUtils.isEmpty(fields.getColor())) {
+                                    htSpuAddRequest.setAttribute(fields.getColor());
+                                } else {
+                                    htSpuAddRequest.setAttribute(fields.getCodeDiff());
+                                }
+                            }
                             HtSpuAddResponse htSpuAddResponse = jumeiHtSpuService.add(shop, htSpuAddRequest);
 
                             if (htSpuAddResponse != null && htSpuAddResponse.is_Success()) {
@@ -1091,7 +1108,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         dealInfo.setShipping_system_id(NumberUtils.toInt(shippingId));
 
         // 产品长标题 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productLongName"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("productLongName"))) {
             dealInfo.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
         } else if (blnIsSmartSx) {
             if(!StringUtils.isEmpty(commonTitle)) {
@@ -1101,7 +1118,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             }
         }
         // 产品中标题 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productMediumName"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("productMediumName"))) {
             dealInfo.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
         } else if (blnIsSmartSx) {
             if(!StringUtils.isEmpty(commonTitle)) {
@@ -1111,7 +1128,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             }
         }
         // 产品短标题 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productShortName"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("productShortName"))) {
             dealInfo.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
         } else if (blnIsSmartSx) {
             if(!StringUtils.isEmpty(commonTitle)) {
@@ -1121,33 +1138,33 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             }
         }
         // 保质期限 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("beforeDate"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("beforeDate"))) {
             dealInfo.setBefore_date(jmFields.getStringAttribute("beforeDate"));
         } else if (blnIsSmartSx) {
             dealInfo.setBefore_date("无");
         }
         // 适用人群 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("suitPeople"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("suitPeople"))) {
             dealInfo.setSuit_people(jmFields.getStringAttribute("suitPeople"));
         } else if (blnIsSmartSx) {
             dealInfo.setSuit_people("时尚潮流人士");
         }
 
         // 特殊说明 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("specialExplain"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("specialExplain"))) {
             dealInfo.setSpecial_explain(jmFields.getStringAttribute("specialExplain"));
         } else if (blnIsSmartSx) {
             dealInfo.setSpecial_explain("自海外直邮发货，物流周期15个工作日左右。");
         }
 
         // 自定义搜索词  charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("searchMetaTextCustom"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("searchMetaTextCustom"))) {
             dealInfo.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
         } else if (blnIsSmartSx) {
             dealInfo.setSearch_meta_text_custom(pBrandName + "," + productType + "," + suitPeople + "," + fields.getModel());
         }
         // 每人限购
-        dealInfo.setUser_purchase_limit(jmFields.getIntAttribute("userPurchaseLimit"));
+        if (jmFields != null) dealInfo.setUser_purchase_limit(jmFields.getIntAttribute("userPurchaseLimit"));
 
 
 
@@ -1517,7 +1534,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         bean.setBrand_id(NumberUtils.toInt(jmCart.getpBrandId()));
         // update by desmond 2016/09/01 end
         // 产品名 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productNameCn"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("productNameCn"))) {
             bean.setName(jmFields.getStringAttribute("productNameCn") + " " +  special_symbol.matcher(productCode).replaceAll("-"));
         } else if (blnIsSmartSx){
             if(!StringUtils.isEmpty(commonTitle)) {
@@ -1528,7 +1545,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         }
 
         // 外文名 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productNameEn"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("productNameEn"))) {
             bean.setForeign_language_name(jmFields.getStringAttribute("productNameEn"));
         } else if (blnIsSmartSx) {
             bean.setForeign_language_name(fields.getProductNameEn());
@@ -1545,7 +1562,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         // 商家自定义deal_id
         deal.setPartner_deal_id(productCode + "-" + channelId + "-" + CART_ID);
         // 限购数量
-        deal.setUser_purchase_limit(jmFields.getIntAttribute("userPurchaseLimit"));
+        if (jmFields != null) deal.setUser_purchase_limit(jmFields.getIntAttribute("userPurchaseLimit"));
 
         // 发货仓库ID
         String shippingId = Codes.getCode("JUMEI", channelId);
@@ -1577,7 +1594,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         deal.setDescription_usage(jmUseageTemplate);
 
         // 产品长标题 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productLongName"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("productLongName"))) {
             deal.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
         } else if (blnIsSmartSx) {
             if(commonTitle != null && commonTitle.length() > 0) {
@@ -1587,7 +1604,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             }
         }
         // 产品中标题 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productMediumName"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("productMediumName"))) {
             deal.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
         } else if (blnIsSmartSx) {
             if(commonTitle != null && commonTitle.length() > 0) {
@@ -1597,7 +1614,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             }
         }
         // 产品短标题 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productShortName"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("productShortName"))) {
             deal.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
         } else if (blnIsSmartSx) {
             if(commonTitle != null && commonTitle.length() > 0) {
@@ -1607,34 +1624,34 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             }
         }
         // 保质期限 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("beforeDate"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("beforeDate"))) {
             deal.setBefore_date(jmFields.getStringAttribute("beforeDate"));
         } else if (blnIsSmartSx) {
             deal.setBefore_date("无");
         }
 
         // 适用人群 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("suitPeople"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("suitPeople"))) {
             deal.setSuit_people(jmFields.getStringAttribute("suitPeople"));
         } else if (blnIsSmartSx) {
             deal.setSuit_people("时尚潮流人士");
         }
 
         // 特殊说明 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("specialExplain"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("specialExplain"))) {
             deal.setSpecial_explain(jmFields.getStringAttribute("specialExplain"));
         } else if (blnIsSmartSx) {
             deal.setSpecial_explain("自海外直邮发货，物流周期15个工作日左右。");
         }
 
         // 自定义搜索词  charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("searchMetaTextCustom"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("searchMetaTextCustom"))) {
             deal.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
         } else if (blnIsSmartSx) {
             deal.setSearch_meta_text_custom(pBrandName + "," + productType + "," + suitPeople + "," + fields.getModel());
         }
         // 生产地区 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("originCn"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("originCn"))) {
             deal.setAddress_of_produce(jmFields.getStringAttribute("originCn"));
         } else if (blnIsSmartSx) {
             deal.setAddress_of_produce("根据生产批次、生产线，详情请见实物包装");
@@ -1674,7 +1691,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             // 规格 :FORMAL 正装 MS 中小样 OTHER 其他
             spu.setPropery(jmSku.getStringAttribute("property"));
             // 型号/颜色 charis update
-            if (!StringUtils.isEmpty(jmFields.getStringAttribute("attribute"))) {
+            if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("attribute"))) {
                 spu.setAttribute(jmFields.getStringAttribute("attribute"));//Code级
             } else if (blnIsSmartSx) {
                 if (!StringUtils.isEmpty(fields.getColor())) {
@@ -1823,28 +1840,31 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         cmsBtJmProductModel.setChannelId(channelId);
         cmsBtJmProductModel.setProductCode(productCode);
         cmsBtJmProductModel.setOrigin(fields.getOrigin());
-        cmsBtJmProductModel.setProductNameCn(jmFields.getStringAttribute("productNameCn") + " " + special_symbol.matcher(productCode).replaceAll("-"));
         cmsBtJmProductModel.setVoBrandName(brandName);                                   // VO系统里面的品牌名称
         cmsBtJmProductModel.setVoCategoryName(product.getCommon().getCatPath());
         cmsBtJmProductModel.setBrandName(product.getPlatform(CART_ID).getpBrandName());  // 聚美平台上的品牌名称
         cmsBtJmProductModel.setProductType(productType);
         cmsBtJmProductModel.setSizeType(sizeType);
         cmsBtJmProductModel.setProductDesEn(fields.getShortDesEn());
-        cmsBtJmProductModel.setAttribute(jmFields.getStringAttribute("attribute"));
-        cmsBtJmProductModel.setForeignLanguageName(jmFields.getStringAttribute("productNameEn"));
-        cmsBtJmProductModel.setAddressOfProduce(jmFields.getStringAttribute("originCn"));
-        cmsBtJmProductModel.setAvailablePeriod(jmFields.getStringAttribute("beforeDate"));
         cmsBtJmProductModel.setProductDesCn(fields.getLongDesCn());
-        cmsBtJmProductModel.setApplicableCrowd(jmFields.getStringAttribute("suitPeople"));
-        cmsBtJmProductModel.setSpecialnote(jmFields.getStringAttribute("specialExplain"));
         cmsBtJmProductModel.setColorEn(fields.getColor());
         cmsBtJmProductModel.setImage1(fields.getImages1().get(0).getName());
-        cmsBtJmProductModel.setProductLongName(jmFields.getStringAttribute("productLongName"));
-        cmsBtJmProductModel.setProductMediumName(jmFields.getStringAttribute("productMediumName"));
-        cmsBtJmProductModel.setProductShortName(jmFields.getStringAttribute("productShortName"));
-        cmsBtJmProductModel.setSearchMetaTextCustom(jmFields.getStringAttribute("searchMetaTextCustom"));
         cmsBtJmProductModel.setMaterialEn(fields.getMaterialEn());
         cmsBtJmProductModel.setMaterialCn(fields.getMaterialCn());
+
+        if (jmFields != null) {
+            cmsBtJmProductModel.setProductNameCn(jmFields.getStringAttribute("productNameCn") + " " + special_symbol.matcher(productCode).replaceAll("-"));
+            cmsBtJmProductModel.setAttribute(jmFields.getStringAttribute("attribute"));
+            cmsBtJmProductModel.setForeignLanguageName(jmFields.getStringAttribute("productNameEn"));
+            cmsBtJmProductModel.setAddressOfProduce(jmFields.getStringAttribute("originCn"));
+            cmsBtJmProductModel.setAvailablePeriod(jmFields.getStringAttribute("beforeDate"));
+            cmsBtJmProductModel.setApplicableCrowd(jmFields.getStringAttribute("suitPeople"));
+            cmsBtJmProductModel.setSpecialnote(jmFields.getStringAttribute("specialExplain"));
+            cmsBtJmProductModel.setProductLongName(jmFields.getStringAttribute("productLongName"));
+            cmsBtJmProductModel.setProductMediumName(jmFields.getStringAttribute("productMediumName"));
+            cmsBtJmProductModel.setProductShortName(jmFields.getStringAttribute("productShortName"));
+            cmsBtJmProductModel.setSearchMetaTextCustom(jmFields.getStringAttribute("searchMetaTextCustom"));
+        }
 
         List<BaseMongoMap<String, Object>> jmSkus = product.getPlatform(CART_ID).getSkus();
         List<CmsBtProductModel_Sku> commonSkus = product.getCommon().getSkus();
