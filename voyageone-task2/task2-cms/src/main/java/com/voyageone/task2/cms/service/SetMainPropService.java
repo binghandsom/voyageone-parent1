@@ -976,6 +976,16 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                             cmsProduct.getCommon().getFields().setColor(feed.getColor().split("-")[0]);
                         }
                     }
+                    if (feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.KitBag.getId())) {
+                        cmsProduct.getCommon().getFields().setShortDesEn(feed.getShortDescription());
+                        if(StringUtil.isEmpty(cmsProduct.getCommonNotNull().getFieldsNotNull().getShortDesCn())) {
+                            cmsProduct.getCommon().getFields().setShortDesCn(feed.getShortDescription());
+                        }
+                        cmsProduct.getCommon().getFields().setMaterialEn(feed.getMaterial());
+                        if(StringUtil.isEmpty(cmsProduct.getCommonNotNull().getFieldsNotNull().getMaterialCn())) {
+                            cmsProduct.getCommon().getFields().setMaterialCn(feed.getMaterial());
+                        }
+                    }
                     if (cmsProduct == null) {
                         // 有出错, 跳过
                         String errMsg = "feed->master导入:更新:编辑商品的时候出错(cmsProduct = null):" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
@@ -1046,6 +1056,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         cmsProduct.getCommon().getFields().setTranslateStatus("1");
                         cmsProduct.getCommon().getFields().setTranslator(getTaskName());
                         cmsProduct.getCommon().getFields().setTranslateTime(DateTimeUtil.getGMTTime());
+                    }
+                    if (feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.KitBag.getId())) {
+                        cmsProduct.getCommon().getFields().setShortDesCn(feed.getShortDescription());
+                        cmsProduct.getCommon().getFields().setMaterialCn(feed.getMaterial());
                     }
 
                     $debug("doCreateCmsBtProductModel:" + (System.currentTimeMillis() - startTime));

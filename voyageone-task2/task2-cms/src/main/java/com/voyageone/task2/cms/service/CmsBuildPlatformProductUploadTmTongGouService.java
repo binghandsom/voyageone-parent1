@@ -1633,12 +1633,29 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             String hscode = "";
             // 只有当入关方式(true表示跨境申报)时，才需要设置海关报关税号hscode;false表示邮关申报时，不需要设置海关报关税号hscode
             if ("true".equalsIgnoreCase(crossBorderRreportFlg)) {
-                String hsCodePrivate = product.getCommon().getFields().getHsCodePrivate();
-                if (!StringUtils.isEmpty(hsCodePrivate)) {
-                    if (hsCodePrivate.contains(Separtor_Coma)) {
-                        hscode = hsCodePrivate.substring(0, hsCodePrivate.indexOf(Separtor_Coma));
+                String propValue = product.getCommon().getFields().getHsCodePrivate();
+
+                // 20170427 bug修正 START
+                // 通过配置表(cms_mt_channel_config)来决定用hsCodeCross，还是hsCodePrivate，默认用hsCodePrivate
+                CmsChannelConfigBean hscodeConfig = CmsChannelConfigs.getConfigBean(expressionParser.getSxData().getChannelId(),
+                        CmsConstants.ChannelConfig.HSCODE,
+                        String.valueOf(expressionParser.getSxData().getCartId()) + CmsConstants.ChannelConfig.SX_HSCODE);
+                if (hscodeConfig != null) {
+                    String hscodePropName = hscodeConfig.getConfigValue1(); // 目前配置的是code或者color或者codeDiff
+                    if (!StringUtils.isEmpty(hscodePropName)) {
+                        String val = expressionParser.getSxData().getMainProduct().getCommon().getFields().getStringAttribute(hscodePropName);
+                        if (!StringUtils.isEmpty(val)) {
+                            propValue = val;
+                        }
+                    }
+                }
+                // 20170427 bug修正 END
+
+                if (!StringUtils.isEmpty(propValue)) {
+                    if (propValue.contains(Separtor_Coma)) {
+                        hscode = propValue.substring(0, propValue.indexOf(Separtor_Coma));
                     } else {
-                        hscode = hsCodePrivate;
+                        hscode = propValue;
                     }
                 }
             }
