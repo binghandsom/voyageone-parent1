@@ -100,6 +100,15 @@ public class CmsMqRoutingKey {
     // 聚美活动价格同步到聚美商城价格
     public static final String CMS_JM_MALL_PROMOTION_PRICE_SYNC = "VOCmsJmMallPromotionPriceSyncQueue";
 
+    //批量lock平台    added by piao
+    public static final String  CMS_ADV_SEARCH_LOCK_PRODUCTS = "VOCmsAdvSearchLockProductsMQJobQueue";
+
+    // 检测产品数据是否正确
+    public static final String CMS_CHECK_PRODUCT_IS_RIGHT = "VOCmsCheckProductIsRightQueue";
+
+    // 添加新group
+    public static final String CMS_ADD_NEW_GROUP = "VOCmsAddNewGroupQueue";
+
     // feed数据导入接口
     public static final String CMS_FEED_IMPORT_MQ_JOB = "CmsFeedImportMQJobQueue";
 
@@ -108,9 +117,6 @@ public class CmsMqRoutingKey {
 
     //sneakerHead根据活动里面的产品找出同一group的商品加入活动
     public static final String CMS_SNEAKERHEAD_ADD_PROMOTION = "CmsSneakerheadAddPromotionMQJobQueue";
-
-    //批量lock平台    added by piao
-    public static final String  CMS_ADV_SEARCH_LOCK_PRODUCTS = "VOCmsAdvSearchLockProductsMQJobQueue";
 
 
     // 未整理的业务内容
