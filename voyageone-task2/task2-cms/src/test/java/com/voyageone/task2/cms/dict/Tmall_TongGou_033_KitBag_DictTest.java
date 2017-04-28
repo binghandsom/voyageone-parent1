@@ -41,9 +41,9 @@ public class Tmall_TongGou_033_KitBag_DictTest extends BaseDictTest{
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
         ShopBean shopProp = new ShopBean();
         shopProp.setApp_url("http://gw.api.taobao.com/router/rest");
-        shopProp.setAppKey("23755796");
-        shopProp.setAppSecret("dedb99809d9ac1f0506d6f772a0db70d");
-        shopProp.setSessionKey("6201110eb95c7f87e7ZZfda1b579b23f96564be9abea9d23247884386");
+        shopProp.setAppKey("");
+        shopProp.setAppSecret("");
+        shopProp.setSessionKey("");
         shopProp.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
 
         try {
