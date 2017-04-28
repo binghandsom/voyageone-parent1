@@ -2553,9 +2553,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 $info("聚美上新修改聚美Sku商家商品编码(skuCode) 头部+\"ERROR_\" " + response.getBody());
             }
         } catch (Exception e) {
-            $error(String.format("聚美上新修改聚美Sku商家商品编码(skuCode) 头部+\"ERROR_\" 调用聚美API失败 channelId=%s, " +
-                    "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
-            throw new BusinessException("聚美上新修改聚美Sku商家商品编码(skuCode) 头部+\"ERROR_\"失败！");
+            String errorMsg = String.format("聚美上新修改聚美Sku商家商品编码(skuCode) 头部+\"ERROR_\" 调用聚美API失败 channelId=%s, " +
+                    "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage());
+            $error(errorMsg, e);
+            throw new BusinessException(errorMsg);
         }
     }
 
