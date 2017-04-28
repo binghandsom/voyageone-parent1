@@ -48,7 +48,6 @@ public class ProductCheckService extends BaseService {
         CmsBtProductErrorModel errorModel = new CmsBtProductErrorModel();
         errorModel.setChannelId(productModel.getChannelId());
         errorModel.setProduct_Id(productModel.get_id());
-//        CmsBtProductModel oldProductModel = productModel.clone();
 
         try {
 
@@ -238,7 +237,8 @@ public class ProductCheckService extends BaseService {
         String productCode = productModel.getCommon().getFields().getCode();
 
         if (productModel.getPlatform(cartId) == null || productModel.getPlatform(cartId).getSkus() == null) {
-            if (productModel.getPlatform(cartId) != null && productModel.getPlatform(cartId).getSkus() == null)
+            if (productModel.getPlatform(cartId) != null && productModel.getPlatform(cartId).getSkus() == null
+                    && 928 != cartId)
                 productModel.getPlatforms().remove("P"+ cartId);
             errorModel.getErrors().add(String.format("该产品_id:%s的platforms.P%s为空", productModel.get_id(), cartId));
         } else {
