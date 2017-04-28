@@ -2,7 +2,6 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.category.match.FeedQuery;
 import com.voyageone.category.match.Searcher;
-import com.voyageone.category.match.StopWordCleaner;
 import com.voyageone.category.match.Tokenizer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,14 +57,12 @@ public class SetMainPropServiceTest {
      * @return FeedQuer 查询条件
      */
     private FeedQuery getFeedQuery(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
-        // 调用Feed到主数据的匹配程序匹配主类目
-        StopWordCleaner cleaner = new StopWordCleaner(StopWordCleaner.STOPWORD_LIST);
         // 子店feed类目path分隔符(由于导入feedInfo表时全部替换成用"-"来分隔了，所以这里写固定值就可以了)
         List<String> categoryPathSplit = new ArrayList<>();
         categoryPathSplit.add("-");
         Tokenizer tokenizer = new Tokenizer(categoryPathSplit);
 
-        FeedQuery query = new FeedQuery(feedCategoryPath, cleaner, tokenizer);
+        FeedQuery query = new FeedQuery(feedCategoryPath, null, tokenizer);
         query.setProductType(productType);
         query.setSizeType(sizeType);
         query.setProductName(productNameEn, brand);
