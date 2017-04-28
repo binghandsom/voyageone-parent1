@@ -289,60 +289,63 @@ public class ProductCheckService extends BaseService {
 
 
             // 检测group的状态(已group的信息为正确依据)
-            if (StringUtils.isEmpty(groupInfo.getNumIId())) {
+            if (groupInfo.getCartId() != 928) {
 
-                if (((CartEnums.Cart.JM.getValue() == cartId)
-                        && !StringUtils.isEmpty(groupInfo.getPlatformPid()))
-                        || (CartEnums.Cart.JM.getValue() == cartId
-                        && !StringUtils.isEmpty(groupInfo.getPlatformMallId()))
-                        || !StringUtils.isEmpty(groupInfo.getPublishTime())
-                        || !StringUtils.isEmpty(groupInfo.getOnSaleTime())
-                        || !StringUtils.isEmpty(groupInfo.getInStockTime())
-                        || groupInfo.getPlatformStatus() != null) {
-                    flg = true;
-                    errorModel.getErrors().add(String.format("group(grup_id: %s),该group未上新,但是平台相关属性有值", groupInfo.get_id()));
-                }
-                groupInfo.setNumIId("");
-                groupInfo.setPlatformPid("");
-                groupInfo.setPlatformMallId("");
-                groupInfo.setPublishTime("");
-                groupInfo.setOnSaleTime("");
-                groupInfo.setInStockTime("");
-                groupInfo.setPlatformStatus(null);
+                if (StringUtils.isEmpty(groupInfo.getNumIId())) {
+
+                    if (((CartEnums.Cart.JM.getValue() == cartId)
+                            && !StringUtils.isEmpty(groupInfo.getPlatformPid()))
+                            || (CartEnums.Cart.JM.getValue() == cartId
+                            && !StringUtils.isEmpty(groupInfo.getPlatformMallId()))
+                            || !StringUtils.isEmpty(groupInfo.getPublishTime())
+                            || !StringUtils.isEmpty(groupInfo.getOnSaleTime())
+                            || !StringUtils.isEmpty(groupInfo.getInStockTime())
+                            || groupInfo.getPlatformStatus() != null) {
+                        flg = true;
+                        errorModel.getErrors().add(String.format("group(grup_id: %s),该group未上新,但是平台相关属性有值", groupInfo.get_id()));
+                    }
+                    groupInfo.setNumIId("");
+                    groupInfo.setPlatformPid("");
+                    groupInfo.setPlatformMallId("");
+                    groupInfo.setPublishTime("");
+                    groupInfo.setOnSaleTime("");
+                    groupInfo.setInStockTime("");
+                    groupInfo.setPlatformStatus(null);
 
 //                if (!CmsConstants.ProductStatus.Approved.toString().equals(mainProduct.getPlatform(cartId).getStatus())) {
 //                    groupInfo.setPlatformActive(null);
 //                }
-            } else {
-                groupInfo.setNumIId(mainProduct.getPlatform(cartId).getpNumIId());
-                if (CartEnums.Cart.JM.getValue() == cartId) {
-                    if ((StringUtils.isEmpty(groupInfo.getPlatformPid())
-                            || (!StringUtils.isEmpty(mainProduct.getPlatform(cartId).getpProductId())
-                            && !mainProduct.getPlatform(cartId).getpProductId().equals(groupInfo.getPlatformPid())))) {
-                        flg = true;
-                        errorModel.getErrors().add(String.format("group(grup_id: %s, cartId: %s),该group已上新,但是平台PlatformPid为空或不正确(%s)", groupInfo.get_id(), cartId, mainProduct.getPlatform(cartId).getpProductId()));
-                        groupInfo.setPlatformPid(mainProduct.getPlatform(cartId).getpProductId());
-                    }
                 } else {
+                    groupInfo.setNumIId(mainProduct.getPlatform(cartId).getpNumIId());
+                    if (CartEnums.Cart.JM.getValue() == cartId) {
+                        if ((StringUtils.isEmpty(groupInfo.getPlatformPid())
+                                || (!StringUtils.isEmpty(mainProduct.getPlatform(cartId).getpProductId())
+                                && !mainProduct.getPlatform(cartId).getpProductId().equals(groupInfo.getPlatformPid())))) {
+                            flg = true;
+                            errorModel.getErrors().add(String.format("group(grup_id: %s, cartId: %s),该group已上新,但是平台PlatformPid为空或不正确(%s)", groupInfo.get_id(), cartId, mainProduct.getPlatform(cartId).getpProductId()));
+                            groupInfo.setPlatformPid(mainProduct.getPlatform(cartId).getpProductId());
+                        }
+                    } else {
 
-                    flg = true;
-                    groupInfo.setPlatformPid("");
+                        flg = true;
+                        groupInfo.setPlatformPid("");
+                    }
+
+                    if (CartEnums.Cart.JM.getValue() == cartId
+                            && (StringUtils.isEmpty(groupInfo.getPlatformMallId())
+                            || (!StringUtils.isEmpty(mainProduct.getPlatform(cartId).getpPlatformMallId())
+                            && !mainProduct.getPlatform(cartId).getpPlatformMallId().equals(groupInfo.getPlatformMallId())))) {
+                        flg = true;
+                        errorModel.getErrors().add(String.format("group(grup_id: %s, cartId: %s),该group已上新,但是平台PlatformMallId为空或不正确(%s)", groupInfo.get_id(), cartId, mainProduct.getPlatform(cartId).getpPlatformMallId()));
+                        groupInfo.setPlatformMallId(mainProduct.getPlatform(cartId).getpPlatformMallId());
+                    } else if (CartEnums.Cart.JM.getValue() != cartId && !StringUtils.isEmpty(groupInfo.getPlatformMallId())) {
+                        flg = true;
+                        groupInfo.setPlatformMallId("");
+                    }
+
+                    groupInfo.setPublishTime(mainProduct.getPlatform(cartId).getpPublishTime());
+                    groupInfo.setPlatformStatus(mainProduct.getPlatform(cartId).getpStatus());
                 }
-
-                if (CartEnums.Cart.JM.getValue() == cartId
-                        && (StringUtils.isEmpty(groupInfo.getPlatformMallId())
-                        || (!StringUtils.isEmpty(mainProduct.getPlatform(cartId).getpPlatformMallId())
-                        && !mainProduct.getPlatform(cartId).getpPlatformMallId().equals(groupInfo.getPlatformMallId())))) {
-                    flg = true;
-                    errorModel.getErrors().add(String.format("group(grup_id: %s, cartId: %s),该group已上新,但是平台PlatformMallId为空或不正确(%s)", groupInfo.get_id(), cartId, mainProduct.getPlatform(cartId).getpPlatformMallId()));
-                    groupInfo.setPlatformMallId(mainProduct.getPlatform(cartId).getpPlatformMallId());
-                } else if (CartEnums.Cart.JM.getValue() != cartId && !StringUtils.isEmpty(groupInfo.getPlatformMallId())) {
-                    flg = true;
-                    groupInfo.setPlatformMallId("");
-                }
-
-                groupInfo.setPublishTime(mainProduct.getPlatform(cartId).getpPublishTime());
-                groupInfo.setPlatformStatus(mainProduct.getPlatform(cartId).getpStatus());
             }
 
             // 更新group表
