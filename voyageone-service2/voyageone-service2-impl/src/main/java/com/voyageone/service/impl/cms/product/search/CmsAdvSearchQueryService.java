@@ -185,6 +185,14 @@ public class CmsAdvSearchQueryService extends BaseService {
             queryObject.addQuery("{'platforms.P#.cartId':#}");
             queryObject.addParameters(cartId, cartId);
 
+            if("1".equals(searchValue.getpLockFlg())){
+                queryObject.addQuery("{'platforms.P#.pLockFlg':#}");
+                queryObject.addParameters(cartId, "1");
+            }else if("0".equals(searchValue.getpLockFlg())){
+                queryObject.addQuery("{'platforms.P#.pLockFlg':{$in:[null,'','0']}}");
+                queryObject.addParameters(cartId);
+            }
+
             // 获取platform/cart status
             if (searchValue.getPlatformStatus() != null && searchValue.getPlatformStatus().size() > 0) {
                 // 获取platform status
