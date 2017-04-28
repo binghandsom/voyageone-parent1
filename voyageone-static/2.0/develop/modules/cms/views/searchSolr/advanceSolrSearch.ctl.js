@@ -1455,7 +1455,8 @@ define([
                         cartId: cartId,
                         productIds: _.pluck(_selProdList, "code"),
                         lock: lock,
-                        isSelectAll: $scope.vm._selall ? 1 : 0
+                        isSelectAll: $scope.vm._selall ? 1 : 0,
+                        searchInfo: $scope.searchInfoBefo
                     };
 
                     if (lock) {
