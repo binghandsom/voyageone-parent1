@@ -431,13 +431,11 @@ public class ProductCheckService extends BaseService {
             else {
                 //
                 if (StringUtils.isEmpty(cartInfo.getpPublishTime())
-                        || cartInfo.getpStatus() == null
+                        || (cartInfo.getpStatus() == null && !"928".equals(String.valueOf(cartId)))
                         || (StringUtils.isEmpty(cartInfo.getpNumIId()) && !"928".equals(String.valueOf(cartId)))
-                        || StringUtils.isEmpty(cartInfo.getpReallyStatus())
-                        || ((CartEnums.Cart.JM.getValue() == cartId)
-                        && StringUtils.isEmpty(cartInfo.getpProductId()))
-                        || (CartEnums.Cart.JM.getValue() == cartId
-                        && StringUtils.isEmpty(cartInfo.getpPlatformMallId()))) {
+                        || (StringUtils.isEmpty(cartInfo.getpReallyStatus()) && !"928".equals(String.valueOf(cartId)))
+                        || ((CartEnums.Cart.JM.getValue() == cartId) && StringUtils.isEmpty(cartInfo.getpProductId()))
+                        || (CartEnums.Cart.JM.getValue() == cartId && StringUtils.isEmpty(cartInfo.getpPlatformMallId()))) {
 
                     if (!"Error".equals(cartInfo.getpPublishError())) {
 
