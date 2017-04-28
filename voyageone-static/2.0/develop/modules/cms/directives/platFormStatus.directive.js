@@ -17,7 +17,9 @@ define([
     var statusDes = {
             "WaitingPublish": "待",
             "InStock": "库",
-            "OnSale": "售"
+            "OnSale": "售",
+            "ToOnSale": "售",
+            "ToInStock": "库"
         },
         pStatusDes = {
             "InStock": "(未)",
