@@ -430,7 +430,7 @@ public class ProductCheckService extends BaseService {
             // Approve的时候
             else {
                 //
-                if (StringUtils.isEmpty(cartInfo.getpPublishTime())
+                if ((StringUtils.isEmpty(cartInfo.getpPublishTime()) && !"928".equals(String.valueOf(cartId)))
                         || (cartInfo.getpStatus() == null && !"928".equals(String.valueOf(cartId)))
                         || (StringUtils.isEmpty(cartInfo.getpNumIId()) && !"928".equals(String.valueOf(cartId)))
                         || (StringUtils.isEmpty(cartInfo.getpReallyStatus()) && !"928".equals(String.valueOf(cartId)))
