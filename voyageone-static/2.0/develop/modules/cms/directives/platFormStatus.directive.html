@@ -1,7 +1,7 @@
 <!--  方便开发并为了保障前端压缩，该html修改后要压缩后拷入platFormStatus.directive-->
 
 <span class="plateform-status" ng-if="!ctrl.statusData.pReallyStatus">
-     <span class="label"  ng-class="{\'pending\': ctrl.statusData.status == \'Pending\',
+     <span class="label {{ctrl.statusData.approveError ? \'error\' : \'\'}}" ng-class="{\'pending\': ctrl.statusData.status == \'Pending\',
                                      \'ready\':ctrl.statusData.status == \'Ready\' ,
                                      \'waiting-publish\':ctrl.statusData.status == \'Approved\'}"
            title="{{ctrl.statusData.status}}">

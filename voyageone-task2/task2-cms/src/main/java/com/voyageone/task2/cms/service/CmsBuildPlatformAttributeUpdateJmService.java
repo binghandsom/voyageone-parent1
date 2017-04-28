@@ -6,6 +6,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
@@ -294,23 +295,18 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
         }
         // 判断一下聚美详情， 用哪套模板
         String strJumeiDetailTemplateName = "聚美详情";
-        if (mainProduct.getChannelId().equals("928")) {
+        if (ChannelConfigEnums.Channel.USJGJ.getId().equals(mainProduct.getChannelId())) {
+            strJumeiDetailTemplateName = "聚美详情-非重点";
             if (mainProduct.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().containsKey("details")) {
                 String detailName = mainProduct.getPlatformNotNull(CartEnums.Cart.LTT.getValue()).getFieldsNotNull().getStringAttribute("details");
 
                 if (StringUtils.isEmpty(detailName)) detailName = "";
-                if (detailName.equals("天猫同购描述-重点商品")) {
-                    strJumeiDetailTemplateName = "聚美详情-重点商品";
-                } else if (detailName.equals("天猫同购描述-无属性图")) {
-                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
-                } else if (detailName.equals("天猫同购描述-非重点之英文长描述")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之英文长描述";
-                } else if (detailName.equals("天猫同购描述-非重点之中文长描述")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之中文长描述";
-                } else if (detailName.equals("天猫同购描述-非重点之中文使用说明")) {
-                    strJumeiDetailTemplateName = "聚美详情-非重点之中文使用说明";
-                } else if (detailName.equals("天猫同购描述-爆款商品")) {
-                    strJumeiDetailTemplateName = "聚美详情"; // 注： 这里不是写错了， 确实要这样做
+                if (detailName.equals("天猫同购描述-重点")) {
+                    strJumeiDetailTemplateName = "聚美详情-重点";
+                } else if (detailName.equals("天猫同购描述-非重点")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点";
+                } else if (detailName.equals("天猫同购描述-爆款")) {
+                    strJumeiDetailTemplateName = "聚美详情-非重点"; // 注： 这里不是写错了， 确实要这样做
                 }
             }
         }

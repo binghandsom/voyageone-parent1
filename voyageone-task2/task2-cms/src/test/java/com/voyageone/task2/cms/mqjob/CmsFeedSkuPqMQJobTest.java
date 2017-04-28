@@ -3,7 +3,6 @@ package com.voyageone.task2.cms.mqjob;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsFeedSkuPqMQMessageBody;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedSkuPqModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +27,7 @@ public class CmsFeedSkuPqMQJobTest {
     @Test
     public void onStartup() throws Exception {
         CmsFeedSkuPqMQMessageBody message = new CmsFeedSkuPqMQMessageBody();
-        List<CmsBtFeedSkuPqModel> skus= new ArrayList<>();
 
-        CmsBtFeedSkuPqModel  skuPqModel = new CmsBtFeedSkuPqModel();
         List<CmsBtFeedInfoModel_Sku> skuList = new ArrayList<>();
         CmsBtFeedInfoModel_Sku _skuInfo = feedInfoService.getProductByCode("010", "1FMA3324Y11").getSkus().get(0);
         /**
@@ -44,14 +41,11 @@ public class CmsFeedSkuPqMQJobTest {
         _skuInfo.setPriceClientMsrp(0.0);
 
         skuList.add(_skuInfo);
-        skuPqModel.setSkus(skuList);
-
-        skus.add(skuPqModel);
 
         //拼消息体
         message.setChannelId("010");
         message.setSender("piao");
-        message.setSkuInfo(skus);
+        message.setSkuList(skuList);
 
 
         cmsFeedSkuPqMQJob.onStartup(message);

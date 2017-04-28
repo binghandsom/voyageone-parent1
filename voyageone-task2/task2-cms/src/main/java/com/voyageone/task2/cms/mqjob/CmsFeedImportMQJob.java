@@ -2,17 +2,14 @@ package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsFeedImportMQMessageBody;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

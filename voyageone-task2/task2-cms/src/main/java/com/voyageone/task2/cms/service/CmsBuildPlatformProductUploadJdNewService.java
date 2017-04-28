@@ -41,9 +41,11 @@ import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsMtChannelConditionMappingConfigDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.sx.PlatformWorkloadAttribute;
 import com.voyageone.service.impl.cms.sx.SxProductNewService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
@@ -180,6 +182,8 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
     private CmsPlatformTitleTranslateMqService cmsTranslateMqService;
     @Autowired
     private CmsMtChannelConditionMappingConfigDao cmsMtChannelConditionMappingConfigDao;
+    @Autowired
+    private CmsBtSxWorkloadDaoExt sxWorkloadDao;
 
     @Override
     public SubSystem getSubSystem() {
@@ -1094,7 +1098,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
             sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, String.valueOf(jdWareId), platformStatus, "", getTaskName());
 
             // 上新成功之后回写jdSkuId操作
-            updateSkuIds(shopProp, StringUtils.toString(jdWareId), updateWare);
+            updateSkuIds(shopProp, StringUtils.toString(jdWareId), updateWare, groupId);
 
             // added by morse.lu 2016/12/08 start
             if (ChannelConfigEnums.Channel.SN.getId().equals(channelId)) {
@@ -2765,11 +2769,12 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
     /**
      * 从京东平台取得skuId回写到mongDB的product中
      */
-    public void updateSkuIds(ShopBean shop, String wareId, boolean updateFlg) {
+    public void updateSkuIds(ShopBean shop, String wareId, boolean updateFlg, Long groupId) {
         if (shop == null || StringUtils.isEmpty(wareId)) return;
 
         String channelId = shop.getOrder_channel_id();
         String cartId = shop.getCart_id();
+
         StringBuilder failCause = new StringBuilder("");
         List<Sku> skus;
 
@@ -2779,7 +2784,23 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
             // 根据京东商品id取得京东平台上的sku信息列表(即使出错也不报出来，算上新成功，只是回写出错，以后再回写也可以)
             skus = jdSkuService.getSkusByWareId(shop, wareId, failCause);
 
-            if (ListUtils.isNull(skus)) return;
+            if (ListUtils.isNull(skus)) {
+                // 如果没有渠道skuId 将该商品插入platform_workload表 等待重新再取一次skuId
+                List<CmsBtSxWorkloadModel> modelList = new ArrayList<>();
+                CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
+                model.setChannelId(channelId);
+                model.setCartId(Integer.parseInt(cartId));
+                model.setWorkloadName(PlatformWorkloadAttribute.JD_SKUID.getValue());
+                model.setGroupId(groupId);
+                model.setPriority_order(1);
+                model.setModifier(getTaskName());
+                model.setModified(DateTimeUtil.getDate());
+                model.setCreater(getTaskName());
+                model.setCreated(DateTimeUtil.getDate());
+                modelList.add(model);
+                sxWorkloadDao.insertPlatformWorkloadModels(modelList);
+                return;
+            }
 
             // 循环取得的sku信息列表，把jdSkuId批量更新到product中去
             BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);

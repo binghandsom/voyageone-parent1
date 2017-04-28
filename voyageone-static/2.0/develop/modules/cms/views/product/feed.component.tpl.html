@@ -18,14 +18,11 @@
                             </div>
                             <label class="col-sm-2 control-label">{{feedProp.feedAttrCn}}</label>
                             <div class="col-sm-3">
-
-                                    <input class="form-control" name="cnAttribute" ng-model="feedProp.feedAttrValueCn" required>
-
-
+                                    <input class="form-control" name="cnAttribute" ng-model="feedProp.feedAttrValueCn" >
                             </div>
                             <div class="col-sm-1">
                                 <label class="i-checks-sm m-b-none">
-                                    <input type="checkbox" ng-model="feedProp.customPropActive" disabled>
+                                    <input type="checkbox" ng-click="ctrl.checkChg(feedProp)" ng-model="feedProp.customPropActive" >
                                 </label>
                             </div>
                         </div>

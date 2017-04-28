@@ -60,6 +60,7 @@ public class CmsAdvSearchCustColumnService extends BaseViewService {
         if (custAttrList.length > 0) {
             List<Map<String, Object>> customProps = feedCustomPropService.getFeedCustomPropAttrs(channelId, "");
             for (Map<String, Object> props : customProps) {
+                if(props.get("feed_prop_translation") == null) continue;
                 String propId = (String) props.get("feed_prop_original");
                 Map<String, String> atts = new HashMap<>(2);
                 atts.put("configCode", "feed.cnAtts." + propId);

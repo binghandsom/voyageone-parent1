@@ -44,7 +44,7 @@ public class CmsBuildPlatformProductUploadTmServiceTest {
         workload.setCartId(23);
 //        workload.setGroupId(Long.parseLong("977667"));   // 服饰
 //        workload.setGroupId(Long.parseLong("980134"));   // 配饰1
-        workload.setGroupId(Long.parseLong("980170"));   // 配饰2
+        workload.setGroupId(Long.parseLong("10798126"));   // 配饰2
 //        workload.setGroupId(Long.parseLong("984304"));   // 鞋子
         workload.setPublishStatus(0);
 
@@ -57,10 +57,10 @@ public class CmsBuildPlatformProductUploadTmServiceTest {
     public void testUploadProduct2() throws Exception {
 
         CmsBtSxWorkloadModel workload = new CmsBtSxWorkloadModel();
-        workload.setId(247);
+//        workload.setId(247);
         workload.setChannelId("010");
         workload.setCartId(23);
-        workload.setGroupId(Long.parseLong("27725"));
+        workload.setGroupId(Long.parseLong("10798126"));
         workload.setPublishStatus(0);
 
         // 测试用PortAmerican海外专营店
@@ -68,7 +68,7 @@ public class CmsBuildPlatformProductUploadTmServiceTest {
         shop.setOrder_channel_id("010");
         shop.setCart_id("23");
         shop.setApp_url("http://gw.api.taobao.com/router/rest");
-        shop.setAppKey("21008948");
+        shop.setAppKey("");
         shop.setAppSecret("");
         shop.setSessionKey("");
         // platformid一定要设成京东，否则默认为天猫（1）的话，expressionParser.parse里面会上传照片到天猫空间，出现异常

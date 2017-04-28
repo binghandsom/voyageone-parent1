@@ -1,6 +1,7 @@
 package com.voyageone.service.bean.cms.jumei;
 
 import java.util.List;
+import java.util.Map;
 
 public class BatchUpdateSkuPriceParameterBean {
     //价格类型    1 建议售价   2指导售价  3最终售价  4固定售价
@@ -17,6 +18,8 @@ public class BatchUpdateSkuPriceParameterBean {
     double priceValue;
     List<Integer> listPromotionProductId;
     int jmPromotionId;
+    private Map<String, Object> searchInfo;
+    private boolean selAll;
     public int getPriceTypeId() {
         return priceTypeId;
     }
@@ -73,5 +76,19 @@ public class BatchUpdateSkuPriceParameterBean {
         this.jmPromotionId = jmPromotionId;
     }
 
+    public Map<String, Object> getSearchInfo() {
+        return searchInfo;
+    }
 
+    public void setSearchInfo(Map<String, Object> searchInfo) {
+        this.searchInfo = searchInfo;
+    }
+
+    public boolean isSelAll() {
+        return selAll;
+    }
+
+    public void setSelAll(boolean selAll) {
+        this.selAll = selAll;
+    }
 }

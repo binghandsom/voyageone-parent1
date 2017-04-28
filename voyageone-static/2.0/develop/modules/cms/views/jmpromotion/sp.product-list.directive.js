@@ -14,9 +14,11 @@ define([
             tagList: [],
             changeCount: 0,
             productCount: 0,
-            productUrl: carts.valueOf(27).pUrl
+            productUrl: carts.valueOf(27).pUrl,
+            _selall:false
         };
         $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.jmpromId, pCatPath: null, pCatId: null};
+        $scope.searchInfoBefore = {};
         $scope.parentModel = {};
         $scope.modelUpdateDealEndTime = {};
         $scope.modelAllUpdateDealEndTime = {};
@@ -56,9 +58,11 @@ define([
             $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.jmpromId};
             $scope.searchInfo.brand = null;
             $scope.searchInfo.selectedChanged = null;
+            $scope.vm._selall = false;
         };
 
         $scope.search = function () {
+            $scope.vm._selall = false;
             var data = getSearchInfo(),
                 size = $scope.dataPageOption.size ? $scope.dataPageOption.size : 10;
 
@@ -80,6 +84,7 @@ define([
                     }
                 }
             }
+            $scope.searchInfoBefore = angular.copy(data);
             return data;
         }
 
@@ -366,7 +371,7 @@ define([
         //批量同步价格
         $scope.batchSynchPrice = function () {
             var listPromotionProductId = $scope.getSelectedPromotionProductIdList();
-            if (listPromotionProductId.length == 0) {
+            if (listPromotionProductId.length == 0 && $scope.vm._selall == false) {
                 alert("请选择同步价格的商品!");
                 return;
             }
@@ -386,6 +391,8 @@ define([
             var parameter = {};
             parameter.promotionId = $scope.vm.promotionId;
             parameter.listPromotionProductId = listPromotionProductId;
+            parameter.searchInfo = $scope.searchInfoBefore;
+            parameter.selAll = $scope.vm._selall;
             jmPromotionDetailService.batchSynchPrice(parameter).then(function (res) {
                 $scope.search();
                 alert("请稍后几分钟刷新页面，查看最新上传结果");
@@ -395,7 +402,7 @@ define([
         //批量同步价格
         $scope.batchSynchMallPrice = function () {
             var listPromotionProductCodes = $scope.getSelectedPromotionProductCodeList();
-            if (listPromotionProductCodes.length == 0) {
+            if (listPromotionProductCodes.length == 0 && $scope.vm._selall == false) {
                 alert("请选择同步价格的商品!");
                 return;
             }
@@ -415,10 +422,14 @@ define([
             var parameter = {};
             parameter.jmPromotionId = $scope.vm.promotionId;
             parameter.productCodes = listPromotionProductCodes;
+            parameter.searchInfo = $scope.searchInfoBefore;
+            parameter.selAll = $scope.vm._selall;
             jmPromotionDetailService.batchSynchMallPrice(parameter).then(function (res) {
                 if (res.data.result) {
                     $scope.search();
+
                     alert("请稍后几分钟刷新页面，查看最新上传结果");
+
                 }
 
             });
@@ -447,7 +458,7 @@ define([
         //批量上传
         $scope.batchCopyDeal = function () {
             var listPromotionProductId = $scope.getSelectedPromotionProductIdList();
-            if (listPromotionProductId.length == 0) {
+            if (listPromotionProductId.length == 0 && $scope.vm._selall == false) {
                 alert("请选择上传的商品!");
                 return;
             }
@@ -468,10 +479,13 @@ define([
             var parameter = {};
             parameter.promotionId = $scope.vm.promotionId;
             parameter.listPromotionProductId = listPromotionProductId;
+            parameter.searchInfo = $scope.searchInfoBefore;
+            parameter.selAll = $scope.vm._selall;
             jmPromotionDetailService.batchCopyDeal(parameter).then(function (res) {
                 if (res.data.result) {
                     $scope.search();
                     alert($translate.instant('请稍后几分钟刷新页面，查看最新上传结果'));
+                    $scope.vm._selall = false;
                 }
                 else {
                     alert($translate.instant('TXT_FAIL'));
@@ -503,7 +517,9 @@ define([
             parameter.promotionId = $scope.vm.promotionId;
             parameter.listPromotionProductId = listPromotionProductId;
             parameter.listProductCode = listProductCode;
-            if (listPromotionProductId.length == 0) {
+            parameter.searchInfo = $scope.searchInfoBefore;
+            parameter.selAll = $scope.vm._selall;
+            if (listPromotionProductId.length == 0 && $scope.vm._selall == false) {
                 alert("请选择删除的商品!");
                 return;
             }
@@ -513,6 +529,7 @@ define([
                     if (res.data.result) {
                         $scope.search();
                         alert($translate.instant('TXT_SUCCESS'));
+                        $scope.vm._selall = false;
                     }
                     else {
                         alert($translate.instant('TXT_FAIL'));
@@ -551,7 +568,7 @@ define([
         //批量修改价格
         $scope.openPriceModifyWin = function () {
             var listPromotionProduct = $scope.getSelectedPromotionProductList();
-            if (listPromotionProduct.length == 0) {
+            if (listPromotionProduct.length == 0 && $scope.vm._selall == false) {
                 alert("请选择修改价格的商品!");
                 return;
             }
@@ -559,13 +576,17 @@ define([
                 search: $scope.search,
                 jmPromotionId: $scope.vm.promotionId,
                 isBegin: $scope.vm.isBegin,
-                listPromotionProduct: listPromotionProduct
+                listPromotionProduct: listPromotionProduct,
+                searchInfo : $scope.searchInfoBefore,
+                selAll : $scope.vm._selall
+            }).then(function () {
+                $scope.vm._selall = false;
             })
         };
 
         $scope.openTagModifyWin = function () {
             var listPromotionProduct = $scope.getSelectedPromotionProductList();
-            if (listPromotionProduct.length == 0) {
+            if (listPromotionProduct.length == 0 && $scope.vm._selall == false) {
                 alert("请选择修改价格的商品!");
                 return;
             }
@@ -574,7 +595,9 @@ define([
                 tagList: $scope.vm.tagList,
                 jmPromotionId: $scope.vm.promotionId,
                 isBegin: $scope.vm.isBegin,
-                listPromotionProduct: listPromotionProduct
+                listPromotionProduct: listPromotionProduct,
+                searchInfo : $scope.searchInfoBefore,
+                selAll : $scope.vm._selall
             })
         };
 

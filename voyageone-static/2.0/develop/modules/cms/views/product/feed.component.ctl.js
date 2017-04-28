@@ -23,7 +23,8 @@ define([
 
             productDetailService.updateProductAtts({
                 prodId: $scope.productInfo.productId,
-                feedInfo: $scope.productInfo.feedInfo
+                feedInfo: $scope.productInfo.feedInfo,
+                productCustomIsDisp: $scope.productInfo.productCustomIsDisp
             }).then(function () {
                 self.notify.success("更新成功!");
             }, function () {
@@ -50,6 +51,16 @@ define([
             firstError.focus();
             firstError.addClass("focus-error");
         };
+
+        feedComponentCtl.prototype.checkChg = function (feedProp) {
+            var self = this,
+                $scope = self.$scope;
+            if(!$scope.productInfo.productCustomIsDisp){
+                $scope.productInfo.productCustomIsDisp={};
+            }
+            $scope.productInfo.productCustomIsDisp[feedProp.feedAttrEn] = feedProp.customPropActive;
+        };
+
 
         return {
             restrict: "E",

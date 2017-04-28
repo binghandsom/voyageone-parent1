@@ -592,8 +592,8 @@ public class CmsProductDetailService extends BaseViewService {
         }
 
         requestMap.put("productCodes", prodCodes);
-        requestMap.put("userName",userInfo.getUserName());
-        requestMap.put("channelId",userInfo.getSelChannelId());
+        requestMap.put("userName", userInfo.getUserName());
+        requestMap.put("channelId", userInfo.getSelChannelId());
 
         CmsBatchSetMainCategoryMQMessageBody messageBody = BeanUtils.toModel(requestMap, CmsBatchSetMainCategoryMQMessageBody.class);
         messageBody.setSender(userInfo.getUserName());
@@ -615,7 +615,7 @@ public class CmsProductDetailService extends BaseViewService {
         List<String> prodCodes = null;
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            prodCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (Map<String, Object>)requestMap.get("searchInfo"));
+            prodCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (Map<String, Object>) requestMap.get("searchInfo"));
         } else {
             prodCodes = (List<String>) requestMap.get("prodIds");
         }
@@ -624,12 +624,12 @@ public class CmsProductDetailService extends BaseViewService {
             resultMap.put("isChangeCategory", false);
             return resultMap;
         }
-        requestMap.put("userName",userInfo.getUserName());
-        requestMap.put("channelId",userInfo.getSelChannelId());
-        List<List<String>> splitCodes = CommonUtil.splitList(prodCodes,100);
+        requestMap.put("userName", userInfo.getUserName());
+        requestMap.put("channelId", userInfo.getSelChannelId());
+        List<List<String>> splitCodes = CommonUtil.splitList(prodCodes, 100);
         splitCodes.forEach(codes -> {
-            requestMap.put("codeList",codes);
-            sender.sendMessage( CmsMqRoutingKey.CMS_BATCH_CmsBatchRefreshMainCategoryJob, requestMap);
+            requestMap.put("codeList", codes);
+            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_CmsBatchRefreshMainCategoryJob, requestMap);
         });
 
         // 获取更新结果
@@ -651,18 +651,18 @@ public class CmsProductDetailService extends BaseViewService {
             if (product != null) {
                 Map<String, Object> image = new HashMap<String, Object>();
                 image.put("productCode", s1);
-                String imageName ="";
+                String imageName = "";
 
-                if(!ListUtils.isNull(product.getCommon().getFields().getImages1()) && product.getCommon().getFields().getImages1().get(0).size()>0){
+                if (!ListUtils.isNull(product.getCommon().getFields().getImages1()) && product.getCommon().getFields().getImages1().get(0).size() > 0) {
                     imageName = (String) product.getCommon().getFields().getImages1().get(0).get("image1");
                 }
-                if(StringUtil.isEmpty(imageName) && !ListUtils.isNull(product.getCommon().getFields().getImages6()) && product.getCommon().getFields().getImages6().get(0).size()>0){
+                if (StringUtil.isEmpty(imageName) && !ListUtils.isNull(product.getCommon().getFields().getImages6()) && product.getCommon().getFields().getImages6().get(0).size() > 0) {
                     imageName = (String) product.getCommon().getFields().getImages6().get(0).get("image6");
                 }
                 image.put("imageName", imageName);
                 image.put("isMain", finalCmsBtProductGroup.getMainProductCode().equalsIgnoreCase(s1));
                 image.put("prodId", product.getProdId());
-                image.put("qty",product.getCommon().getFields().getQuantity());
+                image.put("qty", product.getCommon().getFields().getQuantity());
                 images.add(image);
             }
         });
@@ -685,8 +685,8 @@ public class CmsProductDetailService extends BaseViewService {
         Map<String, Object> mastData = new HashMap<>();
         mastData.put("images", images);
         mastData.put("lock", cmsBtProduct.getLock());
-        mastData.put("appSwitch",productComm.getFields().getAppSwitch());
-        mastData.put("translateStatus",productComm.getFields().getTranslateStatus());
+        mastData.put("appSwitch", productComm.getFields().getAppSwitch());
+        mastData.put("translateStatus", productComm.getFields().getTranslateStatus());
         mastData.put("isMain", cmsBtProductGroup.getMainProductCode().equalsIgnoreCase(cmsBtProduct.getCommon().getFields().getCode()));
 
         // 获取各个平台的状态
@@ -712,6 +712,7 @@ public class CmsProductDetailService extends BaseViewService {
         mastData.put("platformList", platformList);
 
         mastData.put("feedInfo", productService.getCustomProp(cmsBtProduct));
+        mastData.put("productCustomIsDisp", cmsBtProduct.getFeed().getProductCustomIsDisp());
 
         List<Map<String, Object>> inventoryList = getProdSkuCnt(channelId, prodId);
         mastData.put("inventoryList", inventoryList);
@@ -735,18 +736,18 @@ public class CmsProductDetailService extends BaseViewService {
             feedInfoModel = feedInfoService.getProductByCode(channelId, StringUtils.isEmpty(cmsBtProduct.getCommon().getFields().getOriginalCode()) ? cmsBtProduct.getCommon().getFields().getCode() : cmsBtProduct.getCommon().getFields().getOriginalCode());
         }
 
-        Map<String,Integer> skuinvs = null;
+        Map<String, Integer> skuinvs = null;
         WmsCodeStoreInvBean stockDetail = inventoryCenterLogicService.getCodeStockDetails(cmsBtProduct.getOrgChannelId(), cmsBtProduct.getCommon().getFields().getCode());
-        if(stockDetail != null && !ListUtils.isNull(stockDetail.getStocks())){
+        if (stockDetail != null && !ListUtils.isNull(stockDetail.getStocks())) {
             skuinvs = stockDetail.getStocks().stream().map(WmsCodeStoreInvBean.StocksBean::getBase)
-                    .collect(Collectors.toMap(sku->channelId.equals("001")?sku.getSku().toLowerCase():sku.getSku(),WmsCodeStoreInvBean.StocksBean.BaseBean::getTotal));
+                    .collect(Collectors.toMap(sku -> channelId.equals("001") ? sku.getSku().toLowerCase() : sku.getSku(), WmsCodeStoreInvBean.StocksBean.BaseBean::getTotal));
         }
 
         List<Map<String, Object>> skuList = new ArrayList<>();
         for (CmsBtProductModel_Sku skuModel : cmsBtProduct.getCommon().getSkus()) {
             Map<String, Object> skuInfo = new HashMap<>();
             skuInfo.put("skuCode", skuModel.getSkuCode());
-            skuInfo.put("qty", skuinvs == null || skuinvs.get(skuModel.getSkuCode()) == null?0:skuinvs.get(skuModel.getSkuCode()));
+            skuInfo.put("qty", skuinvs == null || skuinvs.get(skuModel.getSkuCode()) == null ? 0 : skuinvs.get(skuModel.getSkuCode()));
             skuInfo.put("size", skuModel.getSize());
             skuInfo.put("barcode", skuModel.getBarcode());
             // 取得FeedInfo中的原始图片
@@ -778,6 +779,7 @@ public class CmsProductDetailService extends BaseViewService {
 
     /**
      * 更新产品共通属性
+     *
      * @param channelId
      * @param prodId
      * @param commInfo
@@ -808,7 +810,15 @@ public class CmsProductDetailService extends BaseViewService {
 
         }
         //产品编辑页翻译状态从0-》1的场合 翻译时间 和人 设置
-        if(!oldProduct.getCommon().getFields().getTranslateStatus().equalsIgnoreCase(commonModel.getFields().getTranslateStatus()) && "1".equalsIgnoreCase(commonModel.getFields().getTranslateStatus())){
+        if (!oldProduct.getCommon().getFields().getTranslateStatus().equalsIgnoreCase(commonModel.getFields().getTranslateStatus()) && "1".equalsIgnoreCase(commonModel.getFields().getTranslateStatus())) {
+            commonModel.getFields().setTranslator(modifier);
+            commonModel.getFields().setTranslateTime(DateTimeUtil.getNowTimeStamp());
+        }
+
+        /**保存时未设置翻译状态，询问后设置翻译状态补全翻译实践 added by piao */
+        if ("1".equalsIgnoreCase(commonModel.getFields().getTranslateStatus())
+                && commonModel.getFields().getTranslator().isEmpty()
+                && commonModel.getFields().getTranslateTime().isEmpty()) {
             commonModel.getFields().setTranslator(modifier);
             commonModel.getFields().setTranslateTime(DateTimeUtil.getNowTimeStamp());
         }
@@ -1338,12 +1348,12 @@ public class CmsProductDetailService extends BaseViewService {
                 Map<String, Object> productInfo = new HashMap<String, Object>();
                 productInfo.put("productCode", s1);
 
-                String imageName ="";
+                String imageName = "";
 
-                if(!ListUtils.isNull(product.getCommon().getFields().getImages1()) && product.getCommon().getFields().getImages1().get(0).size()>0){
+                if (!ListUtils.isNull(product.getCommon().getFields().getImages1()) && product.getCommon().getFields().getImages1().get(0).size() > 0) {
                     imageName = (String) product.getCommon().getFields().getImages1().get(0).get("image1");
                 }
-                if(StringUtil.isEmpty(imageName) && !ListUtils.isNull(product.getCommon().getFields().getImages6()) && product.getCommon().getFields().getImages6().get(0).size()>0){
+                if (StringUtil.isEmpty(imageName) && !ListUtils.isNull(product.getCommon().getFields().getImages6()) && product.getCommon().getFields().getImages6().get(0).size() > 0) {
                     imageName = (String) product.getCommon().getFields().getImages6().get(0).get("image6");
                 }
                 productInfo.put("imageName", imageName);
@@ -1436,7 +1446,7 @@ public class CmsProductDetailService extends BaseViewService {
         platForm.setpNumIId("");
         // platForm.setpStatus(CmsConstants.PlatformStatus.);
         platForm.remove("pStatus");
-        productPlatformService.updateProductPlatformWithSx(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier, "单品下线",false);
+        productPlatformService.updateProductPlatformWithSx(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier, "单品下线", false);
         String comment = parameter.getComment();
         productStatusHistoryService.insert(parameter.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), parameter.getCartId(), EnumProductOperationType.Delisting, comment, modifier);
 
@@ -1488,7 +1498,7 @@ public class CmsProductDetailService extends BaseViewService {
 
     private void delistingCode(DelistingParameter paramr, String modifier, String code) {
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode(paramr.getChannelId(), code);
-        if(cmsBtProductModel != null) {
+        if (cmsBtProductModel != null) {
             CmsBtProductModel_Platform_Cart platForm = cmsBtProductModel.getPlatform(paramr.getCartId());
             String comment = String.format("NumIID【%s】，人工下线。备注:%s", platForm.getpNumIId(), paramr.getComment());
             platForm.setStatus(CmsConstants.ProductStatus.Ready.name());
@@ -1589,6 +1599,7 @@ public class CmsProductDetailService extends BaseViewService {
 
     /**
      * 只更新平台价格,触发平台价格刷新.
+     *
      * @param channelId
      * @param cartId
      * @param prodId
@@ -1596,12 +1607,12 @@ public class CmsProductDetailService extends BaseViewService {
      * @param platform
      * @throws Exception
      */
-    public void updateSkuPrice(String channelId, Integer cartId, Long prodId, String userName,CmsBtProductModel_Platform_Cart platform) throws BusinessException {
+    public void updateSkuPrice(String channelId, Integer cartId, Long prodId, String userName, CmsBtProductModel_Platform_Cart platform) throws BusinessException {
 
         // 根据中国最终售价来判断 中国建议售价是否需要自动提高价格
         try {
             priceService.unifySkuPriceMsrp(platform.getSkus(), channelId, platform.getCartId());
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new BusinessException(String.format("修改平台商品价格　调用priceService.unifySkuPriceMsrp失败 channelId=%s, cartId=%s", channelId, platform.getCartId()), e);
         }
 
@@ -1632,11 +1643,12 @@ public class CmsProductDetailService extends BaseViewService {
 
     /**
      * 修改产品共通属性中的图片
-     * @param imageType   图片类型
-     * @param images      图片集合
+     *
+     * @param imageType 图片类型
+     * @param images    图片集合
      * @return 系统当前时间
      */
-    public String restoreImg(String channelId, Long prodId, String imageType,List<String> images,String modifier){
+    public String restoreImg(String channelId, Long prodId, String imageType, List<String> images, String modifier) {
 
         String modified = DateTimeUtil.getNowTimeStamp();
         HashMap<String, Object> queryMap = new HashMap<>();
@@ -1644,7 +1656,7 @@ public class CmsProductDetailService extends BaseViewService {
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put(String.format("common.fields.images%s", imageType.substring(imageType.length()-1,imageType.length())), images);
+        updateMap.put(String.format("common.fields.images%s", imageType.substring(imageType.length() - 1, imageType.length())), images);
         updateMap.put("common.modifier", modifier);
 
         BulkUpdateModel model = new BulkUpdateModel();
@@ -1659,12 +1671,13 @@ public class CmsProductDetailService extends BaseViewService {
 
     /**
      * 修改产品PlateForm属性中的图片
-     * @param cartId      平台类型
-     * @param imageType   图片类型
-     * @param images      图片集合
+     *
+     * @param cartId    平台类型
+     * @param imageType 图片类型
+     * @param images    图片集合
      * @return 系统当前时间
      */
-    public String restorePlatformImg(String channelId, Long prodId, String imageType,List<String> images,String modifier,Integer cartId){
+    public String restorePlatformImg(String channelId, Long prodId, String imageType, List<String> images, String modifier, Integer cartId) {
 
         String modified = DateTimeUtil.getNowTimeStamp();
         HashMap<String, Object> queryMap = new HashMap<>();
@@ -1672,7 +1685,7 @@ public class CmsProductDetailService extends BaseViewService {
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put(String.format("platforms.P%s.images%s",cartId,imageType.substring(imageType.length()-1,imageType.length())), images);
+        updateMap.put(String.format("platforms.P%s.images%s", cartId, imageType.substring(imageType.length() - 1, imageType.length())), images);
         updateMap.put("common.modifier", modifier);
 
         BulkUpdateModel model = new BulkUpdateModel();

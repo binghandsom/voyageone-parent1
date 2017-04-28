@@ -6,6 +6,7 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.JumeiHtMallService;
 import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
@@ -83,7 +84,8 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
                 List<CmsBtJmSkuModel> skuModelList = getCmsBtJmSkuModels(channelId, productCode);
                 for (CmsBtJmSkuModel skuModel : skuModelList) {
 
-                    if (productCode.equalsIgnoreCase(skuModel.getProductCode())) {
+                    if (productCode.equalsIgnoreCase(skuModel.getProductCode())
+                            && !StringUtils.isEmpty(skuModel.getJmSkuNo())) {
                         HtMallSkuPriceUpdateInfo updateData = new HtMallSkuPriceUpdateInfo();
                         list.add(updateData);
                         updateData.setJumei_sku_no(skuModel.getJmSkuNo());

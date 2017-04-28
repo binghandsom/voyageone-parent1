@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.search.product;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.components.solr.bean.CmsProductSearchModel;
 import com.voyageone.components.solr.query.SimpleQueryBean;
@@ -194,7 +195,11 @@ public class CmsProductSearchQueryService extends BaseService {
 
             // 获取店铺内分类查询条件
             if (searchValue.getCidValue() !=  null && searchValue.getCidValue().size() > 0) {
-                criteria = criteria.and("P"+cartId+"_sellerCats").in(searchValue.getCidValue());
+                if(1 == searchValue.getShopCatType()) {
+                    criteria = criteria.and("P" + cartId + "_sellerCats").in(searchValue.getCidValue());
+                }else{
+                    criteria = criteria.and("P" + cartId + "_sellerCats").in(searchValue.getCidValue()).not();
+                }
             }
 
             // 查询价格变动(指导售价)
@@ -242,12 +247,21 @@ public class CmsProductSearchQueryService extends BaseService {
 
         // 获取 feed category
         if (searchValue.getfCatPathList() != null && searchValue.getfCatPathList().size() > 0) {
-            criteria = criteria.and("feedCat").in(searchValue.getfCatPathList());
+            searchValue.setfCatPathList(searchValue.getfCatPathList().stream().map(str->str.trim()).collect(Collectors.toList()));
+            if(searchValue.getfCatPathType() == 1) {
+                criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList());
+            }else {
+                criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList()).not();
+            }
         }
 
         // 获取 master category
-        if (StringUtils.isNotEmpty(searchValue.getmCatPath())) {
-            criteria = criteria.and("catPath").contains(searchValue.getmCatPath());
+        if (ListUtils.notNull(searchValue.getmCatPath())) {
+            if(searchValue.getmCatPathType() == 1) {
+                criteria = criteria.and("catPath").contains(searchValue.getmCatPath());
+            }else{
+                criteria = criteria.and("catPath").contains(searchValue.getmCatPath()).not();
+            }
         }
 
         if (StringUtils.isNotEmpty(searchValue.getCreateTimeStart())) {
@@ -276,6 +290,7 @@ public class CmsProductSearchQueryService extends BaseService {
 
         // 获取brand
         if (searchValue.getBrandList() !=  null && searchValue.getBrandList().size() > 0 && searchValue.getBrandSelType() > 0) {
+            searchValue.setBrandList(searchValue.getBrandList().stream().map(String::trim).collect(Collectors.toList()));
             if (searchValue.getBrandSelType() == 1) {
                 criteria = criteria.and("brand").in(searchValue.getBrandList());
             } else if (searchValue.getBrandSelType() == 2) {

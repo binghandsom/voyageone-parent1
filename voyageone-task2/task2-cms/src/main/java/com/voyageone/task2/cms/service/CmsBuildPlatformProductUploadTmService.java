@@ -1,5 +1,7 @@
 package com.voyageone.task2.cms.service;
 
+import com.taobao.api.ApiException;
+import com.taobao.api.domain.ScItem;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
@@ -16,6 +18,7 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbSaleService;
+import com.voyageone.components.tmall.service.TbScItemService;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.bean.cms.product.SxData;
@@ -101,7 +104,8 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
     private TaobaoScItemService taobaoScItemService;
     @Autowired
     private TbSaleService tbSaleService;
-
+    @Autowired
+    private TbScItemService tbScItemService;
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -385,6 +389,49 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 throw new BusinessException(errMsg);
             }
 
+            // 表达式解析子
+            expressionParser = new ExpressionParser(sxProductService, sxData);
+
+            // 20170417 全链路库存改造 charis STA
+            List<String> strSkuCodeList = new ArrayList<>();
+            sxData.getSkuList().forEach(sku -> strSkuCodeList.add(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name())));
+
+            if (ListUtils.isNull(strSkuCodeList)) {
+                String errMsg = "已完成审批的产品sku列表为空";
+                $error(errMsg);
+                throw new BusinessException(errMsg);
+            }
+            // 判断是否需要做货品绑定
+            String storeCode = taobaoScItemService.doCheckNeedSetScItem(shopProp, mainProduct);
+            if (!StringUtils.isEmpty(storeCode)) {
+                String title = sxProductService.getProductValueByMasterMapping("title", shopProp, expressionParser, getTaskName());
+                Map<String, ScItem> scItemMap = new HashMap<>();
+                for (String sku_outerId : strSkuCodeList) {
+                    // 检查是否发布过仓储商品
+                    ScItem scItem;
+                    try {
+                        scItem = tbScItemService.getScItemByOuterCode(shopProp, sku_outerId);
+                    } catch (ApiException e) {
+                        String errMsg = String.format("自动设置天猫商品全链路库存管理:检查是否发布过仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
+                        throw new BusinessException(errMsg);
+                    }
+
+                    if (scItem == null) {
+                        // 没有发布过仓储商品的场合， 发布仓储商品
+                        try {
+                            scItem = tbScItemService.addScItemSimple(shopProp, title, sku_outerId);
+                        } catch (ApiException e) {
+                            String errMsg = String.format("自动设置天猫商品全链路库存管理:发布仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
+                            throw new BusinessException(errMsg);
+                        }
+                    }
+                    scItemMap.put(sku_outerId, scItem);
+                }
+                sxData.setScItemMap(scItemMap);
+            }
+            // 20170417 全链路库存改造 charis END
+
+
             // 属性值准备
             // 取得主产品类目对应的platform mapping数据
             cmsMtPlatformMappingModel = platformMappingDeprecatedService.getMappingByMainCatId(channelId, cartId, mainProduct.getCommon().getCatId());
@@ -426,8 +473,6 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
             // 设置是否是达尔文体系标志位
             sxData.setDarwin(isDarwin);
 
-            // 表达式解析子
-            expressionParser = new ExpressionParser(sxProductService, sxData);
             // 平台产品id(MongoDB的)
             platformProductId = sxData.getPlatform().getPlatformPid();
 
@@ -624,7 +669,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                     // 达尔文的场合， 货品关联可能会丢失， 需要重新绑定货品
                     if (sxData.isDarwin() && canSxDarwinItem) {
                         // 自动设置天猫商品全链路库存管理（函数里会自动判断当前店铺是否需要处理全链路）
-                        taobaoScItemService.doSetScItem(shopProp, sxData.getMainProduct(), Long.parseLong(numIId));
+                        taobaoScItemService.doSetScItem(shopProp, sxData, Long.parseLong(numIId));
 
                         // 20170413 tom 如果是新建的场合， 需要根据配置来设置上下架状态 START
                         CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
@@ -639,6 +684,10 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                         }
                     }
                     // 20161202 达尔文货品关联问题的对应 END
+
+                    // 20170417 调用更新库存接口同步库存 STA
+                    sxProductService.synInventoryToPlatform(channelId, String.valueOf(cartId), listSxCode, null);
+                    // 20170417 调用更新库存接口同步库存 END
 
                     // added by morse.lu 2017/01/05 start
                     // 更新cms_bt_tm_sc_item表，把货品id记下来，同步库存用

@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
@@ -19,6 +20,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.CommonPropService;
@@ -271,6 +273,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
 
     public List<String> getProductCodeList(String channelId, Map<String,Object> searchInfo) {
         CmsSearchInfoBean2 cmsSearchInfoBean2 = new CmsSearchInfoBean2();
+        if(searchInfo == null) throw new BusinessException("检索条件不能为null");
         cmsSearchInfoBean2 = JacksonUtil.json2Bean(JacksonUtil.bean2Json(searchInfo),CmsSearchInfoBean2.class);
         return getProductCodeList(channelId, cmsSearchInfoBean2);
     }

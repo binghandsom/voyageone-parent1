@@ -90,6 +90,8 @@ define([
                             scope.vm.currentImage = $rootScope.imageUrl.replace('%s', _fields.images1[0].image1);
 
                         scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
+                        scope.productInfo.productCustomIsDisp = scope.vm.mastData.productCustomIsDisp;
+
                         scope.vm.lockStatus.onOffSwitch1 = scope.vm.mastData.appSwitch == "1" ? true : false;
                         scope.vm.lockStatus.onOffSwitch2 = scope.vm.mastData.translateStatus == "1" ? true : false;
                         scope.vm.lockStatus.onOffSwitch3 = scope.vm.mastData.lock == "1" ? true : false;
@@ -277,13 +279,13 @@ define([
                                     results: results
                                 }).then(function (context) {
                                     if (context === 'confirm') {
-                                        callSaveProduct(true);
+                                        masterSaveAction(true);
                                     } else {
                                         hsCode.value.value = _prehsCode;
                                     }
                                 });
                             } else {
-                                callSaveProduct();
+                                masterSaveAction();
                             }
 
                         }, function (res) {
@@ -292,9 +294,42 @@ define([
                         });
 
                     } else {
-                        callSaveProduct();
+                        masterSaveAction();
                     }
 
+                }
+
+                /**
+                 * 保存前判断是否要设置税号
+                 * @param flag
+                 */
+                function masterSaveAction(flag){
+                    if(!scope.vm.lockStatus.onOffSwitch2 && $localStorage.user.channel == 928){
+                        confirm('是否设置翻译状态为翻译?').then(function(){
+                            scope.vm.lockStatus.onOffSwitch2 = true;
+
+                            productDetailService.doTranslateStatus({
+                                prodId: scope.productInfo.productId,
+                                translateStatus: "1"
+                            }).then(function () {
+                                //改变翻译状态后要设置保存接口的上行参数
+                                //翻译状态是schema中的属性
+                                scope.productInfo.translateStatus = 1;
+
+                                scope.vm.productComm.fields.translateStatus = '1';
+                                var translateStatus = searchField("商品翻译状态", scope.vm.productComm.schemaFields);
+                                if (translateStatus) {
+                                    translateStatus.value.value = '1';
+                                }
+                                callSaveProduct(flag);
+                            });
+
+                        },function () {
+                            callSaveProduct(flag);
+                        });
+                    }else{
+                        callSaveProduct(flag);
+                    }
                 }
 
                 /**
@@ -474,6 +509,26 @@ define([
                     });
                 }
 
+
+                /**
+                 * group info 显示更多图片
+                 */
+                scope.moreCode = function () {
+                    scope.moreCodeFlg = !scope.moreCodeFlg;
+                };
+
+                scope.canMoreCode = function () {
+                    _mastData = scope.vm.mastData;
+
+                    if (!_mastData || !_mastData.images || _mastData.images.length === 0)
+                        return false;
+
+                    return _.some(_mastData.images, function (element) {
+                        return element.qty== 0
+                            && !element.isMain
+                            && element.productCode != scope.productInfo.masterField.code;
+                    });
+                };
 
                 /**全schema中通过name递归查找field*/
                 function searchField(fieldName, schema) {

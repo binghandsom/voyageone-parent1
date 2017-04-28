@@ -23,6 +23,7 @@ import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
@@ -265,7 +266,7 @@ public class CmsFieldEditService extends BaseViewService {
             JongoUpdate updObj = new JongoUpdate();
             updObj.setQuery("{'common.fields.code':{$in:#}}");
             updObj.setQueryParameters(productCodes);
-            updObj.setUpdate("{$set:{'common.fields." + prop_id + "':#}}");
+            updObj.setUpdate("{$set:{'common.catConf':'1','common.fields." + prop_id + "':#}}");
             updObj.setUpdateParameters(stsCode);
 
             WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
@@ -1044,6 +1045,54 @@ public class CmsFieldEditService extends BaseViewService {
         rsMap.put("ecd", 0);
         return rsMap;
     }
+
+    /**
+     * 平台部分上新
+     * @param params 检索条件
+     * @param userInfo 用户信息
+     * @return 处理结果
+     */
+    public Map<String, Object> partApproval(Map<String, Object> params, UserSessionBean userInfo) {
+
+        List<String> productCodes = (ArrayList<String>) params.get("productIds");
+        List<String> platformWorkloadAttributes = (List<String>) params.get("platformWorkloadAttributes");
+        if(ListUtils.isNull(platformWorkloadAttributes)){
+            throw new BusinessException("更新字段不能为空");
+        }
+        Integer isSelAll = (Integer) params.get("isSelAll");
+        if (isSelAll == null) {
+            isSelAll = 0;
+        }
+
+        Map<String, Object> rsMap = new HashMap<>();
+        if (isSelAll == 1) {
+            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), (Map<String, Object>) params.get("searchInfo"));
+        }
+        if (productCodes == null || productCodes.isEmpty()) {
+            $warn("没有code条件 params=" + params.toString());
+            rsMap.put("ecd", 1);
+            return rsMap;
+        }
+
+        Integer cartId = (Integer) params.get("cartId");
+
+        $debug("指导价变更批量确认 开始批量处理");
+
+        AdvSearchPartApprovalMQMessageBody mqMessageBody = new AdvSearchPartApprovalMQMessageBody();
+        mqMessageBody.setChannelId(userInfo.getSelChannelId());
+        mqMessageBody.setCartId(cartId);
+        mqMessageBody.setSender(userInfo.getUserName());
+        mqMessageBody.setPlatformWorkloadAttributes(platformWorkloadAttributes);
+        List<List<String>> codesList = CommonUtil.splitList(productCodes,100);
+        codesList.forEach(codes->{
+            mqMessageBody.setCodeList(codes);
+            cmsMqSenderService.sendMessage(mqMessageBody);
+        });
+        rsMap.put("ecd", 0);
+        return rsMap;
+    }
+
 
     /**
      * 从新计算中国指导售价

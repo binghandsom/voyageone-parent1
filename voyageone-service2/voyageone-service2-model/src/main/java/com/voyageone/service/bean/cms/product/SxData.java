@@ -1,5 +1,6 @@
 package com.voyageone.service.bean.cms.product;
 
+import com.taobao.api.domain.ScItem;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.service.model.cms.CmsTmpSxCnCodeModel;
@@ -42,6 +43,8 @@ public class SxData {
 	private Map<String, SxDarwinSkuProps> mapDarwinSkuProps; // Map<sku, SxDarwinSkuProps>
 
 	private Integer sizeChartId;
+	private Map<String, ScItem> scItemMap; // sku对应全链路后端商品
+
 
 	public class SxDarwinSkuProps {
 		private SxDarwinSkuProps() {}
@@ -289,6 +292,15 @@ public class SxData {
 	public void setSizeChartId(Integer sizeChartId) {
 		this.sizeChartId = sizeChartId;
 	}
+
+	public Map<String, ScItem> getScItemMap() {
+		return scItemMap;
+	}
+
+	public void setScItemMap(Map<String, ScItem> scItemMap) {
+		this.scItemMap = scItemMap;
+	}
+
 
 	public Map<String, SxSkuExInfo> getMapSxSkuExInfo() {
 		return mapSxSkuExInfo;

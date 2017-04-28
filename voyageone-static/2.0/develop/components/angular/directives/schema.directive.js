@@ -1280,6 +1280,7 @@
                                 innerElement.attr('name', name);
                                 innerElement.attr('ng-model', 'field.value.value');
                                 innerElement.attr('width', '"100%"');
+                                innerElement.attr('search-contains',true);
                                 innerElement.attr('title', field.name || field.id);
 
                                 bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');

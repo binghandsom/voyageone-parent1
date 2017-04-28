@@ -743,6 +743,29 @@ define([
 
     };
 
+    /**
+     * group info 显示更多图片
+     */
+    SpTmController.prototype.moreCode = function () {
+        var self = this;
+
+        self.moreCodeFlg = !self.moreCodeFlg;
+    };
+
+    SpTmController.prototype.canMoreCode = function () {
+        var self = this;
+
+        if (!self.vm.mastData || !self.vm.mastData.images || self.vm.mastData.images.length == 0)
+            return false;
+
+        return _.some(self.vm.mastData.images, function (element) {
+            return element.qty == 0
+                && !element.isMain
+                && !self.$scope.productInfo
+                && element.productCode != self.$scope.productInfo.masterField.code;
+        });
+    };
+
     cms.directive('tmSubPage', function () {
         return {
             restrict: 'E',

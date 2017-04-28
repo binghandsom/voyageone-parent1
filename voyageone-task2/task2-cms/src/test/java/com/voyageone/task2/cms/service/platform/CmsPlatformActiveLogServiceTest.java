@@ -21,10 +21,16 @@ import java.util.Map;
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class CmsPlatformActiveLogServiceTest {
 
+    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_ShopConfigs.toString();
     @Autowired
     private CmsPlatformActiveLogService targetService;
 
-    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_ShopConfigs.toString();
+    /**
+     * build redis hash Key
+     */
+    private static String buildKey(String cart_id, String order_channel_id) {
+        return cart_id + CacheKeyEnums.SKIP + order_channel_id;
+    }
 
     @Before
     public void setUp() {
@@ -67,12 +73,12 @@ public class CmsPlatformActiveLogServiceTest {
     public void testTMPlatformToOnsale() {
         // 发送请求到MQ,插入操作历史记录
         Map<String, Object> logParams = new HashMap<>(6);
-        logParams.put("channelId", "012");
-        logParams.put("cartId", 27);
+        logParams.put("channelId", "928");
+        logParams.put("cartId", 31);
         logParams.put("activeStatus", "ToOnSale");
         logParams.put("creator", "edward");
         logParams.put("comment", "高级检索 批量上下架");
-        logParams.put("codeList", new ArrayList(Arrays.asList("BCH60F46-6R3")));
+        logParams.put("codeList", new ArrayList(Arrays.asList("028-ps7112758")));
         try {
             targetService.setProductOnSaleOrInStock(logParams);
         } catch (Exception e) {
@@ -176,12 +182,5 @@ public class CmsPlatformActiveLogServiceTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * build redis hash Key
-     */
-    private static String buildKey(String cart_id, String order_channel_id) {
-        return cart_id + CacheKeyEnums.SKIP + order_channel_id;
     }
 }

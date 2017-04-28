@@ -95,6 +95,10 @@ public class CmsFieldEditController extends CmsController {
                 // 重新计算指导价
                 Map<String, Object> rs = fieldEditService.refreshRetailPrice(params, getUser(), cmsSession);
                 return success(rs);
+            }else if ("partApproval".equals(prop)) { // 【高级检索】->【平台部分上新】
+                // 重新计算指导价
+                Map<String, Object> rs = fieldEditService.partApproval(params, getUser());
+                return success(rs);
             }
             return success(null);
         }

@@ -6,7 +6,7 @@ import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedSkuPqModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 
 import java.util.List;
 
@@ -16,14 +16,14 @@ import java.util.List;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_FEED_SKU_PQ_MQ_JOB)
 public class CmsFeedSkuPqMQMessageBody extends BaseMQMessageBody {
 
-    List<CmsBtFeedSkuPqModel> skuInfo;
+    private List<CmsBtFeedInfoModel_Sku> skuList;
 
-    public List<CmsBtFeedSkuPqModel> getSkuInfo() {
-        return skuInfo;
+    public List<CmsBtFeedInfoModel_Sku> getSkuList() {
+        return skuList;
     }
 
-    public void setSkuInfo(List<CmsBtFeedSkuPqModel> skuInfo) {
-        this.skuInfo = skuInfo;
+    public void setSkuList(List<CmsBtFeedInfoModel_Sku> skuList) {
+        this.skuList = skuList;
     }
 
 
@@ -33,7 +33,7 @@ public class CmsFeedSkuPqMQMessageBody extends BaseMQMessageBody {
             throw new MQMessageRuleException("缺少参数：channelId");
         }
 
-        if( ListUtils.isNull(skuInfo)){
+        if (ListUtils.isNull(skuList)) {
             throw new MQMessageRuleException("缺少参数：skuInfo");
         }
     }

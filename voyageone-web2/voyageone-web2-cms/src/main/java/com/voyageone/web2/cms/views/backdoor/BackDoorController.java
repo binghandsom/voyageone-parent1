@@ -35,7 +35,9 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsAddNewGroupMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsCartAddMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsCheckProductIsRightMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
@@ -1931,6 +1933,45 @@ public class BackDoorController extends CmsController {
         map.setSender(getUser().getUserName());
         cmsMqSenderService.sendMessage(map);
     }
+
+    /**
+     * 创建一个或者一个cart的group
+     *
+     * @param channelId
+     * @param cartId
+     * @param productCode
+     * @param isSingle
+     */
+    @RequestMapping(value = "addNewGroup", method = RequestMethod.GET)
+    public void addNewGroup(@RequestParam("channelId") String channelId, @RequestParam("cartId") Integer cartId, @RequestParam("code") String productCode, @RequestParam("isSingle") Boolean isSingle) {
+
+        CmsAddNewGroupMQMessageBody messageBody = new CmsAddNewGroupMQMessageBody();
+        messageBody.setChannelId(channelId);
+        messageBody.setCartId(cartId);
+        if (!StringUtils.isEmpty(productCode))
+            messageBody.setCode(productCode);
+        messageBody.setIsingle(isSingle);
+        cmsMqSenderService.sendMessage(messageBody);
+    }
+
+    /**
+     * 检测一个或者一个cart的商品信息是否正确
+     *
+     * @param channelId
+     * @param productCode
+     */
+    @RequestMapping(value = "checkProductIsRight", method = RequestMethod.GET)
+    public void checkProductIsRight(@RequestParam("channelId") String channelId, @RequestParam("code") String productCode) {
+
+        CmsCheckProductIsRightMQMessageBody messageBody = new CmsCheckProductIsRightMQMessageBody();
+        messageBody.setChannelId(channelId);
+        if (!StringUtils.isEmpty(productCode))
+            messageBody.setCode(productCode);
+        cmsMqSenderService.sendMessage(messageBody);
+    }
+
+
+
 
     public class skuPlatformSizeAndQty {
         String skuCode;
