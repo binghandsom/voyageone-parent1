@@ -47,16 +47,16 @@ public class Jumei_928_Common_DictTest {
 
         // 聚美详情
         doCreateJson("聚美详情-重点", false, doDict_聚美详情(2));
-        doCreateJson("聚美详情-非重点", false, doDict_聚美详情(4));
+//        doCreateJson("聚美详情-非重点", false, doDict_聚美详情(4));
 
         // 聚美使用方法
-        doCreateJson("聚美使用方法", false, doDict_聚美使用方法());
+//        doCreateJson("聚美使用方法", false, doDict_聚美使用方法());
 
         // 聚美实拍
-        doCreateJson("聚美实拍", false, doDict_聚美实拍());
+//        doCreateJson("聚美实拍", false, doDict_聚美实拍());
 
         // 聚美白底方图
-        doCreateJson("聚美白底方图", false, doDict_聚美白底方图());
+//        doCreateJson("聚美白底方图", false, doDict_聚美白底方图());
 
     }
 
@@ -177,9 +177,9 @@ public class Jumei_928_Common_DictTest {
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
 
-            if (propType == 4 ) {  // 参数图 - 非重点之英文长描述
+            if (propType == 4) {  // 参数图 - 非重点之英文长描述
                 // charis sta
-                String html = "<div style=\"margin-top: -3px; border-width: 0 15px 0 15px; border-color: #f6f2f1 ; border-style: double solid; padding: 50px 20px 20px 20px; width: 720px;font-family:'microsoft yahei'; font-size: 13pt; color: #000000; \">";
+                String html = "<div style=\"margin-top: -3px; padding: 50px 0 20px 10px; width: 100%; font-family:'microsoft yahei'; font-size: 13pt; color: #000000; \">";
                 ruleRoot.addRuleWord(new TextWord(html));
 
                 ruleRoot.addRuleWord(new MasterClrHtmlWord("longDesEn")); // 英文长描述
@@ -190,8 +190,8 @@ public class Jumei_928_Common_DictTest {
 
             if (propType == 2) {   // 参数图 - 重点商品
 
-                String tableTem = "<div style=\"margin-top: -3px; border-width: 0 15px 0 15px; border-color: #f6f2f1; border-style: double solid; padding: 50px 20px 20px 20px; width: 720px; \">" +
-                        "<table style=\"width: 720px; font-family: microsoft yahei; font-size: 13pt; color: #000000;\">";
+                String tableTem = "<div style=\"margin-top: -3px; padding: 50px 0 20px 10px; width: 100%; \">" +
+                        "<table style=\"font-family: microsoft yahei; font-size: 13pt; color: #000000; width: 100%;\">";
                 int columnCount = 2;
                 RuleExpression tableTemplate = new RuleExpression();
                 tableTemplate.addRuleWord(new TextWord(tableTem));
