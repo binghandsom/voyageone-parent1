@@ -8,6 +8,7 @@
 package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
+import java.util.Date;
 
 /**
  * 
@@ -68,6 +69,18 @@ public class CmsBtPromotionModel extends BaseModel {
     protected Integer isAllPromotion;
 
     protected Integer promotionId;
+
+    /**
+     * 0:实时 1:定时
+     */
+    protected Integer triggerType;
+
+    protected Date triggerTime;
+
+    /**
+     * mq的消息id
+     */
+    protected String mqId;
 
     public String getChannelId() {
         return channelId;
@@ -195,5 +208,29 @@ public class CmsBtPromotionModel extends BaseModel {
 
     public void setPromotionId(Integer promotionId) {
         this.promotionId = promotionId;
+    }
+
+    public Integer getTriggerType() {
+        return triggerType;
+    }
+
+    public void setTriggerType(Integer triggerType) {
+        this.triggerType = triggerType;
+    }
+
+    public Date getTriggerTime() {
+        return triggerTime;
+    }
+
+    public void setTriggerTime(Date triggerTime) {
+        this.triggerTime = triggerTime;
+    }
+
+    public String getMqId() {
+        return mqId;
+    }
+
+    public void setMqId(String mqId) {
+        this.mqId = mqId == null ? null : mqId.trim();
     }
 }

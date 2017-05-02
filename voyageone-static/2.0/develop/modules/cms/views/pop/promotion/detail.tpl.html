@@ -23,10 +23,56 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PLATFORM_TYPE"></label>
                 <div class="col-sm-7 m-t-xs">
-                    <label ng-repeat="cart in cartList" class="c-radio" ng-if="cart.value != 27">
+                    <label ng-repeat="cart in cartList" class="c-radio" ng-if="cart.value != 27 && cart.value != 928">
                         <input type="radio" name="promotionCartId" class="form-control" ng-model="editModel.promotionModel.cartId" value="{{::cart.value}}" required>
                         <span class="fa fa-check"></span><b>&nbsp;{{::cart.name}}</b>
                     </label>
+                </div>
+            </div>
+            <div class="form-group" ng-if="editModel.promotionModel.cartId == 20 || editModel.promotionModel.cartId == 23 || editModel.promotionModel.cartId == 30 || editModel.promotionModel.cartId == 31">
+                <label class="col-sm-3 control-label vo_reqfield" >类型</label>
+                <div class="col-sm-7 m-t-xs">
+                    <label class="c-radio"  >
+                        <input type="radio" name="promotionType" class="form-control" ng-model="editModel.promotionModel.promotionType" value=0 required>
+                        <span class="fa fa-check"></span><b>&nbsp;普通</b>
+                    </label>
+                    <label class="c-radio" >
+                        <input type="radio" name="promotionType" class="form-control" ng-model="editModel.promotionModel.promotionType" value=1 required>
+                        <span class="fa fa-check"></span><b>&nbsp;直降</b>
+                    </label>
+                    <label class="c-radio" >
+                        <input type="radio" name="promotionType" class="form-control" ng-model="editModel.promotionModel.promotionType" value=2 required>
+                        <span class="fa fa-check"></span><b>&nbsp;特价宝</b>
+                    </label>
+                    <label  ng-if="editModel.promotionModel.promotionType == 2">
+                        <input  class="form-control" ng-model="editModel.promotionModel.tejiabaoId" placeholder="{{'TXT_TE_JIA_BAO_ID' | translate}}">
+                    </label>
+                </div>
+            </div>
+            <div class="form-group" ng-if="(editModel.promotionModel.cartId == 20 || editModel.promotionModel.cartId == 23 || editModel.promotionModel.cartId == 30 || editModel.promotionModel.cartId == 31) && editModel.promotionModel.promotionType != 0">
+                <label class="col-sm-3 control-label vo_reqfield" >触发机制</label>
+                <div class="col-sm-7 m-t-xs">
+                    <label class="c-radio"  >
+                        <input type="radio" name="triggerType" class="form-control" ng-model="editModel.promotionModel.triggerType" value=0 required>
+                        <span class="fa fa-check"></span><b>&nbsp;手动</b>
+                    </label>
+                    <label class="c-radio" >
+                        <input type="radio" name="triggerType" class="form-control" ng-model="editModel.promotionModel.triggerType" value=1 required>
+                        <span class="fa fa-check"></span><b>&nbsp;实时</b>
+                    </label>
+                    <label class="c-radio" >
+                        <input type="radio" name="triggerType" class="form-control" ng-model="editModel.promotionModel.triggerType" value=2 required>
+                        <span class="fa fa-check"></span><b>&nbsp;定时</b>
+                    </label>
+                    <div class="col-sm-5 input-group" ng-if="editModel.promotionModel.triggerType == 2">
+                        <input type="datetime-local" class="form-control" uib-datepicker-popup
+                               ng-model="editModel.promotionModel.triggerTime" name="signupDeadline" required
+                               date-model-format="yyyy-MM-dd HH:mm:ss" step="1"
+                               is-open="datePicker4" close-text="Close"                         />
+                        <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4" ><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                    </div>
                 </div>
             </div>
             <div class="form-group">
@@ -155,21 +201,6 @@
                 <div class="col-sm-7 col-sm-offset-3">
                     <vo-message target="promotionForm.promotionTimeStart && promotionForm.promotionTimeEnd" class="vo-message-success"></vo-message>
                 </div>
-            </div>
-            <div class="form-group" ng-show="editModel.promotionModel.cartId == 20 || editModel.promotionModel.cartId == 23 || editModel.promotionModel.cartId == 30 || editModel.promotionModel.cartId == 31">
-                <div class="col-sm-3 control-label"><label class="" translate="TXT_IS_START_TE_JIA_BAO"></label></div>
-                <div class="col-sm-2">
-                    <div class="onoffswitch">
-                        <input type="checkbox" name="onoffswitch" ng-model="tejiabao" class="onoffswitch-checkbox" id="myonoffswitch4" checked>
-                        <label class="onoffswitch-label" for="myonoffswitch4">
-                            <span class="onoffswitch-inner"></span>
-                            <span class="onoffswitch-switch"></span>
-                        </label>
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <input class="form-control" ng-if="tejiabao == true" ng-model="editModel.promotionModel.tejiabaoId" placeholder="{{'TXT_TE_JIA_BAO_ID' | translate}}">
-                </div><!-- onoff switch -->
             </div>
         </form>
     </div>

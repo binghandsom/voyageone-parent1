@@ -6,7 +6,8 @@
         `id`, `channel_id`, `cart_id`, `promotion_status`, `promotion_name`, `pre_sale_end`, 
         `pre_sale_start`, `pre_period_start`, `pre_period_end`, `activity_start`, `activity_end`, 
         `tejiabao_id`, `promotion_type`, `ref_tag_id`, `active`, `is_all_promotion`, `created`, 
-        `creater`, `modified`, `modifier`, `promotion_id`
+        `creater`, `modified`, `modifier`, `promotion_id`, `trigger_type`, `trigger_time`, 
+        `mq_id`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -82,6 +83,15 @@
             <if test="promotionId != null" >
                 `promotion_id` = #{promotionId,jdbcType=INTEGER},
             </if>
+            <if test="triggerType != null" >
+                `trigger_type` = #{triggerType,jdbcType=INTEGER},
+            </if>
+            <if test="triggerTime != null" >
+                `trigger_time` = #{triggerTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="mqId != null" >
+                `mq_id` = #{mqId,jdbcType=VARCHAR},
+            </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
@@ -156,6 +166,15 @@
             <if test="promotionId != null" >
                 and `promotion_id` = #{promotionId,jdbcType=INTEGER}
             </if>
+            <if test="triggerType != null" >
+                and `trigger_type` = #{triggerType,jdbcType=INTEGER}
+            </if>
+            <if test="triggerTime != null" >
+                and `trigger_time` = #{triggerTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="mqId != null" >
+                and `mq_id` = #{mqId,jdbcType=VARCHAR}
+            </if>
         </where>
         limit 1
     </select>
@@ -225,6 +244,15 @@
             <if test="promotionId != null" >
                 and `promotion_id` = #{promotionId,jdbcType=INTEGER}
             </if>
+            <if test="triggerType != null" >
+                and `trigger_type` = #{triggerType,jdbcType=INTEGER}
+            </if>
+            <if test="triggerTime != null" >
+                and `trigger_time` = #{triggerTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="mqId != null" >
+                and `mq_id` = #{mqId,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -291,6 +319,15 @@
             <if test="promotionId != null" >
                 and `promotion_id` = #{promotionId,jdbcType=INTEGER}
             </if>
+            <if test="triggerType != null" >
+                and `trigger_type` = #{triggerType,jdbcType=INTEGER}
+            </if>
+            <if test="triggerTime != null" >
+                and `trigger_time` = #{triggerTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="mqId != null" >
+                and `mq_id` = #{mqId,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -355,6 +392,15 @@
             </if>
             <if test="promotionId != null" >
                 `promotion_id`,
+            </if>
+            <if test="triggerType != null" >
+                `trigger_type`,
+            </if>
+            <if test="triggerTime != null" >
+                `trigger_time`,
+            </if>
+            <if test="mqId != null" >
+                `mq_id`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -426,6 +472,15 @@
             </if>
             <if test="promotionId != null" >
                 #{promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="triggerType != null" >
+                #{triggerType,jdbcType=INTEGER},
+            </if>
+            <if test="triggerTime != null" >
+                #{triggerTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="mqId != null" >
+                #{mqId,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
