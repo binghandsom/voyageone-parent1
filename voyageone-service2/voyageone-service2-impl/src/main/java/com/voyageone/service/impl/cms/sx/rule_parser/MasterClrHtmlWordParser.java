@@ -27,15 +27,15 @@ public class MasterClrHtmlWordParser extends MasterWordParser {
         List<String> lstHtml = new ArrayList<>();
         lstHtml.add(prefix + "br" + suffix);
         lstHtml.add("< *br */>");
-        lstHtml.add("< *br *\\>");
+        lstHtml.add("< *br *\\\\>");
         lstHtml.add(prefix + "p" + suffix);
         lstHtml.add(prefix + "/p" + suffix);
         lstHtml.add(prefix + "/ *p" + suffix);
         lstHtml.add(prefix + "ul" + suffix);
         lstHtml.add(prefix + "/ul" + suffix);
         lstHtml.add(prefix + "/ *ul" + suffix);
-        lstHtml.add(prefix + "\\ul" + suffix);
-        lstHtml.add(prefix + "\\ *ul" + suffix);
+//        lstHtml.add(prefix + "\\ul" + suffix);
+        lstHtml.add(prefix + "\\\\ *ul" + suffix);
         lstHtml.add(prefix + "li" + suffix);
         lstHtml.add(prefix + "/li" + suffix);
         lstHtml.add(prefix + "/ *li" + suffix);

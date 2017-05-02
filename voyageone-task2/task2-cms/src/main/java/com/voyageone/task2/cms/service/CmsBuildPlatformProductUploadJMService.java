@@ -1884,7 +1884,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      * @param product
      * @return
      */
-    private  CmsBtJmProductModel fillCmsBtJmProductModel(CmsBtJmProductModel cmsBtJmProductModel, CmsBtProductModel product)
+    public  CmsBtJmProductModel fillCmsBtJmProductModel(CmsBtJmProductModel cmsBtJmProductModel, CmsBtProductModel product)
     {
         if(cmsBtJmProductModel == null)
         {
@@ -1914,10 +1914,15 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         cmsBtJmProductModel.setProductDesEn(fields.getShortDesEn());
         cmsBtJmProductModel.setProductDesCn(fields.getLongDesCn());
         cmsBtJmProductModel.setColorEn(fields.getColor());
-        cmsBtJmProductModel.setImage1(fields.getImages1().get(0).getName());
         cmsBtJmProductModel.setMaterialEn(fields.getMaterialEn());
         cmsBtJmProductModel.setMaterialCn(fields.getMaterialCn());
-
+        // 回写cms_bt_jm_product表时取得图片逻辑修改
+        List<CmsBtProductModel_Field_Image> field_images = sxProductService.getProductImages(product, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE, CART_ID);
+        if (ListUtils.notNull(field_images) && field_images.get(0) != null) {
+            cmsBtJmProductModel.setImage1(field_images.get(0).getName());
+        } else {
+            cmsBtJmProductModel.setImage1("");
+        }
         if (jmFields != null) {
             cmsBtJmProductModel.setProductNameCn(jmFields.getStringAttribute("productNameCn") + " " + special_symbol.matcher(productCode).replaceAll("-"));
             cmsBtJmProductModel.setAttribute(jmFields.getStringAttribute("attribute"));
