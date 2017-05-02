@@ -259,7 +259,7 @@
         <task:scheduled ref="CmsBuildPlatformProductUploadCnnJob" method="run" cron="0 0/3 0-23 * * ?"/>
 
         <!-- 检查善品数据是否正确（每天执行一次） -->
-        <task:scheduled ref="CmsCheckProductIsRightJob" method="run" cron="0 0/30 0-23 * * ?"/>
+        <task:scheduled ref="CmsCheckProductIsRightJob" method="run" cron="0 30 20 * * ?"/>
 
     </task:scheduled-tasks>
 
