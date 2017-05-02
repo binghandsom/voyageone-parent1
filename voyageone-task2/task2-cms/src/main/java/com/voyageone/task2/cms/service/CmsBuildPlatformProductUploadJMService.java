@@ -1920,6 +1920,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         List<CmsBtProductModel_Field_Image> field_images = sxProductService.getProductImages(product, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE, CART_ID);
         if (ListUtils.notNull(field_images) && field_images.get(0) != null) {
             cmsBtJmProductModel.setImage1(field_images.get(0).getName());
+        } else {
+            cmsBtJmProductModel.setImage1("");
         }
         if (jmFields != null) {
             cmsBtJmProductModel.setProductNameCn(jmFields.getStringAttribute("productNameCn") + " " + special_symbol.matcher(productCode).replaceAll("-"));
