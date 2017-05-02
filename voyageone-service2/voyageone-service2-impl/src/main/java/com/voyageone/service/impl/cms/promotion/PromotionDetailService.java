@@ -691,12 +691,12 @@ public class PromotionDetailService extends BaseService {
             }
 
             cmsPromotionSkuDao.deletePromotionSkuByProductId(item.getPromotionId(), item.getProductId());
-
-            promotionService.sendPromotionMq(promotionModel, false, operator);
         }
 
         //批量删除tag
         promotionCodesTagService.deleteListByPromotionId_Codes(channelId,promotionModel.getPromotionId(),codeList,promotionModel.getRefTagId());
+
+        promotionService.sendPromotionMq(promotionModel, false, operator);
     }
 
     @VOTransactional

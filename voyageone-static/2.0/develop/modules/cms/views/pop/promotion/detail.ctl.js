@@ -109,8 +109,8 @@ define([
                 _editModel.promotionModel.triggerType = 0;
             }
 
-            if(_editModel.promotionModel.triggerType == 0){
-                _editModel.promotionModel.triggerTime = null;
+            if(2 !=_editModel.promotionModel.triggerType){
+                _editModel.promotionModel.triggerTime = 0;
             }
 
             if(_editModel.promotionModel.triggerTime){
@@ -118,7 +118,7 @@ define([
             }
 
             if (_editModel.promotionModel.promotionType != 2)
-                $scope.editModel.promotionModel.tejiabaoId = "0";
+                _editModel.promotionModel.tejiabaoId = "0";
 
             promotionService.saveEditModel(_editModel).then(function () {
                 $scope.$close();

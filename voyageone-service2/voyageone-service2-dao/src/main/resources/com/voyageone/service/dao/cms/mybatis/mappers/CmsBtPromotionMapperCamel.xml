@@ -86,9 +86,7 @@
             <if test="triggerType != null" >
                 `trigger_type` = #{triggerType,jdbcType=INTEGER},
             </if>
-            <if test="triggerTime != null" >
                 `trigger_time` = #{triggerTime,jdbcType=TIMESTAMP},
-            </if>
             <if test="mqId != null" >
                 `mq_id` = #{mqId,jdbcType=VARCHAR},
             </if>

@@ -49,8 +49,6 @@ import java.util.stream.Collectors;
 public class PromotionService extends BaseService {
 
     @Autowired
-    CmsBtPromotionDao dao;
-    @Autowired
     CmsBtJmPromotionDao daoCmsBtJMPromotion;
     @Autowired
     private CmsBtPromotionDaoExt cmsBtPromotionDaoExt;
@@ -105,7 +103,7 @@ public class PromotionService extends BaseService {
         int result;
         if (cmsBtPromotionBean.getId() != null && cmsBtPromotionBean.getId() != 0) {
             CmsBtPromotionModel oldBtPromotion = getPromotion(cmsBtPromotionBean.getId());
-            result = dao.update(cmsBtPromotionBean);
+            result = promotionDao.update(cmsBtPromotionBean);
             editModel.getTagList().forEach(cmsBtTagModel -> {
                 cmsBtTagModel.setModifier(cmsBtPromotionBean.getModifier());
                 if (cmsBtTagDao.update(cmsBtTagModel) == 0) {
@@ -134,8 +132,11 @@ public class PromotionService extends BaseService {
             param.put("promotionName", cmsBtPromotionBean.getPromotionName());
             List<CmsBtPromotionBean> promotions = cmsBtPromotionDaoExt.selectByCondition(param);
             if (promotions == null || promotions.isEmpty()) {
-                result = dao.insert(insertTagsAndGetNewModel(editModel).getPromotionModel());
-//                sendPromotionMq(editModel.getPromotionModel(),true, cmsBtPromotionBean.getModifier());
+                result = promotionDao.insert(insertTagsAndGetNewModel(editModel).getPromotionModel());
+                // 如果是定时刷价格的场合 发送一个延时mq
+                if(2 == editModel.getPromotionModel().getTriggerType() && editModel.getPromotionModel().getTriggerTime() != null) {
+                    sendPromotionMq(editModel.getPromotionModel(), true, cmsBtPromotionBean.getModifier());
+                }
             } else {
                 throw new BusinessException("4000093");
             }
@@ -184,7 +185,7 @@ public class PromotionService extends BaseService {
     @VOTransactional
     public CallResult deleteByPromotionId(int promotionId ) {
         CallResult result=new CallResult();
-        CmsBtPromotionModel model = dao.select(promotionId);
+        CmsBtPromotionModel model = promotionDao.select(promotionId);
         if (model.getCartId() == CartEnums.Cart.JM.getValue()) {
             CmsBtJmPromotionModel jmModel = daoCmsBtJMPromotion.select(model.getPromotionId());
             if(jmModel.getStatus()==1)
@@ -211,9 +212,9 @@ public class PromotionService extends BaseService {
     }
 
     public int setPromotionStatus(SetPromotionStatusParameter parameter) {
-        CmsBtPromotionModel model = dao.select(parameter.getPromotionId());
+        CmsBtPromotionModel model = promotionDao.select(parameter.getPromotionId());
         model.setPromotionStatus(parameter.getPromotionStatus());
-      return   dao.update(model);
+      return   promotionDao.update(model);
     }
     //分页 end
 
@@ -318,7 +319,7 @@ public class PromotionService extends BaseService {
         result.put("total", count);
         return result;
     }
-    
+
     /**
      * 取得按Cart进行分类的活动详情
      * @param params 查询参数
@@ -343,7 +344,7 @@ public class PromotionService extends BaseService {
     			}
     		}
     	}
-    	
+
     	return result;
     }
 
