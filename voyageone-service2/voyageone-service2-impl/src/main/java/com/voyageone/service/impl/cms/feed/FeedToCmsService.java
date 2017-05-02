@@ -141,7 +141,7 @@ public class FeedToCmsService extends BaseService {
                                         || item.getPriceMsrp().compareTo(skuModel.getPriceMsrp()) != 0
                                         || item.getPriceNet().compareTo(skuModel.getPriceNet()) != 0
                                         || item.getPriceCurrent().compareTo(skuModel.getPriceCurrent()) != 0
-                                        || (item.getMainVid() != null && item.getMainVid().compareTo(skuModel.getMainVid()) != 0)) {
+                                        || (!item.getMainVid().equals(skuModel.getMainVid()))) {
                                     insertLog = true;
                                 }
                             }

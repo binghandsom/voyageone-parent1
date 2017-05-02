@@ -43,14 +43,18 @@ public class Tmall_010_Jewelry_DictTest {
 
 	@Test
 	public void dictTest() {
-		SxData sxData = sxProductService.getSxProductDataByGroupId("010", 26117L);
+		SxData sxData = sxProductService.getSxProductDataByGroupId("010", 20813L);
 		sxData.setCartId(23);
 		ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
 		ShopBean shopProp = Shops.getShop("010", 23);
+		shopProp.setApp_url("http://gw.api.taobao.com/router/rest");
+		shopProp.setAppKey("");
+		shopProp.setAppSecret("");
+		shopProp.setSessionKey("");
 		shopProp.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
 
 		try {
-			String result = sxProductService.resolveDict("无线描述", expressionParser, shopProp, getTaskName(), null);
+			String result = sxProductService.resolveDict("无线描述", expressionParser, shopProp, "JW_AppDesc_Test", null);
 			System.out.println(result);
 
 		} catch (Exception e) {

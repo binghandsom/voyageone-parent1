@@ -27,12 +27,15 @@ public class MasterClrHtmlWordParser extends MasterWordParser {
         List<String> lstHtml = new ArrayList<>();
         lstHtml.add(prefix + "br" + suffix);
         lstHtml.add("< *br */>");
+        lstHtml.add("< *br *\\\\>");
         lstHtml.add(prefix + "p" + suffix);
         lstHtml.add(prefix + "/p" + suffix);
         lstHtml.add(prefix + "/ *p" + suffix);
         lstHtml.add(prefix + "ul" + suffix);
         lstHtml.add(prefix + "/ul" + suffix);
         lstHtml.add(prefix + "/ *ul" + suffix);
+//        lstHtml.add(prefix + "\\ul" + suffix);
+        lstHtml.add(prefix + "\\\\ *ul" + suffix);
         lstHtml.add(prefix + "li" + suffix);
         lstHtml.add(prefix + "/li" + suffix);
         lstHtml.add(prefix + "/ *li" + suffix);
@@ -40,7 +43,9 @@ public class MasterClrHtmlWordParser extends MasterWordParser {
         lstHtml.add(prefix + "/div" + suffix);
         lstHtml.add(prefix + "/ *div" + suffix);
         lstHtml.add("&nbsp;");
-
+        lstHtml.add(prefix + "a *href=.*" + suffix);
+        lstHtml.add(prefix + "/a" + suffix);
+        lstHtml.add(prefix + "/ *a" + suffix);
         for (String html : lstHtml) {
             superResult = superResult.replaceAll(html, " ");
         }
