@@ -1,10 +1,8 @@
 package com.voyageone.service.impl.cms.sx.word;
 
-import com.taobao.api.response.PictureUploadResponse;
-import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.ims.rule_expression.*;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -135,19 +133,16 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         txtDesc = txtDesc.replaceAll("<br>", "\n");
         txtDesc = doClearHtml(txtDesc);
 
+        // 20170419 自定义图片处理逻辑优化 charis STA
         // 制作图片
         byte[] img = doCreateImage(txtDesc, width, startX, startY, sectionSize, fontSize, oneLineBit);
 
-        if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
-            TbPictureService tbPictureService = new TbPictureService();
-            PictureUploadResponse response = tbPictureService.uploadPicture(shopBean, img, "desc", "0");
+        String orgUrl = "customGetDescImage://" + MD5.getMD5(txtDesc);
 
-            if (!StringUtils.isEmpty(response.getPicture().getPicturePath())) {
-                return  response.getPicture().getPicturePath();
-            }
-        }
-
-        return "";
+        // 到数据库里找一下， 如果有了的话， 直接用数据库里的 platform_image_url
+        String url = sxProductService.getPlatformUrl4GetDescImage(orgUrl, sxData, shopBean, user, img);
+        // 20170419 自定义图片处理逻辑优化 charis END
+        return url;
     }
 
     public String doClearHtml(String value) {
