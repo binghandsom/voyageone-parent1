@@ -6,7 +6,6 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.feed.FeedSaleService;
@@ -62,11 +61,11 @@ public class LuckyVitaminSkuStatusCheckService  extends BaseCronTaskService {
                 String sku = reader.get(0);
                 if(!StringUtil.isEmpty(sku)) {
                     if (discontinued.equalsIgnoreCase("yes")) {
-                        feedSaleService.notSale(getChannel().getId(), sku);
+                        feedSaleService.setSaleOrNotSale(getChannel().getId(), sku, sku, 1);
                         $info(getChannel().getId() + " " + sku + " sale -> notSale");
                         sale++;
                     } else {
-                        feedSaleService.sale(getChannel().getId(), sku, 0);
+                        feedSaleService.setSaleOrNotSale(getChannel().getId(), sku, sku, 0);
                         $info(getChannel().getId() + " " + sku + " notSale -> sale");
                         noSale++;
                     }
