@@ -131,13 +131,13 @@ d-complex[multi] d-toolbox {
     vertical-align: bottom;
 }
 
-s-complex[multi] s-tip-new{
+s-complex[multi] s-tip-new {
     position: absolute;
     top: 0;
     right: 15px;
 }
 
-s-complex[multi] s-header{
+s-complex[multi] s-header {
     width: 100%;
 }
 
@@ -161,21 +161,24 @@ s-container label,
 d-container label {
     margin-right: 10px;
 }
-s-tip-new{
+
+s-tip-new {
     color: #ee903d;
     cursor: pointer;
     font-size: 14px;
 }
-s-tip-new:before{
+
+s-tip-new:before {
     content: '\f0a2';
     margin-right: -15px;
 }
-s-tip ,
-d-tip
-{
+
+s-tip,
+d-tip {
     display: block;
     color: #ee903d;
 }
+
 s-tip-new:before,
 s-tip:before,
 d-tip:before {
@@ -248,13 +251,13 @@ vo-message {
     border: 2px solid #fd0001;
 }
 
-.plateform-status .isMain{
+.plateform-status .isMain {
     color: #d85757;
     text-decoration: none;
     font-weight: bold;
 }
 
-.plateform-status .isCommon{
+.plateform-status .isCommon {
     color: #000;
     text-decoration: none;
     font-weight: lighter;
@@ -443,4 +446,32 @@ vpagination button.btn-default {
     filter: alpha(opacity=80);
 }
 
-/* dialogs.factory end */
+/** 鼠标点击右键操作 */
+#contextmenu {
+    position: fixed;
+    border-radius: 5px;
+    z-index: 9999
+}
+
+#contextmenu > ul {
+    list-style: none;
+    padding: 0;
+    margin: 0
+}
+
+#contextmenu > ul li {
+    list-style: none;
+    position: relative
+}
+
+#contextmenu > ul li ul {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    padding: 0
+}
+
+#contextmenu > ul li:hover ul {
+    display: block
+}

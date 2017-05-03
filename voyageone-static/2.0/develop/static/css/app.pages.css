@@ -485,6 +485,13 @@ s-field textarea.s-html {
     right: 13px;
 }
 
+.btn-copy{
+    position: absolute;
+    display: block;
+    top: 1px;
+    right: 3px;
+}
+
 .product-shema-detail .btn-nav-pop {
     box-shadow: 1px 1px 2px #ADCAE2;
 }
