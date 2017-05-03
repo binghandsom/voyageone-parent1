@@ -226,12 +226,14 @@
                                         <div class="col-xs-6 col-md-2"  ng-repeat="image in ctrl.vm.mastData.images">
                                             <a href="javascript:void(0)" class="thumbnail current clear-margin-bottom" ng-if="image.productCode == productInfo.masterField.code" style="height: 115px;">
                                                 <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
-                                                <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
+                                                <img class="thumb-group" src="http://image.voyageone.com.cn/is/image/sneakerhead/{{image.imageName}}"
+                                                     title="{{image.productCode}}">
                                             </a>
                                             <!--不是当前商品的话可以跳转到图片对应产品详情页-->
                                             <a ng-href="#/product/detail/{{image.prodId}}" class="thumbnail clear-margin-bottom" ng-if="image.productCode != productInfo.masterField.code" target="_blank" style="height: 115px;">
                                                 <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
-                                                <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
+                                                <img class="thumb-group" src="http://image.voyageone.com.cn/is/image/sneakerhead/{{image.imageName}}"
+                                                     title="{{image.productCode}}">
                                             </a>
                                             <div class="thumbInfo">
                                                 <div class="row">
