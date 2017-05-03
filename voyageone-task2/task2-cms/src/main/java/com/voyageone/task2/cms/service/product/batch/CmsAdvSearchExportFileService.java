@@ -244,29 +244,29 @@ public class CmsAdvSearchExportFileService extends BaseService {
         JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{'common.fields.code':{$in:#}}");
         queryObject.setParameters(prodCodeList);
-        String searchItemStr = CmsAdvSearchQueryService.searchItems;
-        if (cmsSessionBean.get("_adv_search_props_searchItems") != null) {
-            searchItemStr += (String) cmsSessionBean.get("_adv_search_props_searchItems");
-        }
-        if (!searchItemStr.endsWith(";"))
-            searchItemStr += ";";
-        if (searchValue.getFileType() == 3) {
-            // 要输出sku级信息
-            searchItemStr += "common.skus;common.fields.model;common.fields.color;feed.catPath;common.fields.origSizeType;common.fields.originalCode;";
-        } else if (searchValue.getFileType() == 2) {
-            // 要输出group级信息
-            searchItemStr += "common.fields.model;feed.catPath;common.fields.origSizeType;";
-        } else if (searchValue.getFileType() == 1) {
-            //code
-            searchItemStr += "common.fields.model;common.fields.color;feed.catPath;common.fields.origSizeType;";
-        } else if (searchValue.getFileType() == 4) {
-            searchItemStr += "common.skus.clientNetPrice;common.fields.color;common.fields.originalCode;platforms";
-        } else if (searchValue.getFileType() == 5) {
-            searchItemStr += "common.skus;common.fields.model;common.fields.isFiled;common.fields.hsCodeCross;common.fields.origin;common.fields.color;" +
-                    "common.fields.weightKG;common.fields.shortDesEn;common.fields.shortDesCn;common.fields.materialCn;common.fields.materialEn";
-        }
-
-        queryObject.setProjectionExt(searchItemStr.split(";"));
+//        String searchItemStr = CmsAdvSearchQueryService.searchItems;
+//        if (cmsSessionBean.get("_adv_search_props_searchItems") != null) {
+//            searchItemStr += (String) cmsSessionBean.get("_adv_search_props_searchItems");
+//        }
+//        if (!searchItemStr.endsWith(";"))
+//            searchItemStr += ";";
+//        if (searchValue.getFileType() == 3) {
+//            // 要输出sku级信息
+//            searchItemStr += "common.skus;common.fields.model;common.fields.color;feed.catPath;common.fields.origSizeType;common.fields.originalCode;";
+//        } else if (searchValue.getFileType() == 2) {
+//            // 要输出group级信息
+//            searchItemStr += "common.fields.model;feed.catPath;common.fields.origSizeType;";
+//        } else if (searchValue.getFileType() == 1) {
+//            //code
+//            searchItemStr += "common.fields.model;common.fields.color;feed.catPath;common.fields.origSizeType;";
+//        } else if (searchValue.getFileType() == 4) {
+//            searchItemStr += "common.skus.clientNetPrice;common.fields.color;common.fields.originalCode;platforms";
+//        } else if (searchValue.getFileType() == 5) {
+//            searchItemStr += "common.skus;common.fields.model;common.fields.isFiled;common.fields.hsCodeCross;common.fields.origin;common.fields.color;" +
+//                    "common.fields.weightKG;common.fields.shortDesEn;common.fields.shortDesCn;common.fields.materialCn;common.fields.materialEn";
+//        }
+//
+//        queryObject.setProjectionExt(searchItemStr.split(";"));
 
         // 店铺(cart/平台)列表
         List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
@@ -494,6 +494,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         index = size;
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
+                if(prop.get("name").indexOf("可售库存")>-0) continue;
                 FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
             }
         }
@@ -533,6 +534,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
+                if(prop.get("name").indexOf("可售库存")>-0) continue;
                 FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
             }
         }
@@ -806,7 +808,24 @@ public class CmsAdvSearchExportFileService extends BaseService {
                         continue;
                     }
 
-                    index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
+                    if("qty".equals(key.substring(key.lastIndexOf(".") + 1))){
+                        Integer qty = 0;
+                        for (BaseMongoMap<String, Object> map : _platform.getSkus()) {
+                            String sku = (String) map.get("skuCode");
+                            Boolean isSale = (Boolean) map.get("isSale");
+                            if(isSale !=null && isSale){
+                                SkuInventoryForCmsBean skuBeanObj = skuInventoryMap.keySet().stream().filter(skuBean -> sku.equalsIgnoreCase(skuBean.getSku())).findFirst().orElse(null);
+                                if (skuBeanObj != null) {
+                                    if (skuInventoryMap.get(skuBeanObj) != null) {
+                                        qty = qty + skuInventoryMap.get(skuBeanObj);
+                                    }
+                                }
+                            }
+                        }
+                        FileUtils.cell(row, index++, unlock).setCellValue(qty);
+                    }else{
+                        index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
+                    }
 
                 }
             }
@@ -889,7 +908,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                         FileUtils.cell(row, index++, unlock).setCellValue("");
                         continue;
                     }
-
+                    if("qty".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                     index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
 
                 }
@@ -999,7 +1018,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             FileUtils.cell(row, index++, unlock).setCellValue("");
                             continue;
                         }
-
+                        if("qty".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                         index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
 
                     }
@@ -1046,6 +1065,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
             FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(_platform.getpPriceRetailSt(), _platform.getpPriceRetailEd()));
         } else if ("pPriceSaleEd".equals(attrName)) {
             FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(_platform.getpPriceSaleSt(), _platform.getpPriceSaleEd()));
+        } else if ("lock".equals(attrName)) {
+            FileUtils.cell(row, index++, unlock).setCellValue(getLockStatusTxt(StringUtil.isEmpty(_platform.getLock())?"0":"1"));
         } else {
             key = key.split(_cartId)[1].substring(1);
             Object salesVal = _platform.getSubNode(key.split("\\."));
