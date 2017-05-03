@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.vomq.vomessage.body;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.components.rabbitmq.namesub.IMQMessageSubBeanName;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -15,9 +16,9 @@ import java.util.Map;
  * Created by gjl on 2017/3/28.
  */
 @VOMQQueue(value = CmsMqRoutingKey.EWMS_MQ_GROUP_SKU)
-public class EwmsMQUpdateProductMessageBody  extends BaseMQMessageBody {
+public class EwmsMQUpdateProductMessageBody  extends BaseMQMessageBody implements IMQMessageSubBeanName {
 
-    private String channelId;
+//    private String channelId;
     private Integer cartId;
     private String groupSku;
     private Double groupPrice;
@@ -27,13 +28,13 @@ public class EwmsMQUpdateProductMessageBody  extends BaseMQMessageBody {
     private String userName;
     private String type;
 
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
+//    public String getChannelId() {
+//        return channelId;
+//    }
+//
+//    public void setChannelId(String channelId) {
+//        this.channelId = channelId;
+//    }
 
     public Integer getCartId() {
         return cartId;
@@ -101,7 +102,7 @@ public class EwmsMQUpdateProductMessageBody  extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isBlank(channelId)) {
+        if (StringUtils.isBlank(getChannelId())) {
             throw new MQMessageRuleException("组合商品推送MQ发送异常, 参数channelId为空.");
         }
         if (cartId == null) {
@@ -113,5 +114,10 @@ public class EwmsMQUpdateProductMessageBody  extends BaseMQMessageBody {
         if (CollectionUtils.isEmpty(sku)) {
             throw new MQMessageRuleException("组合商品推送MQ发送异常, 参数sku为空.");
         }
+    }
+
+    @Override
+    public String getSubBeanName() {
+        return getChannelId();
     }
 }
