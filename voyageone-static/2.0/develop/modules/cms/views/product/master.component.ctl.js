@@ -51,7 +51,7 @@ define([
                             value: 'image3',
                             name: '角度图'
                         }, {
-                            value: 'image6',
+                            value: 'image4',
                             name: 'PC端自定义图'
                         }, {
                             value: 'image5',
@@ -521,7 +521,6 @@ define([
                         callSaveProduct().then(function(){
                             initialize();
                         });
-
 
                     });
                 }
