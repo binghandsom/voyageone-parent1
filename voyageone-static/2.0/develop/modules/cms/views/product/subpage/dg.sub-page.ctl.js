@@ -200,7 +200,7 @@ define([
         self.vm.preStatus = angular.copy(self.vm.status);
 
         //有效性判断
-        if (!self.saveValid(mark))
+        if (mark != "temporary" && !self.saveValid(mark))
             return;
 
         //判断页面头部状态
