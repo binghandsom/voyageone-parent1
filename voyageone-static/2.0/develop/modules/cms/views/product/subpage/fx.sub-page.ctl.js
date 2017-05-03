@@ -553,6 +553,9 @@ define([
             showArr:['image1','image6','image7','image4','image5']
         }).then(function (platform) {
             self.vm.platform = platform;
+
+            //暂存
+            self.saveProduct('temporary');
         });
     };
 
