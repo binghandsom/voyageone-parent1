@@ -374,7 +374,9 @@ define([
                     break;
             }
 
-            popups.openColumnForDownLoad().then(function () {
+            popups.openColumnForDownLoad({
+                fileType: fileType
+            }).then(function () {
                 confirm(msg).then(function () {
                     $scope.vm.searchInfo.fileType = fileType;
                     searchAdvanceService2.exportFile($scope.vm.searchInfo).then(function (res) {

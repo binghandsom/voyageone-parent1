@@ -70,6 +70,9 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             {"platforms.P%s.fields.pPriceMsrpEd", "官方建议售价"},
             {"platforms.P%s.fields.pPriceRetailEd", "指导售价"},
             {"platforms.P%s.fields.pPriceSaleEd", "最终售价"},
+            {"platforms.P%s.mainProductCode", "主商品编码"},
+            {"platforms.P%s.qty", "可售库存"},
+            {"platforms.P%s.lock", "是否锁定"},
     };
 
     private static final String[][] platformItemsJM = {
@@ -82,6 +85,9 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             {"platforms.P%s.fields.pPriceMsrpEd", "官方建议售价"},
             {"platforms.P%s.fields.pPriceRetailEd", "指导售价"},
             {"platforms.P%s.fields.pPriceSaleEd", "最终售价"},
+            {"platforms.P%s.mainProductCode", "主商品编码"},
+            {"platforms.P%s.qty", "可售库存"},
+            {"platforms.P%s.lock", "是否锁定"},
     };
     /**
      * 取得当前主商品所在组的其他信息：所有商品的价格变动信息，子商品图片
