@@ -31,14 +31,14 @@ public class FeedSaleServiceTest {
 
         String channelId="010";
          String clientSku="ESH96163FFEI";
-        saleService.notSale(channelId, clientSku);
+        saleService.setSaleOrNotSale(channelId, clientSku, clientSku, 0);
     }
     @Test
     public void sale( ) {
 
         String channelId="010";
         String clientSku="ESH96163FFEI";
-        saleService.sale(channelId, clientSku,10);
+        saleService.setSaleOrNotSale(channelId, clientSku, clientSku, 1);
     }
 
     @Test

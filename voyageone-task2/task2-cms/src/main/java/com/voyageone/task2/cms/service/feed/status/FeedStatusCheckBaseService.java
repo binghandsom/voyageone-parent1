@@ -25,11 +25,8 @@ import java.util.stream.Collectors;
 public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
 
     private static final Integer pageSize = 200;
-
-    protected abstract List<CmsFeedLiveSkuModel> getSkuList() throws Exception;
-
-    protected abstract ChannelConfigEnums.Channel getChannel();
-
+    private static Set<String> notSale;
+    private static Set<String> sale;
     @Autowired
     private CmsFeedLiveSkuDaoExt cmsFeedLiveSkuDaoExt;
 
@@ -39,9 +36,9 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
     @Autowired
     private FeedSaleService feedSaleService;
 
-    private static Set<String> notSale;
+    protected abstract List<CmsFeedLiveSkuModel> getSkuList() throws Exception;
 
-    private static Set<String> sale;
+    protected abstract ChannelConfigEnums.Channel getChannel();
 
     @Override
     public SubSystem getSubSystem() {
@@ -110,11 +107,11 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
             }
             if (sku.getIsSale() == 0 && cmsFeedLiveSku != null) {
                 $info(getChannel().getId()+ " " + sku.getSku() + " notSale -> sale");
-                feedSaleService.sale(getChannel().getId(),sku.getClientSku(),cmsBtFeedInfoModel.getQty());
+                feedSaleService.setSaleOrNotSale(getChannel().getId(), sku.getClientSku(), sku.getSku(), 0);
                 sale.add(sku.getClientSku());
             } else if(sku.getIsSale() == 1 && cmsFeedLiveSku == null) {
                 $info(getChannel().getId()+ " " + sku.getSku() + " sale ->notSale");
-                feedSaleService.notSale(getChannel().getId(),sku.getClientSku());
+                feedSaleService.setSaleOrNotSale(getChannel().getId(), sku.getClientSku(), sku.getSku(), 1);
                 notSale.add(sku.getClientSku());
             }
         });

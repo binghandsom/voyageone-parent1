@@ -9,14 +9,12 @@ import com.voyageone.base.exception.CommonConfigNotFoundException;
 import com.voyageone.category.match.*;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
@@ -1653,6 +1651,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 commonSku.setClientSize(sku.getSize()); // ClientSize
                 commonSku.setSize(sku.getSize()); // 尺码
                 commonSku.setQty(sku.getQty());
+                commonSku.setIsSale(sku.getIsSale() == null ? 1 : sku.getIsSale());
                 // 重量(单位：磅) 如果原始重量不是lb的,feed里已根据公式转成lb
                 if (!StringUtils.isEmpty(sku.getWeightCalc()))
                     commonSku.setWeight(NumberUtils.toDouble(sku.getWeightCalc()));
@@ -2030,6 +2029,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         sku.setClientSkuCode(feedSku.getClientSku());
                         sku.setClientSize(feedSku.getSize());
                         sku.setSize(feedSku.getSize());
+                        if (feedSku.getIsSale() != null)
+                            sku.setIsSale(feedSku.getIsSale());
                         if (!StringUtils.isEmpty(feedSku.getWeightCalc()))
                             sku.setWeight(NumberUtils.toDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
 
@@ -2047,6 +2048,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     sku.setClientSize(feedSku.getSize());
                     sku.setSize(feedSku.getSize());        // Add by desmond 2016/07/04 因为上新用的是这个字段
                     sku.setQty(feedSku.getQty());
+                    sku.setIsSale(feedSku.getIsSale() == null ? 1 : feedSku.getIsSale());
                     if (!StringUtils.isEmpty(feedSku.getWeightCalc()))
                         sku.setWeight(NumberUtils.toDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
 
