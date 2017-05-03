@@ -11,6 +11,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
@@ -535,6 +536,7 @@ public class PromotionService extends BaseService {
             cmsPromotionMQMessageBody.setPromotionId(promotion.getId());
             cmsPromotionMQMessageBody.setTriggerTime(promotion.getTriggerTime().getTime());
             //当前
+//            Long delaySecond = DateTimeUtilBeijing.toLocalTime(promotion.getTriggerTime()) - DateTimeUtil.getNowTimeStampLong();
             Long delaySecond = promotion.getTriggerTime().getTime() - DateTimeUtil.getNowTimeStampLong();
             if(delaySecond > 0){
                 if(sendDelayMq) {

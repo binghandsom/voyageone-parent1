@@ -3,8 +3,10 @@ package com.voyageone.web2.cms.views.promotion.list;
 import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
+import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -79,8 +82,11 @@ public class CmsPromotionIndexController extends CmsController {
     public AjaxResponse getEditModel(@RequestBody int promotionId) {
 
         Map<String, Object> result = new HashMap<>();
-
-        result.put("editModel",promotionService.getEditModel(promotionId));
+        EditCmsBtPromotionBean data = promotionService.getEditModel(promotionId);
+        if(data.getPromotionModel().getTriggerTime() != null){
+            data.getPromotionModel().setTriggerTime(DateTimeUtilBeijing.toBeiJingDate(data.getPromotionModel().getTriggerTime()));
+        }
+        result.put("editModel",data);
         result.put("currentTimeStamp",DateTimeUtil.getDate());
 
         return success(result);
@@ -95,6 +101,9 @@ public class CmsPromotionIndexController extends CmsController {
         editModel.getPromotionModel().setChannelId(channelId);
         editModel.getPromotionModel().setCreater(getUser().getUserName());
         editModel.getPromotionModel().setModifier(getUser().getUserName());
+        if(editModel.getPromotionModel().getTriggerTime() != null){
+            editModel.getPromotionModel().setTriggerTime(DateTimeUtilBeijing.toLocalDate(editModel.getPromotionModel().getTriggerTime()));
+        }
         promotionService.saveEditModel(editModel);
         return success(null);
     }

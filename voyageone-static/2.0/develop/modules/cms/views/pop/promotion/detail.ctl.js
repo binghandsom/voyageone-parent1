@@ -81,6 +81,7 @@ define([
             _editModel.promotionModel.activityEnd = dateToString(_editModel.promotionModel.activityEnd);
             _editModel.promotionModel.preSaleStart = dateToString(_editModel.promotionModel.preSaleStart);
             _editModel.promotionModel.preSaleEnd = dateToString(_editModel.promotionModel.preSaleEnd);
+            _editModel.promotionModel.triggerTime = dateToString(_editModel.promotionModel.triggerTime,"yyyy-MM-dd HH:mm:ss");
 
             if (_editModel.promotionModel.activityStart > _editModel.promotionModel.activityEnd) {
                 alert("活动时间检查：请输入结束时间>开始时间。");
@@ -126,9 +127,13 @@ define([
 
         };
 
-        function dateToString(date) {
+        function dateToString(date,format) {
             if (date && date instanceof Date) {
-                return $filter("date")(date, "yyyy-MM-dd");
+                if(format){
+                    return $filter("date")(date, format);
+                }else{
+                    return $filter("date")(date, "yyyy-MM-dd");
+                }
             } else {
                 if (date)    return date;
                 return "";
