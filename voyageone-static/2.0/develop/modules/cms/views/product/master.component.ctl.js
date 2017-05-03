@@ -34,18 +34,34 @@ define([
                     lockStatus: {},
                     channelId: $localStorage.user.channel,
                     panelShow: true,
-                    copyImgs:[
+                    copyImages: [
                         {
-                            text: 'PC端自拍图',
-                            event: function () {
-
-                            }
-                        },
-                        {
-                            text: 'APP端自拍图',
-                            event: function () {
-
-                            }
+                            value: 'image1',
+                            name: '品牌方商品图'
+                        }, {
+                            value: 'image6',
+                            name: 'PC端自拍商品图'
+                        }, {
+                            value: 'image7',
+                            name: 'App端自拍商品图'
+                        }, {
+                            value: 'image2',
+                            name: '包装图'
+                        }, {
+                            value: 'image3',
+                            name: '角度图'
+                        }, {
+                            value: 'image6',
+                            name: 'PC端自定义图'
+                        }, {
+                            value: 'image5',
+                            name: 'APP端自定义图'
+                        }, {
+                            value: 'image8',
+                            name: '吊牌图'
+                        }, {
+                            value: 'image9',
+                            name: '耐久性标签图'
                         }
                     ]
                 };
@@ -68,6 +84,7 @@ define([
                 scope.removeImg = removeImg;
                 scope.sortImg = sortImg;
                 scope.lockProduct = lockProduct;
+                scope.copyToOtherImg = copyToOtherImg;
 
                 initialize();
                 /**
@@ -318,9 +335,9 @@ define([
                  * 保存前判断是否要设置税号
                  * @param flag
                  */
-                function masterSaveAction(flag){
-                    if(!scope.vm.lockStatus.onOffSwitch2 && $localStorage.user.channel == 928){
-                        confirm('是否设置翻译状态为翻译?').then(function(){
+                function masterSaveAction(flag) {
+                    if (!scope.vm.lockStatus.onOffSwitch2 && $localStorage.user.channel == 928) {
+                        confirm('是否设置翻译状态为翻译?').then(function () {
                             scope.vm.lockStatus.onOffSwitch2 = true;
 
                             productDetailService.doTranslateStatus({
@@ -339,10 +356,10 @@ define([
                                 callSaveProduct(flag);
                             });
 
-                        },function () {
+                        }, function () {
                             callSaveProduct(flag);
                         });
-                    }else{
+                    } else {
                         callSaveProduct(flag);
                     }
                 }
@@ -353,7 +370,7 @@ define([
                  * */
                 function callSaveProduct(freshSub) {
 
-                    productDetailService.updateCommonProductInfo({
+                    return productDetailService.updateCommonProductInfo({
                         prodId: scope.productInfo.productId,
                         productComm: scope.vm.productComm
                     }).then(function (resp) {
@@ -472,6 +489,43 @@ define([
                     $event.stopPropagation();
                 }
 
+                function copyToOtherImg(image,orgImgName, targetImg) {
+                    var imageType = Object.keys(image)[0];
+
+                    confirm("您确认要复制到【" + targetImg.name + "】吗?").then(function () {
+                        var schemaData = scope.vm.productComm.schemaFields;
+
+                        var orgModel = searchField(orgImgName, schemaData);
+                        var targetModel = searchField(targetImg.name, schemaData);
+
+                        var orgComplexValue = _.find(orgModel.complexValues,function(_element){
+                            var _fieldMap = _element.fieldMap;
+                            return _fieldMap[Object.keys(_fieldMap)[0]].value === image[imageType];
+                        });
+
+                        var jsonStr = angular.toJson(orgComplexValue).replace(/image\d{1}/g,targetImg.value);
+
+                        var isExit = _.some(targetModel.complexValues,function(item){
+                            var _fieldMap = item.fieldMap;
+                            return _fieldMap[Object.keys(_fieldMap)[0]].value === image[imageType];
+                        });
+
+                        if(isExit){
+                            alert(targetImg.name + "上已经存在该图片。");
+                            return;
+                        }
+
+                        targetModel.complexValues.push(angular.fromJson(jsonStr));
+
+                        //调用保存接口
+                        callSaveProduct().then(function(){
+                            initialize();
+                        });
+
+
+                    });
+                }
+
                 /**
                  * 导航栏上的状态锁定操作
                  * @param onOffSwitch：锁定的对象
@@ -539,7 +593,7 @@ define([
                         return false;
 
                     return _.some(_mastData.images, function (element) {
-                        return element.qty== 0
+                        return element.qty == 0
                             && !element.isMain
                             && element.productCode != scope.productInfo.masterField.code;
                     });

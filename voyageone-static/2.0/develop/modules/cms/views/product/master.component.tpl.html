@@ -274,9 +274,20 @@
                                                 <div class="row sortable-container" sv-root sv-part="vm.productComm.fields.images1" sv-on-sort="sortImg('images1',$event)">
                                                     <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images1"
                                                          sv-element="{containment:'#img-fix'}"
-                                                         mouse-options="vm.copyImgs"
                                                          ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image1)">
                                                         <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
+                                                        <div class="btn-group btn-copy" uib-dropdown>
+                                                            <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
+                                                                <i class="fa fa-copy"></i>&nbsp;<span class="caret"></span>
+                                                            </button>
+                                                            <ul uib-dropdown-menu>
+                                                                <li ng-repeat="item in vm.copyImages">
+                                                                    <a href="javascript:void(0)" ng-click="copyToOtherImg(image,'品牌方商品图',item)" ng-if="item.name != '品牌方商品图'">
+                                                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;{{item.name}}
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image1}" style="height: 88px">
                                                             <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image1)}}">
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image1,$event)"><i class="fa fa-cloud-download "></i></button>
