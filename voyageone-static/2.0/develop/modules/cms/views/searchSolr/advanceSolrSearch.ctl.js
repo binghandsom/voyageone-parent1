@@ -380,6 +380,8 @@ define([
                         } else if (ecd == '0') {
                             notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
                         }
+
+                        $scope.search();
                     });
                 });
             });
