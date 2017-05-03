@@ -2856,7 +2856,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 itemDetailsBean.setItemcode(feed.getCode());
                 itemDetailsBean.setSize(feedSku.getSize());
                 itemDetailsBean.setBarcode(feedSku.getBarcode());
-                itemDetailsBean.setIs_sale("1");
                 itemDetailsBean.setClient_sku(feedSku.getClientSku());
                 itemDetailsBean.setActive(1);
 
@@ -2876,10 +2875,11 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                             $error(errMsg);
                             throw new BusinessException(errMsg);
                         }
-                        itemDetailsBean.setIs_sale(oldRecord.getIs_sale());
+                        itemDetailsBean.setIs_sale(feedSku.getIsSale() == null ? oldRecord.getIs_sale() : String.valueOf(feedSku.getIsSale()));
                         // 已经存在的场合: 更新数据库
                         itemDetailsDao.updateItemDetails(itemDetailsBean, getTaskName());
                     } else {
+                        itemDetailsBean.setIs_sale(feedSku.getIsSale() == null ? "1" : String.valueOf(feedSku.getIsSale()));
                         // 不存在的场合: 插入数据库
                         itemDetailsDao.insertItemDetails(itemDetailsBean, getTaskName());
 

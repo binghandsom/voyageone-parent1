@@ -4,9 +4,6 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.wms.WmsBtItemDetailsDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,86 +18,42 @@ import java.util.List;
  */
 @Service
 public class FeedSaleService extends BaseService {
-    @Autowired
-    private FeedInfoService feedInfoService;
-@Autowired
-    private WmsBtItemDetailsDao  wmsBtItemDetailsDao;
 
     @Autowired
     CmsBtProductDao cmsBtProductDao;
-
+    @Autowired
+    private WmsBtItemDetailsDao wmsBtItemDetailsDao;
     @Autowired
     private ProductService  productService;
-    public void notSale( String channelId, String clientSku) {
-      //  boolean isSale=false;
-//        clientSku
-//                feed的sku库存变成0
-//        的sku.isSale=0
-//        product库存扣减sku库存
-//
-//                通过feed的sku找
-//        product的common.skus.isSale = 0
-//
-//        clientSku
-//        wms_bt_item_details 对应的channel和sku,is_sale =0
-        CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByClientSku(channelId, clientSku);
-        CmsBtFeedInfoModel_Sku cmsBtFeedInfoModel_sku = cmsBtFeedInfoModel.getSkus().stream().filter(w -> clientSku.equals(w.getClientSku())).findFirst().get();
-        if (cmsBtFeedInfoModel_sku != null) {
-            cmsBtFeedInfoModel.setQty(cmsBtFeedInfoModel.getQty() - cmsBtFeedInfoModel_sku.getQty());
-            cmsBtFeedInfoModel_sku.setQty(0);
-            cmsBtFeedInfoModel_sku.setIsSale(0);
+
+    /**
+     * 设定product.sku不再售卖
+     *
+     * @param channelId 店铺Id
+     * @param clientSku 品牌方sku
+     * @param skuCode   voSku
+     * @param isSale    1:售卖, 0:不卖
+     */
+    public void setSaleOrNotSale(String channelId, String clientSku, String skuCode, Integer isSale) {
+
+        CmsBtProductModel cmsBtProductModel = productService.getProductBySku(channelId, skuCode);
+        if(cmsBtProductModel!=null) {
+            CmsBtProductModel_Sku cmsBtProductModel_sku = cmsBtProductModel.getCommon().getSku(skuCode);
+            cmsBtProductModel_sku.setIsSale(isSale);
         }
 
-        CmsBtProductModel cmsBtProductModel = productService.getProductBySku(channelId, cmsBtFeedInfoModel_sku.getSku());
-        if(cmsBtProductModel!=null) {
-            CmsBtProductModel_Sku cmsBtProductModel_sku = cmsBtProductModel.getCommon().getSku(cmsBtFeedInfoModel_sku.getSku());
-            cmsBtProductModel_sku.setIsSale(0);
-        }
-        feedInfoService.updateFeedInfo(cmsBtFeedInfoModel);
         if(cmsBtProductModel!=null) {
             HashMap<String, Object> queryMap = new HashMap<>();
-            queryMap.put("common.skus.skuCode",  cmsBtFeedInfoModel_sku.getSku());
+            queryMap.put("common.skus.skuCode", skuCode);
             List<BulkUpdateModel> bulkList = new ArrayList<>();
             HashMap<String, Object> updateMap = new HashMap<>();
-            updateMap.put("common.skus.$.isSale", 0);
+            updateMap.put("common.skus.$.isSale", isSale);
             BulkUpdateModel model = new BulkUpdateModel();
             model.setUpdateMap(updateMap);
             model.setQueryMap(queryMap);
             bulkList.add(model);
             cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, "FeedSaleService", "$set");
-            wmsBtItemDetailsDao.update(channelId, clientSku, 0);
+            wmsBtItemDetailsDao.update(channelId, clientSku, isSale);
         }
-    }
-
-    public void sale(String channelId, String clientSku, int stockQty) {
-        //boolean isSale=true;
-        CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByClientSku(channelId, clientSku);
-        CmsBtFeedInfoModel_Sku cmsBtFeedInfoModel_sku = cmsBtFeedInfoModel.getSkus().stream().filter(w -> clientSku.equals(w.getClientSku())).findFirst().get();
-        if (cmsBtFeedInfoModel_sku != null) {
-            cmsBtFeedInfoModel.setQty(cmsBtFeedInfoModel.getQty()+stockQty);
-            cmsBtFeedInfoModel_sku.setQty(stockQty);
-            cmsBtFeedInfoModel_sku.setIsSale(1);
-        }
-        CmsBtProductModel cmsBtProductModel = productService.getProductBySku(channelId, cmsBtFeedInfoModel_sku.getSku());
-        if(cmsBtProductModel!=null) {
-            CmsBtProductModel_Sku cmsBtProductModel_sku = cmsBtProductModel.getCommon().getSku(cmsBtFeedInfoModel_sku.getSku());
-            cmsBtProductModel_sku.setIsSale(1);
-        }
-
-        feedInfoService.updateFeedInfo(cmsBtFeedInfoModel);
-        if(cmsBtProductModel!=null) {
-            HashMap<String, Object> queryMap = new HashMap<>();
-            queryMap.put("common.skus.skuCode",  cmsBtFeedInfoModel_sku.getSku());
-            List<BulkUpdateModel> bulkList = new ArrayList<>();
-            HashMap<String, Object> updateMap = new HashMap<>();
-            updateMap.put("common.skus.$.isSale", 1);
-            BulkUpdateModel model = new BulkUpdateModel();
-            model.setUpdateMap(updateMap);
-            model.setQueryMap(queryMap);
-            bulkList.add(model);
-            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, "FeedSaleService", "$set");
-            wmsBtItemDetailsDao.update(channelId,clientSku,1);
-        }
-
     }
 }
