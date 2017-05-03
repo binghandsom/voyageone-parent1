@@ -6,12 +6,13 @@ define([
     'cms'
 ], function (cms) {
 
-    cms.controller('popColumnForDownloadCtl', function ($scope, $searchAdvanceService2, $modalInstance) {
+    cms.controller('popColumnForDownloadCtl', function ($scope, context, $searchAdvanceService2, $modalInstance) {
 
         $scope.vm = {
             customProps: [],
             commonProps: []
         };
+        $scope.context = context;
         $scope.chkItemStatus = chkItemStatus;
 
         $scope.init = function () {
@@ -40,6 +41,10 @@ define([
 
                 _.each($scope.vm.platformDataList, function (item) {
                     item.isChk = _.contains(res.data.platformProps, item.value);
+                });
+
+                $scope.vm.platformDataList = _.filter($scope.vm.platformDataList,function(item){
+                    return !(context.fileType !== 1 && item.name.indexOf('可售库存') >= 0);
                 });
 
                 // 检查全选框

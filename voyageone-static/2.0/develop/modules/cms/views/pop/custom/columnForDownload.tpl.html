@@ -143,7 +143,8 @@
                   <div ng-repeat="platformData in vm.platformDataList | filter:{name:platformDataName}" class="m-t-xs">
                       <label class="checkbox-inline c-checkbox">
                           <input type="checkbox" name="biDataSels" value="{{platformData.value}}" ng-model="platformData.isChk" ng-change="chkItemStatus(5)">
-                          <span class="fa fa-check"></span>&nbsp;{{platformData.name}}</label>
+                          <span class="fa fa-check"></span>&nbsp;{{platformData.name}}
+                      </label>
                   </div>
               </div>
           </div>
