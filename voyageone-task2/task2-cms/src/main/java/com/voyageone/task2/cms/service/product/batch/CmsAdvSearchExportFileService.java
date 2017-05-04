@@ -1013,7 +1013,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
                         }
                         if ("qty".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                         BaseMongoMap<String, Object> pSku = _platform.getSkus().stream().filter(sku -> skuItem.getSkuCode().equals(sku.get("skuCode"))).findFirst().orElse(new BaseMongoMap<>());
-
                         String attrName = key.substring(key.lastIndexOf(".") + 1);
                         if ("isSale".equals(attrName)) {
                             Boolean isSale = (Boolean) pSku.get("isSale");
