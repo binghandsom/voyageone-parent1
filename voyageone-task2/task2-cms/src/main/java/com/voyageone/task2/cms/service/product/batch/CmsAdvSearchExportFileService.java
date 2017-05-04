@@ -459,6 +459,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         }
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
+                if(prop.get("name").indexOf("是否销售")>-0) continue;
                 FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
             }
         }
@@ -495,6 +496,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
                 if(prop.get("name").indexOf("可售库存")>-0) continue;
+                if(prop.get("name").indexOf("是否销售")>-0) continue;
                 FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
             }
         }
@@ -1008,7 +1010,11 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             continue;
                         }
                         if("qty".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
-                        index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
+                        if("isSale".equals(key.substring(key.lastIndexOf(".") + 1))){
+                            FileUtils.cell(row, index++, unlock).setCellValue(getLockStatusTxt(item.getLock()));
+                        }else {
+                            index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
+                        }
 
                     }
                 }
