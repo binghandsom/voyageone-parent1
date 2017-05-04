@@ -22,7 +22,7 @@
     <!-- mongodb的主要操作对象，所有对mongodb的增删改查的操作都是通过它完成 -->
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
         <constructor-arg name="mongo" ref="mongo"/>
-        <constructor-arg name="databaseName" value="cms2_charis"/>
+        <constructor-arg name="databaseName" value="cms2"/>
     </bean>
 
     <bean id="baseJomgoDao" class="com.voyageone.base.dao.mongodb.BaseJongoTemplate">
