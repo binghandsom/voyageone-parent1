@@ -43,7 +43,7 @@ define([
                             name: 'PC端自拍商品图'
                         }, {
                             value: 'image7',
-                            name: 'App端自拍商品图'
+                            name: 'APP端自拍商品图'
                         }, {
                             value: 'image2',
                             name: '包装图'
