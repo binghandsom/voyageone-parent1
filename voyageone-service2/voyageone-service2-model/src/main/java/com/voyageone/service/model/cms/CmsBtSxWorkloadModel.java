@@ -9,6 +9,8 @@ package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
 
+import java.util.List;
+
 /**
  * 
  */
@@ -24,6 +26,8 @@ public class CmsBtSxWorkloadModel extends BaseModel {
     protected String workloadName;
 
     protected Integer priority_order;
+
+    protected List<String> attributeList;
 
     public Integer getPriority_order() {
         return priority_order;
@@ -71,5 +75,13 @@ public class CmsBtSxWorkloadModel extends BaseModel {
 
     public void setCartId(Integer cartId) {
         this.cartId = cartId;
+    }
+
+    public List<String> getAttributeList() {
+        return attributeList;
+    }
+
+    public void setAttributeList(List<String> attributeList) {
+        this.attributeList = attributeList;
     }
 }
