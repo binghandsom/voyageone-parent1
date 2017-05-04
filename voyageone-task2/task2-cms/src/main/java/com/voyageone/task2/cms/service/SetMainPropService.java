@@ -26,6 +26,7 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.logger.VOAbsIssueLoggable;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
@@ -55,6 +56,7 @@ import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.WmsCreateOrUpdateProductMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.WmsCreateOrUpdateProductMQMessageBody_detail;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
@@ -2858,7 +2860,14 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 messageBody.setProductType(field.getProductType());
                 messageBody.setUserName(productModel.getModifier());
                 messageBody.setIsSale(sku.getIsSale());
+
+                WmsCreateOrUpdateProductMQMessageBody_detail detailInfo = new WmsCreateOrUpdateProductMQMessageBody_detail();
+                detailInfo.setKgWeight(field.getWeightKG());
+                detailInfo.setLbWeight(field.getWeightLb());
+                detailInfo.setOrigin(field.getOrigin());
+                messageBody.setDetailInfo(detailInfo);
                 cmsMqSenderService.sendMessage(messageBody);
+                $info(productModel.getModifier() + "同步最新Product信息至WMS，内容：" + JacksonUtil.bean2Json(messageBody));
             });
 
             return true;

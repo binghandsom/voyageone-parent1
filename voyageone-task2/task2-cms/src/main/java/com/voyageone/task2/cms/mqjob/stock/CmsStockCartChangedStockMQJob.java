@@ -1,10 +1,14 @@
 package com.voyageone.task2.cms.mqjob.stock;
 
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.rabbitmq.annotation.VOSubRabbitListener;
 import com.voyageone.service.impl.cms.product.ProductStockService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.stock.CmsStockCartChangedStockMQMessageBody;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsSubService;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,14 +28,13 @@ public class CmsStockCartChangedStockMQJob extends TBaseMQCmsSubService<CmsStock
 
     @Override
     public void onStartup(CmsStockCartChangedStockMQMessageBody messageBody) throws Exception {
-
-        /**执行批量lock商品*/
-        List<CmsBtOperationLogModel_Msg> result = productStockService.updateProductStock(messageBody.getStockList());
-
-        if (result.size() > 0) {
-            String comment = String.format("高级检索批量lock商品处理总件数(%s), 处理失败件数(%s)", messageBody.getStockList().size(), result.size());
-            cmsSuccessIncludeFailLog(messageBody, comment, result);
+        $info("WMS->CMS批量更新库存，消息内容：" + JacksonUtil.bean2Json(messageBody));
+        messageBody.setSender("CmsStockCartChangedStockMQJob");
+        List<CmsBtOperationLogModel_Msg> failList = productStockService.updateProductStock(messageBody.getCartChangedStocks());
+        if (CollectionUtils.isEmpty(failList)) {
+            cmsSuccessLog(messageBody, "WMS->CMS批量更新库存");
+        } else {
+            cmsSuccessIncludeFailLog(messageBody, "WMS->CMS批量更新库存", failList);
         }
-
     }
 }

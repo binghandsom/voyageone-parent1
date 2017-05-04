@@ -581,10 +581,11 @@ public class CmsBtCombinedProductService extends BaseService {
             // 如果编辑之前是“提交”状态，编辑后仍然是提交状态，那么编辑同步至WMS
             if (CmsBtCombinedProductStatus.SUBMITTED.intValue() == model.getStatus().intValue()) {
                 sendMqMessage(model, channelId, user, "1");
-            } else {
+            }
+            /*else {
                 // 如果编辑之前是“提交”状态，编辑后是暂存状态，那么将其从WMS删除
                 sendMqMessage(model, channelId, user, "2");
-            }
+            }*/
         } else {
             // 如果编辑之前是“暂存状态”，编辑后是提交装填，那么新增至WMS
             if (CmsBtCombinedProductStatus.SUBMITTED.intValue() == model.getStatus().intValue()) {

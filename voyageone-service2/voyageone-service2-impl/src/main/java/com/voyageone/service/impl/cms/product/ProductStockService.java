@@ -1,19 +1,26 @@
 package com.voyageone.service.impl.cms.product;
 
+import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.stock.CartChangedStockBean;
+import com.voyageone.service.dao.cms.mongo.CmsBtOperationLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author piao
@@ -29,74 +36,87 @@ public class ProductStockService extends BaseService {
     CmsBtProductDao cmsBtProductDao;
 
     /**
-     * 批量更新产品库存 方法待优化
-     * 不着急发布   added by piao
+     * WMS->CMS 库存更新
+     * @param stockList 如果cartId=0是渠道库存更新，否则是店铺库存更新
      */
     public List<CmsBtOperationLogModel_Msg> updateProductStock(List<CartChangedStockBean> stockList) {
+        List<CmsBtOperationLogModel_Msg> failList = null;
+        if (CollectionUtils.isNotEmpty(stockList)) {
 
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
-        CartChangedStockBean firstStock = stockList.get(0);
-        List<CmsBtOperationLogModel_Msg> result = new ArrayList<>();
+            Map<String, List<BulkUpdateModel>> bulkUpdateModelMap = new HashMap<>();
+            failList = new ArrayList<>();
 
-        for (CartChangedStockBean stockInfo : stockList) {
+            for (CartChangedStockBean stockBean : stockList) {
+                // 当前渠道ID、平台ID
+                String channelId = stockBean.getChannelId();
+                Integer cartId = stockBean.getCartId();
 
-            CmsBtProductModel productInfo = productService.getProductByCode(stockInfo.getChannelId(), stockInfo.getItemCode());
-
-            if (productInfo != null) {
-
-                Integer quantity = 0;
-
-                if (stockInfo.getCartId() == 0) {
-
-                    for (CmsBtProductModel_Sku skuModel : productInfo.getCommon().getSkus()) {
-                        if (skuModel.getSkuCode().equals(stockInfo.getSku())) {
-                            skuModel.setQty(stockInfo.getQty());
-                            quantity += stockInfo.getQty();
-                        }
-                    }
+                // 根据产品Code获取产品
+                CmsBtProductModel productModel = productService.getProductByCode(channelId, stockBean.getItemCode());
+                if (productModel != null) {
 
                     HashMap<String, Object> updateMap = new HashMap<>();
-                    updateMap.put("common.skus.$.qty", stockInfo.getQty());
-                    updateMap.put("common.fields.quantity", quantity);
-
                     HashMap<String, Object> queryMap = new HashMap<>();
-                    queryMap.put("channelId", stockInfo.getChannelId());
-                    queryMap.put("common.skus.skuCode", stockInfo.getSku());
 
-                    bulkList.add(createBulkUpdateModel(updateMap, queryMap));
+                    Integer quantity = 0;
+                    if (cartId == null || cartId.intValue() == 0) {
+                        // cartId为0，则表示按渠道更新库存
+                        for (CmsBtProductModel_Sku skuModel : productModel.getCommon().getSkus()) {
+                            if (skuModel.getSkuCode().equals(stockBean.getSku())) {
+                                quantity += stockBean.getQty();
+                            } else {
+                                quantity += skuModel.getQty() == null ? 0 : skuModel.getQty();
+                            }
+                        }
 
+                        // 更新数据
+                        updateMap.put("common.skus.$.qty", stockBean.getQty());
+                        updateMap.put("common.fields.quantity", quantity);
+                        queryMap.put("channelId", stockBean.getChannelId());
+                        queryMap.put("common.skus.skuCode", stockBean.getSku());
+                        List<CmsBtProductModel> productModel1 = productService.getProductBySkuCode(stockBean.getChannelId(),stockBean.getSku());
+                        $info("");
+
+                    } else {
+                        // cartId不为0，表示更新具体某个平台某个店铺的库存
+                        for (BaseMongoMap<String, Object> skuModel : productModel.getPlatform(stockBean.getCartId()).getSkus()) {
+                            if (skuModel.getStringAttribute("skuCode").equals(stockBean.getSku())) {
+                                quantity += stockBean.getQty();
+                            } else {
+                                quantity += skuModel.getIntAttribute("qty");
+                            }
+                        }
+
+                        // 更新数据
+                        updateMap.put(String.format("platforms.P%s.skus.$.qty", stockBean.getCartId()), stockBean.getQty());
+                        updateMap.put(String.format("platforms.P%s.fields.quantity", stockBean.getCartId()), quantity);
+                        queryMap.put("channelId", stockBean.getChannelId());
+                        queryMap.put(String.format("platforms.P%s.skus.skuCode", stockBean.getCartId()), stockBean.getSku());
+
+                    }
+                    if (bulkUpdateModelMap.containsKey(channelId)) {
+                        bulkUpdateModelMap.get(channelId).add(createBulkUpdateModel(updateMap, queryMap));
+                    } else {
+                        List<BulkUpdateModel> tempBulkUpdateModelList = new ArrayList<>();
+                        tempBulkUpdateModelList.add(createBulkUpdateModel(updateMap, queryMap));
+                        bulkUpdateModelMap.put(channelId, tempBulkUpdateModelList);
+
+                    }
                 } else {
-
-                    for (BaseMongoMap<String, Object> skuModel : productInfo.getPlatform(stockInfo.getCartId()).getSkus()) {
-                        if (skuModel.getStringAttribute("skuCode").equals(stockInfo.getSku())) {
-                            skuModel.setAttribute("qty", stockInfo.getQty());
-                            quantity += stockInfo.getQty();
-                        }
-                    }
-
-                    HashMap<String, Object> updateMap = new HashMap<>();
-                    updateMap.put(String.format("platforms.P%s.skus.$.qty", stockInfo.getCartId()), stockInfo.getQty());
-                    updateMap.put(String.format("platforms.P%s.fields.quantity", stockInfo.getCartId()), quantity);
-
-                    HashMap<String, Object> queryMap = new HashMap<>();
-                    queryMap.put("channelId", stockInfo.getChannelId());
-                    queryMap.put(String.format("platforms.P%s.skus.skuCode", stockInfo.getCartId()), stockInfo.getSku());
-
-                    bulkList.add(createBulkUpdateModel(updateMap, queryMap));
+                    CmsBtOperationLogModel_Msg failMsg = new CmsBtOperationLogModel_Msg();
+                    failMsg.setMsg("WMS->CMS渠道/店铺库存更新时根据产品Code在CMS查不到商品");
+                    failList.add(failMsg);
                 }
-
-                //记录操作结果
-                CmsBtOperationLogModel_Msg msgInfo = new CmsBtOperationLogModel_Msg();
-                msgInfo.setSkuCode(stockInfo.getSku());
-                msgInfo.setMsg("产品库存更新成功！");
-                result.add(msgInfo);
+            }
+            if (!bulkUpdateModelMap.isEmpty()) {
+                for (Map.Entry<String, List<BulkUpdateModel>> entry : bulkUpdateModelMap.entrySet()) {
+                    BulkWriteResult writeResult = cmsBtProductDao.bulkUpdateWithMap(entry.getKey(), entry.getValue(), "CmsStockCartChangedStockMQJob", "$set");
+                    $info(String.format("渠道(chanelId=%s)库存更新结果: %s", entry.getKey(), JacksonUtil.bean2Json(writeResult)));
+                }
             }
 
         }
-
-        cmsBtProductDao.bulkUpdateWithMap(firstStock.getChannelId(), bulkList, "库存更新MQ", "$set");
-
-        return result;
+        return failList;
     }
 
     private BulkUpdateModel createBulkUpdateModel(HashMap<String, Object> updateMap,
