@@ -68,12 +68,12 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
     //common.fields.origSizeType
     /*code级导出时和平台无关的固定列：英文和中文列头名称*/
-    private final static String[] _CODE_STATIC_COLS = {"code", "productNameEn", "originalTitleCn", "supplier", "category", "brand", "skuCounts", "quantity", "freeTags", "feedCategory"};
-    private final static String[] _CODE_STATIC_COLS_ZN = {"商品编码", "产品名称英语", "产品名称中文", "供应商", "主类目", "品牌", "SKU数", "库存", "自由标签", "feed类目"};
+    private final static String[] _CODE_STATIC_COLS = {"code", "productNameEn", "originalTitleCn", "supplier", "category", "brand", "skuCounts", "quantity", "freeTags", "feedCategory", "Lock"};
+    private final static String[] _CODE_STATIC_COLS_ZN = {"商品编码", "产品名称英语", "产品名称中文", "供应商", "主类目", "品牌", "SKU数", "库存", "自由标签", "feed类目", "是否被锁定"};
 
     /*sku级导出时和平台无关的固定列：英文和中文列头名称*/
-    private final static String[] _SKU_STATIC_COLS = {"code", "barcode", "clientSKU", "productNameEn", "originalTitleCn", "clientSKU", "clientSize", "size", "inventory", "clientPriceMsrp", "clientPriceRetail", "clientPriceCost", "weightCalc"};
-    private final static String[] _SKU_STATIC_COLS_ZN = {"sku", "条形码", "商品编码", "产品名称英语", "产品名称中文", "客户原始SKU", "客户原始Size", "转换后Size", "库存", "客户建议售价", "客户指导价", "客户成本价", "重量（lb）"};
+    private final static String[] _SKU_STATIC_COLS = {"code", "barcode", "clientSKU", "productNameEn", "originalTitleCn", "clientSKU", "clientSize", "size", "inventory", "clientPriceMsrp", "clientPriceRetail", "clientPriceCost", "weightCalc", "Lock"};
+    private final static String[] _SKU_STATIC_COLS_ZN = {"sku", "条形码", "商品编码", "产品名称英语", "产品名称中文", "客户原始SKU", "客户原始Size", "转换后Size", "库存", "客户建议售价", "客户指导价", "客户成本价", "重量（lb）", "是否被锁定"};
 
     // 产品数据（code级）固定输出列，用于过滤自定义显示列中相同项目
     private final static String[] _prodCol = {"code", "brand", "category", "productNameEn", "originalTitleCn", "mainCode", "model", "quantity", "color"};
@@ -426,7 +426,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
         }
         // 固定列长度
         index = size;
-        FileUtils.cell(row2, index++, style2).setCellValue("是否被锁定");
 
         if (commonProps != null) {
             for (Map<String, String> prop : commonProps) {
@@ -535,7 +534,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
             }
         }
-        FileUtils.cell(row2, index++, style2).setCellValue("是否被锁定");
     }
 
     /**
@@ -984,6 +982,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 } else {
                     FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getWeight());
                 }
+                FileUtils.cell(row, index++, unlock).setCellValue(getLockStatusTxt(item.getLock()));
 
                 List<Map<String, String>> platformDataList = (List<Map<String, String>>) cmsSession.get("_adv_search_selPlatformDataList");
                 if (platformDataList != null) {
@@ -1022,7 +1021,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     }
                 }
 
-                FileUtils.cell(row, index++, unlock).setCellValue(getLockStatusTxt(item.getLock()));
                 total++;
             }
         }
