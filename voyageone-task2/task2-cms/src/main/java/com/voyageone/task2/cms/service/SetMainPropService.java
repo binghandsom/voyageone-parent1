@@ -1006,7 +1006,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // 清除一些batch的标记 // TODO: 梁兄啊, batchField的更新没有放到product更新里, 暂时自己写一个用, 这里暂时注释掉
 
                     // 计算主类目
-                    if (usjoi) {
+                    if (usjoi || cmsProduct.getChannelId().equals("024")) {
                         doSetMainCategory(cmsProduct.getCommon(), feed);
                     }
 
@@ -1075,7 +1075,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     platFromAttributeCopyFromMainProduct(cmsProduct);
 
                     // 计算主类目
-                    if (usjoi) {
+                    if (usjoi || cmsProduct.getChannelId().equals("024")) {
                         doSetMainCategory(cmsProduct.getCommon(), feed);
                     }
 
@@ -3251,7 +3251,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 if (!StringUtils.isEmpty(searchResult.getSizeTypeCn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getSizeTypeCn())))
                     prodCommonField.setSizeTypeCn(searchResult.getSizeTypeCn());
                 // TODO 2016/12/30暂时这样更新，以后要改
-                if ("CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter()) || !"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getHsCodePrivate())) {
+                if (!StringUtils.isEmpty(searchResult.getTaxPersonal()) && (getTaskName().equalsIgnoreCase(prodCommonField.getHsCodeSetter()) || "CmsUploadProductToUSJoiJob".equalsIgnoreCase(prodCommonField.getHsCodeSetter()) || !"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getHsCodePrivate()))) {
                     // 税号个人
                     if (!StringUtils.isEmpty(searchResult.getTaxPersonal())) {
                         prodCommonField.setHsCodePrivate(searchResult.getTaxPersonal());
@@ -3266,12 +3266,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     }
                 }
                 // 税号跨境申报（10位）
-                if (!StringUtils.isEmpty(searchResult.getTaxDeclare()) || !"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getHsCodeCross()))
+                if (!StringUtils.isEmpty(searchResult.getTaxDeclare()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getHsCodeCross())))
                     prodCommonField.setHsCodeCross(searchResult.getTaxDeclare());
 
                 // 商品中文名称(如果已翻译，则不设置)
                 // 临时特殊处理 017的名称不根据主类目自动翻译,如果后续有这个需求再改正
-                if ("0".equals(prodCommonField.getTranslateStatus())) {
+                if (usjoi && "0".equals(prodCommonField.getTranslateStatus())) {
                     if (!StringUtils.isEmpty(searchResult.getCnName())) {
                         // 主类目叶子级中文名称（"服饰>服饰配件>钱包卡包钥匙包>护照夹" -> "护照夹"）
                         String leafCategoryCnName = searchResult.getCnName().substring(searchResult.getCnName().lastIndexOf(">") + 1,
