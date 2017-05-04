@@ -363,7 +363,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             if (platformCart.getFields() == null) platformCart.setFields(new BaseMongoMap<>());
             // added by morse.lu 2016/09/13 start
             // 天猫国际sku级属性，设值下默认商家编码为skuCode
-            if (cartId == CartEnums.Cart.TG.getValue()) {
+            if (cartId == CartEnums.Cart.TM.getValue() || cartId == CartEnums.Cart.TG.getValue()) {
                 String skuKey = "sku_outerId"; // 商家编码对应skuCode
                 try {
                     List<Map<String, Object>> listSkuVal = platformCart.getFields().getAttribute("sku");
@@ -722,7 +722,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         platform.setpBrandId(mainPlatform.getpBrandId());
         platform.setpBrandName(mainPlatform.getpBrandName());
         if (platform.getFields() == null) platform.setFields(new BaseMongoMap<>());
-        if (cartId == CartEnums.Cart.TG.getValue()) {
+        if (cartId == CartEnums.Cart.TM.getValue() || cartId == CartEnums.Cart.TG.getValue()) {
             String skuKey = "sku_outerId"; // 商家编码对应skuCode
             try {
                 List<Map<String, Object>> listSkuVal = platform.getFields().getAttribute("sku");
@@ -760,7 +760,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 System.out.println(s);
                 if (platform.getFields().get(s) == null || StringUtils.isEmpty(platform.getFields().get(s).toString())) {
                     // 天猫的场合 属性ID是 sku darwin_sku不复制
-                    if (cartId == CartEnums.Cart.TG.getValue()) {
+                    if (cartId == CartEnums.Cart.TM.getValue() || cartId == CartEnums.Cart.TG.getValue()) {
                         if (!"sku".equalsIgnoreCase(s) && !"darwin_sku".equalsIgnoreCase(s)) {
                             platform.getFields().put(s, o);
                         }
@@ -771,7 +771,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             } else {
                 if (platform.getFields().get(s) == null || StringUtils.isEmpty(platform.getFields().get(s).toString())) {
                     // 天猫的场合 属性ID是 sku darwin_sku不复制
-                    if (cartId == CartEnums.Cart.TG.getValue()) {
+                    if (cartId == CartEnums.Cart.TM.getValue() || cartId == CartEnums.Cart.TG.getValue()) {
                         if (!"sku".equalsIgnoreCase(s) && !"darwin_sku".equalsIgnoreCase(s)) {
                             platform.getFields().put(s, o);
                         }
