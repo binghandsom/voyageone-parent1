@@ -393,7 +393,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
         // 固定列长度
         int index = size;
-        FileUtils.cell(row1, index++, style1).setCellValue("Lock");
 
         if (commonProps != null) {
             for (Map<String, String> prop : commonProps) {
