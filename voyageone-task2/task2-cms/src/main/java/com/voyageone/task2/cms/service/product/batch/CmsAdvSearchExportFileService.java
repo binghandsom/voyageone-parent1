@@ -802,6 +802,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                         continue;
                     }
 
+                    if("isSale".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                     if("qty".equals(key.substring(key.lastIndexOf(".") + 1))){
                         Integer qty = 0;
                         for (BaseMongoMap<String, Object> map : _platform.getSkus()) {
@@ -900,6 +901,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                         continue;
                     }
                     if("qty".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
+                    if("isSale".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                     index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
 
                 }
@@ -1011,11 +1013,10 @@ public class CmsAdvSearchExportFileService extends BaseService {
                         }
                         if("qty".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                         if("isSale".equals(key.substring(key.lastIndexOf(".") + 1))){
-                            FileUtils.cell(row, index++, unlock).setCellValue(getLockStatusTxt(item.getLock()));
+                            FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getIsSale() == 0 ? "No":"Yes");
                         }else {
                             index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
                         }
-
                     }
                 }
 
