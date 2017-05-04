@@ -676,12 +676,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getBrand()));
             FileUtils.cell(row, index++, unlock).setCellValue(item.getCommon().getSkus().size());
             //sku取得库存
-            Map<String, Set<String>> codesMap = new HashMap<>();
-            if (org.apache.commons.lang.StringUtils.isNotBlank(fields.getOriginalCode())) {
-                codesMap.computeIfAbsent(item.getOrgChannelId(), k -> new HashSet<>());
-                codesMap.get(item.getOrgChannelId()).add(fields.getOriginalCode());
-            }
-            FileUtils.cell(row, index++, unlock).setCellValue(item.getCommon().getFields().getQuantity());
+            Map<String, Integer> codesMap = new HashMap<>();
+            item.getCommon().getSkus().forEach(sku->codesMap.put(sku.getSkuCode(), sku.getQty()));
+            FileUtils.cell(row, index++, unlock).setCellValue(item.getCommon().getFieldsNotNull().getQuantity());
 
             // 取得自由标签
             List<CmsBtTagBean> tagModelList = new ArrayList<>();
@@ -804,11 +801,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             String sku = (String) map.get("skuCode");
                             Boolean isSale = (Boolean) map.get("isSale");
                             if(isSale !=null && isSale){
-                                SkuInventoryForCmsBean skuBeanObj = skuInventoryMap.keySet().stream().filter(skuBean -> sku.equalsIgnoreCase(skuBean.getSku())).findFirst().orElse(null);
-                                if (skuBeanObj != null) {
-                                    if (skuInventoryMap.get(skuBeanObj) != null) {
-                                        qty = qty + skuInventoryMap.get(skuBeanObj);
-                                    }
+                                if (codesMap.get(sku) != null) {
+                                    qty = qty + codesMap.get(sku);
                                 }
                             }
                         }
