@@ -681,17 +681,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getBrand()));
             FileUtils.cell(row, index++, unlock).setCellValue(item.getCommon().getSkus().size());
             //sku取得库存
-            Map<String, Set<String>> codesMap = new HashMap<>();
-            if (org.apache.commons.lang.StringUtils.isNotBlank(fields.getOriginalCode())) {
-                codesMap.computeIfAbsent(item.getOrgChannelId(), k -> new HashSet<>());
-                codesMap.get(item.getOrgChannelId()).add(fields.getOriginalCode());
-            }
-            Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = getSkuInventoryMap(codesMap);
-            int codeQty = 0;
-            for (Integer qty : skuInventoryMap.values()) {
-                codeQty = codeQty + qty;
-            }
-            FileUtils.cell(row, index++, unlock).setCellValue(codeQty);
+            Map<String, Integer> codesMap = new HashMap<>();
+            item.getCommon().getSkus().forEach(sku->codesMap.put(sku.getSkuCode(), sku.getQty()));
+            FileUtils.cell(row, index++, unlock).setCellValue(item.getCommon().getFieldsNotNull().getQuantity());
 
             // 取得自由标签
             List<CmsBtTagBean> tagModelList = new ArrayList<>();
@@ -814,11 +806,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             String sku = (String) map.get("skuCode");
                             Boolean isSale = (Boolean) map.get("isSale");
                             if(isSale !=null && isSale){
-                                SkuInventoryForCmsBean skuBeanObj = skuInventoryMap.keySet().stream().filter(skuBean -> sku.equalsIgnoreCase(skuBean.getSku())).findFirst().orElse(null);
-                                if (skuBeanObj != null) {
-                                    if (skuInventoryMap.get(skuBeanObj) != null) {
-                                        qty = qty + skuInventoryMap.get(skuBeanObj);
-                                    }
+                                if (codesMap.get(sku) != null) {
+                                    qty = qty + codesMap.get(sku);
                                 }
                             }
                         }
@@ -953,8 +942,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
             products.add(item);
         }
-        //取得sku级别的库存
-        Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = getSkuInventoryMap(codesMap);
+//        //取得sku级别的库存
+//        Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = getSkuInventoryMap(codesMap);
 
         CellStyle unlock = FileUtils.createUnLockStyle(book);
 
@@ -977,7 +966,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSize()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getSize()));
                 SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuItem.getSkuCode().toLowerCase());
-                FileUtils.cell(row, index++, unlock).setCellValue(skuInventoryMap.get(temp) == null ? "0" : String.valueOf(skuInventoryMap.get(temp)));
+                FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getQty() == null ? "0" : skuItem.getQty().toString());
                 if (skuItem.getClientMsrpPrice() == null) {
                     FileUtils.cell(row, index++, unlock).setCellValue("");
                 } else {
@@ -1079,22 +1068,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
         return index;
     }
 
-    //取得sku级别的库存
-    private Map<SkuInventoryForCmsBean, Integer> getSkuInventoryMap(Map<String, Set<String>> codesMap) {
-        Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<>();
-        codesMap.keySet().stream()
-                .filter(channel -> codesMap.get(channel).size() > 0)
-                .forEach(channel -> {
-                    List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(channel, new ArrayList<>(codesMap.get(channel)));
-                    if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
-                        for (SkuInventoryForCmsBean skuInventory : inventoryForCmsBeanList) {
-                            skuInventory.setSku(skuInventory.getSku().toLowerCase());
-                            skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
-                        }
-                    }
-                });
-        return skuInventoryMap;
-    }
 
     /**
      * 导出聚美上新SKU级数据
