@@ -12,14 +12,12 @@ import com.voyageone.category.match.Searcher;
 import com.voyageone.category.match.Tokenizer;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
@@ -61,8 +59,6 @@ import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
-import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
-import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
@@ -506,7 +502,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 // 取得所有主类目
                 // update desmond 2016/07/04 start
                 //            List<CmsMtCategoryTreeModel> categoryTreeList = categoryTreeService.getMasterCategory();
-                List<CmsMtCategoryTreeAllModel> categoryTreeAllList = categoryTreeAllService.getMasterCategory();
+//                List<CmsMtCategoryTreeAllModel> categoryTreeAllList = categoryTreeAllService.getMasterCategory();
                 // update desmond 2016/07/04 end
                 // jeff 2016/05 add end
 
@@ -544,7 +540,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         }
                         feed.setSkus(skus);
                         // feed->master导入主处理
-                        doSaveProductMainProp(feed, channelId, categoryTreeAllList);
+                        doSaveProductMainProp(feed, channelId);
                         for (CmsBtFeedInfoModel_Sku cmsBtFeedInfoModel_Sku : feed.getSkus()) {
                             if (!StringUtils.isEmpty(cmsBtFeedInfoModel_Sku.getMainVid())) {
                                 HttpHeaders httpHeaders = new HttpHeaders();
@@ -711,12 +707,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
          * @param originalFeed        Feed信息
          * @param channelId           channel id
          *                            //         * @param mapBrandMapping 品牌mapping一览
-         * @param categoryTreeAllList 所有主类目
          */
         public void doSaveProductMainProp(
                 CmsBtFeedInfoModel originalFeed
                 , String channelId
-                , List<CmsMtCategoryTreeAllModel> categoryTreeAllList
         ) {
             // feed类目名称
             String feedCategory = originalFeed.getCategory();
@@ -1650,6 +1644,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 commonSku.setClientSize(sku.getSize()); // ClientSize
                 commonSku.setSize(sku.getSize()); // 尺码
                 commonSku.setQty(sku.getQty());
+                commonSku.setIsSale(sku.getIsSale() == null ? 1 : sku.getIsSale());
                 // 重量(单位：磅) 如果原始重量不是lb的,feed里已根据公式转成lb
                 if (!StringUtils.isEmpty(sku.getWeightCalc())) {
                     commonSku.setWeight(NumberUtils.toDouble(sku.getWeightCalc()));
@@ -1662,14 +1657,14 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
             // --------- platform ------------------------------------------------------
 //            Map<String, CmsBtProductModel_Platform_Cart> platforms = new HashMap<>();  // delete desmond 2016/07/04
-            List<CmsMtCategoryTreeAllModel_Platform> platformCategoryList = null;
+//            List<CmsMtCategoryTreeAllModel_Platform> platformCategoryList = null;
             // 取得新的主类目对应的平台类目
-            if (newMapping != null) {
-                CmsMtCategoryTreeAllModel categoryTreeAllModel = categoryTreeAllService.getCategoryByCatPath(newMapping.getMainCategoryPath());
-                if (categoryTreeAllModel != null) {
-                    platformCategoryList = categoryTreeAllModel.getPlatformCategory();
-                }
-            }
+//            if (newMapping != null) {
+//                CmsMtCategoryTreeAllModel categoryTreeAllModel = categoryTreeAllService.getCategoryByCatPath(newMapping.getMainCategoryPath());
+//                if (categoryTreeAllModel != null) {
+//                    platformCategoryList = categoryTreeAllModel.getPlatformCategory();
+//                }
+//            }
 
             // add desmond 2016/07/07 start
             // 根据渠道和平台取得已经申请的平台类目
@@ -1706,23 +1701,23 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 // 平台类目状态(新增时)
                 platform.setpCatStatus("0");  // add desmond 2016/07/05
                 // 如果新的主类目对应的平台类目存在，那么设定
-                if (platformCategoryList != null) {
-                    for (CmsMtCategoryTreeAllModel_Platform platformCategory : platformCategoryList) {
-                        CartBean cartBean = Carts.getCart(typeChannelBean.getValue());
-                        if (cartBean != null && platformCategory.getPlatformId().equals(cartBean.getPlatform_id())) {
-                            // update desmond 2016/07/07 start
-                            // 新增时，如果该catId已经申请了才设置平台catId属性，没申请不设置
-                            if (applyPlatformCategoryMap.get(typeChannelBean.getValue()) != null
-                                    && applyPlatformCategoryMap.get(typeChannelBean.getValue()).get(platformCategory.getCatId()) != null) {
-                                platform.setpCatId(platformCategory.getCatId());
-                                platform.setpCatPath(platformCategory.getCatPath());
-                                platform.setpCatStatus("1");
-                            }
-                            break;
-                            // update desmond 2016/07/07 end
-                        }
-                    }
-                }
+//                if (platformCategoryList != null) {
+//                    for (CmsMtCategoryTreeAllModel_Platform platformCategory : platformCategoryList) {
+//                        CartBean cartBean = Carts.getCart(typeChannelBean.getValue());
+//                        if (cartBean != null && platformCategory.getPlatformId().equals(cartBean.getPlatform_id())) {
+//                            // update desmond 2016/07/07 start
+//                            // 新增时，如果该catId已经申请了才设置平台catId属性，没申请不设置
+//                            if (applyPlatformCategoryMap.get(typeChannelBean.getValue()) != null
+//                                    && applyPlatformCategoryMap.get(typeChannelBean.getValue()).get(platformCategory.getCatId()) != null) {
+//                                platform.setpCatId(platformCategory.getCatId());
+//                                platform.setpCatPath(platformCategory.getCatPath());
+//                                platform.setpCatStatus("1");
+//                            }
+//                            break;
+//                            // update desmond 2016/07/07 end
+//                        }
+//                    }
+//                }
                 // 商品状态
                 // cartID是928的场合 状态直接是approved james.li
                 if (platform.getCartId() == CartEnums.Cart.USJGJ.getValue()) {
@@ -2029,7 +2024,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         sku.setClientSkuCode(feedSku.getClientSku());
                         sku.setClientSize(feedSku.getSize());
                         sku.setSize(feedSku.getSize());
-                        if (!StringUtils.isEmpty(feedSku.getWeightCalc())) {
+                        if (!StringUtils.isEmpty(feedSku.getWeightCalc()))
                             sku.setWeight(NumberUtils.toDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
                             sku.setWeightUnit(feedSku.getWeightOrgUnit());
                         }
@@ -2048,7 +2043,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     sku.setClientSize(feedSku.getSize());
                     sku.setSize(feedSku.getSize());        // Add by desmond 2016/07/04 因为上新用的是这个字段
                     sku.setQty(feedSku.getQty());
-                    if (!StringUtils.isEmpty(feedSku.getWeightCalc())) {
+                    sku.setIsSale(feedSku.getIsSale() == null ? 1 : feedSku.getIsSale());
+                    if (!StringUtils.isEmpty(feedSku.getWeightCalc()))
                         sku.setWeight(NumberUtils.toDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
                         sku.setWeightUnit(feedSku.getWeightOrgUnit());
                     }
@@ -2096,7 +2092,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     categoryTreeAllService.getApplyPlatformCategory(feed.getChannelId(), typeChannelBeanListApprove);
             // add desmond 2016/07/07 end
 
-            List<CmsMtCategoryTreeAllModel_Platform> platformCategoryList = null;
+//            List<CmsMtCategoryTreeAllModel_Platform> platformCategoryList = null;
             for (TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
                 // add desmond 2016/07/05 start
                 // P0（主数据）等平台不用设置分平台共通属性(typeChannel表里面保存的是0)
@@ -2115,12 +2111,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 }
                 if (!blnFound) {
                     // 更新时，没找到该cartId对应的platform，则新建这个cartId对应的platform  PXX
-                    if (platformCategoryList == null && newMapping != null) {
-                        CmsMtCategoryTreeAllModel categoryTreeAllModel = categoryTreeAllService.getCategoryByCatPath(newMapping.getMainCategoryPath());
-                        if (categoryTreeAllModel != null) {
-                            platformCategoryList = categoryTreeAllModel.getPlatformCategory();
-                        }
-                    }
+//                    if (platformCategoryList == null && newMapping != null) {
+//                        CmsMtCategoryTreeAllModel categoryTreeAllModel = categoryTreeAllService.getCategoryByCatPath(newMapping.getMainCategoryPath());
+//                        if (categoryTreeAllModel != null) {
+//                            platformCategoryList = categoryTreeAllModel.getPlatformCategory();
+//                        }
+//                    }
                     CmsBtProductModel_Platform_Cart platform = new CmsBtProductModel_Platform_Cart();
                     // cartId
                     platform.setCartId(Integer.parseInt(typeChannelBean.getValue()));
@@ -2141,23 +2137,23 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // 平台类目状态(更新时，新增PXX平台属性时)
                     platform.setpCatStatus("0");
                     // 如果新的主类目对应的平台类目存在，那么设定
-                    if (platformCategoryList != null) {
-                        for (CmsMtCategoryTreeAllModel_Platform platformCategory : platformCategoryList) {
-                            CartBean cartBean = Carts.getCart(typeChannelBean.getValue());
-                            if (cartBean != null && platformCategory.getPlatformId().equals(cartBean.getPlatform_id())) {
-                                // update desmond 2016/07/07 start
-                                // 新增PXX平台属性时，如果该catId已经申请了就设置平台catId属性，没申请就不设置
-                                if (applyPlatformCategoryMap.get(typeChannelBean.getValue()) != null
-                                        && applyPlatformCategoryMap.get(typeChannelBean.getValue()).get(platformCategory.getCatId()) != null) {
-                                    platform.setpCatId(platformCategory.getCatId());
-                                    platform.setpCatPath(platformCategory.getCatPath());
-                                    platform.setpCatStatus("1");
-                                }
-                                break;
-                                // update desmond 2016/07/07 end
-                            }
-                        }
-                    }
+//                    if (platformCategoryList != null) {
+//                        for (CmsMtCategoryTreeAllModel_Platform platformCategory : platformCategoryList) {
+//                            CartBean cartBean = Carts.getCart(typeChannelBean.getValue());
+//                            if (cartBean != null && platformCategory.getPlatformId().equals(cartBean.getPlatform_id())) {
+//                                // update desmond 2016/07/07 start
+//                                // 新增PXX平台属性时，如果该catId已经申请了就设置平台catId属性，没申请就不设置
+//                                if (applyPlatformCategoryMap.get(typeChannelBean.getValue()) != null
+//                                        && applyPlatformCategoryMap.get(typeChannelBean.getValue()).get(platformCategory.getCatId()) != null) {
+//                                    platform.setpCatId(platformCategory.getCatId());
+//                                    platform.setpCatPath(platformCategory.getCatPath());
+//                                    platform.setpCatStatus("1");
+//                                }
+//                                break;
+//                                // update desmond 2016/07/07 end
+//                            }
+//                        }
+//                    }
                     // 商品状态
                     // cartID是928的场合 状态直接是approved james.li
                     if (platform.getCartId() == CartEnums.Cart.USJGJ.getValue()) {
@@ -2171,24 +2167,24 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 } else {
                     // add desmond 2016/07/07 start
                     // 更新时，找到该cartId对应的platform，只更新pCatId相关属性，不更新其他属性
-                    if (platformCategoryList != null) {
-                        for (CmsMtCategoryTreeAllModel_Platform platformCategory : platformCategoryList) {
-                            CartBean cartBean = Carts.getCart(typeChannelBean.getValue());
-                            if (cartBean != null && platformCategory.getPlatformId().equals(cartBean.getPlatform_id())) {
-                                CmsBtProductModel_Platform_Cart platform = platforms.get("P" + typeChannelBean.getValue());
-                                // 如果pCatId已经手动设过了，不更新；如果没有设置过，并且该catId已经申请了才更新,没申请不更新
-                                if (platform != null
-                                        && StringUtils.isEmpty(platform.getpCatId())
-                                        && applyPlatformCategoryMap.get(typeChannelBean.getValue()) != null
-                                        && applyPlatformCategoryMap.get(typeChannelBean.getValue()).get(platformCategory.getCatId()) != null) {
-                                    platform.setpCatId(platformCategory.getCatId());
-                                    platform.setpCatPath(platformCategory.getCatPath());
-                                    platform.setpCatStatus("1");
-                                }
-                                break;
-                            }
-                        }
-                    }
+//                    if (platformCategoryList != null) {
+//                        for (CmsMtCategoryTreeAllModel_Platform platformCategory : platformCategoryList) {
+//                            CartBean cartBean = Carts.getCart(typeChannelBean.getValue());
+//                            if (cartBean != null && platformCategory.getPlatformId().equals(cartBean.getPlatform_id())) {
+//                                CmsBtProductModel_Platform_Cart platform = platforms.get("P" + typeChannelBean.getValue());
+//                                // 如果pCatId已经手动设过了，不更新；如果没有设置过，并且该catId已经申请了才更新,没申请不更新
+//                                if (platform != null
+//                                        && StringUtils.isEmpty(platform.getpCatId())
+//                                        && applyPlatformCategoryMap.get(typeChannelBean.getValue()) != null
+//                                        && applyPlatformCategoryMap.get(typeChannelBean.getValue()).get(platformCategory.getCatId()) != null) {
+//                                    platform.setpCatId(platformCategory.getCatId());
+//                                    platform.setpCatPath(platformCategory.getCatPath());
+//                                    platform.setpCatStatus("1");
+//                                }
+//                                break;
+//                            }
+//                        }
+//                    }
                     // add desmond 2016/07/07 end
 
                     // cartID是928的场合 状态直接是approved james.li

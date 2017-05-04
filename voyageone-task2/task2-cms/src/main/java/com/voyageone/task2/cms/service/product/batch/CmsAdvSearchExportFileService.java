@@ -1229,7 +1229,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 // 图片路径
                 String imgPath = "";
                 if (CollectionUtils.isNotEmpty(fields.getImages1()) && fields.getImages1().get(0) != null) {
-                    imgPath = "http://image.voyageone.com.cn/is/image/sneakerhead/" + fields.getImages1().get(0).getName();
+                    imgPath = Constants.productForOtherSystemInfo.IMG_URL + fields.getImages1().get(0).getName();
                 }
                 FileUtils.cell(row, index++, unlock).setCellValue(imgPath); // 图片
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getSizeType())); // 使用人群

@@ -71,6 +71,9 @@ public class FeedToCmsService extends BaseService {
     @Autowired
     private PriceService priceService;
 
+    @Autowired
+    private FeedSaleService feedSaleService;
+
 
     public boolean chkCategoryPathValid(String categoryPath) {
         if (categoryPath.length() == categoryPath.lastIndexOf("-") + 1) {
@@ -318,8 +321,13 @@ public class FeedToCmsService extends BaseService {
                         }
 
                         // 同步状态
-                        if (targetSku.getIsSale() != null)
+                        if (targetSku.getIsSale() != null) {
+
+                            if (targetSku.getIsSale() != skuInfo.getIsSale()) {
+                                feedSaleService.setSaleOrNotSale(channelId, skuInfo.getClientSku(), skuInfo.getSku(), targetSku.getIsSale());
+                            }
                             skuInfo.setIsSale(targetSku.getIsSale());
+                        }
                     }
                     qty += skuInfo.getQty();
                 }
