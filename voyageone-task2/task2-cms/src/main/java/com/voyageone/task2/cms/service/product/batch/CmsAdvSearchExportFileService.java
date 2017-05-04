@@ -454,7 +454,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         }
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
-                if(prop.get("name").indexOf("是否销售")>-0) continue;
+                if (prop.get("name").indexOf("是否销售") > -0) continue;
                 FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
             }
         }
@@ -490,8 +490,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
         index = size;
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
-                if(prop.get("name").indexOf("可售库存")>-0) continue;
-                if(prop.get("name").indexOf("是否销售")>-0) continue;
+                if (prop.get("name").indexOf("可售库存") > -0) continue;
+                if (prop.get("name").indexOf("是否销售") > -0) continue;
                 FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
             }
         }
@@ -531,7 +531,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
-                if(prop.get("name").indexOf("可售库存")>-0) continue;
+                if (prop.get("name").indexOf("可售库存") > -0) continue;
                 FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
             }
         }
@@ -679,7 +679,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
             FileUtils.cell(row, index++, unlock).setCellValue(item.getCommon().getSkus().size());
             //sku取得库存
             Map<String, Integer> codesMap = new HashMap<>();
-            item.getCommon().getSkus().forEach(sku->codesMap.put(sku.getSkuCode(), sku.getQty()));
+            item.getCommon().getSkus().forEach(sku -> codesMap.put(sku.getSkuCode(), sku.getQty()));
             FileUtils.cell(row, index++, unlock).setCellValue(item.getCommon().getFieldsNotNull().getQuantity());
 
             // 取得自由标签
@@ -797,20 +797,20 @@ public class CmsAdvSearchExportFileService extends BaseService {
                         continue;
                     }
 
-                    if("isSale".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
-                    if("qty".equals(key.substring(key.lastIndexOf(".") + 1))){
+                    if ("isSale".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
+                    if ("qty".equals(key.substring(key.lastIndexOf(".") + 1))) {
                         Integer qty = 0;
                         for (BaseMongoMap<String, Object> map : _platform.getSkus()) {
                             String sku = (String) map.get("skuCode");
                             Boolean isSale = (Boolean) map.get("isSale");
-                            if(isSale !=null && isSale){
+                            if (isSale != null && isSale) {
                                 if (codesMap.get(sku) != null) {
                                     qty = qty + codesMap.get(sku);
                                 }
                             }
                         }
                         FileUtils.cell(row, index++, unlock).setCellValue(qty);
-                    }else{
+                    } else {
                         index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
                     }
 
@@ -895,8 +895,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
                         FileUtils.cell(row, index++, unlock).setCellValue("");
                         continue;
                     }
-                    if("qty".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
-                    if("isSale".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
+                    if ("qty".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
+                    if ("isSale".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                     index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
 
                 }
@@ -1003,10 +1003,20 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             FileUtils.cell(row, index++, unlock).setCellValue("");
                             continue;
                         }
-                        if("qty".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
-                        if("isSale".equals(key.substring(key.lastIndexOf(".") + 1))){
-                            FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getIsSale() == 0 ? "No":"Yes");
-                        }else {
+                        if ("qty".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
+                        BaseMongoMap<String, Object> pSku = _platform.getSkus().stream().filter(sku -> skuItem.getSkuCode().equals(sku.get("skuCode"))).findFirst().orElse(new BaseMongoMap<>());
+                        String attrName = key.substring(key.lastIndexOf(".") + 1);
+                        if ("isSale".equals(attrName)) {
+                            Boolean isSale = (Boolean) pSku.get("isSale");
+                            if (isSale == null) isSale = true;
+                            FileUtils.cell(row, index++, unlock).setCellValue(isSale ? "Yes" : "No");
+                        } else if ("pPriceMsrpEd".equals(attrName)) {
+                            FileUtils.cell(row, index++, unlock).setCellValue((Double) pSku.getDoubleAttribute("priceMsrp"));
+                        } else if ("pPriceRetailEd".equals(attrName)) {
+                            FileUtils.cell(row, index++, unlock).setCellValue((Double) pSku.getDoubleAttribute("priceRetail"));
+                        } else if ("pPriceSaleEd".equals(attrName)) {
+                            FileUtils.cell(row, index++, unlock).setCellValue((Double) pSku.getDoubleAttribute("priceSale"));
+                        } else {
                             index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
                         }
                     }
@@ -1021,6 +1031,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
     /**
      * 构建excel内容中的平台信息
+     *
      * @param key
      * @param row
      * @param index
@@ -1054,7 +1065,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         } else if ("pPriceSaleEd".equals(attrName)) {
             FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(_platform.getpPriceSaleSt(), _platform.getpPriceSaleEd()));
         } else if ("lock".equals(attrName)) {
-            FileUtils.cell(row, index++, unlock).setCellValue(getLockStatusTxt(StringUtil.isEmpty(_platform.getLock())?"0":"1"));
+            FileUtils.cell(row, index++, unlock).setCellValue(getLockStatusTxt(StringUtil.isEmpty(_platform.getLock()) ? "0" : "1"));
         } else {
             key = key.split(_cartId)[1].substring(1);
             Object salesVal = _platform.getSubNode(key.split("\\."));
