@@ -1602,7 +1602,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         // 品牌id
         if (!StringUtils.isEmpty(jmCart.getpBrandId())) {
             bean.setBrand_id(NumberUtils.toInt(jmCart.getpBrandId()));
-        } else if (blnIsSmartSx && !StringUtils.isEmpty(sxData.getBrandCode())) {
+        } else if (!StringUtils.isEmpty(sxData.getBrandCode())) {
             bean.setBrand_id(NumberUtils.toInt(sxData.getBrandCode()));
         }
         // update by desmond 2016/09/01 end
