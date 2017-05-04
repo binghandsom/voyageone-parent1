@@ -357,6 +357,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             }
             // 如果没有设置过平台类目， 并且是智能上新的场合， 自动匹配一下主类目 END
 
+            //填充JmProductBean
+            bean = fillJmProductBean(product, expressionParser, shop, skuLogicQtyMap, blnIsSmartSx, sxData);
+
             if (StringUtils.isNullOrBlank2(originHashId)) {
                 //如果OriginHashId不存在，则创建新商品
 
@@ -364,9 +367,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 cmsBtJmProductModel = fillCmsBtJmProductModel(cmsBtJmProductModel, product);
                 //填充cmsBtJmSkuModelList
                 cmsBtJmSkuModelList = fillCmsBtJmSkuModelList(cmsBtJmSkuModelList, product);
-
-                //填充JmProductBean
-                bean = fillJmProductBean(product, expressionParser, shop, skuLogicQtyMap, blnIsSmartSx, sxData);
 
                 HtProductAddRequest htProductAddRequest = new HtProductAddRequest();
                 htProductAddRequest.setJmProduct(bean);
