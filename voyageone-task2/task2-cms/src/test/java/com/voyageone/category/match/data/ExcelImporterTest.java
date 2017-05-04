@@ -1,4 +1,4 @@
-package com.voyageone.category.match;
+package com.voyageone.category.match.data;
 
 import junit.framework.TestCase;
 import org.junit.Test;
@@ -20,6 +20,7 @@ public class ExcelImporterTest extends TestCase {
 
     @Autowired
     ExcelImporter excelImporter;
+
     @Test
     public void importDataToDb() throws Exception {
         excelImporter.importDataToDb(TEST_FILEPATH1, TEST_FILEPATH2);

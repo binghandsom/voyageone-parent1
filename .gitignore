@@ -16,3 +16,4 @@ npm-debug.log
 rebel.xml
 node_modules
 .project
+.DS_Store

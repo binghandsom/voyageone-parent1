@@ -11,10 +11,67 @@
     <!-- 类扫描路径配置 -->
     <context:component-scan base-package="com.voyageone"/>
 
-    <import resource="classpath*:datasource-cms2-config.xml"/>
+    <bean id="dataSourceMaster" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+        <property name="jdbcUrl"
+                  value="jdbc:mysql://10.0.0.83:3306/Synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round&amp;allowMultiQueries=true"/>
+        <property name="user" value="app_my_dev"/>
+        <property name="password" value="s28Bw_1IL1bz"/>
+
+        <!--不要提交  不要改这里  59的配置对应配置文件datasource-cms2-config-mast.xml-->
+        <!--<property name="jdbcUrl"-->
+        <!--value="jdbc:mysql://10.0.0.59:8989/synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round"/>-->
+        <!--<property name="user" value="app_web_read"/>-->
+        <!--<property name="password" value="ND-_123B-"/>-->
+        <!--<property name="jdbcUrl"
+                  value="jdbc:mysql://10.0.0.82:3306/synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round"/>
+        <property name="user" value="app"/>
+        <property name="password" value="ZAQ!2wsx"/>-->
+        <!--初始化时获取连接的数目，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
+        <property name="initialPoolSize" value="5"></property>
+        <!--连接池中保留的最大连接数。Default: 15 -->
+        <property name="maxPoolSize" value="30"></property>
+        <property name="minPoolSize" value="5"></property>
+        <property name="testConnectionOnCheckout" value="true"></property>
+        <!--如果设为true那么在取得连接的同时将校验连接的有效性。Default: false -->
+        <property name="testConnectionOnCheckin" value="true"></property>
+        <!--定义所有连接测试都执行的测试语句。在使用连接测试的情况下这个一显著提高测试速度。注意： 测试的表必须在初始数据源的时候就存在。Default: null-->
+        <property name="preferredTestQuery" value="SELECT CURRENT_DATE"></property>
+        <!--最大空闲时间,单位为秒。若为0则永不丢弃。Default: 0 -->
+        <property name="maxIdleTime" value="14400"></property>
+        <!--强迫连接池扑杀任何的连接，这些连接超过了设置的秒数。(现将其设置为数据库wait_timeout的1/2)-->
+        <property name="maxConnectionAge" value="14400"></property>
+    </bean>
+
+    <bean id="sqlSessionFactoryMaster" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- SqlSessionFactory的数据源 -->
+        <property name="dataSource" ref="dataSourceMaster"/>
+        <!-- 指定sqlMapConfig总配置文件，订制的environment在spring容器中不在生效-->
+        <property name="configLocation" value="classpath:com/voyageone/mybatis/myBatisConfig.xml"/>
+        <!--指定实体类映射文件，可以指定同时指定某一包以及子包下面的所有配置文件 -->
+        <property name="mapperLocations" value="classpath*:com/voyageone/**/*Mapper.xml"/>
+        <!-- 配置Mybatis的插件plugin-->
+        <property name="plugins">
+            <array>
+                <bean class="com.voyageone.base.dao.mysql.MybatisSchemaInterceptor">
+                    <property name="properties">
+                        <value>
+                            database_schema=Synship
+                        </value>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+
+    <bean id="updateTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg ref="sqlSessionFactoryMaster"/>
+    </bean>
+
     <import resource="classpath*:datasource-config-mongo-cms2.xml"/>
     <!-- Redis Config -->
     <import resource="classpath*:redis-config.xml"/>
+    <import resource="classpath*:mq-config.xml"/>
 
     <!-- 初始化处理 -->
     <bean class="com.voyageone.common.configs.Initializer" init-method="init" lazy-init="false"/>

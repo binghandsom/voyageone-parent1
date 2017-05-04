@@ -2,7 +2,10 @@ package com.voyageone.service.impl.cms.feed;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.category.match.*;
+import com.voyageone.category.match.FeedQuery;
+import com.voyageone.category.match.MatchResult;
+import com.voyageone.category.match.Searcher;
+import com.voyageone.category.match.Tokenizer;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -265,7 +268,7 @@ public class FeedToCmsService extends BaseService {
      * @param channelId
      * @param skuList
      * @param modifier
-     * @return
+     * @return Map<String, List<CmsBtOperationLogModel_Msg>>
      */
     public Map<String, List<CmsBtOperationLogModel_Msg>> updateFeedSkuPrice(String channelId, List<CmsBtFeedInfoModel_Sku> skuList,
                                                                             String modifier) {
@@ -274,35 +277,35 @@ public class FeedToCmsService extends BaseService {
             List<CmsBtOperationLogModel_Msg> success = new ArrayList<>(),
                     failed = new ArrayList<>();
 
-            List<String> skuCodeList = skuList.stream().map(sku -> sku.getClientSku()).collect(Collectors.toList());
+        List<String> skuCodeList = skuList.stream().map(sku -> sku.getClientSku()).collect(Collectors.toList());
 
-            JongoQuery query = new JongoQuery();
-            query.setQuery("{\"skus.clientSku\": {$in: #}}");
-            query.setParameters(skuCodeList);
-            List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, query);
+        JongoQuery query = new JongoQuery();
+        query.setQuery("{\"skus.clientSku\": {$in: #}}");
+        query.setParameters(skuCodeList);
+        List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, query);
 
-            feedList.forEach(orgFeedInfo -> {
+        feedList.forEach(orgFeedInfo -> {
 
-                Integer qty = 0;
-                /**标识是否要触发价格公式，
-                 * 当判断中的3个价格都没有值时，不会触发价格公式
-                 * */
+            Integer qty = 0;
+            /**标识是否要触发价格公式，
+             * 当判断中的3个价格都没有值时，不会触发价格公式
+             * */
 
-                boolean triggerPrice = false;
-                for (CmsBtFeedInfoModel_Sku skuInfo : orgFeedInfo.getSkus()) {
+            boolean triggerPrice = false;
+            for (CmsBtFeedInfoModel_Sku skuInfo : orgFeedInfo.getSkus()) {
 
-                    CmsBtFeedInfoModel_Sku targetSku = filterSku(skuList, skuInfo.getClientSku());
+                CmsBtFeedInfoModel_Sku targetSku = filterSku(skuList, skuInfo.getClientSku());
 
-                    /**
-                     * 比较一下客户价格
-                     * priceNet:美金成本价
-                     * priceClientRetail:美金指导价
-                     * priceClientMsrp:美金专柜价
-                     */
-                    if (targetSku != null) {
-                        triggerPrice = !((targetSku.getPriceNet() == null || targetSku.getPriceNet() == 0)
-                                && (targetSku.getPriceClientRetail() == null || targetSku.getPriceClientRetail() == 0)
-                                && (targetSku.getPriceClientMsrp() == null || targetSku.getPriceClientMsrp() == 0));
+                /**
+                 * 比较一下客户价格
+                 * priceNet:美金成本价
+                 * priceClientRetail:美金指导价
+                 * priceClientMsrp:美金专柜价
+                 */
+                if (targetSku != null) {
+                    triggerPrice = !((targetSku.getPriceNet() == null || targetSku.getPriceNet() == 0)
+                            && (targetSku.getPriceClientRetail() == null || targetSku.getPriceClientRetail() == 0)
+                            && (targetSku.getPriceClientMsrp() == null || targetSku.getPriceClientMsrp() == 0));
 
                         // 同步价格
                         if (targetSku.getPriceNet() != null && targetSku.getPriceNet() != 0)
@@ -351,15 +354,15 @@ public class FeedToCmsService extends BaseService {
                     _successMsg.setMsg("修改feed信息完毕");
                     success.add(_successMsg);
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    CmsBtOperationLogModel_Msg _failedMsg = new CmsBtOperationLogModel_Msg();
-                    _failedMsg.setSkuCode(orgFeedInfo.getCode());
-                    _failedMsg.setMsg(e.getMessage());
-                    failed.add(_failedMsg);
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                CmsBtOperationLogModel_Msg _failedMsg = new CmsBtOperationLogModel_Msg();
+                _failedMsg.setSkuCode(orgFeedInfo.getCode());
+                _failedMsg.setMsg(e.getMessage());
+                failed.add(_failedMsg);
+            }
 
-            });
+        });
 
             Map<String, List<CmsBtOperationLogModel_Msg>> response = new HashMap<>();
             response.put("success", success);
@@ -590,13 +593,12 @@ public class FeedToCmsService extends BaseService {
 
     private void setMainCategory(CmsBtFeedInfoModel feedProduct) {
 
-        StopWordCleaner cleaner = new StopWordCleaner(StopWordCleaner.STOPWORD_LIST);
         // 子店feed类目path分隔符(由于导入feedInfo表时全部替换成用"-"来分隔了，所以这里写固定值就可以了)
         List<String> categoryPathSplit = new ArrayList<>();
         categoryPathSplit.add("-");
         Tokenizer tokenizer = new Tokenizer(categoryPathSplit);
 
-        FeedQuery query = new FeedQuery(feedProduct.getCategory(), cleaner, tokenizer);
+        FeedQuery query = new FeedQuery(feedProduct.getCategory(), null, tokenizer);
         query.setProductType(feedProduct.getProductType());
         query.setSizeType(feedProduct.getSizeType());
         query.setProductName(feedProduct.getName(), feedProduct.getBrand());
