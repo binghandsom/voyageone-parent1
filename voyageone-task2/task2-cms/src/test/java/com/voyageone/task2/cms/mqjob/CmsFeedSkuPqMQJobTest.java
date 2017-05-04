@@ -1,16 +1,12 @@
 package com.voyageone.task2.cms.mqjob;
 
-import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsFeedSkuPqMQMessageBody;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by 123 on 2017/3/22.
@@ -20,34 +16,13 @@ import java.util.List;
 public class CmsFeedSkuPqMQJobTest {
 
     @Autowired
-    FeedInfoService feedInfoService;
-    @Autowired
     CmsFeedSkuPqMQJob cmsFeedSkuPqMQJob;
 
     @Test
     public void onStartup() throws Exception {
-        CmsFeedSkuPqMQMessageBody message = new CmsFeedSkuPqMQMessageBody();
+        String msg1 = "{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"VmsThirdFileDataProcessingJob\",\"channelId\":\"033\",\"skuList\":[{\"priceCurrent\":null,\"priceMsrp\":null,\"priceNet\":null,\"priceClientRetail\":null,\"priceClientMsrp\":null,\"sku\":null,\"size\":null,\"barcode\":null,\"clientSku\":\"128333\",\"image\":null,\"qty\":10,\"relationshipType\":null,\"variationTheme\":null,\"weightOrg\":null,\"weightOrgUnit\":null,\"weightCalc\":null,\"isSale\":0,\"mainVid\":null,\"attribute\":{},\"errInfo\":null},{\"priceCurrent\":null,\"priceMsrp\":null,\"priceNet\":null,\"priceClientRetail\":null,\"priceClientMsrp\":null,\"sku\":null,\"size\":null,\"barcode\":null,\"clientSku\":\"1187206\",\"image\":null,\"qty\":11,\"relationshipType\":null,\"variationTheme\":null,\"weightOrg\":null,\"weightOrgUnit\":null,\"weightCalc\":null,\"isSale\":0,\"mainVid\":null,\"attribute\":{},\"errInfo\":null},{\"priceCurrent\":null,\"priceMsrp\":null,\"priceNet\":null,\"priceClientRetail\":null,\"priceClientMsrp\":null,\"sku\":null,\"size\":null,\"barcode\":null,\"clientSku\":\"1187205\",\"image\":null,\"qty\":12,\"relationshipType\":null,\"variationTheme\":null,\"weightOrg\":null,\"weightOrgUnit\":null,\"weightCalc\":null,\"isSale\":0,\"mainVid\":null,\"attribute\":{},\"errInfo\":null},{\"priceCurrent\":null,\"priceMsrp\":null,\"priceNet\":null,\"priceClientRetail\":null,\"priceClientMsrp\":null,\"sku\":null,\"size\":null,\"barcode\":null,\"clientSku\":\"1187204\",\"image\":null,\"qty\":13,\"relationshipType\":null,\"variationTheme\":null,\"weightOrg\":null,\"weightOrgUnit\":null,\"weightCalc\":null,\"isSale\":0,\"mainVid\":null,\"attribute\":{},\"errInfo\":null},{\"priceCurrent\":null,\"priceMsrp\":null,\"priceNet\":null,\"priceClientRetail\":null,\"priceClientMsrp\":null,\"sku\":null,\"size\":null,\"barcode\":null,\"clientSku\":\"1187203\",\"image\":null,\"qty\":14,\"relationshipType\":null,\"variationTheme\":null,\"weightOrg\":null,\"weightOrgUnit\":null,\"weightCalc\":null,\"isSale\":0,\"mainVid\":null,\"attribute\":{},\"errInfo\":null},{\"priceCurrent\":null,\"priceMsrp\":null,\"priceNet\":null,\"priceClientRetail\":null,\"priceClientMsrp\":null,\"sku\":null,\"size\":null,\"barcode\":null,\"clientSku\":\"1187202\",\"image\":null,\"qty\":15,\"relationshipType\":null,\"variationTheme\":null,\"weightOrg\":null,\"weightOrgUnit\":null,\"weightCalc\":null,\"isSale\":0,\"mainVid\":null,\"attribute\":{},\"errInfo\":null}],\"subBeanName\":\"033\"}";
 
-        List<CmsBtFeedInfoModel_Sku> skuList = new ArrayList<>();
-        CmsBtFeedInfoModel_Sku _skuInfo = feedInfoService.getProductByCode("010", "1FMA3324Y11").getSkus().get(0);
-        /**
-         * 比较一下客户价格
-         * priceNet:美金成本价
-         * priceClientRetail:美金指导价
-         * priceClientMsrp:美金专柜价
-         */
-        _skuInfo.setPriceNet(0.0);
-        _skuInfo.setPriceClientRetail(0.0);
-        _skuInfo.setPriceClientMsrp(0.0);
-
-        skuList.add(_skuInfo);
-
-        //拼消息体
-        message.setChannelId("010");
-        message.setSender("piao");
-        message.setSkuList(skuList);
-
-
+        CmsFeedSkuPqMQMessageBody message = JacksonUtil.json2Bean(msg1, CmsFeedSkuPqMQMessageBody.class);
         cmsFeedSkuPqMQJob.onStartup(message);
     }
 

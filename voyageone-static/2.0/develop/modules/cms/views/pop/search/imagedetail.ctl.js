@@ -25,7 +25,7 @@ define([
                 if ($rootScope.imageUrl == null || $rootScope.imageUrl == undefined) {
                     $rootScope.imageUrl = '';
                 }
-                picObj.mainPic = $rootScope.imageUrl.replace("%s", picObj.mainPic);//"http://image.sneakerhead.com/is/image/sneakerhead/" + ;
+                picObj.mainPic = $rootScope.imageUrl.replace("%s", picObj.mainPic);//"http://image.voyageone.com.cn/is/image/sneakerhead/" + ;
                 var picList = picObj.picList;
 
                 //框架foreach无法改变值，所以用js源生循环
