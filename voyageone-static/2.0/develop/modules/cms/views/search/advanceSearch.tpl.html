@@ -774,10 +774,10 @@
                                 <i class="fa fa-exchange"></i>&nbsp;{{'TXT_COMMON_EXCHANGE' | translate}}&nbsp;<span class="caret"></span>
                             </button>
                             <ul uib-dropdown-menu>
-                                <li ng-if="vm.masterData.isminimall == 1">
+                                <li ng-if="vm.masterData.isminimall == 1 || vm.channelId == '024'">
                                     <a href="javascript:void(0)" ng-click="$parent.openCategoryMapping(popupCategoryNew)"> {{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</a>
                                 </li>
-                                <li ng-if="vm.masterData.isminimall == 1">
+                                <li ng-if="vm.masterData.isminimall == 1 || vm.channelId == '024'">
                                     <a href="javascript:void(0)" ng-click="$parent.refreshProductCategory()"> {{'BTN_REFRESH_MASTER_CATEGORY' | translate}}</a>
                                 </li>
                                 <li>
