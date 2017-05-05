@@ -770,7 +770,7 @@ define([
     };
 
     SpTmController.prototype.popEditGroup = function () {
-        var self = this;
+        var self = this, $scope = self.$scope;
 
         var _mainProduct = _.find(self.vm.mastData.images, function (item) {
             return item.isMain;
@@ -783,7 +783,8 @@ define([
 
         self.popups.openEditGroup({
             mainProdId: _mainProduct.prodId,
-            cartId: self.$scope.cartInfo.value
+            cartId: $scope.cartInfo.value,
+            masterField: $scope.productInfo.masterField
         }).then(function (res) {
             console.log(res);
         });

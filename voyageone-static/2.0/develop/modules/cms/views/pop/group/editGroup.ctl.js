@@ -5,8 +5,7 @@
  */
 define([
     'cms',
-    'modules/cms/directives/platFormStatus.directive',
-    'modules/cms/directives/noticeTip.directive'
+    'modules/cms/enums/Carts'
 ], function (cms, carts) {
 
     cms.controller('editGroupController', (function () {
@@ -144,7 +143,7 @@ define([
             self.popups.openAddChannelCategoryEdit([{
                 code: self.vm.mastData.productCode,
                 sellerCats: self.vm.sellerCats,
-                cartId: self.context.value,
+                cartId: self.context.cartId,
                 selectedIds: selectedIds,
                 plateSchema: true
             }]).then(function (context) {
@@ -159,13 +158,13 @@ define([
          */
         EditGroupCtl.prototype.choseBrand = function () {
 
-            var self = this, $scope = self.$scope,
+            var self = this,
                 platform = self.vm.platform;
 
             self.popups.openPlatformMappingSetting({
-                cartId: $scope.cartInfo.value,
-                cartName: $scope.cartInfo.name,
-                masterName: $scope.productInfo.masterField.brand,
+                cartId: self.context.cartId,
+                cartName: carts.valueOf(Number(self.context.cartId)).desc,
+                masterName: self.context.masterField.brand,
                 pBrandId: platform.pBrandId ? platform.pBrandId : null
             }).then(function (context) {
                 self.vm.platform.pBrandName = context.pBrand;
@@ -384,11 +383,11 @@ define([
             var self = this,
                 popup = self.popups;
 
-            self.vm.platform['images1'] = self.$scope.productInfo.masterField['images1'];
+            self.vm.platform['images1'] = self.context.masterField['images1'];
 
             popup.openUploadImages({
-                cartId: self.$scope.cartInfo.value,
-                productId: self.$scope.productInfo.productId,
+                cartId: self.context.cartId,
+                productId: self.context.mainProdId,
                 platform: self.vm.platform,
                 showArr: ['image1', 'image6', 'image7', 'image2', 'image3', 'image4', 'image5']
             }).then(function (platform) {
