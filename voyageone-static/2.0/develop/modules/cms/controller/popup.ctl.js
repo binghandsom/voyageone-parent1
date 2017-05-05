@@ -205,6 +205,12 @@ define([
                 "templateUrl": "views/pop/custom/confirmstoreopp.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/custom/confirmstoreopp.ctl",
                 "controller": 'popConfirmStoreOppCtl'
+            },
+            "columnForDownLoad": {
+                "templateUrl": "views/pop/custom/columnForDownload.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/custom/columnForDownload.ctl",
+                "controller": 'popColumnForDownloadCtl',
+                "size": 'lg'
             }
         },
         "configuration": {
@@ -658,10 +664,10 @@ define([
         function openModal(config, context, contextIsResolve) {
 
             config.resolve = contextIsResolve ? context : {
-                    context: function () {
-                        return context;
-                    }
-                };
+                context: function () {
+                    return context;
+                }
+            };
 
             var defer = $q.defer();
             require([config.controllerUrl], function () {
@@ -1132,7 +1138,12 @@ define([
                 productIds.push(object.code);
             });
             if (context && context.isSelAll) {
-                data = {"productIds": [], "cartId": cartId, 'isSelAll': context.isSelAll,"searchInfo":context.searchInfo};
+                data = {
+                    "productIds": [],
+                    "cartId": cartId,
+                    'isSelAll': context.isSelAll,
+                    "searchInfo": context.searchInfo
+                };
             } else if (selList.length > 0 && selList[0].plateSchema) {
                 data = {
                     "productIds": productIds,
@@ -1513,7 +1524,14 @@ define([
          */
         $scope.openLoadAttribute = function openLoadAttribute(context) {
             return openModal(popActions.product.loadAttribute, context)
-        }
+        };
+
+        /**
+         * 自定义下载选择列模态框
+         */
+        $scope.openColumnForDownLoad = function(context) {
+            return openModal(popActions.custom.columnForDownLoad, context);
+        };
 
     }).factory('popups', function ($controller, $rootScope) {
 

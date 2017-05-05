@@ -62,6 +62,35 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             {"platforms.P%s.pPriceSaleEd", "中国最终售价"}
     };
 
+    private static final String[][] platformItems = {
+            {"platforms.P%s.URL", "URL"},
+            {"platforms.P%s.pNumIId", "Numiid"},
+            {"platforms.P%s.fields.title", "商品名称"},
+            {"platforms.P%s.fields.fields.pCatPath", "类目"},
+            {"platforms.P%s.fields.pPriceMsrpEd", "官方建议售价"},
+            {"platforms.P%s.fields.pPriceRetailEd", "指导售价"},
+            {"platforms.P%s.fields.pPriceSaleEd", "最终售价"},
+            {"platforms.P%s.mainProductCode", "主商品编码"},
+            {"platforms.P%s.qty", "可售库存"},
+            {"platforms.P%s.lock", "是否锁定"},
+            {"platforms.P%s.skus.isSale", "是否销售"},
+    };
+
+    private static final String[][] platformItemsJM = {
+            {"platforms.P%s.MallURL", "MallURL"},
+            {"platforms.P%s.pMallId", "MallId"},
+            {"platforms.P%s.URL", "URL"},
+            {"platforms.P%s.pNumIId", "HashID"},
+            {"platforms.P%s.fields.title", "商品名称"},
+            {"platforms.P%s.fields.fields.pCatPath", "类目"},
+            {"platforms.P%s.fields.pPriceMsrpEd", "官方建议售价"},
+            {"platforms.P%s.fields.pPriceRetailEd", "指导售价"},
+            {"platforms.P%s.fields.pPriceSaleEd", "最终售价"},
+            {"platforms.P%s.mainProductCode", "主商品编码"},
+            {"platforms.P%s.qty", "可售库存"},
+            {"platforms.P%s.lock", "是否锁定"},
+            {"platforms.P%s.skus.isSale", "是否销售"},
+    };
     /**
      * 取得当前主商品所在组的其他信息：所有商品的价格变动信息，子商品图片
      */
@@ -344,6 +373,67 @@ public class CmsAdvSearchOtherService extends BaseViewService {
         }
         return salseSumList;
     }
+    /**
+     * 取得销量数据显示列
+     */
+    public List<Map<String, String>> getPlatformList(String channelId, String language,List<String> filterList) {
+        List<Map<String, String>> dataSumList = new ArrayList<>();
+
+        // 设置显示列排序
+        List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, language);
+        if (cartList == null) {
+            return dataSumList;
+        }
+        for (TypeChannelBean cartObj : cartList) {
+            int cartId = NumberUtils.toInt(cartObj.getValue(), -1);
+            if (cartId == 0 || cartId == 1 || cartId == -1) {
+                continue;
+            }
+
+            // 目前只有淘宝和京东有bi数据，其他平台都忽略
+            // 目前暂不计算平台相加总数
+            ShopBean shopProp = Shops.getShop(channelId, cartId);
+            if (shopProp == null) {
+                $error("CmsAdvSearchOtherService 获取到店铺信息失败(shopProp == null)! [ChannelId:%s] [CartId:%s]", channelId, cartId);
+                continue;
+            }
+
+            if(PlatFormEnums.PlatForm.JM.getId().equals(shopProp.getPlatform_id())){
+                // 添加各平台的排序字段
+                for (String[] platformItem : platformItemsJM) {
+                    Map<String, String> keySumMap = new HashMap<>();
+                    keySumMap.put("name", cartObj.getName() + platformItem[1]);
+                    keySumMap.put("value", String.format(platformItem[0], cartId));
+                    dataSumList.add(keySumMap);
+                }
+            }else {
+                // 添加各平台的排序字段
+                for (String[] platformItem : platformItems) {
+                    Map<String, String> keySumMap = new HashMap<>();
+                    keySumMap.put("name", cartObj.getName() + platformItem[1]);
+                    keySumMap.put("value", String.format(platformItem[0], cartId));
+                    dataSumList.add(keySumMap);
+                }
+            }
+        }
+
+        if(filterList != null){
+            return filterSelList(dataSumList,filterList);
+        }
+
+        return dataSumList;
+    }
+
+    private List<Map<String, String>> filterSelList(List<Map<String, String>> orgList,List<String> filterList){
+        List<Map<String, String>> resultList = new ArrayList<>();
+        for (Map<String, String> sumObj : orgList) {
+            if (filterList.contains(sumObj.get("value"))) {
+                resultList.add(sumObj);
+            }
+        }
+
+        return resultList;
+    }
 
     /**
      * 取得BI数据显示列
@@ -394,14 +484,9 @@ public class CmsAdvSearchOtherService extends BaseViewService {
         }
 
         if (filterList != null) {
-            List<Map<String, String>> sumAllList = new ArrayList<>();
-            for (Map<String, String> sumObj : dataSumList) {
-                if (filterList.contains(sumObj.get("value"))) {
-                    sumAllList.add(sumObj);
-                }
-            }
-            return sumAllList;
+            return filterSelList(dataSumList,filterList);
         }
+
         return dataSumList;
     }
 }
