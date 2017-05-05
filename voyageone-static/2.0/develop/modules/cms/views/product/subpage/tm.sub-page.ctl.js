@@ -769,10 +769,22 @@ define([
         });
     };
 
-    SpTmController.prototype.popEditGroup = function(){
+    SpTmController.prototype.popEditGroup = function () {
         var self = this;
 
-        self.popups.openEditGroup().then(function (res) {
+        var _mainProduct = _.find(self.vm.mastData.images, function (item) {
+            return item.isMain;
+        });
+
+        if (!_mainProduct) {
+            self.alert('未找到对应主商品信息！');
+            return;
+        }
+
+        self.popups.openEditGroup({
+            mainProdId: _mainProduct.prodId,
+            cartId: self.$scope.cartInfo.value
+        }).then(function (res) {
             console.log(res);
         });
     };

@@ -6,91 +6,26 @@
         <h5 class="modal-title"><i class="fa fa-pencil"></i> 编辑group信息</h5>
     </div>
 
-    <div class="modal-body wrapper">
-
+    <div class="modal-body wrapper" style="height: 666px;overflow-y: auto;">
         <div class="product-shema-detail">
-            <div class="panel-group" id="accordion">
-                <div class="panel panel-default">
-                    <div class="panel-heading cur-p" ng-click="ctrl.panelShow = true" ng-if="!ctrl.panelShow">
-                        <h4 class="panel-title">
-                            <a href="javascript:void(0)">
-                                <i class="fa fa-caret-right"></i>&nbsp;&nbsp;<strong>展开</strong>
-                            </a>
-                        </h4>
-                    </div>
-                    <div class="panel-heading cur-p" ng-click="ctrl.panelShow = false" ng-if="ctrl.panelShow">
-                        <h4 class="panel-title">
-                            <a href="javascript:void(0)">
-                                <i class="fa fa-caret-down"></i>&nbsp;&nbsp;<strong>收起</strong>
-                            </a>
-                        </h4>
-                    </div>
-                    <div class="panel-body" ng-if="ctrl.panelShow">
-                        <div class="row m-t-xs">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <div class="btn-group">
-                                        <button class="btn btn-info btn-pop" ng-click="ctrl.popUploadImg()"><i
-                                                class="fa fa-upload"></i>&nbsp;&nbsp;图片上传
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <form class="form-horizontal" name="productFieldForm" novalidate>
                 <div class="panel vo_panel tab_panel">
                     <div class="wrapper">
                         <div class="container-fluid" id="common">
                             <div class="row">
                                 <div class="col-md-8 form-group">
+                                    <div class="form-group">
+                                        <div class="btn-group">
+                                            <button class="btn btn-info btn-pop" ng-click="ctrl.popUploadImg()"><i
+                                                    class="fa fa-upload"></i>&nbsp;&nbsp;图片上传
+                                            </button>
+                                        </div>
+                                    </div>
                                     <div class="text-warnings no-master" style="padding-left:0px;" ng-if="ctrl.vm.noMaterMsg">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;{{ctrl.vm.noMaterMsg}} , 否则该产品信息无法显示！！！<br>
                                     </div>
-                                    <div class="text-warnings" style="padding-left:0px" ng-if="ctrl.vm.mastData.isMain != true">
-                                        <i class="icon fa fa-bell-o"></i>&nbsp;此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面。<br>
-                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <!--应运营要求，保存按钮跳过check，一直为pending状态，除了平台类目为必选-->
-                                    <div class="row">
-                                        <div class="pull-right m-t-xs m-r-xs" uib-dropdown
-                                             ng-if="ctrl.vm.status == 'Ready' || ctrl.vm.status == 'Approved' || isPublishSucceed">
-                                            <button class="btn btn-vo" uib-dropdown-toggle ng-disabled="!ctrl.btnDisabled()">
-                                                <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Approved &nbsp;<span class="caret"></span>
-                                            </button>
-                                            <ul uib-dropdown-menu>
-                                                <li>
-                                                    <a href="javascript:void(0)" ng-click="ctrl.saveProduct()">
-                                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;普通上新
-                                                    </a>
-                                                </li>
-                                                <li ng-if="ctrl.vm.platform.pNumIId">
-                                                    <a href="javascript:void(0)" ng-click="ctrl.loadAttribute()">
-                                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;部分上新
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Pending'">
-                                            <button class="btn btn-vo" ng-click="ctrl.saveProduct('ready')"
-                                                    ng-disabled="!ctrl.btnDisabled()">
-                                                <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Ready
-                                            </button>
-                                        </div>
-                                        <div class="pull-right m-t-xs m-r-xs"
-                                             ng-if="ctrl.vm.status == 'Pending' || ctrl.vm.status == 'Ready'">
-                                            <button class="btn btn-vo" ng-click="ctrl.saveProduct('temporary')">
-                                                <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存
-                                            </button>
 
-                                        </div>
-
-                                    </div>
-
-                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-9">
@@ -310,6 +245,39 @@
     </div>
 
     <div class="modal-footer">
-        <button class="btn btn-success" ng-click="ctrl.complete()"><i class="fa fa-check "></i>&nbsp;确认上传</button>
+        <div class="row">
+            <div class="pull-right m-t-xs m-r-xs" uib-dropdown
+                 ng-if="ctrl.vm.status == 'Ready' || ctrl.vm.status == 'Approved' || isPublishSucceed">
+                <button class="btn btn-vo" uib-dropdown-toggle ng-disabled="!ctrl.btnDisabled()">
+                    <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Approved &nbsp;<span class="caret"></span>
+                </button>
+                <ul uib-dropdown-menu>
+                    <li>
+                        <a href="javascript:void(0)" ng-click="ctrl.saveProduct()">
+                            <i class="fa fa-arrow-circle-right"></i>&nbsp;普通上新
+                        </a>
+                    </li>
+                    <li ng-if="ctrl.vm.platform.pNumIId">
+                        <a href="javascript:void(0)" ng-click="ctrl.loadAttribute()">
+                            <i class="fa fa-arrow-circle-right"></i>&nbsp;部分上新
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Pending'">
+                <button class="btn btn-vo" ng-click="ctrl.saveProduct('ready')"
+                        ng-disabled="!ctrl.btnDisabled()">
+                    <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Ready
+                </button>
+            </div>
+            <div class="pull-right m-t-xs m-r-xs"
+                 ng-if="ctrl.vm.status == 'Pending' || ctrl.vm.status == 'Ready'">
+                <button class="btn btn-vo" ng-click="ctrl.saveProduct('temporary')">
+                    <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存
+                </button>
+
+            </div>
+
+        </div>
     </div>
 </div>

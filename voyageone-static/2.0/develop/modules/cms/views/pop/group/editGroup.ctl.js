@@ -4,14 +4,17 @@
  * @author Piao
  */
 define([
-    'cms'
-], function (cms) {
+    'cms',
+    'modules/cms/directives/platFormStatus.directive',
+    'modules/cms/directives/noticeTip.directive'
+], function (cms, carts) {
 
     cms.controller('editGroupController', (function () {
 
         function EditGroupCtl(context, $uibModalInstance, productDetailService, $translate, notify, confirm, $compile, alert, popups, $fieldEditService, $document, $templateRequest) {
             var self = this;
-            self.$scope = $scope;
+            self.context = context;
+            self.$uibModalInstance = $uibModalInstance;
             self.productDetailService = productDetailService;
             self.$translate = $translate;
             self.notify = notify;
@@ -29,12 +32,6 @@ define([
                 platform: null,
                 status: "Pending",
                 skuTemp: {},
-                checkFlag: self.$scope.cartInfo.value == 20 ? {translate: 0, category: 0, attribute: 0} : {
-                    translate: 0,
-                    tax: 0,
-                    category: 0,
-                    attribute: 0
-                },
                 resultFlag: 0,
                 sellerCats: [],
                 productUrl: "",
@@ -44,25 +41,8 @@ define([
             self.panelShow = true;
         }
 
-        EditGroupCtl.prototype.init = function (element) {
-            var self = this,
-                check = self.vm.checkFlag,
-                $scope = self.$scope;
-
-            self.element = element;
-
-            //监控税号和翻译状态和锁定状态
-            var checkFlag = $scope.$watch("productInfo.checkFlag", function () {
-                check.translate = $scope.productInfo.translateStatus;
-
-                if ($scope.cartInfo.value != 20)
-                    check.tax = $scope.productInfo.hsCodeStatus;
-            });
-
-            //监控主类目
-            var masterCategory = $scope.$watch("productInfo.masterCategory", function () {
-                self.getPlatformData();
-            });
+        EditGroupCtl.prototype.init = function () {
+            this.getPlatformData();
         };
 
         /**
@@ -71,12 +51,11 @@ define([
         EditGroupCtl.prototype.getPlatformData = function () {
 
             var self = this,
-                $scope = self.$scope,
                 vm = self.vm;
 
             self.productDetailService.getProductPlatform({
-                cartId: $scope.cartInfo.value,
-                prodId: $scope.productInfo.productId
+                cartId: self.context.cartId,
+                prodId: self.context.mainProdId
             }).then(function (resp) {
                 vm.mastData = resp.data.mastData;
                 vm.platform = resp.data.platform;
@@ -87,35 +66,24 @@ define([
                         vm.noMaterMsg = "该商品的没有设置主商品，请先设置主商品：" + vm.platform.mainCode;
 
                     vm.status = vm.platform.status == null ? vm.status : vm.platform.status;
-                    vm.checkFlag.category = vm.platform.pCatPath == null ? 0 : 1;
                     vm.platform.pStatus = vm.platform.pStatus == null ? "" : vm.platform.pStatus;
                     vm.sellerCats = vm.platform.sellerCats == null ? [] : vm.platform.sellerCats;
                 }
 
-                _.each(vm.mastData.skus, function (mSku) {
-                    vm.skuTemp[mSku.skuCode] = mSku;
-                });
-
                 if (vm.platform.schemaFields && vm.platform.schemaFields.product)
                     self.initBrand(vm.platform.schemaFields.product, vm.platform.pBrandId);
-
-                if ($scope.productInfo.skuBlock) {
-                    setTimeout(function () {
-                        self.pageAnchor('sku', 0);
-                    }, 1500)
-                }
 
                 self.autoSyncPriceMsrp = resp.data.autoSyncPriceMsrp;
                 self.autoSyncPriceSale = resp.data.autoSyncPriceSale;
 
                 /**生成共通部分，商品状态*/
                 self.productDetailService.createPstatus(self.element.find("#platform-status"),
-                    self.$scope.$new(),
+                    self.$new(),
                     self.vm.platform
                 );
             });
 
-            vm.productUrl = carts.valueOf(+$scope.cartInfo.value).pUrl;
+            vm.productUrl = carts.valueOf(Number(self.context.cartId)).pUrl;
 
         };
 
@@ -126,8 +94,7 @@ define([
          */
         EditGroupCtl.prototype.categoryMapping = function () {
             var self = this,
-                productDetailService = self.productDetailService,
-                $scope = self.$scope;
+                productDetailService = self.productDetailService;
 
             productDetailService.getPlatformCategories({cartId: $scope.cartInfo.value})
                 .then(function (res) {
@@ -248,13 +215,13 @@ define([
         EditGroupCtl.prototype.saveValid = function (mark) {
             var self = this, masterBrand;
 
-            if (mark == "ready" || self.vm.status == "Ready" || self.vm.status == "Approved") {
+            if (mark === "ready" || self.vm.status === "Ready" || self.vm.status === "Approved") {
                 if (!self.validSchema()) {
                     self.alert("请输入必填属性，或者输入的属性格式不正确");
                     return false;
                 }
 
-                if (self.vm.platform.pBrandName == null) {
+                if (!self.vm.platform.pBrandName) {
                     masterBrand = self.$scope.productInfo.masterField.brand;
                     self.vm.status = self.vm.preStatus;
                     self.alert("该商品的品牌【" + masterBrand + "】没有与平台品牌建立关联，点击左侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置");
@@ -279,17 +246,17 @@ define([
             self.vm.preStatus = angular.copy(self.vm.status);
 
             //有效性判断
-            if (mark != "temporary" && !self.saveValid(mark))
+            if (mark !== "temporary" && !self.saveValid(mark))
                 return;
 
             //判断页面头部状态
-            if (mark != "temporary")
+            if (mark !== "temporary")
                 self.vm.status = productDetailService.bulbAdjust(self.vm.status, self.vm.checkFlag);
 
             /**构造调用接口上行参数*/
             productDetailService.platformUpEntity({cartId: self.$scope.cartInfo.value, mark: mark}, self.vm);
 
-            if (mark == "temporary") {
+            if (mark === "temporary") {
                 self.vm.status = self.vm.platform.status;
                 self.callSave("temporary");
                 return;
@@ -353,13 +320,13 @@ define([
                     self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
 
                 /**生成共通部分，商品状态*/
-                self.productDetailService.createPstatus(self.element.find("#platform-status"),
+                self.productDetailService.createPstatus(angular.element.find("#platform-status"),
                     self.$scope.$new(),
                     self.vm.platform
                 );
 
             }, function (resp) {
-                if (resp.code != "4000091" && resp.code != "4000092" && resp.code != "4000094") {
+                if (resp.code !== "4000091" && resp.code !== "4000092" && resp.code !== "4000094") {
                     self.vm.status = self.vm.preStatus;
                     return;
                 }
@@ -370,13 +337,13 @@ define([
                         self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
 
                         /**生成共通部分，商品状态*/
-                        self.productDetailService.createPstatus(self.element.find("#platform-status"),
+                        self.productDetailService.createPstatus(angular.element.find("#platform-status"),
                             self.$scope.$new(),
                             self.vm.platform
                         );
                     });
                 }, function () {
-                    if (mark != 'temporary')
+                    if (mark !== 'temporary')
                         self.vm.status = self.vm.preStatus;
                 });
             });
@@ -392,7 +359,7 @@ define([
             if (!product)
                 return;
 
-            brandField = searchField("品牌", product);
+            brandField = this.productDetailService.searchField("品牌", product);
 
             if (!brandField)
                 return;
