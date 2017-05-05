@@ -45,14 +45,23 @@ public class ProductStockService extends BaseService {
 
             Map<String, List<BulkUpdateModel>> bulkUpdateModelMap = new HashMap<>();
             failList = new ArrayList<>();
+            Map<String, CmsBtProductModel> productModelMap = new HashMap<>();
 
             for (CartChangedStockBean stockBean : stockList) {
                 // 当前渠道ID、平台ID
                 String channelId = stockBean.getChannelId();
                 Integer cartId = stockBean.getCartId();
 
-                // 根据产品Code获取产品
-                CmsBtProductModel productModel = productService.getProductByCode(channelId, stockBean.getItemCode());
+                CmsBtProductModel productModel = null;
+                if (productModelMap.containsKey(stockBean.getItemCode())) {
+                    productModel = productModelMap.get(stockBean.getItemCode());
+                } else {
+                    // 根据产品Code获取产品
+                    productModel = productService.getProductByCode(channelId, stockBean.getItemCode());
+                    if (productModel != null) {
+                        productModelMap.put(stockBean.getItemCode(), productModel);
+                    }
+                }
                 if (productModel != null) {
 
                     HashMap<String, Object> updateMap = new HashMap<>();
@@ -63,6 +72,7 @@ public class ProductStockService extends BaseService {
                         // cartId为0，则表示按渠道更新库存
                         for (CmsBtProductModel_Sku skuModel : productModel.getCommon().getSkus()) {
                             if (skuModel.getSkuCode().equals(stockBean.getSku())) {
+                                skuModel.setQty(stockBean.getQty());
                                 quantity += stockBean.getQty();
                             } else {
                                 quantity += skuModel.getQty() == null ? 0 : skuModel.getQty();
@@ -81,6 +91,7 @@ public class ProductStockService extends BaseService {
                         // cartId不为0，表示更新具体某个平台某个店铺的库存
                         for (BaseMongoMap<String, Object> skuModel : productModel.getPlatform(stockBean.getCartId()).getSkus()) {
                             if (skuModel.getStringAttribute("skuCode").equals(stockBean.getSku())) {
+                                skuModel.setAttribute("qty", stockBean.getQty());
                                 quantity += stockBean.getQty();
                             } else {
                                 quantity += skuModel.getIntAttribute("qty");
