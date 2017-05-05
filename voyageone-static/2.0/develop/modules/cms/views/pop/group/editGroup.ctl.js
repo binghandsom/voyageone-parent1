@@ -11,9 +11,10 @@ define([
 
     cms.controller('editGroupController', (function () {
 
-        function EditGroupCtl(context, $uibModalInstance, productDetailService, $translate, notify, confirm, $compile, alert, popups, $fieldEditService, $document, $templateRequest) {
+        function EditGroupCtl(context, $scope, $uibModalInstance, productDetailService, $translate, notify, confirm, $compile, alert, popups, $fieldEditService, $document, $templateRequest) {
             var self = this;
             self.context = context;
+            self.$scope = $scope;
             self.$uibModalInstance = $uibModalInstance;
             self.productDetailService = productDetailService;
             self.$translate = $translate;
@@ -77,8 +78,8 @@ define([
                 self.autoSyncPriceSale = resp.data.autoSyncPriceSale;
 
                 /**生成共通部分，商品状态*/
-                self.productDetailService.createPstatus(self.element.find("#platform-status"),
-                    self.$new(),
+                self.productDetailService.createPstatus(angular.element("#group-platform-status"),
+                    self.$scope.$new(),
                     self.vm.platform
                 );
             });
@@ -96,7 +97,7 @@ define([
             var self = this,
                 productDetailService = self.productDetailService;
 
-            productDetailService.getPlatformCategories({cartId: $scope.cartInfo.value})
+            productDetailService.getPlatformCategories({cartId: self.context.cartId})
                 .then(function (res) {
                     if (!res.data || !res.data.length) {
                         self.notify.danger("数据还未准备完毕");
@@ -116,15 +117,14 @@ define([
                         }
 
                         productDetailService.changePlatformCategory({
-                            cartId: $scope.cartInfo.value,
-                            prodId: $scope.productInfo.productId,
+                            cartId: self.context.cartId,
+                            prodId: self.context.mainProdId,
                             catId: context.selected.catId,
                             catPath: context.selected.catPath
                         }).then(function (resp) {
                             self.vm.platform = resp.data.platform;
                             self.vm.platform.pCatPath = context.selected.catPath;
                             self.vm.platform.pCatId = context.selected.catId;
-                            self.vm.checkFlag.category = 1;
                         });
                     });
 
@@ -144,7 +144,7 @@ define([
             self.popups.openAddChannelCategoryEdit([{
                 code: self.vm.mastData.productCode,
                 sellerCats: self.vm.sellerCats,
-                cartId: self.$scope.cartInfo.value,
+                cartId: self.context.value,
                 selectedIds: selectedIds,
                 plateSchema: true
             }]).then(function (context) {
@@ -320,7 +320,7 @@ define([
                     self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
 
                 /**生成共通部分，商品状态*/
-                self.productDetailService.createPstatus(angular.element.find("#platform-status"),
+                self.productDetailService.createPstatus(angular.element("#group-platform-status"),
                     self.$scope.$new(),
                     self.vm.platform
                 );
@@ -337,7 +337,7 @@ define([
                         self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
 
                         /**生成共通部分，商品状态*/
-                        self.productDetailService.createPstatus(angular.element.find("#platform-status"),
+                        self.productDetailService.createPstatus(angular.element("#group-platform-status"),
                             self.$scope.$new(),
                             self.vm.platform
                         );
