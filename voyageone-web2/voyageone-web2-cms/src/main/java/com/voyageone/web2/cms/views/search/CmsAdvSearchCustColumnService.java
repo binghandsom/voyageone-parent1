@@ -5,11 +5,9 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.impl.cms.CmsBtCustomPropService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
-import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -184,7 +182,7 @@ public class CmsAdvSearchCustColumnService extends BaseViewService {
             String custAttrStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) colMap2.get("cfg_val1"));
             rsMap.put("platformProps", custAttrStr.split(","));
         }
-        rsMap.put("platformDataList", advSearchQueryService.getPlatformList(userInfo.getSelChannelId(), language,null));
+        rsMap.put("platformDataList", advSearchQueryService.getPlatformList(userInfo.getSelChannelId(), language, null));
         return rsMap;
     }
 
