@@ -769,6 +769,14 @@ define([
         });
     };
 
+    SpTmController.prototype.popEditGroup = function(){
+        var self = this;
+
+        self.popups.openEditGroup().then(function (res) {
+            console.log(res);
+        });
+    };
+
     cms.directive('tmSubPage', function () {
         return {
             restrict: 'E',
