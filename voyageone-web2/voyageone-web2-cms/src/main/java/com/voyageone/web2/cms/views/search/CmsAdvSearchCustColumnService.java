@@ -5,11 +5,9 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.impl.cms.CmsBtCustomPropService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
-import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -177,6 +175,14 @@ public class CmsAdvSearchCustColumnService extends BaseViewService {
             rsMap.put("commList", commStr.split(","));
         }
 
+        colMap2 = commonPropService.getCustColumnsByUserId(userInfo.getUserId(), "cms_prod_cust_col_platform");
+        if (colMap2 == null || colMap2.isEmpty()) {
+            rsMap.put("platformProps", new String[]{});
+        } else {
+            String custAttrStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) colMap2.get("cfg_val1"));
+            rsMap.put("platformProps", custAttrStr.split(","));
+        }
+        rsMap.put("platformDataList", advSearchQueryService.getPlatformList(userInfo.getSelChannelId(), language, null));
         return rsMap;
     }
 
@@ -186,6 +192,7 @@ public class CmsAdvSearchCustColumnService extends BaseViewService {
     public void saveCustColumnsInfo(UserSessionBean userInfo, CmsSessionBean cmsSessionBean, Map<String, Object> params, String language) {
         List<String> selCustomPropList = (List<String>) params.get("customProps");
         List<String> selCommonPropList = (List<String>) params.get("commonProps");
+        List<String> platformDataList = (List<String>) params.get("platformProps");
         String customStrs = org.apache.commons.lang3.StringUtils.trimToEmpty(org.apache.commons.lang3.StringUtils.join(selCustomPropList, ","));
         String commonStrs = org.apache.commons.lang3.StringUtils.trimToEmpty(org.apache.commons.lang3.StringUtils.join(selCommonPropList, ","));
 
@@ -276,7 +283,27 @@ public class CmsAdvSearchCustColumnService extends BaseViewService {
         if (rs == 0) {
             $error("保存BI数据显示设置不成功 userid=" + userInfo.getUserId());
         }
+
+        // 保存 平台列
+        raMap = commonPropService.getCustColumnsByUserId(userInfo.getUserId(), "cms_prod_cust_col_platform");
+        if (platformDataList == null || platformDataList.isEmpty()) {
+            selStr = "";
+        } else {
+            selStr = platformDataList.stream().collect(Collectors.joining(","));
+        }
+        if (raMap == null || raMap.isEmpty()) {
+            rs = commonPropService.addUserCustColumn(userInfo.getUserId(), userInfo.getUserName(), "cms_prod_cust_col_platform", selStr, "");
+        } else {
+            rs = commonPropService.saveUserCustColumn(userInfo.getUserId(), userInfo.getUserName(), "cms_prod_cust_col_platform", selStr, "");
+        }
+        if (rs == 0) {
+            $error("保存BI数据显示设置不成功 userid=" + userInfo.getUserId());
+        }
+
+        //cms_prod_cust_col_bidata
         cmsSessionBean.putAttribute("_adv_search_selBiDataList", advSearchQueryService.getBiDataList(userInfo.getSelChannelId(), language, selBiDataList));
+        //自定义下载 平台列
+        cmsSessionBean.putAttribute("_adv_search_selPlatformDataList", advSearchQueryService.getPlatformList(userInfo.getSelChannelId(), language, platformDataList));
     }
 
 }

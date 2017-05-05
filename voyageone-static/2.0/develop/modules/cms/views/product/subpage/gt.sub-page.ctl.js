@@ -284,7 +284,7 @@ define([
         self.vm.preStatus = angular.copy(self.vm.status);
 
         //有效性判断
-        if (!self.saveValid(mark))
+        if (mark != "temporary" && !self.saveValid(mark))
             return;
 
         //判断页面头部状态
@@ -654,6 +654,9 @@ define([
             showArr: ['image1', 'image6', 'image7', 'image2', 'image3', 'image4', 'image5']
         }).then(function (platform) {
             self.vm.platform = platform;
+
+            //暂存
+            self.saveProduct('temporary');
         });
     };
 
@@ -695,7 +698,7 @@ define([
         return _.some(self.vm.mastData.images, function (element) {
             return element.qty == 0
                 && !element.isMain
-                && !self.$scope.productInfo
+                && self.$scope.productInfo
                 && element.productCode != self.$scope.productInfo.masterField.code;
         });
     };

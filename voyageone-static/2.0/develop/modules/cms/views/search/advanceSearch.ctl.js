@@ -351,24 +351,32 @@ define([
 
                 if (selList.length > 0 && !$scope.vm._selall) {
                     msg = '<br>仅导出选中的记录，如需导出全部记录，请回到一览画面取消选择。';
-                    _.forEach(selList, function (object) {
-                        $scope.vm.searchInfo._selCodeList.push(object.code);
-                    });
+                    $scope.vm.searchInfo._selCodeList = _.pluck(selList, 'code');
                 } else {
                     msg = '<br>将导出所有的商品记录，如需只导出部分商品，请回到一览画面选择指定商品。';
                 }
 
-                if (fileType == 1) {
+                switch (fileType) {
+                    case 1:
                     msg = '即将导出Code级的搜索结果，请确认。' + msg;
-                } else if (fileType == 2) {
+                        break;
+                    case 2:
                     msg = '即将导出Group级的搜索结果，请确认。' + msg;
-                } else if (fileType == 3) {
+                        break;
+                    case 3:
                     msg = '即将导出SKU级的搜索结果，请确认。' + msg;
-                } else if (fileType == 4) {
+                        break;
+                    case 4:
                     msg = '即将导出聚美上新SKU级的搜索结果，请确认。' + msg;
-                } else if (fileType == 5) {
+                        break;
+                    case 5:
                     msg = "即将根据搜索结果导出报备文件，请确认。" + msg;
+                        break;
                 }
+
+                popups.openColumnForDownLoad({
+                    fileType: fileType
+                }).then(function () {
                 confirm(msg).then(function () {
                     $scope.vm.searchInfo.fileType = fileType;
                     searchAdvanceService2.exportFile($scope.vm.searchInfo).then(function (res) {
@@ -384,6 +392,8 @@ define([
                         }
                     });
                 });
+                });
+
             }
 
             /**

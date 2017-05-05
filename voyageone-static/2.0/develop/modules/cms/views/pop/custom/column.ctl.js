@@ -1,11 +1,13 @@
 /**
- * Created by linanbin on 15/12/7.
+ * @description 高级检索自定义列
+ * @author edward.
+ * @date 2015-12-7
  */
 define([
-    'angularAMD'
-], function (angularAMD) {
+    'cms'
+], function (cms) {
 
-    angularAMD.controller('popCustomColumnCtl', function ($scope, $searchAdvanceService2, $modalInstance) {
+    cms.controller('popCustomColumnCtl', function ($scope, $searchAdvanceService2, $modalInstance) {
         // 从后台取得的全部列
         $scope.cus = {
             customProps:[],
@@ -125,7 +127,7 @@ define([
 
         $scope.close = function () {
             $modalInstance.dismiss();
-        }
+        };
 
         // 全选框的操作
         $scope.chkSelStatus = function (stsType) {
@@ -152,28 +154,28 @@ define([
         $scope.chkItemStatus = function (stsType) {
             var chkSts = false;
             if (stsType == 1) {
-                for (keyIdx in $scope.cus.commonProps) {
+                for (var keyIdx in $scope.cus.commonProps) {
                     if (!$scope.cus.commonProps[keyIdx].isChk) {
                         chkSts = true;
                     }
                 }
                 $scope.cus.all_commonData = !chkSts;
             } else if (stsType == 2) {
-                for (keyIdx in $scope.cus.customProps) {
+                for (var keyIdx in $scope.cus.customProps) {
                     if (!$scope.cus.customProps[keyIdx].isChk) {
                         chkSts = true;
                     }
                 }
                 $scope.cus.all_customData = !chkSts;
             } else if (stsType == 3) {
-                for (keyIdx in $scope.cus.salesTypeList) {
+                for (var keyIdx in $scope.cus.salesTypeList) {
                     if (!$scope.cus.salesTypeList[keyIdx].isChk) {
                         chkSts = true;
                     }
                 }
                 $scope.cus.all_salesType = !chkSts;
             } else if (stsType == 4) {
-                for (keyIdx in $scope.cus.biDataList) {
+                for (var keyIdx in $scope.cus.biDataList) {
                     if (!$scope.cus.biDataList[keyIdx].isChk) {
                         chkSts = true;
                     }

@@ -759,6 +759,7 @@ define(function () {
             },
             "blackBrandService": {
                 root: "/cms/channel/black_brand/",
+                init:"init",
                 list: "searchBlackBrand",
                 update: "updateBlackBrand"
             },

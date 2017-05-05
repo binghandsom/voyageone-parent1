@@ -874,6 +874,8 @@ public interface CmsUrlConstants {
         interface BLACK_BRAND {
             String ROOT = "/cms/channel/black_brand";
 
+            String INIT = "init";
+
             String SEARCH_BLACK_BRAND = "searchBlackBrand";
 
             String UPDATE_BLACK_BRAND = "updateBlackBrand";

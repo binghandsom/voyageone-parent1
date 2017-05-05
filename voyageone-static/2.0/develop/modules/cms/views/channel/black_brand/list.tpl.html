@@ -7,7 +7,7 @@
             <div class="row form-inline">
                 <div class="col-sm-6">
                     <label class="control-label col-md-4 text-right">{{'TXT_BRAND_CATEGORY'|translate}} &nbsp;&nbsp;</label>
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                         <select class="form-control" style="width: 200px" ng-model="ctrl.searchInfo.brandType" ng-change="ctrl.selectCarts()">
                             <option value="0" translate="TXT_FEED_BRAND"></option>
                             <option value="1" translate="TXT_MASTER_BRAND"></option>
@@ -32,6 +32,15 @@
                 </div>
             </div>
             <div class="row form-inline m-t-sm">
+                <div ng-if="ctrl.channel == '928' && ctrl.searchInfo.brandType == 0" class="col-sm-6">
+                    <label class="control-label col-md-4 text-right">供应商 &nbsp;&nbsp;</label>
+                    <div class="col-md-8">
+                        <select class="form-control" style="width: 200px" ng-model="ctrl.selChannelId"
+                                ng-options="orgChaInfo.order_channel_id as orgChaInfo.full_name for orgChaInfo in ctrl.channelList">
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="col-sm-6">
                     <div class="col-md-8 col-md-offset-4" ng-if="ctrl.searchInfo.brandType == 2">
                         <label ng-repeat="cart in ctrl.cartList">

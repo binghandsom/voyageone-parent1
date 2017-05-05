@@ -4,6 +4,7 @@ import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.configs.dao.TypeChannelDao;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
@@ -77,6 +78,7 @@ class CmsBlackBrandViewService extends BaseViewService {
         List<CmsBlackBrandViewBean> data;
         switch (brandType) {
             case CmsBtBrandBlockService.BRAND_TYPE_FEED:
+                channelId = StringUtil.isEmpty(blackBrandParamBean.getChannelId()) ? user.getSelChannelId() : blackBrandParamBean.getChannelId();
                 stream = getFeedBrandStream(channelId);
                 break;
             case CmsBtBrandBlockService.BRAND_TYPE_MASTER:
@@ -140,6 +142,9 @@ class CmsBlackBrandViewService extends BaseViewService {
             return true;
 
         String channelId = user.getSelChannelId();
+        if(blackBrandParamBean.getBrandType() == CmsBtBrandBlockService.BRAND_TYPE_FEED){
+            channelId = StringUtil.isEmpty(blackBrandParamBean.getChannelId()) ? user.getSelChannelId() : blackBrandParamBean.getChannelId();
+        }
         String username = user.getUserName();
 
         for (CmsBlackBrandViewBean blackBrandViewBean : blackBrandViewBeanList)

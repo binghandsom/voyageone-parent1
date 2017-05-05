@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service.feed;
 
+import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
@@ -26,12 +27,9 @@ import java.util.regex.Pattern;
 class SEAnalysisContext {
 
     private final static Pattern NUM_REGEX = Pattern.compile("^\\d+$");
-
-    private List<CmsBtFeedInfoModel> codeList = new ArrayList<>();
-
-    private Map<String, CmsBtFeedInfoModel> codeMap = new HashMap<>();
-
     private final ExpressionParser parser = new SpelExpressionParser();
+    private List<CmsBtFeedInfoModel> codeList = new ArrayList<>();
+    private Map<String, CmsBtFeedInfoModel> codeMap = new HashMap<>();
 
     void put(ShoeCityFeedBean feedBean) {
 
@@ -94,7 +92,7 @@ class SEAnalysisContext {
         product.setSizeType(feedBean.getSize_type());
         List<String> imageUrls = new ArrayList<>();
         for (int i = 1; i <= 5; i++)
-            imageUrls.add(String.format("http://image.sneakerhead.com/is/image/sneakerhead/%s-%s", feedBean.getImg_id(), i));
+            imageUrls.add(String.format(Constants.productForOtherSystemInfo.IMG_URL_WITH_PARAMENTER, feedBean.getImg_id(), i));
         product.setImage(imageUrls);
         product.setBrand(feedBean.getBrand());
         product.setWeight("4");
