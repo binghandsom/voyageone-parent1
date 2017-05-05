@@ -84,8 +84,6 @@ public class ProductStockService extends BaseService {
                         updateMap.put("common.fields.quantity", quantity);
                         queryMap.put("channelId", stockBean.getChannelId());
                         queryMap.put("common.skus.skuCode", stockBean.getSku());
-                        List<CmsBtProductModel> productModel1 = productService.getProductBySkuCode(stockBean.getChannelId(),stockBean.getSku());
-                        $info("");
 
                     } else {
                         // cartId不为0，表示更新具体某个平台某个店铺的库存
