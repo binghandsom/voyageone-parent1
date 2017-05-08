@@ -757,6 +757,28 @@ define([
         });
     };
 
+    SpJdController.prototype.popEditGroup = function () {
+        var self = this, $scope = self.$scope;
+
+        var _mainProduct = _.find(self.vm.mastData.images, function (item) {
+            return item.isMain;
+        });
+
+        if (!_mainProduct) {
+            self.alert('未找到对应主商品信息！');
+            return;
+        }
+
+        self.popups.openEditGroup({
+            mainProdId: _mainProduct.prodId,
+            cartId: $scope.cartInfo.value,
+            masterField: $scope.productInfo.masterField
+        }).then(function (res) {
+            console.log(res);
+        });
+    };
+
+
     cms.directive('jdSubPage', function () {
         return {
             restrict: 'E',

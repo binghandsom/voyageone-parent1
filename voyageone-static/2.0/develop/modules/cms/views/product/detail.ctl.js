@@ -72,8 +72,6 @@ define([
                     self.defaultCartId = _cartObj;
             }
 
-            self.defaultCartId = 23;
-
         };
 
         /**锁定操作*/
