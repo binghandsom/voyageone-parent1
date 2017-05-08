@@ -228,13 +228,11 @@ public class Tmall_TongGou_033_KitBag_DictTest extends BaseDictTest{
             RuleExpression htmlTemplate = new RuleExpression();
             htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
 
-            // 图片类型, 1:商品图 2:尺码图 3:品牌故事图 4:物流介绍图 5:店铺图
             RuleExpression imageType = new RuleExpression();
-            imageType.addRuleWord(new TextWord("1"));
+            imageType.addRuleWord(new TextWord(C_商品图片));
 
-            // 1:PC端 2:APP端
-            RuleExpression viewType = new RuleExpression();
-            viewType.addRuleWord(new TextWord("1"));
+            RuleExpression imageTemplate = new RuleExpression();
+            imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/KITBAG20170421790x750TEST1?$PRODUCT=%s&layer=comp&wid=790&hei=750"));
 
             RuleExpression imageIndex = new RuleExpression();
             imageIndex.addRuleWord(new TextWord("0"));
@@ -242,7 +240,7 @@ public class Tmall_TongGou_033_KitBag_DictTest extends BaseDictTest{
             RuleExpression codeIndex = new RuleExpression();
             codeIndex.addRuleWord(new TextWord("-1")); // 所有非主商品
 
-            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, null, imageIndex);
+            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, null, null, null, codeIndex, imageIndex);
             ruleRoot.addRuleWord(new CustomWord(word));
 
         }

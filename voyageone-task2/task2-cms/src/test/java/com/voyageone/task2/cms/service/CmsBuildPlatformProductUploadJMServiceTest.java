@@ -752,7 +752,7 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         //按groupId取Product
         SxData sxData = sxProductService.getSxProductDataByGroupId("928", 1042325L);
         try {
-            cmsBuildPlatformProductUploadJMService.uploadMall(sxData.getMainProduct(), shop, null, null, null);
+//            cmsBuildPlatformProductUploadJMService.uploadMall(sxData.getMainProduct(), shop, null, null, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -764,7 +764,7 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         SxData sxData = sxProductService.getSxProductDataByGroupId("928", 10627267L);
 
         CmsBtJmProductModel cmsBtJmProductModel = new CmsBtJmProductModel();
-        cmsBtJmProductModel = cmsBuildPlatformProductUploadJMService.fillCmsBtJmProductModel(cmsBtJmProductModel, sxData.getMainProduct());
+//        cmsBtJmProductModel = cmsBuildPlatformProductUploadJMService.fillCmsBtJmProductModel(cmsBtJmProductModel, sxData.getMainProduct());
 
         System.out.println(cmsBtJmProductModel.getImage1());
     }
