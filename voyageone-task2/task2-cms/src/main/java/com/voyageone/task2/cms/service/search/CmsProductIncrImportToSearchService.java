@@ -126,7 +126,7 @@ public class CmsProductIncrImportToSearchService extends BaseListenService {
      * @return MongoClient
      */
     private MongoClient getMongoClient() {
-        return (MongoClient) SpringContext.getBean("mongo");
+        return (MongoClient) SpringContext.getBean("mongoClient");
     }
 
     /**
