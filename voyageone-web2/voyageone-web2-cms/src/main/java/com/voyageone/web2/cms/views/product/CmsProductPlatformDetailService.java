@@ -20,10 +20,7 @@ import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
-import com.voyageone.common.util.ConvertUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.ListUtils;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.components.jumei.service.JumeiSaleService;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.*;
 import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
@@ -584,6 +581,54 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         }
         return modified;
 
+    }
+
+    /**
+     * 产品编辑页保存包含类型判断
+     */
+    public String updateGroupPlatform(String channelId, String code, Integer cartId, Map<String, Object> platform, String modifier) {
+
+        final String[] modified = new String[1];
+        List<Field> masterFields = null;
+        Map<String, Object> fields = null;
+        if (platform.get("schemaFields") != null) {
+            masterFields = buildMasterFields((Map<String, Object>) platform.get("schemaFields"));
+            fields = FieldUtil.getFieldsValueToMap(masterFields);
+        }
+
+        if(fields == null){
+            throw new BusinessException("数据错误");
+        }
+        BaseMongoMap<String, Object>  newFields = new BaseMongoMap<>();
+        newFields.putAll(fields);
+
+        CmsBtProductGroupModel cmsBtProductGroupModel = productGroupService.selectProductGroupByCode(channelId, code, cartId);
+        if(cmsBtProductGroupModel != null && ListUtils.notNull(cmsBtProductGroupModel.getProductCodes())){
+            cmsBtProductGroupModel.getProductCodes().forEach(productCode->{
+                CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, productCode);
+                CmsBtProductModel_Platform_Cart platformModel = cmsBtProductModel.getPlatform(cartId);
+                if (cartId == CartEnums.Cart.TM.getValue() || cartId == CartEnums.Cart.TG.getValue()) {
+                    newFields.put("sku",platformModel.getFields().getAttribute("sku"));
+                }
+                platformModel.setFields(newFields);
+                if(platform.get("sellerCats") != null){
+                    JacksonUtil.bean2Json(platform.get("sellerCats"));
+                    platformModel.setSellerCats(JacksonUtil.jsonToBeanList( JacksonUtil.bean2Json(platform.get("sellerCats")), CmsBtProductModel_SellerCat.class));
+                }
+                platformModel.setpCatId((String) platform.get("pCatId"));
+                platformModel.setpCatPath((String) platform.get("pCatPath"));
+                platformModel.setpBrandId((String) platform.get("pBrandId"));
+                platformModel.setpBrandName((String) platform.get("pBrandName"));
+                platformModel.setpCatStatus((String) platform.get("pCatStatus"));
+                String ret = productPlatformService.updateProductPlatformWithSmartSx(channelId, cmsBtProductModel.getProdId(), platformModel, modifier, "页面group信息编辑", false, 0);
+                if(code.equals(productCode)){
+                    modified[0] = ret;
+                }
+            });
+        }else {
+            throw new BusinessException("没有找到对应的group");
+        }
+        return modified[0];
     }
 
     /**

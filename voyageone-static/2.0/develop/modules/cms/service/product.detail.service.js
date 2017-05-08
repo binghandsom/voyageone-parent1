@@ -909,6 +909,7 @@ define([
         /**
          * @param targetDom 目标jq对象
          * @param pScope    绑定在jq对象上的scope作用域
+         * @param data
          */
         this.createPstatus = function (targetDom, pScope, data) {
             var _pStatusHtml = "<platform-status data='data' ng-if='data'></platform-status>",
@@ -916,6 +917,45 @@ define([
 
             pScope.data = data;
             targetDom.html($compile(_pStatusDom)(pScope));
+        };
+
+        this.searchField = function searchField(fieldName, schema) {
+
+            var result = null;
+
+            _.find(schema, function (field) {
+
+                if (field.name === fieldName) {
+                    result = field;
+                    return true;
+                }
+
+                if (field.fields && field.fields.length) {
+                    result = searchField(fieldName, field.fields);
+                    if (result)
+                        return true;
+                }
+
+                return false;
+            });
+
+            return result;
+        };
+
+        /**
+         * 更新group信息
+         */
+        this.updateGroupPlatform = function(req){
+            var defer = $q.defer();
+            $productDetailService.updateGroupPlatform(req)
+                .then(function (res) {
+                    defer.resolve(res);
+                }, function (res) {
+                    defer.reject(res);
+                });
+
+            return defer.promise;
         }
+
     }
 });
