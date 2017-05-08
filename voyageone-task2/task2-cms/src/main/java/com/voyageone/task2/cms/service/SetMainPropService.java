@@ -70,6 +70,7 @@ import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.math.NumberUtils;
 import org.joda.time.LocalDate;
@@ -1865,6 +1866,13 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             product.getFeed().setCatPath(feed.getCategory());
             product.getFeed().setBrand(feed.getBrand());
 
+            // 特殊处理sneakerhead的subCategories初始化
+            if (CollectionUtils.isEmpty(product.getFeed().getSubCategories()) && "001".equals(feed.getChannelId())) {
+                List<String> subCategories = new ArrayList<>(Arrays.asList(feed.getCategory().split("-")));
+                subCategories.set(subCategories.size() - 1, feed.getCategory());
+                product.getFeed().setSubCategories(subCategories);
+            }
+
             // --------- 商品Group信息设定 ------------------------------------------------------
             // 创建新的group
             // jeff 2016/04 change start
@@ -2358,6 +2366,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             product.getFeed().setCatPath(feed.getCategory());
             product.getFeed().setBrand(feed.getBrand());
 
+            // 特殊处理sneakerhead的subCategories初始化
+            if (CollectionUtils.isEmpty(product.getFeed().getSubCategories()) && "001".equals(feed.getChannelId())) {
+                List<String> subCategories = new ArrayList<>(Arrays.asList(feed.getCategory().split("-")));
+                subCategories.set(subCategories.size() - 1, feed.getCategory());
+                product.getFeed().setSubCategories(subCategories);
+            }
 
             return product;
         }
