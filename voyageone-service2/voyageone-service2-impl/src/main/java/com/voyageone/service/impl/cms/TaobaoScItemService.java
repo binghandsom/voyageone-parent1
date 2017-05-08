@@ -352,11 +352,14 @@ public class TaobaoScItemService extends BaseService {
 				outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, Long.parseLong(sku_id), sku_outerId);
 			}
 			System.out.println("关联成功:" + outerCodeResult);
-		} catch (ApiException e) {
-			String errMsg = String.format("自动设置天猫商品全链路库存管理:创建关联:{numIId: %s, outerId: %s, err_msg: %s}", numIId, sku_outerId, e.toString());
-			throw new BusinessException(errMsg);
 		} catch (InterruptedException e) {
 			String errMsg = String.format("自动设置天猫商品全链路库存管理:创建关联[之前睡会儿失败]:{numIId: %s, outerId: %s, err_msg: %s}", numIId, sku_outerId, e.toString());
+			throw new BusinessException(errMsg);
+		} catch (Exception e) {
+			if (e.toString().contains("您输入的前端商品已挂靠至该货品上")) {
+				return String.valueOf(scItem.getItemId());
+			}
+			String errMsg = String.format("自动设置天猫商品全链路库存管理:创建关联:{numIId: %s, outerId: %s, err_msg: %s}", numIId, sku_outerId, e.toString());
 			throw new BusinessException(errMsg);
 		}
 

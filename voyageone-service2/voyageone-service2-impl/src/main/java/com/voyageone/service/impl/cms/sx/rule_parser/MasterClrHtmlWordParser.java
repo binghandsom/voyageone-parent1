@@ -34,7 +34,7 @@ public class MasterClrHtmlWordParser extends MasterWordParser {
         lstHtml.add(prefix + "ul" + suffix);
         lstHtml.add(prefix + "/ul" + suffix);
         lstHtml.add(prefix + "/ *ul" + suffix);
-//        lstHtml.add(prefix + "\\ul" + suffix);
+        lstHtml.add(prefix + "ul *\\\\" + suffix);
         lstHtml.add(prefix + "\\\\ *ul" + suffix);
         lstHtml.add(prefix + "li" + suffix);
         lstHtml.add(prefix + "/li" + suffix);
