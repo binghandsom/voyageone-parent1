@@ -770,7 +770,9 @@ define([
     };
 
     SpTmController.prototype.popEditGroup = function () {
-        var self = this, $scope = self.$scope;
+        var self = this,
+            $translate = self.$translate,
+            $scope = self.$scope;
 
         var _mainProduct = _.find(self.vm.mastData.images, function (item) {
             return item.isMain;
