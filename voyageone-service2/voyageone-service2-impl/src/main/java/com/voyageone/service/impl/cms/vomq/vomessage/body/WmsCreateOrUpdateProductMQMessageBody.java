@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.vomq.vomessage.body;
 
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
+import com.voyageone.components.rabbitmq.namesub.IMQMessageSubBeanName;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 
 import java.math.BigDecimal;
@@ -14,7 +15,7 @@ import java.util.Set;
  * @Create 2017-04-18 16:03
  */
 @VOMQQueue(value = CmsMqRoutingKey.EWMS_MQ_CREATE_OR_UPDATE_PRODUCT)
-public class WmsCreateOrUpdateProductMQMessageBody extends BaseMQMessageBody {
+public class WmsCreateOrUpdateProductMQMessageBody extends BaseMQMessageBody implements IMQMessageSubBeanName {
 
     /*商品渠道ID，必要参数*/
     private String channelId;
@@ -222,5 +223,10 @@ public class WmsCreateOrUpdateProductMQMessageBody extends BaseMQMessageBody {
 
     public void setIsSale(Integer isSale) {
         this.isSale = isSale;
+    }
+
+    @Override
+    public String getSubBeanName() {
+        return channelId;
     }
 }

@@ -17,19 +17,19 @@ import java.util.List;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_STOCK_CART_CHANGED_STOCK)
 public class CmsStockCartChangedStockMQMessageBody extends BaseMQMessageBody implements IMQMessageSubBeanName {
 
-    private List<CartChangedStockBean> stockList;
+    private List<CartChangedStockBean> cartChangedStocks;
 
-    public List<CartChangedStockBean> getStockList() {
-        return stockList;
+    public List<CartChangedStockBean> getCartChangedStocks() {
+        return cartChangedStocks;
     }
 
-    public void setStockList(List<CartChangedStockBean> stockList) {
-        this.stockList = stockList;
+    public void setCartChangedStocks(List<CartChangedStockBean> cartChangedStocks) {
+        this.cartChangedStocks = cartChangedStocks;
     }
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (CollectionUtils.isEmpty(stockList)) {
+        if (CollectionUtils.isEmpty(cartChangedStocks)) {
             throw new MQMessageRuleException("接收WMS推送过来的渠道库存MQ发送异常, 参数stockList为空.");
         }
     }
