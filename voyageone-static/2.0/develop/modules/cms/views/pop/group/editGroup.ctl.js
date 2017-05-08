@@ -255,12 +255,18 @@ define([
         EditGroupCtl.prototype.saveGroup = function () {
             var self = this, vm = self.vm;
 
-            self.productDetailService.updateGroupPlatform({
-                code: vm.mastData.productCode,
-                platform: vm.platform
-            }).then(function (res) {
-                self.$uibModalInstance.close(res);
+            confirm('您是否确认要保存产品Group信息？').then(function(){
+                //设置店铺内分类
+                vm.platform.sellerCats = vm.sellerCats;
+
+                self.productDetailService.updateGroupPlatform({
+                    code: vm.mastData.productCode,
+                    platform: vm.platform
+                }).then(function (res) {
+                    self.$uibModalInstance.close(res);
+                });
             });
+
         };
 
         return EditGroupCtl;
