@@ -336,46 +336,58 @@ define([
                 alert($translate.instant('TXT_MSG_NO_PRODUCT_ROWS'));
                 return;
             }
-            var msg = '';
-            var selList = getSelProductList();
+
+            var msg = '', selList = getSelProductList();
             $scope.vm.searchInfo._selCodeList = [];
 
             if (selList.length > 0 && !$scope.vm._selall) {
                 msg = '<br>仅导出选中的记录，如需导出全部记录，请回到一览画面取消选择。';
-                _.forEach(selList, function (object) {
-                    $scope.vm.searchInfo._selCodeList.push(object.code);
-                });
+                $scope.vm.searchInfo._selCodeList = _.pluck(selList, 'code');
             } else {
                 msg = '<br>将导出所有的商品记录，如需只导出部分商品，请回到一览画面选择指定商品。';
             }
 
-            if (fileType == 1) {
-                msg = '即将导出Code级的搜索结果，请确认。' + msg;
-            } else if (fileType == 2) {
-                msg = '即将导出Group级的搜索结果，请确认。' + msg;
-            } else if (fileType == 3) {
-                msg = '即将导出SKU级的搜索结果，请确认。' + msg;
-            } else if (fileType == 4) {
-                msg = '即将导出聚美上新SKU级的搜索结果，请确认。' + msg;
-            } else if (fileType == 5) {
-                msg = "即将根据搜索结果导出报备文件，请确认。" + msg;
+            switch (fileType) {
+                case 1:
+                    msg = '即将导出Code级的搜索结果，请确认。' + msg;
+                    break;
+                case 2:
+                    msg = '即将导出Group级的搜索结果，请确认。' + msg;
+                    break;
+                case 3:
+                    msg = '即将导出SKU级的搜索结果，请确认。' + msg;
+                    break;
+                case 4:
+                    msg = '即将导出聚美上新SKU级的搜索结果，请确认。' + msg;
+                    break;
+                case 5:
+                    msg = "即将根据搜索结果导出报备文件，请确认。" + msg;
+                    break;
             }
 
-            confirm(msg).then(function () {
-                $scope.vm.searchInfo.fileType = fileType;
-                searchAdvanceSolrService.exportFile($scope.vm.searchInfo).then(function (res) {
-                    var ecd = res.data.ecd;
-                    if (ecd == undefined || ecd == '4003') {
-                        alert("创建文件时出错。");
-                    } else if (ecd == '4002') {
-                        alert("未选择导出文件类型。");
-                    } else if (ecd == '4004') {
-                        alert("已经有一个任务还没有执行完毕。请稍后再导出");
-                    } else if (ecd == '0') {
-                        notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
-                    }
+            popups.openColumnForDownLoad({
+                fileType: fileType
+            }).then(function () {
+
+                confirm(msg).then(function () {
+                    $scope.vm.searchInfo.fileType = fileType;
+                    searchAdvanceSolrService.exportFile($scope.vm.searchInfo).then(function (res) {
+                        var ecd = res.data.ecd;
+                        if (ecd == undefined || ecd == '4003') {
+                            alert("创建文件时出错。");
+                        } else if (ecd == '4002') {
+                            alert("未选择导出文件类型。");
+                        } else if (ecd == '4004') {
+                            alert("已经有一个任务还没有执行完毕。请稍后再导出");
+                        } else if (ecd == '0') {
+                            notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
+                        }
+
+                        $scope.search();
+                    });
                 });
             });
+
         }
 
         /**

@@ -6,7 +6,10 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.CommonConfigNotFoundException;
-import com.voyageone.category.match.*;
+import com.voyageone.category.match.FeedQuery;
+import com.voyageone.category.match.MatchResult;
+import com.voyageone.category.match.Searcher;
+import com.voyageone.category.match.Tokenizer;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
@@ -947,7 +950,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 if (blnProductExist) {
                     // 修改商品数据
                     // 一般只改改价格神马的
-                    cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
+                    cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, newMapping, feedList.size() > 1, originalFeed.getCode());
                     cmsProduct.getFeed().setCatPath(feed.getCategory());
                     if (feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())) {
                         cmsProduct.getCommon().getFields().setProductNameEn(feed.getName());
@@ -999,6 +1002,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 //                        cmsBtFeedInfoDao.update(originalFeed);
 //                        return;
                     }
+
+                    //james g kg 计算
+                    weightCalculate(cmsProduct);
+
                     // tom 20160510 追加 END
 
                     // TODO: 没有设置的fields里的内容, 不会被清除? 这个应该是在共通里做掉的吧, 要是共通里不做的话就要自己写了
@@ -1018,8 +1025,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                     // 设置sku数
                     cmsProduct.getCommon().getFields().setSkuCnt(cmsProduct.getCommon().getSkus().size());
-                    //james g kg 计算
-                    weightCalculate(cmsProduct);
 
                     // productService.updateProduct(channelId, requestModel);
                     // 更新产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
@@ -1039,7 +1044,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 } else {
 
                     // 不存在的场合, 新建一个product
-                    cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
+                    cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1, originalFeed.getCode());
 
                     // Champion特殊处理
                     if (feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())) {
@@ -1074,6 +1079,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                     platFromAttributeCopyFromMainProduct(cmsProduct);
 
+                    //james g kg 计算
+                    weightCalculate(cmsProduct);
+
                     // 计算主类目
                     if (usjoi || cmsProduct.getChannelId().equals("024")) {
                         doSetMainCategory(cmsProduct.getCommon(), feed);
@@ -1085,9 +1093,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // 设置店铺共通的店铺内分类信息
                     setSellerCats(feed, cmsProduct);
                     $debug("setSellerCats:" + (System.currentTimeMillis() - startTime));
-
-                    //james g kg 计算
-                    weightCalculate(cmsProduct);
 
                     // 设置sku数
                     cmsProduct.getCommon().getFields().setSkuCnt(cmsProduct.getCommon().getSkus().size());
@@ -1653,8 +1658,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 commonSku.setQty(sku.getQty());
                 commonSku.setIsSale(sku.getIsSale() == null ? 1 : sku.getIsSale());
                 // 重量(单位：磅) 如果原始重量不是lb的,feed里已根据公式转成lb
-                if (!StringUtils.isEmpty(sku.getWeightCalc()))
+                if (!StringUtils.isEmpty(sku.getWeightCalc())) {
                     commonSku.setWeight(NumberUtils.toDouble(sku.getWeightCalc()));
+                    commonSku.setWeightUnit(sku.getWeightOrgUnit());
+                }
 
                 commonSkuList.add(commonSku);
             }
@@ -2031,8 +2038,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         sku.setSize(feedSku.getSize());
                         if (feedSku.getIsSale() != null)
                             sku.setIsSale(feedSku.getIsSale());
-                        if (!StringUtils.isEmpty(feedSku.getWeightCalc()))
+                        if (!StringUtils.isEmpty(feedSku.getWeightCalc())) {
                             sku.setWeight(NumberUtils.toDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
+                            sku.setWeightUnit(feedSku.getWeightOrgUnit());
+                        }
 
                         break;
                     }
@@ -2049,8 +2058,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     sku.setSize(feedSku.getSize());        // Add by desmond 2016/07/04 因为上新用的是这个字段
                     sku.setQty(feedSku.getQty());
                     sku.setIsSale(feedSku.getIsSale() == null ? 1 : feedSku.getIsSale());
-                    if (!StringUtils.isEmpty(feedSku.getWeightCalc()))
+                    if (!StringUtils.isEmpty(feedSku.getWeightCalc())) {
                         sku.setWeight(NumberUtils.toDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
+                        sku.setWeightUnit(feedSku.getWeightOrgUnit());
+                    }
 
                     skuList.add(sku);
                 }
@@ -3238,6 +3249,26 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 } else {
                     prodCommonField.setCategoryStatus("0");
                 }
+
+                // 根据主类目设置商品重量
+                if (searchResult.getWeight() != 0.0D
+                        && (prodCommonField.getWeightLb() == null || prodCommonField.getWeightLb() == 0.0)) {
+                    prodCommonField.setWeightLb(searchResult.getWeight());
+                    BigDecimal b = new BigDecimal(searchResult.getWeight() * 453.59237);
+                    prodCommonField.setWeightG(b.setScale(0, BigDecimal.ROUND_HALF_UP).intValue());
+                    b = new BigDecimal(searchResult.getWeight() * 453.59237 / 1000.0);
+                    prodCommonField.setWeightKG(b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                }
+
+                // 如果sku的重量不存在,则设置成默认重量
+                prodCommon.getSkus().forEach(sku -> {
+                    if ((sku.getWeight() == null || sku.getWeight() == 0.0D)
+                            && searchResult.getWeight() != 0.0D) {
+                        sku.setWeight(searchResult.getWeight());
+                        sku.setWeightUnit("lb");
+                    }
+                });
+
                 // 产品分类(英文)
                 if (!StringUtils.isEmpty(searchResult.getProductTypeEn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getProductType())))
                     prodCommonField.setProductType(searchResult.getProductTypeEn().toLowerCase());
@@ -3324,13 +3355,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
          */
         private FeedQuery getFeedQuery(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
             // 调用Feed到主数据的匹配程序匹配主类目
-            StopWordCleaner cleaner = new StopWordCleaner(StopWordCleaner.STOPWORD_LIST);
             // 子店feed类目path分隔符(由于导入feedInfo表时全部替换成用"-"来分隔了，所以这里写固定值就可以了)
             List<String> categoryPathSplit = new ArrayList<>();
             categoryPathSplit.add("-");
             Tokenizer tokenizer = new Tokenizer(categoryPathSplit);
 
-            FeedQuery query = new FeedQuery(feedCategoryPath, cleaner, tokenizer);
+            FeedQuery query = new FeedQuery(feedCategoryPath, null, tokenizer);
             query.setProductType(productType);
             query.setSizeType(sizeType);
             query.setProductName(productNameEn, brand);

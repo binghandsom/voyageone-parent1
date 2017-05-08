@@ -106,6 +106,10 @@ public class CmsProductSearchService extends BaseSearchService {
 
         cmsProductSearchModel.setLock(cmsBtProductModel.getLock());
 
+        if(cmsBtProductModel.getFeed() != null && cmsBtProductModel.getFeed().getSubCategories() != null) {
+            cmsProductSearchModel.setSubCategories(cmsBtProductModel.getFeed().getSubCategories());
+        }
+
         cmsBtProductModel.getPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> {
             if(cmsBtProductModel_platform_cart.getCartId() > 10 && cmsBtProductModel_platform_cart.getCartId() < 900){
                 CmsProductSearchPlatformModel cmsProductSearchPlatformModel = new CmsProductSearchPlatformModel();
@@ -132,6 +136,7 @@ public class CmsProductSearchService extends BaseSearchService {
         cmsProductSearchPlatformModel.setSaleYear(cmsBtProductModel.getSales().getCodeSumYear(0));
         cmsProductSearchPlatformModel.setSaleAll(cmsBtProductModel.getSales().getCodeSumAll(0));
         cmsProductSearchModel.getPlatform().put("P0", cmsProductSearchPlatformModel);
+
 
         return createSolrBean(cmsProductSearchModel, lastVer);
     }

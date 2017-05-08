@@ -1,4 +1,4 @@
-package com.voyageone.category.match;
+package com.voyageone.category.match.data;
 
 import junit.framework.TestCase;
 import org.junit.Test;
@@ -9,6 +9,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+
 /**
  * Created by jonas on 2016/12/15.
  */
@@ -20,10 +21,12 @@ public class ExcelImporterTest extends TestCase {
 
     @Autowired
     ExcelImporter excelImporter;
+
     @Test
     public void importDataToDb() throws Exception {
         excelImporter.importDataToDb(TEST_FILEPATH1, TEST_FILEPATH2);
     }
+
     @Test
     public void testFormat() {
         NumberFormat formatter = new DecimalFormat("#");

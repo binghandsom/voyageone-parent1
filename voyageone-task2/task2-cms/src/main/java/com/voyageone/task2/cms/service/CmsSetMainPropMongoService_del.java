@@ -2239,8 +2239,10 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
                 commonSku.setSize(sku.getSize()); // 尺码
                 commonSku.setQty(sku.getQty());
                 // 重量(单位：磅) 如果原始重量不是lb的,feed里已根据公式转成lb
-                if (!StringUtils.isEmpty(sku.getWeightCalc()))
+                if (!StringUtils.isEmpty(sku.getWeightCalc())) {
                     commonSku.setWeight(NumberUtils.toDouble(sku.getWeightCalc()));
+                    commonSku.setWeightUnit(sku.getWeightOrgUnit());
+                }
 
                 // 增加默认渠道
 //                mainSku.setSkuCarts(skuCarts); // 删除现在没有skuCarts这个项目了
@@ -2698,8 +2700,10 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
                         sku.setClientSkuCode(feedSku.getClientSku());
                         sku.setClientSize(feedSku.getSize());
                         sku.setSize(feedSku.getSize());
-                        if (!StringUtils.isEmpty(feedSku.getWeightCalc()))
+                        if (!StringUtils.isEmpty(feedSku.getWeightCalc())) {
                             sku.setWeight(NumberUtils.toDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
+                            sku.setWeightUnit(feedSku.getWeightOrgUnit());
+                        }
 
                         break;
                     }
@@ -2715,8 +2719,10 @@ public class CmsSetMainPropMongoService_del extends BaseCronTaskService {
                     sku.setClientSize(feedSku.getSize());
                     sku.setSize(feedSku.getSize());        // Add by desmond 2016/07/04 因为上新用的是这个字段
                     sku.setQty(feedSku.getQty());
-                    if (!StringUtils.isEmpty(feedSku.getWeightCalc()))
+                    if (!StringUtils.isEmpty(feedSku.getWeightCalc())) {
                         sku.setWeight(NumberUtils.toDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
+                        sku.setWeightUnit(feedSku.getWeightOrgUnit());
+                    }
 
                     skuList.add(sku);
                 }

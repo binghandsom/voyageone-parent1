@@ -23,6 +23,11 @@
             <artifactId>aliyun-sdk-oss</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-rabbitmq</artifactId>
+            <version>${voyageone.components.rabbitmq.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>voyageone-components-tmall</finalName>

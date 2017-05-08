@@ -42,6 +42,7 @@ public class CmsProductSearchModel {
     private String lock;
     private Double priceMsrpEd;
     private Double priceRetailEd;
+    private List<String>subCategories;
 
     private Map<String, CmsProductSearchPlatformModel> platform;
 
@@ -245,5 +246,13 @@ public class CmsProductSearchModel {
 
     public void setLock(String lock) {
         this.lock = lock;
+    }
+
+    public List<String> getSubCategories() {
+        return subCategories;
+    }
+
+    public void setSubCategories(List<String> subCategories) {
+        this.subCategories = subCategories;
     }
 }
