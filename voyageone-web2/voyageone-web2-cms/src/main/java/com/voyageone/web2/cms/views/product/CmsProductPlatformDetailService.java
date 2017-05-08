@@ -609,7 +609,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         CmsBtProductGroupModel cmsBtProductGroupModel = productGroupService.selectProductGroupByCode(channelId, code, cartId);
         if(cmsBtProductGroupModel != null && ListUtils.notNull(cmsBtProductGroupModel.getProductCodes())){
             cmsBtProductGroupModel.getProductCodes().forEach(productCode->{
-                CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, code);
+                CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, productCode);
                 CmsBtProductModel_Platform_Cart platformModel = cmsBtProductModel.getPlatform(cartId);
                 if (cartId == CartEnums.Cart.TM.getValue() || cartId == CartEnums.Cart.TG.getValue()) {
                     newFields.put("sku",platformModel.getFields().getAttribute("sku"));
