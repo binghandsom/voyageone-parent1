@@ -170,6 +170,7 @@ define([
                 masterName: self.context.masterField.brand,
                 pBrandId: platform.pBrandId ? platform.pBrandId : null
             }).then(function (context) {
+                self.vm.platform.pBrandId = context.brandId;
                 self.vm.platform.pBrandName = context.pBrand;
                 if (platform.schemaFields && platform.schemaFields.product)
                     self.initBrand(platform.schemaFields.product, context.brandId);
@@ -255,7 +256,8 @@ define([
         EditGroupCtl.prototype.saveGroup = function () {
             var self = this, vm = self.vm;
 
-            confirm('您是否确认要保存产品Group信息？').then(function(){
+            self.confirm('您是否确认要保存产品Group信息？').then(function(){
+
                 //设置店铺内分类
                 vm.platform.sellerCats = vm.sellerCats;
 
