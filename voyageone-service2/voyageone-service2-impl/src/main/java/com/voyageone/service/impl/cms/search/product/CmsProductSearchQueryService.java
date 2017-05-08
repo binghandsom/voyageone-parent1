@@ -254,22 +254,24 @@ public class CmsProductSearchQueryService extends BaseService {
                         .map(str -> ClientUtils.escapeQueryChars(str) + "*")
                         .collect(Collectors.toList()));
                 Criteria tempCriteria = null;
-                for(String str:searchValue.getfCatPathList()){
-                    if(tempCriteria == null){
+                for (String str : searchValue.getfCatPathList()) {
+                    if (tempCriteria == null) {
                         if (searchValue.getfCatPathType() == 1) {
                             tempCriteria = new Criteria("subCategories").expression(str);
-                        }else{
-                            tempCriteria = new Criteria("subCategories").expression(str).not();
+                        } else {
+                            criteria = criteria.and("subCategories").expression(str).not();
                         }
-                    }else {
+                    } else {
                         if (searchValue.getfCatPathType() == 1) {
                             tempCriteria = tempCriteria.or("subCategories").expression(str);
                         } else {
-                            tempCriteria = tempCriteria.and("subCategories").expression(str).not();
+                            criteria = criteria.and("subCategories").expression(str).not();
                         }
                     }
-                };
-                criteria=criteria.and(tempCriteria);
+                }
+                if (searchValue.getfCatPathType() == 1) {
+                    criteria = criteria.and(tempCriteria);
+                }
             } else {
                 searchValue.setfCatPathList(searchValue.getfCatPathList().stream()
                         .map(String::trim)
