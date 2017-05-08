@@ -940,6 +940,21 @@ define([
             });
 
             return result;
+        };
+
+        /**
+         * 更新group信息
+         */
+        this.updateGroupPlatform = function(req){
+            var defer = $q.defer();
+            $productDetailService.updateGroupPlatform(req)
+                .then(function (res) {
+                    defer.resolve(res);
+                }, function (res) {
+                    defer.reject(res);
+                });
+
+            return defer.promise;
         }
 
     }
