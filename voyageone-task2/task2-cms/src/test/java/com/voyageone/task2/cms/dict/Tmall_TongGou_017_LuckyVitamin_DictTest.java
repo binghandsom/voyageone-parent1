@@ -531,11 +531,12 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
 //                String strImgJiage = "http://img.alicdn.com/imgextra/i2/2640015666/TB2KOwjaJuO.eBjSZFCXXXULFXa_!!2640015666.jpg";
 //                do处理天猫同购无线端20张图片(9, ruleRoot, new TextWord(strImgJiage));
 
+                // 生成描述图片
                 {
                     RuleExpression ruleExpressionField = new RuleExpression();
                     ruleExpressionField.addRuleWord(new TextWord("shortDesCn"));
                     RuleExpression ruleExpressionFontSize = new RuleExpression();
-                    ruleExpressionFontSize.addRuleWord(new TextWord("34"));
+                    ruleExpressionFontSize.addRuleWord(new TextWord("23"));
                     RuleExpression ruleExpressionOneLineBit = new RuleExpression();
                     ruleExpressionOneLineBit.addRuleWord(new TextWord("60"));
                     RuleExpression ruleExpressionSectionSize = new RuleExpression();
