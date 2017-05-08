@@ -684,6 +684,8 @@ public interface CmsUrlConstants {
             String UPPER_LOWER_FRAME = "upperLowerFrame";
 
             String LOCK_PLATFORM = "lockPlatForm";
+
+            String UPDATE_GROUP_PLATFORM = "updateGroupPlatform";
         }
 
         interface HISTORY {
