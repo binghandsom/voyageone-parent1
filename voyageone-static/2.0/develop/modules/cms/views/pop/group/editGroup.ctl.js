@@ -259,7 +259,7 @@ define([
                 code: vm.mastData.productCode,
                 platform: vm.platform
             }).then(function (res) {
-                console.log(res);
+                self.$uibModalInstance.close(res);
             });
         };
 
