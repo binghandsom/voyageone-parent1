@@ -357,7 +357,7 @@ public class TaobaoScItemService extends BaseService {
 			throw new BusinessException(errMsg);
 		} catch (Exception e) {
 			if (e.toString().contains("您输入的前端商品已挂靠至该货品上")) {
-				return null;
+				return String.valueOf(scItem.getItemId());
 			}
 			String errMsg = String.format("自动设置天猫商品全链路库存管理:创建关联:{numIId: %s, outerId: %s, err_msg: %s}", numIId, sku_outerId, e.toString());
 			throw new BusinessException(errMsg);
