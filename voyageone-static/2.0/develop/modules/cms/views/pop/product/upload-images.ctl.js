@@ -23,7 +23,7 @@ define([
 
     cms.controller('uploadImagesController', (function () {
 
-        function UploadImagesCtl(context, $uibModalInstance, popups, $productDetailService, confirm, notify, $rootScope) {
+        function UploadImagesCtl(context, $uibModalInstance, popups, $productDetailService, confirm, notify, $rootScope, alert) {
             this.context = context;
             this.uibModalInstance = $uibModalInstance;
             this.popups = popups;
@@ -31,6 +31,37 @@ define([
             this.notify = notify;
             this.$rootScope = $rootScope;
             this.productDetailService = $productDetailService;
+            this.copyImages = [
+                {
+                    value: 'image1',
+                    name: '品牌方商品图'
+                }, {
+                    value: 'image6',
+                    name: 'PC端自拍商品图'
+                }, {
+                    value: 'image7',
+                    name: 'APP端自拍商品图'
+                }, {
+                    value: 'image2',
+                    name: '包装图'
+                }, {
+                    value: 'image3',
+                    name: '角度图'
+                }, {
+                    value: 'image4',
+                    name: 'PC端自定义图'
+                }, {
+                    value: 'image5',
+                    name: 'APP端自定义图'
+                }, {
+                    value: 'image8',
+                    name: '吊牌图'
+                }, {
+                    value: 'image9',
+                    name: '耐久性标签图'
+                }
+            ];
+            this.alert = alert;
         }
 
         UploadImagesCtl.prototype.init = function () {
@@ -126,7 +157,7 @@ define([
             return this.context.showArr.indexOf(imageType) >= 0;
         };
 
-        UploadImagesCtl.prototype.goDetail = function(){
+        UploadImagesCtl.prototype.goDetail = function () {
             var self = this,
                 args = self.currentImage.split("/");
 
@@ -136,8 +167,8 @@ define([
             window.open(mConfig.bigImageUrl.replace("✓", args[args.length - 1]));
         };
 
-        UploadImagesCtl.prototype.sortImg = function(imagesType){
-            var self = this,context = self.context,
+        UploadImagesCtl.prototype.sortImg = function (imagesType) {
+            var self = this, context = self.context,
                 imgSource = self.platform[imagesType];
 
             if (!imagesType || imgSource.length < 2)
@@ -160,7 +191,7 @@ define([
 
         };
 
-        UploadImagesCtl.prototype.simpleImgDown = function(imgName, $event){
+        UploadImagesCtl.prototype.simpleImgDown = function (imgName, $event) {
 
             var jq = angular.element,
                 _aTag;
@@ -174,6 +205,42 @@ define([
 
             $event.stopPropagation();
 
+        };
+
+        UploadImagesCtl.prototype.copyToOtherImg = function (image, targetImg) {
+            var self = this,
+                imageType = Object.keys(image)[0],
+                platform = self.context.platform,
+                imageName = image[imageType];
+
+            self.confirm("您确认要复制到【" + targetImg.name + "】吗?").then(function () {
+
+
+                var _orgImg = _.find(platform[imageType.replace('image', 'images')], function (item) {
+                    return item[imageType] === imageName;
+                });
+
+                var jsonStr = angular.toJson(_orgImg).replace(/image\d{1}/g, targetImg.value);
+                _target = platform[targetImg.value.replace('image', 'images')];
+
+                if (!_target) {
+                    _target = platform[targetImg.value.replace('image', 'images')] = [];
+                }
+
+                var isExit = _.some(_target, function (item) {
+                    return item[targetImg.value] === imageName;
+                });
+
+                if (isExit) {
+                    self.alert(targetImg.name + "上已经存在该图片。");
+                    return;
+                }
+
+                _target.push(angular.fromJson(jsonStr));
+
+                self.notify.success('复制成功。');
+
+            });
         };
 
         return UploadImagesCtl;

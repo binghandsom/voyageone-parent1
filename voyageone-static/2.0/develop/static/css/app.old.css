@@ -7657,6 +7657,10 @@ a.text-black:hover {
     height: 350px;
 }
 
+.column_overflow_download {
+    height: 197px;
+}
+
 .smatop {
     padding-top: 10px
 }

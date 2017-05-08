@@ -1,6 +1,7 @@
 package com.voyageone.web2.core.views.user;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.model.user.ComUserModel;
 import com.voyageone.security.service.ComUserService;
 import com.voyageone.service.bean.com.ChannelPermissionBean;
@@ -156,6 +157,9 @@ public class UserController extends BaseController {
     @RequestMapping(CoreUrlConstants.USER.GET_CHANNEL)
     public AjaxResponse getChannel() {
         List<ChannelPermissionBean> companyBeans = userService.getPermissionCompany(getUser());
+        if(ListUtils.notNull(companyBeans)){
+            companyBeans.sort((o1, o2) -> o1.getChannelId().compareTo(o2.getChannelId()));
+        }
         return success(companyBeans);
     }
 
