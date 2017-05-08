@@ -2860,6 +2860,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 messageBody.setProductType(field.getProductType());
                 messageBody.setUserName(productModel.getModifier());
                 messageBody.setIsSale(sku.getIsSale());
+                messageBody.setCmsSku(sku.getSkuCode());
 
                 WmsCreateOrUpdateProductMQMessageBody_detail detailInfo = new WmsCreateOrUpdateProductMQMessageBody_detail();
                 detailInfo.setKgWeight(field.getWeightKG());
