@@ -51,9 +51,6 @@ public class FeedToCmsService_old extends BaseService {
     private FeedCategoryTreeService feedCategoryTreeService;
 
     @Autowired
-    private FeedInfoLogService feedInfoLogService;
-
-    @Autowired
     private FeedInfoService feedInfoService;
 
     @Autowired
@@ -247,12 +244,6 @@ public class FeedToCmsService_old extends BaseService {
                 brandList.add(product.getBrand());
                 sizeTypeList.add(product.getSizeType());
                 productTypeList.add(product.getProductType());
-
-                if (insertLog) {
-                    // 写log表
-                    product.set_id(null);
-                    feedInfoLogService.insertCmsBtFeedInfoLog(product);
-                }
 
                 Map<String, List<String>> attributeMtData;
                 if (attributeMtDatas.get(category) == null) {
