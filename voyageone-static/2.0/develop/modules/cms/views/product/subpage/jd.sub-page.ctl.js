@@ -773,8 +773,11 @@ define([
             mainProdId: _mainProduct.prodId,
             cartId: $scope.cartInfo.value,
             masterField: $scope.productInfo.masterField
-        }).then(function (res) {
-            console.log(res);
+        }).then(function (resp) {
+            self.vm.platform.modified = resp.data.modified;
+            self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+
+            self.getPlatformData();
         });
     };
 
