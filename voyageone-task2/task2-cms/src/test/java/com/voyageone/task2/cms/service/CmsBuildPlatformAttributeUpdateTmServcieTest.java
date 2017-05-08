@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +29,14 @@ public class CmsBuildPlatformAttributeUpdateTmServcieTest {
         workloadModel.setCartId(23);
         workloadModel.setGroupId(10408058L);
 
-        cmsBuildPlatformAttributeUpdateTmServcie.doTmAttibuteUpdate(workloadModel);
+        ShopBean shopBean = new ShopBean();
+        shopBean.setApp_url("");
+        shopBean.setAppKey("");
+        shopBean.setAppSecret("");
+        shopBean.setSessionKey("");
+        shopBean.setOrder_channel_id("001");
+        shopBean.setCart_id("26");
+        cmsBuildPlatformAttributeUpdateTmServcie.doTmAttibuteUpdate(workloadModel, shopBean);
 
     }
 }

@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.junit.Test;
@@ -40,9 +41,16 @@ public class CmsBuildPlatformAttributeUpdateJdServiceTest {
 
         work.setChannelId("001");
         work.setCartId(26);
-        work.setGroupId(700640L);
-        work.setWorkloadName("setSellerCat");
+        work.setGroupId(10007685L);
+        work.setWorkloadName("jd_skuId");
 
-        attributeUpdateJdService.doJdAttributeUpdate(work);
+        ShopBean shopBean = new ShopBean();
+        shopBean.setApp_url("https://api.jd.com/routerjson");
+        shopBean.setAppKey("");
+        shopBean.setAppSecret("");
+        shopBean.setSessionKey("");
+        shopBean.setOrder_channel_id("001");
+        shopBean.setCart_id("26");
+        attributeUpdateJdService.doJdAttributeUpdate(work, shopBean);
     }
 }
