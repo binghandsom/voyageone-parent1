@@ -212,19 +212,25 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                     for (int i = 1, leng = pCdList.size(); i < leng; i++) {
                         // 根据商品code找到其主图片
                         JongoQuery queryObj = new JongoQuery();
-                        queryObj.setProjection("{'common.fields.images1':1,'prodId': 1, 'common.fields.code': 1,'_id':0}");
+                        queryObj.setProjection("{'common.fields.images1':1,'common.fields.images6':1,'prodId': 1, 'common.fields.code': 1,'_id':0}");
                         queryObj.setQuery("{'common.fields.code':'" + String.valueOf(pCdList.get(i)) + "'}");
                         CmsBtProductModel prod = productService.getProductByCondition(channelId, queryObj);
                         // 如果根据code获取不到数据就跳过
                         if (prod == null)
                             continue;
-                        List<CmsBtProductModel_Field_Image> fldImgList = prod.getCommonNotNull().getFieldsNotNull().getImages1();
+                        List<CmsBtProductModel_Field_Image> fldImgList = prod.getCommonNotNull().getFieldsNotNull().getImages6();
                         if (fldImgList.size() > 0) {
                             Map<String, String> map = new HashMap<>(1);
                             map.put("value", fldImgList.get(0).getName());
                             images1Arr.add(map);
+                        }else {
+                            fldImgList = prod.getCommonNotNull().getFieldsNotNull().getImages1();
+                            if (fldImgList.size() > 0) {
+                                Map<String, String> map = new HashMap<>(1);
+                                map.put("value", fldImgList.get(0).getName());
+                                images1Arr.add(map);
+                            }
                         }
-
                         // 设定该group对应的prodId
                         Map<String, Object> proMap = new HashMap<>();
                         proMap.put("prodId", prod.getProdId());
