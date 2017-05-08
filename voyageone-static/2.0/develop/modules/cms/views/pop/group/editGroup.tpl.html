@@ -240,7 +240,7 @@
     </div>
 
     <div class="modal-footer">
-        <div class="row">
+<!--        <div class="row">
             <div class="pull-right m-t-xs m-r-xs" uib-dropdown
                  ng-if="ctrl.vm.status == 'Ready' || ctrl.vm.status == 'Approved' || isPublishSucceed">
                 <button class="btn btn-vo" uib-dropdown-toggle ng-disabled="!ctrl.btnDisabled()">
@@ -273,6 +273,9 @@
 
             </div>
 
+        </div>-->
+        <div class="pull-right">
+            <button class="btn btn-vo" ng-click="ctrl.saveGroup()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
         </div>
     </div>
 </div>

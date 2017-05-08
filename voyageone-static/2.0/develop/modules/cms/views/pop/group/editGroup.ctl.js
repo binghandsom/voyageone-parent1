@@ -422,6 +422,13 @@ define([
             });
         };
 
+        /**
+         * group 保存操作
+         */
+        EditGroupCtl.prototype.saveGroup = function(){
+
+        };
+
         return EditGroupCtl;
 
     })());
