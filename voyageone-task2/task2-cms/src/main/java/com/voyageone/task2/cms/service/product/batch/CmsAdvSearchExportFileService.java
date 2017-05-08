@@ -519,6 +519,31 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
         }
         index = size;
+
+        if (commonProps != null) {
+            for (Map<String, String> prop : commonProps) {
+                if (ArrayUtils.contains(_prodCol, prop.get("propId"))) {
+                    continue;
+                }
+                FileUtils.cell(row2, index++, style2).setCellValue(StringUtils.null2Space2((prop.get("propName"))));
+            }
+        }
+        if (customProps != null) {
+            for (Map<String, String> prop : customProps) {
+                FileUtils.cell(row2, index++, style2).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation")));
+                FileUtils.cell(row2, index++, style2).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_original")));
+            }
+        }
+        if (salesProps != null) {
+            for (Map<String, String> prop : salesProps) {
+                FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
+            }
+        }
+        if (bidatasProps != null) {
+            for (Map<String, String> prop : bidatasProps) {
+                FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
+            }
+        }
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
                 if (prop.get("name").indexOf("可售库存") > -0) continue;
@@ -583,8 +608,32 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
             }
         }
-        FileUtils.cell(row1, index++, style1).setCellValue("Lock");
         index = size;
+
+        if (commonProps != null) {
+            for (Map<String, String> prop : commonProps) {
+                if (ArrayUtils.contains(_prodCol, prop.get("propId"))) {
+                    continue;
+                }
+                FileUtils.cell(row2, index++, style2).setCellValue(StringUtils.null2Space2((prop.get("propName"))));
+            }
+        }
+        if (customProps != null) {
+            for (Map<String, String> prop : customProps) {
+                FileUtils.cell(row2, index++, style2).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation")));
+                FileUtils.cell(row2, index++, style2).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_original")));
+            }
+        }
+        if (salesProps != null) {
+            for (Map<String, String> prop : salesProps) {
+                FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
+            }
+        }
+        if (bidatasProps != null) {
+            for (Map<String, String> prop : bidatasProps) {
+                FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
+            }
+        }
 
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
