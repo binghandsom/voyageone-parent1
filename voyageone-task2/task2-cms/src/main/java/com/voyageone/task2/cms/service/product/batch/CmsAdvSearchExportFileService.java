@@ -75,8 +75,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private final static String[] _CODE_STATIC_COLS_ZN = {"商品编码", "产品名称英语", "产品名称中文", "供应商", "主类目", "品牌", "SKU数", "库存", "自由标签", "feed类目", "是否被锁定"};
 
     /*sku级导出时和平台无关的固定列：英文和中文列头名称*/
-    private final static String[] _SKU_STATIC_COLS = {"code", "barcode", "clientSKU", "productNameEn", "originalTitleCn", "clientSKU", "clientSize", "size", "inventory", "clientPriceMsrp", "clientPriceRetail", "clientPriceCost", "weightCalc", "Lock"};
-    private final static String[] _SKU_STATIC_COLS_ZN = {"sku", "条形码", "商品编码", "产品名称英语", "产品名称中文", "客户原始SKU", "客户原始Size", "转换后Size", "库存", "客户建议售价", "客户指导价", "客户成本价", "重量（lb）", "是否被锁定"};
+    private final static String[] _SKU_STATIC_COLS = {"code", "barcode", "clientSKU","supplier", "category", "brand",  "freeTags", "feedCategory", "productNameEn", "originalTitleCn", "clientSKU", "clientSize", "size", "inventory", "clientPriceMsrp", "clientPriceRetail", "clientPriceCost", "weightCalc", "Lock"};
+    private final static String[] _SKU_STATIC_COLS_ZN = {"sku", "条形码", "商品编码","供应商", "主类目", "品牌" ,"自由标签", "feed类目", "产品名称英语", "产品名称中文", "客户原始SKU", "客户原始Size", "转换后Size", "库存", "客户建议售价", "客户指导价", "客户成本价", "重量（lb）", "是否被锁定"};
 
     // 产品数据（code级）固定输出列，用于过滤自定义显示列中相同项目
     private final static String[] _prodCol = {"code", "brand", "category", "productNameEn", "originalTitleCn", "mainCode", "model", "quantity", "color"};
@@ -480,10 +480,38 @@ public class CmsAdvSearchExportFileService extends BaseService {
             FileUtils.cell(row1, i, style1).setCellValue(_GROUP_STATIC_COLS[i]);
             FileUtils.cell(row2, i, style2).setCellValue(_GROUP_STATIC_COLS_ZN[i]);
         }
-
+        List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.get("_adv_search_customProps");
+        List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.get("_adv_search_commonProps");
+        List<Map<String, String>> salesProps = (List<Map<String, String>>) cmsSession.get("_adv_search_selSalesType");
+        List<Map<String, String>> bidatasProps = (List<Map<String, String>>) cmsSession.get("_adv_search_selBiDataList");
         List<Map<String, String>> platformDataList = (List<Map<String, String>>) cmsSession.get("_adv_search_selPlatformDataList");
 
         int index = size;
+        if (commonProps != null) {
+            for (Map<String, String> prop : commonProps) {
+                if (ArrayUtils.contains(_prodCol, prop.get("propId"))) {
+                    continue;
+                }
+                FileUtils.cell(row1, index++, style1).setCellValue(StringUtils.null2Space2((prop.get("propName"))));
+            }
+        }
+        if (customProps != null) {
+            for (Map<String, String> prop : customProps) {
+                FileUtils.cell(row1, index++, style1).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation")));
+                FileUtils.cell(row1, index++, style1).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_original")));
+            }
+        }
+        if (salesProps != null) {
+            for (Map<String, String> prop : salesProps) {
+                FileUtils.cell(row1, index++, style1).setCellValue(prop.get("name"));
+            }
+        }
+        if (bidatasProps != null) {
+            for (Map<String, String> prop : bidatasProps) {
+                FileUtils.cell(row1, index++, style1).setCellValue(prop.get("name"));
+            }
+        }
+
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
                 FileUtils.cell(row1, index++, style1).setCellValue(prop.get("name"));
@@ -518,17 +546,43 @@ public class CmsAdvSearchExportFileService extends BaseService {
             FileUtils.cell(row1, i, style1).setCellValue(_SKU_STATIC_COLS[i]);
             FileUtils.cell(row2, i, style2).setCellValue(_SKU_STATIC_COLS_ZN[i]);
         }
-
+        List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.get("_adv_search_customProps");
+        List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.get("_adv_search_commonProps");
+        List<Map<String, String>> salesProps = (List<Map<String, String>>) cmsSession.get("_adv_search_selSalesType");
+        List<Map<String, String>> bidatasProps = (List<Map<String, String>>) cmsSession.get("_adv_search_selBiDataList");
         List<Map<String, String>> platformDataList = (List<Map<String, String>>) cmsSession.get("_adv_search_selPlatformDataList");
-
         int index = size;
+        if (commonProps != null) {
+            for (Map<String, String> prop : commonProps) {
+                if (ArrayUtils.contains(_prodCol, prop.get("propId"))) {
+                    continue;
+                }
+                FileUtils.cell(row1, index++, style1).setCellValue(StringUtils.null2Space2((prop.get("propName"))));
+            }
+        }
+        if (customProps != null) {
+            for (Map<String, String> prop : customProps) {
+                FileUtils.cell(row1, index++, style1).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation")));
+                FileUtils.cell(row1, index++, style1).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_original")));
+            }
+        }
+        if (salesProps != null) {
+            for (Map<String, String> prop : salesProps) {
+                FileUtils.cell(row1, index++, style1).setCellValue(prop.get("name"));
+            }
+        }
+        if (bidatasProps != null) {
+            for (Map<String, String> prop : bidatasProps) {
+                FileUtils.cell(row1, index++, style1).setCellValue(prop.get("name"));
+            }
+        }
+
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
                 FileUtils.cell(row1, index++, style1).setCellValue(prop.get("name"));
 
             }
         }
-
         FileUtils.cell(row1, index++, style1).setCellValue("Lock");
         index = size;
 
@@ -833,6 +887,10 @@ public class CmsAdvSearchExportFileService extends BaseService {
      */
     private boolean writeRecordToGroupFile(Workbook book, List<CmsBtProductBean> items, String channelId, List<TypeChannelBean> cartList, int startRowIndex, Map<String, String> channelIdMap, Map cmsSession) {
         boolean isContinueOutput = true;
+        List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.get("_adv_search_customProps");
+        List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.get("_adv_search_commonProps");
+        List<Map<String, Object>> salesProps = (List<Map<String, Object>>) cmsSession.get("_adv_search_selSalesType");
+        List<Map<String, Object>> bidatasProps = (List<Map<String, Object>>) cmsSession.get("_adv_search_selBiDataList");
         CellStyle unlock = FileUtils.createUnLockStyle(book);
 
         // 先取得各产品group信息
@@ -879,6 +937,74 @@ public class CmsAdvSearchExportFileService extends BaseService {
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getBrand()));
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getFeed().getCatPath()));
 
+            if (commonProps != null) {
+                for (Map<String, String> prop : commonProps) {
+                    String propId = prop.get("propId");
+                    if (ArrayUtils.contains(_prodCol, propId)) {
+                        continue;
+                    }
+                    if ("comment".equals(propId)) {
+                        Object value = item.getCommon().getComment();
+                        FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
+                    } else if ("longDesEn".equals(propId) || "longDesCn".equals(propId)) {
+                        // 项目长度可能会超过32767个字符，需要截取，否则会报错，目前只检查长描述英文/中文
+                        String longDes = fields.getStringAttribute(propId);
+                        if (longDes == null) {
+                            longDes = "";
+                        } else if (longDes.length() > CELL_LENGTH_LIMIT) {
+                            longDes = longDes.substring(0, CELL_LENGTH_LIMIT);
+                        }
+                        FileUtils.cell(row, index++, unlock).setCellValue(longDes);
+                    } else {
+                        Object value = fields.getAttribute(propId);
+                        FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
+                    }
+                }
+            }
+
+            if (customProps != null) {
+                for (Map<String, String> prop : customProps) {
+                    Object value = item.getFeed().getCnAtts().getAttribute(prop.get("feed_prop_original"));
+                    FileUtils.cell(row, index++, unlock)
+                            .setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
+                    value = item.getFeed().getOrgAtts().getAttribute(prop.get("feed_prop_original"));
+                    FileUtils.cell(row, index++, unlock)
+                            .setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
+                }
+            }
+            if (salesProps != null) {
+                CmsBtProductModel_Sales salesData = item.getSales();
+                String key;
+                for (Map<String, Object> prop : salesProps) {
+                    key = (String) prop.get("value");
+                    key = key.substring(6);
+                    Integer salesVal = null;
+                    if (salesData.getSubNode(key.split("\\.")) instanceof Double)
+                        salesVal = ((Double) salesData.getSubNode(key.split("\\."))).intValue();
+                    else
+                        salesVal = (Integer) salesData.getSubNode(key.split("\\."));
+
+                    if (salesVal == null) {
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                    } else {
+                        FileUtils.cell(row, index++, unlock).setCellValue(salesVal);
+                    }
+                }
+            }
+            if (bidatasProps != null) {
+                BaseMongoMap biData = item.getBi();
+                for (Map<String, Object> prop : bidatasProps) {
+                    String key = (String) prop.get("value");
+                    key = key.substring(3);
+                    Object salesVal = biData.getSubNode(key.split("\\."));
+                    if (salesVal == null) {
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                    } else {
+                        FileUtils.cell(row, index++, unlock).setCellValue(salesVal.toString());
+                    }
+                }
+            }
+
             List<Map<String, String>> platformDataList = (List<Map<String, String>>) cmsSession.get("_adv_search_selPlatformDataList");
             if (platformDataList != null) {
                 Pattern patten = Pattern.compile("^platforms\\.P(\\d+)");
@@ -920,6 +1046,12 @@ public class CmsAdvSearchExportFileService extends BaseService {
      * @return 行数偏移量
      */
     private int writeRecordToSkuFile(Workbook book, List<CmsBtProductBean> items, List<TypeChannelBean> cartList, int startRowIndex, Map<String, String> channelIdMap, Map cmsSession) {
+        Map<String, CmsBtTagBean> cachTag = new HashMap<>();
+        List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.get("_adv_search_customProps");
+        List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.get("_adv_search_commonProps");
+        List<Map<String, Object>> salesProps = (List<Map<String, Object>>) cmsSession.get("_adv_search_selSalesType");
+        List<Map<String, Object>> bidatasProps = (List<Map<String, Object>>) cmsSession.get("_adv_search_selBiDataList");
+
         int total = 0;
         List<CmsBtProductBean> products = new ArrayList<>();
         Map<String, Set<String>> codesMap = new HashMap<>();
@@ -961,6 +1093,34 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getSkuCode()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getBarcode()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getCode()));
+                FileUtils.cell(row, index++, unlock).setCellValue(channelIdMap.get(item.getOrgChannelId()));
+                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommon().getCatPath()));
+                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getBrand()));
+                // 取得自由标签
+                List<CmsBtTagBean> tagModelList = new ArrayList<>();
+                List<String> temp2 = new ArrayList<>();
+                for (String tag : item.getFreeTags()) {
+                    if (cachTag.containsKey(tag)) {
+                        tagModelList.add(cachTag.get(tag));
+                    } else {
+                        temp2.add(tag);
+                    }
+                }
+                if (temp2.size() > 0) {
+                    List<CmsBtTagBean> ts = tagService.getTagPathNameByTagPath(item.getChannelId(), temp2);
+                    if (!ListUtils.isNull(ts)) {
+                        for (CmsBtTagBean cmsBtTagBean : ts) {
+                            cachTag.put(cmsBtTagBean.getTagPath(), cmsBtTagBean);
+                            tagModelList.add(cmsBtTagBean);
+                        }
+                    }
+                }
+                String tag = "";
+                if (!ListUtils.isNull(tagModelList)) {
+                    tag = tagModelList.stream().map(CmsBtTagBean::getTagChildrenName).collect(Collectors.joining(","));
+                }
+                FileUtils.cell(row, index++, unlock).setCellValue(tag);
+                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getFeed().getCatPath()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommonNotNull().getFieldsNotNull().getProductNameEn()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSkuCode()));
@@ -991,6 +1151,73 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 }
                 FileUtils.cell(row, index++, unlock).setCellValue(getLockStatusTxt(item.getLock()));
 
+                if (commonProps != null) {
+                    for (Map<String, String> prop : commonProps) {
+                        String propId = prop.get("propId");
+                        if (ArrayUtils.contains(_prodCol, propId)) {
+                            continue;
+                        }
+                        if ("comment".equals(propId)) {
+                            Object value = item.getCommon().getComment();
+                            FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
+                        } else if ("longDesEn".equals(propId) || "longDesCn".equals(propId)) {
+                            // 项目长度可能会超过32767个字符，需要截取，否则会报错，目前只检查长描述英文/中文
+                            String longDes = fields.getStringAttribute(propId);
+                            if (longDes == null) {
+                                longDes = "";
+                            } else if (longDes.length() > CELL_LENGTH_LIMIT) {
+                                longDes = longDes.substring(0, CELL_LENGTH_LIMIT);
+                            }
+                            FileUtils.cell(row, index++, unlock).setCellValue(longDes);
+                        } else {
+                            Object value = fields.getAttribute(propId);
+                            FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
+                        }
+                    }
+                }
+
+                if (customProps != null) {
+                    for (Map<String, String> prop : customProps) {
+                        Object value = item.getFeed().getCnAtts().getAttribute(prop.get("feed_prop_original"));
+                        FileUtils.cell(row, index++, unlock)
+                                .setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
+                        value = item.getFeed().getOrgAtts().getAttribute(prop.get("feed_prop_original"));
+                        FileUtils.cell(row, index++, unlock)
+                                .setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
+                    }
+                }
+                if (salesProps != null) {
+                    CmsBtProductModel_Sales salesData = item.getSales();
+                    String key;
+                    for (Map<String, Object> prop : salesProps) {
+                        key = (String) prop.get("value");
+                        key = key.substring(6);
+                        Integer salesVal = null;
+                        if (salesData.getSubNode(key.split("\\.")) instanceof Double)
+                            salesVal = ((Double) salesData.getSubNode(key.split("\\."))).intValue();
+                        else
+                            salesVal = (Integer) salesData.getSubNode(key.split("\\."));
+
+                        if (salesVal == null) {
+                            FileUtils.cell(row, index++, unlock).setCellValue("");
+                        } else {
+                            FileUtils.cell(row, index++, unlock).setCellValue(salesVal);
+                        }
+                    }
+                }
+                if (bidatasProps != null) {
+                    BaseMongoMap biData = item.getBi();
+                    for (Map<String, Object> prop : bidatasProps) {
+                        String key = (String) prop.get("value");
+                        key = key.substring(3);
+                        Object salesVal = biData.getSubNode(key.split("\\."));
+                        if (salesVal == null) {
+                            FileUtils.cell(row, index++, unlock).setCellValue("");
+                        } else {
+                            FileUtils.cell(row, index++, unlock).setCellValue(salesVal.toString());
+                        }
+                    }
+                }
                 List<Map<String, String>> platformDataList = (List<Map<String, String>>) cmsSession.get("_adv_search_selPlatformDataList");
                 if (platformDataList != null) {
                     Pattern patten = Pattern.compile("^platforms\\.P(\\d+)");
