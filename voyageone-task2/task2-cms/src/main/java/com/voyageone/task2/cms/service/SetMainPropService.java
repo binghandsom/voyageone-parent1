@@ -2024,7 +2024,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         sku.setClientSkuCode(feedSku.getClientSku());
                         sku.setClientSize(feedSku.getSize());
                         sku.setSize(feedSku.getSize());
-                        if (!StringUtils.isEmpty(feedSku.getWeightCalc())){
+                        if (feedSku.getIsSale() != null)
+                            sku.setIsSale(feedSku.getIsSale());
+                        if (!StringUtils.isEmpty(feedSku.getWeightCalc())) {
                             sku.setWeight(NumberUtils.toDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
                             sku.setWeightUnit(feedSku.getWeightOrgUnit());
                         }
@@ -2044,7 +2046,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     sku.setSize(feedSku.getSize());        // Add by desmond 2016/07/04 因为上新用的是这个字段
                     sku.setQty(feedSku.getQty());
                     sku.setIsSale(feedSku.getIsSale() == null ? 1 : feedSku.getIsSale());
-                    if (!StringUtils.isEmpty(feedSku.getWeightCalc())){
+                    if (!StringUtils.isEmpty(feedSku.getWeightCalc())) {
                         sku.setWeight(NumberUtils.toDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
                         sku.setWeightUnit(feedSku.getWeightOrgUnit());
                     }

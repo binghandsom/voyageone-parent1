@@ -21,7 +21,6 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.CommonPropService;
@@ -268,7 +267,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
      * 统计当前查询的product件数（查询条件从画面而来）
      */
     public long countProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-        JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue);
+        JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, userInfo.getSelChannelId());
         return productService.countByQuery(queryObject.getQuery(), queryObject.getParameters(), userInfo.getSelChannelId());
     }
 
@@ -284,7 +283,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
             $warn("高级检索 getProductCodeList session中的查询条件为空");
             return new ArrayList<>(0);
         }
-        JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue);
+        JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, channelId);
         queryObject.setProjection("{'common.fields.code':1,'_id':0}");
         if ($isDebugEnabled()) {
             $debug(String.format("高级检索 获取当前查询的product列表 (session) ChannelId=%s, %s", channelId, queryObject.toString()));
@@ -311,7 +310,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
             $warn("高级检索 getProductIdList session中的查询条件为空");
             return new ArrayList<>(0);
         }
-        JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue);
+        JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, channelId);
         queryObject.setProjection("{'prodId':1,'_id':0}");
         if ($isDebugEnabled()) {
             $debug(String.format("高级检索 获取当前查询的product id列表 (session) ChannelId=%s, %s", channelId, queryObject.toString()));
@@ -412,7 +411,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
      */
     public long countGroupCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         List<JongoAggregate> aggrList = new ArrayList<>();
-        String qry1 = cmsBtProductDao.getQueryStr(advSearchQueryService.getSearchQuery(searchValue));
+        String qry1 = cmsBtProductDao.getQueryStr(advSearchQueryService.getSearchQuery(searchValue, userInfo.getSelChannelId()));
         if (qry1 != null && qry1.length() > 0) {
             aggrList.add(new JongoAggregate("{ $match : " + qry1 + " }"));
         }

@@ -1009,11 +1009,11 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             if (isSale == null) isSale = true;
                             FileUtils.cell(row, index++, unlock).setCellValue(isSale ? "Yes" : "No");
                         } else if ("pPriceMsrpEd".equals(attrName)) {
-                            FileUtils.cell(row, index++, unlock).setCellValue((Double) pSku.getDoubleAttribute("priceMsrp"));
+                            FileUtils.cell(row, index++, unlock).setCellValue(pSku.getDoubleAttribute("priceMsrp"));
                         } else if ("pPriceRetailEd".equals(attrName)) {
-                            FileUtils.cell(row, index++, unlock).setCellValue((Double) pSku.getDoubleAttribute("priceRetail"));
+                            FileUtils.cell(row, index++, unlock).setCellValue(pSku.getDoubleAttribute("priceRetail"));
                         } else if ("pPriceSaleEd".equals(attrName)) {
-                            FileUtils.cell(row, index++, unlock).setCellValue((Double) pSku.getDoubleAttribute("priceSale"));
+                            FileUtils.cell(row, index++, unlock).setCellValue(pSku.getDoubleAttribute("priceSale"));
                         } else {
                             index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
                         }

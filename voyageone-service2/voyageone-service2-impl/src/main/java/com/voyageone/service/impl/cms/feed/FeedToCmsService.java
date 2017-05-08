@@ -354,15 +354,15 @@ public class FeedToCmsService extends BaseService {
                     _successMsg.setMsg("修改feed信息完毕");
                     success.add(_successMsg);
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    CmsBtOperationLogModel_Msg _failedMsg = new CmsBtOperationLogModel_Msg();
-                    _failedMsg.setSkuCode(orgFeedInfo.getCode());
-                    _failedMsg.setMsg(e.getMessage());
-                    failed.add(_failedMsg);
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                CmsBtOperationLogModel_Msg _failedMsg = new CmsBtOperationLogModel_Msg();
+                _failedMsg.setSkuCode(orgFeedInfo.getCode());
+                _failedMsg.setMsg(e.getMessage());
+                failed.add(_failedMsg);
+            }
 
-            });
+        });
 
             Map<String, List<CmsBtOperationLogModel_Msg>> response = new HashMap<>();
             response.put("success", success);

@@ -1529,7 +1529,7 @@ define([
         /**
          * 自定义下载选择列模态框
          */
-        $scope.openColumnForDownLoad = function(context) {
+        $scope.openColumnForDownLoad = function (context) {
             return openModal(popActions.custom.columnForDownLoad, context);
         };
 

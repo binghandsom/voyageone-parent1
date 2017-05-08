@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
-import com.taobao.api.domain.Product;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
@@ -14,8 +13,6 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.math.BigDecimal;
 
 /**
  * Created by rex on 2017/1/5.
@@ -40,8 +37,8 @@ public class CmsAdvSearchExportMQJobTest {
     }
 
     @Test
-    public void test(){
-        CmsBtProductModel cmsBtProductModel = productService.getProductByCode("007","C5-P301-010");
+    public void test() {
+        CmsBtProductModel cmsBtProductModel = productService.getProductByCode("007", "C5-P301-010");
         ExpressionParser parser = new SpelExpressionParser();
 
         Expression expression = parser.parseExpression("platforms[\"P23\"].fields[\"title\"]");

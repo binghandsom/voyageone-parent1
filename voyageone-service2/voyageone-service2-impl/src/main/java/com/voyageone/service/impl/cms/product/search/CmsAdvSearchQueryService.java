@@ -8,7 +8,6 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
@@ -17,7 +16,6 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -51,7 +49,7 @@ public class CmsAdvSearchQueryService extends BaseService {
     }
 
     public List<String> getProductCodeList(CmsSearchInfoBean2 searchValue, String channelId, Boolean isSort, Boolean isAll) {
-        JongoQuery queryObject = getSearchQuery(searchValue);
+        JongoQuery queryObject = getSearchQuery(searchValue, channelId);
         queryObject.setProjection("{'common.fields.code':1,'_id':0}");
         if(isSort) {
             queryObject.setSort(getSortValue(searchValue));
@@ -80,7 +78,7 @@ public class CmsAdvSearchQueryService extends BaseService {
      */
     public List<String> getProductCodeList(CmsSearchInfoBean2 searchValue, String channelId, Boolean isSort, int fileType) {
         if (fileType == 5) { // 报备文件
-            JongoQuery queryObject = getSearchQuery(searchValue);
+            JongoQuery queryObject = getSearchQuery(searchValue, channelId);
             queryObject.addQuery("{'common.fields.isFiled':{$ne:1}}");
             List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "");
             if (cartList != null && cartList.size() > 0) {
@@ -127,7 +125,7 @@ public class CmsAdvSearchQueryService extends BaseService {
     public List<String> getGroupCodeList(CmsSearchInfoBean2 searchValue, String channelId) {
         List<JongoAggregate> aggrList = new ArrayList<>();
         // 查询条件
-        String qry1 = cmsBtProductDao.getQueryStr(getSearchQuery(searchValue));
+        String qry1 = cmsBtProductDao.getQueryStr(getSearchQuery(searchValue, channelId));
         if (qry1 != null && qry1.length() > 0) {
             aggrList.add(new JongoAggregate("{ $match : " + qry1 + " }"));
         }
@@ -170,7 +168,7 @@ public class CmsAdvSearchQueryService extends BaseService {
     /**
      * 返回页面端的检索条件拼装成mongo使用的条件
      */
-    public JongoQuery getSearchQuery(CmsSearchInfoBean2 searchValue) {
+    public JongoQuery getSearchQuery(CmsSearchInfoBean2 searchValue, String channelId) {
         JongoQuery queryObject = new JongoQuery();
 
         // 添加platform cart
@@ -389,18 +387,23 @@ public class CmsAdvSearchQueryService extends BaseService {
         }
 
         // 获取其他检索条件
-        getSearchValueForMongo(searchValue, queryObject);
+        getSearchValueForMongo(searchValue, queryObject, channelId);
         return queryObject;
     }
 
     /**
      * 获取其他检索条件
      */
-    private void getSearchValueForMongo(CmsSearchInfoBean2 searchValue, JongoQuery queryObject) {
+    private void getSearchValueForMongo(CmsSearchInfoBean2 searchValue, JongoQuery queryObject, String channelId) {
         // 获取 feed category
         // 获取 feed category
         if (searchValue.getfCatPathList() != null && searchValue.getfCatPathList().size() > 0) {
             searchValue.setfCatPathList(searchValue.getfCatPathList().stream().map(str->str.trim()).collect(Collectors.toList()));
+
+            String tempCatValue = "feed.catPath";
+            if ("001".equals(channelId)) {
+                tempCatValue = "feed.subCategories";
+            }
             if(searchValue.getfCatPathType() == 1) {
                 StringBuilder fCatPathStr = new StringBuilder("{$or:[");
                 int idx = 0;
@@ -408,10 +411,10 @@ public class CmsAdvSearchQueryService extends BaseService {
                 for (String fCatPath : searchValue.getfCatPathList()) {
                     //fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
                     if (idx == 0) {
-                        fCatPathStr.append("{\"feed.catPath\":{\"$regex\":#}}");
+                        fCatPathStr.append("{\"" + tempCatValue + "\":{\"$regex\":#}}");
                         idx++;
                     } else {
-                        fCatPathStr.append(",{\"feed.catPath\":{\"$regex\":#}}");
+                        fCatPathStr.append(",{\"" + tempCatValue + "\":{\"$regex\":#}}");
                     }
                     parameters.add("^" + fCatPath);
                 }
@@ -419,22 +422,40 @@ public class CmsAdvSearchQueryService extends BaseService {
                 queryObject.addQuery(fCatPathStr.toString());
                 queryObject.addParameters(parameters.toArray());
             }else{
-                StringBuilder fCatPathStr = new StringBuilder("{$or:[{$and:[");
-                int idx = 0;
+                StringBuilder fCatPathStr = new StringBuilder();
                 List<String> parameters = new ArrayList<>();
-                for (String fCatPath : searchValue.getfCatPathList()) {
-                    //fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
-                    if (idx == 0) {
-                        fCatPathStr.append("{\"feed.catPath\":{\"$regex\":#}}");
-                        idx++;
-                    } else {
-                        fCatPathStr.append(",{\"feed.catPath\":{\"$regex\":#}}");
+                int idx = 0;
+                if ("001".equals(channelId)) {
+                    fCatPathStr.append("{$or:[");
+                    fCatPathStr.append("{\"" + tempCatValue + "\":{\"$nin\": [");
+                    for (String fCatPath : searchValue.getfCatPathList()) {
+                        if (idx == 0) {
+                            fCatPathStr.append("\"" + fCatPath + "\",");
+                            idx++;
+                        } else {
+                            fCatPathStr.append("\"" + fCatPath + "\"");
+                        }
                     }
-                    parameters.add(String.format("^((?!%s).)*$",fCatPath));
+                    fCatPathStr.append("]}},{\"" + tempCatValue + "\":{\"$size\": 0 }}, ");
+                    fCatPathStr.append("{\"" + tempCatValue + "\":{\"$in\":[null,'']}}]}");
+                } else {
+                    fCatPathStr.append("{$or:[{$and:[");
+//                    int idx = 0;
+                    for (String fCatPath : searchValue.getfCatPathList()) {
+                        //fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
+                        if (idx == 0) {
+                            fCatPathStr.append("{\"" + tempCatValue + "\":{\"$regex\":#}}");
+                            idx++;
+                        } else {
+                            fCatPathStr.append(",{\"" + tempCatValue + "\":{\"$regex\":#}}");
+                        }
+                        parameters.add(String.format("^((?!%s).)*$", fCatPath));
+                    }
+                    fCatPathStr.append("]},{\"" + tempCatValue + "\":{\"$in\":[null,'']}}]}");
+                    queryObject.addParameters(parameters.toArray());
                 }
-                fCatPathStr.append("]},{\"feed.catPath\":{\"$in\":[null,'']}}]}");
+
                 queryObject.addQuery(fCatPathStr.toString());
-                queryObject.addParameters(parameters.toArray());
             }
         }
 

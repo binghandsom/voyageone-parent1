@@ -202,7 +202,8 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <button class="col-md-2 btn btn-default" ng-disabled="vm.channelId != '928'" ng-controller="popupCtrl" ng-click="masterCategoryMapping(popupCategoryNew)" ><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
+                                <button class="col-md-2 btn btn-default" ng-disabled="vm.channelId != '928' && vm.channelId != '024'"
+                                        ng-controller="popupCtrl" ng-click="masterCategoryMapping(popupCategoryNew)"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
                                 </button>
                                 <div class="col-md-1" style="width: 35px;">
                                     <span notice-direction="bottom" notice-content="切换平台类目将影响整个Group中的所有商品，请慎重！"
