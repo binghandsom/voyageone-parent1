@@ -51,7 +51,7 @@
         <task:scheduled ref="CmsBuildPlatformAttributeUpdateJmJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!-- 京东0库存在售商品的下架 -->
-        <task:scheduled ref="CmsBuildPlatformQuantityCheckJdJob" method="run" cron="0 30 17 * 1,4 ?"/>
+        <task:scheduled ref="CmsBuildPlatformQuantityCheckJdJob" method="run" cron="0 30 17 * * ?"/>
 
         <!-- 取得平台类目:手动batch -->
         <task:scheduled ref="getPlatformCategoryTreesTask" method="run" cron="0 0/1 0-23 * * ?"/>
