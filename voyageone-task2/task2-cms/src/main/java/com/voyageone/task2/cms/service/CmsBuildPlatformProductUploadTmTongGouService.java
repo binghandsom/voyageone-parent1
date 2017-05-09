@@ -59,6 +59,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -907,6 +908,21 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
         String valTitle = getTitleForTongGou(mainProduct, sxData, shopProp);
         // 店铺级标题禁用词 20161216 tom END
+        // 官网同购是会自动把超长的字符截掉的， 为了提示运营， 报个错吧 20170509 tom START
+        if (!StringUtils.isEmpty(valTitle) && !ChannelConfigEnums.Channel.USJGJ.equals(shopProp.getOrder_channel_id()) ) {
+            int titleLength = 0;
+
+            try {
+                titleLength = valTitle.getBytes("GB2312").length;
+            } catch (UnsupportedEncodingException ignored) {
+            }
+
+            if (titleLength > 60) {
+                throw new BusinessException(String.format("标题超长:%s", valTitle));
+            }
+
+        }
+        // 官网同购是会自动把超长的字符截掉的， 为了提示运营， 报个错吧 20170509 tom END
         productInfoMap.put("title", valTitle);
 
         // 子标题(卖点)(非必填)
