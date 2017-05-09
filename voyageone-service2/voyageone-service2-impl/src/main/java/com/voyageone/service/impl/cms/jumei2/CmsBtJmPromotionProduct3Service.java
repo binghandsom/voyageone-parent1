@@ -123,7 +123,11 @@ public class CmsBtJmPromotionProduct3Service {
         result.setBrandList(TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, language));
 
         //判断活动是否过期
-        result.getModelPromotion().setPassDated(activityEnd.getTime() < new Date().getTime());
+        if(activityEnd != null) {
+            result.getModelPromotion().setPassDated(activityEnd.getTime() < new Date().getTime());
+        }else{
+            result.getModelPromotion().setPassDated(false);
+        }
 
         return result;
     }
