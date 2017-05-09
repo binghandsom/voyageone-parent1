@@ -748,7 +748,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             CmsConstants.PlatformStatus platformStatus = CmsConstants.PlatformStatus.InStock;
             if ("0".equals(productInfoMap.get("status"))) {
                 // 商品上架
-                platformStatus = CmsConstants.PlatformStatus.InStock;
+                platformStatus = CmsConstants.PlatformStatus.OnSale;
             }
 
             // 20170413 tom 在上新的时候已经判断过是否上架了， 所以这里只需要用之前的那个判断结果就行了 END
