@@ -1,5 +1,7 @@
 package com.voyageone.task2.cms.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.ScItem;
@@ -516,16 +518,19 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
             // 判断新增商品还是更新商品
             // 只要numIId不为空，则为更新商品
+            TbItemSchema tbItemSchema = null;
             if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
                 // 更新商品
                 updateWare = true;
                 // 取得更新对象商品id
                 numIId = sxData.getPlatform().getNumIId();
+                // 获取商品页面信息
+                tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
             }
 
             // 编辑天猫国际官网同购共通属性
             BaseMongoMap<String, String> productInfoMap = getProductInfo(sxData, shopProp, priceConfigValue,
-                    skuLogicQtyMap, tmTonggouFeedAttrList, categoryMappingListMap, updateWare);
+                    skuLogicQtyMap, tmTonggouFeedAttrList, categoryMappingListMap, updateWare, tbItemSchema);
 
             // 构造Field列表
             List<Field> itemFieldList = new ArrayList<>();
@@ -674,7 +679,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
                 // 获取skuId
                 List<Map<String, Object>> skuMapList = null;
-                TbItemSchema tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
+
                 if (tbItemSchema != null) {
                     Map<String, Field> mapField = tbItemSchema.getFieldMap();
                     if (mapField != null) {
@@ -884,7 +889,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     private BaseMongoMap<String, String> getProductInfo(SxData sxData, ShopBean shopProp, String priceConfigValue,
                                                         Map<String, Integer> skuLogicQtyMap, List<String> tmTonggouFeedAttrList,
                                                         Map<String, List<Map<String, String>>> categoryMappingListMap,
-                                                        boolean updateWare) throws BusinessException {
+                                                        boolean updateWare, TbItemSchema tbItemSchema) throws BusinessException {
         // 上新产品信息保存map
         BaseMongoMap<String, String> productInfoMap = new BaseMongoMap<>();
 
@@ -1110,9 +1115,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
                 String numIId = sxData.getPlatform().getNumIId();
                 // 取得更新对象商品id
-                TbItemSchema tbItemSchema = null;
                 try {
-                    tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, NumberUtils.toLong(numIId));
                     if (tbItemSchema != null && !ListUtils.isNull(tbItemSchema.getFields())) {
                         InputField inputFieldBrand = (InputField)tbItemSchema.getFieldMap().get("brand");
                         if (!StringUtils.isEmpty(inputFieldBrand.getDefaultValue())) {
@@ -1323,7 +1326,22 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             } else {
                 valWirelessDetails = getValueByDict("天猫同购无线描述", expressionParser, shopProp);
             }
+            // 如果当前店铺在cms_mt_channel_config表中配置成了运营自己在天猫后台管理无线端共通模块时
+            CmsChannelConfigBean config = CmsChannelConfigs.getConfigBean(shopProp.getOrder_channel_id(),
+                    CmsConstants.ChannelConfig.TMALL_WIRELESS_COMMON_MODULE_BY_USER, shopProp.getCart_id());
+            if (config != null && "1".equals(config.getConfigValue1())) {
+                // 如果设置成"1：运营自己天猫后台管理"时,用天猫平台上取下来的运营自己后台设置的值设置schema无线端共通模块相关属性
 
+                String defaultValue = ((InputField)tbItemSchema.getFieldMap().get("wireless_desc")).getDefaultValue();
+                // 店铺活动(json)
+                valWirelessDetails = updateDefaultValue(valWirelessDetails, "shop_discount", defaultValue);
+                // 文字说明(json)
+                valWirelessDetails = updateDefaultValue(valWirelessDetails, "item_text", defaultValue);
+                // 优惠(json)
+                valWirelessDetails = updateDefaultValue(valWirelessDetails, "coupon", defaultValue);
+                // 同店推荐(json)
+                valWirelessDetails = updateDefaultValue(valWirelessDetails, "hot_recommanded", defaultValue);
+            }
             productInfoMap.put("wireless_desc", valWirelessDetails);
         }
 
@@ -2084,6 +2102,21 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             }
         }
         return valTitle;
+    }
+
+    public String updateDefaultValue(String valWirelessDetails, String fieldName, String defaultValue) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> defaultMap = JacksonUtil.jsonToMap(defaultValue);
+        Map<String, Object> wirelessMap = JacksonUtil.jsonToMap(valWirelessDetails);
+        if (defaultMap != null && defaultMap.get(fieldName) != null) {
+            wirelessMap.put(fieldName, defaultMap.get(fieldName));
+        }
+        try {
+            valWirelessDetails = objectMapper.writeValueAsString(wirelessMap);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return valWirelessDetails;
     }
 
 }
