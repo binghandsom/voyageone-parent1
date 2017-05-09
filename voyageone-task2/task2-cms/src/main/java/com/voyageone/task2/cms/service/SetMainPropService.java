@@ -2857,16 +2857,16 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 messageBody.setClientSku(sku.getClientSkuCode());
                 messageBody.setSkuKind("1");
                 messageBody.setNetPrice(BigDecimal.valueOf(sku.getClientNetPrice()));
-                messageBody.setProductType(field.getProductType());
+                // messageBody.setProductType(field.getProductType()); // 暂时忽略，因为和WMS不一致
                 messageBody.setUserName(productModel.getModifier());
                 messageBody.setIsSale(sku.getIsSale());
                 messageBody.setCmsSku(sku.getSkuCode());
 
-                WmsCreateOrUpdateProductMQMessageBody_detail detailInfo = new WmsCreateOrUpdateProductMQMessageBody_detail();
+                /*WmsCreateOrUpdateProductMQMessageBody_detail detailInfo = new WmsCreateOrUpdateProductMQMessageBody_detail();
                 detailInfo.setKgWeight(field.getWeightKG());
                 detailInfo.setLbWeight(field.getWeightLb());
                 detailInfo.setOrigin(field.getOrigin());
-                messageBody.setDetailInfo(detailInfo);
+                messageBody.setDetailInfo(detailInfo);*/
                 cmsMqSenderService.sendMessage(messageBody);
                 $info(productModel.getModifier() + "同步最新Product信息至WMS，内容：" + JacksonUtil.bean2Json(messageBody));
             });
