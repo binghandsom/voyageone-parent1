@@ -1580,6 +1580,10 @@ public class CmsProductDetailService extends BaseViewService {
                 common.getFields().put(s, o);
             }
         });
+
+        //主商品的APP端自定义图和PC端自定义图 也需要复制过来
+        common.getFields().setImages4(mainCommon.getFields().getImages4());
+        common.getFields().setImages5(mainCommon.getFields().getImages5());
         if ("1".equalsIgnoreCase(mainCommon.getFields().getHsCodeStatus())) {
             common.getFields().setHsCodeStatus("1");
         }
