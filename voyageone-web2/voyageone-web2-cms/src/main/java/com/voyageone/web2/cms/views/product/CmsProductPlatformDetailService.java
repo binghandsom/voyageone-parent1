@@ -595,12 +595,11 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             masterFields = buildMasterFields((Map<String, Object>) platform.get("schemaFields"));
             fields = FieldUtil.getFieldsValueToMap(masterFields);
         }
-
-        if(fields == null){
-            throw new BusinessException("数据错误");
-        }
         BaseMongoMap<String, Object>  newFields = new BaseMongoMap<>();
-        newFields.putAll(fields);
+        if(fields != null){
+            newFields.putAll(fields);
+        }
+
 
         CmsBtProductGroupModel cmsBtProductGroupModel = productGroupService.selectProductGroupByCode(channelId, code, cartId);
         if(cmsBtProductGroupModel != null && ListUtils.notNull(cmsBtProductGroupModel.getProductCodes())){
@@ -608,7 +607,12 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, productCode);
                 CmsBtProductModel_Platform_Cart platformModel = cmsBtProductModel.getPlatform(cartId);
                 if (cartId == CartEnums.Cart.TM.getValue() || cartId == CartEnums.Cart.TG.getValue()) {
-                    newFields.put("sku",platformModel.getFields().getAttribute("sku"));
+                    if(platformModel.getFieldsNotNull().getAttribute("sku") != null) {
+                        newFields.put("sku", platformModel.getFields().getAttribute("sku"));
+                    }
+                    if(platformModel.getFieldsNotNull().getAttribute("darwin_sku") != null) {
+                        newFields.put("darwin_sku", platformModel.getFields().getAttribute("darwin_sku"));
+                    }
                 }
                 platformModel.setFields(newFields);
                 if(platform.get("sellerCats") != null){
@@ -620,6 +624,12 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 platformModel.setpBrandId((String) platform.get("pBrandId"));
                 platformModel.setpBrandName((String) platform.get("pBrandName"));
                 platformModel.setpCatStatus((String) platform.get("pCatStatus"));
+                if(platform.get("images4") != null){
+                    platformModel.setImages4(JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(platform.get("images4")), CmsBtProductModel_Field_Image.class));
+                }
+                if(platform.get("images5") != null){
+                    platformModel.setImages5(JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(platform.get("images5")), CmsBtProductModel_Field_Image.class));
+                }
                 String ret = productPlatformService.updateProductPlatformWithSmartSx(channelId, cmsBtProductModel.getProdId(), platformModel, modifier, "页面group信息编辑", false, 0);
                 if(code.equals(productCode)){
                     modified[0] = ret;
@@ -822,6 +832,9 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 }
             }
         });
+
+        platform.setImages4(mainPlatform.getImages4());
+        platform.setImages5(mainPlatform.getImages5());
 
         platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId, prodId, language, platform.getpCatPath(), platform.getpBrandId(), sxProductService.generateStyleCode(cmsBtProductModel, cartId)));
 
