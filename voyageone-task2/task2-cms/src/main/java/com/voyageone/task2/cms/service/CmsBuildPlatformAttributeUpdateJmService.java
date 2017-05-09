@@ -370,33 +370,42 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
         }
 
         // 产品长标题 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productLongName"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("productLongName"))) {
             dealInfo.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
         } else if (blnIsSmartSx) {
-            if (!StringUtils.isEmpty(commonTitle)) {
+            if(!StringUtils.isEmpty(commonTitle) && commonTitle.length() < 130) {
                 dealInfo.setProduct_long_name(commonTitle);
             } else {
                 dealInfo.setProduct_long_name(pBrandName + " " + suitPeople + " " + productType + " " + fields.getCode());
+                if (dealInfo.getProduct_long_name().length() > 130) {
+                    dealInfo.setProduct_long_name(pBrandName + " " + productType + " " + fields.getCode());
+                }
             }
         }
         // 产品中标题 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productMediumName"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("productMediumName"))) {
             dealInfo.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
         } else if (blnIsSmartSx) {
-            if (!StringUtils.isEmpty(commonTitle)) {
+            if(!StringUtils.isEmpty(commonTitle) && commonTitle.length() < 35) {
                 dealInfo.setProduct_medium_name(commonTitle);
             } else {
                 dealInfo.setProduct_medium_name(pBrandName + " " + suitPeople + " " + productType + " " + fields.getModel());
+                if (dealInfo.getProduct_medium_name().length() > 35) {
+                    dealInfo.setProduct_medium_name(pBrandName + " " + suitPeople + " " + productType);
+                }
             }
         }
         // 产品短标题 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productShortName"))) {
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("productShortName"))) {
             dealInfo.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
         } else if (blnIsSmartSx) {
-            if (!StringUtils.isEmpty(commonTitle)) {
+            if(!StringUtils.isEmpty(commonTitle) && commonTitle.length() < 15) {
                 dealInfo.setProduct_short_name(commonTitle);
             } else {
                 dealInfo.setProduct_short_name(pBrandName + " " + suitPeople + " " + productType + " " + fields.getModel());
+                if (dealInfo.getProduct_short_name().length() > 15) {
+                    dealInfo.setProduct_short_name(pBrandName + " " + productType);
+                }
             }
         }
 
@@ -429,11 +438,11 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
             updateDataInfo.setDescription_images(jmProductTemplate);
 
             // 产品长标题
-            if (jmFields != null) updateDataInfo.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
+            updateDataInfo.setProduct_long_name(dealInfo.getProduct_long_name());
             // 产品中标题
-            if (jmFields != null) updateDataInfo.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
+            updateDataInfo.setProduct_medium_name(dealInfo.getProduct_medium_name());
             // 产品短标题
-            if (jmFields != null) updateDataInfo.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
+            updateDataInfo.setProduct_short_name(dealInfo.getProduct_short_name());
 
             StringBuffer sb = new StringBuffer("");
             boolean isSuccess = jumeiHtMallService.updateMall(shop, mallUpdateInfo, sb);

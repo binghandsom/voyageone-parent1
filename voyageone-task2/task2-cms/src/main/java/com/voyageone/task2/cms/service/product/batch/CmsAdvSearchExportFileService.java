@@ -7,6 +7,7 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
@@ -76,7 +77,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private final static String[] _SKU_STATIC_COLS_ZN = {"sku", "条形码", "商品编码","供应商", "主类目", "品牌" ,"自由标签", "feed类目", "产品名称英语", "产品名称中文", "客户原始SKU", "客户原始Size", "转换后Size", "库存", "客户建议售价", "客户指导价", "客户成本价", "重量（lb）", "是否被锁定"};
 
     // 产品数据（code级）固定输出列，用于过滤自定义显示列中相同项目
-    private final static String[] _prodCol = {"code", "brand", "category", "productNameEn", "originalTitleCn", "mainCode", "model", "quantity", "color"};
+//    private final static String[] _prodCol = {"code", "brand", "category", "productNameEn", "originalTitleCn", "mainCode", "quantity", "color"};
+    private final static String[] _prodCol = {};
     /*聚美上新SKU导出列*/
     private final static String[] _shoemetroColJMSKU = {"Child SKU", "Brand", "Parent SKU", "Color", "Size", "VO Price", "Final RMB Price", "URL Link", "Inventory"};
     /*报备数据导出文件列*/
@@ -1351,6 +1353,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         return index;
     }
 
+
     /**
      * 导出聚美上新SKU级数据
      *
@@ -1396,15 +1399,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
             products.add(item);
         }
-//        Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<>();
-//        if (!codes.isEmpty()) {
-//            List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(ChannelConfigEnums.Channel.ShoeMetro.getId(), new ArrayList<>(codes));
-//            if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
-//                for (SkuInventoryForCmsBean skuInventory : inventoryForCmsBeanList) {
-//                    skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
-//                }
-//            }
-//        }
+
         String jmUrlPrefix = platformService.getPlatformProductUrl(CartEnums.Cart.JM.getId());
         // 写入导出数据
         Sheet sheet = book.getSheetAt(0);
@@ -1440,7 +1435,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
                 // JmURL
                 FileUtils.cell(row, index++, unlock).setCellValue(jmUrlPrefix + cart.getpPlatformMallId() + ".html");
-                FileUtils.cell(row, index++, unlock).setCellValue(skuMap.getStringAttribute("qty") == null ? "0" : skuMap.getStringAttribute("qty"));
+                SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuCode);
+                FileUtils.cell(row, index++, unlock).setCellValue(skuMap.getIntAttribute("qty"));
                 total++;
             }
         }

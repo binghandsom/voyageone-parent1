@@ -290,7 +290,11 @@ public class CmsBtJmPromotionService extends BaseService {
         }
 
         //判断是否过期
-        info.getModel().setPassDated(info.getModel().getActivityEnd().getTime() < new Date().getTime());
+        if(info.getModel().getActivityEnd() != null) {
+            info.getModel().setPassDated(info.getModel().getActivityEnd().getTime() < new Date().getTime());
+        }else{
+            info.getModel().setPassDated(false);
+        }
 
         return info;
     }

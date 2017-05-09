@@ -118,6 +118,9 @@ public class CmsMqRoutingKey {
     //sneakerHead根据活动里面的产品找出同一group的商品加入活动
     public static final String CMS_SNEAKERHEAD_ADD_PROMOTION = "CmsSneakerheadAddPromotionMQJobQueue";
 
+    //批量lock平台    added by piao
+    public static final String  CMS_ADV_SEARCH_LOCK_PRODUCTS = "VOCmsAdvSearchLockProductsMQJobQueue";
+
     /**库存相关MQ*/
     public static final String CMS_STOCK_CART_CHANGED_STOCK = "VOCmsStockCartChangedStockMqJobQueue";
 

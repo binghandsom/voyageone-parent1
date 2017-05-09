@@ -305,6 +305,15 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
             if (StringUtils.isEmpty(sxData.getErrorMessage())) {
                 sxData.setErrorMessage(errMsg);
             }
+            if (IncrementAttrList.contains(workloadName)) {
+                // 回写workload表(失败2)
+                work.setAttributeList(IncrementAttrList);
+                sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+            } else {
+                // 回写workload表(失败2)
+                sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+            }
+
 
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, getTaskName());
@@ -388,18 +397,14 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
             sxData.setErrorMessage(errMsg);
             throw new BusinessException(errMsg);
         }
-
-        work.setAttributeList(IncrementAttrList);
         if (StringUtils.isEmpty(result)) {
-            // 回写workload表(失败2)
-            sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
-
             String errMsg = String.format("天猫增量更新商品时失败! [numIId:%s]" + numIId);
             $error(errMsg);
             sxData.setErrorMessage(errMsg);
             throw new BusinessException(errMsg);
         } else {
             // 回写workload表(成功1)
+            work.setAttributeList(IncrementAttrList);
             sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
         }
     }
@@ -609,8 +614,6 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
                 if (!StringUtils.isEmpty(numIId)) {
                     // 回写workload表(成功1)
                     sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
-                } else {
-                    sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
                 }
 
             } catch (ApiException e) {

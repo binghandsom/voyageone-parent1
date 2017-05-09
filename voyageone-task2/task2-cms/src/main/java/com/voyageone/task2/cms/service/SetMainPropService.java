@@ -2871,6 +2871,23 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
             CmsBtProductModel_Field field = productModel.getCommon().getFields();
 
+            productModel.getCommon().getSkus().forEach(sku -> {
+                        String channelId = StringUtils.isEmpty(productModel.getOrgChannelId()) ? productModel.getChannelId() : productModel.getOrgChannelId();
+                        String oneSkuCode = productModel.getCommon().getSkus().get(0).getSkuCode();
+                        CmsBtProductModel oldProductModel = productService.getProductBySku(channelId, oneSkuCode);
+                        if(usjoi){
+                            oldProductModel = productService.getProductBySku("928",channelId, oneSkuCode);
+                        }else{
+                            oldProductModel = productService.getProductBySku(channelId, oneSkuCode);
+                        }
+                        if (oldProductModel != null && !field.getCode().equals(oldProductModel.getCommon().getFields().getCode())) {
+                            String errMsg = String.format("feed->master导入:异常终止:由于该sku所属的feedCode发生了变更,[sku:%s] [OldFeedCode:%s] [NewFeedCode:%s]",
+                                    oneSkuCode, oldProductModel.getCommon().getFields().getCode(), field.getCode());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
+                        }
+                    });
+
             // 按sku为单位推送产品信息到wms
             productModel.getCommon().getSkus().forEach(sku -> {
                 WmsCreateOrUpdateProductMQMessageBody messageBody = new WmsCreateOrUpdateProductMQMessageBody();
@@ -2892,15 +2909,16 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 messageBody.setClientSku(sku.getClientSkuCode());
                 messageBody.setSkuKind("1");
                 messageBody.setNetPrice(BigDecimal.valueOf(sku.getClientNetPrice()));
-                messageBody.setProductType(field.getProductType());
+                // messageBody.setProductType(field.getProductType()); // 暂时忽略，因为和WMS不一致
                 messageBody.setUserName(productModel.getModifier());
                 messageBody.setIsSale(sku.getIsSale());
+                messageBody.setCmsSku(sku.getSkuCode());
 
-                WmsCreateOrUpdateProductMQMessageBody_detail detailInfo = new WmsCreateOrUpdateProductMQMessageBody_detail();
+                /*WmsCreateOrUpdateProductMQMessageBody_detail detailInfo = new WmsCreateOrUpdateProductMQMessageBody_detail();
                 detailInfo.setKgWeight(field.getWeightKG());
                 detailInfo.setLbWeight(field.getWeightLb());
                 detailInfo.setOrigin(field.getOrigin());
-                messageBody.setDetailInfo(detailInfo);
+                messageBody.setDetailInfo(detailInfo);*/
                 cmsMqSenderService.sendMessage(messageBody);
                 $info(productModel.getModifier() + "同步最新Product信息至WMS，内容：" + JacksonUtil.bean2Json(messageBody));
             });
