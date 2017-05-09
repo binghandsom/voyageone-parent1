@@ -184,6 +184,7 @@ public class CmsBtFeedInfoModel_Sku {
     }
 
     public String getMainVid() {
+        if (mainVid == null) mainVid = "";
         return mainVid;
     }
 

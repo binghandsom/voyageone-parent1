@@ -161,7 +161,7 @@ public class JdSaleService extends JdBase {
 
         request.setPage(strPageIndex);
         request.setPageSize(pageSize);
-        request.setFields("ware_id");
+        request.setFields("ware_id,stock_num");
 //        request.setStartModified(DateTimeUtil.format(DateUtils.addDays(DateTimeUtilBeijing.getCurrentBeiJingDate(), -1), DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00");
 //        request.setEndModified(DateTimeUtil.format(DateTimeUtilBeijing.getCurrentBeiJingDate(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
 
@@ -184,7 +184,7 @@ public class JdSaleService extends JdBase {
 
         request.setPage(strPageIndex);
         request.setPageSize(pageSize);
-        request.setFields("ware_id");
+        request.setFields("ware_id,stock_num");
 //        request.setStartModified(DateTimeUtil.format(DateUtils.addDays(DateTimeUtilBeijing.getCurrentBeiJingDate(), -1), DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00");
 //        request.setEndModified(DateTimeUtil.format(DateTimeUtilBeijing.getCurrentBeiJingDate(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
 
@@ -248,4 +248,80 @@ public class JdSaleService extends JdBase {
         retMap.put(CmsConstants.PlatformStatus.OnSale, onSaleWareIdList);
         return retMap;
     }
+
+    /**
+     *  获取已上架的商品
+     * @param channelId     店铺
+     * @param cartId        渠道
+     * @param wareStatus    商品状态
+     * @param checkStockNum 商品库存状态（0: 不做check， 1: 仅抽出有库存， -1：仅抽出无库存）
+     * @return
+     */
+
+    public List<String> getJdWareIdList(String channelId, String cartId, String wareStatus, int checkStockNum) {
+        List<String> wareIdList = new ArrayList<>();
+        long pageNo = 1;
+        if (CmsConstants.PlatformStatus.InStock.name().equals(wareStatus)) {
+            while(true) {
+                List<Ware> jdList;
+                try {
+                    // 查询下架
+                    jdList = getDeListProduct(channelId, cartId, Long.toString(pageNo), String.valueOf(PAGE_SIZE));
+                    pageNo++;
+                } catch (JdException apiExp) {
+                    throw new BusinessException(String.format("调用京东API获取下架商品时API出错! channelId=%s, cartId=%s", channelId, cartId), apiExp);
+                } catch (Exception exp) {
+                    throw new BusinessException(String.format("调用京东API获取下架商品时出错! channelId=%s, cartId=%s", channelId, cartId), exp);
+                }
+                if (jdList != null && jdList.size() > 0) {
+                    wareIdList.addAll(jdList.stream().map(ware -> ware.getWareId().toString()).collect(Collectors.toList()));
+                }
+                if (jdList == null || jdList.size() < PAGE_SIZE) {
+                    break;
+                }
+            }
+        } else if (CmsConstants.PlatformStatus.OnSale.name().equals(wareStatus)) {
+            while(true) {
+                List<Ware> jdList;
+                try {
+                    // 查询上架
+                    jdList = getOnListProduct(channelId, cartId, Long.toString(pageNo), String.valueOf(PAGE_SIZE));
+                    pageNo++;
+                } catch (JdException apiExp) {
+                    throw new BusinessException(String.format("调用京东API获取上架商品时API出错! channelId=%s, cartId=%s", channelId, cartId), apiExp);
+                } catch (Exception exp) {
+                    throw new BusinessException(String.format("调用京东API获取上架商品时出错! channelId=%s, cartId=%s", channelId, cartId), exp);
+                }
+                if (jdList != null && jdList.size() > 0) {
+                    switch (checkStockNum) {
+                        case 0:
+                            wareIdList.addAll(jdList.stream()
+                                    .map(ware -> ware.getWareId().toString())
+                                    .collect(Collectors.toList())
+                            );
+                            break;
+                        case 1:
+                            wareIdList.addAll(jdList.stream()
+                                    .filter(ware -> ware.getStockNum() > 0)
+                                    .map(ware -> ware.getWareId().toString())
+                                    .collect(Collectors.toList())
+                            );
+                            break;
+                        case -1:
+                            wareIdList.addAll(jdList.stream()
+                                    .filter(ware -> ware.getStockNum() <= 0)
+                                    .map(ware -> ware.getWareId().toString())
+                                    .collect(Collectors.toList())
+                            );
+                            break;
+                    }
+                }
+                if (jdList == null || jdList.size() < PAGE_SIZE) {
+                    break;
+                }
+            }
+        }
+        return wareIdList;
+    }
+
 }

@@ -26,7 +26,7 @@ define([
 
     cms.controller('BlackBrandListController', (function () {
 
-        function BlackBrandListController(menuService, blackBrandService, confirm, $routeParams, $translate, notify, alert) {
+        function BlackBrandListController(menuService, blackBrandService, confirm, $routeParams, $translate, notify, alert,$localStorage) {
             var self = this;
 
             menuService.getPlatformType().then(function (resp) {
@@ -35,7 +35,8 @@ define([
                 });
                 self.cartList = cartList;
             });
-
+            self.channelList;
+            self.channel = $localStorage.user.channel;
             self.blackBrandService = blackBrandService;
             self.$routeParams = $routeParams;
             self.confirm = confirm;
@@ -64,17 +65,18 @@ define([
             var self = this,
                 searchInfo = self.searchInfo,
                 params = self.$routeParams.params;
-
-            if (params) {
-                var paraArr = params.split("|");
-                searchInfo.brandType = paraArr[0] ? paraArr[0] : null;
-                searchInfo.status = paraArr[1] ? paraArr[1] : null;
-                if (paraArr[2]) {
-                    searchInfo.cart[paraArr[2]] = true;
-                }
-            }
-
-            self.search();
+                self.blackBrandService.init(self.channel).then(function (res) {
+                    self.channelList = res.data.channelList;
+                    if (params) {
+                        var paraArr = params.split("|");
+                        searchInfo.brandType = paraArr[0] ? paraArr[0] : null;
+                        searchInfo.status = paraArr[1] ? paraArr[1] : null;
+                        if (paraArr[2]) {
+                            searchInfo.cart[paraArr[2]] = true;
+                        }
+                    }
+                    self.search();
+                });
         };
 
         /**
@@ -107,7 +109,8 @@ define([
                 cartIdList: searchInfo.brandType == 2 ? cartIdList : null,
                 brandType: +searchInfo.brandType,
                 status: searchInfo.status == null ? null : !!(+searchInfo.status),
-                brand: searchInfo.brand
+                brand: searchInfo.brand,
+                channelId:self.selChannelId
             });
 
             blackBrandService.list(upEntity).then(function (res) {
@@ -146,7 +149,8 @@ define([
                 confirm(msg).then(function () {
                     blackBrandService.update({
                         status: mark,
-                        brandList: brandList
+                        brandList: brandList,
+                        channelId:self.selChannelId
                     }).then(function () {
                         notify.success('TXT_MSG_UPDATE_SUCCESS');
                         self.search();

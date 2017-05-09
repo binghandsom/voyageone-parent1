@@ -71,6 +71,9 @@ public class FeedToCmsService extends BaseService {
     @Autowired
     private PriceService priceService;
 
+    @Autowired
+    private FeedSaleService feedSaleService;
+
 
     public boolean chkCategoryPathValid(String categoryPath) {
         if (categoryPath.length() == categoryPath.lastIndexOf("-") + 1) {
@@ -143,7 +146,8 @@ public class FeedToCmsService extends BaseService {
                                         || item.getPriceClientRetail().compareTo(skuModel.getPriceClientRetail()) != 0
                                         || item.getPriceMsrp().compareTo(skuModel.getPriceMsrp()) != 0
                                         || item.getPriceNet().compareTo(skuModel.getPriceNet()) != 0
-                                        || item.getPriceCurrent().compareTo(skuModel.getPriceCurrent()) != 0) {
+                                        || item.getPriceCurrent().compareTo(skuModel.getPriceCurrent()) != 0
+                                        || (!item.getMainVid().equals(skuModel.getMainVid()))) {
                                     insertLog = true;
                                 }
                             }
@@ -317,8 +321,13 @@ public class FeedToCmsService extends BaseService {
                         }
 
                         // 同步状态
-                        if (targetSku.getIsSale() != null)
+                        if (targetSku.getIsSale() != null) {
+
+                            if (targetSku.getIsSale() != skuInfo.getIsSale()) {
+                                feedSaleService.setSaleOrNotSale(channelId, skuInfo.getClientSku(), skuInfo.getSku(), targetSku.getIsSale());
+                            }
                             skuInfo.setIsSale(targetSku.getIsSale());
+                        }
                     }
                     qty += skuInfo.getQty();
                 }
@@ -345,15 +354,15 @@ public class FeedToCmsService extends BaseService {
                     _successMsg.setMsg("修改feed信息完毕");
                     success.add(_successMsg);
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    CmsBtOperationLogModel_Msg _failedMsg = new CmsBtOperationLogModel_Msg();
-                    _failedMsg.setSkuCode(orgFeedInfo.getCode());
-                    _failedMsg.setMsg(e.getMessage());
-                    failed.add(_failedMsg);
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                CmsBtOperationLogModel_Msg _failedMsg = new CmsBtOperationLogModel_Msg();
+                _failedMsg.setSkuCode(orgFeedInfo.getCode());
+                _failedMsg.setMsg(e.getMessage());
+                failed.add(_failedMsg);
+            }
 
-            });
+        });
 
             Map<String, List<CmsBtOperationLogModel_Msg>> response = new HashMap<>();
             response.put("success", success);

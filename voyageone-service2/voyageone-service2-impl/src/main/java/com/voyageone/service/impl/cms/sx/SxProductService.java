@@ -3083,7 +3083,7 @@ public class SxProductService extends BaseService {
                         String scProductId = updateTmScProductId(shopBean,
                                             mainSxProduct,
                                             skuCode,
-                                            getProductValueByMasterMapping("title", shopBean, expressionParser, user),
+                                            sxData,
                                             skuInventoryMap.get(skuCode) != null ? Integer.toString(skuInventoryMap.get(skuCode)) : "0"
                         );
                         inputField.setValue(scProductId);
@@ -3617,13 +3617,13 @@ public class SxProductService extends BaseService {
     /**
      * 更新天猫货品id(关联商品)
      */
-    public String updateTmScProductId(ShopBean shopBean, CmsBtProductModel productModel, String skuCode, String title, String qty) {
+    public String updateTmScProductId(ShopBean shopBean, CmsBtProductModel productModel, String skuCode, SxData sxData, String qty) {
         if (StringUtils.isEmpty(taobaoScItemService.doCheckNeedSetScItem(shopBean, productModel))) {
             // 不要关联商品
             return null;
         }
         try {
-            String scProductId = taobaoScItemService.doCreateScItem(shopBean, productModel, skuCode, title, qty);
+            String scProductId = taobaoScItemService.doCreateScItem(shopBean, productModel, skuCode, sxData, qty);
 			// 临时忽略检查
 //            if (StringUtils.isEmpty(scProductId)) {
 //                throw new BusinessException(String.format("自动设置天猫商品全链路库存管理时,发生不明异常!skuCode:%s", skuCode));
@@ -6169,6 +6169,50 @@ public class SxProductService extends BaseService {
         $debug("insertPlatformWorkLoad 新增PlatformWorkload结果 " + iCnt);
 
 
+    }
+
+    public String getPlatformUrl4GetDescImage(String orgUrl, SxData sxData, ShopBean shopBean, String user, byte[] img) throws Exception{
+
+
+        CmsBtPlatformImagesModel imagesModel = cmsBtPlatformImagesDaoExt.selectPlatformImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), orgUrl);
+
+        if (imagesModel != null) {
+            if (!StringUtils.isEmpty(imagesModel.getPlatformImgUrl())) {
+                return  imagesModel.getPlatformImgUrl();
+            }
+        } else {
+
+            if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
+                TbPictureService tbPictureService = new TbPictureService();
+                PictureUploadResponse response = tbPictureService.uploadPicture(shopBean, img, "desc", "0");
+                if (response != null) {
+                    String platformUrl = response.getPicture().getPicturePath();
+                    if (!StringUtils.isEmpty(platformUrl)) {
+                        // 回写数据库
+                        List<CmsBtPlatformImagesModel> imageUrlSaveModels = new ArrayList<>();
+                        CmsBtPlatformImagesModel imageUrlInfo = new CmsBtPlatformImagesModel();
+                        imageUrlInfo.setCartId(sxData.getCartId());
+                        imageUrlInfo.setChannelId(sxData.getChannelId());
+                        imageUrlInfo.setSearchId(String.valueOf(sxData.getGroupId()));
+                        imageUrlInfo.setImgName(""); // 暂定为空
+                        imageUrlInfo.setOriginalImgUrl(orgUrl);
+                        imageUrlInfo.setPlatformImgUrl(platformUrl);
+                        imageUrlInfo.setPlatformImgId(String.valueOf(response.getPicture().getPictureId()));
+                        imageUrlInfo.setUpdFlg(UPD_FLG_UPLOADED);
+                        imageUrlInfo.setCreater(user);
+                        imageUrlInfo.setModifier(user);
+                        imageUrlSaveModels.add(imageUrlInfo);
+                        if (!imageUrlSaveModels.isEmpty()) {
+                            // insert image url
+                            cmsBtPlatformImagesDaoExt.insertPlatformImagesByList(imageUrlSaveModels);
+                        }
+                        return platformUrl;
+                    }
+                }
+            }
+        }
+
+        return "";
     }
 
 }

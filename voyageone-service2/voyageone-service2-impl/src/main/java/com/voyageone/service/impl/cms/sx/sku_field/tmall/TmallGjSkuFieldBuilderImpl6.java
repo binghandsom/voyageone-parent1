@@ -413,7 +413,7 @@ public class TmallGjSkuFieldBuilderImpl6 extends AbstractSkuFieldBuilder {
                                 shopBean,
                                 expressionParser.getSxData().getMainProduct(),
                                 skuCode,
-                                expressionParser.getSxProductService().getProductValueByMasterMapping("title", shopBean, expressionParser, user),
+                                expressionParser.getSxData(),
                                 skuInventoryMap.get(skuCode) != null ? Integer.toString(skuInventoryMap.get(skuCode)) : "0"
                         );
                         skuFieldValue.setInputFieldValue(sku_productIdField.getId(), scProductId);

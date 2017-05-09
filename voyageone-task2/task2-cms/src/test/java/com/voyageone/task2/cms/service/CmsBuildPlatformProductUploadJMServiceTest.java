@@ -22,6 +22,7 @@ import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmSkuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -720,9 +721,9 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         shop.setOrder_channel_id("928");
         shop.setCart_id(String.valueOf("27"));
         shop.setApp_url("http://openapi.ext.jumei.com/");
-        shop.setAppKey(""); // 131
-        shop.setAppSecret("");  // 0f9e3437ca010f63f2c4f3a216b7f4bc9698f071
-        shop.setSessionKey(""); // 7e059a48c30c67d2693be14275c2d3be
+        shop.setAppKey("");
+        shop.setAppSecret("");
+        shop.setSessionKey("");
         List<HtMallSkuPriceUpdateInfo> updateData = new ArrayList<>();
 
         HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
@@ -745,16 +746,27 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         shop.setOrder_channel_id("928");
         shop.setCart_id(String.valueOf("27"));
         shop.setApp_url("http://openapi.ext.jumei.com/");
-        shop.setAppKey(""); // 131
-        shop.setAppSecret("");  // 0f9e3437ca010f63f2c4f3a216b7f4bc9698f071
-        shop.setSessionKey(""); // 7e059a48c30c67d2693be14275c2d3be
+        shop.setAppKey("");
+        shop.setAppSecret("");
+        shop.setSessionKey("");
         //按groupId取Product
         SxData sxData = sxProductService.getSxProductDataByGroupId("928", 1042325L);
         try {
-            cmsBuildPlatformProductUploadJMService.uploadMall(sxData.getMainProduct(), shop, null, null, null);
+//            cmsBuildPlatformProductUploadJMService.uploadMall(sxData.getMainProduct(), shop, null, null, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    @Test
+    public void testFillCmsBtJmProductModel() {
+        SxData sxData = sxProductService.getSxProductDataByGroupId("928", 10627267L);
+
+        CmsBtJmProductModel cmsBtJmProductModel = new CmsBtJmProductModel();
+        cmsBtJmProductModel = cmsBuildPlatformProductUploadJMService.fillCmsBtJmProductModel(cmsBtJmProductModel, sxData.getMainProduct());
+
+        System.out.println(cmsBtJmProductModel.getImage1());
     }
 
 

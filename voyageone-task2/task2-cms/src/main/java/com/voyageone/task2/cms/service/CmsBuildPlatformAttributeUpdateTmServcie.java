@@ -9,6 +9,7 @@ import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
@@ -36,10 +37,14 @@ import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -51,14 +56,11 @@ import java.util.stream.Collectors;
 @Service
 public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskService{
 
-    // 天猫系cartID
-    private final static List<String> cartList = Lists.newArrayList("20","23");
     // 天猫增量更新支持的属性 -> 对应系统任务名(workloadName)
     private final static List<String> IncrementAttrList = Lists.newArrayList(
-                        PlatformWorkloadAttribute.SELLER_CIDS.getValue(), PlatformWorkloadAttribute.ITEM_IMAGES.getValue(),
+                        PlatformWorkloadAttribute.SELLER_CIDS.getValue(),
                         PlatformWorkloadAttribute.DESCRIPTION.getValue(), PlatformWorkloadAttribute.TITLE.getValue(),
-                        PlatformWorkloadAttribute.SELL_POINTS.getValue(), PlatformWorkloadAttribute.WHITE_BG_IMAGE.getValue(),
-                        PlatformWorkloadAttribute.WIRELESS_DESC.getValue());
+                        PlatformWorkloadAttribute.SELL_POINTS.getValue(), PlatformWorkloadAttribute.WIRELESS_DESC.getValue());
 
     @Autowired
     private PlatformMappingDeprecatedService platformMappingDeprecatedService;
@@ -82,31 +84,164 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
     }
 
     @Override
-    public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+    public void onStartup(List<TaskControlBean> taskControlList) {
+
+        doUpdateMain(taskControlList);
+    }
+
+    public void doUpdateMain(List<TaskControlBean> taskControlList) {
+        // 由于这个方法可能会自己调用自己循环很多很多次， 不一定会跳出循环， 但又希望能获取到最新的TaskControl的信息， 所以不使用基类里的这个方法了
+        // 为了调试方便， 允许作为参数传入， 但是理想中实际运行中， 基本上还是自主获取的场合比较多
+        if (taskControlList == null) {
+            taskControlList = taskDao.getTaskControlList(getTaskName());
+
+            if (taskControlList.isEmpty()) {
+//                $info("没有找到任何配置。");
+                logIssue("没有找到任何配置！！！", getTaskName());
+                return;
+            }
+
+            // 是否可以运行的判断
+            if (!TaskControlUtils.isRunnable(taskControlList)) {
+                $info("Runnable is false");
+                return;
+            }
+
+        }
+
+        // 抽出件数(默认为500)
+        int rowCount = NumberUtils.toInt(TaskControlUtils.getVal1WithDefVal(taskControlList, TaskControlEnums.Name.row_count, "500"));
+
+        // 每个小组， 最多允许的线程数量
+        int threadCount = NumberUtils.toInt(TaskControlUtils.getVal1WithDefVal(taskControlList, TaskControlEnums.Name.thread_count, "5"));
 
         // 获取该任务可以运行的销售渠道
-        List<String> channels = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
+        List<TaskControlBean> taskControlBeanList = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.order_channel_id);
 
-        // 从上新的任务表中获取该平台及渠道需要上新的任务列表(group by channel_id, cart_id, group_id)
-        List<CmsBtSxWorkloadModel> sxWorkloadModels = platformProductUploadService.getSxWorkloadWithChannelIdListCartIdList(
-                CmsConstants.PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE, channels, cartList);
-        if (sxWorkloadModels == null || sxWorkloadModels.size() == 0) {
-            $error("上新任务表中没有该渠道和平台对应的任务列表信息！[ChannelId:%s] [CartId:%s]", channels, cartList);
+        // 准备按组分配线程（相同的组， 会共用相同的一组线程通道， 不同的组， 线程通道互不干涉）
+        Map<String, List<String>> mapTaskControl = new HashMap<>();
+        taskControlBeanList.forEach((l)->{
+            String key = l.getCfg_val2();
+            if (StringUtils.isEmpty(key)) {
+                key = "0";
+            }
+            if (mapTaskControl.containsKey(key)) {
+                mapTaskControl.get(key).add(l.getCfg_val1());
+            } else {
+                List<String> channelList = new ArrayList<>();
+                channelList.add(l.getCfg_val1());
+                mapTaskControl.put(key, channelList);
+            }
+        });
+
+        Map<String, ExecutorService> mapThread = new HashMap<>();
+
+        while (true) {
+
+            mapTaskControl.forEach((k, v)->{
+                boolean blnCreateThread = false;
+
+                if (mapThread.containsKey(k)) {
+                    ExecutorService t = mapThread.get(k);
+                    if (t.isTerminated()) {
+                        // 可以新做一个线程
+                        blnCreateThread = true;
+                    }
+                } else {
+                    // 可以新做一个线程
+                    blnCreateThread = true;
+                }
+
+                if (blnCreateThread) {
+                    ExecutorService t = Executors.newSingleThreadExecutor();
+
+                    List<String> channelIdList = v;
+                    if (channelIdList != null) {
+                        for (String channelId : channelIdList) {
+                            t.execute(() -> {
+                                try {
+                                    doProductUpdate(channelId, CartEnums.Cart.TM.getValue(), threadCount, rowCount);
+                                    doProductUpdate(channelId, CartEnums.Cart.TG.getValue(), threadCount, rowCount);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            });
+
+                        }
+                    }
+                    t.shutdown();
+
+                    mapThread.put(k, t);
+
+                }
+            });
+
+            boolean blnAllOver = true;
+            for (Map.Entry<String, ExecutorService> entry : mapThread.entrySet()) {
+                if (!entry.getValue().isTerminated()) {
+                    blnAllOver = false;
+                    break;
+                }
+            }
+            if (blnAllOver) {
+                break;
+            }
+            try {
+                Thread.sleep(1000 * 10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        // TODO: 所有渠道处理总件数为0的场合， 就跳出不继续做了。 以外的场合， 说明可能还有别的未完成的数据， 继续自己调用自己一下
+        try {
+            Thread.sleep(1000 * 10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        doUpdateMain(null);
+
+    }
+
+    private void doProductUpdate(String channelId, int cartId, int threadPoolCnt, int rowCount) throws Exception {
+
+        // 获取店铺信息
+        ShopBean shopProp = Shops.getShop(channelId, cartId);
+        if (shopProp == null) {
             return;
         }
 
-        for(CmsBtSxWorkloadModel workloadModel : sxWorkloadModels) {
-            doTmAttibuteUpdate(workloadModel);
+        // 从上新的任务表中获取该平台及渠道需要上新的任务列表(group by channel_id, cart_id, group_id)
+        List<CmsBtSxWorkloadModel> sxWorkloadModels = platformProductUploadService.getSxWorkloadWithChannelIdListCartIdList(
+                rowCount, channelId, cartId);
+        if (ListUtils.isNull(sxWorkloadModels)) {
+            return;
+        }
+
+        // 创建线程池
+        ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
+        // 根据上新任务列表中的groupid循环上新处理
+        for (CmsBtSxWorkloadModel cmsBtSxWorkloadModel : sxWorkloadModels) {
+            // 启动多线程
+            executor.execute(() -> doTmAttibuteUpdate(cmsBtSxWorkloadModel, shopProp));
+        }
+        // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
+        // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
+        executor.shutdown(); //并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
+        try {
+            // 阻塞，直到线程池里所有任务结束
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
         }
     }
-
-    public void doTmAttibuteUpdate(CmsBtSxWorkloadModel work){
+    public void doTmAttibuteUpdate(CmsBtSxWorkloadModel work, ShopBean shop){
         String channelId = work.getChannelId();
         int cartId = work.getCartId();
         Long groupId = work.getGroupId();
         String workloadName = work.getWorkloadName();
         SxData sxData = null;
-        ShopBean shop = new ShopBean();
         // 开始时间
         long prodStartTime = System.currentTimeMillis();
         work.setModified(new Date(prodStartTime));
@@ -134,14 +269,6 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
                 throw new BusinessException(errMsg);
             }
 
-            //读店铺信息
-            shop = Shops.getShop(channelId, cartId);
-
-            if (shop == null) {
-                $error("获取到店铺信息失败! [ChannelId:%s] [CartId:%s]", channelId, cartId);
-                throw new Exception(String.format("获取到店铺信息失败! [ChannelId:%s] [CartId:%s]", channelId, cartId));
-            }
-
             // 取得主产品类目对应的platform mapping数据
             CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = platformMappingDeprecatedService.getMappingByMainCatId(channelId, cartId, mainProduct.getCommon().getCatId());
             // 表达式解析子
@@ -149,7 +276,7 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
             CmsBtProductModel_Platform_Cart cartData = mainProduct.getPlatform(Integer.parseInt(shop.getCart_id()));
             String numIId = cartData.getpNumIId();
             if (StringUtils.isEmpty(numIId)) {
-                String errorMsg = String.format("取得该平台wareId失败！[ChannelId:%s] [CartId；%s] [GroupId:%s]", channelId, cartId, groupId);
+                String errorMsg = String.format("取得该平台NumIID失败！[ChannelId:%s] [CartId；%s] [GroupId:%s]", channelId, cartId, groupId);
                 logger.error(errorMsg);
                 throw new BusinessException(errorMsg);
             }
@@ -178,8 +305,16 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
             if (StringUtils.isEmpty(sxData.getErrorMessage())) {
                 sxData.setErrorMessage(errMsg);
             }
-            // 回写workload表(失败2)
-            sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+            if (IncrementAttrList.contains(workloadName)) {
+                // 回写workload表(失败2)
+                work.setAttributeList(IncrementAttrList);
+                sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+            } else {
+                // 回写workload表(失败2)
+                sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+            }
+
+
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, getTaskName());
             $error(String.format("天猫平台更新商品信息异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [耗时:%s]",
@@ -211,7 +346,7 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
             throw new BusinessException(errMsg);
         }
         // 将需要更新的属性设入schema中
-        List<Field> newFields = fields.stream().filter(p -> workloadName.equals(p.getId())).collect(Collectors.toList());
+        List<Field> newFields = fields.stream().filter(p -> IncrementAttrList.contains(p.getId().toLowerCase())).collect(Collectors.toList());
         try {
             sxProductService.constructMappingPlatformProps(newFields, cmsMtPlatformMappingModel, shop, expressionParser, getTaskName(), true);
             for (Field tmField : fields) {
@@ -269,6 +404,7 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
             throw new BusinessException(errMsg);
         } else {
             // 回写workload表(成功1)
+            work.setAttributeList(IncrementAttrList);
             sxProductService.updatePlatformWorkload(work, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
         }
     }

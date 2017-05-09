@@ -1,7 +1,9 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.google.gson.Gson;
 import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
@@ -265,12 +267,13 @@ public class CmsAdvanceSearchService extends BaseViewService {
      * 统计当前查询的product件数（查询条件从画面而来）
      */
     public long countProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-        JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue);
+        JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, userInfo.getSelChannelId());
         return productService.countByQuery(queryObject.getQuery(), queryObject.getParameters(), userInfo.getSelChannelId());
     }
 
     public List<String> getProductCodeList(String channelId, Map<String,Object> searchInfo) {
         CmsSearchInfoBean2 cmsSearchInfoBean2 = new CmsSearchInfoBean2();
+        if(searchInfo == null) throw new BusinessException("检索条件不能为null");
         cmsSearchInfoBean2 = JacksonUtil.json2Bean(JacksonUtil.bean2Json(searchInfo),CmsSearchInfoBean2.class);
         return getProductCodeList(channelId, cmsSearchInfoBean2);
     }
@@ -280,7 +283,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
             $warn("高级检索 getProductCodeList session中的查询条件为空");
             return new ArrayList<>(0);
         }
-        JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue);
+        JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, channelId);
         queryObject.setProjection("{'common.fields.code':1,'_id':0}");
         if ($isDebugEnabled()) {
             $debug(String.format("高级检索 获取当前查询的product列表 (session) ChannelId=%s, %s", channelId, queryObject.toString()));
@@ -307,7 +310,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
             $warn("高级检索 getProductIdList session中的查询条件为空");
             return new ArrayList<>(0);
         }
-        JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue);
+        JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, channelId);
         queryObject.setProjection("{'prodId':1,'_id':0}");
         if ($isDebugEnabled()) {
             $debug(String.format("高级检索 获取当前查询的product id列表 (session) ChannelId=%s, %s", channelId, queryObject.toString()));
@@ -408,7 +411,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
      */
     public long countGroupCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         List<JongoAggregate> aggrList = new ArrayList<>();
-        String qry1 = cmsBtProductDao.getQueryStr(advSearchQueryService.getSearchQuery(searchValue));
+        String qry1 = cmsBtProductDao.getQueryStr(advSearchQueryService.getSearchQuery(searchValue, userInfo.getSelChannelId()));
         if (qry1 != null && qry1.length() > 0) {
             aggrList.add(new JongoAggregate("{ $match : " + qry1 + " }"));
         }
@@ -499,13 +502,21 @@ public class CmsAdvanceSearchService extends BaseViewService {
             sessionBean.put("_adv_search_commonProps", cmsSessionBean.getAttribute("_adv_search_commonProps"));
             sessionBean.put("_adv_search_selSalesType", cmsSessionBean.getAttribute("_adv_search_selSalesType"));
             sessionBean.put("_adv_search_selBiDataList", cmsSessionBean.getAttribute("_adv_search_selBiDataList"));
+            sessionBean.put("_adv_search_selPlatformDataList", cmsSessionBean.getAttribute("_adv_search_selPlatformDataList"));
             searchValue.put("_sessionBean", sessionBean);
+
             AdvSearchExportMQMessageBody advSearchExportMQMessageBody = new AdvSearchExportMQMessageBody();
             advSearchExportMQMessageBody.setChannelId(userInfo.getSelChannelId());
             advSearchExportMQMessageBody.setCmsBtExportTaskId(taskModel.getId());
             advSearchExportMQMessageBody.setSearchValue(searchValue);
             advSearchExportMQMessageBody.setChannelIdMap(channelIdMap);
             advSearchExportMQMessageBody.setSender(userInfo.getUserName());
+
+            Gson gson = new Gson();
+            String strAdvSearchExportMQMessageBody = gson.toJson(advSearchExportMQMessageBody);
+            System.out.print("###############################");
+            System.out.println(strAdvSearchExportMQMessageBody);
+            System.out.print("###############################");
 
             cmsMqSenderService.sendMessage(advSearchExportMQMessageBody);
             return true;

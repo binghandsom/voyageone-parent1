@@ -9,6 +9,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.components.jumei.JumeiHtDealService;
@@ -34,12 +35,14 @@ import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Charis on 2017/4/5.
@@ -48,8 +51,9 @@ import java.util.List;
 
 @Service
 public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskService{
-    private final static List<String> cartList = Lists.newArrayList(String.valueOf(CartEnums.Cart.JM.getValue()));
-
+    // 抱团一起更新回写的属性
+    private final static List<String> dealAndMallAttrs = Lists.newArrayList(PlatformWorkloadAttribute.DESCRIPTION.getValue(),
+            PlatformWorkloadAttribute.TITLE.getValue());
     @Autowired
     private PlatformProductUploadService platformProductUploadService;
     @Autowired
@@ -72,42 +76,166 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-        //获取Workload列表
-        List<CmsBtSxWorkloadModel> groupList = new ArrayList<>();
-        // 获取该任务可以运行的销售渠道
-        List<String> channels = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
-        // 从上新的任务表中获取该平台及渠道需要上新的任务列表(group by channel_id, cart_id, group_id) TODO
-        List<CmsBtSxWorkloadModel> workloadList = platformProductUploadService.getSxWorkloadWithChannelIdListCartIdList(
-                CmsConstants.PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE, channels, cartList);
-        groupList.addAll(workloadList);
-        if (groupList.size() == 0) {
-            $error("更新任务表中没有该平台对应的任务列表信息！[ChannelIdList:%s]", channels);
-            return;
-        }
-        $info("从更新任务表中共读取共读取[%d]条更新任务！[ChannelIdList:%s]", groupList.size(), channels);
 
-        for(CmsBtSxWorkloadModel workloadModel : groupList) {
-            doJmAttributeUpdate(workloadModel);
-        }
+        doUpdateMain(taskControlList);
 
     }
 
-    public void doJmAttributeUpdate(CmsBtSxWorkloadModel workloadModel){
+    public void doUpdateMain(List<TaskControlBean> taskControlList) {
+        // 由于这个方法可能会自己调用自己循环很多很多次， 不一定会跳出循环， 但又希望能获取到最新的TaskControl的信息， 所以不使用基类里的这个方法了
+        // 为了调试方便， 允许作为参数传入， 但是理想中实际运行中， 基本上还是自主获取的场合比较多
+        if (taskControlList == null) {
+            taskControlList = taskDao.getTaskControlList(getTaskName());
+
+            if (taskControlList.isEmpty()) {
+//                $info("没有找到任何配置。");
+                logIssue("没有找到任何配置！！！", getTaskName());
+                return;
+            }
+
+            // 是否可以运行的判断
+            if (!TaskControlUtils.isRunnable(taskControlList)) {
+                $info("Runnable is false");
+                return;
+            }
+
+        }
+        // 抽出件数(默认为500)
+        int rowCount = NumberUtils.toInt(TaskControlUtils.getVal1WithDefVal(taskControlList, TaskControlEnums.Name.row_count, "500"));
+
+        // 每个小组， 最多允许的线程数量
+        int threadCount = NumberUtils.toInt(TaskControlUtils.getVal1WithDefVal(taskControlList, TaskControlEnums.Name.thread_count, "5"));
+
+        // 获取该任务可以运行的销售渠道
+        List<TaskControlBean> taskControlBeanList = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.order_channel_id);
+
+        // 准备按组分配线程（相同的组， 会共用相同的一组线程通道， 不同的组， 线程通道互不干涉）
+        Map<String, List<String>> mapTaskControl = new HashMap<>();
+        taskControlBeanList.forEach((l)->{
+            String key = l.getCfg_val2();
+            if (StringUtils.isEmpty(key)) {
+                key = "0";
+            }
+            if (mapTaskControl.containsKey(key)) {
+                mapTaskControl.get(key).add(l.getCfg_val1());
+            } else {
+                List<String> channelList = new ArrayList<>();
+                channelList.add(l.getCfg_val1());
+                mapTaskControl.put(key, channelList);
+            }
+        });
+
+        Map<String, ExecutorService> mapThread = new HashMap<>();
+
+        while (true) {
+
+            mapTaskControl.forEach((k, v)->{
+                boolean blnCreateThread = false;
+
+                if (mapThread.containsKey(k)) {
+                    ExecutorService t = mapThread.get(k);
+                    if (t.isTerminated()) {
+                        // 可以新做一个线程
+                        blnCreateThread = true;
+                    }
+                } else {
+                    // 可以新做一个线程
+                    blnCreateThread = true;
+                }
+
+                if (blnCreateThread) {
+                    ExecutorService t = Executors.newSingleThreadExecutor();
+
+                    List<String> channelIdList = v;
+                    if (channelIdList != null) {
+                        for (String channelId : channelIdList) {
+                            t.execute(() -> {
+                                try {
+                                    doProductUpdate(channelId, CartEnums.Cart.JM.getValue(), threadCount, rowCount);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            });
+
+                        }
+                    }
+                    t.shutdown();
+
+                    mapThread.put(k, t);
+
+                }
+            });
+
+            boolean blnAllOver = true;
+            for (Map.Entry<String, ExecutorService> entry : mapThread.entrySet()) {
+                if (!entry.getValue().isTerminated()) {
+                    blnAllOver = false;
+                    break;
+                }
+            }
+            if (blnAllOver) {
+                break;
+            }
+            try {
+                Thread.sleep(1000 * 10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        // TODO: 所有渠道处理总件数为0的场合， 就跳出不继续做了。 以外的场合， 说明可能还有别的未完成的数据， 继续自己调用自己一下
+        try {
+            Thread.sleep(1000 * 10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        doUpdateMain(null);
+
+    }
+
+    public void doProductUpdate(String channelId, int cartId, int threadPoolCnt, int rowCount) throws Exception {
+
+        // 获取店铺信息
+        ShopBean shopProp = Shops.getShop(channelId, cartId);
+        if (shopProp == null) {
+            return;
+        }
+        // 从上新的任务表中获取该平台及渠道需要上新的任务列表(group by channel_id, cart_id, group_id)
+        List<CmsBtSxWorkloadModel> workloadList = platformProductUploadService.getSxWorkloadWithChannelIdListCartIdList(
+                rowCount, channelId, cartId);
+        if (ListUtils.isNull(workloadList)) {
+            return;
+        }
+
+        // 创建线程池
+        ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
+        // 根据上新任务列表中的groupid循环上新处理
+        for(CmsBtSxWorkloadModel cmsBtSxWorkloadModel : workloadList) {
+            // 启动多线程
+            executor.execute(() -> doJmAttributeUpdate(cmsBtSxWorkloadModel, shopProp));
+        }
+        // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
+        // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
+        executor.shutdown(); // 并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
+        try {
+            // 阻塞，直到线程池里所有任务结束
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
+        }
+    }
+
+    public void doJmAttributeUpdate(CmsBtSxWorkloadModel workloadModel, ShopBean shop) {
         String channelId = workloadModel.getChannelId();
         int cartId = workloadModel.getCartId();
         Long groupId = workloadModel.getGroupId();
         SxData sxData = null;
         String workloadName = workloadModel.getWorkloadName();
-        ShopBean shop = new ShopBean();
         // 开始时间
         long prodStartTime = System.currentTimeMillis();
         workloadModel.setModified(new Date(prodStartTime));
         try {
-            shop = Shops.getShop(channelId, cartId);
-            if (shop == null) {
-                $error("获取到店铺信息失败! [ChannelId:%s] [CartId:%s]", channelId, cartId);
-                throw new Exception(String.format("获取到店铺信息失败! [ChannelId:%s] [CartId:%s]", channelId, cartId));
-            }
             //是否为智能上新
             boolean blnIsSmartSx = sxProductService.isSmartSx(shop.getOrder_channel_id(), Integer.parseInt(shop.getCart_id()));
 
@@ -137,14 +265,11 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
             CmsBtProductModel_Field fields = mainProduct.getCommon().getFields();
             BaseMongoMap<String, Object> jmFields = platform_cart.getFields();
             String result = "";
-            if (PlatformWorkloadAttribute.TITLE.getValue().equals(workloadName)) {
-                result = updateTitle(jmFields, channelId, groupId, mainProduct, shop, fields, blnIsSmartSx, sxData, platform_cart);
-
-            } else if (PlatformWorkloadAttribute.DESCRIPTION.getValue().equals(workloadName)) {
-                result = updateDescription(jmFields, channelId, groupId, mainProduct, shop, fields, blnIsSmartSx, sxData, platform_cart, expressionParser);
-
+            if (dealAndMallAttrs.contains(workloadName)) {
+                workloadModel.setAttributeList(dealAndMallAttrs);
+                result = updateDealAndMallAttribute(jmFields, channelId, groupId, mainProduct, shop, fields, blnIsSmartSx, sxData, platform_cart, expressionParser);
             } else if (PlatformWorkloadAttribute.ITEM_IMAGES.getValue().equals(workloadName)) {
-                result = updateImage(jmFields, channelId, groupId, mainProduct, shop, fields, blnIsSmartSx, sxData, platform_cart, expressionParser);
+                result = updateProductImage(jmFields, channelId, groupId, mainProduct, shop, fields, blnIsSmartSx, sxData, platform_cart, expressionParser);
             }
 
             if (!StringUtils.isEmpty(result)) {
@@ -165,7 +290,7 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
                 sxData.setGroupId(groupId);
                 sxData.setErrorMessage(String.format("取得上新用的商品数据信息失败！[ChannelId:%s] [GroupId:%s]", channelId, groupId));
             }
-            String errMsg = String.format("聚美平台更新商品标题异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [%s]",
+            String errMsg = String.format("聚美平台更新商品异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [%s]",
                     channelId, cartId, groupId, e.getMessage());
             $error(errMsg);
             e.printStackTrace();
@@ -174,115 +299,21 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
                 sxData.setErrorMessage(errMsg);
             }
             // 回写workload表(失败2)
-            sxProductService.updatePlatformWorkload(workloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+            if (dealAndMallAttrs.contains(workloadName)) {
+                workloadModel.setAttributeList(dealAndMallAttrs);
+                sxProductService.updatePlatformWorkload(workloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+            } else {
+                sxProductService.updatePlatformWorkload(workloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+            }
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, getTaskName());
-            $error(String.format("聚美平台更新商品标题信息异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [耗时:%s]",
+            $error(String.format("聚美平台更新商品信息异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [耗时:%s]",
                     channelId, cartId, groupId, (System.currentTimeMillis() - prodStartTime)));
             return;
         }
     }
-    public String updateTitle(BaseMongoMap<String, Object> jmFields, String channelId, Long groupId ,CmsBtProductModel mainProduct, ShopBean shop,
-                            CmsBtProductModel_Field fields, boolean blnIsSmartSx, SxData sxData, CmsBtProductModel_Platform_Cart platform_cart) throws Exception{
-        StringBuffer failInfo = new StringBuffer();
-        String jmHashId = platform_cart.getpNumIId(); // 聚美hashId
-        String mallId = platform_cart.getpPlatformMallId(); // 聚美Mall Id.
-        if (StringUtils.isEmpty(jmHashId)) {
-            String error = String.format("取得聚美hashId为空！[ChannelId:%s] [GroupId:%s]", channelId, groupId);
-            $error(error);
-            sxData.setErrorMessage(error);
-            throw new BusinessException(error);
-        }
 
-        //商品共通属性 - 产品名称
-        String commonTitle = fields.getOriginalTitleCn();
-        String pBrandName = platform_cart.getpBrandName();
-        if (StringUtils.isEmpty(pBrandName)) {
-            pBrandName = fields.getBrand();
-        }
-        String suitPeople;
-        String productType;
-        if (!StringUtils.isEmpty(fields.getProductTypeCn())) {
-            productType = fields.getProductTypeCn();
-        } else {
-            productType = BaiduTranslateUtil.translate(fields.getProductType());
-        }
-        if (!StringUtils.isEmpty(fields.getSizeTypeCn())) {
-            suitPeople = fields.getSizeTypeCn();
-        } else {
-            suitPeople = BaiduTranslateUtil.translate(fields.getSizeType());
-        }
-        HtDealUpdate_DealInfo dealInfo = new HtDealUpdate_DealInfo();
-        // 产品长标题 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productLongName"))) {
-            dealInfo.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
-        } else if (blnIsSmartSx) {
-            if (!StringUtils.isEmpty(commonTitle)) {
-                dealInfo.setProduct_long_name(commonTitle);
-            } else {
-                dealInfo.setProduct_long_name(pBrandName + " " + suitPeople + " " + productType + " " + fields.getCode());
-            }
-        }
-        // 产品中标题 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productMediumName"))) {
-            dealInfo.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
-        } else if (blnIsSmartSx) {
-            if (!StringUtils.isEmpty(commonTitle)) {
-                dealInfo.setProduct_medium_name(commonTitle);
-            } else {
-                dealInfo.setProduct_medium_name(pBrandName + " " + suitPeople + " " + productType + " " + fields.getModel());
-            }
-        }
-        // 产品短标题 charis update
-        if (!StringUtils.isEmpty(jmFields.getStringAttribute("productShortName"))) {
-            dealInfo.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
-        } else if (blnIsSmartSx) {
-            if (!StringUtils.isEmpty(commonTitle)) {
-                dealInfo.setProduct_short_name(commonTitle);
-            } else {
-                dealInfo.setProduct_short_name(pBrandName + " " + suitPeople + " " + productType + " " + fields.getModel());
-            }
-        }
-        HtDealUpdateRequest htDealUpdateRequest = new HtDealUpdateRequest();
-        htDealUpdateRequest.setJumei_hash_id(jmHashId);
-        htDealUpdateRequest.setUpdate_data(dealInfo);
-        HtDealUpdateResponse htDealUpdateResponse = jumeiHtDealService.update(shop, htDealUpdateRequest);
-        if (htDealUpdateResponse != null && htDealUpdateResponse.is_Success()) {
-            $info("聚美更新Deal成功！[ProductId:%s]", mainProduct.getProdId());
-        }
-        //更新Deal失败
-        else {
-            String msg = String.format("聚美更新Deal标题失败！[ProductId:%s], [HashId:%s], [Message:%s]", mainProduct.getProdId(), jmHashId, htDealUpdateResponse.getErrorMsg());
-            $error(msg);
-            failInfo.append(msg + ",");
-        }
-        //更新聚美商城的标题
-        HtMallUpdateInfo mallUpdateInfo = new HtMallUpdateInfo();
-        // 聚美Mall Id
-        mallUpdateInfo.setJumeiMallId(mallId);
-        HtMallUpdateInfo.UpdateDataInfo updateDataInfo = mallUpdateInfo.getUpdateDataInfo();
-        // 产品长标题
-        updateDataInfo.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
-        // 产品中标题
-        updateDataInfo.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
-        // 产品短标题
-        updateDataInfo.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
-        StringBuffer sb = new StringBuffer("");
-        boolean isSuccess = jumeiHtMallService.updateMall(shop, mallUpdateInfo, sb);
-        if (!isSuccess) {
-            // 上传失败
-            String msg = String.format("聚美商城的商品标题更新失败! [ProductId:%s], [MallId:%s], [Message:%s]", mainProduct.getProdId(), mallId, sb.toString());
-            $error(msg);
-            failInfo.append(msg);
-        } else {
-            $info("聚美更新商城标题成功！[ProductId:%s]", mainProduct.getProdId());
-        }
-
-        return failInfo.toString();
-
-    }
-
-    public String updateDescription(BaseMongoMap<String, Object> jmFields, String channelId, Long groupId ,CmsBtProductModel mainProduct, ShopBean shop,
+    public String updateDealAndMallAttribute(BaseMongoMap<String, Object> jmFields, String channelId, Long groupId ,CmsBtProductModel mainProduct, ShopBean shop,
                             CmsBtProductModel_Field fields, boolean blnIsSmartSx, SxData sxData, CmsBtProductModel_Platform_Cart platform_cart, ExpressionParser expressionParser) throws Exception{
         StringBuffer failInfo = new StringBuffer();
         String jmHashId = platform_cart.getpNumIId(); // 聚美hashId
@@ -293,6 +324,7 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
             sxData.setErrorMessage(error);
             throw new BusinessException(error);
         }
+        HtDealUpdate_DealInfo dealInfo = new HtDealUpdate_DealInfo();
         // 判断一下聚美详情， 用哪套模板
         String strJumeiDetailTemplateName = "聚美详情";
         if (ChannelConfigEnums.Channel.USJGJ.getId().equals(mainProduct.getChannelId())) {
@@ -313,22 +345,81 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
         String jmDetailTemplate = getTemplate(strJumeiDetailTemplateName, expressionParser, shop);
         String jmProductTemplate = getTemplate("聚美实拍", expressionParser, shop);
         String jmUseageTemplate = getTemplate("聚美使用方法", expressionParser, shop);
-        {
-            HtDealUpdate_DealInfo dealInfo = new HtDealUpdate_DealInfo();
-            dealInfo.setDescription_properties(jmDetailTemplate);
-            dealInfo.setDescription_images(jmProductTemplate);
-            dealInfo.setDescription_usage(jmUseageTemplate);
 
+        dealInfo.setDescription_properties(jmDetailTemplate);
+        dealInfo.setDescription_images(jmProductTemplate);
+        dealInfo.setDescription_usage(jmUseageTemplate);
+
+        // 商品共通属性 - 产品名称
+        String commonTitle = fields.getOriginalTitleCn();
+        String pBrandName = platform_cart.getpBrandName();
+        if (StringUtils.isEmpty(pBrandName)) {
+            pBrandName = fields.getBrand();
+        }
+        String suitPeople;
+        String productType;
+        if (!StringUtils.isEmpty(fields.getProductTypeCn())) {
+            productType = fields.getProductTypeCn();
+        } else {
+            productType = BaiduTranslateUtil.translate(fields.getProductType());
+        }
+        if (!StringUtils.isEmpty(fields.getSizeTypeCn())) {
+            suitPeople = fields.getSizeTypeCn();
+        } else {
+            suitPeople = BaiduTranslateUtil.translate(fields.getSizeType());
+        }
+
+        // 产品长标题 charis update
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("productLongName"))) {
+            dealInfo.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
+        } else if (blnIsSmartSx) {
+            if(!StringUtils.isEmpty(commonTitle) && commonTitle.length() < 130) {
+                dealInfo.setProduct_long_name(commonTitle);
+            } else {
+                dealInfo.setProduct_long_name(pBrandName + " " + suitPeople + " " + productType + " " + fields.getCode());
+                if (dealInfo.getProduct_long_name().length() > 130) {
+                    dealInfo.setProduct_long_name(pBrandName + " " + productType + " " + fields.getCode());
+                }
+            }
+        }
+        // 产品中标题 charis update
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("productMediumName"))) {
+            dealInfo.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
+        } else if (blnIsSmartSx) {
+            if(!StringUtils.isEmpty(commonTitle) && commonTitle.length() < 35) {
+                dealInfo.setProduct_medium_name(commonTitle);
+            } else {
+                dealInfo.setProduct_medium_name(pBrandName + " " + suitPeople + " " + productType + " " + fields.getModel());
+                if (dealInfo.getProduct_medium_name().length() > 35) {
+                    dealInfo.setProduct_medium_name(pBrandName + " " + suitPeople + " " + productType);
+                }
+            }
+        }
+        // 产品短标题 charis update
+        if (jmFields != null && !StringUtils.isEmpty(jmFields.getStringAttribute("productShortName"))) {
+            dealInfo.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
+        } else if (blnIsSmartSx) {
+            if(!StringUtils.isEmpty(commonTitle) && commonTitle.length() < 15) {
+                dealInfo.setProduct_short_name(commonTitle);
+            } else {
+                dealInfo.setProduct_short_name(pBrandName + " " + suitPeople + " " + productType + " " + fields.getModel());
+                if (dealInfo.getProduct_short_name().length() > 15) {
+                    dealInfo.setProduct_short_name(pBrandName + " " + productType);
+                }
+            }
+        }
+
+        {
             HtDealUpdateRequest htDealUpdateRequest = new HtDealUpdateRequest();
             htDealUpdateRequest.setJumei_hash_id(jmHashId);
             htDealUpdateRequest.setUpdate_data(dealInfo);
             HtDealUpdateResponse htDealUpdateResponse = jumeiHtDealService.update(shop, htDealUpdateRequest);
             if (htDealUpdateResponse != null && htDealUpdateResponse.is_Success()) {
-                $info("聚美更新Deal商品描述成功！[ProductId:%s]", mainProduct.getProdId());
+                $info("聚美更新Deal商品属性成功！[ProductId:%s]", mainProduct.getProdId());
             }
             //更新Deal失败
             else {
-                String msg = String.format("聚美更新Deal商品描述失败！[ProductId:%s], [HashId:%s], [Message:%s]", mainProduct.getProdId(), jmHashId, htDealUpdateResponse.getErrorMsg());
+                String msg = String.format("聚美更新Deal商品属性更新失败！[ProductId:%s], [HashId:%s], [Message:%s]", mainProduct.getProdId(), jmHashId, htDealUpdateResponse.getErrorMsg());
                 $error(msg);
                 failInfo.append(msg + ";");
             }
@@ -345,12 +436,19 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
             updateDataInfo.setDescription_usage(jmUseageTemplate);
             // 商品实拍
             updateDataInfo.setDescription_images(jmProductTemplate);
+
+            // 产品长标题
+            updateDataInfo.setProduct_long_name(dealInfo.getProduct_long_name());
+            // 产品中标题
+            updateDataInfo.setProduct_medium_name(dealInfo.getProduct_medium_name());
+            // 产品短标题
+            updateDataInfo.setProduct_short_name(dealInfo.getProduct_short_name());
+
             StringBuffer sb = new StringBuffer("");
             boolean isSuccess = jumeiHtMallService.updateMall(shop, mallUpdateInfo, sb);
             if (!isSuccess) {
                 // 上传失败
-//                    throw new BusinessException("聚美商城的商品描述更新失败!" + sb.toString());
-                String msg = String.format("聚美商城的商品描述更新失败! [ProductId:%s], [MallId:%s], [Message:%s]", mainProduct.getProdId(), mallId, sb.toString());
+                String msg = String.format("聚美商城的商品属性更新失败! [ProductId:%s], [MallId:%s], [Message:%s]", mainProduct.getProdId(), mallId, sb.toString());
                 $error(msg);
                 failInfo.append(msg);
             }
@@ -361,7 +459,7 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
 
     }
 
-    public String updateImage(BaseMongoMap<String, Object> jmFields, String channelId, Long groupId ,CmsBtProductModel mainProduct, ShopBean shop,
+    public String updateProductImage(BaseMongoMap<String, Object> jmFields, String channelId, Long groupId ,CmsBtProductModel mainProduct, ShopBean shop,
                             CmsBtProductModel_Field fields, boolean blnIsSmartSx, SxData sxData, CmsBtProductModel_Platform_Cart platform_cart, ExpressionParser expressionParser) throws Exception{
         StringBuffer failInfo = new StringBuffer();
         String jmProductId = platform_cart.getpProductId(); // 聚美ProductId

@@ -37,6 +37,47 @@ import java.util.*;
 @Service
 public class CmsAdvSearchOtherService extends BaseViewService {
 
+    private static final String[] biSortItems = {"1", "7", "30"};
+    private static final String[][] biSortItemKeys = {
+            {"bi.sum%s.pv.cartId", "%s浏览量"},
+            {"bi.sum%s.uv.cartId", "%s访客数"},
+            {"bi.sum%s.gwc.cartId", "%s加购件数"},
+            {"bi.sum%s.scs.cartId", "%s收藏人数"}
+    };
+    private static final String[][] commonSortItems = {
+            {"platforms.P%s.pPublishTime", "商品发布时间"},
+            {"platforms.P%s.pPriceMsrpEd", "中国建议售价"},
+            {"platforms.P%s.pPriceRetailSt", "中国指导售价"},
+            {"platforms.P%s.pPriceSaleEd", "中国最终售价"}
+    };
+    private static final String[][] platformItems = {
+            {"platforms.P%s.URL", "URL"},
+            {"platforms.P%s.pNumIId", "Numiid"},
+            {"platforms.P%s.fields.title", "商品名称"},
+            {"platforms.P%s.fields.fields.pCatPath", "类目"},
+            {"platforms.P%s.fields.pPriceMsrpEd", "官方建议售价"},
+            {"platforms.P%s.fields.pPriceRetailEd", "指导售价"},
+            {"platforms.P%s.fields.pPriceSaleEd", "最终售价"},
+            {"platforms.P%s.mainProductCode", "主商品编码"},
+            {"platforms.P%s.qty", "可售库存"},
+            {"platforms.P%s.lock", "是否锁定"},
+            {"platforms.P%s.skus.isSale", "是否销售"},
+    };
+    private static final String[][] platformItemsJM = {
+            {"platforms.P%s.MallURL", "MallURL"},
+            {"platforms.P%s.pMallId", "MallId"},
+            {"platforms.P%s.URL", "URL"},
+            {"platforms.P%s.pNumIId", "HashID"},
+            {"platforms.P%s.fields.title", "商品名称"},
+            {"platforms.P%s.fields.fields.pCatPath", "类目"},
+            {"platforms.P%s.fields.pPriceMsrpEd", "官方建议售价"},
+            {"platforms.P%s.fields.pPriceRetailEd", "指导售价"},
+            {"platforms.P%s.fields.pPriceSaleEd", "最终售价"},
+            {"platforms.P%s.mainProductCode", "主商品编码"},
+            {"platforms.P%s.qty", "可售库存"},
+            {"platforms.P%s.lock", "是否锁定"},
+            {"platforms.P%s.skus.isSale", "是否销售"},
+    };
     @Autowired
     private ProductService productService;
     @Autowired
@@ -45,22 +86,6 @@ public class CmsAdvSearchOtherService extends BaseViewService {
     private CmsChannelTagService cmsChannelTagService;
     @Autowired
     private TagService tagService;
-
-    private static final String[] biSortItems = {"1", "7", "30"};
-
-    private static final String[][] biSortItemKeys = {
-            {"bi.sum%s.pv.cartId", "%s浏览量"},
-            {"bi.sum%s.uv.cartId", "%s访客数"},
-            {"bi.sum%s.gwc.cartId", "%s加购件数"},
-            {"bi.sum%s.scs.cartId", "%s收藏人数"}
-    };
-
-    private static final String[][] commonSortItems = {
-            {"platforms.P%s.pPublishTime", "商品发布时间"},
-            {"platforms.P%s.pPriceMsrpEd", "中国建议售价"},
-            {"platforms.P%s.pPriceRetailSt", "中国指导售价"},
-            {"platforms.P%s.pPriceSaleEd", "中国最终售价"}
-    };
 
     /**
      * 取得当前主商品所在组的其他信息：所有商品的价格变动信息，子商品图片
@@ -187,19 +212,25 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                     for (int i = 1, leng = pCdList.size(); i < leng; i++) {
                         // 根据商品code找到其主图片
                         JongoQuery queryObj = new JongoQuery();
-                        queryObj.setProjection("{'common.fields.images1':1,'prodId': 1, 'common.fields.code': 1,'_id':0}");
+                        queryObj.setProjection("{'common.fields.images1':1,'common.fields.images6':1,'prodId': 1, 'common.fields.code': 1,'_id':0}");
                         queryObj.setQuery("{'common.fields.code':'" + String.valueOf(pCdList.get(i)) + "'}");
                         CmsBtProductModel prod = productService.getProductByCondition(channelId, queryObj);
                         // 如果根据code获取不到数据就跳过
                         if (prod == null)
                             continue;
-                        List<CmsBtProductModel_Field_Image> fldImgList = prod.getCommonNotNull().getFieldsNotNull().getImages1();
+                        List<CmsBtProductModel_Field_Image> fldImgList = prod.getCommonNotNull().getFieldsNotNull().getImages6();
                         if (fldImgList.size() > 0) {
                             Map<String, String> map = new HashMap<>(1);
                             map.put("value", fldImgList.get(0).getName());
                             images1Arr.add(map);
+                        }else {
+                            fldImgList = prod.getCommonNotNull().getFieldsNotNull().getImages1();
+                            if (fldImgList.size() > 0) {
+                                Map<String, String> map = new HashMap<>(1);
+                                map.put("value", fldImgList.get(0).getName());
+                                images1Arr.add(map);
+                            }
                         }
-
                         // 设定该group对应的prodId
                         Map<String, Object> proMap = new HashMap<>();
                         proMap.put("prodId", prod.getProdId());
@@ -346,6 +377,68 @@ public class CmsAdvSearchOtherService extends BaseViewService {
     }
 
     /**
+     * 取得销量数据显示列
+     */
+    public List<Map<String, String>> getPlatformList(String channelId, String language, List<String> filterList) {
+        List<Map<String, String>> dataSumList = new ArrayList<>();
+
+        // 设置显示列排序
+        List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, language);
+        if (cartList == null) {
+            return dataSumList;
+        }
+        for (TypeChannelBean cartObj : cartList) {
+            int cartId = NumberUtils.toInt(cartObj.getValue(), -1);
+            if (cartId == 0 || cartId == 1 || cartId == -1) {
+                continue;
+            }
+
+            // 目前只有淘宝和京东有bi数据，其他平台都忽略
+            // 目前暂不计算平台相加总数
+            ShopBean shopProp = Shops.getShop(channelId, cartId);
+            if (shopProp == null) {
+                $error("CmsAdvSearchOtherService 获取到店铺信息失败(shopProp == null)! [ChannelId:%s] [CartId:%s]", channelId, cartId);
+                continue;
+            }
+
+            if (PlatFormEnums.PlatForm.JM.getId().equals(shopProp.getPlatform_id())) {
+                // 添加各平台的排序字段
+                for (String[] platformItem : platformItemsJM) {
+                    Map<String, String> keySumMap = new HashMap<>();
+                    keySumMap.put("name", cartObj.getName() + platformItem[1]);
+                    keySumMap.put("value", String.format(platformItem[0], cartId));
+                    dataSumList.add(keySumMap);
+                }
+            } else {
+                // 添加各平台的排序字段
+                for (String[] platformItem : platformItems) {
+                    Map<String, String> keySumMap = new HashMap<>();
+                    keySumMap.put("name", cartObj.getName() + platformItem[1]);
+                    keySumMap.put("value", String.format(platformItem[0], cartId));
+                    dataSumList.add(keySumMap);
+                }
+            }
+        }
+
+        if (filterList != null) {
+            return filterSelList(dataSumList, filterList);
+        }
+
+        return dataSumList;
+    }
+
+    private List<Map<String, String>> filterSelList(List<Map<String, String>> orgList, List<String> filterList) {
+        List<Map<String, String>> resultList = new ArrayList<>();
+        for (Map<String, String> sumObj : orgList) {
+            if (filterList.contains(sumObj.get("value"))) {
+                resultList.add(sumObj);
+            }
+        }
+
+        return resultList;
+    }
+
+    /**
      * 取得BI数据显示列
      */
     public List<Map<String, String>> getBiDataList(String channelId, String language, List<String> filterList) {
@@ -394,14 +487,9 @@ public class CmsAdvSearchOtherService extends BaseViewService {
         }
 
         if (filterList != null) {
-            List<Map<String, String>> sumAllList = new ArrayList<>();
-            for (Map<String, String> sumObj : dataSumList) {
-                if (filterList.contains(sumObj.get("value"))) {
-                    sumAllList.add(sumObj);
-                }
-            }
-            return sumAllList;
+            return filterSelList(dataSumList, filterList);
         }
+
         return dataSumList;
     }
 }

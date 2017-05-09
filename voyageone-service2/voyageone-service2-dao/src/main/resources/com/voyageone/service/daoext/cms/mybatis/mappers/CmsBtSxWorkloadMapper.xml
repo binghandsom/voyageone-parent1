@@ -6,27 +6,27 @@
     <select id="cms_select_sx_workload" resultType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
         SELECT
         id as id,
-            channel_id as channelId,
-            group_id as groupId,
-            cart_id as cartId,
-            publish_status as publishStatus,
-            creater,
-            MAX(created) as created,
-            modifier,
-            MAX(modified) as modified
+        channel_id as channelId,
+        group_id as groupId,
+        cart_id as cartId,
+        publish_status as publishStatus,
+        creater,
+        MAX(created) as created,
+        modifier,
+        MAX(modified) as modified
         FROM voyageone_cms2.cms_bt_sx_workload
         WHERE
-            (publish_status=0 or publish_status=3)
+        (publish_status=0 or publish_status=3)
         <if test="channel_id != null">
-        AND
+            AND
             channel_id=#{channel_id}
         </if>
         <if test="cartId != null">
             AND
             cart_id=#{cartId}
         </if>
-            group by channel_id, cart_id, group_id
-            order by MAX(modified) asc
+        group by channel_id, cart_id, group_id
+        order by MAX(modified) asc
         <if test="record_count != null">
             limit 0,#{record_count}
         </if>
@@ -94,9 +94,9 @@
 
     <update id="cms_update_sx_workload">
         UPDATE
-            voyageone_cms2.cms_bt_sx_workload
+        voyageone_cms2.cms_bt_sx_workload
         SET
-            publish_status=#{publish_status}
+        publish_status=#{publish_status}
         WHERE
         id=#{id}
     </update>
@@ -241,12 +241,17 @@
         AND
         group_id = #{groupId}
         AND
-        workload_name = #{workloadName}
-        AND
          (publish_status=0 or publish_status=3)
-         ]]>
+        ]]>
+        <if test="attributeList != null and attributeList.size() > 0">
+            AND workload_name IN
+            <foreach collection="attributeList" item="workloadName" open="(" separator="," close=")"> #{workloadName} </foreach>
+        </if>
+        <if test="attributeList == null">
+            AND
+            workload_name = #{workloadName}
+        </if>
     </update>
-
 
     <update id="delay_work_load" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
         <![CDATA[
@@ -284,15 +289,13 @@
         FROM voyageone_cms2.cms_bt_platform_workload
         WHERE
         publish_status = 0
-        <if test="cartList != null and cartList.size() > 0">
+        <if test="cartId != null">
             AND
-            cart_id in
-            <foreach collection="cartList" item="cartId" open="(" separator="," close=")">#{cartId} </foreach>
+            cart_id = #{cartId}
         </if>
-        <if test="channelIdList != null and channelIdList.size() > 0">
+        <if test="channelId != null">
             AND
-            channel_id in
-            <foreach collection="channelIdList" item="channelId" open="(" separator="," close=")">#{channelId} </foreach>
+            channel_id = #{channelId}
         </if>
 
         order by priority_order ASC ,created ASC

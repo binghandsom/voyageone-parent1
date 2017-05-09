@@ -29,15 +29,11 @@ import java.util.List;
 @RabbitListener()
 public class CmsCartAddMQJob extends TBaseMQCmsService<CmsCartAddMQMessageBody> {
 
-    private final ProductService productService;
-
-    private final ProductGroupService productGroupService;
-
-    private final PriceService priceService;
-
-    private final ProductPlatformService productPlatformService;
-
     private final static int pageSize = 200;
+    private final ProductService productService;
+    private final ProductGroupService productGroupService;
+    private final PriceService priceService;
+    private final ProductPlatformService productPlatformService;
 
     @Autowired
     public CmsCartAddMQJob(ProductService productService, ProductGroupService productGroupService, PriceService priceService, ProductPlatformService productPlatformService) {
@@ -119,7 +115,11 @@ public class CmsCartAddMQJob extends TBaseMQCmsService<CmsCartAddMQMessageBody> 
         platform.setpCatStatus("0");  // add desmond 2016/07/05
 
         // 商品状态
-        platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+        if (928 != cartId)
+            platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+        else {
+            platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
+        }
         // 平台属性状态(新增时)
         platform.setpAttributeStatus("0");    // add desmond 2016/07/05
 

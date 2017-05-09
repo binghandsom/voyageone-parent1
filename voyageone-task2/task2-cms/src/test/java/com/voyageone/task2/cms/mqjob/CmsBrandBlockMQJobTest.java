@@ -18,22 +18,7 @@ public class CmsBrandBlockMQJobTest {
     @Test
     public void testOnStartup() throws Exception {
 
-        String msg ="{\n" +
-                "\t\"data\": {\n" +
-                "\t\t\"channelId\": \"010\",\n" +
-                "\t\t\"cartId\": 27,\n" +
-                "\t\t\"type\": 2,\n" +
-                "\t\t\"brand\": \"10507\",\n" +
-                "\t\t\"id\": 68,\n" +
-                "\t\t\"creater\": \"edward\",\n" +
-                "\t\t\"modifier\": \"edward\"\n" +
-                "\t},\n" +
-                "\t\"blocking\": true,\n" +
-                "\t\"consumerRetryTimes\": 0,\n" +
-                "\t\"mqId\": 0,\n" +
-                "\t\"delaySecond\": 0,\n" +
-                "\t\"sender\": \"edward\"\n" +
-                "}";
+        String msg ="{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"james\",\"channelId\":\"025\",\"data\":{\"id\":71,\"created\":null,\"creater\":\"james\",\"modified\":null,\"modifier\":\"james\",\"channelId\":\"025\",\"cartId\":1,\"type\":0,\"brand\":\"Nino Cerruti\"},\"blocking\":true}";
         CmsBrandBlockMQMessageBody messageBody = JacksonUtil.json2Bean(msg, CmsBrandBlockMQMessageBody.class);
 
         service.onStartup(messageBody);

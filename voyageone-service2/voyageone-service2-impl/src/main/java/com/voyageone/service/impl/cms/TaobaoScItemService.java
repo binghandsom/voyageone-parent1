@@ -17,6 +17,7 @@ import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbScItemService;
+import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,44 +45,23 @@ public class TaobaoScItemService extends BaseService {
 	 * 创建一个货品， 并初始化库存
 	 * @param shopBean shopBean
 	 * @param sku_outerId 商家编码
-	 * @param title 商品标题
+	 * @param sxData sxData
 	 * @return 货品id（如果返回为空那就是不需要设置， 如果出错会抛出BusinessError）
 	 */
-	public String doCreateScItem(ShopBean shopBean, CmsBtProductModel productModel, String sku_outerId, String title, String qty) {
+	public String doCreateScItem(ShopBean shopBean, CmsBtProductModel productModel, String sku_outerId, SxData sxData, String qty) {
 		// 判断一下是否需要做货品绑定
 		String storeCode = doCheckNeedSetScItem(shopBean, productModel);
 		if (StringUtils.isEmpty(storeCode)) {
 			return null;
 		}
 
-		// 检查是否发布过仓储商品
-		ScItem scItem;
-		try {
-			scItem = tbScItemService.getScItemByOuterCode(shopBean, sku_outerId);
-		} catch (ApiException e) {
-			String errMsg = String.format("自动设置天猫商品全链路库存管理:检查是否发布过仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
-			throw new BusinessException(errMsg);
-		}
+		ScItem scItem = sxData.getScItemMap().get(sku_outerId);
 
-		if (scItem == null) {
-			// 没有发布过仓储商品的场合， 发布仓储商品
-			try {
-				scItem = tbScItemService.addScItemSimple(shopBean, title, sku_outerId);
-				Thread.sleep(6000); // 一定要睡一会儿， 操作太快后面的操作目测会有70%几率失败
-			} catch (ApiException e) {
-				String errMsg = String.format("自动设置天猫商品全链路库存管理:发布仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
-				throw new BusinessException(errMsg);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-
-		// 进行库存初始化
 		if (scItem == null) {
 			// 如果没有创建成功， 不需要做库存初始化， 直接跳出
 			return null;
 		}
-
+		// 进行库存初始化
 		try {
 			String errinfo = tbScItemService.doInitialInventory(shopBean, storeCode, sku_outerId, qty);
 			if (!StringUtils.isEmpty(errinfo)) {
@@ -104,7 +84,9 @@ public class TaobaoScItemService extends BaseService {
      * @param shopBean shopBean
      * @param numIId 天猫id
      */
-    public void doSetScItem(ShopBean shopBean, CmsBtProductModel productModel, long numIId) {
+    public void doSetScItem(ShopBean shopBean, SxData sxData, long numIId) {
+
+		CmsBtProductModel productModel = sxData.getMainProduct();
 
 		// 判断一下是否需要做货品绑定
 		String storeCode = doCheckNeedSetScItem(shopBean, productModel);
@@ -164,7 +146,7 @@ public class TaobaoScItemService extends BaseService {
                     String scProductId = skuFieldValue.getInputFieldValue("sku_scProductId");
 					String qty = skuFieldValue.getInputFieldValue("sku_quantity");
 
-                    doSetScItemSku(shopBean, productModel, numIId, outerId, skuId, scProductId, title, qty);
+                    doSetScItemSku(shopBean, productModel, numIId, outerId, skuId, scProductId, sxData, qty);
                 }
             }
         }
@@ -181,7 +163,7 @@ public class TaobaoScItemService extends BaseService {
                     String scProductId = skuFieldValue.getInputFieldValue("sku_scProductId");
 					String qty = skuFieldValue.getInputFieldValue("sku_quantity");
 
-                    doSetScItemSku(shopBean, productModel, numIId, outerId, skuId, scProductId, title, qty);
+                    doSetScItemSku(shopBean, productModel, numIId, outerId, skuId, scProductId, sxData, qty);
                 }
             }
         }
@@ -191,7 +173,7 @@ public class TaobaoScItemService extends BaseService {
             String scProductId = ((InputField)mapFields.get("item_sc_product_id")).getDefaultValue();
 			String qty = ((InputField)mapFields.get("quantity")).getDefaultValue();
 
-            doSetScItemSku(shopBean, productModel, numIId, outerId, null, scProductId, title, qty);
+            doSetScItemSku(shopBean, productModel, numIId, outerId, null, scProductId, sxData, qty);
         }
 
 
@@ -231,7 +213,7 @@ public class TaobaoScItemService extends BaseService {
 
 	}
 
-    private String doSetScItemSku(ShopBean shopBean, CmsBtProductModel productModel, long numIId, String sku_outerId, String sku_id, String sku_scProductId, String title, String qty) {
+    private String doSetScItemSku(ShopBean shopBean, CmsBtProductModel productModel, long numIId, String sku_outerId, String sku_id, String sku_scProductId, SxData sxData, String qty) {
 
 		// 判断一下是否需要做货品绑定
 		String storeCode = doCheckNeedSetScItem(shopBean, productModel);
@@ -246,12 +228,12 @@ public class TaobaoScItemService extends BaseService {
         }
 
         // 创建货品（如果没有创建过的话）并初始化库存
-		doCreateScItem(shopBean, productModel, sku_outerId, title, qty);
+		doCreateScItem(shopBean, productModel, sku_outerId, sxData, qty);
 
 		// 创建关联
 		String outerCodeResult;
         try {
-            if (StringUtils.isEmpty(sku_id)) {
+            if (StringUtils.isEmpty(sku_id) || "null".equals(sku_id)) {
                 outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, null, sku_outerId);
             } else {
                 outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, Long.parseLong(sku_id), sku_outerId);
@@ -273,11 +255,12 @@ public class TaobaoScItemService extends BaseService {
 	/**
 	 * 自动设置天猫商品全链路库存管理(Liking)
 	 * @param shopBean shopBean
-	 * @param orgChannelId orgChannelId
-	 * @param title 标题
+	 * @param sxData sxData
 	 * @param skuMap {outer_id: xx, price: xx, quantity: xx, sku_id: xx}
 	 */
-	public String doSetLikingScItem(ShopBean shopBean, String orgChannelId, long numIId, String title, Map<String, Object> skuMap) {
+	public String doSetLikingScItem(ShopBean shopBean, SxData sxData, long numIId, Map<String, Object> skuMap) {
+
+		String orgChannelId = sxData.getMainProduct().getOrgChannelId();
 
 		// Liking天猫国际同购店， 获取子店货品绑定的 天猫商家仓库编码
 		String storeCode = doGetLikingStoreCode(shopBean, orgChannelId);
@@ -290,7 +273,9 @@ public class TaobaoScItemService extends BaseService {
 		String skuId = String.valueOf(skuMap.get("sku_id")); // 可能为null
 		String qty = String.valueOf(skuMap.get("quantity"));
 
-		return doSetLikingScItemSku(shopBean, orgChannelId, numIId, outerId, skuId, title, qty);
+		ScItem scItem = sxData.getScItemMap().get(outerId);
+
+		return doSetLikingScItemSku(shopBean, orgChannelId, numIId, outerId, skuId, qty, scItem);
 
 	}
 
@@ -300,7 +285,7 @@ public class TaobaoScItemService extends BaseService {
 	 * @param orgChannelId orgChannelId
 	 * @return 商家仓库编码（如果返回内容为null， 那么就有问题了， 估计是没有配置）
 	 */
-	private String doGetLikingStoreCode(ShopBean shopBean, String orgChannelId) {
+	public String doGetLikingStoreCode(ShopBean shopBean, String orgChannelId) {
 		int cartId = Integer.valueOf(shopBean.getCart_id());
 
 		// 获取当前channel的配置
@@ -325,7 +310,7 @@ public class TaobaoScItemService extends BaseService {
 
 	private String doSetLikingScItemSku(
 			ShopBean shopBean, String orgChannelId,
-			long numIId, String sku_outerId, String sku_id, String title, String qty) {
+			long numIId, String sku_outerId, String sku_id, String qty, ScItem scItem) {
 
 		// Liking天猫国际同购店， 获取子店货品绑定的 天猫商家仓库编码
 		String storeCode = doGetLikingStoreCode(shopBean, orgChannelId);
@@ -333,30 +318,8 @@ public class TaobaoScItemService extends BaseService {
 			return null;
 		}
 
-		ScItem scItem;
 		// 创建货品（如果没有创建过的话）并初始化库存
 		{
-			// 检查是否发布过仓储商品
-			try {
-				scItem = tbScItemService.getScItemByOuterCode(shopBean, sku_outerId);
-			} catch (ApiException e) {
-				String errMsg = String.format("自动设置天猫商品全链路库存管理:检查是否发布过仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
-				throw new BusinessException(errMsg);
-			}
-
-			if (scItem == null) {
-				// 没有发布过仓储商品的场合， 发布仓储商品
-				try {
-					scItem = tbScItemService.addScItemSimple(shopBean, title, sku_outerId);
-					Thread.sleep(6000); // 一定要睡一会儿， 操作太快后面的操作目测会有70%几率失败
-				} catch (ApiException e) {
-					String errMsg = String.format("自动设置天猫商品全链路库存管理:发布仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
-					throw new BusinessException(errMsg);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-
 			// 进行库存初始化
 			if (scItem == null) {
 				// 如果没有创建成功， 不需要做库存初始化， 直接跳出
@@ -383,17 +346,20 @@ public class TaobaoScItemService extends BaseService {
 		String outerCodeResult;
 		try {
 			Thread.sleep(1000); // 一定要睡一会儿， 因为如果商品都已经创建成功并初始化过的话， 就会连续创建关联， 可能会导致IC_OPTIMISTIC_LOCKING_CONFLICT
-			if (StringUtils.isEmpty(sku_id)) {
+			if (StringUtils.isEmpty(sku_id) || "null".equals(sku_id)) {
 				outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, null, sku_outerId);
 			} else {
 				outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, Long.parseLong(sku_id), sku_outerId);
 			}
 			System.out.println("关联成功:" + outerCodeResult);
-		} catch (ApiException e) {
-			String errMsg = String.format("自动设置天猫商品全链路库存管理:创建关联:{numIId: %s, outerId: %s, err_msg: %s}", numIId, sku_outerId, e.toString());
-			throw new BusinessException(errMsg);
 		} catch (InterruptedException e) {
 			String errMsg = String.format("自动设置天猫商品全链路库存管理:创建关联[之前睡会儿失败]:{numIId: %s, outerId: %s, err_msg: %s}", numIId, sku_outerId, e.toString());
+			throw new BusinessException(errMsg);
+		} catch (Exception e) {
+			if (e.toString().contains("您输入的前端商品已挂靠至该货品上")) {
+				return String.valueOf(scItem.getItemId());
+			}
+			String errMsg = String.format("自动设置天猫商品全链路库存管理:创建关联:{numIId: %s, outerId: %s, err_msg: %s}", numIId, sku_outerId, e.toString());
 			throw new BusinessException(errMsg);
 		}
 

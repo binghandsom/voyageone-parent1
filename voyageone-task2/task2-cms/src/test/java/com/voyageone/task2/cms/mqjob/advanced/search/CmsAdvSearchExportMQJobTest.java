@@ -1,10 +1,16 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -18,94 +24,30 @@ public class CmsAdvSearchExportMQJobTest {
     @Autowired
     private CmsAdvSearchExportMQJob cmsAdvSearchExportMQJob;
 
+    @Autowired
+    private ProductService productService;
+
     @Test
     public void onStartup() throws Exception {
-        String json = "{\n" +
-                "\t\"cmsBtExportTaskId\": 268,\n" +
-                "\t\"searchValue\": {\n" +
-                "\t\t\"tags\": [],\n" +
-                "\t\t\"priceChgFlg\": \"\",\n" +
-                "\t\t\"priceDiffFlg\": \"\",\n" +
-                "\t\t\"tagTypeSelectValue\": \"0\",\n" +
-                "\t\t\"promotionList\": [],\n" +
-                "\t\t\"catgoryList\": [],\n" +
-                "\t\t\"cidValue\": [],\n" +
-                "\t\t\"promotionTagType\": 1,\n" +
-                "\t\t\"freeTagType\": 1,\n" +
-                "\t\t\"supplierType\": 1,\n" +
-                "\t\t\"brandSelType\": 1,\n" +
-                "\t\t\"productSelType\": \"1\",\n" +
-                "\t\t\"sizeSelType\": \"1\",\n" +
-                "\t\t\"salesType\": \"All\",\n" +
-                "\t\t\"custGroupType\": \"1\",\n" +
-                "\t\t\"custAttrMap\": [{\n" +
-                "\t\t\t\"inputVal\": \"\",\n" +
-                "\t\t\t\"inputOpts\": \"\",\n" +
-                "\t\t\t\"inputOptsKey\": \"\"\n" +
-                "\t\t}],\n" +
-                "\t\t\"_selCodeList\": [\"51A0HC13E1-00LCNB0\"],\n" +
-                "\t\t\"fileType\": 1,\n" +
-                "\t\t\"productStatus\": [],\n" +
-                "\t\t\"platformStatus\": [],\n" +
-                "\t\t\"pRealStatus\": [],\n" +
-                "\t\t\"shopCatStatus\": 0,\n" +
-                "\t\t\"pCatStatus\": 0,\n" +
-                "\t\t\"_channleId\": \"010\",\n" +
-                "\t\t\"_userName\": \"edward\",\n" +
-                "\t\t\"_language\": \"cn\",\n" +
-                "\t\t\"_taskId\": 268,\n" +
-                "\t\t\"_sessionBean\": {\n" +
-                "\t\t\t\"_adv_search_customProps\": [],\n" +
-                "\t\t\t\"_adv_search_commonProps\": [],\n" +
-                "\t\t\t\"_adv_search_props_searchItems\": \"\",\n" +
-                "\t\t\t\"_adv_search_selSalesType\": []\n" +
-                "\t\t}\n" +
-                "\t},\n" +
-                "\t\"channelIdMap\": {\n" +
-                "\t\t\"030\": \"Wella\",\n" +
-                "\t\t\"031\": \"WoodLand\",\n" +
-                "\t\t\"010\": \"Jewelry\",\n" +
-                "\t\t\"032\": \"Frye\",\n" +
-                "\t\t\"033\": \"KitBag\",\n" +
-                "\t\t\"012\": \"BCBG\",\n" +
-                "\t\t\"034\": \"Coty\",\n" +
-                "\t\t\"013\": \"Sears\",\n" +
-                "\t\t\"035\": \"LikingBuyer\",\n" +
-                "\t\t\"014\": \"WMF\",\n" +
-                "\t\t\"015\": \"GILT\",\n" +
-                "\t\t\"016\": \"ShoeCity\",\n" +
-                "\t\t\"017\": \"Lucky Vitamin\",\n" +
-                "\t\t\"018\": \"Target\",\n" +
-                "\t\t\"019\": \"SummerGuru\",\n" +
-                "\t\t\"020\": \"EdcSkincare\",\n" +
-                "\t\t\"021\": \"BHFOX\",\n" +
-                "\t\t\"022\": \"DFO\",\n" +
-                "\t\t\"001\": \"Sneakerhead\",\n" +
-                "\t\t\"023\": \"ShoeZoo\",\n" +
-                "\t\t\"002\": \"PortAmerican\",\n" +
-                "\t\t\"024\": \"Overstock\",\n" +
-                "\t\t\"003\": \"Essuntial\",\n" +
-                "\t\t\"025\": \"FragranceNet\",\n" +
-                "\t\t\"004\": \"JuicyCouture\",\n" +
-                "\t\t\"026\": \"Lighthouse\",\n" +
-                "\t\t\"005\": \"Spalding\",\n" +
-                "\t\t\"027\": \"Yogademocracy\",\n" +
-                "\t\t\"006\": \"BHFO\",\n" +
-                "\t\t\"028\": \"ShoeMetro\",\n" +
-                "\t\t\"007\": \"Champion\",\n" +
-                "\t\t\"029\": \"Modotex\",\n" +
-                "\t\t\"008\": \"RealMadrid\",\n" +
-                "\t\t\"009\": \"SwissWatch\",\n" +
-                "\t\t\"928\": \"Liking\"\n" +
-                "\t},\n" +
-                "\t\"consumerRetryTimes\": 0,\n" +
-                "\t\"mqId\": 0,\n" +
-                "\t\"delaySecond\": 0,\n" +
-                "\t\"sender\": \"edward\"\n" +
-                "}";
+        String json = "{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"james\",\"channelId\":\"018\",\"cmsBtExportTaskId\":13203,\"searchValue\":{\"compareType\":null,\"brand\":null,\"tags\":[],\"priceChgFlg\":null,\"priceDiffFlg\":null,\"tagTypeSelectValue\":\"0\",\"promotionList\":[],\"catgoryList\":[],\"cidValue\":[],\"promotionTagType\":1,\"freeTagType\":1,\"supplierType\":1,\"brandSelType\":1,\"mCatPathType\":1,\"fCatPathType\":1,\"shopCatType\":1,\"pCatPathType\":1,\"productSelType\":\"1\",\"sizeSelType\":\"1\",\"salesType\":\"All\",\"custGroupType\":\"1\",\"cartId\":23,\"productStatus\":[],\"platformStatus\":[],\"pRealStatus\":[],\"hasErrorFlg\":null,\"promotionTags\":null,\"salesSortType\":null,\"salesStart\":null,\"salesEnd\":null,\"pCatId\":null,\"pCatPath\":null,\"pCatStatus\":0,\"shopCatStatus\":0,\"publishTimeStart\":null,\"publishTimeTo\":null,\"priceEnd\":null,\"priceStart\":null,\"priceType\":null,\"propertyStatus\":null,\"pCatPathList\":[],\"custAttrMap\":[{\"inputVal\":\"\",\"inputOpts\":\"\",\"inputOptsKey\":\"\"}],\"_selCodeList\":[],\"fileType\":2,\"_channleId\":\"018\",\"_userName\":\"james\",\"_language\":\"cn\",\"_taskId\":13203,\"_sessionBean\":{\"_adv_search_customProps\":[],\"_adv_search_selPlatformDataList\":[],\"_adv_search_commonProps\":[{\"valType\":\"string\",\"propId\":\"clientMsrpPrice\",\"propName\":\"客户建议零售价\"}],\"_adv_search_props_searchItems\":\"common.fields.clientMsrpPrice;\",\"_adv_search_selSalesType\":[{\"name\":\"7天销量\",\"value\":\"sales.codeSum7.cartId0\"},{\"name\":\"30天销量\",\"value\":\"sales.codeSum30.cartId0\"},{\"name\":\"YTD销量\",\"value\":\"sales.codeSumYear.cartId0\"},{\"name\":\"总销量\",\"value\":\"sales.codeSumAll.cartId0\"},{\"name\":\"天猫国际7天销量\",\"value\":\"sales.codeSum7.cartId23\"},{\"name\":\"天猫国际30天销量\",\"value\":\"sales.codeSum30.cartId23\"},{\"name\":\"天猫国际YTD销量\",\"value\":\"sales.codeSumYear.cartId23\"},{\"name\":\"天猫国际总销量\",\"value\":\"sales.codeSumAll.cartId23\"}],\"_adv_search_selBiDataList\":[{\"name\":\"天猫国际1浏览量\",\"value\":\"bi.sum1.pv.cartId23\"},{\"name\":\"天猫国际1访客数\",\"value\":\"bi.sum1.uv.cartId23\"},{\"name\":\"天猫国际1加购件数\",\"value\":\"bi.sum1.gwc.cartId23\"},{\"name\":\"天猫国际1收藏人数\",\"value\":\"bi.sum1.scs.cartId23\"},{\"name\":\"天猫国际7浏览量\",\"value\":\"bi.sum7.pv.cartId23\"},{\"name\":\"天猫国际7访客数\",\"value\":\"bi.sum7.uv.cartId23\"},{\"name\":\"天猫国际7加购件数\",\"value\":\"bi.sum7.gwc.cartId23\"},{\"name\":\"天猫国际7收藏人数\",\"value\":\"bi.sum7.scs.cartId23\"},{\"name\":\"天猫国际30浏览量\",\"value\":\"bi.sum30.pv.cartId23\"},{\"name\":\"天猫国际30访客数\",\"value\":\"bi.sum30.uv.cartId23\"},{\"name\":\"天猫国际30加购件数\",\"value\":\"bi.sum30.gwc.cartId23\"},{\"name\":\"天猫国际30收藏人数\",\"value\":\"bi.sum30.scs.cartId23\"},{\"name\":\"天猫国际商品发布时间\",\"value\":\"platforms.P23.pPublishTime\"},{\"name\":\"天猫国际中国建议售价\",\"value\":\"platforms.P23.pPriceMsrpEd\"},{\"name\":\"天猫国际中国指导售价\",\"value\":\"platforms.P23.pPriceRetailSt\"},{\"name\":\"天猫国际中国最终售价\",\"value\":\"platforms.P23.pPriceSaleEd\"}]}},\"channelIdMap\":{\"030\":\"Wella\",\"031\":\"WoodLand\",\"010\":\"Jewelry\",\"032\":\"Frye\",\"033\":\"KitBag\",\"012\":\"BCBG\",\"034\":\"Coty\",\"013\":\"Sears\",\"035\":\"LikingBuyer\",\"014\":\"WMF\",\"036\":\"Cinxus\",\"015\":\"GILT\",\"037\":\"SharonShoe\",\"016\":\"ShoeCity\",\"038\":\"FAMbrand\",\"017\":\"Lucky Vitamin\",\"039\":\"Ladolcevitae\",\"018\":\"Target\",\"019\":\"SummerGuru\",\"040\":\"AuthenticGlasses\",\"020\":\"EdcSkincare\",\"021\":\"BHFOX\",\"022\":\"DFO\",\"001\":\"Sneakerhead\",\"023\":\"ShoeZoo\",\"002\":\"PortAmerican\",\"024\":\"Overstock\",\"003\":\"Essuntial\",\"025\":\"FragranceNet\",\"004\":\"JuicyCouture\",\"026\":\"Lighthouse\",\"005\":\"Spalding\",\"027\":\"Yogademocracy\",\"006\":\"BHFO\",\"028\":\"ShoeMetro\",\"007\":\"Champion\",\"029\":\"Modotex\",\"008\":\"RealMadrid\",\"009\":\"SwissWatch\",\"928\":\"Liking\"}}";
 
         AdvSearchExportMQMessageBody advSearchExportMQMessageBody = JacksonUtil.json2Bean(json, AdvSearchExportMQMessageBody.class);
         cmsAdvSearchExportMQJob.onStartup(advSearchExportMQMessageBody);
+
+    }
+
+    @Test
+    public void test() {
+        CmsBtProductModel cmsBtProductModel = productService.getProductByCode("007", "C5-P301-010");
+        ExpressionParser parser = new SpelExpressionParser();
+
+        Expression expression = parser.parseExpression("platforms[\"P23\"].fields[\"title\"]");
+
+        StandardEvaluationContext context = new StandardEvaluationContext(cmsBtProductModel);
+
+        Object price = expression.getValue(context);
+
+        System.out.println(price);
 
     }
 

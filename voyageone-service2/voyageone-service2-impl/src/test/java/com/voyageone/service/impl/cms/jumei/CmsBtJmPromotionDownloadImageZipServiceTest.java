@@ -19,7 +19,7 @@ public class CmsBtJmPromotionDownloadImageZipServiceTest {
     CmsBtJmPromotionDownloadImageZipService cmsBtJmPromotionDownloadImageZipService;
     @Test
     public void downImage() throws Exception {
-        byte[] image = cmsBtJmPromotionDownloadImageZipService.downImage("http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1?wid=2200&hei=2200");
+        byte[] image = cmsBtJmPromotionDownloadImageZipService.downImage("http://image.voyageone.com.cn/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1?wid=2200&hei=2200");
         System.out.println(image.length);
     }
 
