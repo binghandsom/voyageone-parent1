@@ -593,48 +593,22 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     public String updateGroupPlatform(String channelId, String code, Integer cartId, Map<String, Object> platform, String modifier) {
 
         final String[] modified = new String[1];
-        List<Field> masterFields = null;
-        Map<String, Object> fields = null;
+
         if (platform.get("schemaFields") != null) {
-            masterFields = buildMasterFields((Map<String, Object>) platform.get("schemaFields"));
-            fields = FieldUtil.getFieldsValueToMap(masterFields);
+            List<Field> masterFields = buildMasterFields((Map<String, Object>) platform.get("schemaFields"));
+
+            platform.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
+            platform.remove("schemaFields");
         }
-        BaseMongoMap<String, Object>  newFields = new BaseMongoMap<>();
-        if(fields != null){
-            newFields.putAll(fields);
-        }
+        CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
 
 
         CmsBtProductGroupModel cmsBtProductGroupModel = productGroupService.selectProductGroupByCode(channelId, code, cartId);
         if(cmsBtProductGroupModel != null && ListUtils.notNull(cmsBtProductGroupModel.getProductCodes())){
             cmsBtProductGroupModel.getProductCodes().forEach(productCode->{
                 CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, productCode);
-                CmsBtProductModel_Platform_Cart platformModel = cmsBtProductModel.getPlatform(cartId);
-                if (cartId == CartEnums.Cart.TM.getValue() || cartId == CartEnums.Cart.TG.getValue()) {
-                    if(platformModel.getFieldsNotNull().getAttribute("sku") != null) {
-                        newFields.put("sku", platformModel.getFields().getAttribute("sku"));
-                    }
-                    if(platformModel.getFieldsNotNull().getAttribute("darwin_sku") != null) {
-                        newFields.put("darwin_sku", platformModel.getFields().getAttribute("darwin_sku"));
-                    }
-                }
-                platformModel.setFields(newFields);
-                if(platform.get("sellerCats") != null){
-                    JacksonUtil.bean2Json(platform.get("sellerCats"));
-                    platformModel.setSellerCats(JacksonUtil.jsonToBeanList( JacksonUtil.bean2Json(platform.get("sellerCats")), CmsBtProductModel_SellerCat.class));
-                }
-                platformModel.setpCatId((String) platform.get("pCatId"));
-                platformModel.setpCatPath((String) platform.get("pCatPath"));
-                platformModel.setpBrandId((String) platform.get("pBrandId"));
-                platformModel.setpBrandName((String) platform.get("pBrandName"));
-                platformModel.setpCatStatus((String) platform.get("pCatStatus"));
-                if(platform.get("images4") != null){
-                    platformModel.setImages4(JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(platform.get("images4")), CmsBtProductModel_Field_Image.class));
-                }
-                if(platform.get("images5") != null){
-                    platformModel.setImages5(JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(platform.get("images5")), CmsBtProductModel_Field_Image.class));
-                }
-                String ret = productPlatformService.updateProductPlatformWithSmartSx(channelId, cmsBtProductModel.getProdId(), platformModel, modifier, "页面group信息编辑", false, 0);
+                CmsBtProductModel_Platform_Cart newPlatform = productPlatformService.platformCopy(channelId, cmsBtProductModel, cartId, platformModel, modifier);
+                String ret = productPlatformService.updateProductPlatformWithSmartSx(channelId, cmsBtProductModel.getProdId(), newPlatform, modifier, "页面group信息编辑", false, 0);
                 if(code.equals(productCode)){
                     modified[0] = ret;
                 }

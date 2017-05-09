@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.product;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -7,6 +8,7 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.jd.service.JdProductService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
@@ -16,6 +18,7 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_UsPlatform_Cart;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -334,5 +337,45 @@ public class ProductPlatformService extends BaseService {
         model.setQueryMap(queryMap);
         bulkList.add(model);
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
+    }
+
+    /**
+     * 覆盖platform详细
+     * @param channelId
+     * @param desProductModel
+     * @param cartId
+     * @param platform
+     * @param modifier
+     * @return
+     */
+    public CmsBtProductModel_Platform_Cart platformCopy(String channelId, CmsBtProductModel desProductModel, Integer cartId, CmsBtProductModel_Platform_Cart platform, String modifier) {
+
+        BaseMongoMap newFields = platform.getFieldsNotNull();
+
+        CmsBtProductModel_Platform_Cart platformModel = desProductModel.getPlatform(cartId);
+        if (cartId == CartEnums.Cart.TM.getValue() || cartId == CartEnums.Cart.TG.getValue()) {
+            if(platformModel.getFieldsNotNull().getAttribute("sku") != null) {
+                newFields.put("sku", platformModel.getFields().getAttribute("sku"));
+            }
+            if(platformModel.getFieldsNotNull().getAttribute("darwin_sku") != null) {
+                newFields.put("darwin_sku", platformModel.getFields().getAttribute("darwin_sku"));
+            }
+        }
+        platformModel.setFields(newFields);
+        if(platform.getSellerCats() != null){
+            platformModel.setSellerCats(platform.getSellerCats());
+        }
+        platformModel.setpCatId((String) platform.get("pCatId"));
+        platformModel.setpCatPath((String) platform.get("pCatPath"));
+        platformModel.setpBrandId((String) platform.get("pBrandId"));
+        platformModel.setpBrandName((String) platform.get("pBrandName"));
+        platformModel.setpCatStatus((String) platform.get("pCatStatus"));
+        if(platform.get("images4") != null){
+            platformModel.setImages4(JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(platform.get("images4")), CmsBtProductModel_Field_Image.class));
+        }
+        if(platform.get("images5") != null){
+            platformModel.setImages5(JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(platform.get("images5")), CmsBtProductModel_Field_Image.class));
+        }
+        return  platformModel;
     }
 }
