@@ -2109,7 +2109,11 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         Map<String, Object> defaultMap = JacksonUtil.jsonToMap(defaultValue);
         Map<String, Object> wirelessMap = JacksonUtil.jsonToMap(valWirelessDetails);
         if (defaultMap != null && defaultMap.get(fieldName) != null) {
-            wirelessMap.put(fieldName, defaultMap.get(fieldName));
+            if ("item_picture".equals(fieldName)) {
+                ((Map<String,Object>)(wirelessMap.get(fieldName))).put("order", ((Map<String,Object>)(defaultMap.get(fieldName))).get("order"));
+            } else {
+                wirelessMap.put(fieldName, defaultMap.get(fieldName));
+            }
         }
         try {
             valWirelessDetails = objectMapper.writeValueAsString(wirelessMap);
