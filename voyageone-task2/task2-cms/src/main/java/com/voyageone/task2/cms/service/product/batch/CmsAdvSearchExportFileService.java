@@ -79,7 +79,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private final static String[] _SKU_STATIC_COLS_ZN = {"sku", "条形码", "商品编码","供应商", "主类目", "品牌" ,"自由标签", "feed类目", "产品名称英语", "产品名称中文", "客户原始SKU", "客户原始Size", "转换后Size", "库存", "客户建议售价", "客户指导价", "客户成本价", "重量（lb）", "是否被锁定"};
 
     // 产品数据（code级）固定输出列，用于过滤自定义显示列中相同项目
-    private final static String[] _prodCol = {"code", "brand", "category", "productNameEn", "originalTitleCn", "mainCode", "model", "quantity", "color"};
+//    private final static String[] _prodCol = {"code", "brand", "category", "productNameEn", "originalTitleCn", "mainCode", "quantity", "color"};
+    private final static String[] _prodCol = {};
     /*聚美上新SKU导出列*/
     private final static String[] _shoemetroColJMSKU = {"Child SKU", "Brand", "Parent SKU", "Color", "Size", "VO Price", "Final RMB Price", "URL Link", "Inventory"};
     /*报备数据导出文件列*/
