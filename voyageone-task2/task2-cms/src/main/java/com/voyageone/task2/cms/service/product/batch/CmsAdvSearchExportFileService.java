@@ -34,7 +34,6 @@ import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.cms.bean.SkuInventoryForCmsBean;
-import com.voyageone.task2.cms.dao.InventoryDao;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -98,8 +97,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private PlatformService platformService;
     @Autowired
     private CmsBtExportTaskService cmsBtExportTaskService;
-    @Autowired
-    private InventoryDao inventoryDao;
     @Autowired
     private TagService tagService;
 
@@ -1406,15 +1403,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
             products.add(item);
         }
-        Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<>();
-        if (!codes.isEmpty()) {
-            List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(ChannelConfigEnums.Channel.ShoeMetro.getId(), new ArrayList<>(codes));
-            if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
-                for (SkuInventoryForCmsBean skuInventory : inventoryForCmsBeanList) {
-                    skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
-                }
-            }
-        }
+
         String jmUrlPrefix = platformService.getPlatformProductUrl(CartEnums.Cart.JM.getId());
         // 写入导出数据
         Sheet sheet = book.getSheetAt(0);
@@ -1451,7 +1440,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 // JmURL
                 FileUtils.cell(row, index++, unlock).setCellValue(jmUrlPrefix + cart.getpPlatformMallId() + ".html");
                 SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuCode);
-                FileUtils.cell(row, index++, unlock).setCellValue(skuInventoryMap.get(temp) == null ? "0" : String.valueOf(skuInventoryMap.get(temp)));
+                FileUtils.cell(row, index++, unlock).setCellValue(skuMap.getIntAttribute("qty"));
                 total++;
             }
         }

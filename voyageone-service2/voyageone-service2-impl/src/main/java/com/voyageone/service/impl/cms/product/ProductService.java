@@ -187,6 +187,15 @@ public class ProductService extends BaseService {
     }
 
     /**
+     * 获取商品 Sku
+     */
+    public CmsBtProductModel getProductBySku(String channelId, String orgChannelId, String sku) {
+        String query = "{\"orgChannelId\":\"" + orgChannelId + "\", \"common.skus.skuCode\":\"" + sku + "\"}";
+        return cmsBtProductDao.selectOneWithQuery(query, channelId);
+    }
+
+
+    /**
      * 获取商品 根据query
      */
     public CmsBtProductModel getProductByCondition(String channelId, JongoQuery query) {
