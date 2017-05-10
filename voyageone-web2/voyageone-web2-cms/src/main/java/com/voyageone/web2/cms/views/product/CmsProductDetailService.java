@@ -727,18 +727,20 @@ public class CmsProductDetailService extends BaseViewService {
             feedInfoModel = feedInfoService.getProductByCode(channelId, StringUtils.isEmpty(cmsBtProduct.getCommon().getFields().getOriginalCode()) ? cmsBtProduct.getCommon().getFields().getCode() : cmsBtProduct.getCommon().getFields().getOriginalCode());
         }
 
-        Map<String, Integer> skuinvs = null;
+        /*Map<String, Integer> skuinvs = null;
         WmsCodeStoreInvBean stockDetail = inventoryCenterLogicService.getCodeStockDetails(cmsBtProduct.getOrgChannelId(), cmsBtProduct.getCommon().getFields().getCode());
         if (stockDetail != null && !ListUtils.isNull(stockDetail.getStocks())) {
             skuinvs = stockDetail.getStocks().stream().map(WmsCodeStoreInvBean.StocksBean::getBase)
                     .collect(Collectors.toMap(sku -> channelId.equals("001") ? sku.getSku().toLowerCase() : sku.getSku(), WmsCodeStoreInvBean.StocksBean.BaseBean::getTotal));
-        }
+        }*/
 
         List<Map<String, Object>> skuList = new ArrayList<>();
         for (CmsBtProductModel_Sku skuModel : cmsBtProduct.getCommon().getSkus()) {
             Map<String, Object> skuInfo = new HashMap<>();
             skuInfo.put("skuCode", skuModel.getSkuCode());
-            skuInfo.put("qty", skuinvs == null || skuinvs.get(skuModel.getSkuCode()) == null ? 0 : skuinvs.get(skuModel.getSkuCode()));
+            // skuInfo.put("qty", skuinvs == null || skuinvs.get(skuModel.getSkuCode()) == null ? 0 : skuinvs.get(skuModel.getSkuCode()));
+            // 现在直接CMS mongodb里查询sku库存
+            skuInfo.put("qty", skuModel.getIntAttribute("qty"));
             skuInfo.put("size", skuModel.getSize());
             skuInfo.put("barcode", skuModel.getBarcode());
             // 取得FeedInfo中的原始图片
@@ -1422,9 +1424,13 @@ public class CmsProductDetailService extends BaseViewService {
 
         CmsBtProductModel_Platform_Cart platForm = cmsBtProductModel.getPlatform(parameter.getCartId());
         CmsBtProductModel_Platform_Cart newPlatForm = newCmsBtProductModel.getPlatform(parameter.getCartId());
+
         if (CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(platForm.getStatus()) && !CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(newPlatForm.getStatus())) {
             throw new BusinessException("只能设置状态为Approve的商品");
         }
+
+        // 重主商品复制属性
+        newPlatForm = productPlatformService.platformCopy(parameter.getChannelId(), newCmsBtProductModel, parameter.getCartId(),platForm, modifier);
         platForm.setpIsMain(0);// 把mainProduct的所对应的product表中对应的平台的pIsMain设0
         platForm.setMainProductCode(parameter.getProductCode());
         newPlatForm.setpIsMain(1);//把productCode的所对应的product表中对应的平台的pIsMain设1
@@ -1618,6 +1624,10 @@ public class CmsProductDetailService extends BaseViewService {
                 common.getFields().put(s, o);
             }
         });
+
+        //主商品的APP端自定义图和PC端自定义图 也需要复制过来
+        common.getFields().setImages4(mainCommon.getFields().getImages4());
+        common.getFields().setImages5(mainCommon.getFields().getImages5());
         if ("1".equalsIgnoreCase(mainCommon.getFields().getHsCodeStatus())) {
             common.getFields().setHsCodeStatus("1");
         }
