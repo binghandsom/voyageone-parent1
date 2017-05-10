@@ -42,7 +42,10 @@ public class GetStoreStockDetailRequest extends VoApiRequest<GetStoreStockDetail
 
     @Override
     public String getApiURLPath() {
-        return "/cms/product/getWmsProductsInfo";
+        // return "/cms/product/getWmsProductsInfo";
+
+        // EWMS 实时查询库存
+        return "/rest/wms/stock/store/getStockDetail";
     }
 
     @Override
