@@ -840,7 +840,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         //聚美特殊处理
         if (PlatFormEnums.PlatForm.JM.getId().equals(shopProp.getPlatform_id())) {
             numIId = grpObj.getPlatformMallId();
-            if(!StringUtil.isEmpty(numIId)){
+            if(StringUtil.isEmpty(numIId)){
                 CmsBtProductModel cmsBtProductModel = productService.getProductByCode(userBean.getSelChannelId(), productCode);
                 if(cmsBtProductModel != null){
                     CmsBtProductModel_Platform_Cart cmsBtProductModel_platform_cart = cmsBtProductModel.getPlatform(cartId);
