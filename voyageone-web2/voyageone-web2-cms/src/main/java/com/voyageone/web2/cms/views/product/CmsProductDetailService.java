@@ -1321,7 +1321,7 @@ public class CmsProductDetailService extends BaseViewService {
         //调用wms openapi 取得code的详细库存
         GetStoreStockDetailRequest storeStockDetailRequest = new GetStoreStockDetailRequest();
         storeStockDetailRequest.setChannelId(channelId);
-        storeStockDetailRequest.setItemCode(code);
+        storeStockDetailRequest.setItemCode(code.toUpperCase());
         GetStoreStockDetailResponse stockDetail = voApiClient.execute(storeStockDetailRequest);
 
         // 取得SKU的平台尺寸信息
@@ -1335,8 +1335,8 @@ public class CmsProductDetailService extends BaseViewService {
         }
 
         // 更新商品库存中的SKU尺寸信息
-        if (CollectionUtils.isNotEmpty(stockDetail.getStocks())) {
-            stockDetail.getStocks().forEach(stock -> {
+        if (stockDetail != null && stockDetail.getData() != null && CollectionUtils.isNotEmpty(stockDetail.getData().getStocks())) {
+            stockDetail.getData().getStocks().forEach(stock -> {
                 CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku) CollectionUtils.find(skus, new Predicate() {
                     @Override
                     public boolean evaluate(Object object) {
