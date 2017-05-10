@@ -1435,7 +1435,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
                 // JmURL
                 FileUtils.cell(row, index++, unlock).setCellValue(jmUrlPrefix + cart.getpPlatformMallId() + ".html");
-                SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuCode);
                 FileUtils.cell(row, index++, unlock).setCellValue(skuMap.getIntAttribute("qty"));
                 total++;
             }
