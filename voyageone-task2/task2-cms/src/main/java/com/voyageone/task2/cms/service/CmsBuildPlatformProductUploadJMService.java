@@ -1524,11 +1524,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             productName = jmFields.getStringAttribute("productNameCn") + " " +  special_symbol.matcher(fields.getCode()).replaceAll("-");
         } else if (blnIsSmartSx){
             if(!StringUtils.isEmpty(commonTitle) && commonTitle.length() < 100) {
-                productName = commonTitle;
+                productName = commonTitle + " " +  special_symbol.matcher(fields.getCode()).replaceAll("-");
             } else {
-                productName = pBrandName + " " + suitPeople + " " + productType + " " + productCode;
+                productName = pBrandName + " " + suitPeople + " " + productType + " " + special_symbol.matcher(fields.getCode()).replaceAll("-");
                 if (productName.length() > 100) {
-                    productName = pBrandName + " " + productType + " " + productCode;
+                    productName = pBrandName + " " + productType + " " + special_symbol.matcher(fields.getCode()).replaceAll("-");
                 }
             }
         }
@@ -1623,11 +1623,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             bean.setName(jmFields.getStringAttribute("productNameCn") + " " +  special_symbol.matcher(productCode).replaceAll("-"));
         } else if (blnIsSmartSx){
             if(!StringUtils.isEmpty(commonTitle) && commonTitle.length() < 100) {
-                bean.setName(commonTitle);
+                bean.setName(commonTitle + " " +  special_symbol.matcher(productCode).replaceAll("-"));
             } else {
-                bean.setName(pBrandName + " " + suitPeople + " " + productType + " " + productCode);
+                bean.setName(pBrandName + " " + suitPeople + " " + productType + " " +  special_symbol.matcher(productCode).replaceAll("-"));
                 if (bean.getName().length() > 100) {
-                    bean.setName(pBrandName + " " + productType + " " + productCode);
+                    bean.setName(pBrandName + " " + productType + " " + special_symbol.matcher(productCode).replaceAll("-"));
                 }
             }
         }
