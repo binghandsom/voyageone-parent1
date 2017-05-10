@@ -12,7 +12,6 @@
                                 <th class="text-center table_compare_before" ng-attr-colspan="{{thConfig.inNOwnColumns}}">(国内)非自营</th>
                                 <th class="text-center table_compare_after" ng-attr-colspan="{{thConfig.gbOwnColumns}}">(国际)自营</th>
                                 <th class="text-center table_compare_after" ng-attr-colspan="{{thConfig.gbNOwnColumns}}">(国际)非自营</th>
-                                <th class="text-center" colspan="3"></th>
                             </tr>
                             <tr>
                             	<!-- 基础信息 -->
@@ -25,16 +24,17 @@
                                 <th ng-if="showDetail" style="border: 1px solid #ccc;width: 88px;" class="text-center">销售尺码</th>
                                 <th class="text-center" style="border: 1px solid #ccc;width: 50px;">库存</th>
                                 <!-- (国内)自营 -->
-                                <th ng-repeat="attr in tblData.header.inOwn" ng-if="showDetail || attr.name == 'total'" class="text-center table_compare_before" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}</th>
+                                <th ng-repeat="attr in tblData.header.inOwn" ng-if="showDetail || attr.name == 'total'"
+                                    class="text-center table_compare_before" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}（可用，占用）</th>
                                 <!-- (国内)非自营 -->
-                                <th ng-repeat="attr in tblData.header.inNOwn" ng-if="showDetail || attr.name == 'total'" class="text-center table_compare_before" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}</th>
+                                <th ng-repeat="attr in tblData.header.inNOwn" ng-if="showDetail || attr.name == 'total'"
+                                    class="text-center table_compare_before" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}（可用，占用）</th>
                                 <!-- (国际)自营 -->
-                                <th ng-repeat="attr in tblData.header.gbOwn" ng-if="showDetail || attr.name == 'total'" class="text-center table_compare_after" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}</th>
+                                <th ng-repeat="attr in tblData.header.gbOwn" ng-if="showDetail || attr.name == 'total'"
+                                    class="text-center table_compare_after" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}（可用，占用）</th>
                                 <!-- (国际)非自营 -->
-                                <th ng-repeat="attr in tblData.header.gbNOwn" ng-if="showDetail || attr.name == 'total'" class="text-center table_compare_after" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}</th>
-                                <th class="text-center border-col-gray" style="width: 65px;">CH</th>
-                                <th class="text-center border-col-gray" style="width: 72px;">On Hold</th>
-                                <th class="text-center border-col-gray" style="width: 87px;">New Order</th>
+                                <th ng-repeat="attr in tblData.header.gbNOwn" ng-if="showDetail || attr.name == 'total'"
+                                    class="text-center table_compare_after" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}（可用，占用）</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -53,9 +53,6 @@
                                 <td ng-repeat="attr in tblData.header.gbOwn" ng-if="showDetail || attr.name == 'total'" class="text-right v-middle">{{skuDetail.gbOwn[attr.name]}}</td>
                                 <!-- (国际)非自营 -->
                                 <td ng-repeat="attr in tblData.header.gbNOwn" ng-if="showDetail || attr.name == 'total'" class="text-right v-middle">{{skuDetail.gbNOwn[attr.name]}}</td>
-                                <td class="text-right v-middle">{{skuDetail.order.ch}}</td>
-                                <td class="text-right v-middle">{{skuDetail.order.onHold}}</td>
-                                <td class="text-right v-middle">{{skuDetail.order.newOrder}}</td>
                             </tr>
                             </tbody>
                         </table>
