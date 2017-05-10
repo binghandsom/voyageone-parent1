@@ -727,18 +727,20 @@ public class CmsProductDetailService extends BaseViewService {
             feedInfoModel = feedInfoService.getProductByCode(channelId, StringUtils.isEmpty(cmsBtProduct.getCommon().getFields().getOriginalCode()) ? cmsBtProduct.getCommon().getFields().getCode() : cmsBtProduct.getCommon().getFields().getOriginalCode());
         }
 
-        Map<String, Integer> skuinvs = null;
+        /*Map<String, Integer> skuinvs = null;
         WmsCodeStoreInvBean stockDetail = inventoryCenterLogicService.getCodeStockDetails(cmsBtProduct.getOrgChannelId(), cmsBtProduct.getCommon().getFields().getCode());
         if (stockDetail != null && !ListUtils.isNull(stockDetail.getStocks())) {
             skuinvs = stockDetail.getStocks().stream().map(WmsCodeStoreInvBean.StocksBean::getBase)
                     .collect(Collectors.toMap(sku -> channelId.equals("001") ? sku.getSku().toLowerCase() : sku.getSku(), WmsCodeStoreInvBean.StocksBean.BaseBean::getTotal));
-        }
+        }*/
 
         List<Map<String, Object>> skuList = new ArrayList<>();
         for (CmsBtProductModel_Sku skuModel : cmsBtProduct.getCommon().getSkus()) {
             Map<String, Object> skuInfo = new HashMap<>();
             skuInfo.put("skuCode", skuModel.getSkuCode());
-            skuInfo.put("qty", skuinvs == null || skuinvs.get(skuModel.getSkuCode()) == null ? 0 : skuinvs.get(skuModel.getSkuCode()));
+            // skuInfo.put("qty", skuinvs == null || skuinvs.get(skuModel.getSkuCode()) == null ? 0 : skuinvs.get(skuModel.getSkuCode()));
+            // 现在直接CMS mongodb里查询sku库存
+            skuInfo.put("qty", skuModel.getIntAttribute("qty"));
             skuInfo.put("size", skuModel.getSize());
             skuInfo.put("barcode", skuModel.getBarcode());
             // 取得FeedInfo中的原始图片
