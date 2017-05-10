@@ -110,7 +110,7 @@ public class CmsPlatformActiveLogService extends BaseService {
             //聚美特殊处理
             if (PlatFormEnums.PlatForm.JM.getId().equals(shopProp.getPlatform_id())) {
                 numIId = cmsBtProductGroupModel.getPlatformMallId();
-                if(!StringUtil.isEmpty(numIId)){
+                if(StringUtil.isEmpty(numIId)){
                     CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, cmsBtProductGroupModel.getMainProductCode());
                     if(cmsBtProductModel != null){
                         CmsBtProductModel_Platform_Cart cmsBtProductModel_platform_cart = cmsBtProductModel.getPlatform(cartId);
