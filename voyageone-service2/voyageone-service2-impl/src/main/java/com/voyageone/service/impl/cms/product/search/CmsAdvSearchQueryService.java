@@ -181,10 +181,10 @@ public class CmsAdvSearchQueryService extends BaseService {
             queryObject.addParameters(cartId, cartId);
 
             if("1".equals(searchValue.getpLockFlg())){
-                queryObject.addQuery("{'platforms.P#.pLockFlg':#}");
+                queryObject.addQuery("{'platforms.P#.lock':#}");
                 queryObject.addParameters(cartId, "1");
             }else if("0".equals(searchValue.getpLockFlg())){
-                queryObject.addQuery("{'platforms.P#.pLockFlg':{$in:[null,'','0']}}");
+                queryObject.addQuery("{'platforms.P#.lock':{$in:[null,'','0']}}");
                 queryObject.addParameters(cartId);
             }
 
