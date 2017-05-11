@@ -23,7 +23,7 @@ public class CmsPromotrionServiceTest  {
 
     @Test
     public void testOnStartup() throws Exception {
-        cmsPromotrionService.updatePromotion("001","23");
+        cmsPromotrionService.updatePromotion("928","31");
 
     }
 }
