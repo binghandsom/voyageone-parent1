@@ -178,7 +178,12 @@ public class CmsBtShelvesService extends BaseService {
                         htmlImageTemplate = htmlImageTemplate.replaceAll("@price", String.valueOf(productBean.getSalePrice().intValue()));
                     }
                     if (htmlImageTemplate.contains("@img")) {
-                        htmlImageTemplate = htmlImageTemplate.replaceAll("@img", productBean.getImage());
+
+                        if (shopBean.getPlatform_id().equalsIgnoreCase(PlatformType.JD.getPlatformId().toString())) {
+                            htmlImageTemplate = htmlImageTemplate.replaceAll("@img", "//img10.360buyimg.com/imgzone/"+productBean.getImage());
+                        }else{
+                            htmlImageTemplate = htmlImageTemplate.replaceAll("@img", productBean.getImage());
+                        }
                     }
                     if (htmlImageTemplate.contains("@name")) {
                         try {
