@@ -170,7 +170,12 @@ public class CmsBtShelvesService extends BaseService {
                     singleHtml = singleHtml.replace("@link", "https://item.jd.hk/" + jdskuid+".html"); // 根据商品在平台ID拼接商品详情页
                 }
                 if (!preview) {
-                    singleHtml = singleHtml.replace("@imglink", productBean.getPlatformImageUrl()); // 单品模板生成图片在平台的地址
+
+                    if (shopBean.getPlatform_id().equalsIgnoreCase(PlatformType.JD.getPlatformId().toString())) {
+                        singleHtml = singleHtml.replace("@imglink", "//img10.360buyimg.com/imgzone/"+ productBean.getPlatformImageUrl()); // 单品模板生成图片在平台的地址
+                    }else{
+                        singleHtml = singleHtml.replace("@imglink", productBean.getPlatformImageUrl()); // 单品模板生成图片在平台的地址
+                    }
                 } else {
                     // 单品模板的图片模板来生成图片html
                     String htmlImageTemplate = singleTemplate.getHtmlImageTemplate();
@@ -178,12 +183,7 @@ public class CmsBtShelvesService extends BaseService {
                         htmlImageTemplate = htmlImageTemplate.replaceAll("@price", String.valueOf(productBean.getSalePrice().intValue()));
                     }
                     if (htmlImageTemplate.contains("@img")) {
-
-                        if (shopBean.getPlatform_id().equalsIgnoreCase(PlatformType.JD.getPlatformId().toString())) {
-                            htmlImageTemplate = htmlImageTemplate.replaceAll("@img", "//img10.360buyimg.com/imgzone/"+productBean.getImage());
-                        }else{
-                            htmlImageTemplate = htmlImageTemplate.replaceAll("@img", productBean.getImage());
-                        }
+                        htmlImageTemplate = htmlImageTemplate.replaceAll("@img", productBean.getImage());
                     }
                     if (htmlImageTemplate.contains("@name")) {
                         try {
