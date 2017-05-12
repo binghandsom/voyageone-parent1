@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.mqjob;
 
 
 import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.rabbitmq.annotation.VOSubRabbitListener;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsFeedSkuPqMQMessageBody;
@@ -57,7 +58,7 @@ public class CmsFeedSkuPqMQJob extends TBaseMQCmsSubService<CmsFeedSkuPqMQMessag
 
     @Override
     public String[] getAllSubBeanName() {
-        List<String> orderChannelIdList = Shops.getShopList().stream().map(item -> item.getCart_id()).distinct().collect(Collectors.toList());
+        List<String> orderChannelIdList = Shops.getShopList().stream().map(ShopBean::getOrder_channel_id).distinct().collect(Collectors.toList());
         String[] strings = new String[orderChannelIdList.size()];
         orderChannelIdList.toArray(strings);
         return strings;
