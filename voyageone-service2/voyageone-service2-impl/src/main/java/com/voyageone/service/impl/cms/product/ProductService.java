@@ -25,7 +25,6 @@ import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.Tag
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsBtCustomPropService;
@@ -59,9 +58,6 @@ import static java.util.stream.Collectors.toMap;
  */
 @Service
 public class ProductService extends BaseService {
-
-    @Autowired
-    protected CmsBtProductLogDao cmsBtProductLogDao;
 
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
@@ -349,7 +345,6 @@ public class ProductService extends BaseService {
         //save
         cmsBtProductDao.insert(product);
 
-        insertProductHistory(channelId, product.getProdId());
         // 记录价格变更履历
         addPriceUpdateHistory(product, modifier, "New");
     }
@@ -934,7 +929,6 @@ public class ProductService extends BaseService {
         // 更新workLoad表
         sxProductService.insertSxWorkLoad(getProductById(channelId, prodId), modifier);
 
-        insertProductHistory(channelId, prodId);
 
         Map<String, Object> result = new HashMap<>();
         result.put("modified", common.getModified());
@@ -990,8 +984,6 @@ public class ProductService extends BaseService {
         bulkList.add(model);
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
 
-        /**最有插入产品记录表*/
-        insertProductHistory(channelId, prodId);
     }
 
     /**
@@ -1084,7 +1076,6 @@ public class ProductService extends BaseService {
         model.setQueryMap(queryMap);
         bulkList.add(model);
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
-        insertProductHistory(channelId, prodId);
     }
 
     public void updateProductTranslateStatus(String channelId, Long prodId, String translateStatus, String modifier) {
@@ -1106,7 +1097,6 @@ public class ProductService extends BaseService {
         model.setQueryMap(queryMap);
         bulkList.add(model);
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
-        insertProductHistory(channelId, prodId);
     }
 
     /**
@@ -1254,7 +1244,6 @@ public class ProductService extends BaseService {
         bulkList.add(model);
         BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
 
-        insertProductHistory(channelId, cmsProduct.getProdId());
         // 记录价格变更履历
         addPriceUpdateHistory(cmsProduct, modifier, comment);
 
@@ -1622,24 +1611,6 @@ public class ProductService extends BaseService {
         return hs1.equalsIgnoreCase(hs2);
     }
 
-    /**
-     * insertProductHistory
-     *
-     * @param channelId
-     * @param productId
-     */
-    public void insertProductHistory(String channelId, Long productId) {
-        if (productId != null) {
-            CmsBtProductModel productModel = getProductById(channelId, productId);
-            if (productModel != null) {
-                CmsBtProductLogModel logModel = new CmsBtProductLogModel();
-                logModel = JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel), logModel.getClass());
-                logModel.set_id(null);
-                logModel.setChannelId(channelId);
-                cmsBtProductLogDao.insert(logModel);
-            }
-        }
-    }
 
     public BulkJongoUpdateList updateCmsBtProductInfo(String channelId) {
         BulkJongoUpdateList bulkList = new BulkJongoUpdateList(10, cmsBtProductDao, channelId);
