@@ -115,10 +115,10 @@
                 and a.quantity ${compareType} #{stockQty}
             </if>
             <if test="productNameCn!=null">
-                and   (b.product_name_cn  like CONCAT(#{productNameCn},'%')
-                       or  b.product_long_name like CONCAT(#{productNameCn},'%')
-                       or  b.product_medium_name like CONCAT(#{productNameCn},'%')
-                       or  b.product_short_name like CONCAT(#{productNameCn},'%')
+                and   (b.product_name_cn  like CONCAT('%',#{productNameCn},'%')
+                       or  b.product_long_name like CONCAT('%',#{productNameCn},'%')
+                       or  b.product_medium_name like CONCAT('%',#{productNameCn},'%')
+                       or  b.product_short_name like CONCAT('%',#{productNameCn},'%')
                       )
             </if>
             <if test="listBrandName!=null and listBrandName.size()!=0">
