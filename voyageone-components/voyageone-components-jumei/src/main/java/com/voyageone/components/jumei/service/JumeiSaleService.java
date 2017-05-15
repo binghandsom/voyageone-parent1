@@ -1,5 +1,6 @@
 package com.voyageone.components.jumei.service;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.jumei.JmBase;
@@ -58,8 +59,8 @@ public class JumeiSaleService extends JmBase {
             return response;
         } catch (Exception e) {
             logger.error("MallId[" + mallId + "]:调用API时发生异常! ", e);
+            throw new BusinessException(e.getMessage());
         }
-        return null;
     }
 
     /**

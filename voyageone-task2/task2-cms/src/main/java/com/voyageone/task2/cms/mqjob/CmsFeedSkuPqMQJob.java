@@ -1,15 +1,19 @@
 package com.voyageone.task2.cms.mqjob;
 
 
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.rabbitmq.annotation.VOSubRabbitListener;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsFeedSkuPqMQMessageBody;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -29,6 +33,9 @@ public class CmsFeedSkuPqMQJob extends TBaseMQCmsSubService<CmsFeedSkuPqMQMessag
     @Autowired
     FeedToCmsService feedToCmsService;
 
+    @Autowired
+    MongoTemplate mongoTemplate;
+
     @Override
     public void onStartup(CmsFeedSkuPqMQMessageBody messageBody) throws Exception {
 
@@ -47,5 +54,13 @@ public class CmsFeedSkuPqMQJob extends TBaseMQCmsSubService<CmsFeedSkuPqMQMessag
             cmsSuccessIncludeFailLog(messageBody, comment, failed);
         }
 
+    }
+
+    @Override
+    public String[] getAllSubBeanName() {
+        List<String> orderChannelIdList = Shops.getShopList().stream().map(ShopBean::getOrder_channel_id).distinct().collect(Collectors.toList());
+        String[] strings = new String[orderChannelIdList.size()];
+        orderChannelIdList.toArray(strings);
+        return strings;
     }
 }

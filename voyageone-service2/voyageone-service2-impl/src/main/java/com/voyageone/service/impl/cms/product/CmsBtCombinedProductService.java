@@ -951,7 +951,7 @@ public class CmsBtCombinedProductService extends BaseService {
             } else {
                 if (!response.isSuccess()) {
                     if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
-                        resultMap = "调用聚美商品上架API失败";
+                        resultMap = "调用聚美商品上架API失败" + response.getError_code() + "-" + response.getErrorMsg();
                     } else {
                         resultMap = "调用聚美商品下架API失败:" + response.getError_code() + "-" + response.getErrorMsg();
                     }

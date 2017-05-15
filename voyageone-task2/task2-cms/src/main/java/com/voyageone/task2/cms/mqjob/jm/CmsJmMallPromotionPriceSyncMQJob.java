@@ -84,7 +84,7 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
                 List<CmsBtJmSkuModel> skuModelList = getCmsBtJmSkuModels(channelId, productCode);
                 for (CmsBtJmSkuModel skuModel : skuModelList) {
 
-                    if (productCode.equalsIgnoreCase(skuModel.getProductCode())
+                    if (productCode.equals(skuModel.getProductCode())
                             && !StringUtils.isEmpty(skuModel.getJmSkuNo()) && codePrice.containsKey(productCode)) {
                         PriceBean priceBean = codePrice.get(productCode);
                         HtMallSkuPriceUpdateInfo updateData = new HtMallSkuPriceUpdateInfo();

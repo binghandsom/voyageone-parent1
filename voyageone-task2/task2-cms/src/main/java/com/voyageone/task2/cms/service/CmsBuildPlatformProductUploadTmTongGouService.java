@@ -909,7 +909,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         String valTitle = getTitleForTongGou(mainProduct, sxData, shopProp);
         // 店铺级标题禁用词 20161216 tom END
         // 官网同购是会自动把超长的字符截掉的， 为了提示运营， 报个错吧 20170509 tom START
-        if (!StringUtils.isEmpty(valTitle) && !ChannelConfigEnums.Channel.USJGJ.equals(shopProp.getOrder_channel_id()) ) {
+        if (!StringUtils.isEmpty(valTitle)
+                && ChannelConfigEnums.Channel.Coty.equals(shopProp.getOrder_channel_id()) ) {
             int titleLength = 0;
 
             try {
