@@ -2703,6 +2703,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                 return newModel.getImgName();
             } else {
+                if(!StringUtil.isEmpty(findImage.getOriginalUrl())){
+                    findImage.setOriginalUrl(findImage.getOriginalUrl().trim());
+                }
                 // 如果原始图片的地址发生变更则做更新操作
                 if (!originalUrl.equals(findImage.getOriginalUrl())) {
                     findImage.setOriginalUrl(originalUrl);
