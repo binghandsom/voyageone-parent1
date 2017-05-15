@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.product;
 
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
@@ -23,6 +24,7 @@ import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.*;
@@ -1696,5 +1698,33 @@ public class CmsProductDetailService extends BaseViewService {
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
 
         return modified;
+    }
+
+    /**
+     * 修改产品originalTitleCn
+     *
+     * @param channelId       渠道ID
+     * @param prodId          产品prodId
+     * @param originalTitleCn 更新的originalTitleCn
+     * @param username        操作人
+     */
+    public void updateOriginalTitleCn(String channelId, Long prodId, String originalTitleCn, String username) {
+
+        CmsBtProductModel productModel = productService.getProductById(channelId, prodId);
+        if (productModel == null) {
+            throw new BusinessException(String.format("产品(%d)不存在", prodId));
+        }
+
+        JongoUpdate jongoUpdate = new JongoUpdate();
+        jongoUpdate.setQuery("{\"prodId\": #}");
+        jongoUpdate.setQueryParameters(productModel.getProdId());
+
+        jongoUpdate.setUpdate("{$set: {\"common.fields.originalTitleCn\": #,\"modifier\":#,\"modified\":#}}");
+        jongoUpdate.setUpdateParameters(originalTitleCn, username, DateTimeUtil.getNowTimeStamp());
+
+        WriteResult writeResult = cmsBtProductDao.updateFirst(jongoUpdate, channelId);
+
+        $info(String.format("(%s)更新产品(prodId=%d)originalTitleCn信息，更新结果:%s", username, prodId, JacksonUtil.bean2Json(writeResult)));
+
     }
 }

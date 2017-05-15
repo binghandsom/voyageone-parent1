@@ -308,6 +308,13 @@ define([
 
         function contructQty(productList, codeMap) {
             _.map(productList, function (element) {
+                // 复制记录产品的原始originalTitleCn，如果为空，则设置productNameEn显示为originalTitleCn
+                var oldOriginalTitleCn = angular.copy(element.common.fields.originalTitleCn);
+                if (!oldOriginalTitleCn) {
+                    oldOriginalTitleCn = angular.copy(element.common.fields.productNameEn);
+                }
+                _.extend(element, {"oldOriginalTitleCn":oldOriginalTitleCn});
+
                 element.saleQty = (function () {
                     var qtyArr = codeMap[element.common.fields.code],
                         _cartId = $scope.vm.searchInfo.cartId,
@@ -1669,7 +1676,29 @@ define([
 
             });
 
+        };
+
+        $scope.updateOriginalTitle = function (productInfo) {
+            var prodId = productInfo.prodId;
+            var originalTitleCn = productInfo.common.fields.originalTitleCn;
+            if (prodId && originalTitleCn) {
+                var params = {prodId:prodId, originalTitleCn:originalTitleCn};
+                productDetailService.updateOriginalTitleCn(params).then(function (resp) {
+                    _.extend(productInfo, {"oldOriginalTitleCn":originalTitleCn, originalTitleCnEditFlag:false});
+                    notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                });
+            }
+        };
+
+        $scope.editOriginalTitleCn = function(productInfo) {
+            _.extend(productInfo, {originalTitleCnEditFlag:true})
+
+        };
+
+        $scope.noEditOriginalTitleCn = function (productInfo) {
+            _.extend(productInfo, {originalTitleCnEditFlag:false})
         }
+
     });
 
 });
