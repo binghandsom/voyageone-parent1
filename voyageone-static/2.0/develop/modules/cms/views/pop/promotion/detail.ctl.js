@@ -12,7 +12,7 @@ define([
         $scope.cartList = cartList;
         $scope.datePicker = [];
         $scope.isEdit = false;
-        $scope.editModel = {promotionModel: {}, tagList: []};
+        $scope.editModel = {promotionModel: {"promotionType":0}, tagList: []};
 
         $scope.initialize = function () {
             if (items) {
@@ -33,10 +33,8 @@ define([
             if (promotionModel.activityEnd) promotionModel.activityEnd = new Date(promotionModel.activityEnd);
             if (promotionModel.preSaleStart)  promotionModel.preSaleStart = new Date(promotionModel.preSaleStart);
             if (promotionModel.preSaleEnd) promotionModel.preSaleEnd = new Date(promotionModel.preSaleEnd);
+            if (promotionModel.triggerTime) promotionModel.triggerTime = new Date(promotionModel.triggerTime);
             $scope.isEdit = !promotionModel.promotionStatus; //1:open  0:close
-            if (promotionModel.tejiabaoId != "0") {
-                $scope.tejiabao = true;
-            }
             $scope.editModel = data;
         }
 
@@ -61,9 +59,6 @@ define([
 
         $scope.ok = function () {
 
-            if (!$scope.tejiabao)
-                $scope.editModel.promotionModel.tejiabaoId = "0";
-
             if (!$scope.promotionForm.$valid || !$scope.editModel.tagList)
                 return;
 
@@ -86,6 +81,7 @@ define([
             _editModel.promotionModel.activityEnd = dateToString(_editModel.promotionModel.activityEnd);
             _editModel.promotionModel.preSaleStart = dateToString(_editModel.promotionModel.preSaleStart);
             _editModel.promotionModel.preSaleEnd = dateToString(_editModel.promotionModel.preSaleEnd);
+            _editModel.promotionModel.triggerTime = dateToString(_editModel.promotionModel.triggerTime,"yyyy-MM-dd HH:mm:ss");
 
             if (_editModel.promotionModel.activityStart > _editModel.promotionModel.activityEnd) {
                 alert("活动时间检查：请输入结束时间>开始时间。");
@@ -110,6 +106,20 @@ define([
                 alert("预售开始时间不能晚于活动开始时间");
                 return;
             }
+            if(_editModel.promotionModel.promotionType == 0){
+                _editModel.promotionModel.triggerType = 0;
+            }
+
+            if(2 !=_editModel.promotionModel.triggerType){
+                _editModel.promotionModel.triggerTime = 0;
+            }
+
+            if(_editModel.promotionModel.triggerTime){
+                _editModel.promotionModel.mqId = null;
+            }
+
+            if (_editModel.promotionModel.promotionType != 2)
+                _editModel.promotionModel.tejiabaoId = "0";
 
             promotionService.saveEditModel(_editModel).then(function () {
                 $scope.$close();
@@ -117,9 +127,13 @@ define([
 
         };
 
-        function dateToString(date) {
+        function dateToString(date,format) {
             if (date && date instanceof Date) {
-                return $filter("date")(date, "yyyy-MM-dd");
+                if(format){
+                    return $filter("date")(date, format);
+                }else{
+                    return $filter("date")(date, "yyyy-MM-dd");
+                }
             } else {
                 if (date)    return date;
                 return "";

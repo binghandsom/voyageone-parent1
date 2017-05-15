@@ -25,6 +25,9 @@
         <result column="cartName" property="cartName" jdbcType="VARCHAR"/>
         <result column="promotion_id" property="promotionId" jdbcType="INTEGER"/>
         <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="trigger_type" property="triggerType" jdbcType="INTEGER"/>
+        <result column="trigger_time" property="triggerTime" jdbcType="TIMESTAMP"/>
+        <result column="mq_id" property="mqId" jdbcType="VARCHAR"/>
         <collection property="tagList" javaType="ArrayList" ofType="com.voyageone.service.model.cms.CmsBtTagModel">
             <id column="tag_id" property="id" jdbcType="INTEGER"/>
             <result column="tag_name" property="tagName" jdbcType="VARCHAR"/>
@@ -60,6 +63,9 @@
         a.modified,
         a.modifier,
         a.promotion_id,
+        a.trigger_type,
+        a.trigger_time,
+        a.mq_id,
     </sql>
 
     <select id="select_cms_bt_promotion_by_channelId_cartId" resultMap="PromotionMap" parameterType="Map">

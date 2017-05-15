@@ -144,7 +144,7 @@ public class MqSenderService extends ComponentBase {
         queueMap.put("x-dead-letter-exchange", exchange);
         queueMap.put("x-dead-letter-routing-key", redirectRoutingKey);
         queueMap.put("x-message-ttl", TimeUnit.SECONDS.toMillis(delaySecond));
-        String tempQueue = redirectRoutingKey + "-temp";
+        String tempQueue = redirectRoutingKey + "-temp-" + delaySecond;
         amqpAdmin.declareQueue(new Queue(tempQueue, true, false, true, queueMap));
         amqpTemplate.send(tempQueue, message);
     }

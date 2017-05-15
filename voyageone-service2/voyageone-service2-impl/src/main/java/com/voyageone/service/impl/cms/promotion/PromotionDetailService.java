@@ -31,6 +31,8 @@ import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsPromotionMQMessageBody;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -91,6 +93,8 @@ public class PromotionDetailService extends BaseService {
     private CmsBtPromotionGroupsDaoExtCamel daoExtCamelCmsBtPromotionGroups;
     @Autowired
     private CmsBtPromotionSkusDaoExtCamel daoExtCamelCmsBtPromotionSkus;
+    @Autowired
+    private PromotionCodeService promotionCodeService;
 
     @VOTransactional
     public void addPromotionDetail(PromotionDetailAddBean bean) {
@@ -687,16 +691,12 @@ public class PromotionDetailService extends BaseService {
             }
 
             cmsPromotionSkuDao.deletePromotionSkuByProductId(item.getPromotionId(), item.getProductId());
-
-//            List<Long> poIds = new ArrayList<>();
-//            poIds.add(item.getProductId());
-//            if (!StringUtil.isEmpty(item.getTagPath())) {
-//                productTagService.delete(channelId, item.getTagPath(), poIds, "tags", operator);
-//            }
         }
 
         //批量删除tag
         promotionCodesTagService.deleteListByPromotionId_Codes(channelId,promotionModel.getPromotionId(),codeList,promotionModel.getRefTagId());
+
+        promotionService.sendPromotionMq(promotionModel, false, operator);
     }
 
     @VOTransactional
@@ -758,5 +758,52 @@ public class PromotionDetailService extends BaseService {
         });
         tagTreeNode.setOldChecked(tagTreeNode.getChecked());
         return tagTreeNode;
+    }
+
+    /**
+     * 特价宝商品初期化
+     *
+     * @param promotionId 活动ID
+     * @param operator    操作者
+     */
+    public void teJiaBaoInit(Integer promotionId, String channelId, String operator) {
+        List<CmsBtTasksBean> tasks = taskService.getTasks(promotionId, null, channelId, PromotionTypeEnums.Type.TEJIABAO.getTypeId());
+        CmsBtPromotionModel cmsBtPromotionModel = promotionService.getByPromotionId(promotionId);
+        List<CmsBtTasksBean> addTaskList = new ArrayList<>();
+        if (tasks.size() == 0) {
+            CmsBtTasksBean tasksBean = new CmsBtTasksBean();
+            tasksBean.setModifier(operator);
+            tasksBean.setCreater(operator);
+            tasksBean.setPromotionId(promotionId);
+            tasksBean.setTaskType(PromotionTypeEnums.Type.TEJIABAO.getTypeId());
+            tasksBean.setTaskName(cmsBtPromotionModel.getPromotionName());
+            tasksBean.setActivityStart(cmsBtPromotionModel.getActivityStart());
+            tasksBean.setActivityEnd(cmsBtPromotionModel.getActivityEnd());
+            tasksBean.setChannelId(channelId);
+            addTaskList.add(tasksBean);
+        }
+
+        Map<String, Object> param = new HashMap<>();
+        param.put("promotionId", promotionId);
+        List<CmsBtPromotionCodesBean> codeList = promotionCodeService.getPromotionCodeList(param);
+
+        List<CmsBtTaskTejiabaoModel> addPromotionTaskList = new ArrayList<>();
+        codeList.forEach(code -> {
+//            CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionId, PromotionTypeEnums.Type.TEJIABAO.getTypeId(), code.getProductCode(), code.getNumIid(), operator);
+            CmsBtTaskTejiabaoModel cmsBtPromotionTask = new CmsBtTaskTejiabaoModel();
+            cmsBtPromotionTask.setPromotionId(promotionId);
+            cmsBtPromotionTask.setTaskType(PromotionTypeEnums.Type.TEJIABAO.getTypeId());
+            cmsBtPromotionTask.setKey(code.getProductCode());
+            cmsBtPromotionTask.setNumIid(code.getNumIid());
+            cmsBtPromotionTask.setCreater(operator);
+            cmsBtPromotionTask.setModifier(operator);
+            // 实时和定时的场合 synflg设成等待
+            if(1 == cmsBtPromotionModel.getTriggerType() || 2 == cmsBtPromotionModel.getTriggerType()){
+                cmsBtPromotionTask.setSynFlg(1);
+            }
+            addPromotionTaskList.add(cmsBtPromotionTask);
+        });
+
+        addTeJiaBaoInit(addTaskList, addPromotionTaskList);
     }
 }

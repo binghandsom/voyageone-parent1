@@ -10,30 +10,132 @@
 						<div class="col-sm-4">
 							<form class="form-horizontal">
 								<div class="form-group">
-									<label class="col-sm-4 control-label">{{'TXT_TASK_NAME' | translate}}</label>
-									<div class="col-sm-7">
-										<input type="text" class="form-control" ng-model="vm.promotion.promotionName" disabled>
+									<label class="col-sm-4 control-label" translate="TXT_PROMOTION_NAME"></label>
+									<div class="col-sm-8">
+										<input type="text" class="form-control" ng-model="vm.promotion.promotionName">
 									</div>
 								</div>
 								<div class="form-group">
-									<label  class="col-sm-4 control-label">{{'TXT_TASK_DATE' | translate}}</label>
-									<div class="col-sm-7 form-inline">
-										<div class="input-group col-sm-5"><input type="text" class="form-control inherited" ng-model="vm.promotion.activityStart" disabled></div>
-										<div class="input-group col-sm-6"><input type="text" class="form-control inherited" ng-model="vm.promotion.activityEnd" disabled></div>
+									<label class="col-sm-4 control-label" translate="TXT_PLATFORM_TYPE"></label>
+									<div class="col-sm-8">
+										<label ng-repeat="cart in vm.platformTypeList" class="checkbox-inline c-checkbox">
+											<input type="radio" name="cartid" ng-model="vm.promotion.cartId"  ng-required="true" value={{cart.value}}>
+											<span class="fa fa-check"></span> {{cart.name}}
+										</label>
 									</div>
-								</div><!-- .form-group -->
-							</form><!-- .form -->
-						</div><!--.col -->
+								</div>
+								<!-- .form-group -->
+								<div class="form-group"  ng-if="vm.promotion.cartId == 20 || vm.promotion.cartId == 23 || vm.promotion.cartId == 30 || vm.promotion.cartId == 31">
+									<label class="col-sm-3 control-label " >类型</label>
+									<div class="col-sm-7 m-t-xs">
+										<label class="c-radio"  >
+											<input type="radio"  name="promotionType" class="form-control" ng-model="vm.promotion.promotionType" value=0 required>
+											<span class="fa fa-check"></span><b>&nbsp;普通</b>
+										</label>
+										<label class="c-radio" >
+											<input type="radio"  name="promotionType" class="form-control" ng-model="vm.promotion.promotionType" value=1 required>
+											<span class="fa fa-check"></span><b>&nbsp;直降</b>
+										</label>
+										<label class="c-radio" >
+											<input type="radio"  name="promotionType" class="form-control" ng-model="vm.promotion.promotionType" value=2 required>
+											<span class="fa fa-check"></span><b>&nbsp;特价宝</b>
+										</label>
+										<label  ng-if="vm.promotion.promotionType == 2">
+											<input  disabled class="form-control" ng-model="vm.promotion.tejiabaoId" placeholder="{{'TXT_TE_JIA_BAO_ID' | translate}}">
+										</label>
+									</div>
+								</div>
+								<div class="form-group" ng-if="(vm.promotion.cartId == 20 || vm.promotion.cartId == 23 || vm.promotion.cartId == 30 || vm.promotion.cartId == 31) && vm.promotion.promotionType != 0">
+									<label class="col-sm-3 control-label" >触发机制</label>
+									<div class="col-sm-7 m-t-xs">
+										<label class="c-radio"  >
+											<input type="radio" name="triggerType" class="form-control" ng-model="vm.promotion.triggerType" value=0 required>
+											<span class="fa fa-check"></span><b>&nbsp;手动</b>
+										</label>
+										<label class="c-radio" >
+											<input type="radio" name="triggerType" class="form-control" ng-model="vm.promotion.triggerType" value=1 required>
+											<span class="fa fa-check"></span><b>&nbsp;实时</b>
+										</label>
+										<label class="c-radio" >
+											<input type="radio" name="triggerType" class="form-control" ng-model="vm.promotion.triggerType" value=2 required>
+											<span class="fa fa-check"></span><b>&nbsp;定时</b>
+										</label>
+										<div class="col-sm-5 input-group" ng-if="vm.promotion.triggerType == 2">
+											{{vm.promotion.triggerTime | gmtDate:'yyyy-MM-dd HH:mm:ss'}}
+										</div>
+									</div>
+								</div>
+							</form>
+							<!-- .form -->
+						</div>
+						<!--.col -->
 						<div class="col-sm-4">
 							<form class="form-horizontal">
 								<div class="form-group">
-									<label class="col-sm-3 control-label">{{'TXT_PROMOTION_STATUS' | translate}}</label>
-									<div class="col-sm-8">
-										<input ng-show="vm.promotion.promotionStatus==false" value="Open" type="text" class="form-control" placeholder="promotion_approved" disabled>
-										<input ng-show="vm.promotion.promotionStatus==true" value="Close" type="text" class="form-control" placeholder="promotion_approved" disabled>
+									<label class="col-sm-4 control-label" translate="TXT_PREHEATING_TIME"></label>
+									<div class="col-sm-8 form-inline">
+										<div class="col-sm-5 input-group" >
+											<input type="text" ng-model="vm.promotion.prePeriodStart" class="form-control" uib-datepicker-popup
+												   is-open="datePicker1" date-model-format="yyyy-MM-dd" close-text="Close"
+												   max-date="vm.promotion.prePeriodEnd"/>
+											<span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+										</div>&nbsp;~&nbsp;
+										<div class="col-sm-5 input-group" >
+											<input type="text" ng-model="vm.promotion.prePeriodEnd" class="form-control" uib-datepicker-popup
+												   is-open="datePicker2" date-model-format="yyyy-MM-dd" close-text="Close"
+												   min-date="vm.promotion.prePeriodStart"/>
+											<span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+										</div>
 									</div>
 								</div>
-							</form><!-- .form -->
+								<div class="form-group">
+									<label class="col-sm-4 control-label" translate="TXT_PRE_SALE_TIME"></label>
+									<div class="col-sm-8 form-inline">
+										<div class="col-sm-5 input-group" >
+											<input type="text" ng-model="vm.promotion.preSaleStart" class="form-control" uib-datepicker-popup
+												   is-open="datePicker3" date-model-format="yyyy-MM-dd" close-text="Close"
+												   max-date="vm.promotion.preSaleEnd"/>
+											<span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+										</div>&nbsp;~&nbsp;
+										<div class="col-sm-5 input-group" >
+											<input type="text" ng-model="vm.promotion.preSaleEnd" class="form-control" uib-datepicker-popup
+												   is-open="datePicker4" date-model-format="yyyy-MM-dd" close-text="Close"
+												   min-date="vm.promotion.preSaleStart"/>
+											<span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label" translate="TXT_PROMOTION_TIME"></label>
+									<div class="col-sm-8 form-inline">
+										<div class="col-sm-5 input-group" >
+											<input type="text" ng-model="vm.promotion.activityStart" class="form-control" uib-datepicker-popup
+												   is-open="datePicker5" date-model-format="yyyy-MM-dd" close-text="Close"
+												   max-date="vm.promotion.activityEnd"/>
+											<span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="datePicker5 = !datePicker5"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+										</div>&nbsp;~&nbsp;
+										<div class="col-sm-5 input-group" >
+											<input type="text" ng-model="vm.promotion.activityEnd" class="form-control" uib-datepicker-popup
+												   is-open="datePicker6" date-model-format="yyyy-MM-dd" close-text="Close"
+												   min-date="vm.promotion.activityStart"/>
+											<span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="datePicker6 = !datePicker6"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+										</div>
+									</div>
+								</div>
+							</form>
+							<!-- .form -->
 						</div>
 						<div class="col-sm-4">
 							<form class="form-horizontal">
@@ -53,12 +155,6 @@
 								<button class="btn btn-danger"  ng-click="updateAllFailStatus()"><i class="fa fa-warning"></i> {{'TXT_FAIL_STARTUP_ALL' | translate}}</button>
 							</div><!-- /right-btn -->
 						</div>
-						<div class="col-sm-12" ng-if="vm.isAllPromotion != 1">
-							<div class="form-inline m-b-xs text-center" ng-controller = "popupCtrl">
-								<button class="btn btn-danger"   ng-click="delAllPromotionByCustomPromotionId()"><i class="fa fa-warning"></i> 删除全店特价宝</button>
-								<button class="btn btn-danger"   ng-click="refreshAllPromotionByCustomPromotionId()"><i class="fa fa-warning"></i> 重新刷全店特价宝</button>
-							</div><!-- /right-btn -->
-						</div>
 						<div class="col-sm-12">
 							<div class="form-inline m-b-xs text-right" >
 								<button class="btn btn-vo" ng-click="searchStatus(1)"><i class="fa fa-warning"></i> Pending{{vm.statusCnt.pendingCnt}}</button>
@@ -67,6 +163,17 @@
 							</div><!-- /right-btn -->
 						</div>
 						</div>
+					<div class="col-sm-12">
+						<div class="text-center" ng-if="!vm.promotion.promotionStatus">
+							<div class="col-sm-12">
+								<div class="form-inline" >
+									<button class="btn btn-default" ng-click="cannelPromotionInfo()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' | translate}}</button>
+									<button class="btn btn-vo" ng-click="savePromotionInfo()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
+								</div>
+								<!-- .form-inline -->
+							</div>
+						</div>
+					</div>
 					</div>
 				</div>
 			</div>
