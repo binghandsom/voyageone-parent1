@@ -39,6 +39,7 @@ public class CmsBtJmPromotionSkuService {
         entity.setCreater(modifer);
         entity.setModifier(modifer);
         entity.setDiscount(entity.getDealPrice().divide(entity.getMarketPrice(), 2, BigDecimal.ROUND_HALF_UP));
+        entity.setDiscount2(entity.getDealPrice().divide(entity.getSalePrice(), 2, BigDecimal.ROUND_HALF_UP));
         if (entity.getId() > 0)
             this.update(entity);
         else

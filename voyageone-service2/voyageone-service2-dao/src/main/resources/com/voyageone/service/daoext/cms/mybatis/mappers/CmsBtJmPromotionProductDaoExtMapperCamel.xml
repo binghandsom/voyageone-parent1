@@ -91,7 +91,7 @@
         SELECT a.deal_end_time_status,ifnull(b.image1,a.image1) as image1,ifnull(b.product_Long_Name,a.product_name_en)  AS productLongName,b.color_En AS colorEn,a.deal_Price,b.attribute
         ,a.max_retail_price,a.max_msrp_usd,a.max_msrp_rmb,a.max_sale_price,a.min_retail_price,a.min_msrp_usd,a.min_msrp_rmb,a.min_sale_price,a.market_price,a.jm_hash_id AS jmHashId,a.sku_count AS skuCount
         ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status,a.id,a.promotion_tag,a.product_code,b.comment,
-        a.max_deal_price,a.min_deal_price,a.max_market_price,a.min_market_price,a.discount,b.jumei_mall_id,a.quantity,a.remark
+        a.max_deal_price,a.min_deal_price,a.max_market_price,a.min_market_price,a.discount,b.jumei_mall_id,a.quantity,a.remark,a.discount2
         FROM `cms_bt_jm_promotion_product` AS a
         left JOIN  `cms_bt_jm_product`       AS b ON a.`product_code`=b.`product_code` AND a.`channel_id`=b.`channel_id`
         <where>
@@ -168,6 +168,12 @@
             </if>
             <if test="endDiscount!=null">
                 and  a.discount&lt;=(#{endDiscount}/10)
+            </if>
+            <if test="beginDiscount2!=null">
+                and a.discount2>=(#{beginDiscount2}/10)
+            </if>
+            <if test="endDiscount2!=null">
+                and  a.discount2&lt;=(#{endDiscount2}/10)
             </if>
             <if test="priceType=='msrpRmb'">
                 <if test="beginPrice!=null">
@@ -288,6 +294,12 @@
             </if>
             <if test="endDiscount!=null">
                 and  a.discount&lt;=(#{endDiscount}/10)
+            </if>
+            <if test="beginDiscount2!=null">
+                and a.discount2>=(#{beginDiscount2}/10)
+            </if>
+            <if test="endDiscount2!=null">
+                and  a.discount2&lt;=(#{endDiscount2}/10)
             </if>
             <if test="priceType=='msrpRmb'">
                 <if test="beginPrice!=null">
