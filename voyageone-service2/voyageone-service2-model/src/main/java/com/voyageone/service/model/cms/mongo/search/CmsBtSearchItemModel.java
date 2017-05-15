@@ -22,6 +22,11 @@ public class CmsBtSearchItemModel extends BaseMongoModel {
      * 检索/下载条件项
      */
     private List<CmsBtSearchItemModel_SearchItem> searchItems;
+
+    /**
+     * 用,拼接的检索/下载条件项
+     */
+    private String searchItemVal;
     /**
      * 排序条件项
      */
@@ -45,6 +50,14 @@ public class CmsBtSearchItemModel extends BaseMongoModel {
 
     public void setSearchItems(List<CmsBtSearchItemModel_SearchItem> searchItems) {
         this.searchItems = searchItems;
+    }
+
+    public String getSearchItemVal() {
+        return searchItemVal;
+    }
+
+    public void setSearchItemVal(String searchItemVal) {
+        this.searchItemVal = searchItemVal;
     }
 
     public List<String> getSortItems() {

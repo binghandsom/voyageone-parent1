@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.product.search;
 
 import com.mongodb.DBObject;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtSearchItemDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CommonPropService;
@@ -12,6 +13,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -37,8 +39,9 @@ public class CmsBtSearchItemService extends BaseService {
 
     /**
      * 高级检索查询/下载时解析条件，并把条件不空的检索项名称记录下来
-     * @param userId 用户ID
-     * @param channelId 渠道
+     *
+     * @param userId     用户ID
+     * @param channelId  渠道
      * @param jongoQuery 最终生成的Mongo查询条件
      */
     public void analysisSearchItems(int userId, String userName, String channelId, CmsSearchInfoBean2 searchInfo, JongoQuery jongoQuery) {
@@ -57,6 +60,16 @@ public class CmsBtSearchItemService extends BaseService {
                 List<CmsBtSearchItemModel_SearchItem> searchItems = null;
                 if (jongoQuery != null && CollectionUtils.isNotEmpty(searchItems = this.getMongoModelField(jongoQuery.getQueryMap()))) {
                     searchItemModel.setSearchItems(searchItems);
+
+                    String searchItemVal = "";
+                    int size = searchItems.size();
+                    for (int i = 0; i < size; i++) {
+                        searchItemVal += searchItems.get(i);
+                        if (i != size - 1) {
+                            searchItemVal += ",";
+                        }
+                    }
+                    searchItemModel.setSearchItemVal(searchItemVal);
                 }
 
                 // 排序条件
@@ -74,7 +87,7 @@ public class CmsBtSearchItemService extends BaseService {
                     searchItemModel.setSortItems(sortItems);
                 }
 
-                if (CollectionUtils.isNotEmpty(searchItemModel.getSearchItems()) && CollectionUtils.isNotEmpty(searchItemModel.getSearchItems())) {
+                if (StringUtils.isNotBlank(searchItemModel.getSearchItemVal())) {
                     cmsBtSearchItemDao.insert(searchItemModel);
                 }
 
@@ -99,7 +112,7 @@ public class CmsBtSearchItemService extends BaseService {
 
             if (entry.getKey().startsWith("$")) {
                 List<DBObject> values = (List<DBObject>) entry.getValue();
-                if (CollectionUtils.isNotEmpty(values)){
+                if (CollectionUtils.isNotEmpty(values)) {
                     for (DBObject dbObject : values) {
                         searchItems.addAll(getMongoModelField(dbObject.toMap()));
                     }
