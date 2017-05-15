@@ -1898,9 +1898,24 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
             // 特殊处理sneakerhead的subCategories初始化
             if (CollectionUtils.isEmpty(product.getFeed().getSubCategories()) && "001".equals(feed.getChannelId())) {
-                List<String> subCategories = new ArrayList<>(Arrays.asList(feed.getCategory().split("-")));
+                // 2017/5/11 rex.wu CMS-13
+                String[] subCategories = feed.getCategory().split("-");
+                List<String> productSubCategories = new ArrayList<>();
+                int len = subCategories.length;
+                for (int i = 0; i < len; i++) {
+                    String tempSubCategory = "";
+                    for (int j = 0; j <= i; j++) {
+                        tempSubCategory += subCategories[j] + (j == i ? "" : "-");
+                    }
+                    if (!StringUtils.isEmpty(tempSubCategory)) {
+                        productSubCategories.add(tempSubCategory);
+                    }
+                }
+                product.getFeed().setSubCategories(productSubCategories);
+
+                /*List<String> subCategories = new ArrayList<>(Arrays.asList(feed.getCategory().split("-")));
                 subCategories.set(subCategories.size() - 1, feed.getCategory());
-                product.getFeed().setSubCategories(subCategories);
+                product.getFeed().setSubCategories(subCategories);*/
             }
 
             // --------- 商品Group信息设定 ------------------------------------------------------
