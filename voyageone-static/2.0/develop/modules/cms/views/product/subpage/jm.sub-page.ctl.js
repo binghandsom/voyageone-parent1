@@ -610,7 +610,7 @@ define([
             cartId: self.$scope.cartInfo.value,
             productId: self.$scope.productInfo.productId,
             platform: self.vm.platform,
-            showArr: ['image1', 'image6', 'image4']
+            showArr: ['image1', 'image5','image6', 'image7','image4']
         }).then(function (platform) {
             self.vm.platform = platform;
 
