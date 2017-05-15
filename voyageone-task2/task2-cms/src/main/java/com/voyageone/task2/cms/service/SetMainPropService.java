@@ -691,9 +691,19 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         }
                         break;
                 }
+                if(StringUtil.isEmpty(catPath)) {
+                    MatchResult searchResult = getMainCatInfo(originalFeed.getCategory(),
+                            !StringUtils.isEmpty(originalFeed.getProductType()) ? originalFeed.getProductType() : "",
+                            !StringUtils.isEmpty(originalFeed.getSizeType()) ? originalFeed.getSizeType() : "",
+                            originalFeed.getName(),
+                            originalFeed.getBrand());
+                    if(searchResult != null)
+                        catPath = searchResult.getCnName();
 
-                String finalCatPath = catPath == null ? "" : catPath;
-                return categorySingle.stream().anyMatch(cat -> finalCatPath.indexOf(cat) == 0);
+                }
+                if(StringUtil.isEmpty(catPath)) return false;
+                String finalCatPath = catPath;
+                return categorySingle.stream().noneMatch(cat -> finalCatPath.indexOf(cat) == 0);
             } else if ("2".equals(singleFlg)) {
                 return true;
             }
