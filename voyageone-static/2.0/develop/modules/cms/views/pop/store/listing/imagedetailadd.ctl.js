@@ -99,8 +99,12 @@ define([
 
             $scope.disableText = show;
 
-            if(show)
+            //选中图片
+            if(show){
+                $scope.uploader.clearQueue();
                 $scope.originUrl = null;
+            }
+
         }
     })
 });
