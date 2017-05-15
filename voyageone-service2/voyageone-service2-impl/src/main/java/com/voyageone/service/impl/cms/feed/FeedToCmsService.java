@@ -216,7 +216,7 @@ public class FeedToCmsService extends BaseService {
                 try {
                     priceService.setFeedPrice(product);
                 } catch (Exception e) {
-                    $error(e);
+//                    $error(e);
                 }
 
                 feedInfoService.updateFeedInfo(product);

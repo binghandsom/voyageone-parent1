@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.rabbitmq.annotation.VOSubRabbitListener;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
@@ -45,6 +46,7 @@ public class CmsFeedImportMQJob extends TBaseMQCmsSubService<CmsFeedImportMQMess
                 msg.add(item);
             });
             cmsSuccessIncludeFailLog(messageBody, "feed导入失败", msg);
+            $info(JacksonUtil.bean2Json(messageBody));
         }
     }
 
