@@ -1034,23 +1034,7 @@
                                             <a ng-href="#/product/detail/{{productInfo.prodId}}" target="_blank" ng-bind="productInfo.common.fields.code"></a>
                                         </td>
                                         <td class="text-left">
-                                            <a ng-if="!productInfo.originalTitleCnEditFlag"
-                                               href="#/product/detail/{{productInfo.prodId}}"
-                                               title="{{productInfo.common.fields.originalTitleCn}}"
-                                               target="_blank">
-                                                {{productInfo.common.fields.originalTitleCn | limitTo: 30}}{{productInfo.common.fields.originalTitleCn.length > 30 ? '...' : ''}}
-                                            </a>
-                                            <i class="icon fa fa-question-circle text-md" ng-if="!productInfo.originalTitleCnEditFlag" ng-click="editOriginalTitleCn(productInfo)"></i>
-                                            <textarea ng-if="productInfo.originalTitleCnEditFlag" ng-model="productInfo.common.fields.originalTitleCn"
-                                                      ng-keypress="$event.keyCode==13&& updateOriginalTitle(productInfo)" ng-blur="updateOriginalTitle(productInfo)">
-                                              {{productInfo.common.fields.originalTitleCn | limitTo: 30}}{{productInfo.common.fields.originalTitleCn.length > 30 ? '...' : ''}}
-                                            </textarea>
-                                            <i class="icon fa fa-question-circle text-l-t" ng-if="productInfo.originalTitleCnEditFlag" ng-click="noEditOriginalTitleCn(productInfo)"></i>
-
-                                            <!--<a ng-if="!productInfo.common.fields.originalTitleCn"
-                                               href="#/product/detail/{{productInfo.prodId}}"
-                                               title="{{productInfo.common.fields.productNameEn}}"
-                                               target="_blank">{{productInfo.common.fields.productNameEn | limitTo: 30}}{{productInfo.common.fields.productNameEn.length > 30 ? '...' : ''}}</a>-->
+                                            <edit-title data="productInfo"></edit-title>
                                         </td>
                                         <td class="text-left" style="width:110px;">
                                             {{productInfo.common.fields.brand}}

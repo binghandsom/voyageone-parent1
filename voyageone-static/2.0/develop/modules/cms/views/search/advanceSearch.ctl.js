@@ -1556,29 +1556,6 @@ define([
         };
 
         /**
-         * 编辑产品originalTitleCn
-         * @param productInfo 产品信息
-         */
-        $scope.updateOriginalTitle = function (productInfo) {
-            var prodId = productInfo.prodId;
-            var originalTitleCn = productInfo.common.fields.originalTitleCn;
-            if (prodId && originalTitleCn) {
-                var params = {prodId:prodId, originalTitleCn:originalTitleCn};
-                productDetailService.updateOriginalTitleCn(params).then(function (resp) {
-                    _.extend(productInfo, {"oldOriginalTitleCn":originalTitleCn, originalTitleCnEditFlag:false});
-                    notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                });
-            }
-        };
-        $scope.editOriginalTitleCn = function(productInfo) {
-            _.extend(productInfo, {originalTitleCnEditFlag:true})
-
-        };
-        $scope.noEditOriginalTitleCn = function (productInfo) {
-            _.extend(productInfo, {originalTitleCnEditFlag:false})
-        };
-
-        /**
          * 部分上新操作
          * @param cartInfo 平台信息
          */
