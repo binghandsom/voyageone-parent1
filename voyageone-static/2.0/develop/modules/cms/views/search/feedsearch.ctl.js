@@ -293,20 +293,21 @@ define([
             item.modified = $filter('date')(new Date(item.modified), 'yyyy-MM-dd HH:mm:ss')
         }
 
-        $scope.popCategoryMapping = function () {
+        $scope.popCategoryMapping = function (feedInfo) {
 
             systemCategoryService.getNewsCategoryList().then(function (res) {
                 popups.popupCategoryNew({
                     categories: res.data
                 }).then(function (context) {
-                    bindCategory(context.selected);
+                    bindCategory(context.selected, feedInfo);
                 });
             });
 
         };
 
-        function bindCategory(category, selList) {
-            $scope.vm.feedSelList.selList
+        function bindCategory(category, feedInfo) {
+            feedInfo.mainCategoryCn = category.catPath;
+            feedInfo.mainCategoryEn = category.catPathEn;
         }
 
 
