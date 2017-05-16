@@ -17,7 +17,9 @@ import com.voyageone.service.impl.cms.PlatformService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
+import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtPromotionSkusModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.web2.base.BaseViewService;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -49,6 +51,9 @@ public class CmsPromotionIndexService extends BaseViewService {
 
     @Autowired
     private PlatformService platformService;
+
+    @Autowired
+    private PromotionSkuService promotionSkuService;
 
     @Autowired
     private TagService serviceTag;
@@ -121,7 +126,7 @@ public class CmsPromotionIndexService extends BaseViewService {
         String templatePath = Properties.readValue(CmsProperty.Props.PROMOTION_EXPORT_TEMPLATE);
 
         CmsBtPromotionModel cmsBtPromotionModel = promotionService.getByPromotionIdOrgChannelId(promotionId, channelId);
-        List<CmsBtPromotionCodesBean> promotionCodes = promotionCodeService.getPromotionCodeListByIdOrgChannelId(promotionId, channelId);
+        List<CmsBtPromotionCodesBean> promotionCodes = promotionCodeService.getPromotionCodeListByIdOrgChannelId2(promotionId, channelId);
 
         $info("准备生成 Item 文档 [ %s ]", promotionCodes.size());
         $info("准备打开文档 [ %s ]", templatePath);
@@ -129,30 +134,20 @@ public class CmsPromotionIndexService extends BaseViewService {
         try (InputStream inputStream = new FileInputStream(templatePath);
              Workbook book = WorkbookFactory.create(inputStream)) {
 
-            int rowIndex = 1;
-            for (CmsBtPromotionCodesBean promotionCode : promotionCodes) {
-
+            Integer rowIndex = 1;
+            for (int i=0 ;i<promotionCodes.size();i++) {
+                CmsBtPromotionCodesBean promotionCode = promotionCodes.get(i);
+                $info(String.format("导出活动%d/%d",i+1, promotionCodes.size()));
                 promotionCode.setCartId(cmsBtPromotionModel.getCartId());
 //                promotionCodes.get(i).setChannelId(promotionCodes.get().getChannelId());
-                boolean isContinueOutput = writeRecordToFile(book, promotionCode, rowIndex);
+                rowIndex = writeRecordToFile(book, promotionCode, rowIndex);
                 // 超过最大行的场合
-                if (!isContinueOutput) {
-                    break;
-                }
-                rowIndex += promotionCode.getSkus() != null ? promotionCode.getSkus().size() : 0;
+//                rowIndex += promotionCode.getSkus() != null ? promotionCode.getSkus().size() : 0;
             }
 
             writeCodeRecordToFile(book, promotionCodes);
 
             $info("文档写入完成");
-
-//            try (FileOutputStream outputFileStream = new FileOutputStream("d:/test.xlsx")) {
-//
-//                book.write(outputFileStream);
-//
-//                outputFileStream.flush();
-//                outputFileStream.close();
-//            }
 
             // 返回值设定
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
@@ -174,15 +169,26 @@ public class CmsPromotionIndexService extends BaseViewService {
      * @param startRowIndex 开始
      * @return boolean 是否终止输出
      */
-    private boolean writeRecordToFile(Workbook book, CmsBtPromotionCodesBean item, int startRowIndex) {
+    private Integer writeRecordToFile(Workbook book, CmsBtPromotionCodesBean item, Integer startRowIndex) {
         Sheet sheet = book.getSheet("sku");
 
         Row styleRow = FileUtils.row(sheet, 1);
 
         CellStyle unlock = styleRow.getCell(0).getCellStyle();
 
-        if(item.getSkus() != null && item.getSkus().size() > 0) {
-            for (CmsBtPromotionSkuBean sku : item.getSkus()) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("promotionId", item.getPromotionId());
+        param.put("productCode", item.getProductCode());
+        List<CmsBtPromotionSkusModel> cmsBtPromotionSkusList = promotionSkuService.getListByWhere(param);
+
+        if(cmsBtPromotionSkusList != null && cmsBtPromotionSkusList.size() > 0) {
+            item.setSalePrice(cmsBtPromotionSkusList.get(0).getSalePrice().doubleValue());
+            item.setMsrpUS(cmsBtPromotionSkusList.get(0).getMsrpUsd().doubleValue());
+            item.setMsrp(cmsBtPromotionSkusList.get(0).getMsrpRmb().doubleValue());
+            item.setRetailPrice(cmsBtPromotionSkusList.get(0).getRetailPrice().doubleValue());
+            item.setSalePrice(cmsBtPromotionSkusList.get(0).getSalePrice().doubleValue());
+            item.setPromotionPrice(cmsBtPromotionSkusList.get(0).getPromotionPrice().doubleValue());
+            for (CmsBtPromotionSkusModel sku : cmsBtPromotionSkusList) {
                 Row row = FileUtils.row(sheet, startRowIndex);
 
                 FileUtils.cell(row, CmsConstants.CellNum.cartIdCellNum, unlock).setCellValue(item.getCartId());
@@ -207,20 +213,20 @@ public class CmsPromotionIndexService extends BaseViewService {
 
                 FileUtils.cell(row, CmsConstants.CellNum.tagCellNum, unlock).setCellValue(item.getTag());
 
-                if(item.getMsrpUS() != null){
-                    FileUtils.cell(row, CmsConstants.CellNum.msrpUSCellNum, unlock).setCellValue(item.getMsrpUS());
+                if(sku.getMsrpUsd() != null){
+                    FileUtils.cell(row, CmsConstants.CellNum.msrpUSCellNum, unlock).setCellValue(sku.getMsrpUsd().doubleValue());
                 }
-                if(item.getMsrp() != null){
-                    FileUtils.cell(row, CmsConstants.CellNum.msrpRMBCellNum, unlock).setCellValue(item.getMsrp());
+                if(sku.getMsrpRmb() != null){
+                    FileUtils.cell(row, CmsConstants.CellNum.msrpRMBCellNum, unlock).setCellValue(sku.getMsrpRmb().doubleValue());
                 }
-                if(item.getRetailPrice() != null){
-                    FileUtils.cell(row, CmsConstants.CellNum.retailPriceCellNum, unlock).setCellValue(item.getRetailPrice());
+                if(sku.getRetailPrice() != null){
+                    FileUtils.cell(row, CmsConstants.CellNum.retailPriceCellNum, unlock).setCellValue(sku.getRetailPrice().doubleValue());
                 }
-                if(item.getSalePrice() != null){
-                    FileUtils.cell(row, CmsConstants.CellNum.salePriceCellNum, unlock).setCellValue(item.getSalePrice());
+                if(sku.getSalePrice() != null){
+                    FileUtils.cell(row, CmsConstants.CellNum.salePriceCellNum, unlock).setCellValue(sku.getSalePrice().doubleValue());
                 }
-                if(item.getPromotionPrice() != null){
-                    FileUtils.cell(row, CmsConstants.CellNum.promotionPriceCellNum, unlock).setCellValue(item.getPromotionPrice());
+                if(sku.getPromotionPrice() != null){
+                    FileUtils.cell(row, CmsConstants.CellNum.promotionPriceCellNum, unlock).setCellValue(sku.getPromotionPrice().doubleValue());
                 }
                 if(item.getInventory() != null){
                     FileUtils.cell(row, CmsConstants.CellNum.inventoryCellNum, unlock).setCellValue(item.getInventory());
@@ -248,7 +254,7 @@ public class CmsPromotionIndexService extends BaseViewService {
             }
         }
 
-        return true;
+        return startRowIndex;
     }
 
     private boolean writeCodeRecordToFile(Workbook book, List<CmsBtPromotionCodesBean> items) {

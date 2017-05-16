@@ -45,6 +45,12 @@ public class PromotionCodeService extends BaseService {
         params.put("orgChannelId", orgChannelId);
         return cmsBtPromotionCodesDaoExt.selectPromotionCodeSkuList(params);
     }
+    public List<CmsBtPromotionCodesBean> getPromotionCodeListByIdOrgChannelId2(int promotionId, String orgChannelId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("promotionId", promotionId);
+        params.put("orgChannelId", orgChannelId);
+        return cmsBtPromotionCodesDaoExt.selectPromotionCodeSku2List(params);
+    }
 
     public List<Map<String, Object>> getPromotionCodesByPromotionIds(List<String> promotionIdList) {
         return cmsBtPromotionCodesDaoExt.selectCmsBtPromotionAllCodeByPromotionIdS(promotionIdList);
