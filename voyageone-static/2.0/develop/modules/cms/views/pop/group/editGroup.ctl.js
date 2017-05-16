@@ -245,8 +245,8 @@ define([
             return _.some(self.vm.mastData.images, function (element) {
                 return element.qty == 0
                     && !element.isMain
-                    && self.$scope.productInfo
-                    && element.productCode != self.$scope.productInfo.masterField.code;
+                    && self.vm.mastData
+                    && element.productCode != self.vm.mastData.productCode;
             });
         };
 
