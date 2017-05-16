@@ -2,9 +2,12 @@ package com.voyageone.service.impl.cms.feed;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CmsMtCategoryTreeAllBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
@@ -467,5 +470,18 @@ public class FeedInfoService extends BaseService {
 
     public WriteResult updateAllUpdFlg(String selChannelId, String searchQuery, Integer status, String modifier) {
         return cmsBtFeedInfoDao.updateAllUpdFlg(selChannelId, searchQuery, status, modifier);
+    }
+
+    public boolean updateMainCategory(String channelId, String code, CmsMtCategoryTreeAllBean cmsMtCategory, String modifier){
+        CmsBtFeedInfoModel cmsBtFeedInfo = getProductByCode(channelId, code);
+        if(cmsBtFeedInfo != null){
+            cmsBtFeedInfo.setMainCategoryCn(cmsMtCategory.getCatPath());
+            cmsBtFeedInfo.setMainCategoryEn(cmsMtCategory.getCatPathEn());
+            cmsBtFeedInfo.setCatConf("1");
+            cmsBtFeedInfo.setModifier(modifier);
+            cmsBtFeedInfo.setModified(DateTimeUtil.getNowTimeStamp());
+        }
+        updateFeedInfo(cmsBtFeedInfo);
+        return true;
     }
 }

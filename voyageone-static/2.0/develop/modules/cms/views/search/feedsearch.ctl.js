@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl',
     'modules/cms/directives/keyValue.directive'
 ], function () {
-    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage, $filter, cookieService,popups,systemCategoryService) {
+    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage, $filter, cookieService,popups,systemCategoryService,notify) {
         $scope.status={};
         $scope.vm = {
             searchInfo: {},
@@ -306,14 +306,14 @@ define([
         };
 
         function bindCategory(category, feedInfo) {
-            feedInfo.mainCategoryCn = category.catPath;
-            feedInfo.mainCategoryEn = category.catPathEn;
+            $feedSearchService.updateMainCategory({"code":feedInfo.code,"mainCategoryInfo":category}).then(function () {
+                feedInfo.mainCategoryCn = category.catPath;
+                feedInfo.mainCategoryEn = category.catPathEn;
+                notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
+            })
         }
-
-
-
     };
 
-    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q', 'selectRowsFactory', 'confirm', 'alert', 'attributeService', 'cActions', '$sessionStorage', '$filter','cookieService','popups','systemCategoryService'];
+    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q', 'selectRowsFactory', 'confirm', 'alert', 'attributeService', 'cActions', '$sessionStorage', '$filter','cookieService','popups','systemCategoryService','notify'];
     return searchIndex;
 });

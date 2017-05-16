@@ -369,6 +369,7 @@ public interface CmsUrlConstants {
             String REEXPORT = "reExport";
             String EXPORTSEARCH = "exportSearch";
             String DOWNLOAD = "download";
+            String UPDATE_MAIN_CATEGORY = "updateMainCategory";
         }
     }
 

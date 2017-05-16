@@ -1,8 +1,11 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.service.bean.cms.CmsMtCategoryTreeAllBean;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -32,6 +35,9 @@ public class CmsFeedSearchController extends CmsController {
 
     @Autowired
     private CmsBtExportTaskService cmsBtExportTaskService;
+
+    @Autowired
+    private FeedInfoService feedInfoService;
 
     /**
      * @api {post} /cms/search/feed/init 2.1 初始化FEED检索画面时,获取master数据
@@ -202,5 +208,17 @@ public class CmsFeedSearchController extends CmsController {
     @RequestMapping(CmsUrlConstants.SEARCH.FEED.DOWNLOAD)
     public ResponseEntity<byte[]> download(@RequestParam String fileName){
         return genResponseEntityFromFile(fileName, CmsBtExportTaskService.savePath + fileName);
+    }
+    @RequestMapping(CmsUrlConstants.SEARCH.FEED.UPDATE_MAIN_CATEGORY)
+    public AjaxResponse updateMainCategory(@RequestBody MainCategoryBean params){
+
+        return success(feedInfoService.updateMainCategory(getUser().getSelChannelId(), params.code, params.mainCategoryInfo, getUser().getUserName()));
+    }
+
+    private static class MainCategoryBean {
+        @JsonProperty("code")
+        String code;
+        @JsonProperty("mainCategoryInfo")
+        CmsMtCategoryTreeAllBean mainCategoryInfo;
     }
 }
