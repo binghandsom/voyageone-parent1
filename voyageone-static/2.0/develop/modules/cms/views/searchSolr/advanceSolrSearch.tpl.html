@@ -701,11 +701,12 @@
                                             <span class="label label-success m-t-xs m-r-sm" ng-if="vm.masterData.isminimall==1&&productInfo._prodOrgChaName">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>&nbsp;
                                             <!-- Todo 标签 -->
                                             <span>&nbsp;&nbsp;
-                                                <button ng-if="productInfo.freeTags != null && productInfo.freeTags.length > 0 && productInfo._freeTagsInfo" ng-controller="showPopoverCtrl" popover-html="showInfo(productInfo._freeTagsInfo)"
+                                                <button ng-if="productInfo.freeTags != null && productInfo.freeTags.length > 0 && productInfo._freeTagsInfo"
+                                                        ng-controller="showPopoverCtrl" popover-html="showInfo(productInfo._freeTagsInfo)"
                                                         popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">标签</button>
-                                                <button>设置自由标签</button>
+                                                <!--<button>设置自由标签</button>-->
                                                 <button type="button" class="btn btn-pop btn-default" ng-disabled="vm.masterData.freetagList.length == 0"
-                                                        ng-click="$parent.addFreeTag(openFreeTag)">
+                                                        ng-click="$parent.addProductFreeTag(productInfo)">
                                                     <i class="fa fa-cog"></i>&nbsp;{{'TXT_CUS_TAGS_SETTING' | translate}}
                                                 </button>
                                             </span>

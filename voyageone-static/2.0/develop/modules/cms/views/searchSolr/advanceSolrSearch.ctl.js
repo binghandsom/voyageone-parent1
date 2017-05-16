@@ -312,6 +312,7 @@ define([
                 var oldOriginalTitleCn = angular.copy(element.common.fields.originalTitleCn);
                 if (!oldOriginalTitleCn) {
                     oldOriginalTitleCn = angular.copy(element.common.fields.productNameEn);
+                    element.common.fields.originalTitleCn = oldOriginalTitleCn;
                 }
                 _.extend(element, {"oldOriginalTitleCn":oldOriginalTitleCn});
 
@@ -1678,6 +1679,10 @@ define([
 
         };
 
+        /**
+         * 编辑产品originalTitleCn
+         * @param productInfo 产品信息
+         */
         $scope.updateOriginalTitle = function (productInfo) {
             var prodId = productInfo.prodId;
             var originalTitleCn = productInfo.common.fields.originalTitleCn;
@@ -1689,16 +1694,57 @@ define([
                 });
             }
         };
-
         $scope.editOriginalTitleCn = function(productInfo) {
             _.extend(productInfo, {originalTitleCnEditFlag:true})
 
         };
-
         $scope.noEditOriginalTitleCn = function (productInfo) {
             _.extend(productInfo, {originalTitleCnEditFlag:false})
+        };
+
+        /**
+         * 为单商品添加自由标签
+         * @param productInfo 产品信息
+         */
+        $scope.addProductFreeTag = function (productInfo) {
+            var prodId = productInfo.prodId;
+            var productCodes = [productInfo.common.fields.code];
+            popups.openFreeTag({
+                                   'orgFlg': 2,
+                                   'tagTypeSel': '4',
+                                   'cartId': $scope.vm.searchInfo.cartId,
+                                   'productIds': productCodes,
+                                   'selAllFlg':  0
+                               }).then(function (res) {
+                // 设置自由标签
+                var msg = '';
+                if (res.selectdTagList && res.selectdTagList.length > 0) {
+                    var freeTagsTxt = _.chain(res.selectdTagList).map(function (key, value) {
+                        return key.tagPathName;
+                    }).value();
+                    msg = "将对选定的产品设置自由标签:<br>" + freeTagsTxt.join('; ');
+                } else {
+                    msg = "将对选定的产品清空自由标签";
+                }
+                var freeTags = _.chain(res.selectdTagList).map(function (key, value) {
+                    return key.tagPath;
+                }).value();
+                confirm(msg)
+                    .then(function () {
+                        var data = {
+                            "tagPathList": freeTags,
+                            "prodIdList": productCodes,
+                            "isSelAll": 0,
+                            "orgDispTagList": res.orgDispTagList,
+                            "singleProd":1 // 是否是单一针对商品进行自由标签编辑
+                        };
+                        $searchAdvanceService2.addFreeTag(data).then(function () {
+                            notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
+                            searchAdvanceSolrService.clearSelList();
+                            $scope.search();
+                        })
+                    });
+            });
         }
-
     });
-
 });

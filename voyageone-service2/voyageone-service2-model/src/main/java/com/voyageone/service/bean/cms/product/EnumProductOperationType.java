@@ -24,7 +24,8 @@ public enum EnumProductOperationType {
     changeMainCategory(17, "修改主类目"),
     UpdatePlatformLock(18, "触发平台级锁操作"),
     UpdateCommonLock(19, "触发共通锁操作"),
-    BatchUpdatePlatformLock(19, "触发批量平台级锁操作");
+    BatchUpdatePlatformLock(20, "触发批量平台级锁操作"),
+    SingleProdSetFreeTag(21, "单商品自由变迁设置");
 
     private int id;
     private String name;
