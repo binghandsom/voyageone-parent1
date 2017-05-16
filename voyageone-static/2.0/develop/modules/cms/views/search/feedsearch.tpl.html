@@ -360,6 +360,7 @@
                                     <th class="text-left mfb-x" translate="TXT_NAME"></th>
                                     <th class="text-left mfb-x" translate="TXT_MODEL"></th>
                                     <th class="text-left mfb-x" translate="TXT_STATUS"></th>
+                                    <th class="text-center mfb-x" >主类目</th>
                                     <th class="text-center mfb-x" translate="TXT_INVENTORY"></th>
                                     <th class="text-left mfb-x" translate="TXT_SHORT_DESCRIPTION"></th>
                                     <th class="text-left mfb-x" translate="TXT_LONG_DESCRIPTION"></th>
@@ -405,6 +406,7 @@
                                     </td>
                                     <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.model}}</td>
                                     <td class="text-left mfb-x" style="overflow: hidden;"><key-value type="feedStatus" ng-model="feedInfo.updFlg"></key-value></td>
+                                    <td class="text-center mfb-x" style="overflow: hidden;"> <button type="button" class="btn btn-default" ng-click="popCategoryMapping()" >{{feedInfo.mainCategoryCn}}</button> </td>
                                     <td class="text-center mfb-x" style="overflow: hidden;">{{feedInfo.qty}}</td>
                                     <td class="text-left mfb-x" style="overflow: hidden;">
                                         <span ng-if="feedInfo.shortDescription.length > 50"><popover-text content="feedInfo.shortDescription" direct="left" size="50"></popover-text></span>

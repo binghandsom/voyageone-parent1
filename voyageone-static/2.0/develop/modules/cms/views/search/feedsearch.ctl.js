@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl',
     'modules/cms/directives/keyValue.directive'
 ], function () {
-    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage, $filter, cookieService) {
+    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage, $filter, cookieService,popups,systemCategoryService) {
         $scope.status={};
         $scope.vm = {
             searchInfo: {},
@@ -293,8 +293,26 @@ define([
             item.modified = $filter('date')(new Date(item.modified), 'yyyy-MM-dd HH:mm:ss')
         }
 
+        $scope.popCategoryMapping = function () {
+
+            systemCategoryService.getNewsCategoryList().then(function (res) {
+                popups.popupCategoryNew({
+                    categories: res.data
+                }).then(function (context) {
+                    bindCategory(context.selected);
+                });
+            });
+
+        };
+
+        function bindCategory(category, selList) {
+            $scope.vm.feedSelList.selList
+        }
+
+
+
     };
 
-    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q', 'selectRowsFactory', 'confirm', 'alert', 'attributeService', 'cActions', '$sessionStorage', '$filter','cookieService'];
+    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q', 'selectRowsFactory', 'confirm', 'alert', 'attributeService', 'cActions', '$sessionStorage', '$filter','cookieService','popups','systemCategoryService'];
     return searchIndex;
 });
