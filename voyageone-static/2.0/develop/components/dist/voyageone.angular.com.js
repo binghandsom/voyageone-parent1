@@ -319,6 +319,11 @@ angular.module("voyageone.angular.directives").directive("dateModelFormat", func
 
 /*****************************/
 
+/**
+ * 编辑产品originalTitleCn
+ * @param productInfo 产品信息
+ * @author piao
+ */
 angular.module("voyageone.angular.directives").directive("editTitle", function () {
 
     function EditTitleController($scope, $attrs, $element, notify, $translate, productDetailService) {
