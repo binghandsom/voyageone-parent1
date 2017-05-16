@@ -130,9 +130,10 @@ public abstract class BaseController extends BaseViewComponent {
     public AjaxResponse success(Object data) {
         AjaxResponse response = new AjaxResponse();
         response.setData(data);
-        if ($isDebugEnabled()) {
-            $debug(String.format("当前请求url=%s 响应结果response=:%s", request.getServletPath(), JacksonUtil.bean2Json(response)));
-        }
+//        if ($isDebugEnabled()) {
+//            $debug(String.format("当前请求url=%s 响应结果response=:%s", request.getServletPath(), JacksonUtil.bean2Json(response)));
+//        }
+        $info(String.format("当前请求url=%s 响应结果response=:%s", request.getServletPath(), JacksonUtil.bean2Json(response)));
         return response;
     }
 
