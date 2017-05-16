@@ -228,6 +228,7 @@ public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImag
     }
 
     public byte[] downImage(String imageUrl) {
+        $info(imageUrl);
         HttpGet httpGet = new HttpGet(imageUrl);
 
         try (CloseableHttpClient httpClient = HttpClients.createMinimal();
