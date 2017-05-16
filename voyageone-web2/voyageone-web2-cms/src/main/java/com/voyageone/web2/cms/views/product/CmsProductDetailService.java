@@ -1726,5 +1726,10 @@ public class CmsProductDetailService extends BaseViewService {
 
         $info(String.format("(%s)更新产品(prodId=%d)originalTitleCn信息，更新结果:%s", username, prodId, JacksonUtil.bean2Json(writeResult)));
 
+        String msg = "高级检索 单商品originalTitleCn设置" ;
+        List<String> prodCodeList = new ArrayList<>();
+        prodCodeList.add(productModel.getCommon().getFields().getCode());
+        productStatusHistoryService.insertList(channelId, prodCodeList, -1, EnumProductOperationType.SingleProdSetOriginalTitleCn, msg, username);
+
     }
 }
