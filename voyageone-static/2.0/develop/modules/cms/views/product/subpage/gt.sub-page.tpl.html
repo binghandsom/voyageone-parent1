@@ -249,7 +249,7 @@
                                 <div class="col-md-8">
                                     <div class="row">
                                         <div class="col-xs-6 col-md-2" ng-repeat="image in ctrl.vm.mastData.images"
-                                             ng-init = "$currentCode = (image.productCode == productInfo.masterField.code)"
+                                             ng-init = "$currentCode = (image.productCode == ctrl.vm.mastData.productCode)"
                                              ng-if="image.productCode == productInfo.masterField.code || ctrl.moreCodeFlg || image.isMain || image.qty > 0">
                                             <a class="thumbnail clear-margin-bottom"
                                                ng-href="{{$currentCode ? 'javascript:void(0)' : '#/product/detail/'+image.prodId}}"
