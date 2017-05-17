@@ -10,6 +10,8 @@ import com.voyageone.category.match.FeedQuery;
 import com.voyageone.category.match.MatchResult;
 import com.voyageone.category.match.Searcher;
 import com.voyageone.category.match.Tokenizer;
+import com.voyageone.category.match.data.MtCategoryKeysDao;
+import com.voyageone.category.match.data.MtCategoryKeysModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
@@ -157,6 +159,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
     private Searcher searcher;
     @Autowired
     private MqSender sender;
+
+    @Autowired
+    MtCategoryKeysDao mtCategoryKeysDao;
 
 
     /**
@@ -1016,6 +1021,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // 计算主类目
                     if (usjoi || cmsProduct.getChannelId().equals("024")) {
                         doSetMainCategory(cmsProduct.getCommon(), feed);
+
                     }
 
                     // 更新价格相关项目
@@ -3223,6 +3229,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             prodCommon.getFieldsNotNull().setOrigSizeType(feed.getSizeType());
             if (prodCommon == null || StringUtils.isEmpty(feed.getCategory())) return;
 
+            // feed里面人为设置过主类目的场合
+            MtCategoryKeysModel mtCategoryKeysModel = null;
+            if(!StringUtil.isEmpty(feed.getMainCategoryEn()) && "1".equals(feed.getCatConf())){
+                mtCategoryKeysModel = mtCategoryKeysDao.selectOne(feed.getMainCategoryEn());
+            }
+
             // 共通Field
             CmsBtProductModel_Field prodCommonField = prodCommon.getFieldsNotNull();
 
@@ -3233,6 +3245,20 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     !StringUtils.isEmpty(prodCommonField.getOrigSizeType()) ? prodCommonField.getOrigSizeType() : "",
                     prodCommonField.getProductNameEn(),
                     prodCommonField.getBrand());
+
+
+            // 用feed里面的主类目进行替换
+            if(!"1".equals(prodCommon.getCatConf()) && mtCategoryKeysModel != null){
+                searchResult.setCnName(feed.getMainCategoryCn());
+                searchResult.setEnName(feed.getMainCategoryEn());
+                searchResult.setTaxDeclare(mtCategoryKeysModel.getTaxDeclare());
+                searchResult.setTaxPersonal(mtCategoryKeysModel.getTaxPersonal());
+                String weight = mtCategoryKeysModel.getWeight();
+                if(!StringUtil.isEmpty(weight)){
+                    searchResult.setWeight(Double.parseDouble(weight));
+                }
+            }
+
             if (searchResult != null) {
                 $info(String.format("调用主类目匹配接口取得主类目和适用人群正常结束！[耗时:%s] [feedCategoryPath:%s] [productType:%s] " +
                                 "[sizeType:%s] [productNameEn:%s] [brand:%s]", (System.currentTimeMillis() - beginTime), feed.getCategory(),
