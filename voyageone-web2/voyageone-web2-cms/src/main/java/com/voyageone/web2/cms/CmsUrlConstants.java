@@ -370,6 +370,7 @@ public interface CmsUrlConstants {
             String EXPORTSEARCH = "exportSearch";
             String DOWNLOAD = "download";
             String UPDATE_MAIN_CATEGORY = "updateMainCategory";
+            String BATCH_UPDATE_MAIN_CATEGORY = "batchUpdateMainCategory";
         }
     }
 

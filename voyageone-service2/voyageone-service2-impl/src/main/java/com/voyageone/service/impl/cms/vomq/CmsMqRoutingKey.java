@@ -112,6 +112,10 @@ public class CmsMqRoutingKey {
     // feed数据导入接口
     public static final String CMS_FEED_IMPORT_MQ_JOB = "CmsFeedImportMQJobQueue";
 
+    // feed数据批量设置主类目
+    public static final String CMS_FEED_SET_CATEGORY_MQ_JOB = "CmsFeedSetCategoryQueue";
+
+
     // VMS价格和库存变更 通知CMS更新feedInfo
     public static final String CMS_FEED_SKU_PQ_MQ_JOB = "CmsFeedSkuPqMQJobQueue";
 

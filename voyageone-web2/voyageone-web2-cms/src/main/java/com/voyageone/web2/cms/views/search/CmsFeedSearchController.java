@@ -3,9 +3,12 @@ package com.voyageone.web2.cms.views.search;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsMtCategoryTreeAllBean;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsFeedSetCategoryMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -17,10 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author JiangJusheng
@@ -38,6 +43,9 @@ public class CmsFeedSearchController extends CmsController {
 
     @Autowired
     private FeedInfoService feedInfoService;
+
+    @Autowired
+    CmsMqSenderService cmsMqSenderService;
 
     /**
      * @api {post} /cms/search/feed/init 2.1 初始化FEED检索画面时,获取master数据
@@ -209,16 +217,73 @@ public class CmsFeedSearchController extends CmsController {
     public ResponseEntity<byte[]> download(@RequestParam String fileName){
         return genResponseEntityFromFile(fileName, CmsBtExportTaskService.savePath + fileName);
     }
+
+    // 单商品设主类目
     @RequestMapping(CmsUrlConstants.SEARCH.FEED.UPDATE_MAIN_CATEGORY)
     public AjaxResponse updateMainCategory(@RequestBody MainCategoryBean params){
-
         return success(feedInfoService.updateMainCategory(getUser().getSelChannelId(), params.code, params.mainCategoryInfo, getUser().getUserName()));
     }
 
+    // 批量设主类目
+    @RequestMapping(CmsUrlConstants.SEARCH.FEED.BATCH_UPDATE_MAIN_CATEGORY)
+    public AjaxResponse batchUpdateMainCategory(@RequestBody batchUpdateCategoryBean batchUpdateCategory){
+
+        int cnt = 0;
+        Boolean isAll = batchUpdateCategory.isAll;
+        Map<String, Object> searchValue = batchUpdateCategory.searchInfo;
+        String channelId = getUser().getSelChannelId();
+        if(searchValue != null){
+            channelId = searchValue.get("orgChaId")==null?getUser().getSelChannelId():searchValue.get("orgChaId").toString();
+        }
+        List<String> selList;
+        if(isAll == null || !isAll) {
+            selList = batchUpdateCategory.selList.stream().map(item->item.get("code")).collect(Collectors.toList());
+            if (selList == null || selList.isEmpty()) {
+                throw new BusinessException("请至少选择一个Feed.");
+            }
+            sendBatchUpdateMainCategory(channelId, selList, batchUpdateCategory.mainCategoryInfo,getUser().getUserName());
+        }else{
+            long feedListTotal = searchService.getFeedCnt(searchValue, getUser());
+            Long pageCnt = feedListTotal / 100 + (feedListTotal % 100 > 0 ? 1 : 0);
+            searchValue.put("pageSize",100);
+            for(long i=0;i<pageCnt;i++){
+                searchValue.put("pageNum",i+1);
+                List<CmsBtFeedInfoModel> feedList = searchService.getFeedList(searchValue, getUser());
+                if(ListUtils.notNull(feedList)){
+                    selList = feedList.stream().map(CmsBtFeedInfoModel::getCode).collect(Collectors.toList());
+                    sendBatchUpdateMainCategory(channelId, selList, batchUpdateCategory.mainCategoryInfo,getUser().getUserName());
+                }
+            }
+        }
+        // 返回结果信息
+        return success(null);
+    }
+
+    private void sendBatchUpdateMainCategory(String channelId, List<String> codes, CmsMtCategoryTreeAllBean cmsMtCategoryTreeAllBean, String sender){
+        CmsFeedSetCategoryMQMessageBody cmsFeedSetCategoryMQMessageBody = new CmsFeedSetCategoryMQMessageBody();
+        cmsFeedSetCategoryMQMessageBody.setChannelId(channelId);
+        cmsFeedSetCategoryMQMessageBody.setMainCategoryInfo(cmsMtCategoryTreeAllBean);
+        cmsFeedSetCategoryMQMessageBody.setCodeList(codes);
+        cmsFeedSetCategoryMQMessageBody.setSender(sender);
+        cmsMqSenderService.sendMessage(cmsFeedSetCategoryMQMessageBody);
+
+    }
     private static class MainCategoryBean {
         @JsonProperty("code")
         String code;
         @JsonProperty("mainCategoryInfo")
         CmsMtCategoryTreeAllBean mainCategoryInfo;
+    }
+
+    private static class batchUpdateCategoryBean{
+        @JsonProperty("searchInfo")
+        Map<String, Object> searchInfo;
+        @JsonProperty("isAll")
+        Boolean isAll;
+        @JsonProperty("selList")
+        List<Map<String, String>> selList;
+        @JsonProperty("mainCategoryInfo")
+        CmsMtCategoryTreeAllBean mainCategoryInfo;
+
     }
 }

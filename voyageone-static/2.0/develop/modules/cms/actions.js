@@ -99,7 +99,8 @@ define(function () {
                     "doExport": "export",
                     "exportSearch": "exportSearch",
                     "download": "download",
-                    "updateMainCategory":"updateMainCategory"
+                    "updateMainCategory":"updateMainCategory",
+                    "batchUpdateMainCategory":"batchUpdateMainCategory"
                 }
             },
             "group": {

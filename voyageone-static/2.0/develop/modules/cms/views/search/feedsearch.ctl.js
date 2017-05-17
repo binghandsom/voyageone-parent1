@@ -305,6 +305,39 @@ define([
 
         };
 
+        $scope.batchUpdateMainCategory = function () {
+            var selList = $scope.vm.feedSelList.selList;
+            if (selList && selList.length == 0 && $scope.vm.searchInfo.isAll != true) {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                return;
+            }
+
+            systemCategoryService.getNewsCategoryList().then(function (res) {
+                popups.popupCategoryNew({
+                    categories: res.data
+                }).then(function (context) {
+                    var selList = $scope.vm.feedSelList.selList;
+                    if (selList && selList.length == 0 && $scope.vm.searchInfo.isAll != true) {
+                        alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                        return;
+                    }
+                    confirm("谁否设置主类目").then(function () {
+                        $feedSearchService.batchUpdateMainCategory({
+                            'selList': selList,
+                            'isAll': $scope.vm.searchInfo.isAll,
+                            "searchInfo": $scope.beforSearchInfo,
+                            "mainCategoryInfo":context.selected
+                        }).then(function () {
+                            if (tempFeedSelect != null) {
+                                tempFeedSelect.clearSelectedList();
+                            }
+                            $scope.vm.searchInfo.isAll = false;
+                        })
+                    });
+                });
+            });
+        };
+
         function bindCategory(category, feedInfo) {
             $feedSearchService.updateMainCategory({"code":feedInfo.code,"mainCategoryInfo":category}).then(function () {
                 feedInfo.mainCategoryCn = category.catPath;

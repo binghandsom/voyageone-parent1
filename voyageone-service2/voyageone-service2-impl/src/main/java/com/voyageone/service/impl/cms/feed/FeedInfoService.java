@@ -4,6 +4,7 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -480,6 +481,9 @@ public class FeedInfoService extends BaseService {
             cmsBtFeedInfo.setCatConf("1");
             cmsBtFeedInfo.setModifier(modifier);
             cmsBtFeedInfo.setModified(DateTimeUtil.getNowTimeStamp());
+            if (cmsBtFeedInfo.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Succeed || cmsBtFeedInfo.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Fail) {
+                cmsBtFeedInfo.setUpdFlg(CmsConstants.FeedUpdFlgStatus.Pending);
+            }
         }
         updateFeedInfo(cmsBtFeedInfo);
         return true;
