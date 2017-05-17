@@ -275,36 +275,13 @@ public class CmsProductSearchQueryService extends BaseService {
             } else {
                 searchValue.setfCatPathList(searchValue.getfCatPathList().stream()
                         .map(String::trim)
-                        .map(str -> ClientUtils.escapeQueryChars(str) + "*")
+                        .map(ClientUtils::escapeQueryChars)
                         .collect(Collectors.toList()));
-                Criteria tempCriteria = null;
-                for (String str : searchValue.getfCatPathList()) {
-                    if (tempCriteria == null) {
-                        if (searchValue.getfCatPathType() == 1) {
-                            tempCriteria = new Criteria("feedCat").expression(str);
-                        } else {
-                            criteria = criteria.and("feedCat").expression(str).not();
-                        }
-                    } else {
-                        if (searchValue.getfCatPathType() == 1) {
-                            tempCriteria = tempCriteria.or("feedCat").expression(str);
-                        } else {
-                            criteria = criteria.and("feedCat").expression(str).not();
-                        }
-                    }
-                }
                 if (searchValue.getfCatPathType() == 1) {
-                    criteria = criteria.and(tempCriteria);
+                    criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList());
+                } else {
+                    criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList()).not();
                 }
-//                searchValue.setfCatPathList(searchValue.getfCatPathList().stream()
-//                        .map(String::trim)
-////                    .map(ClientUtils::escapeQueryChars)
-//                        .collect(Collectors.toList()));
-//                if (searchValue.getfCatPathType() == 1) {
-//                    criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList());
-//                } else {
-//                    criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList()).not();
-//                }
             }
 
         }
