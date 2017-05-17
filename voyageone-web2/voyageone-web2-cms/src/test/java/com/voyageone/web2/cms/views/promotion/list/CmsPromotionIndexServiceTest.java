@@ -1,10 +1,14 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
+import org.apache.commons.io.FileUtils;
+import org.aspectj.util.FileUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.io.File;
 
 import static org.junit.Assert.*;
 
@@ -20,6 +24,9 @@ public class CmsPromotionIndexServiceTest {
     CmsPromotionIndexService cmsPromotionIndexService;
     @Test
     public void testGetCodeExcelFile() throws Exception {
-        cmsPromotionIndexService.getCodeExcelFile(45,"010");
+        byte[] bytes = cmsPromotionIndexService.getCodeExcelFile(1793,"001");
+
+        File f = new File("h:/promotion.xls");
+        FileUtils.writeByteArrayToFile(f, bytes);
     }
 }

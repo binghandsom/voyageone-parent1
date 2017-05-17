@@ -17,11 +17,11 @@ define([
                 $scope.vm.cmsBtJmPromotionExportTaskList = res.data;
             }, function (res) {
             })
-        }
+        };
         $scope.downloadExportExcel = function (id) {
             ///cms/CmsBtJmPromotionExportTask/index/downloadExcel
             ExportExcel("/cms/CmsBtJmPromotionExportTask/index/downloadExcel", angular.toJson({id: id}));
-        }
+        };
 
         function ExportExcel(action, source)//导出excel方法
         {
@@ -37,6 +37,11 @@ define([
             Form.action = action;
             Form.submit();
         };
+
+        // 查询数据文件创建的状态
+        $scope.exportSearch = function(page) {
+            $scope.searchExport();
+        }
     }
     cms.directive('spExportList', [function spExportListDirectiveFactory() {
         return {

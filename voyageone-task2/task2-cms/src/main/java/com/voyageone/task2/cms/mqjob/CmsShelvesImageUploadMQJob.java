@@ -25,6 +25,11 @@ import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsShelvesImageUploadM
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import com.voyageone.service.model.cms.CmsBtShelvesTemplateModel;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -223,30 +228,42 @@ public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImag
     }
 
     public byte[] downImage(String imageUrl) {
-        long threadNo = Thread.currentThread().getId();
-        //如果promotionImagesList为空的时，不做处理
-        byte[] buffer = new byte[1024 * 10];
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            int len;
-            URL url = new URL(imageUrl);
-            $info("threadNo:" + threadNo + " url:" + imageUrl + "下载开始");
-            //Url
-            try (InputStream inputStream = HttpUtils.getInputStream(imageUrl)) {
-                while ((len = inputStream.read(buffer)) > 0) {
-                    $info("len: "+len);
-                    byteArrayOutputStream.write(buffer, 0, len);
-                }
-                inputStream.close();
-            } catch (Exception e) {
-                $error(e);
-                e.printStackTrace();
-            }
+        $info(imageUrl);
+        HttpGet httpGet = new HttpGet(imageUrl);
 
-            $info("threadNo:" + threadNo + " url:" + imageUrl + "下载结束");
-            return byteArrayOutputStream.toByteArray();
+        try (CloseableHttpClient httpClient = HttpClients.createMinimal();
+             CloseableHttpResponse response = httpClient.execute(httpGet);
+             InputStream inputStream = response.getEntity().getContent()) {
+            return IOUtils.toByteArray(inputStream);
         } catch (IOException e) {
             $error(e);
         }
         return null;
+//
+//        long threadNo = Thread.currentThread().getId();
+//        //如果promotionImagesList为空的时，不做处理
+//        byte[] buffer = new byte[1024 * 10];
+//        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+//            int len;
+//            URL url = new URL(imageUrl);
+//            $info("threadNo:" + threadNo + " url:" + imageUrl + "下载开始");
+//            //Url
+//            try (InputStream inputStream = HttpUtils.getInputStream(imageUrl)) {
+//                while ((len = inputStream.read(buffer)) > 0) {
+//                    $info("len: "+len);
+//                    byteArrayOutputStream.write(buffer, 0, len);
+//                }
+//                inputStream.close();
+//            } catch (Exception e) {
+//                $error(e);
+//                e.printStackTrace();
+//            }
+//
+//            $info("threadNo:" + threadNo + " url:" + imageUrl + "下载结束");
+//            return byteArrayOutputStream.toByteArray();
+//        } catch (IOException e) {
+//            $error(e);
+//        }
+//        return null;
     }
 }

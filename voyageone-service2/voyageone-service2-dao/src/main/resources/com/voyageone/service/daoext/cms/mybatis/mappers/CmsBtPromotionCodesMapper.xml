@@ -187,6 +187,59 @@
         </where>
         group by a.product_model,a.tag_id desc, c.id
     </select>
+
+    <resultMap id="bt_promotion_code_sku_map2" autoMapping="true" extends="bt_promotion_code_map"
+               type="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean">
+    </resultMap>
+    <select id="select_cms_bt_promotion_code_sku2" resultMap="bt_promotion_code_sku_map2" parameterType="HashMap">
+        SELECT
+        a.id,
+        a.promotion_id,
+        a.org_channel_id,
+        a.product_id,
+        a.model_id,
+        a.product_model,
+        a.product_code,
+        a.product_name,
+        a.cat_path,
+        -- c.retail_price,
+        -- c.sale_price,
+        -- c.msrp_rmb as msrp,
+        -- c.msrp_usd as msrpUS,
+        a.tag_id,
+        -- c.promotion_price,
+        a.num_iid,
+        a.image_url_1,
+        a.image_url_2,
+        a.image_url_3,
+        a.property_1,
+        a.property_2,
+        a.property_3,
+        a.property_4,
+        a.created,
+        a.creater,
+        a.modified,
+        a.modifier,
+        a.image_url_1 as image,
+        GROUP_CONCAT(b.tag_name SEPARATOR '|') as tag_name
+        FROM
+        voyageone_cms2.cms_bt_promotion_codes a
+        -- LEFT JOIN voyageone_cms2.cms_bt_tag b ON a.tag_id = b.id
+        left join  voyageone_cms2.`cms_bt_promotion_codes_tag` as  b on a.id=b.cms_bt_promotion_codes_id
+        <where>
+            <if test="promotionId != null">
+                a.promotion_id = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="orgChannelId != null and orgChannelId != '' and orgChannelId != '928'">
+                and a.org_channel_id= #{orgChannelId,jdbcType=VARCHAR}
+            </if>
+        </where>
+        group by
+        a.product_code, a.tag_id
+        ORDER BY
+        a.product_model,
+        a.tag_id DESC
+    </select>
     <select id="select_cms_bt_promotion_code_in_active_promotion_name" resultType="HashMap" parameterType="HashMap">
         SELECT DISTINCT(promotion_name) from voyageone_cms2.cms_bt_promotion_codes t1
         INNER JOIN voyageone_cms2.cms_bt_promotion t2 on  t1.promotion_id = t2.id
