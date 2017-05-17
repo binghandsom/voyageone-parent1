@@ -61,7 +61,7 @@ angular.module("voyageone.angular.directives").directive("editTitle", function (
         + '<button class="btn btn-success" ng-click="ctrl.save()"><i class="fa fa-save"></i></button>'
         + '</div>'
         + '</script>'
-        + '<button uib-popover-template="ctrl.dynamicPopover.templateUrl" popover-title="{{ctrl.dynamicPopover.title}}" popover-is-open="ctrl.isOpen" type="button" class="btn btn-default" title="{{ctrl.productInfo.common.fields.originalTitleCn}}">{{ctrl.productInfo.common.fields.originalTitleCn  | limitTo: 30}}</button>'
+        + '<button uib-popover-template="ctrl.dynamicPopover.templateUrl" popover-title="{{ctrl.dynamicPopover.title}}" popover-is-open="ctrl.isOpen" type="button" class="btn btn-default" title="{{ctrl.productInfo.common.fields.originalTitleCn}}" ng-if="ctrl.productInfo.common.fields.originalTitleCn">{{ctrl.productInfo.common.fields.originalTitleCn  | limitTo: 30}}</button>'
         + '</div>'
 
     }
