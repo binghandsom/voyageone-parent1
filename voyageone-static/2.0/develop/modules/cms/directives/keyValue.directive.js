@@ -19,35 +19,44 @@ define([
             },
             template : '<div>{{dispValue}}</div>',
             link: function(scope, elem, attrs) {
-                if (scope.ngModel == undefined) {
-                    return;
-                }
-                if (attrs.type == 'carts') {
-                    if (scope.ngModel.length == 0) {
+
+                scope.$watch('scope.ngModel',function () {
+                    getValue();
+                });
+
+                function getValue(){
+                    if (scope.ngModel == undefined) {
                         return;
                     }
-                    var strDisp = "";
-                    scope.ngModel.forEach(function (cartObj) {
-                        if (cartObj.cartId != 0 && cartObj.cartId != 1) {
-                            var strValue = Carts.valueOf(cartObj.cartId);
-                            if (strValue == undefined) {
-                                // Carts中没有定义时直接输出cartId
-                                strValue = cartObj.cartId;
-                            } else {
-                                strValue = strValue.name;
-                            }
-                            if (strDisp.length == 0) {
-                                strDisp = strDisp + strValue;
-                            } else {
-                                strDisp = strDisp + ', ' + strValue;
-                            }
+                    if (attrs.type == 'carts') {
+                        if (scope.ngModel.length == 0) {
+                            return;
                         }
-                    });
-                    scope.dispValue = strDisp;
-                } else if (attrs.type == 'feedStatus') {
-                    var strDisp = FeedStatus.valueOf(scope.ngModel).name;
-                    scope.dispValue = $translate.instant(strDisp);
+                        var strDisp = "";
+                        scope.ngModel.forEach(function (cartObj) {
+                            if (cartObj.cartId != 0 && cartObj.cartId != 1) {
+                                var strValue = Carts.valueOf(cartObj.cartId);
+                                if (strValue == undefined) {
+                                    // Carts中没有定义时直接输出cartId
+                                    strValue = cartObj.cartId;
+                                } else {
+                                    strValue = strValue.name;
+                                }
+                                if (strDisp.length == 0) {
+                                    strDisp = strDisp + strValue;
+                                } else {
+                                    strDisp = strDisp + ', ' + strValue;
+                                }
+                            }
+                        });
+                        scope.dispValue = strDisp;
+                    } else if (attrs.type == 'feedStatus') {
+                        var strDisp = FeedStatus.valueOf(scope.ngModel).name;
+                        scope.dispValue = $translate.instant(strDisp);
+                    }
                 }
+
+
             }
         };
     });

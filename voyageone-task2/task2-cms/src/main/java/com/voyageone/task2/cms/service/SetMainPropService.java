@@ -3253,6 +3253,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 searchResult.setEnName(feed.getMainCategoryEn());
                 searchResult.setTaxDeclare(mtCategoryKeysModel.getTaxDeclare());
                 searchResult.setTaxPersonal(mtCategoryKeysModel.getTaxPersonal());
+                searchResult.setProductTypeCn(mtCategoryKeysModel.getProductTypeCn());
+                searchResult.setProductTypeEn(mtCategoryKeysModel.getProductTypeEn());
                 String weight = mtCategoryKeysModel.getWeight();
                 if(!StringUtil.isEmpty(weight)){
                     searchResult.setWeight(Double.parseDouble(weight));

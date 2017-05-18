@@ -342,6 +342,9 @@ define([
             $feedSearchService.updateMainCategory({"code":feedInfo.code,"mainCategoryInfo":category}).then(function () {
                 feedInfo.mainCategoryCn = category.catPath;
                 feedInfo.mainCategoryEn = category.catPathEn;
+                if(feedInfo.updFlg == "1" || feedInfo.updFlg == "2"){
+                    feedInfo.updFlg = 0;
+                }
                 notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
             })
         }
