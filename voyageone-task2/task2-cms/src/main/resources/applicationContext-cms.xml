@@ -113,7 +113,7 @@
         <task:scheduled ref="CmsMongoOptimizeIndexJob" method="run" cron="0 0 3 * * ?"/>
 
         <!-- overstock 价格变更监听 -->
-        <task:scheduled ref="CmsOverstockPriceEventJob" method="run" cron="9 0/3 0 * * *"/>
+        <task:scheduled ref="CmsOverstockPriceEventJob" method="run" cron="9 0/3 * * * *"/>
 
         <!-- 单独向Target发送数据-->
         <task:scheduled ref="TargetDailyService" method="run" cron="0 0 1,13 * * *"/>
