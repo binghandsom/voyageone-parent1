@@ -112,10 +112,11 @@ public class PlatformPriceService extends VOAbsLoggable {
         String userName = StringUtils.trimToNull(messageBody.getSender());
         List<String> codeList = messageBody.getCodeList();
         Integer cartId = messageBody.getCartId();
+        $info("start count = "+codeList.size() + " channel= "+ channelId);
 
         JongoQuery qryObj = new JongoQuery();
         JongoUpdate updObj = new JongoUpdate();
-        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
+        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1, cmsBtProductDao, channelId);
 
         // 获取产品的信息
         qryObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + ".skus.0':{$exists:true}}");
@@ -149,7 +150,7 @@ public class PlatformPriceService extends VOAbsLoggable {
                 updObj.setUpdateParameters(skuList, DateTimeUtil.getNowTimeStamp(), userName);
                 BulkWriteResult rs = bulkList.addBulkJongo(updObj);
                 if (rs != null) {
-                    $debug(String.format("指导价变更批量确认 channelId=%s 执行结果=%s", channelId, rs.toString()));
+                    $info(String.format("指导价变更批量确认 channelId=%s 执行结果=%s", channelId, rs.toString()));
                     // 保存确认历史
                     priceConfirmLogService.addConfirmed(channelId, prodCode, prodObj.getPlatformNotNull(cartId), userName);
                 }
@@ -160,8 +161,9 @@ public class PlatformPriceService extends VOAbsLoggable {
         productStatusHistoryService.insertList(channelId, newCodeList, cartId, EnumProductOperationType.BatchConfirmRetailPrice, "", userName);
         BulkWriteResult rs = bulkList.execute();
         if (rs != null) {
-            $debug(String.format("指导价变更批量确认 channelId=%s 结果=%s", channelId, rs.toString()));
+            $info(String.format("指导价变更批量确认 channelId=%s 结果=%s", channelId, rs.toString()));
         }
+        $info("end");
     }
 
     /**
