@@ -317,8 +317,8 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
             BaseMongoMap<String, String> productInfoMap = getProductInfoMap(mainProductPlatformCart, mainProduct, sxData, shop);
             // 构造Field列表
             List<InputField> itemFieldList = new ArrayList<>();
-            InputField inputField = new InputField();
             productInfoMap.entrySet().forEach(p -> {
+                InputField inputField = new InputField();
                 inputField.setId(p.getKey().toLowerCase());
                 inputField.setValue(p.getValue());
                 itemFieldList.add(inputField);
@@ -327,7 +327,8 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
             List<Field> fieldList = tbItemSchema.getFields();
             fieldList.stream()
                     .forEach( tmField -> {
-                        if (fieldMap.get(tmField.getId().toLowerCase()).getId().equalsIgnoreCase(tmField.getId())) {
+                        if (fieldMap.get(tmField.getId().toLowerCase()) != null &&
+                            fieldMap.get(tmField.getId().toLowerCase()).getId().equalsIgnoreCase(tmField.getId())) {
                             InputField field = (InputField) tmField;
                             if ("extends".equals(tmField.getId())) {
                                 Map<String,String> map = new HashMap<String, String>();
