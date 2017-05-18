@@ -131,9 +131,9 @@ public class PlatformPriceService extends VOAbsLoggable {
 
             List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
             for (BaseMongoMap skuObj : skuList) {
-                Boolean isSaleFlg = (Boolean) skuObj.get("isSale");
+//                Boolean isSaleFlg = (Boolean) skuObj.get("isSale");
                 String chgFlg = StringUtils.trimToEmpty(skuObj.getStringAttribute("priceChgFlg"));
-                if ((chgFlg.startsWith("U") || chgFlg.startsWith("D")) && isSaleFlg) {
+                if ((chgFlg.startsWith("U") || chgFlg.startsWith("D"))) {
                     // 指导价有变更
                     skuObj.put("priceChgFlg", "0");
                     skuObj.put("confPriceRetail", skuObj.getDoubleAttribute("priceRetail"));
