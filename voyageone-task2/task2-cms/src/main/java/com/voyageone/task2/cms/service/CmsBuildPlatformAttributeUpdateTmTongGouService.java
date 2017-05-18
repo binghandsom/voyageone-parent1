@@ -503,14 +503,14 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
         // 最少1张，最多5张。多张图片之间，使用英文的逗号进行分割。需要使用alicdn的图片地址。建议尺寸为800*800像素。
         // 格式：<value>http://img.alicdn.com/imgextra/i1/2640015666/TB2PTFYkXXXXXaUXpXXXXXXXXXX_!!2640015666.jpg,
         //      http://img.alicdn.com/imgextra/~~</value>
-//        String valMainImages = "";
-//        // 解析cms_mt_platform_dict表中的数据字典
-//        String mainPicUrls = getValueByDict("天猫同购商品主图5张", expressionParser, shop);
-//        if (!StringUtils.isNullOrBlank2(mainPicUrls)) {
-//            // 去掉末尾的逗号
-//            valMainImages = mainPicUrls.substring(0, mainPicUrls.lastIndexOf(Separtor_Coma));
-//        }
-//        productInfoMap.put("main_images", valMainImages);
+        String valMainImages = "";
+        // 解析cms_mt_platform_dict表中的数据字典
+        String mainPicUrls = getValueByDict("天猫同购商品主图5张", expressionParser, shop);
+        if (!StringUtils.isNullOrBlank2(mainPicUrls)) {
+            // 去掉末尾的逗号
+            valMainImages = mainPicUrls.substring(0, mainPicUrls.lastIndexOf(Separtor_Coma));
+        }
+        productInfoMap.put("main_images", valMainImages);
 
         // 无线描述(选填)
         // 解析cms_mt_platform_dict表中的数据字典
