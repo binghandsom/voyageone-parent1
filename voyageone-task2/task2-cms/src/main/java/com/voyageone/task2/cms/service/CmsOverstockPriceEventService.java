@@ -145,13 +145,13 @@ public class CmsOverstockPriceEventService extends BaseCronTaskService {
                 for (CmsBtFeedInfoModel_Sku feedSku : cmsBtFeedInfoModel.getSkus()) {
                     if (feedSku.getSku().equalsIgnoreCase(sku)) {
                         feedSku.setPriceClientRetail(price.doubleValue());
-                        feedSku.setPriceNet(price.multiply(new BigDecimal(0.88)).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                        feedSku.setPriceNet(Math.ceil(price.multiply(new BigDecimal(0.88)).doubleValue()));
                         Double weight = 3.0;
                         if(feedSku.getWeightOrg() != null){
                             weight = Double.parseDouble(feedSku.getWeightOrg());
                         }
                         weight = new BigDecimal(weight+0.5).setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
-                        feedSku.setPriceCurrent(new BigDecimal((price.doubleValue()*0.88+weight*3.5+1)*6.7/(1 - 0.15 - 0.06 - 0.119 - 0.05)).setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
+                        feedSku.setPriceCurrent(Math.ceil(new BigDecimal((price.doubleValue()*0.88+weight*3.5+1)*6.7/(1 - 0.15 - 0.06 - 0.119 - 0.05)).setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue()));
                         if (cmsBtFeedInfoModel.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Succeed) {
                             cmsBtFeedInfoModel.setUpdFlg(CmsConstants.FeedUpdFlgStatus.Pending);
                         }
