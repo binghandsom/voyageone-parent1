@@ -10,30 +10,26 @@ define([
     'modules/cms/enums/FeedStatus'
 ], function (cms, Carts, FeedStatus) {
     'use strict';
-    return cms.directive("keyValue", function($translate) {
+    return cms.directive("keyValue", function ($translate) {
         return {
             restrict: "E",
-            require: '^ngModel',
-            scope: {
-                ngModel: '='
-            },
-            template : '<div>{{dispValue}}</div>',
-            link: function(scope, elem, attrs) {
+            require: 'ngModel',
+            link: function (scope, elem, attrs, ctrls) {
 
-                scope.$watch('scope.ngModel',function () {
-                    getValue();
-                });
+                var type = attrs.type,
+                    viewValue = ctrls.$viewValue;
 
-                function getValue(){
-                    if (scope.ngModel == undefined) {
+                ctrls.$render = function() {
+
+                    if (ctrls.$viewValue == undefined)
                         return;
-                    }
-                    if (attrs.type == 'carts') {
-                        if (scope.ngModel.length == 0) {
+
+                    if (type === 'carts') {
+                        if (viewValue.length === 0) {
                             return;
                         }
                         var strDisp = "";
-                        scope.ngModel.forEach(function (cartObj) {
+                        ctrls.$viewValue.forEach(function (cartObj) {
                             if (cartObj.cartId != 0 && cartObj.cartId != 1) {
                                 var strValue = Carts.valueOf(cartObj.cartId);
                                 if (strValue == undefined) {
@@ -49,15 +45,17 @@ define([
                                 }
                             }
                         });
-                        scope.dispValue = strDisp;
-                    } else if (attrs.type == 'feedStatus') {
-                        var strDisp = FeedStatus.valueOf(scope.ngModel).name;
-                        scope.dispValue = $translate.instant(strDisp);
+                        elem.html(strDisp);
+                    } else if (type === 'feedStatus') {
+                        var strDisp = FeedStatus.valueOf(ctrls.$viewValue).name;
+                        elem.html($translate.instant(strDisp));
                     }
-                }
+                };
 
 
             }
+
+
         };
     });
 })
