@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.cms.CmsBtPromotionExportTaskService;
 import com.voyageone.service.impl.cms.promotion.CmsPromotionExportService;
@@ -35,7 +36,7 @@ public class CmsPromotionExportMQJob extends TBaseMQCmsService<CmsPromotionExpor
 
     @Override
     public void onStartup(CmsPromotionExportMQMessageBody messageBody) throws Exception {
-
+        $info("活动(非聚美)导出:" + JacksonUtil.bean2Json(messageBody));
         try {
             cmsPromotionExportService.export(messageBody);
         } catch (Exception e) {

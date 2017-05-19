@@ -113,7 +113,7 @@ public class CmsPromotionExportService extends BaseService {
         CmsPromotionExportMQMessageBody messageBody = new CmsPromotionExportMQMessageBody();
         messageBody.setChannelId(channelId);
         messageBody.setSender(username);
-        messageBody.setCmsPromotionExportTaskId(newTaskModel.getCmsBtPromotionId());
+        messageBody.setCmsPromotionExportTaskId(newTaskModel.getId());
         cmsMqSenderService.sendMessage(messageBody);
     }
 
