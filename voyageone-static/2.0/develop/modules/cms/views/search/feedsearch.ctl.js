@@ -329,7 +329,7 @@ define([
                         alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                         return;
                     }
-                    confirm("谁否设置主类目").then(function () {
+                    confirm("是否设置主类目？").then(function () {
                         $feedSearchService.batchUpdateMainCategory({
                             'selList': selList,
                             'isAll': $scope.vm.searchInfo.isAll,
@@ -340,6 +340,7 @@ define([
                                 tempFeedSelect.clearSelectedList();
                             }
                             $scope.vm.searchInfo.isAll = false;
+                            search();
                         })
                     });
                 });
