@@ -93,6 +93,7 @@ public class CmsPromotionExportService extends BaseService {
      */
     public void createPromotionExportTask(String channelId, Integer promotionId, Integer templateType, String username) {
         CmsBtPromotionExportTaskModel queryModel = new CmsBtPromotionExportTaskModel();
+        queryModel.setCmsBtPromotionId(promotionId);
         queryModel.setCreater(username);
         queryModel.setStatus(0);
         // 当前用户是否有等待导入的任务

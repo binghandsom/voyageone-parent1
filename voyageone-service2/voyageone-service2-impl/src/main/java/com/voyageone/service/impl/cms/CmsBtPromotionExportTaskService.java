@@ -32,16 +32,18 @@ public class CmsBtPromotionExportTaskService extends BaseService {
         return cmsBtPromotionExportTaskDao.select(cmsBtPromotionExportTaskId);
     }
 
-    public List<CmsBtPromotionExportTaskModel> getExportTaskByUser(String channelId, String userName, int start, Integer pageSize) {
+    public List<CmsBtPromotionExportTaskModel> getExportTaskByUser(String channelId, Integer promotionId,  String userName, int start, Integer pageSize) {
         Map<String,Object> param = new HashMap<>();
+        param.put("cmsBtPromotionId", promotionId);
         param.put("creater",userName);
         param.put("start",start);
         param.put("pageSize",pageSize);
         return cmsBtPromotionExportTaskDaoExt.selectList(param);
     }
 
-    public int getExportTaskByUserCnt(String channelId, String userName) {
+    public int getExportTaskByUserCnt(String channelId, Integer promotionId, String userName) {
         Map<String,Object>param = new HashMap<>();
+        param.put("cmsBtPromotionId", promotionId);
         param.put("creater",userName);
         return cmsBtPromotionExportTaskDao.selectCount(param);
     }

@@ -201,11 +201,12 @@ public class CmsPromotionIndexController extends CmsController {
         if (pageSize == null) {
             pageSize = 10;
         }
+        Integer promotionId = requestParams.get("promotionId");
 
         UserSessionBean userInfo = getUser();
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("exportList", cmsBtPromotionExportTaskService.getExportTaskByUser(userInfo.getSelChannelId(), userInfo.getUserName(), (pageNum - 1) * pageSize, pageSize));
-        resultMap.put("exportTotal", cmsBtPromotionExportTaskService.getExportTaskByUserCnt(userInfo.getSelChannelId(), userInfo.getUserName()));
+        resultMap.put("exportList", cmsBtPromotionExportTaskService.getExportTaskByUser(userInfo.getSelChannelId(), promotionId, userInfo.getUserName(), (pageNum - 1) * pageSize, pageSize));
+        resultMap.put("exportTotal", cmsBtPromotionExportTaskService.getExportTaskByUserCnt(userInfo.getSelChannelId(), promotionId, userInfo.getUserName()));
         return success(resultMap);
     }
 
