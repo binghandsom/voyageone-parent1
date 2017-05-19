@@ -42,6 +42,7 @@ import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
+import com.voyageone.service.impl.cms.sx.PlatformWorkloadAttribute;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
@@ -63,11 +64,14 @@ import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1731,5 +1735,13 @@ public class CmsProductDetailService extends BaseViewService {
         prodCodeList.add(productModel.getCommon().getFields().getCode());
         productStatusHistoryService.insertList(channelId, prodCodeList, -1, EnumProductOperationType.SingleProdSetOriginalTitleCn, msg, username);
 
+        String code = productModel.getCommon().getFields().getCode();
+        for (CmsBtProductModel_Platform_Cart platformCart : productModel.getPlatforms().values()) {
+            if (CmsConstants.ProductStatus.Approved.name().equals(platformCart.getStatus())) {
+                //取得approved的code插入
+                $debug(String.format("商品(channel=%s, code=%s)Title修改，平台(cartId=%d)Approved需重新上新", channelId, code, platformCart.getCartId()));
+                sxProductService.insertPlatformWorkload(channelId, platformCart.getCartId(), PlatformWorkloadAttribute.TITLE, Arrays.asList(code), username);
+            }
+        }
     }
 }
