@@ -1740,8 +1740,8 @@ public class CmsProductDetailService extends BaseViewService {
             Integer cartId = platformCart.getCartId();
             if (cartId.intValue() > 19 && cartId.intValue() < 900 && CmsConstants.ProductStatus.Approved.name().equals(platformCart.getStatus())) {
                 //取得approved的code插入
-                $debug(String.format("商品(channel=%s, code=%s)Title修改，平台(cartId=%d)Approved需重新上新", channelId, code, platformCart.getCartId()));
-                sxProductService.insertPlatformWorkload(channelId, platformCart.getCartId(), PlatformWorkloadAttribute.TITLE, Arrays.asList(code), username);
+                $debug(String.format("商品(channel=%s, code=%s)Title修改，平台(cartId=%d)Approved需重新上新", channelId, code, cartId));
+                sxProductService.insertPlatformWorkload(channelId, cartId, PlatformWorkloadAttribute.TITLE, Arrays.asList(code), username);
             }
         }
     }
