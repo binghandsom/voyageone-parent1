@@ -239,6 +239,8 @@ define(function () {
                     "updatePromotion": "updatePromotion",
                     "delPromotion": "delPromotion",
                     "exportPromotion": "exportPromotion",
+                    "getPromotionExportTask":"getPromotionExportTask",
+                    "downloadPromotionExport":"downloadPromotionExport",
                     getPage: "getPage",
                     getCount: "getCount",
                     getEditModel: "getEditModel",

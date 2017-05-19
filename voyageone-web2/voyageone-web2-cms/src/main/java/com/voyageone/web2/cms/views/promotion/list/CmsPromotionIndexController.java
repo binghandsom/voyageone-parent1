@@ -1,25 +1,37 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Properties;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
+import com.voyageone.service.impl.CmsProperty;
+import com.voyageone.service.impl.cms.CmsBtExportTaskService;
+import com.voyageone.service.impl.cms.CmsBtPromotionExportTaskService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
+import com.voyageone.service.impl.cms.promotion.CmsPromotionExportService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsSneakerHeadAddPromotionMQMessageBody;
+import com.voyageone.service.model.cms.CmsBtPromotionExportTaskModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
+import com.voyageone.web2.core.bean.UserSessionBean;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author james 2015/12/15
@@ -34,13 +46,18 @@ public class CmsPromotionIndexController extends CmsController {
     private final CmsPromotionIndexService cmsPromotionService;
     private final PromotionService promotionService;
     private final CmsBtJmPromotionService cmsBtJmPromotionService;
+    private final CmsPromotionExportService cmsPromotionExportService;
+    private final CmsBtPromotionExportTaskService cmsBtPromotionExportTaskService;
 
     @Autowired
     public CmsPromotionIndexController(PromotionService promotionService, CmsPromotionIndexService cmsPromotionService,
-                                       CmsBtJmPromotionService cmsBtJmPromotionService) {
+                                       CmsBtJmPromotionService cmsBtJmPromotionService, CmsPromotionExportService cmsPromotionExportService,
+                                       CmsBtPromotionExportTaskService cmsBtPromotionExportTaskService) {
         this.promotionService = promotionService;
         this.cmsPromotionService = cmsPromotionService;
         this.cmsBtJmPromotionService = cmsBtJmPromotionService;
+        this.cmsPromotionExportService = cmsPromotionExportService;
+        this.cmsBtPromotionExportTaskService = cmsBtPromotionExportTaskService;
     }
 
 /*    @RequestMapping(PROMOTION.LIST.INDEX.TEST)
@@ -135,15 +152,61 @@ public class CmsPromotionIndexController extends CmsController {
 //    }
 
     @RequestMapping(PROMOTION.LIST.INDEX.PROMOTION_EXPORT)
-    public ResponseEntity<byte[]> doExport(HttpServletRequest request, HttpServletResponse response,
-                                           @RequestParam Integer promotionId,
-                                           @RequestParam String promotionName) throws Exception {
+    public AjaxResponse promotionExport(@RequestBody Map<String, Integer> requestParams) {
+        Integer promotionId = requestParams.get("promotionId");
+        Integer templateType = requestParams.get("templateType");
+        cmsPromotionExportService.createPromotionExportTask(getUser().getSelChannelId(), promotionId, templateType, getUser().getUserName());
 
-        byte[] data = cmsPromotionService.getCodeExcelFile(promotionId, getUser().getSelChannelId());
+        /*byte[] data = cmsPromotionService.getCodeExcelFile(promotionId, getUser().getSelChannelId());
+        String filename = String.format("%s(%s).xlsx", promotionName, DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss"));*/
 
-        String filename = String.format("%s(%s).xlsx", promotionName, DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss"));
+        return success(null);
+    }
 
-        return genResponseEntityFromBytes(filename, data);
+    @RequestMapping(PROMOTION.LIST.INDEX.PROMOTION_EXPORT_DOWNLOAD)
+    public ResponseEntity<byte[]> promotionExportDownload(@RequestParam Integer promotionExportTaskId) {
+
+        CmsBtPromotionExportTaskModel taskModel = cmsBtPromotionExportTaskService.getById(promotionExportTaskId);
+        String exportPath = "";
+        if (Objects.equals(taskModel.getTemplateType(), Integer.valueOf(0))) {
+            exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_EXPORT_PATH);
+        } else if (Objects.equals(taskModel.getTemplateType(), Integer.valueOf(1))) {
+            exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_JUHUASUAN_EXPORT_PATH);
+        } else if (Objects.equals(taskModel.getTemplateType(), Integer.valueOf(2))) {
+            exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_TMALL_EXPORT_PATH);
+        }
+        File pathFileObj = new File(exportPath);
+        if (!pathFileObj.exists()) {
+            $info("活动导出路径：" + exportPath);
+            throw new BusinessException(String.format("活动导出路径(%s)不存在", exportPath));
+        }
+
+        exportPath += taskModel.getFileName();
+        pathFileObj = new File(exportPath);
+        if (!pathFileObj.exists()) {
+            $info("活动导出文件：" + exportPath);
+            throw new BusinessException(String.format("活动导出文件(%s)不存在", exportPath));
+        }
+        return genResponseEntityFromFile(taskModel.getFileName(), exportPath);
+    }
+
+
+    @RequestMapping(PROMOTION.LIST.INDEX.GET_PROMOTION_EXPORT_TASK)
+    public AjaxResponse getPromotionExportTask(@RequestBody Map<String, Integer> requestParams) {
+        Integer pageNum = requestParams.get("pageNum");
+        if (pageNum == null) {
+            pageNum = 1;
+        }
+        Integer pageSize = requestParams.get("pageSize");
+        if (pageSize == null) {
+            pageSize = 10;
+        }
+
+        UserSessionBean userInfo = getUser();
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("exportList", cmsBtPromotionExportTaskService.getExportTaskByUser(userInfo.getSelChannelId(), userInfo.getUserName(), (pageNum - 1) * pageSize, pageSize));
+        resultMap.put("exportTotal", cmsBtPromotionExportTaskService.getExportTaskByUserCnt(userInfo.getSelChannelId(), userInfo.getUserName()));
+        return success(resultMap);
     }
 
     /**

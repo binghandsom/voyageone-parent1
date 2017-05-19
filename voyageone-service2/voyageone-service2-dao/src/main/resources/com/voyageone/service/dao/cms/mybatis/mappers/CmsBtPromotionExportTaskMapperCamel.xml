@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtPromotionExportTaskDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtPromotionExportTaskModel" />
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List" >
+        `id`, `cms_bt_promotion_id`, `template_type`, `file_name`, `file_path`, `begin_time`, 
+        `end_time`, `parameter`, `status`, `comment`, `creater`, `created`, `modifier`, `modified`
+    </sql>
+
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.cms.CmsBtPromotionExportTaskExample" >
+        select
+        <if test="distinct" >
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List" />
+        from cms_bt_promotion_export_task
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_promotion_export_task
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="countByExample" parameterType="com.voyageone.service.model.cms.CmsBtPromotionExportTaskExample" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_promotion_export_task
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map" >
+        update cms_bt_promotion_export_task
+        <set >
+            <if test="record.id != null" >
+                `id` = #{record.id,jdbcType=INTEGER},
+            </if>
+            <if test="record.cmsBtPromotionId != null" >
+                `cms_bt_promotion_id` = #{record.cmsBtPromotionId,jdbcType=INTEGER},
+            </if>
+            <if test="record.templateType != null" >
+                `template_type` = #{record.templateType,jdbcType=INTEGER},
+            </if>
+            <if test="record.fileName != null" >
+                `file_name` = #{record.fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.filePath != null" >
+                `file_path` = #{record.filePath,jdbcType=VARCHAR},
+            </if>
+            <if test="record.beginTime != null" >
+                `begin_time` = #{record.beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.endTime != null" >
+                `end_time` = #{record.endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.parameter != null" >
+                `parameter` = #{record.parameter,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record.status != null" >
+                `status` = #{record.status,jdbcType=INTEGER},
+            </if>
+            <if test="record.comment != null" >
+                `comment` = #{record.comment,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record.creater != null" >
+                `creater` = #{record.creater,jdbcType=VARCHAR},
+            </if>
+            <if test="record.created != null" >
+                `created` = #{record.created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.modifier != null" >
+                `modifier` = #{record.modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="record.modified != null" >
+                `modified` = #{record.modified,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByExample" parameterType="map" >
+        update cms_bt_promotion_export_task
+        set `id` = #{record.id,jdbcType=INTEGER},
+            `cms_bt_promotion_id` = #{record.cmsBtPromotionId,jdbcType=INTEGER},
+            `template_type` = #{record.templateType,jdbcType=INTEGER},
+            `file_name` = #{record.fileName,jdbcType=VARCHAR},
+            `file_path` = #{record.filePath,jdbcType=VARCHAR},
+            `begin_time` = #{record.beginTime,jdbcType=TIMESTAMP},
+            `end_time` = #{record.endTime,jdbcType=TIMESTAMP},
+            `parameter` = #{record.parameter,jdbcType=LONGVARCHAR},
+            `status` = #{record.status,jdbcType=INTEGER},
+            `comment` = #{record.comment,jdbcType=LONGVARCHAR},
+            `creater` = #{record.creater,jdbcType=VARCHAR},
+            `created` = #{record.created,jdbcType=TIMESTAMP},
+            `modifier` = #{record.modifier,jdbcType=VARCHAR},
+            `modified` = #{record.modified,jdbcType=TIMESTAMP}
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtPromotionExportTaskModel" >
+        update cms_bt_promotion_export_task
+        <set >
+            <if test="cmsBtPromotionId != null" >
+                `cms_bt_promotion_id` = #{cmsBtPromotionId,jdbcType=INTEGER},
+            </if>
+            <if test="templateType != null" >
+                `template_type` = #{templateType,jdbcType=INTEGER},
+            </if>
+            <if test="fileName != null" >
+                `file_name` = #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="filePath != null" >
+                `file_path` = #{filePath,jdbcType=VARCHAR},
+            </if>
+            <if test="beginTime != null" >
+                `begin_time` = #{beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                `end_time` = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="parameter != null" >
+                `parameter` = #{parameter,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="status != null" >
+                `status` = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="comment != null" >
+                `comment` = #{comment,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_promotion_export_task
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteByExample" parameterType="com.voyageone.service.model.cms.CmsBtPromotionExportTaskExample" >
+        delete from cms_bt_promotion_export_task
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_promotion_export_task
+        <where >
+            <if test="cmsBtPromotionId != null" >
+                and `cms_bt_promotion_id` = #{cmsBtPromotionId,jdbcType=INTEGER}
+            </if>
+            <if test="templateType != null" >
+                and `template_type` = #{templateType,jdbcType=INTEGER}
+            </if>
+            <if test="fileName != null" >
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="filePath != null" >
+                and `file_path` = #{filePath,jdbcType=VARCHAR}
+            </if>
+            <if test="beginTime != null" >
+                and `begin_time` = #{beginTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="endTime != null" >
+                and `end_time` = #{endTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="parameter != null" >
+                and `parameter` = #{parameter,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_promotion_export_task
+        <where >
+            <if test="cmsBtPromotionId != null" >
+                and `cms_bt_promotion_id` = #{cmsBtPromotionId,jdbcType=INTEGER}
+            </if>
+            <if test="templateType != null" >
+                and `template_type` = #{templateType,jdbcType=INTEGER}
+            </if>
+            <if test="fileName != null" >
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="filePath != null" >
+                and `file_path` = #{filePath,jdbcType=VARCHAR}
+            </if>
+            <if test="beginTime != null" >
+                and `begin_time` = #{beginTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="endTime != null" >
+                and `end_time` = #{endTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="parameter != null" >
+                and `parameter` = #{parameter,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_promotion_export_task
+        <where >
+            <if test="cmsBtPromotionId != null" >
+                and `cms_bt_promotion_id` = #{cmsBtPromotionId,jdbcType=INTEGER}
+            </if>
+            <if test="templateType != null" >
+                and `template_type` = #{templateType,jdbcType=INTEGER}
+            </if>
+            <if test="fileName != null" >
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="filePath != null" >
+                and `file_path` = #{filePath,jdbcType=VARCHAR}
+            </if>
+            <if test="beginTime != null" >
+                and `begin_time` = #{beginTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="endTime != null" >
+                and `end_time` = #{endTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="parameter != null" >
+                and `parameter` = #{parameter,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtPromotionExportTaskModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_promotion_export_task
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="cmsBtPromotionId != null" >
+                `cms_bt_promotion_id`,
+            </if>
+            <if test="templateType != null" >
+                `template_type`,
+            </if>
+            <if test="fileName != null" >
+                `file_name`,
+            </if>
+            <if test="filePath != null" >
+                `file_path`,
+            </if>
+            <if test="beginTime != null" >
+                `begin_time`,
+            </if>
+            <if test="endTime != null" >
+                `end_time`,
+            </if>
+            <if test="parameter != null" >
+                `parameter`,
+            </if>
+            <if test="status != null" >
+                `status`,
+            </if>
+            <if test="comment != null" >
+                `comment`,
+            </if>
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `created`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+            `modified`,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="cmsBtPromotionId != null" >
+                #{cmsBtPromotionId,jdbcType=INTEGER},
+            </if>
+            <if test="templateType != null" >
+                #{templateType,jdbcType=INTEGER},
+            </if>
+            <if test="fileName != null" >
+                #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="filePath != null" >
+                #{filePath,jdbcType=VARCHAR},
+            </if>
+            <if test="beginTime != null" >
+                #{beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="parameter != null" >
+                #{parameter,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="status != null" >
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="comment != null" >
+                #{comment,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>
