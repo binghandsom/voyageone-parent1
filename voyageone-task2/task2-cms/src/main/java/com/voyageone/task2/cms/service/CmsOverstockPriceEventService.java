@@ -68,12 +68,16 @@ public class CmsOverstockPriceEventService extends BaseCronTaskService {
             ErrorDetails errMsg = result.getErrorDetails();
             EventsType eventsType = result.getEntity();
 
-            List<EventType> eventTypeList = eventsType.getEvent();
+
 
             // 返回正常的场合
             if (statusCode == 200) {
+                List<EventType> eventTypeList = null;
+                if(eventsType != null){
+                    eventTypeList = eventsType.getEvent();
+                }
                 // 最后一页
-                if (eventTypeList.size() == 0) {
+                if (eventTypeList == null || eventTypeList.size() == 0) {
                     $info("价格没有变化");
                 } else {
 
