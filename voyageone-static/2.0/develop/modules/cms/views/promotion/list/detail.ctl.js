@@ -217,20 +217,20 @@ define([
 
         $scope.openOtherDownload = function (promotion) {
             promotionService.exportPromotion({"promotionId":promotion.id, "templateType":0}).then(function (resp) {
-                notify("OK", "success");
+                notify.success("success");
             });
 
             // $.download.post(cActions.cms.promotion.promotionService.root + "/" + cActions.cms.promotion.promotionService.exportPromotion, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
         };
         $scope.openJuhuasuanDownload = function (promotion) {
             promotionService.exportPromotion({"promotionId":promotion.id, "templateType":1}).then(function (resp) {
-                notify("OK", "success");
+                notify.success("success");
             });
             // $.download.post(cActions.cms.promotion.promotionDetailService.root + "/" + cActions.cms.promotion.promotionDetailService.tmallJuhuasuanExport, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
         };
         $scope.openTmallDownload = function (promotion) {
             promotionService.exportPromotion({"promotionId":promotion.id, "templateType":2}).then(function (resp) {
-                notify("OK", "success");
+                notify.success("success");
             });
             // $.download.post(cActions.cms.promotion.promotionDetailService.root + "/" + cActions.cms.promotion.promotionDetailService.tmallPromotionExport, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
         };
@@ -255,18 +255,7 @@ define([
          * @param page
          */
         $scope.exportSearch = function(page) {
-            $scope.vm.exportPageOption.curr = !page ? $scope.vm.exportPageOption.curr : page;
-
-            $searchAdvanceService2.exportSearch({
-                                                    "pageNum": $scope.vm.exportPageOption.curr,
-                                                    "pageSize": $scope.vm.exportPageOption.size
-                                                }).then(function (res) {
-                $scope.vm.exportList = res.data.exportList;
-                _.each($scope.vm.exportList, function (item) {
-                    item.fileName = item.fileName.split(",");
-                });
-                $scope.vm.exportPageOption.total = res.data.exportListTotal;
-            })
+            searchExport();
         };
 
 

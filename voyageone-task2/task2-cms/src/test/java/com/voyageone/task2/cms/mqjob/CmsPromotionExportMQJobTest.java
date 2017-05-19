@@ -27,7 +27,7 @@ public class CmsPromotionExportMQJobTest {
 
         messageBody.setSender("edward");
         messageBody.setChannelId("001");
-        messageBody.setCmsPromotionExportTaskId(4);
+        messageBody.setCmsPromotionExportTaskId(6);
         try {
             cmsPromotionExportMQJob.onStartup(messageBody);
         } catch (Exception e) {

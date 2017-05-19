@@ -152,7 +152,7 @@ public class CmsPromotionExportService extends BaseService {
             exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_TMALL_EXPORT_PATH);
         }
         File pathFileObj = new File(exportPath);
-        if (!pathFileObj.exists()) {
+        if (StringUtils.isBlank(exportPath) || !(pathFileObj = new File(exportPath)).exists()) {
             $info("活动(非聚美)商品导出文件目录不存在 " + exportPath);
             if (!pathFileObj.mkdirs()) {
                 $error("活动(非聚美)商品导出文件目录不存在" + exportPath);
@@ -173,8 +173,12 @@ public class CmsPromotionExportService extends BaseService {
                 book = new SXSSFWorkbook(1000);
                 createExportFile(book, cmsBtPromotionModel);
             } else if (Objects.equals(templateType, Integer.valueOf(1))) {
+                // 模板是xls，后缀格式必须统一，否则打不开
+                filename = filename.replace("xlsx", "xls");
                 book = createJuhuasuanExportFile(cmsBtPromotionModel);
             } else if (Objects.equals(templateType, Integer.valueOf(2))) {
+                // 模板是xls，后缀格式必须统一，否则打不开
+                filename = filename.replace("xlsx", "xls");
                 book = createTmallExportFile(cmsBtPromotionModel);
             }
 
