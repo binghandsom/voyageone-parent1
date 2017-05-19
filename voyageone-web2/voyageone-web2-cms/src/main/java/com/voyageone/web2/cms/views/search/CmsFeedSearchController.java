@@ -221,7 +221,16 @@ public class CmsFeedSearchController extends CmsController {
     // 单商品设主类目
     @RequestMapping(CmsUrlConstants.SEARCH.FEED.UPDATE_MAIN_CATEGORY)
     public AjaxResponse updateMainCategory(@RequestBody MainCategoryBean params){
-        return success(feedInfoService.updateMainCategory(getUser().getSelChannelId(), params.code, params.mainCategoryInfo, getUser().getUserName()));
+        if(params.isUpdateGroup != null && params.isUpdateGroup){
+            CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(getUser().getSelChannelId(), params.code);
+            List<CmsBtFeedInfoModel> cmsBtFeedInfoModels = feedInfoService.getProductByModel(cmsBtFeedInfoModel.getChannelId(), cmsBtFeedInfoModel.getModel());
+            cmsBtFeedInfoModels.forEach(item->{
+                feedInfoService.updateMainCategory(getUser().getSelChannelId(), item.getCode(), params.mainCategoryInfo, getUser().getUserName());
+            });
+        }else{
+            feedInfoService.updateMainCategory(getUser().getSelChannelId(), params.code, params.mainCategoryInfo, getUser().getUserName());
+        }
+        return success(true);
     }
 
     // 批量设主类目
@@ -273,6 +282,8 @@ public class CmsFeedSearchController extends CmsController {
         String code;
         @JsonProperty("mainCategoryInfo")
         CmsMtCategoryTreeAllBean mainCategoryInfo;
+        @JsonProperty("isUpdateGroup")
+        Boolean isUpdateGroup;
     }
 
     private static class batchUpdateCategoryBean{

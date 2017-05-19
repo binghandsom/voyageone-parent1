@@ -299,7 +299,15 @@ define([
                 popups.popupCategoryNew({
                     categories: res.data
                 }).then(function (context) {
-                    bindCategory(context.selected, feedInfo);
+                    var isUpdateGroup = false;
+                    confirm("是否更新同一model下的其它商品?").then(function () {
+                        isUpdateGroup = true;
+                        bindCategory(context.selected, feedInfo, isUpdateGroup);
+                    }, function () {
+                        isUpdateGroup = false;
+                        bindCategory(context.selected, feedInfo, isUpdateGroup);
+                    });
+
                 });
             });
 
@@ -338,14 +346,15 @@ define([
             });
         };
 
-        function bindCategory(category, feedInfo) {
-            $feedSearchService.updateMainCategory({"code":feedInfo.code,"mainCategoryInfo":category}).then(function () {
-                feedInfo.mainCategoryCn = category.catPath;
-                feedInfo.mainCategoryEn = category.catPathEn;
-                if(feedInfo.updFlg == "1" || feedInfo.updFlg == "2"){
-                    feedInfo.updFlg = 0;
-                }
+        function bindCategory(category, feedInfo,isUpdateGroup) {
+            $feedSearchService.updateMainCategory({"isUpdateGroup":isUpdateGroup,"code":feedInfo.code,"mainCategoryInfo":category}).then(function () {
+                // feedInfo.mainCategoryCn = category.catPath;
+                // feedInfo.mainCategoryEn = category.catPathEn;
+                // if(feedInfo.updFlg == "1" || feedInfo.updFlg == "2"){
+                //     feedInfo.updFlg = 0;
+                // }
                 notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
+                search();
             })
         }
     };

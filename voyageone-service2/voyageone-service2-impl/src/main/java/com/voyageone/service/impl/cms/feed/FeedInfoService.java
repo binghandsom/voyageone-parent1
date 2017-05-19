@@ -6,6 +6,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsMtCategoryTreeAllBean;
@@ -86,6 +87,10 @@ public class FeedInfoService extends BaseService {
 
     public CmsBtFeedInfoModel getProductByClientSku(String channelId, String clientSku) {
         return cmsBtFeedInfoDao.selectProductByClientSku(channelId, clientSku);
+    }
+
+    public List<CmsBtFeedInfoModel> getProductByModel(String channelId, String model) {
+        return cmsBtFeedInfoDao.selectProductByModel(channelId, model);
     }
     /**
      * 更新feed的产品信息
