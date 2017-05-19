@@ -1537,6 +1537,9 @@ define([
                 var freeTags = _.chain(res.selectdTagList).map(function (key, value) {
                     return key.tagPath;
                 }).value();
+                var _freeTagsInfo = _.chain(res.selectdTagList).map(function (key, value) {
+                    return key.tagPathName;
+                }).value();
                 confirm(msg)
                     .then(function () {
                         var data = {
@@ -1547,6 +1550,10 @@ define([
                             "singleProd":1 // 是否是单一针对商品进行自由标签编辑
                         };
                         $searchAdvanceService2.addFreeTag(data).then(function () {
+
+                            productInfo.freeTags = freeTags;
+                            productInfo._freeTagsInfo = _freeTagsInfo;
+
                             notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
                             searchAdvanceService2.clearSelList();
                         })
