@@ -1549,7 +1549,6 @@ define([
                         $searchAdvanceService2.addFreeTag(data).then(function () {
                             notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
                             searchAdvanceService2.clearSelList();
-                            $scope.search();
                         })
                     });
             });
