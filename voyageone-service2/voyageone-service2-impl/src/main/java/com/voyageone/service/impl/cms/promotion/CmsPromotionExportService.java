@@ -433,7 +433,7 @@ public class CmsPromotionExportService extends BaseService {
             /*if (promotionCodesBean.getInventory() != null) {
                 FileUtils.cell(row, CmsConstants.CellNum.inventoryCellNum - 1, unlock).setCellValue(promotionCodesBean.getInventory());
             }*/
-            FileUtils.cell(row, CmsConstants.CellNum.inventoryCellNum, unlock).setCellValue(promotionCodesBean.getInventory() == null ? "0" : String.valueOf(promotionCodesBean.getInventory()));
+            FileUtils.cell(row, CmsConstants.CellNum.inventoryCellNum - 1, unlock).setCellValue(promotionCodesBean.getInventory() == null ? "0" : String.valueOf(promotionCodesBean.getInventory()));
 
             FileUtils.cell(row, CmsConstants.CellNum.image1CellNum - 1, unlock).setCellValue(promotionCodesBean.getImage_url_1());
 
