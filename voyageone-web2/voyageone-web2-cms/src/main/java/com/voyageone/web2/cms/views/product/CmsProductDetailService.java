@@ -1723,8 +1723,15 @@ public class CmsProductDetailService extends BaseViewService {
         jongoUpdate.setQuery("{\"prodId\": #}");
         jongoUpdate.setQueryParameters(productModel.getProdId());
 
-        jongoUpdate.setUpdate("{$set: {\"common.fields.originalTitleCn\": #,\"modifier\":#,\"modified\":#}}");
-        jongoUpdate.setUpdateParameters(originalTitleCn, username, DateTimeUtil.getNowTimeStamp());
+        if("928".equals(channelId) || "024".equals(channelId)){
+            jongoUpdate.setUpdate("{$set: {\"common.fields.originalTitleCn\": #,\"common.catConf\": #, \"modifier\":#,\"modified\":#}}");
+            jongoUpdate.setUpdateParameters(originalTitleCn,"1", username, DateTimeUtil.getNowTimeStamp());
+        }else{
+            jongoUpdate.setUpdate("{$set: {\"common.fields.originalTitleCn\": #,\"modifier\":#,\"modified\":#}}");
+            jongoUpdate.setUpdateParameters(originalTitleCn, username, DateTimeUtil.getNowTimeStamp());
+        }
+
+
 
         WriteResult writeResult = cmsBtProductDao.updateFirst(jongoUpdate, channelId);
 
