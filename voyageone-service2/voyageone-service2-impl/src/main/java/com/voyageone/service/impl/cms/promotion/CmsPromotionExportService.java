@@ -302,7 +302,6 @@ public class CmsPromotionExportService extends BaseService {
         this.setHeadCellStyle(unlock, "cn");
 
         int codeCount = promotionCodes.size();
-        System.out.println("CODE个数+" + codeCount);
         int skuCount = 0;
         for (int i = 0; i < PAGE_SIZE; i++) {
             int index = codeStartIndex + i;
