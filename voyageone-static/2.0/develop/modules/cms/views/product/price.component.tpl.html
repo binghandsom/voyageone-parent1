@@ -79,18 +79,11 @@
                 <div class="panel-body">
                     <div class="table-responsive">
                         <div class="table-responsive text-right">
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Brand</label>
-                                <div class="col-sm-6">
-                                    <input type="text" class="form-control" ng-model="ctrl.vm.model.brand" readonly/>
-                                </div>
-                                <label class="control-label">中国建议售价</label>&nbsp;&nbsp;
-                                <input type="number" class="text-right form-inline" placeholder="中国建议售价" scale="15,2" ng-model="ctrl.vm.priceMsrp">
-                                <label class="control-label">中国最终售价</label>&nbsp;&nbsp;
-                                <input type="number" class="text-right form-inline" placeholder="中国最终售价" scale="15,2" ng-model="ctrl.vm.priceSale">&nbsp;
-                                <button type="button" class="btn btn-success btn-pop" ng-disabled="!ctrl.vm.priceMsrp || !ctrl.vm.priceSale" ng-click="ctrl.setAllCartPrice()">价格保存</button>
-                            </div>
-
+                            <label class="control-label">中国建议售价</label>&nbsp;&nbsp;
+                            <input type="number" class="text-right form-inline" placeholder="中国建议售价" scale="15,2" ng-model="ctrl.vm.priceMsrp">
+                            <label class="control-label">中国最终售价</label>&nbsp;&nbsp;
+                            <input type="number" class="text-right form-inline" placeholder="中国最终售价" scale="15,2" ng-model="ctrl.vm.priceSale">&nbsp;
+                            <button type="button" class="btn btn-success btn-pop" ng-disabled="!ctrl.vm.priceMsrp || !ctrl.vm.priceSale" ng-click="ctrl.setAllCartPrice()">价格保存</button>
                         </div>
                         <table class="table table-hover-new table-hover" style="min-width:1400px">
                             <thead>
