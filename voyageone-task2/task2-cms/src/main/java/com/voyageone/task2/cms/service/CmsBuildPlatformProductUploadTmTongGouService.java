@@ -1346,7 +1346,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             // 如果当前店铺在cms_mt_channel_config表中配置成了运营自己在天猫后台管理无线端共通模块时
             CmsChannelConfigBean config = CmsChannelConfigs.getConfigBean(shopProp.getOrder_channel_id(),
                     CmsConstants.ChannelConfig.TMALL_WIRELESS_COMMON_MODULE_BY_USER, shopProp.getCart_id());
-            if (config != null && "1".equals(config.getConfigValue1())) {
+            if (config != null && "1".equals(config.getConfigValue1()) && updateWare) {
                 // 如果设置成"1：运营自己天猫后台管理"时,用天猫平台上取下来的运营自己后台设置的值设置schema无线端共通模块相关属性
 
                 String defaultValue = ((InputField)tbItemSchema.getFieldMap().get("wireless_desc")).getDefaultValue();
