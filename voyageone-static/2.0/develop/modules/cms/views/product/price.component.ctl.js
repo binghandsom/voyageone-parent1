@@ -17,7 +17,9 @@ define([
         self.vm = {
             selectSales: "codeSumAll",
             productPriceList: [],
-            model: {}
+            model: {},
+            priceMsrp:"",
+            priceSale:""
         };
         self.$productDetailService = $productDetailService;
         self.$rootScope = $rootScope;
@@ -147,6 +149,19 @@ define([
             self.notify.success("保存成功")
 
         });
+    };
+    
+    productPriceCtl.prototype.setAllCartPrice = function () {
+        var self = this;
+        var priceMsrp = self.vm.priceMsrp;
+        var priceSale = self.vm.priceSale;
+        if (priceMsrp > 0 && priceSale > 0) {
+
+            self.vm.productPriceList.forEach(function (element) {
+                element.priceMsrp = priceMsrp;
+                element.priceSale = priceSale;
+            });
+        }
     };
 
     cms.directive("priceSchema", function ($productDetailService, $rootScope, alert, notify, confirm) {
