@@ -218,6 +218,7 @@ define([
         $scope.openOtherDownload = function (promotion) {
             promotionService.exportPromotion({"promotionId":promotion.id, "templateType":0}).then(function (resp) {
                 notify.success("success");
+                searchExport();
             });
 
             // $.download.post(cActions.cms.promotion.promotionService.root + "/" + cActions.cms.promotion.promotionService.exportPromotion, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
@@ -225,12 +226,14 @@ define([
         $scope.openJuhuasuanDownload = function (promotion) {
             promotionService.exportPromotion({"promotionId":promotion.id, "templateType":1}).then(function (resp) {
                 notify.success("success");
+                searchExport();
             });
             // $.download.post(cActions.cms.promotion.promotionDetailService.root + "/" + cActions.cms.promotion.promotionDetailService.tmallJuhuasuanExport, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
         };
         $scope.openTmallDownload = function (promotion) {
             promotionService.exportPromotion({"promotionId":promotion.id, "templateType":2}).then(function (resp) {
                 notify.success("success");
+                searchExport();
             });
             // $.download.post(cActions.cms.promotion.promotionDetailService.root + "/" + cActions.cms.promotion.promotionDetailService.tmallPromotionExport, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
         };
