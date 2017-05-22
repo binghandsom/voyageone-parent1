@@ -783,6 +783,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         });
 
         platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId, prodId, language, platform.getpCatPath(), platform.getpBrandId(), sxProductService.generateStyleCode(cmsBtProductModel, cartId)));
+        platform.setSellerCats(mainPlatform.getSellerCats());
 
         return platform;
     }
