@@ -354,6 +354,10 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 throw new BusinessException("SxData取得失败!");
                 // modified by morse.lu 2016/06/12 end
             }
+            // 上新对象code(后面回写状态时要用到)
+            if (ListUtils.notNull(sxData.getProductList())) {
+                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
+            }
             if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
                 // 取得上新数据出错时，cartId有可能没有设置
                 sxData.setCartId(cartId);
@@ -455,10 +459,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 throw new BusinessException(errMsg);
             }
 
-            // 上新对象code(后面回写状态时要用到)
-            if (ListUtils.notNull(sxData.getProductList())) {
-                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
-            }
+
 
             // 判断商品是否是达尔文
             boolean isDarwin = false;
