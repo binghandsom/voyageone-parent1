@@ -64,7 +64,7 @@ public class CmsBtSearchItemService extends BaseService {
                     String searchItemVal = "";
                     int size = searchItems.size();
                     for (int i = 0; i < size; i++) {
-                        searchItemVal += searchItems.get(i);
+                        searchItemVal += searchItems.get(i).getField();
                         if (i != size - 1) {
                             searchItemVal += ",";
                         }
