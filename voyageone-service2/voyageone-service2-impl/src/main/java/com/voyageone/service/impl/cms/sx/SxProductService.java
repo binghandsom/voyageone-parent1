@@ -3495,9 +3495,6 @@ public class SxProductService extends BaseService {
                     hasSetting = true;
                     for (int index = 1; index <= subfields.size(); index++) {
                         Field valueField = deepCloneField(subfields.get(index - 1));
-                        if ("item_wireless_images".equals(complexField.getId())) {
-                            valueField = deepCloneField(subfields.get(index)); // 商品无线图片索引是从1开始的
-                        }
                         if (valueField.getType() == FieldTypeEnum.INPUT) {
                             String url = resolveDict(imageProp.getBaseDictName() + index, expressionParser, shopBean, user, null);
                             if (StringUtils.isEmpty(url)) {
