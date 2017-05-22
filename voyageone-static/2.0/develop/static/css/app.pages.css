@@ -1033,7 +1033,7 @@ schema .ng-invalid.focus-error {
     overflow: auto;
 }
 
-#advanceSearch .opacityBtn {
+.opacityBtn {
     border: none;
     background: none;
 }
@@ -1058,11 +1058,6 @@ schema .ng-invalid.focus-error {
     margin-bottom: 6px;
     border: 1px solid #e5bb23;
     border-radius: 4px;
-}
-
-#newCategory .opacityBtn {
-    border: none;
-    background: none;
 }
 
 #newCategory .top-area {

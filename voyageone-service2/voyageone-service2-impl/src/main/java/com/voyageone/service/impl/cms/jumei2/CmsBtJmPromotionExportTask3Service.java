@@ -7,6 +7,7 @@ import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
+import com.voyageone.common.util.excel.EnumExcelColumnType;
 import com.voyageone.common.util.excel.ExcelColumn;
 import com.voyageone.common.util.excel.ExcelException;
 import com.voyageone.common.util.excel.ExportExcelInfo;
@@ -18,13 +19,19 @@ import com.voyageone.service.daoext.cms.CmsBtJmPromotionExportTaskDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionExportMQMessageBody;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionProductService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsMtProdSalesHisModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.util.MapModel;
+
+import org.apache.commons.lang3.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -36,6 +43,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.aspectj.bridge.Version.text;
 
 /**
  * Created by dell on 2016/3/18.
@@ -60,6 +69,8 @@ public class CmsBtJmPromotionExportTask3Service extends BaseService {
     CmsMtProdSalesHisDao cmsMtProdSalesHisDao;
     @Autowired
     CmsBtJmPromotion3Service cmsBtJmPromotion3Service;
+    @Autowired
+    private ProductService productService;
 
     public CmsBtJmPromotionExportTaskModel get(int id) {
         return dao.select(id);
@@ -127,6 +138,25 @@ public class CmsBtJmPromotionExportTask3Service extends BaseService {
     public void export(String fileName, List<Map<String, Object>> dataSourceProduct, List<Map<String, Object>> dataSourceSku, boolean isErrorColumn) {
         ExportExcelInfo<Map<String, Object>> productInfo = getProductExportExcelInfo(dataSourceProduct, isErrorColumn);
         ExportExcelInfo<Map<String, Object>> skuInfo = getSkuExportExcelInfo(dataSourceSku, isErrorColumn);
+
+        for (Map<String, Object> productMap : productInfo.getDataSource()) {
+            String channelId = (String) productMap.get("channelId");
+            String productCode = (String) productMap.get("productCode");
+            String jmCatPath = "";
+            if (org.apache.commons.lang3.StringUtils.isNotBlank(channelId) && StringUtils.isNotBlank(productCode)) {
+                CmsBtProductModel mongoProductModel = productService.getProductByCode(channelId, productCode);
+                CmsBtProductModel_Platform_Cart jmPlatformCart = null;
+                if (mongoProductModel != null && (jmPlatformCart = mongoProductModel.getPlatform(27)) != null) {
+                    jmCatPath = jmPlatformCart.getpCatPath();
+                    if (StringUtils.isBlank((String) productMap.get("brandName"))) {
+                        productMap.put("brandName", mongoProductModel.getCommon().getFields().getBrand());
+                    }
+                }
+            }
+            productMap.put("jmCartPath", jmCatPath);
+
+        }
+
         try {
             ExportFileExcelUtil.exportExcel(fileName, productInfo, skuInfo);
         } catch (ExcelException | IOException e) {
@@ -170,6 +200,9 @@ public class CmsBtJmPromotionExportTask3Service extends BaseService {
         info.addExcelColumn("聚美MallId", "jumeiMallId", "cms_bt_jm_product");
         info.addExcelColumn("聚美HID", "jmHashId", "cms_bt_jm_product");
         info.addExcelColumn("品牌", "brandName", "cms_bt_jm_product");
+        info.addExcelColumn("库存", "quantity", "cms_bt_jm_promotion_product");
+        info.addExcelColumn("JM类目", "jmCartPath");
+
         info.addExcelColumn("错误信息", "errorMsg", "cms_bt_jm_promotion_product");
 
         if (isErrorColumn) {
