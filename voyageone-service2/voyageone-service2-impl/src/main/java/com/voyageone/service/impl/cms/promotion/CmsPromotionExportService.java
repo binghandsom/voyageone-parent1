@@ -471,7 +471,7 @@ public class CmsPromotionExportService extends BaseService {
         InputStream inputStream = new FileInputStream(templatePath);
         Workbook book = WorkbookFactory.create(inputStream);
 
-        Map<String, List<CmsBtPromotionCodesBean>> groups = getPromotionInfo(promotionModel.getPromotionId(), promotionModel.getChannelId());
+        Map<String, List<CmsBtPromotionCodesBean>> groups = getPromotionInfo(promotionModel.getId(), promotionModel.getChannelId());
         // 转成导出的格式
         List<CmsPromotionExportBean> cmsPromotionExportBeans = new ArrayList<>();
         groups.forEach((numiid, cmsBtPromotionCodesBeans) -> {
@@ -561,7 +561,7 @@ public class CmsPromotionExportService extends BaseService {
         InputStream inputStream = new FileInputStream(templatePath);
         Workbook book = WorkbookFactory.create(inputStream);
 
-        Map<String, List<CmsBtPromotionCodesBean>> groups = getPromotionInfo(promotionModel.getPromotionId(), promotionModel.getChannelId());
+        Map<String, List<CmsBtPromotionCodesBean>> groups = getPromotionInfo(promotionModel.getId(), promotionModel.getChannelId());
         Sheet sheet = book.getSheetAt(1);
         Row styleRow = FileUtils.row(sheet, 1);
         CellStyle unlock = styleRow.getRowStyle();
