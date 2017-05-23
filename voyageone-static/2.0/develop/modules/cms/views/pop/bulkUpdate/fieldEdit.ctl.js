@@ -32,6 +32,7 @@ define([
             }
             $fieldEditService.getPopOptions().then(function (res) {
                 $scope.vm.properties = res.data;
+                console.log($scope.vm.properties);
             });
         }
 
