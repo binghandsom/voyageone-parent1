@@ -65,13 +65,15 @@ define([
                         return;
                     }
                     var inValue = '';
-                    if ($scope.vm.propertyInfo.property.value != undefined && $scope.vm.propertyInfo.property.value != null) {
+                    if ($scope.vm.propertyInfo.property.value != undefined
+                        && $scope.vm.propertyInfo.property.value != null) {
                         inValue = $scope.vm.propertyInfo.property.value.toString();
                     }
 
                     if (inValue == '') {
-                        var msg = '是否确认清空VO扣点值，使用系统缺省值？<br>本次操作对象商品数：' + $scope.vm.selCnt + '<br>修改Vo扣点会造成商品的中国指导价发生变化<br>选择确定，处理将会继续。 选择取消，处理停止';
-                        confirm(msg).then(function(){
+                        var msg = '是否确认清空VO扣点值，使用系统缺省值？<br>本次操作对象商品数：' + $scope.vm.selCnt
+                                  + '<br>修改Vo扣点会造成商品的中国指导价发生变化<br>选择确定，处理将会继续。 选择取消，处理停止';
+                        confirm(msg).then(function () {
                             _openBulkUpdate();
                         });
                         return;
@@ -80,9 +82,10 @@ define([
                             alert('请输入正确的数值，不能大于100');
                             return;
                         }
-                        var msg2 = '是否确认批量修改[Vo扣点]？<br>本次操作对象商品数：' + $scope.vm.selCnt + '<br>修改Vo扣点会造成商品的中国指导价发生变化<br>选择确定，处理将会继续。 选择取消，处理停止';
+                        var msg2 = '是否确认批量修改[Vo扣点]？<br>本次操作对象商品数：' + $scope.vm.selCnt
+                                   + '<br>修改Vo扣点会造成商品的中国指导价发生变化<br>选择确定，处理将会继续。 选择取消，处理停止';
                         if ($scope.vm.propertyInfo.property.value > 20) {
-                            confirm(msg2).then(function(){
+                            confirm(msg2).then(function () {
                                 confirm('扣点值超过警告值(20%)，请确认是否没有问题？').then(function () {
                                     _openBulkUpdate();
                                 });
@@ -93,12 +96,19 @@ define([
                             _openBulkUpdate();
                         });
                     }
+                } else if ($scope.vm.propertyInfo.property.id == 'title') {
+                    if (!$scope.vm.propertyInfo.property.value || !$scope.vm.propertyInfo.titlePlace) {
+                        alert("请填写产品标题，并选择覆盖/添加后缀/添加前缀操作");
+                        return;
+                    }
+                    _openBulkUpdate();
                 } else {
                     _openBulkUpdate();
                 }
             }
 
             function _openBulkUpdate() {
+
                 $fieldEditService.setProductFields($scope.vm.propertyInfo).then(function (res) {
                     if (res.data.ecd == null || res.data.ecd == undefined) {
                         alert("提交请求时出现错误");

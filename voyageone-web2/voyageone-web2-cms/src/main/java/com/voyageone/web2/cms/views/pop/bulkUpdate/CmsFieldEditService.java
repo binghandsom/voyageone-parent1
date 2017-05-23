@@ -43,6 +43,8 @@ import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.product.CmsProductDetailService;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -343,6 +345,17 @@ public class CmsFieldEditService extends BaseViewService {
 
             rsMap.put("ecd", 0);
             return rsMap;
+
+        } else if ("title".equals(prop_id)) {
+            // 批量修改商品Title
+            String title = (String) prop.get("value");
+            String titlePlace = (String) prop.get("titlePlace");
+            if (StringUtils.isBlank(title) || StringUtils.isBlank(titlePlace)) {
+                $warn("没有设置变更项目 params=" + params.toString());
+                rsMap.put("ecd", 2);
+                return rsMap;
+            }
+            // TODO: 2017/5/23 REX.WU mq
 
         } else {
             $warn("CmsFieldEditService.setProductFields 错误的选择项 params=" + params.toString());
