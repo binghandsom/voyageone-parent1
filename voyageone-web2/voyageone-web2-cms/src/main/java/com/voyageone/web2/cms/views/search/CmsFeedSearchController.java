@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.search;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsMtCategoryTreeAllBean;
@@ -221,14 +222,15 @@ public class CmsFeedSearchController extends CmsController {
     // 单商品设主类目
     @RequestMapping(CmsUrlConstants.SEARCH.FEED.UPDATE_MAIN_CATEGORY)
     public AjaxResponse updateMainCategory(@RequestBody MainCategoryBean params){
+        String channelId = StringUtil.isEmpty(params.channelId) ? getUser().getSelChannelId():params.channelId;
         if(params.isUpdateGroup != null && params.isUpdateGroup){
-            CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(getUser().getSelChannelId(), params.code);
+            CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(channelId, params.code);
             List<CmsBtFeedInfoModel> cmsBtFeedInfoModels = feedInfoService.getProductByModel(cmsBtFeedInfoModel.getChannelId(), cmsBtFeedInfoModel.getModel());
             cmsBtFeedInfoModels.forEach(item->{
-                feedInfoService.updateMainCategory(getUser().getSelChannelId(), item.getCode(), params.mainCategoryInfo, getUser().getUserName());
+                feedInfoService.updateMainCategory(cmsBtFeedInfoModel.getChannelId(), item.getCode(), params.mainCategoryInfo, getUser().getUserName());
             });
         }else{
-            feedInfoService.updateMainCategory(getUser().getSelChannelId(), params.code, params.mainCategoryInfo, getUser().getUserName());
+            feedInfoService.updateMainCategory(channelId, params.code, params.mainCategoryInfo, getUser().getUserName());
         }
         return success(true);
     }
@@ -284,6 +286,8 @@ public class CmsFeedSearchController extends CmsController {
         CmsMtCategoryTreeAllBean mainCategoryInfo;
         @JsonProperty("isUpdateGroup")
         Boolean isUpdateGroup;
+        @JsonProperty("channelId")
+        String channelId;
     }
 
     private static class batchUpdateCategoryBean{
@@ -295,6 +299,5 @@ public class CmsFeedSearchController extends CmsController {
         List<Map<String, String>> selList;
         @JsonProperty("mainCategoryInfo")
         CmsMtCategoryTreeAllBean mainCategoryInfo;
-
     }
 }

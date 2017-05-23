@@ -348,7 +348,7 @@ define([
         };
 
         function bindCategory(category, feedInfo,isUpdateGroup) {
-            $feedSearchService.updateMainCategory({"isUpdateGroup":isUpdateGroup,"code":feedInfo.code,"mainCategoryInfo":category}).then(function () {
+            $feedSearchService.updateMainCategory({"channelId":$scope.vm.orgChaId,"isUpdateGroup":isUpdateGroup,"code":feedInfo.code,"mainCategoryInfo":category}).then(function () {
                 // feedInfo.mainCategoryCn = category.catPath;
                 // feedInfo.mainCategoryEn = category.catPathEn;
                 // if(feedInfo.updFlg == "1" || feedInfo.updFlg == "2"){
