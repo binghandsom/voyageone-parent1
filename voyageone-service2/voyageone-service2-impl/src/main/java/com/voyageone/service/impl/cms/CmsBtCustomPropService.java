@@ -4,6 +4,7 @@ import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
+import com.voyageone.common.redis.VoCacheTemplate;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtCustomPropDao;
@@ -421,7 +422,10 @@ public class CmsBtCustomPropService extends BaseService {
             entitys = feedCategoryAttributeService.getAttributeNameByChannelId(orgChannelId);
             if (!ListUtils.isNull(entitys)) {
                 CacheHelper.getHashOperation().put(CacheKey, orgChannelId, entitys);
-                CacheHelper.getCacheTemplate().expire(CacheKey, 1, TimeUnit.DAYS);
+                if(!(CacheHelper.getCacheTemplate() instanceof VoCacheTemplate)){
+                    CacheHelper.getCacheTemplate().expire(CacheKey, 1, TimeUnit.DAYS);
+                }
+
             }
         }
         feedCustomProp.setEntitys(entitys);

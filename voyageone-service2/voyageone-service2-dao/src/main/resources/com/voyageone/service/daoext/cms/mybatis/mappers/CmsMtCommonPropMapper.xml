@@ -61,7 +61,7 @@
                 AND prop_id != 'priceMsrpSt' AND prop_id != 'priceMsrpEd' AND prop_id != 'priceRetailSt' AND prop_id != 'priceRetailEd' AND prop_id != 'priceSaleSt' AND prop_id != 'priceSaleEd')
         </if>
         <if test="selType == 2" >
-            AND (prop_id != 'brand' AND prop_id != 'quantity' AND prop_id != 'code' AND prop_id != 'originalTitleCn' AND prop_id != 'productNameEn'
+            AND (prop_id != 'code' AND prop_id != 'originalTitleCn'
                 AND prop_id != 'priceMsrpSt' AND prop_id != 'priceMsrpEd' AND prop_id != 'priceRetailSt' AND prop_id != 'priceRetailEd' AND prop_id != 'priceSaleSt' AND prop_id != 'priceSaleEd')
         </if>
         <if test="selType == 3" >
