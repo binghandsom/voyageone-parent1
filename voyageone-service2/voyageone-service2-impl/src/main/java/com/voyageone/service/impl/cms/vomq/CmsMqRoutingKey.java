@@ -118,6 +118,9 @@ public class CmsMqRoutingKey {
     //sneakerHead根据活动里面的产品找出同一group的商品加入活动
     public static final String CMS_SNEAKERHEAD_ADD_PROMOTION = "CmsSneakerheadAddPromotionMQJobQueue";
 
+    // 高级检索批量修改商品标题
+    public static final String CMS_BATCH_UPDATE_PRODUCT_TITLE = "VOCmsBatchUpdateProductTitleMQJobQueue";
+
 
     // 未整理的业务内容
     /**

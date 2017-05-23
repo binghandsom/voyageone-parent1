@@ -349,7 +349,7 @@ public class CmsFieldEditService extends BaseViewService {
         } else if ("title".equals(prop_id)) {
             // 批量修改商品Title
             String title = (String) prop.get("value");
-            String titlePlace = (String) prop.get("titlePlace");
+            String titlePlace = (String) params.get("titlePlace");
             if (StringUtils.isBlank(title) || StringUtils.isBlank(titlePlace)) {
                 $warn("没有设置变更项目 params=" + params.toString());
                 rsMap.put("ecd", 2);
