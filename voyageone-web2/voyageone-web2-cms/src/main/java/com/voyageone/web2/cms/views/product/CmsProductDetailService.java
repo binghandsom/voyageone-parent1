@@ -1320,8 +1320,8 @@ public class CmsProductDetailService extends BaseViewService {
         String code = productInfo.getCommon().getFields().getCode();
         //调用wms openapi 取得code的详细库存
         GetStoreStockDetailRequest storeStockDetailRequest = new GetStoreStockDetailRequest();
-        storeStockDetailRequest.setChannelId(channelId);
-        storeStockDetailRequest.setItemCode(code.toUpperCase());
+        storeStockDetailRequest.setChannelId(StringUtils.isBlank(productInfo.getOrgChannelId()) ? productInfo.getChannelId() : productInfo.getChannelId());
+        storeStockDetailRequest.setItemCode(code);
         GetStoreStockDetailResponse stockDetail = voApiClient.execute(storeStockDetailRequest);
 
         // 取得SKU的平台尺寸信息
