@@ -680,7 +680,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
                 // 获取skuId
                 List<Map<String, Object>> skuMapList = null;
-
+                // 获取商品页面信息
+                tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
                 if (tbItemSchema != null) {
                     Map<String, Field> mapField = tbItemSchema.getFieldMap();
                     if (mapField != null) {
@@ -704,6 +705,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                                         shopProp, sxData,
                                         Long.parseLong(numIId), skuMap));
                     }
+                    saveCmsBtTmScItem_Liking(sxData.getMainProduct().getOrgChannelId(), cartId, skuMapList);
                 }
 
 
@@ -711,7 +713,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // TODO: 目前这个channelId传入的是原始channelId， 2017年4月份左右新wms上新前， 要改为928自己的channelId
 //                saveCmsBtTmScItem_Liking(channelId, cartId, skuMapList);
                 // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
-                saveCmsBtTmScItem_Liking(sxData.getMainProduct().getOrgChannelId(), cartId, skuMapList);
+
             }
 
             // 20170413 tom 在上新的时候已经判断过是否上架了， 所以这里只需要用之前的那个判断结果就行了 START
