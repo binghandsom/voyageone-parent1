@@ -1679,6 +1679,17 @@ define([
 
         };
 
+        $scope.isExistCommonProps = function (propId) {
+            return _.some($scope.vm.commonProps,function (item) {
+                return item.propId == propId;
+            })
+        };
+
+        $scope.commonPropsFilter = function (item) {
+            return searchAdvanceSolrService.commonFilter.indexOf(item.propId) < 0;
+
+        };
+
         /**
          * 为单商品添加自由标签
          * @param productInfo 产品信息
