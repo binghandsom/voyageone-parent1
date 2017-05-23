@@ -21,11 +21,6 @@ import java.util.List;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_BATCH_UPDATE_PRODUCT_TITLE)
 public class CmsBatchUpdateProductTitleMQMessageBody extends BaseMQMessageBody {
 
-
-    /**
-     * 渠道ID
-     */
-    private String channelId;
     /**
      * 待批量修改Title的产品code
      */
@@ -42,7 +37,11 @@ public class CmsBatchUpdateProductTitleMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isNotBlank(channelId)) {
+
+        if (StringUtils.isBlank(getSender())) {
+            throw new BusinessException("批量修改商品标题消息发送人为空");
+        }
+        if (StringUtils.isBlank(getChannelId())) {
             throw new BusinessException("批量修改商品标题参数(channelId)为空");
         }
         if (CollectionUtils.isEmpty(productCodes)) {
@@ -54,16 +53,6 @@ public class CmsBatchUpdateProductTitleMQMessageBody extends BaseMQMessageBody {
         if (StringUtils.isBlank(titlePlace)) {
             throw new BusinessException("批量修改商品标题参数(titlePlace)为空");
         }
-    }
-
-    @Override
-    public String getChannelId() {
-        return channelId;
-    }
-
-    @Override
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
     }
 
     public List<String> getProductCodes() {

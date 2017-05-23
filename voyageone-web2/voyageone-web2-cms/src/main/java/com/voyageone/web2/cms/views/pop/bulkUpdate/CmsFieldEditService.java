@@ -355,8 +355,13 @@ public class CmsFieldEditService extends BaseViewService {
                 rsMap.put("ecd", 2);
                 return rsMap;
             }
-            // TODO: 2017/5/23 REX.WU mq
-
+            CmsBatchUpdateProductTitleMQMessageBody mqMessageBody = new CmsBatchUpdateProductTitleMQMessageBody();
+            mqMessageBody.setChannelId(userInfo.getSelChannelId());
+            mqMessageBody.setSender(userInfo.getUserName());
+            mqMessageBody.setProductCodes(productCodes);
+            mqMessageBody.setTitle(title);
+            mqMessageBody.setTitlePlace(titlePlace);
+            cmsMqSenderService.sendMessage(mqMessageBody);
         } else {
             $warn("CmsFieldEditService.setProductFields 错误的选择项 params=" + params.toString());
         }
