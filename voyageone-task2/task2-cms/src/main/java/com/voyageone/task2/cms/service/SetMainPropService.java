@@ -2882,7 +2882,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             productModel.getCommon().getSkus().forEach(sku -> {
                 WmsCreateOrUpdateProductMQMessageBody messageBody = new WmsCreateOrUpdateProductMQMessageBody();
                 messageBody.setChannelId(StringUtils.isEmpty(productModel.getOrgChannelId()) ? productModel.getChannelId() : productModel.getOrgChannelId());
-                messageBody.setSku(sku.getClientSkuCode());
+                messageBody.setSku(sku.getSkuCode());
                 messageBody.setCode(field.getCode());
                 messageBody.setName(StringUtils.isEmpty(field.getOriginalTitleCn()) ? field.getProductNameEn() : field.getOriginalTitleCn());
                 messageBody.setBrand(field.getBrand());
