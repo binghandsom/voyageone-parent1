@@ -949,6 +949,34 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             paramCategory.put("cat_id", mainProductPlatformCart.getpCatId());
             valCategory = JacksonUtil.bean2Json(paramCategory);
         }
+
+        // 20170523 临时用一下 tom START
+        {
+            // 如果曾经上新过， 但是cms里并没有保存着类目id， 说明类目id被人删掉了， 需要从天猫上拉回来
+
+            if (updateWare && StringUtils.isEmpty(valCategory)) {
+                // 回写PXX.pCatId, PXX.pCatPath等信息
+                Map<String, String> pCatInfoMap = null;
+                try {
+                    String numIId = sxData.getPlatform().getNumIId();
+                    pCatInfoMap = getSimpleItemCatInfo(shopProp, numIId);
+                } catch (ApiException | TopSchemaException | GetUpdateSchemaFailException ignored) {
+                }
+                if (pCatInfoMap != null && pCatInfoMap.size() > 0) {
+                    // 如果拉到了的话
+                    if (pCatInfoMap.containsKey("pCatId")) {
+                        if (!StringUtils.isEmpty(pCatInfoMap.get("pCatId"))) {
+                            valCategory = pCatInfoMap.get("pCatId");
+                        }
+                    }
+                }
+                if (StringUtils.isEmpty(valCategory)) {
+                    throw new BusinessException("如果曾经上新过， 但是cms里并没有保存着类目id， 说明类目id被人删掉了， 需要从天猫上拉回来， 但是拉取失败了， 这种可能性很小， 如果遇到了， 请联系IT。");
+                }
+            }
+        }
+        // 20170523 临时用一下 tom END
+
 //        else if (feedInfo != null && !StringUtils.isEmpty(feedInfo.getCategory())) {
         // 使用商家自有系统类目路径
         // feed_info表的category（将中杠【-】替换为：【&gt;】(>)） (格式：<value>man&gt;sports&gt;socks</value>)
