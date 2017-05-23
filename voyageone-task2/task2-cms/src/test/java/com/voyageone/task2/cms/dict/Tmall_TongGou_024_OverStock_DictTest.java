@@ -92,13 +92,7 @@ public class Tmall_TongGou_024_OverStock_DictTest extends BaseDictTest{
 
 //		// OverStock变成官网同购后， 参数图暂时不要了， 不确定以后还要不要
 //		do参数图(ruleRoot);
-		{
-			// 212香水banner
-			TextWord word = new TextWord(String.format(C_TEMPLATE_IMG_XIANGSHUI,
-					"https://h5.m.taobao.com/weapp/view_page.htm?page=shop/activity&userId=2939402618&pageId=74570068",
-					"https://img.alicdn.com/imgextra/i3/2939402618/TB2xqM1kwJkpuFjSszcXXXfsFXa-2939402618.jpg"));
-			ruleRoot.addRuleWord(word);
-		}
+
 		{
 			// 店铺介绍图
 			RuleExpression htmlTemplate = new RuleExpression();
