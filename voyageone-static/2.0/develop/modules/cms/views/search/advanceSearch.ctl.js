@@ -1503,6 +1503,17 @@ define([
                 return [23, 20, 24, 26, 27, 30, 31].indexOf(Number(cartId)) > -1;
             };
 
+            $scope.isExistCommonProps = function (propId) {
+                return _.some($scope.vm.commonProps,function (item) {
+                    return item.propId == propId;
+                })
+            };
+
+            $scope.commonPropsFilter = function (item) {
+                return searchAdvanceService2.commonFilter.indexOf(item.propId) < 0;
+
+            };
+
         /**
          * 部分上新操作
          * @param cartInfo 平台信息
