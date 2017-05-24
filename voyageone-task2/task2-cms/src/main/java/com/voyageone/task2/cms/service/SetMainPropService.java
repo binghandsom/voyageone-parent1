@@ -3312,7 +3312,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     prodCommonField.setWeightKG(b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 }
 
-                $info("4");
                 // 如果sku的重量不存在,则设置成默认重量
                 prodCommon.getSkus().forEach(sku -> {
                     if ((sku.getWeight() == null || sku.getWeight() == 0.0D)
@@ -3321,7 +3320,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         sku.setWeightUnit("lb");
                     }
                 });
-                $info("3");
                 // 产品分类(英文)
                 if (!StringUtils.isEmpty(searchResult.getProductTypeEn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getProductType())))
                     prodCommonField.setProductType(searchResult.getProductTypeEn().toLowerCase());
@@ -3349,14 +3347,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         prodCommonField.setHsCodeStatus("0");
                     }
                 }
-                $info("2");
                 // 税号跨境申报（10位）
                 if (!StringUtils.isEmpty(searchResult.getTaxDeclare()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getHsCodeCross())))
                     prodCommonField.setHsCodeCross(searchResult.getTaxDeclare());
 
                 // 商品中文名称(如果已翻译，则不设置)
                 // 临时特殊处理 017的名称不根据主类目自动翻译,如果后续有这个需求再改正
-                $info("1");
                 if (usjoi && "0".equals(prodCommonField.getTranslateStatus())) {
                     if (!StringUtils.isEmpty(searchResult.getCnName())) {
                         // 主类目叶子级中文名称（"服饰>服饰配件>钱包卡包钥匙包>护照夹" -> "护照夹"）
