@@ -680,7 +680,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
                 // 获取skuId
                 List<Map<String, Object>> skuMapList = null;
-
+                // 获取商品页面信息
+                tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
                 if (tbItemSchema != null) {
                     Map<String, Field> mapField = tbItemSchema.getFieldMap();
                     if (mapField != null) {
@@ -704,6 +705,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                                         shopProp, sxData,
                                         Long.parseLong(numIId), skuMap));
                     }
+                    saveCmsBtTmScItem_Liking(sxData.getMainProduct().getOrgChannelId(), cartId, skuMapList);
                 }
 
 
@@ -711,7 +713,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // TODO: 目前这个channelId传入的是原始channelId， 2017年4月份左右新wms上新前， 要改为928自己的channelId
 //                saveCmsBtTmScItem_Liking(channelId, cartId, skuMapList);
                 // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
-                saveCmsBtTmScItem_Liking(sxData.getMainProduct().getOrgChannelId(), cartId, skuMapList);
+
             }
 
             // 20170413 tom 在上新的时候已经判断过是否上架了， 所以这里只需要用之前的那个判断结果就行了 START
@@ -947,6 +949,34 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             paramCategory.put("cat_id", mainProductPlatformCart.getpCatId());
             valCategory = JacksonUtil.bean2Json(paramCategory);
         }
+
+        // 20170523 临时用一下 tom START
+        {
+            // 如果曾经上新过， 但是cms里并没有保存着类目id， 说明类目id被人删掉了， 需要从天猫上拉回来
+
+            if (updateWare && StringUtils.isEmpty(valCategory)) {
+                // 回写PXX.pCatId, PXX.pCatPath等信息
+                Map<String, String> pCatInfoMap = null;
+                try {
+                    String numIId = sxData.getPlatform().getNumIId();
+                    pCatInfoMap = getSimpleItemCatInfo(shopProp, numIId);
+                } catch (ApiException | TopSchemaException | GetUpdateSchemaFailException ignored) {
+                }
+                if (pCatInfoMap != null && pCatInfoMap.size() > 0) {
+                    // 如果拉到了的话
+                    if (pCatInfoMap.containsKey("pCatId")) {
+                        if (!StringUtils.isEmpty(pCatInfoMap.get("pCatId"))) {
+                            valCategory = pCatInfoMap.get("pCatId");
+                        }
+                    }
+                }
+                if (StringUtils.isEmpty(valCategory)) {
+                    throw new BusinessException("如果曾经上新过， 但是cms里并没有保存着类目id， 说明类目id被人删掉了， 需要从天猫上拉回来， 但是拉取失败了， 这种可能性很小， 如果遇到了， 请联系IT。");
+                }
+            }
+        }
+        // 20170523 临时用一下 tom END
+
 //        else if (feedInfo != null && !StringUtils.isEmpty(feedInfo.getCategory())) {
         // 使用商家自有系统类目路径
         // feed_info表的category（将中杠【-】替换为：【&gt;】(>)） (格式：<value>man&gt;sports&gt;socks</value>)
@@ -1346,7 +1376,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             // 如果当前店铺在cms_mt_channel_config表中配置成了运营自己在天猫后台管理无线端共通模块时
             CmsChannelConfigBean config = CmsChannelConfigs.getConfigBean(shopProp.getOrder_channel_id(),
                     CmsConstants.ChannelConfig.TMALL_WIRELESS_COMMON_MODULE_BY_USER, shopProp.getCart_id());
-            if (config != null && "1".equals(config.getConfigValue1())) {
+            if (config != null && "1".equals(config.getConfigValue1()) && updateWare) {
                 // 如果设置成"1：运营自己天猫后台管理"时,用天猫平台上取下来的运营自己后台设置的值设置schema无线端共通模块相关属性
 
                 String defaultValue = ((InputField)tbItemSchema.getFieldMap().get("wireless_desc")).getDefaultValue();

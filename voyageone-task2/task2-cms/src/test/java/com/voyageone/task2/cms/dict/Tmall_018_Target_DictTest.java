@@ -81,6 +81,32 @@ public class Tmall_018_Target_DictTest {
 			}
 
 			{
+                {
+                    // 店铺介绍图(第一张)
+                    RuleExpression htmlTemplate = new RuleExpression();
+                    htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
+
+                    // 图片类型, 1:商品图 2:尺码图 3:品牌故事图 4:物流介绍图 5:店铺图
+                    RuleExpression imageType = new RuleExpression();
+                    imageType.addRuleWord(new TextWord("5"));
+
+                    // 1:PC端 2:APP端
+                    RuleExpression viewType = new RuleExpression();
+                    viewType.addRuleWord(new TextWord("1"));
+
+                    // 图片index 如果是null, 那么就获取全部, index从0开始, 指定但不存在的场合返回""
+                    RuleExpression imageIndex = new RuleExpression();
+                    imageIndex.addRuleWord(new TextWord("0"));
+
+                    // 1:使用原图 其它或者未设置，使用天猫平台图
+                    RuleExpression useOriUrl = null;
+//					RuleExpression useOriUrl = new RuleExpression();
+//					useOriUrl.addRuleWord(new TextWord("1"));
+
+                    CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+                    ruleRoot.addRuleWord(new CustomWord(word));
+
+                }
 				{
 					// 品牌故事图(第一张)
 					RuleExpression htmlTemplate = new RuleExpression();
