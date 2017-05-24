@@ -118,6 +118,9 @@ public class CmsMqRoutingKey {
     //sneakerHead根据活动里面的产品找出同一group的商品加入活动
     public static final String CMS_SNEAKERHEAD_ADD_PROMOTION = "CmsSneakerheadAddPromotionMQJobQueue";
 
+    // 活动(非聚美)商品导出
+    public static final String CMS_PROMOTION_EXPORT = "CmsPromotionExportMQJobQueue";
+
 
     // 未整理的业务内容
     /**
