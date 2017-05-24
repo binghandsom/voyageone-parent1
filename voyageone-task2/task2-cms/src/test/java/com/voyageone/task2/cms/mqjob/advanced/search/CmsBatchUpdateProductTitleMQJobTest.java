@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
+import com.voyageone.common.configs.MQConfigInitTestUtil;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsBatchUpdateProductTitleMQMessageBody;
 
 import org.junit.Test;
@@ -27,12 +28,13 @@ public class CmsBatchUpdateProductTitleMQJobTest {
 
         CmsBatchUpdateProductTitleMQMessageBody mqMessageBody = new CmsBatchUpdateProductTitleMQMessageBody();
         mqMessageBody.setChannelId("001");
-        mqMessageBody.setProductCodes(Arrays.asList("s002z"));
-        mqMessageBody.setTitle("523-");
-        mqMessageBody.setTitlePlace("prefix");
+        mqMessageBody.setProductCodes(Arrays.asList("s002z","s4246","s5044","ha450-0572","ha450-0581","ha450-0582","ha410-0590","ha410-0591","ha410-0592"));
+        mqMessageBody.setTitle("-524");
+        mqMessageBody.setTitlePlace("suffix");
         mqMessageBody.setSender("edward");
-
         cmsBatchUpdateProductTitleMQJob.onStartup(mqMessageBody);
+
+//        MQConfigInitTestUtil.startMQ(cmsBatchUpdateProductTitleMQJob);
     }
 
 }
