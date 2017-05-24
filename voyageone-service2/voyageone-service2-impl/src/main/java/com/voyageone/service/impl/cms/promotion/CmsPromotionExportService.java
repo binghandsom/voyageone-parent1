@@ -299,7 +299,7 @@ public class CmsPromotionExportService extends BaseService {
         Sheet codeSheet = book.getSheet("code");
 
         CellStyle unlock = book.createCellStyle();
-        this.setHeadCellStyle(unlock, "cn");
+        // this.setHeadCellStyle(unlock, "cn");
 
         int codeCount = promotionCodes.size();
         int skuCount = 0;
