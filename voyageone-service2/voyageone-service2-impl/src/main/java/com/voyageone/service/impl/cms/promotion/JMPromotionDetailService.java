@@ -153,6 +153,7 @@ public class JMPromotionDetailService extends BaseService {
             jmProductModel.setMaxDealPrice(getMaxDealPrice(listPromotionSku));
             jmProductModel.setMinDealPrice(getMinDealPrice(listPromotionSku));
             jmProductModel.setDiscount(listPromotionSku.get(0).getDiscount());//折扣
+            jmProductModel.setDiscount2(listPromotionSku.get(0).getDiscount2());//折扣
             jmProductModel.setSkuCount(listPromotionSku.size());
 
             // 统计code级别的库存
@@ -225,6 +226,7 @@ public class JMPromotionDetailService extends BaseService {
 //            }
             jmProductModel.setPriceStatus(0);
             jmProductModel.setDiscount(new BigDecimal(0));
+            jmProductModel.setDiscount2(new BigDecimal(0));
             jmProductModel.setSkuCount(0);
             jmProductModel.setQuantity(0);
             jmProductModel.setDealEndTimeStatus(0);
@@ -341,6 +343,7 @@ public class JMPromotionDetailService extends BaseService {
                 skuModel.setDealPrice(new BigDecimal(0));
                 skuModel.setMarketPrice(new BigDecimal(priceMsrp));
                 skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(), skuModel.getMarketPrice(), 2));//折扣
+                skuModel.setDiscount2(BigDecimalUtil.divide(skuModel.getDealPrice(), skuModel.getSalePrice(), 2));//折扣
                 skuModel.setModified(new Date());
                 skuModel.setModifier(modifier);
                 listPromotionSku.add(skuModel);

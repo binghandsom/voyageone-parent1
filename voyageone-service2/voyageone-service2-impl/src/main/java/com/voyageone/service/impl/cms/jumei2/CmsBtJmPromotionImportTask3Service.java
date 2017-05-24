@@ -366,6 +366,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             }
             saveInfo.jmProductModel.setPriceStatus(0);
             saveInfo.jmProductModel.setDiscount(new BigDecimal(0));
+            saveInfo.jmProductModel.setDiscount2(new BigDecimal(0));
             saveInfo.jmProductModel.setSkuCount(0);
             saveInfo.jmProductModel.setQuantity(0);
             saveInfo.jmProductModel.setDealEndTimeStatus(0);
@@ -429,6 +430,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.jmProductModel.setMaxDealPrice(getMaxDealPrice(saveInfo.jmSkuList));
             saveInfo.jmProductModel.setMinDealPrice(getMinDealPrice(saveInfo.jmSkuList));
             saveInfo.jmProductModel.setDiscount(saveInfo.jmSkuList.get(0).getDiscount());//折扣
+            saveInfo.jmProductModel.setDiscount2(saveInfo.jmSkuList.get(0).getDiscount2());//折扣
             saveInfo.jmProductModel.setSkuCount(saveInfo.jmSkuList.size());
         }
         saveInfo._importProduct = product;
@@ -664,6 +666,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             skuModel.setDealPrice(new BigDecimal(skuImportBean.getDealPrice()));
             skuModel.setMarketPrice(new BigDecimal(skuImportBean.getMarketPrice()));
             skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(), skuModel.getMarketPrice(), 2));//折扣
+            skuModel.setDiscount2(BigDecimalUtil.divide(skuModel.getDealPrice(), skuModel.getSalePrice(), 2));//折扣
             skuModel.setModified(new Date());
             skuModel.setModifier(userName);
             saveInfo.jmSkuList.add(skuModel);

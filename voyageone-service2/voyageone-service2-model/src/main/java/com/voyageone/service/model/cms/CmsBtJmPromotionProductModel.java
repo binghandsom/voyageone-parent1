@@ -179,6 +179,11 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     protected String remark;
 
+    /**
+     * 团购价/最终售价
+     */
+    protected BigDecimal discount2;
+
     public String getChannelId() {
         return channelId;
     }
@@ -473,5 +478,13 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
+    }
+
+    public BigDecimal getDiscount2() {
+        return discount2;
+    }
+
+    public void setDiscount2(BigDecimal discount2) {
+        this.discount2 = discount2;
     }
 }
