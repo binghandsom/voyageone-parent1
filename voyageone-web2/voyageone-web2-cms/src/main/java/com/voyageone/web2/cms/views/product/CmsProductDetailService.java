@@ -1451,7 +1451,7 @@ public class CmsProductDetailService extends BaseViewService {
         productStatusHistoryService.insert(parameter.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), parameter.getCartId(), EnumProductOperationType.Delisting, comment, modifier);
 
         //2.1.3	Voyageone_ims. ims_bt_product(mysql) 根据 channel cartId 和code找到对应的记录 把 numIId字段设为0
-        ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(parameter.getChannelId(), parameter.getCartId(), parameter.getProductCode());
+        ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(parameter.getChannelId(), parameter.getCartId(), parameter.getProductCode(), cmsBtProductModel.getOrgChannelId());
         if (imsBtProductModel != null) {
             imsBtProductModel.setNumIid("");
             imsBtProductDao.updateImsBtProductBySeq(imsBtProductModel, modifier);
@@ -1507,7 +1507,7 @@ public class CmsProductDetailService extends BaseViewService {
             platForm.remove("pStatus");
             productPlatformService.updateProductPlatformWithSx(paramr.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier, "group下线", false);
             productStatusHistoryService.insert(paramr.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), paramr.getCartId(), EnumProductOperationType.DelistinGroup, comment, modifier);
-            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(paramr.getChannelId(), paramr.getCartId(), code);
+            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(paramr.getChannelId(), paramr.getCartId(), code, cmsBtProductModel.getOrgChannelId());
             if (imsBtProductModel != null) {
                 imsBtProductModel.setNumIid("");
                 imsBtProductDao.updateImsBtProductBySeq(imsBtProductModel, modifier);

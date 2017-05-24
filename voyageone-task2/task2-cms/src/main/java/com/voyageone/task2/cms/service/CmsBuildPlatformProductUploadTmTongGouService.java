@@ -705,7 +705,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                                         shopProp, sxData,
                                         Long.parseLong(numIId), skuMap));
                     }
-                    saveCmsBtTmScItem_Liking(sxData.getMainProduct().getOrgChannelId(), cartId, skuMapList);
+                    saveCmsBtTmScItem_Liking(sxData, cartId, skuMapList);
                 }
 
 
@@ -832,12 +832,13 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     }
 
     // 注意： 本函数Liking专用（code无所谓， 随便瞎填的）
-    private void saveCmsBtTmScItem_Liking(String channelId, int cartId, List<Map<String, Object>> skuMapList) {
+    private void saveCmsBtTmScItem_Liking(SxData sxData, int cartId, List<Map<String, Object>> skuMapList) {
         for(Map<String, Object> skuMap : skuMapList) {
             String code = "I_LIKING_IT";
             String skuCode = String.valueOf(skuMap.get("outer_id"));
             Map<String, Object> searchParam = new HashMap<>();
-            searchParam.put("channelId", channelId);
+            searchParam.put("channelId", sxData.getChannelId());
+            searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
             searchParam.put("cartId", cartId);
             searchParam.put("code", code);
             searchParam.put("sku", skuCode);
@@ -856,7 +857,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 if (scItemModel == null) {
                     // add
                     scItemModel = new CmsBtTmScItemModel();
-                    scItemModel.setChannelId(channelId);
+                    scItemModel.setChannelId(sxData.getChannelId());
+                    scItemModel.setOrgChannelId(sxData.getMainProduct().getOrgChannelId());
                     scItemModel.setCartId(cartId);
                     scItemModel.setCode(code);
                     scItemModel.setSku(skuCode);

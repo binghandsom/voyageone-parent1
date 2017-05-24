@@ -374,7 +374,8 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
             List<BaseMongoMap<String, Object>> skus = platform.getSkus();
             for (BaseMongoMap<String, Object> sku : skus) {
                 CmsBtDtSkuModel dtSkuModel = new CmsBtDtSkuModel();
-                dtSkuModel.setChannelId(prodObj.getOrgChannelId()); // ims表同步库存需要用OrgChannelId
+                dtSkuModel.setOrgChannelId(prodObj.getOrgChannelId());
+                dtSkuModel.setChannelId(prodObj.getChannelId());
                 dtSkuModel.setProductCode(code);
                 dtSkuModel.setSkuCode(sku.getStringAttribute("skuCode"));
                 dtSkuModel.setCreater(getTaskName());
@@ -384,7 +385,8 @@ public class CmsBuildPlatformProductUploadDtService extends BaseCronTaskService 
 
                 // 查询mySql表中的sku列表(一个产品查询一次，如果每个sku更新/新增的时候都去查的话，效率太低了)
                 Map<String, String> query = new HashMap<>();
-                query.put("channelId", prodObj.getOrgChannelId());  // ims表同步库存需要用OrgChannelId
+                query.put("channelId", prodObj.getChannelId());
+                query.put("orgChannelId", prodObj.getOrgChannelId());
                 query.put("cartId", StringUtils.toString(cartId));
                 query.put("productCode", code);
                 query.put("skuCode", sku.getStringAttribute("skuCode"));
