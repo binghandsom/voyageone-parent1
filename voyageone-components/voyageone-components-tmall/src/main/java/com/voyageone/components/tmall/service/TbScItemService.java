@@ -34,9 +34,9 @@ public class TbScItemService extends TbBase {
 	private String getRealScOuterCodeBySku(String sku) {
 //		String regExTmp = "[-_a-zA-Z0-9]";
 //
-//		if (StringUtils.isEmpty(sku)) {
-//			return "";
-//		}
+		if (StringUtils.isEmpty(sku)) {
+			return "";
+		}
 //
 //		StringBuilder sb = new StringBuilder();
 //		String result;
