@@ -16,11 +16,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author piao
@@ -104,27 +100,19 @@ public class ProductStockService extends BaseService {
                         queryMap.put(String.format("platforms.P%s.skus.skuCode", stockBean.getCartId()), stockBean.getSku());
 
                     }
-                    if (bulkUpdateModelMap.containsKey(channelId)) {
-                        bulkUpdateModelMap.get(channelId).add(createBulkUpdateModel(updateMap, queryMap));
-                    } else {
-                        List<BulkUpdateModel> tempBulkUpdateModelList = new ArrayList<>();
-                        tempBulkUpdateModelList.add(createBulkUpdateModel(updateMap, queryMap));
-                        bulkUpdateModelMap.put(channelId, tempBulkUpdateModelList);
-
-                    }
+                    BulkWriteResult writeResult = cmsBtProductDao.bulkUpdateWithMap(channelId, Arrays.asList(createBulkUpdateModel(updateMap, queryMap)), "CmsStockCartChangedStockMQJob", "$set");
                 } else {
                     CmsBtOperationLogModel_Msg failMsg = new CmsBtOperationLogModel_Msg();
                     failMsg.setMsg("WMS->CMS渠道/店铺库存更新时根据产品Code在CMS查不到商品");
                     failList.add(failMsg);
                 }
             }
-            if (!bulkUpdateModelMap.isEmpty()) {
-                for (Map.Entry<String, List<BulkUpdateModel>> entry : bulkUpdateModelMap.entrySet()) {
-                    BulkWriteResult writeResult = cmsBtProductDao.bulkUpdateWithMap(entry.getKey(), entry.getValue(), "CmsStockCartChangedStockMQJob", "$set");
-                    $info(String.format("渠道(chanelId=%s)库存更新结果: %s", entry.getKey(), JacksonUtil.bean2Json(writeResult)));
-                }
-            }
-
+//            if (!bulkUpdateModelMap.isEmpty()) {
+//                for (Map.Entry<String, List<BulkUpdateModel>> entry : bulkUpdateModelMap.entrySet()) {
+//                    BulkWriteResult writeResult = cmsBtProductDao.bulkUpdateWithMap(entry.getKey(), entry.getValue(), "CmsStockCartChangedStockMQJob", "$set");
+//                    $info(String.format("渠道(chanelId=%s)库存更新结果: %s", entry.getKey(), JacksonUtil.bean2Json(writeResult)));
+//                }
+//            }
         }
         return failList;
     }
