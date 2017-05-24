@@ -28,7 +28,7 @@ public class CmsStockCartChangedStockMQJob extends TBaseMQCmsSubService<CmsStock
 
     @Override
     public void onStartup(CmsStockCartChangedStockMQMessageBody messageBody) throws Exception {
-        $info("WMS->CMS批量更新库存，消息内容：" + JacksonUtil.bean2Json(messageBody));
+        $info("WMS->CMS批量更新库存，消息内容个数：" + messageBody.getCartChangedStocks().size());
         messageBody.setSender("CmsStockCartChangedStockMQJob");
         List<CmsBtOperationLogModel_Msg> failList = productStockService.updateProductStock(messageBody.getCartChangedStocks());
         if (CollectionUtils.isEmpty(failList)) {
