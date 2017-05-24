@@ -98,7 +98,9 @@ define(function () {
                     "updateFeedStatus": "updateFeedStatus",
                     "doExport": "export",
                     "exportSearch": "exportSearch",
-                    "download": "download"
+                    "download": "download",
+                    "updateMainCategory":"updateMainCategory",
+                    "batchUpdateMainCategory":"batchUpdateMainCategory"
                 }
             },
             "group": {

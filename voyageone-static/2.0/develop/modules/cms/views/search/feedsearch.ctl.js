@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl',
     'modules/cms/directives/keyValue.directive'
 ], function () {
-    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage, $filter, cookieService) {
+    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage, $filter, cookieService,popups,systemCategoryService,notify) {
         $scope.status={};
         $scope.vm = {
             searchInfo: {},
@@ -293,8 +293,73 @@ define([
             item.modified = $filter('date')(new Date(item.modified), 'yyyy-MM-dd HH:mm:ss')
         }
 
+        $scope.popCategoryMapping = function (feedInfo) {
+
+            systemCategoryService.getNewsCategoryList().then(function (res) {
+                popups.popupCategoryNew({
+                    categories: res.data
+                }).then(function (context) {
+                    var isUpdateGroup = false;
+                    confirm("是否更新同一model下的其它商品?").then(function () {
+                        isUpdateGroup = true;
+                        bindCategory(context.selected, feedInfo, isUpdateGroup);
+                    }, function () {
+                        isUpdateGroup = false;
+                        bindCategory(context.selected, feedInfo, isUpdateGroup);
+                    });
+
+                });
+            });
+
+        };
+
+        $scope.batchUpdateMainCategory = function () {
+            var selList = $scope.vm.feedSelList.selList;
+            if (selList && selList.length == 0 && $scope.vm.searchInfo.isAll != true) {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                return;
+            }
+
+            systemCategoryService.getNewsCategoryList().then(function (res) {
+                popups.popupCategoryNew({
+                    categories: res.data
+                }).then(function (context) {
+                    var selList = $scope.vm.feedSelList.selList;
+                    if (selList && selList.length == 0 && $scope.vm.searchInfo.isAll != true) {
+                        alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                        return;
+                    }
+                    confirm("是否设置主类目？").then(function () {
+                        $feedSearchService.batchUpdateMainCategory({
+                            'selList': selList,
+                            'isAll': $scope.vm.searchInfo.isAll,
+                            "searchInfo": $scope.beforSearchInfo,
+                            "mainCategoryInfo":context.selected
+                        }).then(function () {
+                            if (tempFeedSelect != null) {
+                                tempFeedSelect.clearSelectedList();
+                            }
+                            $scope.vm.searchInfo.isAll = false;
+                            search();
+                        })
+                    });
+                });
+            });
+        };
+
+        function bindCategory(category, feedInfo,isUpdateGroup) {
+            $feedSearchService.updateMainCategory({"channelId":$scope.vm.orgChaId,"isUpdateGroup":isUpdateGroup,"code":feedInfo.code,"mainCategoryInfo":category}).then(function () {
+                // feedInfo.mainCategoryCn = category.catPath;
+                // feedInfo.mainCategoryEn = category.catPathEn;
+                // if(feedInfo.updFlg == "1" || feedInfo.updFlg == "2"){
+                //     feedInfo.updFlg = 0;
+                // }
+                notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
+                search();
+            })
+        }
     };
 
-    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q', 'selectRowsFactory', 'confirm', 'alert', 'attributeService', 'cActions', '$sessionStorage', '$filter','cookieService'];
+    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q', 'selectRowsFactory', 'confirm', 'alert', 'attributeService', 'cActions', '$sessionStorage', '$filter','cookieService','popups','systemCategoryService','notify'];
     return searchIndex;
 });
