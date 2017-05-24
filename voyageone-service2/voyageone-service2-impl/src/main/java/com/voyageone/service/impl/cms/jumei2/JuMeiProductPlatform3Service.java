@@ -189,10 +189,6 @@ public class JuMeiProductPlatform3Service extends BaseService {
 
             $debug(promotionId + " code:" + model.getProductCode() + "上新end");
             listOperationResult.add(result);
-            // 提出错误code列表
-            if (!result.isResult()) {
-                productCodes.remove(model.getProductCode());
-            }
         }
         // 发送库存同步信息
         try {
