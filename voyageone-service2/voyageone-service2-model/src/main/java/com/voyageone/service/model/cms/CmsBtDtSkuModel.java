@@ -28,6 +28,11 @@ public class CmsBtDtSkuModel extends BaseModel {
      */
     protected String skuCode;
 
+    /**
+     * 原始渠道ID
+     */
+    protected String orgChannelId;
+
     public String getChannelId() {
         return channelId;
     }
@@ -50,5 +55,13 @@ public class CmsBtDtSkuModel extends BaseModel {
 
     public void setSkuCode(String skuCode) {
         this.skuCode = skuCode == null ? null : skuCode.trim();
+    }
+
+    public String getOrgChannelId() {
+        return orgChannelId;
+    }
+
+    public void setOrgChannelId(String orgChannelId) {
+        this.orgChannelId = orgChannelId;
     }
 }

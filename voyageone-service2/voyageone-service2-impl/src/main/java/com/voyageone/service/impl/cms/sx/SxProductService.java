@@ -498,17 +498,19 @@ public class SxProductService extends BaseService {
             // modified by morse.lu 2016/06/24 end
 
             ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(
-                    sxData.getMainProduct().getOrgChannelId(),   // ims表要用OrgChannelId
+                    sxData.getMainProduct().getChannelId(),   // ims表总店和子店剥离开
                     sxData.getCartId(),
-                    code);
+                    code,
+                    sxData.getMainProduct().getOrgChannelId());  // ims表总店和子店剥离开
             if (imsBtProductModel == null) {
                 // 没找到就插入
                 imsBtProductModel = new ImsBtProductModel();
-                imsBtProductModel.setChannelId(sxData.getMainProduct().getOrgChannelId()); // ims表要用OrgChannelId
+                imsBtProductModel.setChannelId(sxData.getMainProduct().getChannelId());
                 imsBtProductModel.setCartId(sxData.getCartId());
                 imsBtProductModel.setCode(code);
                 imsBtProductModel.setNumIid(sxData.getPlatform().getNumIId());
                 imsBtProductModel.setQuantityUpdateType(updateType);
+                imsBtProductModel.setOrgChannelId(sxData.getMainProduct().getOrgChannelId());
 
                 imsBtProductDao.insertImsBtProduct(imsBtProductModel, modifier);
             } else {

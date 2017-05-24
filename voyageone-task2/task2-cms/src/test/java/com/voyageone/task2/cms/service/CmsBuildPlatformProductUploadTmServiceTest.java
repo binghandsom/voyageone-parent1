@@ -58,19 +58,19 @@ public class CmsBuildPlatformProductUploadTmServiceTest {
 
         CmsBtSxWorkloadModel workload = new CmsBtSxWorkloadModel();
 //        workload.setId(247);
-        workload.setChannelId("010");
+        workload.setChannelId("018");
         workload.setCartId(23);
-        workload.setGroupId(Long.parseLong("10798126"));
+        workload.setGroupId(Long.parseLong("494011"));
         workload.setPublishStatus(0);
 
         // 测试用PortAmerican海外专营店
         ShopBean shop = new ShopBean();
-        shop.setOrder_channel_id("010");
+        shop.setOrder_channel_id("018");
         shop.setCart_id("23");
         shop.setApp_url("http://gw.api.taobao.com/router/rest");
-        shop.setAppKey("");
-        shop.setAppSecret("");
-        shop.setSessionKey("");
+        shop.setAppKey("21008948");
+        shop.setAppSecret("0a16bd08019790b269322e000e52a19f");
+        shop.setSessionKey("6200e048fd07ZZ0fed0d170d705977052199dfac7d039cb2854639042");
         // platformid一定要设成京东，否则默认为天猫（1）的话，expressionParser.parse里面会上传照片到天猫空间，出现异常
         shop.setPlatform_id("1");
 

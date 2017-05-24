@@ -781,6 +781,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 searchParam.put("cartId", cartId);
                 searchParam.put("code", code);
                 searchParam.put("sku", skuCode);
+                searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
                 CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
                 SxData.SxSkuExInfo sxSkuExInfo = sxData.getSxSkuExInfo(skuCode, false);
                 String scProductId = sxSkuExInfo != null? sxSkuExInfo.getScProductId() : null;
@@ -794,6 +795,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                         // add
                         scItemModel = new CmsBtTmScItemModel();
                         scItemModel.setChannelId(channelId);
+                        scItemModel.setOrgChannelId(sxData.getMainProduct().getOrgChannelId());
                         scItemModel.setCartId(cartId);
                         scItemModel.setCode(code);
                         scItemModel.setSku(skuCode);
