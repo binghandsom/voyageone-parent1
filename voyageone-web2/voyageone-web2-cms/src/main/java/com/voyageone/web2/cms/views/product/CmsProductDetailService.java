@@ -23,6 +23,7 @@ import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.*;
@@ -1323,6 +1324,7 @@ public class CmsProductDetailService extends BaseViewService {
         storeStockDetailRequest.setChannelId(StringUtils.isBlank(productInfo.getOrgChannelId()) ? productInfo.getChannelId() : productInfo.getOrgChannelId());
         storeStockDetailRequest.setItemCode(code);
         GetStoreStockDetailResponse stockDetail = voApiClient.execute(storeStockDetailRequest);
+        $info(String.format("从WMS实时查询Code(channelId=%s, code=%s)下SKU库存, API返回结果:%s", channelId, code, JacksonUtil.bean2Json(stockDetail)));
 
         // 取得SKU的平台尺寸信息
         List<CmsBtProductModel_Sku> skus = productInfo.getCommon().getSkus();
