@@ -106,7 +106,7 @@ public class ProductStockService extends BaseService {
                                 stockBean.getChannelId(), stockBean.getCartId(), stockBean.getItemCode(), stockBean.getSku(), JacksonUtil.bean2Json(writeResult)));
                     } catch (Exception e) {
                         CmsBtOperationLogModel_Msg failMsg = new CmsBtOperationLogModel_Msg();
-                        failMsg.setSkuCode(stockBean.getItemCode());
+                        failMsg.setSkuCode(stockBean.getSku());
                         failMsg.setMsg("WMS->CMS渠道/店铺库存更新Mongodb异常");
                         failList.add(failMsg);
                         $error(String.format("(channelId=%s, cartId=%d, code=%s, sku=%s)库存更新差异",
@@ -114,7 +114,7 @@ public class ProductStockService extends BaseService {
                     }
                 } else {
                     CmsBtOperationLogModel_Msg failMsg = new CmsBtOperationLogModel_Msg();
-                    failMsg.setSkuCode(stockBean.getItemCode());
+                    failMsg.setSkuCode(stockBean.getSku());
                     failMsg.setMsg("WMS->CMS渠道/店铺库存更新时根据产品Code在CMS查不到商品");
                     failList.add(failMsg);
                     $info(String.format("channelId=%s cartId=%d code=%s 在CMS查不到商品", channelId, cartId==null?0:cartId, stockBean.getItemCode()));
