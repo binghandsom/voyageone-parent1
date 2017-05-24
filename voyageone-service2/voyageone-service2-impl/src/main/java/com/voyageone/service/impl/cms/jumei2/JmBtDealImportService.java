@@ -144,6 +144,7 @@ public class JmBtDealImportService extends BaseService {
         modelCmsBtJmProduct.setAvailablePeriod("");
         modelCmsBtJmProduct.setBrandName(modelJmBtProduct.getBrandName());
         modelCmsBtJmProduct.setOrgChannelId(modelJmBtProduct.getChannelId());
+        modelCmsBtJmProduct.setChannelId(modelJmBtProduct.getChannelId());
         modelCmsBtJmProduct.setColorEn(modelJmBtProduct.getAttribute());
         modelCmsBtJmProduct.setForeignLanguageName(modelJmBtProduct.getForeignLanguageName());
         modelCmsBtJmProduct.setHsCode(modelJmBtProduct.getHsCode());
@@ -219,6 +220,7 @@ public class JmBtDealImportService extends BaseService {
 //            }
             modelCmsBtJmSku.setSkuCode(modelJmBtSku.getSku());
             modelCmsBtJmSku.setOrgChannelId(modelJmBtSku.getChannelId());
+            modelCmsBtJmSku.setChannelId(modelJmBtSku.getChannelId());
             modelCmsBtJmSku.setCmsSize(modelJmBtSku.getSize());//modelJmBtSku.getSize();
             modelCmsBtJmSku.setFormat("");
             modelCmsBtJmSku.setJmSize(modelJmBtSku.getSize());
