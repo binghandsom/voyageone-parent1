@@ -101,7 +101,17 @@ public class ProductStockService extends BaseService {
                         queryMap.put(String.format("platforms.P%s.skus.skuCode", stockBean.getCartId()), stockBean.getSku());
 
                     }
-                    BulkWriteResult writeResult = cmsBtProductDao.bulkUpdateWithMap(channelId, Arrays.asList(createBulkUpdateModel(updateMap, queryMap)), modifier, "$set");
+                    try {
+
+                        BulkWriteResult writeResult = cmsBtProductDao.bulkUpdateWithMap(channelId, Arrays.asList(createBulkUpdateModel(updateMap, queryMap)), modifier, "$set");
+                        $info(String.format("(channelId=%s, cartId=%d, code=%s, sku=%s)库存更新结果：%s",
+                                stockBean.getChannelId(), stockBean.getCartId(), stockBean.getItemCode(), stockBean.getSku(), JacksonUtil.bean2Json(writeResult)));
+                    } catch (Exception e) {
+                        CmsBtOperationLogModel_Msg failMsg = new CmsBtOperationLogModel_Msg();
+                        failMsg.setSkuCode(stockBean.getItemCode());
+                        failMsg.setMsg("WMS->CMS渠道/店铺库存更新Mongodb异常");
+                        failList.add(failMsg);
+                    }
                 } else {
                     CmsBtOperationLogModel_Msg failMsg = new CmsBtOperationLogModel_Msg();
                     failMsg.setSkuCode(stockBean.getItemCode());
