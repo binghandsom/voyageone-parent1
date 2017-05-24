@@ -3315,7 +3315,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 // 如果sku的重量不存在,则设置成默认重量
                 prodCommon.getSkus().forEach(sku -> {
                     if ((sku.getWeight() == null || sku.getWeight() == 0.0D)
-                            && searchResult.getWeight() != 0.0D) {
+                    && searchResult.getWeight() != null && searchResult.getWeight() != 0.0D) {
                         sku.setWeight(searchResult.getWeight());
                         sku.setWeightUnit("lb");
                     }
