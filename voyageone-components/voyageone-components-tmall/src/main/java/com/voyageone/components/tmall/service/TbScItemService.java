@@ -81,11 +81,11 @@ public class TbScItemService extends TbBase {
 
 		ScitemOutercodeGetResponse res = reqTaobaoApi(shopBean, request);
 
-		if (!res.isSuccess() || !StringUtils.isEmpty(res.getSubCode())) {
-			request.setOuterCode(outerCode);
-
-			res = reqTaobaoApi(shopBean, request);
-		}
+//		if (!res.isSuccess() || !StringUtils.isEmpty(res.getSubCode())) {
+//			request.setOuterCode(outerCode);
+//
+//			res = reqTaobaoApi(shopBean, request);
+//		}
 
 		if (!res.isSuccess() || !StringUtils.isEmpty(res.getSubCode())) {
 			return null;
