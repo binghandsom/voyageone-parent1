@@ -111,6 +111,8 @@ public class ProductStockService extends BaseService {
                         failMsg.setSkuCode(stockBean.getItemCode());
                         failMsg.setMsg("WMS->CMS渠道/店铺库存更新Mongodb异常");
                         failList.add(failMsg);
+                        $error(String.format("(channelId=%s, cartId=%d, code=%s, sku=%s)库存更新差异",
+                                stockBean.getChannelId(), stockBean.getCartId(), stockBean.getItemCode(), stockBean.getSku()));
                     }
                 } else {
                     CmsBtOperationLogModel_Msg failMsg = new CmsBtOperationLogModel_Msg();
