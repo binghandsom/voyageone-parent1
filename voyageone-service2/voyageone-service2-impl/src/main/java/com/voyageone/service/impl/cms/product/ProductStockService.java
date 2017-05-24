@@ -34,8 +34,9 @@ public class ProductStockService extends BaseService {
     /**
      * WMS->CMS 库存更新
      * @param stockList 如果cartId=0是渠道库存更新，否则是店铺库存更新
+     * @param modifier 更新人
      */
-    public List<CmsBtOperationLogModel_Msg> updateProductStock(List<CartChangedStockBean> stockList) {
+    public List<CmsBtOperationLogModel_Msg> updateProductStock(List<CartChangedStockBean> stockList, String modifier) {
         List<CmsBtOperationLogModel_Msg> failList = null;
         if (CollectionUtils.isNotEmpty(stockList)) {
 
@@ -100,9 +101,10 @@ public class ProductStockService extends BaseService {
                         queryMap.put(String.format("platforms.P%s.skus.skuCode", stockBean.getCartId()), stockBean.getSku());
 
                     }
-                    BulkWriteResult writeResult = cmsBtProductDao.bulkUpdateWithMap(channelId, Arrays.asList(createBulkUpdateModel(updateMap, queryMap)), "CmsStockCartChangedStockMQJob", "$set");
+                    BulkWriteResult writeResult = cmsBtProductDao.bulkUpdateWithMap(channelId, Arrays.asList(createBulkUpdateModel(updateMap, queryMap)), modifier, "$set");
                 } else {
                     CmsBtOperationLogModel_Msg failMsg = new CmsBtOperationLogModel_Msg();
+                    failMsg.setSkuCode(stockBean.getItemCode());
                     failMsg.setMsg("WMS->CMS渠道/店铺库存更新时根据产品Code在CMS查不到商品");
                     failList.add(failMsg);
                     $info(String.format("channelId=%s cartId=%d code=%s 在CMS查不到商品", channelId, cartId==null?0:cartId, stockBean.getItemCode()));

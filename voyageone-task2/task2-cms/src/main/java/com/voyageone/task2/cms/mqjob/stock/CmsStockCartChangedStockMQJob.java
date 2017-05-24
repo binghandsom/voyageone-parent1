@@ -8,6 +8,7 @@ import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsSubService;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,9 +29,13 @@ public class CmsStockCartChangedStockMQJob extends TBaseMQCmsSubService<CmsStock
 
     @Override
     public void onStartup(CmsStockCartChangedStockMQMessageBody messageBody) throws Exception {
+
         $info("WMS->CMS批量更新库存，消息内容个数：" + messageBody.getCartChangedStocks().size());
-        messageBody.setSender("CmsStockCartChangedStockMQJob");
-        List<CmsBtOperationLogModel_Msg> failList = productStockService.updateProductStock(messageBody.getCartChangedStocks());
+        if (StringUtils.isBlank(messageBody.getSender())) {
+            messageBody.setSender("CmsStockCartChangedStockMQJob");
+        }
+
+        List<CmsBtOperationLogModel_Msg> failList = productStockService.updateProductStock(messageBody.getCartChangedStocks(), messageBody.getSender());
         if (CollectionUtils.isEmpty(failList)) {
             cmsSuccessLog(messageBody, "WMS->CMS批量更新库存");
         } else {
