@@ -500,7 +500,7 @@ public class CmsAdvanceSearchSolrController extends CmsController {
     public AjaxResponse addFreeTag(@RequestBody Map<String, Object> params) {
         UserSessionBean userInfo = getUser();
 
-        searchIndexService.setProdFreeTagMQ(userInfo.getSelChannelId(), params, userInfo.getUserName(), getCmsSession());
+        searchIndexService.setProdFreeTag(userInfo.getSelChannelId(), params, userInfo.getUserName(), getCmsSession());
         return success(null);
     }
 

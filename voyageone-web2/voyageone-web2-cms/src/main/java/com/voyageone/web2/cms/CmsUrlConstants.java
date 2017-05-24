@@ -688,6 +688,8 @@ public interface CmsUrlConstants {
             String UPPER_LOWER_FRAME = "upperLowerFrame";
 
             String LOCK_PLATFORM = "lockPlatForm";
+
+            String UPDATE_ORIGINAL_TITLE_CN = "updateOriginalTitleCn";
         }
 
         interface HISTORY {

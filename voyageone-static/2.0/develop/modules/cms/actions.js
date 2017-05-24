@@ -165,7 +165,8 @@ define(function () {
                     doTranslateStatus: "doTranslateStatus",
                     getProductIdByCode: "getProductIdByCode",
                     upperLowerFrame: "upperLowerFrame",
-                    lockPlatForm: "lockPlatForm"
+                    lockPlatForm: "lockPlatForm",
+                    updateOriginalTitleCn:"updateOriginalTitleCn"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
