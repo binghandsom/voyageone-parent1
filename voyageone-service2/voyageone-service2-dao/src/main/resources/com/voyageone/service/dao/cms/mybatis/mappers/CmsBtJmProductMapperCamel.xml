@@ -10,7 +10,7 @@
         `creater`, `modified`, `modifier`, `created`, `image1`, `product_long_name`, `product_medium_name`, 
         `product_short_name`, `search_meta_text_custom`, `msrp_usd`, `msrp_rmb`, `retail_price`, 
         `sale_price`, `hs_code`, `hs_name`, `hs_unit`, `material_en`, `material_cn`, `category_name`, 
-        `comment`
+        `comment`, `org_channel_id`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -149,6 +149,9 @@
             <if test="comment != null" >
                 `comment` = #{comment,jdbcType=VARCHAR},
             </if>
+            <if test="orgChannelId != null" >
+                `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR},
+            </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
@@ -286,6 +289,9 @@
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
+            <if test="orgChannelId != null" >
+                and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
+            </if>
         </where>
         limit 1
     </select>
@@ -418,6 +424,9 @@
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
+            <if test="orgChannelId != null" >
+                and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -547,6 +556,9 @@
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
+            <if test="orgChannelId != null" >
+                and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -674,6 +686,9 @@
             </if>
             <if test="comment != null" >
                 `comment`,
+            </if>
+            <if test="orgChannelId != null" >
+                `org_channel_id`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -808,6 +823,9 @@
             </if>
             <if test="comment != null" >
                 #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="orgChannelId != null" >
+                #{orgChannelId,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

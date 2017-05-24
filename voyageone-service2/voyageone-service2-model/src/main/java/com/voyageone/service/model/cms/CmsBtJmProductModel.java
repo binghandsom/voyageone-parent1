@@ -196,6 +196,12 @@ public class CmsBtJmProductModel extends BaseModel {
      */
     protected String comment;
 
+    /**
+     * 原始ChannelId
+     */
+    protected String orgChannelId;
+
+
     public String getChannelId() {
         return channelId;
     }
@@ -490,5 +496,13 @@ public class CmsBtJmProductModel extends BaseModel {
 
     public void setComment(String comment) {
         this.comment = comment == null ? null : comment.trim();
+    }
+
+    public String getOrgChannelId() {
+        return orgChannelId;
+    }
+
+    public void setOrgChannelId(String orgChannelId) {
+        this.orgChannelId = orgChannelId;
     }
 }

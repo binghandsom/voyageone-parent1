@@ -355,7 +355,7 @@ public class PlatformPriceService extends VOAbsLoggable {
         String updType = null;
         if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id()) || PlatFormEnums.PlatForm.JD.getId().equals(cartObj.getPlatform_id())) {
             // 先要判断更新类型
-            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(productModel.getOrgChannelId(), cartId, prodCode);
+            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(productModel.getOrgChannelId(), cartId, prodCode, productModel.getOrgChannelId());
             if (imsBtProductModel == null) {
                 $error("PriceService 产品数据不全 未配置ims_bt_product表 channelId=%s, cartId=%d, prod=%s", channelId, cartId, productModel.toString());
                 throw new BusinessException("产品数据不全,未配置ims_bt_product表！");

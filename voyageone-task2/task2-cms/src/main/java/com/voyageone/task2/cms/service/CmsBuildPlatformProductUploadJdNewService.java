@@ -46,7 +46,6 @@ import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.PlatformWorkloadAttribute;
-import com.voyageone.service.impl.cms.sx.SxProductNewService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
@@ -164,8 +163,6 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
     private CmsMtPlatformSkusService cmcMtPlatformSkusService;
     @Autowired
     private SxProductService sxProductService;
-    @Autowired
-    private SxProductNewService sxProductNewService;
     @Autowired
     private ProductService productService;
     @Autowired
@@ -838,7 +835,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         List<Image> imageList = new ArrayList<>();
         Set<String> picSet = new HashSet<>();
         picSet.add(picUrl);
-        Map<String,String> imageMap = sxProductNewService.uploadImage(shopProp.getOrder_channel_id(), Integer.parseInt(shopProp.getCart_id()),
+        Map<String,String> imageMap = sxProductService.uploadImage(shopProp.getOrder_channel_id(), Integer.parseInt(shopProp.getCart_id()),
                 String.valueOf(sxData.getGroupId()), shopProp, picSet, getTaskName());
         for (int i=0;i<5;i++) {
             Image image = new Image();
@@ -1919,7 +1916,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                         if (StringUtils.isEmpty(picUrl)) continue;
                         Set<String> picSet = new HashSet<>();
                         picSet.add(picUrl);
-                        Map<String,String> imageMap = sxProductNewService.uploadImage(shopProp.getOrder_channel_id(), Integer.parseInt(shopProp.getCart_id()),
+                        Map<String,String> imageMap = sxProductService.uploadImage(shopProp.getOrder_channel_id(), Integer.parseInt(shopProp.getCart_id()),
                                 String.valueOf(sxData.getGroupId()), shopProp, picSet, getTaskName());
                         Image image = new Image();
                         image.setColorId(colorId);
