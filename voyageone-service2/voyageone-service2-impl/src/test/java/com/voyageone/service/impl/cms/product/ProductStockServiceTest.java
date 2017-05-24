@@ -42,7 +42,7 @@ public class ProductStockServiceTest {
         stockBean2.setSku("14009927");
         stockBean2.setQty(3);
         stockBeans.add(stockBean2);
-        productStockService.updateProductStock(stockBeans);
+        productStockService.updateProductStock(stockBeans, "test");
     }
 
 }
