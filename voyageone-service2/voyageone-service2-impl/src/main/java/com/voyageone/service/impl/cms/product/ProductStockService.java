@@ -80,7 +80,6 @@ public class ProductStockService extends BaseService {
                         // 更新数据
                         updateMap.put("common.skus.$.qty", stockBean.getQty());
                         updateMap.put("common.fields.quantity", quantity);
-                        queryMap.put("channelId", stockBean.getChannelId());
                         queryMap.put("common.skus.skuCode", stockBean.getSku());
 
                     } else {
@@ -97,7 +96,6 @@ public class ProductStockService extends BaseService {
                         // 更新数据
                         updateMap.put(String.format("platforms.P%s.skus.$.qty", stockBean.getCartId()), stockBean.getQty());
                         updateMap.put(String.format("platforms.P%s.quantity", stockBean.getCartId()), quantity);
-                        queryMap.put("channelId", stockBean.getChannelId());
                         queryMap.put(String.format("platforms.P%s.skus.skuCode", stockBean.getCartId()), stockBean.getSku());
 
                     }
