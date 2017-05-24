@@ -2044,6 +2044,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      * @return String 商品中文名称(品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称)
      */
     public String getOriginalTitleCnByCategory(String brand, String sizeTypeCn, String leafCategoryCnName) {
+        if(brand == null) brand = "";
+        if(sizeTypeCn == null) sizeTypeCn = "";
+        if(leafCategoryCnName == null) leafCategoryCnName = "";
         return brand + " " + sizeTypeCn + " " + leafCategoryCnName;
     }
 
