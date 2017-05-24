@@ -426,7 +426,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     }
                 } else {
                     // 子店不是拆分出来的产品，用code去查(其实也可以用skuCode去查，但效率可能会比较低)
-                    CmsBtProductModel pr = productService.getProductByCode(usJoiChannelId, productCode);
+                    CmsBtProductModel pr = productService.getProductByCode(usJoiChannelId, sxWorkLoadBean.getChannelId(), productCode);
                     if (pr != null) prList.add(pr);
                 }
 

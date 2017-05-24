@@ -68,6 +68,7 @@ import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.math.NumberUtils;
 import org.joda.time.LocalDate;
@@ -690,9 +691,19 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         }
                         break;
                 }
+                if(StringUtil.isEmpty(catPath)) {
+                    MatchResult searchResult = getMainCatInfo(originalFeed.getCategory(),
+                            !StringUtils.isEmpty(originalFeed.getProductType()) ? originalFeed.getProductType() : "",
+                            !StringUtils.isEmpty(originalFeed.getSizeType()) ? originalFeed.getSizeType() : "",
+                            originalFeed.getName(),
+                            originalFeed.getBrand());
+                    if(searchResult != null)
+                        catPath = searchResult.getCnName();
 
-                String finalCatPath = catPath == null ? "" : catPath;
-                return categorySingle.stream().anyMatch(cat -> finalCatPath.indexOf(cat) == 0);
+                }
+                if(StringUtil.isEmpty(catPath)) return false;
+                String finalCatPath = catPath;
+                return categorySingle.stream().noneMatch(cat -> finalCatPath.indexOf(cat) == 0);
             } else if ("2".equals(singleFlg)) {
                 return true;
             }
@@ -1287,9 +1298,19 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             productCommonField.setCodeDiff(feed.getColor());
 //            }
 
-            if (!"007".equals(feed.getChannelId()) && !StringUtil.isEmpty(productCommonField.getCodeDiff()) && StringUtil.isEmpty(productCommonField.getColor())) {
-                String color = cmsBtTranslateService.translate(usjoi ? "928" : feed.getChannelId(), CmsBtCustomPropModel.CustomPropType.Common.getValue(), "com_color", productCommonField.getCodeDiff());
-                if (!StringUtil.isEmpty(color)) productCommonField.setColor(color);
+//            if (!"007".equals(feed.getChannelId()) && !StringUtil.isEmpty(productCommonField.getCodeDiff()) && StringUtil.isEmpty(productCommonField.getColor())) {
+//                String color = cmsBtTranslateService.translate(usjoi ? "928" : feed.getChannelId(), CmsBtCustomPropModel.CustomPropType.Common.getValue(), "com_color", productCommonField.getCodeDiff());
+//                if (!StringUtil.isEmpty(color)) productCommonField.setColor(color);
+//            }
+//            1.【原始 颜色/口味/香型等】为空的场合，【颜色/口味/香型等】为“暂无”。
+//            2.【原始 颜色/口味/香型等】不为空的场合，【颜色/口味/香型等】调用字典进行中文自动翻译。
+            if(!"007".equals(feed.getChannelId())){
+                if(!StringUtil.isEmpty(productCommonField.getCodeDiff()) && (StringUtil.isEmpty(productCommonField.getColor()) || "暂无".equals(productCommonField.getColor()))){
+                    String color = cmsBtTranslateService.translate(usjoi ? "928" : feed.getChannelId(), CmsBtCustomPropModel.CustomPropType.Common.getValue(), "com_color", productCommonField.getCodeDiff());
+                    if (!StringUtil.isEmpty(color)) productCommonField.setColor(color);
+                }else if(StringUtil.isEmpty(productCommonField.getCodeDiff()) && StringUtil.isEmpty(productCommonField.getColor())){
+                    productCommonField.setColor("暂无");
+                }
             }
 
             // update desmond 2016/07/05 end
@@ -1875,6 +1896,28 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             product.getFeed().setCatPath(feed.getCategory());
             product.getFeed().setBrand(feed.getBrand());
 
+            // 特殊处理sneakerhead的subCategories初始化
+            if (CollectionUtils.isEmpty(product.getFeed().getSubCategories()) && "001".equals(feed.getChannelId())) {
+                // 2017/5/11 rex.wu CMS-13
+                String[] subCategories = feed.getCategory().split("-");
+                List<String> productSubCategories = new ArrayList<>();
+                int len = subCategories.length;
+                for (int i = 0; i < len; i++) {
+                    String tempSubCategory = "";
+                    for (int j = 0; j <= i; j++) {
+                        tempSubCategory += subCategories[j] + (j == i ? "" : "-");
+                    }
+                    if (!StringUtils.isEmpty(tempSubCategory)) {
+                        productSubCategories.add(tempSubCategory);
+                    }
+                }
+                product.getFeed().setSubCategories(productSubCategories);
+
+                /*List<String> subCategories = new ArrayList<>(Arrays.asList(feed.getCategory().split("-")));
+                subCategories.set(subCategories.size() - 1, feed.getCategory());
+                product.getFeed().setSubCategories(subCategories);*/
+            }
+
             // --------- 商品Group信息设定 ------------------------------------------------------
             // 创建新的group
             // jeff 2016/04 change start
@@ -2369,6 +2412,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             product.getFeed().setCatPath(feed.getCategory());
             product.getFeed().setBrand(feed.getBrand());
 
+            // 特殊处理sneakerhead的subCategories初始化
+            if (CollectionUtils.isEmpty(product.getFeed().getSubCategories()) && "001".equals(feed.getChannelId())) {
+                List<String> subCategories = new ArrayList<>(Arrays.asList(feed.getCategory().split("-")));
+                subCategories.set(subCategories.size() - 1, feed.getCategory());
+                product.getFeed().setSubCategories(subCategories);
+            }
 
             return product;
         }
@@ -2679,6 +2728,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                 return newModel.getImgName();
             } else {
+                if(!StringUtil.isEmpty(findImage.getOriginalUrl())){
+                    findImage.setOriginalUrl(findImage.getOriginalUrl().trim());
+                }
                 // 如果原始图片的地址发生变更则做更新操作
                 if (!originalUrl.equals(findImage.getOriginalUrl())) {
                     findImage.setOriginalUrl(originalUrl);

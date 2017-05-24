@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.jm;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
@@ -76,6 +77,7 @@ public class CmsJmPromotionIndexController extends CmsController {
         String channelId = getUser().getSelChannelId();
         String userName = getUser().getUserName();
         parameter.getModel().setChannelId(channelId);
+        if(parameter.getModel().getActivityEnd() == null || parameter.getModel().getActivityStart() == null) throw new BusinessException("活动的开始结束时间不能为空 如果已经填写了时间请确认使用的浏览器是否是chrome");
         return success(service.saveModel(parameter, userName, channelId));
     }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.ENCORE)

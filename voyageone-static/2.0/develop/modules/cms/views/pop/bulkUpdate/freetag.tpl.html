@@ -34,10 +34,10 @@
                                                        ng-model="ctrl.vm.selectedNode[tag.id]"
                                                        ng-checked="ctrl.orgChkStsMap[tag.tagPath]"
                                                        ui-indeterminate="ctrl.orgDispMap[tag.tagPath]"
-                                                       ng-click = "ctrl.selOrgDisp(tag.id , tag.tagPath , $event)"
-                                                >
-                                                {{tag.tagChildrenName}}
+                                                       ng-click = "ctrl.selOrgDisp(tag.id , tag.tagPath , $event)">
+
                                             </label>
+                                            <span>{{tag.tagChildrenName}}</span>
                                             <span class="pull-right text-muted" ng-if="tag.isLeaf == false">
                                             <i class="fa fa-fw fa-angle-right text"></i>
                                         </span>

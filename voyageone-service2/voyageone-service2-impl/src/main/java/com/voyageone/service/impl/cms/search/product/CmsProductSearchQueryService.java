@@ -20,6 +20,7 @@ import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.Query;
 import org.springframework.data.solr.core.query.SimpleQuery;
 import org.springframework.stereotype.Service;
+import org.apache.solr.client.solrj.util.ClientUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -111,7 +112,7 @@ public class CmsProductSearchQueryService extends BaseService {
             if (result.size() > 10) {
                 result = result.subList(0, 10);
             }
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             $error("CmsProductSearchQueryService.getTop10ProductModelCodeSkuList", ex);
         }
 
@@ -162,29 +163,29 @@ public class CmsProductSearchQueryService extends BaseService {
             // 获取platform/lock
             if (StringUtils.isNotEmpty(searchValue.getpLockFlg())) {
                 if ("1".equals(searchValue.getpLockFlg())) {
-                    criteria = criteria.and("P"+cartId+"_lock").is("1");
+                    criteria = criteria.and("P" + cartId + "_lock").is("1");
                 } else {
-                    criteria = criteria.and("P"+cartId+"_lock").is("1").not();
+                    criteria = criteria.and("P" + cartId + "_lock").is("1").not();
                 }
             }
             // 获取platform/cart status
             if (searchValue.getPlatformStatus() != null && searchValue.getPlatformStatus().size() > 0) {
-                criteria = criteria.and("P"+cartId+"_pStatus").in(searchValue.getPlatformStatus());
+                criteria = criteria.and("P" + cartId + "_pStatus").in(searchValue.getPlatformStatus());
             }
 
             // 获取product status
             if (searchValue.getProductStatus() != null && searchValue.getProductStatus().size() > 0) {
-                criteria = criteria.and("P"+cartId+"_status").in(searchValue.getProductStatus());
+                criteria = criteria.and("P" + cartId + "_status").in(searchValue.getProductStatus());
             }
 
             // 获取实际平台状态
             if (searchValue.getpRealStatus() != null && searchValue.getpRealStatus().size() > 0) {
-                criteria = criteria.and("P"+cartId+"_pReallyStatus").in(searchValue.getpRealStatus());
+                criteria = criteria.and("P" + cartId + "_pReallyStatus").in(searchValue.getpRealStatus());
             }
 
             // 获取platform category
             if (searchValue.getpCatPathList() != null && searchValue.getpCatPathList().size() > 0) {
-                criteria = criteria.and("P"+cartId+"_pCatPath").in(searchValue.getpCatPathList());
+                criteria = criteria.and("P" + cartId + "_pCatPath").in(searchValue.getpCatPathList());
             }
 
 
@@ -194,10 +195,10 @@ public class CmsProductSearchQueryService extends BaseService {
             }
 
             // 获取店铺内分类查询条件
-            if (searchValue.getCidValue() !=  null && searchValue.getCidValue().size() > 0) {
-                if(1 == searchValue.getShopCatType()) {
+            if (searchValue.getCidValue() != null && searchValue.getCidValue().size() > 0) {
+                if (1 == searchValue.getShopCatType()) {
                     criteria = criteria.and("P" + cartId + "_sellerCats").in(searchValue.getCidValue());
-                }else{
+                } else {
                     criteria = criteria.and("P" + cartId + "_sellerCats").in(searchValue.getCidValue()).not();
                 }
             }
@@ -205,15 +206,15 @@ public class CmsProductSearchQueryService extends BaseService {
             // 查询价格变动(指导售价)
             if (StringUtils.isNotEmpty(searchValue.getPriceChgFlg())) {
                 if (searchValue.getPriceChgFlg().startsWith("X")) {
-                    criteria = criteria.and("P"+cartId+"_priceMsrpFlg").contains(searchValue.getPriceChgFlg());
+                    criteria = criteria.and("P" + cartId + "_priceMsrpFlg").contains(searchValue.getPriceChgFlg());
                 } else {
-                    criteria = criteria.and("P"+cartId+"_priceChgFlg").contains(searchValue.getPriceChgFlg());
+                    criteria = criteria.and("P" + cartId + "_priceChgFlg").contains(searchValue.getPriceChgFlg());
                 }
             }
 
             // 查询价格比较（最终售价）
             if (StringUtils.isNotEmpty(searchValue.getPriceDiffFlg())) {
-                criteria = criteria.and("P"+cartId+"_priceDiffFlg").contains(searchValue.getPriceDiffFlg());
+                criteria = criteria.and("P" + cartId + "_priceDiffFlg").contains(searchValue.getPriceDiffFlg());
             }
 
 
@@ -222,13 +223,13 @@ public class CmsProductSearchQueryService extends BaseService {
                 if (searchValue.getSalesStart() != null) {
                     // 获取销量上限
                     if (searchValue.getSalesEnd() != null) {
-                        criteria = criteria.and("P"+cartId+"_sale"+ searchValue.getSalesType()).between(searchValue.getSalesStart(), searchValue.getSalesEnd());
+                        criteria = criteria.and("P" + cartId + "_sale" + searchValue.getSalesType()).between(searchValue.getSalesStart(), searchValue.getSalesEnd());
                     } else {
-                        criteria = criteria.and("P"+cartId+"_sale"+ searchValue.getSalesType()).greaterThanEqual(searchValue.getSalesStart());
+                        criteria = criteria.and("P" + cartId + "_sale" + searchValue.getSalesType()).greaterThanEqual(searchValue.getSalesStart());
                     }
                 } else {
                     if (searchValue.getSalesEnd() != null) {
-                        criteria = criteria.and("P"+cartId+"_sale"+ searchValue.getSalesType()).lessThanEqual(searchValue.getSalesEnd());
+                        criteria = criteria.and("P" + cartId + "_sale" + searchValue.getSalesType()).lessThanEqual(searchValue.getSalesEnd());
                     }
                 }
             }
@@ -237,9 +238,9 @@ public class CmsProductSearchQueryService extends BaseService {
             if (StringUtils.isNoneEmpty(searchValue.getNumIIds())) {
                 // 聚美平台按MallID作为查询条件
                 if (CartEnums.Cart.JM.getId().equals(String.valueOf(cartId))) {
-                    criteria = criteria.and("P"+cartId+"_pPlatformMallId").in(searchValue.getNumIIds());
+                    criteria = criteria.and("P" + cartId + "_pPlatformMallId").in(searchValue.getNumIIds());
                 } else {
-                    criteria = criteria.and("P"+cartId+"_pNumIId").in(searchValue.getNumIIds());
+                    criteria = criteria.and("P" + cartId + "_pNumIId").in(searchValue.getNumIIds());
                 }
             }
         }
@@ -247,19 +248,72 @@ public class CmsProductSearchQueryService extends BaseService {
 
         // 获取 feed category
         if (searchValue.getfCatPathList() != null && searchValue.getfCatPathList().size() > 0) {
-            searchValue.setfCatPathList(searchValue.getfCatPathList().stream().map(str->str.trim()).collect(Collectors.toList()));
-            if(searchValue.getfCatPathType() == 1) {
-                criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList());
-            }else {
-                criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList()).not();
+            if ("001".equals(channelId)) {
+                searchValue.setfCatPathList(searchValue.getfCatPathList().stream()
+                        .map(String::trim)
+                        .map(str -> ClientUtils.escapeQueryChars(str) + "*")
+                        .collect(Collectors.toList()));
+                Criteria tempCriteria = null;
+                for (String str : searchValue.getfCatPathList()) {
+                    if (tempCriteria == null) {
+                        if (searchValue.getfCatPathType() == 1) {
+                            tempCriteria = new Criteria("subCategories").expression(str);
+                        } else {
+                            criteria = criteria.and("subCategories").expression(str).not();
+                        }
+                    } else {
+                        if (searchValue.getfCatPathType() == 1) {
+                            tempCriteria = tempCriteria.or("subCategories").expression(str);
+                        } else {
+                            criteria = criteria.and("subCategories").expression(str).not();
+                        }
+                    }
+                }
+                if (searchValue.getfCatPathType() == 1) {
+                    criteria = criteria.and(tempCriteria);
+                }
+            } else {
+                searchValue.setfCatPathList(searchValue.getfCatPathList().stream()
+                        .map(String::trim)
+                        .map(str -> ClientUtils.escapeQueryChars(str) + "*")
+                        .collect(Collectors.toList()));
+                Criteria tempCriteria = null;
+                for (String str : searchValue.getfCatPathList()) {
+                    if (tempCriteria == null) {
+                        if (searchValue.getfCatPathType() == 1) {
+                            tempCriteria = new Criteria("feedCat").expression(str);
+                        } else {
+                            criteria = criteria.and("feedCat").expression(str).not();
+                        }
+                    } else {
+                        if (searchValue.getfCatPathType() == 1) {
+                            tempCriteria = tempCriteria.or("feedCat").expression(str);
+                        } else {
+                            criteria = criteria.and("feedCat").expression(str).not();
+                        }
+                    }
+                }
+                if (searchValue.getfCatPathType() == 1) {
+                    criteria = criteria.and(tempCriteria);
+                }
+//                searchValue.setfCatPathList(searchValue.getfCatPathList().stream()
+//                        .map(String::trim)
+//                        .map(ClientUtils::escapeQueryChars)
+//                        .collect(Collectors.toList()));
+//                if (searchValue.getfCatPathType() == 1) {
+//                    criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList());
+//                } else {
+//                    criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList()).not();
+//                }
             }
+
         }
 
         // 获取 master category
         if (ListUtils.notNull(searchValue.getmCatPath())) {
-            if(searchValue.getmCatPathType() == 1) {
+            if (searchValue.getmCatPathType() == 1) {
                 criteria = criteria.and("catPath").contains(searchValue.getmCatPath());
-            }else{
+            } else {
                 criteria = criteria.and("catPath").contains(searchValue.getmCatPath()).not();
             }
         }
@@ -279,17 +333,17 @@ public class CmsProductSearchQueryService extends BaseService {
 
         // 获取inventory
         if (StringUtils.isNotEmpty(searchValue.getCompareType()) && searchValue.getInventory() != null) {
-            if(searchValue.getCompareType().equals("$eq")){
+            if (searchValue.getCompareType().equals("$eq")) {
                 criteria = criteria.and("quantity").is(searchValue.getInventory());
-            }else if(searchValue.getCompareType().equals("$lt")){
+            } else if (searchValue.getCompareType().equals("$lt")) {
                 criteria = criteria.and("quantity").lessThan(searchValue.getInventory());
-            }else{
+            } else {
                 criteria = criteria.and("quantity").greaterThan(searchValue.getInventory());
             }
         }
 
         // 获取brand
-        if (searchValue.getBrandList() !=  null && searchValue.getBrandList().size() > 0 && searchValue.getBrandSelType() > 0) {
+        if (searchValue.getBrandList() != null && searchValue.getBrandList().size() > 0 && searchValue.getBrandSelType() > 0) {
             searchValue.setBrandList(searchValue.getBrandList().stream().map(String::trim).collect(Collectors.toList()));
             if (searchValue.getBrandSelType() == 1) {
                 criteria = criteria.and("brand").in(searchValue.getBrandList());
@@ -313,7 +367,7 @@ public class CmsProductSearchQueryService extends BaseService {
             if ("1".equals(searchValue.getTransStsFlg()) || "2".equals(searchValue.getTransStsFlg())) {
                 criteria = criteria.and("translateStatus").is(searchValue.getTransStsFlg());
             } else {
-                criteria = criteria.and("translateStatus").is(Arrays.asList("1","2")).not();
+                criteria = criteria.and("translateStatus").is(Arrays.asList("1", "2")).not();
             }
         }
         // 获取主类目完成状态
@@ -385,22 +439,22 @@ public class CmsProductSearchQueryService extends BaseService {
             List<String> orSearch = new ArrayList<>();
             // 英文查询内容
             String fuzzyStr = searchValue.getFuzzyStr();
-            fuzzyStr = "*"+fuzzyStr.replaceAll(" ","\\\\ ")+"*";
+            fuzzyStr = "*" + fuzzyStr.replaceAll(" ", "\\\\ ") + "*";
             Criteria criteria1 = new Criteria("nameEn").expression(fuzzyStr).or("nameCn").expression(fuzzyStr);
             criteria = criteria.and(criteria1);
         }
 
-        if(searchValue.getNoSale() != null && searchValue.getNoSale()){
+        if (searchValue.getNoSale() != null && searchValue.getNoSale()) {
             criteria = criteria
-                    .and("P20.pNumIId").in(Arrays.asList("",null))
-                    .and("P20.pNumIId").in(Arrays.asList("",null))
-                    .and("P21.pNumIId").in(Arrays.asList("",null))
-                    .and("P22.pNumIId").in(Arrays.asList("",null))
-                    .and("P23.pNumIId").in(Arrays.asList("",null))
-                    .and("P24.pNumIId").in(Arrays.asList("",null))
-                    .and("P25.pNumIId").in(Arrays.asList("",null))
-                    .and("P26.pNumIId").in(Arrays.asList("",null))
-                    .and("P27.pNumIId").in(Arrays.asList("",null));
+                    .and("P20.pNumIId").in(Arrays.asList("", null))
+                    .and("P20.pNumIId").in(Arrays.asList("", null))
+                    .and("P21.pNumIId").in(Arrays.asList("", null))
+                    .and("P22.pNumIId").in(Arrays.asList("", null))
+                    .and("P23.pNumIId").in(Arrays.asList("", null))
+                    .and("P24.pNumIId").in(Arrays.asList("", null))
+                    .and("P25.pNumIId").in(Arrays.asList("", null))
+                    .and("P26.pNumIId").in(Arrays.asList("", null))
+                    .and("P27.pNumIId").in(Arrays.asList("", null));
         }
 
 
@@ -427,9 +481,9 @@ public class CmsProductSearchQueryService extends BaseService {
         // 获取排序字段1
         if (StringUtils.isNotEmpty(searchValue.getSortOneName()) && StringUtils.isNotEmpty(searchValue.getSortOneType())) {
             Sort.Direction sortType;
-            if("1".equalsIgnoreCase(searchValue.getSortOneType())){
+            if ("1".equalsIgnoreCase(searchValue.getSortOneType())) {
                 sortType = Sort.Direction.ASC;
-            }else{
+            } else {
                 sortType = Sort.Direction.DESC;
             }
             query.addSort(new Sort(sortType, searchValue.getSortOneName()));
@@ -438,9 +492,9 @@ public class CmsProductSearchQueryService extends BaseService {
         // 获取排序字段2
         if (StringUtils.isNotEmpty(searchValue.getSortTwoName()) && StringUtils.isNotEmpty(searchValue.getSortTwoType())) {
             Sort.Direction sortType;
-            if("1".equalsIgnoreCase(searchValue.getSortTwoType())){
+            if ("1".equalsIgnoreCase(searchValue.getSortTwoType())) {
                 sortType = Sort.Direction.ASC;
-            }else{
+            } else {
                 sortType = Sort.Direction.DESC;
             }
             query.addSort(new Sort(sortType, searchValue.getSortTwoName()));
@@ -449,9 +503,9 @@ public class CmsProductSearchQueryService extends BaseService {
         // 获取排序字段3
         if (StringUtils.isNotEmpty(searchValue.getSortThreeName()) && StringUtils.isNotEmpty(searchValue.getSortThreeType())) {
             Sort.Direction sortType;
-            if("1".equalsIgnoreCase(searchValue.getSortThreeType())){
+            if ("1".equalsIgnoreCase(searchValue.getSortThreeType())) {
                 sortType = Sort.Direction.ASC;
-            }else{
+            } else {
                 sortType = Sort.Direction.DESC;
             }
             query.addSort(new Sort(sortType, searchValue.getSortThreeName()));

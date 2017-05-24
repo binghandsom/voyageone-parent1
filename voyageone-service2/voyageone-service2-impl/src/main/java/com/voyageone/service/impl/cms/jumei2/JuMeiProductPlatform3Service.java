@@ -476,6 +476,27 @@ public class JuMeiProductPlatform3Service extends BaseService {
             request.setSkus_data(new ArrayList<jmHtDealCopyDealSkusData>());
         try {
             HtDealCopyDealResponse response = serviceJumeiHtDeal.copyDeal(parameter.shopBean, request);
+            // error_code":100015的场合先做一下商城价格同步再做再售
+            if(response.getBody() != null && response.getBody().indexOf("100015")>-1){
+                $info("100015 重新刷商城价格");
+                StringBuffer failCause = new StringBuffer();
+                List<HtMallSkuPriceUpdateInfo> htMallSkuPriceUpdateInfos = new ArrayList<>(dealSkuList.size());
+                dealSkuList.forEach(dealSku->{
+                    HtMallSkuPriceUpdateInfo htMallSkuPriceUpdateInfo = new HtMallSkuPriceUpdateInfo();
+                    // 因为商城价格不允许阶梯价格所以就用第一个sku的价格作为商城价格
+                    htMallSkuPriceUpdateInfo.setMarket_price(Double.parseDouble(dealSkuList.get(0).getMarket_price()));
+                    htMallSkuPriceUpdateInfo.setMall_price(Double.parseDouble(dealSkuList.get(0).getDeal_price()));
+                    htMallSkuPriceUpdateInfo.setJumei_sku_no(dealSku.getSku_no());
+                    htMallSkuPriceUpdateInfos.add(htMallSkuPriceUpdateInfo);
+                });
+                boolean isSuccess = jumeiHtMallService.updateMallSkuPrice(parameter.shopBean, htMallSkuPriceUpdateInfos, failCause);
+                if(!isSuccess){
+                    throw new BusinessException("商城价格刷新失败" + failCause.toString());
+                }else{
+                    // 商城价格成功后再做再售处理
+                    response = serviceJumeiHtDeal.copyDeal(parameter.shopBean, request);
+                }
+            }
             if (response.is_Success()) {
                 parameter.cmsBtJmPromotionProductModel.setJmHashId(response.getJumei_hash_id());
             } else {

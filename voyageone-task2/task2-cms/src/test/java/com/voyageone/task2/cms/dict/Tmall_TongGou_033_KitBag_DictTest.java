@@ -32,6 +32,8 @@ public class Tmall_TongGou_033_KitBag_DictTest extends BaseDictTest{
 
         doCreateJson("天猫同购描述", false, doPC详情());
 
+        doCreateJson("天猫同购描述-全自定义", false, doPC详情_全自定义());
+
     }
 
     @Test
@@ -58,7 +60,26 @@ public class Tmall_TongGou_033_KitBag_DictTest extends BaseDictTest{
         }
 
     }
+    private RuleExpression doPC详情_全自定义() {
+        RuleExpression ruleRoot = new RuleExpression();
+        // 自定义图
+        {
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
 
+            RuleExpression imageTemplate = null;
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord(C_自定义图片));
+
+            RuleExpression useOriUrl = new RuleExpression();
+            useOriUrl.addRuleWord(new TextWord("1")); // 使用原图
+
+            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, null);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+        return ruleRoot;
+    }
 
     private RuleExpression doPC详情() {
 
@@ -206,6 +227,30 @@ public class Tmall_TongGou_033_KitBag_DictTest extends BaseDictTest{
             ruleRoot.addRuleWord(new CustomWord(word));
 
         }
+        // 尺码图(指引到各品牌详细尺码)
+        {
+            String template = "<div style='width:790px;height:508px;overflow:hidden;font-size:0px;line-height:0px;'>\n" +
+                    "\t<img src=\"%s\" border='0' usemap='#map8739897477' alt=''/>\n" +
+                    "\t<map name='map8739897477' id='map8739897477'>\n" +
+                    "\t\t<area target='_blank' title='nb' outline='none' shape='rect' coords='43,98,259,244'  href='%s' />\n" +
+                    "\t\t<area target='_blank' title='nike' outline='none' shape='rect' coords='286,98,502,244'  href='%s' />\n" +
+                    "\t\t<area target='_blank' title='umbro' outline='none' shape='rect' coords='527,98,743,243'  href='%s' />\n" +
+                    "\t\t<area target='_blank' title='puma' outline='none' shape='rect' coords='43,268,259,411'  href='%s' />\n" +
+                    "\t\t<area target='_blank' title='adidas' outline='none' shape='rect' coords='285,267,501,411'  href='%s' />\n" +
+                    "\t\t<area target='_blank' title='ua' outline='none' shape='rect' coords='527,266,743,412'  href='%s' />\n" +
+                    "\t</map>\n" +
+                    "</div>";
+            TextWord word = new TextWord(String.format(template,
+                    "https://img.alicdn.com/imgextra/i2/3247884386/TB2oI0poMNlpuFjy0FfXXX3CpXa_!!3247884386.jpg",
+                    "https://h5.m.taobao.com/weapp/view_page.htm?page=shop/activity&userId=3247884386&shopId=404370509&pageId=78526031",
+                    "https://h5.m.taobao.com/weapp/view_page.htm?page=shop/activity&userId=3247884386&shopId=404370509&pageId=78916026",
+                    "https://h5.m.taobao.com/weapp/view_page.htm?page=shop/activity&userId=3247884386&shopId=404370509&pageId=78241036",
+                    "https://h5.m.taobao.com/weapp/view_page.htm?page=shop/activity&userId=3247884386&shopId=404370509&pageId=78626022",
+                    "https://h5.m.taobao.com/weapp/view_page.htm?page=shop/activity&userId=3247884386&shopId=404370509&pageId=79239026",
+                    "https://h5.m.taobao.com/weapp/view_page.htm?page=shop/activity&userId=3247884386&shopId=404370509&pageId=78310034"));
+            ruleRoot.addRuleWord(word);
+        }
+
         // 自定义图
         {
             RuleExpression htmlTemplate = new RuleExpression();
@@ -228,13 +273,11 @@ public class Tmall_TongGou_033_KitBag_DictTest extends BaseDictTest{
             RuleExpression htmlTemplate = new RuleExpression();
             htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
 
-            // 图片类型, 1:商品图 2:尺码图 3:品牌故事图 4:物流介绍图 5:店铺图
             RuleExpression imageType = new RuleExpression();
-            imageType.addRuleWord(new TextWord("1"));
+            imageType.addRuleWord(new TextWord(C_商品图片));
 
-            // 1:PC端 2:APP端
-            RuleExpression viewType = new RuleExpression();
-            viewType.addRuleWord(new TextWord("1"));
+            RuleExpression imageTemplate = new RuleExpression();
+            imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/KITBAG20170421790x750TEST1?$PRODUCT=%s&layer=comp&wid=790&hei=750"));
 
             RuleExpression imageIndex = new RuleExpression();
             imageIndex.addRuleWord(new TextWord("0"));
@@ -242,7 +285,7 @@ public class Tmall_TongGou_033_KitBag_DictTest extends BaseDictTest{
             RuleExpression codeIndex = new RuleExpression();
             codeIndex.addRuleWord(new TextWord("-1")); // 所有非主商品
 
-            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, null, imageIndex);
+            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, null, null, null, codeIndex, imageIndex);
             ruleRoot.addRuleWord(new CustomWord(word));
 
         }

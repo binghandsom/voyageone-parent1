@@ -48,7 +48,7 @@ public class PlatformService extends BaseService {
      * @return
      */
     public String getPlatformProductUrl(String cartId, String numIid) {
-        if (numIid.isEmpty())
+        if (numIid == null || numIid.isEmpty())
             return "";
 
         String productUrl = getPlatformProductUrl(cartId);

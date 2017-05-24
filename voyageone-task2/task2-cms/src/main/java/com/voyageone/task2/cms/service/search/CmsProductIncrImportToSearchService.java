@@ -79,27 +79,32 @@ public class CmsProductIncrImportToSearchService extends BaseListenService {
 
     @Override
     protected Object onListen(List<TaskControlBean> taskControlList) {
-        // get MongoClient
-        MongoClient client = getMongoClient();
-        // get MongoCollection
-        MongoCollection<Document> fromCollection = client.getDatabase("local").getCollection("oplog.rs");
-        // get Query
-        BasicDBObject queryDBObject = getQueryDBObject();
-        $info("CmsProductIncrImportToSearchService Start tailing with query:" + queryDBObject);
         try {
-            return fromCollection.find(queryDBObject)
-                    .sort(new BasicDBObject("$natural", 1))
-                    .cursorType(CursorType.TailableAwait)
-                    .noCursorTimeout(true).iterator();
+            // get MongoClient
+            MongoClient client = getMongoClient();
+            // get MongoCollection
+            MongoCollection<Document> fromCollection = client.getDatabase("local").getCollection("oplog.rs");
+            // get Query
+            BasicDBObject queryDBObject = getQueryDBObject();
+            $info("CmsProductIncrImportToSearchService Start tailing with query:" + queryDBObject);
+            try {
+                return fromCollection.find(queryDBObject)
+                        .sort(new BasicDBObject("$natural", 1))
+                        .cursorType(CursorType.TailableAwait)
+                        .noCursorTimeout(true).iterator();
+            } catch (Exception e) {
+                $info(e.getMessage());
+                issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+                try {
+                    Thread.sleep(1000L);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+                return onListen(taskControlList);
+            }
         }catch (Exception e){
             $info(e.getMessage());
-            issueLog.log(e, ErrorType.BatchJob,SubSystem.CMS);
-            try {
-                Thread.sleep(1000L);
-            } catch (InterruptedException e1) {
-                e1.printStackTrace();
-            }
-            return onListen(taskControlList);
+            throw e;
         }
     }
 
@@ -121,7 +126,7 @@ public class CmsProductIncrImportToSearchService extends BaseListenService {
      * @return MongoClient
      */
     private MongoClient getMongoClient() {
-        return (MongoClient) SpringContext.getBean("mongo");
+        return (MongoClient) SpringContext.getBean("mongoClient");
     }
 
     /**

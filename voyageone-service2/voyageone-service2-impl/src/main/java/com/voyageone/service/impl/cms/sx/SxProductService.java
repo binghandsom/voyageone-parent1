@@ -4609,17 +4609,17 @@ public class SxProductService extends BaseService {
                                   String numIId, CmsConstants.PlatformStatus platformStatus,
                                   String platformPid, String modifier, Map<String, String> pCatInfoMap) {
 
-        // 取得变更前的product group表数据
-        CmsBtProductGroupModel beforeProductGroup = productGroupService.getProductGroupByGroupId(sxData.getChannelId(),
-                sxData.getGroupId());
-        if (beforeProductGroup == null) {
-            $error("回写上新结果状态失败！没找到更新前的产品group表数据 [ProductCode:%s] [GroupId:%s]",
-                    sxData.getChannelId(), sxData.getPlatform().getGroupId());
-            return;
-        }
-
         // 上新成功时
         if (uploadStatus) {
+            // 取得变更前的product group表数据
+            CmsBtProductGroupModel beforeProductGroup = productGroupService.getProductGroupByGroupId(sxData.getChannelId(),
+                    sxData.getGroupId());
+            if (beforeProductGroup == null) {
+                $error("回写上新结果状态失败！没找到更新前的产品group表数据 [ProductCode:%s] [GroupId:%s]",
+                        sxData.getChannelId(), sxData.getPlatform().getGroupId());
+                return;
+            }
+
             // 设置共通属性
             sxData.getPlatform().setNumIId(numIId);
             // 一般店铺上新时(更新商品失败时，不更新platformStatus)
@@ -4671,9 +4671,10 @@ public class SxProductService extends BaseService {
             List<String> listSxCode = null;
             if (ListUtils.notNull(sxData.getProductList())) {
                 listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
+
+                // 上新失败后回写product表pPublishError的值("Error")
+                productGroupService.updateUploadErrorStatus(sxData.getPlatform(), listSxCode, sxData.getErrorMessage());
             }
-            // 上新失败后回写product表pPublishError的值("Error")
-            productGroupService.updateUploadErrorStatus(sxData.getPlatform(), listSxCode, sxData.getErrorMessage());
 
             // 出错的时候将错误信息回写到cms_bt_business_log表
             this.insertBusinessLog(sxData, modifier);

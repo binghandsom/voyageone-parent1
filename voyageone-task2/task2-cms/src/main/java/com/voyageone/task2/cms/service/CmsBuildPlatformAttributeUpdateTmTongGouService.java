@@ -11,6 +11,8 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
@@ -29,6 +31,7 @@ import com.voyageone.service.impl.cms.sx.PlatformWorkloadAttribute;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.CmsBtTmTonggouFeedAttrModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -38,14 +41,20 @@ import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
+import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.avro.data.Json;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.groupingBy;
 
 /**
  * Created by Charis on 2017/3/24.
@@ -54,10 +63,14 @@ import java.util.stream.Stream;
 @Service
 public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTaskService{
 
-    // 官网同购系cartID
-    private final static List<String> cartList = Lists.newArrayList("30","31");
+    // 线程数(synship.tm_task_control中设置的当前job的最大线程数"thread_count", 默认为5)
+    private int threadCount = 5;
+
+    // 抽出件数(synship.tm_task_control中设置的当前job的最大线程数"row_count", 默认为500)
+    private int rowCount = 500;
 
     private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
+
     // 分隔符(,)
     private final static String Separtor_Coma = ",";
 
@@ -69,7 +82,8 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
     private PlatformMappingDeprecatedService platformMappingDeprecatedService;
     @Autowired
     private SxProductService sxProductService;
-
+    @Autowired
+    private ConditionPropValueRepo conditionPropValueRepo;
     @Override
     protected String getTaskName() {
         return "CmsBuildPlatformAttributeUpdateTmTongGouJob";
@@ -83,22 +97,178 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-        // 获取该任务可以运行的销售渠道
-        List<String> channels = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
-        // 从上新的任务表中获取该平台及渠道需要上新的任务列表(group by channel_id, cart_id, group_id)
-        List<CmsBtSxWorkloadModel> sxWorkloadModels = platformProductUploadService.getSxWorkloadWithChannelIdListCartIdList(
-                CmsConstants.PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE, channels, cartList);
-        if (sxWorkloadModels == null || sxWorkloadModels.size() == 0) {
-            $error("上新任务表中没有该渠道和平台对应的任务列表信息！[ChannelId:%s] [CartId:%s]", channels, cartList);
-            return;
-        }
-        for(CmsBtSxWorkloadModel workloadModel : sxWorkloadModels) {
-            doTmTongGouAttibuteUpdate(workloadModel);
-        }
+        doUpdateMain(taskControlList);
+
     }
 
-    public void doTmTongGouAttibuteUpdate(CmsBtSxWorkloadModel work){
+    public void doUpdateMain(List<TaskControlBean> taskControlList) {
+        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
+        channelConditionConfig = new HashMap<>();
+
+        // 由于这个方法可能会自己调用自己循环很多很多次， 不一定会跳出循环， 但又希望能获取到最新的TaskControl的信息， 所以不使用基类里的这个方法了
+        // 为了调试方便， 允许作为参数传入， 但是理想中实际运行中， 基本上还是自主获取的场合比较多
+        if (taskControlList == null) {
+            taskControlList = taskDao.getTaskControlList(getTaskName());
+
+            if (taskControlList.isEmpty()) {
+//                $info("没有找到任何配置。");
+                logIssue("没有找到任何配置！！！", getTaskName());
+                return;
+            }
+
+            // 是否可以运行的判断
+            if (!TaskControlUtils.isRunnable(taskControlList)) {
+                $info("Runnable is false");
+                return;
+            }
+
+        }
+
+        // 线程数(默认为5)
+        threadCount = NumberUtils.toInt(TaskControlUtils.getVal1WithDefVal(taskControlList, TaskControlEnums.Name.thread_count, "5"));
+        // 抽出件数(默认为500)
+        rowCount = NumberUtils.toInt(TaskControlUtils.getVal1WithDefVal(taskControlList, TaskControlEnums.Name.row_count, "500"));
+
+        // 获取该任务可以运行的销售渠道
+        List<TaskControlBean> taskControlBeanList = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.order_channel_id);
+
+        // 准备按组分配线程（相同的组， 会共用相同的一组线程通道， 不同的组， 线程通道互不干涉）
+        Map<String, List<String>> mapTaskControl = new HashMap<>();
+        taskControlBeanList.forEach((l)->{
+            String key = l.getCfg_val2();
+            if (StringUtils.isEmpty(key)) {
+                key = "0";
+            }
+            if (mapTaskControl.containsKey(key)) {
+                mapTaskControl.get(key).add(l.getCfg_val1());
+            } else {
+                List<String> channelList = new ArrayList<>();
+                channelList.add(l.getCfg_val1());
+                mapTaskControl.put(key, channelList);
+            }
+            // 再次获取一下配置项
+            channelConditionConfig.put(l.getCfg_val1(), conditionPropValueRepo.getAllByChannelId(l.getCfg_val1()));
+        });
+
+        Map<String, ExecutorService> mapThread = new HashMap<>();
+
+        while (true) {
+
+            mapTaskControl.forEach((k, v)->{
+                boolean blnCreateThread = false;
+
+                if (mapThread.containsKey(k)) {
+                    ExecutorService t = mapThread.get(k);
+                    if (t.isTerminated()) {
+                        // 可以新做一个线程
+                        blnCreateThread = true;
+                    }
+                } else {
+                    // 可以新做一个线程
+                    blnCreateThread = true;
+                }
+
+                if (blnCreateThread) {
+                    ExecutorService t = Executors.newSingleThreadExecutor();
+
+                    List<String> channelIdList = v;
+                    if (channelIdList != null) {
+                        for (String channelId : channelIdList) {
+                            t.execute(() -> {
+                                try {
+                                    if (ChannelConfigEnums.Channel.USJGJ.getId().equals(channelId)) {
+                                        doProductUpdate(channelId, CartEnums.Cart.LTT.getValue(), threadCount, rowCount);
+                                    } else {
+                                        doProductUpdate(channelId, CartEnums.Cart.TT.getValue(), threadCount, rowCount);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                        }
+                    }
+                    t.shutdown();
+
+                    mapThread.put(k, t);
+
+                }
+            });
+
+            boolean blnAllOver = true;
+            for (Map.Entry<String, ExecutorService> entry : mapThread.entrySet()) {
+                if (!entry.getValue().isTerminated()) {
+                    blnAllOver = false;
+                    break;
+                }
+            }
+            if (blnAllOver) {
+                break;
+            }
+            try {
+                Thread.sleep(1000 * 10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        // TODO: 所有渠道处理总件数为0的场合， 就跳出不继续做了。 以外的场合， 说明可能还有别的未完成的数据， 继续自己调用自己一下
+        try {
+            Thread.sleep(1000 * 10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        doUpdateMain(null);
+
+    }
+
+    /**
+     * 平台产品更新主处理
+     *
+     * @param channelId String 渠道ID
+     * @param cartId String 平台ID
+     * @param threadCount int 线程数
+     * @param rowCount int 每个渠道最大抽出件数
+     */
+    public void doProductUpdate(String channelId, int cartId, int threadCount, int rowCount) throws Exception {
+
+        // 获取店铺信息
+        ShopBean shopProp = Shops.getShop(channelId, cartId);
+        if (shopProp == null) {
+            $error("获取到店铺信息失败(shopProp == null)! [ChannelId:%s] [CartId:%s]", channelId, cartId);
+            return;
+        }
+        $info("获取店铺信息成功![ChannelId:%s] [CartId:%s]", channelId, cartId);
+
+        List<CmsBtSxWorkloadModel> sxWorkloadModels = platformProductUploadService.getSxWorkloadWithChannelIdListCartIdList(
+                rowCount, channelId, cartId);
+        if (ListUtils.isNull(sxWorkloadModels)) {
+            $error("增量更新任务表中没有该渠道和平台对应的任务列表信息！[ChannelId:%s] [CartId:%s]", channelId, cartId);
+            return;
+        }
+
+        // 创建线程池
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+        // 根据上新任务列表中的groupid循环上新处理
+        for (CmsBtSxWorkloadModel cmsBtSxWorkloadModel : sxWorkloadModels) {
+            // 启动多线程
+            executor.execute(() -> doTmTongGouAttibuteUpdate(cmsBtSxWorkloadModel, shopProp));
+        }
+        // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
+        // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
+        executor.shutdown(); // 并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
+        try {
+            // 阻塞，直到线程池里所有任务结束
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
+        }
+
+        $info("当前渠道的天猫官网同购更新任务执行完毕！[channelId:%s] [cartId:%s] [更新对象group件数:%s] ", channelId, cartId, sxWorkloadModels.size());
+    }
+
+    public void doTmTongGouAttibuteUpdate(CmsBtSxWorkloadModel work, ShopBean shop){
         String channelId = work.getChannelId();
         int cartId_shop = work.getCartId();
         Long groupId = work.getGroupId();
@@ -108,16 +278,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
         // 开始时间
         long prodStartTime = System.currentTimeMillis();
         work.setModified(new Date(prodStartTime));
-        //读店铺信息
-        ShopBean shop = new ShopBean();
         try {
-            //读店铺信息
-            shop = Shops.getShop(channelId, cartId_shop);
-
-            if (shop == null) {
-                $error("获取到店铺信息失败! [ChannelId:%s] [CartId:%s]", channelId, cartId_shop);
-                throw new Exception(String.format("获取到店铺信息失败! [ChannelId:%s] [CartId:%s]", channelId, cartId_shop));
-            }
 
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
 
@@ -145,7 +306,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
             CmsBtProductModel_Platform_Cart mainProductPlatformCart = mainProduct.getPlatform(cartId);
             numIId = mainProductPlatformCart.getpNumIId();
             if (StringUtils.isEmpty(numIId)) {
-                String errorMsg = String.format("取得该平台wareId失败！[ChannelId:%s] [CartId；%s] [GroupId:%s]", channelId, cartId, groupId);
+                String errorMsg = String.format("取得该平台numIId失败！[ChannelId:%s] [CartId；%s] [GroupId:%s]", channelId, cartId, groupId);
                 logger.error(errorMsg);
                 throw new BusinessException(errorMsg);
             }
@@ -153,20 +314,21 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
             // tmall.item.update.simpleschema.get (官网同购编辑商品的get接口)
             TbItemSchema tbItemSchema = tbSimpleItemService.getSimpleItem(shop, Long.parseLong(numIId));
 
-            BaseMongoMap<String, String> productInfoMap = getProductInfoMap(mainProductPlatformCart, workloadName, mainProduct, sxData, shop);
+            BaseMongoMap<String, String> productInfoMap = getProductInfoMap(mainProductPlatformCart, mainProduct, sxData, shop);
             // 构造Field列表
-//            List<Field> itemFieldList = new ArrayList<>();
-            InputField inputField = new InputField();
+            List<InputField> itemFieldList = new ArrayList<>();
             productInfoMap.entrySet().forEach(p -> {
-                inputField.setId(p.getKey());
+                InputField inputField = new InputField();
+                inputField.setId(p.getKey().toLowerCase());
                 inputField.setValue(p.getValue());
-//                itemFieldList.add(inputField);
+                itemFieldList.add(inputField);
             });
-
+            Map<String, InputField> fieldMap = itemFieldList.stream().collect(Collectors.toMap(InputField::getId, field -> field));
             List<Field> fieldList = tbItemSchema.getFields();
             fieldList.stream()
                     .forEach( tmField -> {
-                        if (inputField.getId().equals(tmField.getId())) {
+                        if (fieldMap.get(tmField.getId().toLowerCase()) != null &&
+                            fieldMap.get(tmField.getId().toLowerCase()).getId().equalsIgnoreCase(tmField.getId())) {
                             InputField field = (InputField) tmField;
                             if ("extends".equals(tmField.getId())) {
                                 Map<String,String> map = new HashMap<String, String>();
@@ -178,7 +340,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
                                 }
                                 map.entrySet().stream().forEach(m -> {
                                     if ("shop_cats".equals(m.getKey())) {
-                                        m.setValue(inputField.getValue());
+                                        m.setValue(fieldMap.get(tmField.getId()).getValue());
                                     }
                                 });
                                 try {
@@ -188,7 +350,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
 //                                    e.printStackTrace();
                                 }
                             } else {
-                                field.setValue(inputField.getValue());
+                                field.setValue(fieldMap.get(tmField.getId()).getValue());
                             }
                         } else {
                             if (tmField.getType().toString().equalsIgnoreCase("input")) {
@@ -196,6 +358,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
                                 field.setValue(field.getDefaultValue());
                             }
                         }
+
                     });
             String productInfoXml = SchemaWriter.writeParamXmlString(fieldList);
             String result = tbSimpleItemService.updateSimpleItem(shop, NumberUtils.toLong(numIId), productInfoXml);
@@ -238,7 +401,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
     }
 
 
-    private BaseMongoMap<String, String> getProductInfoMap(CmsBtProductModel_Platform_Cart mainProductPlatformCart, String workloadName,
+    private BaseMongoMap<String, String> getProductInfoMap(CmsBtProductModel_Platform_Cart mainProductPlatformCart,
                                                            CmsBtProductModel mainProduct, SxData sxData, ShopBean shop) {
 
         // 表达式解析子
@@ -253,102 +416,123 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
         // 店铺级标题禁用词 20161216 tom START
         // 先临时这样处理
         String notAllowList = getConditionPropValue(sxData, "notAllowTitleList", shop);
-        if (PlatformWorkloadAttribute.TITLE.getValue().equals(workloadName)) {
-            // 标题(必填)
-            // 商品标题支持英文到中文，韩文到中文的自动翻译，可以在extends字段里面进行设置是否需要翻译
-            // 注意：使用测试账号的APPKEY测试时，标题应包含中文"测试请不要拍"
-            String valTitle = "";
-            if (mainProductPlatformCart != null && mainProductPlatformCart.getFields() != null
-                    && !StringUtils.isEmpty(mainProductPlatformCart.getFields().getStringAttribute("title"))) {
-                // 画面上输入的platform的fields中的标题 (格式：<value>测试请不要拍 title</value>)
-                valTitle = mainProductPlatformCart.getFields().getStringAttribute("title");
-            } else if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("originalTitleCn"))) {
-                // common中文长标题
-                valTitle = mainProduct.getCommon().getFields().getStringAttribute("originalTitleCn");
-            } else if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("productNameEn"))) {
-                // common英文长标题
-                valTitle = mainProduct.getCommon().getFields().getStringAttribute("productNameEn");
-            }
 
-            if (!StringUtils.isEmpty(notAllowList)) {
-                if (!StringUtils.isEmpty(valTitle)) {
-                    String[] splitWord = notAllowList.split(",");
-                    for (String notAllow : splitWord) {
-                        // 直接删掉违禁词
-                        valTitle = valTitle.replaceAll(notAllow, "");
-                    }
+        // 标题(必填)
+        // 商品标题支持英文到中文，韩文到中文的自动翻译，可以在extends字段里面进行设置是否需要翻译
+        // 注意：使用测试账号的APPKEY测试时，标题应包含中文"测试请不要拍"
+        String valTitle = "";
+        if (mainProductPlatformCart != null && mainProductPlatformCart.getFields() != null
+                && !StringUtils.isEmpty(mainProductPlatformCart.getFields().getStringAttribute("title"))) {
+            // 画面上输入的platform的fields中的标题 (格式：<value>测试请不要拍 title</value>)
+            valTitle = mainProductPlatformCart.getFields().getStringAttribute("title");
+        } else if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("originalTitleCn"))) {
+            // common中文长标题
+            valTitle = mainProduct.getCommon().getFields().getStringAttribute("originalTitleCn");
+        } else if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("productNameEn"))) {
+            // common英文长标题
+            valTitle = mainProduct.getCommon().getFields().getStringAttribute("productNameEn");
+        }
+
+        if (!StringUtils.isEmpty(notAllowList)) {
+            if (!StringUtils.isEmpty(valTitle)) {
+                String[] splitWord = notAllowList.split(",");
+                for (String notAllow : splitWord) {
+                    // 直接删掉违禁词
+                    valTitle = valTitle.replaceAll(notAllow, "");
                 }
             }
-            // 店铺级标题禁用词 20161216 tom END
-            productInfoMap.put(PlatformWorkloadAttribute.TITLE.getValue(), valTitle);
-        } else if (PlatformWorkloadAttribute.SELLER_CIDS.getValue().equals(workloadName)) {
-            // 店铺内分类id(非必填)  格式："shop_cats":"111111,222222,333333"
-            String extends_shop_cats = "";
-            if (mainProductPlatformCart != null
-                    && ListUtils.notNull(mainProductPlatformCart.getSellerCats())) {
-                List<String> sellerCatIdList = new ArrayList<>();
-                for (CmsBtProductModel_SellerCat sellerCat : mainProductPlatformCart.getSellerCats()) {
-                    if (!StringUtils.isEmpty(sellerCat.getcId())) {
-                        sellerCatIdList.add(sellerCat.getcId());
-                    }
-                }
-                if (ListUtils.notNull(sellerCatIdList)) {
-                    extends_shop_cats = Joiner.on(Separtor_Coma).join(sellerCatIdList);
+        }
+        // 店铺级标题禁用词 20161216 tom END
+        productInfoMap.put(PlatformWorkloadAttribute.TITLE.getValue(), valTitle);
+
+        // 店铺内分类id(非必填)  格式："shop_cats":"111111,222222,333333"
+        String extends_shop_cats = "";
+        if (mainProductPlatformCart != null
+                && ListUtils.notNull(mainProductPlatformCart.getSellerCats())) {
+            List<String> sellerCatIdList = new ArrayList<>();
+            for (CmsBtProductModel_SellerCat sellerCat : mainProductPlatformCart.getSellerCats()) {
+                if (!StringUtils.isEmpty(sellerCat.getcId())) {
+                    sellerCatIdList.add(sellerCat.getcId());
                 }
             }
-            productInfoMap.put("extends", extends_shop_cats);
-//            productInfoMap.put("extends", JacksonUtil.bean2Json(paramExtends));
-        } else if (PlatformWorkloadAttribute.DESCRIPTION.getValue().equals(workloadName)) {
-            // 描述(必填)
-            // 商品描述支持HTML格式，但是需要将内容变成XML格式。
-            // 为了更好的用户体验，建议全部使用图片来做描述内容。描述的图片宽度不超过800像素.
-            // 格式：<value>&lt;img align="middle" src="http://img.alicdn.com/imgextra/i1/2640015666/TB2islBkXXXXXXBXFXXXXXXXXXX_!!2640015666.jpg"
-            //      /&gt; &lt;br&gt;&lt;img align="middle" src="http://img.alicdn.com/imgextra/i1/2640015666/~~</value>
-            // 解析cms_mt_platform_dict表中的数据字典
-            // modified by morse.lu 2016/12/23 start
-            // 画面上可以选
+            if (ListUtils.notNull(sellerCatIdList)) {
+                extends_shop_cats = Joiner.on(Separtor_Coma).join(sellerCatIdList);
+            }
+        }
+        productInfoMap.put("extends", extends_shop_cats);
+
+        // 描述(必填)
+        // 商品描述支持HTML格式，但是需要将内容变成XML格式。
+        // 为了更好的用户体验，建议全部使用图片来做描述内容。描述的图片宽度不超过800像素.
+        // 格式：<value>&lt;img align="middle" src="http://img.alicdn.com/imgextra/i1/2640015666/TB2islBkXXXXXXBXFXXXXXXXXXX_!!2640015666.jpg"
+        //      /&gt; &lt;br&gt;&lt;img align="middle" src="http://img.alicdn.com/imgextra/i1/2640015666/~~</value>
+        // 解析cms_mt_platform_dict表中的数据字典
+        // modified by morse.lu 2016/12/23 start
+        // 画面上可以选
 //        String valDescription = getValueByDict("天猫同购描述", expressionParser, shopProp);
-            String valDescription;
-            RuleExpression ruleDetails = new RuleExpression();
-            MasterWord masterWord = new MasterWord("details");
-            ruleDetails.addRuleWord(masterWord);
-            String details = null;
+        String valDescription;
+        RuleExpression ruleDetails = new RuleExpression();
+        MasterWord masterWord = new MasterWord("details");
+        ruleDetails.addRuleWord(masterWord);
+        String details = null;
+        try {
+            details = expressionParser.parse(ruleDetails, shop, getTaskName(), null);
+        } catch (Exception e) {
+        }
+        if (!StringUtils.isEmpty(details)) {
+            valDescription = getValueByDict(details, expressionParser, shop);
+        } else {
+            valDescription = getValueByDict("天猫同购描述", expressionParser, shop);
+        }
+        // modified by morse.lu 2016/12/23 end
+        // 店铺级标题禁用词 20161216 tom START
+        // 先临时这样处理
+        if (!StringUtils.isEmpty(notAllowList)) {
+            if (!StringUtils.isEmpty(valDescription)) {
+                String[] splitWord = notAllowList.split(",");
+                for (String notAllow : splitWord) {
+                    // 直接删掉违禁词
+                    valDescription = valDescription.replaceAll(notAllow, "");
+                }
+            }
+        }
+        // 店铺级标题禁用词 20161216 tom END
+        productInfoMap.put(PlatformWorkloadAttribute.DESCRIPTION.getValue(), valDescription);
+
+        // 主图(必填)
+        // 最少1张，最多5张。多张图片之间，使用英文的逗号进行分割。需要使用alicdn的图片地址。建议尺寸为800*800像素。
+        // 格式：<value>http://img.alicdn.com/imgextra/i1/2640015666/TB2PTFYkXXXXXaUXpXXXXXXXXXX_!!2640015666.jpg,
+        //      http://img.alicdn.com/imgextra/~~</value>
+        String valMainImages = "";
+        // 解析cms_mt_platform_dict表中的数据字典
+        String mainPicUrls = getValueByDict("天猫同购商品主图5张", expressionParser, shop);
+        if (!StringUtils.isNullOrBlank2(mainPicUrls)) {
+            // 去掉末尾的逗号
+            valMainImages = mainPicUrls.substring(0, mainPicUrls.lastIndexOf(Separtor_Coma));
+        }
+        productInfoMap.put("main_images", valMainImages);
+
+        // 无线描述(选填)
+        // 解析cms_mt_platform_dict表中的数据字典
+        if (mainProduct.getCommon().getFields().getAppSwitch() != null &&
+                mainProduct.getCommon().getFields().getAppSwitch() == 1) {
+
+            String valWirelessDetails;
+            RuleExpression ruleWirelessDetails = new RuleExpression();
+            MasterWord masterWordWirelessDetails = new MasterWord("wirelessDetails");
+            ruleWirelessDetails.addRuleWord(masterWordWirelessDetails);
+            String wirelessDetails = null;
             try {
-                details = expressionParser.parse(ruleDetails, shop, getTaskName(), null);
+                wirelessDetails = expressionParser.parse(ruleWirelessDetails, shop, getTaskName(), null);
             } catch (Exception e) {
             }
-            if (!StringUtils.isEmpty(details)) {
-                valDescription = getValueByDict(details, expressionParser, shop);
+            if (!StringUtils.isEmpty(wirelessDetails)) {
+                valWirelessDetails = getValueByDict(wirelessDetails, expressionParser, shop);
             } else {
-                valDescription = getValueByDict("天猫同购描述", expressionParser, shop);
+                valWirelessDetails = getValueByDict("天猫同购无线描述", expressionParser, shop);
             }
-            // modified by morse.lu 2016/12/23 end
-            // 店铺级标题禁用词 20161216 tom START
-            // 先临时这样处理
-            if (!StringUtils.isEmpty(notAllowList)) {
-                if (!StringUtils.isEmpty(valDescription)) {
-                    String[] splitWord = notAllowList.split(",");
-                    for (String notAllow : splitWord) {
-                        // 直接删掉违禁词
-                        valDescription = valDescription.replaceAll(notAllow, "");
-                    }
-                }
-            }
-            // 店铺级标题禁用词 20161216 tom END
-            productInfoMap.put(PlatformWorkloadAttribute.DESCRIPTION.getValue(), valDescription);
-        } else if (PlatformWorkloadAttribute.ITEM_IMAGES.getValue().equals(workloadName)) {
-            // 主图(必填)
-            // 最少1张，最多5张。多张图片之间，使用英文的逗号进行分割。需要使用alicdn的图片地址。建议尺寸为800*800像素。
-            // 格式：<value>http://img.alicdn.com/imgextra/i1/2640015666/TB2PTFYkXXXXXaUXpXXXXXXXXXX_!!2640015666.jpg,
-            //      http://img.alicdn.com/imgextra/~~</value>
-            String valMainImages = "";
-            // 解析cms_mt_platform_dict表中的数据字典
-            String mainPicUrls = getValueByDict("天猫同购商品主图5张", expressionParser, shop);
-            if (!StringUtils.isNullOrBlank2(mainPicUrls)) {
-                // 去掉末尾的逗号
-                valMainImages = mainPicUrls.substring(0, mainPicUrls.lastIndexOf(Separtor_Coma));
-            }
-            productInfoMap.put("main_images", valMainImages);
+
+            productInfoMap.put("wireless_desc", valWirelessDetails);
         }
 
 

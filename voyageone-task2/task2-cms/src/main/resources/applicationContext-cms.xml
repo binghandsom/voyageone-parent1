@@ -51,7 +51,7 @@
         <task:scheduled ref="CmsBuildPlatformAttributeUpdateJmJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!-- 京东0库存在售商品的下架 -->
-        <task:scheduled ref="CmsBuildPlatformQuantityCheckJdJob" method="run" cron="0 30 17 * 1,4 ?"/>
+        <task:scheduled ref="CmsBuildPlatformQuantityCheckJdJob" method="run" cron="0 30 17 * * ?"/>
 
         <!-- 取得平台类目:手动batch -->
         <task:scheduled ref="getPlatformCategoryTreesTask" method="run" cron="0 0/1 0-23 * * ?"/>
@@ -81,76 +81,6 @@
         <task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="25 30 0/1 * * ?"/>
         <!--<task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="0 5 * * * ?"/>-->
 
-        <!-- Jewelry feed 导入 cms2 -->
-        <task:scheduled ref="CmsJEAnalysisJob" method="run" cron="0 0/1 * * * ?"/>
-
-        <!-- Shoe City feed 导入 cms2 -->
-        <task:scheduled ref="ShoeCityAnalysisJob" method="run" cron="0 10 0/1 * * ?"/>
-
-        <!-- BHFO feed 导入 cms2 -->
-        <task:scheduled ref="CmsBhfoAnalySisJob" method="run" cron="0 15 0/1 * * ?"/>
-
-        <!-- SummerGuru feed 导入 cms2 -->
-        <task:scheduled ref="CmsSummerGuruAnalySisJob" method="run" cron="0 20 0/1 * * ?"/>
-
-        <!-- ShoeZoo feed 导入 cms2 -->
-        <task:scheduled ref="CmsShoeZooAnalysisJob" method="run" cron="0 25 0/1 * * ?"/>
-
-        <!-- OverStock feed 导入 cms2 -->
-        <task:scheduled ref="CmsOverStockAnalysisJob" method="run" cron="20 0/5 * * * ?"/>
-
-        <task:scheduled ref="OverStockTempJob" method="run" cron="20 0/1 * * * ?"/>
-
-        <!-- OverStock price 导入 cms2 -->
-        <task:scheduled ref="OverStockPriceAnalysisJob" method="run" cron="13 0/2 * * * ?"/>
-
-        <!-- LightHouse 导入 cms2 -->
-        <task:scheduled ref="CmsLightHouseAnalysisJob" method="run" cron="0 35 0/1 * * ?"/>
-
-        <!-- FragranceNet feed 导入 cms2 -->
-        <task:scheduled ref="CmsFragranceNetAnalysisJob" method="run" cron="0 40 0/1 * * ?"/>
-
-        <!-- YogaDemocracy feed 导入 cms2 -->
-        <task:scheduled ref="CmsYogaDemocracyAnalysisJob" method="run" cron="0 0/13 * * * ?"/>
-
-        <!-- ShoeMetro feed 导入 cms2 -->
-        <task:scheduled ref="CmsShoeMetroAnalysisJob" method="run" cron="0 0/13 * * * ?"/>
-
-        <!-- Modotex feed 导入 cms2 -->
-        <task:scheduled ref="CmsModotexAnalysisJob" method="run" cron="0 40 0/1 * * ?"/>
-
-        <!-- SwissWatch feed 导入 cms2 -->
-        <task:scheduled ref="CmsSwissWatchAnalysisJob" method="run" cron="0 0/13 * * * ?"/>
-
-        <!-- EdcSkincare feed 导入 cms2 -->
-        <task:scheduled ref="CmsEdcSkincareAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
-
-        <!-- Target feed 导入 cms2 -->
-        <task:scheduled ref="CmsTargetAnalySisJob" method="run" cron="15 0/5 * * * ?"/>
-
-        <!-- 维他命 feed 导入 cms2 -->
-        <task:scheduled ref="CmsVtmJob" method="run" cron="10 25 9 * * ?"/>
-
-        <!-- Gilt feed 导入 cms2 -->
-        <task:scheduled ref="Cms2GiltAnalysisJob" method="run" cron="40 0/1 * * * ?"/>
-
-        <!-- DFO 导入 cms2 -->
-        <task:scheduled ref="CmsDfoAnalysisJob" method="run" cron="40 0/1 * * * ?"/>
-
-        <!-- Champion 导入 cms2 -->
-        <task:scheduled ref="CmsChampionAnalysisJob" method="run" cron="0 0/5 0-23 * * ?"/>
-
-        <!-- SneakerHead feed 导入 cms2 -->
-        <task:scheduled ref="CmsSneakerHeadAnalysisJob" method="run" cron="0 0/1 * * * ?"/>
-
-        <!-- Wmf 导入 cms2 -->
-        <task:scheduled ref="CmsWmfAnalysisJob" method="run" cron="40 * 0/1 * * ?"/>
-
-        <!-- Wmf价格 导入 cms2 -->
-        <task:scheduled ref="WmfPriceAnalysisJob" method="run" cron="30 * 0/1 * * ?"/>
-
-        <!-- KitBag feed 导入 cms2 -->
-        <task:scheduled ref="CmsKitBagAnalysisJob" method="run" cron="0 0/15 * * * ?"/>
 
         <!-- 产品数据上新到USJoi -->
         <task:scheduled ref="CmsUploadProductToUSJoiJob" method="run" cron="20 0/1 * * * ?"/>
@@ -183,10 +113,7 @@
         <task:scheduled ref="CmsMongoOptimizeIndexJob" method="run" cron="0 0 3 * * ?"/>
 
         <!-- overstock 价格变更监听 -->
-        <task:scheduled ref="CmsOverstockPriceEventJob" method="run" cron="9 0/3 0 * * *"/>
-
-        <!-- BCBG Feed 导入 cms2 (每三分钟的第40秒执行) -->
-        <task:scheduled ref="Cms2BcbgAnalysisJob" method="run" cron="40 0/3 * * * *"/>
+        <task:scheduled ref="CmsOverstockPriceEventJob" method="run" cron="9 0/3 * * * *"/>
 
         <!-- 单独向Target发送数据-->
         <task:scheduled ref="TargetDailyService" method="run" cron="0 0 1,13 * * *"/>
@@ -227,7 +154,6 @@
 
         <task:scheduled ref="CmsLuckyVitaminSkuStatusJob" method="run" cron="1 0/1 * * * ?"/>
 
-
         <!-- CmsUsCategorySyncJob: 获取 sneakerhead 在美国 cms 的类目结构和 product 的挂靠关系 vantis -->
         <task:scheduled ref="CmsUsCategorySyncJob" method="run" cron="0 45 0/1 * * ?"/>
 
@@ -264,5 +190,5 @@
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->
-    <task:scheduler id="cms-job-scheduler" pool-size="10"/>
+    <task:scheduler id="cms-job-scheduler" pool-size="20"/>
 </beans>

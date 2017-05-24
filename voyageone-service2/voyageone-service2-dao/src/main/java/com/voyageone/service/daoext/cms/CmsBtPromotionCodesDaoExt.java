@@ -24,6 +24,9 @@ public class CmsBtPromotionCodesDaoExt extends ServiceBaseDao {
     public List<CmsBtPromotionCodesBean> selectPromotionCodeSkuList(Map<String, Object> params) {
         return selectList("select_cms_bt_promotion_code_sku", params);
     }
+    public List<CmsBtPromotionCodesBean> selectPromotionCodeSku2List(Map<String, Object> params) {
+        return selectList("select_cms_bt_promotion_code_sku2", params);
+    }
 
     public int selectPromotionCodeListCnt(Map<String, Object> params) {
         return selectOne("select_cms_bt_promotion_code_cnt", params);
