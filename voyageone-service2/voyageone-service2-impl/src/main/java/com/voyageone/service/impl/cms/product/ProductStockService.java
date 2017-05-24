@@ -105,6 +105,7 @@ public class ProductStockService extends BaseService {
                     CmsBtOperationLogModel_Msg failMsg = new CmsBtOperationLogModel_Msg();
                     failMsg.setMsg("WMS->CMS渠道/店铺库存更新时根据产品Code在CMS查不到商品");
                     failList.add(failMsg);
+                    $info(String.format("channelId=%s cartId=%d code=%s 在CMS查不到商品", channelId, cartId==null?0:cartId, stockBean.getItemCode()));
                 }
             }
 //            if (!bulkUpdateModelMap.isEmpty()) {
