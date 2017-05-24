@@ -68,9 +68,9 @@ public class CmsBuildPlatformProductUploadTmServiceTest {
         shop.setOrder_channel_id("018");
         shop.setCart_id("23");
         shop.setApp_url("http://gw.api.taobao.com/router/rest");
-        shop.setAppKey("21008948");
-        shop.setAppSecret("0a16bd08019790b269322e000e52a19f");
-        shop.setSessionKey("6200e048fd07ZZ0fed0d170d705977052199dfac7d039cb2854639042");
+        shop.setAppKey("");
+        shop.setAppSecret("");
+        shop.setSessionKey("");
         // platformid一定要设成京东，否则默认为天猫（1）的话，expressionParser.parse里面会上传照片到天猫空间，出现异常
         shop.setPlatform_id("1");
 
