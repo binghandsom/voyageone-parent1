@@ -27,6 +27,7 @@ import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
+import com.voyageone.service.impl.cms.product.search.CmsBtSearchItemService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -83,6 +84,8 @@ public class CmsAdvanceSearchService extends BaseViewService {
     private CmsBtShelvesService cmsBtShelvesService;
     @Autowired
     private SxProductService sxProductService;
+    @Autowired
+    private CmsBtSearchItemService cmsBtSearchItemService;
 
     /**
      * 获取检索页面初始化的master data数据
@@ -268,6 +271,8 @@ public class CmsAdvanceSearchService extends BaseViewService {
      */
     public long countProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, userInfo.getSelChannelId());
+
+        cmsBtSearchItemService.analysisSearchItems(userInfo.getUserId(), userInfo.getUserName(), userInfo.getSelChannelId(), searchValue, queryObject);
         return productService.countByQuery(queryObject.getQuery(), queryObject.getParameters(), userInfo.getSelChannelId());
     }
 
@@ -489,6 +494,14 @@ public class CmsAdvanceSearchService extends BaseViewService {
             taskModel.setModified(new Date());
             int rs = cmsBtExportTaskService.add(taskModel);
             $debug("高级检索 创建文件下载任务 结果=%d", rs);
+
+            // 记录下载参数
+            try {
+                CmsSearchInfoBean2 searchInfoBean = JacksonUtil.json2Bean(JacksonUtil.bean2Json(searchValue), CmsSearchInfoBean2.class);
+                cmsBtSearchItemService.analysisSearchItems(userInfo.getUserId(), userInfo.getUserName(), userInfo.getSelChannelId(), searchInfoBean, null);
+            } catch (Exception e) {
+                $error("记录(%s)用户导出文件参数错误，查询参数解析成CmsSearchInfoBean2出现异常.");
+            }
 
             // 发送MQ消息
             searchValue.put("_channleId", userInfo.getSelChannelId());
