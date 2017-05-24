@@ -3303,7 +3303,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 }
 
                 // 根据主类目设置商品重量
-                if (searchResult.getWeight() != 0.0D
+                if (searchResult.getWeight() != null && searchResult.getWeight() != 0.0D
                         && (prodCommonField.getWeightLb() == null || prodCommonField.getWeightLb() == 0.0)) {
                     prodCommonField.setWeightLb(searchResult.getWeight());
                     BigDecimal b = new BigDecimal(searchResult.getWeight() * 453.59237);
