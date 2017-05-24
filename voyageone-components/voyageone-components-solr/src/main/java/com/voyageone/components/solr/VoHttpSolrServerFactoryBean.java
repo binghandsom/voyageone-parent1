@@ -1,14 +1,14 @@
 package com.voyageone.components.solr;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.impl.LBHttpSolrServer;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.data.solr.server.support.HttpSolrServerFactory;
-import org.springframework.data.solr.server.support.HttpSolrServerFactoryBean;
+import org.springframework.data.solr.server.support.HttpSolrClientFactory;
 import org.springframework.util.Assert;
 
 import java.net.MalformedURLException;
@@ -16,7 +16,7 @@ import java.net.MalformedURLException;
 /**
  * Created by james on 2017/4/14.
  */
-public class VoHttpSolrServerFactoryBean extends HttpSolrServerFactory implements FactoryBean<SolrServer>,
+public class VoHttpSolrServerFactoryBean extends HttpSolrClientFactory implements FactoryBean<SolrClient>,
         InitializingBean, DisposableBean {
 
     private static final String SERVER_URL_SEPARATOR = ",";
@@ -39,14 +39,14 @@ public class VoHttpSolrServerFactoryBean extends HttpSolrServerFactory implement
     }
 
     private void createHttpSolrServer() {
-        HttpSolrServer httpSolrServer = new VoPostHttpSolrServer(this.url);
+        HttpSolrClient httpSolrServer = new VoPostHttpSolrServer(this.url);
         if (timeout != null) {
             httpSolrServer.setConnectionTimeout(timeout.intValue());
         }
         if (maxConnections != null) {
             httpSolrServer.setMaxTotalConnections(maxConnections);
         }
-        this.setSolrServer(httpSolrServer);
+        this.setSolrClient(httpSolrServer);
     }
 
     private void createLoadBalancedHttpSolrServer() {
@@ -55,23 +55,23 @@ public class VoHttpSolrServerFactoryBean extends HttpSolrServerFactory implement
             if (timeout != null) {
                 lbHttpSolrServer.setConnectionTimeout(timeout.intValue());
             }
-            this.setSolrServer(lbHttpSolrServer);
+            this.setSolrClient(lbHttpSolrServer);
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("Unable to create Load Balanced Http Solr Server", e);
         }
     }
 
     @Override
-    public SolrServer getObject() throws Exception {
-        return getSolrServer();
+    public SolrClient getObject() throws Exception {
+        return getSolrClient();
     }
 
     @Override
     public Class<?> getObjectType() {
-        if (getSolrServer() == null) {
+        if (getSolrClient() == null) {
             return HttpSolrServer.class;
         }
-        return getSolrServer().getClass();
+        return getSolrClient().getClass();
     }
 
     @Override

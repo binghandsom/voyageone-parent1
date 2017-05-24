@@ -493,7 +493,7 @@ public class ProductGroupService extends BaseService {
     }
 
     public WriteResult updateFirst(JongoUpdate updObj, String channelId) {
-        return cmsBtProductGroupDao.updateFirst(updObj, channelId);
+        return cmsBtProductGroupDao.updateMulti(updObj, channelId);
     }
 
     public long countByQuery(final String strQuery, String channelId) {

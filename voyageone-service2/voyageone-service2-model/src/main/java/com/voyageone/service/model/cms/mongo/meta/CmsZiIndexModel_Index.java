@@ -1,14 +1,5 @@
 package com.voyageone.service.model.cms.mongo.meta;
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.base.dao.mysql.BaseModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * {@link CmsZiIndexModel_Index} 的商品Model
  *
@@ -22,6 +13,8 @@ public class CmsZiIndexModel_Index {
     private String key;
     private Boolean unique;
     private Boolean required;
+    private Boolean sparse;
+    private String partialFilterExpression;
 
     public String getKey() {
         return key;
@@ -53,5 +46,21 @@ public class CmsZiIndexModel_Index {
 
     public void setUnique(Boolean unique) {
         this.unique = unique;
+    }
+
+    public Boolean getSparse() {
+        return sparse;
+    }
+
+    public void setSparse(Boolean sparse) {
+        this.sparse = sparse;
+    }
+
+    public String getPartialFilterExpression() {
+        return partialFilterExpression;
+    }
+
+    public void setPartialFilterExpression(String partialFilterExpression) {
+        this.partialFilterExpression = partialFilterExpression;
     }
 }

@@ -369,7 +369,7 @@ public class ProductService extends BaseService {
      * @return
      */
     public WriteResult updateFirstProduct(JongoUpdate updObj, String channelId) {
-        return cmsBtProductDao.updateFirst(updObj, channelId);
+        return cmsBtProductDao.updateMulti(updObj, channelId);
     }
 
     /**

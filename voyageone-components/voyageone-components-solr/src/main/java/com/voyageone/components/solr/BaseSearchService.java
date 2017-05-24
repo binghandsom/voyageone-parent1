@@ -38,6 +38,11 @@ public abstract class BaseSearchService extends ComponentBase {
         return response.toString();
     }
 
+    public String saveBean(String coreName, SolrUpdateBean bean) {
+        UpdateResponse response = getSolrTemplate().saveBean(coreName, bean);
+        return response.toString();
+    }
+
     /**
      * saveBeans
      */
@@ -51,6 +56,11 @@ public abstract class BaseSearchService extends ComponentBase {
      */
     public String deleteById(String id) {
         UpdateResponse response = getSolrTemplate().deleteById(id);
+        return response.toString();
+    }
+
+    public String deleteById(String coreName, String id) {
+        UpdateResponse response = getSolrTemplate().deleteById(coreName, id);
         return response.toString();
     }
 
@@ -70,11 +80,18 @@ public abstract class BaseSearchService extends ComponentBase {
     }
 
     /**
+     * commit specified collection
+     */
+    public void commit(String coreName) {
+        getSolrTemplate().commit(coreName);
+    }
+
+    /**
      * optimize
      */
     public void optimize() {
         try {
-            getSolrTemplate().getSolrServer().optimize();
+            getSolrTemplate().getSolrClient().optimize();
         } catch (SolrServerException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -101,13 +118,13 @@ public abstract class BaseSearchService extends ComponentBase {
             } else {
                 Object docMap = doc.get(path);
                 if (docMap instanceof Map) {
-                    for (int i=0; i<rightPathList.size()-1; i++) {
+                    for (int i = 0; i < rightPathList.size() - 1; i++) {
                         docMap = ((Map) docMap).get(rightPathList.get(i));
                         if (!Map.class.isInstance(docMap)) {
                             return null;
                         }
                     }
-                    return ((Map) docMap).get(rightPathList.get(rightPathList.size()-1));
+                    return ((Map) docMap).get(rightPathList.get(rightPathList.size() - 1));
                 }
             }
         } else {

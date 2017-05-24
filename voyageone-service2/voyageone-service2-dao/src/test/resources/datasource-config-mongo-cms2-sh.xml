@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="true"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/data/mongo
+        http://www.springframework.org/schema/data/mongo/spring-mongo-1.8.xsd">
+
+    <!-- Default bean name is 'mongo' -->
+    <mongo:mongo-client id="mongo" host="10.0.0.75" port="27018" credentials="app_user:ad528_qYpN@cms" >
+        <mongo:client-options
+                connect-timeout="1000000"
+                socket-timeout="1000000"
+                max-wait-time="1500000"/>
+    </mongo:mongo-client>
+
+    <!--<mongo:db-factory id="mongoDbFactory" mongo-ref="mongo" dbname="cms"/>-->
+
+    <!-- mongodb的主要操作对象，所有对mongodb的增删改查的操作都是通过它完成 -->
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg name="mongo" ref="mongo"/>
+        <constructor-arg name="databaseName" value="cms"/>
+    </bean>
+
+    <bean id="baseJomgoDao" class="com.voyageone.base.dao.mongodb.BaseJongoTemplate">
+        <constructor-arg ref="mongoTemplate"/>
+    </bean>
+
+    <context:annotation-config/>
+</beans>
