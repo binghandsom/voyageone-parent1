@@ -8,6 +8,7 @@ import com.taobao.api.request.*;
 import com.taobao.api.response.*;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.TbBase;
 import org.springframework.stereotype.Component;
@@ -31,35 +32,37 @@ public class TbScItemService extends TbBase {
 	 * @return
 	 */
 	private String getRealScOuterCodeBySku(String sku) {
-		String regExTmp = "[-_a-zA-Z0-9]";
+//		String regExTmp = "[-_a-zA-Z0-9]";
+//
+//		if (StringUtils.isEmpty(sku)) {
+//			return "";
+//		}
+//
+//		StringBuilder sb = new StringBuilder();
+//		String result;
+//
+//		for (int i = 0; i < sku.length(); i ++) {
+//			String c = sku.substring(i, i + 1);
+//
+//			Pattern pattern = Pattern.compile(regExTmp, Pattern.CASE_INSENSITIVE);
+//			Matcher matcher = pattern.matcher(c);
+//
+//			if (matcher.find()) {
+//				// OK的字符
+//				sb.append(c);
+//			}
+//
+//		}
+//
+//		result = sb.toString();
+//
+//		if (result.length() > 25) {
+//			result = result.substring(0, 25);
+//		}
+//
+//		return result;
 
-		if (StringUtils.isEmpty(sku)) {
-			return "";
-		}
-
-		StringBuilder sb = new StringBuilder();
-		String result;
-
-		for (int i = 0; i < sku.length(); i ++) {
-			String c = sku.substring(i, i + 1);
-
-			Pattern pattern = Pattern.compile(regExTmp, Pattern.CASE_INSENSITIVE);
-			Matcher matcher = pattern.matcher(c);
-
-			if (matcher.find()) {
-				// OK的字符
-				sb.append(c);
-			}
-
-		}
-
-		result = sb.toString();
-
-		if (result.length() > 25) {
-			result = result.substring(0, 25);
-		}
-
-		return result;
+		return MD5.getMd5_16(sku);
 	}
 
 	/**
