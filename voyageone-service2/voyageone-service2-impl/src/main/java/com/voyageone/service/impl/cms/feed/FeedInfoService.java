@@ -5,6 +5,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MongoUtils;
@@ -465,6 +466,57 @@ public class FeedInfoService extends BaseService {
             result.append("{updFlg:{$nin:[");
             result.append(ninList.stream().map(Object::toString).collect(Collectors.joining(",")));
             result.append("]}},");
+        }
+
+        // 获取 master category
+        if (searchValue.get("mCatPath") != null) {
+            List<String>mCatPathList = (List<String>) searchValue.get("mCatPath");
+            if("1".equals(searchValue.get("mCatPathType").toString())) {
+                StringBuilder mCatPathStr = new StringBuilder("{$or:[");
+                int idx = 0;
+                List<String> parameters = new ArrayList<>();
+                for (String mCatPath : mCatPathList) {
+                    //fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
+                    if (idx == 0) {
+                        mCatPathStr.append("{\"mainCategoryCn\":{\"$regex\":#}}");
+                        idx++;
+                    } else {
+                        mCatPathStr.append(",{\"mainCategoryCn\":{\"$regex\":#}}");
+                    }
+                    parameters.add("^" + mCatPath);
+                }
+                mCatPathStr.append("]}");
+                JongoQuery queryObject = new JongoQuery();
+                queryObject.addQuery(mCatPathStr.toString());
+                queryObject.addParameters(parameters.toArray());
+                result.append(queryObject.getJongoQueryStr()+",");
+            }else{
+                StringBuilder mCatPathStr = new StringBuilder("{$or:[{$and:[");
+                int idx = 0;
+                List<String> parameters = new ArrayList<>();
+                for (String mCatPath : mCatPathList) {
+                    //fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
+                    if (idx == 0) {
+                        mCatPathStr.append("{\"mainCategoryCn\":{\"$regex\":#}}");
+                        idx++;
+                    } else {
+                        mCatPathStr.append(",{\"mainCategoryCn\":{\"$regex\":#}}");
+                    }
+                    parameters.add(String.format("^((?!%s).)*$",mCatPath));
+                }
+                mCatPathStr.append("]},{\"mainCategoryCn\":{\"$in\":[null,'']}}]}");
+                JongoQuery queryObject = new JongoQuery();
+                queryObject.addQuery(mCatPathStr.toString());
+                queryObject.addParameters(parameters.toArray());
+                result.append(queryObject.getJongoQueryStr()+",");
+            }
+        }
+
+        if(searchValue.get("message") != null && !StringUtil.isEmpty((String) searchValue.get("message"))){
+            JongoQuery queryObject = new JongoQuery();
+            queryObject.addQuery("{\"updMessage\":{\"$regex\":#}}");
+            queryObject.addParameters(searchValue.get("message"));
+            result.append(queryObject.getJongoQueryStr()+",");
         }
 
         if (!StringUtils.isEmpty(result.toString())) {

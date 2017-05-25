@@ -34,6 +34,29 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="form-group"><!-- 查询主类目 -->
+                                    <div class="col-sm-3 text-right">
+                                        <button class="btn btn-pop btn-default" ng-click="openMasterCategoryMapping(popupCategoryNew)">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_MAIN_CATEGORY' |translate}}
+                                        </button>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <label class="checkbox-inline c-radio">
+                                            <input type="radio" name="mCatPathOperation" value=1 ng-model="vm.searchInfo.mCatPathType"><span class="fa fa-check"></span> 包含
+                                        </label>
+                                        <label class="checkbox-inline c-radio">
+                                            <input type="radio" name="mCatPathOperation" value=2 ng-model="vm.searchInfo.mCatPathType"><span class="fa fa-check"></span> 不包含
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div style="width:58%;float:left;min-height:40px;max-height:160px;background: #EEEEEE; border: 1px solid #C8C2C2; overflow: auto;margin-left:25.7%;">
+                                        <label ng-repeat="mCatPath in vm.searchInfo.mCatPath">
+                                            <label class="label label-default m-r-xxs" >{{mCatPath}}</label>{{$last?'':'&nbsp;&nbsp;'}}
+                                        </label>
+                                    </div>
+                                    <button class="btn btn-default btn-md" style="margin-left:-1px" type="button" translate="BTN_RESET" ng-click="vm.searchInfo.mCatPath=[]"></button>
+                                </div>
                                 <div class="row form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_BRAND"></label>
                                     <div class="col-sm-8">
@@ -85,18 +108,6 @@
                                         <div class="text-warnings">
                                             <i class="icon fa fa-bell-o"></i>&nbsp;模糊查询,包括:Category,Name,Short Description
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="row form-group">
-                                    <label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
-                                    <div class="col-sm-8" style="padding-left:0px">
-                                        <div class="col-sm-6">
-                                            <select class="form-control m-r-xs" style="margin-left:4px" ng-model="vm.searchInfo.compareType"
-                                                    ng-options="compareType.value as compareType.name for compareType in vm.masterData.compareTypeList">
-                                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-sm-6"><input type="number" class="form-control" ng-model="vm.searchInfo.inventory" ng-pattern="/^(\d+)$/"></div>
                                     </div>
                                 </div>
                             </div>
@@ -191,6 +202,18 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
+                                    <div class="col-sm-8" style="padding-left:0px">
+                                        <div class="col-sm-6">
+                                            <select class="form-control m-r-xs" style="margin-left:4px" ng-model="vm.searchInfo.compareType"
+                                                    ng-options="compareType.value as compareType.name for compareType in vm.masterData.compareTypeList">
+                                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-6"><input type="number" class="form-control" ng-model="vm.searchInfo.inventory" ng-pattern="/^(\d+)$/"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <!-----------------------------------------第三列------------------------------------------->
@@ -202,6 +225,15 @@
                                         <textarea class="form-control inherited" rows="4" ng-model="vm.searchInfo.codeList"></textarea>
                                         <div class="text-warnings">
                                             <i class="icon fa fa-bell-o"></i>&nbsp;多项查询,精确查询，包括:款号Model(多项换行分割),产品Code(多项换行分割),产品Sku(多项换行分割)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label">错误信息查询</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="vm.searchInfo.message"/>
+                                        <div class="text-warnings">
+                                            <i class="icon fa fa-bell-o"></i>
                                         </div>
                                     </div>
                                 </div>
