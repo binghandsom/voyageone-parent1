@@ -126,7 +126,7 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
     private List<CmsBtJmSkuModel> getCmsBtJmSkuModels(String channelId, String productCode) {
         Map<String, Object> map = new HashMap<>();
         map.put("productCode", productCode);
-        map.put("orgChannelId", channelId);
+        map.put("channelId", channelId);
         List<CmsBtJmSkuModel> skuList = cmsBtJmSkuDao.selectList(map);
         if (skuList == null) {
             skuList = new ArrayList<>();
