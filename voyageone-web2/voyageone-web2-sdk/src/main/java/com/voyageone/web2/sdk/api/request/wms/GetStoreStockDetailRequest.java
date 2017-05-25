@@ -12,6 +12,8 @@ public class GetStoreStockDetailRequest extends VoApiRequest<GetStoreStockDetail
 
     private String channelId;
 
+    private String subChannelId;
+
     private String sku;
 
     private String itemCode;
@@ -22,6 +24,14 @@ public class GetStoreStockDetailRequest extends VoApiRequest<GetStoreStockDetail
 
     public void setChannelId(String channelId) {
         this.channelId = channelId;
+    }
+
+    public String getSubChannelId() {
+        return subChannelId;
+    }
+
+    public void setSubChannelId(String subChannelId) {
+        this.subChannelId = subChannelId;
     }
 
     public String getSku() {
