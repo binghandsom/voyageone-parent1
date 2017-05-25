@@ -82,7 +82,10 @@ public class CmsProductIncrImportToSearchService extends BaseListenService {
         BSONTimestamp ts = readTimestamp();
         if (shardId == null) {
             shardNeedCommitMap.put(NON_SHARD, false);
-            shardLastTimestampMap.put(NON_SHARD, readTimestamp());
+            if (ts != null) {
+                shardLastTimestampMap.put(NON_SHARD, readTimestamp());
+            }
+            handleCommit(null);
         } else {
             Iterator<String> shardIterator = shardMap.keySet().iterator();
             while (shardIterator.hasNext()) {
@@ -145,6 +148,7 @@ public class CmsProductIncrImportToSearchService extends BaseListenService {
                 shardLastTimestampMap.put(this.shardId.get(), new BSONTimestamp(ts.getTime(), ts.getInc()));
             } else {
                 $info("正在处理非shard : " + nextOp.toJson() + "  ts:" + ts.toString());
+                shardLastTimestampMap.put(NON_SHARD, new BSONTimestamp(ts.getTime(), ts.getInc()));
             }
             handleOp(nextOp);
         }
