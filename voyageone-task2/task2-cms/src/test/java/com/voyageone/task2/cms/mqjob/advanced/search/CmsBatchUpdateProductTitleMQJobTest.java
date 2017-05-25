@@ -28,9 +28,9 @@ public class CmsBatchUpdateProductTitleMQJobTest {
 
         CmsBatchUpdateProductTitleMQMessageBody mqMessageBody = new CmsBatchUpdateProductTitleMQMessageBody();
         mqMessageBody.setChannelId("001");
-        mqMessageBody.setProductCodes(Arrays.asList("s002z","s4246","s5044","ha450-0572","ha450-0581","ha450-0582","ha410-0590","ha410-0591","ha410-0592"));
-        mqMessageBody.setTitle("-524");
-        mqMessageBody.setTitlePlace("suffix");
+        mqMessageBody.setProductCodes(Arrays.asList("s002z"));
+        mqMessageBody.setTitle("SHOCK ABSORBER 运动内衣防震跑步女bra 高强度文胸瑜伽健身");
+        mqMessageBody.setTitlePlace("cover");
         mqMessageBody.setSender("edward");
         cmsBatchUpdateProductTitleMQJob.onStartup(mqMessageBody);
 

@@ -58,7 +58,6 @@ public class CmsBatchUpdateProductTitleMQJob extends TBaseMQCmsSubService<CmsBat
 
         List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
         List<BulkUpdateModel> bulkUpdateModels = new ArrayList<>();
-        List<PlatformWorkloadInfo> platformWorkloadInfos = new ArrayList<>();
 
         CmsBtProductModel productModel = null;
         CmsBtProductModel_Field fields = null;
@@ -94,45 +93,34 @@ public class CmsBatchUpdateProductTitleMQJob extends TBaseMQCmsSubService<CmsBat
             queryMap.put("common.fields.code", fields.getCode());
 
             // 批量修改Model
-            bulkUpdateModels.add(createBulkUpdateModel(updateMap, queryMap));
+            // bulkUpdateModels.add(createBulkUpdateModel(updateMap, queryMap));
 
-            // 产品如有平台状态Approved，则重新上新
-            for (CmsBtProductModel_Platform_Cart platformCart : productModel.getPlatforms().values()) {
-                Integer cartId = platformCart.getCartId();
-                if (cartId.intValue() > 19 && cartId.intValue() < 900 && CmsConstants.ProductStatus.Approved.name().equals(platformCart.getStatus())) {
-                    PlatformWorkloadInfo platformWorkloadInfo = new PlatformWorkloadInfo();
-                    platformWorkloadInfo.setChannelId(channelId);
-                    platformWorkloadInfo.setCode(fields.getCode());
-                    platformWorkloadInfo.setCartId(cartId);
-                    platformWorkloadInfo.setUsername(username);
-                    platformWorkloadInfos.add(platformWorkloadInfo);
+            try {
+                // 注意修改产品标题，如果平台Approved则平台上新
+                BulkWriteResult writeResult = productService.bulkUpdateWithMap(channelId, Arrays.asList(createBulkUpdateModel(updateMap, queryMap)), username, "$set");
+                $info(String.format("(%s)高级检索批量修改产品(channelId=%s, code=%s)标题，结果：%s", username, channelId, code, JacksonUtil.bean2Json(writeResult)));
+
+                // 产品如有平台状态Approved，则重新上新
+                for (CmsBtProductModel_Platform_Cart platformCart : productModel.getPlatforms().values()) {
+                    Integer cartId = platformCart.getCartId();
+                    if (cartId.intValue() > 19 && cartId.intValue() < 900 && CmsConstants.ProductStatus.Approved.name().equals(platformCart.getStatus())) {
+                        $debug(String.format("(%s)高级检索批量修改产品标题(channel=%s, code=%s)，平台(cartId=%d)Approved需重新上新", username, channelId, code, cartId));
+                        sxProductService.insertPlatformWorkload(channelId, cartId, PlatformWorkloadAttribute.TITLE, Arrays.asList(code), username);
+                    }
                 }
+            } catch (Exception e) {
+                $error(String.format("(%s)高级检索批量修改产品标题(channelId=%s, code=%s)错误", username, channelId, code), e);
+                CmsBtOperationLogModel_Msg exceptionOne = new CmsBtOperationLogModel_Msg();
+                exceptionOne.setSkuCode(code);
+                exceptionOne.setMsg("高级检索批量修改产品标题错误");
+                failList.add(exceptionOne);
             }
         }
 
-        try {
-            if (!bulkUpdateModels.isEmpty()) {
-                // 批量修改产品标题
-                BulkWriteResult writeResult = productService.bulkUpdateWithMap(channelId, bulkUpdateModels, username, "$set");
-                $info(String.format("高级检索批量修改产品标题(channelId=%s, username=%s)结果(%s)", channelId, username, JacksonUtil.bean2Json(writeResult)));
-            }
-
-            if (!platformWorkloadInfos.isEmpty()) {
-                // 平台Approved
-                for (PlatformWorkloadInfo platformWorkloadInfo : platformWorkloadInfos) {
-                    $debug(String.format("高级检索批量修改商品标题(channel=%s, code=%s)，平台(cartId=%d)Approved需重新上新", channelId, platformWorkloadInfo.getCode(), platformWorkloadInfo.getCartId()));
-                    sxProductService.insertPlatformWorkload(channelId, platformWorkloadInfo.getCartId(), PlatformWorkloadAttribute.TITLE, Arrays.asList(platformWorkloadInfo.getCode()), username);
-                }
-            }
-
-            if (failList.isEmpty()) {
-                cmsSuccessLog(messageBody, "高级检索批量修改产品标题");
-            } else {
-                cmsSuccessIncludeFailLog(messageBody, "高级检索批量修改产品标题", failList);
-            }
-        } catch (Exception e) {
-            $error(String.format("(%s)高级检索批量修改产品标题出错了", username), e);
-            cmsLog(messageBody, OperationLog_Type.unknownException, "高级检索批量修改产品标题");
+        if (failList.isEmpty()) {
+            cmsSuccessLog(messageBody, String.format("(%s)高级检索批量修改产品标题OK", username));
+        } else {
+            cmsSuccessIncludeFailLog(messageBody, String.format("(%s)高级检索批量修改产品标题部分失败", username), failList);
         }
     }
 
@@ -141,44 +129,5 @@ public class CmsBatchUpdateProductTitleMQJob extends TBaseMQCmsSubService<CmsBat
         model.setUpdateMap(updateMap);
         model.setQueryMap(queryMap);
         return model;
-    }
-
-    private class PlatformWorkloadInfo {
-        private String channelId;
-        private Integer cartId;
-        private String code;
-        private String username;
-
-        public String getChannelId() {
-            return channelId;
-        }
-
-        public void setChannelId(String channelId) {
-            this.channelId = channelId;
-        }
-
-        public Integer getCartId() {
-            return cartId;
-        }
-
-        public void setCartId(Integer cartId) {
-            this.cartId = cartId;
-        }
-
-        public String getCode() {
-            return code;
-        }
-
-        public void setCode(String code) {
-            this.code = code;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
     }
 }
