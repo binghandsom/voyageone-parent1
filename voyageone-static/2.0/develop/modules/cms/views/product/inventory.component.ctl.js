@@ -64,22 +64,30 @@ define([
                     	// 删除不需要统计的表头
                     	copyHeader.base.splice(0, 3);
                     	// 统计库存信息
-                    	var totalStock = {};
+                    	var totalStock = [];
                     	angular.forEach(copyHeader, function(items, key) {
                     		totalStock[key] = {};
                     		angular.forEach(items, function(item) {
-                    			var countTotal = 0;
+                    			var countTotal = [];
+                    			var totalAvailableQty = 0; // 当前项总的可用库存
+                    			var totalOccupiedQty = 0;  // 当前项总的占用库存
                     			angular.forEach(tblData.stocks, function(stock) {
                     				if (!angular.isDefined(stock[key][item])) {
                     					stock[key][item] = [0,0];
                     				}
+                                    totalAvailableQty += stock[key][item][0];
+                                    totalOccupiedQty += stock[key][item][1];
                     				// countTotal += stock[key][item];
-                    				angular.forEach(stock[key][item], function (qty) {
-                                        countTotal += qty;
-                                    })
+                    				// angular.forEach(stock[key][item], function (qty) {
+                                     //    countTotal += qty;
+                                    // })
                     			});
+                                countTotal.push(totalAvailableQty);
+                                countTotal.push(totalOccupiedQty);
+
+
                     			// 保存库存为0的总库存，删除其他库存为0的仓库
-                    			if (key != 'order' && item != 'total' && countTotal == 0) {
+                    			if (key != 'order' && item != 'total' && countTotal[0] == 0 && countTotal[1] == 0) {
                     				stockHeader[key].splice(stockHeader[key].indexOf(item), 1);
                     			} else {
                     				totalStock[key][item] = countTotal;

@@ -22,7 +22,7 @@
                                     SKU</th>
                                 <th class="text-center" style="border: 1px solid #ccc;width: 65px;">原始尺码</th>
                                 <th ng-if="showDetail" style="border: 1px solid #ccc;width: 88px;" class="text-center">销售尺码</th>
-                                <th class="text-center" style="border: 1px solid #ccc;width: 50px;">库存</th>
+                                <th class="text-center" style="border: 1px solid #ccc;width: 50px;">库存（可用，占用）</th>
                                 <!-- (国内)自营 -->
                                 <th ng-repeat="attr in tblData.header.inOwn" ng-if="showDetail || attr.name == 'total'"
                                     class="text-center table_compare_before" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}（可用，占用）</th>
