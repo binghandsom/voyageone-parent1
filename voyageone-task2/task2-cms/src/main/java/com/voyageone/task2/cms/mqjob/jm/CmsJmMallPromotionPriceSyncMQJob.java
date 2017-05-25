@@ -53,6 +53,7 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
 
     @Override
     public void onStartup(CmsJmMallPromotionPriceSyncMQMessageBody messageBody) throws Exception {
+        $info(JacksonUtil.bean2Json(messageBody));
         Integer jmPid = messageBody.getJmPromotionId();
         List<String> productCodes = messageBody.getProductCodes();
 
