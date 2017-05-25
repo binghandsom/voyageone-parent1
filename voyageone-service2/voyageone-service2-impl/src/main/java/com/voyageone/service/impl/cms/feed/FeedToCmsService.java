@@ -212,7 +212,11 @@ public class FeedToCmsService extends BaseService {
 
                 //计算主类目
                 if (isSetCategory && StringUtil.isEmpty(product.getMainCategoryEn())) {
-                    setMainCategory(product);
+                    try {
+                        setMainCategory(product);
+                    }catch (Exception e){
+                        $error(e.getMessage());
+                    }
                 }
 
                 // 产品数据合法性检查

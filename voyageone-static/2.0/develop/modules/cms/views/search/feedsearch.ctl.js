@@ -9,7 +9,7 @@ define([
     function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage, $filter, cookieService,popups,systemCategoryService,notify) {
         $scope.status={};
         $scope.vm = {
-            searchInfo: {},
+            searchInfo: {"mCatPathType":1},
             feedPageOption: {curr: 1, total: 0, fetch: search},
             feedList: [],
             feedSelList: {selList: []},
@@ -28,6 +28,8 @@ define([
 
         $scope.exportSearch = exportSearch;
         $scope.doExport = doExport;
+
+        $scope.openMasterCategoryMapping = openMasterCategoryMapping;
 
         var tempFeedSelect = null;
 
@@ -68,7 +70,7 @@ define([
          * 清空画面上显示的数据
          */
         function clear() {
-            $scope.vm.searchInfo = {};
+            $scope.vm.searchInfo = {"mCatPathType":1};
             $scope.status={};
             // 默认设置成第一页
             $scope.vm.feedPageOption.curr = 1;
@@ -297,7 +299,8 @@ define([
 
             systemCategoryService.getNewsCategoryList().then(function (res) {
                 popups.popupCategoryNew({
-                    categories: res.data
+                    categories: res.data,
+                    from:feedInfo.mainCategoryCn
                 }).then(function (context) {
                     var isUpdateGroup = false;
                     confirm("是否更新同一model下的其它商品?").then(function () {
@@ -358,7 +361,24 @@ define([
                 search();
             })
         }
-    };
+
+        /**
+         * popup弹出选择主类目数据
+         * @param popupNewCategory
+         */
+        function openMasterCategoryMapping() {
+            systemCategoryService.getNewsCategoryList().then(function (res) {
+                popups.popupCategoryNew({
+                    categories: res.data
+                }).then(function (context) {
+                    if(!$scope.vm.searchInfo.mCatPath){
+                        $scope.vm.searchInfo.mCatPath = [];
+                    }
+                    $scope.vm.searchInfo.mCatPath.push(context.selected.catPath);
+                });
+            });
+        }
+    }
 
     searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q', 'selectRowsFactory', 'confirm', 'alert', 'attributeService', 'cActions', '$sessionStorage', '$filter','cookieService','popups','systemCategoryService','notify'];
     return searchIndex;
