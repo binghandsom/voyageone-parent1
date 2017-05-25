@@ -1,6 +1,7 @@
 package com.voyageone.web2.sdk.api;
 
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.AccessTokenRequest;
 import com.voyageone.web2.sdk.api.response.AccessTokenResponse;
@@ -87,6 +88,7 @@ public class VoApiDefaultClient implements VoApiClient {
                 throw ae;
             }
         }
+        System.out.println("请求参数: " + JacksonUtil.bean2Json(request) + "; 请求结果: " + JacksonUtil.bean2Json(result));
         return result;
     }
 
