@@ -6,9 +6,9 @@
     </resultMap>
 
     <select id="selectBySkuCodeChannelId"  resultMap="ResultMap">
-        select  *   from cms_bt_jm_sku where org_channel_id=#{orgChannelId} and  product_code=#{productCode} and sku_code=#{skuCode} limit 1
+        select  *   from cms_bt_jm_sku where channel_id=#{channelId} and  product_code=#{productCode} and sku_code=#{skuCode} limit 1
     </select>
     <select id="existsCode" resultType="Boolean">
-        SELECT 1 FROM  cms_bt_jm_sku where org_channel_id=#{orgChannelId} and product_code=#{productCode} and sku_code=#{skuCode} limit 1
+        SELECT 1 FROM  cms_bt_jm_sku where channel_id=#{channelId} and product_code=#{productCode} and sku_code=#{skuCode} limit 1
     </select>
 </mapper>

@@ -4,17 +4,17 @@
     <select id="selectByProductCodeChannelId" resultType="com.voyageone.service.model.cms.CmsBtJmProductModel">
         SELECT *
         FROM cms_bt_jm_product
-        WHERE org_channel_id = #{orgChannelId} AND product_code = #{productCode}
+        WHERE channel_id = #{channelId} AND product_code = #{productCode}
         LIMIT 1
     </select>
     <select id="existsCode" resultType="Boolean">
         SELECT 1
         FROM `cms_bt_jm_product`
-        WHERE org_channel_id = #{orgChannelId} AND product_code = #{productCode}
+        WHERE channel_id = #{channelId} AND product_code = #{productCode}
         LIMIT 1
     </select>
     <select id="selectByProductCodeListChannelId" resultType="com.voyageone.service.model.cms.CmsBtJmProductModel">
-        select * from cms_bt_jm_product where org_channel_id=#{orgChannelId} and product_code in
+        select * from cms_bt_jm_product where channel_id=#{channelId} and product_code in
         <foreach item="item" index="index" collection="productCodes" open="("
                  separator="," close=")">
             #{item}
