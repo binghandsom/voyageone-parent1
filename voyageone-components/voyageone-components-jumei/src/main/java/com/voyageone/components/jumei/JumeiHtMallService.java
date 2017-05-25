@@ -3,6 +3,7 @@ package com.voyageone.components.jumei;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.bean.HtMallSkuAddInfo;
@@ -162,6 +163,7 @@ public class JumeiHtMallService extends JmBase {
                 throw bex;
             }
         }
+        logger.info(JacksonUtil.bean2Json(reqResult));
         HtMallSkuPriceUpdateResponse response = new HtMallSkuPriceUpdateResponse();
         response.setBody(reqResult);
         if (!response.isSuccess()) {
