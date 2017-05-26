@@ -70,6 +70,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -502,7 +504,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
      * @param shopProp ShopBean 店铺信息
      */
     public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp, Map<String, String> channelConfigValueMap
-                , Map<String, List<Map<String, String>>> categoryMappingListMap) {
+                , Map<String, List<Map<String, String>>> categoryMappingListMap){
 
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
@@ -597,7 +599,11 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
-
+            // 上新对象code
+            List<String> listSxCode = null;
+            if (ListUtils.notNull(sxData.getProductList())) {
+                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
+            }
             // 判断新增商品还是更新商品
             // 只要numIId不为空，则为更新商品
             if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
@@ -609,8 +615,32 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 
             // 如果skuList不为空，取得所有sku的库存信息
             // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
-            Map<String, Integer> skuLogicQtyMap = productService.getLogicQty(mainProduct.getOrgChannelId(), strSkuCodeList);
-
+            // WMS2.0切换 20170526 charis STA
+            Date nowTime  = new Date();
+            Date changeTime = null;
+            try {
+                changeTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-05-28 00:00:00");
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
+            if (changeTime.before(nowTime)) {
+                for (String code : listSxCode) {
+                    try {
+                        Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), code, null);
+                        for (Map.Entry<String, Integer> e : map.entrySet()) {
+                            skuLogicQtyMap.put(e.getKey(), e.getValue());
+                        }
+                    } catch (Exception e) {
+                        String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
+                                channelId, cartId, code, e.getMessage());
+                        throw new Exception(errorMsg);
+                    }
+                }
+            } else {
+                skuLogicQtyMap = productService.getLogicQty(mainProduct.getOrgChannelId(), strSkuCodeList);
+            }
+            // WMS2.0切换 20170526 charis END
             // delete by desmond 2016/12/26 start 暂时先注释掉，以后有可能还是要删除库存为0的SKU
 //            // 删除主产品的common.skus中库存为0的SKU
 //            if (ListUtils.notNull(sxData.getMainProduct().getCommonNotNull().getSkus())) {
