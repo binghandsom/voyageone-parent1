@@ -26,7 +26,9 @@ define([
             codeSelList: { selList: []},
             skuSelList: { selList: []},
             tagList:[],
-            platformUrl: ''
+            platformUrl: '',
+            "exportPageOption":{curr:1, total:0, size:10, fetch:searchExport},
+            "exportList":[]
         };
         $scope.currentChannelId = cookieService.channel();
 
@@ -65,6 +67,7 @@ define([
             searchGroup();
             searchCode();
             //searchSku();
+            searchExport();
         };
         //处理tag sunpt
         $scope.codeTagChange=function(m,oldTagNameList) {
@@ -109,7 +112,8 @@ define([
                 alert($translate.instant('TXT_FAIL'));
             });
 
-        }
+        };
+
         $scope.updateCode = function(code){
             delete code.isUpdate;
             promotionDetailService.updatePromotionProduct(code).then(function (res) {
@@ -212,23 +216,57 @@ define([
         };
 
         $scope.openOtherDownload = function (promotion) {
+            promotionService.exportPromotion({"promotionId":promotion.id, "templateType":0}).then(function (resp) {
+                notify.success("success");
+                searchExport();
+            });
 
-            $.download.post(cActions.cms.promotion.promotionService.root + "/" + cActions.cms.promotion.promotionService.exportPromotion, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
+            // $.download.post(cActions.cms.promotion.promotionService.root + "/" + cActions.cms.promotion.promotionService.exportPromotion, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
         };
         $scope.openJuhuasuanDownload = function (promotion) {
-
-            $.download.post(cActions.cms.promotion.promotionDetailService.root + "/" + cActions.cms.promotion.promotionDetailService.tmallJuhuasuanExport, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
+            promotionService.exportPromotion({"promotionId":promotion.id, "templateType":1}).then(function (resp) {
+                notify.success("success");
+                searchExport();
+            });
+            // $.download.post(cActions.cms.promotion.promotionDetailService.root + "/" + cActions.cms.promotion.promotionDetailService.tmallJuhuasuanExport, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
         };
         $scope.openTmallDownload = function (promotion) {
-
-            $.download.post(cActions.cms.promotion.promotionDetailService.root + "/" + cActions.cms.promotion.promotionDetailService.tmallPromotionExport, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
+            promotionService.exportPromotion({"promotionId":promotion.id, "templateType":2}).then(function (resp) {
+                notify.success("success");
+                searchExport();
+            });
+            // $.download.post(cActions.cms.promotion.promotionDetailService.root + "/" + cActions.cms.promotion.promotionDetailService.tmallPromotionExport, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
         };
+
+        function searchExport() {
+            promotionService.getPromotionExportTask({
+                  "promotionId": $routeParams.promotionId,
+                  "pageNum": $scope.vm.exportPageOption.curr,
+                  "pageSize": $scope.vm.exportPageOption.size
+             }).then(function (res) {
+                $scope.vm.exportPageOption.total = res.data.exportTotal;
+                $scope.vm.exportList = res.data.exportList == null ? [] : res.data.exportList;
+            })
+        }
+
+        $scope.downloadExportExcel = function (promotion) {
+            $.download.post(cActions.cms.promotion.promotionService.root + "/" + cActions.cms.promotion.promotionService.downloadPromotionExport, {"promotionExportTaskId": promotion.id});
+        };
+
+        /**
+         * 导出任务列表查询
+         * @param page
+         */
+        $scope.exportSearch = function(page) {
+            searchExport();
+        };
+
 
         $scope.addPromotionByGroup = function () {
             promotionDetailService.addPromotionByGroup($scope.vm.promotion.id).then(function (res) {
                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
             })
-        }
+        };
 
 
 

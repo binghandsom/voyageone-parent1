@@ -52,7 +52,8 @@ public class CmsBtJmPromotionSku3Service {
         CmsBtJmPromotionSkuModel model = dao.select(parameter.getPromotionSkuId());
         model.setDealPrice(BigDecimal.valueOf(parameter.getDealPrice()));
         model.setMarketPrice(BigDecimal.valueOf(parameter.getMarketPrice()));
-        model.setDiscount(BigDecimalUtil.divide(model.getDealPrice(), model.getMarketPrice(), 4));
+        model.setDiscount(BigDecimalUtil.divide(model.getDealPrice(), model.getMarketPrice(), 2));
+        model.setDiscount2(BigDecimalUtil.divide(model.getDealPrice(), model.getSalePrice(), 2));
         model.setModifier(modifier);
         int result = update(model);
         CmsBtJmPromotionProductModel modelCmsBtJmPromotionProduct = daoCmsBtJmPromotionProduct.select(model.getCmsBtJmPromotionProductId());
@@ -103,6 +104,7 @@ public class CmsBtJmPromotionSku3Service {
                     f.setModifier(userName);
                     f.setModified(new Date());
                    f.setDiscount(BigDecimalUtil.divide(f.getDealPrice(), f.getMarketPrice(), 2));//折扣
+                    f.setDiscount2(BigDecimalUtil.divide(f.getDealPrice(), f.getSalePrice(), 2));//折扣
 
             dao.update(f);
                 }

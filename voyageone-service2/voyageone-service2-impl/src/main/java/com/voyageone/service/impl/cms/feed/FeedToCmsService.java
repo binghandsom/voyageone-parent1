@@ -132,6 +132,12 @@ public class FeedToCmsService extends BaseService {
                 CmsBtFeedInfoModel befproduct = feedInfoService.getProductByCode(channelId, product.getCode());
                 if (befproduct != null) {
                     product.set_id(befproduct.get_id());
+                    // 如果已经人为设置过主类目的场合 把这个主类目保存起来不用重新计算主类目了
+                    product.setCatConf(befproduct.getCatConf());
+                    if("1".equals(product.getCatConf())){
+                        product.setMainCategoryCn(befproduct.getMainCategoryCn());
+                        product.setMainCategoryEn(befproduct.getMainCategoryEn());
+                    }
                     //把之前的sku（新的product中没有的sku）保存到新的product的sku中
                     for (CmsBtFeedInfoModel_Sku skuModel : befproduct.getSkus()) {
                         if (!product.getSkus().contains(skuModel)) {
@@ -206,7 +212,11 @@ public class FeedToCmsService extends BaseService {
 
                 //计算主类目
                 if (isSetCategory && StringUtil.isEmpty(product.getMainCategoryEn())) {
-                    setMainCategory(product);
+                    try {
+                        setMainCategory(product);
+                    }catch (Exception e){
+                        $error(e.getMessage());
+                    }
                 }
 
                 // 产品数据合法性检查

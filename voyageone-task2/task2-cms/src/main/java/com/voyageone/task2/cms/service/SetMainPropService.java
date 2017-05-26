@@ -10,6 +10,8 @@ import com.voyageone.category.match.FeedQuery;
 import com.voyageone.category.match.MatchResult;
 import com.voyageone.category.match.Searcher;
 import com.voyageone.category.match.Tokenizer;
+import com.voyageone.category.match.data.MtCategoryKeysDao;
+import com.voyageone.category.match.data.MtCategoryKeysModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
@@ -157,6 +159,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
     private Searcher searcher;
     @Autowired
     private MqSender sender;
+
+    @Autowired
+    MtCategoryKeysDao mtCategoryKeysDao;
 
 
     /**
@@ -1026,6 +1031,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // 计算主类目
                     if (usjoi || cmsProduct.getChannelId().equals("024")) {
                         doSetMainCategory(cmsProduct.getCommon(), feed);
+
                     }
 
                     // 更新价格相关项目
@@ -3251,6 +3257,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             prodCommon.getFieldsNotNull().setOrigSizeType(feed.getSizeType());
             if (prodCommon == null || StringUtils.isEmpty(feed.getCategory())) return;
 
+            // feed里面人为设置过主类目的场合
+            MtCategoryKeysModel mtCategoryKeysModel = null;
+            if(!StringUtil.isEmpty(feed.getMainCategoryEn()) && "1".equals(feed.getCatConf())){
+                mtCategoryKeysModel = mtCategoryKeysDao.selectOne(feed.getMainCategoryEn());
+            }
+
             // 共通Field
             CmsBtProductModel_Field prodCommonField = prodCommon.getFieldsNotNull();
 
@@ -3261,10 +3273,26 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     !StringUtils.isEmpty(prodCommonField.getOrigSizeType()) ? prodCommonField.getOrigSizeType() : "",
                     prodCommonField.getProductNameEn(),
                     prodCommonField.getBrand());
+
+
+            // 用feed里面的主类目进行替换
+            if(!"1".equals(prodCommon.getCatConf()) && mtCategoryKeysModel != null){
+                searchResult.setCnName(feed.getMainCategoryCn());
+                searchResult.setEnName(feed.getMainCategoryEn());
+                searchResult.setTaxDeclare(mtCategoryKeysModel.getTaxDeclare());
+                searchResult.setTaxPersonal(mtCategoryKeysModel.getTaxPersonal());
+                searchResult.setProductTypeCn(mtCategoryKeysModel.getProductTypeCn());
+                searchResult.setProductTypeEn(mtCategoryKeysModel.getProductTypeEn());
+                String weight = mtCategoryKeysModel.getWeight();
+                if(!StringUtil.isEmpty(weight)){
+                    searchResult.setWeight(Double.parseDouble(weight));
+                }
+            }
+
             if (searchResult != null) {
                 $info(String.format("调用主类目匹配接口取得主类目和适用人群正常结束！[耗时:%s] [feedCategoryPath:%s] [productType:%s] " +
-                                "[sizeType:%s] [productNameEn:%s] [brand:%s]", (System.currentTimeMillis() - beginTime), feed.getCategory(),
-                        prodCommonField.getProductType(), prodCommonField.getSizeType(), prodCommonField.getProductNameEn(), prodCommonField.getBrand()));
+                                "[sizeType:%s] [productNameEn:%s] [brand:%s] [mainCategory:%s]", (System.currentTimeMillis() - beginTime), feed.getCategory(),
+                        prodCommonField.getProductType(), prodCommonField.getSizeType(), prodCommonField.getProductNameEn(), prodCommonField.getBrand(), searchResult.getCnName()));
 
                 // 先备份原来的productType和sizeType
                 // feed原始产品分类
@@ -3303,7 +3331,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 }
 
                 // 根据主类目设置商品重量
-                if (searchResult.getWeight() != 0.0D
+                if (searchResult.getWeight() != null && searchResult.getWeight() != 0.0D
                         && (prodCommonField.getWeightLb() == null || prodCommonField.getWeightLb() == 0.0)) {
                     prodCommonField.setWeightLb(searchResult.getWeight());
                     BigDecimal b = new BigDecimal(searchResult.getWeight() * 453.59237);
@@ -3315,12 +3343,11 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 // 如果sku的重量不存在,则设置成默认重量
                 prodCommon.getSkus().forEach(sku -> {
                     if ((sku.getWeight() == null || sku.getWeight() == 0.0D)
-                            && searchResult.getWeight() != 0.0D) {
+                    && searchResult.getWeight() != null && searchResult.getWeight() != 0.0D) {
                         sku.setWeight(searchResult.getWeight());
                         sku.setWeightUnit("lb");
                     }
                 });
-
                 // 产品分类(英文)
                 if (!StringUtils.isEmpty(searchResult.getProductTypeEn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getProductType())))
                     prodCommonField.setProductType(searchResult.getProductTypeEn().toLowerCase());
@@ -3363,6 +3390,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         // 设置中文名称
                         prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(prodCommonField.getBrand()
                                 , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
+                        $info(prodCommonField.getOriginalTitleCn());
                     }
                 }
             }
@@ -3429,6 +3457,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
          * @return String 商品中文名称(品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称)
          */
         private String getOriginalTitleCnByCategory(String brand, String sizeTypeCn, String leafCategoryCnName) {
+            if(brand == null) brand = "";
+            if(sizeTypeCn == null) sizeTypeCn = "";
+            if(leafCategoryCnName == null) leafCategoryCnName = "";
             return brand + " " + sizeTypeCn + " " + leafCategoryCnName;
         }
     }

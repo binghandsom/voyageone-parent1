@@ -2,10 +2,12 @@ package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -102,5 +104,11 @@ public class CmsBtFeedInfoDao extends BaseMongoChannelDao<CmsBtFeedInfoModel> {
         String param = models.stream().collect(joining("\",\""));
 
         return selectWithProjection("{model:{$in:[\"" + param + "\"]}}", "{category:1, catId:1}", channelId);
+    }
+
+    public List<CmsBtFeedInfoModel> selectProductByModel(String channelId, String model) {
+        JongoQuery jongoQuery = new JongoQuery();
+        jongoQuery.setQuery(new Criteria("model").is(model));
+        return select(jongoQuery, channelId);
     }
 }

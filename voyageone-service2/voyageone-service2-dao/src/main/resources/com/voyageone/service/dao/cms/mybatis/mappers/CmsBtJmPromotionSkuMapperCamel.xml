@@ -3,10 +3,10 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `cms_bt_jm_promotion_id`, `cms_bt_jm_promotion_product_id`, `product_code`, 
-        `sku_code`, `market_price`, `discount`, `deal_price`, `error_msg`, `synch_status`, 
-        `creater`, `created`, `modified`, `modifier`, `update_state`, `msrp_usd`, `msrp_rmb`, 
-        `retail_price`, `sale_price`
+        `id`, `channel_id`, `cms_bt_jm_promotion_id`, `cms_bt_jm_promotion_product_id`, `product_model`, 
+        `product_code`, `sku_code`, `market_price`, `discount`, `deal_price`, `error_msg`, 
+        `synch_status`, `creater`, `created`, `modified`, `modifier`, `update_state`, `msrp_usd`, 
+        `msrp_rmb`, `retail_price`, `sale_price`, `discount2`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -27,6 +27,9 @@
             </if>
             <if test="cmsBtJmPromotionProductId != null" >
                 `cms_bt_jm_promotion_product_id` = #{cmsBtJmPromotionProductId,jdbcType=INTEGER},
+            </if>
+            <if test="productModel != null" >
+                `product_model` = #{productModel,jdbcType=VARCHAR},
             </if>
             <if test="productCode != null" >
                 `product_code` = #{productCode,jdbcType=VARCHAR},
@@ -79,6 +82,9 @@
             <if test="salePrice != null" >
                 `sale_price` = #{salePrice,jdbcType=DECIMAL},
             </if>
+            <if test="discount2 != null" >
+                `discount2` = #{discount2,jdbcType=DECIMAL},
+            </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
@@ -102,6 +108,9 @@
             <if test="cmsBtJmPromotionProductId != null" >
                 and `cms_bt_jm_promotion_product_id` = #{cmsBtJmPromotionProductId,jdbcType=INTEGER}
             </if>
+            <if test="productModel != null" >
+                and `product_model` = #{productModel,jdbcType=VARCHAR}
+            </if>
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
@@ -149,6 +158,9 @@
             </if>
             <if test="salePrice != null" >
                 and `sale_price` = #{salePrice,jdbcType=DECIMAL}
+            </if>
+            <if test="discount2 != null" >
+                and `discount2` = #{discount2,jdbcType=DECIMAL}
             </if>
         </where>
         limit 1
@@ -168,6 +180,9 @@
             <if test="cmsBtJmPromotionProductId != null" >
                 and `cms_bt_jm_promotion_product_id` = #{cmsBtJmPromotionProductId,jdbcType=INTEGER}
             </if>
+            <if test="productModel != null" >
+                and `product_model` = #{productModel,jdbcType=VARCHAR}
+            </if>
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
@@ -215,6 +230,9 @@
             </if>
             <if test="salePrice != null" >
                 and `sale_price` = #{salePrice,jdbcType=DECIMAL}
+            </if>
+            <if test="discount2 != null" >
+                and `discount2` = #{discount2,jdbcType=DECIMAL}
             </if>
         </where>
     </select>
@@ -231,6 +249,9 @@
             <if test="cmsBtJmPromotionProductId != null" >
                 and `cms_bt_jm_promotion_product_id` = #{cmsBtJmPromotionProductId,jdbcType=INTEGER}
             </if>
+            <if test="productModel != null" >
+                and `product_model` = #{productModel,jdbcType=VARCHAR}
+            </if>
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
@@ -279,6 +300,9 @@
             <if test="salePrice != null" >
                 and `sale_price` = #{salePrice,jdbcType=DECIMAL}
             </if>
+            <if test="discount2 != null" >
+                and `discount2` = #{discount2,jdbcType=DECIMAL}
+            </if>
         </where>
     </select>
 
@@ -293,6 +317,9 @@
             </if>
             <if test="cmsBtJmPromotionProductId != null" >
                 `cms_bt_jm_promotion_product_id`,
+            </if>
+            <if test="productModel != null" >
+                `product_model`,
             </if>
             <if test="productCode != null" >
                 `product_code`,
@@ -341,6 +368,9 @@
             <if test="salePrice != null" >
                 `sale_price`,
             </if>
+            <if test="discount2 != null" >
+                `discount2`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
@@ -351,6 +381,9 @@
             </if>
             <if test="cmsBtJmPromotionProductId != null" >
                 #{cmsBtJmPromotionProductId,jdbcType=INTEGER},
+            </if>
+            <if test="productModel != null" >
+                #{productModel,jdbcType=VARCHAR},
             </if>
             <if test="productCode != null" >
                 #{productCode,jdbcType=VARCHAR},
@@ -408,6 +441,9 @@
             </if>
             <if test="salePrice != null" >
                 #{salePrice,jdbcType=DECIMAL},
+            </if>
+            <if test="discount2 != null" >
+                #{discount2,jdbcType=DECIMAL},
             </if>
         </trim>
     </insert>

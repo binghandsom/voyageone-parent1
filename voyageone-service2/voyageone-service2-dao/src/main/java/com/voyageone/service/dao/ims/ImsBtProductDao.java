@@ -13,9 +13,10 @@ import java.util.Map;
 @Repository
 public class ImsBtProductDao extends ServiceBaseDao {
 
-    public ImsBtProductModel selectImsBtProductByChannelCartCode(String channelId, int cartId, String code) {
+    public ImsBtProductModel selectImsBtProductByChannelCartCode(String channelId, int cartId, String code, String orgChannelId) {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("channelId", channelId);
+        dataMap.put("orgChannelId", orgChannelId);
         dataMap.put("cartId", cartId);
         dataMap.put("code", code);
         return selectOne("ims_bt_product_selectByChannelCartCode", dataMap);

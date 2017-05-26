@@ -354,6 +354,10 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 throw new BusinessException("SxData取得失败!");
                 // modified by morse.lu 2016/06/12 end
             }
+            // 上新对象code(后面回写状态时要用到)
+            if (ListUtils.notNull(sxData.getProductList())) {
+                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
+            }
             if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
                 // 取得上新数据出错时，cartId有可能没有设置
                 sxData.setCartId(cartId);
@@ -455,10 +459,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 throw new BusinessException(errMsg);
             }
 
-            // 上新对象code(后面回写状态时要用到)
-            if (ListUtils.notNull(sxData.getProductList())) {
-                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
-            }
+
 
             // 判断商品是否是达尔文
             boolean isDarwin = false;
@@ -780,6 +781,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 searchParam.put("cartId", cartId);
                 searchParam.put("code", code);
                 searchParam.put("sku", skuCode);
+                searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
                 CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
                 SxData.SxSkuExInfo sxSkuExInfo = sxData.getSxSkuExInfo(skuCode, false);
                 String scProductId = sxSkuExInfo != null? sxSkuExInfo.getScProductId() : null;
@@ -793,6 +795,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                         // add
                         scItemModel = new CmsBtTmScItemModel();
                         scItemModel.setChannelId(channelId);
+                        scItemModel.setOrgChannelId(sxData.getMainProduct().getOrgChannelId());
                         scItemModel.setCartId(cartId);
                         scItemModel.setCode(code);
                         scItemModel.setSku(skuCode);
