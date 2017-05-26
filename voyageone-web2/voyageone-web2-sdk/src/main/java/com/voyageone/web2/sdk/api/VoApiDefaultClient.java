@@ -88,7 +88,6 @@ public class VoApiDefaultClient implements VoApiClient {
                 throw ae;
             }
         }
-        System.out.println("请求参数: " + JacksonUtil.bean2Json(request) + "; 请求结果: " + JacksonUtil.bean2Json(result));
         return result;
     }
 
