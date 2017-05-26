@@ -25,8 +25,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -373,5 +375,22 @@ public class CmsBuildPlatformProductUploadJdNewServiceTest {
 
         sxProductService.updateImsBtProduct(sxData, "charis");
 
+    }
+
+    @Test
+    public void testDate() throws ParseException {
+
+        Date changeTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-05-28 00:00:00");
+        Date nowTime  = new Date();
+
+        System.out.println("是否到28号0点了？   " + changeTime.before(nowTime));
+    }
+
+    @Test
+    public void testQty() throws Exception{
+
+        Map<String, Integer> skuQtyMap = sxProductService.getAvailQuantity("001", "24", "ay8282", null);
+
+        System.out.println("hehe");
     }
 }

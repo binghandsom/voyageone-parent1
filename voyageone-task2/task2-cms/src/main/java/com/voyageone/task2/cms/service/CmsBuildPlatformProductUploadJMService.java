@@ -55,6 +55,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -306,8 +308,33 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             List<CmsBtJmSkuModel> currentCmsBtJmSkuList = getCmsBtJmSkuModels(channelId, productCode, product.getOrgChannelId());
             // add by desmond 2016/10/31 end
 
-            //取库存
-            Map<String, Integer> skuLogicQtyMap = productService.getLogicQty(StringUtils.isNullOrBlank2(product.getOrgChannelId())? channelId :  product.getOrgChannelId(), jmCart.getSkus().stream().map(w->w.getStringAttribute("skuCode")).collect(Collectors.toList()));
+            // WMS2.0切换 20170526 charis STA
+            // 上新对象code
+            Date nowTime  = new Date();
+            Date changeTime = null;
+            try {
+                changeTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-05-28 00:00:00");
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
+            if (changeTime.before(nowTime)) {
+                for (String code : listSxCode) {
+                    try {
+                        Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(work.getCartId()), code, null);
+                        for (Map.Entry<String, Integer> e : map.entrySet()) {
+                            skuLogicQtyMap.put(e.getKey(), e.getValue());
+                        }
+                    } catch (Exception e) {
+                        String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
+                                channelId, work.getCartId(), code, e.getMessage());
+                        throw new Exception(errorMsg);
+                    }
+                }
+            } else {
+                skuLogicQtyMap = productService.getLogicQty(StringUtils.isNullOrBlank2(product.getOrgChannelId())? channelId :  product.getOrgChannelId(), jmCart.getSkus().stream().map(w->w.getStringAttribute("skuCode")).collect(Collectors.toList()));
+            }
+            // WMS2.0切换 20170526 charis END
 
             //是否为智能上新
             boolean blnIsSmartSx = sxProductService.isSmartSx(shop.getOrder_channel_id(), Integer.parseInt(shop.getCart_id()));

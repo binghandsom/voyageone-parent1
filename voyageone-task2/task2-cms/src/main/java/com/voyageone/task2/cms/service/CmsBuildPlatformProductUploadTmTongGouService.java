@@ -43,6 +43,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
+import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaTmModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -61,11 +62,14 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 天猫国际官网同购（官网直供）产品上新服务
@@ -124,6 +128,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     private TaobaoScItemService taobaoScItemService;
     @Autowired
     private TbScItemService tbScItemService;
+    @Autowired
+    private MqSender sender;
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -500,7 +506,37 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
             // 如果skuList不为空，取得所有sku的库存信息
             // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
-            Map<String, Integer> skuLogicQtyMap = productService.getLogicQty(mainProduct.getOrgChannelId(), strSkuCodeList);
+            // WMS2.0切换 20170526 charis STA
+            // 上新对象code
+            List<String> listSxCode = null;
+            if (ListUtils.notNull(sxData.getProductList())) {
+                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
+            }
+            Date nowTime  = new Date();
+            Date changeTime = null;
+            try {
+                changeTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-05-28 00:00:00");
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
+            if (changeTime.before(nowTime)) {
+                for (String code : listSxCode) {
+                    try {
+                        Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), code, null);
+                        for (Map.Entry<String, Integer> e : map.entrySet()) {
+                            skuLogicQtyMap.put(e.getKey(), e.getValue());
+                        }
+                    } catch (Exception e) {
+                        String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
+                                channelId, cartId, code, e.getMessage());
+                        throw new Exception(errorMsg);
+                    }
+                }
+            } else {
+                skuLogicQtyMap = productService.getLogicQty(mainProduct.getOrgChannelId(), strSkuCodeList);
+            }
+            // WMS2.0切换 20170526 charis END
 
             // 取得主产品天猫同购平台设置信息(包含SKU等信息)
             CmsBtProductModel_Platform_Cart mainProductPlatformCart = mainProduct.getPlatform(cartId);
@@ -703,7 +739,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                         skuMap.put("scProductId",
                                 taobaoScItemService.doSetLikingScItem(
                                         shopProp, sxData,
-                                        Long.parseLong(numIId), skuMap));
+                                        Long.parseLong(numIId), skuMap, updateWare));
                     }
                     saveCmsBtTmScItem_Liking(sxData, cartId, skuMapList);
                 }
@@ -756,9 +792,15 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
             // 20170413 tom 在上新的时候已经判断过是否上架了， 所以这里只需要用之前的那个判断结果就行了 END
 
-            // 20170417 调用更新库存接口同步库存 STA
-            sxProductService.synInventoryToPlatform(channelId, String.valueOf(cartId), null, strSkuCodeList);
-            // 20170417 调用更新库存接口同步库存 END
+            // 20170526 调用新的更新库存接口同步库存 STA
+            for (String sku : strSkuCodeList) {
+                Map<String, Object> messageMap = new HashMap<>();
+                messageMap.put("channelId", channelId);
+                messageMap.put("cartId", cartId);
+                messageMap.put("sku", sku);
+                sender.sendMessage("ewms_mq_stock_sync_platform_stock", messageMap);
+            }
+            // 20170526 调用新的更新库存接口同步库存 END
 
             // 回写PXX.pCatId, PXX.pCatPath等信息
             Map<String, String> pCatInfoMap = getSimpleItemCatInfo(shopProp, numIId);

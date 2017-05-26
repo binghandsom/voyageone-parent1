@@ -17,6 +17,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
+import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbScItemService;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.BaseService;
@@ -42,6 +43,9 @@ public class TaobaoScItemService extends BaseService {
 
     @Autowired
     private TbScItemService tbScItemService;
+
+	@Autowired
+	private TbProductService tbProductService;
 
 	/**
 	 * 创建一个货品， 并初始化库存
@@ -267,7 +271,7 @@ public class TaobaoScItemService extends BaseService {
 	 * @param sxData sxData
 	 * @param skuMap {outer_id: xx, price: xx, quantity: xx, sku_id: xx}
 	 */
-	public String doSetLikingScItem(ShopBean shopBean, SxData sxData, long numIId, Map<String, Object> skuMap) {
+	public String doSetLikingScItem(ShopBean shopBean, SxData sxData, long numIId, Map<String, Object> skuMap, boolean updateWare) {
 
 		String orgChannelId = sxData.getMainProduct().getOrgChannelId();
 
@@ -284,7 +288,7 @@ public class TaobaoScItemService extends BaseService {
 
 		ScItem scItem = sxData.getScItemMap().get(outerId);
 
-		return doSetLikingScItemSku(shopBean, orgChannelId, numIId, outerId, skuId, qty, scItem);
+		return doSetLikingScItemSku(shopBean, orgChannelId, numIId, outerId, skuId, qty, scItem, updateWare);
 
 	}
 
@@ -319,7 +323,7 @@ public class TaobaoScItemService extends BaseService {
 
 	private String doSetLikingScItemSku(
 			ShopBean shopBean, String orgChannelId,
-			long numIId, String sku_outerId, String sku_id, String qty, ScItem scItem) {
+			long numIId, String sku_outerId, String sku_id, String qty, ScItem scItem, boolean updateWare) {
 
 		// Liking天猫国际同购店， 获取子店货品绑定的 天猫商家仓库编码
 		String storeCode = doGetLikingStoreCode(shopBean, orgChannelId);
@@ -375,7 +379,19 @@ public class TaobaoScItemService extends BaseService {
 			if (e.toString().contains("您输入的前端商品已挂靠至该货品上")) {
 				return String.valueOf(scItem.getItemId());
 			}
-			String errMsg = String.format("自动设置天猫商品全链路库存管理:创建关联:{numIId: %s, outerId: %s, err_msg: %s}", numIId, sku_outerId, e.toString());
+			String error = "";
+			if (!updateWare) {
+				try {
+					tbProductService.delItem(shopBean, String.valueOf(numIId));
+				} catch (ApiException e1) {
+					error = "商品上新的场合,关联货品失败后做删除商品的动作时失败了！";
+				}
+			} else {
+				error = "商品更新的场合,关联货品失败了！";
+			}
+
+
+			String errMsg = String.format("创建关联失败:{numIId: %s, outerId: %s, err_msg: %s}", numIId, sku_outerId, e.toString() + " & " + error);
 			throw new BusinessException(errMsg);
 		}
 

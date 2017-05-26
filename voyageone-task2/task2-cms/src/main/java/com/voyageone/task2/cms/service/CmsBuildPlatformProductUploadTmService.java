@@ -34,6 +34,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
+import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.CmsBtSxCspuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.CmsBtTmScItemModel;
@@ -106,6 +107,8 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
     private TbSaleService tbSaleService;
     @Autowired
     private TbScItemService tbScItemService;
+    @Autowired
+    private MqSender sender;
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -335,6 +338,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
         // 开始时间
         long prodStartTime = System.currentTimeMillis();
 
+        List<String> strSkuCodeList = new ArrayList<>();
         // 天猫产品上新处理
         try {
             // 上新用的商品数据信息取得
@@ -397,7 +401,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
             expressionParser = new ExpressionParser(sxProductService, sxData);
 
             // 20170417 全链路库存改造 charis STA
-            List<String> strSkuCodeList = new ArrayList<>();
+
             sxData.getSkuList().forEach(sku -> strSkuCodeList.add(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name())));
 
             if (ListUtils.isNull(strSkuCodeList)) {
@@ -686,9 +690,13 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                     }
                     // 20161202 达尔文货品关联问题的对应 END
 
-                    // 20170417 调用更新库存接口同步库存 STA
-                    sxProductService.synInventoryToPlatform(channelId, String.valueOf(cartId), listSxCode, null);
-                    // 20170417 调用更新库存接口同步库存 END
+                    for (String sku : strSkuCodeList) {
+                        Map<String, Object> messageMap = new HashMap<>();
+                        messageMap.put("channelId", channelId);
+                        messageMap.put("cartId", cartId);
+                        messageMap.put("sku", sku);
+                        sender.sendMessage("ewms_mq_stock_sync_platform_stock", messageMap);
+                    }
 
                     // added by morse.lu 2017/01/05 start
                     // 更新cms_bt_tm_sc_item表，把货品id记下来，同步库存用

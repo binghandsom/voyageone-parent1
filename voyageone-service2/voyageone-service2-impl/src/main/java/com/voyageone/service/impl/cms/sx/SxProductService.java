@@ -77,6 +77,9 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.wms.AvailQuantityForCmsRequest;
+import com.voyageone.web2.sdk.api.response.wms.AvailQuantityForCmsResponse;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -94,6 +97,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -123,6 +128,8 @@ public class SxProductService extends BaseService {
 //     * 大码List
 //     */
 //    private static List<String> bigSizeList = Lists.newArrayList("16","17","18");
+    @Autowired
+    private VoApiDefaultClient voApiDefaultClient;
     @Autowired
     TbProductService tbProductService;
     @Autowired
@@ -1692,23 +1699,56 @@ public class SxProductService extends BaseService {
         // 暂时除sku的Mapping改成不Mapping以外的逻辑都不修正 morse.lu 2016-06-24
         Map<CustomMappingType, List<Field>> mappingTypePropsMap = getCustomPlatformProps(fieldsMap, expressionParser, mapSp, isItem);
         if (!mappingTypePropsMap.isEmpty()) {
-            // 所有sku取得
-            List<String> skus = new ArrayList<>();
-            for (CmsBtProductModel productModel : sxData.getProductList()) {
-                skus.addAll(productModel.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
+
+            // WMS2.0切换 20170526 charis STA
+            // 上新对象code
+            List<String> listSxCode = null;
+            if (ListUtils.notNull(sxData.getProductList())) {
+                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
             }
-            // wms逻辑库存取得
-            List<WmsBtInventoryCenterLogicModel> skuInventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailBySkuList(sxData.getChannelId(), skus);
-            Map<String, Integer> skuInventoryMap = new HashMap<>();
-            for (WmsBtInventoryCenterLogicModel model : skuInventoryList) {
-                if (ChannelConfigEnums.Channel.SN.getId().equals(shopBean.getOrder_channel_id())) {
-                    skuInventoryMap.put(model.getSku().toLowerCase(), model.getQtyChina());
-                } else {
-                    skuInventoryMap.put(model.getSku(), model.getQtyChina());
+            Date nowTime  = new Date();
+            Date changeTime = null;
+            try {
+                changeTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-05-28 00:00:00");
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
+            if (changeTime.before(nowTime)) {
+                for (String code : listSxCode) {
+                    try {
+                        Map<String, Integer> map = getAvailQuantity(sxData.getChannelId(), String.valueOf(sxData.getCartId()), code, null);
+                        for (Map.Entry<String, Integer> e : map.entrySet()) {
+                            skuLogicQtyMap.put(e.getKey(), e.getValue());
+                        }
+                    } catch (Exception e) {
+                        String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
+                                sxData.getChannelId(), sxData.getCartId(), code, e.getMessage());
+                        throw new Exception(errorMsg);
+                    }
+                }
+            } else {
+                // 所有sku取得
+                List<String> skus = new ArrayList<>();
+                for (CmsBtProductModel productModel : sxData.getProductList()) {
+                    skus.addAll(productModel.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
+                }
+                // wms逻辑库存取得
+                List<WmsBtInventoryCenterLogicModel> skuInventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailBySkuList(sxData.getChannelId(), skus);
+
+                for (WmsBtInventoryCenterLogicModel model : skuInventoryList) {
+                    if (ChannelConfigEnums.Channel.SN.getId().equals(shopBean.getOrder_channel_id())) {
+                        skuLogicQtyMap.put(model.getSku().toLowerCase(), model.getQtyChina());
+                    } else {
+                        skuLogicQtyMap.put(model.getSku(), model.getQtyChina());
+                    }
                 }
             }
+            // WMS2.0切换 20170526 charis END
 
-            Map<String, Field> resolveField = constructCustomPlatformProps(mappingTypePropsMap, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
+
+
+            Map<String, Field> resolveField = constructCustomPlatformProps(mappingTypePropsMap, expressionParser, cmsMtPlatformMappingModel, skuLogicQtyMap, shopBean, user);
             if (!resolveField.isEmpty()) {
                 retMap = new HashMap<>();
                 retMap.putAll(resolveField);
@@ -6222,6 +6262,35 @@ public class SxProductService extends BaseService {
         }
 
         return "";
+    }
+
+    /**
+     * 获取可售库存
+     * @param channelId
+     * @param cartId
+     * @param code
+     * @param sku
+     */
+
+    public Map<String, Integer> getAvailQuantity(String channelId, String cartId, String code, String sku) throws Exception{
+        List data;
+        Map<String, Integer> skuLogicQtyMap = new LinkedHashMap<>();
+        AvailQuantityForCmsRequest request = new AvailQuantityForCmsRequest();
+        request.setChannelId(channelId);
+        request.setCartId(cartId);
+        request.setItemCode(code);
+        request.setSku(sku);
+        AvailQuantityForCmsResponse response = voApiDefaultClient.execute(request);
+
+        if ("0".equals(response.getCode())) {
+            data = (ArrayList) response.getData();
+            data.stream().forEach(d -> skuLogicQtyMap.put((String)((LinkedHashMap)d).get("sku"), (Integer)((LinkedHashMap)d).get("qty")));
+            return skuLogicQtyMap;
+        } else {
+            String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [sku:%s] [errorMsg:%s]",
+                    channelId, cartId, code, sku, response.getMessage());
+            throw new Exception(errorMsg);
+        }
     }
 
 }
