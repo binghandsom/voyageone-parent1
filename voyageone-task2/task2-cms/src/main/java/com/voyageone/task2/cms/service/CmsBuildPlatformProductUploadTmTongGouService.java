@@ -10,6 +10,7 @@ import com.taobao.top.schema.factory.SchemaWriter;
 import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.InputField;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -36,10 +37,12 @@ import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtTmScItemDao;
 import com.voyageone.service.dao.cms.CmsBtTmTonggouFeedAttrDao;
 import com.voyageone.service.dao.cms.CmsMtChannelConditionMappingConfigDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaTmDao;
 import com.voyageone.service.impl.cms.DictService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.TaobaoScItemService;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -103,6 +106,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         t_value_category         // value:天猫平台类目(天猫叶子类目，天猫一级类目)
     }
 
+    @Autowired
+    private ProductGroupService productGroupService;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private DictService dictService;
     @Autowired
@@ -650,7 +657,41 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 throw new BusinessException(errMsg);
             } else {
                 // 天猫官网同购新增/更新商品成功时
-                if (!updateWare) numIId = result;
+                if (!updateWare) {
+                    numIId = result;
+
+                    // 设置共通属性
+                    sxData.getPlatform().setNumIId(numIId);
+                    // 更新cms_bt_product_groups表
+                    sxData.getPlatform().setModified(DateTimeUtil.getNow());
+                    productGroupService.update(sxData.getPlatform());
+
+
+                    // 批量更新产品的平台状态.
+                    List<BulkUpdateModel> bulkList = new ArrayList<>();
+                    for (String code : listSxCode) {
+                        // modified by morse.lu 2016/08/08 end
+                        // 设置批量更新条件
+                        HashMap<String, Object> bulkQueryMap = new HashMap<>();
+                        bulkQueryMap.put("common.fields.code", code);
+                        // 设置更新值
+                        HashMap<String, Object> bulkUpdateMap = new HashMap<>();
+                        bulkUpdateMap.put("platforms.P" + cartId + ".pNumIId", numIId);
+
+                        // 设定批量更新条件和值
+                        if (!bulkUpdateMap.isEmpty()) {
+                            BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
+                            bulkUpdateModel.setUpdateMap(bulkUpdateMap);
+                            bulkUpdateModel.setQueryMap(bulkQueryMap);
+                            bulkList.add(bulkUpdateModel);
+                        }
+                    }
+                    // 批量更新product表
+                    if (!bulkList.isEmpty()) {
+                        // 因为是回写产品状态，找不到产品时也不插入新错误的记录
+                        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set", false);
+                    }
+                }
             }
 
             // 这些Liking的商品， 仍然需要绑定货品
@@ -747,14 +788,14 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                         }
                     } catch (Exception e) {
                         String error = "";
-                        if (e.getMessage().contains("创建关联失败") && !updateWare) {
-                            try {
-                                tbProductService.delItem(shopProp, String.valueOf(numIId));
-                            } catch (ApiException e1) {
-                                error = "商品上新的场合,关联货品失败后做删除商品的动作时失败了！";
-                            }
-                        }
-                        throw new Exception(e.getMessage() + "&" + error);
+//                        if (e.getMessage().contains("创建关联失败") && !updateWare) {
+//                            try {
+//                                tbProductService.delItem(shopProp, String.valueOf(numIId));
+//                            } catch (ApiException e1) {
+//                                error = "商品上新的场合,关联货品失败后做删除商品的动作时失败了！";
+//                            }
+//                        }
+                        throw new Exception(e.getMessage() + " " + error);
                     }
 
                     saveCmsBtTmScItem_Liking(sxData, cartId, skuMapList);
