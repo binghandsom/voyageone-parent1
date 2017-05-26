@@ -53,10 +53,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -689,13 +688,27 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                         }
                     }
                     // 20161202 达尔文货品关联问题的对应 END
-
-                    for (String sku : strSkuCodeList) {
-                        Map<String, Object> messageMap = new HashMap<>();
-                        messageMap.put("channelId", channelId);
-                        messageMap.put("cartId", cartId);
-                        messageMap.put("sku", sku);
-                        sender.sendMessage("ewms_mq_stock_sync_platform_stock", messageMap);
+                    Date nowTime  = new Date();
+                    Date changeTime = null;
+                    try {
+                        changeTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-05-28 00:00:00");
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    if (changeTime.before(nowTime)) {
+                        // 20170526 调用新的更新库存接口同步库存 STA
+                        for (String sku : strSkuCodeList) {
+                            Map<String, Object> messageMap = new HashMap<>();
+                            messageMap.put("channelId", channelId);
+                            messageMap.put("cartId", cartId);
+                            messageMap.put("sku", sku);
+                            sender.sendMessage("ewms_mq_stock_sync_platform_stock", messageMap);
+                        }
+                        // 20170526 调用新的更新库存接口同步库存 END
+                    } else {
+                        // 20170417 调用更新库存接口同步库存 STA
+                        sxProductService.synInventoryToPlatform(channelId, String.valueOf(cartId), null, strSkuCodeList);
+                        // 20170417 调用更新库存接口同步库存 END
                     }
 
                     // added by morse.lu 2017/01/05 start
