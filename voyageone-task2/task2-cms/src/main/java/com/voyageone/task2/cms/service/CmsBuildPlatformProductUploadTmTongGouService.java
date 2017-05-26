@@ -22,6 +22,7 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.*;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
+import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbScItemService;
 import com.voyageone.components.tmall.service.TbSimpleItemService;
 
@@ -130,6 +131,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     private TbScItemService tbScItemService;
     @Autowired
     private MqSender sender;
+    @Autowired
+    private TbProductService tbProductService;
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -733,14 +736,27 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
                 // 关联货品
                 if (skuMapList != null) {
-                    for (Map<String, Object> skuMap : skuMapList) {
-//                        skuMap: outer_id, price, quantity, sku_id
 
-                        skuMap.put("scProductId",
-                                taobaoScItemService.doSetLikingScItem(
-                                        shopProp, sxData,
-                                        Long.parseLong(numIId), skuMap, updateWare));
+                    try {
+                        for (Map<String, Object> skuMap : skuMapList) {
+//                        skuMap: outer_id, price, quantity, sku_id
+                            skuMap.put("scProductId",
+                                    taobaoScItemService.doSetLikingScItem(
+                                            shopProp, sxData,
+                                            Long.parseLong(numIId), skuMap));
+                        }
+                    } catch (Exception e) {
+                        String error = "";
+                        if (e.getMessage().contains("创建关联失败") && !updateWare) {
+                            try {
+                                tbProductService.delItem(shopProp, String.valueOf(numIId));
+                            } catch (ApiException e1) {
+                                error = "商品上新的场合,关联货品失败后做删除商品的动作时失败了！";
+                            }
+                        }
+                        throw new Exception(e.getMessage() + "&" + error);
                     }
+
                     saveCmsBtTmScItem_Liking(sxData, cartId, skuMapList);
                 }
 
