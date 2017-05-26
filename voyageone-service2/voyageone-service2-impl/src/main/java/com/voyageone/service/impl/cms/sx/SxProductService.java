@@ -3855,14 +3855,20 @@ public class SxProductService extends BaseService {
             if (matchModels.size() == 1) {
 //                $info("找到image_group记录!");
                 if (matchModels.get(0).getImage() == null || matchModels.get(0).getImage().size() == 0) {
-                    throw new BusinessException("共通图片表找到的图片类型对应的图片数为0,请确保至少上传1张图片！" +
-                            "channelId= " + channelId +
-                            ",cartId= " + cartId +
-                            ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图 6：使用保养图 7：测量方式图)" +
-                            ",viewType= " + viewType + "(1:PC端 2：APP端)" +
-                            ",BrandName= " + paramBrandName +
-                            ",ProductType= " + paramProductType +
-                            ",SizeType=" + paramSizeType);
+
+                    // 20170526 tom 不报错， 假装认为没看到这个， 直接跳过 START
+//                    throw new BusinessException("共通图片表找到的图片类型对应的图片数为0,请确保至少上传1张图片！" +
+//                            "channelId= " + channelId +
+//                            ",cartId= " + cartId +
+//                            ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图 6：使用保养图 7：测量方式图)" +
+//                            ",viewType= " + viewType + "(1:PC端 2：APP端)" +
+//                            ",BrandName= " + paramBrandName +
+//                            ",ProductType= " + paramProductType +
+//                            ",SizeType=" + paramSizeType);
+
+                    continue;
+                    // 20170526 tom 不报错， 假装认为没看到这个， 直接跳过 END
+
                 }
                 for (CmsBtImageGroupModel_Image imageInfo : matchModels.get(0).getImage()) {
                     if (getOriUrl) {
