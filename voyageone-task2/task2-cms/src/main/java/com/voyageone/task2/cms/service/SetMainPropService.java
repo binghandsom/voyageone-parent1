@@ -1025,6 +1025,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                     }
 
+                    // 往wms推送数据
+                    doSaveItemDetails(cmsProduct);
+
+
                     // 更新价格相关项目
                     Integer chg = doSetPrice(feed, cmsProduct);
 
@@ -1044,8 +1048,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         throw new BusinessException(errMsg);
                     }
 
-                    // 往wms推送数据
-                    doSaveItemDetails(cmsProduct);
 
                     // 判断是否更新平台价格 如果要更新直接更新
                     platformPriceService.publishPlatFormPrice(usjoi ? "928" : channelId, chg, cmsProduct, getTaskName(), true);
@@ -1110,14 +1112,13 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // 检查类目 重量 和 价格是否超过阈值
                     checkProduct(cmsProduct);
 
+                    // 往wms推送数据
+                    doSaveItemDetails(cmsProduct);
                     $debug("doSaveItemDetails:" + (System.currentTimeMillis() - startTime));
 
                     // 生成productGroup数据
                     doSetGroup(feed);
                     productService.createProduct(cmsProduct.getChannelId(), cmsProduct, getTaskName());
-
-                    // 往wms推送数据
-                    doSaveItemDetails(cmsProduct);
 
                     $debug("createProduct:" + (System.currentTimeMillis() - startTime));
 
