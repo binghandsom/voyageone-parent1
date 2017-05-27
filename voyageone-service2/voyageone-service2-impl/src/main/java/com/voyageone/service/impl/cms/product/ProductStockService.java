@@ -49,6 +49,11 @@ public class ProductStockService extends BaseService {
                 String channelId = stockBean.getChannelId();
                 Integer cartId = stockBean.getCartId();
 
+                if("001".equals(channelId)){
+                    stockBean.setItemCode(stockBean.getItemCode().toLowerCase());
+                    stockBean.setSku(stockBean.getSku().toLowerCase());
+                }
+
                 CmsBtProductModel productModel = null;
                 if (productModelMap.containsKey(stockBean.getItemCode())) {
                     productModel = productModelMap.get(stockBean.getItemCode());
