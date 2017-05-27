@@ -70,7 +70,6 @@ import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.request.wms.GetStoreStockDetailRequest;
 import com.voyageone.web2.sdk.api.response.wms.GetStoreStockDetailResponse;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
