@@ -11,7 +11,8 @@ define([
 ], function (cms, carts) {
 
     var mConfig = {
-        bigImageUrl: 'http://image.voyageone.com.cn/is/image/sneakerhead/✓?wid=2200&hei=2200'
+        bigImageUrl: 'http://image.voyageone.com.cn/is/image/sneakerhead/✓?wid=2200&hei=2200',
+        newImageUrl: 'http://image.voyageone.com.cn/is/image/sneakerhead/✓?fmt=jpg&scl=1&qlt=100'
     };
 
     cms.directive("masterSchema", function (productDetailService, sizeChartService, $rootScope, systemCategoryService, alert, notify, confirm, $localStorage) {
@@ -426,11 +427,15 @@ define([
 
                 }
 
-                function simpleImgDown(imgName, $event) {
+                function simpleImgDown(imgName, templateFlag, $event) {
                     var jq = angular.element,
                         _aTag;
 
-                    imgName = mConfig.bigImageUrl.replace("✓", imgName);
+                    if (templateFlag == 0) {
+                        imgName = mConfig.bigImageUrl.replace("✓", imgName);
+                    } else {
+                        imgName = mConfig.newImageUrl.replace("✓", imgName);
+                    }
                     _aTag = jq('<a download>').attr({'href': imgName});
 
                     jq('body').append(_aTag);
