@@ -2908,8 +2908,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
             productModel.getCommon().getSkus().forEach(sku -> {
                         String channelId = StringUtils.isEmpty(productModel.getOrgChannelId()) ? productModel.getChannelId() : productModel.getOrgChannelId();
-                        String oneSkuCode = productModel.getCommon().getSkus().get(0).getSkuCode();
-                        CmsBtProductModel oldProductModel = productService.getProductBySku(channelId, oneSkuCode);
+                        String oneSkuCode = sku.getSkuCode();
+                        CmsBtProductModel oldProductModel = null;
                         if(usjoi){
                             oldProductModel = productService.getProductBySku("928",channelId, oneSkuCode);
                         }else{
