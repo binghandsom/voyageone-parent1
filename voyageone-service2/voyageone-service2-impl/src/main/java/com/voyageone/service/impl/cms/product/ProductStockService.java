@@ -88,6 +88,9 @@ public class ProductStockService extends BaseService {
                         queryMap.put("common.skus.skuCode", stockBean.getSku());
 
                     } else {
+                        if(productModel.getPlatform(stockBean.getCartId()) == null){
+                            continue;
+                        }
                         // cartId不为0，表示更新具体某个平台某个店铺的库存
                         for (BaseMongoMap<String, Object> skuModel : productModel.getPlatform(stockBean.getCartId()).getSkus()) {
                             if (skuModel.getStringAttribute("skuCode").equals(stockBean.getSku())) {
