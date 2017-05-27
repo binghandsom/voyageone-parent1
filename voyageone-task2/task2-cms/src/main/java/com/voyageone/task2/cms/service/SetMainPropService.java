@@ -2906,7 +2906,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             }
             CmsBtProductModel_Field field = productModel.getCommon().getFields();
 
-            productModel.getCommon().getSkus().forEach(sku -> {
+            for(CmsBtProductModel_Sku sku:productModel.getCommon().getSkus()){
                         String channelId = StringUtils.isEmpty(productModel.getOrgChannelId()) ? productModel.getChannelId() : productModel.getOrgChannelId();
                         String oneSkuCode = sku.getSkuCode();
                         CmsBtProductModel oldProductModel = null;
@@ -2921,7 +2921,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                             $error(errMsg);
                             throw new BusinessException(errMsg);
                         }
-                    });
+                    }
 
             // 按sku为单位推送产品信息到wms
             productModel.getCommon().getSkus().forEach(sku -> {
@@ -2955,7 +2955,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 detailInfo.setOrigin(field.getOrigin());
                 messageBody.setDetailInfo(detailInfo);*/
                 cmsMqSenderService.sendMessage(messageBody);
-                $info(productModel.getModifier() + "同步最新Product信息至WMS，内容：" + JacksonUtil.bean2Json(messageBody));
+                $debug(productModel.getModifier() + "同步最新Product信息至WMS，内容：" + JacksonUtil.bean2Json(messageBody));
             });
 
             return true;
