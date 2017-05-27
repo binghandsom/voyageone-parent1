@@ -5,6 +5,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.JumeiHtMallService;
@@ -52,6 +53,7 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
 
     @Override
     public void onStartup(CmsJmMallPromotionPriceSyncMQMessageBody messageBody) throws Exception {
+        $info(JacksonUtil.bean2Json(messageBody));
         Integer jmPid = messageBody.getJmPromotionId();
         List<String> productCodes = messageBody.getProductCodes();
 
@@ -65,14 +67,14 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
 
         // 找到该活动下所有sku
         List<Map<String, Object>> skus = cmsBtJmPromotionService.selectCloseJmPromotionSku(jmPid);
-        Map<String, Double> codePrice = new HashMap<>();
+        Map<String, PriceBean> codePrice = new HashMap<>();
         if(ListUtils.isNull(productCodes)) {
             productCodes = skus.stream().map(sku -> sku.get("product_code").toString()).distinct().collect(Collectors.toList());
         }
         // 获取code的deal_price
         for (Map<String, Object> skuPriceBean : skus) {
             if (!codePrice.containsKey(skuPriceBean.get("product_code").toString())) {
-                codePrice.put(skuPriceBean.get("product_code").toString(), Double.parseDouble(skuPriceBean.get("deal_price").toString()));
+                codePrice.put(skuPriceBean.get("product_code").toString(), new PriceBean(Double.parseDouble(skuPriceBean.get("deal_price").toString()), Double.parseDouble(skuPriceBean.get("market_price").toString())));
             }
         }
         super.count = productCodes == null ? 0 : productCodes.size();
@@ -84,12 +86,14 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
                 List<CmsBtJmSkuModel> skuModelList = getCmsBtJmSkuModels(channelId, productCode);
                 for (CmsBtJmSkuModel skuModel : skuModelList) {
 
-                    if (productCode.equalsIgnoreCase(skuModel.getProductCode())
-                            && !StringUtils.isEmpty(skuModel.getJmSkuNo())) {
+                    if (productCode.equals(skuModel.getProductCode())
+                            && !StringUtils.isEmpty(skuModel.getJmSkuNo()) && codePrice.containsKey(productCode)) {
+                        PriceBean priceBean = codePrice.get(productCode);
                         HtMallSkuPriceUpdateInfo updateData = new HtMallSkuPriceUpdateInfo();
                         list.add(updateData);
                         updateData.setJumei_sku_no(skuModel.getJmSkuNo());
-                        updateData.setMall_price(codePrice.get(productCode));
+                        updateData.setMall_price(priceBean.getDealPrice());
+                        updateData.setMarket_price(priceBean.getMarketPrice());
                     }
                 }
                 if(list.size()>0) {
@@ -123,7 +127,6 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
         Map<String, Object> map = new HashMap<>();
         map.put("productCode", productCode);
         map.put("channelId", channelId);
-
         List<CmsBtJmSkuModel> skuList = cmsBtJmSkuDao.selectList(map);
         if (skuList == null) {
             skuList = new ArrayList<>();
@@ -137,6 +140,7 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
         for (List<HtMallSkuPriceUpdateInfo> page : pageList) {
             StringBuffer sb = new StringBuffer();
             try {
+                $info(JacksonUtil.bean2Json(page));
                 if (!jumeiHtMallService.updateMallSkuPrice(shopBean, page, sb)) {
                     $error(sb.toString());
                     throw new BusinessException(sb.toString());
@@ -153,4 +157,30 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
             }
         }
     }
+
+    private class PriceBean{
+        Double dealPrice;
+        Double marketPrice;
+
+        public PriceBean(Double dealPrice, Double marketPrice){
+            setDealPrice(dealPrice);
+            setMarketPrice(marketPrice);
+        }
+        public Double getDealPrice() {
+            return dealPrice;
+        }
+
+        public void setDealPrice(Double dealPrice) {
+            this.dealPrice = dealPrice;
+        }
+
+        public Double getMarketPrice() {
+            return marketPrice;
+        }
+
+        public void setMarketPrice(Double marketPrice) {
+            this.marketPrice = marketPrice;
+        }
+    }
+
 }

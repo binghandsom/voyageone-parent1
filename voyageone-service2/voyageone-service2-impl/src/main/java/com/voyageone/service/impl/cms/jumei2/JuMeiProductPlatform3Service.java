@@ -97,7 +97,6 @@ public class JuMeiProductPlatform3Service extends BaseService {
         JongoQuery query = new JongoQuery();
         query.setQuery("{\"common.fields.code\": {$in: #}}");
         query.setParameters(productCodes);
-//        query.setProjection("{\"orgChannelId\": 1,\"common.fields.code\": 1, \"platforms.P27\": 1}");
         List<CmsBtProductModel> productMongos = productService.getList(modelCmsBtJmPromotion.getChannelId(), query);
 
         // 获取活动中sku列表
@@ -105,9 +104,17 @@ public class JuMeiProductPlatform3Service extends BaseService {
 
         // 获取product中目前有效销售的sku
         Map<String, List<jmHtDealCopyDealSkusData>> productSkus = new HashMap<>();
-//        Map<String, List<String>> isNotSaleSkuList = new HashMap<>();
-//        Map<String, String> originalHashIdList = new HashMap<>();
+        Map<String, List<String>> stockProducts = new HashMap<>();
         productMongos.forEach((product) -> {
+
+            // 按原始channel分组productCode,方便库存同步调用,因为库存同步按原始channel来同步库存
+            if (stockProducts.get(product.getOrgChannelId()) != null) {
+                stockProducts.get(product.getOrgChannelId()).add(product.getCommon().getFields().getCode());
+            } else {
+                List<String> tempProductCodes = new ArrayList<>();
+                tempProductCodes.add(product.getCommon().getFields().getCode());
+                stockProducts.put(product.getOrgChannelId(), tempProductCodes);
+            }
 
 //            List<String> newJmDealSkuNoList = new ArrayList<>();
             try {
@@ -184,33 +191,32 @@ public class JuMeiProductPlatform3Service extends BaseService {
 
             $debug(promotionId + " code:" + model.getProductCode() + "上新end");
             listOperationResult.add(result);
-            // 提出错误code列表
-            if (!result.isResult()) {
-                productCodes.remove(model.getProductCode());
-            }
         }
-        // 发送库存同步信息
-        try {
-            // 每100个调用一次库存同步
-            List<List<String>> productCodesList = CommonUtil.splitList(productCodes, 100);
-            for (List<String> codes : productCodesList) {
-                $info("发送库存同步请求" + codes.toArray().toString());
-                Map<String, Object> result = sxProductService.synInventoryToPlatform(modelCmsBtJmPromotion.getChannelId(), "27", codes, null);
 
-                // 同步库存失败结果返回
-                ((ArrayList<String>) result.get("errorCodeList")).forEach(code -> {
-                    OperationResult oResult = new OperationResult();
-                    oResult.setResult(false);
-                    oResult.setMsg(String.valueOf(result.get("errorMsg")));
-                    oResult.setCode(code);
-                    listOperationResult.add(oResult);
-                });
+        // 发送库存同步信息
+        stockProducts.forEach((orgChannelId, products) -> {
+            try {
+                // 每100个调用一次库存同步
+                List<List<String>> productCodesList = CommonUtil.splitList(products, 100);
+                for (List<String> codes : productCodesList) {
+                    $info("发送库存同步请求" + codes.toArray().toString());
+                    Map<String, Object> result = sxProductService.synInventoryToPlatform(orgChannelId, "27", codes, null);
+
+                    // 同步库存失败结果返回
+                    ((ArrayList<String>) result.get("errorCodeList")).forEach(code -> {
+                        OperationResult oResult = new OperationResult();
+                        oResult.setResult(false);
+                        oResult.setMsg(String.valueOf(result.get("errorMsg")));
+                        oResult.setCode(code);
+                        listOperationResult.add(oResult);
+                    });
+                }
+            } catch (IOException ex) {
+                $error("聚美活动上传同步平台库存调用失败");
+                ex.printStackTrace();
+                throw new BusinessException("聚美活动上传同步平台库存调用失败");
             }
-        } catch (IOException ex) {
-            $error("聚美活动上传同步平台库存调用失败");
-            ex.printStackTrace();
-            throw new BusinessException("聚美活动上传同步平台库存调用失败");
-        }
+        });
 
         mapMasterBrand.clear();
 
@@ -471,6 +477,27 @@ public class JuMeiProductPlatform3Service extends BaseService {
             request.setSkus_data(new ArrayList<jmHtDealCopyDealSkusData>());
         try {
             HtDealCopyDealResponse response = serviceJumeiHtDeal.copyDeal(parameter.shopBean, request);
+            // error_code":100015的场合先做一下商城价格同步再做再售
+            if(response.getBody() != null && response.getBody().indexOf("100015")>-1){
+                $info("100015 重新刷商城价格");
+                StringBuffer failCause = new StringBuffer();
+                List<HtMallSkuPriceUpdateInfo> htMallSkuPriceUpdateInfos = new ArrayList<>(dealSkuList.size());
+                dealSkuList.forEach(dealSku->{
+                    HtMallSkuPriceUpdateInfo htMallSkuPriceUpdateInfo = new HtMallSkuPriceUpdateInfo();
+                    // 因为商城价格不允许阶梯价格所以就用第一个sku的价格作为商城价格
+                    htMallSkuPriceUpdateInfo.setMarket_price(Double.parseDouble(dealSkuList.get(0).getMarket_price()));
+                    htMallSkuPriceUpdateInfo.setMall_price(Double.parseDouble(dealSkuList.get(0).getDeal_price()));
+                    htMallSkuPriceUpdateInfo.setJumei_sku_no(dealSku.getSku_no());
+                    htMallSkuPriceUpdateInfos.add(htMallSkuPriceUpdateInfo);
+                });
+                boolean isSuccess = jumeiHtMallService.updateMallSkuPrice(parameter.shopBean, htMallSkuPriceUpdateInfos, failCause);
+                if(!isSuccess){
+                    throw new BusinessException("商城价格刷新失败" + failCause.toString());
+                }else{
+                    // 商城价格成功后再做再售处理
+                    response = serviceJumeiHtDeal.copyDeal(parameter.shopBean, request);
+                }
+            }
             if (response.is_Success()) {
                 parameter.cmsBtJmPromotionProductModel.setJmHashId(response.getJumei_hash_id());
             } else {

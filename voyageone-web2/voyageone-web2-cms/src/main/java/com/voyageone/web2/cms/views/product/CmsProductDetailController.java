@@ -20,11 +20,14 @@ import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
 import com.voyageone.web2.sdk.api.response.wms.GetStoreStockDetailResponse;
+import com.voyageone.web2.core.bean.UserSessionBean;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -407,6 +410,18 @@ public class CmsProductDetailController extends CmsController {
         Long productId = productService.getProductIdByCode(code, this.getUser().getSelChannelId());
         if (productId != null)
             return success(productId.toString());
+        return success(null);
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_ORIGINAL_TITLE_CN)
+    public AjaxResponse updateOriginalTitleCn(@RequestBody Map params) {
+        Long prodId = Long.valueOf(String.valueOf(params.get("prodId")));
+        Assert.notNull(prodId).elseThrowDefaultWithTitle("prodId");
+        String originalTitleCn = StringUtils.trimToNull(String.valueOf(params.get("originalTitleCn")));
+        Assert.notNull(prodId).elseThrowDefaultWithTitle("originalTitleCn");
+
+        UserSessionBean user = getUser();
+        productPropsEditService.updateOriginalTitleCn(getUser().getSelChannelId(), prodId, originalTitleCn, user.getUserName());
         return success(null);
     }
 }

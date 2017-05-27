@@ -317,46 +317,45 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
             BaseMongoMap<String, String> productInfoMap = getProductInfoMap(mainProductPlatformCart, mainProduct, sxData, shop);
             // 构造Field列表
             List<InputField> itemFieldList = new ArrayList<>();
-            InputField inputField = new InputField();
             productInfoMap.entrySet().forEach(p -> {
-                inputField.setId(p.getKey());
+                InputField inputField = new InputField();
+                inputField.setId(p.getKey().toLowerCase());
                 inputField.setValue(p.getValue());
                 itemFieldList.add(inputField);
             });
-
+            Map<String, InputField> fieldMap = itemFieldList.stream().collect(Collectors.toMap(InputField::getId, field -> field));
             List<Field> fieldList = tbItemSchema.getFields();
             fieldList.stream()
                     .forEach( tmField -> {
-                        for (InputField f : itemFieldList) {
-                            if (f.getId().equals(tmField.getId())) {
-                                InputField field = (InputField) tmField;
-                                if ("extends".equals(tmField.getId())) {
-                                    Map<String,String> map = new HashMap<String, String>();
-                                    ObjectMapper objectMapper = new ObjectMapper();
-                                    try{
-                                        map = objectMapper.readValue(field.getDefaultValue(), new TypeReference<HashMap<String,String>>(){});
-                                    }catch(Exception e){
+                        if (fieldMap.get(tmField.getId().toLowerCase()) != null &&
+                            fieldMap.get(tmField.getId().toLowerCase()).getId().equalsIgnoreCase(tmField.getId())) {
+                            InputField field = (InputField) tmField;
+                            if ("extends".equals(tmField.getId())) {
+                                Map<String,String> map = new HashMap<String, String>();
+                                ObjectMapper objectMapper = new ObjectMapper();
+                                try{
+                                    map = objectMapper.readValue(field.getDefaultValue(), new TypeReference<HashMap<String,String>>(){});
+                                }catch(Exception e){
 //                                    e.printStackTrace();
+                                }
+                                map.entrySet().stream().forEach(m -> {
+                                    if ("shop_cats".equals(m.getKey())) {
+                                        m.setValue(fieldMap.get(tmField.getId()).getValue());
                                     }
-                                    map.entrySet().stream().forEach(m -> {
-                                        if ("shop_cats".equals(m.getKey())) {
-                                            m.setValue(f.getValue());
-                                        }
-                                    });
-                                    try {
-                                        String fieldValue = objectMapper.writeValueAsString(map);
-                                        field.setValue(fieldValue);
-                                    } catch (JsonProcessingException e) {
+                                });
+                                try {
+                                    String fieldValue = objectMapper.writeValueAsString(map);
+                                    field.setValue(fieldValue);
+                                } catch (JsonProcessingException e) {
 //                                    e.printStackTrace();
-                                    }
-                                } else {
-                                    field.setValue(f.getValue());
                                 }
                             } else {
-                                if (tmField.getType().toString().equalsIgnoreCase("input")) {
-                                    InputField field = (InputField) tmField;
-                                    field.setValue(field.getDefaultValue());
-                                }
+                                field.setValue(fieldMap.get(tmField.getId()).getValue());
+                            }
+                        } else {
+                            if (tmField.getType().toString().equalsIgnoreCase("input")) {
+                                InputField field = (InputField) tmField;
+                                field.setValue(field.getDefaultValue());
                             }
                         }
 

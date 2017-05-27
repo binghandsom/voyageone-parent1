@@ -11,7 +11,6 @@ import com.voyageone.components.jd.service.JdProductService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceService;
@@ -35,8 +34,6 @@ import java.util.Map;
 @Service
 public class ProductPlatformService extends BaseService {
 
-    @Autowired
-    protected CmsBtProductLogDao cmsBtProductLogDao;
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;

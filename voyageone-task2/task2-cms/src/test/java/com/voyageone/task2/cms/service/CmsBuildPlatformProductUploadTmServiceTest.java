@@ -58,14 +58,14 @@ public class CmsBuildPlatformProductUploadTmServiceTest {
 
         CmsBtSxWorkloadModel workload = new CmsBtSxWorkloadModel();
 //        workload.setId(247);
-        workload.setChannelId("010");
+        workload.setChannelId("018");
         workload.setCartId(23);
-        workload.setGroupId(Long.parseLong("10798126"));
+        workload.setGroupId(Long.parseLong("494011"));
         workload.setPublishStatus(0);
 
         // 测试用PortAmerican海外专营店
         ShopBean shop = new ShopBean();
-        shop.setOrder_channel_id("010");
+        shop.setOrder_channel_id("018");
         shop.setCart_id("23");
         shop.setApp_url("http://gw.api.taobao.com/router/rest");
         shop.setAppKey("");

@@ -20,10 +20,12 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.product.CmsBtCombinedProductService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtPlatformActiveLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,8 @@ public class CmsPlatformActiveLogService extends BaseService {
     private MongoSequenceService sequenceService;
     @Autowired
     private CmsBtCombinedProductService cmsBtCombinedProductService;
+    @Autowired
+    private ProductService productService;
 
     /**
      * 执行产品上下架操作
@@ -106,6 +110,15 @@ public class CmsPlatformActiveLogService extends BaseService {
             //聚美特殊处理
             if (PlatFormEnums.PlatForm.JM.getId().equals(shopProp.getPlatform_id())) {
                 numIId = cmsBtProductGroupModel.getPlatformMallId();
+                if(StringUtil.isEmpty(numIId)){
+                    CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, cmsBtProductGroupModel.getMainProductCode());
+                    if(cmsBtProductModel != null){
+                        CmsBtProductModel_Platform_Cart cmsBtProductModel_platform_cart = cmsBtProductModel.getPlatform(cartId);
+                        if(cmsBtProductModel_platform_cart != null){
+                            numIId = cmsBtProductModel_platform_cart.getpPlatformMallId();
+                        }
+                    }
+                }
             }
 //            List<String> pcdList = cmsBtProductGroupModel.getProductCodes();
 

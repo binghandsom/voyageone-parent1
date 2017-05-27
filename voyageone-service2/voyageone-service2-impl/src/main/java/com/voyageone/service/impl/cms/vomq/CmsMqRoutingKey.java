@@ -109,11 +109,18 @@ public class CmsMqRoutingKey {
     // feed数据导入接口
     public static final String CMS_FEED_IMPORT_MQ_JOB = "CmsFeedImportMQJobQueue";
 
+    // feed数据批量设置主类目
+    public static final String CMS_FEED_SET_CATEGORY_MQ_JOB = "CmsFeedSetCategoryQueue";
+
+
     // VMS价格和库存变更 通知CMS更新feedInfo
     public static final String CMS_FEED_SKU_PQ_MQ_JOB = "CmsFeedSkuPqMQJobQueue";
 
     //sneakerHead根据活动里面的产品找出同一group的商品加入活动
     public static final String CMS_SNEAKERHEAD_ADD_PROMOTION = "CmsSneakerheadAddPromotionMQJobQueue";
+
+    // 活动(非聚美)商品导出
+    public static final String CMS_PROMOTION_EXPORT = "CmsPromotionExportMQJobQueue";
 
     //批量lock平台    added by piao
     public static final String  CMS_ADV_SEARCH_LOCK_PRODUCTS = "VOCmsAdvSearchLockProductsMQJobQueue";

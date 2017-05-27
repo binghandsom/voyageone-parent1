@@ -10,6 +10,8 @@ import com.voyageone.components.solr.query.SimpleQueryBean;
 import com.voyageone.components.solr.service.CmsProductSearchService;
 import com.voyageone.service.bean.cms.search.product.CmsProductCodeListBean;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
+import com.voyageone.service.impl.cms.product.search.CmsBtSearchItemService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +43,8 @@ public class CmsProductSearchQueryService extends BaseService {
 
     @Autowired
     private CmsProductSearchService cmsProductSearchService;
+    @Autowired
+    private CmsBtSearchItemService cmsBtSearchItemService;
 
     /**
      * 获取当前查询的product列表（查询条件从画面而来）
@@ -48,6 +52,22 @@ public class CmsProductSearchQueryService extends BaseService {
     public CmsProductCodeListBean getProductCodeList(CmsSearchInfoBean2 searchValue, String channelId) {
         CmsProductCodeListBean result = new CmsProductCodeListBean();
         SimpleQueryBean queryBean = getSearchQuery(searchValue, channelId);
+
+        if ($isDebugEnabled()) {
+            $debug(String.format("获取当前查询的product列表 ChannelId=%s, %s", channelId, queryBean.toString()));
+        }
+        Page<CmsProductSearchModel> page = cmsProductSearchService.queryForPage(queryBean, CmsProductSearchModel.class);
+        List<String> productCodeList = page.getContent().stream().filter(model -> model.getProductCode() != null).map(CmsProductSearchModel::getProductCode).collect(Collectors.toList());
+        result.setProductCodeList(productCodeList);
+        result.setTotalCount(page.getTotalElements());
+
+        return result;
+    }
+
+    public CmsProductCodeListBean getProductCodeList(CmsSearchInfoBean2 searchValue, String channelId, int userId, String userName) {
+        CmsProductCodeListBean result = new CmsProductCodeListBean();
+        SimpleQueryBean queryBean = getSearchQuery(searchValue, channelId);
+        cmsBtSearchItemService.analysisSearchItems(userId, userName, channelId, searchValue, null);
 
         if ($isDebugEnabled()) {
             $debug(String.format("获取当前查询的product列表 ChannelId=%s, %s", channelId, queryBean.toString()));
@@ -275,13 +295,36 @@ public class CmsProductSearchQueryService extends BaseService {
             } else {
                 searchValue.setfCatPathList(searchValue.getfCatPathList().stream()
                         .map(String::trim)
-//                    .map(ClientUtils::escapeQueryChars)
+                        .map(str -> ClientUtils.escapeQueryChars(str) + "*")
                         .collect(Collectors.toList()));
-                if (searchValue.getfCatPathType() == 1) {
-                    criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList());
-                } else {
-                    criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList()).not();
+                Criteria tempCriteria = null;
+                for (String str : searchValue.getfCatPathList()) {
+                    if (tempCriteria == null) {
+                        if (searchValue.getfCatPathType() == 1) {
+                            tempCriteria = new Criteria("feedCat").expression(str);
+                        } else {
+                            criteria = criteria.and("feedCat").expression(str).not();
+                        }
+                    } else {
+                        if (searchValue.getfCatPathType() == 1) {
+                            tempCriteria = tempCriteria.or("feedCat").expression(str);
+                        } else {
+                            criteria = criteria.and("feedCat").expression(str).not();
+                        }
+                    }
                 }
+                if (searchValue.getfCatPathType() == 1) {
+                    criteria = criteria.and(tempCriteria);
+                }
+//                searchValue.setfCatPathList(searchValue.getfCatPathList().stream()
+//                        .map(String::trim)
+//                        .map(ClientUtils::escapeQueryChars)
+//                        .collect(Collectors.toList()));
+//                if (searchValue.getfCatPathType() == 1) {
+//                    criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList());
+//                } else {
+//                    criteria = criteria.and("feedCat").contains(searchValue.getfCatPathList()).not();
+//                }
             }
 
         }

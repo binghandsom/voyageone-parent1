@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtDtSkuModel" />
     <sql id="Base_Column_List" >
         `id`, `channel_id`, `product_code`, `sku_code`, `creater`, `created`, `modifier`, 
-        `modified`
+        `modified`, `org_channel_id`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -41,6 +41,9 @@
             <if test="modified == null" >
                 `modified` = now(),
             </if>
+            <if test="orgChannelId != null" >
+                `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR},
+            </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
@@ -76,6 +79,9 @@
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
+            <if test="orgChannelId != null" >
+                and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
+            </if>
         </where>
         limit 1
     </select>
@@ -106,6 +112,9 @@
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
+            <if test="orgChannelId != null" >
+                and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -133,6 +142,9 @@
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
+            <if test="orgChannelId != null" >
+                and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -159,6 +171,9 @@
                 `modifier`,
             </if>
             `modified`,
+            <if test="orgChannelId != null" >
+                `org_channel_id`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
@@ -190,6 +205,9 @@
             </if>
             <if test="modified != null" >
                 #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="orgChannelId != null" >
+                #{orgChannelId,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

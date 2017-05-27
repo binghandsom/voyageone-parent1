@@ -42,6 +42,10 @@ define([
             IsExcelElement.value = 1;
             Form.action = action;
             Form.submit();
+        };
+        // 查询数据文件创建的状态
+        $scope.importSearch = function(page) {
+            $scope.searchImport();
         }
     }
 

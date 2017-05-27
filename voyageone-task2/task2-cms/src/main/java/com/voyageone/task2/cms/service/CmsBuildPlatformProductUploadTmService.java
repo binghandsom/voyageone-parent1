@@ -34,6 +34,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
+import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.CmsBtSxCspuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.CmsBtTmScItemModel;
@@ -52,10 +53,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -106,6 +106,8 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
     private TbSaleService tbSaleService;
     @Autowired
     private TbScItemService tbScItemService;
+    @Autowired
+    private MqSender sender;
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -335,6 +337,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
         // 开始时间
         long prodStartTime = System.currentTimeMillis();
 
+        List<String> strSkuCodeList = new ArrayList<>();
         // 天猫产品上新处理
         try {
             // 上新用的商品数据信息取得
@@ -353,6 +356,10 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
 //                throw new BusinessException(errMsg);
                 throw new BusinessException("SxData取得失败!");
                 // modified by morse.lu 2016/06/12 end
+            }
+            // 上新对象code(后面回写状态时要用到)
+            if (ListUtils.notNull(sxData.getProductList())) {
+                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
             }
             if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
                 // 取得上新数据出错时，cartId有可能没有设置
@@ -393,7 +400,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
             expressionParser = new ExpressionParser(sxProductService, sxData);
 
             // 20170417 全链路库存改造 charis STA
-            List<String> strSkuCodeList = new ArrayList<>();
+
             sxData.getSkuList().forEach(sku -> strSkuCodeList.add(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name())));
 
             if (ListUtils.isNull(strSkuCodeList)) {
@@ -455,10 +462,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 throw new BusinessException(errMsg);
             }
 
-            // 上新对象code(后面回写状态时要用到)
-            if (ListUtils.notNull(sxData.getProductList())) {
-                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
-            }
+
 
             // 判断商品是否是达尔文
             boolean isDarwin = false;
@@ -684,10 +688,28 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                         }
                     }
                     // 20161202 达尔文货品关联问题的对应 END
-
-                    // 20170417 调用更新库存接口同步库存 STA
-                    sxProductService.synInventoryToPlatform(channelId, String.valueOf(cartId), listSxCode, null);
-                    // 20170417 调用更新库存接口同步库存 END
+                    Date nowTime  = new Date();
+                    Date changeTime = null;
+                    try {
+                        changeTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-05-28 00:00:00");
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    if (changeTime.before(nowTime)) {
+                        // 20170526 调用新的更新库存接口同步库存 STA
+                        for (String sku : strSkuCodeList) {
+                            Map<String, Object> messageMap = new HashMap<>();
+                            messageMap.put("channelId", channelId);
+                            messageMap.put("cartId", cartId);
+                            messageMap.put("sku", sku);
+                            sender.sendMessage("ewms_mq_stock_sync_platform_stock", messageMap);
+                        }
+                        // 20170526 调用新的更新库存接口同步库存 END
+                    } else {
+                        // 20170417 调用更新库存接口同步库存 STA
+                        sxProductService.synInventoryToPlatform(channelId, String.valueOf(cartId), null, strSkuCodeList);
+                        // 20170417 调用更新库存接口同步库存 END
+                    }
 
                     // added by morse.lu 2017/01/05 start
                     // 更新cms_bt_tm_sc_item表，把货品id记下来，同步库存用
@@ -780,6 +802,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 searchParam.put("cartId", cartId);
                 searchParam.put("code", code);
                 searchParam.put("sku", skuCode);
+                searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
                 CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
                 SxData.SxSkuExInfo sxSkuExInfo = sxData.getSxSkuExInfo(skuCode, false);
                 String scProductId = sxSkuExInfo != null? sxSkuExInfo.getScProductId() : null;
@@ -793,6 +816,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                         // add
                         scItemModel = new CmsBtTmScItemModel();
                         scItemModel.setChannelId(channelId);
+                        scItemModel.setOrgChannelId(sxData.getMainProduct().getOrgChannelId());
                         scItemModel.setCartId(cartId);
                         scItemModel.setCode(code);
                         scItemModel.setSku(skuCode);

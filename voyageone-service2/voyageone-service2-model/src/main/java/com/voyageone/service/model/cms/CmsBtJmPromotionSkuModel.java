@@ -26,6 +26,8 @@ public class CmsBtJmPromotionSkuModel extends BaseModel {
 
     protected Integer cmsBtJmPromotionProductId;
 
+    protected String productModel;
+
     protected String productCode;
 
     /**
@@ -83,6 +85,11 @@ public class CmsBtJmPromotionSkuModel extends BaseModel {
      */
     protected BigDecimal salePrice;
 
+    /**
+     * 团购价/最终售价
+     */
+    protected BigDecimal discount2;
+
     public String getChannelId() {
         return channelId;
     }
@@ -105,6 +112,14 @@ public class CmsBtJmPromotionSkuModel extends BaseModel {
 
     public void setCmsBtJmPromotionProductId(Integer cmsBtJmPromotionProductId) {
         this.cmsBtJmPromotionProductId = cmsBtJmPromotionProductId;
+    }
+
+    public String getProductModel() {
+        return productModel;
+    }
+
+    public void setProductModel(String productModel) {
+        this.productModel = productModel == null ? null : productModel.trim();
     }
 
     public String getProductCode() {
@@ -201,5 +216,13 @@ public class CmsBtJmPromotionSkuModel extends BaseModel {
 
     public void setSalePrice(BigDecimal salePrice) {
         this.salePrice = salePrice;
+    }
+
+    public BigDecimal getDiscount2() {
+        return discount2;
+    }
+
+    public void setDiscount2(BigDecimal discount2) {
+        this.discount2 = discount2;
     }
 }

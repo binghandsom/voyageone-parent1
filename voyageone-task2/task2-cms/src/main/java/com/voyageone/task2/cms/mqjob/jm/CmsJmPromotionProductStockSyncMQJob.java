@@ -70,7 +70,7 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
         }
         if (result.size() > 0) {
             //写业务错误日志
-            String comment = String.format("处理失败件数(%s)",  result.size());
+            String comment = String.format("处理失败件数(%s)", result.size());
             cmsSuccessIncludeFailLog(messageBody, comment, result);
         }
     }
@@ -94,24 +94,24 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
         // 先判断该店铺的cms_bt_product_cxxx表是否存在
         boolean exists = cmsBtProductDao.collectionExists(cmsBtProductDao.getCollectionName(channelId));
         if (!exists) {
-            $warn("PromotionProductStockSyncService 本店铺对应的cms_bt_product_cxxx表不存在！ channelId=" + channelId);
-
-            CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
-            errorInfo.setSkuCode("channelId:" + channelId);
-            errorInfo.setMsg("本店铺对应的cms_bt_product_cxxx表不存在！");
-            failList.add(errorInfo);
+//            $warn("PromotionProductStockSyncService 本店铺对应的cms_bt_product_cxxx表不存在！ channelId=" + channelId);
+//
+//            CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+//            errorInfo.setSkuCode("channelId:" + channelId);
+//            errorInfo.setMsg("本店铺对应的cms_bt_product_cxxx表不存在！");
+//            failList.add(errorInfo);
             return failList;
         }
 
         // 验证该店铺的平台配置
         TypeChannelBean cartBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, cartIdStr);
         if (cartBean == null) {
-            $error("PromotionProductStockSyncService 本店铺无平台数据！ channelId=%s, cartId=%s", channelId, cartIdStr);
-
-            CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
-            errorInfo.setSkuCode("cartId:" + cartIdStr);
-            errorInfo.setMsg("本店铺无平台数据！");
-            failList.add(errorInfo);
+//            $error("PromotionProductStockSyncService 本店铺无平台数据！ channelId=%s, cartId=%s", channelId, cartIdStr);
+//
+//            CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+//            errorInfo.setSkuCode("cartId:" + cartIdStr);
+//            errorInfo.setMsg("本店铺无平台数据！");
+//            failList.add(errorInfo);
             return failList;
         }
 
@@ -125,10 +125,10 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
             if (jmProdList == null || jmProdList.isEmpty()) {
                 $warn("JmPromotionProductStockSyncService 本店铺无活动下的产品数据！ channelId=%s, cartId=%s", channelId, cartIdStr);
 
-                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
-                errorInfo.setSkuCode("cartId:" + cartIdStr);
-                errorInfo.setMsg("本店铺无活动下的产品数据！");
-                failList.add(errorInfo);
+//                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+//                errorInfo.setSkuCode("cartId:" + cartIdStr);
+//                errorInfo.setMsg("本店铺无活动下的产品数据！");
+//                failList.add(errorInfo);
                 return failList;
             }
             // 过滤出商品code
@@ -136,10 +136,10 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
             if (codeList == null || codeList.isEmpty()) {
                 $warn("JmPromotionProductStockSyncService 本店铺无活动下的有效产品数据！ channelId=%s, cartId=%s", channelId, cartIdStr);
 
-                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
-                errorInfo.setSkuCode("cartId:" + cartIdStr);
-                errorInfo.setMsg("本店铺无活动下的有效产品数据！");
-                failList.add(errorInfo);
+//                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+//                errorInfo.setSkuCode("cartId:" + cartIdStr);
+//                errorInfo.setMsg("本店铺无活动下的有效产品数据！");
+//                failList.add(errorInfo);
                 return failList;
             }
 
@@ -152,10 +152,10 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
             if (prodList == null || prodList.isEmpty()) {
                 $warn("JmPromotionProductStockSyncService 无指定的产品数据！ channelId=%s, cartId=%s", channelId, cartIdStr);
 
-                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
-                errorInfo.setSkuCode("cartId:" + cartIdStr);
-                errorInfo.setMsg("无指定的产品数据！");
-                failList.add(errorInfo);
+//                CmsBtOperationLogModel_Msg errorInfo = new CmsBtOperationLogModel_Msg();
+//                errorInfo.setSkuCode("cartId:" + cartIdStr);
+//                errorInfo.setMsg("无指定的产品数据！");
+//                failList.add(errorInfo);
                 return failList;
             }
 
@@ -180,6 +180,8 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
                         break;
                     }
                 }
+                if(jmPromProd.getSales() == null) jmPromProd.setSales(0);
+                if(jmPromProd.getQuantity() == null) jmPromProd.setQuantity(0);
             }
 
             int rs = 0;

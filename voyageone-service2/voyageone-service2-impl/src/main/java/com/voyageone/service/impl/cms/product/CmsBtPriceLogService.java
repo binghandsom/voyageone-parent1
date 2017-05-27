@@ -110,17 +110,6 @@ public class CmsBtPriceLogService extends BaseService {
                 }
             }
         }
-        // 先做完所有价格范围同步的请求后，再开始处理是否记录未确认价格的操作
-//        for (CmsBtPriceLogModel newLog : paramList) {
-//            String channelId = newLog.getChannelId();
-//            int cartId = newLog.getCartId();
-//            BaseMongoMap<String, Object> skuModel = getSinglePlatformSku(newLog.getSku(), cartId, channelId);
-//            Double confirmPrice = skuModel.getDoubleAttribute(confPriceRetail.name());
-//            // 检查价格，是否需要记录未确认
-//            if (newLog.getRetailPrice() >= 0 && !newLog.getRetailPrice().equals(confirmPrice))
-//                priceConfirmLogService.addUnConfirmed(channelId, cartId, newLog.getCode(), skuModel, newLog.getCreater());
-//        }
-
         return rs;
     }
 

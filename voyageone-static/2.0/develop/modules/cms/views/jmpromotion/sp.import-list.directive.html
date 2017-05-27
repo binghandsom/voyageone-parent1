@@ -1,37 +1,55 @@
 <div class="wrapper-md" ng-init="initialize()" ng-controller="popupCtrl">
-    <div class="table-responsive">
-        <table class="table table-hover-new vo_table" style="table-layout: fixed;">
-            <thead>
-            <tr>
-                <th class="text-left">导入文件</th>
-                <th class="text-center" style="width:100px">成功件数(sku)</th>
-                <th class="text-center" style="width:100px">失败件数(sku)</th>
-                <th class="text-left">导入开始时间</th>
-                <th class="text-left">导入结束时间</th>
-                <th class="text-left" style="width:300px">异常信息</th>
-                <th class="text-left">失败文件</th>
-                <th class="text-center">操作</th>
-            </tr>
-            </thead>
-            <tbody ng-if="vm.cmsBtJmPromotionImportTaskList.length">
-            <tr ng-repeat="model in vm.cmsBtJmPromotionImportTaskList">
-                <td class="text-left"><a ng-click="downloadImportExcel(model.id)">{{model.originFileName}}</a></td>
-                <td class="text-center">{{model.successRows}}</td>
-                <td class="text-center">{{model.failuresRows}}</td>
-                <td class="text-left">{{model.beginTime}}</td>
-                <td class="text-left">{{model.endTime}}</td>
-                <td class="text-left">
-                    <span ng-if="model.errorMsg.length > 50"><popover-text content="model.errorMsg" direct="left" size="50"></popover-text></span>
-                    <span ng-if="model.errorMsg.length <= 50">{{model.errorMsg}}</span>
-                </td>
-                <td class="text-left"><a ng-click="downloadImportErrorExcel(model.id);">{{model.failuresFileName}}</a></td>
-                <td class="text-center">
-                    <button title="下载" ng-click="downloadImportExcel(model.id)" class="btn btn-danger btn-xs"><i
-                            class="fa fa-download"></i></button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
 
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-4">
+                        &emsp;
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-pop btn-default" ng-click="importSearch()">
+                                <i class="fa fa-refresh"></i>&nbsp;刷新
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive box box-body">
+                <table class="table table-hover-new vo_table" style="table-layout: fixed;">
+                    <thead>
+                    <tr>
+                        <th class="text-left">导入文件</th>
+                        <th class="text-center" style="width:100px">成功件数(sku)</th>
+                        <th class="text-center" style="width:100px">失败件数(sku)</th>
+                        <th class="text-left">导入开始时间</th>
+                        <th class="text-left">导入结束时间</th>
+                        <th class="text-left" style="width:300px">异常信息</th>
+                        <th class="text-left">失败文件</th>
+                        <th class="text-center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody ng-if="vm.cmsBtJmPromotionImportTaskList.length">
+                    <tr ng-repeat="model in vm.cmsBtJmPromotionImportTaskList">
+                        <td class="text-left"><a ng-click="downloadImportExcel(model.id)">{{model.originFileName}}</a></td>
+                        <td class="text-center">{{model.successRows}}</td>
+                        <td class="text-center">{{model.failuresRows}}</td>
+                        <td class="text-left">{{model.beginTime}}</td>
+                        <td class="text-left">{{model.endTime}}</td>
+                        <td class="text-left">
+                            <span ng-if="model.errorMsg.length > 50"><popover-text content="model.errorMsg" direct="left" size="50"></popover-text></span>
+                            <span ng-if="model.errorMsg.length <= 50">{{model.errorMsg}}</span>
+                        </td>
+                        <td class="text-left"><a ng-click="downloadImportErrorExcel(model.id);">{{model.failuresFileName}}</a></td>
+                        <td class="text-center">
+                            <button title="下载" ng-click="downloadImportExcel(model.id)" class="btn btn-danger btn-xs"><i
+                                    class="fa fa-download"></i></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>

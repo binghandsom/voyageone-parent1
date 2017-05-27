@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.ScItem;
+import com.taobao.api.domain.ScItemMap;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.InputField;
@@ -16,6 +17,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
+import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbScItemService;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.BaseService;
@@ -23,6 +25,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,6 +43,7 @@ public class TaobaoScItemService extends BaseService {
 
     @Autowired
     private TbScItemService tbScItemService;
+
 
 	/**
 	 * 创建一个货品， 并初始化库存
@@ -213,6 +217,7 @@ public class TaobaoScItemService extends BaseService {
 
 	}
 
+	// 返回的是商家编码
     private String doSetScItemSku(ShopBean shopBean, CmsBtProductModel productModel, long numIId, String sku_outerId, String sku_id, String sku_scProductId, SxData sxData, String qty) {
 
 		// 判断一下是否需要做货品绑定
@@ -234,10 +239,16 @@ public class TaobaoScItemService extends BaseService {
 		String outerCodeResult;
         try {
             if (StringUtils.isEmpty(sku_id) || "null".equals(sku_id)) {
-                outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, null, sku_outerId);
-            } else {
-                outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, Long.parseLong(sku_id), sku_outerId);
+				sku_id = null;
             }
+			// 先去看看是否已经创建过关联了
+			List<ScItemMap> scItemMapList = tbScItemService.getScItemMap(shopBean, numIId, sku_id);
+			if (scItemMapList != null && scItemMapList.size() > 0) {
+				// 已经创建过关联了， 跳出
+				System.out.println("已经创建过关联了， 不重新关联");
+				return String.valueOf(sku_outerId);
+			}
+			outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, Long.parseLong(sku_id), sku_outerId);
             System.out.println("关联成功:" + outerCodeResult);
         } catch (ApiException e) {
             String errMsg = String.format("自动设置天猫商品全链路库存管理:创建关联:{numIId: %s, outerId: %s, err_msg: %s}", numIId, sku_outerId, e.toString());
@@ -347,10 +358,17 @@ public class TaobaoScItemService extends BaseService {
 		try {
 			Thread.sleep(1000); // 一定要睡一会儿， 因为如果商品都已经创建成功并初始化过的话， 就会连续创建关联， 可能会导致IC_OPTIMISTIC_LOCKING_CONFLICT
 			if (StringUtils.isEmpty(sku_id) || "null".equals(sku_id)) {
-				outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, null, sku_outerId);
-			} else {
-				outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, Long.parseLong(sku_id), sku_outerId);
+				sku_id = null;
 			}
+			// 先去看看是否已经创建过关联了
+			List<ScItemMap> scItemMapList = tbScItemService.getScItemMap(shopBean, numIId, sku_id);
+			if (scItemMapList != null && scItemMapList.size() > 0) {
+				// 已经创建过关联了， 跳出
+				System.out.println("已经创建过关联了， 不重新关联");
+				return String.valueOf(scItem.getItemId());
+			}
+			outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, Long.parseLong(sku_id), sku_outerId);
+
 			System.out.println("关联成功:" + outerCodeResult);
 		} catch (InterruptedException e) {
 			String errMsg = String.format("自动设置天猫商品全链路库存管理:创建关联[之前睡会儿失败]:{numIId: %s, outerId: %s, err_msg: %s}", numIId, sku_outerId, e.toString());
@@ -359,7 +377,7 @@ public class TaobaoScItemService extends BaseService {
 			if (e.toString().contains("您输入的前端商品已挂靠至该货品上")) {
 				return String.valueOf(scItem.getItemId());
 			}
-			String errMsg = String.format("自动设置天猫商品全链路库存管理:创建关联:{numIId: %s, outerId: %s, err_msg: %s}", numIId, sku_outerId, e.toString());
+			String errMsg = String.format("创建关联失败:{numIId: %s, outerId: %s, err_msg: %s}", numIId, sku_outerId, e.toString());
 			throw new BusinessException(errMsg);
 		}
 

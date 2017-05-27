@@ -35,6 +35,7 @@ public enum CustomMappingType {
         ITEM_ATTACH_IMAGES("item_attach_images", "商品资质图片-"), // 商品资质图片(1:吊牌图,2:耐久性标签",3:质检报告,4:合格证)
         DIAOPAI_PIC("diaopai_pic", "新品吊牌图"), // 吊牌图
         WHITE_BG_IMAGE("white_bg_image", "透明图"), // 透明素材图
+        ITEM_WIRELESS_IMAGES("item_wireless_images", "商品无线图片-"), // 商品无线图片
         ;
 
         private final String propId;

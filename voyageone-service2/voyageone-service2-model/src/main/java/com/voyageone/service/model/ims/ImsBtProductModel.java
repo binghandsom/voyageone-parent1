@@ -33,6 +33,9 @@ public class ImsBtProductModel extends BaseModel {
     private String publishPromotionPriceStatus;
     private String promotionFaildComment;
 
+    private String orgChannelId;
+
+
     public Long getSeq() {
         return seq;
     }
@@ -208,4 +211,13 @@ public class ImsBtProductModel extends BaseModel {
     public void setPromotionFaildComment(String promotionFaildComment) {
         this.promotionFaildComment = promotionFaildComment;
     }
+
+    public String getOrgChannelId() {
+        return orgChannelId;
+    }
+
+    public void setOrgChannelId(String orgChannelId) {
+        this.orgChannelId = orgChannelId;
+    }
+
 }

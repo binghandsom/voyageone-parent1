@@ -78,9 +78,11 @@ public class ProductTagService extends BaseService {
      * @param tagPathList tagPathList
      * @param prodCodeList prodCodeList
      * @param orgDispTagList orgDispTagList
+     * @param operationType operationType
      * @param modifier modifier
      */
-    public void setProdFreeTag(String channelId, List<String> tagPathList, List<String> prodCodeList, List<String> orgDispTagList, String modifier) {
+    public void setProdFreeTag(String channelId, List<String> tagPathList, List<String> prodCodeList, List<String> orgDispTagList,
+                               EnumProductOperationType operationType, String modifier) {
         if (prodCodeList == null || prodCodeList.isEmpty()) {
             $warn("ProductTagService：setProdFreeTag 缺少参数");
             throw new BusinessException("缺少参数!");
@@ -126,7 +128,7 @@ public class ProductTagService extends BaseService {
         List<CmsBtTagBean> tagBeanList = cmsBtTagDaoExt.selectTagPathNameByTagPath(channelId, tagPathList);
         tagBeanList.stream().map(tagBean -> tagBean.getTagPathName()).collect(Collectors.toList());
         String msg = "高级检索 批量设置自由标签 " ;
-        productStatusHistoryService.insertList(channelId, prodCodeList, -1, EnumProductOperationType.BatchSetFreeTag, msg, modifier);
+        productStatusHistoryService.insertList(channelId, prodCodeList, -1, operationType, msg, modifier);
     }
 
     /**
