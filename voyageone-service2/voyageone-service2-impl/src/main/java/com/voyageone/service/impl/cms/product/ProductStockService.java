@@ -107,8 +107,8 @@ public class ProductStockService extends BaseService {
                     try {
 
                         BulkWriteResult writeResult = cmsBtProductDao.bulkUpdateWithMap(channelId, Arrays.asList(createBulkUpdateModel(updateMap, queryMap)), modifier, "$set");
-                        $info(String.format("(channelId=%s, cartId=%d, code=%s, sku=%s)库存更新结果：%s",
-                                stockBean.getChannelId(), stockBean.getCartId(), stockBean.getItemCode(), stockBean.getSku(), JacksonUtil.bean2Json(writeResult)));
+//                        $info(String.format("(channelId=%s, cartId=%d, code=%s, sku=%s)库存更新结果：%s",
+//                                stockBean.getChannelId(), stockBean.getCartId(), stockBean.getItemCode(), stockBean.getSku(), JacksonUtil.bean2Json(writeResult)));
                     } catch (Exception e) {
                         CmsBtOperationLogModel_Msg failMsg = new CmsBtOperationLogModel_Msg();
                         failMsg.setSkuCode(stockBean.getSku());
