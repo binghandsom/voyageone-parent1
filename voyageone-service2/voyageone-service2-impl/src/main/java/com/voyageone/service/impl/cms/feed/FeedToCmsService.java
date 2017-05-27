@@ -353,9 +353,9 @@ public class FeedToCmsService extends BaseService {
                     }
 
                     // 原feed数据导入成功或者导入失败,则自动重新导入一次
-                    if (CmsConstants.FeedUpdFlgStatus.Succeed == orgFeedInfo.getUpdFlg()
-                            || CmsConstants.FeedUpdFlgStatus.Fail == orgFeedInfo.getUpdFlg())
-                        orgFeedInfo.setUpdFlg(CmsConstants.FeedUpdFlgStatus.Pending);
+//                    if (CmsConstants.FeedUpdFlgStatus.Succeed == orgFeedInfo.getUpdFlg()
+//                            || CmsConstants.FeedUpdFlgStatus.Fail == orgFeedInfo.getUpdFlg())
+//                        orgFeedInfo.setUpdFlg(CmsConstants.FeedUpdFlgStatus.Pending);
 
                     feedInfoService.updateFeedInfo(orgFeedInfo);
 
