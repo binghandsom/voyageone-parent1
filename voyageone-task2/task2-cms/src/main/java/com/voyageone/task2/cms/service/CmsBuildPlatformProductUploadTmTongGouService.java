@@ -207,14 +207,13 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         Map<String, Integer> map = sxProductService.getAvailQuantity("017", "30", "105030", null);
         map.entrySet().forEach((ky)->{
             $info("TOM:" + ky.getKey() + ":" + ky.getValue() + ";");
-//            List<Map<String, Object>> lst = new ArrayList<>();
-//            Map<String, Object> messageMap = new HashMap<>();
-//            messageMap.put("channelId", "017");
-//            messageMap.put("cartId", "30");
-//            messageMap.put("sku", ky.getKey());
-//            sender.sendMessage("ewms_mq_stock_sync_platform_stock", messageMap);
+            List<Map<String, Object>> lst = new ArrayList<>();
+            Map<String, Object> messageMap = new HashMap<>();
+            messageMap.put("channelId", "017");
+            messageMap.put("cartId", "30");
+            messageMap.put("sku", ky.getKey());
+            sender.sendMessage("ewms_mq_stock_sync_platform_stock_017", messageMap);
 
-            // JmPromotionProductStockSyncMQMessageBody mqMessageBody = new JmPromotionProductStockSyncMQMessageBody();
         });
         {
             Date nowTime  = new Date();
