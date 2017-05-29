@@ -207,6 +207,13 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         Map<String, Integer> map = sxProductService.getAvailQuantity("017", "30", "105030", null);
         map.entrySet().forEach((ky)->{
             $info("TOM:" + ky.getKey() + ":" + ky.getValue() + ";");
+
+            Map<String, Object> messageMap = new HashMap<>();
+            messageMap.put("channelId", "017");
+            messageMap.put("cartId", "30");
+            messageMap.put("sku", ky.getKey());
+            sender.sendMessage("ewms_mq_stock_sync_platform_stock", messageMap);
+
         });
         {
             Date nowTime  = new Date();
@@ -222,6 +229,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             } else {
                 $info("TOM-2:N");
             }
+
         }
         // WMS切换临时测试用 END
 
