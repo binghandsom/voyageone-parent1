@@ -202,36 +202,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 //        // 输出最终结果
 //        sxProductService.doPrintResultMap(resultMap, "天猫官网同购上新", channelCartMapList);
 
-        // WMS切换临时测试用 START
-//        doUploadMain(taskControlList); // 临时先注释掉不用
-        Map<String, Integer> map = sxProductService.getAvailQuantity("017", "30", "105030", null);
-        map.entrySet().forEach((ky)->{
-            $info("TOM:" + ky.getKey() + ":" + ky.getValue() + ";");
-            List<Map<String, Object>> lst = new ArrayList<>();
-            Map<String, Object> messageMap = new HashMap<>();
-            messageMap.put("channelId", "017");
-            messageMap.put("cartId", "30");
-            messageMap.put("sku", ky.getKey());
-            sender.sendMessage("ewms_mq_stock_sync_platform_stock_017", messageMap);
-
-        });
-        {
-            Date nowTime  = new Date();
-            Date changeTime = null;
-            try {
-                changeTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-05-28 00:00:00");
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
-            if (changeTime.before(nowTime)) {
-                $info("TOM-2:Y");
-            } else {
-                $info("TOM-2:N");
-            }
-
-        }
-        // WMS切换临时测试用 END
+        doUploadMain(taskControlList);
 
         // 正常结束
         $info("天猫国际官网同购主线程正常结束");
@@ -885,7 +856,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                     messageMap.put("channelId", channelId);
                     messageMap.put("cartId", cartId);
                     messageMap.put("sku", sku);
-                    sender.sendMessage("ewms_mq_stock_sync_platform_stock", messageMap);
+                    sender.sendMessage("ewms_mq_stock_sync_platform_stock" + "_" + channelId, messageMap);
                 }
                 // 20170526 调用新的更新库存接口同步库存 END
             } else {
