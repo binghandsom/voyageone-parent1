@@ -202,7 +202,28 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 //        // 输出最终结果
 //        sxProductService.doPrintResultMap(resultMap, "天猫官网同购上新", channelCartMapList);
 
-        doUploadMain(taskControlList);
+        // WMS切换临时测试用 START
+//        doUploadMain(taskControlList); // 临时先注释掉不用
+        Map<String, Integer> map = sxProductService.getAvailQuantity("017", "30", "105030", null);
+        map.entrySet().forEach((ky)->{
+            $info("TOM:" + ky.getKey() + ":" + ky.getValue() + ";");
+        });
+        {
+            Date nowTime  = new Date();
+            Date changeTime = null;
+            try {
+                changeTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-05-28 00:00:00");
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
+            if (changeTime.before(nowTime)) {
+                $info("TOM-2:Y");
+            } else {
+                $info("TOM-2:N");
+            }
+        }
+        // WMS切换临时测试用 END
 
         // 正常结束
         $info("天猫国际官网同购主线程正常结束");
