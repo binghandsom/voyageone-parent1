@@ -6,6 +6,7 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
@@ -79,14 +80,17 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
             productCodes.add(f.getCommon().getFields().getCode());
         });
 
+        List<List<String>> productCodeList = CommonUtil.splitList(productCodes,100);
         PlatformActiveLogMQMessageBody mqMessageBody = new PlatformActiveLogMQMessageBody();
         mqMessageBody.setChannelId(channelId);
         mqMessageBody.setCartId(cartId);
         mqMessageBody.setActiveStatus(CmsConstants.PlatformActive.ToOnSale.name());
         mqMessageBody.setComment("平台被迫下架的产品，自动上架");
-        mqMessageBody.setProductCodes(productCodes);
         mqMessageBody.setSender("autoOnSale");
-        cmsMqSenderService.sendMessage(mqMessageBody);
+        productCodeList.forEach(item ->{
+            mqMessageBody.setProductCodes(item);
+            cmsMqSenderService.sendMessage(mqMessageBody);
+        });
 
     }
 }
