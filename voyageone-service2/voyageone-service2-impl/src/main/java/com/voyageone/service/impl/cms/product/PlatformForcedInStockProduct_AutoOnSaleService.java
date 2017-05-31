@@ -47,7 +47,9 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
                     continue;
                 }
                 if (isAutoOnSale(channelId, cartId)) {
+                    $info("自动上架开始");
                     onSaleByChannelId(channelId, cartId);
+                    $info("自动上架结束");
                 }
             }
         }
@@ -69,6 +71,7 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
         List<CmsBtProductModel> prodList = cmsBtProductDao.select(queryObj, channelId);
         if (prodList.size() == 0) return;
 
+        $info("需要上架的code数"+prodList.size());
 
         //productCodes
         List<String> productCodes = new ArrayList<>();
