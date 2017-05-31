@@ -2929,7 +2929,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 messageBody.setChannelId(StringUtils.isEmpty(productModel.getOrgChannelId()) ? productModel.getChannelId() : productModel.getOrgChannelId());
                 messageBody.setSku(sku.getSkuCode());
                 messageBody.setCode(field.getCode());
-                messageBody.setName(StringUtils.isEmpty(field.getOriginalTitleCn()) ? field.getProductNameEn() : field.getOriginalTitleCn());
+                // 商品名称：取英文名称，如果英文名称为空则取中文名称
+                messageBody.setName(StringUtils.isEmpty(field.getProductNameEn()) ? field.getOriginalTitleCn() : field.getProductNameEn());
                 messageBody.setBrand(field.getBrand());
                 messageBody.setColor(field.getColor());
                 messageBody.setSize(sku.getClientSize());
