@@ -45,7 +45,7 @@ define([
 
                 //只有code级别显示cart可售库存
                 $scope.vm.platformDataList = _.filter($scope.vm.platformDataList, function (item) {
-                    return !(context.fileType !== 1 && item.name.indexOf('可售库存') >= 0);
+                    return !((context.fileType !== 1 || context.fileType !== 3) && item.name.indexOf('可售库存') >= 0);
                 });
 
                 //只有sku级别显示cart是否销售

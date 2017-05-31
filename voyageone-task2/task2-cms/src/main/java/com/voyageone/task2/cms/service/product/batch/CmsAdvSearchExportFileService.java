@@ -635,7 +635,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
-                if (prop.get("name").indexOf("可售库存") > -0) continue;
                 FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
             }
         }
@@ -907,9 +906,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             String sku = (String) map.get("skuCode");
                             Boolean isSale = (Boolean) map.get("isSale");
                             if (isSale != null && isSale) {
-                                if (codesMap.get(sku) != null) {
-                                    qty = qty + codesMap.get(sku);
-                                }
+//                                qty = qty + codesMap.get(sku);
+                                qty = qty + map.getIntAttribute("qty");
                             }
                         }
                         FileUtils.cell(row, index++, unlock).setCellValue(qty);
@@ -1283,7 +1281,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             FileUtils.cell(row, index++, unlock).setCellValue("");
                             continue;
                         }
-                        if ("qty".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                         BaseMongoMap<String, Object> pSku = _platform.getSkus().stream().filter(sku -> skuItem.getSkuCode().equals(sku.get("skuCode"))).findFirst().orElse(new BaseMongoMap<>());
                         String attrName = key.substring(key.lastIndexOf(".") + 1);
                         if ("isSale".equals(attrName)) {
@@ -1296,7 +1293,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             FileUtils.cell(row, index++, unlock).setCellValue(pSku.getDoubleAttribute("priceRetail"));
                         } else if ("pPriceSaleEd".equals(attrName)) {
                             FileUtils.cell(row, index++, unlock).setCellValue(pSku.getDoubleAttribute("priceSale"));
-                        } else {
+                        } else if ("qty".equals(key.substring(key.lastIndexOf(".") + 1))){
+                            FileUtils.cell(row, index++, unlock).setCellValue( pSku.getIntAttribute("qty"));
+                        }else {
                             index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
                         }
                     }
