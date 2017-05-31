@@ -314,10 +314,14 @@ public class CmsAdvanceSearchController extends CmsController {
                     String sku = (String) map.get("skuCode");
                     Boolean isSale = (Boolean) map.get("isSale");
                     if (isSale != null && isSale) {
-                        for(CmsBtProductModel_Sku skus : cmsBtProductBean.getCommonNotNull().getSkus()){
+                        if(map.get("qty") != null){
+                            qty = qty + map.getIntAttribute("qty");
+                        }else {
+                            for (CmsBtProductModel_Sku skus : cmsBtProductBean.getCommonNotNull().getSkus()) {
 //                        for (WmsBtInventoryCenterLogicModel inventoryInfo : inventoryList) {
-                            if (skus.getSkuCode().equals(sku)) {
-                                qty = qty + skus.getQty();
+                                if (skus.getSkuCode().equals(sku)) {
+                                    qty = qty + skus.getQty();
+                                }
                             }
                         }
                     }
