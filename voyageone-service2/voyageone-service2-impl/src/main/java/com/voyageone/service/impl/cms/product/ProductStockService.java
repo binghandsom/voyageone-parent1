@@ -65,8 +65,7 @@ public class ProductStockService extends BaseService {
                     }
                 }
                 if (productModel != null) {
-                    $info(String.format("channelId=%s cartId=%d code=%s", channelId, cartId==null?0:cartId, stockBean.getItemCode()));
-
+                    $info(String.format("channelId=%s cartId=%d code=%s qty=%d", channelId, cartId==null?0:cartId, stockBean.getItemCode(), stockBean.getQty()));
                     HashMap<String, Object> updateMap = new HashMap<>();
                     HashMap<String, Object> queryMap = new HashMap<>();
 
