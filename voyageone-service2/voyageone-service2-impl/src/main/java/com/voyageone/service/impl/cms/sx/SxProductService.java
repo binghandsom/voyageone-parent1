@@ -1706,42 +1706,17 @@ public class SxProductService extends BaseService {
             if (ListUtils.notNull(sxData.getProductList())) {
                 listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
             }
-            Date nowTime  = new Date();
-            Date changeTime = null;
-            try {
-                changeTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-05-28 00:00:00");
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
             Map<String, Integer> skuLogicQtyMap = new HashMap<>();
-            if (changeTime.before(nowTime)) {
-                for (String code : listSxCode) {
-                    try {
-                        Map<String, Integer> map = getAvailQuantity(sxData.getChannelId(), String.valueOf(sxData.getCartId()), code, null);
-                        for (Map.Entry<String, Integer> e : map.entrySet()) {
-                            skuLogicQtyMap.put(e.getKey(), e.getValue());
-                        }
-                    } catch (Exception e) {
-                        String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
-                                sxData.getChannelId(), sxData.getCartId(), code, e.getMessage());
-                        throw new Exception(errorMsg);
+            for (String code : listSxCode) {
+                try {
+                    Map<String, Integer> map = getAvailQuantity(sxData.getChannelId(), String.valueOf(sxData.getCartId()), code, null);
+                    for (Map.Entry<String, Integer> e : map.entrySet()) {
+                        skuLogicQtyMap.put(e.getKey(), e.getValue());
                     }
-                }
-            } else {
-                // 所有sku取得
-                List<String> skus = new ArrayList<>();
-                for (CmsBtProductModel productModel : sxData.getProductList()) {
-                    skus.addAll(productModel.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
-                }
-                // wms逻辑库存取得
-                List<WmsBtInventoryCenterLogicModel> skuInventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailBySkuList(sxData.getChannelId(), skus);
-
-                for (WmsBtInventoryCenterLogicModel model : skuInventoryList) {
-                    if (ChannelConfigEnums.Channel.SN.getId().equals(shopBean.getOrder_channel_id())) {
-                        skuLogicQtyMap.put(model.getSku().toLowerCase(), model.getQtyChina());
-                    } else {
-                        skuLogicQtyMap.put(model.getSku(), model.getQtyChina());
-                    }
+                } catch (Exception e) {
+                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
+                            sxData.getChannelId(), sxData.getCartId(), code, e.getMessage());
+                    throw new Exception(errorMsg);
                 }
             }
             // WMS2.0切换 20170526 charis END

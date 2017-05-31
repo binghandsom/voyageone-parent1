@@ -688,28 +688,20 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                         }
                     }
                     // 20161202 达尔文货品关联问题的对应 END
-                    Date nowTime  = new Date();
-                    Date changeTime = null;
-                    try {
-                        changeTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-05-28 00:00:00");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                    // 20170526 调用新的更新库存接口同步库存 STA
+                    Map<String, Object> messageBodyMap = new HashMap<>();
+                    List<Object> messageMapList = new ArrayList<>();
+                    for (String sku : strSkuCodeList) {
+                        Map<String, Object> messageMap = new HashMap<>();
+                        messageMap.put("channelId", channelId);
+                        messageMap.put("cartId", cartId);
+                        messageMap.put("sku", sku);
+
+                        messageMapList.add(messageMap);
                     }
-                    if (changeTime.before(nowTime)) {
-                        // 20170526 调用新的更新库存接口同步库存 STA
-                        for (String sku : strSkuCodeList) {
-                            Map<String, Object> messageMap = new HashMap<>();
-                            messageMap.put("channelId", channelId);
-                            messageMap.put("cartId", cartId);
-                            messageMap.put("sku", sku);
-//                            sender.sendMessage("ewms_mq_stock_sync_platform_stock" + "_" + channelId, messageMap);
-                        }
-                        // 20170526 调用新的更新库存接口同步库存 END
-                    } else {
-                        // 20170417 调用更新库存接口同步库存 STA
-                        sxProductService.synInventoryToPlatform(channelId, String.valueOf(cartId), null, strSkuCodeList);
-                        // 20170417 调用更新库存接口同步库存 END
-                    }
+                    messageBodyMap.put("platformStocks", messageMapList);
+                    sender.sendMessage("ewms_mq_stock_sync_platform_stock" + "_" + channelId, messageBodyMap);
+                    // 20170526 调用新的更新库存接口同步库存 END
 
                     // added by morse.lu 2017/01/05 start
                     // 更新cms_bt_tm_sc_item表，把货品id记下来，同步库存用

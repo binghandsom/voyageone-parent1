@@ -202,20 +202,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 //        // 输出最终结果
 //        sxProductService.doPrintResultMap(resultMap, "天猫官网同购上新", channelCartMapList);
 
-//        doUploadMain(taskControlList);
-
-        Map<String, Object> messageBodyMap = new HashMap<>();
-        List<Object> messageMapList = new ArrayList<>();
-
-            Map<String, Object> messageMap = new HashMap<>();
-            messageMap.put("channelId", "017");
-            messageMap.put("cartId", 30);
-            messageMap.put("sku", "017-105030");
-
-            messageMapList.add(messageMap);
-
-        messageBodyMap.put("platformStocks", messageMapList);
-        sender.sendMessage("ewms_mq_stock_sync_platform_stock" + "_" + "017", messageBodyMap);
+        doUploadMain(taskControlList);
 
         // 正常结束
         $info("天猫国际官网同购主线程正常结束");
@@ -535,29 +522,18 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             if (ListUtils.notNull(sxData.getProductList())) {
                 listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
             }
-            Date nowTime  = new Date();
-            Date changeTime = null;
-            try {
-                changeTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-05-28 00:00:00");
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
             Map<String, Integer> skuLogicQtyMap = new HashMap<>();
-            if (changeTime.before(nowTime)) {
-                for (String code : listSxCode) {
-                    try {
-                        Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), code, null);
-                        for (Map.Entry<String, Integer> e : map.entrySet()) {
-                            skuLogicQtyMap.put(e.getKey(), e.getValue());
-                        }
-                    } catch (Exception e) {
-                        String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
-                                channelId, cartId, code, e.getMessage());
-                        throw new Exception(errorMsg);
+            for (String code : listSxCode) {
+                try {
+                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), code, null);
+                    for (Map.Entry<String, Integer> e : map.entrySet()) {
+                        skuLogicQtyMap.put(e.getKey(), e.getValue());
                     }
+                } catch (Exception e) {
+                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
+                            channelId, cartId, code, e.getMessage());
+                    throw new Exception(errorMsg);
                 }
-            } else {
-                skuLogicQtyMap = productService.getLogicQty(mainProduct.getOrgChannelId(), strSkuCodeList);
             }
             // WMS2.0切换 20170526 charis END
 
@@ -862,8 +838,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
             // 20170413 tom 在上新的时候已经判断过是否上架了， 所以这里只需要用之前的那个判断结果就行了 END
 
-//            if (changeTime.before(nowTime)) {
-//                // 20170526 调用新的更新库存接口同步库存 STA
+            // 20170526 调用新的更新库存接口同步库存 STA
             Map<String, Object> messageBodyMap = new HashMap<>();
             List<Object> messageMapList = new ArrayList<>();
             for (String sku : strSkuCodeList) {
@@ -876,12 +851,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             }
             messageBodyMap.put("platformStocks", messageMapList);
             sender.sendMessage("ewms_mq_stock_sync_platform_stock" + "_" + channelId, messageBodyMap);
-//                // 20170526 调用新的更新库存接口同步库存 END
-//            } else {
-//                // 20170417 调用更新库存接口同步库存 STA
-//                sxProductService.synInventoryToPlatform(channelId, String.valueOf(cartId), null, strSkuCodeList);
-//                // 20170417 调用更新库存接口同步库存 END
-//            }
+            // 20170526 调用新的更新库存接口同步库存 END
 
             // 回写PXX.pCatId, PXX.pCatPath等信息
             Map<String, String> pCatInfoMap = getSimpleItemCatInfo(shopProp, numIId);
