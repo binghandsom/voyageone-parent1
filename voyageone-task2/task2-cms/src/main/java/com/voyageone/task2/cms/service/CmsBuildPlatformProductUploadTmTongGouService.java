@@ -856,7 +856,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                     messageMap.put("channelId", channelId);
                     messageMap.put("cartId", cartId);
                     messageMap.put("sku", sku);
-                    sender.sendMessage("ewms_mq_stock_sync_platform_stock" + "_" + channelId, messageMap);
+//                    sender.sendMessage("ewms_mq_stock_sync_platform_stock" + "_" + channelId, messageMap);
                 }
                 // 20170526 调用新的更新库存接口同步库存 END
             } else {
