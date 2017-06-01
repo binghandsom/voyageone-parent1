@@ -6266,7 +6266,7 @@ public class SxProductService extends BaseService {
             }
         } catch (Exception e) {
             String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [sku:%s] [errorMsg:%s]",
-                    channelId, cartId, code, sku, response.getMessage());
+                    channelId, cartId, code, sku, e.getMessage());
             throw new Exception(errorMsg);
         }
         return null;
