@@ -41,19 +41,30 @@ define([
                 function initialize() {
                     scope.showDetail = false;
                     scope.thConfig = _inventConfig.orgTh;
+                    scope.noStock = false;
+                    scope.noStockSkus = [];
                 	productDetailService.getSkuStockInfo(scope.productInfo.productId)
                 	.then(function(resp) {
-                		var tblData = resp.data.data;
-                		countTotalStock(tblData);
-                		resetHeaderView(tblData.header);
-                		scope.tblData = tblData;
-                		// 重新设置表头的合并列
-                        angular.extend(_inventConfig.expandTh, {
-                            inOwnColumns: tblData.header.inOwn.length,
-                            inNOwnColumns: tblData.header.inNOwn.length,
-                            gbOwnColumns: tblData.header.gbOwn.length,
-                            gbNOwnColumns: tblData.header.gbNOwn.length
-                        });
+                        var stockData = resp.data.stockDetail.data;
+                	    if (!stockData || !stockData.stocks) {
+                            scope.noStock = true;
+                        } else {
+                	        var noStockSkuData = resp.data.noStockSkus;
+                	        if (noStockSkuData && noStockSkuData.length > 0) {
+                                scope.noStockSkus = angular.copy(noStockSkuData);
+                            }
+                            var tblData = angular.copy(stockData);
+                            countTotalStock(tblData);
+                            resetHeaderView(tblData.header);
+                            scope.tblData = tblData;
+                            // 重新设置表头的合并列
+                            angular.extend(_inventConfig.expandTh, {
+                                inOwnColumns: tblData.header.inOwn.length,
+                                inNOwnColumns: tblData.header.inNOwn.length,
+                                gbOwnColumns: tblData.header.gbOwn.length,
+                                gbNOwnColumns: tblData.header.gbNOwn.length
+                            });
+                        }
                 	});
                 }
                 

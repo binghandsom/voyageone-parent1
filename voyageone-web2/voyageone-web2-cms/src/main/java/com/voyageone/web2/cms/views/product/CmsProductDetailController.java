@@ -312,9 +312,7 @@ public class CmsProductDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_SKU_STOCK_INFO)
     public AjaxResponse getSkuStockInfo(@RequestBody String productId) {
     	Preconditions.checkArgument(StringUtils.isNotBlank(productId));
-
-        GetStoreStockDetailResponse skuStock = productPropsEditService.getStockInfoBySku(getUser().getSelChannelId(), Long.valueOf(productId));
-    	return success(skuStock);
+    	return success(productPropsEditService.getStockInfoBySku(getUser().getSelChannelId(), Long.valueOf(productId)));
     }
 
     /**

@@ -78,8 +78,10 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR;
@@ -1316,7 +1318,8 @@ public class CmsProductDetailService extends BaseViewService {
     /**
      * 查询商品的库存信息（合并SKU与库存信息）
      */
-    public GetStoreStockDetailResponse getStockInfoBySku(String channelId, long productId) {
+    public Map<String, Object> getStockInfoBySku(String channelId, long productId) {
+        Map<String, Object> resultMap = new HashMap<>();
         // 查询商品信息
         CmsBtProductModel productInfo = productService.getProductById(channelId, productId);
         if (productInfo == null) {
@@ -1332,6 +1335,8 @@ public class CmsProductDetailService extends BaseViewService {
         GetStoreStockDetailResponse stockDetail = voApiClient.execute(storeStockDetailRequest);
         $info(String.format("从WMS实时查询Code(channelId=%s, code=%s)下SKU库存, API返回结果:%s", channelId, code, JacksonUtil.bean2Json(stockDetail)));
 
+        Set<String> commonSkus = new HashSet<>();
+        Set<String> stockSkus = new HashSet<>();
         // 取得SKU的平台尺寸信息
         List<CmsBtProductModel_Sku> skus = productInfo.getCommon().getSkus();
         Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, productInfo.getCommon().getFields().getBrand(),
@@ -1339,12 +1344,18 @@ public class CmsProductDetailService extends BaseViewService {
         if (MapUtils.isNotEmpty(sizeMap)) {
             skus.forEach(sku -> {
                 sku.setAttribute("platformSize", sizeMap.get(sku.getSize()));
+                commonSkus.add(sku.getSkuCode());
+            });
+        } else {
+            skus.forEach(sku -> {
+                commonSkus.add(sku.getSkuCode());
             });
         }
 
         // 更新商品库存中的SKU尺寸信息
         if (stockDetail != null && stockDetail.getData() != null && CollectionUtils.isNotEmpty(stockDetail.getData().getStocks())) {
             stockDetail.getData().getStocks().forEach(stock -> {
+                stockSkus.add(stock.getBase().getSku());
                 CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku) CollectionUtils.find(skus, new Predicate() {
                     @Override
                     public boolean evaluate(Object object) {
@@ -1358,8 +1369,12 @@ public class CmsProductDetailService extends BaseViewService {
                 }
             });
         }
-
-        return stockDetail;
+        resultMap.put("stockDetail", stockDetail); // 从WMS查询的SKU库存详情
+        boolean existNoStockSku = commonSkus.removeAll(stockSkus);
+        if (existNoStockSku) {
+            resultMap.put("noStockSkus", commonSkus); // CMS中有但WMS SKU库存查询结果中不包含的SKU
+        }
+        return resultMap;
     }
 
     /**
