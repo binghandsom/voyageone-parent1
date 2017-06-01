@@ -434,7 +434,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 if(product.getPlatform(cartId) != null) {
                     image.put("qty", product.getPlatform(cartId).getIntAttribute("quantity"));
                 }else{
-                    image.put("qty", 0);
+                    image.put("qty", product.getCommonNotNull().getFieldsNotNull().getQuantity());
                 }
                 if (product.getPlatform(cartId) != null) {
                     image.put("priceSaleSt", product.getPlatform(cartId).getpPriceSaleSt());
