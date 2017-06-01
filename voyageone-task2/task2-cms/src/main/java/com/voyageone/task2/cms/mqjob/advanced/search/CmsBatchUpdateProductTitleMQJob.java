@@ -15,7 +15,7 @@ import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
-import com.voyageone.task2.cms.mqjob.TBaseMQCmsSubService;
+import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +36,7 @@ import java.util.Map;
  */
 @Service
 @VOSubRabbitListener
-public class CmsBatchUpdateProductTitleMQJob extends TBaseMQCmsSubService<CmsBatchUpdateProductTitleMQMessageBody> {
+public class CmsBatchUpdateProductTitleMQJob extends TBaseMQCmsService<CmsBatchUpdateProductTitleMQMessageBody> {
 
     @Autowired
     private ProductService productService;
