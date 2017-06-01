@@ -64,8 +64,8 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
     // 指定平台上架
     private void onSaleByChannelId(String channelId, int cartId) {
         //被迫下架的产品的code
-        String queryformat = "{lock:'0',\"common.fields.quantity\":{ $gt:0},\"platforms.P%s.pStatus\":'OnSale',\"platforms.P%s.pReallyStatus\":'InStock'}";
-        String strQuery = String.format(queryformat, cartId, cartId);
+        String queryformat = "{\"platforms.P%s.lock\":'0',\"platforms.P%s.quantity\":{ $gt:0},\"platforms.P%s.pStatus\":'OnSale',\"platforms.P%s.pReallyStatus\":'InStock'}";
+        String strQuery = String.format(queryformat, cartId, cartId, cartId, cartId);
         JongoQuery queryObj = new JongoQuery();
         queryObj.setQuery(strQuery);
         queryObj.setProjectionExt("common.fields.code");
