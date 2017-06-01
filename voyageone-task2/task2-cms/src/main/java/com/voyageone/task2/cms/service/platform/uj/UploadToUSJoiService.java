@@ -2123,7 +2123,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
     }
 
     private void checkProduct(CmsBtProductModel cmsProduct) {
-        if (!ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId().equals(cmsProduct.getOrgChannelId())) {
+        if (!ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId().equals(cmsProduct.getOrgChannelId()) && !ChannelConfigEnums.Channel.OverStock.getId().equals(cmsProduct.getOrgChannelId()) ) {
             if (StringUtil.isEmpty(cmsProduct.getCommonNotNull().getCatPath())) {
                 throw new BusinessException("主类目没有计算成功");
             }
