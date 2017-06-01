@@ -253,11 +253,16 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
                 $error(errorMsg);
                 throw new BusinessException(errorMsg);
             }
-            // 如果取得上新对象商品信息出错时，报错
-            if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
-                String errorMsg = sxData.getErrorMessage();
-                // 有错误的时候，直接报错
-                throw new BusinessException(errorMsg);
+            if (!workloadName.equals(PlatformWorkloadAttribute.SELLER_CIDS.getValue()) // 更新店铺内分类报错也没关系
+                    && !workloadName.equals(PlatformWorkloadAttribute.TITLE.getValue()) // 更新标题报错也没关系
+                    && !workloadName.equals(PlatformWorkloadAttribute.SELL_POINTS.getValue()) // 更新卖点报错也没关系
+                    ) {
+                // 如果取得上新对象商品信息出错时，报错
+                if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
+                    String errorMsg = sxData.getErrorMessage();
+                    // 有错误的时候，直接报错
+                    throw new BusinessException(errorMsg);
+                }
             }
             // 主产品等列表取得
             CmsBtProductModel mainProduct = sxData.getMainProduct();
