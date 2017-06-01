@@ -253,6 +253,8 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
                 $error(errorMsg);
                 throw new BusinessException(errorMsg);
             }
+
+            // TODO: 这样判断并不好， 但是为了让sneakersneakerhead活动能正常进行， 临时这样处理一下
             if (!workloadName.equals(PlatformWorkloadAttribute.SELLER_CIDS.getValue()) // 更新店铺内分类报错也没关系
                     && !workloadName.equals(PlatformWorkloadAttribute.TITLE.getValue()) // 更新标题报错也没关系
                     && !workloadName.equals(PlatformWorkloadAttribute.SELL_POINTS.getValue()) // 更新卖点报错也没关系
