@@ -55,6 +55,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -303,11 +305,25 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
             // add by desmond 2016/10/31 start
             // 查询mySql表中的sku列表(一个产品查询一次，如果每个sku更新/新增的时候都去查的话，效率太低了)
-            List<CmsBtJmSkuModel> currentCmsBtJmSkuList = getCmsBtJmSkuModels(channelId, productCode);
+            List<CmsBtJmSkuModel> currentCmsBtJmSkuList = getCmsBtJmSkuModels(channelId, productCode, product.getOrgChannelId());
             // add by desmond 2016/10/31 end
 
-            //取库存
-            Map<String, Integer> skuLogicQtyMap = productService.getLogicQty(StringUtils.isNullOrBlank2(product.getOrgChannelId())? channelId :  product.getOrgChannelId(), jmCart.getSkus().stream().map(w->w.getStringAttribute("skuCode")).collect(Collectors.toList()));
+            // WMS2.0切换 20170526 charis STA
+            // 上新对象code
+            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
+            for (String code : listSxCode) {
+                try {
+                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(work.getCartId()), code, null);
+                    for (Map.Entry<String, Integer> e : map.entrySet()) {
+                        skuLogicQtyMap.put(e.getKey(), e.getValue());
+                    }
+                } catch (Exception e) {
+                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
+                            channelId, work.getCartId(), code, e.getMessage());
+                    throw new Exception(errorMsg);
+                }
+            }
+            // WMS2.0切换 20170526 charis END
 
             //是否为智能上新
             boolean blnIsSmartSx = sxProductService.isSmartSx(shop.getOrder_channel_id(), Integer.parseInt(shop.getCart_id()));
@@ -418,7 +434,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         jmsku.setJmSpuNo(spu.getJumei_spu_no());
 //                        cmsBtJmSkuDao.insert(jmsku);
                         // 插入或更新MySql的cms_bt_jm_sku表(以前无条件插入的话，如果有脏数据存在就会报MySql表主键冲突的错误)
-                        insertOrUpdateCmsBtJmSku(jmsku, channelId, productCode);
+                        insertOrUpdateCmsBtJmSku(jmsku, channelId, productCode, product.getOrgChannelId());
                         // update by desmond 2016/10/31 end
                         $info("新增CmsBtJmSku成功！[JM_SPU_NO:%s], [ProductId:%s], [ChannelId:%s], [CartId:%s]", spu.getJumei_spu_no(), product.getProdId(), channelId, CART_ID);
                     }
@@ -498,7 +514,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         String jmProductId = jmGetProductInfoRes.getProduct_id();
 
                         //查找Product,并保存到数据库
-                        CmsBtJmProductModel  productModel = getCmsBtJmProductModel(channelId, productCode);
+                        CmsBtJmProductModel  productModel = getCmsBtJmProductModel(channelId, productCode, product.getOrgChannelId());
                         if(productModel == null)
                         {
                             cmsBtJmProductModel.setOriginJmHashId(originHashId);
@@ -527,7 +543,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                 jmsku.setJmSkuNo(spu.getSku_no());
                                 jmsku.setJmSpuNo(spu.getSpu_no());
 //                                cmsBtJmSkuDao.update(jmsku);
-                                insertOrUpdateCmsBtJmSku(jmsku, channelId, productCode);
+                                insertOrUpdateCmsBtJmSku(jmsku, channelId, productCode, product.getOrgChannelId());
                                 $info("保存聚美SKU成功！[JM_SPU_NO:%s], [ProductId:%s], [ChannelId:%s], [CartId:%s]", spu.getSpu_no(), product.getProdId(), channelId, CART_ID);
                             }
                         }
@@ -659,7 +675,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 BaseMongoMap<String, Object> jmFields = jmCart.getFields();
 
                 //查询jm_product
-                CmsBtJmProductModel jmProductModel = getCmsBtJmProductModel(channelId, productCode);
+                CmsBtJmProductModel jmProductModel = getCmsBtJmProductModel(channelId, productCode, product.getOrgChannelId());
                 boolean needAdd = false;
                 if(jmProductModel == null)
                 {
@@ -685,7 +701,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                     }
 
                     //查询MySQL库SPU
-                    List<CmsBtJmSkuModel> skuList = getCmsBtJmSkuModels(channelId, productCode);
+                    List<CmsBtJmSkuModel> skuList = getCmsBtJmSkuModels(channelId, productCode, product.getOrgChannelId());
 
                     List<BaseMongoMap<String, Object>> newSkuList = jmCart.getSkus();
                     List<CmsBtProductModel_Sku> commonSkus = product.getCommon().getSkus();
@@ -746,18 +762,18 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                     mySku.setMsrpUsd(new BigDecimal(skuMap.getDoubleAttribute("clientMsrpPrice")));
                                     mySku.setModifier(getTaskName());
 //                                    cmsBtJmSkuDao.update(mySku);
-                                    insertOrUpdateCmsBtJmSku(mySku, channelId, productCode);
+                                    insertOrUpdateCmsBtJmSku(mySku, channelId, productCode, product.getOrgChannelId());
                                 }
                                 else
                                 {
                                     // 如果MySQL库中没有这条SKU,则新增一条
-                                    CmsBtJmSkuModel mySku = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
+                                    CmsBtJmSkuModel mySku = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr, product.getOrgChannelId());
                                     mySku.setJmSpuNo(oldSku.getSpu_no());
                                     mySku.setJmSkuNo(oldSku.getSku_no());
                                     mySku.setModifier(getTaskName());
                                     mySku.setModified(new Date());
 //                                    cmsBtJmSkuDao.insert(mySku);
-                                    insertOrUpdateCmsBtJmSku(mySku, channelId, productCode);
+                                    insertOrUpdateCmsBtJmSku(mySku, channelId, productCode, product.getOrgChannelId());
                                     // 这里不追加的话，后面还以为这个sku还是不存在，再insert就会出错
                                     skuList.add(mySku);
                                 }
@@ -815,14 +831,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                         mySku.setModifier(getTaskName());
                                         mySku.setModified(new Date());
 //                                        cmsBtJmSkuDao.update(mySku);
-                                        insertOrUpdateCmsBtJmSku(mySku, channelId, productCode);
+                                        insertOrUpdateCmsBtJmSku(mySku, channelId, productCode, product.getOrgChannelId());
                                     } else
                                     {
-                                        CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
+                                        CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr, product.getOrgChannelId());
                                         cmsBtJmSkuModel.setJmSpuNo(oldSku.getSpu_no());
                                         cmsBtJmSkuModel.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
 //                                        cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
-                                        insertOrUpdateCmsBtJmSku(cmsBtJmSkuModel, channelId, productCode);
+                                        insertOrUpdateCmsBtJmSku(cmsBtJmSkuModel, channelId, productCode, product.getOrgChannelId());
 
                                         skuMap.setStringAttribute("jmSkuNo", htSkuAddResponse.getJumei_sku_no());
                                     }
@@ -921,11 +937,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                     addSkuList.add(skuCode);
                                     // added by morse.lu 2016/09/01 end
 
-                                    CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
+                                    CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr, product.getOrgChannelId());
                                     cmsBtJmSkuModel.setJmSpuNo(htSpuAddResponse.getJumei_spu_no());
                                     cmsBtJmSkuModel.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
 //                                    cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
-                                    insertOrUpdateCmsBtJmSku(cmsBtJmSkuModel, channelId, productCode);
+                                    insertOrUpdateCmsBtJmSku(cmsBtJmSkuModel, channelId, productCode, product.getOrgChannelId());
 
                                     skuMap.setStringAttribute("jmSkuNo", htSkuAddResponse.getJumei_sku_no());
                                 }
@@ -1432,11 +1448,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      * @param productCode
      * @return
      */
-    private List<CmsBtJmSkuModel> getCmsBtJmSkuModels(String channelId, String productCode) {
+    private List<CmsBtJmSkuModel> getCmsBtJmSkuModels(String channelId, String productCode, String orgChannelId) {
         Map<String, Object> map = new HashMap<>();
         map.put("productCode", productCode);
         map.put("channelId", channelId);
-
+        map.put("orgChannelId", orgChannelId);
         List<CmsBtJmSkuModel> skuList = cmsBtJmSkuDao.selectList(map);
         if (skuList == null) {
             skuList = new ArrayList<>();
@@ -1451,11 +1467,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      * @param productCode
      * @return
      */
-    private CmsBtJmSkuModel getCmsBtJmSkuModel(String channelId, String productCode, String skuCode) {
+    public CmsBtJmSkuModel getCmsBtJmSkuModel(String channelId, String productCode, String skuCode, String orgChannelId) {
         Map<String, Object> map = new HashMap<>();
         map.put("channelId", channelId);
         map.put("productCode", productCode);
         map.put("skuCode", skuCode);
+        map.put("orgChannelId", orgChannelId);
 
         CmsBtJmSkuModel skuModel = cmsBtJmSkuDao.selectOne(map);
 
@@ -1469,11 +1486,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      * @param productCode
      * @return
      */
-    private CmsBtJmProductModel getCmsBtJmProductModel(String channelId, String productCode) {
+    private CmsBtJmProductModel getCmsBtJmProductModel(String channelId, String productCode, String orgChannelId) {
         Map<String, Object> productMap = new HashMap<>();
         productMap.put("productCode", productCode);
         productMap.put("channelId", channelId);
-
+        productMap.put("orgChannelId", orgChannelId);
         CmsBtJmProductModel model = cmsBtJmProductDao.selectOne(productMap);
 
         return model;
@@ -1882,7 +1899,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         String channelId =  product.getChannelId();
         CmsBtProductModel_Field fields =  product.getCommon().getFields();
         String productCode = fields.getCode();
-
         if(list == null)
         {
             list  = new ArrayList<>();
@@ -1903,7 +1919,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 //            String  sizeStr = getSizeFromSizeMap(size, channelId, brandName, productType, sizeType);
             String  sizeStr = jmSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
             // update by desmond 2016/07/08 end
-            CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, jmSku, sizeStr);
+            CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, jmSku, sizeStr, product.getOrgChannelId());
             list.add(cmsBtJmSkuModel);
             }
         }
@@ -1951,6 +1967,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         cmsBtJmProductModel.setColorEn(fields.getColor());
         cmsBtJmProductModel.setMaterialEn(fields.getMaterialEn());
         cmsBtJmProductModel.setMaterialCn(fields.getMaterialCn());
+        cmsBtJmProductModel.setOrgChannelId(product.getOrgChannelId());
         // 回写cms_bt_jm_product表时取得图片逻辑修改
         List<CmsBtProductModel_Field_Image> field_images = sxProductService.getProductImages(product, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE, CART_ID);
         if (ListUtils.notNull(field_images) && field_images.get(0) != null) {
@@ -2038,7 +2055,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      * @param jmSku
      * @return
      */
-    protected CmsBtJmSkuModel fillNewCmsBtJmSkuModel(String channelId, String productCode, BaseMongoMap<String, Object> jmSku, String sizeStr ) {
+    protected CmsBtJmSkuModel fillNewCmsBtJmSkuModel(String channelId, String productCode,
+                                                     BaseMongoMap<String, Object> jmSku, String sizeStr, String orgChannelId ) {
         CmsBtJmSkuModel cmsBtJmSkuModel = new CmsBtJmSkuModel();
         cmsBtJmSkuModel.setChannelId(channelId);
         cmsBtJmSkuModel.setProductCode(productCode);
@@ -2059,6 +2077,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         cmsBtJmSkuModel.setCreated(DateTimeUtil.getDate());
         cmsBtJmSkuModel.setModifier(getTaskName());
         cmsBtJmSkuModel.setCreater(getTaskName());
+        cmsBtJmSkuModel.setOrgChannelId(orgChannelId);
         return cmsBtJmSkuModel;
     }
 
@@ -2207,11 +2226,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
                         // 回写
                         String sizeStr = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
-                        CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(product.getChannelId(), product.getCommon().getFields().getCode(), sku, sizeStr);
+                        CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(product.getChannelId(), product.getCommon().getFields().getCode(), sku, sizeStr, product.getOrgChannelId());
                         cmsBtJmSkuModel.setJmSpuNo(sku.getStringAttribute("jmSpuNo"));
                         cmsBtJmSkuModel.setJmSkuNo(jumeiSkuNo);
 //                        cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
-                        insertOrUpdateCmsBtJmSku(cmsBtJmSkuModel, product.getChannelId(), product.getCommon().getFields().getCode());
+                        insertOrUpdateCmsBtJmSku(cmsBtJmSkuModel, product.getChannelId(), product.getCommon().getFields().getCode(), product.getOrgChannelId());
 
                         sku.setStringAttribute("jmSkuNo", jumeiSkuNo);
                         saveProductPlatform(product.getChannelId(), product);
@@ -2321,7 +2340,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
         // add by desmond 2016/10/18 start
         // 回写mallId到voyageone_cms2.cms_bt_jm_product表中
-        CmsBtJmProductModel productModel = getCmsBtJmProductModel(channelId, code);
+        CmsBtJmProductModel productModel = getCmsBtJmProductModel(channelId, code, product.getOrgChannelId());
         if(productModel != null) {
             productModel.setJumeiMallId(mallId);
             cmsBtJmProductDao.update(productModel);
@@ -2888,7 +2907,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      * @param channelId 渠道id
      * @param channelId 产品code
      */
-    protected void insertOrUpdateCmsBtJmSku(CmsBtJmSkuModel jmsku, String channelId, String productCode) {
+    protected void insertOrUpdateCmsBtJmSku(CmsBtJmSkuModel jmsku, String channelId, String productCode, String orgChannelId) {
         if (jmsku == null || StringUtils.isEmpty(jmsku.getSkuCode())) return;
 
         // 20170425 tom 由于只回写jmSpuNo和jmSkuNo， 那么如果是空的， 那么这个sku就没必须回写了 START
@@ -2896,7 +2915,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         // 20170425 tom 由于只回写jmSpuNo和jmSkuNo， 那么如果是空的， 那么这个sku就没必须回写了 END
 
         // 查询mySql表中的sku列表(一个产品查询一次，如果每个sku更新/新增的时候都去查的话，效率太低了)
-        CmsBtJmSkuModel currentCmsBtJmSku = getCmsBtJmSkuModel(channelId, productCode, jmsku.getSkuCode());
+        CmsBtJmSkuModel currentCmsBtJmSku = getCmsBtJmSkuModel(channelId, productCode, jmsku.getSkuCode(), orgChannelId);
 
         if (currentCmsBtJmSku == null) {
             // 不存在，新增
@@ -2981,12 +3000,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
                 // 其实这个mysql的库存同步用表cms_bt_jm_sku里面的channelId应该回写成原始channelId的(其他上新都是回写成原始channelId)，
                 // 但库存同步那边做了相应的mapping配置，所以聚美sku表里面回写成Liking(928)也没问题
-                CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, code, sku, sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
+                CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, code, sku, sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()), prodObj.getOrgChannelId());
                 cmsBtJmSkuModel.setJmSpuNo(pSku.getStringAttribute("jmSpuNo"));   // 设置成mongo表中的spu_no
                 cmsBtJmSkuModel.setJmSkuNo(pSku.getStringAttribute("jmSkuNo"));   // 设置成mongo表中的sku_no
 
                 // 回写mysql的cms_bt_jm_sku表中(存在时更新，不存在时新增)
-                insertOrUpdateCmsBtJmSku(cmsBtJmSkuModel, channelId, code);
+                insertOrUpdateCmsBtJmSku(cmsBtJmSkuModel, channelId, code, prodObj.getOrgChannelId());
             }
         }
     }

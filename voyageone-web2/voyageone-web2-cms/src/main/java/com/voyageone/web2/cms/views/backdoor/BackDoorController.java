@@ -1753,10 +1753,6 @@ public class BackDoorController extends CmsController {
 
             Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, productInfo.getCommon().getFields().getBrand(), productInfo.getCommon().getFields().getProductType(), productInfo.getCommon().getFields().getSizeType());
 
-            String skuChannelId = StringUtils.isEmpty(productInfo.getOrgChannelId()) ? channelId : productInfo.getOrgChannelId();
-            Map<String, Integer> skuInventoryList = productService.getProductSkuQty(skuChannelId, productInfo.getCommon().getFields().getCode());
-
-
             Map<String, skuPlatformSizeAndQty> tempInfo = new HashMap<>();
             Map<String, String> tempSkuInfo = new HashMap<String, String>();
             if (sizeMap != null && sizeMap.size() > 0) {
@@ -1765,7 +1761,7 @@ public class BackDoorController extends CmsController {
                     skuPlatformSizeAndQty tempQtyAndPlatformSize = new skuPlatformSizeAndQty();
                     tempQtyAndPlatformSize.setSkuCode(sku.getSkuCode());
                     tempQtyAndPlatformSize.setPlatformSize(sizeMap.get(sku.getSize()));
-                    tempQtyAndPlatformSize.setQty(skuInventoryList.get(sku.getSkuCode()) == null ? 0 : skuInventoryList.get(sku.getSkuCode()));
+                    tempQtyAndPlatformSize.setQty(sku.getQty() == null ? 0 : sku.getQty());
 
                     if (tempInfo.containsKey(sku.getBarcode()) && !StringUtils.isEmpty(sizeMap.get(sku.getSize()))) {
 

@@ -100,9 +100,6 @@ public class CmsMqRoutingKey {
     // 聚美活动价格同步到聚美商城价格
     public static final String CMS_JM_MALL_PROMOTION_PRICE_SYNC = "VOCmsJmMallPromotionPriceSyncQueue";
 
-    //批量lock平台    added by piao
-    public static final String  CMS_ADV_SEARCH_LOCK_PRODUCTS = "VOCmsAdvSearchLockProductsMQJobQueue";
-
     // 检测产品数据是否正确
     public static final String CMS_CHECK_PRODUCT_IS_RIGHT = "VOCmsCheckProductIsRightQueue";
 
@@ -112,17 +109,38 @@ public class CmsMqRoutingKey {
     // feed数据导入接口
     public static final String CMS_FEED_IMPORT_MQ_JOB = "CmsFeedImportMQJobQueue";
 
+    // feed数据批量设置主类目
+    public static final String CMS_FEED_SET_CATEGORY_MQ_JOB = "CmsFeedSetCategoryQueue";
+
+
     // VMS价格和库存变更 通知CMS更新feedInfo
     public static final String CMS_FEED_SKU_PQ_MQ_JOB = "CmsFeedSkuPqMQJobQueue";
 
     //sneakerHead根据活动里面的产品找出同一group的商品加入活动
     public static final String CMS_SNEAKERHEAD_ADD_PROMOTION = "CmsSneakerheadAddPromotionMQJobQueue";
 
+    // 活动(非聚美)商品导出
+    public static final String CMS_PROMOTION_EXPORT = "CmsPromotionExportMQJobQueue";
+
+    //批量lock平台    added by piao
+    public static final String  CMS_ADV_SEARCH_LOCK_PRODUCTS = "VOCmsAdvSearchLockProductsMQJobQueue";
+
+    /**库存相关MQ*/
+    public static final String CMS_STOCK_CART_CHANGED_STOCK = "VOCmsStockCartChangedStockMqJobQueue";
+
+    /**组合商品推送MQ*/
+    public static final String EWMS_MQ_GROUP_SKU = "ewms_mq_group_sku";
+
+    /**
+     * 往wms推送产品信息(新建/更新)
+     */
+    public static final String EWMS_MQ_CREATE_OR_UPDATE_PRODUCT = "ewms_mq_create_or_update_product";
     // 高级检索批量修改商品标题
     public static final String CMS_BATCH_UPDATE_PRODUCT_TITLE = "VOCmsBatchUpdateProductTitleMQJobQueue";
 
 
     // 未整理的业务内容
+
     /**
      * image create task
      */

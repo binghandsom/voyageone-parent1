@@ -4,6 +4,8 @@ import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.product.DelistingParameter;
 import com.voyageone.service.bean.cms.product.GetChangeMastProductInfoParameter;
 import com.voyageone.service.bean.cms.product.SetMastProductParameter;
+import com.voyageone.web2.sdk.api.response.wms.GetStoreStockDetailResponse;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,5 +68,14 @@ public class CmsProductDetailServiceTest {
         parameter.setComment("说明");
         System.out.println(JacksonUtil.bean2Json(parameter));
         cmsProductDetailService.delistinGroup(parameter, "syste");
+    }
+
+    @Test
+    public void testGetStockInfoBySku() throws Exception {
+
+
+        GetStoreStockDetailResponse response = cmsProductDetailService.getStockInfoBySku("001", 4398212);
+        System.out.println(response.getCode());
+
     }
 }

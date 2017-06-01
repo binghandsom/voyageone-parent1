@@ -6,6 +6,7 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
@@ -47,7 +48,9 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
                     continue;
                 }
                 if (isAutoOnSale(channelId, cartId)) {
+                    $info("自动上架开始");
                     onSaleByChannelId(channelId, cartId);
+                    $info("自动上架结束");
                 }
             }
         }
@@ -61,14 +64,15 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
     // 指定平台上架
     private void onSaleByChannelId(String channelId, int cartId) {
         //被迫下架的产品的code
-        String queryformat = "{lock:'0',\"common.fields.quantity\":{ $gt:0},\"platforms.P%s.pStatus\":'OnSale',\"platforms.P%s.pReallyStatus\":'InStock'}";
-        String strQuery = String.format(queryformat, cartId, cartId);
+        String queryformat = "{\"platforms.P%s.lock\":'0',\"platforms.P%s.quantity\":{ $gt:0},\"platforms.P%s.pStatus\":'OnSale',\"platforms.P%s.pReallyStatus\":'InStock'}";
+        String strQuery = String.format(queryformat, cartId, cartId, cartId, cartId);
         JongoQuery queryObj = new JongoQuery();
         queryObj.setQuery(strQuery);
         queryObj.setProjectionExt("common.fields.code");
         List<CmsBtProductModel> prodList = cmsBtProductDao.select(queryObj, channelId);
         if (prodList.size() == 0) return;
 
+        $info("需要上架的code数"+prodList.size());
 
         //productCodes
         List<String> productCodes = new ArrayList<>();
@@ -76,14 +80,17 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
             productCodes.add(f.getCommon().getFields().getCode());
         });
 
+        List<List<String>> productCodeList = CommonUtil.splitList(productCodes,100);
         PlatformActiveLogMQMessageBody mqMessageBody = new PlatformActiveLogMQMessageBody();
         mqMessageBody.setChannelId(channelId);
         mqMessageBody.setCartId(cartId);
         mqMessageBody.setActiveStatus(CmsConstants.PlatformActive.ToOnSale.name());
         mqMessageBody.setComment("平台被迫下架的产品，自动上架");
-        mqMessageBody.setProductCodes(productCodes);
         mqMessageBody.setSender("autoOnSale");
-        cmsMqSenderService.sendMessage(mqMessageBody);
+        productCodeList.forEach(item ->{
+            mqMessageBody.setProductCodes(item);
+            cmsMqSenderService.sendMessage(mqMessageBody);
+        });
 
     }
 }

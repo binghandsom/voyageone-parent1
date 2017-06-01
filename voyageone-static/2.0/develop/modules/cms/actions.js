@@ -98,7 +98,9 @@ define(function () {
                     "updateFeedStatus": "updateFeedStatus",
                     "doExport": "export",
                     "exportSearch": "exportSearch",
-                    "download": "download"
+                    "download": "download",
+                    "updateMainCategory":"updateMainCategory",
+                    "batchUpdateMainCategory":"batchUpdateMainCategory"
                 }
             },
             "group": {
@@ -165,7 +167,8 @@ define(function () {
                     doTranslateStatus: "doTranslateStatus",
                     getProductIdByCode: "getProductIdByCode",
                     upperLowerFrame: "upperLowerFrame",
-                    lockPlatForm: "lockPlatForm"
+                    lockPlatForm: "lockPlatForm",
+                    updateOriginalTitleCn:"updateOriginalTitleCn"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -239,6 +242,8 @@ define(function () {
                     "updatePromotion": "updatePromotion",
                     "delPromotion": "delPromotion",
                     "exportPromotion": "exportPromotion",
+                    "getPromotionExportTask":"getPromotionExportTask",
+                    "downloadPromotionExport":"downloadPromotionExport",
                     getPage: "getPage",
                     getCount: "getCount",
                     getEditModel: "getEditModel",

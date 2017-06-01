@@ -291,7 +291,7 @@
                                                        ng-true-value="true" ng-false-value="false">
                                             </td>
                                             <td class="text-center v-middle">{{entity.skuCode}}</td>
-                                            <td class="text-center v-middle">{{ctrl.vm.skuTemp[entity.skuCode].qty}}
+                                            <td class="text-center v-middle">{{entity.qty ? entity.qty : ctrl.vm.skuTemp[entity.skuCode].qty}}</td>
                                             </td>
                                             <td class="text-center v-middle">{{ctrl.vm.skuTemp[entity.skuCode].size}}
                                             </td>

@@ -8,7 +8,9 @@ import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdSkuService;
+import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -23,8 +25,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,6 +50,9 @@ public class CmsBuildPlatformProductUploadJdNewServiceTest {
 
     @Autowired
     CmsBtProductDao cmsBtProductDao;
+
+    @Autowired
+    SxProductService sxProductService;
 
     @Test
     public void testOnStartup() throws Exception {
@@ -354,5 +361,36 @@ public class CmsBuildPlatformProductUploadJdNewServiceTest {
         System.out.println("==================================================================");
         System.out.println("自动生成的jdSkuId更新SQL文： " + sqlFileName);
 
+    }
+    @Test
+    public void testUpdateImsBtProduct() {
+        String channelId = "928";
+        long groupId = 1323281L;
+        SxData sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
+
+        if (sxData == null) {
+            System.out.println("sxData == null");
+            return;
+        }
+
+        sxProductService.updateImsBtProduct(sxData, "charis");
+
+    }
+
+    @Test
+    public void testDate() throws ParseException {
+
+        Date changeTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2017-05-28 00:00:00");
+        Date nowTime  = new Date();
+
+        System.out.println("是否到28号0点了？   " + changeTime.before(nowTime));
+    }
+
+    @Test
+    public void testQty() throws Exception{
+
+        Map<String, Integer> skuQtyMap = sxProductService.getAvailQuantity("001", "24", "ay8282", null);
+
+        System.out.println("hehe");
     }
 }

@@ -700,10 +700,17 @@
                                             </span>
                                             <span class="label label-success m-t-xs m-r-sm" ng-if="vm.masterData.isminimall==1&&productInfo._prodOrgChaName">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>&nbsp;
                                             <!-- Todo 标签 -->
-                                            <span ng-if="productInfo.freeTags != null && productInfo.freeTags.length > 0 && productInfo._freeTagsInfo">&nbsp;&nbsp;
-                                                <button ng-controller="showPopoverCtrl" popover-html="showInfo(productInfo._freeTagsInfo)"
+                                            <span>&nbsp;&nbsp;
+                                                <button ng-if="productInfo.freeTags != null && productInfo.freeTags.length > 0 && productInfo._freeTagsInfo"
+                                                        ng-controller="showPopoverCtrl" popover-html="showInfo(productInfo._freeTagsInfo)"
                                                         popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">标签</button>
+                                                <!--<button>设置自由标签</button>-->
+                                                <button type="button" class="btn btn-pop btn-default" ng-disabled="vm.masterData.freetagList.length == 0"
+                                                        ng-click="$parent.addProductFreeTag(productInfo)">
+                                                    <i class="fa fa-cog"></i>&nbsp;{{'TXT_CUS_TAGS_SETTING' | translate}}
+                                                </button>
                                             </span>
+
                                             <span class="label m-t-xs m-r-sm m-l-sm" style="font-size:12px;background-color:black;" ng-if="productInfo.lock == 1">&nbsp;锁定&nbsp;</span>
                                             <span class="text-right">
                                                 <span class="pull-right" style="margin-right:10px">{{'TXT_MATER_CATEGORY_WITH_COLON' | translate}}&nbsp;{{productInfo.common.catPath}}</span>
@@ -715,14 +722,7 @@
                                             <a ng-href="#/product/detail/{{productInfo.prodId}}" target="_blank" ng-bind="productInfo.common.fields.code"></a>
                                         </td>
                                         <td class="text-left">
-                                            <a ng-if="productInfo.common.fields.originalTitleCn"
-                                               href="#/product/detail/{{productInfo.prodId}}"
-                                               title="{{productInfo.common.fields.originalTitleCn}}"
-                                               target="_blank">{{productInfo.common.fields.originalTitleCn | limitTo: 30}}{{productInfo.common.fields.originalTitleCn.length > 30 ? '...' : ''}}</a>
-                                            <a ng-if="!productInfo.common.fields.originalTitleCn"
-                                               href="#/product/detail/{{productInfo.prodId}}"
-                                               title="{{productInfo.common.fields.productNameEn}}"
-                                               target="_blank">{{productInfo.common.fields.productNameEn | limitTo: 30}}{{productInfo.common.fields.productNameEn.length > 30 ? '...' : ''}}</a>
+                                            <edit-title data="productInfo"></edit-title>
                                         </td>
                                         <td class="text-left">
                                             {{productInfo.common.fields.brand}}

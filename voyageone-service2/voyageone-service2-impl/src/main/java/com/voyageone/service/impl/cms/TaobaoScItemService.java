@@ -17,6 +17,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
+import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbScItemService;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.BaseService;
@@ -42,6 +43,7 @@ public class TaobaoScItemService extends BaseService {
 
     @Autowired
     private TbScItemService tbScItemService;
+
 
 	/**
 	 * 创建一个货品， 并初始化库存
@@ -375,7 +377,7 @@ public class TaobaoScItemService extends BaseService {
 			if (e.toString().contains("您输入的前端商品已挂靠至该货品上")) {
 				return String.valueOf(scItem.getItemId());
 			}
-			String errMsg = String.format("自动设置天猫商品全链路库存管理:创建关联:{numIId: %s, outerId: %s, err_msg: %s}", numIId, sku_outerId, e.toString());
+			String errMsg = String.format("创建关联失败:{numIId: %s, outerId: %s, err_msg: %s}", numIId, sku_outerId, e.toString());
 			throw new BusinessException(errMsg);
 		}
 

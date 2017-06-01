@@ -20,13 +20,16 @@ import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
+import com.voyageone.service.impl.cms.product.search.CmsBtSearchItemService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -83,6 +86,10 @@ public class CmsAdvanceSearchService extends BaseViewService {
     private CmsBtShelvesService cmsBtShelvesService;
     @Autowired
     private SxProductService sxProductService;
+    @Autowired
+    private ProductTagService productTagService;
+    @Autowired
+    private CmsBtSearchItemService cmsBtSearchItemService;
 
     /**
      * 获取检索页面初始化的master data数据
@@ -268,6 +275,8 @@ public class CmsAdvanceSearchService extends BaseViewService {
      */
     public long countProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, userInfo.getSelChannelId());
+
+        cmsBtSearchItemService.analysisSearchItems(userInfo.getUserId(), userInfo.getUserName(), userInfo.getSelChannelId(), searchValue, queryObject);
         return productService.countByQuery(queryObject.getQuery(), queryObject.getParameters(), userInfo.getSelChannelId());
     }
 
@@ -433,9 +442,13 @@ public class CmsAdvanceSearchService extends BaseViewService {
     }
 
     /**
-     * 设置产品free tag，同时添加该tag的所有上级tag
+     * 设置产品自由标签，同时添加该tag的所有上级tag，当在高级检索列表也单商品修改free tag时不走MQ方式了
+     * @param channelId
+     * @param params
+     * @param modifier
+     * @param cmsSession
      */
-    public void setProdFreeTagMQ(String channelId, Map<String, Object> params, String modifier, CmsSessionBean cmsSession) {
+    public void setProdFreeTag(String channelId, Map<String, Object> params, String modifier, CmsSessionBean cmsSession) {
         List<String> tagPathList = (List<String>) params.get("tagPathList");
         if (tagPathList == null || tagPathList.isEmpty()) {
             $info("CmsAdvanceSearchService：setProdFreeTag 未选择标签,将清空所有自由标签");
@@ -446,19 +459,27 @@ public class CmsAdvanceSearchService extends BaseViewService {
             orgDispTagList = (List<String>) params.get("orgDispTagList");
         }
 
-        Integer isSelAll = (Integer) params.get("isSelAll");
-        if (isSelAll == null) {
-            isSelAll = 0;
-        }
-        List<String> prodCodeList;
-        if (isSelAll == 1) {
-            CmsSearchInfoBean2 searchValue = new CmsSearchInfoBean2();
-            BeanUtils.copyProperties((Map<String, Object>) params.get("searchInfo"),searchValue);
-            cmsProductFreeTagsUpdateService.sendMessage(channelId, searchValue, tagPathList, orgDispTagList, modifier);
+        // 先获取singleProd参数，如果结果为1，则针对单商品进行自由标签编辑，那么直接操作，否则就是批量走MQ
+        Integer singleProd = (Integer) params.get("singleProd");
+        if (Objects.equals(singleProd, Integer.valueOf(1))) {
+            List<String> prodCodeList = (List<String>) params.get("prodIdList");
+            productTagService.setProdFreeTag(channelId, tagPathList, prodCodeList, orgDispTagList, EnumProductOperationType.SingleProdSetFreeTag, modifier);
         } else {
-            prodCodeList = (List<String>) params.get("prodIdList");
-            cmsProductFreeTagsUpdateService.sendMessage(channelId, prodCodeList, tagPathList, orgDispTagList, modifier);
+            Integer isSelAll = (Integer) params.get("isSelAll");
+            if (isSelAll == null) {
+                isSelAll = 0;
+            }
+            List<String> prodCodeList;
+            if (isSelAll == 1) {
+                CmsSearchInfoBean2 searchValue = new CmsSearchInfoBean2();
+                BeanUtils.copyProperties((Map<String, Object>) params.get("searchInfo"),searchValue);
+                cmsProductFreeTagsUpdateService.sendMessage(channelId, searchValue, tagPathList, orgDispTagList, modifier);
+            } else {
+                prodCodeList = (List<String>) params.get("prodIdList");
+                cmsProductFreeTagsUpdateService.sendMessage(channelId, prodCodeList, tagPathList, orgDispTagList, modifier);
+            }
         }
+
     }
 
     /**
@@ -489,6 +510,14 @@ public class CmsAdvanceSearchService extends BaseViewService {
             taskModel.setModified(new Date());
             int rs = cmsBtExportTaskService.add(taskModel);
             $debug("高级检索 创建文件下载任务 结果=%d", rs);
+
+            // 记录下载参数
+            try {
+                CmsSearchInfoBean2 searchInfoBean = JacksonUtil.json2Bean(JacksonUtil.bean2Json(searchValue), CmsSearchInfoBean2.class);
+                cmsBtSearchItemService.analysisSearchItems(userInfo.getUserId(), userInfo.getUserName(), userInfo.getSelChannelId(), searchInfoBean, null);
+            } catch (Exception e) {
+                $error("记录(%s)用户导出文件参数错误，查询参数解析成CmsSearchInfoBean2出现异常.");
+            }
 
             // 发送MQ消息
             searchValue.put("_channleId", userInfo.getSelChannelId());
