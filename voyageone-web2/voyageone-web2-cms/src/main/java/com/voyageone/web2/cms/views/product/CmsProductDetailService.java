@@ -1510,6 +1510,7 @@ public class CmsProductDetailService extends BaseViewService {
         // platForm.setpStatus(CmsConstants.PlatformStatus.);
         platForm.remove("pStatus");
         productPlatformService.updateProductPlatformWithSx(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier, "单品下线", false);
+        sxProductService.insertSxWorkLoad(cmsBtProductModel.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), parameter.getCartId(), modifier, false);
         String comment = parameter.getComment();
         productStatusHistoryService.insert(parameter.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), parameter.getCartId(), EnumProductOperationType.Delisting, comment, modifier);
 
