@@ -462,8 +462,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
                     doSetMainCategory(productModel.getCommon(), productModel.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
 
+                    Map<String, Integer>qty = new HashMap<>();
                     // 设置sku的重量
                     for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
+                        qty.put(sku.getSkuCode(), sku.getQty());
                         if ((sku.getWeight() == null || sku.getWeight() == 0.0D)
                                 && productModel.getCommon().getFields().getWeightLb() != 0.0D) {
                             sku.setWeight(productModel.getCommon().getFields().getWeightLb());
@@ -519,9 +521,12 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                     newSku.setAttribute("priceRetail", sku.get("priceRetail"));
                                     newSku.setAttribute("priceSale", sku.get("priceSale"));
                                 }
+                                newSku.setAttribute("qty", qty.get(newSku.getStringAttribute("skuCode")));
                                 sku = newSku;
                                 return sku;
                             }).collect(Collectors.toList()));
+
+                            platform.setAttribute("quantity",productModel.getCommon().getFields().getQuantity());
                             // 下面几个cartId都设成同一个platform
                             finalProductModel.setPlatform(cartId, platform);
                         }
