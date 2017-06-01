@@ -4,7 +4,11 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <table class="table table-hover-new table-hover table_main table_compare">
+                        <div class="text-warnings" ng-if="noStock">
+                            <i class="icon fa fa-bell-o"></i>&nbsp;
+                            从WMS未查询到SKU物理库存数据
+                        </div>
+                        <table class="table table-hover-new table-hover table_main table_compare" ng-if="!noStock">
                             <thead>
                             <tr>
                                 <th class="text-center" ng-attr-colspan="{{thConfig.baseColumns}}">基础信息</th>
@@ -56,6 +60,10 @@
                             </tr>
                             </tbody>
                         </table>
+                        <div class="text-warnings" ng-if="noStockSkus.length > 0">
+                            <i class="icon fa fa-bell-o"></i>&nbsp;
+                            CMS中部分SKU&nbsp;<strong>{{noStockSkus}}</strong>&nbsp;在WMS未查询到库存，该SKU库存信息不显示
+                        </div>
                     </div>
                 </div>
             </div>

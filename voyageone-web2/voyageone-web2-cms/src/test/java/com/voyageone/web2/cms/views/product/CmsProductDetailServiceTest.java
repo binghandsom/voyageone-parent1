@@ -70,12 +70,4 @@ public class CmsProductDetailServiceTest {
         cmsProductDetailService.delistinGroup(parameter, "syste");
     }
 
-    @Test
-    public void testGetStockInfoBySku() throws Exception {
-
-
-        GetStoreStockDetailResponse response = cmsProductDetailService.getStockInfoBySku("001", 4398212);
-        System.out.println(response.getCode());
-
-    }
 }
