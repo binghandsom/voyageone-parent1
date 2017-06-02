@@ -155,13 +155,13 @@ define([
         var self = this;
         var priceMsrp = self.vm.priceMsrp;
         var priceSale = self.vm.priceSale;
-        if (priceMsrp > 0 || priceSale > 0) {
+        if ((priceMsrp && priceMsrp > 0) || (priceSale && priceSale > 0)) {
 
             self.vm.productPriceList.forEach(function (element) {
                 if (priceMsrp > 0) {
                     element.priceMsrp = priceMsrp;
                 }
-                if (priceSale) {
+                if (priceSale > 0) {
                     element.priceSale = priceSale;
                 }
             });
