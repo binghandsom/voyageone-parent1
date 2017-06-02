@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.mqjob;
 
 
+import com.voyageone.components.rabbitmq.annotation.VOSubRabbitListener;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.rabbitmq.annotation.VOSubRabbitListener;

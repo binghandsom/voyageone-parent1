@@ -10,6 +10,8 @@ import com.voyageone.category.match.FeedQuery;
 import com.voyageone.category.match.MatchResult;
 import com.voyageone.category.match.Searcher;
 import com.voyageone.category.match.Tokenizer;
+import com.voyageone.category.match.data.MtCategoryKeysDao;
+import com.voyageone.category.match.data.MtCategoryKeysModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
@@ -24,6 +26,7 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.logger.VOAbsIssueLoggable;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
@@ -50,7 +53,10 @@ import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.WmsCreateOrUpdateProductMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.WmsCreateOrUpdateProductMQMessageBody_detail;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
@@ -62,8 +68,6 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.feed.mapping2.CmsBtFeedMapping2Model;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.task2.cms.bean.ItemDetailsBean;
-import com.voyageone.task2.cms.dao.ItemDetailsDao;
 import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
@@ -116,8 +120,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
     @Autowired
     private ComMtValueChannelService comMtValueChannelService;    // 更新Synship.com_mt_value_channel表
     @Autowired
-    private ItemDetailsDao itemDetailsDao; // DAO: ItemDetailsDao
-    @Autowired
     private TmpOldCmsDataDao tmpOldCmsDataDao; // DAO: 旧数据
     @Autowired
     private FeedCustomPropService customPropService;
@@ -156,7 +158,14 @@ public class SetMainPropService extends VOAbsIssueLoggable {
     @Autowired
     private Searcher searcher;
     @Autowired
+    private ImageTemplateService imageTemplateService;
+    @Autowired
+    private CmsMqSenderService cmsMqSenderService;
+    @Autowired
     private MqSender sender;
+
+    @Autowired
+    MtCategoryKeysDao mtCategoryKeysDao;
 
 
     /**
@@ -1001,19 +1010,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 //                        return;
                     }
 
-                    // tom 20160510 追加 START
-                    // 更新wms_bt_item_details表的数据
-                    if (!doSaveItemDetails(channelId, cmsProduct.getProdId(), feed)) {
-                        // 如果出错了的话, 就跳出去
-                        String errMsg = "feed->master导入:更新:更新wms_bt_item_details表数据的时候出错:" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
-                        $error(errMsg);
-                        throw new BusinessException(errMsg);
-//                        // 设置更新时间,更新者
-//                        originalFeed.setModifier(getTaskName());
-//                        cmsBtFeedInfoDao.update(originalFeed);
-//                        return;
-                    }
-
                     //james g kg 计算
                     weightCalculate(cmsProduct);
 
@@ -1026,7 +1022,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // 计算主类目
                     if (usjoi || cmsProduct.getChannelId().equals("024")) {
                         doSetMainCategory(cmsProduct.getCommon(), feed);
+
                     }
+
+                    // 往wms推送数据
+                    doSaveItemDetails(cmsProduct);
+
 
                     // 更新价格相关项目
                     Integer chg = doSetPrice(feed, cmsProduct);
@@ -1046,6 +1047,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         $error(errMsg);
                         throw new BusinessException(errMsg);
                     }
+
 
                     // 判断是否更新平台价格 如果要更新直接更新
                     platformPriceService.publishPlatFormPrice(usjoi ? "928" : channelId, chg, cmsProduct, getTaskName(), true);
@@ -1110,19 +1112,14 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // 检查类目 重量 和 价格是否超过阈值
                     checkProduct(cmsProduct);
 
-                    // tom 20160510 追加 START
-                    // 更新wms_bt_item_details表的数据
-                    if (!doSaveItemDetails(channelId, cmsProduct.getProdId(), feed)) {
-                        // 如果出错了的话, 就跳出去
-                        String errMsg = "feed->master导入:新增:更新wms_bt_item_details表数据的时候出错:" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
-                        $error(errMsg);
-                        throw new BusinessException(errMsg);
-                    }
+                    // 往wms推送数据
+                    doSaveItemDetails(cmsProduct);
                     $debug("doSaveItemDetails:" + (System.currentTimeMillis() - startTime));
 
                     // 生成productGroup数据
                     doSetGroup(feed);
                     productService.createProduct(cmsProduct.getChannelId(), cmsProduct, getTaskName());
+
                     $debug("createProduct:" + (System.currentTimeMillis() - startTime));
 
                 }
@@ -2896,85 +2893,73 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         }
 
         /**
-         * doSaveItemDetails 保存item details的数据
+         * doSaveItemDetails 往wms推送sku产品信息
          *
-         * @param channelId channel id
-         * @param productId product id
-         * @param feed      feed信息
+         * @param productModel productModel
          */
-        private boolean doSaveItemDetails(String channelId, Long productId, CmsBtFeedInfoModel feed) {
+        private boolean doSaveItemDetails(CmsBtProductModel productModel) {
 
             // 如果feed里,没有sku的数据的话,那么就不需要做下去了
-            if (feed.getSkus() == null || feed.getSkus().size() == 0) {
+            if (productModel.getCommon().getSkus() == null || productModel.getCommon().getSkus().size() == 0) {
                 // 也认为是正常
                 return true;
             }
+            CmsBtProductModel_Field field = productModel.getCommon().getFields();
 
-
-            // 遍历feed的sku信息
-            for (CmsBtFeedInfoModel_Sku feedSku : feed.getSkus()) {
-                // 数据准备
-                ItemDetailsBean itemDetailsBean = new ItemDetailsBean();
-                itemDetailsBean.setOrder_channel_id(channelId);
-                itemDetailsBean.setSku(feedSku.getSku());
-                itemDetailsBean.setProduct_id(productId);
-                itemDetailsBean.setItemcode(feed.getCode());
-                itemDetailsBean.setSize(feedSku.getSize());
-                itemDetailsBean.setBarcode(feedSku.getBarcode());
-                itemDetailsBean.setClient_sku(feedSku.getClientSku());
-                itemDetailsBean.setActive(1);
-
-                try {
-                    // 判断这个sku是否已经存在
-                    //if (skuList.contains(feedSku.getSku())) {
-                    ItemDetailsBean oldRecord = itemDetailsDao.selectBySku(channelId, feedSku.getSku());
-                    if (oldRecord != null) {
-                        // 如果该skuCode没变，但feed里面的code从A->B了，则报出异常, feedCode一致才更新
-                        if (!oldRecord.getItemcode().equalsIgnoreCase(feed.getCode())) {
-                            String errMsg = String.format("feed->master导入:异常终止:由于该sku所属的feedCode发生了变更," +
-                                            "导致不能更新wms_bt_item_details表 [sku:%s] [OldFeedCode:%s] [NewFeedCode:%s]",
-                                    itemDetailsBean.getSku(),
-                                    oldRecord.getItemcode(),
-                                    feed.getCode()
-                            );
+            for(CmsBtProductModel_Sku sku:productModel.getCommon().getSkus()){
+                        String channelId = StringUtils.isEmpty(productModel.getOrgChannelId()) ? productModel.getChannelId() : productModel.getOrgChannelId();
+                        String oneSkuCode = sku.getSkuCode();
+                        CmsBtProductModel oldProductModel = null;
+                        if(usjoi){
+                            oldProductModel = productService.getProductBySku("928",channelId, oneSkuCode);
+                        }else{
+                            oldProductModel = productService.getProductBySku(channelId, oneSkuCode);
+                        }
+                        if (oldProductModel != null && !field.getCode().equals(oldProductModel.getCommon().getFields().getCode())) {
+                            String errMsg = String.format("feed->master导入:异常终止:由于该sku所属的feedCode发生了变更,[sku:%s] [OldFeedCode:%s] [NewFeedCode:%s]",
+                                    oneSkuCode, oldProductModel.getCommon().getFields().getCode(), field.getCode());
                             $error(errMsg);
                             throw new BusinessException(errMsg);
                         }
-                        itemDetailsBean.setIs_sale(feedSku.getIsSale() == null ? oldRecord.getIs_sale() : String.valueOf(feedSku.getIsSale()));
-                        // 已经存在的场合: 更新数据库
-                        itemDetailsDao.updateItemDetails(itemDetailsBean, getTaskName());
-                    } else {
-                        itemDetailsBean.setIs_sale(feedSku.getIsSale() == null ? "1" : String.valueOf(feedSku.getIsSale()));
-                        // 不存在的场合: 插入数据库
-                        itemDetailsDao.insertItemDetails(itemDetailsBean, getTaskName());
-
-                        if(usjoi) {
-                            Map<String, Object> data = new HashMap<>();
-                            data.put("order_channel_id", channelId);
-                            data.put("skulist", Collections.singletonList(itemDetailsBean.getClient_sku()));
-                            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_CA_Update_Quantity, data);
-                        }
-
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    // update desmond 2016/07/06 start
-                    String errMsg = String.format("feed->master导入:异常终止:无法插入或更新wms_bt_item_details表( channel: [%s], sku: [%s], itemcode: [%s], barcode: [%s], size: [%s], msg: [%s] )",
-                            channelId,
-                            itemDetailsBean.getSku(),
-                            itemDetailsBean.getItemcode(),
-                            itemDetailsBean.getBarcode(),
-                            itemDetailsBean.getSize(),
-                            e.getMessage()
-                    );
-                    $error(errMsg);
-                    throw new BusinessException(errMsg);
-                }
 
-            }
+            // 按sku为单位推送产品信息到wms
+            productModel.getCommon().getSkus().forEach(sku -> {
+                WmsCreateOrUpdateProductMQMessageBody messageBody = new WmsCreateOrUpdateProductMQMessageBody();
+                messageBody.setChannelId(StringUtils.isEmpty(productModel.getOrgChannelId()) ? productModel.getChannelId() : productModel.getOrgChannelId());
+                messageBody.setSku(sku.getSkuCode());
+                messageBody.setCode(field.getCode());
+                // 商品名称：取英文名称，如果英文名称为空则取中文名称
+                messageBody.setName(StringUtils.isEmpty(field.getProductNameEn()) ? field.getOriginalTitleCn() : field.getProductNameEn());
+                messageBody.setBrand(field.getBrand());
+                messageBody.setColor(field.getColor());
+                messageBody.setSize(sku.getClientSize());
+                messageBody.setBarcode(sku.getBarcode());
+                String imagePath = "";
+                if (!field.getImages1().isEmpty()) {
+                    if (!StringUtils.isEmpty(field.getImages1().get(0).getName()))
+                        imagePath = imageTemplateService.getImageUrl(field.getImages1().get(0).getName());
+                }
+                messageBody.setImageUrl(imagePath);
+                messageBody.setMsrp(BigDecimal.valueOf(sku.getClientMsrpPrice()));
+                messageBody.setClientSku(sku.getClientSkuCode());
+                messageBody.setSkuKind("1");
+                messageBody.setNetPrice(BigDecimal.valueOf(sku.getClientNetPrice()));
+                // messageBody.setProductType(field.getProductType()); // 暂时忽略，因为和WMS不一致
+                messageBody.setUserName(productModel.getModifier());
+                messageBody.setIsSale(sku.getIsSale());
+                messageBody.setCmsSku(sku.getSkuCode());
+
+                /*WmsCreateOrUpdateProductMQMessageBody_detail detailInfo = new WmsCreateOrUpdateProductMQMessageBody_detail();
+                detailInfo.setKgWeight(field.getWeightKG());
+                detailInfo.setLbWeight(field.getWeightLb());
+                detailInfo.setOrigin(field.getOrigin());
+                messageBody.setDetailInfo(detailInfo);*/
+                cmsMqSenderService.sendMessage(messageBody);
+                $debug(productModel.getModifier() + "同步最新Product信息至WMS，内容：" + JacksonUtil.bean2Json(messageBody));
+            });
 
             return true;
-
         }
 
 
@@ -3251,6 +3236,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             prodCommon.getFieldsNotNull().setOrigSizeType(feed.getSizeType());
             if (prodCommon == null || StringUtils.isEmpty(feed.getCategory())) return;
 
+            // feed里面人为设置过主类目的场合
+            MtCategoryKeysModel mtCategoryKeysModel = null;
+            if(!StringUtil.isEmpty(feed.getMainCategoryEn()) && "1".equals(feed.getCatConf())){
+                mtCategoryKeysModel = mtCategoryKeysDao.selectOne(feed.getMainCategoryEn());
+            }
+
             // 共通Field
             CmsBtProductModel_Field prodCommonField = prodCommon.getFieldsNotNull();
 
@@ -3261,10 +3252,26 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     !StringUtils.isEmpty(prodCommonField.getOrigSizeType()) ? prodCommonField.getOrigSizeType() : "",
                     prodCommonField.getProductNameEn(),
                     prodCommonField.getBrand());
+
+
+            // 用feed里面的主类目进行替换
+            if(!"1".equals(prodCommon.getCatConf()) && mtCategoryKeysModel != null){
+                searchResult.setCnName(feed.getMainCategoryCn());
+                searchResult.setEnName(feed.getMainCategoryEn());
+                searchResult.setTaxDeclare(mtCategoryKeysModel.getTaxDeclare());
+                searchResult.setTaxPersonal(mtCategoryKeysModel.getTaxPersonal());
+                searchResult.setProductTypeCn(mtCategoryKeysModel.getProductTypeCn());
+                searchResult.setProductTypeEn(mtCategoryKeysModel.getProductTypeEn());
+                String weight = mtCategoryKeysModel.getWeight();
+                if(!StringUtil.isEmpty(weight)){
+                    searchResult.setWeight(Double.parseDouble(weight));
+                }
+            }
+
             if (searchResult != null) {
                 $info(String.format("调用主类目匹配接口取得主类目和适用人群正常结束！[耗时:%s] [feedCategoryPath:%s] [productType:%s] " +
-                                "[sizeType:%s] [productNameEn:%s] [brand:%s]", (System.currentTimeMillis() - beginTime), feed.getCategory(),
-                        prodCommonField.getProductType(), prodCommonField.getSizeType(), prodCommonField.getProductNameEn(), prodCommonField.getBrand()));
+                                "[sizeType:%s] [productNameEn:%s] [brand:%s] [mainCategory:%s]", (System.currentTimeMillis() - beginTime), feed.getCategory(),
+                        prodCommonField.getProductType(), prodCommonField.getSizeType(), prodCommonField.getProductNameEn(), prodCommonField.getBrand(), searchResult.getCnName()));
 
                 // 先备份原来的productType和sizeType
                 // feed原始产品分类
@@ -3303,7 +3310,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 }
 
                 // 根据主类目设置商品重量
-                if (searchResult.getWeight() != 0.0D
+                if (searchResult.getWeight() != null && searchResult.getWeight() != 0.0D
                         && (prodCommonField.getWeightLb() == null || prodCommonField.getWeightLb() == 0.0)) {
                     prodCommonField.setWeightLb(searchResult.getWeight());
                     BigDecimal b = new BigDecimal(searchResult.getWeight() * 453.59237);
@@ -3315,12 +3322,11 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 // 如果sku的重量不存在,则设置成默认重量
                 prodCommon.getSkus().forEach(sku -> {
                     if ((sku.getWeight() == null || sku.getWeight() == 0.0D)
-                            && searchResult.getWeight() != 0.0D) {
+                    && searchResult.getWeight() != null && searchResult.getWeight() != 0.0D) {
                         sku.setWeight(searchResult.getWeight());
                         sku.setWeightUnit("lb");
                     }
                 });
-
                 // 产品分类(英文)
                 if (!StringUtils.isEmpty(searchResult.getProductTypeEn()) && (!"1".equals(prodCommon.getCatConf()) || StringUtil.isEmpty(prodCommonField.getProductType())))
                     prodCommonField.setProductType(searchResult.getProductTypeEn().toLowerCase());
@@ -3363,6 +3369,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         // 设置中文名称
                         prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(prodCommonField.getBrand()
                                 , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
+                        $info(prodCommonField.getOriginalTitleCn());
                     }
                 }
             }
@@ -3429,6 +3436,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
          * @return String 商品中文名称(品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称)
          */
         private String getOriginalTitleCnByCategory(String brand, String sizeTypeCn, String leafCategoryCnName) {
+            if(brand == null) brand = "";
+            if(sizeTypeCn == null) sizeTypeCn = "";
+            if(leafCategoryCnName == null) leafCategoryCnName = "";
             return brand + " " + sizeTypeCn + " " + leafCategoryCnName;
         }
     }

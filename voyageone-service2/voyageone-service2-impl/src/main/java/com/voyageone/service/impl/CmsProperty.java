@@ -18,5 +18,9 @@ public interface CmsProperty {
         String CMS_Image_Ceate_Import_Path ="cms.image.create.import.path";
         String CMS_PROMOTION_EXPORT_JUHUASUAN = "cms.promotion.export.juhuasuan";
         String CMS_PROMOTION_EXPORT_TMALL = "cms.promotion.export.tmall";
+
+        String PROMOTION_EXPORT_PATH = "cms.promotion.export.path";
+        String PROMOTION_JUHUASUAN_EXPORT_PATH = "cms.promotion.juhuasuan.export.path";
+        String PROMOTION_TMALL_EXPORT_PATH = "cms.promotion.tmall.export.path";
     }
 }

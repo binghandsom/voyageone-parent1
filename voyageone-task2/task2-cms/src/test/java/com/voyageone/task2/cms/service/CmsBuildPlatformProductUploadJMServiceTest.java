@@ -668,7 +668,7 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
                     // 回写(自己手动回写到mysql表吧)
                     String sizeStr = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
-                    CmsBtJmSkuModel cmsBtJmSkuModel = cmsBuildPlatformProductUploadJMService.fillNewCmsBtJmSkuModel(product.getChannelId(), product.getCommon().getFields().getCode(), sku, sizeStr);
+                    CmsBtJmSkuModel cmsBtJmSkuModel = cmsBuildPlatformProductUploadJMService.fillNewCmsBtJmSkuModel(product.getChannelId(), product.getCommon().getFields().getCode(), sku, sizeStr, product.getOrgChannelId());
                     cmsBtJmSkuModel.setJmSpuNo(sku.getStringAttribute("jmSpuNo"));
                     cmsBtJmSkuModel.setJmSkuNo(jumeiSkuNo);
 
@@ -769,5 +769,10 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         System.out.println(cmsBtJmProductModel.getImage1());
     }
 
+    @Test
+    public void testGetCmsBtJmSkuModel() {
+        CmsBtJmSkuModel c = cmsBuildPlatformProductUploadJMService.getCmsBtJmSkuModel("010", "00772YAK7", "00772YAK7", "010");
+        System.out.println(c.getOrgChannelId());
+    }
 
 }

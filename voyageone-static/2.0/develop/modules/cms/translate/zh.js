@@ -920,6 +920,8 @@ define(function () {
         "TXT_CHANGE_PASS": "修改密码",
         "TXT_TRANSLATION_DATE": "翻译时间",
 
+        "TXT_TEMPLATE_TYPE":"模板类型",
+
         /**bi_download_list*/
         "TXT_BI_DOWNLOAD_LIST_TITLE" : "BI报表下载",
         "TXT_BI_DOWNLOAD_LIST_FILE_TYPE" : "文件类型",

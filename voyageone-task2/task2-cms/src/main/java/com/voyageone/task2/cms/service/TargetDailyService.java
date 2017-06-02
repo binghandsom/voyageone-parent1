@@ -6,7 +6,10 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.mail.Mail;
-import com.voyageone.common.util.*;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ExcelUtils;
+import com.voyageone.common.util.FileUtils;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.tmall.service.TbSaleService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -79,10 +82,9 @@ public class TargetDailyService extends BaseCronTaskService {
 
     private List<Item> getInventoryProduct(String type){
         List<Item> allList = new ArrayList<>();
-        List<Item> rsList = null;
+        List<Item> rsList;
         Long pageNo = 1L;
         do {
-            rsList = null;
             try {
                 // 查询上架
                 rsList = tbSaleService.getInventoryProduct(ChannelConfigEnums.Channel.TARGET.getId(), CartEnums.Cart.TG.getId(), type, pageNo++, 200L);
@@ -106,11 +108,10 @@ public class TargetDailyService extends BaseCronTaskService {
         numIids.forEach(item -> {
             List<CmsBtProductModel> productModels = productService.getProductByNumIid("018", item.getNumIid().toString(), 23);
             productModels.forEach(cmsBtProductModel -> {
-                Map<String, Integer> qtys = productService.getProductSkuQty("018", cmsBtProductModel.getCommon().getFields().getCode());
                 cmsBtProductModel.getCommon().getSkus().forEach(cmsBtProductModel_sku -> {
                     TargetDailyBean targetDailyBean = new TargetDailyBean();
                     targetDailyBean.setSku(cmsBtProductModel_sku.getSkuCode());
-                    targetDailyBean.setQty(qtys.get(cmsBtProductModel_sku.getSkuCode()));
+                    targetDailyBean.setQty(cmsBtProductModel_sku.getQty());
                     targetDailyBean.setUpc(cmsBtProductModel_sku.getBarcode());
                     targetDailyBean.setTitle(item.getTitle());
                     targetDailyBean.setNumIid(item.getNumIid() + "");

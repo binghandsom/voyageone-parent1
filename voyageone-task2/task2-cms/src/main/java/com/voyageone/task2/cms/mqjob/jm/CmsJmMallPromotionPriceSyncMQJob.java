@@ -5,6 +5,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.JumeiHtMallService;
@@ -52,6 +53,7 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
 
     @Override
     public void onStartup(CmsJmMallPromotionPriceSyncMQMessageBody messageBody) throws Exception {
+        $info(JacksonUtil.bean2Json(messageBody));
         Integer jmPid = messageBody.getJmPromotionId();
         List<String> productCodes = messageBody.getProductCodes();
 
@@ -125,7 +127,6 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
         Map<String, Object> map = new HashMap<>();
         map.put("productCode", productCode);
         map.put("channelId", channelId);
-
         List<CmsBtJmSkuModel> skuList = cmsBtJmSkuDao.selectList(map);
         if (skuList == null) {
             skuList = new ArrayList<>();
@@ -139,6 +140,7 @@ public class CmsJmMallPromotionPriceSyncMQJob extends TBaseMQCmsService<CmsJmMal
         for (List<HtMallSkuPriceUpdateInfo> page : pageList) {
             StringBuffer sb = new StringBuffer();
             try {
+                $info(JacksonUtil.bean2Json(page));
                 if (!jumeiHtMallService.updateMallSkuPrice(shopBean, page, sb)) {
                     $error(sb.toString());
                     throw new BusinessException(sb.toString());

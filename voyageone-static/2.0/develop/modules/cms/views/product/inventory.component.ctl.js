@@ -41,19 +41,30 @@ define([
                 function initialize() {
                     scope.showDetail = false;
                     scope.thConfig = _inventConfig.orgTh;
+                    scope.noStock = false;
+                    scope.noStockSkus = [];
                 	productDetailService.getSkuStockInfo(scope.productInfo.productId)
                 	.then(function(resp) {
-                		var tblData = resp.data;
-                		countTotalStock(tblData);
-                		resetHeaderView(tblData.header);
-                		scope.tblData = tblData;
-                		// 重新设置表头的合并列
-                        angular.extend(_inventConfig.expandTh, {
-                            inOwnColumns: tblData.header.inOwn.length,
-                            inNOwnColumns: tblData.header.inNOwn.length,
-                            gbOwnColumns: tblData.header.gbOwn.length,
-                            gbNOwnColumns: tblData.header.gbNOwn.length
-                        });
+                        var stockData = resp.data.stockDetail.data;
+                	    if (!stockData || !stockData.stocks) {
+                            scope.noStock = true;
+                        } else {
+                	        var noStockSkuData = resp.data.noStockSkus;
+                	        if (noStockSkuData && noStockSkuData.length > 0) {
+                                scope.noStockSkus = angular.copy(noStockSkuData);
+                            }
+                            var tblData = angular.copy(stockData);
+                            countTotalStock(tblData);
+                            resetHeaderView(tblData.header);
+                            scope.tblData = tblData;
+                            // 重新设置表头的合并列
+                            angular.extend(_inventConfig.expandTh, {
+                                inOwnColumns: tblData.header.inOwn.length,
+                                inNOwnColumns: tblData.header.inNOwn.length,
+                                gbOwnColumns: tblData.header.gbOwn.length,
+                                gbNOwnColumns: tblData.header.gbNOwn.length
+                            });
+                        }
                 	});
                 }
                 
@@ -64,20 +75,30 @@ define([
                     	// 删除不需要统计的表头
                     	copyHeader.base.splice(0, 3);
                     	// 统计库存信息
-                    	var totalStock = {};
+                    	var totalStock = [];
                     	angular.forEach(copyHeader, function(items, key) {
                     		totalStock[key] = {};
                     		angular.forEach(items, function(item) {
-                    			var countTotal = 0;
+                    			var countTotal = [];
+                    			var totalAvailableQty = 0; // 当前项总的可用库存
+                    			var totalOccupiedQty = 0;  // 当前项总的占用库存
                     			angular.forEach(tblData.stocks, function(stock) {
                     				if (!angular.isDefined(stock[key][item])) {
-                    					stock[key][item] = 0;
+                    					stock[key][item] = [0,0];
                     				}
-                    				countTotal += stock[key][item];
+                                    totalAvailableQty += stock[key][item][0];
+                                    totalOccupiedQty += stock[key][item][1];
+                    				// countTotal += stock[key][item];
+                    				// angular.forEach(stock[key][item], function (qty) {
+                                     //    countTotal += qty;
+                                    // })
                     			});
-                    			
+                                countTotal.push(totalAvailableQty);
+                                countTotal.push(totalOccupiedQty);
+
+
                     			// 保存库存为0的总库存，删除其他库存为0的仓库
-                    			if (key != 'order' && item != 'total' && countTotal == 0) {
+                    			if (key != 'order' && item != 'total' && countTotal[0] == 0 && countTotal[1] == 0) {
                     				stockHeader[key].splice(stockHeader[key].indexOf(item), 1);
                     			} else {
                     				totalStock[key][item] = countTotal;

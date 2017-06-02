@@ -182,6 +182,10 @@ public interface CmsUrlConstants {
 
                 String PROMOTION_EXPORT = "exportPromotion";
 
+                String GET_PROMOTION_EXPORT_TASK = "getPromotionExportTask";
+
+                String PROMOTION_EXPORT_DOWNLOAD = "downloadPromotionExport";
+
                 String DEL_PROMOTION = "delPromotion";
                 String TEST = "test";
             }
@@ -369,6 +373,8 @@ public interface CmsUrlConstants {
             String REEXPORT = "reExport";
             String EXPORTSEARCH = "exportSearch";
             String DOWNLOAD = "download";
+            String UPDATE_MAIN_CATEGORY = "updateMainCategory";
+            String BATCH_UPDATE_MAIN_CATEGORY = "batchUpdateMainCategory";
         }
     }
 
@@ -684,6 +690,8 @@ public interface CmsUrlConstants {
             String UPPER_LOWER_FRAME = "upperLowerFrame";
 
             String LOCK_PLATFORM = "lockPlatForm";
+
+            String UPDATE_ORIGINAL_TITLE_CN = "updateOriginalTitleCn";
         }
 
         interface HISTORY {

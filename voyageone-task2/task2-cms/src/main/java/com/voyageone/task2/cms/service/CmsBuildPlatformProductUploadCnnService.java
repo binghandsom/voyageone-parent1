@@ -39,6 +39,8 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -310,7 +312,6 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             if (strSkuCodeList.isEmpty()) {
                 throw new BusinessException("已完成审批的产品sku列表为空！");
             }
-
             // 获取字典表(根据channel_id)上传图片的规格等信息
             List<CmsMtPlatformDictModel> cmsMtPlatformDictModelList = dictService.getModesByChannelCartId(channelId, cartId);
             if (cmsMtPlatformDictModelList == null || cmsMtPlatformDictModelList.size() == 0) {
@@ -319,7 +320,26 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
 
             // 如果skuList不为空，取得所有sku的库存信息
             // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
-            Map<String, Integer> skuLogicQtyMap = productService.getLogicQty(mainProduct.getOrgChannelId(), strSkuCodeList);
+            // WMS2.0切换 20170526 charis STA
+            // 上新对象code
+            List<String> listSxCode = null;
+            if (ListUtils.notNull(sxData.getProductList())) {
+                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
+            }
+            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
+            for (String code : listSxCode) {
+                try {
+                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), code, null);
+                    for (Map.Entry<String, Integer> e : map.entrySet()) {
+                        skuLogicQtyMap.put(e.getKey(), e.getValue());
+                    }
+                } catch (Exception e) {
+                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
+                            channelId, cartId, code, e.getMessage());
+                    throw new Exception(errorMsg);
+                }
+            }
+            // WMS2.0切换 20170526 charis END
 
             // 计算该商品下所有产品所有SKU的逻辑库存之和，新增时如果所有库存为0，报出不能上新错误
             int totalSkusLogicQty = 0;

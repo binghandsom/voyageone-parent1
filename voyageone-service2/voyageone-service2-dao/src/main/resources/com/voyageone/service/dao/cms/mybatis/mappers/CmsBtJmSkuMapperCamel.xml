@@ -5,7 +5,7 @@
     <sql id="Base_Column_List" >
         `id`, `channel_id`, `product_code`, `sku_code`, `jm_spu_no`, `jm_sku_no`, `format`, 
         `upc`, `cms_size`, `jm_size`, `msrp_usd`, `msrp_rmb`, `retail_price`, `sale_price`, 
-        `creater`, `created`, `modified`, `modifier`
+        `creater`, `created`, `modified`, `modifier`, `org_channel_id`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -72,6 +72,9 @@
             <if test="modifier != null" >
                 `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
+            <if test="orgChannelId != null" >
+                `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR},
+            </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
@@ -137,6 +140,9 @@
             <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
+            <if test="orgChannelId != null" >
+                and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
+            </if>
         </where>
         limit 1
     </select>
@@ -197,6 +203,9 @@
             <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
+            <if test="orgChannelId != null" >
+                and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -254,6 +263,9 @@
             <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
+            <if test="orgChannelId != null" >
+                and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -309,6 +321,9 @@
             </if>
             <if test="modifier == null and creater != null" >
                 `modifier`,
+            </if>
+            <if test="orgChannelId != null" >
+                `org_channel_id`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -371,6 +386,9 @@
             </if>
             <if test="modifier == null and creater != null" >
                 #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="orgChannelId != null" >
+                #{orgChannelId,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

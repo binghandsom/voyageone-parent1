@@ -23,7 +23,6 @@ import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryServic
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -315,10 +314,14 @@ public class CmsAdvanceSearchController extends CmsController {
                     String sku = (String) map.get("skuCode");
                     Boolean isSale = (Boolean) map.get("isSale");
                     if (isSale != null && isSale) {
-                        for(CmsBtProductModel_Sku skus : cmsBtProductBean.getCommonNotNull().getSkus()){
+                        if(map.get("qty") != null){
+                            qty = qty + map.getIntAttribute("qty");
+                        }else {
+                            for (CmsBtProductModel_Sku skus : cmsBtProductBean.getCommonNotNull().getSkus()) {
 //                        for (WmsBtInventoryCenterLogicModel inventoryInfo : inventoryList) {
-                            if (skus.getSkuCode().equals(sku)) {
-                                qty = qty + skus.getQty();
+                                if (skus.getSkuCode().equals(sku)) {
+                                    qty = qty + skus.getQty();
+                                }
                             }
                         }
                     }
@@ -497,7 +500,7 @@ public class CmsAdvanceSearchController extends CmsController {
     public AjaxResponse addFreeTag(@RequestBody Map<String, Object> params) {
         UserSessionBean userInfo = getUser();
 
-        searchIndexService.setProdFreeTagMQ(userInfo.getSelChannelId(), params, userInfo.getUserName(), getCmsSession());
+        searchIndexService.setProdFreeTag(userInfo.getSelChannelId(), params, userInfo.getUserName(), getCmsSession());
         return success(null);
     }
 
@@ -550,7 +553,7 @@ public class CmsAdvanceSearchController extends CmsController {
     public AjaxResponse getSkuInventoryList(@RequestBody String code) {
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode(getUser().getSelChannelId(), code);
         if (cmsBtProductModel != null) {
-            return success(advSearchQueryService.getSkuInventoryList(cmsBtProductModel.getOrgChannelId(), code));
+            return success(advSearchQueryService.getSkuInventoryList(cmsBtProductModel));
         } else {
             throw new BusinessException(code + "：该商品不存在");
         }

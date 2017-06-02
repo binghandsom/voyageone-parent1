@@ -115,7 +115,7 @@
             <dependency>
                 <groupId>com.voyageone.tools.feed</groupId>
                 <artifactId>category-matcher-java</artifactId>
-                <version>1.8.0-RELEASE</version>
+                <version>1.8.5-RELEASE</version>
             </dependency>
             <!-- spring -->
             <dependency>

@@ -431,7 +431,11 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 image.put("imageName", imageName);
                 image.put("isMain", finalCmsBtProductGroup.getMainProductCode().equalsIgnoreCase(s1));
                 image.put("prodId", product.getProdId());
-                image.put("qty", product.getCommon().getFields().getQuantity());
+                if(product.getPlatform(cartId) != null && product.getPlatform(cartId).getAttribute("quantity") != null) {
+                    image.put("qty", product.getPlatform(cartId).getIntAttribute("quantity"));
+                }else{
+                    image.put("qty", product.getCommonNotNull().getFieldsNotNull().getQuantity());
+                }
                 if (product.getPlatform(cartId) != null) {
                     image.put("priceSaleSt", product.getPlatform(cartId).getpPriceSaleSt());
                     image.put("priceSaleEd", product.getPlatform(cartId).getpPriceSaleEd());
@@ -457,10 +461,6 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         }
 
-        //TODO 取得Sku的库存
-        String skuChannelId = StringUtils.isEmpty(cmsBtProduct.getOrgChannelId()) ? channelId : cmsBtProduct.getOrgChannelId();
-        Map<String, Integer> skuInventoryList = productService.getProductSkuQty(skuChannelId, cmsBtProduct.getCommon().getFields().getCode());
-        cmsBtProduct.getCommon().getSkus().forEach(cmsBtProductModel_sku -> cmsBtProductModel_sku.setQty(skuInventoryList.get(cmsBtProductModel_sku.getSkuCode()) == null ? 0 : skuInventoryList.get(cmsBtProductModel_sku.getSkuCode())));
         mastData.put("images", images);
         return mastData;
     }
@@ -830,6 +830,13 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         long batchNo = sequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PLATFORMACTIVEJOB_ID);
         //根据cartId和productCodes取得cmsBtProductGroup信息
         CmsBtProductGroupModel grpObj = productGroupService.selectProductGroupByCode(userBean.getSelChannelId(), productCode, cartId);
+
+        CmsBtProductModel mainProduct = productService.getProductByCode(grpObj.getChannelId(), grpObj.getMainProductCode());
+        if(mainProduct != null && mainProduct.getPlatform(cartId) != null){
+            if("1".equals(mainProduct.getPlatform(cartId).getLock())){
+                throw new BusinessException("该主商品是锁住状态，不能做上下架操作。");
+            }
+        }
         // 根据cartId和channelId取得Shops信息
         ShopBean shopProp = Shops.getShop(userBean.getSelChannelId(), cartId);
         if (shopProp == null) {

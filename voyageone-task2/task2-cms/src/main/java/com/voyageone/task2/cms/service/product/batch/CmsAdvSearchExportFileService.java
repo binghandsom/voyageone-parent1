@@ -34,7 +34,6 @@ import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.cms.bean.SkuInventoryForCmsBean;
-import com.voyageone.task2.cms.dao.InventoryDao;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -98,8 +97,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private PlatformService platformService;
     @Autowired
     private CmsBtExportTaskService cmsBtExportTaskService;
-    @Autowired
-    private InventoryDao inventoryDao;
     @Autowired
     private TagService tagService;
 
@@ -638,7 +635,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
-                if (prop.get("name").indexOf("可售库存") > -0) continue;
                 FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
             }
         }
@@ -910,9 +906,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             String sku = (String) map.get("skuCode");
                             Boolean isSale = (Boolean) map.get("isSale");
                             if (isSale != null && isSale) {
-                                if (codesMap.get(sku) != null) {
-                                    qty = qty + codesMap.get(sku);
-                                }
+//                                qty = qty + codesMap.get(sku);
+                                qty = qty + map.getIntAttribute("qty");
                             }
                         }
                         FileUtils.cell(row, index++, unlock).setCellValue(qty);
@@ -1286,7 +1281,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             FileUtils.cell(row, index++, unlock).setCellValue("");
                             continue;
                         }
-                        if ("qty".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                         BaseMongoMap<String, Object> pSku = _platform.getSkus().stream().filter(sku -> skuItem.getSkuCode().equals(sku.get("skuCode"))).findFirst().orElse(new BaseMongoMap<>());
                         String attrName = key.substring(key.lastIndexOf(".") + 1);
                         if ("isSale".equals(attrName)) {
@@ -1299,7 +1293,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             FileUtils.cell(row, index++, unlock).setCellValue(pSku.getDoubleAttribute("priceRetail"));
                         } else if ("pPriceSaleEd".equals(attrName)) {
                             FileUtils.cell(row, index++, unlock).setCellValue(pSku.getDoubleAttribute("priceSale"));
-                        } else {
+                        } else if ("qty".equals(key.substring(key.lastIndexOf(".") + 1))){
+                            FileUtils.cell(row, index++, unlock).setCellValue( pSku.getIntAttribute("qty"));
+                        }else {
                             index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
                         }
                     }
@@ -1406,15 +1402,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
             products.add(item);
         }
-        Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<>();
-        if (!codes.isEmpty()) {
-            List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(ChannelConfigEnums.Channel.ShoeMetro.getId(), new ArrayList<>(codes));
-            if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
-                for (SkuInventoryForCmsBean skuInventory : inventoryForCmsBeanList) {
-                    skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
-                }
-            }
-        }
+
         String jmUrlPrefix = platformService.getPlatformProductUrl(CartEnums.Cart.JM.getId());
         // 写入导出数据
         Sheet sheet = book.getSheetAt(0);
@@ -1451,7 +1439,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 // JmURL
                 FileUtils.cell(row, index++, unlock).setCellValue(jmUrlPrefix + cart.getpPlatformMallId() + ".html");
                 SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuCode);
-                FileUtils.cell(row, index++, unlock).setCellValue(skuInventoryMap.get(temp) == null ? "0" : String.valueOf(skuInventoryMap.get(temp)));
+                FileUtils.cell(row, index++, unlock).setCellValue(skuMap.getIntAttribute("qty"));
                 total++;
             }
         }

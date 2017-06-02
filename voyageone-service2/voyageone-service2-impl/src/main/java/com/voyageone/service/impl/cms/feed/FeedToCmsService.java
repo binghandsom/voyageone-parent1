@@ -132,6 +132,12 @@ public class FeedToCmsService extends BaseService {
                 CmsBtFeedInfoModel befproduct = feedInfoService.getProductByCode(channelId, product.getCode());
                 if (befproduct != null) {
                     product.set_id(befproduct.get_id());
+                    // 如果已经人为设置过主类目的场合 把这个主类目保存起来不用重新计算主类目了
+                    product.setCatConf(befproduct.getCatConf());
+                    if("1".equals(product.getCatConf())){
+                        product.setMainCategoryCn(befproduct.getMainCategoryCn());
+                        product.setMainCategoryEn(befproduct.getMainCategoryEn());
+                    }
                     //把之前的sku（新的product中没有的sku）保存到新的product的sku中
                     for (CmsBtFeedInfoModel_Sku skuModel : befproduct.getSkus()) {
                         if (!product.getSkus().contains(skuModel)) {
@@ -206,7 +212,11 @@ public class FeedToCmsService extends BaseService {
 
                 //计算主类目
                 if (isSetCategory && StringUtil.isEmpty(product.getMainCategoryEn())) {
-                    setMainCategory(product);
+                    try {
+                        setMainCategory(product);
+                    }catch (Exception e){
+                        $error(e.getMessage());
+                    }
                 }
 
                 // 产品数据合法性检查
@@ -277,35 +287,35 @@ public class FeedToCmsService extends BaseService {
             List<CmsBtOperationLogModel_Msg> success = new ArrayList<>(),
                     failed = new ArrayList<>();
 
-        List<String> skuCodeList = skuList.stream().map(sku -> sku.getClientSku()).collect(Collectors.toList());
+            List<String> skuCodeList = skuList.stream().map(sku -> sku.getClientSku()).collect(Collectors.toList());
 
-        JongoQuery query = new JongoQuery();
-        query.setQuery("{\"skus.clientSku\": {$in: #}}");
-        query.setParameters(skuCodeList);
-        List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, query);
+            JongoQuery query = new JongoQuery();
+            query.setQuery("{\"skus.clientSku\": {$in: #}}");
+            query.setParameters(skuCodeList);
+            List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, query);
 
-        feedList.forEach(orgFeedInfo -> {
+            feedList.forEach(orgFeedInfo -> {
 
-            Integer qty = 0;
-            /**标识是否要触发价格公式，
-             * 当判断中的3个价格都没有值时，不会触发价格公式
-             * */
+                Integer qty = 0;
+                /**标识是否要触发价格公式，
+                 * 当判断中的3个价格都没有值时，不会触发价格公式
+                 * */
 
-            boolean triggerPrice = false;
-            for (CmsBtFeedInfoModel_Sku skuInfo : orgFeedInfo.getSkus()) {
+                boolean triggerPrice = false;
+                for (CmsBtFeedInfoModel_Sku skuInfo : orgFeedInfo.getSkus()) {
 
-                CmsBtFeedInfoModel_Sku targetSku = filterSku(skuList, skuInfo.getClientSku());
+                    CmsBtFeedInfoModel_Sku targetSku = filterSku(skuList, skuInfo.getClientSku());
 
-                /**
-                 * 比较一下客户价格
-                 * priceNet:美金成本价
-                 * priceClientRetail:美金指导价
-                 * priceClientMsrp:美金专柜价
-                 */
-                if (targetSku != null) {
-                    triggerPrice = !((targetSku.getPriceNet() == null || targetSku.getPriceNet() == 0)
-                            && (targetSku.getPriceClientRetail() == null || targetSku.getPriceClientRetail() == 0)
-                            && (targetSku.getPriceClientMsrp() == null || targetSku.getPriceClientMsrp() == 0));
+                    /**
+                     * 比较一下客户价格
+                     * priceNet:美金成本价
+                     * priceClientRetail:美金指导价
+                     * priceClientMsrp:美金专柜价
+                     */
+                    if (targetSku != null) {
+                        triggerPrice = !((targetSku.getPriceNet() == null || targetSku.getPriceNet() == 0)
+                                && (targetSku.getPriceClientRetail() == null || targetSku.getPriceClientRetail() == 0)
+                                && (targetSku.getPriceClientMsrp() == null || targetSku.getPriceClientMsrp() == 0));
 
                         // 同步价格
                         if (targetSku.getPriceNet() != null && targetSku.getPriceNet() != 0)
@@ -343,9 +353,9 @@ public class FeedToCmsService extends BaseService {
                     }
 
                     // 原feed数据导入成功或者导入失败,则自动重新导入一次
-                    if (CmsConstants.FeedUpdFlgStatus.Succeed == orgFeedInfo.getUpdFlg()
-                            || CmsConstants.FeedUpdFlgStatus.Fail == orgFeedInfo.getUpdFlg())
-                        orgFeedInfo.setUpdFlg(CmsConstants.FeedUpdFlgStatus.Pending);
+//                    if (CmsConstants.FeedUpdFlgStatus.Succeed == orgFeedInfo.getUpdFlg()
+//                            || CmsConstants.FeedUpdFlgStatus.Fail == orgFeedInfo.getUpdFlg())
+//                        orgFeedInfo.setUpdFlg(CmsConstants.FeedUpdFlgStatus.Pending);
 
                     feedInfoService.updateFeedInfo(orgFeedInfo);
 

@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.common.configs.Shops;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import org.junit.Test;
@@ -9,6 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by zhujiaye on 15/12/21.
@@ -22,6 +24,8 @@ public class CmsBtFeedCustomPropServiceTest {
 
     @Test
     public void testCustomProp() throws Exception {
+
+        List<String> orderChannelIdList = Shops.getShopList().stream().map(item -> item.getOrder_channel_id()).distinct().collect(Collectors.toList());
 //        customPropService.doInit("010");
 
         // 获取属性列表测试

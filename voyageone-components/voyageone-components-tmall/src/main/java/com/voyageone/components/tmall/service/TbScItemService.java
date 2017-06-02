@@ -8,11 +8,14 @@ import com.taobao.api.request.*;
 import com.taobao.api.response.*;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.TbBase;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by tom.zhu on 2016-10-08.
@@ -22,6 +25,45 @@ public class TbScItemService extends TbBase {
 	 // 小知识:
 	 //  天猫前台商品: ic商品
 	 //  仓储商品: sc商品
+
+	/**
+	 * 菜鸟新规定， 后端货品的sku， 仅支持数字、字母、下划线、横杠, 25个字符, 所以我们就转换一下
+	 * @param sku
+	 * @return
+	 */
+	private String getRealScOuterCodeBySku(String sku) {
+//		String regExTmp = "[-_a-zA-Z0-9]";
+//
+		if (StringUtils.isEmpty(sku)) {
+			return "";
+		}
+//
+//		StringBuilder sb = new StringBuilder();
+//		String result;
+//
+//		for (int i = 0; i < sku.length(); i ++) {
+//			String c = sku.substring(i, i + 1);
+//
+//			Pattern pattern = Pattern.compile(regExTmp, Pattern.CASE_INSENSITIVE);
+//			Matcher matcher = pattern.matcher(c);
+//
+//			if (matcher.find()) {
+//				// OK的字符
+//				sb.append(c);
+//			}
+//
+//		}
+//
+//		result = sb.toString();
+//
+//		if (result.length() > 25) {
+//			result = result.substring(0, 25);
+//		}
+//
+//		return result;
+
+		return MD5.getMd5_16(sku);
+	}
 
 	/**
 	 * taobao.scitem.outercode.get (根据outerCode查询仓储商品)
@@ -35,9 +77,15 @@ public class TbScItemService extends TbBase {
 
 		ScitemOutercodeGetRequest request = new ScitemOutercodeGetRequest();
 
-		request.setOuterCode(outerCode);
+		request.setOuterCode(getRealScOuterCodeBySku(outerCode));
 
 		ScitemOutercodeGetResponse res = reqTaobaoApi(shopBean, request);
+
+//		if (!res.isSuccess() || !StringUtils.isEmpty(res.getSubCode())) {
+//			request.setOuterCode(outerCode);
+//
+//			res = reqTaobaoApi(shopBean, request);
+//		}
 
 		if (!res.isSuccess() || !StringUtils.isEmpty(res.getSubCode())) {
 			return null;
@@ -60,7 +108,7 @@ public class TbScItemService extends TbBase {
 		ScitemAddRequest request = new ScitemAddRequest();
 
 		request.setItemName(itemName);
-		request.setOuterCode(outerCode);
+		request.setOuterCode(getRealScOuterCodeBySku(outerCode));
 		request.setWeight(1L);
 
 		ScitemAddResponse res = reqTaobaoApi(shopBean, request);
@@ -90,7 +138,7 @@ public class TbScItemService extends TbBase {
 		if (skuId != null) {
 			request.setSkuId(skuId);
 		}
-		request.setOuterCode(outerCode);
+		request.setOuterCode(getRealScOuterCodeBySku(outerCode));
 
 		ScitemMapAddResponse res = reqTaobaoApi(shopBean, request);
 
@@ -138,7 +186,7 @@ public class TbScItemService extends TbBase {
 
 		request.setStoreCode(store_code);
 		String items = "[{\"scItemId\":\"0\",\"scItemCode\":\"%s\",\"inventoryType\":\"1\",\"quantity\":\"%s\"}]";
-		items = String.format(items, scItemCode, quantity);
+		items = String.format(items, getRealScOuterCodeBySku(scItemCode), quantity);
 		request.setItems(items);
 
 		InventoryInitialResponse res = reqTaobaoApi(shopBean, request);

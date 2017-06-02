@@ -99,7 +99,7 @@ public class CmsBtJmPromotionProductService {
     {
         if (map.containsKey("code")) {
             String code = map.get("code").toString();
-            String[] codeList = code.split("\r\n|\n|\\s+");//split("\r\n");
+            String[] codeList = code.split("\r\n|\n");//split("\r\n");
             map.put("codeList", codeList);
         }
     }

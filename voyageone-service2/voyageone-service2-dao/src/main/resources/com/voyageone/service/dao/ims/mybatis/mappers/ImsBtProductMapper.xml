@@ -6,6 +6,7 @@
         SELECT
         seq,
         channel_id as channelId,
+        org_channel_id as orgChannelId,
         cart_id as cartId,
         product_id as productId,
         model_id as modelId,
@@ -34,12 +35,14 @@
         WHERE channel_id = #{channelId}
         AND cart_id = #{cartId}
         AND code = #{code}
+        AND org_channel_id = #{orgChannelId}
     </select>
 
     <insert id="ims_bt_product_insert" parameterType="com.voyageone.service.model.ims.ImsBtProductModel" >
         INSERT INTO voyageone_ims.ims_bt_product
         (
         channel_id,
+        org_channel_id,
         cart_id,
         code,
         num_iid,
@@ -52,6 +55,7 @@
         VALUES
         (
         #{channelId},
+        #{orgChannelId},
         #{cartId},
         #{code},
         #{numIid},

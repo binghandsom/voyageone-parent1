@@ -39,7 +39,6 @@ import java.util.*;
 public class CmsFeedSearchService extends BaseViewService {
 
     // 查询产品信息时的缺省输出列
-    private final String searchItems = "{'category':1,'code':1,'name':1,'model':1,'color':1,'origin':1,'brand':1,'image':1,'productType':1,'sizeType':1,'shortDescription':1,'longDescription':1,'skus':1,'attribute':1,'updFlg':1,'qty':1,'updMessage':1,'created':1,'modified':1,'lastReceivedOn':1}";
     // 查询产品信息时的缺省排序条件
     private final String sortItems = "{'category':1,'code':1}";
     @Autowired
@@ -148,7 +147,6 @@ public class CmsFeedSearchService extends BaseViewService {
         String channelId = searchValue.get("orgChaId") == null ? userInfo.getSelChannelId() : searchValue.get("orgChaId").toString();
         JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery(feedInfoService.getSearchQuery(channelId, searchValue));
-        queryObject.setProjection(searchItems);
         queryObject.setSort(setSortValue(searchValue));
         int pageNum = (Integer) searchValue.get("pageNum");
         int pageSize = (Integer) searchValue.get("pageSize");
