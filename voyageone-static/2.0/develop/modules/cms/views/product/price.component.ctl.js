@@ -19,7 +19,8 @@ define([
             productPriceList: [],
             model: {},
             priceMsrp:"",
-            priceSale:""
+            priceSale:"",
+            lastCartId:""
         };
         self.$productDetailService = $productDetailService;
         self.$rootScope = $rootScope;
@@ -39,9 +40,22 @@ define([
             vm.model = resp.data;
             self.sales = resp.data.sales;
             self.selectSalesOnChange();
+            var lastCartId = self.vm.lastCartId;
+            var priceMsrp = self.vm.priceMsrp;
+            var priceSale = self.vm.priceSale;
+            var priceFlag = lastCartId && ((priceMsrp && priceMsrp > 0) || (priceSale && priceSale > 0));
             vm.productPriceList.forEach(function (element) {
                 if (element.checked == 2) {
                     element.isSale = true;
+                }
+
+                if (priceFlag && lastCartId != element.cartId) {
+                    if (priceMsrp > 0) {
+                        element.priceMsrp = priceMsrp;
+                    }
+                    if (priceSale > 0) {
+                        element.priceSale = priceSale;
+                    }
                 }
             });
         });
@@ -127,6 +141,8 @@ define([
         var self = this;
 
         self.$productDetailService.saveCartSkuPrice(para).then(function () {
+
+            self.vm.lastCartId = item.cartId;
 
             if (para.priceMsrp > 0) {
                 item.priceMsrpSt = para.priceMsrp;
