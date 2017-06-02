@@ -147,7 +147,7 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
             JongoQuery queryObj = new JongoQuery();
             queryObj.setQuery("{common.fields.code:{$in:#}}");
             queryObj.setParameters(codeList);
-            queryObj.setProjectionExt("common.fields.code", "common.fields.quantity", "sales.codeSumAll.cartId27");
+            queryObj.setProjectionExt("common.fields.code", "common.fields.quantity","platforms.P27.quantity", "sales.codeSumAll.cartId27");
             List<CmsBtProductModel> prodList = cmsBtProductDao.select(queryObj, channelId);
             if (prodList == null || prodList.isEmpty()) {
                 $warn("JmPromotionProductStockSyncService 无指定的产品数据！ channelId=%s, cartId=%s", channelId, cartIdStr);
@@ -172,8 +172,8 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
                     continue;
                 }
                 for (CmsBtProductModel prodObj : prodList) {
-                    if (prodCode.equals(prodObj.getCommonNotNull().getFieldsNotNull().getCode())) {
-                        jmPromProd.setQuantity(prodObj.getCommonNotNull().getFieldsNotNull().getQuantity());
+                    if (prodCode.equals(prodObj.getCommonNotNull().getFieldsNotNull().getCode()) && prodObj.getPlatform(27) != null) {
+                        jmPromProd.setQuantity(prodObj.getPlatform(27).getIntAttribute("quantity"));
                         if (prodObj.getSales() != null) {
                             jmPromProd.setSales(prodObj.getSales().getCodeSumAll(CartEnums.Cart.JM.getValue()));
                         }
@@ -225,7 +225,7 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
             JongoQuery queryObj = new JongoQuery();
             queryObj.setQuery("{common.fields.code:{$in:#}}");
             queryObj.setParameters(codeList);
-            queryObj.setProjectionExt("common.fields.code", "common.fields.quantity");
+            queryObj.setProjectionExt("common.fields.code", "common.fields.quantity","platforms.P"+cartId+".quantity");
             List<CmsBtProductModel> prodList = cmsBtProductDao.select(queryObj, channelId);
             if (prodList == null || prodList.isEmpty()) {
                 $warn("PromotionProductStockSyncService 无指定的产品数据！ channelId=%s, cartId=%s", channelId, cartIdStr);
@@ -250,8 +250,8 @@ public class CmsJmPromotionProductStockSyncMQJob extends TBaseMQCmsService<JmPro
                     continue;
                 }
                 for (CmsBtProductModel prodObj : prodList) {
-                    if (prodCode.equals(prodObj.getCommonNotNull().getFieldsNotNull().getCode())) {
-                        promProd.setQuantity(prodObj.getCommonNotNull().getFieldsNotNull().getQuantity());
+                    if (prodCode.equals(prodObj.getCommonNotNull().getFieldsNotNull().getCode()) && prodObj.getPlatform(cartId) != null) {
+                        promProd.setQuantity(prodObj.getPlatform(cartId).getIntAttribute("quantity"));
                         break;
                     }
                 }

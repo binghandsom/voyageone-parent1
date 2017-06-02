@@ -377,6 +377,79 @@
             </uib-tab>
             <!-- TODO 暂时不显示SKU列表,如果以后需要根据SKU列表来制定 促销价格再放开 -->
 
+            <!--导出任务-->
+            <uib-tab>
+                <tab-heading ng-click="vm.tabIndex = 0"><i class="glyphicons glyphicons-more-items text-default"></i>
+                    Export 一览
+                </tab-heading>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    &emsp;
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-pop btn-default" ng-click="exportSearch()">
+                                            <i class="fa fa-refresh"></i>&nbsp;刷新
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive box box-body">
+                            <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" ng-style="{'border': vm.exportList.length ? '1px solid #ddd': 'none'}">
+                                <thead>
+                                <tr>
+                                    <th class="text-center mfb-xxt">No.</th>
+                                    <th class="text-left mfb-xxt" translate="TXT_EXPORT_FILE_NAME"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_TEMPLATE_TYPE"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_STATUS"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_EXPORT_REQUEST_TIME"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_EXPORT_CREATE_TIME"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_EXPORT_REQUESTER"></th>
+                                    <th class="text-center mfb-xxt" translate="TXT_ACTION"></th>
+                                </tr>
+                                </thead>
+                                <tbody ng-if="!vm.exportList.length">
+                                <tr>
+                                    <td colspan="6"  if-no-rows="vm.exportList.length"></td>
+                                </tr>
+                                </tbody>
+                                <tbody>
+                                <tr ng-if="vm.exportList.length > 0" ng-repeat="exportInfo in vm.exportList">
+                                    <td class="text-center mfb-xxt">{{$index + 1}}</td>
+                                    <td class="text-left mfb-xxt">
+                                        <a href="javascript:void(0)" ng-click="downloadExportExcel(exportInfo)">{{exportInfo.fileName}}<br></a>
+                                    </td>
+
+                                    <td class="text-left mfb-xxt" ng-if="exportInfo.templateType==0">上传模板</td>
+                                    <td class="text-left mfb-xxt" ng-if="exportInfo.templateType==1">聚划算模板</td>
+                                    <td class="text-left mfb-xxt" ng-if="exportInfo.templateType==2">官方活动(A类)模板</td>
+
+                                    <td class="text-left mfb-xxt" ng-if="exportInfo.status==0">等待导出</td>
+                                    <td class="text-left mfb-xxt" ng-if="exportInfo.status==1">导出成功</td>
+                                    <td class="text-left mfb-xxt" ng-if="exportInfo.status==2">导出失败</td>
+
+                                    <td class="text-left mfb-xxt">{{exportInfo.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td><!--exportInfo.modified-->
+                                    <td class="text-left mfb-xxt">{{exportInfo.fileName ? exportInfo.modified: '' | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
+                                    <td class="text-left mfb-xxt">{{exportInfo.creater}}</td>
+                                    <td class="text-center mfb-xxt">
+                                        <button title="下载" ng-disabled="exportInfo.status!=1" ng-click="downloadExportExcel(exportInfo)"
+                                                class="btn btn-danger btn-xs"><i class="fa fa-download"></i></button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-sm-12 m-t-lg m-b-lg">
+                            <vpagination config="vm.exportPageOption"></vpagination>
+                        </div>
+                    </div>
+                </div>
+            </uib-tab>
+
         </uib-tabset>
         <!-- tabset -->
     </div>

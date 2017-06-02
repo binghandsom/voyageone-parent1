@@ -917,5 +917,14 @@ define([
             pScope.data = data;
             targetDom.html($compile(_pStatusDom)(pScope));
         }
+
+        /**
+         * 编辑商品originalTitleCn
+         * @param data
+         * @returns {*}
+         */
+        this.updateOriginalTitleCn = function(data) {
+            return $productDetailService.updateOriginalTitleCn(data);
+        }
     }
 });

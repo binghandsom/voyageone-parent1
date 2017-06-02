@@ -91,7 +91,7 @@
         SELECT a.deal_end_time_status,ifnull(b.image1,a.image1) as image1,ifnull(b.product_Long_Name,a.product_name_en)  AS productLongName,b.color_En AS colorEn,a.deal_Price,b.attribute
         ,a.max_retail_price,a.max_msrp_usd,a.max_msrp_rmb,a.max_sale_price,a.min_retail_price,a.min_msrp_usd,a.min_msrp_rmb,a.min_sale_price,a.market_price,a.jm_hash_id AS jmHashId,a.sku_count AS skuCount
         ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status,a.id,a.promotion_tag,a.product_code,b.comment,
-        a.max_deal_price,a.min_deal_price,a.max_market_price,a.min_market_price,a.discount,b.jumei_mall_id,a.quantity,a.remark
+        a.max_deal_price,a.min_deal_price,a.max_market_price,a.min_market_price,a.discount,b.jumei_mall_id,a.quantity,a.remark,a.discount2
         FROM `cms_bt_jm_promotion_product` AS a
         left JOIN  `cms_bt_jm_product`       AS b ON a.`product_code`=b.`product_code` AND a.`channel_id`=b.`channel_id`
         <where>
@@ -168,6 +168,12 @@
             </if>
             <if test="endDiscount!=null">
                 and  a.discount&lt;=(#{endDiscount}/10)
+            </if>
+            <if test="beginDiscount2!=null">
+                and a.discount2>=(#{beginDiscount2}/10)
+            </if>
+            <if test="endDiscount2!=null">
+                and  a.discount2&lt;=(#{endDiscount2}/10)
             </if>
             <if test="priceType=='msrpRmb'">
                 <if test="beginPrice!=null">
@@ -289,6 +295,12 @@
             <if test="endDiscount!=null">
                 and  a.discount&lt;=(#{endDiscount}/10)
             </if>
+            <if test="beginDiscount2!=null">
+                and a.discount2>=(#{beginDiscount2}/10)
+            </if>
+            <if test="endDiscount2!=null">
+                and  a.discount2&lt;=(#{endDiscount2}/10)
+            </if>
             <if test="priceType=='msrpRmb'">
                 <if test="beginPrice!=null">
                     and   a.max_msrp_rmb>=#{beginPrice}
@@ -382,13 +394,13 @@
     </update>
     <update id="updateAvgPriceByPromotionProductId">
         UPDATE cms_bt_jm_promotion_product  AS a
-        JOIN (SELECT cms_bt_jm_promotion_product_id,AVG(market_price) AS market_price,AVG(deal_price) AS deal_price,AVG(`discount`)  AS discount
+        JOIN (SELECT cms_bt_jm_promotion_product_id,AVG(market_price) AS market_price,AVG(deal_price) AS deal_price,AVG(`discount`)  AS discount ,AVG(`discount2`)  AS discount2
         ,max(market_price) AS max_market_price,max(deal_price) AS max_deal_price,min(market_price) AS min_market_price,min(deal_price) AS min_deal_price,
          MAX(`msrp_usd`) AS `max_msrp_usd`,MAX(`msrp_rmb`) AS `max_msrp_rmb` ,MAX(`retail_price`) AS `max_retail_price` ,MAX(`sale_price`) AS `max_sale_price`,
        MIN(`msrp_usd`) AS `min_msrp_usd`,MIN(`msrp_rmb`) AS `min_msrp_rmb` ,MIN(`retail_price`) AS `min_retail_price` ,MIN(`sale_price`) AS min_sale_price
         FROM `cms_bt_jm_promotion_sku`
         WHERE  cms_bt_jm_promotion_product_id=#{cmsBtJmPromotionProductId}) AS b  ON a.id=b.cms_bt_jm_promotion_product_id
-        SET a.deal_Price=b.deal_price,a.market_price=b.market_price,a.discount=b.discount
+        SET a.deal_Price=b.deal_price,a.market_price=b.market_price,a.discount=b.discount,a.discount2 = b.discount2
         ,a.max_deal_Price=b.max_deal_price,a.max_market_price=b.max_market_price
         ,a.min_deal_Price=b.min_deal_price,a.min_market_price=b.min_market_price,
         a.max_msrp_usd=b.max_msrp_usd,a.max_msrp_rmb=b.max_msrp_rmb,a.max_retail_price=b.max_retail_price,a.max_sale_price=b.max_sale_price,

@@ -448,10 +448,19 @@ public class CmsBtCustomPropService extends BaseService {
 
     // 给属性排序
     private void rearrange(CmsBtCustomPropModel cmsBtCustomPropModel) {
-        cmsBtCustomPropModel.getEntitys().sort((o1, o2) -> {
-            Boolean b1 = o1.getChecked() == null ? false : o1.getChecked();
-            Boolean b2 = o2.getChecked() == null ? false : o2.getChecked();
-            return b1.compareTo(b2) * -1;
+//        cmsBtCustomPropModel.getEntitys().sort((o1, o2) -> {
+//            Boolean b1 = o1.getChecked() == null ? false : o1.getChecked();
+//            Boolean b2 = o2.getChecked() == null ? false : o2.getChecked();
+//            return b1.compareTo(b2) * -1;
+//        });
+
+        cmsBtCustomPropModel.getEntitys().sort(new Comparator<CmsBtCustomPropModel.Entity>() {
+            @Override
+            public int compare(CmsBtCustomPropModel.Entity o1, CmsBtCustomPropModel.Entity o2) {
+                Boolean b1 = o1.getChecked() == null ? false : o1.getChecked();
+                Boolean b2 = o2.getChecked() == null ? false : o2.getChecked();
+                return b1.compareTo(b2) * -1;
+            }
         });
 
         if (!ListUtils.isNull(cmsBtCustomPropModel.getSort())) {

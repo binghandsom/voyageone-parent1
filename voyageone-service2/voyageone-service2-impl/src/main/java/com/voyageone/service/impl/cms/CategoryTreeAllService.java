@@ -1,7 +1,9 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Carts;
+import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
@@ -41,8 +43,22 @@ public class CategoryTreeAllService extends BaseService {
      */
     public List<CmsMtCategoryTreeAllBean> getCategoriesByChannelId(String channelId, String lang) {
         List<CmsMtCategoryTreeAllBean> result = new ArrayList<>();
+
+        boolean isChildren = false;
+        List<TypeChannelBean> typeChannelBeans = TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, "cn");
+        for(TypeChannelBean typeChannelBean : typeChannelBeans){
+            if (Channels.isUsJoi(typeChannelBean.getValue())) {
+                isChildren = true;
+                break;
+            }
+        };
         // 根据channelId取得channel与Category的对应关系
-        List<CmsMtChannelCategoryConfigModel> mappings = channelCategoryService.getByChannelId(channelId);
+        List<CmsMtChannelCategoryConfigModel> mappings = null;
+        if(isChildren){
+            mappings = channelCategoryService.getByChannelId("928");
+        }else{
+            mappings = channelCategoryService.getByChannelId(channelId);
+        }
         $debug("mappings size = " + mappings.size());
         //Map<String, Map<String, CmsMtPlatformCategoryTreeModel>> applyPlatformCategoryMap = null;
 

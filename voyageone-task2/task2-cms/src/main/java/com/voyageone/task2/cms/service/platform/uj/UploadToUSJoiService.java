@@ -462,8 +462,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
                     doSetMainCategory(productModel.getCommon(), productModel.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
 
+                    Map<String, Integer>qty = new HashMap<>();
                     // 设置sku的重量
                     for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
+                        qty.put(sku.getSkuCode(), sku.getQty());
                         if ((sku.getWeight() == null || sku.getWeight() == 0.0D)
                                 && productModel.getCommon().getFields().getWeightLb() != 0.0D) {
                             sku.setWeight(productModel.getCommon().getFields().getWeightLb());
@@ -519,9 +521,12 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                     newSku.setAttribute("priceRetail", sku.get("priceRetail"));
                                     newSku.setAttribute("priceSale", sku.get("priceSale"));
                                 }
+                                newSku.setAttribute("qty", qty.get(newSku.getStringAttribute("skuCode")));
                                 sku = newSku;
                                 return sku;
                             }).collect(Collectors.toList()));
+
+                            platform.setAttribute("quantity",productModel.getCommon().getFields().getQuantity());
                             // 下面几个cartId都设成同一个platform
                             finalProductModel.setPlatform(cartId, platform);
                         }
@@ -1967,7 +1972,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             }
 
             // 根据主类目设置商品重量
-            if (searchResult.getWeight() != 0.0D
+            if (searchResult.getWeight() != null && searchResult.getWeight() != 0.0D
                     && (prodCommonField.getWeightLb() == null || prodCommonField.getWeightLb() == 0.0)) {
                 prodCommonField.setWeightLb(searchResult.getWeight());
                 BigDecimal b = new BigDecimal(searchResult.getWeight() * 453.59237);
@@ -2044,6 +2049,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      * @return String 商品中文名称(品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称)
      */
     public String getOriginalTitleCnByCategory(String brand, String sizeTypeCn, String leafCategoryCnName) {
+        if(brand == null) brand = "";
+        if(sizeTypeCn == null) sizeTypeCn = "";
+        if(leafCategoryCnName == null) leafCategoryCnName = "";
         return brand + " " + sizeTypeCn + " " + leafCategoryCnName;
     }
 

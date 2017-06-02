@@ -79,6 +79,11 @@ public class CmsBtJmSkuModel extends BaseModel {
      */
     protected BigDecimal salePrice;
 
+    /**
+     * 原始channelId
+     */
+    protected String orgChannelId;
+
     public String getChannelId() {
         return channelId;
     }
@@ -181,5 +186,13 @@ public class CmsBtJmSkuModel extends BaseModel {
 
     public void setSalePrice(BigDecimal salePrice) {
         this.salePrice = salePrice;
+    }
+
+    public String getOrgChannelId() {
+        return orgChannelId;
+    }
+
+    public void setOrgChannelId(String orgChannelId) {
+        this.orgChannelId = orgChannelId;
     }
 }
