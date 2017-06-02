@@ -377,7 +377,7 @@ public class TaobaoScItemService extends BaseService {
 			if (e.toString().contains("您输入的前端商品已挂靠至该货品上")) {
 				return String.valueOf(scItem.getItemId());
 			}
-			String errMsg = String.format("创建关联失败:{numIId: %s, outerId: %s, err_msg: %s}", numIId, sku_outerId, e.toString());
+            String errMsg = String.format("关联失败:{outerId: %s, err_msg: %s !}", sku_outerId, e.toString());
 			throw new BusinessException(errMsg);
 		}
 

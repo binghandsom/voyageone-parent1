@@ -309,17 +309,18 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             // add by desmond 2016/10/31 end
 
             // WMS2.0切换 20170526 charis STA
-            // 上新对象code
+            // 上新对象skus
+            List<String> skus = jmCart.getSkus().stream().map(w -> w.getStringAttribute("skuCode")).collect(Collectors.toList());
             Map<String, Integer> skuLogicQtyMap = new HashMap<>();
-            for (String code : listSxCode) {
+            for (String sku : skus) {
                 try {
-                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(work.getCartId()), code, null);
+                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(work.getCartId()), null, sku);
                     for (Map.Entry<String, Integer> e : map.entrySet()) {
                         skuLogicQtyMap.put(e.getKey(), e.getValue());
                     }
                 } catch (Exception e) {
                     String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
-                            channelId, work.getCartId(), code, e.getMessage());
+                            channelId, work.getCartId(), sku, e.getMessage());
                     throw new Exception(errorMsg);
                 }
             }

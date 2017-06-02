@@ -6255,18 +6255,23 @@ public class SxProductService extends BaseService {
         request.setCartId(cartId);
         request.setItemCode(code);
         request.setSku(sku);
-        AvailQuantityForCmsResponse response = null;
+        AvailQuantityForCmsResponse response;
         try {
             response = voApiDefaultClient.execute(request);
 
             if ("0".equals(response.getCode())) {
                 data = (ArrayList) response.getData();
-                data.stream().forEach(d -> skuLogicQtyMap.put((String)((LinkedHashMap)d).get("sku"), (Integer)((LinkedHashMap)d).get("qty")));
+                if (!StringUtils.isEmpty(sku) && ListUtils.isNull(data)) {
+                    skuLogicQtyMap.put(sku, 0);
+                } else {
+                    data.stream().forEach(d -> skuLogicQtyMap.put((String)((LinkedHashMap)d).get("sku"), (Integer)((LinkedHashMap)d).get("qty")));
+                }
+
                 return skuLogicQtyMap;
             }
         } catch (Exception e) {
             String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [sku:%s] [errorMsg:%s]",
-                    channelId, cartId, code, sku, response.getMessage());
+                    channelId, cartId, code, sku, e.getMessage());
             throw new Exception(errorMsg);
         }
         return null;
