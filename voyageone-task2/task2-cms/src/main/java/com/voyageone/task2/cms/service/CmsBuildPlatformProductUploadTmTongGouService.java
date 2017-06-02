@@ -1949,11 +1949,13 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // 只有当入关方式(true表示跨境申报)时，才需要设置海关报关税号hscode;false表示邮关申报时，不需要设置海关报关税号hscode
 
                 if ("true".equalsIgnoreCase(crossBorderRreportFlg)) {
-                    // 获取hscode对应的第一，第二计量单位和销售单位 20170602 STA
-                    skuMap.put("hscode_unit", hscode_unit);
-                    // 销售单位
-                    skuMap.put("hscode_sale_unit", String.format("code##%s||cnName##%s", unitMap.get("unitCode"), hscodeSaleUnit));
-                    // 获取hscode对应的第一，第二计量单位和销售单位 20170602 END
+                    if (!StringUtils.isEmpty(bean.getFirstUnit()) || !StringUtils.isEmpty(bean.getSecondUnit())) {
+                        // 获取hscode对应的第一，第二计量单位和销售单位 20170602 STA
+                        skuMap.put("hscode_unit", hscode_unit);
+                        // 销售单位
+                        skuMap.put("hscode_sale_unit", String.format("code##%s||cnName##%s", unitMap.get("unitCode"), hscodeSaleUnit));
+                        // 获取hscode对应的第一，第二计量单位和销售单位 20170602 END
+                    }
 
                     // 海关报关的税号
                     skuMap.put("hscode", hscode);
