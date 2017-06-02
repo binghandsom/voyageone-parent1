@@ -62,6 +62,7 @@ import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.ibatis.type.IntegerTypeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -1850,31 +1851,36 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 }
                 if (!StringUtils.isEmpty(hscode)) {
                     bean = cmsMtHsCodeUnitDaoExt.getHscodeUnit(hscode);
+                    if (bean != null) {
+                        Double weightKg = product.getCommonNotNull().getFieldsNotNull().getWeightKG();
+                        Integer weightG = product.getCommonNotNull().getFieldsNotNull().getWeightG();
+                        if (!StringUtils.isEmpty(bean.getFirstUnit())) {
+                            if ("千克".equals(bean.getFirstUnit())) {
+                                hscode_unit = weightKg.toString();
+                            } else if ("克".equals(bean.getFirstUnit())) {
+                                hscode_unit = weightG.toString();
+                            } else {
+                                hscode_unit = "1";
+                            }
+                        }
+
+                        if (!StringUtils.isEmpty(bean.getSecondUnit())) {
+                            if ("千克".equals(bean.getSecondUnit())) {
+                                hscode_unit = hscode_unit + "," + weightKg;
+                            } else if ("克".equals(bean.getSecondUnit())) {
+                                hscode_unit = hscode_unit + "," + weightG;
+                            } else {
+                                hscode_unit = hscode_unit + ",1";
+                            }
+                        }
+                    } else {
+                        throw new BusinessException(String.format("hscode [%s] 在cms_mt_hscode_unit表中不存在, 联系管理员！", hscode));
+                    }
                 }
                 if (!StringUtils.isEmpty(hscodeSaleUnit)) {
                     unitMap = cmsMtHsCodeUnitDaoExt.getHscodeSaleUnit(hscodeSaleUnit);
-                }
-
-                Double weightKg = product.getCommonNotNull().getDoubleAttribute("weightKG");
-                Double weightG = product.getCommonNotNull().getDoubleAttribute("weightG");
-
-                if (!StringUtils.isEmpty(bean.getFirstUnit())) {
-                    if ("千克".equals(bean.getFirstUnit())) {
-                        hscode_unit = weightKg.toString();
-                    } else if ("克".equals(bean.getFirstUnit())) {
-                        hscode_unit = weightG.toString();
-                    } else {
-                        hscode_unit = "1";
-                    }
-                }
-
-                if (!StringUtils.isEmpty(bean.getSecondUnit())) {
-                    if ("千克".equals(bean.getSecondUnit())) {
-                        hscode_unit = hscode_unit + "," + weightKg;
-                    } else if ("克".equals(bean.getSecondUnit())) {
-                        hscode_unit = hscode_unit + "," + weightG;
-                    } else {
-                        hscode_unit = hscode_unit + ",1";
+                    if (unitMap == null) {
+                        throw new BusinessException(String.format("hscode的销售单位 [%s] 在cms_mt_hscode_sale_unit表中不存在, 联系管理员！", hscodeSaleUnit));
                     }
                 }
             }
@@ -1944,19 +1950,11 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
                 if ("true".equalsIgnoreCase(crossBorderRreportFlg)) {
                     // 获取hscode对应的第一，第二计量单位和销售单位 20170602 STA
-                    if (bean != null) {
-                        skuMap.put("hscode_unit", hscode_unit);
-                    } else {
-                        throw new BusinessException(String.format("hscode [%s] 在cms_mt_hscode_unit表中不存在, 联系管理员！", hscode));
-                    }
+                    skuMap.put("hscode_unit", hscode_unit);
                     // 销售单位
-                    if (unitMap != null) {
-                        skuMap.put("hscode_sale_unit",
-                                String.format("code##%s||cnName##%s", unitMap.get(hscodeSaleUnit), hscodeSaleUnit));
-                    } else {
-                        throw new BusinessException(String.format("hscode的销售单位 [%s] 在cms_mt_hscode_sale_unit表中不存在, 联系管理员！", hscodeSaleUnit));
-                    }
+                    skuMap.put("hscode_sale_unit", String.format("code##%s||cnName##%s", unitMap.get(hscodeSaleUnit), hscodeSaleUnit));
                     // 获取hscode对应的第一，第二计量单位和销售单位 20170602 END
+
                     // 海关报关的税号
                     skuMap.put("hscode", hscode);
                 }
