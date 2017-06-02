@@ -48,7 +48,8 @@ define([
             channelInner: {catPath: null},
             _cart_tab_act: false,
             channelId: "",
-            columnArrow: {}
+            columnArrow: {},
+            minWidth : 1500
         };
         $scope.searchInfoBefo;
         $scope.exportStatus = ["正在生成", "完成", "失败"];
@@ -301,8 +302,9 @@ define([
                 contructQty($scope.vm.productList, $scope.vm.codeMap);
 
                 // 计算表格宽度
-                $scope.vm.tblWidth = ($scope.vm.commonProps.length * 170 + $scope.vm.sumCustomProps.length * 100 + $scope.vm.selSalesType.length * 150 + $scope.vm.selBiDataList.length * 150 + 400) + 'px';
-                $scope.vm.tblWidth2 = ($scope.vm.commonProps.length * 170 + $scope.vm.sumCustomProps.length * 100 + $scope.vm.selSalesType.length * 150 + $scope.vm.selBiDataList.length * 180 + 960) + 'px';
+
+                $scope.vm.tblWidth2 = $scope.vm.commonProps.length * 170 + $scope.vm.sumCustomProps.length * 100 + $scope.vm.selSalesType.length * 150 + $scope.vm.selBiDataList.length * 180;
+
             })
         }
 

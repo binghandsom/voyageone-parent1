@@ -615,7 +615,7 @@
                                                                                             ng-if="vm.productList.length"
                                                                                             ng-click="columnOrder('quantity')"><i class="fa fa-{{getArrowName('quantity')}}"></i></button>
                                         </th>
-                                        <th ng-if="isExistCommonProps('quantitySale')" class="text-center">
+                                        <th ng-if="isExistCommonProps('quantitySale')" class="text-center" style="min-width: 80px">
                                             可售库存
                                         </th>
                                         <th ng-if="isExistCommonProps('priceMsrp')" class="text-center">
@@ -658,7 +658,7 @@
                                 </tbody>
                                 <tbody class="box-body" ng-repeat="productInfo in vm.productList" style="border-bottom: 1px solid #ddd; height: 80px;">
                                     <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="border-bottom:1px solid #ddd;border-top:1px solid #ddd;height: 40px;">
-                                        <td class="text-center" rowspan="2" style="width: 70px;">
+                                        <td class="text-center" rowspan="2">
                                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
                                                 <input ng-model="vm.productSelList.selFlag[productInfo.prodId]" type="checkbox"
                                                        ng-controller="selectRowsCtrl"
@@ -666,7 +666,7 @@
                                                 <span class="fa fa-check"></span>
                                             </label>
                                         </td>
-                                        <td rowspan="2" style="padding-left: 0;width: 100px">
+                                        <td rowspan="2">
                                             <a href="javascript:void(0)" ng-click="openAdvanceImagedetail(productInfo)">
                                                 <img image="{{productInfo.common.fields.images6 && productInfo.common.fields.images6[0].image6?productInfo.common.fields.images6[0].image6:productInfo.common.fields.images1[0].image1}}" alt="{{productInfo.common.fields.code}}" class="thumb-sm-search"/>
                                             </a>

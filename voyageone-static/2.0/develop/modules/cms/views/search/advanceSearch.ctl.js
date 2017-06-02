@@ -311,7 +311,7 @@ define([
 
                     // 计算表格宽度
                     $scope.vm.tblWidth = ($scope.vm.commonProps.length * 170 + $scope.vm.sumCustomProps.length * 100 + $scope.vm.selSalesType.length * 150 + $scope.vm.selBiDataList.length * 150 + 400) + 'px';
-                    $scope.vm.tblWidth2 = ($scope.vm.commonProps.length * 170 + $scope.vm.sumCustomProps.length * 100 + $scope.vm.selSalesType.length * 150 + $scope.vm.selBiDataList.length * 180 + 960) + 'px';
+                    $scope.vm.tblWidth2 = ($scope.vm.commonProps.length * 170 + $scope.vm.sumCustomProps.length * 100 + $scope.vm.selSalesType.length * 150 + $scope.vm.selBiDataList.length * 180 ) + 'px';
                 })
             }
 
@@ -323,7 +323,7 @@ define([
                         oldOriginalTitleCn = angular.copy(element.common.fields.productNameEn);
                         element.common.fields.originalTitleCn = oldOriginalTitleCn;
                     }
-                    _.extend(element, {"oldOriginalTitleCn":oldOriginalTitleCn});
+                    _.extend(element, {"oldOriginalTitleCn": oldOriginalTitleCn});
                     element.saleQty = (function () {
                         var qtyArr = codeMap[element.common.fields.code],
                             _cartId = $scope.vm.searchInfo.cartId,
@@ -365,40 +365,40 @@ define([
 
                 switch (fileType) {
                     case 1:
-                    msg = '即将导出Code级的搜索结果，请确认。' + msg;
+                        msg = '即将导出Code级的搜索结果，请确认。' + msg;
                         break;
                     case 2:
-                    msg = '即将导出Group级的搜索结果，请确认。' + msg;
+                        msg = '即将导出Group级的搜索结果，请确认。' + msg;
                         break;
                     case 3:
-                    msg = '即将导出SKU级的搜索结果，请确认。' + msg;
+                        msg = '即将导出SKU级的搜索结果，请确认。' + msg;
                         break;
                     case 4:
-                    msg = '即将导出聚美上新SKU级的搜索结果，请确认。' + msg;
+                        msg = '即将导出聚美上新SKU级的搜索结果，请确认。' + msg;
                         break;
                     case 5:
-                    msg = "即将根据搜索结果导出报备文件，请确认。" + msg;
+                        msg = "即将根据搜索结果导出报备文件，请确认。" + msg;
                         break;
                 }
 
                 popups.openColumnForDownLoad({
                     fileType: fileType
                 }).then(function () {
-                confirm(msg).then(function () {
-                    $scope.vm.searchInfo.fileType = fileType;
-                    searchAdvanceService2.exportFile($scope.vm.searchInfo).then(function (res) {
-                        var ecd = res.data.ecd;
-                        if (ecd == undefined || ecd == '4003') {
-                            alert("创建文件时出错。");
-                        } else if (ecd == '4002') {
-                            alert("未选择导出文件类型。");
-                        } else if (ecd == '4004') {
-                            alert("已经有一个任务还没有执行完毕。请稍后再导出");
-                        } else if (ecd == '0') {
-                            notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
-                        }
+                    confirm(msg).then(function () {
+                        $scope.vm.searchInfo.fileType = fileType;
+                        searchAdvanceService2.exportFile($scope.vm.searchInfo).then(function (res) {
+                            var ecd = res.data.ecd;
+                            if (ecd == undefined || ecd == '4003') {
+                                alert("创建文件时出错。");
+                            } else if (ecd == '4002') {
+                                alert("未选择导出文件类型。");
+                            } else if (ecd == '4004') {
+                                alert("已经有一个任务还没有执行完毕。请稍后再导出");
+                            } else if (ecd == '0') {
+                                notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
+                            }
+                        });
                     });
-                });
                 });
 
             }
@@ -1511,7 +1511,7 @@ define([
             };
 
             $scope.isExistCommonProps = function (propId) {
-                return _.some($scope.vm.commonProps,function (item) {
+                return _.some($scope.vm.commonProps, function (item) {
                     return item.propId == propId;
                 })
             };
@@ -1521,62 +1521,62 @@ define([
 
             };
 
-        /**
-         * 为单商品添加自由标签
-         * @param productInfo 产品信息
-         */
-        $scope.addProductFreeTag = function (productInfo) {
-            var prodId = productInfo.prodId;
-            var productCodes = [productInfo.common.fields.code];
-            popups.openFreeTag({
-                                   'orgFlg': 2,
-                                   'tagTypeSel': '4',
-                                   'cartId': $scope.vm.searchInfo.cartId,
-                                   'productIds': productCodes,
-                                   'selAllFlg':  0
-                               }).then(function (res) {
-                // 设置自由标签
-                var msg = '';
-                if (res.selectdTagList && res.selectdTagList.length > 0) {
-                    var freeTagsTxt = _.chain(res.selectdTagList).map(function (key, value) {
+            /**
+             * 为单商品添加自由标签
+             * @param productInfo 产品信息
+             */
+            $scope.addProductFreeTag = function (productInfo) {
+                var prodId = productInfo.prodId;
+                var productCodes = [productInfo.common.fields.code];
+                popups.openFreeTag({
+                    'orgFlg': 2,
+                    'tagTypeSel': '4',
+                    'cartId': $scope.vm.searchInfo.cartId,
+                    'productIds': productCodes,
+                    'selAllFlg': 0
+                }).then(function (res) {
+                    // 设置自由标签
+                    var msg = '';
+                    if (res.selectdTagList && res.selectdTagList.length > 0) {
+                        var freeTagsTxt = _.chain(res.selectdTagList).map(function (key, value) {
+                            return key.tagPathName;
+                        }).value();
+                        msg = "将对选定的产品设置自由标签:<br>" + freeTagsTxt.join('; ');
+                    } else {
+                        msg = "将对选定的产品清空自由标签";
+                    }
+                    var freeTags = _.chain(res.selectdTagList).map(function (key, value) {
+                        return key.tagPath;
+                    }).value();
+                    var _freeTagsInfo = _.chain(res.selectdTagList).map(function (key, value) {
                         return key.tagPathName;
                     }).value();
-                    msg = "将对选定的产品设置自由标签:<br>" + freeTagsTxt.join('; ');
-                } else {
-                    msg = "将对选定的产品清空自由标签";
-                }
-                var freeTags = _.chain(res.selectdTagList).map(function (key, value) {
-                    return key.tagPath;
-                }).value();
-                var _freeTagsInfo = _.chain(res.selectdTagList).map(function (key, value) {
-                    return key.tagPathName;
-                }).value();
-                confirm(msg)
-                    .then(function () {
-                        var data = {
-                            "tagPathList": freeTags,
-                            "prodIdList": productCodes,
-                            "isSelAll": 0,
-                            "orgDispTagList": res.orgDispTagList,
-                            "singleProd":1 // 是否是单一针对商品进行自由标签编辑
-                        };
-                        $searchAdvanceService2.addFreeTag(data).then(function () {
+                    confirm(msg)
+                        .then(function () {
+                            var data = {
+                                "tagPathList": freeTags,
+                                "prodIdList": productCodes,
+                                "isSelAll": 0,
+                                "orgDispTagList": res.orgDispTagList,
+                                "singleProd": 1 // 是否是单一针对商品进行自由标签编辑
+                            };
+                            $searchAdvanceService2.addFreeTag(data).then(function () {
 
-                            productInfo.freeTags = freeTags;
-                            productInfo._freeTagsInfo = _freeTagsInfo;
+                                productInfo.freeTags = freeTags;
+                                productInfo._freeTagsInfo = _freeTagsInfo;
 
-                            notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
-                            searchAdvanceService2.clearSelList();
-                        })
-                    });
-            });
-        };
+                                notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
+                                searchAdvanceService2.clearSelList();
+                            })
+                        });
+                });
+            };
 
-        /**
-         * 部分上新操作
-         * @param cartInfo 平台信息
-         */
-        $scope.batchLoadAttr = function (cartInfo) {
+            /**
+             * 部分上新操作
+             * @param cartInfo 平台信息
+             */
+            $scope.batchLoadAttr = function (cartInfo) {
 
                 _chkProductSel(cartInfo.value, function (cartId, _selProdList) {
                     var attribute = [];
