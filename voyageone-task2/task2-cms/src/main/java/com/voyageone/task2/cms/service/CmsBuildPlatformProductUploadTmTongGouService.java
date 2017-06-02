@@ -33,12 +33,14 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
+import com.voyageone.service.bean.cms.CmsMtHsCodeUnitBean;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtTmScItemDao;
 import com.voyageone.service.dao.cms.CmsBtTmTonggouFeedAttrDao;
 import com.voyageone.service.dao.cms.CmsMtChannelConditionMappingConfigDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaTmDao;
+import com.voyageone.service.daoext.cms.CmsMtHsCodeUnitDaoExt;
 import com.voyageone.service.impl.cms.DictService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.TaobaoScItemService;
@@ -60,6 +62,7 @@ import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.ibatis.type.IntegerTypeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -140,6 +143,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     private MqSender sender;
     @Autowired
     private TbProductService tbProductService;
+    @Autowired
+    private CmsMtHsCodeUnitDaoExt cmsMtHsCodeUnitDaoExt;
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -1373,18 +1379,22 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 如果设置成false邮关申报后，商品不需要设置HSCODE
         String crossBorderRreportFlg = getValueFromPageOrCondition("extends_cross_border_report", "", mainProductPlatformCart, sxData, shopProp);
         // 取得天猫同购上新用skus列表
-        List<BaseMongoMap<String, Object>> targetSkuList_0 = getSkus(0, sxData.getCartId(), productList, skuList,
-                priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg);
-
-        productInfoMap.put("skus", JacksonUtil.bean2Json(targetSkuList_0));
-        if (skuList.size() == 1) {
-            // 只有一个sku的场合， 万一天猫自动匹配的类目只允许一个sku的时候， 可以用上
-            List<BaseMongoMap<String, Object>> targetSkuList_1 = getSkus(1, sxData.getCartId(), productList, skuList,
+        try {
+            List<BaseMongoMap<String, Object>> targetSkuList_0 = getSkus(0, sxData.getCartId(), productList, skuList,
                     priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg);
-            productInfoMap.put("skus_simple", JacksonUtil.bean2Json(targetSkuList_1));
-        } else {
-            // 多个sku的场合， 万一天猫自动匹配的类目只允许一个sku的时候， 就上新不了了
-            productInfoMap.put("skus_simple", null);
+
+            productInfoMap.put("skus", JacksonUtil.bean2Json(targetSkuList_0));
+            if (skuList.size() == 1) {
+                // 只有一个sku的场合， 万一天猫自动匹配的类目只允许一个sku的时候， 可以用上
+                List<BaseMongoMap<String, Object>> targetSkuList_1 = getSkus(1, sxData.getCartId(), productList, skuList,
+                        priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg);
+                productInfoMap.put("skus_simple", JacksonUtil.bean2Json(targetSkuList_1));
+            } else {
+                // 多个sku的场合， 万一天猫自动匹配的类目只允许一个sku的时候， 就上新不了了
+                productInfoMap.put("skus_simple", null);
+            }
+        } catch (BusinessException e) {
+            throw new BusinessException(e.getMessage());
         }
 
         // 扩展(部分必填)
@@ -1765,7 +1775,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                                                        List<BaseMongoMap<String, Object>> skuList,
                                                        String priceConfigValue, Map<String, Integer> skuLogicQtyMap,
                                                        ExpressionParser expressionParser,
-                                                       ShopBean shopProp, String crossBorderRreportFlg) {
+                                                       ShopBean shopProp, String crossBorderRreportFlg) throws BusinessException{
 
         // 官网同购， 上新时候的价格， 统一用所有sku里的最高价
         Double priceMax = 0d;
@@ -1807,6 +1817,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
             // 取得海关报关税号code(10位数字)  (例："9404909000,变形枕,个")
             String hscode = "";
+            String hscodeSaleUnit = "";
+            String hscode_unit = "";
+            Map<String, String> unitMap = new HashMap<>();
+            CmsMtHsCodeUnitBean bean = null;
             // 只有当入关方式(true表示跨境申报)时，才需要设置海关报关税号hscode;false表示邮关申报时，不需要设置海关报关税号hscode
             if ("true".equalsIgnoreCase(crossBorderRreportFlg)) {
                 String propValue = product.getCommon().getFields().getHsCodePrivate();
@@ -1830,8 +1844,43 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 if (!StringUtils.isEmpty(propValue)) {
                     if (propValue.contains(Separtor_Coma)) {
                         hscode = propValue.substring(0, propValue.indexOf(Separtor_Coma));
+                        hscodeSaleUnit = propValue.substring(propValue.lastIndexOf(Separtor_Coma) + 1, propValue.length());
                     } else {
                         hscode = propValue;
+                    }
+                }
+                if (!StringUtils.isEmpty(hscode)) {
+                    bean = cmsMtHsCodeUnitDaoExt.getHscodeUnit(hscode);
+                    if (bean != null) {
+                        Double weightKg = product.getCommonNotNull().getFieldsNotNull().getWeightKG();
+                        Integer weightG = product.getCommonNotNull().getFieldsNotNull().getWeightG();
+                        if (!StringUtils.isEmpty(bean.getFirstUnit())) {
+                            if ("千克".equals(bean.getFirstUnit())) {
+                                hscode_unit = weightKg.toString();
+                            } else if ("克".equals(bean.getFirstUnit())) {
+                                hscode_unit = weightG.toString();
+                            } else {
+                                hscode_unit = "1";
+                            }
+                        }
+
+                        if (!StringUtils.isEmpty(bean.getSecondUnit())) {
+                            if ("千克".equals(bean.getSecondUnit())) {
+                                hscode_unit = hscode_unit + "," + weightKg;
+                            } else if ("克".equals(bean.getSecondUnit())) {
+                                hscode_unit = hscode_unit + "," + weightG;
+                            } else {
+                                hscode_unit = hscode_unit + ",1";
+                            }
+                        }
+                    } else {
+                        throw new BusinessException(String.format("hscode [%s] 在cms_mt_hscode_unit表中不存在, 联系管理员！", hscode));
+                    }
+                }
+                if (!StringUtils.isEmpty(hscodeSaleUnit)) {
+                    unitMap = cmsMtHsCodeUnitDaoExt.getHscodeSaleUnit(hscodeSaleUnit);
+                    if (unitMap == null) {
+                        throw new BusinessException(String.format("hscode的销售单位 [%s] 在cms_mt_hscode_sale_unit表中不存在, 联系管理员！", hscodeSaleUnit));
                     }
                 }
             }
@@ -1898,7 +1947,14 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                     logger.warn("官网同购sku颜色图片取得失败, groupId: " + expressionParser.getSxData().getGroupId());
                 }
                 // 只有当入关方式(true表示跨境申报)时，才需要设置海关报关税号hscode;false表示邮关申报时，不需要设置海关报关税号hscode
+
                 if ("true".equalsIgnoreCase(crossBorderRreportFlg)) {
+                    // 获取hscode对应的第一，第二计量单位和销售单位 20170602 STA
+                    skuMap.put("hscode_unit", hscode_unit);
+                    // 销售单位
+                    skuMap.put("hscode_sale_unit", String.format("code##%s||cnName##%s", unitMap.get(hscodeSaleUnit), hscodeSaleUnit));
+                    // 获取hscode对应的第一，第二计量单位和销售单位 20170602 END
+
                     // 海关报关的税号
                     skuMap.put("hscode", hscode);
                 }

@@ -1031,7 +1031,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 					failCause.setLength(0);
 					boolean blnResult = jdWareNewService.updateWareSaleAttrvalueAlias(shopProp, jdWareId, allSkuSaleProps, failCause);
 					if (!blnResult || !StringUtils.isEmpty(failCause.toString())) {
-						$warn(failCause.toString());
+                        throw new BusinessException(failCause.toString());
 					}
 //                    // 更新商品共通信息成功后，调用京东全量保存SKU接口设置SKU属性(包括颜色和尺码别名)
 //                    boolean saveWareSkusResult = doSaveWareSkus(shopProp, jdWareId, sxData, productColorMap, skuLogicQtyMap,
