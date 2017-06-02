@@ -6,8 +6,10 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CmsMtHsCodeUnitBean;
 import com.voyageone.service.dao.cms.CmsBtTmTonggouFeedAttrDao;
 import com.voyageone.service.dao.cms.CmsMtChannelConditionMappingConfigDao;
+import com.voyageone.service.daoext.cms.CmsMtHsCodeUnitDaoExt;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.CmsBtTmTonggouFeedAttrModel;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -36,6 +38,8 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
     @Autowired
     private CmsMtChannelConditionMappingConfigDao cmsMtChannelConditionMappingConfigDao;
 
+    @Autowired
+    private CmsMtHsCodeUnitDaoExt cmsMtHsCodeUnitDaoExt;
     @Test
     public void testOnStartup() throws Exception {
         List<TaskControlBean> taskControlList = new ArrayList<>();
@@ -230,6 +234,30 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
 
         System.out.println(wirelessValue);
 
+    }
+
+    @Test
+    public void testGetHscodeUnit() {
+        String hscode = "9019101000";
+//        CmsMtHsCodeUnitBean cmsMtHsCodeUnitBean = cmsMtHsCodeUnitDaoExt.getHscodeUnit(hscode);
+
+//        System.out.println(cmsMtHsCodeUnitBean.getHscode());
+
+        Map<String, String> unitMap = cmsMtHsCodeUnitDaoExt.getHscodeSaleUnit("套");
+
+        System.out.println(unitMap.get("套"));
+
+    }
+
+    @Test
+    public void testsplitString() {
+
+//        String a = "aa,vv,dd";
+//        String hscodeSaleUnit = a.substring(a.lastIndexOf(",") + 1, a.length());
+
+        String a = String.format("code##%s||cnName##%s", "111", "套");
+
+        System.out.println(a);
     }
 
 }
