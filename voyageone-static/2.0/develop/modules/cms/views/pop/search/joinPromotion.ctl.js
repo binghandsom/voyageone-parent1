@@ -1,3 +1,7 @@
+/**
+ * @description 高级检索加入活动
+ * @author piao
+ */
 define([
     'cms'
 ], function (cms) {
@@ -39,6 +43,7 @@ define([
             this.allCheckNodes;     //原始全选状态
             this.halfCheckNodes;    //原始半选状态
             this.checkNodes = {};
+            this.toggle = {};
             this.groupInfo = {
                 priceType: 'priceSale',
                 optType: '=',
@@ -99,7 +104,6 @@ define([
         JoinPromotionCtl.prototype.canSelectChild = function (entity) {
 
             var self = this,
-                alert = self.alert,
                 checkNodes = self.checkNodes;
 
             if (checkNodes[entity.id])
