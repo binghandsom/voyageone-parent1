@@ -155,11 +155,15 @@ define([
         var self = this;
         var priceMsrp = self.vm.priceMsrp;
         var priceSale = self.vm.priceSale;
-        if (priceMsrp > 0 && priceSale > 0) {
+        if (priceMsrp > 0 || priceSale > 0) {
 
             self.vm.productPriceList.forEach(function (element) {
-                element.priceMsrp = priceMsrp;
-                element.priceSale = priceSale;
+                if (priceMsrp > 0) {
+                    element.priceMsrp = priceMsrp;
+                }
+                if (priceSale) {
+                    element.priceSale = priceSale;
+                }
             });
         }
     };
