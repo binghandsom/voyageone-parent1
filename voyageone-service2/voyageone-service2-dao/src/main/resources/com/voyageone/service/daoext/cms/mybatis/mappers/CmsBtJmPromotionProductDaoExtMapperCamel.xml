@@ -212,7 +212,14 @@
                 and (b.color_en like CONCAT('%', #{colorEn},'%') or b.attribute like CONCAT('%', #{colorEn},'%'))
             </if>
         </where>
-        order by a.product_code
+        <choose>
+            <when test="sortOneName!=null">
+                order by a.${sortOneName} ${sortOneType}
+            </when>
+            <otherwise>
+                order by a.product_code
+            </otherwise>
+        </choose>
         <if test="start != null and length != null">
             LIMIT #{start}, #{length}
         </if>
@@ -369,7 +376,7 @@
        b.`product_short_name`,b.`search_meta_text_custom`,b.`msrp_usd`,b.`msrp_rmb`,b.`retail_price`,
         b.`sale_price`,b.`hs_code`,b.`hs_name`,b.`hs_unit`,b.`material_en`,b.`material_cn`,b.`category_name`,
        b.`comment`,IFNULL(b.`image1`,a.`image1`),IFNULL(b.`foreign_language_name`,a.`product_name_en`) AS foreign_language_name,a.`product_code`,a.`channel_id`,a.`app_id`,a.`pc_id`,a.`limit`,a.promotion_tag,a.jm_hash_id,b.jumei_mall_id,
-        a.error_msg
+        a.error_msg,a.quantity
         FROM `cms_bt_jm_promotion_product`  AS a
         Left JOIN `cms_bt_jm_product`  AS b  ON a.`channel_id`=b.`channel_id` AND  a.`product_code`=b.`product_code`
         WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}
