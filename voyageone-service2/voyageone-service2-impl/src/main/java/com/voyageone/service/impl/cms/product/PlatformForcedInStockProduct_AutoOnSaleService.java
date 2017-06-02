@@ -28,12 +28,11 @@ import java.util.List;
 public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService {
     @Autowired
     CmsBtProductDao cmsBtProductDao;
-
+    @Autowired
+    TypeChannelsService typeChannelsService;
     @Autowired
     private CmsMqSenderService cmsMqSenderService;
 
-    @Autowired
-    TypeChannelsService typeChannelsService;
     //上架
     public void onSaleByChannelId(String channelId) {
         List<TypeChannelBean> listCarts =typeChannelsService.getPlatformTypeList(channelId,"cn");
@@ -64,7 +63,7 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
     // 指定平台上架
     private void onSaleByChannelId(String channelId, int cartId) {
         //被迫下架的产品的code
-        String queryformat = "{\"platforms.P%s.lock\":'0',\"platforms.P%s.quantity\":{ $gt:0},\"platforms.P%s.pStatus\":'OnSale',\"platforms.P%s.pReallyStatus\":'InStock'}";
+        String queryformat = "{\"platforms.P%s.lock\":{$in: ['0', null]},\"platforms.P%s.quantity\":{ $gt:0},\"platforms.P%s.pStatus\":'OnSale',\"platforms.P%s.pReallyStatus\":'InStock'}";
         String strQuery = String.format(queryformat, cartId, cartId, cartId, cartId);
         JongoQuery queryObj = new JongoQuery();
         queryObj.setQuery(strQuery);

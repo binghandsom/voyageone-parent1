@@ -389,7 +389,7 @@ public class CmsBuildPlatformProductUploadJdNewServiceTest {
     @Test
     public void testQty() throws Exception{
 
-        Map<String, Integer> skuQtyMap = sxProductService.getAvailQuantity("001", "24", "ay8282", null);
+        Map<String, Integer> skuQtyMap = sxProductService.getAvailQuantity("928", "27", null, "7307995");
 
         System.out.println("hehe");
     }

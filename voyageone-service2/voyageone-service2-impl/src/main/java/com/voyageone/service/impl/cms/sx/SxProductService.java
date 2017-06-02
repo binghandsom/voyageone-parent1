@@ -6255,13 +6255,18 @@ public class SxProductService extends BaseService {
         request.setCartId(cartId);
         request.setItemCode(code);
         request.setSku(sku);
-        AvailQuantityForCmsResponse response = null;
+        AvailQuantityForCmsResponse response;
         try {
             response = voApiDefaultClient.execute(request);
 
             if ("0".equals(response.getCode())) {
                 data = (ArrayList) response.getData();
-                data.stream().forEach(d -> skuLogicQtyMap.put((String)((LinkedHashMap)d).get("sku"), (Integer)((LinkedHashMap)d).get("qty")));
+                if (!StringUtils.isEmpty(sku) && ListUtils.isNull(data)) {
+                    skuLogicQtyMap.put(sku, 0);
+                } else {
+                    data.stream().forEach(d -> skuLogicQtyMap.put((String)((LinkedHashMap)d).get("sku"), (Integer)((LinkedHashMap)d).get("qty")));
+                }
+
                 return skuLogicQtyMap;
             }
         } catch (Exception e) {
