@@ -330,10 +330,11 @@ public class CmsPlatformActiveLogService extends BaseService {
                 if (mainCode == null) {
                     $warn("CmsPlatformActiveLogService 产品数据错误(没有MainProductCode数据) channelId=%s, code=%s", channelId, prodCode);
                     failedComment = "未设置主商品, 上下架操作无效";
-                } else if ("1".equals(StringUtils.trimToNull(prodObj.getLock()))) {
-                    $warn("CmsPlatformActiveLogService 商品lock channelId=%s, code=%s", channelId, prodCode);
-                    failedComment = "商品已锁定, 上下架操作无效";
                 }
+//                else if ("1".equals(StringUtils.trimToNull(prodObj.getLock()))) {
+//                    $warn("CmsPlatformActiveLogService 商品lock channelId=%s, code=%s", channelId, prodCode);
+//                    failedComment = "商品已锁定, 上下架操作无效";
+//                }
             } else {
                 failedComment = "商品未上新, 上下架操作无效";
             }
