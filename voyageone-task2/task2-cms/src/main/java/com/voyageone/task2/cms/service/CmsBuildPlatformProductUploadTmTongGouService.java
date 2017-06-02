@@ -1952,7 +1952,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                     // 获取hscode对应的第一，第二计量单位和销售单位 20170602 STA
                     skuMap.put("hscode_unit", hscode_unit);
                     // 销售单位
-                    skuMap.put("hscode_sale_unit", String.format("code##%s||cnName##%s", unitMap.get(hscodeSaleUnit), hscodeSaleUnit));
+                    skuMap.put("hscode_sale_unit", String.format("code##%s||cnName##%s", unitMap.get("unitCode"), hscodeSaleUnit));
                     // 获取hscode对应的第一，第二计量单位和销售单位 20170602 END
 
                     // 海关报关的税号
