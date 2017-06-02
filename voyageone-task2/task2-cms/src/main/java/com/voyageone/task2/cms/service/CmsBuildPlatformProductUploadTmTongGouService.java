@@ -768,12 +768,25 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 if (skuMapList != null) {
 
                     try {
-                        for (Map<String, Object> skuMap : skuMapList) {
+                        String error = "";
+                        for (int i = 0; i < skuMapList.size(); i++) {
 //                        skuMap: outer_id, price, quantity, sku_id
-                            skuMap.put("scProductId",
-                                    taobaoScItemService.doSetLikingScItem(
-                                            shopProp, sxData,
-                                            Long.parseLong(numIId), skuMap));
+                            try {
+                                skuMapList.get(i).put("scProductId",
+                                        taobaoScItemService.doSetLikingScItem(
+                                                shopProp, sxData,
+                                                Long.parseLong(numIId), skuMapList.get(i)));
+                            } catch (Exception e) {
+
+                                error += e.getMessage();
+                                if (i < skuMapList.size() - 1) {
+                                    continue;
+                                } else {
+                                    throw new Exception("关联货品失败 sku如下：" + error);
+                                }
+                            }
+                            saveCmsBtTmScItem_Liking(sxData, cartId, skuMapList.get(i));
+
                         }
                     } catch (Exception e) {
                         String error = "";
@@ -787,7 +800,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                         throw new Exception(e.getMessage() + " " + error);
                     }
 
-                    saveCmsBtTmScItem_Liking(sxData, cartId, skuMapList);
                 }
 
 
@@ -925,8 +937,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     }
 
     // 注意： 本函数Liking专用（code无所谓， 随便瞎填的）
-    private void saveCmsBtTmScItem_Liking(SxData sxData, int cartId, List<Map<String, Object>> skuMapList) {
-        for(Map<String, Object> skuMap : skuMapList) {
+    private void saveCmsBtTmScItem_Liking(SxData sxData, int cartId, Map<String, Object> skuMap) {
+//        for(Map<String, Object> skuMap : skuMapList) {
             String code = "I_LIKING_IT";
             String skuCode = String.valueOf(skuMap.get("outer_id"));
             Map<String, Object> searchParam = new HashMap<>();
@@ -968,7 +980,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                     }
                 }
             }
-        }
+//        }
     }
 
     /**
