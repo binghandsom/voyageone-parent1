@@ -176,6 +176,8 @@ define([
 
             self.notify.success("保存成功")
 
+        }, function (error) {
+            self.notify.warning(error.message);
         });
     };
     
