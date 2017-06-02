@@ -21,11 +21,7 @@ import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
-import com.voyageone.common.util.BeanUtils;
-import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -41,7 +37,6 @@ import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
-import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.sx.PlatformWorkloadAttribute;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
@@ -49,7 +44,6 @@ import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsBatchSetMainCategoryMQMessageBody;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.wms.InventoryCenterLogicService;
-import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
@@ -64,24 +58,17 @@ import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-
-import org.apache.commons.collections4.MapUtils;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.request.wms.GetStoreStockDetailRequest;
 import com.voyageone.web2.sdk.api.response.wms.GetStoreStockDetailResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR;
@@ -1689,6 +1676,39 @@ public class CmsProductDetailService extends BaseViewService {
 
         updateMap.put("platforms.P" + platform.getCartId() + ".modified", DateTimeUtil.getNowTimeStamp());
         updateMap.put("platforms.P" + platform.getCartId() + ".skus", platform.getSkus());
+        Double priceSaleSt = null;
+        Double priceSaleEd = null;
+        Double priceMsrpSt = null;
+        Double priceMsrpEd = null;
+        for (BaseMongoMap<String, Object> platformSku : platform.getSkus()) {
+            if (priceSaleSt == null) {
+                priceSaleSt = Double.parseDouble(String.valueOf(platformSku.get("priceSale")));
+            } else if (priceSaleSt > Double.parseDouble(String.valueOf(platformSku.get("priceSale")))) {
+                priceSaleSt = Double.parseDouble(String.valueOf(platformSku.get("priceSale")));
+            }
+            if (priceSaleEd == null) {
+                priceSaleEd = Double.parseDouble(String.valueOf(platformSku.get("priceSale")));
+            } else if (priceSaleEd < Double.parseDouble(String.valueOf(platformSku.get("priceSale")))) {
+                priceSaleEd = Double.parseDouble(String.valueOf(platformSku.get("priceSale")));
+            }
+
+            if (priceMsrpSt == null) {
+                priceMsrpSt = Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")));
+            } else if (priceMsrpSt > Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")))) {
+                priceMsrpSt = Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")));
+            }
+            if (priceMsrpEd == null) {
+                priceMsrpEd = Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")));
+            } else if (priceMsrpEd < Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")))) {
+                priceMsrpEd = Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")));
+            }
+        }
+
+        updateMap.put("platforms.P" + platform.getCartId() + ".pPriceSaleSt", priceSaleSt);
+        updateMap.put("platforms.P" + platform.getCartId() + ".pPriceSaleEd", priceSaleEd);
+        updateMap.put("platforms.P" + platform.getCartId() + ".pPriceMsrpSt", priceMsrpSt);
+        updateMap.put("platforms.P" + platform.getCartId() + ".pPriceMsrpEd", priceMsrpEd);
+
         BulkUpdateModel model = new BulkUpdateModel();
         model.setUpdateMap(updateMap);
         model.setQueryMap(queryMap);
