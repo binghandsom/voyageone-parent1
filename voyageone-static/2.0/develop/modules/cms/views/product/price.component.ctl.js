@@ -155,6 +155,7 @@ define([
         var self = this;
         var priceMsrp = self.vm.priceMsrp;
         var priceSale = self.vm.priceSale;
+
         if ((priceMsrp && priceMsrp > 0) || (priceSale && priceSale > 0)) {
 
             self.vm.productPriceList.forEach(function (element) {
