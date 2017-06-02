@@ -766,9 +766,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // TODO: Liking因为效率问题， 不准备绑定货品了， 暂时注释掉， 以后可能要恢复的
                 // 关联货品
                 if (skuMapList != null) {
-
+                    String error = "";
                     try {
-                        String error = "";
+
                         for (int i = 0; i < skuMapList.size(); i++) {
 //                        skuMap: outer_id, price, quantity, sku_id
                             try {
@@ -776,20 +776,24 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                                         taobaoScItemService.doSetLikingScItem(
                                                 shopProp, sxData,
                                                 Long.parseLong(numIId), skuMapList.get(i)));
+                                saveCmsBtTmScItem_Liking(sxData, cartId, skuMapList.get(i));
                             } catch (Exception e) {
 
                                 error += e.getMessage();
-                                if (i < skuMapList.size() - 1) {
-                                    continue;
-                                } else {
-                                    throw new Exception("关联货品失败 sku如下：" + error);
-                                }
+                                continue;
+//                                if (i < skuMapList.size() - 1) {
+//                                    continue;
+//                                } else {
+//                                    throw new Exception("关联货品失败 sku如下：" + error);
+//                                }
                             }
-                            saveCmsBtTmScItem_Liking(sxData, cartId, skuMapList.get(i));
+                        }
 
+                        if (!StringUtils.isEmpty(error)) {
+                            throw new Exception("关联货品失败 sku如下：" + error);
                         }
                     } catch (Exception e) {
-                        String error = "";
+//                        String error = "";
 //                        if (e.getMessage().contains("创建关联失败") && !updateWare) {
 //                            try {
 //                                tbProductService.delItem(shopProp, String.valueOf(numIId));
@@ -797,7 +801,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 //                                error = "商品上新的场合,关联货品失败后做删除商品的动作时失败了！";
 //                            }
 //                        }
-                        throw new Exception(e.getMessage() + " " + error);
+                        throw new Exception(e.getMessage());
                     }
 
                 }
