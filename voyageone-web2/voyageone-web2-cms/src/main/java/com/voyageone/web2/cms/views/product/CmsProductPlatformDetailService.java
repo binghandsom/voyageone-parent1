@@ -830,6 +830,13 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         long batchNo = sequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PLATFORMACTIVEJOB_ID);
         //根据cartId和productCodes取得cmsBtProductGroup信息
         CmsBtProductGroupModel grpObj = productGroupService.selectProductGroupByCode(userBean.getSelChannelId(), productCode, cartId);
+
+        CmsBtProductModel mainProduct = productService.getProductByCode(grpObj.getChannelId(), grpObj.getMainProductCode());
+        if(mainProduct != null && mainProduct.getPlatform(cartId) != null){
+            if("1".equals(mainProduct.getPlatform(cartId).getLock())){
+                throw new BusinessException("该主商品是锁住状态，不能做上下架操作。");
+            }
+        }
         // 根据cartId和channelId取得Shops信息
         ShopBean shopProp = Shops.getShop(userBean.getSelChannelId(), cartId);
         if (shopProp == null) {
