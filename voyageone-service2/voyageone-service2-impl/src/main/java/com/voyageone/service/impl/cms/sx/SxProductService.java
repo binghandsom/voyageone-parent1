@@ -927,6 +927,15 @@ public class SxProductService extends BaseService {
             return sxData;
         }
 
+        if (!StringUtils.isEmpty(sxData.getMainProduct().getPlatformNotNull(cartId).getLock())
+                && "1".equals(sxData.getMainProduct().getPlatformNotNull(cartId).getLock())) {
+            // 主商品被锁住， 所以不能新增或更新商品
+            String errorMsg = "取得上新数据(SxData)失败! 主商品被锁住， 所以不能新增或更新商品。groupId(" + groupId + ")";
+            $error(errorMsg);
+            sxData.setErrorMessage(errorMsg);
+            return sxData;
+        }
+
         for (CmsBtProductModel productModel : productModelList) {
             // modified by morse.lu 2016/06/28 start
             // product表结构变化
@@ -1032,12 +1041,6 @@ public class SxProductService extends BaseService {
                 removeProductList.add(productModel);
                 continue;
             }
-            // 2016/06/12 add desmond START
-            if (!StringUtils.isEmpty(productPlatformCart.getLock()) && "1".equals(productPlatformCart.getLock())) {
-                removeProductList.add(productModel);
-                continue;
-            }
-            // 2016/06/12 add desmond END
             // 2016/09/13 add desmond START
             // 看一下feed的品牌，master的品牌和platform的品牌这3个地方的品牌是否在品牌黑名单中，只有有一个在黑名单中，该产品就是上新对象外
             // 官网同购的场合（cart是30， 31）， platform的品牌是不存在的
