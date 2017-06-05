@@ -1384,9 +1384,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             String skus = ((InputField)tbItemSchema.getFieldMap().get("skus")).getDefaultValue();
 
             List<Map<String, Object>> skuPageQtyMapList = JacksonUtil.jsonToMapList(skus);
-            Map<String, String> skuPageQtyMap = new HashMap<>();
+            Map<String, Integer> skuPageQtyMap = new HashMap<>();
             skuPageQtyMapList.stream()
-                    .forEach(sku -> skuPageQtyMap.put(sku.get("outer_id").toString().toLowerCase(), sku.get("quantity").toString()));
+                    .forEach(sku -> skuPageQtyMap.put(sku.get("outer_id").toString().toLowerCase(), (int)Math.floor((Double) sku.get("quantity"))));
 
             List<BaseMongoMap<String, Object>> targetSkuList_0 = getSkus(0, sxData.getCartId(), productList, skuList,
                     priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg, skuPageQtyMap);
@@ -1783,7 +1783,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                                                        List<BaseMongoMap<String, Object>> skuList,
                                                        String priceConfigValue, Map<String, Integer> skuLogicQtyMap,
                                                        ExpressionParser expressionParser, ShopBean shopProp,
-                                                       String crossBorderRreportFlg, Map<String, String> skuPageQtyMap) throws BusinessException{
+                                                       String crossBorderRreportFlg, Map<String, Integer> skuPageQtyMap) throws BusinessException{
 
         // 官网同购， 上新时候的价格， 统一用所有sku里的最高价
         Double priceMax = 0d;
