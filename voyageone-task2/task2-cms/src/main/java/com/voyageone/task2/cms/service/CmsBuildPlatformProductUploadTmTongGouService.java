@@ -1386,7 +1386,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             List<Map<String, Object>> skuPageQtyMapList = JacksonUtil.jsonToMapList(skus);
             Map<String, Integer> skuPageQtyMap = new HashMap<>();
             skuPageQtyMapList.stream()
-                    .forEach(sku -> skuPageQtyMap.put(sku.get("outer_id").toString().toLowerCase(), (int)Math.floor((Double) sku.get("quantity"))));
+                    .forEach(sku -> skuPageQtyMap.put(sku.get("outer_id").toString().toLowerCase(), (int)Math.floor(Double.parseDouble(sku.get("quantity").toString()))));
 
             List<BaseMongoMap<String, Object>> targetSkuList_0 = getSkus(0, sxData.getCartId(), productList, skuList,
                     priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg, skuPageQtyMap);
