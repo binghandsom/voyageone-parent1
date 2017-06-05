@@ -5,6 +5,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdSkuService;
@@ -27,10 +28,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -389,8 +387,17 @@ public class CmsBuildPlatformProductUploadJdNewServiceTest {
     @Test
     public void testQty() throws Exception{
 
-        Map<String, Integer> skuQtyMap = sxProductService.getAvailQuantity("928", "27", null, "7307995");
+//        Map<String, Integer> skuQtyMap = sxProductService.getAvailQuantity("928", "27", null, "7307995");
+//
+//        System.out.println("hehe");
 
-        System.out.println("hehe");
+        String skus = "[{\"hscode\":\"3504009000\",\"outer_id\":\"017-53392\",\"price\":\"144.0\",\"quantity\":3031},{\"hscode\":\"3504009000\",\"outer_id\":\"017-53391\",\"price\":\"144.0\",\"quantity\":3030}]";
+        List<Map<String, Object>> skuPageQtyMapList = JacksonUtil.jsonToMapList(skus);
+        Map<String, String> skuQtyMap = new HashMap<>();
+        skuPageQtyMapList.stream()
+                .forEach(sku -> {
+                    skuQtyMap.put(sku.get("outer_id").toString().toLowerCase(), sku.get("quantity").toString());
+                });
+        System.out.println(skuQtyMap);
     }
 }

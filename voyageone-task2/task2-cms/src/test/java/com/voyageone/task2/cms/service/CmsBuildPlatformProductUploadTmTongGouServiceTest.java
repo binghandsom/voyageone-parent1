@@ -242,10 +242,13 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
 //        CmsMtHsCodeUnitBean cmsMtHsCodeUnitBean = cmsMtHsCodeUnitDaoExt.getHscodeUnit(hscode);
 
 //        System.out.println(cmsMtHsCodeUnitBean.getHscode());
-
-        Map<String, String> unitMap = cmsMtHsCodeUnitDaoExt.getHscodeSaleUnit("套");
-
-        System.out.println(unitMap.get("套"));
+        String unitName = "瓶";
+        Map<String, String> unitMap = cmsMtHsCodeUnitDaoExt.getHscodeSaleUnit(unitName);
+        String aaa = String.format("code##%s||cnName##%s", unitMap.get("unitCode"), unitName);
+        System.out.println(aaa);
+        if (unitMap == null) {
+            System.out.println("a");
+        }
 
     }
 
