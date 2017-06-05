@@ -32,7 +32,7 @@
 </div>
 <div class="wrapper-md clearfix">
     <div class="channel-main-con text-center">
-        <div class="channel-main" ng-repeat="channel in channels">
+        <div class="channel-main" ng-repeat="channel in channels | filter:channelFilter">
             <img ng-src="{{channel.channelImgUrl || '/static/img/NoImageAvailable.png'}}" alt="暂无图片" class="img-circle cur-p" ng-click="choose(channel)"
                  title="~ click me ~">
             <h4 ng-bind="channel.channelName"></h4>
