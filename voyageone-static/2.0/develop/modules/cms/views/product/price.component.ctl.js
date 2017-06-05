@@ -17,7 +17,10 @@ define([
         self.vm = {
             selectSales: "codeSumAll",
             productPriceList: [],
-            model: {}
+            model: {},
+            priceMsrp:"",
+            priceSale:"",
+            lastCartIds:[]
         };
         self.$productDetailService = $productDetailService;
         self.$rootScope = $rootScope;
@@ -37,9 +40,29 @@ define([
             vm.model = resp.data;
             self.sales = resp.data.sales;
             self.selectSalesOnChange();
+            var lastCartIds = self.vm.lastCartIds;
+            var priceMsrp = self.vm.priceMsrp;
+            var priceSale = self.vm.priceSale;
+            var priceFlag = ((priceMsrp && priceMsrp > 0) || (priceSale && priceSale > 0)) && (_.size(lastCartIds) > 0);
+
             vm.productPriceList.forEach(function (element) {
                 if (element.checked == 2) {
                     element.isSale = true;
+                }
+
+
+                if (priceFlag) {
+                    var currentCartId = _.find(lastCartIds, function (ele) {
+                        return element.cartId == ele;
+                    });
+                    if (!currentCartId) {
+                        if (priceMsrp > 0) {
+                            element.priceMsrp = priceMsrp;
+                        }
+                        if (priceSale > 0) {
+                            element.priceSale = priceSale;
+                        }
+                    }
                 }
             });
         });
@@ -126,6 +149,13 @@ define([
 
         self.$productDetailService.saveCartSkuPrice(para).then(function () {
 
+            var lastCartId = _.find(self.vm.lastCartIds, function (element) {
+               return item.cartId == element.cartId;
+            });
+            if (!lastCartId) {
+                self.vm.lastCartIds.push(item.cartId);
+            }
+
             if (para.priceMsrp > 0) {
                 item.priceMsrpSt = para.priceMsrp;
                 item.priceMsrpEd = para.priceMsrp;
@@ -146,7 +176,29 @@ define([
 
             self.notify.success("保存成功")
 
+        }, function (error) {
+            self.notify.warning(error.message);
         });
+    };
+    
+    productPriceCtl.prototype.setAllCartPrice = function () {
+        var self = this;
+        var priceMsrp = self.vm.priceMsrp;
+        var priceSale = self.vm.priceSale;
+
+        if ((priceMsrp && priceMsrp > 0) || (priceSale && priceSale > 0)) {
+
+            self.vm.lastCartIds = [];
+
+            self.vm.productPriceList.forEach(function (element) {
+                if (priceMsrp > 0) {
+                    element.priceMsrp = priceMsrp;
+                }
+                if (priceSale > 0) {
+                    element.priceSale = priceSale;
+                }
+            });
+        }
     };
 
     cms.directive("priceSchema", function ($productDetailService, $rootScope, alert, notify, confirm) {

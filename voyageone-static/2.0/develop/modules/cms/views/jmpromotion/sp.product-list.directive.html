@@ -235,11 +235,20 @@
                     <th class="text-right" style="width: 150px">聚美价格</th>
                     <th class="text-left">聚美MallId</th>
                     <th class="text-left">聚美Hash ID</th>
-                    <th class="text-center">折扣(团/市)</th>
-                    <th class="text-center">折扣(团/最终)</th>
+                    <th class="text-center">折扣(团/市)
+                        <button class="opacityBtn"
+                                ng-click="columnOrder('discount')"><i class="fa fa-{{getArrowName('discount')}}"></i></button>
+                    </th>
+                    <th class="text-center">折扣(团/最终)
+                        <button class="opacityBtn"
+                                ng-click="columnOrder('discount2')"><i class="fa fa-{{getArrowName('discount2')}}"></i></button>
+                    </th>
                     <th class="text-center">SKU数</th>
                     <th class="text-left">错误消息</th>
-                    <th class="text-center">库存数</th>
+                    <th class="text-center">库存数
+                        <button class="opacityBtn"
+                                ng-click="columnOrder('quantity')"><i class="fa fa-{{getArrowName('quantity')}}"></i></button>
+                    </th>
                     <th class="text-left">备注</th>
                     <th class="text-left">变更情况</th>
                     <th class="text-left">Status</th>

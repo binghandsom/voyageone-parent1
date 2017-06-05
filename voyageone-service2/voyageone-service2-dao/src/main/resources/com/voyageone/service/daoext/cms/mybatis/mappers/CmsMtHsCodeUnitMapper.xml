@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+
+
+
+    <select id="selectUnitByHsCode" resultType="com.voyageone.service.bean.cms.CmsMtHsCodeUnitBean">
+        SELECT
+            hs_code as hscode,
+            hs_code_first_unit as firstUnit,
+            hs_code_second_unit as secondUnit
+        FROM
+            voyageone_cms2.cms_mt_hscode_unit
+        WHERE
+            hs_code = #{hscode}
+    </select>
+
+
+    <select id="selectSaleUnit" resultType="Map">
+        SELECT
+            unit_name as unitName,
+            unit_code as unitCode
+        FROM
+            voyageone_cms2.cms_mt_hscode_sale_unit
+        WHERE
+            unit_name = #{unitName}
+
+    </select>
+
+
+</mapper>

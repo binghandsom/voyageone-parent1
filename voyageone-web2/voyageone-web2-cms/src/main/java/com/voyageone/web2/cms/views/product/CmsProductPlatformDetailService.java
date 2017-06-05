@@ -713,9 +713,9 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         CmsBtProductModel mainProduct = productService.getProductByCode(channelId, platform.getMainProductCode());
         CmsBtProductModel_Platform_Cart mainPlatform = mainProduct.getPlatform(cartId);
 
-        if (CmsConstants.ProductStatus.Pending.toString().equalsIgnoreCase(mainPlatform.getStatus())) {
-            throw new BusinessException("主商品没有编辑完成 请先编辑主商品");
-        }
+//        if (CmsConstants.ProductStatus.Pending.toString().equalsIgnoreCase(mainPlatform.getStatus())) {
+//            throw new BusinessException("主商品没有编辑完成 请先编辑主商品");
+//        }
 
         platform.setpCatId(mainPlatform.getpCatId());
         platform.setpCatPath(mainPlatform.getpCatPath());
@@ -783,6 +783,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         });
 
         platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId, prodId, language, platform.getpCatPath(), platform.getpBrandId(), sxProductService.generateStyleCode(cmsBtProductModel, cartId)));
+        platform.setSellerCats(mainPlatform.getSellerCats());
 
         return platform;
     }

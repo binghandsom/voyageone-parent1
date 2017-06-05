@@ -77,7 +77,33 @@
                     </div>
                 </div>
                 <div class="panel-body">
+                    <div class="row">
+                        <div class="row m-b-sm">
+                            <div class="col-md-5 col-md-offset-7">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <label class="col-md-6 control-label">中国建议售价</label>
+                                        <div class="col-md-6">
+                                            <input type="number" class="form-control" placeholder="中国建议售价" scale="15,2" ng-model="ctrl.vm.priceMsrp">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label class="col-md-6 control-label">中国最终售价</label>
+                                        <div class="col-md-6">
+                                            <input type="number" class="form-control" placeholder="中国最终售价" scale="15,2" ng-model="ctrl.vm.priceSale">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-success btn-pop" ng-disabled="!ctrl.vm.priceMsrp && !ctrl.vm.priceSale" ng-click="ctrl.setAllCartPrice()">价格设置</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="table-responsive">
+
                         <table class="table table-hover-new table-hover" style="min-width:1400px">
                             <thead>
                             <tr>

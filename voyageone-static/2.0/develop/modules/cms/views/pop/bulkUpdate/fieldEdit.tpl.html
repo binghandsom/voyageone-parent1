@@ -26,6 +26,9 @@
                     <s-field ng-if="vm.propertyInfo.property.id" field="vm.propertyInfo.property" show-name="false"></s-field>
                 </div>
             </div>
+
+
+
             <div class="form-group" style="padding-top:8px" ng-show="(vm.propertyInfo.property.id=='translateStatus')&&(vm.propertyInfo.property.value.value=='2')">
                 <label class="col-sm-3 control-label">优先翻译日期</label>
                 <div class="col-sm-5 input-group" style="padding-left:4px">
@@ -48,6 +51,21 @@
                         </label>
                     </div>
                 </div><div style="margin-top:3px">是否自动同步指导价到最终售价？</div>
+            </div>
+            <div class="form-group" style="padding-top:8px" ng-show="vm.propertyInfo.property.id=='title'">
+                <div class="row">
+                    <div class="col-sm-9 col-sm-offset-3 checkbox">
+                        <label>
+                            <input type="radio" name="productTitlePlace" value="cover" ng-model="vm.propertyInfo.titlePlace" checked>&nbsp;&nbsp;覆盖
+                        </label>
+                        <label>
+                            <input type="radio" name="productTitlePlace" value="suffix" ng-model="vm.propertyInfo.titlePlace">&nbsp;&nbsp;后缀
+                        </label>
+                        <label>
+                            <input type="radio" name="productTitlePlace" value="prefix" ng-model="vm.propertyInfo.titlePlace">&nbsp;&nbsp;前缀
+                        </label>
+                    </div>
+                </div>
             </div>
         </form>
     </div>

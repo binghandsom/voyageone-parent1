@@ -15,7 +15,8 @@ define([
             changeCount: 0,
             productCount: 0,
             productUrl: carts.valueOf(27).pUrl,
-            _selall:false
+            _selall:false,
+            columnArrow: {}
         };
         $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.jmpromId, pCatPath: null, pCatId: null};
         $scope.searchInfoBefore = {};
@@ -748,6 +749,51 @@ define([
                 selCodeList: selCodeList
             };
         }
+
+        /**
+         * 检索列排序
+         * */
+        $scope.columnOrder = function (columnName) {
+            var column, columnArrow = $scope.vm.columnArrow;
+            _.forEach(columnArrow, function (value, key) {
+                if (key != columnName)
+                    columnArrow[key] = null;
+            });
+            column = columnArrow[columnName];
+            if (!column) {
+                column = {};
+                column.mark = 'unsorted';
+                column.count = null;
+            }
+            column.count = !column.count;
+            //偶数升序，奇数降序
+            if (column.count)
+                column.mark = 'sort-desc';
+            else
+                column.mark = 'sort-up';
+            columnArrow[columnName] = column;
+
+            searchByOrder(columnName, column.mark);
+        };
+
+        function searchByOrder(columnName, sortOneType) {
+            $scope.searchInfo.sortOneName = columnName;
+            $scope.searchInfo.sortOneType = sortOneType == 'sort-up' ? 'asc' : 'desc';
+            $scope.search();
+        }
+
+        $scope.getArrowName = function (columnName, cartId) {
+            var columnArrow = $scope.vm.columnArrow;
+
+            if (cartId) {
+                columnName = columnName.replace('✓', cartId);
+            }
+
+            if (!columnArrow || !columnArrow[columnName])
+                return 'unsorted';
+
+            return columnArrow[columnName].mark;
+        };
     }
 
 

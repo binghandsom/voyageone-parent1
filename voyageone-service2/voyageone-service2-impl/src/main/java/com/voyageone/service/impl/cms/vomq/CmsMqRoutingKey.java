@@ -135,6 +135,9 @@ public class CmsMqRoutingKey {
      * 往wms推送产品信息(新建/更新)
      */
     public static final String EWMS_MQ_CREATE_OR_UPDATE_PRODUCT = "ewms_mq_create_or_update_product";
+    // 高级检索批量修改商品标题
+    public static final String CMS_BATCH_UPDATE_PRODUCT_TITLE = "VOCmsBatchUpdateProductTitleMQJobQueue";
+
 
     // 未整理的业务内容
 

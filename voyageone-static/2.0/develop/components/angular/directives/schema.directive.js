@@ -1174,6 +1174,9 @@
 
                                 innerElement.attr('title', field.name || field.id);
 
+                                //ng-trim="false"
+                                innerElement.attr('ng-trim',false);
+
                                 // 根据类型转换值类型, 并填值
                                 _value = field.value;
                                 field.value = getInputValue(_value, field, valueTypeRule);
