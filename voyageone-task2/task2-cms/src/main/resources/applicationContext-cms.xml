@@ -78,7 +78,7 @@
         <task:scheduled ref="CmsPromotionJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!-- 库存数据导入 cms2 -->
-        <task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="25 30 0/1 * * ?"/>
+        <task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="25 0/3 * * * ?"/>
         <!--<task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="0 5 * * * ?"/>-->
 
 
