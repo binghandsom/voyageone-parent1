@@ -7905,7 +7905,7 @@ a.btn-main:hover {
     display: inline-block;
     text-align: center;
     float: left;
-    min-height: 329px;
+    min-height: 270px;
 }
 
 .channel-main img {
@@ -7918,6 +7918,15 @@ a.btn-main:hover {
     -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, .2);
     -moz-box-shadow: 0 0 10px rgba(0, 0, 0, .2);
     box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+}
+
+.channel-main img:hover{
+    -webkit-box-shadow: 0 0 10px ;
+    -moz-box-shadow: 0 0 17px #253680;
+    box-shadow: 0 0 17px #253680;
+    transition:all 1.5s;
+    -moz-transition:all 1.5s; /* Firefox 4 */
+    -webkit-transition:all 1.5s; /* Safari and Chrome */
 }
 
 .channel-main h4 {

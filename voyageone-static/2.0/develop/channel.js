@@ -6,19 +6,30 @@
  * @Version: 2.0.0
  */
 
-define(['components/dist/voyageone.angular.com.js'], function () {
+define([
+    'underscore',
+    'components/dist/voyageone.angular.com.js'
+], function (_) {
     angular.module('voyageone.cms.channel', [
         'blockUI',
         'ngCookies',
         'ngStorage',
         'voyageone.angular'
     ]).controller('channelController', function ($scope, $ajax, cookieService, $localStorage, $window) {
+
         $ajax.post('/core/access/user/getChannel').then(function (res) {
             $scope.channels = res.data;
         }, function (res) {
             alert(res.message || res.code);
         });
-        $scope.choose = function (channel, app) {
+
+        $scope.choose = function (channel) {
+
+            var app = _.find(channel.apps,function(item){
+                return item.application === 'cms';
+            });
+
+
             $ajax.post('/core/access/user/selectChannel', {
                 channelId: channel.channelId,
                 applicationId: app.applicationId,
@@ -37,13 +48,16 @@ define(['components/dist/voyageone.angular.com.js'], function () {
                 alert(res.message || res.code);
             })
         };
+
         $scope.logout = function () {
             $ajax.post('/core/access/user/logout')
                 .then(function () {
                     cookieService.removeAll();
                     $window.location = '/login.html';
                 });
-        }
+        };
+
     });
+
     return angular.bootstrap(document, ['voyageone.cms.channel']);
 });
