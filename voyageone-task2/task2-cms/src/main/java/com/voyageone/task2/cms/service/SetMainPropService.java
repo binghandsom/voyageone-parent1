@@ -1261,9 +1261,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             }
 
             // 产品名称（英文）
-            if (newFlg || StringUtils.isEmpty(productCommonField.getProductNameEn()) || "1".equals(feed.getIsFeedReImport())) {
+//            if (newFlg || StringUtils.isEmpty(productCommonField.getProductNameEn()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setProductNameEn(feed.getName());
-            }
+//            }
 
             // 长标题, 中标题, 短标题: 都是中文, 需要自己翻译的
             // 款号model
@@ -1320,16 +1320,16 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 productCommonField.setMpn(feed.getMpn());
             }
             // 简短描述英文
-            if (newFlg || StringUtils.isEmpty(productCommonField.getShortDesEn()) || "1".equals(feed.getIsFeedReImport())) {
+//            if (newFlg || StringUtils.isEmpty(productCommonField.getShortDesEn()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setShortDesEn(feed.getShortDescription());
-            }
+//            }
             // 详情描述英文
 //            if (newFlg || StringUtils.isEmpty(productField.getLongDesEn()) || "1".equals(feed.getIsFeedReImport())) {
 //                productField.setLongDesEn(feed.getLongDescription());
 //            }
-            if (newFlg || StringUtils.isEmpty(productCommonField.getLongDesEn()) || "1".equals(feed.getIsFeedReImport())) {
+//            if (newFlg || StringUtils.isEmpty(productCommonField.getLongDesEn()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setLongDesEn(feed.getLongDescription());
-            }
+//            }
 
             if (newFlg || StringUtils.isEmpty(productCommonField.getLastReceivedOn()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setLastReceivedOn(feed.getLastReceivedOn());
