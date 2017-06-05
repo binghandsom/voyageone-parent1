@@ -105,6 +105,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
         // 获取product中目前有效销售的sku
         Map<String, List<jmHtDealCopyDealSkusData>> productSkus = new HashMap<>();
         Map<String, List<String>> stockProducts = new HashMap<>();
+        List<String> stockSkus = new ArrayList<>();
         productMongos.forEach((product) -> {
 
             // 按原始channel分组productCode,方便库存同步调用,因为库存同步按原始channel来同步库存
@@ -145,6 +146,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
                         String skuCode = skuInfo.getStringAttribute("skuCode");
                         String jmSkuNo = skuInfo.getStringAttribute("jmSkuNo");
                         if (newJmDealSkuNoList.contains(jmSkuNo)) {
+                            stockSkus.add(skuCode);
 
                             jmHtDealCopyDealSkusData dealCopyDealSkuData = new jmHtDealCopyDealSkusData();
 
@@ -197,10 +199,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
         stockProducts.forEach((orgChannelId, products) -> {
             try {
                 // 每100个调用一次库存同步
-                List<List<String>> productCodesList = CommonUtil.splitList(products, 100);
-                for (List<String> codes : productCodesList) {
-                    $info("发送库存同步请求" + codes.toArray().toString());
-                    Map<String, Object> result = sxProductService.synInventoryToPlatform(orgChannelId, "27", codes, null);
+                List<List<String>> skuCodeList = CommonUtil.splitList(stockSkus, 100);
+                for (List<String> skus : skuCodeList) {
+                    $info("发送sku库存同步请求:" + skus);
+                    Map<String, Object> result = sxProductService.synInventoryToPlatform(orgChannelId, "27", null, skus);
 
                     // 同步库存失败结果返回
                     ((ArrayList<String>) result.get("errorCodeList")).forEach(code -> {
