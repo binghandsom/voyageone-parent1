@@ -6,11 +6,14 @@ import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.daoext.cms.*;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionTagProductModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.util.MapModel;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +28,7 @@ import static java.util.stream.Collectors.toList;
  * @version 2.8.0
  */
 @Service
-public class CmsBtJmPromotionProductService {
+public class CmsBtJmPromotionProductService extends BaseService {
     private final CmsBtJmPromotionProductDao dao;
     private final CmsBtJmPromotionProductDaoExt daoExt;
     private final CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
@@ -66,6 +69,10 @@ public class CmsBtJmPromotionProductService {
 
     public List<MapModel> getPageByWhere(Map<String, Object> map) {
         loadWhere(map);
+        // 根据sortOneName 和 sortOneType设置排序条件
+        String sortOneName = (String) map.get("sortOneName");
+        String sortOneType = (String) map.get("sortOneType");
+        $info(String.format("聚美活动商品查询排序(%s)-(%s)", sortOneName, sortOneType));
         List<MapModel> list = daoExt.selectPageByWhere(map);
         list.forEach(this::setTagNames);
         return list;
@@ -99,7 +106,7 @@ public class CmsBtJmPromotionProductService {
     {
         if (map.containsKey("code")) {
             String code = map.get("code").toString();
-            String[] codeList = code.split("\r\n|\n|\\s+");//split("\r\n");
+            String[] codeList = code.split("\r\n|\n");//split("\r\n");
             map.put("codeList", codeList);
         }
     }

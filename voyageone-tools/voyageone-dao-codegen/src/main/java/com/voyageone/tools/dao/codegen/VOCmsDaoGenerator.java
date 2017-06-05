@@ -13,7 +13,7 @@ public class VOCmsDaoGenerator {
     public static void main(String[] arg) throws Exception {
         List<String> warnings = new ArrayList<>();
         ConfigurationParser cp = new ConfigurationParser(warnings);
-        File configurationFile = new File(VOCmsDaoGenerator.class.getResource("securityConfig.xml").toURI());
+        File configurationFile = new File(VOCmsDaoGenerator.class.getResource("cmsGeneratorConfig.xml").toURI());
 //        File configurationFile = new File(VOCmsDaoGenerator.class.getResource("synshipGeneratorConfig.xml").toURI());
 
 //

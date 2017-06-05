@@ -55,6 +55,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private String material;
     private String lastReceivedOn = "";
     private String mpn = "";
+    private String catConf="";
 
     public String getSizeChartType() {
         return sizeChartType;
@@ -392,5 +393,13 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setMpn(String mpn) {
         this.mpn = mpn;
+    }
+
+    public String getCatConf() {
+        return catConf;
+    }
+
+    public void setCatConf(String catConf) {
+        this.catConf = catConf;
     }
 }

@@ -20,7 +20,7 @@
                     </div>
                 </div>
 
-                <div class="col-sm-12 m-b-sm" ng-hide="ctrl._context.plateSchema">
+                <div class="col-sm-12 m-b-sm">
                     <div class="col-sm-2 col-md-offset-1 ">
                         <label class="">品名</label>
                     </div>
@@ -31,18 +31,18 @@
 
                 <div class="column_overflow col-sm-12" style="border:1px solid silver;overflow-x:hidden">
                     <div class="col-sm-12" ng-repeat="category in ctrl.channelCategoryList track by category.catId">
-                        <div class="" ng-if="category.isParent == 1">
+                        <div class="" ng-if="category.isParent == 1 || category.children.length > 0">
                             <i class="fa fa-plus icon-small text-vo"></i>&nbsp;
                             <label>{{category.catName}}</label>
                         </div>
-                        <div ng-if="category.isParent == 0">
+                        <div ng-if="category.isParent == 0 && category.children.length == 0">
                             <label ng-if="category.catName.indexOf(ctrl.searchName) >= 0 || !ctrl.searchName">
                                 <input style="margin: 0" type="checkbox" ui-indeterminate="ctrl.orgDispMap[category.catId]" ng-checked="ctrl.orgChkStsMap[category.catId]"
                                        ng-model="ctrl.orgChkStsMap[category.catId]" ng-click="ctrl.chkSave(category.catId,$event)">
                                 &nbsp;<label class="label label-default"></label>{{category.catName}}
                             </label>
                         </div>
-                        <div ng-if="category.isParent == 1" ng-include="'categoryContainer'"
+                        <div ng-if="category.isParent == 1  || category.children.length > 0" ng-include="'categoryContainer'"
                              ng-init="categoryContainer = category.children">
                         </div>
                     </div>
@@ -67,18 +67,18 @@
 
 <script id="categoryContainer" type="text/ng-template">
     <div class="col-sm-12 m-l-md" ng-repeat="category in categoryContainer">
-        <div class="" ng-if="category.isParent == 1">
+        <div class="" ng-if="category.isParent == 1 || category.children.length > 0">
             <i class="fa fa-minus icon-small text-vo"></i>&nbsp;
             <label>{{category.catName}}</label>
         </div>
-        <div ng-if="category.isParent == 0">
+        <div ng-if="category.isParent == 0  && category.children.length == 0">
             <label ng-if="category.catName.indexOf(ctrl.searchName) >= 0 || !ctrl.searchName">
                 <input style="margin: 0" type="checkbox" ui-indeterminate="ctrl.orgDispMap[category.catId]" ng-checked="ctrl.orgChkStsMap[category.catId] = ctrl.orgChkStsMap[category.catId] ? true : false"
                        ng-model="ctrl.orgChkStsMap[category.catId]" ng-click="ctrl.chkSave(category.catId,$event)">
                 &nbsp;{{category.catName}}
             </label>
         </div>
-        <div ng-if="category.isParent == 1" ng-include="'categoryContainer'"
+        <div ng-if="category.isParent == 1 || category.children.length > 0" ng-include="'categoryContainer'"
              ng-init="categoryContainer = category.children"></div>
     </div>
 </script>

@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.product;
 
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
@@ -20,10 +21,7 @@ import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
-import com.voyageone.common.util.BeanUtils;
-import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -39,14 +37,13 @@ import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
-import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
+import com.voyageone.service.impl.cms.sx.PlatformWorkloadAttribute;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsBatchSetMainCategoryMQMessageBody;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.wms.InventoryCenterLogicService;
-import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
@@ -61,14 +58,17 @@ import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.wms.GetStoreStockDetailRequest;
+import com.voyageone.web2.sdk.api.response.wms.GetStoreStockDetailResponse;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR;
@@ -84,6 +84,8 @@ public class CmsProductDetailService extends BaseViewService {
     private static final String COMPLETE_STATUS = "1";
     @Autowired
     protected CategorySchemaService categorySchemaService;
+    @Autowired
+    protected VoApiDefaultClient voApiClient;
     @Autowired
     private CommonSchemaService commonSchemaService;
     @Autowired
@@ -255,17 +257,6 @@ public class CmsProductDetailService extends BaseViewService {
         //没有值的情况下设定complexField、MultiComplexField的默认值.
         setDefaultComplexValues(comSchemaFields);
 
-//        this.fillFieldOptions(subSkuFields, channelId, language);
-
-        // TODO 取得Sku的库存
-        Map<String, Integer> skuInventoryList = productService.getProductSkuQty(productValueModel.getOrgChannelId(), productValueModel.getCommon().getFields().getCode());
-
-        //获取sku schemaValue
-//        Map<String, Object> skuSchemaValue = buildSkuSchemaValue(productValueModel, categorySchemaModel, skuInventoryList);
-
-        //填充sku schema.
-//        FieldUtil.setFieldsValueFromMap(skuSchemaFields, skuSchemaValue);
-
         //设置feed属性值
         customAttributes.setOrgAtts(productValueModel.getFeed().getOrgAtts());
         customAttributes.setCnAtts(productValueModel.getFeed().getCnAtts());
@@ -324,17 +315,12 @@ public class CmsProductDetailService extends BaseViewService {
      */
     public List<Map<String, Object>> getProdSkuCnt(String channelId, Long prodId) {
         CmsBtProductModel prodObj = productService.getProductById(channelId, prodId);
-//        if (channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId())) {
-        // 如果是mini mall店铺，则需要用原始channelId去检索库存信息
-        channelId = StringUtils.isEmpty(prodObj.getOrgChannelId()) ? channelId : prodObj.getOrgChannelId();
-//        }
-        Map<String, Integer> skuList = productService.getProductSkuQty(channelId, prodObj.getCommon().getFields().getCode());
 
         List<Map<String, Object>> inventoryList = new ArrayList<>(0);
         prodObj.getCommon().getSkus().forEach(sku -> {
             Map<String, Object> result = new HashMap<>();
-            result.put("skucode", sku.getSkuCode());
-            result.put("skyqty", skuList.get(sku.getSkuCode()) != null ? skuList.get(sku.getSkuCode()) : 0);
+            result.put("skuCode", sku.getSkuCode());
+            result.put("skuQty", sku.getQty() != null ? sku.getQty() : 0);
             inventoryList.add(result);
         });
 
@@ -649,7 +635,7 @@ public class CmsProductDetailService extends BaseViewService {
         cmsBtProductGroup.getProductCodes().forEach(s1 -> {
             CmsBtProductModel product = cmsBtProduct.getCommon().getFields().getCode().equalsIgnoreCase(s1) ? cmsBtProduct : productService.getProductByCode(channelId, s1);
             if (product != null) {
-                Map<String, Object> image = new HashMap<String, Object>();
+                Map<String, Object> image = new HashMap<>();
                 image.put("productCode", s1);
                 String imageName = "";
 
@@ -736,18 +722,20 @@ public class CmsProductDetailService extends BaseViewService {
             feedInfoModel = feedInfoService.getProductByCode(channelId, StringUtils.isEmpty(cmsBtProduct.getCommon().getFields().getOriginalCode()) ? cmsBtProduct.getCommon().getFields().getCode() : cmsBtProduct.getCommon().getFields().getOriginalCode());
         }
 
-        Map<String, Integer> skuinvs = null;
+        /*Map<String, Integer> skuinvs = null;
         WmsCodeStoreInvBean stockDetail = inventoryCenterLogicService.getCodeStockDetails(cmsBtProduct.getOrgChannelId(), cmsBtProduct.getCommon().getFields().getCode());
         if (stockDetail != null && !ListUtils.isNull(stockDetail.getStocks())) {
             skuinvs = stockDetail.getStocks().stream().map(WmsCodeStoreInvBean.StocksBean::getBase)
                     .collect(Collectors.toMap(sku -> channelId.equals("001") ? sku.getSku().toLowerCase() : sku.getSku(), WmsCodeStoreInvBean.StocksBean.BaseBean::getTotal));
-        }
+        }*/
 
         List<Map<String, Object>> skuList = new ArrayList<>();
         for (CmsBtProductModel_Sku skuModel : cmsBtProduct.getCommon().getSkus()) {
             Map<String, Object> skuInfo = new HashMap<>();
             skuInfo.put("skuCode", skuModel.getSkuCode());
-            skuInfo.put("qty", skuinvs == null || skuinvs.get(skuModel.getSkuCode()) == null ? 0 : skuinvs.get(skuModel.getSkuCode()));
+            // skuInfo.put("qty", skuinvs == null || skuinvs.get(skuModel.getSkuCode()) == null ? 0 : skuinvs.get(skuModel.getSkuCode()));
+            // 现在直接CMS mongodb里查询sku库存
+            skuInfo.put("qty", skuModel.getIntAttribute("qty"));
             skuInfo.put("size", skuModel.getSize());
             skuInfo.put("barcode", skuModel.getBarcode());
             // 取得FeedInfo中的原始图片
@@ -1315,6 +1303,68 @@ public class CmsProductDetailService extends BaseViewService {
     }
 
     /**
+     * 查询商品的库存信息（合并SKU与库存信息）
+     */
+    public Map<String, Object> getStockInfoBySku(String channelId, long productId) {
+        Map<String, Object> resultMap = new HashMap<>();
+        // 查询商品信息
+        CmsBtProductModel productInfo = productService.getProductById(channelId, productId);
+        if (productInfo == null) {
+            throw new BusinessException("找不到商品信息, channelId=" + channelId + ", productId=" + productId);
+        }
+        // 查询商品的库存信息
+        String code = productInfo.getCommon().getFields().getCode();
+        //调用wms openapi 取得code的详细库存
+        GetStoreStockDetailRequest storeStockDetailRequest = new GetStoreStockDetailRequest();
+        storeStockDetailRequest.setChannelId(productInfo.getChannelId());
+        storeStockDetailRequest.setSubChannelId(productInfo.getOrgChannelId());
+        storeStockDetailRequest.setItemCode(code);
+        GetStoreStockDetailResponse stockDetail = voApiClient.execute(storeStockDetailRequest);
+        $info(String.format("从WMS实时查询Code(channelId=%s, code=%s)下SKU库存, API返回结果:%s", channelId, code, JacksonUtil.bean2Json(stockDetail)));
+
+        Set<String> commonSkus = new HashSet<>();
+        Set<String> stockSkus = new HashSet<>();
+        // 取得SKU的平台尺寸信息
+        List<CmsBtProductModel_Sku> skus = productInfo.getCommon().getSkus();
+        Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, productInfo.getCommon().getFields().getBrand(),
+                productInfo.getCommon().getFields().getProductType(), productInfo.getCommon().getFields().getSizeType());
+        if (MapUtils.isNotEmpty(sizeMap)) {
+            skus.forEach(sku -> {
+                sku.setAttribute("platformSize", sizeMap.get(sku.getSize()));
+                commonSkus.add(sku.getSkuCode());
+            });
+        } else {
+            skus.forEach(sku -> {
+                commonSkus.add(sku.getSkuCode());
+            });
+        }
+
+        // 更新商品库存中的SKU尺寸信息
+        if (stockDetail != null && stockDetail.getData() != null && CollectionUtils.isNotEmpty(stockDetail.getData().getStocks())) {
+            stockDetail.getData().getStocks().forEach(stock -> {
+                stockSkus.add(stock.getBase().getSku());
+                CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku) CollectionUtils.find(skus, new Predicate() {
+                    @Override
+                    public boolean evaluate(Object object) {
+                        CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku) object;
+                        return sku.getSkuCode().equalsIgnoreCase(stock.getBase().getSku());
+                    }
+                });
+                if (sku != null) {
+                    stock.getBase().setOrigSize(sku.getSize());
+                    stock.getBase().setSaleSize(sku.getAttribute("platformSize"));
+                }
+            });
+        }
+        resultMap.put("stockDetail", stockDetail); // 从WMS查询的SKU库存详情
+        boolean existNoStockSku = commonSkus.removeAll(stockSkus);
+        if (existNoStockSku) {
+            resultMap.put("noStockSkus", commonSkus); // CMS中有但WMS SKU库存查询结果中不包含的SKU
+        }
+        return resultMap;
+    }
+
+    /**
      * 取得自定义属性的属性名称的中文翻译
      */
     private Map<String, String[]> getCustomAttributesCnAttsShow(String feedCategory, CmsBtProductModel_Feed feed, String channelId) {
@@ -1447,11 +1497,12 @@ public class CmsProductDetailService extends BaseViewService {
         // platForm.setpStatus(CmsConstants.PlatformStatus.);
         platForm.remove("pStatus");
         productPlatformService.updateProductPlatformWithSx(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier, "单品下线", false);
+        sxProductService.insertSxWorkLoad(cmsBtProductModel.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), parameter.getCartId(), modifier, false);
         String comment = parameter.getComment();
         productStatusHistoryService.insert(parameter.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), parameter.getCartId(), EnumProductOperationType.Delisting, comment, modifier);
 
         //2.1.3	Voyageone_ims. ims_bt_product(mysql) 根据 channel cartId 和code找到对应的记录 把 numIId字段设为0
-        ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(parameter.getChannelId(), parameter.getCartId(), parameter.getProductCode());
+        ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(parameter.getChannelId(), parameter.getCartId(), parameter.getProductCode(), cmsBtProductModel.getOrgChannelId());
         if (imsBtProductModel != null) {
             imsBtProductModel.setNumIid("");
             imsBtProductDao.updateImsBtProductBySeq(imsBtProductModel, modifier);
@@ -1507,7 +1558,7 @@ public class CmsProductDetailService extends BaseViewService {
             platForm.remove("pStatus");
             productPlatformService.updateProductPlatformWithSx(paramr.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier, "group下线", false);
             productStatusHistoryService.insert(paramr.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), paramr.getCartId(), EnumProductOperationType.DelistinGroup, comment, modifier);
-            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(paramr.getChannelId(), paramr.getCartId(), code);
+            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(paramr.getChannelId(), paramr.getCartId(), code, cmsBtProductModel.getOrgChannelId());
             if (imsBtProductModel != null) {
                 imsBtProductModel.setNumIid("");
                 imsBtProductDao.updateImsBtProductBySeq(imsBtProductModel, modifier);
@@ -1625,6 +1676,39 @@ public class CmsProductDetailService extends BaseViewService {
 
         updateMap.put("platforms.P" + platform.getCartId() + ".modified", DateTimeUtil.getNowTimeStamp());
         updateMap.put("platforms.P" + platform.getCartId() + ".skus", platform.getSkus());
+        Double priceSaleSt = null;
+        Double priceSaleEd = null;
+        Double priceMsrpSt = null;
+        Double priceMsrpEd = null;
+        for (BaseMongoMap<String, Object> platformSku : platform.getSkus()) {
+            if (priceSaleSt == null) {
+                priceSaleSt = Double.parseDouble(String.valueOf(platformSku.get("priceSale")));
+            } else if (priceSaleSt > Double.parseDouble(String.valueOf(platformSku.get("priceSale")))) {
+                priceSaleSt = Double.parseDouble(String.valueOf(platformSku.get("priceSale")));
+            }
+            if (priceSaleEd == null) {
+                priceSaleEd = Double.parseDouble(String.valueOf(platformSku.get("priceSale")));
+            } else if (priceSaleEd < Double.parseDouble(String.valueOf(platformSku.get("priceSale")))) {
+                priceSaleEd = Double.parseDouble(String.valueOf(platformSku.get("priceSale")));
+            }
+
+            if (priceMsrpSt == null) {
+                priceMsrpSt = Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")));
+            } else if (priceMsrpSt > Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")))) {
+                priceMsrpSt = Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")));
+            }
+            if (priceMsrpEd == null) {
+                priceMsrpEd = Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")));
+            } else if (priceMsrpEd < Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")))) {
+                priceMsrpEd = Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")));
+            }
+        }
+
+        updateMap.put("platforms.P" + platform.getCartId() + ".pPriceSaleSt", priceSaleSt);
+        updateMap.put("platforms.P" + platform.getCartId() + ".pPriceSaleEd", priceSaleEd);
+        updateMap.put("platforms.P" + platform.getCartId() + ".pPriceMsrpSt", priceMsrpSt);
+        updateMap.put("platforms.P" + platform.getCartId() + ".pPriceMsrpEd", priceMsrpEd);
+
         BulkUpdateModel model = new BulkUpdateModel();
         model.setUpdateMap(updateMap);
         model.setQueryMap(queryMap);
@@ -1696,5 +1780,54 @@ public class CmsProductDetailService extends BaseViewService {
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
 
         return modified;
+    }
+
+    /**
+     * 修改产品originalTitleCn
+     *
+     * @param channelId       渠道ID
+     * @param prodId          产品prodId
+     * @param originalTitleCn 更新的originalTitleCn
+     * @param username        操作人
+     */
+    public void updateOriginalTitleCn(String channelId, Long prodId, String originalTitleCn, String username) {
+
+        CmsBtProductModel productModel = productService.getProductById(channelId, prodId);
+        if (productModel == null) {
+            throw new BusinessException(String.format("产品(%d)不存在", prodId));
+        }
+
+        JongoUpdate jongoUpdate = new JongoUpdate();
+        jongoUpdate.setQuery("{\"prodId\": #}");
+        jongoUpdate.setQueryParameters(productModel.getProdId());
+
+        if("928".equals(channelId) || "024".equals(channelId)){
+            jongoUpdate.setUpdate("{$set: {\"common.fields.originalTitleCn\": #,\"common.catConf\": #, \"modifier\":#,\"modified\":#}}");
+            jongoUpdate.setUpdateParameters(originalTitleCn,"1", username, DateTimeUtil.getNowTimeStamp());
+        }else{
+            jongoUpdate.setUpdate("{$set: {\"common.fields.originalTitleCn\": #,\"modifier\":#,\"modified\":#}}");
+            jongoUpdate.setUpdateParameters(originalTitleCn, username, DateTimeUtil.getNowTimeStamp());
+        }
+
+
+
+        WriteResult writeResult = cmsBtProductDao.updateFirst(jongoUpdate, channelId);
+
+        $info(String.format("(%s)更新产品(prodId=%d)originalTitleCn信息，更新结果:%s", username, prodId, JacksonUtil.bean2Json(writeResult)));
+
+        String msg = "高级检索 单商品originalTitleCn设置" ;
+        List<String> prodCodeList = new ArrayList<>();
+        prodCodeList.add(productModel.getCommon().getFields().getCode());
+        productStatusHistoryService.insertList(channelId, prodCodeList, -1, EnumProductOperationType.SingleProdSetOriginalTitleCn, msg, username);
+
+        String code = productModel.getCommon().getFields().getCode();
+        for (CmsBtProductModel_Platform_Cart platformCart : productModel.getPlatforms().values()) {
+            Integer cartId = platformCart.getCartId();
+            if (cartId.intValue() > 19 && cartId.intValue() < 900 && CmsConstants.ProductStatus.Approved.name().equals(platformCart.getStatus())) {
+                //取得approved的code插入
+                $debug(String.format("商品(channel=%s, code=%s)Title修改，平台(cartId=%d)Approved需重新上新", channelId, code, cartId));
+                sxProductService.insertPlatformWorkload(channelId, cartId, PlatformWorkloadAttribute.TITLE, Arrays.asList(code), username);
+            }
+        }
     }
 }

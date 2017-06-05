@@ -46,6 +46,8 @@ import com.voyageone.service.dao.cms.mongo.CmsBtCombinedProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtCombinedProductLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.EwmsMQUpdateProductMessageBody;
 import com.voyageone.service.model.cms.enums.PlatformType;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -53,6 +55,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -86,6 +89,8 @@ public class CmsBtCombinedProductService extends BaseService {
     private DtWareService dtWareService;
     @Autowired
     private CnnWareService cnnWareService;
+    @Autowired
+    private CmsMqSenderService cmsMqSenderService;
 
     /**
      * 获取平台组合套装商品数据
@@ -399,7 +404,7 @@ public class CmsBtCombinedProductService extends BaseService {
         product.setCreated(DateTimeUtil.getNow());
         product.setChannelId(channelId);
         // 组合商品校验
-        checkCombinedProducrtModel(product, channelId, ACTION_TYPE_ADD);
+        checkCombinedProductModel(product, channelId, ACTION_TYPE_ADD);
         WriteResult rs = cmsBtCombinedProductDao.insert(product);
         $debug("新增 组合套装商品 结果 " + rs.toString());
 
@@ -417,6 +422,10 @@ public class CmsBtCombinedProductService extends BaseService {
         logModel.setPlatformStatus(product.getPlatformStatus());
         WriteResult rs_log = cmsBtCombinedProductLogDao.insert(logModel);
         $debug("新增 组合套装商品操作日志 结果 " + rs_log.toString());
+        // 新建，如果是提交状态则同步至WMS
+        if (product.getStatus().intValue() != CmsBtCombinedProductStatus.TEMPORAL.intValue()) {
+            sendMqMessage(product, channelId, user, "1");
+        }
     }
 
     public Map<String, Object> search(int page, int pageSize, CmsBtCombinedProductBean searchBean) {
@@ -476,9 +485,7 @@ public class CmsBtCombinedProductService extends BaseService {
      * @param channelId
      */
     public void deleteCombinedProduct(CmsBtCombinedProductBean modelBean, String user, String channelId) {
-        /*String query = String.format("{'numID':'%s', 'channelId':'%s'}", modelBean.getNumID(), channelId);
-        CmsBtCombinedProductModel target = cmsBtCombinedProductDao.selectOneWithQuery(query);*/
-        CmsBtCombinedProductModel target = null;
+        CmsBtCombinedProductModel target;
         if (modelBean == null || StringUtils.isBlank(modelBean.get_id()) || (target = cmsBtCombinedProductDao.selectById(modelBean.get_id())) == null) {
             throw new BusinessException("要删除的组合套装商品不存在！");
         }
@@ -504,6 +511,10 @@ public class CmsBtCombinedProductService extends BaseService {
         logModel.setStatus(modelBean.getStatus());
         logModel.setPlatformStatus(modelBean.getPlatformStatus());
         WriteResult rs_log = cmsBtCombinedProductLogDao.insert(logModel);
+        // 如果删除的组合商品是提交状态，那么需要将其从WMS删除
+        if (CmsBtCombinedProductStatus.SUBMITTED.intValue() == target.getStatus().intValue()) {
+            sendMqMessage(modelBean, channelId, user, "2");
+        }
         $debug("删除 组合套装商品操作日志 结果 " + rs_log.toString());
     }
 
@@ -544,7 +555,8 @@ public class CmsBtCombinedProductService extends BaseService {
      * @param channelId
      */
     public void editCombinedProduct(CmsBtCombinedProductModel model, String channelId, String user) {
-        checkCombinedProducrtModel(model, channelId, ACTION_TYPE_EDIT);
+        checkCombinedProductModel(model, channelId, ACTION_TYPE_EDIT);
+        CmsBtCombinedProductModel existModel = cmsBtCombinedProductDao.selectById(model.get_id());
         model.setModifier(user);
         model.setModified(DateTimeUtil.getNow());
         WriteResult rs = cmsBtCombinedProductDao.update(model);
@@ -564,8 +576,61 @@ public class CmsBtCombinedProductService extends BaseService {
         logModel.setPlatformStatus(model.getPlatformStatus());
         WriteResult rs_log = cmsBtCombinedProductLogDao.insert(logModel);
         $debug("编辑 组合套装商品操作日志 结果 " + rs_log.toString());
+
+        if (CmsBtCombinedProductStatus.SUBMITTED.intValue() == existModel.getStatus().intValue()) {
+            // 如果编辑之前是“提交”状态，编辑后仍然是提交状态，那么编辑同步至WMS
+            if (CmsBtCombinedProductStatus.SUBMITTED.intValue() == model.getStatus().intValue()) {
+                sendMqMessage(model, channelId, user, "1");
+            }
+            /*else {
+                // 如果编辑之前是“提交”状态，编辑后是暂存状态，那么将其从WMS删除
+                sendMqMessage(model, channelId, user, "2");
+            }*/
+        } else {
+            // 如果编辑之前是“暂存状态”，编辑后是提交装填，那么新增至WMS
+            if (CmsBtCombinedProductStatus.SUBMITTED.intValue() == model.getStatus().intValue()) {
+                sendMqMessage(model, channelId, user, "1");
+            }
+        }
     }
 
+
+    /**
+     * 组合商品推送MQ
+     *
+     * @param model     model
+     * @param channelId channelId
+     * @param user      user
+     * @param type      type
+     */
+    private  void sendMqMessage(CmsBtCombinedProductModel model, String channelId, String user,String type){
+
+        EwmsMQUpdateProductMessageBody ewmsMQUpdateProductMessageBody = new EwmsMQUpdateProductMessageBody();
+        ewmsMQUpdateProductMessageBody.setChannelId(channelId);
+        ewmsMQUpdateProductMessageBody.setCartId(model.getCartId());
+        ewmsMQUpdateProductMessageBody.setGroupKind("1");
+        ewmsMQUpdateProductMessageBody.setNumIid(model.getNumID());
+        ewmsMQUpdateProductMessageBody.setUserName(user);
+        ewmsMQUpdateProductMessageBody.setType(type);
+        if (model.getSkus().size() > 0) {
+
+            model.getSkus().stream()
+                    .filter(cmsBtCombinedProductModel_Sku -> cmsBtCombinedProductModel_Sku.getSkuItems().size() > 0)
+                    .forEach(sku -> {
+                        ewmsMQUpdateProductMessageBody.setGroupSku(sku.getSuitSkuCode());
+                        ewmsMQUpdateProductMessageBody.setGroupPrice(sku.getSuitPreferentialPrice());
+                        List<Map<String, BigDecimal>> skus = new ArrayList<>();
+                        sku.getSkuItems().forEach(subSku -> {
+                            Map<String, BigDecimal> skuMap = new HashMap<>();
+                            skuMap.put(subSku.getSkuCode(), BigDecimal.valueOf(subSku.getPreferentialPrice()));
+                            skus.add(skuMap);
+                        });
+                        ewmsMQUpdateProductMessageBody.setSku(skus);
+                        cmsMqSenderService.sendMessage(ewmsMQUpdateProductMessageBody);
+                        $info(user + "组合商品MQ发送OK，内容：" + JacksonUtil.bean2Json(ewmsMQUpdateProductMessageBody));
+                    });
+        }
+  }
     /**
      * 新增或者编辑时校验组合套装商品
      *
@@ -573,7 +638,7 @@ public class CmsBtCombinedProductService extends BaseService {
      * @param channelId
      * @param actionType
      */
-    public void checkCombinedProducrtModel(CmsBtCombinedProductModel model, String channelId, String actionType) {
+    public void checkCombinedProductModel(CmsBtCombinedProductModel model, String channelId, String actionType) {
         if (!ACTION_TYPE_ADD.equals(actionType) && !ACTION_TYPE_EDIT.equals(actionType)) {
             throw new BusinessException("异常操作!");
         }

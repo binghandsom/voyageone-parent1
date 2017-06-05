@@ -67,7 +67,7 @@
             <i class="fa fa-plus icon-small text-vo"></i>
             <span ng-bind="item.catName"></span>
         </a>
-        <a ng-if="item.isParent == 0 || item.children.length > 0" ng-click="goSearchPage(item.catPath,item.catId)">
+        <a ng-if="item.isParent == 0 && item.children.length == 0" ng-click="goSearchPage(item.catPath,item.catId)">
             <i class="fa fa-minus icon text-vo"></i>
             <span ng-bind="item.catName"></span>
         </a>
@@ -104,7 +104,7 @@
             <i class="fa fa-plus icon-small text-vo"></i>
             <span ng-bind="item.catName"></span>
         </a>
-        <a ng-if="item.isParent == 0 || item.children.length > 0" ng-click="goAdvanceSearchByFeedCat(item.catPath,item.catId)">
+        <a ng-if="item.isParent == 0 && item.children.length == 0" ng-click="goAdvanceSearchByFeedCat(item.catPath,item.catId)">
             <i class="fa fa-minus icon text-vo"></i>
             <span ng-bind="item.catName"></span>
         </a>

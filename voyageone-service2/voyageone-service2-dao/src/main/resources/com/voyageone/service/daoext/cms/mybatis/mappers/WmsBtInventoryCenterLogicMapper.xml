@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.sql">
-    <select id="select_sku_inventory" resultType="com.voyageone.service.model.util.MapModel">
-    	select t.sku, t.code, t.qty_orgin, t.qty_china
-		from wms_bt_inventory_center_logic t
-		where t.order_channel_id = #{channelId} and t.code = #{code}
-    </select>
-</mapper>

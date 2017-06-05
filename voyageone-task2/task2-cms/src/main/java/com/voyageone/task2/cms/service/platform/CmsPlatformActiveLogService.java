@@ -125,7 +125,10 @@ public class CmsPlatformActiveLogService extends BaseService {
             //根据group的code取得cms_bt_product信息数据
             List<CmsBtProductModel> prodObjList = cmsBtCombinedProductService.getCmsBtProductModelInfo(cartId, cmsBtProductGroupModel.getProductCodes(), channelId);
 
-
+            // 主商品如果没有找到的话说明 主商品已经被锁住
+            if(prodObjList.stream().noneMatch(item->item.getCommon().getFields().getCode().equals(cmsBtProductGroupModel.getMainProductCode()))){
+                prodObjList.clear();
+            }
             // 如果该group下有一个code不是被锁状态,则可以执行上下架操作
             if (prodObjList.size() > 0) {
                 String apiResult = cmsBtCombinedProductService.getUpperAndLowerRacksApiResult(numIId, shopProp, activeStatus);
@@ -172,6 +175,7 @@ public class CmsPlatformActiveLogService extends BaseService {
                 errorInfo = new CmsBtOperationLogModel_Msg();
                 errorInfo.setSkuCode("numberId:" + cmsBtProductGroupModel.getNumIId());
                 errorInfo.setMsg("该group下所有的code都处于锁定状态,无法上下架.");
+                $info(cmsBtProductGroupModel.getNumIId() + " 该group下所有的code都处于锁定状态,无法上下架.");
                 failList.add(errorInfo);
             }
         }
@@ -326,10 +330,11 @@ public class CmsPlatformActiveLogService extends BaseService {
                 if (mainCode == null) {
                     $warn("CmsPlatformActiveLogService 产品数据错误(没有MainProductCode数据) channelId=%s, code=%s", channelId, prodCode);
                     failedComment = "未设置主商品, 上下架操作无效";
-                } else if ("1".equals(StringUtils.trimToNull(prodObj.getLock()))) {
-                    $warn("CmsPlatformActiveLogService 商品lock channelId=%s, code=%s", channelId, prodCode);
-                    failedComment = "商品已锁定, 上下架操作无效";
                 }
+//                else if ("1".equals(StringUtils.trimToNull(prodObj.getLock()))) {
+//                    $warn("CmsPlatformActiveLogService 商品lock channelId=%s, code=%s", channelId, prodCode);
+//                    failedComment = "商品已锁定, 上下架操作无效";
+//                }
             } else {
                 failedComment = "商品未上新, 上下架操作无效";
             }

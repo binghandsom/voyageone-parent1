@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.vomqjobservice;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
@@ -99,7 +100,7 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
 
         $info("productCnt="+prodCodeList.size());
         //设置自由标签
-        productTagService.setProdFreeTag(messageMap.getChannelId(), tagPathList, prodCodeList, orgDispTagList, messageMap.getSender());
+        productTagService.setProdFreeTag(messageMap.getChannelId(), tagPathList, prodCodeList, orgDispTagList, EnumProductOperationType.BatchSetFreeTag, messageMap.getSender());
 
         return prodCodeList;
     }

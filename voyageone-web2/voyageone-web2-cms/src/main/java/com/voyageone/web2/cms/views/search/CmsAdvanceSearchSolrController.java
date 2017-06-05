@@ -119,7 +119,7 @@ public class CmsAdvanceSearchSolrController extends CmsController {
         // 分页
         int endIdx = params.getProductPageSize();
         // 先统计product件数,并放到session中(这时group总件数为空)
-        CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId());
+        CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), userInfo.getUserId(), userInfo.getUserName());
         long productListTotal = cmsProductCodeListBean.getTotalCount();
         cmsSession.putAttribute("_adv_search_productListTotal", productListTotal);
         cmsSession.putAttribute("_adv_search_groupListTotal", null);
@@ -250,7 +250,7 @@ public class CmsAdvanceSearchSolrController extends CmsController {
 //        long productListTotal = (Long) cmsSession.getAttribute("_adv_search_productListTotal");
 
         // 获取product列表
-        CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId());
+        CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), userInfo.getUserId(), userInfo.getUserName());
         long productListTotal = cmsProductCodeListBean.getTotalCount();
         List<String> currCodeList = cmsProductCodeListBean.getProductCodeList();
         List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
@@ -500,7 +500,7 @@ public class CmsAdvanceSearchSolrController extends CmsController {
     public AjaxResponse addFreeTag(@RequestBody Map<String, Object> params) {
         UserSessionBean userInfo = getUser();
 
-        searchIndexService.setProdFreeTagMQ(userInfo.getSelChannelId(), params, userInfo.getUserName(), getCmsSession());
+        searchIndexService.setProdFreeTag(userInfo.getSelChannelId(), params, userInfo.getUserName(), getCmsSession());
         return success(null);
     }
 
@@ -553,7 +553,7 @@ public class CmsAdvanceSearchSolrController extends CmsController {
     public AjaxResponse getSkuInventoryList(@RequestBody String code) {
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode(getUser().getSelChannelId(), code);
         if (cmsBtProductModel != null) {
-            return success(advSearchQueryService.getSkuInventoryList(cmsBtProductModel.getOrgChannelId(), code));
+            return success(advSearchQueryService.getSkuInventoryList(cmsBtProductModel));
         } else {
             throw new BusinessException(code + "：该商品不存在");
         }

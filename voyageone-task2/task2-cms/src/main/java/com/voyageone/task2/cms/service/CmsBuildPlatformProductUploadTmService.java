@@ -34,6 +34,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
+import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.CmsBtSxCspuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.CmsBtTmScItemModel;
@@ -52,10 +53,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -106,6 +106,8 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
     private TbSaleService tbSaleService;
     @Autowired
     private TbScItemService tbScItemService;
+    @Autowired
+    private MqSender sender;
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -335,6 +337,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
         // 开始时间
         long prodStartTime = System.currentTimeMillis();
 
+        List<String> strSkuCodeList = new ArrayList<>();
         // 天猫产品上新处理
         try {
             // 上新用的商品数据信息取得
@@ -397,7 +400,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
             expressionParser = new ExpressionParser(sxProductService, sxData);
 
             // 20170417 全链路库存改造 charis STA
-            List<String> strSkuCodeList = new ArrayList<>();
+
             sxData.getSkuList().forEach(sku -> strSkuCodeList.add(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name())));
 
             if (ListUtils.isNull(strSkuCodeList)) {
@@ -685,10 +688,20 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                         }
                     }
                     // 20161202 达尔文货品关联问题的对应 END
+                    // 20170526 调用新的更新库存接口同步库存 STA
+                    Map<String, Object> messageBodyMap = new HashMap<>();
+                    List<Object> messageMapList = new ArrayList<>();
+                    for (String sku : strSkuCodeList) {
+                        Map<String, Object> messageMap = new HashMap<>();
+                        messageMap.put("channelId", channelId);
+                        messageMap.put("cartId", cartId);
+                        messageMap.put("sku", sku);
 
-                    // 20170417 调用更新库存接口同步库存 STA
-                    sxProductService.synInventoryToPlatform(channelId, String.valueOf(cartId), listSxCode, null);
-                    // 20170417 调用更新库存接口同步库存 END
+                        messageMapList.add(messageMap);
+                    }
+                    messageBodyMap.put("platformStocks", messageMapList);
+                    sender.sendMessage("ewms_mq_stock_sync_platform_stock" + "_" + channelId, messageBodyMap);
+                    // 20170526 调用新的更新库存接口同步库存 END
 
                     // added by morse.lu 2017/01/05 start
                     // 更新cms_bt_tm_sc_item表，把货品id记下来，同步库存用
@@ -781,6 +794,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 searchParam.put("cartId", cartId);
                 searchParam.put("code", code);
                 searchParam.put("sku", skuCode);
+                searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
                 CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
                 SxData.SxSkuExInfo sxSkuExInfo = sxData.getSxSkuExInfo(skuCode, false);
                 String scProductId = sxSkuExInfo != null? sxSkuExInfo.getScProductId() : null;
@@ -794,6 +808,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                         // add
                         scItemModel = new CmsBtTmScItemModel();
                         scItemModel.setChannelId(channelId);
+                        scItemModel.setOrgChannelId(sxData.getMainProduct().getOrgChannelId());
                         scItemModel.setCartId(cartId);
                         scItemModel.setCode(code);
                         scItemModel.setSku(skuCode);

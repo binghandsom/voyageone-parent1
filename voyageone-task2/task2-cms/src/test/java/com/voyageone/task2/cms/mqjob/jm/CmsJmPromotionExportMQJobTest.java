@@ -37,8 +37,8 @@ public class CmsJmPromotionExportMQJobTest {
     @Test
     public void testOnStartup() throws Exception {
         JmPromotionExportMQMessageBody jmPromotionExportMQMessageBody = new JmPromotionExportMQMessageBody();
-        jmPromotionExportMQMessageBody.setChannelId("928");
-        jmPromotionExportMQMessageBody.setJmBtPromotionExportTaskId(361);
+        jmPromotionExportMQMessageBody.setChannelId("010");
+        jmPromotionExportMQMessageBody.setJmBtPromotionExportTaskId(366);
         service.onStartup(jmPromotionExportMQMessageBody);
     }
 }

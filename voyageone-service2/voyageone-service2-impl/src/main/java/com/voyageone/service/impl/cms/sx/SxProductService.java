@@ -77,6 +77,9 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.wms.AvailQuantityForCmsRequest;
+import com.voyageone.web2.sdk.api.response.wms.AvailQuantityForCmsResponse;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -94,6 +97,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -123,6 +128,8 @@ public class SxProductService extends BaseService {
 //     * 大码List
 //     */
 //    private static List<String> bigSizeList = Lists.newArrayList("16","17","18");
+    @Autowired
+    private VoApiDefaultClient voApiDefaultClient;
     @Autowired
     TbProductService tbProductService;
     @Autowired
@@ -498,17 +505,19 @@ public class SxProductService extends BaseService {
             // modified by morse.lu 2016/06/24 end
 
             ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(
-                    sxData.getMainProduct().getOrgChannelId(),   // ims表要用OrgChannelId
+                    sxData.getMainProduct().getChannelId(),   // ims表总店和子店剥离开
                     sxData.getCartId(),
-                    code);
+                    code,
+                    sxData.getMainProduct().getOrgChannelId());  // ims表总店和子店剥离开
             if (imsBtProductModel == null) {
                 // 没找到就插入
                 imsBtProductModel = new ImsBtProductModel();
-                imsBtProductModel.setChannelId(sxData.getMainProduct().getOrgChannelId()); // ims表要用OrgChannelId
+                imsBtProductModel.setChannelId(sxData.getMainProduct().getChannelId());
                 imsBtProductModel.setCartId(sxData.getCartId());
                 imsBtProductModel.setCode(code);
                 imsBtProductModel.setNumIid(sxData.getPlatform().getNumIId());
                 imsBtProductModel.setQuantityUpdateType(updateType);
+                imsBtProductModel.setOrgChannelId(sxData.getMainProduct().getOrgChannelId());
 
                 imsBtProductDao.insertImsBtProduct(imsBtProductModel, modifier);
             } else {
@@ -918,6 +927,15 @@ public class SxProductService extends BaseService {
             return sxData;
         }
 
+        if (!StringUtils.isEmpty(sxData.getMainProduct().getPlatformNotNull(cartId).getLock())
+                && "1".equals(sxData.getMainProduct().getPlatformNotNull(cartId).getLock())) {
+            // 主商品被锁住， 所以不能新增或更新商品
+            String errorMsg = "取得上新数据(SxData)失败! 主商品被锁住， 所以不能新增或更新商品。groupId(" + groupId + ")";
+            $error(errorMsg);
+            sxData.setErrorMessage(errorMsg);
+            return sxData;
+        }
+
         for (CmsBtProductModel productModel : productModelList) {
             // modified by morse.lu 2016/06/28 start
             // product表结构变化
@@ -1023,12 +1041,6 @@ public class SxProductService extends BaseService {
                 removeProductList.add(productModel);
                 continue;
             }
-            // 2016/06/12 add desmond START
-            if (!StringUtils.isEmpty(productPlatformCart.getLock()) && "1".equals(productPlatformCart.getLock())) {
-                removeProductList.add(productModel);
-                continue;
-            }
-            // 2016/06/12 add desmond END
             // 2016/09/13 add desmond START
             // 看一下feed的品牌，master的品牌和platform的品牌这3个地方的品牌是否在品牌黑名单中，只有有一个在黑名单中，该产品就是上新对象外
             // 官网同购的场合（cart是30， 31）， platform的品牌是不存在的
@@ -1690,23 +1702,31 @@ public class SxProductService extends BaseService {
         // 暂时除sku的Mapping改成不Mapping以外的逻辑都不修正 morse.lu 2016-06-24
         Map<CustomMappingType, List<Field>> mappingTypePropsMap = getCustomPlatformProps(fieldsMap, expressionParser, mapSp, isItem);
         if (!mappingTypePropsMap.isEmpty()) {
-            // 所有sku取得
-            List<String> skus = new ArrayList<>();
-            for (CmsBtProductModel productModel : sxData.getProductList()) {
-                skus.addAll(productModel.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
+
+            // WMS2.0切换 20170526 charis STA
+            // 上新对象code
+            List<String> listSxCode = null;
+            if (ListUtils.notNull(sxData.getProductList())) {
+                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
             }
-            // wms逻辑库存取得
-            List<WmsBtInventoryCenterLogicModel> skuInventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailBySkuList(sxData.getChannelId(), skus);
-            Map<String, Integer> skuInventoryMap = new HashMap<>();
-            for (WmsBtInventoryCenterLogicModel model : skuInventoryList) {
-                if (ChannelConfigEnums.Channel.SN.getId().equals(shopBean.getOrder_channel_id())) {
-                    skuInventoryMap.put(model.getSku().toLowerCase(), model.getQtyChina());
-                } else {
-                    skuInventoryMap.put(model.getSku(), model.getQtyChina());
+            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
+            for (String code : listSxCode) {
+                try {
+                    Map<String, Integer> map = getAvailQuantity(sxData.getChannelId(), String.valueOf(sxData.getCartId()), code, null);
+                    for (Map.Entry<String, Integer> e : map.entrySet()) {
+                        skuLogicQtyMap.put(e.getKey(), e.getValue());
+                    }
+                } catch (Exception e) {
+                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
+                            sxData.getChannelId(), sxData.getCartId(), code, e.getMessage());
+                    throw new Exception(errorMsg);
                 }
             }
+            // WMS2.0切换 20170526 charis END
 
-            Map<String, Field> resolveField = constructCustomPlatformProps(mappingTypePropsMap, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
+
+
+            Map<String, Field> resolveField = constructCustomPlatformProps(mappingTypePropsMap, expressionParser, cmsMtPlatformMappingModel, skuLogicQtyMap, shopBean, user);
             if (!resolveField.isEmpty()) {
                 retMap = new HashMap<>();
                 retMap.putAll(resolveField);
@@ -3853,14 +3873,20 @@ public class SxProductService extends BaseService {
             if (matchModels.size() == 1) {
 //                $info("找到image_group记录!");
                 if (matchModels.get(0).getImage() == null || matchModels.get(0).getImage().size() == 0) {
-                    throw new BusinessException("共通图片表找到的图片类型对应的图片数为0,请确保至少上传1张图片！" +
-                            "channelId= " + channelId +
-                            ",cartId= " + cartId +
-                            ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图 6：使用保养图 7：测量方式图)" +
-                            ",viewType= " + viewType + "(1:PC端 2：APP端)" +
-                            ",BrandName= " + paramBrandName +
-                            ",ProductType= " + paramProductType +
-                            ",SizeType=" + paramSizeType);
+
+                    // 20170526 tom 不报错， 假装认为没看到这个， 直接跳过 START
+//                    throw new BusinessException("共通图片表找到的图片类型对应的图片数为0,请确保至少上传1张图片！" +
+//                            "channelId= " + channelId +
+//                            ",cartId= " + cartId +
+//                            ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图 6：使用保养图 7：测量方式图)" +
+//                            ",viewType= " + viewType + "(1:PC端 2：APP端)" +
+//                            ",BrandName= " + paramBrandName +
+//                            ",ProductType= " + paramProductType +
+//                            ",SizeType=" + paramSizeType);
+
+                    continue;
+                    // 20170526 tom 不报错， 假装认为没看到这个， 直接跳过 END
+
                 }
                 for (CmsBtImageGroupModel_Image imageInfo : matchModels.get(0).getImage()) {
                     if (getOriUrl) {
@@ -6214,6 +6240,44 @@ public class SxProductService extends BaseService {
         }
 
         return "";
+    }
+
+    /**
+     * 获取可售库存
+     * @param channelId
+     * @param cartId
+     * @param code
+     * @param sku
+     */
+
+    public Map<String, Integer> getAvailQuantity(String channelId, String cartId, String code, String sku) throws Exception{
+        List data;
+        Map<String, Integer> skuLogicQtyMap = new LinkedHashMap<>();
+        AvailQuantityForCmsRequest request = new AvailQuantityForCmsRequest();
+        request.setChannelId(channelId);
+        request.setCartId(cartId);
+        request.setItemCode(code);
+        request.setSku(sku);
+        AvailQuantityForCmsResponse response;
+        try {
+            response = voApiDefaultClient.execute(request);
+
+            if ("0".equals(response.getCode())) {
+                data = (ArrayList) response.getData();
+                if (!StringUtils.isEmpty(sku) && ListUtils.isNull(data)) {
+                    skuLogicQtyMap.put(sku, 0);
+                } else {
+                    data.stream().forEach(d -> skuLogicQtyMap.put((String)((LinkedHashMap)d).get("sku"), (Integer)((LinkedHashMap)d).get("qty")));
+                }
+
+                return skuLogicQtyMap;
+            }
+        } catch (Exception e) {
+            String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [sku:%s] [errorMsg:%s]",
+                    channelId, cartId, code, sku, e.getMessage());
+            throw new Exception(errorMsg);
+        }
+        return null;
     }
 
 }

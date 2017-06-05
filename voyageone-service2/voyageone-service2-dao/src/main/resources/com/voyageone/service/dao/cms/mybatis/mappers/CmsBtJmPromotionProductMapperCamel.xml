@@ -10,7 +10,7 @@
         `max_msrp_usd`, `max_msrp_rmb`, `max_retail_price`, `max_sale_price`, `min_msrp_usd`, 
         `min_msrp_rmb`, `min_retail_price`, `min_sale_price`, `max_market_price`, `min_market_price`, 
         `max_deal_price`, `min_deal_price`, `deal_price`, `market_price`, `image1`, `product_name_en`, 
-        `remark`
+        `remark`, `discount2`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -149,6 +149,9 @@
             <if test="remark != null" >
                 `remark` = #{remark,jdbcType=VARCHAR},
             </if>
+            <if test="discount2 != null" >
+                `discount2` = #{discount2,jdbcType=DECIMAL},
+            </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
@@ -286,6 +289,9 @@
             <if test="remark != null" >
                 and `remark` = #{remark,jdbcType=VARCHAR}
             </if>
+            <if test="discount2 != null" >
+                and `discount2` = #{discount2,jdbcType=DECIMAL}
+            </if>
         </where>
         limit 1
     </select>
@@ -418,6 +424,9 @@
             <if test="remark != null" >
                 and `remark` = #{remark,jdbcType=VARCHAR}
             </if>
+            <if test="discount2 != null" >
+                and `discount2` = #{discount2,jdbcType=DECIMAL}
+            </if>
         </where>
     </select>
 
@@ -547,6 +556,9 @@
             <if test="remark != null" >
                 and `remark` = #{remark,jdbcType=VARCHAR}
             </if>
+            <if test="discount2 != null" >
+                and `discount2` = #{discount2,jdbcType=DECIMAL}
+            </if>
         </where>
     </select>
 
@@ -674,6 +686,9 @@
             </if>
             <if test="remark != null" >
                 `remark`,
+            </if>
+            <if test="discount2 != null" >
+                `discount2`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -808,6 +823,9 @@
             </if>
             <if test="remark != null" >
                 #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="discount2 != null" >
+                #{discount2,jdbcType=DECIMAL},
             </if>
         </trim>
     </insert>

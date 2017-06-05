@@ -602,6 +602,7 @@ define([
                 cartId: +$scope.cartInfo.value
             }).then(function (res) {
                 self.vm.platform = res.data.platform;
+                self.vm.sellerCats = self.vm.platform.sellerCats == null ? [] : self.vm.platform.sellerCats;
             });
         });
     };

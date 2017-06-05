@@ -65,7 +65,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-sm-3 control-label">折扣</label>
+                                        <label class="col-sm-3 control-label">折扣(团/市)</label>
 
                                         <div class="col-sm-8 form-inline">
                                             <div class="input-group col-sm-4">
@@ -74,6 +74,19 @@
                                             &nbsp;~&nbsp;
                                             <div class="input-group col-sm-4">
                                                 <input type="number" value="" style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}" class="form-control" ng-model="searchInfo.endDiscount"
+                                                       placeholder="to"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">折扣(团/最终)</label>
+
+                                        <div class="col-sm-8 form-inline">
+                                            <div class="input-group col-sm-4">
+                                                <input type="number" value="" style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}" class="form-control" ng-model="searchInfo.beginDiscount2"
+                                                       placeholder="from"></div>
+                                            &nbsp;~&nbsp;
+                                            <div class="input-group col-sm-4">
+                                                <input type="number" value="" style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}" class="form-control" ng-model="searchInfo.endDiscount2"
                                                        placeholder="to"></div>
                                         </div>
                                     </div>
@@ -222,10 +235,20 @@
                     <th class="text-right" style="width: 150px">聚美价格</th>
                     <th class="text-left">聚美MallId</th>
                     <th class="text-left">聚美Hash ID</th>
-                    <th class="text-center">折扣</th>
+                    <th class="text-center">折扣(团/市)
+                        <button class="opacityBtn"
+                                ng-click="columnOrder('discount')"><i class="fa fa-{{getArrowName('discount')}}"></i></button>
+                    </th>
+                    <th class="text-center">折扣(团/最终)
+                        <button class="opacityBtn"
+                                ng-click="columnOrder('discount2')"><i class="fa fa-{{getArrowName('discount2')}}"></i></button>
+                    </th>
                     <th class="text-center">SKU数</th>
                     <th class="text-left">错误消息</th>
-                    <th class="text-center">库存数</th>
+                    <th class="text-center">库存数
+                        <button class="opacityBtn"
+                                ng-click="columnOrder('quantity')"><i class="fa fa-{{getArrowName('quantity')}}"></i></button>
+                    </th>
                     <th class="text-left">备注</th>
                     <th class="text-left">变更情况</th>
                     <th class="text-left">Status</th>
@@ -274,7 +297,10 @@
                         <div class="table_main">
                             <ul>
                                 <li>市场价:{{getMarketPrice(model)}}</li>
-                                <li>团购价:{{getDealPrice(model)}}</li>
+                                <li>团购价:{{getDealPrice(model)}}
+                                    <label ng-if="model.maxDealPrice > model.maxSalePrice" class="text-u-red font-bold">&nbsp;(↑{{model.maxDealPrice -  model.maxSalePrice}})</label>
+                                    <label ng-if="model.maxDealPrice < model.maxSalePrice" class="text-u-green font-bold">&nbsp;(↓{{model.maxSalePrice - model.maxDealPrice}})</label>
+                                </li>
                             </ul>
                         </div>
                     </td>
@@ -286,6 +312,7 @@
                         <a ng-if="model.jmHashId" ng-href="{{vm.productUrl}}{{model.jmHashId}}.html" target="_blank" ng-bind="model.jmHashId"></a>
                     </td>
                     <td class="text-center">{{model.discount == 0 || model.discount == undefined ? '0折' : (model.discount*10).toFixed(2) + '折'}}</td>
+                    <td class="text-center">{{model.discount2 == 0 || model.discount2 == undefined ? '0折' : (model.discount2*10).toFixed(2) + '折'}}</td>
                     <td class="text-center">
                         {{model.skuCount}}
                     </td>

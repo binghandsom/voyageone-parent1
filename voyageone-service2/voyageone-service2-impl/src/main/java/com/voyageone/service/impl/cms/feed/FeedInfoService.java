@@ -2,9 +2,15 @@ package com.voyageone.service.impl.cms.feed;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CmsMtCategoryTreeAllBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
@@ -82,6 +88,10 @@ public class FeedInfoService extends BaseService {
 
     public CmsBtFeedInfoModel getProductByClientSku(String channelId, String clientSku) {
         return cmsBtFeedInfoDao.selectProductByClientSku(channelId, clientSku);
+    }
+
+    public List<CmsBtFeedInfoModel> getProductByModel(String channelId, String model) {
+        return cmsBtFeedInfoDao.selectProductByModel(channelId, model);
     }
     /**
      * 更新feed的产品信息
@@ -458,6 +468,57 @@ public class FeedInfoService extends BaseService {
             result.append("]}},");
         }
 
+        // 获取 master category
+        if (searchValue.get("mCatPath") != null) {
+            List<String>mCatPathList = (List<String>) searchValue.get("mCatPath");
+            if("1".equals(searchValue.get("mCatPathType").toString())) {
+                StringBuilder mCatPathStr = new StringBuilder("{$or:[");
+                int idx = 0;
+                List<String> parameters = new ArrayList<>();
+                for (String mCatPath : mCatPathList) {
+                    //fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
+                    if (idx == 0) {
+                        mCatPathStr.append("{\"mainCategoryCn\":{\"$regex\":#}}");
+                        idx++;
+                    } else {
+                        mCatPathStr.append(",{\"mainCategoryCn\":{\"$regex\":#}}");
+                    }
+                    parameters.add("^" + mCatPath);
+                }
+                mCatPathStr.append("]}");
+                JongoQuery queryObject = new JongoQuery();
+                queryObject.addQuery(mCatPathStr.toString());
+                queryObject.addParameters(parameters.toArray());
+                result.append(queryObject.getJongoQueryStr()+",");
+            }else{
+                StringBuilder mCatPathStr = new StringBuilder("{$or:[{$and:[");
+                int idx = 0;
+                List<String> parameters = new ArrayList<>();
+                for (String mCatPath : mCatPathList) {
+                    //fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
+                    if (idx == 0) {
+                        mCatPathStr.append("{\"mainCategoryCn\":{\"$regex\":#}}");
+                        idx++;
+                    } else {
+                        mCatPathStr.append(",{\"mainCategoryCn\":{\"$regex\":#}}");
+                    }
+                    parameters.add(String.format("^((?!%s).)*$",mCatPath));
+                }
+                mCatPathStr.append("]},{\"mainCategoryCn\":{\"$in\":[null,'']}}]}");
+                JongoQuery queryObject = new JongoQuery();
+                queryObject.addQuery(mCatPathStr.toString());
+                queryObject.addParameters(parameters.toArray());
+                result.append(queryObject.getJongoQueryStr()+",");
+            }
+        }
+
+        if(searchValue.get("message") != null && !StringUtil.isEmpty((String) searchValue.get("message"))){
+            JongoQuery queryObject = new JongoQuery();
+            queryObject.addQuery("{\"updMessage\":{\"$regex\":#}}");
+            queryObject.addParameters(searchValue.get("message"));
+            result.append(queryObject.getJongoQueryStr()+",");
+        }
+
         if (!StringUtils.isEmpty(result.toString())) {
             return "{$and:[" + result.toString().substring(0, result.toString().length() - 1) + "]}";
         } else {
@@ -467,5 +528,21 @@ public class FeedInfoService extends BaseService {
 
     public WriteResult updateAllUpdFlg(String selChannelId, String searchQuery, Integer status, String modifier) {
         return cmsBtFeedInfoDao.updateAllUpdFlg(selChannelId, searchQuery, status, modifier);
+    }
+
+    public boolean updateMainCategory(String channelId, String code, CmsMtCategoryTreeAllBean cmsMtCategory, String modifier){
+        CmsBtFeedInfoModel cmsBtFeedInfo = getProductByCode(channelId, code);
+        if(cmsBtFeedInfo != null){
+            cmsBtFeedInfo.setMainCategoryCn(cmsMtCategory.getCatPath());
+            cmsBtFeedInfo.setMainCategoryEn(cmsMtCategory.getCatPathEn());
+            cmsBtFeedInfo.setCatConf("1");
+            cmsBtFeedInfo.setModifier(modifier);
+            cmsBtFeedInfo.setModified(DateTimeUtil.getNowTimeStamp());
+            if (cmsBtFeedInfo.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Succeed || cmsBtFeedInfo.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Fail) {
+                cmsBtFeedInfo.setUpdFlg(CmsConstants.FeedUpdFlgStatus.Pending);
+            }
+        }
+        updateFeedInfo(cmsBtFeedInfo);
+        return true;
     }
 }
