@@ -10,6 +10,7 @@ define([
     'underscore',
     'components/dist/voyageone.angular.com.js'
 ], function (_) {
+
     angular.module('voyageone.cms.channel', [
         'blockUI',
         'ngCookies',
