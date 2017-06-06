@@ -1380,14 +1380,22 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         String crossBorderRreportFlg = getValueFromPageOrCondition("extends_cross_border_report", "", mainProductPlatformCart, sxData, shopProp);
         // 取得天猫同购上新用skus列表
         try {
+            // 获取页面sku以及对应的库存
+            String skus = ((InputField)tbItemSchema.getFieldMap().get("skus")).getDefaultValue();
+
+            List<Map<String, Object>> skuPageQtyMapList = JacksonUtil.jsonToMapList(skus);
+            Map<String, Integer> skuPageQtyMap = new HashMap<>();
+            skuPageQtyMapList.stream()
+                    .forEach(sku -> skuPageQtyMap.put(sku.get("outer_id").toString().toLowerCase(), (int)Math.floor(Double.parseDouble(sku.get("quantity").toString()))));
+
             List<BaseMongoMap<String, Object>> targetSkuList_0 = getSkus(0, sxData.getCartId(), productList, skuList,
-                    priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg);
+                    priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg, skuPageQtyMap);
 
             productInfoMap.put("skus", JacksonUtil.bean2Json(targetSkuList_0));
             if (skuList.size() == 1) {
                 // 只有一个sku的场合， 万一天猫自动匹配的类目只允许一个sku的时候， 可以用上
                 List<BaseMongoMap<String, Object>> targetSkuList_1 = getSkus(1, sxData.getCartId(), productList, skuList,
-                        priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg);
+                        priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg, skuPageQtyMap);
                 productInfoMap.put("skus_simple", JacksonUtil.bean2Json(targetSkuList_1));
             } else {
                 // 多个sku的场合， 万一天猫自动匹配的类目只允许一个sku的时候， 就上新不了了
@@ -1774,8 +1782,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     private List<BaseMongoMap<String, Object>> getSkus(int type, Integer cartId, List<CmsBtProductModel> productList,
                                                        List<BaseMongoMap<String, Object>> skuList,
                                                        String priceConfigValue, Map<String, Integer> skuLogicQtyMap,
-                                                       ExpressionParser expressionParser,
-                                                       ShopBean shopProp, String crossBorderRreportFlg) throws BusinessException{
+                                                       ExpressionParser expressionParser, ShopBean shopProp,
+                                                       String crossBorderRreportFlg, Map<String, Integer> skuPageQtyMap) throws BusinessException{
 
         // 官网同购， 上新时候的价格， 统一用所有sku里的最高价
         Double priceMax = 0d;
@@ -1933,7 +1941,12 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // outer_id
                 skuMap.put("outer_id", skuCode);
                 // 库存
-                skuMap.put("quantity", skuLogicQtyMap.get(skuCode));
+                if (skuPageQtyMap.containsKey(skuCode)) {
+                    skuMap.put("quantity", skuPageQtyMap.get(skuCode.toLowerCase()));
+                } else {
+                    skuMap.put("quantity", skuLogicQtyMap.get(skuCode));
+                }
+
                 // 与颜色尺寸这个销售属性关联的图片
                 String imageTemplate = getValueByDict("属性图片模板", expressionParser, shopProp);
                 String propImage = expressionParser.getSxProductService().getProductImages(product, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE, cartId).get(0).getName();
