@@ -82,6 +82,11 @@ public class CartEnums {
         DT("33"),
 
         /**
+         * 考拉海外购
+         */
+        KL("34"),
+
+        /**
          * USJOI测试
          */
         JGT("98"),
