@@ -529,7 +529,7 @@
                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;{{cartBean.name}}&nbsp;平台级变更&nbsp;<span class="caret"></span>
                             </button>
                             <ul uib-dropdown-menu>
-                                <li ng-if="cartBean.value != 27 && cartBean.cartType != 3">
+                                <li ng-if="cartBean.value != 27 && cartBean.cartType != 3 && cartBean.value != 34">
                                     <a ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit,cartBean.value)">{{'TXT_TAG_STORE_CLASSIFY'|translate}}</a>
                                 </li>
                                 <li ng-if="getAutoSyncPriceSale(cartBean)!=true">
