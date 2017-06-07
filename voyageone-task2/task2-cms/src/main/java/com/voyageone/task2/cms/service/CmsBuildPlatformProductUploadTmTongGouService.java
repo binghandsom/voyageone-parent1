@@ -1379,13 +1379,14 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         String crossBorderRreportFlg = getValueFromPageOrCondition("extends_cross_border_report", "", mainProductPlatformCart, sxData, shopProp);
         // 取得天猫同购上新用skus列表
         try {
-            // 获取页面sku以及对应的库存
-            String skus = ((InputField)tbItemSchema.getFieldMap().get("skus")).getDefaultValue();
-
-            List<Map<String, Object>> skuPageQtyMapList = JacksonUtil.jsonToMapList(skus);
             Map<String, Integer> skuPageQtyMap = new HashMap<>();
-            skuPageQtyMapList.stream()
-                    .forEach(sku -> skuPageQtyMap.put(sku.get("outer_id").toString().toLowerCase(), (int)Math.floor(Double.parseDouble(sku.get("quantity").toString()))));
+            if (updateWare) {
+                // 获取页面sku以及对应的库存
+                String skus = ((InputField)tbItemSchema.getFieldMap().get("skus")).getDefaultValue();
+                List<Map<String, Object>> skuPageQtyMapList = JacksonUtil.jsonToMapList(skus);
+                skuPageQtyMapList.stream()
+                        .forEach(sku -> skuPageQtyMap.put(sku.get("outer_id").toString().toLowerCase(), (int)Math.floor((Double) sku.get("quantity"))));
+            }
 
             List<BaseMongoMap<String, Object>> targetSkuList_0 = getSkus(0, sxData.getCartId(), productList, skuList,
                     priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg, skuPageQtyMap);
