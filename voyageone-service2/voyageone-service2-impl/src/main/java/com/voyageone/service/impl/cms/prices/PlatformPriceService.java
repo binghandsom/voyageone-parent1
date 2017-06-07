@@ -1040,19 +1040,21 @@ public class PlatformPriceService extends VOAbsLoggable {
         Double maxPrice = null;
         List<TmallItemPriceUpdateRequest.UpdateSkuPrice> list2 = new ArrayList<>(skuList.size());
         for (BaseMongoMap skuObj : skuList) {
-            TmallItemPriceUpdateRequest.UpdateSkuPrice obj3 = new TmallItemPriceUpdateRequest.UpdateSkuPrice();
-            obj3.setOuterId((String) skuObj.get("skuCode"));
-            Double priceSale;
-            if (priceConfigValue == null) {
-                priceSale = skuObj.getDoubleAttribute("priceSale");
-            } else {
-                priceSale = skuObj.getDoubleAttribute(priceConfigValue);
+            if(skuObj.getAttribute("isSale") == null || (boolean)skuObj.getAttribute("isSale")) {
+                TmallItemPriceUpdateRequest.UpdateSkuPrice obj3 = new TmallItemPriceUpdateRequest.UpdateSkuPrice();
+                obj3.setOuterId((String) skuObj.get("skuCode"));
+                Double priceSale;
+                if (priceConfigValue == null) {
+                    priceSale = skuObj.getDoubleAttribute("priceSale");
+                } else {
+                    priceSale = skuObj.getDoubleAttribute(priceConfigValue);
+                }
+                if (maxPrice == null || (maxPrice != null && priceSale > maxPrice)) {
+                    maxPrice = priceSale;
+                }
+                obj3.setPrice(priceSale.toString());
+                list2.add(obj3);
             }
-            if (maxPrice == null || (maxPrice != null && priceSale > maxPrice)) {
-                maxPrice = priceSale;
-            }
-            obj3.setPrice(priceSale.toString());
-            list2.add(obj3);
         }
         if ("p".equals(updType)) {
             // 更新商品价格
