@@ -355,7 +355,7 @@ public class PlatformPriceService extends VOAbsLoggable {
         String updType = null;
         if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id()) || PlatFormEnums.PlatForm.JD.getId().equals(cartObj.getPlatform_id())) {
             // 先要判断更新类型
-            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(productModel.getOrgChannelId(), cartId, prodCode, productModel.getOrgChannelId());
+            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(productModel.getChannelId(), cartId, prodCode, productModel.getOrgChannelId());
             if (imsBtProductModel == null) {
                 $error("PriceService 产品数据不全 未配置ims_bt_product表 channelId=%s, cartId=%d, prod=%s", channelId, cartId, productModel.toString());
                 throw new BusinessException("产品数据不全,未配置ims_bt_product表！");
@@ -1040,19 +1040,21 @@ public class PlatformPriceService extends VOAbsLoggable {
         Double maxPrice = null;
         List<TmallItemPriceUpdateRequest.UpdateSkuPrice> list2 = new ArrayList<>(skuList.size());
         for (BaseMongoMap skuObj : skuList) {
-            TmallItemPriceUpdateRequest.UpdateSkuPrice obj3 = new TmallItemPriceUpdateRequest.UpdateSkuPrice();
-            obj3.setOuterId((String) skuObj.get("skuCode"));
-            Double priceSale;
-            if (priceConfigValue == null) {
-                priceSale = skuObj.getDoubleAttribute("priceSale");
-            } else {
-                priceSale = skuObj.getDoubleAttribute(priceConfigValue);
+            if(skuObj.getAttribute("isSale") == null || (boolean)skuObj.getAttribute("isSale")) {
+                TmallItemPriceUpdateRequest.UpdateSkuPrice obj3 = new TmallItemPriceUpdateRequest.UpdateSkuPrice();
+                obj3.setOuterId((String) skuObj.get("skuCode"));
+                Double priceSale;
+                if (priceConfigValue == null) {
+                    priceSale = skuObj.getDoubleAttribute("priceSale");
+                } else {
+                    priceSale = skuObj.getDoubleAttribute(priceConfigValue);
+                }
+                if (maxPrice == null || (maxPrice != null && priceSale > maxPrice)) {
+                    maxPrice = priceSale;
+                }
+                obj3.setPrice(priceSale.toString());
+                list2.add(obj3);
             }
-            if (maxPrice == null || (maxPrice != null && priceSale > maxPrice)) {
-                maxPrice = priceSale;
-            }
-            obj3.setPrice(priceSale.toString());
-            list2.add(obj3);
         }
         if ("p".equals(updType)) {
             // 更新商品价格
