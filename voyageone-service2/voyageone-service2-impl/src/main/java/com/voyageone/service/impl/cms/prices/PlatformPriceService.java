@@ -19,10 +19,7 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.components.jd.service.JdSkuService;
 import com.voyageone.components.jumei.JumeiHtDealService;
 import com.voyageone.components.jumei.JumeiHtMallService;
@@ -31,6 +28,8 @@ import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.components.jumei.reponse.HtDealUpdateDealPriceBatchResponse;
 import com.voyageone.components.jumei.request.HtDealUpdateDealPriceBatchRequest;
 import com.voyageone.components.tmall.service.TbItemService;
+import com.voyageone.ecerp.interfaces.third.koala.KoalaItemService;
+import com.voyageone.ecerp.model.common.ComShopModel;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -101,6 +100,8 @@ public class PlatformPriceService extends VOAbsLoggable {
     private CmsBtPriceLogService cmsBtPriceLogService;
     @Autowired
     private ProductGroupService productGroupService;
+    @Autowired
+    private KoalaItemService koalaItemService;
 
     /**
      * confirmPlatformsRetailPrice
@@ -389,6 +390,9 @@ public class PlatformPriceService extends VOAbsLoggable {
         } else if (PlatFormEnums.PlatForm.JD.getId().equals(cartObj.getPlatform_id())) {
             // votodo -- JdSkuService  京东平台 更新商品SKU的价格
             jdUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType);
+        }else if (PlatFormEnums.PlatForm.NTES.getId().equals(cartObj.getPlatform_id())) {
+            // votodo -- JdSkuService  京东平台 更新商品SKU的价格
+            klUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType);
         }
         // 其他平台价格变成通过上新程序修改价格
         else {
@@ -1203,6 +1207,33 @@ public class PlatformPriceService extends VOAbsLoggable {
                 jdSkuService.updateSkuPriceByOuterId(shopBean, f.getOuterId(), f.getPrice().toString());
             }
         });
+    }
+
+    /**
+     * 考拉更新商品价格
+     * @param shopBean
+     * @param skuList
+     * @param priceConfigValue
+     * @param updType
+     * @throws Exception
+     */
+    private void klUpdatePriceBatch(ShopBean shopBean, List<BaseMongoMap<String, Object>> skuList, String priceConfigValue, String updType) throws Exception {
+        List<TmallItemPriceUpdateRequest.UpdateSkuPrice> list = new ArrayList<>(skuList.size());
+        ComShopModel comShopModel = new ComShopModel();
+        BeanUtils.copy(shopBean, comShopModel);
+        TmallItemPriceUpdateRequest.UpdateSkuPrice updateData = null;
+        Double maxPrice = null;
+        for (BaseMongoMap skuObj : skuList) {
+            Double priceSale = null;
+            if (priceConfigValue == null) {
+                priceSale = skuObj.getDoubleAttribute("priceSale");
+            } else {
+                priceSale = skuObj.getDoubleAttribute(priceConfigValue);
+            }
+            if(!StringUtil.isEmpty((String) skuObj.get("skuKey"))) {
+                koalaItemService.skuSalePriceUpdate(comShopModel, (String) skuObj.get("skuKey"), new BigDecimal(priceSale));
+            }
+        }
     }
 
     /**
