@@ -183,37 +183,21 @@
                             <div class="row">
                                 <div class="pull-right m-t-xs m-r-xs" uib-dropdown
                                      ng-if="ctrl.vm.status == 'Ready' || ctrl.vm.status == 'Approved' || isPublishSucceed">
-                                    <button class="btn btn-vo" uib-dropdown-toggle ng-disabled="!ctrl.btnDisabled()">
-                                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Approved &nbsp;<span class="caret"></span>
+                                    <button class="btn btn-vo" ng-click="ctrl.saveProduct()" ng-disabled="!ctrl.btnDisabled()">
+                                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Approved
                                     </button>
-                                    <ul uib-dropdown-menu>
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="ctrl.saveProduct()">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;普通上新
-                                            </a>
-                                        </li>
-                                        <li ng-if="ctrl.vm.platform.pNumIId">
-                                            <a href="javascript:void(0)" ng-click="ctrl.loadAttribute()">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;部分上新
-                                            </a>
-                                        </li>
-                                    </ul>
                                 </div>
 
                                 <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Pending'" >
                                     <button class="btn btn-vo" ng-click="ctrl.saveProduct('ready')" ng-disabled="!ctrl.btnDisabled()">
-                                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Ready</button>
+                                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Ready
+                                    </button>
                                 </div>
                                 <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.status == 'Pending' || ctrl.vm.status == 'Ready'" >
                                     <button class="btn btn-vo" ng-click="ctrl.saveProduct('temporary')">
-                                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
-
-                                </div>
-
-                                <div class="pull-right m-t-xs m-r-xs" ng-if="ctrl.vm.publishEnabled">
-                                    <button class="btn btn-vo" ng-click="ctrl.publishProduct()" ng-disabled="(cartInfo.value != 24 && ctrl.vm.checkFlag.tax != 1) || !ctrl.vm.platform.pBrandName">
-                                        <i class="glyphicon glyphicon-floppy-disk"></i>智能上新
+                                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存
                                     </button>
+
                                 </div>
 
                                 <span class="text-warnings cur-p pull-right" ng-click="ctrl.showExt()"><i class="icon fa fa-question-circle text-md"></i>&emsp;</span>
