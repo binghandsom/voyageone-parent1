@@ -281,7 +281,7 @@ public class CmsGetPlatformStatusService extends BaseCronTaskService {
         updObj.setUpdate("{$set:{'platforms.P#.pReallyStatus':#,'modified':#,'modifier':#}}");
         updObj.setUpdateParameters(cartId, stsValue, DateTimeUtil.getNowTimeStamp(), getTaskName());
         WriteResult rs = cmsBtProductDao.updateMulti(updObj, channelId);
-        numIIdList.forEach(item->$info(item + "  stsValue"));
+        numIIdList.forEach(item->$info(item + "  "+stsValue));
         $debug("CmsGetPlatformStatusService.savePlatfromSts channelId=%s, cartId=%d, 结果=%s", channelId, cartId, rs.toString());
     }
 }
