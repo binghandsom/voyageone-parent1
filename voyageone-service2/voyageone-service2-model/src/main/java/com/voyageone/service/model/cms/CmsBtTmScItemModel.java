@@ -25,6 +25,8 @@ public class CmsBtTmScItemModel extends BaseModel {
 
     protected String orgChannelId;
 
+    protected String scCode;
+
     public String getChannelId() {
         return channelId;
     }
@@ -71,5 +73,13 @@ public class CmsBtTmScItemModel extends BaseModel {
 
     public void setOrgChannelId(String orgChannelId) {
         this.orgChannelId = orgChannelId;
+    }
+
+    public String getScCode() {
+        return scCode;
+    }
+
+    public void setScCode(String scCode) {
+        this.scCode = scCode;
     }
 }

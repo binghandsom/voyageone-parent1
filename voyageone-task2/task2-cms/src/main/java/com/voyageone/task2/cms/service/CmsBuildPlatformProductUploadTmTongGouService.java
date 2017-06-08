@@ -950,12 +950,19 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 //        for(Map<String, Object> skuMap : skuMapList) {
             String code = "I_LIKING_IT";
             String skuCode = String.valueOf(skuMap.get("outer_id"));
+            String scCode;
+            if (StringUtils.isEmpty(skuCode)) {
+                scCode = "0";
+            } else {
+                scCode = MD5.getMd5_16(skuCode);
+            }
             Map<String, Object> searchParam = new HashMap<>();
             searchParam.put("channelId", sxData.getChannelId());
             searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
             searchParam.put("cartId", cartId);
             searchParam.put("code", code);
             searchParam.put("sku", skuCode);
+            searchParam.put("scCode", scCode);
             CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
 
             String scProductId = null;
@@ -977,6 +984,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                     scItemModel.setCode(code);
                     scItemModel.setSku(skuCode);
                     scItemModel.setScProductId(scProductId);
+                    scItemModel.setScCode(scCode);
                     scItemModel.setCreater(getTaskName());
                     cmsBtTmScItemDao.insert(scItemModel);
                 } else {

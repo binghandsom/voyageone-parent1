@@ -15,6 +15,7 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbSaleService;
@@ -795,6 +796,13 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 searchParam.put("code", code);
                 searchParam.put("sku", skuCode);
                 searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
+                String scCode;
+                if (StringUtils.isEmpty(skuCode)) {
+                    scCode = "0";
+                } else {
+                    scCode = MD5.getMd5_16(skuCode);
+                }
+                searchParam.put("scCode", scCode);
                 CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
                 SxData.SxSkuExInfo sxSkuExInfo = sxData.getSxSkuExInfo(skuCode, false);
                 String scProductId = sxSkuExInfo != null? sxSkuExInfo.getScProductId() : null;
@@ -813,6 +821,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                         scItemModel.setCode(code);
                         scItemModel.setSku(skuCode);
                         scItemModel.setScProductId(scProductId);
+                        scItemModel.setScCode(scCode);
                         scItemModel.setCreater(getTaskName());
                         cmsBtTmScItemDao.insert(scItemModel);
                     } else {
