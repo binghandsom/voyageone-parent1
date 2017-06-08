@@ -802,7 +802,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 } else {
                     scCode = MD5.getMd5_16(skuCode);
                 }
-                searchParam.put("scCode", scCode);
+//                searchParam.put("scCode", scCode); // 检索里不需要这个字段
                 CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
                 SxData.SxSkuExInfo sxSkuExInfo = sxData.getSxSkuExInfo(skuCode, false);
                 String scProductId = sxSkuExInfo != null? sxSkuExInfo.getScProductId() : null;

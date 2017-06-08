@@ -962,7 +962,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             searchParam.put("cartId", cartId);
             searchParam.put("code", code);
             searchParam.put("sku", skuCode);
-            searchParam.put("scCode", scCode);
+//            searchParam.put("scCode", scCode); // 检索里不需要这个字段
             CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
 
             String scProductId = null;

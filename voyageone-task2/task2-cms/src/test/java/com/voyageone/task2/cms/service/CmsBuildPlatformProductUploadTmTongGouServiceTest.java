@@ -280,7 +280,7 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
         searchParam.put("orgChannelId", "017");
         String scCode = MD5.getMd5_16("017-100130");
 
-        searchParam.put("scCode", scCode);
+//        searchParam.put("scCode", scCode); // 检索里不需要这个字段
         CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
 
         System.out.println(scItemModel.getScCode());
