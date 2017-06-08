@@ -1219,8 +1219,7 @@ public class PlatformPriceService extends VOAbsLoggable {
      */
     private void klUpdatePriceBatch(ShopBean shopBean, List<BaseMongoMap<String, Object>> skuList, String priceConfigValue, String updType) throws Exception {
         List<TmallItemPriceUpdateRequest.UpdateSkuPrice> list = new ArrayList<>(skuList.size());
-        KoalaConfig comShopModel = new KoalaConfig();
-        BeanUtils.copy(shopBean, comShopModel);
+        KoalaConfig koalaConfig = Shops.getShopKoala(shopBean.getOrder_channel_id(), shopBean.getCart_id());
         TmallItemPriceUpdateRequest.UpdateSkuPrice updateData = null;
         Double maxPrice = null;
         for (BaseMongoMap skuObj : skuList) {
@@ -1231,7 +1230,7 @@ public class PlatformPriceService extends VOAbsLoggable {
                 priceSale = skuObj.getDoubleAttribute(priceConfigValue);
             }
             if(!StringUtil.isEmpty((String) skuObj.get("skuKey"))) {
-                koalaItemService.skuSalePriceUpdate(comShopModel, (String) skuObj.get("skuKey"), new BigDecimal(priceSale));
+                koalaItemService.skuSalePriceUpdate(koalaConfig, (String) skuObj.get("skuKey"), new BigDecimal(priceSale));
             }
         }
     }

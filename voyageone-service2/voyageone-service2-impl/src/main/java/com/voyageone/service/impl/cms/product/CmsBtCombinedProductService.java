@@ -1033,8 +1033,7 @@ public class CmsBtCombinedProductService extends BaseService {
             }
         }// 考拉上下架
         else if (PlatFormEnums.PlatForm.NTES.getId().equals(shopProp.getPlatform_id())) {
-            KoalaConfig shopConfig = new KoalaConfig();
-            BeanUtils.copy(shopProp,shopConfig);
+            KoalaConfig shopConfig = Shops.getShopKoala(shopProp.getOrder_channel_id(), shopProp.getCart_id());
             String errMsg ="";
             if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
                 com.voyageone.ecerp.interfaces.third.koala.beans.response.ItemUpdateListingResponse response = null;
