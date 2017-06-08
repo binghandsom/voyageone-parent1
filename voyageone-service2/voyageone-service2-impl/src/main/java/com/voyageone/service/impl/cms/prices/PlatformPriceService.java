@@ -29,7 +29,7 @@ import com.voyageone.components.jumei.reponse.HtDealUpdateDealPriceBatchResponse
 import com.voyageone.components.jumei.request.HtDealUpdateDealPriceBatchRequest;
 import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.ecerp.interfaces.third.koala.KoalaItemService;
-import com.voyageone.ecerp.model.common.ComShopModel;
+import com.voyageone.ecerp.interfaces.third.koala.beans.KoalaConfig;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -1219,7 +1219,7 @@ public class PlatformPriceService extends VOAbsLoggable {
      */
     private void klUpdatePriceBatch(ShopBean shopBean, List<BaseMongoMap<String, Object>> skuList, String priceConfigValue, String updType) throws Exception {
         List<TmallItemPriceUpdateRequest.UpdateSkuPrice> list = new ArrayList<>(skuList.size());
-        ComShopModel comShopModel = new ComShopModel();
+        KoalaConfig comShopModel = new KoalaConfig();
         BeanUtils.copy(shopBean, comShopModel);
         TmallItemPriceUpdateRequest.UpdateSkuPrice updateData = null;
         Double maxPrice = null;

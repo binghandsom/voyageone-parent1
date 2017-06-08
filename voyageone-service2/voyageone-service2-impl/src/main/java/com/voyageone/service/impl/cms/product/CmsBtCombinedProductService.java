@@ -40,7 +40,7 @@ import com.voyageone.components.jumei.service.JumeiSaleService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbSaleService;
 import com.voyageone.ecerp.interfaces.third.koala.KoalaItemService;
-import com.voyageone.ecerp.model.common.ComShopModel;
+import com.voyageone.ecerp.interfaces.third.koala.beans.KoalaConfig;
 import com.voyageone.service.bean.cms.product.CmsBtCombinedProductBean;
 import com.voyageone.service.bean.cms.product.CmsBtCombinedProductPlatformStatus;
 import com.voyageone.service.bean.cms.product.CmsBtCombinedProductStatus;
@@ -1033,7 +1033,7 @@ public class CmsBtCombinedProductService extends BaseService {
             }
         }// 考拉上下架
         else if (PlatFormEnums.PlatForm.NTES.getId().equals(shopProp.getPlatform_id())) {
-            ComShopModel shopConfig = new ComShopModel();
+            KoalaConfig shopConfig = new KoalaConfig();
             BeanUtils.copy(shopProp,shopConfig);
             String errMsg ="";
             if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {

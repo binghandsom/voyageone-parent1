@@ -129,6 +129,5 @@ public class ShopBean {
 	public void setCart_name(String cart_name) {
 		this.cart_name = cart_name;
 	}
-    
-    
+
 }
