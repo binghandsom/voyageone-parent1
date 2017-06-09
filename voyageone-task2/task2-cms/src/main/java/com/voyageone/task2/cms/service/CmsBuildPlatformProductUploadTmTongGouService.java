@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.ScItem;
+import com.taobao.api.domain.ScItemMap;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaWriter;
 import com.taobao.top.schema.field.Field;
@@ -773,24 +774,25 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 if (skuMapList != null) {
                     String error = "";
                     try {
-
-                        for (int i = 0; i < skuMapList.size(); i++) {
+                        // 先去看看是否已经创建过关联了
+                        List<ScItemMap> scItemMapList = tbScItemService.getScItemMap(shopProp, Long.parseLong(numIId), null);
+                        Map<String, String> skuIdScIdMap = new HashMap<>();
+                        if (scItemMapList != null && scItemMapList.size() > 0) {
+                            scItemMapList.stream()
+                                    .forEach(scItemMap -> skuIdScIdMap.put(String.valueOf(scItemMap.getSkuId()), String.valueOf(scItemMap.getItemId())));
+                        }
+                        for (Map<String, Object> skuMap : skuMapList) {
 //                        skuMap: outer_id, price, quantity, sku_id
                             try {
-                                skuMapList.get(i).put("scProductId",
+                                skuMap.put("scProductId",
                                         taobaoScItemService.doSetLikingScItem(
                                                 shopProp, sxData,
-                                                Long.parseLong(numIId), skuMapList.get(i)));
-                                saveCmsBtTmScItem_Liking(sxData, cartId, skuMapList.get(i));
+                                                Long.parseLong(numIId), skuMap, skuIdScIdMap));
+                                saveCmsBtTmScItem_Liking(sxData, cartId, skuMap);
                             } catch (Exception e) {
 
                                 error += e.getMessage();
                                 continue;
-//                                if (i < skuMapList.size() - 1) {
-//                                    continue;
-//                                } else {
-//                                    throw new Exception("关联货品失败 sku如下：" + error);
-//                                }
                             }
                         }
 
