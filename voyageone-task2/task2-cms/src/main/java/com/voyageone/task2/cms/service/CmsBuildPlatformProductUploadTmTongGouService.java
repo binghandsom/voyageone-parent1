@@ -779,7 +779,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                         Map<String, String> skuIdScIdMap = new HashMap<>();
                         if (scItemMapList != null && scItemMapList.size() > 0) {
                             scItemMapList.stream()
-                                    .forEach(scItemMap -> skuIdScIdMap.put(String.valueOf(scItemMap.getSkuId()), String.valueOf(scItemMap.getItemId())));
+                                    .forEach(scItemMap -> skuIdScIdMap.put(String.valueOf(scItemMap.getSkuId()), String.valueOf(scItemMap.getRelItemId())));
                         }
                         for (Map<String, Object> skuMap : skuMapList) {
 //                        skuMap: outer_id, price, quantity, sku_id
