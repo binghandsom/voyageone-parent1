@@ -169,7 +169,8 @@
                                 <td class="mfb-xt text-center">
                                     <button class="btn btn-success btn-pop" ng-disabled="!(item.priceMsrp||item.priceSale)||(item.priceMsrp<=0&&item.priceSale<=0)"  ng-click="ctrl.saveCartSkuPriceClick(item)">价格保存</button>
                                 </td>
-                                <td class="mfb-xt  text-right">{{ctrl.vm.model.quantity}}</td>
+                                <!--<td class="mfb-xt  text-right">{{ctrl.vm.model.quantity}}</td>-->
+                                <td class="mfb-xt  text-right">{{item.quantity}}</td>
                                 <td class="mfb-xxt text-right">{{item.saleQty}}</td>
                             </tr>
                             </tbody>
