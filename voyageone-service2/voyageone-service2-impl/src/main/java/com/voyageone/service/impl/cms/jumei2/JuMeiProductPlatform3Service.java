@@ -202,16 +202,16 @@ public class JuMeiProductPlatform3Service extends BaseService {
                 List<List<String>> skuCodeList = CommonUtil.splitList(stockSkus, 100);
                 for (List<String> skus : skuCodeList) {
                     $info("发送sku库存同步请求:" + skus);
-                    Map<String, Object> result = sxProductService.synInventoryToPlatform(orgChannelId, "27", null, skus);
+                    sxProductService.synInventoryToPlatform(orgChannelId, "27", null, skus);
 
-                    // 同步库存失败结果返回
-                    ((ArrayList<String>) result.get("errorCodeList")).forEach(code -> {
-                        OperationResult oResult = new OperationResult();
-                        oResult.setResult(false);
-                        oResult.setMsg(String.valueOf(result.get("errorMsg")));
-                        oResult.setCode(code);
-                        listOperationResult.add(oResult);
-                    });
+//                    // 同步库存失败结果返回
+//                    ((ArrayList<String>) result.get("errorCodeList")).forEach(code -> {
+//                        OperationResult oResult = new OperationResult();
+//                        oResult.setResult(false);
+//                        oResult.setMsg(String.valueOf(result.get("errorMsg")));
+//                        oResult.setCode(code);
+//                        listOperationResult.add(oResult);
+//                    });
                 }
             } catch (IOException ex) {
                 $error("聚美活动上传同步平台库存调用失败");
