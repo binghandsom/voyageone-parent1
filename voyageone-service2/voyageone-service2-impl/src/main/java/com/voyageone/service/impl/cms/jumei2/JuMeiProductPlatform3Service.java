@@ -196,13 +196,12 @@ public class JuMeiProductPlatform3Service extends BaseService {
         }
 
         // 发送库存同步信息
-        stockProducts.forEach((orgChannelId, products) -> {
-            try {
-                // 每100个调用一次库存同步
-                List<List<String>> skuCodeList = CommonUtil.splitList(stockSkus, 100);
-                for (List<String> skus : skuCodeList) {
-                    $info("发送sku库存同步请求:" + skus);
-                    sxProductService.synInventoryToPlatform(orgChannelId, "27", null, skus);
+        try {
+            // 每100个调用一次库存同步
+            List<List<String>> skuCodeList = CommonUtil.splitList(stockSkus, 100);
+            for (List<String> skus : skuCodeList) {
+                $info("发送sku库存同步请求:" + skus);
+                sxProductService.synInventoryToPlatform(modelCmsBtJmPromotion.getChannelId(), "27", null, skus);
 
 //                    // 同步库存失败结果返回
 //                    ((ArrayList<String>) result.get("errorCodeList")).forEach(code -> {
@@ -212,13 +211,12 @@ public class JuMeiProductPlatform3Service extends BaseService {
 //                        oResult.setCode(code);
 //                        listOperationResult.add(oResult);
 //                    });
-                }
-            } catch (IOException ex) {
-                $error("聚美活动上传同步平台库存调用失败");
-                ex.printStackTrace();
-                throw new BusinessException("聚美活动上传同步平台库存调用失败");
             }
-        });
+        } catch (IOException ex) {
+            $error("聚美活动上传同步平台库存调用失败");
+            ex.printStackTrace();
+            throw new BusinessException("聚美活动上传同步平台库存调用失败");
+        }
 
         mapMasterBrand.clear();
 
