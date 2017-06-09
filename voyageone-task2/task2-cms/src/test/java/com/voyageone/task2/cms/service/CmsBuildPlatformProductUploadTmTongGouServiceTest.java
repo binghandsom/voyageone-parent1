@@ -5,12 +5,15 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsMtHsCodeUnitBean;
+import com.voyageone.service.dao.cms.CmsBtTmScItemDao;
 import com.voyageone.service.dao.cms.CmsBtTmTonggouFeedAttrDao;
 import com.voyageone.service.dao.cms.CmsMtChannelConditionMappingConfigDao;
 import com.voyageone.service.daoext.cms.CmsMtHsCodeUnitDaoExt;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.CmsBtTmScItemModel;
 import com.voyageone.service.model.cms.CmsBtTmTonggouFeedAttrModel;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.junit.Test;
@@ -40,6 +43,9 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
 
     @Autowired
     private CmsMtHsCodeUnitDaoExt cmsMtHsCodeUnitDaoExt;
+
+    @Autowired
+    private CmsBtTmScItemDao cmsBtTmScItemDao;
     @Test
     public void testOnStartup() throws Exception {
         List<TaskControlBean> taskControlList = new ArrayList<>();
@@ -242,10 +248,13 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
 //        CmsMtHsCodeUnitBean cmsMtHsCodeUnitBean = cmsMtHsCodeUnitDaoExt.getHscodeUnit(hscode);
 
 //        System.out.println(cmsMtHsCodeUnitBean.getHscode());
-
-        Map<String, String> unitMap = cmsMtHsCodeUnitDaoExt.getHscodeSaleUnit("套");
-
-        System.out.println(unitMap.get("套"));
+        String unitName = "瓶";
+        Map<String, String> unitMap = cmsMtHsCodeUnitDaoExt.getHscodeSaleUnit(unitName);
+        String aaa = String.format("code##%s||cnName##%s", unitMap.get("unitCode"), unitName);
+        System.out.println(aaa);
+        if (unitMap == null) {
+            System.out.println("a");
+        }
 
     }
 
@@ -258,6 +267,23 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
         String a = String.format("code##%s||cnName##%s", "111", "套");
 
         System.out.println(a);
+    }
+
+    @Test
+    public void testSelectScCode() {
+
+        Map<String, Object> searchParam = new HashMap<>();
+        searchParam.put("channelId", "017");
+        searchParam.put("cartId", "30");
+        searchParam.put("code", "I_LIKING_IT");
+        searchParam.put("sku", "017-100130");
+        searchParam.put("orgChannelId", "017");
+        String scCode = MD5.getMd5_16("017-100130");
+
+//        searchParam.put("scCode", scCode); // 检索里不需要这个字段
+        CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
+
+        System.out.println(scItemModel.getScCode());
     }
 
 }

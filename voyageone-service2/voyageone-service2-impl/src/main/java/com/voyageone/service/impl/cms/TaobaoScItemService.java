@@ -248,7 +248,7 @@ public class TaobaoScItemService extends BaseService {
 				System.out.println("已经创建过关联了， 不重新关联");
 				return String.valueOf(sku_outerId);
 			}
-			outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, Long.parseLong(sku_id), sku_outerId);
+			outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, sku_id, sku_outerId);
             System.out.println("关联成功:" + outerCodeResult);
         } catch (ApiException e) {
             String errMsg = String.format("自动设置天猫商品全链路库存管理:创建关联:{numIId: %s, outerId: %s, err_msg: %s}", numIId, sku_outerId, e.toString());
@@ -269,7 +269,7 @@ public class TaobaoScItemService extends BaseService {
 	 * @param sxData sxData
 	 * @param skuMap {outer_id: xx, price: xx, quantity: xx, sku_id: xx}
 	 */
-	public String doSetLikingScItem(ShopBean shopBean, SxData sxData, long numIId, Map<String, Object> skuMap) {
+	public String doSetLikingScItem(ShopBean shopBean, SxData sxData, long numIId, Map<String, Object> skuMap, Map<String, String> skuIdScIdMap) {
 
 		String orgChannelId = sxData.getMainProduct().getOrgChannelId();
 
@@ -283,6 +283,12 @@ public class TaobaoScItemService extends BaseService {
 		String outerId = String.valueOf(skuMap.get("outer_id"));
 		String skuId = String.valueOf(skuMap.get("sku_id")); // 可能为null
 		String qty = String.valueOf(skuMap.get("quantity"));
+		if ((StringUtils.isEmpty(skuId) || "null".equals(skuId))) {
+			skuId = "0";
+		}
+		if (!StringUtils.isEmpty(skuIdScIdMap.get(skuId))) {
+			return skuIdScIdMap.get(skuId);
+		}
 
 		ScItem scItem = sxData.getScItemMap().get(outerId);
 
@@ -357,17 +363,7 @@ public class TaobaoScItemService extends BaseService {
 		String outerCodeResult;
 		try {
 			Thread.sleep(1000); // 一定要睡一会儿， 因为如果商品都已经创建成功并初始化过的话， 就会连续创建关联， 可能会导致IC_OPTIMISTIC_LOCKING_CONFLICT
-			if (StringUtils.isEmpty(sku_id) || "null".equals(sku_id)) {
-				sku_id = null;
-			}
-			// 先去看看是否已经创建过关联了
-			List<ScItemMap> scItemMapList = tbScItemService.getScItemMap(shopBean, numIId, sku_id);
-			if (scItemMapList != null && scItemMapList.size() > 0) {
-				// 已经创建过关联了， 跳出
-				System.out.println("已经创建过关联了， 不重新关联");
-				return String.valueOf(scItem.getItemId());
-			}
-			outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, Long.parseLong(sku_id), sku_outerId);
+			outerCodeResult = tbScItemService.addScItemMap(shopBean, numIId, sku_id, sku_outerId);
 
 			System.out.println("关联成功:" + outerCodeResult);
 		} catch (InterruptedException e) {

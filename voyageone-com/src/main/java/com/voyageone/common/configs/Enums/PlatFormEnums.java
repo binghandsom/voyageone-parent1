@@ -40,7 +40,12 @@ public class PlatFormEnums {
         /**
          * 新独立域名
          */
-        CNN("7");
+        CNN("7"),
+
+        /**
+         * 网易平台
+         */
+        NTES("8");
 
         private String id;
 

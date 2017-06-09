@@ -130,13 +130,13 @@ public class TbScItemService extends TbBase {
 	 * @return 商家编码(如果发生异常, 返回null)
 	 * @throws ApiException
 	 */
-	public String addScItemMap(ShopBean shopBean, long numIId, Long skuId, String outerCode) throws ApiException {
+	public String addScItemMap(ShopBean shopBean, long numIId, String skuId, String outerCode) throws ApiException {
 
 		ScitemMapAddRequest request = new ScitemMapAddRequest();
 
 		request.setItemId(numIId);
 		if (skuId != null) {
-			request.setSkuId(skuId);
+			request.setSkuId(Long.parseLong(skuId));
 		}
 		request.setOuterCode(getRealScOuterCodeBySku(outerCode));
 

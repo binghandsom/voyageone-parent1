@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.ScItem;
+import com.taobao.api.domain.ScItemMap;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
@@ -13,8 +14,11 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.field.InputField;
+import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbSaleService;
@@ -338,6 +342,8 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
         long prodStartTime = System.currentTimeMillis();
 
         List<String> strSkuCodeList = new ArrayList<>();
+
+        String storeCode;
         // 天猫产品上新处理
         try {
             // 上新用的商品数据信息取得
@@ -409,7 +415,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 throw new BusinessException(errMsg);
             }
             // 判断是否需要做货品绑定
-            String storeCode = taobaoScItemService.doCheckNeedSetScItem(shopProp, mainProduct);
+            storeCode = taobaoScItemService.doCheckNeedSetScItem(shopProp, mainProduct);
             if (!StringUtils.isEmpty(storeCode)) {
                 String title = sxProductService.getProductValueByMasterMapping("title", shopProp, expressionParser, getTaskName());
                 Map<String, ScItem> scItemMap = new HashMap<>();
@@ -703,9 +709,30 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                     sender.sendMessage("ewms_mq_stock_sync_platform_stock" + "_" + channelId, messageBodyMap);
                     // 20170526 调用新的更新库存接口同步库存 END
 
+                    // 20170608 获取sku当前绑定的货品 STA
+                    Map<String, String> skuScProductIdMap = null;
+                    String skuType;
+                    if (sxData.isDarwin()) {
+                        skuType = "darwin_sku";
+                    } else {
+                        skuType = "sku";
+                    }
+                    // 商品更新并且是需要做货品绑定的场合
+                    if (!isNewFlag && !StringUtils.isEmpty(storeCode)) {
+                        if (sxData.getUpdateItemFields().get(skuType) != null) {
+                            ((MultiComplexField)sxData.getUpdateItemFields().get(skuType)).getDefaultComplexValues().stream()
+                                    .forEach(v -> skuScProductIdMap.put(v.getValue("sku_outerId").getValue(), v.getValue("sku_scProductId").getValue()));
+                        } else {
+                            String sku = ((InputField)sxData.getUpdateItemFields().get("outer_id")).getValue();
+                            String scProductId = ((InputField)sxData.getUpdateItemFields().get("item_sc_product_id")).getValue();
+                            skuScProductIdMap.put(sku, scProductId);
+                        }
+                    }
+                    // 20170608 获取sku当前绑定的货品 END
+
                     // added by morse.lu 2017/01/05 start
                     // 更新cms_bt_tm_sc_item表，把货品id记下来，同步库存用
-                    saveCmsBtTmScItem(channelId, cartId, sxData);
+                    saveCmsBtTmScItem(channelId, cartId, sxData, skuScProductIdMap);
                     // added by morse.lu 2017/01/05 end
 
                     // 上传商品成功的时候
@@ -784,7 +811,8 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 channelId, cartId, groupId, platformProductId, numIId, (System.currentTimeMillis() - prodStartTime)));
     }
 
-    private void saveCmsBtTmScItem(String channelId, int cartId, SxData sxData) {
+    private void saveCmsBtTmScItem(String channelId, int cartId, SxData sxData, Map<String, String> skuScProductIdMap) {
+
         for (CmsBtProductModel productModel : sxData.getProductList()) {
             for(CmsBtProductModel_Sku commonSku : productModel.getCommon().getSkus()) {
                 String code = productModel.getCommon().getFields().getCode();
@@ -795,9 +823,22 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 searchParam.put("code", code);
                 searchParam.put("sku", skuCode);
                 searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
+                String scCode;
+                if (StringUtils.isEmpty(skuCode)) {
+                    scCode = "0";
+                } else {
+                    scCode = MD5.getMd5_16(skuCode);
+                }
+//                searchParam.put("scCode", scCode); // 检索里不需要这个字段
                 CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
-                SxData.SxSkuExInfo sxSkuExInfo = sxData.getSxSkuExInfo(skuCode, false);
-                String scProductId = sxSkuExInfo != null? sxSkuExInfo.getScProductId() : null;
+                String scProductId;
+                if (skuScProductIdMap != null && !StringUtils.isEmpty(skuScProductIdMap.get(skuCode))) {
+                    scProductId = skuScProductIdMap.get(skuCode);
+                } else {
+                    SxData.SxSkuExInfo sxSkuExInfo = sxData.getSxSkuExInfo(skuCode, false);
+                    scProductId = sxSkuExInfo != null? sxSkuExInfo.getScProductId() : null;
+                }
+
                 if (StringUtils.isEmpty(scProductId)) {
                     // delete
                     if (scItemModel != null) {
@@ -813,6 +854,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                         scItemModel.setCode(code);
                         scItemModel.setSku(skuCode);
                         scItemModel.setScProductId(scProductId);
+                        scItemModel.setScCode(scCode);
                         scItemModel.setCreater(getTaskName());
                         cmsBtTmScItemDao.insert(scItemModel);
                     } else {

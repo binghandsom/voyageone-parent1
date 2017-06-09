@@ -124,25 +124,6 @@ public class CmsGetPlatformStatusService extends BaseCronTaskService {
                 do {
                     rsList = null;
                     try {
-                        // 查询上架
-                        rsList = tbSaleService.getOnsaleProduct(channelId, cartIdStr, pageNo++, 200L);
-                    } catch (ApiException apiExp) {
-                        $error(String.format("调用淘宝API获取上架商品时API出错 channelId=%s, cartId=%s", channelId, cartIdStr), apiExp);
-                        break;
-                    } catch (Exception exp) {
-                        $error(String.format("调用淘宝API获取上架商品时出错 channelId=%s, cartId=%s", channelId, cartIdStr), exp);
-                        break;
-                    }
-                    if (rsList != null && rsList.size() > 0) {
-                        List<String> numIIdList = rsList.stream().map(tmItem -> tmItem.getNumIid().toString()).collect(Collectors.toList());
-                        savePlatfromSts(channelId, cartId, numIIdList, CmsConstants.PlatformStatus.OnSale.name());
-                    }
-                } while (rsList != null && rsList.size() == 200);
-
-                pageNo = 1;
-                do {
-                    rsList = null;
-                    try {
                         // 查询下架
 //                        rsList = tbSaleService.getInventoryProduct(channelId, cartIdStr, pageNo++, 200L);
                         rsList = tbSaleService.getInventoryProductForShelved(channelId, cartIdStr, pageNo++, 200L);
@@ -194,6 +175,25 @@ public class CmsGetPlatformStatusService extends BaseCronTaskService {
                     if (rsList != null && rsList.size() > 0) {
                         List<String> numIIdList = rsList.stream().map(tmItem -> tmItem.getNumIid().toString()).collect(Collectors.toList());
                         savePlatfromSts(channelId, cartId, numIIdList, CmsConstants.PlatformStatus.Violation.name());
+                    }
+                } while (rsList != null && rsList.size() == 200);
+
+                pageNo = 1;
+                do {
+                    rsList = null;
+                    try {
+                        // 查询上架
+                        rsList = tbSaleService.getOnsaleProduct(channelId, cartIdStr, pageNo++, 200L);
+                    } catch (ApiException apiExp) {
+                        $error(String.format("调用淘宝API获取上架商品时API出错 channelId=%s, cartId=%s", channelId, cartIdStr), apiExp);
+                        break;
+                    } catch (Exception exp) {
+                        $error(String.format("调用淘宝API获取上架商品时出错 channelId=%s, cartId=%s", channelId, cartIdStr), exp);
+                        break;
+                    }
+                    if (rsList != null && rsList.size() > 0) {
+                        List<String> numIIdList = rsList.stream().map(tmItem -> tmItem.getNumIid().toString()).collect(Collectors.toList());
+                        savePlatfromSts(channelId, cartId, numIIdList, CmsConstants.PlatformStatus.OnSale.name());
                     }
                 } while (rsList != null && rsList.size() == 200);
 
@@ -281,6 +281,7 @@ public class CmsGetPlatformStatusService extends BaseCronTaskService {
         updObj.setUpdate("{$set:{'platforms.P#.pReallyStatus':#,'modified':#,'modifier':#}}");
         updObj.setUpdateParameters(cartId, stsValue, DateTimeUtil.getNowTimeStamp(), getTaskName());
         WriteResult rs = cmsBtProductDao.updateMulti(updObj, channelId);
+        numIIdList.forEach(item->$info(item + "  "+stsValue));
         $debug("CmsGetPlatformStatusService.savePlatfromSts channelId=%s, cartId=%d, 结果=%s", channelId, cartId, rs.toString());
     }
 }

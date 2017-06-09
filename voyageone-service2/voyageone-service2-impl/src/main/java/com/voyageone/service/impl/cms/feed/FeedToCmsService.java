@@ -102,7 +102,6 @@ public class FeedToCmsService extends BaseService {
         Set<String> brandList = new HashSet<>();
         Set<String> sizeTypeList = new HashSet<>();
         Set<String> productTypeList = new HashSet<>();
-        Boolean isUsJoi = isUsJoi(channelId);
         Map<String, Map<String, List<String>>> attributeMtDatas = new HashMap<>();
         // 读入是否计算主类目
         CmsChannelConfigBean cmsChannelConfigs = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.FEED_IS_SET_MAIN_CATEGORY);
@@ -595,10 +594,6 @@ public class FeedToCmsService extends BaseService {
         skuModel.setPriceCurrent(Math.ceil(current));
         Double msrp = (skuModel.getPriceClientMsrp() + weightCalc * 3.5) * 6.7 / (1 - 0.1 - 0.05 - 0.119 - 0.05);
         skuModel.setPriceMsrp(Math.ceil(msrp));
-    }
-
-    private Boolean isUsJoi(String channelId) {
-        return "1".equalsIgnoreCase(Feeds.getVal1(channelId, FeedEnums.Name.is_usjoi));
     }
 
     private void setMainCategory(CmsBtFeedInfoModel feedProduct) {

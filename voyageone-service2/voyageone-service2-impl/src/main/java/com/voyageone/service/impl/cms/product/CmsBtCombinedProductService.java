@@ -935,12 +935,19 @@ public class CmsBtCombinedProductService extends BaseService {
         }// 聚美上下架
         else if (PlatFormEnums.PlatForm.JM.getId().equals(shopProp.getPlatform_id())) {
             HtMallStatusUpdateBatchResponse response = null;
-            if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
-                // 上架
-                response = jmSaleService.doWareUpdateListing(shopProp, numIId);
-            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(status)) {
-                // 下架
-                response = jmSaleService.doWareUpdateDelisting(shopProp, numIId);
+            try {
+                if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
+                    // 上架
+                    response = jmSaleService.doWareUpdateListing(shopProp, numIId);
+                } else if (CmsConstants.PlatformActive.ToInStock.name().equals(status)) {
+                    // 下架
+                    response = jmSaleService.doWareUpdateDelisting(shopProp, numIId);
+                }
+            }catch (Exception e){
+                response = new HtMallStatusUpdateBatchResponse();
+                response.setSuccess(false);
+                response.setErrorMsg(e.getMessage());
+                response.setError_code("");
             }
             if (response == null) {
                 if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {

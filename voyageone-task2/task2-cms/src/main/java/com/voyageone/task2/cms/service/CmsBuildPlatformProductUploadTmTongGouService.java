@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.ScItem;
+import com.taobao.api.domain.ScItemMap;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaWriter;
 import com.taobao.top.schema.field.Field;
@@ -519,25 +520,24 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
-
-            // 如果skuList不为空，取得所有sku的库存信息
-            // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
-            // WMS2.0切换 20170526 charis STA
             // 上新对象code
             List<String> listSxCode = null;
             if (ListUtils.notNull(sxData.getProductList())) {
                 listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
             }
+            // 如果skuList不为空，取得所有sku的库存信息
+            // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
+            // WMS2.0切换 20170526 charis STA
             Map<String, Integer> skuLogicQtyMap = new HashMap<>();
-            for (String code : listSxCode) {
+            for (String sku : strSkuCodeList) {
                 try {
-                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), code, null);
+                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), null, sku);
                     for (Map.Entry<String, Integer> e : map.entrySet()) {
                         skuLogicQtyMap.put(e.getKey(), e.getValue());
                     }
                 } catch (Exception e) {
                     String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
-                            channelId, cartId, code, e.getMessage());
+                            channelId, cartId, sku, e.getMessage());
                     throw new Exception(errorMsg);
                 }
             }
@@ -774,24 +774,25 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 if (skuMapList != null) {
                     String error = "";
                     try {
-
-                        for (int i = 0; i < skuMapList.size(); i++) {
+                        // 先去看看是否已经创建过关联了
+                        List<ScItemMap> scItemMapList = tbScItemService.getScItemMap(shopProp, Long.parseLong(numIId), null);
+                        Map<String, String> skuIdScIdMap = new HashMap<>();
+                        if (scItemMapList != null && scItemMapList.size() > 0) {
+                            scItemMapList.stream()
+                                    .forEach(scItemMap -> skuIdScIdMap.put(String.valueOf(scItemMap.getSkuId()), String.valueOf(scItemMap.getItemId())));
+                        }
+                        for (Map<String, Object> skuMap : skuMapList) {
 //                        skuMap: outer_id, price, quantity, sku_id
                             try {
-                                skuMapList.get(i).put("scProductId",
+                                skuMap.put("scProductId",
                                         taobaoScItemService.doSetLikingScItem(
                                                 shopProp, sxData,
-                                                Long.parseLong(numIId), skuMapList.get(i)));
-                                saveCmsBtTmScItem_Liking(sxData, cartId, skuMapList.get(i));
+                                                Long.parseLong(numIId), skuMap, skuIdScIdMap));
+                                saveCmsBtTmScItem_Liking(sxData, cartId, skuMap);
                             } catch (Exception e) {
 
                                 error += e.getMessage();
                                 continue;
-//                                if (i < skuMapList.size() - 1) {
-//                                    continue;
-//                                } else {
-//                                    throw new Exception("关联货品失败 sku如下：" + error);
-//                                }
                             }
                         }
 
@@ -951,12 +952,19 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 //        for(Map<String, Object> skuMap : skuMapList) {
             String code = "I_LIKING_IT";
             String skuCode = String.valueOf(skuMap.get("outer_id"));
+            String scCode;
+            if (StringUtils.isEmpty(skuCode)) {
+                scCode = "0";
+            } else {
+                scCode = MD5.getMd5_16(skuCode);
+            }
             Map<String, Object> searchParam = new HashMap<>();
             searchParam.put("channelId", sxData.getChannelId());
             searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
             searchParam.put("cartId", cartId);
             searchParam.put("code", code);
             searchParam.put("sku", skuCode);
+//            searchParam.put("scCode", scCode); // 检索里不需要这个字段
             CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
 
             String scProductId = null;
@@ -978,6 +986,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                     scItemModel.setCode(code);
                     scItemModel.setSku(skuCode);
                     scItemModel.setScProductId(scProductId);
+                    scItemModel.setScCode(scCode);
                     scItemModel.setCreater(getTaskName());
                     cmsBtTmScItemDao.insert(scItemModel);
                 } else {
@@ -1380,14 +1389,23 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         String crossBorderRreportFlg = getValueFromPageOrCondition("extends_cross_border_report", "", mainProductPlatformCart, sxData, shopProp);
         // 取得天猫同购上新用skus列表
         try {
+            Map<String, Integer> skuPageQtyMap = new HashMap<>();
+            if (updateWare) {
+                // 获取页面sku以及对应的库存
+                String skus = ((InputField)tbItemSchema.getFieldMap().get("skus")).getDefaultValue();
+                List<Map<String, Object>> skuPageQtyMapList = JacksonUtil.jsonToMapList(skus);
+                skuPageQtyMapList.stream()
+                        .forEach(sku -> skuPageQtyMap.put(sku.get("outer_id").toString().toLowerCase(), (int)Math.floor(Double.parseDouble(sku.get("quantity").toString()))));
+            }
+
             List<BaseMongoMap<String, Object>> targetSkuList_0 = getSkus(0, sxData.getCartId(), productList, skuList,
-                    priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg);
+                    priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg, skuPageQtyMap);
 
             productInfoMap.put("skus", JacksonUtil.bean2Json(targetSkuList_0));
             if (skuList.size() == 1) {
                 // 只有一个sku的场合， 万一天猫自动匹配的类目只允许一个sku的时候， 可以用上
                 List<BaseMongoMap<String, Object>> targetSkuList_1 = getSkus(1, sxData.getCartId(), productList, skuList,
-                        priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg);
+                        priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg, skuPageQtyMap);
                 productInfoMap.put("skus_simple", JacksonUtil.bean2Json(targetSkuList_1));
             } else {
                 // 多个sku的场合， 万一天猫自动匹配的类目只允许一个sku的时候， 就上新不了了
@@ -1774,8 +1792,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     private List<BaseMongoMap<String, Object>> getSkus(int type, Integer cartId, List<CmsBtProductModel> productList,
                                                        List<BaseMongoMap<String, Object>> skuList,
                                                        String priceConfigValue, Map<String, Integer> skuLogicQtyMap,
-                                                       ExpressionParser expressionParser,
-                                                       ShopBean shopProp, String crossBorderRreportFlg) throws BusinessException{
+                                                       ExpressionParser expressionParser, ShopBean shopProp,
+                                                       String crossBorderRreportFlg, Map<String, Integer> skuPageQtyMap) throws BusinessException{
 
         // 官网同购， 上新时候的价格， 统一用所有sku里的最高价
         Double priceMax = 0d;
@@ -1933,7 +1951,12 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // outer_id
                 skuMap.put("outer_id", skuCode);
                 // 库存
-                skuMap.put("quantity", skuLogicQtyMap.get(skuCode));
+                if (skuPageQtyMap.containsKey(skuCode)) {
+                    skuMap.put("quantity", skuPageQtyMap.get(skuCode.toLowerCase()));
+                } else {
+                    skuMap.put("quantity", skuLogicQtyMap.get(skuCode));
+                }
+
                 // 与颜色尺寸这个销售属性关联的图片
                 String imageTemplate = getValueByDict("属性图片模板", expressionParser, shopProp);
                 String propImage = expressionParser.getSxProductService().getProductImages(product, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE, cartId).get(0).getName();

@@ -78,7 +78,7 @@
         <task:scheduled ref="CmsPromotionJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!-- 库存数据导入 cms2 -->
-        <task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="25 30 0/1 * * ?"/>
+        <task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="25 0/3 * * * ?"/>
         <!--<task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="0 5 * * * ?"/>-->
 
 
@@ -176,7 +176,7 @@
         <task:scheduled ref="CmsBuildPlatformProductSellercatCnTmpJob" method="run" cron="0 0/5 0-23 * * ?"/>
 
         <!-- 被迫下架的商品 自动上架（每5分钟一次） -->
-        <task:scheduled ref="platformForcedInStockProduct_AutoOnSaleJob" method="run" cron="0 30 4 * * ?"/>
+        <task:scheduled ref="platformForcedInStockProduct_AutoOnSaleJob" method="run" cron="0 30 4,17 * * ?"/>
 
         <!-- 分销上新（每3分钟一次） -->
         <task:scheduled ref="CmsBuildPlatformProductUploadDtJob" method="run" cron="0 0/3 0-23 * * ?"/>
