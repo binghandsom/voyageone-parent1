@@ -209,6 +209,8 @@ public class CmsMqRoutingKey {
      */
     public static final String CMS_TASK_CatelogySaleAttrJdJob = "voyageone_cms_task_CatelogySaleAttrJdJobService_queue";
 
+    public static final String EWMS_MQ_STOCK_SYNC_PLATFORM_STOCK ="ewms_mq_stock_sync_platform_stock";
+
 
 
 }
