@@ -1372,7 +1372,7 @@ public class PriceService extends BaseService {
     private void setProductRetailPrice(BaseMongoMap<String, Object> skuInPlatform, Double retailPrice, String isAutoConfigPriceRetail) {
 
         // 设置中国指导确认售价
-        if ("1".equals(isAutoConfigPriceRetail))
+        if ("1".equals(isAutoConfigPriceRetail) || skuInPlatform.get(confPriceRetail.name()) == null)
             skuInPlatform.put(confPriceRetail.name(), retailPrice);
 
         // 获取上一次确认指导价
