@@ -355,7 +355,7 @@ public class CmsPromotionDetailService extends BaseViewService {
                 if (row.getCell(CmsConstants.CellNum.channelIdCellNum) == null || StringUtil.isEmpty(row.getCell(CmsConstants.CellNum.channelIdCellNum).getStringCellValue())) {
                     break;
                 }
-                String groupName = ExcelUtils.getString(row, CmsConstants.CellNum.groupNameCellNum);
+                String groupName = ExcelUtils.getString(row, CmsConstants.CellNum.groupIdCellNum);
                 if (!StringUtil.isEmpty(groupName)) {
                     CmsBtPromotionGroupsBean model = hsModel.get(groupName);
                     if (model == null) {
