@@ -185,14 +185,14 @@ public class BeatJobService extends BaseCronTaskService {
                                     apiException.getMessage());
                         }
 
-                        $debug(format("价格披露2 出现 %s 异常 -> %s", exception.getClass().getName(), message), exception);
+                        $info(format("价格披露2 出现 %s 异常 -> %s", exception.getClass().getName(), message), exception);
 
                         bean.setMessage(format("出现 %s 异常: %s", getGoodName(exception), message));
                         fail(bean);
 
                     } catch (Exception exception) {
 
-                        $debug("价格披露2 出现异常", exception);
+                        $info("价格披露2 出现异常", exception);
 
                         // 对未知异常发送错误报告
                         logIssue(exception, bean.getId());
@@ -201,8 +201,12 @@ public class BeatJobService extends BaseCronTaskService {
                         fail(bean);
                     }
 
+                    $info("{} 图片替换完成", bean.getProductCode());
+
                     bean.setModifier(getTaskName());
                     beatInfoService.saveFlagAndMessage(bean);
+
+                    $info("{} 数据也 save 好了", bean.getProductCode());
                 }
             });
         }
@@ -366,7 +370,7 @@ public class BeatJobService extends BaseCronTaskService {
                 return url.openStream();
             } catch (Exception e) {
                 beatInfoBean.setImageStatus(ImageStatus.Error);
-                $debug("取图失败, 发生异常", e);
+                $info("取图失败, 发生异常", e);
                 throw new BreakBeatJobException("取图失败, 发生异常", e);
             }
         }
