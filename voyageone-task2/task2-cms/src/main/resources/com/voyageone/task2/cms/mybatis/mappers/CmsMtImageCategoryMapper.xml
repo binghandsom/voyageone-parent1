@@ -62,4 +62,8 @@
         #{creater}
         )
     </insert>
+
+    <delete id="cms_mt_image_category_remove">
+        DELETE FROM voyageone_cms2.cms_mt_image_category WHERE category_id = #{category_id}
+    </delete>
 </mapper>

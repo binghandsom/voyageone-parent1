@@ -20,7 +20,7 @@ import com.voyageone.task2.cms.model.CmsMtImageCategoryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Created by jonasvlag on 16/3/7.
@@ -40,35 +40,20 @@ public class ImageCategoryService extends VOAbsLoggable {
     @Autowired
     private JdImgzoneService jdImgzoneService;
 
-    public CmsMtImageCategoryModel getCategory(ShopBean shopBean, ImageCategoryType type) {
+    public CmsMtImageCategoryModel getCategory(ShopBean shopBean, ImageCategoryType type) throws ApiException {
 
         CmsMtImageCategoryModel categoryModel = imageCategoryDao.select(shopBean, type);
 
-        if (categoryModel == null) return null;
-
-        if (!StringUtils.isEmpty(categoryModel.getCategory_tid())) return categoryModel;
-
-        TbGetPicCategoryParam param = new TbGetPicCategoryParam();
-        param.setPictureCategoryName(categoryModel.getCategory_name());
-
-        try {
-            PictureCategoryGetResponse res = tbPictureService.getCategories(shopBean, param);
-            List<PictureCategory> categories = res.getPictureCategories();
-            if (res.isSuccess() && categories != null && categories.size() > 0) {
-                String tid = String.valueOf(categories.get(0).getPictureCategoryId());
-                categoryModel.setCategory_tid(tid);
-                imageCategoryDao.updateTid(categoryModel);
+        if (categoryModel != null) {
+            if (isNotBlank(categoryModel.getCategory_tid())) {
                 return categoryModel;
             }
-            $info("图片空间服务 -> 调用接口尝试获取目录失败 [ %s ] [ %s ] [ %s ]", res.getSubCode(),
-                    res.getSubMsg(), categoryModel.getCategory_name());
-            return null;
-        } catch (ApiException e) {
-            $info("图片空间服务 -> 调用接口尝试获取目录出现错误 [ %s ] [ %s ] [ %s ] [ %s ] [ %s ]",
-                    e.getLocalizedMessage(), e.getErrMsg(), shopBean.getOrder_channel_id(), shopBean.getCart_id(),
-                    categoryModel.getCategory_name());
-            return null;
+            // category_tid 为空，那么这个配置就毫无作用
+            // 这里直接删除数据，交由下一步自动创建
+            imageCategoryDao.delete(categoryModel.getCategory_id());
         }
+
+        return createImageCategory(shopBean, type, "ImageCategoryService#getCategory");
     }
 
     public CmsMtImageCategoryModel createImageCategory(ShopBean shopBean, ImageCategoryType type, String userName) throws ApiException {
@@ -148,7 +133,7 @@ public class ImageCategoryService extends VOAbsLoggable {
      * 取得京东图片空间图片分类
      *
      * @param shopBean ShopBean        店铺信息
-     * @param type ImageCategoryType  图片分类（京东图片分类名不能超过15个字符）
+     * @param type     ImageCategoryType  图片分类（京东图片分类名不能超过15个字符）
      * @param userName String  userName
      * @return CmsMtImageCategoryModel 京东图片分类
      */
@@ -176,7 +161,7 @@ public class ImageCategoryService extends VOAbsLoggable {
             }
         } catch (Exception e) {
             String errMsg = "京东图片空间服务 -> 调用接口尝试获取图片分类ID出现异常，异常信息:";
-            if(StringUtils.isNullOrBlank2(e.getMessage())) {
+            if (StringUtils.isNullOrBlank2(e.getMessage())) {
                 errMsg = errMsg + e.getStackTrace()[0].toString();
             } else {
                 errMsg = e.getMessage();
@@ -202,7 +187,7 @@ public class ImageCategoryService extends VOAbsLoggable {
     /**
      * 京东图片空间添加图片分类
      *
-     * @param shopBean ShopBean        店铺信息
+     * @param shopBean     ShopBean        店铺信息
      * @param categoryName String  图片分类名
      * @return String 京东图片分类id
      */
@@ -228,7 +213,7 @@ public class ImageCategoryService extends VOAbsLoggable {
             }
         } catch (Exception e) {
             String errMsg = "京东图片空间服务 -> 调用接口尝试新增图片分类信息失败，异常信息:";
-            if(StringUtils.isNullOrBlank2(e.getMessage())) {
+            if (StringUtils.isNullOrBlank2(e.getMessage())) {
                 errMsg = errMsg + e.getStackTrace()[0].toString();
             } else {
                 errMsg = e.getMessage();

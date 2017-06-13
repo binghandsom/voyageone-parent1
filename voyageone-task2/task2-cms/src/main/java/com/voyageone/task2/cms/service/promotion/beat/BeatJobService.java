@@ -58,19 +58,10 @@ public class BeatJobService extends BaseCronTaskService {
      * 为 2 表示值类型错误。
      */
     private static int lastErrorTarget = 0;
-
-    static int getLastErrorTarget() {
-        return lastErrorTarget;
-    }
-
     private final CmsBeatInfoService beatInfoService;
-
     private final TbItemService tbItemService;
-
     private final TbSimpleItemService tbSimpleItemService;
-
     private final ImageCategoryService imageCategoryService;
-
     private final TbPictureService tbPictureService;
 
     @Autowired
@@ -82,6 +73,10 @@ public class BeatJobService extends BaseCronTaskService {
         this.tbSimpleItemService = tbSimpleItemService;
         this.tbPictureService = tbPictureService;
         this.imageCategoryService = imageCategoryService;
+    }
+
+    static int getLastErrorTarget() {
+        return lastErrorTarget;
     }
 
     @Override
@@ -304,13 +299,22 @@ public class BeatJobService extends BaseCronTaskService {
 
         private TbItemSchema tbItemSchema;
 
-        private CmsMtImageCategoryModel getUpCategory() {
+        private Context(CmsBtBeatInfoBean beatInfoBean) {
+
+            CmsBtPromotionModel promotion = beatInfoBean.getPromotion();
+
+            this.beatInfoBean = beatInfoBean;
+            this.shopBean = Shops.getShop(promotion.getChannelId(), promotion.getCartId());
+            this.configBean = JacksonUtil.json2Bean(beatInfoBean.getTask().getConfig(), ConfigBean.class);
+        }
+
+        private CmsMtImageCategoryModel getUpCategory() throws ApiException {
             if (upCategory == null)
                 upCategory = imageCategoryService.getCategory(shopBean, ImageCategoryType.Beat);
             return upCategory;
         }
 
-        private CmsMtImageCategoryModel getDownCategory() {
+        private CmsMtImageCategoryModel getDownCategory() throws ApiException {
             if (downCategory == null)
                 downCategory = imageCategoryService.getCategory(shopBean, ImageCategoryType.Main);
             return downCategory;
@@ -337,15 +341,6 @@ public class BeatJobService extends BaseCronTaskService {
             CartEnums.Cart cart = CartEnums.Cart.getValueByID(shopBean.getCart_id());
 
             return CartEnums.Cart.isSimple(cart);
-        }
-
-        private Context(CmsBtBeatInfoBean beatInfoBean) {
-
-            CmsBtPromotionModel promotion = beatInfoBean.getPromotion();
-
-            this.beatInfoBean = beatInfoBean;
-            this.shopBean = Shops.getShop(promotion.getChannelId(), promotion.getCartId());
-            this.configBean = JacksonUtil.json2Bean(beatInfoBean.getTask().getConfig(), ConfigBean.class);
         }
 
         private InputStream getImageStream(String templateUrl, String imageName, boolean withPrice) {

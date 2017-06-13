@@ -1,10 +1,10 @@
 package com.voyageone.task2.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.service.model.cms.enums.ImageCategoryType;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.service.model.cms.enums.ImageCategoryType;
 import com.voyageone.task2.cms.model.CmsMtImageCategoryModel;
 import org.springframework.stereotype.Repository;
 
@@ -49,5 +49,12 @@ public class CmsMtImageCategoryDao extends BaseDao {
                 "cart_id", shopBean.getCart_id(),
                 "channel_id", shopBean.getOrder_channel_id(),
                 "type", type.getVal()));
+    }
+
+    /**
+     * 使用主键删除
+     */
+    public void delete(int category_id) {
+        delete("cms_mt_image_category_remove", category_id);
     }
 }
