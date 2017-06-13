@@ -183,11 +183,10 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
 
                 if (!updateMap.isEmpty()) {
                     try {
-                        if (isMasterFlag) {
-                            // 注意修改产品标题，如果平台Approved则平台上新
-                            BulkWriteResult writeResult = productService.bulkUpdateWithMap(channelId, Arrays.asList(createBulkUpdateModel(updateMap, queryMap)), username, "$set");
-                            $info(String.format("(%s)重设置Master产品名称中文(channelId=%s, code=%s)，结果：%s", username, channelId, code, JacksonUtil.bean2Json(writeResult)));
+                        BulkWriteResult writeResult = productService.bulkUpdateWithMap(channelId, Arrays.asList(createBulkUpdateModel(updateMap, queryMap)), username, "$set");
+                        $info(String.format("(%s)重设置产品标题(channelId=%s, code=%s)，结果：%s", username, channelId, code, JacksonUtil.bean2Json(writeResult)));
 
+                        if (isMasterFlag) {
                             // 产品如有平台状态Approved，则重新上新
                             for (CmsBtProductModel_Platform_Cart platformCart : productModel.getPlatforms().values()) {
                                 Integer cartId = platformCart.getCartId();
