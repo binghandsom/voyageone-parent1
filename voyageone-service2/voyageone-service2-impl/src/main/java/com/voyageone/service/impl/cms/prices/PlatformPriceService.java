@@ -249,6 +249,13 @@ public class PlatformPriceService extends VOAbsLoggable {
      * @param priceIsDown
      */
     public void publishPlatFormPrice(String channelId, Integer chg, CmsBtProductModel cmsProduct, Integer cartId, String modifier, boolean priceIsDown, boolean isSmSx){
+        try {
+            publishPlatFormPrice(channelId, chg, cmsProduct, cartId, modifier, priceIsDown, isSmSx, false);
+        } catch (BusinessException e) {
+            e.printStackTrace();
+        }
+    }
+    public void publishPlatFormPrice(String channelId, Integer chg, CmsBtProductModel cmsProduct, Integer cartId, String modifier, boolean priceIsDown, boolean isSmSx, boolean isThrow) throws BusinessException {
 
         // 如果存在销售的sku变化,则通过上新来处理
         if((chg & 1) == 1
@@ -295,6 +302,9 @@ public class PlatformPriceService extends VOAbsLoggable {
                 } catch (Exception e) {
                     $warn("updateSkuPrices失败", e.getMessage());
                     e.printStackTrace();
+                    if(isThrow){
+                        throw new BusinessException(e.getMessage());
+                    }
                 }
             } else if (CmsConstants.ProductStatus.Approved.name().equals(cmsProduct.getPlatform(cartId).getStatus())) {
                 $info("存在 isSale 变化 插入sxworkload表" );
@@ -392,7 +402,11 @@ public class PlatformPriceService extends VOAbsLoggable {
             jdUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType);
         }else if (PlatFormEnums.PlatForm.NTES.getId().equals(cartObj.getPlatform_id())) {
             // votodo -- JdSkuService  京东平台 更新商品SKU的价格
-            klUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType);
+            try {
+                klUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType);
+            }catch (Exception e){
+                throw new BusinessException(e.getMessage());
+            }
         }
         // 其他平台价格变成通过上新程序修改价格
         else {

@@ -1658,7 +1658,7 @@ public class CmsProductDetailService extends BaseViewService {
      * @param platform
      * @throws Exception
      */
-    public void updateSkuPrice(String channelId, Integer cartId, Long prodId, String userName, CmsBtProductModel_Platform_Cart platform) throws BusinessException {
+    public void updateSkuPrice(String channelId, Integer cartId, Long prodId, String userName, CmsBtProductModel_Platform_Cart platform) {
 
         // 根据中国最终售价来判断 中国建议售价是否需要自动提高价格
         try {
@@ -1717,7 +1717,7 @@ public class CmsProductDetailService extends BaseViewService {
 
         // 刷新平台价格
         CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
-        platformPriceService.publishPlatFormPrice(channelId, 2, newProduct, cartId, userName, true, false);
+        platformPriceService.publishPlatFormPrice(channelId, 2, newProduct, cartId, userName, true, false, true);
 
         //更新价格履历
         List<String> skus = new ArrayList<>();
