@@ -365,6 +365,8 @@ public class PromotionDetailService extends BaseService {
             }
             cmsPromotionSkuDao.deletePromotionSkuByProductCode(cmsBtPromotionGroupsBean.getPromotionId(), code.getProductCode());
             code.getSkus().forEach(cmsBtPromotionSkuModel -> {
+                cmsBtPromotionSkuModel.setProductId(code.getProductId());
+                cmsBtPromotionSkuModel.setModelId(cmsBtPromotionGroupsBean.getModelId());
                 cmsBtPromotionSkuModel.setNumIid(cmsBtPromotionGroupsBean.getNumIid());
                 cmsBtPromotionSkuModel.setProductModel(cmsBtPromotionGroupsBean.getProductModel());
                 cmsBtPromotionSkuModel.setProductCode(code.getProductCode());
