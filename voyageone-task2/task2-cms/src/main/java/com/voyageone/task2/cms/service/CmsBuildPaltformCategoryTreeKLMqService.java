@@ -69,9 +69,9 @@ public class CmsBuildPaltformCategoryTreeKLMqService extends BaseMQCmsService {
                 }
             }
             if (!flg) {
-                firstItem.setCreater("CmsBuildPaltformCategoryTreeJMMqService");
+                firstItem.setCreater("CmsBuildPaltformCategoryTreeKLMqService");
                 firstItem.setCreated(DateTimeUtil.getNow());
-                firstItem.setModifier("CmsBuildPaltformCategoryTreeJMMqService");
+                firstItem.setModifier("CmsBuildPaltformCategoryTreeKLMqService");
                 firstItem.setModified(DateTimeUtil.getNow());
                 tree.add(firstItem);
             }
