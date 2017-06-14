@@ -6,6 +6,9 @@ import com.voyageone.category.match.FeedQuery;
 import com.voyageone.category.match.MatchResult;
 import com.voyageone.category.match.Searcher;
 import com.voyageone.category.match.Tokenizer;
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JsonUtil;
@@ -141,7 +144,18 @@ public class ProductMainCategoryService extends BaseService {
                 if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getOriginalTitleCn()) || !"1".equalsIgnoreCase(cmsBtProductModel.getCommon().getFields().getTranslateStatus())) {
                     // 设置商品中文名称（品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称）
                     String[] temp = mCatPathCn.split(">");
-                    String titleCn = String.format("%s %s %s", com.voyageone.common.util.StringUtils.toString(cmsBtProductModel.getCommon().getFields().getBrand()), com.voyageone.common.util.StringUtils.toString(sizeType), temp[temp.length - 1]);
+
+                    TypeChannelBean typeChannelBean = null;
+                    String brand;
+                    if(!StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getBrand())) {
+                        typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, "928", cmsBtProductModel.getCommon().getFields().getBrand(), "cn");
+                    }
+                    if(typeChannelBean != null && !StringUtil.isEmpty(typeChannelBean.getName())){
+                        brand = typeChannelBean.getName();
+                    }else{
+                        brand = cmsBtProductModel.getCommon().getFields().getBrand();
+                    }
+                    String titleCn = String.format("%s %s %s", com.voyageone.common.util.StringUtils.toString(brand), com.voyageone.common.util.StringUtils.toString(sizeType), temp[temp.length - 1]);
                     updateMap.put("common.fields.originalTitleCn", titleCn);
                 }
                 BulkUpdateModel model = new BulkUpdateModel();

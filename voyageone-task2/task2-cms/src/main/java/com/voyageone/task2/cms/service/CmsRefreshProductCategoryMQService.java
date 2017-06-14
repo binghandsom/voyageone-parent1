@@ -2,6 +2,9 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.category.match.MatchResult;
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -205,8 +208,22 @@ public class CmsRefreshProductCategoryMQService extends BaseMQCmsService  {
                     // 主类目叶子级中文名称（"服饰>服饰配件>钱包卡包钥匙包>护照夹" -> "护照夹"）
                     String leafCategoryCnName = searchResult.getCnName().substring(searchResult.getCnName().lastIndexOf(">") + 1,
                             searchResult.getCnName().length());
+
+                    String titleCn = "";
                     // 设置商品中文名称（品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称）
-                    String titleCn = uploadToUSJoiService.getOriginalTitleCnByCategory(prodCommonField.getBrand(), prodCommonField.getSizeTypeCn(), leafCategoryCnName);
+                    if(channelId.equals("928")) {
+                        TypeChannelBean typeChannelBean = null;
+                        if (!StringUtil.isEmpty(prodCommonField.getBrand())) {
+                            typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, "928", prodCommonField.getBrand(), "cn");
+                        }
+                        if (typeChannelBean != null && !StringUtil.isEmpty(typeChannelBean.getName())) {
+                            titleCn = uploadToUSJoiService.getOriginalTitleCnByCategory(typeChannelBean.getName(), prodCommonField.getSizeTypeCn(), leafCategoryCnName);
+                        } else {
+                            titleCn = uploadToUSJoiService.getOriginalTitleCnByCategory(prodCommonField.getBrand(), prodCommonField.getSizeTypeCn(), leafCategoryCnName);
+                        }
+                    }else{
+                        titleCn = uploadToUSJoiService.getOriginalTitleCnByCategory(prodCommonField.getBrand(), prodCommonField.getSizeTypeCn(), leafCategoryCnName);
+                    }
                     if (!StringUtils.isEmpty(titleCn)) {
                         if (!"017".equals(prodObj.getOrgChannelId())
                                 || ("017".equals(prodObj.getOrgChannelId()) && StringUtils.isEmpty(prodCommonField.getOriginalTitleCn())))
