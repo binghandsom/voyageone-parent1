@@ -21,6 +21,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ import java.util.*;
  * @Create 2017-06-13 11:14
  */
 @Service
-@VOSubRabbitListener
+@RabbitListener
 public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProductTitleMQMessageBody> {
 
     @Autowired
