@@ -2034,7 +2034,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     if (!"017".equals(channelId)
                             || ("017".equals(channelId) && StringUtils.isEmpty(prodCommonField.getOriginalTitleCn()))){
 
-                        TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode("41", "928", prodCommonField.getBrand(), "cn");
+                        TypeChannelBean typeChannelBean = null;
+                        if(!StringUtil.isEmpty(prodCommonField.getBrand())) {
+                            typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, "928", prodCommonField.getBrand(), "cn");
+                        }
                         if(typeChannelBean != null && !StringUtil.isEmpty(typeChannelBean.getName())){
                             prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(typeChannelBean.getName()
                                     , prodCommonField.getSizeTypeCn(), leafCategoryCnName));

@@ -3368,8 +3368,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                         // 设置中文名称 产品名称 brand(英文) + " " + brand(中文) + " " + sizeTypeCn + " " + leafCategoryCnName 来生成
                         TypeChannelBean typeChannelBean = null;
-                        if(!StringUtil.isEmpty(prodCommonField.getBrand())) {
-                            typeChannelBean = TypeChannels.getTypeChannelByCode("41", usjoi ? "928" : feed.getChannelId(), prodCommonField.getBrand(), "cn");
+                        if(!StringUtil.isEmpty(prodCommonField.getBrand()) && usjoi) {
+                            typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, "928", prodCommonField.getBrand(), "cn");
                         }
                         if(typeChannelBean != null && !StringUtil.isEmpty(typeChannelBean.getName())){
                             prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(typeChannelBean.getName()
