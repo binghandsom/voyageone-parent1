@@ -2032,9 +2032,20 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             searchResult.getCnName().length());
                     // 设置商品中文名称（品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称）
                     if (!"017".equals(channelId)
-                            || ("017".equals(channelId) && StringUtils.isEmpty(prodCommonField.getOriginalTitleCn())))
-                        prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(prodCommonField.getBrand()
-                                , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
+                            || ("017".equals(channelId) && StringUtils.isEmpty(prodCommonField.getOriginalTitleCn()))){
+
+                        TypeChannelBean typeChannelBean = null;
+                        if(!StringUtil.isEmpty(prodCommonField.getBrand())) {
+                            typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, "928", prodCommonField.getBrand(), "cn");
+                        }
+                        if(typeChannelBean != null && !StringUtil.isEmpty(typeChannelBean.getName())){
+                            prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(typeChannelBean.getName()
+                                    , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
+                        }else{
+                            prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(prodCommonField.getBrand()
+                                    , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
+                        }
+                    }
                 }
             }
         }

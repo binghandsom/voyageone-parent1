@@ -212,6 +212,10 @@ public class CmsMqRoutingKey {
     public static final String EWMS_MQ_STOCK_SYNC_PLATFORM_STOCK ="ewms_mq_stock_sync_platform_stock";
 
 
+    /**
+     * 重新设置商品标题
+     */
+    public static final String CMS_RESET_PRODUCT_TITLE = "VOCmsResetProductTitleMQJobQueue";
 
 }
 

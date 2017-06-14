@@ -33,7 +33,7 @@ public class CmsRefreshProductCategoryMQServiceTest {
 
         String channelId = "928";
         List<String> codeList = new ArrayList<>();
-        codeList.add("028-ps7097564");
+        codeList.add("1127642188");
         String userName = "testUser001";
 
         Map<String, Object> messageMap = new HashMap<>();
