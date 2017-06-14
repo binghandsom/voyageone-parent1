@@ -22,23 +22,9 @@ import java.util.List;
 public class CmsResetProductTitleMQMessageBody extends BaseMQMessageBody {
 
     /**
-     * 渠道ID
-     */
-    private String channelId;
-    /**
      * 产品Code
      */
     private List<String> codes;
-
-    @Override
-    public String getChannelId() {
-        return channelId;
-    }
-
-    @Override
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 
     public List<String> getCodes() {
         return codes;
@@ -51,7 +37,7 @@ public class CmsResetProductTitleMQMessageBody extends BaseMQMessageBody {
     @Override
     public void check() throws MQMessageRuleException {
 
-        if (StringUtils.isBlank(channelId)) {
+        if (StringUtils.isBlank(getChannelId())) {
             throw new BusinessException("参数channelId为空");
         }
 
