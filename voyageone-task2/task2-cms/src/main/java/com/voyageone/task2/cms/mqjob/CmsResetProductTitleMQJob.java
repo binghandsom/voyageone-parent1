@@ -24,10 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * 重新设置商品Title MQJob
@@ -93,13 +90,13 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
                 if (brandTypeChannelBean == null) {
                     CmsBtOperationLogModel_Msg failOne = new CmsBtOperationLogModel_Msg();
                     failOne.setSkuCode(code);
-                    failOne.setMsg(String.format("根据Brand(%s)在synship.com_mt_value_channel查询不到记录"));
+                    failOne.setMsg(String.format("根据Brand(%s)在synship.com_mt_value_channel查询不到记录", brand));
                     failList.add(failOne);
                     continue;
                 }
 
                 // 原来[brand]要替换成[brand 品牌]
-                String replaceContent = brand + " " + brandTypeChannelBean.getName();
+                String replaceContent = brandTypeChannelBean.getName();
 
                 HashMap<String, Object> updateMap = new HashMap<>();
                 HashMap<String, Object> queryMap = new HashMap<>();
@@ -114,8 +111,8 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
                 // Master产品名称中文
                 String originalTitleCn = fields.getOriginalTitleCn();
                 if (StringUtils.isNotBlank(originalTitleCn)
-                        && originalTitleCn.indexOf(replaceContent) == -1
-                        && originalTitleCn.indexOf(brand) != -1) {
+                        && !originalTitleCn.contains(replaceContent)
+                        && originalTitleCn.contains(brand)) {
 
                     String newTitle = originalTitleCn.replace(brand, replaceContent);
 
@@ -130,30 +127,30 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
 
                 // 聚美产品名 / 聚美长标题 / 聚美中标题
                 CmsBtProductModel_Platform_Cart jmCart = productModel.getPlatform(CartEnums.Cart.JM);
-                if (jmCart != null) {
+                if (jmCart != null && jmCart.getFields() != null) {
                     String productNameCn = jmCart.getFields().getStringAttribute("productNameCn");
                     String productLongName = jmCart.getFields().getStringAttribute("productLongName");
                     String productMediumName = jmCart.getFields().getStringAttribute("productMediumName");
 
                     if (StringUtils.isNotBlank(productNameCn)
-                            && productNameCn.indexOf(replaceContent) == -1
-                            && productNameCn.indexOf(brand) != -1) {
+                            && !productNameCn.contains(replaceContent)
+                            && productNameCn.contains(brand)) {
 
                         updateMap.put(String.format("platforms.P%s.fields.productNameCn", CartEnums.Cart.JM.getId()), productNameCn.replace(brand, replaceContent));
                         isJmFlag = true;
                     }
 
                     if (StringUtils.isNotBlank(productLongName)
-                            && productLongName.indexOf(replaceContent) == -1
-                            && productLongName.indexOf(brand) != -1) {
+                            && !productLongName.contains(replaceContent)
+                            && productLongName.contains(brand)) {
 
                         updateMap.put(String.format("platforms.P%s.fields.productLongName", CartEnums.Cart.JM.getId()), productLongName.replace(brand, replaceContent));
                         isJmFlag = true;
                     }
 
                     if (StringUtils.isNotBlank(productMediumName)
-                            && productMediumName.indexOf(replaceContent) == -1
-                            && productMediumName.indexOf(brand) != -1) {
+                            && !productMediumName.contains(replaceContent)
+                            && productMediumName.contains(brand)) {
 
                         updateMap.put(String.format("platforms.P%s.fields.productMediumName", CartEnums.Cart.JM.getId()), productMediumName.replace(brand, replaceContent));
                         isJmFlag = true;
@@ -165,8 +162,8 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
                 String title = null;
                 if (usjoiCart != null && usjoiCart.getFields() != null
                         && StringUtils.isNotBlank(title = usjoiCart.getFields().getStringAttribute("title"))
-                        && title.indexOf(replaceContent) == -1
-                        && title.indexOf(brand) != -1) {
+                        && !title.contains(replaceContent)
+                        && title.contains(brand)) {
 
                     updateMap.put(String.format("platforms.P%s.fields.title", CartEnums.Cart.LTT.getId()), title.replace(brand, replaceContent));
                     isUsjoiFlag = true;
@@ -177,8 +174,8 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
                 String productTitle = null;
                 if (jgjCart != null && jgjCart.getFields() != null
                         && StringUtils.isNotBlank(productTitle = jgjCart.getFields().getStringAttribute("productTitle"))
-                        && productTitle.indexOf(replaceContent) == -1
-                        && productTitle.indexOf(brand) != -1) {
+                        && !productTitle.contains(replaceContent)
+                        && productTitle.contains(brand)) {
 
                     updateMap.put(String.format("platforms.P%s.fields.productTitle", CartEnums.Cart.JGJ.getId()), productTitle.replace(brand, replaceContent));
                     isJgjFlag = true;
@@ -186,33 +183,33 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
 
                 if (!updateMap.isEmpty()) {
                     try {
-                        BulkWriteResult writeResult = productService.bulkUpdateWithMap(channelId, Arrays.asList(createBulkUpdateModel(updateMap, queryMap)), username, "$set");
+                        BulkWriteResult writeResult = productService.bulkUpdateWithMap(channelId, Collections.singletonList(createBulkUpdateModel(updateMap, queryMap)), username, "$set");
                         $info(String.format("(%s)重设置产品标题(channelId=%s, code=%s)，结果：%s", username, channelId, code, JacksonUtil.bean2Json(writeResult)));
 
                         if (isMasterFlag) {
                             // 产品如有平台状态Approved，则重新上新
                             for (CmsBtProductModel_Platform_Cart platformCart : productModel.getPlatforms().values()) {
                                 Integer cartId = platformCart.getCartId();
-                                if (cartId.intValue() > 19 && cartId.intValue() < 900 && CmsConstants.ProductStatus.Approved.name().equals(platformCart.getStatus())) {
+                                if (cartId > 19 && cartId < 900 && CmsConstants.ProductStatus.Approved.name().equals(platformCart.getStatus())) {
                                     $debug(String.format("(%s)重设置Master产品名称中文(channel=%s, code=%s)，平台(cartId=%d)Approved需重新上新", username, channelId, code, cartId));
-                                    sxProductService.insertPlatformWorkload(channelId, cartId, PlatformWorkloadAttribute.TITLE, Arrays.asList(code), username);
+                                    sxProductService.insertPlatformWorkload(channelId, cartId, PlatformWorkloadAttribute.TITLE, Collections.singletonList(code), username);
                                 }
                             }
                         } else {
                             // 修改的平台如果是Approved状态，则重新上新
                             if (isJmFlag && CmsConstants.ProductStatus.Approved.name().equals(jmCart.getStatus())) {
-                                $debug(String.format("(%s)重设置聚美产品名 / 聚美长标题 / 聚美中标题(channel=%s, code=%s)，平台(cartId=%d)Approved需重新上新", username, channelId, code, CartEnums.Cart.JM.getId()));
-                                sxProductService.insertPlatformWorkload(channelId, Integer.valueOf(CartEnums.Cart.JM.getId()), PlatformWorkloadAttribute.TITLE, Arrays.asList(code), username);
+                                $debug(String.format("(%s)重设置聚美产品名 / 聚美长标题 / 聚美中标题(channel=%s, code=%s)，平台(cartId=%s)Approved需重新上新", username, channelId, code, CartEnums.Cart.JM.getId()));
+                                sxProductService.insertPlatformWorkload(channelId, Integer.valueOf(CartEnums.Cart.JM.getId()), PlatformWorkloadAttribute.TITLE, Collections.singletonList(code), username);
                             }
 
                             if (isUsjoiFlag && CmsConstants.ProductStatus.Approved.name().equals(usjoiCart.getStatus())) {
-                                $debug(String.format("(%s)重设置官网同构标题(channel=%s, code=%s)，平台(cartId=%d)Approved需重新上新", username, channelId, code, CartEnums.Cart.LTT.getId()));
-                                sxProductService.insertPlatformWorkload(channelId, Integer.valueOf(CartEnums.Cart.LTT.getId()), PlatformWorkloadAttribute.TITLE, Arrays.asList(code), username);
+                                $debug(String.format("(%s)重设置官网同构标题(channel=%s, code=%s)，平台(cartId=%s)Approved需重新上新", username, channelId, code, CartEnums.Cart.LTT.getId()));
+                                sxProductService.insertPlatformWorkload(channelId, Integer.valueOf(CartEnums.Cart.LTT.getId()), PlatformWorkloadAttribute.TITLE, Collections.singletonList(code), username);
                             }
 
                             if (isJgjFlag && CmsConstants.ProductStatus.Approved.name().equals(jgjCart.getStatus())) {
-                                $debug(String.format("(%s)重设置匠心界标题(channel=%s, code=%s)，平台(cartId=%d)Approved需重新上新", username, channelId, code, CartEnums.Cart.JGJ.getId()));
-                                sxProductService.insertPlatformWorkload(channelId, Integer.valueOf(CartEnums.Cart.JGJ.getId()), PlatformWorkloadAttribute.TITLE, Arrays.asList(code), username);
+                                $debug(String.format("(%s)重设置匠心界标题(channel=%s, code=%s)，平台(cartId=%s)Approved需重新上新", username, channelId, code, CartEnums.Cart.JGJ.getId()));
+                                sxProductService.insertPlatformWorkload(channelId, Integer.valueOf(CartEnums.Cart.JGJ.getId()), PlatformWorkloadAttribute.TITLE, Collections.singletonList(code), username);
                             }
                         }
                     } catch (Exception e) {
