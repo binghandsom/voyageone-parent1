@@ -11,9 +11,11 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.solr.bean.SolrUpdateBean;
 import com.voyageone.service.dao.cms.CmsBtJmProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
 import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
@@ -35,10 +37,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsAddNewGroupMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsCartAddMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsCheckProductIsRightMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.ProductPriceUpdateMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.*;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -49,6 +48,7 @@ import com.voyageone.service.model.util.MapModel;
 import com.voyageone.web2.cms.CmsController;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -1964,6 +1964,37 @@ public class BackDoorController extends CmsController {
         if (!StringUtils.isEmpty(productCode))
             messageBody.setCode(productCode);
         cmsMqSenderService.sendMessage(messageBody);
+    }
+
+    @RequestMapping(value = "resetProductTitle", method = RequestMethod.GET)
+    public Object resetProductTitle(@RequestParam("channelId") String channelId, @RequestParam("brand") String brand) {
+        JongoQuery queryObject = new JongoQuery();
+        if(!StringUtil.isEmpty(brand)) {
+            queryObject.setQuery("{\"common.fields.brand\":#}");
+            queryObject.setParameters(brand);
+        }
+        Iterator<CmsBtProductModel> it = cmsBtProductDao.selectCursor(queryObject, channelId);
+
+        CmsResetProductTitleMQMessageBody cmsResetProductTitleMQMessageBody = new CmsResetProductTitleMQMessageBody();
+        cmsResetProductTitleMQMessageBody.setChannelId(channelId);
+        cmsResetProductTitleMQMessageBody.setSender("backDoor");
+        List<String> codes = new ArrayList<>(100);
+        int index = 1;
+        while (it.hasNext()) {
+            CmsBtProductModel cmsBtProductModel = it.next();
+            codes.add(cmsBtProductModel.getCommon().getFields().getCode());
+            if(codes.size() == 100){
+                cmsResetProductTitleMQMessageBody.setCodes(codes);
+                cmsMqSenderService.sendMessage(cmsResetProductTitleMQMessageBody);
+                codes.clear();
+            }
+            index++;
+        }
+        if(codes.size() > 0){
+            cmsResetProductTitleMQMessageBody.setCodes(codes);
+            cmsMqSenderService.sendMessage(cmsResetProductTitleMQMessageBody);
+        }
+        return index-1;
     }
 
 
