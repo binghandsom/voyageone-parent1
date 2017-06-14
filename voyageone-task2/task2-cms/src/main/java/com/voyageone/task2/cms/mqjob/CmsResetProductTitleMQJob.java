@@ -111,7 +111,7 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
                 boolean isJgjFlag = false;    // 匠心界标题->是否修改了
 
                 // Master产品名称中文
-                String originalTitleCn = fields.getOriginalTitleCn();
+                String originalTitleCn = replaceBrandIgnoreCase(fields.getOriginalTitleCn(), brand);
                 if (StringUtils.isNotBlank(originalTitleCn)
                         && !originalTitleCn.contains(replaceContent)
                         && originalTitleCn.contains(brand) && !removeBlank(originalTitleCn).contains(replaceContentWithoutBlank)) {
@@ -130,9 +130,9 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
                 // 聚美产品名 / 聚美长标题 / 聚美中标题
                 CmsBtProductModel_Platform_Cart jmCart = productModel.getPlatform(CartEnums.Cart.JM);
                 if (jmCart != null && jmCart.getFields() != null) {
-                    String productNameCn = jmCart.getFields().getStringAttribute("productNameCn");
-                    String productLongName = jmCart.getFields().getStringAttribute("productLongName");
-                    String productMediumName = jmCart.getFields().getStringAttribute("productMediumName");
+                    String productNameCn = replaceBrandIgnoreCase(jmCart.getFields().getStringAttribute("productNameCn"), brand);
+                    String productLongName = replaceBrandIgnoreCase(jmCart.getFields().getStringAttribute("productLongName"), brand);
+                    String productMediumName = replaceBrandIgnoreCase(jmCart.getFields().getStringAttribute("productMediumName"), brand);
 
                     if (StringUtils.isNotBlank(productNameCn)
                             && !productNameCn.contains(replaceContent)
@@ -163,7 +163,7 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
                 CmsBtProductModel_Platform_Cart usjoiCart = productModel.getPlatform(CartEnums.Cart.LTT);
                 String title = null;
                 if (usjoiCart != null && usjoiCart.getFields() != null
-                        && StringUtils.isNotBlank(title = usjoiCart.getFields().getStringAttribute("title"))
+                        && StringUtils.isNotBlank(title = replaceBrandIgnoreCase(usjoiCart.getFields().getStringAttribute("title"), brand))
                         && !title.contains(replaceContent)
                         && title.contains(brand) && !removeBlank(title).contains(replaceContentWithoutBlank)) {
 
@@ -175,7 +175,7 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
                 CmsBtProductModel_Platform_Cart jgjCart = productModel.getPlatform(CartEnums.Cart.JGJ);
                 String productTitle = null;
                 if (jgjCart != null && jgjCart.getFields() != null
-                        && StringUtils.isNotBlank(productTitle = jgjCart.getFields().getStringAttribute("productTitle"))
+                        && StringUtils.isNotBlank(productTitle = replaceBrandIgnoreCase(jgjCart.getFields().getStringAttribute("productTitle"), brand))
                         && !productTitle.contains(replaceContent)
                         && productTitle.contains(brand) && !removeBlank(productTitle).contains(replaceContentWithoutBlank)) {
 
@@ -242,7 +242,15 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
         return model;
     }
 
+    private String replaceBrandIgnoreCase(String targetString, String brand) {
+        if (StringUtils.isNotBlank(targetString) && StringUtils.isNotBlank(brand)) {
+            targetString = targetString.replaceAll("(?i)" + brand, brand);
+        }
+        return targetString;
+    }
+
     private String removeBlank (String targetString) {
         return targetString == null ? null : targetString.replaceAll(" ", "");
     }
+
 }
