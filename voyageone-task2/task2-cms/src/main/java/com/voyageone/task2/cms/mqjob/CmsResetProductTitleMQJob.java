@@ -98,6 +98,7 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
 
                 // 原来[brand]要替换成[brand 品牌]
                 String replaceContent = brandTypeChannelBean.getName();
+                String replaceContentWithoutBlank = replaceContent.replaceAll(" ", "");
 
                 HashMap<String, Object> updateMap = new HashMap<>();
                 HashMap<String, Object> queryMap = new HashMap<>();
@@ -113,7 +114,7 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
                 String originalTitleCn = fields.getOriginalTitleCn();
                 if (StringUtils.isNotBlank(originalTitleCn)
                         && !originalTitleCn.contains(replaceContent)
-                        && originalTitleCn.contains(brand)) {
+                        && originalTitleCn.contains(brand) && !originalTitleCn.contains(replaceContentWithoutBlank)) {
 
                     String newTitle = originalTitleCn.replace(brand, replaceContent);
 
@@ -135,7 +136,7 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
 
                     if (StringUtils.isNotBlank(productNameCn)
                             && !productNameCn.contains(replaceContent)
-                            && productNameCn.contains(brand)) {
+                            && productNameCn.contains(brand) && !productNameCn.contains(replaceContentWithoutBlank)) {
 
                         updateMap.put(String.format("platforms.P%s.fields.productNameCn", CartEnums.Cart.JM.getId()), productNameCn.replace(brand, replaceContent));
                         isJmFlag = true;
@@ -143,7 +144,7 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
 
                     if (StringUtils.isNotBlank(productLongName)
                             && !productLongName.contains(replaceContent)
-                            && productLongName.contains(brand)) {
+                            && productLongName.contains(brand) && !productLongName.contains(replaceContentWithoutBlank)) {
 
                         updateMap.put(String.format("platforms.P%s.fields.productLongName", CartEnums.Cart.JM.getId()), productLongName.replace(brand, replaceContent));
                         isJmFlag = true;
@@ -151,7 +152,7 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
 
                     if (StringUtils.isNotBlank(productMediumName)
                             && !productMediumName.contains(replaceContent)
-                            && productMediumName.contains(brand)) {
+                            && productMediumName.contains(brand) && !productMediumName.contains(replaceContentWithoutBlank)) {
 
                         updateMap.put(String.format("platforms.P%s.fields.productMediumName", CartEnums.Cart.JM.getId()), productMediumName.replace(brand, replaceContent));
                         isJmFlag = true;
@@ -164,7 +165,7 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
                 if (usjoiCart != null && usjoiCart.getFields() != null
                         && StringUtils.isNotBlank(title = usjoiCart.getFields().getStringAttribute("title"))
                         && !title.contains(replaceContent)
-                        && title.contains(brand)) {
+                        && title.contains(brand) && !title.contains(replaceContentWithoutBlank)) {
 
                     updateMap.put(String.format("platforms.P%s.fields.title", CartEnums.Cart.LTT.getId()), title.replace(brand, replaceContent));
                     isUsjoiFlag = true;
@@ -176,7 +177,7 @@ public class CmsResetProductTitleMQJob extends TBaseMQCmsService<CmsResetProduct
                 if (jgjCart != null && jgjCart.getFields() != null
                         && StringUtils.isNotBlank(productTitle = jgjCart.getFields().getStringAttribute("productTitle"))
                         && !productTitle.contains(replaceContent)
-                        && productTitle.contains(brand)) {
+                        && productTitle.contains(brand) && !productTitle.contains(replaceContentWithoutBlank)) {
 
                     updateMap.put(String.format("platforms.P%s.fields.productTitle", CartEnums.Cart.JGJ.getId()), productTitle.replace(brand, replaceContent));
                     isJgjFlag = true;
