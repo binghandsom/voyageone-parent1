@@ -85,10 +85,6 @@ public class CmsBuildPaltformCategorySchemaKLMqService extends BaseMQCmsService 
     private void doLogic(String channelId, String cartId) {
         KoalaConfig shopBean = Shops.getShopKoala(channelId, cartId);
 
-        // 测试代码要删 START
-        shopBean.setSessionkey("m5di3J");
-        // 测试代码要删 END
-
         // 获取叶子类目列表
         List<CmsMtPlatformCategoryTreeModel> allCategoryTreeLeaves = platformCategoryService.getCmsMtPlatformCategoryTreeModelLeafList(Integer.parseInt(cartId));
 
