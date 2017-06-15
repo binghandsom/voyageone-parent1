@@ -903,7 +903,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                         doSetMainCategory(pr.getCommon(), pr.getFeed().getCatPath(), sxWorkLoadBean.getChannelId());
 //                        }
                         // 产品名称中文(common.fields.originalTitleCn)
-                        if ("0".equals(prCommonFields.getTranslateStatus())
+                        if (StringUtil.isEmpty(prCommonFields.getOriginalTitleCn()) && "0".equals(prCommonFields.getTranslateStatus())
                                 && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn())) {
                             prCommonFields.setOriginalTitleCn(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn());
                         }
