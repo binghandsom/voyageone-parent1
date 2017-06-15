@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtKlSkuDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtKlSkuModel" />
+    <sql id="Base_Column_List" >
+        `id`, `channel_id`, `org_channel_id`, `product_code`, `sku`, `kl_numiid`, `kl_sku_key`, 
+        `upc`, `creater`, `created`, `modified`, `modifier`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_kl_sku
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtKlSkuModel" >
+        update cms_bt_kl_sku
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="orgChannelId != null" >
+                `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR},
+            </if>
+            <if test="productCode != null" >
+                `product_code` = #{productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="sku != null" >
+                `sku` = #{sku,jdbcType=VARCHAR},
+            </if>
+            <if test="klNumiid != null" >
+                `kl_numiid` = #{klNumiid,jdbcType=VARCHAR},
+            </if>
+            <if test="klSkuKey != null" >
+                `kl_sku_key` = #{klSkuKey,jdbcType=VARCHAR},
+            </if>
+            <if test="upc != null" >
+                `upc` = #{upc,jdbcType=VARCHAR},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_kl_sku
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_kl_sku
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="orgChannelId != null" >
+                and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
+            </if>
+            <if test="productCode != null" >
+                and `product_code` = #{productCode,jdbcType=VARCHAR}
+            </if>
+            <if test="sku != null" >
+                and `sku` = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="klNumiid != null" >
+                and `kl_numiid` = #{klNumiid,jdbcType=VARCHAR}
+            </if>
+            <if test="klSkuKey != null" >
+                and `kl_sku_key` = #{klSkuKey,jdbcType=VARCHAR}
+            </if>
+            <if test="upc != null" >
+                and `upc` = #{upc,jdbcType=VARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_kl_sku
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="orgChannelId != null" >
+                and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
+            </if>
+            <if test="productCode != null" >
+                and `product_code` = #{productCode,jdbcType=VARCHAR}
+            </if>
+            <if test="sku != null" >
+                and `sku` = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="klNumiid != null" >
+                and `kl_numiid` = #{klNumiid,jdbcType=VARCHAR}
+            </if>
+            <if test="klSkuKey != null" >
+                and `kl_sku_key` = #{klSkuKey,jdbcType=VARCHAR}
+            </if>
+            <if test="upc != null" >
+                and `upc` = #{upc,jdbcType=VARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_kl_sku
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="orgChannelId != null" >
+                and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
+            </if>
+            <if test="productCode != null" >
+                and `product_code` = #{productCode,jdbcType=VARCHAR}
+            </if>
+            <if test="sku != null" >
+                and `sku` = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="klNumiid != null" >
+                and `kl_numiid` = #{klNumiid,jdbcType=VARCHAR}
+            </if>
+            <if test="klSkuKey != null" >
+                and `kl_sku_key` = #{klSkuKey,jdbcType=VARCHAR}
+            </if>
+            <if test="upc != null" >
+                and `upc` = #{upc,jdbcType=VARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtKlSkuModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_kl_sku
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                `channel_id`,
+            </if>
+            <if test="orgChannelId != null" >
+                `org_channel_id`,
+            </if>
+            <if test="productCode != null" >
+                `product_code`,
+            </if>
+            <if test="sku != null" >
+                `sku`,
+            </if>
+            <if test="klNumiid != null" >
+                `kl_numiid`,
+            </if>
+            <if test="klSkuKey != null" >
+                `kl_sku_key`,
+            </if>
+            <if test="upc != null" >
+                `upc`,
+            </if>
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `created`,
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="orgChannelId != null" >
+                #{orgChannelId,jdbcType=VARCHAR},
+            </if>
+            <if test="productCode != null" >
+                #{productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="sku != null" >
+                #{sku,jdbcType=VARCHAR},
+            </if>
+            <if test="klNumiid != null" >
+                #{klNumiid,jdbcType=VARCHAR},
+            </if>
+            <if test="klSkuKey != null" >
+                #{klSkuKey,jdbcType=VARCHAR},
+            </if>
+            <if test="upc != null" >
+                #{upc,jdbcType=VARCHAR},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>
