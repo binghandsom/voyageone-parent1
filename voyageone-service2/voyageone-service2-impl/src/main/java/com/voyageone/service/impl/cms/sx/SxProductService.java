@@ -6277,7 +6277,7 @@ public class SxProductService extends BaseService {
                     channelId, cartId, code, sku, e.getMessage());
             throw new Exception(errorMsg);
         }
-        return null;
+        return skuLogicQtyMap;
     }
 
 }
