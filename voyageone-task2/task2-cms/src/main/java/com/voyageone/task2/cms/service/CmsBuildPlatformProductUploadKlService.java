@@ -33,6 +33,7 @@ import com.voyageone.ecerp.interfaces.third.koala.support.KoalaApiException;
 import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.dao.cms.CmsBtKlSkuDao;
 import com.voyageone.service.dao.cms.CmsMtChannelConditionMappingConfigDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -42,10 +43,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
-import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.CmsMtChannelConditionMappingConfigModel;
-import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
-import com.voyageone.service.model.cms.CmsMtPlatformSkusModel;
+import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -69,6 +67,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -139,6 +138,9 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     // charis update
     // 特殊属性Key(七天无理由退货)
     private final static String Is7ToReturn = "is7ToReturn";
+
+    private static final int CART_ID = CartEnums.Cart.KL.getValue();
+
     @Autowired
     private DictService dictService;
     @Autowired
@@ -175,7 +177,8 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
     @Autowired
     private KoalaItemService koalaItemService;
-
+    @Autowired
+    private CmsBtKlSkuDao cmsBtKlSkuDao;
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -750,7 +753,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
             sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, numIId, CmsConstants.PlatformStatus.InStock, "", getTaskName());
 
             // 回写cms_bt_kl_sku
-//            insertCmsBtKlSku();
+            saveCmsBtKlSku(channelId, sxData, listSxCode, numIId, skuKeys);
 
             if (ChannelConfigEnums.Channel.SN.getId().equals(channelId)) {
                 // Sneakerhead
@@ -1461,6 +1464,80 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         }
 
         return colorAlias;
+    }
+
+    protected void saveCmsBtKlSku(String channelId, SxData sxData, List<String> codes, String numIId, SkuOuterIdResult[] skuKeys) {
+        if (StringUtils.isEmpty(channelId) || ListUtils.isNull(codes) || sxData == null) return;
+        String skuKey;
+        List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
+        for (String code : codes) {
+            // 取得产品信息
+            CmsBtProductModel productModel = productService.getProductByCode(channelId, code);
+            if (productModel == null
+                    || productModel.getPlatform(CART_ID) == null
+                    || ListUtils.isNull(productModel.getPlatform(CART_ID).getSkus())) continue;
+
+            List<BaseMongoMap<String, Object>> pSkus = productModel.getPlatform(CART_ID).getSkus();
+            for(BaseMongoMap<String, Object> pSku : pSkus) {
+                String pSkuCode = pSku.getStringAttribute("skuCode");
+                SkuOuterIdResult result = Stream.of(skuKeys).filter(sku -> pSkuCode.equals(sku.getSkuOuterId())).findFirst().orElse(null);
+                if (result == null) {
+                    skuKey = "";
+                } else {
+                    skuKey = result.getSkuKey();
+                }
+                BaseMongoMap<String, Object> sku = skuList.stream().filter(s -> pSkuCode.equals(s.getStringAttribute("skuCode"))).findFirst().orElse(null);
+                if (MapUtils.isEmpty(sku)) continue;
+
+                CmsBtKlSkuModel cmsBtKlSkuModel = fillCmsBtKlSkuModel(channelId, code, sku, skuKey, numIId, productModel.getOrgChannelId());
+
+
+                // 回写mysql的cms_bt_jm_sku表中(存在时更新，不存在时新增)
+                insertCmsBtKlSku(cmsBtKlSkuModel);
+            }
+        }
+
+    }
+
+    protected CmsBtKlSkuModel fillCmsBtKlSkuModel(String channelId, String productCode, BaseMongoMap<String, Object> klSku,
+                                                  String skuKey, String numIId, String orgChannelId ) {
+        CmsBtKlSkuModel cmsBtKlSkuModel = new CmsBtKlSkuModel();
+
+        cmsBtKlSkuModel.setChannelId(channelId);
+        cmsBtKlSkuModel.setOrgChannelId(orgChannelId);
+        cmsBtKlSkuModel.setKlNumiid(numIId);
+        cmsBtKlSkuModel.setProductCode(productCode);
+        cmsBtKlSkuModel.setSku(klSku.getStringAttribute("skuCode"));
+        cmsBtKlSkuModel.setKlSkuKey(skuKey);
+        cmsBtKlSkuModel.setUpc(klSku.getStringAttribute("barcode"));
+
+        cmsBtKlSkuModel.setModified(DateTimeUtil.getDate());
+        cmsBtKlSkuModel.setCreated(DateTimeUtil.getDate());
+        cmsBtKlSkuModel.setModifier(getTaskName());
+        cmsBtKlSkuModel.setCreater(getTaskName());
+
+        return cmsBtKlSkuModel;
+    }
+
+    protected void insertCmsBtKlSku(CmsBtKlSkuModel skuModel) {
+
+        CmsBtKlSkuModel cmsBtKlSkuModel = getCmsBtKlSkuModel(skuModel.getChannelId(), skuModel.getOrgChannelId(), skuModel.getProductCode(), skuModel.getSku());
+        if (cmsBtKlSkuModel == null) {
+
+            cmsBtKlSkuDao.insert(skuModel);
+        }
+    }
+
+    protected CmsBtKlSkuModel getCmsBtKlSkuModel(String channelId, String orgChannelId, String code, String sku) {
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("orgChannelId", orgChannelId);
+        map.put("channelId", channelId);
+        map.put("productCode", code);
+        map.put("sku", sku);
+        CmsBtKlSkuModel skuModel = cmsBtKlSkuDao.selectOne(map);
+
+        return skuModel;
     }
 
 }

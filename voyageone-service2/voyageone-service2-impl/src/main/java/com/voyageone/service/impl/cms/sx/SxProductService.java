@@ -20,6 +20,7 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -44,6 +45,10 @@ import com.voyageone.components.sneakerhead.enums.CnPlatformStatus;
 import com.voyageone.components.sneakerhead.service.SneakerheadApiService;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.components.tmall.service.TbProductService;
+import com.voyageone.ecerp.interfaces.third.koala.KoalaItemService;
+import com.voyageone.ecerp.interfaces.third.koala.beans.ItemImgUploadResponse;
+import com.voyageone.ecerp.interfaces.third.koala.beans.KoalaConfig;
+import com.voyageone.ecerp.interfaces.third.koala.support.KoalaApiException;
 import com.voyageone.ims.rule_expression.*;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
@@ -93,9 +98,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -211,6 +214,8 @@ public class SxProductService extends BaseService {
     @Autowired
     private ImageGroupService imageGroupService;
 
+    @Autowired
+    private KoalaItemService koalaItemService;
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
         if (!plainValue.endsWith(endStr))
@@ -541,6 +546,12 @@ public class SxProductService extends BaseService {
      * @param user        更新者
      */
     public Map<String, String> uploadImage(String channelId, int cartId, String groupId, ShopBean shopBean, Set<String> imageUrlSet, String user) throws Exception {
+        KoalaConfig koalaConfig = null;
+        if (CartEnums.Cart.KL.getId().equals(cartId)) {
+            koalaConfig = Shops.getShopKoala(channelId, String.valueOf(cartId));
+        }
+
+
         // Map<srcUrl, destUrl>
         Map<String, String> retUrls = new HashMap<>();
 
@@ -591,6 +602,12 @@ public class SxProductService extends BaseService {
                                 pictureId = picture[1];
                             }
                             // 20170227 增加上传图片到京东图片空间 charis END
+                        } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
+                            String[] picture = uploadImageByUrl_KL(srcUrl, koalaConfig, groupId);
+                            if (picture != null && picture.length > 0) {
+                                destUrl = picture[0];
+                                pictureId = picture[1];
+                            }
                         }
                     } catch (Exception e) {
                         // 上传图片出错时不抛出异常，具体的错误信息在上传图片方法里面已经输出了，这里不做任何处理
@@ -6278,6 +6295,73 @@ public class SxProductService extends BaseService {
             throw new Exception(errorMsg);
         }
         return skuLogicQtyMap;
+    }
+
+    public String[] uploadImageByUrl_KL(String picUrl, KoalaConfig koalaConfig, String groupId) throws Exception {
+        String imageUrl[] = {"",""};
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        int TIMEOUT_TIME = 10*1000;
+        int waitTime = 0;
+        int retry_times = 0;
+        int max_retry_times = 3;
+        InputStream is;
+        do {
+            try {
+                URL imgUrl = new URL(picUrl);
+                is = imgUrl.openStream();
+                byte[] byte_buf = new byte[1024];
+                int readBytes = 0;
+
+                while (true) {
+                    while (is.available() >= 0) {
+                        readBytes = is.read(byte_buf, 0, 1024);
+                        if (readBytes < 0)
+                            break;
+                        $debug("read " + readBytes + " bytes");
+                        waitTime = 0;
+                        baos.write(byte_buf, 0, readBytes);
+                    }
+                    if (readBytes < 0)
+                        break;
+
+                    Thread.sleep(1000);
+                    waitTime += 1000;
+
+                    if (waitTime >= TIMEOUT_TIME) {
+                        return null;
+                    }
+                }
+                is.close();
+            } catch (Exception e) {
+                if ("Connection reset".equals(e.getMessage())) {
+                    if (++retry_times < max_retry_times)
+                        continue;
+                }
+                throw new BusinessException(String.format("Fail to upload image[channelId: %s, cartId: %s, orgPicUrl: %s]%s", koalaConfig.getChannelId(), koalaConfig.getCartId(), picUrl, e.getMessage()));
+            }
+            break;
+        } while (true);
+
+        try {
+            ItemImgUploadResponse response = koalaItemService.imgUpload(koalaConfig, baos.toByteArray(), groupId);
+
+            imageUrl[0] = picUrl;
+            imageUrl[1] = response.getUrl();
+
+
+        } catch(KoalaApiException e) {
+            String failCause = "上传图片到考拉时出错！ msg:" + e.getMessage();
+            failCause = String.format("%s[channelId: %s, cartId: %s, orgPicUrl: %s]", failCause, koalaConfig.getChannelId(), koalaConfig.getCartId(), picUrl);
+            $error(failCause);
+            $error("errCode: " + e.getError().getCode());
+            $error("errMsg: " + e.getError().getMsg());
+            throw new BusinessException(failCause);
+        }
+
+
+
+        return imageUrl;
     }
 
 }
