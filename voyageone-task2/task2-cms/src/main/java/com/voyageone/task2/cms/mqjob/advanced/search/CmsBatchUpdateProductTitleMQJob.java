@@ -19,6 +19,7 @@ import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +36,7 @@ import java.util.Map;
  * @Create 2017-05-23 14:44
  */
 @Service
-@VOSubRabbitListener
+@RabbitListener()
 public class CmsBatchUpdateProductTitleMQJob extends TBaseMQCmsService<CmsBatchUpdateProductTitleMQMessageBody> {
 
     @Autowired

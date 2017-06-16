@@ -34,6 +34,8 @@ public class ProductPrice {
     private String autoSyncPriceMsrp; // channelId and cartId 中国建议售价配置的选项值
     private String autoSyncPriceSale; // channelId and cartId 中国最终售价配置的选项值
 
+    private Integer quantity;
+
     public String getClientMsrpPrice() {
         return clientMsrpPrice;
     }
@@ -185,5 +187,13 @@ public class ProductPrice {
 
     public void setAutoSyncPriceSale(String autoSyncPriceSale) {
         this.autoSyncPriceSale = autoSyncPriceSale;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 }

@@ -1331,9 +1331,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 productCommonField.setLongDesEn(feed.getLongDescription());
 //            }
 
-            if (newFlg || StringUtils.isEmpty(productCommonField.getLastReceivedOn()) || "1".equals(feed.getIsFeedReImport())) {
+//            if (newFlg || StringUtils.isEmpty(productCommonField.getLastReceivedOn()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setLastReceivedOn(feed.getLastReceivedOn());
-            }
+//            }
             // 税号集货: 不要设置
             // 税号个人: 不要设置
 //            if (newFlg || (StringUtils.isEmpty(productField.getHsCodePrivate()))) {
@@ -3366,9 +3366,18 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         String leafCategoryCnName = searchResult.getCnName().substring(searchResult.getCnName().lastIndexOf(">") + 1,
                                 searchResult.getCnName().length());
 
-                        // 设置中文名称
-                        prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(prodCommonField.getBrand()
-                                , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
+                        // 设置中文名称 产品名称 brand(英文) + " " + brand(中文) + " " + sizeTypeCn + " " + leafCategoryCnName 来生成
+                        TypeChannelBean typeChannelBean = null;
+                        if(!StringUtil.isEmpty(prodCommonField.getBrand()) && usjoi) {
+                            typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, "928", prodCommonField.getBrand(), "cn");
+                        }
+                        if(typeChannelBean != null && !StringUtil.isEmpty(typeChannelBean.getName())){
+                            prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(typeChannelBean.getName()
+                                    , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
+                        }else{
+                            prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(prodCommonField.getBrand()
+                                    , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
+                        }
                         $info(prodCommonField.getOriginalTitleCn());
                     }
                 }

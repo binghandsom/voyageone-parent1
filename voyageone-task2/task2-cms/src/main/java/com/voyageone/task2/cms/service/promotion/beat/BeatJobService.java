@@ -58,19 +58,10 @@ public class BeatJobService extends BaseCronTaskService {
      * 为 2 表示值类型错误。
      */
     private static int lastErrorTarget = 0;
-
-    static int getLastErrorTarget() {
-        return lastErrorTarget;
-    }
-
     private final CmsBeatInfoService beatInfoService;
-
     private final TbItemService tbItemService;
-
     private final TbSimpleItemService tbSimpleItemService;
-
     private final ImageCategoryService imageCategoryService;
-
     private final TbPictureService tbPictureService;
 
     @Autowired
@@ -82,6 +73,10 @@ public class BeatJobService extends BaseCronTaskService {
         this.tbSimpleItemService = tbSimpleItemService;
         this.tbPictureService = tbPictureService;
         this.imageCategoryService = imageCategoryService;
+    }
+
+    static int getLastErrorTarget() {
+        return lastErrorTarget;
     }
 
     @Override
@@ -185,14 +180,14 @@ public class BeatJobService extends BaseCronTaskService {
                                     apiException.getMessage());
                         }
 
-                        $debug(format("价格披露2 出现 %s 异常 -> %s", exception.getClass().getName(), message), exception);
+                        $error(format("价格披露2 出现 %s 异常 -> %s", exception.getClass().getName(), message), exception);
 
                         bean.setMessage(format("出现 %s 异常: %s", getGoodName(exception), message));
                         fail(bean);
 
                     } catch (Exception exception) {
 
-                        $debug("价格披露2 出现异常", exception);
+                        $error("价格披露2 出现异常", exception);
 
                         // 对未知异常发送错误报告
                         logIssue(exception, bean.getId());
@@ -201,8 +196,17 @@ public class BeatJobService extends BaseCronTaskService {
                         fail(bean);
                     }
 
+                    $info(bean.getProductCode() + " 图片替换完成");
+
                     bean.setModifier(getTaskName());
-                    beatInfoService.saveFlagAndMessage(bean);
+
+                    try {
+                        beatInfoService.saveFlagAndMessage(bean);
+                    } catch (Exception e) {
+                        $error("卧槽，这里也报错", e);
+                    }
+
+                    $info(bean.getProductCode() + " 数据也 save 好了");
                 }
             });
         }
@@ -295,13 +299,22 @@ public class BeatJobService extends BaseCronTaskService {
 
         private TbItemSchema tbItemSchema;
 
-        private CmsMtImageCategoryModel getUpCategory() {
+        private Context(CmsBtBeatInfoBean beatInfoBean) {
+
+            CmsBtPromotionModel promotion = beatInfoBean.getPromotion();
+
+            this.beatInfoBean = beatInfoBean;
+            this.shopBean = Shops.getShop(promotion.getChannelId(), promotion.getCartId());
+            this.configBean = JacksonUtil.json2Bean(beatInfoBean.getTask().getConfig(), ConfigBean.class);
+        }
+
+        private CmsMtImageCategoryModel getUpCategory() throws ApiException {
             if (upCategory == null)
                 upCategory = imageCategoryService.getCategory(shopBean, ImageCategoryType.Beat);
             return upCategory;
         }
 
-        private CmsMtImageCategoryModel getDownCategory() {
+        private CmsMtImageCategoryModel getDownCategory() throws ApiException {
             if (downCategory == null)
                 downCategory = imageCategoryService.getCategory(shopBean, ImageCategoryType.Main);
             return downCategory;
@@ -319,6 +332,7 @@ public class BeatJobService extends BaseCronTaskService {
 
         /**
          * 获取是否是同购店
+         *
          * @return 是否是同购店
          * @since 2.6.0
          */
@@ -327,15 +341,6 @@ public class BeatJobService extends BaseCronTaskService {
             CartEnums.Cart cart = CartEnums.Cart.getValueByID(shopBean.getCart_id());
 
             return CartEnums.Cart.isSimple(cart);
-        }
-
-        private Context(CmsBtBeatInfoBean beatInfoBean) {
-
-            CmsBtPromotionModel promotion = beatInfoBean.getPromotion();
-
-            this.beatInfoBean = beatInfoBean;
-            this.shopBean = Shops.getShop(promotion.getChannelId(), promotion.getCartId());
-            this.configBean = JacksonUtil.json2Bean(beatInfoBean.getTask().getConfig(), ConfigBean.class);
         }
 
         private InputStream getImageStream(String templateUrl, String imageName, boolean withPrice) {
@@ -366,7 +371,7 @@ public class BeatJobService extends BaseCronTaskService {
                 return url.openStream();
             } catch (Exception e) {
                 beatInfoBean.setImageStatus(ImageStatus.Error);
-                $debug("取图失败, 发生异常", e);
+                $info("取图失败, 发生异常", e);
                 throw new BreakBeatJobException("取图失败, 发生异常", e);
             }
         }

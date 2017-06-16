@@ -450,8 +450,10 @@ public class CmsProductSearchQueryService extends BaseService {
             List<String> inputCodeList = Arrays.asList(searchValue.getCodeList());
             inputCodeList = inputCodeList.stream().map(inputCode -> StringUtils.trimToEmpty(inputCode)).filter(inputCode -> !inputCode.isEmpty()).collect(Collectors.toList());
             if (inputCodeList.size() > 0) {
-                criteria = criteria.and("keywords").in(inputCodeList);
+                Criteria tempCriteria = new Criteria("skuCode").in(inputCodeList).or("productCode").in(inputCodeList).or("productModel").in(inputCodeList);
+                criteria = criteria.and(tempCriteria);
             }
+
         }
 
         // 获取模糊查询条件，用于检索产品名，描述

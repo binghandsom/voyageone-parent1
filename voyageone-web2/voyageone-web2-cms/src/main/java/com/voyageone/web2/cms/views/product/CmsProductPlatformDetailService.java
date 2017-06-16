@@ -229,6 +229,9 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 productPrice.setAutoSyncPriceSale(autoSyncPriceSaleOption.getConfigValue1());
                 productPrice.setClientMsrpPrice(cmsBtProduct.getCommon().getFields().getClientMsrpPrice());
                 productPrice.setClientNetPrice(cmsBtProduct.getCommon().getFields().getClientNetPrice());
+                // 追加平台级库存
+                productPrice.setQuantity(f.getIntAttribute("quantity"));
+
                 productPriceList.add(productPrice);
             }
 
