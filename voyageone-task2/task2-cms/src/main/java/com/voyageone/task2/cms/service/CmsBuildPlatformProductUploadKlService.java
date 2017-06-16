@@ -17,6 +17,7 @@ import com.voyageone.common.masterdate.schema.field.InputField;
 import com.voyageone.common.masterdate.schema.field.MultiCheckField;
 import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.masterdate.schema.value.Value;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
@@ -90,7 +91,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
 //    private final static String OptioinType_offsale = "offsale";
     private final static int OptioinType_offsale = 2;
     // 考拉平台商品状态（从未上架）
-    private  final static int OptionType_neverSale = 1;
+    private final static int OptionType_neverSale = 1;
     // 价格类型(市场价格)
     //private final static String PriceType_marketprice = "retail_price";
     // 价格类型(考拉价格)
@@ -179,6 +180,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     private KoalaItemService koalaItemService;
     @Autowired
     private CmsBtKlSkuDao cmsBtKlSkuDao;
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -219,7 +221,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
 
             // 是否可以运行的判断
             if (!TaskControlUtils.isRunnable(taskControlList)) {
-				$info("Runnable is false");
+                $info("Runnable is false");
                 return;
             }
 
@@ -233,7 +235,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
 
         // 准备按组分配线程（相同的组， 会共用相同的一组线程通道， 不同的组， 线程通道互不干涉）
         Map<String, List<String>> mapTaskControl = new HashMap<>();
-        taskControlBeanList.forEach((l)->{
+        taskControlBeanList.forEach((l) -> {
             String key = l.getCfg_val2();
             if (StringUtils.isEmpty(key)) {
                 key = "0";
@@ -251,7 +253,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
 
         while (true) {
 
-            mapTaskControl.forEach((k, v)->{
+            mapTaskControl.forEach((k, v) -> {
                 boolean blnCreateThread = false;
 
                 if (mapThread.containsKey(k)) {
@@ -298,11 +300,11 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
             if (blnAllOver) {
                 break;
             }
-			try {
-				Thread.sleep(1000 * 10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+            try {
+                Thread.sleep(1000 * 10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         }
 
@@ -320,7 +322,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
      * 平台产品上新主处理
      *
      * @param channelId String 渠道ID
-     * @param cartId String 平台ID
+     * @param cartId    String 平台ID
      */
     public void doProductUpload(String channelId, int cartId, int threadPoolCnt) throws Exception {
 
@@ -351,7 +353,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         // 创建线程池
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
         // 根据上新任务列表中的groupid循环上新处理
-        for(CmsBtSxWorkloadModel cmsBtSxWorkloadModel:sxWorkloadModels) {
+        for (CmsBtSxWorkloadModel cmsBtSxWorkloadModel : sxWorkloadModels) {
             // 启动多线程
             executor.execute(() -> uploadProduct(cmsBtSxWorkloadModel, shopProp, channelConfigValueMap, categoryMappingListMap));
         }
@@ -371,7 +373,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
      * 取得产品主类目与天猫平台叶子类目(或者平台一级类目)，以及feed类目id和天猫平台类目之间的mapping关系数据
      *
      * @param channelId 渠道id
-     * @param cartId 平台id
+     * @param cartId    平台id
      * @return Map<String, List<Map<String, String>>> 表中的配置mapping信息
      */
     protected Map<String, List<Map<String, String>>> getCategoryMapping(String channelId, int cartId) {
@@ -442,8 +444,8 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
      * 从cms_mt_channel_condition_mapping_config表中取得该渠道，平台对应的客户过来的类目id和天猫平台类目之间的mapping关系数据
      *
      * @param channelId 渠道id
-     * @param cartId 平台id
-     * @param propName 查询mapping分类(tt_main_category_leaf:主类目与平台叶子类目, tt_main_category:主类目与平台一级类目, tt_category:feed类目与平台一级类目)
+     * @param cartId    平台id
+     * @param propName  查询mapping分类(tt_main_category_leaf:主类目与平台叶子类目, tt_main_category:主类目与平台一级类目, tt_category:feed类目与平台一级类目)
      * @return List<CmsMtChannelConditionMappingConfigModel> 表中的配置mapping信息
      */
     protected List<CmsMtChannelConditionMappingConfigModel> getChannelConditionMappingInfo(String channelId, Integer cartId, String propName) {
@@ -452,7 +454,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         Map<String, String> conditionMappingParamMap = new HashMap<>();
         if (!StringUtils.isEmpty(channelId)) conditionMappingParamMap.put("channelId", channelId);
         if (cartId != null) conditionMappingParamMap.put("cartId", StringUtils.toString(cartId));
-        if (!StringUtils.isEmpty(propName))  conditionMappingParamMap.put("propName", propName);   // 查询mapping分类
+        if (!StringUtils.isEmpty(propName)) conditionMappingParamMap.put("propName", propName);   // 查询mapping分类
         return cmsMtChannelConditionMappingConfigDao.selectList(conditionMappingParamMap);
     }
 
@@ -460,10 +462,9 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
      * 平台产品上新处理
      *
      * @param cmsBtSxWorkloadModel CmsBtSxWorkloadModel WorkLoad信息
-     * @param shopProp ShopBean 店铺信息
+     * @param shopProp             ShopBean 店铺信息
      */
-    public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp, Map<String, String> channelConfigValueMap
-                , Map<String, List<Map<String, String>>> categoryMappingListMap){
+    public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp, Map<String, String> channelConfigValueMap, Map<String, List<Map<String, String>>> categoryMappingListMap) {
 
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
@@ -580,7 +581,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
 
             // 计算该商品下所有产品所有SKU的逻辑库存之和，新增时如果所有库存为0，报出不能上新错误
             int totalSkusLogicQty = 0;
-            for(String skuCode : skuLogicQtyMap.keySet()) {
+            for (String skuCode : skuLogicQtyMap.keySet()) {
                 totalSkusLogicQty += skuLogicQtyMap.get(skuCode);
             }
 
@@ -715,7 +716,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                     .collect(Collectors.toList());
 
             // 保存sku信息 返回销售属性别名
-           doSaveSkus(shopProp, klProductBean, sxData, skuLogicQtyMap, cmsColorList, cmsSizeList, channelConfigValueMap);
+            doSaveSkus(shopProp, klProductBean, sxData, skuLogicQtyMap, cmsColorList, cmsSizeList, channelConfigValueMap);
 
             // 新增商品
             // 如果所有产品所有SKU的库存之和为0时，直接报错
@@ -729,6 +730,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
             KoalaConfig koalaConfig = Shops.getShopKoala(channelId, String.valueOf(cartId));
             ItemAddPartResponse response;
             try {
+                $info("考拉上新schema[groupId:%s]:%s", groupId, klProductBean.toString());
                 response = koalaItemService.addPart(koalaConfig, klProductBean);
             } catch (KoalaApiException e) {
                 if (e.hasError()) {
@@ -760,7 +762,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                 try {
                     sxProductService.uploadCnInfo(sxData);
                 } catch (IOException io) {
-                    throw new BusinessException("上新成功!但在推送给美国数据库时发生异常!"+ io.getMessage());
+                    throw new BusinessException("上新成功!但在推送给美国数据库时发生异常!" + io.getMessage());
                 }
             }
         } catch (Exception ex) {
@@ -783,7 +785,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
             // 如果上新数据中的errorMessage为空
             if (StringUtils.isEmpty(sxData.getErrorMessage())) {
                 // nullpoint错误的处理
-                if(StringUtils.isNullOrBlank2(ex.getMessage())) {
+                if (StringUtils.isNullOrBlank2(ex.getMessage())) {
                     sxData.setErrorMessage("出现不可预知的错误，请跟管理员联系! " + ex.getStackTrace()[0].toString());
                     ex.printStackTrace();
                 } else {
@@ -805,10 +807,10 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     /**
      * 取得主类目到天猫一级类目的匹配结果
      *
-     * @param mainCatPath 主类目
-     * @param brand 品牌
-     * @param sizeType 适用人群
-     * @param ttPropName 匹配方式
+     * @param mainCatPath            主类目
+     * @param brand                  品牌
+     * @param sizeType               适用人群
+     * @param ttPropName             匹配方式
      * @param categoryMappingListMap 当前渠道和平台设置类目和天猫平台类目(叶子类目或平台一级类目)匹配信息列表map
      * @return List<CmsMtChannelConditionMappingConfigModel> 表中的配置mapping信息
      */
@@ -838,10 +840,10 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
      * 设置考拉上新产品用共通属性
      * 不包含"sku属性","sku价格","sku库存","自定义属性值别名","SKU外部ID"的值
      *
-     * @param sxData sxData 上新产品对象
+     * @param sxData             sxData 上新产品对象
      * @param platformCategoryId String     平台类目id
-     * @param shopProp ShopBean             店铺信息
-     * @param klCommonSchema CmsMtPlatformCategorySchemaModel  考拉共通schema数据
+     * @param shopProp           ShopBean             店铺信息
+     * @param klCommonSchema     CmsMtPlatformCategorySchemaModel  考拉共通schema数据
      * @param platformSchemaData CmsMtPlatformCategorySchemaModel  主产品类目对应的平台schema数据
      * @return ItemAddPartRequest 考拉上新用bean
      * @throws BusinessException
@@ -883,18 +885,33 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         klAddBean.setShortTitle(klCommonInfoMap.get("short_title")); // 短标题
         klAddBean.setTenWordsDesc(klCommonInfoMap.get("ten_words_desc")); // 十字描述
         // 商品货号
-        String productModel = null;
+        String itemNO = null;
         if (mainProduct.getPlatform(sxData.getCartId()) != null) {
             if (mainProduct.getPlatform(sxData.getCartId()).getFields() != null) {
-                productModel = mainProduct.getPlatform(sxData.getCartId()).getFields().getStringAttribute("productModel");
+                itemNO = mainProduct.getPlatform(sxData.getCartId()).getFields().getStringAttribute("item_NO");
             }
         }
-        if (StringUtils.isEmpty(productModel)) {
+        if (StringUtils.isEmpty(itemNO)) {
             // 默认使用model来设置
+            // TODO:之后可能一个group一个code,那就改成code
             klAddBean.setItemNO(mainProduct.getCommonNotNull().getFieldsNotNull().getModel());
         } else {
             // 如果有填了的话, 那就用运营自己填写的来设置
-            klAddBean.setItemNO(productModel);
+            klAddBean.setItemNO(itemNO);
+        }
+        // 商品外键id
+        String itemOuterId = null;
+        if (mainProduct.getPlatform(sxData.getCartId()) != null) {
+            if (mainProduct.getPlatform(sxData.getCartId()).getFields() != null) {
+                itemOuterId = mainProduct.getPlatform(sxData.getCartId()).getFields().getStringAttribute("Item_outer_id");
+            }
+        }
+        if (StringUtils.isEmpty(itemOuterId)) {
+            // 默认使用model来设置
+            klAddBean.setItemOuterId(mainProduct.getCommonNotNull().getFieldsNotNull().getModel());
+        } else {
+            // 如果有填了的话, 那就用运营自己填写的来设置
+            klAddBean.setItemOuterId(itemOuterId);
         }
         klAddBean.setBrandId(Long.valueOf(sxData.getBrandCode())); // 品牌id
         klAddBean.setOriginalCountryCodeId(klCommonInfoMap.get("original_country_code_id")); // 原产国id
@@ -936,7 +953,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                 weight = f.getDefaultValue();
             }
         }
-        if(StringUtils.isEmpty(weight) || BigDecimal.ZERO.compareTo(new BigDecimal(weight)) == 0) weight = "1";
+        if (StringUtils.isEmpty(weight) || BigDecimal.ZERO.compareTo(new BigDecimal(weight)) == 0) weight = "1";
         klAddBean.setGrossWeight(weight);
 
         // 详情描述
@@ -994,12 +1011,11 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
             $error(errMsg, ex);
             throw new BusinessException("考拉上传图片失败!" + ex.getMessage());
         }
-        String strUrls = mapUrls.values().stream().map(url->url + Separtor_Caret + "1").collect(Collectors.joining(Separtor_Vertical)) // 商品图片
+        String strUrls = mapUrls.values().stream().map(url -> url + Separtor_Caret + "1").collect(Collectors.joining(Separtor_Vertical)) // 商品图片
                 + Separtor_Vertical
-                + mapUrls.values().stream().map(url->url + Separtor_Caret + "2").collect(Collectors.joining(Separtor_Vertical)); // App图片
+                + mapUrls.values().stream().map(url -> url + Separtor_Caret + "2").collect(Collectors.joining(Separtor_Vertical)); // App图片
         klAddBean.setImageUrls(strUrls);
 
-        // TODO:类目属性
         // 调用共通函数取得商品属性列表，用户自行输入的类目属性ID和用户自行输入的属性值Map
         Map<String, String> klProductAttrMap = getKlProductAttributes(platformSchemaData, shopProp, expressionParser, blnIsSmartSx);
         klAddBean.setPropertyValueIdList(klProductAttrMap.get(Attributes));
@@ -1011,10 +1027,10 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     /**
      * 取得考拉商品共通属性值
      *
-     * @param klCommonSchema CmsMtPlatformCategorySchemaModel  考拉共通schema数据
-     * @param shopBean ShopBean  店铺信息
+     * @param klCommonSchema   CmsMtPlatformCategorySchemaModel  考拉共通schema数据
+     * @param shopBean         ShopBean  店铺信息
      * @param expressionParser ExpressionParser  解析子
-     * @param blnIsSmartSx 是否强制使用智能上新
+     * @param blnIsSmartSx     是否强制使用智能上新
      * @return Map<String, String> 考拉商品共通属性
      */
     private Map<String, String> getKlCommonInfo(CmsMtPlatformCategorySchemaModel klCommonSchema,
@@ -1024,7 +1040,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
 
         // 取得考拉共通schema数据中的propsItem(XML字符串)
         String propsItem = klCommonSchema.getPropsProduct();
-        List<Field> itemFieldList =null;
+        List<Field> itemFieldList = null;
         if (!StringUtils.isEmpty(propsItem)) {
             // 将取出的propsItem转换为字段列表
             itemFieldList = SchemaReader.readXmlForList(propsItem);
@@ -1061,7 +1077,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                 switch (fieldValue.getType()) {
                     case SINGLECHECK: {
                         // 输入类型input_type为1(单选)的时候
-                        retAttrMap.put(fieldId, ((SingleCheckField)fieldValue).getValue().getValue());
+                        retAttrMap.put(fieldId, ((SingleCheckField) fieldValue).getValue().getValue());
                         break;
                     }
                     case MULTICHECK: {
@@ -1092,9 +1108,9 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
      * 取得考拉商品属性值
      *
      * @param platformSchemaData CmsMtPlatformCategorySchemaModel  主产品类目对应的平台schema数据
-     * @param shopBean ShopBean  店铺信息
-     * @param expressionParser ExpressionParser  解析子
-     * @param blnIsSmartSx 是否强制使用智能上新
+     * @param shopBean           ShopBean  店铺信息
+     * @param expressionParser   ExpressionParser  解析子
+     * @param blnIsSmartSx       是否强制使用智能上新
      * @return Map<String, String> 考拉类目属性
      */
     private Map<String, String> getKlProductAttributes(CmsMtPlatformCategorySchemaModel platformSchemaData,
@@ -1104,7 +1120,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
 
         // 取得schema数据中的propsItem(XML字符串)
         String propsItem = platformSchemaData.getPropsItem();
-        List<Field> itemFieldList =null;
+        List<Field> itemFieldList = null;
         if (!StringUtils.isEmpty(propsItem)) {
             // 将取出的propsItem转换为字段列表
             itemFieldList = SchemaReader.readXmlForList(propsItem);
@@ -1147,7 +1163,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                     case SINGLECHECK: {
                         // 输入类型input_type为1(单选)的时候,设置【商品属性列表】
                         // 属性值设置(如果有多个，则用|分隔 "属性值1|属性值2|属性值3")
-                        sbAttributes.append(((SingleCheckField)fieldValue).getValue().getValue()); // 属性值id
+                        sbAttributes.append(((SingleCheckField) fieldValue).getValue().getValue()); // 属性值id
                         sbAttributes.append(Separtor_Vertical);                // "|"
                         break;
                     }
@@ -1197,9 +1213,9 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
      * 取得指定SKU的价格
      *
      * @param cmsBtProductModelSku BaseMongoMap<String, Object> SKU对象
-     * @param channelId String 渠道id
-     * @param cartId String 平台id
-     * @param priceCode String 价格类型 ("sale_price"(考拉价))
+     * @param channelId            String 渠道id
+     * @param cartId               String 平台id
+     * @param priceCode            String 价格类型 ("sale_price"(考拉价))
      * @return double SKU价格
      */
     private double getSkuPrice(BaseMongoMap<String, Object> cmsBtProductModelSku, String channelId, String cartId, String priceKey, String priceCode) {
@@ -1228,7 +1244,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
      * 1:颜色和尺寸属性都有 2:只有颜色没有尺寸属性 3:没有颜色只有尺寸属性 4:没有颜色没有尺寸属性
      *
      * @param cmsColorList List<CmsMtPlatformSkusModel> 颜色对象列表
-     * @param cmsSizeList List<CmsMtPlatformSkusModel> 颜色对象列表
+     * @param cmsSizeList  List<CmsMtPlatformSkusModel> 颜色对象列表
      * @param orgChannelId String 原始channelId(子店channelId)
      * @return String 当前平台主类目对应的销售属性状况
      */
@@ -1261,8 +1277,8 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     /**
      * 取得cms_mt_channel_config配置表中配置的值集合
      *
-     * @param channelId String 渠道id
-     * @param cartId int 平台id
+     * @param channelId             String 渠道id
+     * @param cartId                int 平台id
      * @param channelConfigValueMap 返回cms_mt_channel_config配置表中配置的值集合用
      */
     public void doChannelConfigInit(String channelId, int cartId, Map<String, String> channelConfigValueMap) {
@@ -1277,8 +1293,8 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     /**
      * 取得cms_mt_channel_config配置表中配置的值
      *
-     * @param channelId String 渠道id
-     * @param configKey CmsConstants.ChannelConfig ConfigKey
+     * @param channelId  String 渠道id
+     * @param configKey  CmsConstants.ChannelConfig ConfigKey
      * @param configCode String ConfigCode
      * @return String cms_mt_channel_config配置表中配置的值
      */
@@ -1304,18 +1320,18 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     /**
      * 全量保存考拉商品的SKU属性
      *
-     * @param shopProp ShopBean 店铺信息
-     * @param klProductBean ItemAddPartRequest   产品对象
-     * @param sxData SxData 产品对象
-     * @param skuLogicQtyMap Map<String, Integer> 所有SKU的逻辑库存列表
-     * @param cmsColorList List<CmsMtPlatformSkusModel> 该类目对应的颜色SKU列表
-     * @param cmsSizeList List<CmsMtPlatformSkusModel> 该类目对应的尺寸SKU列表
+     * @param shopProp              ShopBean 店铺信息
+     * @param klProductBean         ItemAddPartRequest   产品对象
+     * @param sxData                SxData 产品对象
+     * @param skuLogicQtyMap        Map<String, Integer> 所有SKU的逻辑库存列表
+     * @param cmsColorList          List<CmsMtPlatformSkusModel> 该类目对应的颜色SKU列表
+     * @param cmsSizeList           List<CmsMtPlatformSkusModel> 该类目对应的尺寸SKU列表
      * @param channelConfigValueMap cms_mt_channel_config配置表中配置的值集合
      */
     protected void doSaveSkus(ShopBean shopProp, ItemAddPartRequest klProductBean, SxData sxData,
-                                   Map<String, Integer> skuLogicQtyMap, List<CmsMtPlatformSkusModel> cmsColorList,
-                                   List<CmsMtPlatformSkusModel> cmsSizeList,
-                                   Map<String, String> channelConfigValueMap) {
+                              Map<String, Integer> skuLogicQtyMap, List<CmsMtPlatformSkusModel> cmsColorList,
+                              List<CmsMtPlatformSkusModel> cmsSizeList,
+                              Map<String, String> channelConfigValueMap) {
 
         List<CmsBtProductModel> productList = sxData.getProductList();
         List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
@@ -1358,7 +1374,10 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
             // 属性图片
             try {
                 String srcPicUrl = sxProductService.resolveDict("属性图片模板", expressionParser, shopProp, getTaskName(), null);
-                picUrl = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), Long.toString(sxData.getGroupId()), shopProp, new HashSet<String>(){{this.add(srcPicUrl);}}, getTaskName()).get(srcPicUrl);
+                srcPicUrl = String.format(srcPicUrl, sxProductService.getProductImages(objProduct, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE, sxData.getCartId()).get(0).getName());
+                Set<String> setUrl = new HashSet<>();
+                setUrl.add(srcPicUrl);
+                picUrl = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), Long.toString(sxData.getGroupId()), shopProp, setUrl, getTaskName()).get(srcPicUrl);
             } catch (Exception e) {
                 $error(e);
                 throw new BusinessException("考拉取得属性图片模板失败!" + e.getMessage());
@@ -1390,19 +1409,23 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                     switch (salePropStatus) {
                         case SaleProp_Both_Color_Size_1:
                             // 颜色和尺码属性都有时
-                            sbPropertyValue.append(colorModel.getAttrValue()).append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 颜色
+//                            sbPropertyValue.append(colorModel.getAttrValue()).append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 颜色
+                            sbPropertyValue.append(colorModel.getAttrValue().split(Separtor_Colon)[0]).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 自定义颜色
                             sbPropertyValue.append(Separtor_Semicolon);
-                            sbPropertyValue.append(sizeVal).append(Separtor_Colon).append(sizeSx); // 尺码
+//                            sbPropertyValue.append(sizeVal).append(Separtor_Colon).append(sizeSx); // 尺码
+                            sbPropertyValue.append(sizeVal.split(Separtor_Colon)[0]).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(sizeSx); // 自定义尺码
                             sbPropertyValue.append(Separtor_Vertical);
                             break;
                         case SaleProp_Only_Color_2:
                             // 只有颜色属性时
-                            sbPropertyValue.append(colorModel.getAttrValue()).append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 颜色
+//                            sbPropertyValue.append(colorModel.getAttrValue()).append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 颜色
+                            sbPropertyValue.append(colorModel.getAttrValue().split(Separtor_Colon)[0]).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 自定义颜色
                             sbPropertyValue.append(Separtor_Vertical);
                             break;
                         case SaleProp_Only_Size_3:
                             // 只有尺码属性时
-                            sbPropertyValue.append(sizeVal).append(Separtor_Colon).append(colorAlias + sizeSx); // 尺码
+//                            sbPropertyValue.append(sizeVal).append(Separtor_Colon).append(colorAlias + sizeSx); // 尺码
+                            sbPropertyValue.append(sizeVal.split(Separtor_Colon)[0]).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(sizeSx); // 自定义尺码
                             sbPropertyValue.append(Separtor_Vertical);
                             break;
                     }
@@ -1414,9 +1437,12 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                     Double skuPrice = getSkuPrice(objSku, shopProp.getOrder_channel_id(), shopProp.getCart_id(), CmsConstants.ChannelConfig.PRICE_SALE_KEY, CmsConstants.ChannelConfig.PRICE_SALE_PRICE_CODE);
                     sbSalePrices.append(Double.toString(skuPrice)).append(Separtor_Vertical);
 
-                    sbBarcode.append(objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.barcode.name())).append(Separtor_Vertical);
+//                    sbBarcode.append(objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.barcode.name())).append(Separtor_Vertical);
+                    sbBarcode.append(pSkuCode).append(Separtor_Vertical);
                     // SKU库存
-                    sbStock.append(skuLogicQtyMap.get(pSkuCode)).append(Separtor_Vertical);
+                    Integer qty = skuLogicQtyMap.get(pSkuCode);
+                    if (qty == null || qty.intValue() < 0) qty = 0;
+                    sbStock.append(qty).append(Separtor_Vertical);
                     // SKU外部ID(skuCode)
                     sbOuterId.append(pSkuCode).append(Separtor_Vertical);
                 }
@@ -1443,8 +1469,8 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     /**
      * 取得当前产品code对应的颜色别名
      *
-     * @param objProduct  产品产品
-     * @param cartId 平台id
+     * @param objProduct            产品产品
+     * @param cartId                平台id
      * @param channelConfigValueMap cms_mt_channel_config配置表中配置的值集合
      * @return String 颜色别名值
      */
@@ -1478,7 +1504,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                     || ListUtils.isNull(productModel.getPlatform(CART_ID).getSkus())) continue;
 
             List<BaseMongoMap<String, Object>> pSkus = productModel.getPlatform(CART_ID).getSkus();
-            for(BaseMongoMap<String, Object> pSku : pSkus) {
+            for (BaseMongoMap<String, Object> pSku : pSkus) {
                 String pSkuCode = pSku.getStringAttribute("skuCode");
                 SkuOuterIdResult result = Stream.of(skuKeys).filter(sku -> pSkuCode.equals(sku.getSkuOuterId())).findFirst().orElse(null);
                 if (result == null) {
@@ -1500,7 +1526,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     }
 
     protected CmsBtKlSkuModel fillCmsBtKlSkuModel(String channelId, String productCode, BaseMongoMap<String, Object> klSku,
-                                                  String skuKey, String numIId, String orgChannelId ) {
+                                                  String skuKey, String numIId, String orgChannelId) {
         CmsBtKlSkuModel cmsBtKlSkuModel = new CmsBtKlSkuModel();
 
         cmsBtKlSkuModel.setChannelId(channelId);
