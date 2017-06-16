@@ -1828,6 +1828,8 @@ public class CmsProductDetailService extends BaseViewService {
         if ("928".equals(channelId)) {
 
             updateMap.put("common.fields.translateStatus", "1");
+            updateMap.put("common.fields.translator", username);
+            updateMap.put("common.fields.translateTime", DateTimeUtil.getNow());
 
             // 聚美产品名 / 聚美长标题 / 聚美中标题
             CmsBtProductModel_Platform_Cart jmCart = productModel.getPlatform(CartEnums.Cart.JM);
