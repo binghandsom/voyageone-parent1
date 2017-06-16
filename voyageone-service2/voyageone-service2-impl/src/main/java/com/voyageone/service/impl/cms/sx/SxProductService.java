@@ -547,7 +547,7 @@ public class SxProductService extends BaseService {
      */
     public Map<String, String> uploadImage(String channelId, int cartId, String groupId, ShopBean shopBean, Set<String> imageUrlSet, String user) throws Exception {
         KoalaConfig koalaConfig = null;
-        if (CartEnums.Cart.KL.getId().equals(cartId)) {
+        if (CartEnums.Cart.KL.getValue() == cartId) {
             koalaConfig = Shops.getShopKoala(channelId, String.valueOf(cartId));
         }
 
@@ -602,7 +602,7 @@ public class SxProductService extends BaseService {
                                 pictureId = picture[1];
                             }
                             // 20170227 增加上传图片到京东图片空间 charis END
-                        } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
+                        } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.NTES.getId())) {
                             String[] picture = uploadImageByUrl_KL(srcUrl, koalaConfig, groupId);
                             if (picture != null && picture.length > 0) {
                                 destUrl = picture[0];
@@ -659,6 +659,12 @@ public class SxProductService extends BaseService {
                             pictureId = picture[1];
                         }
                         // 20170227 增加上传图片到京东图片空间 charis END
+                    } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.NTES.getId())) {
+                        String[] picture = uploadImageByUrl_KL(srcUrl, koalaConfig, groupId);
+                        if (picture != null && picture.length > 0) {
+                            destUrl = picture[0];
+                            pictureId = picture[1];
+                        }
                     }
                 } catch (Exception e) {
                     // 上传图片出错时不抛出异常，具体的错误信息在上传图片方法里面已经输出了,这里不做任何处理
