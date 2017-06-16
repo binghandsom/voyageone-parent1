@@ -1394,7 +1394,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                             break;
                         case SaleProp_Only_Color_2:
                             // 只有颜色属性时
-                            sbPropertyValue.append(colorModel.getAttrValue()).append(Separtor_Colon).append(colorAlias + sizeSx).append(Separtor_Colon).append(picUrl); // 颜色
+                            sbPropertyValue.append(colorModel.getAttrValue()).append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 颜色
                             sbPropertyValue.append(Separtor_Vertical);
                             break;
                         case SaleProp_Only_Size_3:
