@@ -44,6 +44,9 @@
         <!-- 聚美上新 -->
         <task:scheduled ref="CmsBuildPlatformProductUploadJMJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
+        <!-- 考拉上新 -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadKlJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
         <!-- 各个平台增量更新 -->
         <task:scheduled ref="CmsBuildPlatformAttributeUpdateTmJob" method="run" cron="0 0/1 0-23 * * ?"/>
         <task:scheduled ref="CmsBuildPlatformAttributeUpdateTmTongGouJob" method="run" cron="0 0/1 0-23 * * ?"/>
