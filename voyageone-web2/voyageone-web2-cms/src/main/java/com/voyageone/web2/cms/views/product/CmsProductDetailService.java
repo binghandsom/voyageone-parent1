@@ -1827,6 +1827,8 @@ public class CmsProductDetailService extends BaseViewService {
         // 如果是Liking(928)，Master -> originalTitleCn修改后同步修改【聚美：产品名，长标题，中标题】【匠心界：商品名称】【官网同构：标题】
         if ("928".equals(channelId)) {
 
+            updateMap.put("common.fields.translateStatus", "1");
+
             // 聚美产品名 / 聚美长标题 / 聚美中标题
             CmsBtProductModel_Platform_Cart jmCart = productModel.getPlatform(CartEnums.Cart.JM);
             if (jmCart != null && jmCart.getFields() != null) {
