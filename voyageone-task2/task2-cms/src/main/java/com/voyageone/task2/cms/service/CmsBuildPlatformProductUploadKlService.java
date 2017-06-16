@@ -1,12 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.google.common.base.Joiner;
-import com.jd.open.api.sdk.domain.Prop;
-import com.jd.open.api.sdk.domain.ware.Sku;
-import com.mongodb.BulkWriteResult;
-import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -22,7 +17,9 @@ import com.voyageone.common.masterdate.schema.field.InputField;
 import com.voyageone.common.masterdate.schema.field.MultiCheckField;
 import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.masterdate.schema.value.Value;
-import com.voyageone.common.util.*;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdSaleService;
 import com.voyageone.components.jd.service.JdSkuService;
 import com.voyageone.components.jd.service.JdWareNewService;
@@ -43,7 +40,6 @@ import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.sx.PlatformWorkloadAttribute;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
@@ -585,7 +581,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                 totalSkusLogicQty += skuLogicQtyMap.get(skuCode);
             }
 
-//            StringBuilder sbFailCause = new StringBuilder("");
+//            StringBuffer sbFailCause = new StringBuffer("");
             // delete by desmond 2016/12/26 start 暂时先注释掉，以后有可能还是要删除库存为0的SKU
 //            // 考拉上新的时候，以前库存为0的SKU也上，现在改为不上库存为0的SKU不要上新
 //            // 无库存的skuId列表（包含之前卖，现在改为不在考拉上售卖的SKU）,只在更新的时候用
@@ -715,11 +711,8 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                     .sorted(Comparator.comparing(s -> s.getIdx()))
                     .collect(Collectors.toList());
 
-            // 当前平台主类目对应的销售属性状况(1:颜色和尺寸属性都有 2:只有颜色没有尺寸属性 3:没有颜色只有尺寸属性 4:没有颜色没有尺寸属性)
-            String salePropStatus = getSalePropStatus(cmsColorList, cmsSizeList, mainProduct.getOrgChannelId());
-
             // 保存sku信息 返回销售属性别名
-           doSaveSkus(shopProp, klProductBean, sxData, skuLogicQtyMap, cmsColorList, cmsSizeList, salePropStatus, channelConfigValueMap);
+           doSaveSkus(shopProp, klProductBean, sxData, skuLogicQtyMap, cmsColorList, cmsSizeList, channelConfigValueMap);
 
             // 新增商品
             // 如果所有产品所有SKU的库存之和为0时，直接报错
@@ -739,7 +732,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                     if (e.getError().getSubErrors().size() > 0) {
                         StringBuffer sb = new StringBuffer("");
                         for (KoalaApiError.ErrorResponseBean.SubErrorsBean errorsBean : e.getError().getSubErrors()) {
-                            sb.append(errorsBean.toString()).append(";");
+                            sb.append(errorsBean.toString()).append(Separtor_Semicolon);
                         }
                         throw new BusinessException(sb.toString());
                     } else {
@@ -980,10 +973,13 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                 if (!StringUtils.isEmpty(picUrl)) listPicNameUrl.add(picUrl);
 
             } catch (Exception ex) {
-                String errMsg = String.format("考拉取得商品主图信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s] [PicName:%s]",
+                String errMsg = String.format("考拉取得商品主图信息失败![ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s] [PicName:%s]",
                         channelId, cartId, sxData.getGroupId(), platformCategoryId, "商品图片-" + i);
                 $error(errMsg, ex);
             }
+        }
+        if (listPicNameUrl.isEmpty()) {
+            throw new BusinessException("考拉取得商品主图信息失败!");
         }
         // 上传
         Map<String, String> mapUrls;
@@ -998,13 +994,13 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         String strUrls = mapUrls.values().stream().map(url->url + Separtor_Caret + "1").collect(Collectors.joining(Separtor_Vertical)) // 商品图片
                 + Separtor_Vertical
                 + mapUrls.values().stream().map(url->url + Separtor_Caret + "2").collect(Collectors.joining(Separtor_Vertical)); // App图片
-//        klAddBean.setImageUrls(strUrls);
+        klAddBean.setImageUrls(strUrls);
 
         // TODO:类目属性
         // 调用共通函数取得商品属性列表，用户自行输入的类目属性ID和用户自行输入的属性值Map
         Map<String, String> klProductAttrMap = getKlProductAttributes(platformSchemaData, shopProp, expressionParser, blnIsSmartSx);
-//        klAddBean.setPropertyValueIdList(klProductAttrMap.get(Attributes));
-//        klAddBean.setTextPropertyNameId(klProductAttrMap.get(Input_Strs));
+        klAddBean.setPropertyValueIdList(klProductAttrMap.get(Attributes));
+        klAddBean.setTextPropertyNameId(klProductAttrMap.get(Input_Strs));
 
         return klAddBean;
     }
@@ -1125,9 +1121,9 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         }
 
         // 商品属性列表,多组之间用|分隔，格式:vid1|vid2
-        StringBuilder sbAttributes = new StringBuilder();
+        StringBuffer sbAttributes = new StringBuffer();
         // 用户自行输入的属性值,结构:‘aid1^输入值1|aid2^输入值2’
-        StringBuilder sbInputStrs = new StringBuilder();
+        StringBuffer sbInputStrs = new StringBuffer();
 
         // 如果list为空说明没有mappingg过，不用设置
         if (attrMap != null && attrMap.size() > 0 && itemFieldList != null) {
@@ -1192,51 +1188,6 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         retAttrMap.put(Input_Strs, sbInputStrs.toString());
 
         return retAttrMap;
-    }
-
-    /**
-     * 取得所有SKU价格的最高价格
-     *
-     * @param skuList List<BaseMongoMap<String, Object>> 所有sku对象列表
-     * @param channelId String 渠道id
-     * @param cartId String 平台id
-     * @param priceKey
-     * @param priceCode String 价格类型
-     * @return double 所有产品全部SKU的最高价格
-     */
-    private Double getItemPrice(List<BaseMongoMap<String, Object>> skuList, String channelId, String cartId, String priceKey, String priceCode) {
-        // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
-        // priceType:"retail_price"(市场价)  "sale_price"(考拉价)
-        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, priceKey, cartId + priceCode);
-
-        // 检查一下
-        String sxPricePropName;
-        if (sxPriceConfig == null) {
-            return 0.0;
-        } else {
-            // 取得价格属性名
-            sxPricePropName = sxPriceConfig.getConfigValue1();
-            if (StringUtils.isEmpty(sxPricePropName)) {
-                return 0.0;
-            }
-        }
-
-        Double resultPrice = 0.0;
-        // 如果skuList为空（可能所有的sku都没有库存），直接返回0.0,否则后面会报"No value present"错误
-        if (ListUtils.isNull(skuList) || skuList.stream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).count() == 0) {
-            return 0.0;
-        }
-
-        if (CmsConstants.ChannelConfig.PRICE_SALE_PRICE_CODE.equals(priceCode)) {//PriceType_jdprice
-            resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).max().getAsDouble();
-        } else if (CmsConstants.ChannelConfig.PRICE_RETAIL_PRICE_CODE.equals(priceCode)) {//PriceType_marketprice
-            // 如果是市场价"retail_price"，则取个平台相应的售价(platform.P29.sku.priceMsrp)
-            resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).max().getAsDouble();
-        } else {
-            $warn("取得所有SKU价格的最高价格时传入的priceType不正确 [priceType:%s]" + priceCode);
-        }
-
-        return resultPrice;
     }
 
     /**
@@ -1350,144 +1301,139 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     /**
      * 全量保存考拉商品的SKU属性
      *
-//     * @param targetProductBean JdProductBean   产品对象
-     * @param shop ShopBean 店铺信息
+     * @param shopProp ShopBean 店铺信息
+     * @param klProductBean ItemAddPartRequest   产品对象
      * @param sxData SxData 产品对象
      * @param skuLogicQtyMap Map<String, Integer> 所有SKU的逻辑库存列表
      * @param cmsColorList List<CmsMtPlatformSkusModel> 该类目对应的颜色SKU列表
      * @param cmsSizeList List<CmsMtPlatformSkusModel> 该类目对应的尺寸SKU列表
-     * @param salePropStatus String 当前平台主类目对应的销售属性状况
      * @param channelConfigValueMap cms_mt_channel_config配置表中配置的值集合
      */
-    protected void doSaveSkus(ShopBean shop, ItemAddPartRequest klProductBean, SxData sxData,
+    protected void doSaveSkus(ShopBean shopProp, ItemAddPartRequest klProductBean, SxData sxData,
                                    Map<String, Integer> skuLogicQtyMap, List<CmsMtPlatformSkusModel> cmsColorList,
-                                   List<CmsMtPlatformSkusModel> cmsSizeList, String salePropStatus,
+                                   List<CmsMtPlatformSkusModel> cmsSizeList,
                                    Map<String, String> channelConfigValueMap) {
 
         List<CmsBtProductModel> productList = sxData.getProductList();
         List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
+        ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
+
+        // 当前平台主类目对应的销售属性状况(1:颜色和尺寸属性都有 2:只有颜色没有尺寸属性 3:没有颜色只有尺寸属性 4:没有颜色没有尺寸属性)
+        String salePropStatus = getSalePropStatus(cmsColorList, cmsSizeList, sxData.getMainProduct().getOrgChannelId());
 
         // 产品和颜色的Mapping表(因为后面上传SKU图片的时候也要用到，所以从外面传进来)
         // SKU尺寸和尺寸值的Mapping表(Map<上新用尺码, 平台取下来的尺码值value>)
-        Map<String, Object> skuSizeMap = new HashMap<>();
-        Map<String, Object> productColorMap = new HashMap<>();
+        Map<String, CmsMtPlatformSkusModel> skuSizeMap = new HashMap<>();
 
-        // 根据类目的销售属性从cms_mt_platform_skus表中相应颜色和尺寸的值的对应关系，存放在productColorMap和skuSizeList表中
-        doSetColorSizeMappingInfo(sxData, cmsColorList, cmsSizeList, salePropStatus, productColorMap, skuSizeMap);
+        // Sku市场价，多个sku的市场价用|分隔,支持2位小数，单位:元，格式:100|200.12|300.22
+        StringBuffer sbMarketPrices = new StringBuffer();
+        // Sku销售价，多个sku的销售价用|分隔,支持2位小数，单位:元，格式:100|200.12|300.22
+        StringBuffer sbSalePrices = new StringBuffer();
+        // Sku条形码，多个sku的条形码用|分隔，格式:13123|234234|324234
+        StringBuffer sbBarcode = new StringBuffer();
+        // Sku库存，整数，多个Sku的库存用|分隔，格式:100|200|300
+        StringBuffer sbStock = new StringBuffer();
+        // 录入格式：(属性项id:属性值id:属性项中文:图片url|属性项id:-1:自定义属性值:图片url) 同一个sku不同的属性之间用;分隔，不同的sku属性之间用|分隔，只有颜色属性会有图片url
+        // 格式:12949:1237795:110cm;12948:1237794:红色:http://pop.nosdn.127.net/b2f6b452-ca53-4821-b0cf-2b0fe26f969a|12949:-1:100cm;12948:1237793:白色:http://pop.nosdn.127.net/b2f6b452-ca53-4821-b0cf-2b0fe26f969a
+        StringBuffer sbPropertyValue = new StringBuffer();
+        // Sku外键id，不同的sku属性之间用|分隔，格式:13123|234234|324234
+        // 我们设置skuCode
+        StringBuffer sbOuterId = new StringBuffer();
 
-        // 全量保存SKU接口用对象SKU列表
-        List<com.jd.open.api.sdk.domain.Sku> salePropSkuList = new ArrayList<>();
-        Map<String, Prop> allSkuSalePropsMap = new HashMap<>();
+        // TODO:先随便填坑，取别名，之后试试看用对应颜色尺码去上
+        // TODO:没有颜色没有尺码怎么上新，还不知道，碰到了再说
 
         // 根据product列表循环设置该商品的SKU属性
         for (CmsBtProductModel objProduct : productList) {
             // 取得颜色别名的值
             String colorAlias = getColorAlias(objProduct, StringUtils.toString(sxData.getCartId()), channelConfigValueMap);
             String productCode = objProduct.getCommon().getFields().getCode();
+            CmsMtPlatformSkusModel colorModel = cmsColorList.get(0);
+            cmsColorList.remove(0);
+
+            String picUrl;
+            // 属性图片
+            try {
+                String srcPicUrl = sxProductService.resolveDict("属性图片模板", expressionParser, shopProp, getTaskName(), null);
+                picUrl = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), Long.toString(sxData.getGroupId()), shopProp, new HashSet<String>(){{this.add(srcPicUrl);}}, getTaskName()).get(srcPicUrl);
+            } catch (Exception e) {
+                $error(e);
+                throw new BusinessException("考拉取得属性图片模板失败!" + e.getMessage());
+            }
 
             CmsBtProductModel_Platform_Cart platformCart = objProduct.getPlatform(sxData.getCartId());
             if (platformCart == null || ListUtils.isNull(platformCart.getSkus())) continue;
             List<BaseMongoMap<String, Object>> platformSkuList = platformCart.getSkus();
             for (BaseMongoMap<String, Object> pSku : platformSkuList) {
-                String pSkuCode = pSku.getStringAttribute("skuCode");
+                String pSkuCode = pSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
                 // 在skuList中找到对应sku信息，然后设置需要的属性
                 for (BaseMongoMap<String, Object> objSku : skuList) {
                     // 如果没有找到对应skuCode，则继续循环
-                    if (!pSkuCode.equals(objSku.getStringAttribute("skuCode"))) {
+                    if (!pSkuCode.equals(objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))) {
                         continue;
                     }
 
                     // 上新用尺码别名
                     String sizeSx = objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
-
-                    // 全量保存用SKU对象
-                    com.jd.open.api.sdk.domain.Sku sku = new com.jd.open.api.sdk.domain.Sku();
-                    String colorKey = null;
-                    String sizeKey = null;
-                    Set<Prop> saleProp = null;
-                    String[] colorAttrValues = null;
-                    String[] sizeAttrValues = null;
-                    Prop colorProp = null;
-                    Prop sizeProp = null;
+                    CmsMtPlatformSkusModel sizeModel = skuSizeMap.get(sizeSx);
+                    if (sizeModel == null) {
+                        sizeModel = cmsSizeList.get(0);
+                        cmsSizeList.remove(0);
+                        skuSizeMap.put(sizeSx, sizeModel);
+                    }
+                    String sizeVal = sizeModel.getAttrValue();
 
                     // 设置SKU颜色和尺码销售属性
                     switch (salePropStatus) {
                         case SaleProp_Both_Color_Size_1:
-                            // 颜色和尺码属性都有时(颜色1^尺码1)
-                            colorKey = productCode;
-                            sizeKey = sizeSx;
-                            saleProp = new HashSet<>();
-                            // 将当前code对应的颜色属性值(来自cms_mt_platform_skus表)解析成颜色属性id和颜色属性值id
-                            colorAttrValues = getColorAttrValueId(productCode, colorKey, productColorMap, platformCart.getpCatId(), platformCart.getpCatPath());
-                            // 当前SKU的颜色销售属性
-                            colorProp = getSaleProp(colorAttrValues[0], colorAttrValues[1], colorAlias);
-                            saleProp.add(colorProp);
-                            if (!allSkuSalePropsMap.containsKey(colorAttrValues[1])) allSkuSalePropsMap.put(colorAttrValues[1], colorProp);   // 后面更新销售属性别名用
-                            // 将当前sku对应的尺码属性值(来自cms_mt_platform_skus表)解析成尺码属性id和尺码属性值id
-                            sizeAttrValues = getSizeAttrValueId(productCode, pSkuCode, sizeSx, sizeKey, skuSizeMap, platformCart.getpCatId(), platformCart.getpCatPath());
-                            // 当前SKU的尺码销售属性
-                            sizeProp = getSaleProp(sizeAttrValues[0], sizeAttrValues[1], sizeKey);
-                            saleProp.add(sizeProp);
-							if (!allSkuSalePropsMap.containsKey(sizeAttrValues[1])) allSkuSalePropsMap.put(sizeAttrValues[1], sizeProp);    // 后面更新销售属性别名用
-                            sku.setSaleAttrs(saleProp);
+                            // 颜色和尺码属性都有时
+                            sbPropertyValue.append(colorModel.getAttrValue()).append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 颜色
+                            sbPropertyValue.append(Separtor_Semicolon);
+                            sbPropertyValue.append(sizeVal).append(Separtor_Colon).append(sizeSx); // 尺码
+                            sbPropertyValue.append(Separtor_Vertical);
                             break;
                         case SaleProp_Only_Color_2:
-                            // 只有颜色属性时(颜色1^颜色2)
-                            // 如果平台类目只有颜色没有尺寸信息时，productColorMap中的key为productCode_sizeSx
-                            colorKey = productCode + "_" + sizeSx;
-                            saleProp = new HashSet<>();
-                            // 将当前code对应的颜色属性值(来自cms_mt_platform_skus表)解析成颜色属性id和颜色属性值id
-                            colorAttrValues = getColorAttrValueId(productCode, colorKey, productColorMap, platformCart.getpCatId(), platformCart.getpCatPath());
-                            // 当前SKU的颜色销售属性
-                            colorProp = getSaleProp(colorAttrValues[0], colorAttrValues[1], colorAlias);
-                            saleProp.add(colorProp);
-							if (!allSkuSalePropsMap.containsKey(colorAttrValues[1])) allSkuSalePropsMap.put(colorAttrValues[1], colorProp);   // 后面更新销售属性别名用
-                            sku.setSaleAttrs(saleProp);
+                            // 只有颜色属性时
+                            sbPropertyValue.append(colorModel.getAttrValue()).append(Separtor_Colon).append(colorAlias + sizeSx).append(Separtor_Colon).append(picUrl); // 颜色
+                            sbPropertyValue.append(Separtor_Vertical);
                             break;
                         case SaleProp_Only_Size_3:
-                            // 只有尺码属性时(尺码1^尺码2)
-                            /// 如果平台类目没有颜色只有尺寸信息时，skuSizeMap中的key为productCode_sizeSx
-                            sizeKey = productCode + "_" + sizeSx;
-                            saleProp = new HashSet<>();
-                            // 将当前sku对应的尺码属性值(来自cms_mt_platform_skus表)解析成尺码属性id和尺码属性值id
-                            sizeAttrValues = getSizeAttrValueId(productCode, pSkuCode, sizeSx, sizeKey, skuSizeMap, platformCart.getpCatId(), platformCart.getpCatPath());
-                            // 当前SKU的尺码销售属性
-                            sizeProp = getSaleProp(sizeAttrValues[0], sizeAttrValues[1], sizeKey);
-                            saleProp.add(sizeProp);
-							if (!allSkuSalePropsMap.containsKey(sizeAttrValues[1])) allSkuSalePropsMap.put(sizeAttrValues[1], sizeProp);    // 后面更新销售属性别名用
-                            sku.setSaleAttrs(saleProp);
+                            // 只有尺码属性时
+                            sbPropertyValue.append(sizeVal).append(Separtor_Colon).append(colorAlias + sizeSx); // 尺码
+                            sbPropertyValue.append(Separtor_Vertical);
                             break;
                     }
 
-                    // 设置SKU考拉价，库存，外部Code等属性
-                    // SKU考拉价(100.0)
-                    Double skuPrice = getSkuPrice(objSku, shop.getOrder_channel_id(), shop.getCart_id(), CmsConstants.ChannelConfig.PRICE_SALE_KEY, CmsConstants.ChannelConfig.PRICE_SALE_PRICE_CODE);//PriceType_jdprice
-                    sku.setJdPrice(new BigDecimal(skuPrice));
-                    // SKU库存(3)
-                    sku.setStockNum(LongUtils.parseLong(skuLogicQtyMap.get(pSkuCode)));
+                    // 市场价
+                    sbMarketPrices.append(objSku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name())).append(Separtor_Vertical);
+
+                    // 销售价
+                    Double skuPrice = getSkuPrice(objSku, shopProp.getOrder_channel_id(), shopProp.getCart_id(), CmsConstants.ChannelConfig.PRICE_SALE_KEY, CmsConstants.ChannelConfig.PRICE_SALE_PRICE_CODE);
+                    sbSalePrices.append(Double.toString(skuPrice)).append(Separtor_Vertical);
+
+                    sbBarcode.append(objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.barcode.name())).append(Separtor_Vertical);
+                    // SKU库存
+                    sbStock.append(skuLogicQtyMap.get(pSkuCode)).append(Separtor_Vertical);
                     // SKU外部ID(skuCode)
-                    sku.setOuterId(pSkuCode);
-                    salePropSkuList.add(sku);
+                    sbOuterId.append(pSkuCode).append(Separtor_Vertical);
                 }
             }
         }
 
-        // 以防万一，check一下
-//        if (ListUtils.isNull(salePropSkuList)) {
-//            String errMsg = String.format("全量保存SKU接口用对象SKU列表为空，不能全量更新该商品的SKU信息！[wareId:%s]", StringUtils.toString(klProductBean.getWareId()));
-//            $error(errMsg);
-//            throw new BusinessException(errMsg);
-//        }
+        // 去掉最后一位|
+        sbMarketPrices.deleteCharAt(sbMarketPrices.length() - 1);
+        sbSalePrices.deleteCharAt(sbSalePrices.length() - 1);
+        sbBarcode.deleteCharAt(sbBarcode.length() - 1);
+        sbStock.deleteCharAt(sbStock.length() - 1);
+        sbPropertyValue.deleteCharAt(sbPropertyValue.length() - 1);
+        sbOuterId.deleteCharAt(sbOuterId.length() - 1);
 
-//        klProductBean.setSkus(salePropSkuList);
-
-
-//         调用考拉全量保存SKU接口，更新当前商品的SKU信息
-//        List<Sku> resultSkus = jdWareNewService.saveWareSkus(shop, wareId, salePropSkuList, failCause);
-//        if (ListUtils.isNull(resultSkus) || !StringUtils.isEmpty(failCause.toString())) {
-//            $error(failCause.toString());
-//            throw new BusinessException(failCause.toString());
-//        }
+        klProductBean.setSkuMarketPrices(sbMarketPrices.toString());
+        klProductBean.setSkuSalePrices(sbSalePrices.toString());
+        klProductBean.setSkuBarcode(sbBarcode.toString());
+        klProductBean.setSkuStock(sbStock.toString());
+        klProductBean.setSkuPropertyValue(sbPropertyValue.toString());
+        klProductBean.setSkuOuterId(sbOuterId.toString());
 
     }
 
@@ -1516,231 +1462,5 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
 
         return colorAlias;
     }
-
-    /**
-     * 取得颜色属性id和属性值id列表
-     *
-     * @param productCode  产品code
-     * @param productColorMap   颜色属性值mapping信息
-     * @param catId        类目id
-     * @param catPath      类目Path
-     * @return String[] 颜色属性id和属性值id列表
-     */
-    protected String[] getColorAttrValueId(String productCode, String colorKey, Map<String, Object> productColorMap, String catId, String catPath) {
-        if (!productColorMap.containsKey(colorKey)) {
-            // 该group下产品件数比考拉平台上该类目的颜色属性件数多，强制上新会报"参数错误.销售属性维度不一致"的异常
-            String errMsg = String.format("产品(%s)没找到对应的平台类目(%s:%s)的颜色属性值,原因是本group下面的" +
-                            "产品或SKU件数比考拉平台上该类目的颜色属性件数(%s件)多，强制上新会报\"参数错误.销售属性维度不一致\"的异常.",
-                    productCode, catId, catPath, productColorMap.size());
-            $error(errMsg);
-            throw new BusinessException(errMsg);
-        }
-        // 将当前code对应的颜色属性值(来自cms_mt_platform_skus表)解析成颜色属性id和颜色属性值id
-        String[] colorAttrValues = StringUtils.toString(productColorMap.get(colorKey)).split(Separtor_Colon);
-        if (colorAttrValues == null || colorAttrValues.length < 2) {
-            String errMsg = StringUtils.format("cms_mt_platform_skus表中的属性值格式(\"属性id:属性值id\")不正确. " +
-                    "[属性值:%s]", StringUtils.toString(productColorMap.get(colorKey)));
-            $error(errMsg);
-            throw new BusinessException(errMsg);
-        }
-
-        return colorAttrValues;
-    }
-
-    /**
-     * 取得尺码属性id和属性值id列表
-     *
-     * @param productCode   产品code
-     * @param skuCode       SKU code
-     * @param sizeSx       上信用尺码别名
-     * @param sizeKey       尺码mapping key
-     * @param skuSizeMap   尺码属性值mapping信息
-     * @param catId        类目id
-     * @param catPath      类目Path
-     * @return String[] 颜色属性id和属性值id列表
-     */
-    protected String[] getSizeAttrValueId(String productCode, String skuCode, String sizeSx, String sizeKey, Map<String, Object> skuSizeMap, String catId, String catPath) {
-        if (!skuSizeMap.containsKey(sizeKey)) {
-            // 该产品上新用尺码件数(<=sku件数)比考拉平台上该类目的尺码属性件数多，强制上新会报"参数错误.销售属性维度不一致"的异常
-            String errMsg = String.format("产品(%s)的sku(%s)的上新用尺码(%s)没找到对应的平台类目(%s:%s)的尺码属性值，" +
-                            "原因是该产品上新用SKU尺码件数比考拉平台上该类目的尺码属性件数(%s件)多，强制上新" +
-                            "会报\"参数错误.销售属性维度不一致\"的异常.", productCode, skuCode, sizeSx, catId,
-                            catPath, skuSizeMap.size());
-            $error(errMsg);
-            throw new BusinessException(errMsg);
-        }
-        // 将当前sku对应的尺码属性值(来自cms_mt_platform_skus表)解析成尺码属性id和尺码属性值id
-        String[] sizeAttrValues = StringUtils.toString(skuSizeMap.get(sizeKey)).split(Separtor_Colon);
-        if (sizeAttrValues == null || sizeAttrValues.length < 2) {
-            String errMsg = StringUtils.format("cms_mt_platform_skus表中的属性值格式(\"属性id:属性值id\")不正确. " +
-                    "[属性值:%s]", StringUtils.toString(skuSizeMap.get(sizeKey)));
-            $error(errMsg);
-            throw new BusinessException(errMsg);
-        }
-
-        return sizeAttrValues;
-    }
-
-    /**
-     * 取得SKU的颜色或尺码销售对象
-     *
-     * @param salePropAttrId  当前类目的颜色或者尺码属性id
-     * @param attrValue       属性值(颜色或者尺码的属性值)
-     * @param attrValueAlias  别名(颜色或者尺码别名)
-     * @return Prop 单个SKU颜色或者尺码销售属性
-     */
-    protected Prop getSaleProp(String salePropAttrId, String attrValue, String attrValueAlias) {
-
-        Prop prop = new Prop();
-        prop.setAttrId(salePropAttrId);                 // 当前类目的颜色或者尺码属性id(如：1000000051)
-        String[] arrAttrValue = {attrValue};            // 当前code对应的颜色属性值1（如：1565522969）
-        prop.setAttrValues(arrAttrValue);
-        String[] arrAttrValueAlias = {attrValueAlias};  // 颜色别名或者尺码别名（如：红色）
-        prop.setAttrValueAlias(arrAttrValueAlias);
-
-        return prop;
-    }
-
-    /**
-     * 根据当前类目销售属性类型设置取得颜色和尺码的值
-     *
-     * @param sxData SxData 产品对象
-     * @param cmsColorList List<CmsMtPlatformSkusModel> 该类目对应的颜色SKU列表
-     * @param cmsSizeList List<CmsMtPlatformSkusModel> 该类目对应的尺寸SKU列表
-     * @param salePropStatus String 当前平台主类目对应的销售属性状况
-     * @param productColorMap Map<String, Object> 产品和颜色值Mapping关系表(填入值，后面上传颜色图片时会用到)
-     * @param skuSizeMap  Map<String, Object> SKU和尺码值Mapping关系表
-     */
-    protected void doSetColorSizeMappingInfo(SxData sxData,
-                                             List<CmsMtPlatformSkusModel> cmsColorList,
-                                             List<CmsMtPlatformSkusModel> cmsSizeList,
-                                             String salePropStatus,
-                                             Map<String, Object> productColorMap,
-                                             Map<String, Object> skuSizeMap) {
-        List<CmsBtProductModel> productList = sxData.getProductList();
-        List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
-
-        // 当前平台主类目对应的销售属性状况(1:颜色和尺寸属性都有 2:只有颜色没有尺寸属性 3:没有颜色只有尺寸属性 4:没有颜色没有尺寸属性)
-        switch (salePropStatus) {
-            case SaleProp_Both_Color_Size_1:
-                // 如果该平台类目颜色属性和尺寸信息都有的时候，则把每个product作为一种颜色
-                // 根据product列表取得要上新的产品颜色Mapping关系
-                for (CmsBtProductModel product : productList) {
-                    // 取得颜色值列表中的第一个颜色值
-                    if (cmsColorList.size() > 0) {
-                        // "产品code":"颜色值Id" Mapping追加
-                        productColorMap.put(product.getCommon().getFields().getCode(), cmsColorList.get(0).getAttrValue());
-                        // 已经Mapping过的颜色值从颜色列表中删除
-                        cmsColorList.remove(0);
-                    } else {
-                        String errMsg = String.format("该商品的product总件数比cms_mt_platform_skus表中颜色值件数多，该产品(%s)未" +
-                                "找到对应的颜色值！[salePropStatus:%s(颜色和尺寸属性都有)]", product.getCommon().getFields().getCode(), salePropStatus);
-                        $error(errMsg);
-                        throw new BusinessException(errMsg);
-                    }
-                }
-
-                // 根据sku列表(根据sizeSx排序)取得要上新的产品尺寸Mapping关系
-                for (BaseMongoMap<String, Object> sku : skuList) {
-                    // SKU和尺寸的Mapping表中不存在的话，追加进去(已存在不要再追加)
-                    // skuSizeMap<上新用尺码, 平台取下来的尺码值value> 直接用共通方法里面转换后的上新用尺码作为尺码别名上新
-                    // 上新用尺码(sizeSx)的设置顺序：sizeNick（特殊尺码转换信息） > 尺码转换表（共通尺码转换信息） > size (转换前尺码)
-                    if (!skuSizeMap.containsKey(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()))) {
-                        // 取得尺寸列表中的第一个尺寸值
-                        if (cmsSizeList.size() > 0) {
-                            // "SKU尺寸(3,3.5等)":"尺寸值Id" Mapping追加
-                            skuSizeMap.put(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()), cmsSizeList.get(0).getAttrValue());
-                            // 已经Mapping过的尺寸值从尺寸列表中删除
-                            cmsSizeList.remove(0);
-                        } else {
-                            String errMsg = String.format("SKU尺寸件数比cms_mt_platform_skus表中尺寸值件数多，该尺寸(sizeSx:%s)" +
-                                            "未找到对应的尺寸值! [salePropStatus:%s(颜色和尺寸属性都有)]",
-                                    sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()), salePropStatus);
-                            $error(errMsg);
-                            throw new BusinessException(errMsg);
-                        }
-                    }
-                }
-                break;
-            case SaleProp_Only_Color_2:
-                // 如果该平台类目只有颜色属性，没有尺寸信息，则把product下面的每个sku作为一种颜色
-                // 根据product列表取得要上新的产品颜色Mapping关系
-                for (CmsBtProductModel product : productList) {
-                    CmsBtProductModel_Platform_Cart platformCart = product.getPlatform(sxData.getCartId());
-                    if (platformCart == null || ListUtils.isNull(platformCart.getSkus())) continue;
-                    List<BaseMongoMap<String, Object>> platformSkuList = platformCart.getSkus();
-                    for (BaseMongoMap<String, Object> pSku : platformSkuList) {
-                        String pSkuCode = pSku.getStringAttribute("skuCode");
-                        for (BaseMongoMap<String, Object> objSku : skuList) {
-                            // 如果没有找到对应skuCode，则继续循环
-                            if (!pSkuCode.equals(objSku.getStringAttribute("skuCode"))) {
-                                continue;
-                            }
-
-                            // productMap中的key为productCode_sizeSx
-                            String colorKey = product.getCommon().getFields().getCode() + "_" +
-                                    objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
-
-                            // 取得颜色值列表中的第一个颜色值
-                            if (cmsColorList.size() > 0) {
-                                // "产品code":"颜色值Id" Mapping追加
-                                productColorMap.put(colorKey, cmsColorList.get(0).getAttrValue());
-                                // 已经Mapping过的颜色值从颜色列表中删除
-                                cmsColorList.remove(0);
-                            } else {
-                                String errMsg = String.format("该商品的产品sku总件数比cms_mt_platform_skus表中颜色值件数多，该SKU未" +
-                                                "找到对应的颜色值！[code:%s] [skuCode:%s] [sizeSx:%s] [salePropStatus:%s(2:只有颜色没有尺寸," +
-                                                "把product下面的每个sku作为一种颜色)]", product.getCommon().getFields().getCode(), pSkuCode,
-                                        objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()), salePropStatus);
-                                $error(errMsg);
-                                throw new BusinessException(errMsg);
-                            }
-                        }
-                    }
-                }
-                break;
-            case SaleProp_Only_Size_3:
-                // 如果该平台类目没有颜色属性，只有尺寸信息，则把product下面的每个sku作为一种尺寸
-                // 根据product列表取得要上新的产品尺寸Mapping关系
-                for (CmsBtProductModel product : productList) {
-                    CmsBtProductModel_Platform_Cart platformCart = product.getPlatform(sxData.getCartId());
-                    if (platformCart == null || ListUtils.isNull(platformCart.getSkus())) continue;
-                    List<BaseMongoMap<String, Object>> platformSkuList = platformCart.getSkus();
-                    for (BaseMongoMap<String, Object> pSku : platformSkuList) {
-                        String pSkuCode = pSku.getStringAttribute("skuCode");
-                        for (BaseMongoMap<String, Object> objSku : skuList) {
-                            // 如果没有找到对应skuCode，则继续循环
-                            if (!pSkuCode.equals(objSku.getStringAttribute("skuCode"))) {
-                                continue;
-                            }
-
-                            // productSizeMap中的key为productCode_sizeSx
-                            String sizeKey = product.getCommon().getFields().getCode() + "_" +
-                                    objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
-
-                            // 上新用尺码(sizeSx)的设置顺序：sizeNick（特殊尺码转换信息） > 尺码转换表（共通尺码转换信息） > size (转换前尺码)
-                            if (!skuSizeMap.containsKey(objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()))) {
-                                // 取得尺寸列表中的第一个尺寸值
-                                if (cmsSizeList.size() > 0) {
-                                    // "SKU尺寸(3,3.5等)":"尺寸值Id" Mapping追加
-                                    skuSizeMap.put(sizeKey, cmsSizeList.get(0).getAttrValue());
-                                    // 已经Mapping过的尺寸值从尺寸列表中删除
-                                    cmsSizeList.remove(0);
-                                } else {
-                                    String errMsg = String.format("该商品SKU总件数比cms_mt_platform_skus表中尺寸值件数多，该SKU未找到对应的尺寸值!" +
-                                                    "[code:%s] [skuCode:%s] [sizeSx:%s] [salePropStatus:%s (没有颜色只有尺寸,把product下面的每个sku作为一种尺寸)]",
-                                            product.getCommon().getFields().getCode(), pSkuCode,
-                                            objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()), salePropStatus);
-                                    $error(errMsg);
-                                    throw new BusinessException(errMsg);
-                                }
-                            }
-                        }
-                    }
-                }
-                break;
-        }
-    }
-
 
 }
