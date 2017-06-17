@@ -27,11 +27,11 @@ public class CmsBatchUpdateProductTitleMQJobTest {
     public void onStartup() throws Exception {
 
         CmsBatchUpdateProductTitleMQMessageBody mqMessageBody = new CmsBatchUpdateProductTitleMQMessageBody();
-        mqMessageBody.setChannelId("001");
-        mqMessageBody.setProductCodes(Arrays.asList("s002z"));
-        mqMessageBody.setTitle("SHOCK ABSORBER 运动内衣防震跑步女bra 高强度文胸瑜伽健身");
-        mqMessageBody.setTitlePlace("cover");
-        mqMessageBody.setSender("edward");
+        mqMessageBody.setChannelId("928");
+        mqMessageBody.setProductCodes(Arrays.asList("144196"));
+        mqMessageBody.setTitle("-616");
+        mqMessageBody.setTitlePlace("suffix");
+        mqMessageBody.setSender("rex");
         cmsBatchUpdateProductTitleMQJob.onStartup(mqMessageBody);
 
 //        MQConfigInitTestUtil.startMQ(cmsBatchUpdateProductTitleMQJob);
