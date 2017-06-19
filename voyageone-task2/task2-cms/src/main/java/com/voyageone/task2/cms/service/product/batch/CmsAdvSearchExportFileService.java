@@ -29,6 +29,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
@@ -99,6 +100,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private CmsBtExportTaskService cmsBtExportTaskService;
     @Autowired
     private TagService tagService;
+    @Autowired
+    private SxProductService sxProductService;
 
     public List<CmsBtOperationLogModel_Msg> export(AdvSearchExportMQMessageBody messageBody) throws Exception {
         $debug("高级检索 文件下载任务 param=" + JacksonUtil.bean2Json(messageBody));
@@ -1130,7 +1133,13 @@ public class CmsAdvSearchExportFileService extends BaseService {
         for (CmsBtProductBean item : products) {
             CmsBtProductModel_Field fields = item.getCommon().getFields();
             List<CmsBtProductModel_Sku> skuList = item.getCommon().getSkus();
+            Map<String, String> sizeMap = null;
+            try {
+                sizeMap = sxProductService.getSizeMap(item.getChannelId(), item.getCommon().getFields().getBrand(), item.getCommon().getFields().getProductType(), item.getCommon().getFields().getSizeType());
+            } catch (Exception e) {
 
+            }
+            if(sizeMap == null) sizeMap = new HashMap<>();
             // 内容输出
             for (CmsBtProductModel_Sku skuItem : skuList) {
                 int index = 0;
@@ -1170,7 +1179,10 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSkuCode()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSize()));
-                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getSize()));
+                String platformSize = sizeMap.get(skuItem.getSize());
+                if (platformSize == null) platformSize = "";
+                FileUtils.cell(row, index++, unlock).setCellValue(platformSize);
+
                 SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuItem.getSkuCode().toLowerCase());
                 FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getQty() == null ? "0" : skuItem.getQty().toString());
                 if (skuItem.getClientMsrpPrice() == null) {
