@@ -546,6 +546,12 @@ public class SxProductService extends BaseService {
      * @param user        更新者
      */
     public Map<String, String> uploadImage(String channelId, int cartId, String groupId, ShopBean shopBean, Set<String> imageUrlSet, String user) throws Exception {
+        KoalaConfig koalaConfig = null;
+        if (CartEnums.Cart.KL.getValue() == cartId) {
+            koalaConfig = Shops.getShopKoala(channelId, String.valueOf(cartId));
+        }
+
+
         // Map<srcUrl, destUrl>
         Map<String, String> retUrls = new HashMap<>();
 
@@ -597,7 +603,6 @@ public class SxProductService extends BaseService {
                             }
                             // 20170227 增加上传图片到京东图片空间 charis END
                         } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.NTES.getId())) {
-                            KoalaConfig koalaConfig = Shops.getShopKoala(channelId, String.valueOf(cartId));
                             String[] picture = uploadImageByUrl_KL(srcUrl, koalaConfig, groupId);
                             if (picture != null && picture.length > 0) {
                                 destUrl = picture[0];
@@ -655,7 +660,6 @@ public class SxProductService extends BaseService {
                         }
                         // 20170227 增加上传图片到京东图片空间 charis END
                     } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.NTES.getId())) {
-                        KoalaConfig koalaConfig = Shops.getShopKoala(channelId, String.valueOf(cartId));
                         String[] picture = uploadImageByUrl_KL(srcUrl, koalaConfig, groupId);
                         if (picture != null && picture.length > 0) {
                             destUrl = picture[0];
