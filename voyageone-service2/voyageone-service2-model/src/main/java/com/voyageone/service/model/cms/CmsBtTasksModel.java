@@ -32,6 +32,11 @@ public class CmsBtTasksModel extends BaseModel {
 
     protected String activityEnd;
 
+    /**
+     * 平台ID
+     */
+    protected Integer cartId;
+
     public String getTaskName() {
         return taskName;
     }
@@ -94,5 +99,13 @@ public class CmsBtTasksModel extends BaseModel {
 
     public void setActivityEnd(String activityEnd) {
         this.activityEnd = activityEnd == null ? null : activityEnd.trim();
+    }
+
+    public Integer getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
     }
 }

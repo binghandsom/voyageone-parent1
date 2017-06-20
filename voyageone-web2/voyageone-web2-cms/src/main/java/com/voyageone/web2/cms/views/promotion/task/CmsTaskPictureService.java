@@ -209,7 +209,16 @@ class CmsTaskPictureService extends BaseViewService {
                 model.setCreated(now);
                 model.setModified(now);
 
-                // 之前导入时Excel有两列，分别为numIid和code。现在新增两列price和im
+                // 之前导入时Excel有两列，分别为numIid和code。现在新增两列price和imageName
+                // 有image6，无则image1
+                String priceVal = getString(row, 2);
+                String imageName = getString(row, 3);
+                if (StringUtils.isBlank(imageName)) {
+
+                }
+
+
+
 
                 models.add(model);
             }
