@@ -177,7 +177,7 @@ public class ProductStockService extends BaseService {
                                         platform.setMainProductCode(newMastCode);
                                         productPlatformService.updateProductPlatformWithSx(channelId, productModel.getProdId(), platform, modifier, "切换主商品", false);
 
-                                        String comment = "主商品发生变化 主商品：" + newMastCode;
+                                        String comment = "WMS->CMS推送平台库存 主商品发生变化 主商品：" + newMastCode;
                                         productStatusHistoryService.insert(channelId, stockBean.getItemCode(), platform.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, comment, modifier);
                                     }
 
@@ -186,7 +186,7 @@ public class ProductStockService extends BaseService {
                                         newPlatFormCart.setMainProductCode(newMastCode);
                                         productPlatformService.updateProductPlatformWithSx(channelId, newMastProduct.getProdId(), newPlatFormCart, modifier, "切换主商品", false);
 
-                                        String newComment = "设置为主商品 主商品：" + newMastCode;
+                                        String newComment = "WMS->CMS推送平台库存 设置为主商品 主商品：" + newMastCode;
                                         productStatusHistoryService.insert(channelId, newMastCode, newPlatFormCart.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, newComment, modifier);
                                     }
 
@@ -208,10 +208,10 @@ public class ProductStockService extends BaseService {
                                             productPlatformService.updateProductPlatformWithSx(channelId, product.getProdId(), pform, modifier, "切换主商品", false);
 
                                             if (code.equalsIgnoreCase(oldMastCode)) {
-                                                String comment = "取消主商品 主商品：" + oldMastCode;
+                                                String comment = "WMS->CMS推送平台库存 取消主商品 主商品：" + oldMastCode;
                                                 productStatusHistoryService.insert(channelId, code, pform.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, comment, modifier);
                                             } else {
-                                                String comment = "主商品发生变化 主商品：" + code;
+                                                String comment = "WMS->CMS推送平台库存 主商品发生变化 主商品：" + code;
                                                 productStatusHistoryService.insert(channelId, code, pform.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, comment, modifier);
                                             }
                                         }
