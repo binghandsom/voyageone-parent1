@@ -170,27 +170,27 @@ public class ProductStockService extends BaseService {
 
                                 if (newMastCode != null) {
 
-                                    if (!newMastCode.equalsIgnoreCase(platform.getMainProductCode())) {
-                                        String comment = "取消主商品 主商品：" + platform.getMainProductCode();
-                                        productStatusHistoryService.insert(channelId, stockBean.getItemCode(), platform.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, comment, modifier);
-
+                                    // 当前平台原来的主商品Code
+                                    String oldMastCode = platform.getMainProductCode();
+                                    if (!newMastCode.equalsIgnoreCase(oldMastCode)) {
                                         platform.setpIsMain(0);// 把product表中对应的平台的pIsMain设0
                                         platform.setMainProductCode(newMastCode);
                                         productPlatformService.updateProductPlatformWithSx(channelId, productModel.getProdId(), platform, modifier, "切换主商品", false);
 
+                                        String comment = "主商品发生变化 主商品：" + newMastCode;
+                                        productStatusHistoryService.insert(channelId, stockBean.getItemCode(), platform.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, comment, modifier);
                                     }
 
                                     if (!newMastCode.equalsIgnoreCase(newPlatFormCart.getMainProductCode())) {
                                         newPlatFormCart.setpIsMain(1);//把productCode的所对应的product表中对应的平台的pIsMain设1
                                         newPlatFormCart.setMainProductCode(newMastCode);
-                                        productPlatformService.updateProductPlatformWithSx(channelId, productMap.get(newMastCode).getProdId(), newPlatFormCart, modifier, "切换主商品", false);
+                                        productPlatformService.updateProductPlatformWithSx(channelId, newMastProduct.getProdId(), newPlatFormCart, modifier, "切换主商品", false);
 
                                         String newComment = "设置为主商品 主商品：" + newMastCode;
                                         productStatusHistoryService.insert(channelId, newMastCode, newPlatFormCart.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, newComment, modifier);
                                     }
 
-                                    String oldMainProductCode = cmsBtProductGroup.getMainProductCode();
-                                    if (!newMastCode.equalsIgnoreCase(oldMainProductCode)) {
+                                    if (!newMastCode.equalsIgnoreCase(cmsBtProductGroup.getMainProductCode())) {
                                         cmsBtProductGroup.setMainProductCode(newMastCode);//把group表中的mainProduct替换成productCode
                                         cmsBtProductGroup.setModifier(modifier);
                                         cmsBtProductGroup.setModified(DateTimeUtil.getNowTimeStamp());
@@ -206,8 +206,14 @@ public class ProductStockService extends BaseService {
                                             CmsBtProductModel_Platform_Cart pform = product.getPlatform(cartId);
                                             pform.setMainProductCode(newMastCode);
                                             productPlatformService.updateProductPlatformWithSx(channelId, product.getProdId(), pform, modifier, "切换主商品", false);
-                                            String comment = "主商品发生变化 主商品：" + code;
-                                            productStatusHistoryService.insert(channelId, code, pform.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, comment, modifier);
+
+                                            if (code.equalsIgnoreCase(oldMastCode)) {
+                                                String comment = "取消主商品 主商品：" + oldMastCode;
+                                                productStatusHistoryService.insert(channelId, code, pform.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, comment, modifier);
+                                            } else {
+                                                String comment = "主商品发生变化 主商品：" + code;
+                                                productStatusHistoryService.insert(channelId, code, pform.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, comment, modifier);
+                                            }
                                         }
                                     }
                                 }
