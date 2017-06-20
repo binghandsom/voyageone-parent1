@@ -254,28 +254,28 @@ public class CmsBuildPaltformCategorySchemaKLMqService extends BaseMQCmsService 
         List<Field> productFieldsList = new ArrayList<>();
 
         // 商品名称（最大64位字符）
-        addInputField(productFieldsList, "name", "商品名称", "", true, "64", "");
+        addInputField(productFieldsList, "name", "商品名称", "", false, "64", "默认中文长描述");
 
         // 副标题（最大200位字符）
-        addInputField(productFieldsList, "sub_title", "副标题", "", true, "200", "");
+        addInputField(productFieldsList, "sub_title", "副标题", "", true, "200", "副标题将用于商品详情页商品名称后的卖点描述");
 
         // 短标题（最大48位字符）
-        addInputField(productFieldsList, "short_title", "短标题", "", true, "48", "");
+        addInputField(productFieldsList, "short_title", "短标题", "", true, "48", "短标题将用于移动端和web端首页商品标题、web端活动页商品标题");
 
         // 十字描述（最大8-24位字符）
-        addInputField(productFieldsList, "ten_words_desc", "十字描述", "", true, "24", "最少8个字符， 最大24个字符");
+        addInputField(productFieldsList, "ten_words_desc", "十字描述", "", true, "24", "最少8个字符， 最大24个字符，用于web端首页活动页商品标题后的卖点描述");
 
         // 商品货号（最大50位字符）
-        addInputField(productFieldsList, "item_NO", "商品货号（默认用model）", "", true, "50", "");
+        addInputField(productFieldsList, "item_NO", "商品货号", "", false, "50", "默认用model");
 
         // 原产国id
         addInputField(productFieldsList, "original_country_code_id", "原产国id", "", true, null, "");
 
         // 商品毛重
-        addInputField(productFieldsList, "gross_weight", "商品毛重（单位kg）", "", true, null, "商品的毛重不能随意填写，将会推送至海关报关，如果和实际重量差别很大，会导致清关失败");
+        addInputField(productFieldsList, "gross_weight", "商品毛重（单位kg）", "", false, null, "默认master详情的重量(kg)，如果没值，此项必填，商品的毛重不能随意填写，将会推送至海关报关，如果和实际重量差别很大，会导致清关失败");
 
         // 商品外键id
-        addInputField(productFieldsList, "Item_outer_id", "商品外键id（默认用model）", "", true, null, "");
+        addInputField(productFieldsList, "Item_outer_id", "商品外键id", "", false, null, "默认用model");
 
         // 根据考拉平台上新时用到一些平台相关的输入项目转换成XML文件
         String schemaCommonXmlContent = null;

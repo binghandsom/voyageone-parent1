@@ -15,6 +15,10 @@
 	<url>http://maven.apache.org</url>
 	<dependencies>
 		<dependency>
+			<groupId>com.voyageone.common</groupId>
+			<artifactId>ecerp-interfaces-koala</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.voyageone</groupId>
 			<artifactId>voyageone-web2-core</artifactId>
 			<version>${voyageone.web2.core.version}</version>
