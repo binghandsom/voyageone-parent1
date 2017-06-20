@@ -17,7 +17,7 @@ public class TestVOCmsDaoGenerator {
 //        File configurationFile = new File(VoDaoGenerator.class.getResource("cmsGeneratorConfig.xml").toURI());
 
        // File configurationFile = new File(TestVOCmsDaoGenerator.class.getResource("cmsGeneratorConfigTest.xml").toURI());
-        File configurationFile = new File(VOCmsDaoGenerator.class.getResource("synshipGeneratorConfigTest.xml").toURI());
+        File configurationFile = new File(VOCmsDaoGenerator.class.getResource("cmsGeneratorConfigTest.xml").toURI());
 
 //
 //

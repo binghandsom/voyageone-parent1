@@ -27,6 +27,21 @@ public class CmsBtTaskJiagepiluModel extends BaseModel {
 
     protected Integer imageTaskId;
 
+    /**
+     * 价格
+     */
+    protected Double price;
+
+    /**
+     * 图片URL
+     */
+    protected String imageUrl;
+
+    /**
+     * 图片名
+     */
+    protected String imageName;
+
     public Integer getTaskId() {
         return taskId;
     }
@@ -81,5 +96,29 @@ public class CmsBtTaskJiagepiluModel extends BaseModel {
 
     public void setImageTaskId(Integer imageTaskId) {
         this.imageTaskId = imageTaskId;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl == null ? null : imageUrl.trim();
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName == null ? null : imageName.trim();
     }
 }
