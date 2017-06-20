@@ -39,7 +39,7 @@
         </javaClientGenerator>
 
 
-        <table tableName="cms_bt_jm_promotion_export_task" delimitAllColumns="true" enableCountByExample="false"
+        <table tableName="cms_bt_task_jiagepilu" delimitAllColumns="true" enableCountByExample="false"
         enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
         selectByExampleQueryId="false">
         <generatedKey column="id" sqlStatement="JDBC"/>
