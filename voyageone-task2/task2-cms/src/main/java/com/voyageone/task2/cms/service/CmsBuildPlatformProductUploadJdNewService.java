@@ -526,10 +526,9 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         }
 
         try {
-            // 上新用的商品数据信息取得 // TODO：这段翻译写得不好看， 以后再改
+            // 上新用的商品数据信息取得
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
-            cmsTranslateMqService.executeSingleCode(channelId, 0, sxData.getMainProduct().getCommon().getFields().getCode(), "0");
-            sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
+            cmsTranslateMqService.executeSingleCode(sxData, "0");
             if (sxData == null) {
                 throw new BusinessException("取得上新用的商品数据信息失败！请向管理员确认 [sxData=null]");
             }
