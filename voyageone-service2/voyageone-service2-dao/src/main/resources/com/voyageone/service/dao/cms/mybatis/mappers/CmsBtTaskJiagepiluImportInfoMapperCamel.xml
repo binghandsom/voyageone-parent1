@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtTaskJiagepiluImportInfoDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtTaskJiagepiluImportInfoModel" />
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List" >
+        `id`, `task_id`, `success_count`, `fail_count`, `import_begin`, `import_end`, `error_msg`, 
+        `import_file_name`, `created`, `creater`
+    </sql>
+
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.cms.CmsBtTaskJiagepiluImportInfoExample" >
+        select
+        <if test="distinct" >
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List" />
+        from cms_bt_task_jiagepilu_import_info
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_task_jiagepilu_import_info
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="countByExample" parameterType="com.voyageone.service.model.cms.CmsBtTaskJiagepiluImportInfoExample" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_task_jiagepilu_import_info
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map" >
+        update cms_bt_task_jiagepilu_import_info
+        <set >
+            <if test="record.id != null" >
+                `id` = #{record.id,jdbcType=INTEGER},
+            </if>
+            <if test="record.taskId != null" >
+                `task_id` = #{record.taskId,jdbcType=INTEGER},
+            </if>
+            <if test="record.successCount != null" >
+                `success_count` = #{record.successCount,jdbcType=INTEGER},
+            </if>
+            <if test="record.failCount != null" >
+                `fail_count` = #{record.failCount,jdbcType=INTEGER},
+            </if>
+            <if test="record.importBegin != null" >
+                `import_begin` = #{record.importBegin,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.importEnd != null" >
+                `import_end` = #{record.importEnd,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.errorMsg != null" >
+                `error_msg` = #{record.errorMsg,jdbcType=VARCHAR},
+            </if>
+            <if test="record.importFileName != null" >
+                `import_file_name` = #{record.importFileName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.created != null" >
+                `created` = #{record.created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.creater != null" >
+                `creater` = #{record.creater,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByExample" parameterType="map" >
+        update cms_bt_task_jiagepilu_import_info
+        set `id` = #{record.id,jdbcType=INTEGER},
+            `task_id` = #{record.taskId,jdbcType=INTEGER},
+            `success_count` = #{record.successCount,jdbcType=INTEGER},
+            `fail_count` = #{record.failCount,jdbcType=INTEGER},
+            `import_begin` = #{record.importBegin,jdbcType=TIMESTAMP},
+            `import_end` = #{record.importEnd,jdbcType=TIMESTAMP},
+            `error_msg` = #{record.errorMsg,jdbcType=VARCHAR},
+            `import_file_name` = #{record.importFileName,jdbcType=VARCHAR},
+            `created` = #{record.created,jdbcType=TIMESTAMP},
+            `creater` = #{record.creater,jdbcType=VARCHAR}
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtTaskJiagepiluImportInfoModel" >
+        update cms_bt_task_jiagepilu_import_info
+        <set >
+            <if test="taskId != null" >
+                `task_id` = #{taskId,jdbcType=INTEGER},
+            </if>
+            <if test="successCount != null" >
+                `success_count` = #{successCount,jdbcType=INTEGER},
+            </if>
+            <if test="failCount != null" >
+                `fail_count` = #{failCount,jdbcType=INTEGER},
+            </if>
+            <if test="importBegin != null" >
+                `import_begin` = #{importBegin,jdbcType=TIMESTAMP},
+            </if>
+            <if test="importEnd != null" >
+                `import_end` = #{importEnd,jdbcType=TIMESTAMP},
+            </if>
+            <if test="errorMsg != null" >
+                `error_msg` = #{errorMsg,jdbcType=VARCHAR},
+            </if>
+            <if test="importFileName != null" >
+                `import_file_name` = #{importFileName,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_task_jiagepilu_import_info
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteByExample" parameterType="com.voyageone.service.model.cms.CmsBtTaskJiagepiluImportInfoExample" >
+        delete from cms_bt_task_jiagepilu_import_info
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_task_jiagepilu_import_info
+        <where >
+            <if test="taskId != null" >
+                and `task_id` = #{taskId,jdbcType=INTEGER}
+            </if>
+            <if test="successCount != null" >
+                and `success_count` = #{successCount,jdbcType=INTEGER}
+            </if>
+            <if test="failCount != null" >
+                and `fail_count` = #{failCount,jdbcType=INTEGER}
+            </if>
+            <if test="importBegin != null" >
+                and `import_begin` = #{importBegin,jdbcType=TIMESTAMP}
+            </if>
+            <if test="importEnd != null" >
+                and `import_end` = #{importEnd,jdbcType=TIMESTAMP}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="importFileName != null" >
+                and `import_file_name` = #{importFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_task_jiagepilu_import_info
+        <where >
+            <if test="taskId != null" >
+                and `task_id` = #{taskId,jdbcType=INTEGER}
+            </if>
+            <if test="successCount != null" >
+                and `success_count` = #{successCount,jdbcType=INTEGER}
+            </if>
+            <if test="failCount != null" >
+                and `fail_count` = #{failCount,jdbcType=INTEGER}
+            </if>
+            <if test="importBegin != null" >
+                and `import_begin` = #{importBegin,jdbcType=TIMESTAMP}
+            </if>
+            <if test="importEnd != null" >
+                and `import_end` = #{importEnd,jdbcType=TIMESTAMP}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="importFileName != null" >
+                and `import_file_name` = #{importFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_task_jiagepilu_import_info
+        <where >
+            <if test="taskId != null" >
+                and `task_id` = #{taskId,jdbcType=INTEGER}
+            </if>
+            <if test="successCount != null" >
+                and `success_count` = #{successCount,jdbcType=INTEGER}
+            </if>
+            <if test="failCount != null" >
+                and `fail_count` = #{failCount,jdbcType=INTEGER}
+            </if>
+            <if test="importBegin != null" >
+                and `import_begin` = #{importBegin,jdbcType=TIMESTAMP}
+            </if>
+            <if test="importEnd != null" >
+                and `import_end` = #{importEnd,jdbcType=TIMESTAMP}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="importFileName != null" >
+                and `import_file_name` = #{importFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtTaskJiagepiluImportInfoModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_task_jiagepilu_import_info
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="taskId != null" >
+                `task_id`,
+            </if>
+            <if test="successCount != null" >
+                `success_count`,
+            </if>
+            <if test="failCount != null" >
+                `fail_count`,
+            </if>
+            <if test="importBegin != null" >
+                `import_begin`,
+            </if>
+            <if test="importEnd != null" >
+                `import_end`,
+            </if>
+            <if test="errorMsg != null" >
+                `error_msg`,
+            </if>
+            <if test="importFileName != null" >
+                `import_file_name`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="taskId != null" >
+                #{taskId,jdbcType=INTEGER},
+            </if>
+            <if test="successCount != null" >
+                #{successCount,jdbcType=INTEGER},
+            </if>
+            <if test="failCount != null" >
+                #{failCount,jdbcType=INTEGER},
+            </if>
+            <if test="importBegin != null" >
+                #{importBegin,jdbcType=TIMESTAMP},
+            </if>
+            <if test="importEnd != null" >
+                #{importEnd,jdbcType=TIMESTAMP},
+            </if>
+            <if test="errorMsg != null" >
+                #{errorMsg,jdbcType=VARCHAR},
+            </if>
+            <if test="importFileName != null" >
+                #{importFileName,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

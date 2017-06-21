@@ -31,7 +31,7 @@ import java.util.Map;
  * @Create 2017-06-21 10:45
  */
 @RestController
-@RequestMapping( value = CmsUrlConstants.TASK.JIAGEPILU.ROOT )
+@RequestMapping(value = CmsUrlConstants.TASK.JIAGEPILU.ROOT)
 public class CmsJiagepiluController extends BaseController {
 
     @Autowired
@@ -58,8 +58,11 @@ public class CmsJiagepiluController extends BaseController {
         return success(resultMap);
     }
 
+    /**
+     * 下载商品导入模板文件
+     */
     @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.DOWNLOAD_IMPORT_TEMPLATE)
-    public ResponseEntity<byte[]> downloadBeat() {
+    public ResponseEntity<byte[]> downloadImportTemplate() {
 
         String filePath = Properties.readValue(CmsProperty.Props.CMS_JIAGEPILU_IMPORT_TEMPLATE_PATH);
         File file = new File(filePath);
@@ -77,16 +80,15 @@ public class CmsJiagepiluController extends BaseController {
     }
 
     /**
-     * 导入价格披露
-     * @param task_id
-     * @param size
-     * @param file
-     * @return
+     * 导入价格披露任务商品
+     *
+     * @param taskId 价格披露TaskId
+     * @param file   导入Excel文件
      */
     @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.IMPORT)
-    public AjaxResponse importBeat(@RequestParam int task_id, @RequestParam int size, @RequestParam MultipartFile file) {
+    public AjaxResponse importBeat(@RequestParam Integer taskId, @RequestParam MultipartFile file) {
 
-
+        jiagepiluService.importProduct(taskId, file, getUser().getUserName());
         return success("");
     }
 

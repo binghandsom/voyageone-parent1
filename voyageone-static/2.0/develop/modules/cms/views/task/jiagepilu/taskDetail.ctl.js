@@ -106,7 +106,7 @@ define([
                 //     })
             },
 
-            importBeat: function () {
+            importProduct: function () {
                 var self = this;
                 var uploadQueue = self.uploader.queue;
                 var uploadItem = uploadQueue[uploadQueue.length - 1];
@@ -121,25 +121,19 @@ define([
                             return;
                         }
                         self.notify.success('TXT_MSG_UPDATE_SUCCESS');
-                        if (res.data) {
-                            self.data = res.data.list;
-                            self.pageOption.curr = 1;
-                            self.pageOption.total = res.data.total;
-                        }
                     };
                     uploadItem.formData = [{
-                        task_id: self.task_id,
-                        size: self.pageOption.size
+                        taskId: self.taskId
                     }];
                     uploadItem.upload();
                 };
                 if (!uploadItem) {
                     return self.alert('TXT_MSG_NO_UPLOAD');
                 }
-                if (!self.data.length) {
-                    uploadIt();
-                    return;
-                }
+                // if (!self.data.length) {
+                //     uploadIt();
+                //     return;
+                // }
                 // self.confirm('TXT_MSG_REIMPORT_BEAT').then(uploadIt);
                 self.confirm('TXT_MSG_NEW_REIMPLORT_BEAR').then(uploadIt);
             },
