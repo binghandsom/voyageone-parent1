@@ -262,8 +262,6 @@ public class CmsBtBeatInfoDaoExtTest {
 
         Assert.assertTrue(bean.getNumIid() == 525897623218L);
         Assert.assertTrue(bean.getProductCode().equals("51A0HC13E1-00LCNB0"));
-        Assert.assertTrue(bean.getPromotion().getPromotionName().equals("Test Promotion"));
-        Assert.assertTrue(bean.getPromotion_code().getProductName().equals("Jewelry.com 镀925银紫水晶大气魅力女款手镯 欧美时尚饰品"));
     }
 
     @Test

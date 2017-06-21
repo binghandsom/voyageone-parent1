@@ -76,10 +76,10 @@ public class BeatJobServiceTest {
 
         // 修改 Shop 配置
         ShopBean shopBean = Shops.getShop("010", 23);
-        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
-        shopBean.setAppKey("21008948");
-        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
+//        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
+//        shopBean.setAppKey("21008948");
+//        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
+//        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
 
         // 定义固定配置
         TaskControlBean threadCount = new TaskControlBean();
