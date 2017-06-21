@@ -1,6 +1,10 @@
 package com.voyageone.web2.core.views.user;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.model.user.ComUserModel;
 import com.voyageone.security.service.ComUserService;
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Index 路径
@@ -156,8 +161,18 @@ public class UserController extends BaseController {
 
     @RequestMapping(CoreUrlConstants.USER.GET_CHANNEL)
     public AjaxResponse getChannel() {
+
+        List<TypeChannelBean> typeChannelBeans = TypeChannels.getTypeChannelBeansByTypeLang(Constants.comMtTypeChannel.SKU_CARTS_53, "cn");
+        List<String> channelIds = typeChannelBeans
+                .stream()
+                .filter(item->!"1".equals(item.getValue()) && !"0".equals(item.getValue()) && !item.getValue().startsWith("928") && !"22".equals(item.getValue()))
+                .map(TypeChannelBean::getChannel_id)
+                .distinct()
+                .collect(Collectors.toList());
+
         List<ChannelPermissionBean> companyBeans = userService.getPermissionCompany(getUser());
         if(ListUtils.notNull(companyBeans)){
+            companyBeans = companyBeans.stream().filter(item->channelIds.contains(item.getChannelId())).collect(Collectors.toList());
             companyBeans.sort((o1, o2) -> o1.getChannelId().compareTo(o2.getChannelId()));
         }
         return success(companyBeans);
