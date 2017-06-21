@@ -13,6 +13,10 @@
     <name>VoyageOne Service 2 - Implement</name>
     <dependencies>
         <dependency>
+            <groupId>com.voyageone.common</groupId>
+            <artifactId>ecerp-interfaces-koala</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.voyageone</groupId>
             <artifactId>voyageone-service2-base</artifactId>
             <version>${voyageone.service2.base.version}</version>

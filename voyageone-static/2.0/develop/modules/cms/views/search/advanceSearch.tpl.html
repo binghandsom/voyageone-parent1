@@ -29,7 +29,8 @@
                                             <div class="form-group">
                                                 <div class="col-sm-3"></div>
                                                 <div class="col-sm-8">
-                                                    <select multiple chosen width="'100%'" class="form-control" ng-model="vm.searchInfo.brandList"
+                                                    <select multiple chosen width="'100%'" class="form-control"
+                                                            ng-model="vm.searchInfo.brandList" search-contains = "true"
                                                             ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
                                                         <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
                                                     </select>
@@ -823,23 +824,22 @@
             <div class="container-fluid m-t-xs m-b-xs">
                 <uib-tabset class="tab-container vo_nav-tabs">
                     <!--right-btn-->
-                    <div class="form-inline m-b-xs pull-right" style="margin-right:30px" ng-controller="popupCtrl">
+                    <div class="form-inline m-b-xs pull-right advance-tabs" style="margin-right: 10px" ng-controller="popupCtrl">
                         <label class="checkbox-inline c-checkbox" style="margin-top:12px">
                             <input type="checkbox" value="1" ng-model="vm._selall">
                             <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;检索结果全量&nbsp;
                         </label>
                         <div class="btn-group" style="margin-left:10px" uib-dropdown ng-repeat="cartBean in vm.masterData.cartList">
                             <button type="button" class="btn btn-pop btn-default" uib-dropdown-toggle>
-                                <i class="fa fa-arrow-circle-right"></i>&nbsp;{{cartBean.name}}&nbsp;平台级变更&nbsp;<span class="caret"></span>
+                                <i class="fa fa-arrow-circle-right"></i>&nbsp;{{cartBean.name}}&nbsp;<span class="caret"></span>
                             </button>
                             <ul uib-dropdown-menu>
-                                <li ng-if="cartBean.value != 27 && cartBean.cartType != 3">
+                                <li ng-if="cartBean.value != 27 && cartBean.cartType != 3 && cartBean.value != 34">
                                     <a ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit,cartBean.value)">{{'TXT_TAG_STORE_CLASSIFY'|translate}}</a>
                                 </li>
                                 <li ng-if="getAutoSyncPriceSale(cartBean)!=true">
                                     <a href="javascript:void(0)" ng-click="toopenSalePrice(openSalePrice,cartBean.value)">{{'TXT_FINAL_SALE_PRICE_SETTING'|translate}}</a>
                                 </li>
-
                                 <li >
                                     <a href="javascript:void(0)" ng-click="jdCategoryMapping(cartBean.value)">修改平台类目</a>
                                 </li>
@@ -897,7 +897,7 @@
                             <table ng-controller="popupCtrl"  class="vo_table vo_models dropdown_table_bk font-bold" style="min-width:100%;" width="{{vm.tblWidth2}}" ng-style="{'border': vm.productList.length ? '1px solid #ddd': 'none'}">
                                 <thead>
                                     <tr style="background:#e67e22;color: #fff">
-                                        <th class="text-left" style="line-height:40px;padding-left:10px;width: 120px;" colspan="2">
+                                        <th class="text-left" style="line-height:40px;padding-left:10px;min-width: 120px;" colspan="2">
                                             <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
                                                 <input type="checkbox" ng-click="selectAll(vm.productSelList)"
                                                        ng-checked="isAllSelected(vm.productSelList)"

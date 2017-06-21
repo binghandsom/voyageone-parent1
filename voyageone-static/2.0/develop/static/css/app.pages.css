@@ -1222,3 +1222,27 @@ schema .ng-invalid.focus-error {
         transform: translateY(0);
     }
 }
+
+@media screen and (max-width: 1490px) {
+    .advance-tabs{
+        min-width: 1200px;
+    }
+}
+
+@media screen and (min-width:1400px) and (max-width:1490px){
+    .advance-tabs{
+        min-width: 1150px;
+    }
+}
+
+@media screen and (max-width: 1400px){
+    .advance-tabs{
+        min-width: 1100px;
+    }
+}
+
+@media screen and (max-width: 1350px) {
+    .advance-solr-tabs{
+        min-width: 1100px;
+    }
+}
