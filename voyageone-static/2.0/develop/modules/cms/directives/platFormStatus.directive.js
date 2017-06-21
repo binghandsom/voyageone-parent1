@@ -62,7 +62,7 @@ define([
                         if (_jdUrlEntity) {
                             this.statusData.detailUrl = _cartInfo.pUrl + _jdUrlEntity.jdSkuId + ".html";
                         }
-                    } else if (_cartId == 32) {
+                    } else if (_cartId == 32 || _cartId == 34) {
                         this.statusData.detailUrl = _cartInfo.pUrl + _numberId + ".html";
                     } else {
                         this.statusData.detailUrl = _cartInfo.pUrl + _numberId;
