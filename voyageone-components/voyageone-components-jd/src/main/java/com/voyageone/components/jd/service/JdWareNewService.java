@@ -1169,4 +1169,37 @@ public class JdWareNewService extends JdBase {
 
         return response;
     }
+
+    public ImageReadFindImagesByWareIdResponse getImageByWareId(ShopBean shop, Long jdWareId) {
+        ImageReadFindImagesByWareIdRequest imageReadFindImagesByWareIdRequest = new ImageReadFindImagesByWareIdRequest();
+
+        imageReadFindImagesByWareIdRequest.setWareId(jdWareId);
+
+        ImageReadFindImagesByWareIdResponse response = reqApi(shop, imageReadFindImagesByWareIdRequest);
+
+        return response;
+    }
+
+    public WareReadFindWareByIdResponse wareReadFindWareById(ShopBean shop, Long jdWareId) {
+        WareReadFindWareByIdRequest wareReadFindWareByIdRequest = new WareReadFindWareByIdRequest();
+
+        wareReadFindWareByIdRequest.setWareId(jdWareId);
+        wareReadFindWareByIdRequest.setField("props");
+
+        WareReadFindWareByIdResponse response = reqApi(shop, wareReadFindWareByIdRequest);
+
+        return response;
+    }
+
+    public SkuReadFindSkuByIdResponse skuReadFindSkuById(ShopBean shop, Long jdWareId,String field) {
+        SkuReadFindSkuByIdRequest skuReadFindSkuByIdRequest = new SkuReadFindSkuByIdRequest();
+
+        skuReadFindSkuByIdRequest.setSkuId(jdWareId);
+        skuReadFindSkuByIdRequest.setField(field);
+        SkuReadFindSkuByIdResponse response = reqApi(shop, skuReadFindSkuByIdRequest);
+
+        //1983231825
+        return response;
+    }
+
 }

@@ -261,85 +261,35 @@
     </update>
 
     <select id="selectListNeedBeatFullData" resultMap="beatInfo_With_Code_Task">
-        SELECT
+       SELECT
             b.id,
+            t.channel_id,
+            t.cart_id,
             b.task_id,
             b.num_iid,
             b.product_code,
-            syn_flag,
+            b.syn_flag,
             message,
             image_status,
             image_task_id,
+            b.image_url,
+            b.image_name,
+            b.price,
             b.created,
             b.creater,
             b.modified,
             b.modifier,
-
-            t.id             task_task_id,
-            task_name        task_task_name,
-            task_type        task_task_type,
-            t.promotion_id   task_promotion_id,
-            config           task_config,
-            status           task_status,
-            t.activity_start task_activity_start,
-            t.activity_end   task_activity_end,
-            t.created        task_created,
-            t.creater        task_creater,
-            t.modified       task_modified,
-            t.modifier       task_modifier,
-
-            p.id             promotion_promotion_id,
-            p.channel_id     promotion_channel_id,
-            cart_id          promotion_cart_id,
-            promotion_status promotion_promotion_status,
-            promotion_name   promotion_promotion_name,
-            pre_sale_end     promotion_pre_sale_end,
-            pre_sale_start   promotion_pre_sale_start,
-            pre_period_start promotion_pre_period_start,
-            pre_period_end   promotion_pre_period_end,
-            p.activity_start promotion_activity_start,
-            p.activity_end   promotion_activity_end,
-            tejiabao_id      promotion_tejiabao_id,
-            promotion_type   promotion_promotion_type,
-            ref_tag_id       promotion_ref_tag_id,
-            active           promotion_is_active,
-            is_all_promotion promotion_is_all_promotion,
-            p.created        promotion_created,
-            p.creater        promotion_creater,
-            p.modified       promotion_modified,
-            p.modifier       promotion_modifier,
-
-            c.id             code_seq,
-            c.promotion_id   code_promotion_id,
-            product_id       code_product_id,
-            c.model_id       code_model_id,
-            c.product_model  code_product_model,
-            c.product_code   code_product_code,
-            product_name     code_product_name,
-            c.cat_path       code_cat_path,
-            retail_price     code_retail_price,
-            sale_price       code_sale_price,
-            msrp             code_msrp,
-            tag_id           code_tag_id,
-            promotion_price  code_promotion_price,
-            c.num_iid        code_num_iid,
-            image_url_1      code_image_url_1,
-            image_url_2      code_image_url_2,
-            image_url_3      code_image_url_3,
-            c.created        code_created,
-            c.creater        code_creater,
-            c.modified       code_modified,
-            c.modifier       code_modifier
+            t.task_name      ,
+            task_type        ,
+            config           ,
+            status           ,
+            t.activity_start ,
+            t.activity_end
 
         FROM voyageone_cms2.cms_bt_task_jiagepilu b
             JOIN voyageone_cms2.cms_bt_tasks t ON t.id = b.task_id
-            JOIN voyageone_cms2.cms_bt_promotion p ON p.id = t.promotion_id
-            LEFT JOIN voyageone_cms2.cms_bt_promotion_groups m ON m.promotion_id = p.id AND b.num_iid = m.num_iid
-            LEFT JOIN voyageone_cms2.cms_bt_promotion_codes c
-                ON c.promotion_id = p.id AND c.product_code = b.product_code
         WHERE (
-                  p.active = 1
-                  AND #{now} > t.activity_start
+                  #{now} > t.activity_start
                   AND #{now} &lt; t.activity_end
                   AND b.syn_flag = #{upFlag}
               ) OR (
@@ -348,70 +298,27 @@
                   b.syn_flag = #{downFlag}
                   AND #{now} > t.activity_end
               )
+        and t.cart_id in
+        <foreach item="item" index="index" collection="cartIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
         LIMIT #{limit}
     </select>
 
     <resultMap id="beatInfo_With_Code_Task"
                type="com.voyageone.service.bean.cms.CmsBtBeatInfoBean" autoMapping="true">
         <id property="id" column="id"/>
-        <association property="task" javaType="com.voyageone.service.bean.cms.CmsBtTasksBean">
-            <id property="id" column="task_task_id"/>
-            <result property="taskName" column="task_task_name"/>
-            <result property="taskType" column="task_task_type"/>
-            <result property="promotionId" column="task_promotion_id"/>
-            <result property="config" column="task_config"/>
-            <result property="status" column="task_status"/>
-            <result property="activityStart" column="task_activity_start"/>
-            <result property="activityEnd" column="task_activity_end"/>
-            <result property="created" column="task_created"/>
-            <result property="creater" column="task_creater"/>
-            <result property="modified" column="task_modified"/>
-            <result property="modifier" column="task_modifier"/>
-        </association>
-        <association property="promotion" javaType="com.voyageone.service.model.cms.CmsBtPromotionModel">
-            <id property="id" column="promotion_promotion_id"/>
-            <result property="channelId" column="promotion_channel_id"/>
-            <result property="cartId" column="promotion_cart_id"/>
-            <result property="promotionStatus" column="promotion_promotion_status"/>
-            <result property="promotionName" column="promotion_promotion_name"/>
-            <result property="preSaleEnd" column="promotion_pre_sale_end"/>
-            <result property="preSaleStart" column="promotion_pre_sale_start"/>
-            <result property="prePeriodStart" column="promotion_pre_period_start"/>
-            <result property="prePeriodEnd" column="promotion_pre_period_end"/>
-            <result property="activityStart" column="promotion_activity_start"/>
-            <result property="activityEnd" column="promotion_activity_end"/>
-            <result property="tejiabaoId" column="promotion_tejiabao_id"/>
-            <result property="promotionType" column="promotion_promotion_type"/>
-            <result property="refTagId" column="promotion_ref_tag_id"/>
-            <result property="active" column="promotion_is_active"/>
-            <result property="isAllPromotion" column="promotion_is_all_promotion"/>
-            <result property="created" column="promotion_created"/>
-            <result property="creater" column="promotion_creater"/>
-            <result property="modified" column="promotion_modified"/>
-            <result property="modifier" column="promotion_modifier"/>
-        </association>
-        <association property="promotion_code" javaType="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean">
-            <id property="id" column="code_seq"/>
-            <result property="promotionId" column="code_promotion_id"/>
-            <result property="productId" column="code_product_id"/>
-            <result property="modelId" column="code_model_id"/>
-            <result property="productModel" column="code_product_model"/>
-            <result property="productCode" column="code_product_code"/>
-            <result property="productName" column="code_product_name"/>
-            <result property="catPath" column="code_cat_path"/>
-            <result property="retailPrice" column="code_retail_price"/>
-            <result property="salePrice" column="code_sale_price"/>
-            <result property="msrp" column="code_msrp"/>
-            <result property="tagId" column="code_tag_id"/>
-            <result property="promotionPrice" column="code_promotion_price"/>
-            <result property="numIid" column="code_num_iid"/>
-            <result property="image_url_1" column="code_image_url_1"/>
-            <result property="image_url_2" column="code_image_url_2"/>
-            <result property="image_url_3" column="code_image_url_3"/>
-            <result property="created" column="code_created"/>
-            <result property="creater" column="code_creater"/>
-            <result property="modified" column="code_modified"/>
-            <result property="modifier" column="code_modifier"/>
+        <association property="task" javaType="com.voyageone.service.model.cms.CmsBtTasksModel">
+            <id property="id" column="task_id"/>
+            <result property="channelId" column="channel_id"/>
+            <result property="taskName" column="task_name"/>
+            <result property="taskType" column="task_type"/>
+            <result property="config" column="config"/>
+            <result property="status" column="status"/>
+            <result property="cartId" column="cart_id"/>
+            <result property="activityStart" column="activity_start"/>
+            <result property="activityEnd" column="activity_end"/>
         </association>
     </resultMap>
 
@@ -420,6 +327,7 @@
         SET syn_flag     = #{synFlag},
             message      = #{message},
             image_status = #{imageStatus},
+            image_url = #{imageUrl},
             modified     = NOW(),
             modifier     = #{modifier}
         WHERE id = #{id}
