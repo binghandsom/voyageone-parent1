@@ -1191,11 +1191,11 @@ public class JdWareNewService extends JdBase {
         return response;
     }
 
-    public SkuReadFindSkuByIdResponse skuReadFindSkuById(ShopBean shop, Long jdWareId) {
+    public SkuReadFindSkuByIdResponse skuReadFindSkuById(ShopBean shop, Long jdWareId,String field) {
         SkuReadFindSkuByIdRequest skuReadFindSkuByIdRequest = new SkuReadFindSkuByIdRequest();
 
         skuReadFindSkuByIdRequest.setSkuId(jdWareId);
-        skuReadFindSkuByIdRequest.setField("outerId,logo");
+        skuReadFindSkuByIdRequest.setField(field);
         SkuReadFindSkuByIdResponse response = reqApi(shop, skuReadFindSkuByIdRequest);
 
         //1983231825

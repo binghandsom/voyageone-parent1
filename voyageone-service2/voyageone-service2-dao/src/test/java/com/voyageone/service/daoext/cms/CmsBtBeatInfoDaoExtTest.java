@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Ethan Shi on 2016/5/11.
@@ -254,7 +251,7 @@ public class CmsBtBeatInfoDaoExtTest {
                 BeatFlag.BEATING.getFlag(),
                 BeatFlag.REVERT.getFlag(),
                 BeatFlag.SUCCESS.getFlag(),
-                DateTimeUtil.parse("2017-01-01 00:00:00"));
+                DateTimeUtil.parse("2017-01-01 00:00:00"), Arrays.asList(23));
 
         Assert.assertTrue(list.size() == 2);
 

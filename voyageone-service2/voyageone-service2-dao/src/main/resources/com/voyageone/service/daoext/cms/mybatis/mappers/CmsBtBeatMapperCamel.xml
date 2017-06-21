@@ -298,6 +298,11 @@
                   b.syn_flag = #{downFlag}
                   AND #{now} > t.activity_end
               )
+        and t.cart_id in
+        <foreach item="item" index="index" collection="cartIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
         LIMIT #{limit}
     </select>
 
