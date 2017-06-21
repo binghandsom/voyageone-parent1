@@ -486,8 +486,6 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
             // 上新用的商品数据信息取得 // TODO：这段翻译写得不好看， 以后再改 Tom
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
             if (!StringUtils.isEmpty(sxData.getPlatform().getPlatformPid())) throw new BusinessException("已经上新过,考拉不能更新商品!");
-            cmsTranslateMqService.executeSingleCode(channelId, 0, sxData.getMainProduct().getCommon().getFields().getCode(), "0");
-            sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
             if (sxData == null) {
                 throw new BusinessException("取得上新用的商品数据信息失败！请向管理员确认 [sxData=null]");
             }
@@ -1360,7 +1358,6 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         // 我们设置skuCode
         StringBuffer sbOuterId = new StringBuffer();
 
-        // TODO:先随便填坑，取别名，之后试试看用对应颜色尺码去上
         // TODO:没有颜色没有尺码怎么上新，还不知道，碰到了再说
 
         // 根据product列表循环设置该商品的SKU属性
