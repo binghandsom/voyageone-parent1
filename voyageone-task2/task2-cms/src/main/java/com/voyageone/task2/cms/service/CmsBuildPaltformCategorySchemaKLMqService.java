@@ -13,7 +13,9 @@ import com.voyageone.common.masterdate.schema.rule.*;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.ecerp.interfaces.third.koala.KoalaCommonService;
 import com.voyageone.ecerp.interfaces.third.koala.KoalaItempropsService;
+import com.voyageone.ecerp.interfaces.third.koala.beans.Country;
 import com.voyageone.ecerp.interfaces.third.koala.beans.KoalaConfig;
 import com.voyageone.ecerp.interfaces.third.koala.beans.PropertyCategory;
 import com.voyageone.ecerp.interfaces.third.koala.beans.PropertyValue;
@@ -42,6 +44,8 @@ public class CmsBuildPaltformCategorySchemaKLMqService extends BaseMQCmsService 
 
     @Autowired
     private KoalaItempropsService koalaItempropsService;
+    @Autowired
+    private KoalaCommonService koalaCommonService;
 
     @Autowired
     private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
@@ -91,7 +95,7 @@ public class CmsBuildPaltformCategorySchemaKLMqService extends BaseMQCmsService 
         // 删除考拉共通类目schema
         cmsMtPlatformCategorySchemaDao.deletePlatformCategorySchemaByCategory(Integer.parseInt(cartId), "1");
         // 创建考拉共通类目schema
-        doSetPlatformSchemaCommon(Integer.parseInt(cartId));
+        doSetPlatformSchemaCommon(shopBean, Integer.parseInt(cartId));
 
         // 创建考拉各个平台叶子类目
         if (ListUtils.notNull(allCategoryTreeLeaves)) {
@@ -242,7 +246,7 @@ public class CmsBuildPaltformCategorySchemaKLMqService extends BaseMQCmsService 
      * 创建考拉共通类目
      * @param cartId
      */
-    protected void doSetPlatformSchemaCommon(int cartId) {
+    protected void doSetPlatformSchemaCommon(KoalaConfig shopBean, int cartId) {
         CmsMtPlatformCategorySchemaModel schemaCommonModel = new CmsMtPlatformCategorySchemaModel();
         schemaCommonModel.setCartId(cartId);
         schemaCommonModel.setCatId("1");
@@ -269,7 +273,15 @@ public class CmsBuildPaltformCategorySchemaKLMqService extends BaseMQCmsService 
         addInputField(productFieldsList, "item_NO", "商品货号", "", false, "50", "默认用code");
 
         // 原产国id
-        addInputField(productFieldsList, "original_country_code_id", "原产国id", "", true, null, "");
+        Country[] countries = koalaCommonService.countriesGet(shopBean);
+        List<Option> optionList = new ArrayList<>();
+        for (Country country : countries) {
+            Option option = new Option();
+            option.setValue(country.getCountryCode());
+            option.setDisplayName(country.getCountryName());
+            optionList.add(option);
+        }
+        addSingleCheckField(productFieldsList, "original_country_code_id", "原产国id", "", true, optionList);
 
         // 商品毛重
         addInputField(productFieldsList, "gross_weight", "商品毛重（单位kg）", "", false, null, "默认master详情的重量(kg)，如果没值，此项必填，商品的毛重不能随意填写，将会推送至海关报关，如果和实际重量差别很大，会导致清关失败");

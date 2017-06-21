@@ -485,7 +485,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         try {
             // 上新用的商品数据信息取得 // TODO：这段翻译写得不好看， 以后再改 Tom
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
-            if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) throw new BusinessException("已经上新过,考拉不能更新商品!");
+            if (!StringUtils.isEmpty(sxData.getPlatform().getPlatformPid())) throw new BusinessException("已经上新过,考拉不能更新商品!");
             cmsTranslateMqService.executeSingleCode(channelId, 0, sxData.getMainProduct().getCommon().getFields().getCode(), "0");
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
             if (sxData == null) {
@@ -748,14 +748,14 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                 }
             }
 
-            String numIId = response.getKey();
+            String platformPid = response.getKey();
             SkuOuterIdResult[] skuKeys = response.getSkuKeys();
 
             // 上新成功时状态回写操作
-            sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, numIId, CmsConstants.PlatformStatus.InStock, "", getTaskName());
+            sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, "", CmsConstants.PlatformStatus.InStock, platformPid, getTaskName());
 
             // 回写cms_bt_kl_sku
-            saveCmsBtKlSku(channelId, sxData, listSxCode, numIId, skuKeys);
+            saveCmsBtKlSku(channelId, sxData, listSxCode, "", skuKeys);
 
             if (ChannelConfigEnums.Channel.SN.getId().equals(channelId)) {
                 // Sneakerhead
