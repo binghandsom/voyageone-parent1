@@ -1367,9 +1367,18 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         for (CmsBtProductModel objProduct : productList) {
             // 取得颜色别名的值
             String colorAlias = getColorAlias(objProduct, StringUtils.toString(sxData.getCartId()), channelConfigValueMap);
+
+            // 20170620 优先匹配考拉给的颜色列表 charis STA
+            String attrColorValueId = cmsColorList.get(0).getAttrValue().split(Separtor_Colon)[0];
+            CmsMtPlatformSkusModel colorModel = cmsColorList.stream()
+                    .filter(c -> c.getAttrName().equals(colorAlias))
+                    .findFirst()
+                    .orElse(null);
+            // 20170620 优先匹配考拉给的颜色列表 charis END
+
             String productCode = objProduct.getCommon().getFields().getCode();
-            CmsMtPlatformSkusModel colorModel = cmsColorList.get(0);
-            cmsColorList.remove(0);
+//            CmsMtPlatformSkusModel colorModel = cmsColorList.get(0);
+//            cmsColorList.remove(0);
 
             String picUrl;
             // 属性图片
@@ -1398,35 +1407,56 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
 
                     // 上新用尺码别名
                     String sizeSx = objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
-                    CmsMtPlatformSkusModel sizeModel = skuSizeMap.get(sizeSx);
-                    if (sizeModel == null) {
-                        sizeModel = cmsSizeList.get(0);
-                        cmsSizeList.remove(0);
-                        skuSizeMap.put(sizeSx, sizeModel);
-                    }
-                    String sizeVal = sizeModel.getAttrValue();
+//                    CmsMtPlatformSkusModel sizeModel = skuSizeMap.get(sizeSx);
+
+                    // 20170620 优先匹配考拉给的尺码列表 charis STA
+                    String attrSizeValueId = cmsSizeList.get(0).getAttrValue().split(Separtor_Colon)[0];
+                    CmsMtPlatformSkusModel sizeModel = cmsSizeList.stream()
+                            .filter(c -> c.getAttrName().equals(sizeSx))
+                            .findFirst()
+                            .orElse(null);
+                    // 20170620 优先匹配考拉给的尺码列表 charis END
+
+//                    if (sizeModel == null) {
+//                        sizeModel = cmsSizeList.get(0);
+//                        cmsSizeList.remove(0);
+//                        skuSizeMap.put(sizeSx, sizeModel);
+//                    }
+//                    String sizeVal = sizeModel.getAttrValue();
 
                     // 设置SKU颜色和尺码销售属性
                     switch (salePropStatus) {
                         case SaleProp_Both_Color_Size_1:
                             // 颜色和尺码属性都有时
-//                            sbPropertyValue.append(colorModel.getAttrValue()).append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 颜色
-                            sbPropertyValue.append(colorModel.getAttrValue().split(Separtor_Colon)[0]).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 自定义颜色
+                            if (colorModel == null) {
+                                sbPropertyValue.append(attrColorValueId).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(productCode).append(Separtor_Colon).append(picUrl); // 自定义颜色
+                            } else {
+                                sbPropertyValue.append(colorModel.getAttrValue()).append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 颜色
+                            }
                             sbPropertyValue.append(Separtor_Semicolon);
-//                            sbPropertyValue.append(sizeVal).append(Separtor_Colon).append(sizeSx); // 尺码
-                            sbPropertyValue.append(sizeVal.split(Separtor_Colon)[0]).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(sizeSx); // 自定义尺码
+                            if (sizeModel == null) {
+                                sbPropertyValue.append(attrSizeValueId).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(sizeSx); // 自定义尺码
+                            } else {
+                                sbPropertyValue.append(sizeModel.getAttrValue()).append(Separtor_Colon).append(sizeSx); // 尺码
+                            }
                             sbPropertyValue.append(Separtor_Vertical);
                             break;
                         case SaleProp_Only_Color_2:
                             // 只有颜色属性时
-//                            sbPropertyValue.append(colorModel.getAttrValue()).append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 颜色
-                            sbPropertyValue.append(colorModel.getAttrValue().split(Separtor_Colon)[0]).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 自定义颜色
+                            if (colorModel == null) {
+                                sbPropertyValue.append(attrColorValueId).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(productCode).append(Separtor_Colon).append(picUrl); // 自定义颜色
+                            } else {
+                                sbPropertyValue.append(colorModel.getAttrValue()).append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 颜色
+                            }
                             sbPropertyValue.append(Separtor_Vertical);
                             break;
                         case SaleProp_Only_Size_3:
                             // 只有尺码属性时
-//                            sbPropertyValue.append(sizeVal).append(Separtor_Colon).append(colorAlias + sizeSx); // 尺码
-                            sbPropertyValue.append(sizeVal.split(Separtor_Colon)[0]).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(sizeSx); // 自定义尺码
+                            if (sizeModel == null) {
+                                sbPropertyValue.append(attrSizeValueId).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(sizeSx); // 自定义尺码
+                            } else {
+                                sbPropertyValue.append(sizeModel.getAttrValue()).append(Separtor_Colon).append(sizeSx); // 尺码
+                            }
                             sbPropertyValue.append(Separtor_Vertical);
                             break;
                     }
