@@ -22,5 +22,10 @@ public interface CmsProperty {
         String PROMOTION_EXPORT_PATH = "cms.promotion.export.path";
         String PROMOTION_JUHUASUAN_EXPORT_PATH = "cms.promotion.juhuasuan.export.path";
         String PROMOTION_TMALL_EXPORT_PATH = "cms.promotion.tmall.export.path";
+
+        /**
+         * 价格披露商品导入模板下载路径
+         */
+        String CMS_JIAGEPILU_IMPORT_TEMPLATE_PATH = "cms.jiagepilu.import.template.path";
     }
 }

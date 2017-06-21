@@ -339,7 +339,30 @@ public interface CmsUrlConstants {
 
                 String EXECUTE_STOCK_INCREMENT_SEPARATION = "executeStockIncrementSeparation";
             }
+
         }
+    }
+
+    interface TASK {
+        /**
+         * 价格披露URL
+         */
+        interface JIAGEPILU {
+
+            String ROOT = "/cms/task/jiagepilu";
+
+            String LIST = "list";
+
+            String GET_TASK_MODEL = "getTaskModel";
+
+            String GET_PRODUCT_LIST = "getProductList";
+
+            String DOWNLOAD_IMPORT_TEMPLATE = "downloadImportTemplate";
+
+            String IMPORT = "import";
+
+        }
+
     }
 
     // 检索

@@ -446,6 +446,13 @@ define(function () {
                     "importStockInfo": "importStockInfo",
                     "exportStockInfo": "exportStockInfo",
                     "executeStockIncrementSeparation": "executeStockIncrementSeparation"
+                },
+                "taskJiagepiluService": {
+                    "root": "/cms/task/jiagepilu",
+                    "getTaskModel":"getTaskModel",
+                    "getProductList":"getProductList",
+                    "downloadImportTemplate":"downloadImportTemplate",
+                    "import":"import"
                 }
             },
             "system": {

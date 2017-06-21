@@ -922,6 +922,16 @@ define(function () {
         "TXT_CHANGE_PASS": "修改密码",
         "TXT_TRANSLATION_DATE": "翻译时间",
 
-        "TXT_TEMPLATE_TYPE":"模板类型"
+        "TXT_TEMPLATE_TYPE":"模板类型",
+
+        "TXT_TASK_NAME":"任务名称",
+        "TXT_TASK_STATUS":"任务状态",
+        "TXT_CODE_OR_NUMIID":"Code / Number ID",
+        "TXT_ERROR_MESSAGE":"错误信息",
+        "TXT_SINGLE_CODE_STATUS":"单品状态",
+        "BTN_TASK_EDIT": "编辑任务",
+        "TXT_PRODUCT_LIST":"Product List",
+        "TXT_IMPORT_LIST":"Import List",
+        "BTN_IMPORT_TEMPLATE_DOWNLOAD":"导入模板下载"
     };
 });

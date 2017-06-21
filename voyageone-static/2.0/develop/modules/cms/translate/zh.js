@@ -951,6 +951,17 @@ define(function () {
         "TXT_BI_DOWNLOAD_LIST_FILE_CREATING":"文件正在生成！",
         "TXT_BI_DOWNLOAD_LIST_NO_FILEPATH":"无法找到文件路径！错误代码：",
         "TXT_BI_DOWNLOAD_LIST_NO_CONNECTION":"无法连接远程API！错误代码：",
-        "TXT_BI_DOWNLOAD_LIST_ERROR_CODE":"生成文件失败，错误代码:"
+        "TXT_BI_DOWNLOAD_LIST_ERROR_CODE":"生成文件失败，错误代码:",
+
+        "TXT_TASK_NAME":"任务名称",
+        "TXT_TASK_STATUS":"任务状态",
+        "TXT_CODE_OR_NUMIID":"Code / Number ID",
+        "TXT_ERROR_MESSAGE":"错误信息",
+        "TXT_SINGLE_CODE_STATUS":"单品状态",
+        "BTN_TASK_EDIT": "编辑任务",
+        "TXT_PRODUCT_LIST":"Product List",
+        "TXT_IMPORT_LIST":"Import List",
+        "BTN_IMPORT_TEMPLATE_DOWNLOAD":"导入模板下载"
+
     };
 });
