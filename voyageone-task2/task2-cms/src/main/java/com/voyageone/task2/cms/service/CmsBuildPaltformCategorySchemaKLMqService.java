@@ -266,7 +266,7 @@ public class CmsBuildPaltformCategorySchemaKLMqService extends BaseMQCmsService 
         addInputField(productFieldsList, "ten_words_desc", "十字描述", "", true, "24", "最少8个字符， 最大24个字符，用于web端首页活动页商品标题后的卖点描述");
 
         // 商品货号（最大50位字符）
-        addInputField(productFieldsList, "item_NO", "商品货号", "", false, "50", "默认用model");
+        addInputField(productFieldsList, "item_NO", "商品货号", "", false, "50", "默认用code");
 
         // 原产国id
         addInputField(productFieldsList, "original_country_code_id", "原产国id", "", true, null, "");

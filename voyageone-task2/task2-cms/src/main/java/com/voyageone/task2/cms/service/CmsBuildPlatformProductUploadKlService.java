@@ -893,8 +893,9 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         }
         if (StringUtils.isEmpty(itemNO)) {
             // 默认使用model来设置
-            // TODO:之后可能一个group一个code,那就改成code
-            klAddBean.setItemNO(mainProduct.getCommonNotNull().getFieldsNotNull().getModel());
+            // TODO:暂时一个group一个code,改成code
+//            klAddBean.setItemNO(mainProduct.getCommonNotNull().getFieldsNotNull().getModel());
+            klAddBean.setItemNO(mainProduct.getCommonNotNull().getFieldsNotNull().getCode());
         } else {
             // 如果有填了的话, 那就用运营自己填写的来设置
             klAddBean.setItemNO(itemNO);
