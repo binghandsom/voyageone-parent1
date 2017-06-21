@@ -327,6 +327,7 @@
         SET syn_flag     = #{synFlag},
             message      = #{message},
             image_status = #{imageStatus},
+            image_url = #{imageUrl},
             modified     = NOW(),
             modifier     = #{modifier}
         WHERE id = #{id}

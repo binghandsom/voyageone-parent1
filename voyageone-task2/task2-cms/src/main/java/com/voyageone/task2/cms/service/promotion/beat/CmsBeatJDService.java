@@ -4,6 +4,7 @@ import com.jd.open.api.sdk.JdException;
 import com.jd.open.api.sdk.domain.ware.ImageReadService.Image;
 import com.jd.open.api.sdk.response.imgzone.ImgzonePictureUploadResponse;
 import com.jd.open.api.sdk.response.ware.ImageReadFindImagesByWareIdResponse;
+import com.jd.open.api.sdk.response.ware.ImageWriteUpdateResponse;
 import com.jd.open.api.sdk.response.ware.SkuReadFindSkuByIdResponse;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.Picture;
@@ -49,24 +50,29 @@ import static java.lang.String.format;
 
 /**
  * Created by james on 2017/6/20.
+ * 京东的价格披露
  */
 @Service
 public class CmsBeatJDService extends BaseCronTaskService {
 
-    @Autowired
-    private CmsBeatInfoService beatInfoService;
+    private final CmsBeatInfoService beatInfoService;
+
+    private final ProductService productService;
+
+    private final JdWareNewService jdWareNewService;
+
+    private final ImageCategoryService imageCategoryService;
+
+    private final JdImgzoneService jdImgzoneService;
 
     @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private JdWareNewService jdWareNewService;
-
-    @Autowired
-    private ImageCategoryService imageCategoryService;
-
-    @Autowired
-    private JdImgzoneService jdImgzoneService;
+    public CmsBeatJDService(CmsBeatInfoService beatInfoService, ProductService productService, JdWareNewService jdWareNewService, ImageCategoryService imageCategoryService, JdImgzoneService jdImgzoneService) {
+        this.beatInfoService = beatInfoService;
+        this.productService = productService;
+        this.jdWareNewService = jdWareNewService;
+        this.imageCategoryService = imageCategoryService;
+        this.jdImgzoneService = jdImgzoneService;
+    }
 
 
     @Override
@@ -100,10 +106,12 @@ public class CmsBeatJDService extends BaseCronTaskService {
         }
 
         $info("预定抽取数量：%s，实际抽取数量：%s", LIMIT, beatInfoModels.size());
+        beatInfoModels.forEach(this::beatMain);
+
     }
 
 
-    public void beatMain(CmsBtBeatInfoBean cmsBtBeatInfo) {
+    private void beatMain(CmsBtBeatInfoBean cmsBtBeatInfo) {
         ConfigBean configBean;
         ShopBean shopBean = Shops.getShop(cmsBtBeatInfo.getTask().getChannelId(), cmsBtBeatInfo.getTask().getCartId());
         shopBean.setShop_name("Sneakerhead国际旗舰店");
@@ -118,10 +126,30 @@ public class CmsBeatJDService extends BaseCronTaskService {
             CmsMtImageCategoryModel cmsMtImageCategoryModel = imageCategoryService.getCategory(shopBean, ImageCategoryType.Beat);
             if (cmsMtImageCategoryModel == null) throw new BusinessException("平台的图片空间取得失败");
             if (cmsBtBeatInfo.getSynFlag() == BeatFlag.BEATING.getFlag()) {
+                $info(String.format("channelId:%s code:%s numIId:%d 价格披露",cmsBtBeatInfo.getTask().getChannelId(), cmsBtBeatInfo.getProductCode(), cmsBtBeatInfo.getNumIid()));
                 String jdImageUrl = getJdImageUrl(shopBean, configBean.getBeat_template(), cmsBtBeatInfo.getImageName(), cmsMtImageCategoryModel, cmsBtBeatInfo.getPrice());
                 $info("jdImageUrl " + jdImageUrl);
                 Image image = getJDImage(shopBean, cmsBtBeatInfo.getTask().getChannelId(), cmsBtBeatInfo.getTask().getCartId(), cmsBtBeatInfo.getProductCode(), cmsBtBeatInfo.getNumIid());
-                jdWareNewService.imageWriteUpdate(shopBean, cmsBtBeatInfo.getNumIid(), Collections.singletonList(image.getColorId()), Collections.singletonList(jdImageUrl), Collections.singletonList("1"));
+                cmsBtBeatInfo.setImageUrl(image.getImgUrl());
+                ImageWriteUpdateResponse imageWriteUpdateResponse = jdWareNewService.imageWriteUpdate(shopBean, cmsBtBeatInfo.getNumIid(), Collections.singletonList(image.getColorId()), Collections.singletonList(jdImageUrl), Collections.singletonList("1"));
+                if(imageWriteUpdateResponse != null && !imageWriteUpdateResponse.getSuccess()){
+                    throw new BusinessException("更新商品图错误" + JacksonUtil.bean2Json(imageWriteUpdateResponse));
+                }else if(imageWriteUpdateResponse == null){
+                    throw new BusinessException("更新商品图错误");
+                }
+                cmsBtBeatInfo.setMessage("");
+                cmsBtBeatInfo.setSynFlag(BeatFlag.SUCCESS);
+            }else if(cmsBtBeatInfo.getSynFlag() == BeatFlag.REVERT.getFlag()){
+                $info(String.format("channelId:%s code:%s numIId:%d 价格披露还原",cmsBtBeatInfo.getTask().getChannelId(), cmsBtBeatInfo.getProductCode(), cmsBtBeatInfo.getNumIid()));
+                Image image = getJDImage(shopBean, cmsBtBeatInfo.getTask().getChannelId(), cmsBtBeatInfo.getTask().getCartId(), cmsBtBeatInfo.getProductCode(), cmsBtBeatInfo.getNumIid());
+                ImageWriteUpdateResponse imageWriteUpdateResponse = jdWareNewService.imageWriteUpdate(shopBean, cmsBtBeatInfo.getNumIid(), Collections.singletonList(image.getColorId()), Collections.singletonList(cmsBtBeatInfo.getImageUrl()), Collections.singletonList("1"));
+                if(imageWriteUpdateResponse != null && !imageWriteUpdateResponse.getSuccess()){
+                    throw new BusinessException("更新商品图错误" + JacksonUtil.bean2Json(imageWriteUpdateResponse));
+                }else if(imageWriteUpdateResponse == null){
+                    throw new BusinessException("更新商品图错误");
+                }
+                cmsBtBeatInfo.setMessage("");
+                cmsBtBeatInfo.setSynFlag(BeatFlag.RE_SUCCESS);
             }
         } catch (Exception e) {
             if(cmsBtBeatInfo.getSynFlag() == BeatFlag.REVERT.getFlag()){
@@ -131,10 +159,11 @@ public class CmsBeatJDService extends BaseCronTaskService {
             }
             cmsBtBeatInfo.setMessage(e.getMessage());
         }
+        beatInfoService.saveFlagAndMessage(cmsBtBeatInfo);
     }
 
     // 获取该code在京东的主图信息
-    public Image getJDImage(ShopBean shopBean, String channelId, Integer cartId, String code, Long numIId) {
+    private Image getJDImage(ShopBean shopBean, String channelId, Integer cartId, String code, Long numIId) {
         CmsBtProductModel cmsBtProduct = productService.getProductByCode(channelId, code);
         if (cmsBtProduct == null) {
             throw new BusinessException("code在cms中不存在");
@@ -164,8 +193,7 @@ public class CmsBeatJDService extends BaseCronTaskService {
         SkuReadFindSkuByIdResponse skuReadFindSkuByIdResponse = jdWareNewService.skuReadFindSkuById(shopBean, Long.parseLong(jdSkuId), "outerId,logo");
         if (skuReadFindSkuByIdResponse == null) throw new BusinessException("jdSkuId: " + jdSkuId + " 没有取得sku详情");
 
-        Image image = imageReadFindImagesByWareIdResponse.getImages().stream().filter(item -> !item.getColorId().equals("0000000000")).filter(item -> item.getImgUrl().equals(skuReadFindSkuByIdResponse.getSku().getLogo())).findFirst().orElse(null);
-        return image;
+        return imageReadFindImagesByWareIdResponse.getImages().stream().filter(item -> !item.getColorId().equals("0000000000")).filter(item -> item.getImgUrl().equals(skuReadFindSkuByIdResponse.getSku().getLogo())).findFirst().orElse(null);
     }
 
     private int[] tryGetConfig(List<TaskControlBean> taskControlList) {
@@ -173,18 +201,6 @@ public class CmsBeatJDService extends BaseCronTaskService {
         String thread_count = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.thread_count);
 
         String atom_count = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.atom_count);
-
-        String errorMessage = null;
-        int errorTarget = 0;
-
-        // 计算 errorMessage
-        if (StringUtils.isAnyEmpty(thread_count, atom_count)) {
-            errorMessage = "价格披露的线程配置为空";
-            errorTarget = 1;
-        } else if (!StringUtils.isNumeric(thread_count) || !StringUtils.isNumeric(atom_count)) {
-            errorMessage = "价格披露的线程配置不是数字";
-            errorTarget = 2;
-        }
 
         return new int[]{Integer.valueOf(thread_count), Integer.valueOf(atom_count)};
     }
@@ -212,7 +228,7 @@ public class CmsBeatJDService extends BaseCronTaskService {
         if (uploadResponse != null && !StringUtil.isEmpty(uploadResponse.getPictureUrl()))
             // 成功返回
             return uploadResponse.getPictureUrl();
-        String message = format("上传主图失败：[ %d ] [ %s ]", uploadResponse.getCode(), uploadResponse.getDesc());
+        String message = format("上传主图失败：[ %s ] [ %s ]", uploadResponse.getCode(), uploadResponse.getDesc());
         throw new BusinessException(message);
     }
 

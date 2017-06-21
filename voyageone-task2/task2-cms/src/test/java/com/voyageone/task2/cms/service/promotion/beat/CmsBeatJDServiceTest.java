@@ -8,6 +8,9 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.jd.service.JdWareNewService;
+import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
+import com.voyageone.task2.base.Enums.TaskControlEnums;
+import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -55,13 +59,33 @@ public class CmsBeatJDServiceTest {
 
     @Test
     public void getJDImage(){
-        ShopBean shopBean = Shops.getShop("001",26);
-        shopBean.setShop_name("Sneakerhead国际旗舰店");
-        shopBean.setApp_url("https://api.jd.com/routerjson");
-        shopBean.setAppKey("BFA3102EFD4B981E9EEC2BE32DF1E44E");
-        shopBean.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
-        shopBean.setSessionKey("614a5873-f72e-4efc-9208-c0c5db4e07ac");
-        Image image = cmsBeatJDService.getJDImage(shopBean, "001",26, "s74990", 1956654138L);
-        System.out.println(JacksonUtil.bean2Json(image));
+//        ShopBean shopBean = Shops.getShop("001",26);
+//        shopBean.setShop_name("Sneakerhead国际旗舰店");
+//        shopBean.setApp_url("https://api.jd.com/routerjson");
+//        shopBean.setAppKey("BFA3102EFD4B981E9EEC2BE32DF1E44E");
+//        shopBean.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
+//        shopBean.setSessionKey("614a5873-f72e-4efc-9208-c0c5db4e07ac");
+//        Image image = cmsBeatJDService.getJDImage(shopBean, "001",26, "s74990", 1956654138L);
+//        System.out.println(JacksonUtil.bean2Json(image));
+    }
+
+    @Test
+    public void beatMain(){
+        TaskControlBean threadCount = new TaskControlBean();
+        threadCount.setCfg_name(TaskControlEnums.Name.thread_count.toString());
+        threadCount.setCfg_val1("5");
+
+        TaskControlBean atomCount = new TaskControlBean();
+        atomCount.setCfg_name(TaskControlEnums.Name.atom_count.toString());
+        atomCount.setCfg_val1("10");
+
+        List< TaskControlBean > taskControlList = new ArrayList<>();
+        taskControlList.add(threadCount);
+        taskControlList.add(atomCount);
+        try {
+            cmsBeatJDService.onStartup(taskControlList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
