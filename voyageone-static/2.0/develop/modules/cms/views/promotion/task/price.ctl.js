@@ -22,6 +22,7 @@ define([
         $scope.initialize = function () {
             promotionService.getPromotionList({"promotionId": $routeParams.promotionId}).then(function (res) {
                 $scope.vm.promotion = res.data[0];
+                // if ($scope.vm.promotion.triggerTime) $scope.vm.promotion.triggerTime = new Date($scope.vm.promotion.triggerTime);
             }, function (err) {
 
             });

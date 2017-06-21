@@ -69,6 +69,8 @@ public class CmsTaskPriceController extends CmsController {
 
         param.setModifier(getUser().getUserName());
         cmsTaskPriceService.updateTaskStatus(param);
+
+        promotionDetail.sendPromotionMq(param.getPromotionId(), false, getUser().getUserName());
         // 返回用户信息
         return success(null);
     }

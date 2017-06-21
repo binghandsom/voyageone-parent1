@@ -35,6 +35,14 @@ public class PromotionDao extends BaseDao {
         return data;
     }
 
+    public List<Map> getPromotionItem(Integer promotionId){
+        List<Map> data = selectList("select_pending_product", promotionId);
+        if (data == null){
+            data = new ArrayList<>();
+        }
+        return data;
+    }
+
     public int updatePromotionStatus(Map<String,Object> parameter){
         return update("com.voyageone.cms.sql.update_cms_bt_promotion_task", parameter);
     }

@@ -85,6 +85,9 @@ public class CmsMqRoutingKey {
     // 天猫活动管理 - 天猫特价宝刷新
     public static final String CMS_TM_TE_JIA_BAO_DEL = "VOCmsTmTeJiaBaoDelQueue";
 
+    // 天猫活动管理 - 天猫活动刷价格
+    public static final String CMS_PROMOTION= "VOCmsPromotionQueue";
+
     // 定时任务 - 取得产品的bi信息
     public static final String CMS_BATCH_GET_PRODUCT_BI_DATA = "VOCmsBatchGetProductBIDataQueue";
 

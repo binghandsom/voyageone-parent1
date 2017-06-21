@@ -1058,7 +1058,7 @@ public class PlatformPriceService extends VOAbsLoggable {
      * @param pNumIId
      * @throws Exception
      */
-    private void tmUpdatePriceBatch(ShopBean shopBean, List<BaseMongoMap<String, Object>> skuList, String priceConfigValue, String updType, String pNumIId) throws Exception {
+    public void tmUpdatePriceBatch(ShopBean shopBean, List<BaseMongoMap<String, Object>> skuList, String priceConfigValue, String updType, String pNumIId) throws Exception {
         Double maxPrice = null;
         List<TmallItemPriceUpdateRequest.UpdateSkuPrice> list2 = new ArrayList<>(skuList.size());
         for (BaseMongoMap skuObj : skuList) {
@@ -1197,7 +1197,7 @@ public class PlatformPriceService extends VOAbsLoggable {
      * @param updType
      * @throws Exception
      */
-    private void jdUpdatePriceBatch(ShopBean shopBean, List<BaseMongoMap<String, Object>> skuList, String priceConfigValue, String updType) throws Exception {
+    public void jdUpdatePriceBatch(ShopBean shopBean, List<BaseMongoMap<String, Object>> skuList, String priceConfigValue, String updType) throws Exception {
         List<TmallItemPriceUpdateRequest.UpdateSkuPrice> list = new ArrayList<>(skuList.size());
         TmallItemPriceUpdateRequest.UpdateSkuPrice updateData = null;
         Double maxPrice = null;
