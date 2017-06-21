@@ -157,6 +157,7 @@ public class CmsMqRoutingKey {
     public static final String CMS_BATCH_PlatformProductUploadJdJob = "voyageone_cms_batchjob_CmsBuildPlatformProductUploadJdJob_queue";
 
     public static final String CMS_BATCH_PlatformCategorySchemaJMJob = "voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaJMJob_queue";
+    public static final String CMS_BATCH_PlatformCategorySchemaKLJob = "voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaKLJob_queue";
 
     public static final String CMS_BATCH_TMFieldsImportCms2Job = "voyageone_cms_batchjob_TMFieldsImportCms2Job_queue";
     public static final String CMS_BATCH_TMGroupImportCms2Job = "voyageone_cms_batchjob_TMGroupImportCms2Job_queue";
