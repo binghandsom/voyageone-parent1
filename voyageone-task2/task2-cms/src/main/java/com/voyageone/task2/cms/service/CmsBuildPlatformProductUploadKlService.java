@@ -82,20 +82,6 @@ import java.util.stream.Stream;
 @Service
 public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService {
 
-    // 考拉平台的操作类型(在售)
-    // charis update
-//    private final static String OptioinType_onsale = "onsale";
-    private final static int OptioinType_onsale = 8;
-    // 考拉平台的操作类型(在库)
-    // charis update
-//    private final static String OptioinType_offsale = "offsale";
-    private final static int OptioinType_offsale = 2;
-    // 考拉平台商品状态（从未上架）
-    private final static int OptionType_neverSale = 1;
-    // 价格类型(市场价格)
-    //private final static String PriceType_marketprice = "retail_price";
-    // 价格类型(考拉价格)
-    //private final static String PriceType_jdprice = "sale_price";
     // 商品预定义属性值列表
     private final static String Attributes = "attributes";
     // 用户自行输入的属性值串
@@ -104,16 +90,12 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
 //    private final static String Prop_ShopCategory = "seller_cids_";
     // 考拉运费模板
     private final static String Prop_TransportId = "transportid_";
-    // 考拉关联板式
-    private final static String Prop_CommonHtmlId = "commonhtml_id_";
     // SKU属性类型(颜色)
     private final static String AttrType_Color = "c";
     // SKU属性类型(尺寸)
     private final static String AttrType_Size = "s";
     // SKU属性Active
     private final static int AttrType_Active_1 = 1;
-    // 分隔符(tab)
-//    private final static String Separtor_Xor = "^";
     // 分隔符(|)
     private final static String Separtor_Vertical = "|";
     // 分隔符(-)
@@ -126,8 +108,6 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     private final static String Separtor_Coma = ",";
     // 分隔符(^)
     private final static String Separtor_Caret = "^";
-    // 商品主图颜色值Id(0000000000)
-    private final static String ColorId_MainPic = "0000000000";
     // 销售属性_颜色和尺码都有
     private final static String SaleProp_Both_Color_Size_1 = "1";
     // 销售属性_只有颜色没有尺码属性
@@ -136,9 +116,8 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     private final static String SaleProp_Only_Size_3 = "3";
     // 销售属性_颜色和尺码都没有
     private final static String SaleProp_None_Color_Size_4 = "4";
-    // charis update
     // 特殊属性Key(七天无理由退货)
-    private final static String Is7ToReturn = "is7ToReturn";
+//    private final static String Is7ToReturn = "is7ToReturn";
 
     private static final int CART_ID = CartEnums.Cart.KL.getValue();
 
@@ -149,33 +128,13 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     @Autowired
     private PlatformCategoryService platformCategoryService;
     @Autowired
-    private ConditionPropValueRepo conditionPropValueRepo;
-    @Autowired
-    private JdWareNewService jdWareNewService;
-    @Autowired
-    private JdSaleService jdSaleService;
-    @Autowired
     private CmsMtPlatformSkusService cmcMtPlatformSkusService;
     @Autowired
     private SxProductService sxProductService;
     @Autowired
     private ProductService productService;
     @Autowired
-    private ProductGroupService productGroupService;
-    @Autowired
-    private CmsBtPlatformActiveLogDao cmsBtPlatformActiveLogDao;
-    @Autowired
-    private MongoSequenceService sequenceService;
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
-    @Autowired
-    private JdSkuService jdSkuService;
-    @Autowired
-    private CmsPlatformTitleTranslateMqService cmsTranslateMqService;
-    @Autowired
     private CmsMtChannelConditionMappingConfigDao cmsMtChannelConditionMappingConfigDao;
-    @Autowired
-    private CmsBtSxWorkloadDaoExt sxWorkloadDao;
     @Autowired
     private KoalaItemService koalaItemService;
     @Autowired
