@@ -66,21 +66,21 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private final static int SELECT_PAGE_SIZE = 100;
 
     /*group级导出时和平台无关的固定列：英文和中文列头名称*/
-    private final static String[] _GROUP_STATIC_COLS = {"model", "mainCode", "productNameEn", "originalTitleCn", "supplier", "category", "brand", "feedCategory"};
-    private final static String[] _GROUP_STATIC_COLS_ZN = {"款号", "主商品编码", "产品名称英语", "产品名称中文", "供应商", "主类目", "品牌", "feed类目"};
+    private final static String[] _GROUP_STATIC_COLS = {"model", "mainCode", "productNameEn", "originalTitleCn", "supplier", "category", "feedCategory"};
+    private final static String[] _GROUP_STATIC_COLS_ZN = {"款号", "主商品编码", "产品名称英语", "产品名称中文", "供应商", "主类目", "feed类目"};
 
     //common.fields.origSizeType
     /*code级导出时和平台无关的固定列：英文和中文列头名称*/
-    private final static String[] _CODE_STATIC_COLS = {"code", "productNameEn", "originalTitleCn", "supplier", "category", "brand", "skuCounts", "quantity", "freeTags", "feedCategory", "Lock"};
-    private final static String[] _CODE_STATIC_COLS_ZN = {"商品编码", "产品名称英语", "产品名称中文", "供应商", "主类目", "品牌", "SKU数", "库存", "自由标签", "feed类目", "是否被锁定"};
+    private final static String[] _CODE_STATIC_COLS = {"code", "productNameEn", "originalTitleCn", "supplier", "category", "freeTags", "feedCategory", "Lock"};
+    private final static String[] _CODE_STATIC_COLS_ZN = {"商品编码", "产品名称英语", "产品名称中文", "供应商", "主类目", "自由标签", "feed类目", "是否被锁定"};
 
     /*sku级导出时和平台无关的固定列：英文和中文列头名称*/
-    private final static String[] _SKU_STATIC_COLS = {"code", "barcode", "clientSKU","supplier", "category", "brand",  "freeTags", "feedCategory", "productNameEn", "originalTitleCn", "clientSKU", "clientSize", "size", "inventory", "clientPriceMsrp", "clientPriceRetail", "clientPriceCost", "weightCalc", "Lock"};
-    private final static String[] _SKU_STATIC_COLS_ZN = {"sku", "条形码", "商品编码","供应商", "主类目", "品牌" ,"自由标签", "feed类目", "产品名称英语", "产品名称中文", "客户原始SKU", "客户原始Size", "转换后Size", "库存", "客户建议售价", "客户指导价", "客户成本价", "重量（lb）", "是否被锁定"};
+    private final static String[] _SKU_STATIC_COLS = {"sku", "barcode", "code","supplier", "category",  "freeTags", "feedCategory", "productNameEn", "originalTitleCn", "clientSKU", "clientSize", "size", "weightCalc", "Lock"};
+    private final static String[] _SKU_STATIC_COLS_ZN = {"sku", "条形码", "商品编码","供应商", "主类目", "自由标签", "feed类目", "产品名称英语", "产品名称中文", "客户原始SKU", "客户原始Size", "转换后Size",  "重量（lb）", "是否被锁定"};
 
     // 产品数据（code级）固定输出列，用于过滤自定义显示列中相同项目
 //    private final static String[] _prodCol = {"code", "brand", "category", "productNameEn", "originalTitleCn", "mainCode", "quantity", "color"};
-    private final static String[] _prodCol = {};
+    private final static String[] _prodCol = {"priceMsrp","priceRetail","priceSale","quantitySale"};
     /*聚美上新SKU导出列*/
     private final static String[] _shoemetroColJMSKU = {"Child SKU", "Brand", "Parent SKU", "Color", "Size", "VO Price", "Final RMB Price", "URL Link", "Inventory"};
     /*报备数据导出文件列*/
@@ -426,6 +426,10 @@ public class CmsAdvSearchExportFileService extends BaseService {
         }
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
+                if (prop.get("name").indexOf("是否销售") > -0) continue;
+                if (prop.get("name").indexOf("SkuNo") > -0) continue;
+                if (prop.get("name").indexOf("SpuNo") > -0) continue;
+                if (prop.get("name").indexOf("jdSkuId") > -0) continue;
                 FileUtils.cell(row1, index++, style1).setCellValue(prop.get("name"));
             }
         }
@@ -459,6 +463,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
                 if (prop.get("name").indexOf("是否销售") > -0) continue;
+                if (prop.get("name").indexOf("SkuNo") > -0) continue;
+                if (prop.get("name").indexOf("SpuNo") > -0) continue;
+                if (prop.get("name").indexOf("jdSkuId") > -0) continue;
                 FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
             }
         }
@@ -515,6 +522,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
+                if (prop.get("name").indexOf("SkuNo") > -0) continue;
+                if (prop.get("name").indexOf("SpuNo") > -0) continue;
+                if (prop.get("name").indexOf("jdSkuId") > -0) continue;
                 FileUtils.cell(row1, index++, style1).setCellValue(prop.get("name"));
 
             }
@@ -549,6 +559,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
             for (Map<String, String> prop : platformDataList) {
                 if (prop.get("name").indexOf("可售库存") > -0) continue;
                 if (prop.get("name").indexOf("是否销售") > -0) continue;
+                if (prop.get("name").indexOf("SkuNo") > -0) continue;
+                if (prop.get("name").indexOf("SpuNo") > -0) continue;
+                if (prop.get("name").indexOf("jdSkuId") > -0) continue;
                 FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
             }
         }
@@ -780,12 +793,11 @@ public class CmsAdvSearchExportFileService extends BaseService {
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getOriginalTitleCn()));
             FileUtils.cell(row, index++, unlock).setCellValue(channelIdMap.get(item.getOrgChannelId()));
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommon().getCatPath()));
-            FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getBrand()));
-            FileUtils.cell(row, index++, unlock).setCellValue(item.getCommon().getSkus().size());
+//            FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getBrand()));
+
             //sku取得库存
             Map<String, Integer> codesMap = new HashMap<>();
             item.getCommon().getSkus().forEach(sku -> codesMap.put(sku.getSkuCode(), sku.getQty()));
-            FileUtils.cell(row, index++, unlock).setCellValue(item.getCommon().getFieldsNotNull().getQuantity());
 
             // 取得自由标签
             List<CmsBtTagBean> tagModelList = new ArrayList<>();
@@ -833,7 +845,12 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             longDes = longDes.substring(0, CELL_LENGTH_LIMIT);
                         }
                         FileUtils.cell(row, index++, unlock).setCellValue(longDes);
-                    } else {
+                    } else if("skuCnt".equals(propId)){
+                        FileUtils.cell(row, index++, unlock).setCellValue(item.getCommon().getSkus().size());
+                    }
+                    else if("quantity".equals(propId)){
+                        FileUtils.cell(row, index++, unlock).setCellValue(item.getCommon().getFieldsNotNull().getQuantity());
+                    }else {
                         Object value = fields.getAttribute(propId);
                         FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
                     }
@@ -903,6 +920,10 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     }
 
                     if ("isSale".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
+                    if ("jmSkuNo".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
+                    if ("jmSpuNo".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
+                    if ("jdSkuId".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
+
                     if ("qty".equals(key.substring(key.lastIndexOf(".") + 1))) {
                         Integer qty = 0;
                         for (BaseMongoMap<String, Object> map : _platform.getSkus()) {
@@ -982,7 +1003,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getOriginalTitleCn()));
             FileUtils.cell(row, index++, unlock).setCellValue(channelIdMap.get(item.getOrgChannelId()));
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommon().getCatPath()));
-            FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getBrand()));
+//            FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getBrand()));
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getFeed().getCatPath()));
 
             if (commonProps != null) {
@@ -1003,6 +1024,10 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             longDes = longDes.substring(0, CELL_LENGTH_LIMIT);
                         }
                         FileUtils.cell(row, index++, unlock).setCellValue(longDes);
+                    } else if("skuCnt".equals(propId)){
+                        FileUtils.cell(row, index++, unlock).setCellValue(item.getCommon().getSkus().size());
+                    } else if("quantity".equals(propId)){
+                        FileUtils.cell(row, index++, unlock).setCellValue(item.getCommon().getFieldsNotNull().getQuantity());
                     } else {
                         Object value = fields.getAttribute(propId);
                         FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
@@ -1073,6 +1098,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     }
                     if ("qty".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                     if ("isSale".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
+                    if ("jmSkuNo".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
+                    if ("jmSpuNo".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
+                    if ("jdSkuId".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                     index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
 
                 }
@@ -1149,7 +1177,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getCode()));
                 FileUtils.cell(row, index++, unlock).setCellValue(channelIdMap.get(item.getOrgChannelId()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommon().getCatPath()));
-                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getBrand()));
+//                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getBrand()));
                 // 取得自由标签
                 List<CmsBtTagBean> tagModelList = new ArrayList<>();
                 List<String> temp2 = new ArrayList<>();
@@ -1179,27 +1207,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSkuCode()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSize()));
-                String platformSize = sizeMap.get(skuItem.getSize());
-                if (platformSize == null) platformSize = "";
-                FileUtils.cell(row, index++, unlock).setCellValue(platformSize);
+                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getSize()));
 
-                SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuItem.getSkuCode().toLowerCase());
-                FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getQty() == null ? "0" : skuItem.getQty().toString());
-                if (skuItem.getClientMsrpPrice() == null) {
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                } else {
-                    FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getClientMsrpPrice());
-                }
-                if (skuItem.getClientRetailPrice() == null) {
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                } else {
-                    FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getClientRetailPrice());
-                }
-                if (skuItem.getClientNetPrice() == null) {
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                } else {
-                    FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getClientNetPrice());
-                }
                 // 重量
                 if (skuItem.getWeight() == null) {
                     FileUtils.cell(row, index++, unlock).setCellValue("");
@@ -1226,7 +1235,23 @@ public class CmsAdvSearchExportFileService extends BaseService {
                                 longDes = longDes.substring(0, CELL_LENGTH_LIMIT);
                             }
                             FileUtils.cell(row, index++, unlock).setCellValue(longDes);
-                        } else {
+                        } else if("skuCnt".equals(propId)){
+                            FileUtils.cell(row, index++, unlock).setCellValue(1);
+                        } else if("quantity".equals(propId)){
+                            FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getQty() == null ? "0" : skuItem.getQty().toString());
+                        } else if("clientMsrpPrice".equals(propId)){
+                            if (skuItem.getClientMsrpPrice() == null) {
+                                FileUtils.cell(row, index++, unlock).setCellValue("");
+                            } else {
+                                FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getClientMsrpPrice());
+                            }
+                        }else if("clientNetPrice".equals(propId)){
+                            if (skuItem.getClientNetPrice() == null) {
+                                FileUtils.cell(row, index++, unlock).setCellValue("");
+                            } else {
+                                FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getClientNetPrice());
+                            }
+                        }else {
                             Object value = fields.getAttribute(propId);
                             FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
                         }
@@ -1307,7 +1332,13 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             FileUtils.cell(row, index++, unlock).setCellValue(pSku.getDoubleAttribute("priceSale"));
                         } else if ("qty".equals(key.substring(key.lastIndexOf(".") + 1))){
                             FileUtils.cell(row, index++, unlock).setCellValue( pSku.getIntAttribute("qty"));
-                        }else {
+                        } else if ("jdSkuId".equals(attrName) && pSku.getStringAttribute("jdSkuId") != null) {
+                            FileUtils.cell(row, index++, unlock).setCellValue(pSku.getStringAttribute("jdSkuId"));
+                        } else if ("jmSkuNo".equals(attrName) && pSku.getStringAttribute("jmSkuNo") != null) {
+                            FileUtils.cell(row, index++, unlock).setCellValue(pSku.getStringAttribute("jmSkuNo"));
+                        } else if ("jmSpuNo".equals(attrName) && pSku.getStringAttribute("jmSpuNo") != null) {
+                            FileUtils.cell(row, index++, unlock).setCellValue(pSku.getStringAttribute("jmSpuNo"));
+                        } else {
                             index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
                         }
                     }
