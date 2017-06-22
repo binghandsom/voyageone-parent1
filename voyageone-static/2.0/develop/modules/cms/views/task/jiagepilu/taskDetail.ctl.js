@@ -8,7 +8,7 @@ define([
 ], function (cms, _) {
     cms.controller("jiagepiluController", (function () {
 
-        function JiagepiluController($routeParams, taskJiagepiluService, taskBeatService, cActions, FileUploader, alert, confirm, notify, $location, $timeout) {
+        function JiagepiluController($routeParams, taskJiagepiluService, $translate, taskBeatService, cActions, FileUploader, alert, confirm, notify, $location, $timeout) {
 
             var urls = cActions.cms.task.taskJiagepiluService;
             this.urls = urls;
@@ -33,10 +33,13 @@ define([
 
 
             this.taskJiagepiluService = taskJiagepiluService;
+            this.$translate = $translate;
 
             this.taskId = taskId; // 价格披露任务ID
             this.task = {};       // 价格披露Task
-            this.search = {};     // 价格披露商品搜索条件
+            this.searchBean = {
+                taskId:this.taskId
+            };     // 价格披露商品搜索条件
             this.productList = [];// 价格披露Task内商品
             this.pageOption = {
                 curr: 1,
@@ -50,8 +53,11 @@ define([
             });
             this.uploadItem = null;
             this.downloadUrl = urls.root + "/" + urls.download;
+
+            this.beatFlags = [];
+            this.imageStatuses = [];
+
             this.summary = {};
-            this.task = null;
             this.$timeout = $timeout;
             this.searchKey = null;
         }
@@ -77,15 +83,47 @@ define([
 
                 // 获取价格披露任务Model
                 self.taskJiagepiluService.getTaskModel({taskId:self.taskId}).then(function (resp) {
-                    if (resp.data) {
+                    if (resp.data && resp.data.task) {
                         self.task = resp.data;
+
+                        var beatFlagArray = _.map(resp.data.beatFlags,function (element) {
+                            var _obj = {key:element,value: self.$translate.instant(element)};
+                            // _obj[element] = self.$translate.instant(element);
+                            return _obj;
+                        });
+                        self.beatFlags = beatFlagArray;
+
+                        var imageStatusArray = _.map(resp.data.imageStatuses,function (element) {
+                            var _obj = {key:element,value: self.$translate.instant(element)};
+                            return _obj;
+                        });
+                        self.imageStatuses = imageStatusArray;
+
                     }
                 });
 
+
+                var searchBean = angular.copy(self.searchBean);
+                if (searchBean.beatFlags && _.size(searchBean.beatFlags) > 0) {
+                    var beatFlagObj = _.pick(searchBean.beatFlags, function (value, key, object) {
+                        return value;
+                    });
+                    var beatFlags = _.keys(beatFlagObj);
+                    _.extend(searchBean, {"beatFlags":beatFlags});
+                }
+
+                if (searchBean.imageStatuses && _.size(searchBean.imageStatuses) > 0) {
+                    var imageStatusObj = _.pick(searchBean.imageStatuses, function (value, key, object) {
+                        return value;
+                    });
+                    var imageStatuses = _.keys(imageStatusObj);
+                    _.extend(searchBean, {"imageStatuses":imageStatuses});
+                }
+
                 // 获取价格披露任务产品列表
-                self.taskJiagepiluService.getProductList({taskId:self.taskId}).then(function (resp) {
+                self.taskJiagepiluService.search(searchBean).then(function (resp) {
                     if (resp.data) {
-                        self.productList = resp.data.productList;
+                        self.productList = resp.data.products;
                         self.pageOption.total = resp.data.total;
                     }
                 });
@@ -157,6 +195,19 @@ define([
                         getProductList();
                     })
             },
+
+            // 清除搜索条件
+            clear: function () {
+                this.searchBean = {taskId:this.taskId};
+            },
+
+            // 搜索结果
+            search: function () {
+                var self = this;
+                // 检索
+                self.getData();
+            },
+
 
 
             download: function () {

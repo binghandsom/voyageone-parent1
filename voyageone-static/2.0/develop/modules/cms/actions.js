@@ -450,7 +450,7 @@ define(function () {
                 "taskJiagepiluService": {
                     "root": "/cms/task/jiagepilu",
                     "getTaskModel":"getTaskModel",
-                    "getProductList":"getProductList",
+                    "search":"search",
                     "downloadImportTemplate":"downloadImportTemplate",
                     "import":"import",
                     "getImportInfoList":"getImportInfoList",

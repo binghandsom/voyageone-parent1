@@ -7,10 +7,8 @@
  */
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.service.model.cms.CmsBtTaskJiagepiluImportInfoExample;
 import com.voyageone.service.model.cms.CmsBtTaskJiagepiluImportInfoModel;
 import java.util.List;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -27,15 +25,5 @@ public interface CmsBtTaskJiagepiluImportInfoDao {
 
     int update(CmsBtTaskJiagepiluImportInfoModel record);
 
-    int countByExample(CmsBtTaskJiagepiluImportInfoExample example);
-
-    int deleteByExample(CmsBtTaskJiagepiluImportInfoExample example);
-
     int delete(Integer id);
-
-    List<CmsBtTaskJiagepiluImportInfoModel> selectByExample(CmsBtTaskJiagepiluImportInfoExample example);
-
-    int updateByExampleSelective(@Param("record") CmsBtTaskJiagepiluImportInfoModel record, @Param("example") CmsBtTaskJiagepiluImportInfoExample example);
-
-    int updateByExample(@Param("record") CmsBtTaskJiagepiluImportInfoModel record, @Param("example") CmsBtTaskJiagepiluImportInfoExample example);
 }

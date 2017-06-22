@@ -355,13 +355,13 @@ public interface CmsUrlConstants {
 
             String GET_TASK_MODEL = "getTaskModel";
 
-            String GET_PRODUCT_LIST = "getProductList";
+            String GET_IMPORT_INFO_LIST = "getImportInfoList";
 
             String DOWNLOAD_IMPORT_TEMPLATE = "downloadImportTemplate";
 
             String IMPORT = "import";
 
-            String GET_IMPORT_INFO_LIST = "getImportInfoList";
+            String SEARCH = "search";
 
             String DOWNLOAD_IMPORT_ERROR = "downloadImportError";
 

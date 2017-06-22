@@ -7,10 +7,14 @@ import com.voyageone.common.configs.Properties;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
+import com.voyageone.service.bean.cms.task.beat.CmsBtTaskJiagepiluBean;
+import com.voyageone.service.bean.cms.task.beat.SearchTaskJiagepiluBean;
+import com.voyageone.service.bean.cms.task.beat.SearchTaskJiagepiluResult;
 import com.voyageone.service.dao.cms.CmsBtTaskJiagepiluDao;
 import com.voyageone.service.dao.cms.CmsBtTaskJiagepiluImportInfoDao;
 import com.voyageone.service.dao.cms.CmsBtTasksDao;
 import com.voyageone.service.daoext.cms.CmsBtBeatInfoDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtTaskJiagepiluDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -66,6 +70,9 @@ public class JiagepiluService extends BaseService {
 
     @Autowired
     private CmsBtTaskJiagepiluDao cmsBtTaskJiagepiluDao;
+
+    @Autowired
+    private CmsBtTaskJiagepiluDaoExt cmsBtTaskJiagepiluDaoExt;
 
     @Autowired
     private ProductService productService;
@@ -418,6 +425,16 @@ public class JiagepiluService extends BaseService {
             });
         }
         return importInfoModelList;
+    }
+
+    public SearchTaskJiagepiluResult search(SearchTaskJiagepiluBean search) {
+        search.parseEnum(); // 枚举处理
+        SearchTaskJiagepiluResult result = new SearchTaskJiagepiluResult();
+        List<CmsBtTaskJiagepiluBean> productList =  cmsBtTaskJiagepiluDaoExt.search(search);
+        result.setProducts(productList);
+        int total = cmsBtTaskJiagepiluDaoExt.count(search);
+        result.setTotal(total);
+        return result;
     }
 
     @VOTransactional

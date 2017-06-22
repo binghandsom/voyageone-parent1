@@ -2,10 +2,12 @@ package com.voyageone.web2.cms.views.task;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Properties;
+import com.voyageone.service.bean.cms.task.beat.SearchTaskJiagepiluBean;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.task.JiagepiluService;
-import com.voyageone.service.model.cms.CmsBtTaskJiagepiluImportInfoModel;
 import com.voyageone.service.model.cms.CmsBtTaskJiagepiluModel;
+import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
+import com.voyageone.service.model.cms.enums.jiagepilu.ImageStatus;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -42,22 +44,19 @@ public class CmsJiagepiluController extends BaseController {
 
     @RequestMapping(value = CmsUrlConstants.TASK.JIAGEPILU.GET_TASK_MODEL)
     public AjaxResponse getJiagepiluTaskModel(@RequestBody Map<String, Object> requestParams) {
+
         Integer taskId = (Integer) requestParams.get("taskId");
-        return success(jiagepiluService.getJiagepiluTaskModel(taskId));
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("task", jiagepiluService.getJiagepiluTaskModel(taskId));
+        resultMap.put("beatFlags", BeatFlag.values());
+        resultMap.put("imageStatuses", ImageStatus.values());
+        return success(resultMap);
     }
 
-    @RequestMapping(value = CmsUrlConstants.TASK.JIAGEPILU.GET_PRODUCT_LIST)
+    @RequestMapping(value = CmsUrlConstants.TASK.JIAGEPILU.GET_IMPORT_INFO_LIST)
     public AjaxResponse jiagepiluTaskDetail(@RequestBody Map<String, Object> requestParams) {
         Integer taskId = (Integer) requestParams.get("taskId");
-
-        List<CmsBtTaskJiagepiluModel> productList = jiagepiluService.getProductList(taskId);
-
-        int total = jiagepiluService.getProductCount(taskId);
-
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("productList", productList);
-        resultMap.put("total", total);
-        return success(resultMap);
+        return success(jiagepiluService.getImportInfoList(taskId));
     }
 
     /**
@@ -95,10 +94,14 @@ public class CmsJiagepiluController extends BaseController {
     }
 
 
-    @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.GET_IMPORT_INFO_LIST)
-    public AjaxResponse getImportInfoList(@RequestBody Map<String, Integer> requestParams) {
-        Integer taskId = requestParams.get("taskId");
-        return success(jiagepiluService.getImportInfoList(taskId));
+    /**
+     * 搜索价格披露任务商品
+     * @param searchBean
+     * @return
+     */
+    @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.SEARCH)
+    public AjaxResponse getImportInfoList(@RequestBody SearchTaskJiagepiluBean searchBean) {
+        return success(jiagepiluService.search(searchBean));
     }
 
 

@@ -2,86 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtTaskJiagepiluImportInfoDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtTaskJiagepiluImportInfoModel" />
-    <sql id="Example_Where_Clause" >
-        <where >
-            <foreach collection="oredCriteria" item="criteria" separator="or" >
-                <if test="criteria.valid" >
-                    <trim prefix="(" suffix=")" prefixOverrides="and" >
-                        <foreach collection="criteria.criteria" item="criterion" >
-                            <choose >
-                                <when test="criterion.noValue" >
-                                    and ${criterion.condition}
-                                </when>
-                                <when test="criterion.singleValue" >
-                                    and ${criterion.condition} #{criterion.value}
-                                </when>
-                                <when test="criterion.betweenValue" >
-                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                                </when>
-                                <when test="criterion.listValue" >
-                                    and ${criterion.condition}
-                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
-                                        #{listItem}
-                                    </foreach>
-                                </when>
-                            </choose>
-                        </foreach>
-                    </trim>
-                </if>
-            </foreach>
-        </where>
-    </sql>
-
-    <sql id="Update_By_Example_Where_Clause" >
-        <where >
-            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
-                <if test="criteria.valid" >
-                    <trim prefix="(" suffix=")" prefixOverrides="and" >
-                        <foreach collection="criteria.criteria" item="criterion" >
-                            <choose >
-                                <when test="criterion.noValue" >
-                                    and ${criterion.condition}
-                                </when>
-                                <when test="criterion.singleValue" >
-                                    and ${criterion.condition} #{criterion.value}
-                                </when>
-                                <when test="criterion.betweenValue" >
-                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                                </when>
-                                <when test="criterion.listValue" >
-                                    and ${criterion.condition}
-                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
-                                        #{listItem}
-                                    </foreach>
-                                </when>
-                            </choose>
-                        </foreach>
-                    </trim>
-                </if>
-            </foreach>
-        </where>
-    </sql>
-
     <sql id="Base_Column_List" >
         `id`, `task_id`, `success_count`, `fail_count`, `import_begin_time`, `import_end_time`, 
         `error_msg`, `import_file_name`, `error_file_name`, `created`, `creater`
     </sql>
-
-    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.cms.CmsBtTaskJiagepiluImportInfoExample" >
-        select
-        <if test="distinct" >
-            distinct
-        </if>
-        'true' as QUERYID,
-        <include refid="Base_Column_List" />
-        from cms_bt_task_jiagepilu_import_info
-        <if test="_parameter != null" >
-            <include refid="Example_Where_Clause" />
-        </if>
-        <if test="orderByClause != null" >
-            order by ${orderByClause}
-        </if>
-    </select>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
         select 
@@ -89,73 +13,6 @@
         from cms_bt_task_jiagepilu_import_info
         where `id` = #{id,jdbcType=INTEGER}
     </select>
-
-    <select id="countByExample" parameterType="com.voyageone.service.model.cms.CmsBtTaskJiagepiluImportInfoExample" resultType="java.lang.Integer" >
-        select count(*) from cms_bt_task_jiagepilu_import_info
-        <if test="_parameter != null" >
-            <include refid="Example_Where_Clause" />
-        </if>
-    </select>
-
-    <update id="updateByExampleSelective" parameterType="map" >
-        update cms_bt_task_jiagepilu_import_info
-        <set >
-            <if test="record.id != null" >
-                `id` = #{record.id,jdbcType=INTEGER},
-            </if>
-            <if test="record.taskId != null" >
-                `task_id` = #{record.taskId,jdbcType=INTEGER},
-            </if>
-            <if test="record.successCount != null" >
-                `success_count` = #{record.successCount,jdbcType=INTEGER},
-            </if>
-            <if test="record.failCount != null" >
-                `fail_count` = #{record.failCount,jdbcType=INTEGER},
-            </if>
-            <if test="record.importBeginTime != null" >
-                `import_begin_time` = #{record.importBeginTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="record.importEndTime != null" >
-                `import_end_time` = #{record.importEndTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="record.errorMsg != null" >
-                `error_msg` = #{record.errorMsg,jdbcType=VARCHAR},
-            </if>
-            <if test="record.importFileName != null" >
-                `import_file_name` = #{record.importFileName,jdbcType=VARCHAR},
-            </if>
-            <if test="record.errorFileName != null" >
-                `error_file_name` = #{record.errorFileName,jdbcType=VARCHAR},
-            </if>
-            <if test="record.created != null" >
-                `created` = #{record.created,jdbcType=TIMESTAMP},
-            </if>
-            <if test="record.creater != null" >
-                `creater` = #{record.creater,jdbcType=VARCHAR},
-            </if>
-        </set>
-        <if test="_parameter != null" >
-            <include refid="Update_By_Example_Where_Clause" />
-        </if>
-    </update>
-
-    <update id="updateByExample" parameterType="map" >
-        update cms_bt_task_jiagepilu_import_info
-        set `id` = #{record.id,jdbcType=INTEGER},
-            `task_id` = #{record.taskId,jdbcType=INTEGER},
-            `success_count` = #{record.successCount,jdbcType=INTEGER},
-            `fail_count` = #{record.failCount,jdbcType=INTEGER},
-            `import_begin_time` = #{record.importBeginTime,jdbcType=TIMESTAMP},
-            `import_end_time` = #{record.importEndTime,jdbcType=TIMESTAMP},
-            `error_msg` = #{record.errorMsg,jdbcType=VARCHAR},
-            `import_file_name` = #{record.importFileName,jdbcType=VARCHAR},
-            `error_file_name` = #{record.errorFileName,jdbcType=VARCHAR},
-            `created` = #{record.created,jdbcType=TIMESTAMP},
-            `creater` = #{record.creater,jdbcType=VARCHAR}
-        <if test="_parameter != null" >
-            <include refid="Update_By_Example_Where_Clause" />
-        </if>
-    </update>
 
     <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtTaskJiagepiluImportInfoModel" >
         update cms_bt_task_jiagepilu_import_info
@@ -197,13 +54,6 @@
     <delete id="delete" parameterType="java.lang.Integer" >
         delete from cms_bt_task_jiagepilu_import_info
         where `id` = #{id,jdbcType=INTEGER}
-    </delete>
-
-    <delete id="deleteByExample" parameterType="com.voyageone.service.model.cms.CmsBtTaskJiagepiluImportInfoExample" >
-        delete from cms_bt_task_jiagepilu_import_info
-        <if test="_parameter != null" >
-            <include refid="Example_Where_Clause" />
-        </if>
     </delete>
 
     <select id="selectOne" resultMap="BaseResultMap" >
