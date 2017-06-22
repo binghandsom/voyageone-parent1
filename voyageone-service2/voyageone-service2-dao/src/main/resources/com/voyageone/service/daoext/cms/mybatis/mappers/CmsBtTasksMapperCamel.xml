@@ -54,7 +54,7 @@
             t.modified,
             t.modifier,
             t.channel_id,
-            cart_id,
+            t.cart_id,
             promotion_status,
             promotion_name,
             pre_sale_end,
@@ -66,7 +66,7 @@
             tejiabao_id,
             promotion_type,
             ref_tag_id,
-            active,
+            t.active,
             is_all_promotion,
             p.created         p_created,
             p.creater         p_creater,
@@ -76,8 +76,9 @@
         LEFT JOIN voyageone_cms2.cms_bt_promotion p
         ON t.promotion_id = p.id
         <where>
+            t.active = 1
             <if test="_parameter.containsKey('task_id') and task_id != null">
-                t.id = #{task_id}
+                and t.id = #{task_id}
             </if>
             <if test="_parameter.containsKey('channelId') and channelId != null">
                 and t.channel_id = #{channelId}
@@ -99,6 +100,13 @@
             </if>
             <if test="_parameter.containsKey('activity_end') and activity_end != null and activity_end != ''">
                 and #{activity_end,jdbcType=VARCHAR} >= t.activity_end
+            </if>
+            <if test="cartIds != null and cartIds.size > 0">
+                and t.cart_id in
+                <foreach collection="cartIds" item="item" index="index"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
             </if>
         </where>
     </select>

@@ -3,13 +3,15 @@
  */
 define([
     'cms',
+    'modules/cms/enums/Carts',
     'modules/cms/controller/popup.ctl'
-], function (cms) {
+], function (cms, carts) {
     cms.controller("taskIndexController", (function () {
     
-        function TaskIndexController(taskService, taskStockService, cActions, confirm, notify) {
+        function TaskIndexController(taskService, taskStockService, promotionService, cActions, confirm, notify) {
             this.taskService = taskService;
             this.taskStockService = taskStockService;
+            this.promotionService = promotionService;
             var urls = cActions.cms.task.taskStockService;
             this.tasks = [];
             this.confirm = confirm;
@@ -20,13 +22,18 @@ define([
             this.datePicker = [];
 
             this.downloadUrl = urls.root + "/" + urls.exportErrorInfo;
+            this.platformTypeList = [];
+            this.platformStatus = {};
         }
     
         TaskIndexController.prototype = {
             init: function () {
                 var self = this;
-                self.taskService.page(self.searchInfo).then(function(res){
-                    self.tasks = res.data;
+                self.promotionService.init().then(function (res) {
+                    self.platformTypeList = res.data.platformTypeList;
+                    self.taskService.page(self.searchInfo).then(function(res){
+                        self.tasks = res.data;
+                    });
                 });
             },
 
@@ -42,8 +49,19 @@ define([
                         return '未知类型';
                 }
             },
+            cartName: function(cartId) {
+                return carts.valueOf(cartId).desc;
+
+            },
             search: function(){
                 var self = this;
+                var cartIds = [];
+                _.each(self.platformStatus,function (value, key) {
+                    if(value){
+                        cartIds.push(key);
+                    }
+                });
+                this.searchInfo.cartIds = cartIds;
                 this.taskService.page(this.searchInfo).then(function(res){
                     self.tasks = res.data;
                 });

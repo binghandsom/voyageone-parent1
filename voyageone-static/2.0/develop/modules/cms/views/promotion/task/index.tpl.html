@@ -49,6 +49,15 @@
                                         <input class="form-control" ng-model="ctrl.searchInfo.searchKey">
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" ></label>
+                                    <div class="col-sm-7">
+                                        <label class="checkbox-inline c-checkbox" ng-repeat="platform in ctrl.platformTypeList">
+                                            <input type="checkbox" ng-value="platform.value" style="margin: 0"
+                                                   ng-model="ctrl.platformStatus[platform.value]"><span class="fa fa-check"></span> {{platform.name}}
+                                        </label>
+                                    </div>
+                                </div>
                             </div><!-- .form-group -->
                         </div>
                         <div class="col-sm-12 text-center m-t-sm" ng-controller="popupCtrl">
@@ -71,58 +80,60 @@
             <table class="table table-hover-new text-center" ng-controller="popupCtrl">
                 <thead>
                 <tr>
-                    <th class="mfb-xt3 text-center">{{::$index+1}}</th>
+                    <th class="mfb-xt3 text-center">ID</th>
                     <!--<th class="text-center"><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label></th>-->
                     <th class="mfb-xt text-left">{{'TXT_STATUS' | translate}}</th>
-                    <th class="mfb-xxs text-left">{{'TXT_TASK_NAME' | translate}}</th>
+                    <th class="mfb-xt text-left">{{'TXT_TASK_NAME' | translate}}</th>
+                    <th class="mfb-xt text-left">{{'TXT_PLATFORM_TYPE_WITH_COLON' | translate}}</th>
                     <th class="mfb-xt text-left">{{'TXT_TYPE' | translate}}</th>
                     <th class="mfb-xxt text-left">{{'TXT_TIME_START' | translate}}-{{'TXT_TIME_END' | translate}}</th>
                     <th class="mfb-xxs text-left">{{'TXT_ACTION' | translate}}</th>
-                    <th class="mfb-xxt text-center">{{'BTN_EDIT' | translate}}</th>
+
 
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="task in ctrl.tasks">
-                    <td class="mfb-xt3 text-center">{{$index+1}}</td>
+                    <td class="mfb-xt3 text-center">{{task.id}}</td>
                     <td class="mfb-xt text-left"><span ng-show="task.status==0" class="label label-success-new m-r-lg"> Open </span><span
                             ng-show="task.status==1" class="label label-yellow-new m-r-lg"> Close </span></td>
-                    <td class="mfb-xxs text-left">{{task.taskName}}</td>
-                    <td class="mfb-xt text-left">{{ctrl.typeName(task)}}</td>
-                    <td class="mfb-xxt text-left">{{task.activityStart}} ~ {{task.activityEnd}}</td>
-                    <td class="mfb-xxs text-left">
+                    <td class="mfb-xt text-left">
                         <a ng-if="task.taskType == 1" ng-href="#/promotion/task/beat/{{task.id}}" target="_blank">
-                            <button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i
-                                    class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}
-                            </button>
+                            {{task.taskName}}
                         </a>
                         <a ng-if="task.taskType == 0" ng-href="#/promotion/task/price/{{task.promotion.id}}"
                            target="_blank">
-                            <button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i
-                                    class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}
-                            </button>
-                        </a>
-                        <a ng-if="task.taskType == 2" ng-href="#/promotion/task_stock/{{task.id}}"
-                           target="_blank">
-                            <button title="{{'TXT_STOCK_SEPARATE_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_STOCK_SEPARATE_DETAIL' | translate}}
-                            </button>
-                        </a>
-                        <a ng-if="task.taskType == 2"
-                           ng-href="#/promotion/task_stock_increment/{{::task.id}}" target="_blank">
-                            <button title="{{'TXT_STOCK_INCREMENT_SEPARATE' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_STOCK_INCREMENT_SEPARATE' | translate}}
-                            </button>
+                            {{task.taskName}}
                         </a>
                     </td>
-                    <td class="mfb-xxt text-center">
-                        <button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs"
-                                ng-click="openMrbStock('lg',task)" ng-if="task.taskType == 2"><i class="fa fa-pencil"></i></button>
-                        <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-click="ctrl.delete(task)" ng-if="task.taskType == 2"><i
-                                class="fa  fa-trash-o"></i></button>
-                        <!--<button title="{{'BTN_ADD' | translate}}" class="btn btn-dangerdel btn-xs" ng-if="task.task_type != 2"><i-->
-                                <!--class="fa fa-cloud-download"></i></button>-->
-                        <button title="{{'BTN_DOWNLOAD_ERROR' | translate}}" class="btn btn-dangerdel btn-xs" ng-if="task.taskType == 2"
-                                ng-click="ctrl.download(task.id)"><i class="glyphicons glyphicons-cloud-download"></i></button>
+
+                    <td class="mfb-xt text-left">{{ctrl.cartName(task.cartId)}}</td>
+                    <td class="mfb-xt text-left">{{ctrl.typeName(task)}}</td>
+                    <td class="mfb-xxt text-left">{{task.activityStart}} ~ {{task.activityEnd}}</td>
+                    <td class="mfb-xxs text-left">
+                        <!--<a ng-if="task.taskType == 1" ng-href="#/promotion/task/beat/{{task.id}}" target="_blank">-->
+                            <!--<button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i-->
+                                    <!--class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}-->
+                            <!--</button>-->
+                        <!--</a>-->
+                        <!--<a ng-if="task.taskType == 0" ng-href="#/promotion/task/price/{{task.promotion.id}}"-->
+                           <!--target="_blank">-->
+                            <!--<button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i-->
+                                    <!--class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}-->
+                            <!--</button>-->
+                        <!--</a>-->
+                        <!--<a ng-if="task.taskType == 2" ng-href="#/promotion/task_stock/{{task.id}}"-->
+                           <!--target="_blank">-->
+                            <!--<button title="{{'TXT_STOCK_SEPARATE_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_STOCK_SEPARATE_DETAIL' | translate}}-->
+                            <!--</button>-->
+                        <!--</a>-->
+                        <!--<a ng-if="task.taskType == 2"-->
+                           <!--ng-href="#/promotion/task_stock_increment/{{::task.id}}" target="_blank">-->
+                            <!--<button title="{{'TXT_STOCK_INCREMENT_SEPARATE' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_STOCK_INCREMENT_SEPARATE' | translate}}-->
+                            <!--</button>-->
+                        <!--</a>-->
                     </td>
+
                 </tr>
                 </tbody>
             </table>

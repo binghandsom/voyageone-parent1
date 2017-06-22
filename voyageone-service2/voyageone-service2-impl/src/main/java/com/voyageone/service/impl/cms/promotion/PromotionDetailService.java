@@ -776,6 +776,7 @@ public class PromotionDetailService extends BaseService {
             CmsBtTasksBean tasksBean = new CmsBtTasksBean();
             tasksBean.setModifier(operator);
             tasksBean.setCreater(operator);
+            tasksBean.setCartId(cmsBtPromotionModel.getCartId());
             tasksBean.setPromotionId(promotionId);
             tasksBean.setTaskType(PromotionTypeEnums.Type.TEJIABAO.getTypeId());
             tasksBean.setTaskName(cmsBtPromotionModel.getPromotionName());
