@@ -231,16 +231,4 @@ public class CmsBeatJDService extends BaseCronTaskService {
         String message = format("上传主图失败：[ %s ] [ %s ]", uploadResponse.getCode(), uploadResponse.getDesc());
         throw new BusinessException(message);
     }
-
-    private InputStream getImageStream(String templateUrl, String imageName, Double promotionPrice) throws IOException {
-
-        String imageUrl;
-        if (promotionPrice != null)
-            imageUrl = templateUrl.replace("{key}", imageName).replace("{price}", new DecimalFormat("#.##").format(promotionPrice));
-        else
-            imageUrl = templateUrl.replace("{key}", imageName);
-
-        URL url = new URL(imageUrl);
-        return url.openStream();
-    }
 }
