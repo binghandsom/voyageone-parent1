@@ -1205,22 +1205,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSkuCode()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSize()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getSize()));
-                FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getQty() == null ? "0" : String.valueOf(skuItem.getQty()));
-                if (skuItem.getClientMsrpPrice() == null) {
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                } else {
-                    FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getClientMsrpPrice());
-                }
-                if (skuItem.getClientRetailPrice() == null) {
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                } else {
-                    FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getClientRetailPrice());
-                }
-                if (skuItem.getClientNetPrice() == null) {
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                } else {
-                    FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getClientNetPrice());
-                }
+
                 // 重量
                 if (skuItem.getWeight() == null) {
                     FileUtils.cell(row, index++, unlock).setCellValue("");
