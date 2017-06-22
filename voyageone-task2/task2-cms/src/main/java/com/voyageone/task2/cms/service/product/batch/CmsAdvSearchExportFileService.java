@@ -34,7 +34,6 @@ import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessa
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.task2.cms.bean.SkuInventoryForCmsBean;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -1151,8 +1150,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
             products.add(item);
         }
-//        //取得sku级别的库存
-//        Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = getSkuInventoryMap(codesMap);
 
         CellStyle unlock = FileUtils.createUnLockStyle(book);
 
@@ -1481,7 +1478,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
                 // JmURL
                 FileUtils.cell(row, index++, unlock).setCellValue(jmUrlPrefix + cart.getpPlatformMallId() + ".html");
-                SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuCode);
                 FileUtils.cell(row, index++, unlock).setCellValue(skuMap.getIntAttribute("qty"));
                 total++;
             }

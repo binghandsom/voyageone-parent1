@@ -2103,7 +2103,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         sku.setWeight(NumberUtils.toDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
                         sku.setWeightUnit(feedSku.getWeightOrgUnit());
                     }
-
                     skuList.add(sku);
                 }
             }
@@ -2906,6 +2905,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 // 也认为是正常
                 return true;
             }
+
             CmsBtProductModel_Field field = productModel.getCommon().getFields();
 
             for(CmsBtProductModel_Sku sku:productModel.getCommon().getSkus()){
