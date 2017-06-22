@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Properties;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
 import com.voyageone.service.dao.cms.CmsBtTaskJiagepiluDao;
@@ -34,9 +35,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -68,39 +73,6 @@ public class JiagepiluService extends BaseService {
     @Autowired
     private CmsBtTaskJiagepiluImportInfoDao cmsBtTaskJiagepiluImportInfoDao;
 
-    @Autowired
-    private CmsBtBeatInfoDaoExt beatInfoDaoExt;
-
-    @VOTransactional
-    public int saveOrUpdateTaskJiagepiluModel(CmsBtTaskJiagepiluModel taskJiagepiluModel) {
-        int result = 0;
-        if (taskJiagepiluModel != null) {
-            CmsBtTaskJiagepiluModel queryModel = new CmsBtTaskJiagepiluModel();
-            queryModel.setTaskId(taskJiagepiluModel.getTaskId());
-            queryModel.setNumIid(taskJiagepiluModel.getNumIid());
-
-            CmsBtTaskJiagepiluModel targetModel = cmsBtTaskJiagepiluDao.selectOne(queryModel);
-            if (targetModel == null) {
-                result = cmsBtTaskJiagepiluDao.insert(taskJiagepiluModel);
-            } else {
-                CmsBtTaskJiagepiluModel updateModel = new CmsBtTaskJiagepiluModel();
-                updateModel.setId(targetModel.getId());
-
-                updateModel.setProductCode(taskJiagepiluModel.getProductCode());
-                updateModel.setPrice(taskJiagepiluModel.getPrice());
-                updateModel.setImageName(taskJiagepiluModel.getImageName());
-                updateModel.setSynFlag(taskJiagepiluModel.getSynFlag());
-                updateModel.setMessage(taskJiagepiluModel.getMessage());
-                updateModel.setModified(new Date());
-                updateModel.setModifier(taskJiagepiluModel.getCreater());
-
-                result = cmsBtTaskJiagepiluDao.update(updateModel);
-            }
-        }
-
-        return result;
-    }
-
     /**
      * 获取价格披露TaskModel
      */
@@ -130,6 +102,7 @@ public class JiagepiluService extends BaseService {
      * @param taskId 价格披露任务ID
      * @param file   导入Excel文件
      */
+    @VOTransactional
     public void importProduct(Integer taskId, MultipartFile file, String username) {
 
         CmsBtTasksModel tasksModel = cmsBtTasksDao.select(taskId);
@@ -181,7 +154,7 @@ public class JiagepiluService extends BaseService {
 
             Date beginTime = new Date();
             // 从1到rowNum遍历，第一行(rowNum=0)视为标题
-            for (int i = 1; i < rowNum; i++) {
+            for (int i = 1; i <= rowNum; i++) {
                 Row row = sheet.getRow(i);
 
                 // 取四列数据
@@ -303,25 +276,39 @@ public class JiagepiluService extends BaseService {
             }
             Date endTime = new Date();
 
-            int errorCount = errorSheet.getLastRowNum() - 1;
-
             CmsBtTaskJiagepiluImportInfoModel jiagepiluImportInfoModel = new CmsBtTaskJiagepiluImportInfoModel();
             jiagepiluImportInfoModel.setTaskId(taskId);
-            jiagepiluImportInfoModel.setFailCount(errorCount);
-            jiagepiluImportInfoModel.setSuccessCount(rowNum - 1 - errorCount);
+            jiagepiluImportInfoModel.setFailCount(errorRowNum);
+            jiagepiluImportInfoModel.setSuccessCount(rowNum - errorRowNum);
             jiagepiluImportInfoModel.setImportFileName(fileName);
-            jiagepiluImportInfoModel.setImportBegin(beginTime);
-            jiagepiluImportInfoModel.setImportEnd(endTime);
+            jiagepiluImportInfoModel.setImportBeginTime(beginTime);
+            jiagepiluImportInfoModel.setImportEndTime(endTime);
             jiagepiluImportInfoModel.setCreater(username);
             jiagepiluImportInfoModel.setCreated(new Date());
 
+            String errorFileName = "jiagepilu" + taskId + "-import-error-"
+                    + DateTimeUtil.format(new Date(), DateTimeUtil.DATE_TIME_FORMAT_2) + ".xlsx";
+            if (errorRowNum > 0) {
+                jiagepiluImportInfoModel.setErrorFileName(errorFileName);
+            }
             cmsBtTaskJiagepiluImportInfoDao.insert(jiagepiluImportInfoModel);
 
             // 保存导入失败文件
-            if (errorCount > 0) {
+            if (errorRowNum > 0) {
+                String importErrorDir = Properties.readValue(CmsProperty.Props.CMS_JIAGEPILU_IMPORT_ERROR_PATH);
+                File pathFileObj = new File(importErrorDir);
+                if (!pathFileObj.exists()) {
+                    pathFileObj.mkdirs();
+                }
+
+                OutputStream outputStream = new FileOutputStream(importErrorDir + errorFileName);
+                try {
+                    errorBook.write(outputStream);
+                    $info("已写入输出流");
+                } finally {
+                    outputStream.close();
+                }
             }
-
-
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
         } finally {
@@ -411,7 +398,78 @@ public class JiagepiluService extends BaseService {
             result = cmsBtTaskJiagepiluDao.update(updateModel);
         }
         return result;
+    }
 
+    /**
+     * 查询价格披露任务Task的导入信息
+     *
+     * @param taskId 价格披露任务ID
+     */
+    public List<CmsBtTaskJiagepiluImportInfoModel> getImportInfoList(Integer taskId) {
+        CmsBtTaskJiagepiluImportInfoModel queryModel = new CmsBtTaskJiagepiluImportInfoModel();
+        queryModel.setTaskId(taskId);
+        List<CmsBtTaskJiagepiluImportInfoModel> importInfoModelList = cmsBtTaskJiagepiluImportInfoDao.selectList(queryModel);
+        if (CollectionUtils.isNotEmpty(importInfoModelList)) {
+            // 默认按ID递增，倒序
+            Collections.sort(importInfoModelList,new Comparator<CmsBtTaskJiagepiluImportInfoModel>(){
+                public int compare(CmsBtTaskJiagepiluImportInfoModel arg0, CmsBtTaskJiagepiluImportInfoModel arg1) {
+                    return arg1.getId().compareTo(arg0.getId());
+                }
+            });
+        }
+        return importInfoModelList;
+    }
+
+    @VOTransactional
+    public int addJiagepiluProduct(Integer id, Integer taskId, String numIid, String code, Double price, String username) {
+
+        CmsBtTasksModel tasksModel = cmsBtTasksDao.select(taskId);
+        if (tasksModel == null) {
+            throw new BusinessException(String.format("价格披露任务(taskId:%d)不存在", taskId));
+        }
+
+        Integer cartId = tasksModel.getCartId();
+        CartEnums.Cart cart = CartEnums.Cart.getValueByID(String.valueOf(cartId));
+        boolean isTmSeries = CartEnums.Cart.isTmSeries(cart);
+        if (!isTmSeries) {
+            boolean isJdSeries = CartEnums.Cart.isJdSeries(cart);
+            if (!isJdSeries) {
+                throw new BusinessException(String.format("价格披露Task平台(%d)既不是天猫系也不是京东系", cartId));
+            }
+        }
+
+        int affected = 0;
+
+        CmsBtTaskJiagepiluModel queryModel = new CmsBtTaskJiagepiluModel();
+        queryModel.setTaskId(taskId);
+        queryModel.setNumIid(Long.valueOf(numIid));
+        if (!isTmSeries) {
+            queryModel.setProductCode(code);
+        }
+
+        CmsBtTaskJiagepiluModel targetModel = cmsBtTaskJiagepiluDao.selectOne(queryModel);
+        if (targetModel == null) {
+            CmsBtTaskJiagepiluModel newModel = new CmsBtTaskJiagepiluModel();
+            newModel.setCreated(new Date());
+            newModel.setCreater(username);
+            newModel.setTaskId(taskId);
+            newModel.setNumIid(Long.valueOf(numIid));
+            newModel.setProductCode(code);
+            newModel.setPrice(price);
+            newModel.setImageName("");
+
+            // 初始"STOP"状态
+            newModel.setSynFlag(BeatFlag.STOP.getFlag());
+            newModel.setImageStatus(ImageStatus.None.getId()); // 无图状态
+            newModel.setImageTaskId(0);
+            affected = cmsBtTaskJiagepiluDao.insert(newModel);
+        } else {
+            CmsBtTaskJiagepiluModel updateModel = new CmsBtTaskJiagepiluModel();
+            updateModel.setId(targetModel.getId());
+            affected = cmsBtTaskJiagepiluDao.update(updateModel);
+        }
+
+        return affected;
     }
 
 

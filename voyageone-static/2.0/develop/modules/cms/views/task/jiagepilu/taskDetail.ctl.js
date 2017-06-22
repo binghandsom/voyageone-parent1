@@ -44,6 +44,7 @@ define([
                 size: 20,
                 fetch: this.getData.bind(this)
             };
+            this.importInfoList = [];
             this.uploader = new FileUploader({
                 url: urls.root + "/" + urls.import
             });
@@ -87,23 +88,10 @@ define([
                         self.productList = resp.data.productList;
                         self.pageOption.total = resp.data.total;
                     }
-                })
+                });
 
-                // self.taskBeatService.page({
-                //     task_id: self.task_id,
-                //     flag: self.flag,
-                //     searchKey: self.searchKey,
-                //     offset: offset,
-                //     size: self.pageOption.size
-                // }).then(function (res) {
-                //
-                //         var map = res.data;
-                //
-                //         self.data = map.list;
-                //         self.pageOption.total = map.total;
-                //         self.summary = map.summary;
-                //         self.task = map.task;
-                //     })
+                // 获取当前任务导入信息列表
+                self.refreshImportInfoList();
             },
 
             importProduct: function () {
@@ -134,8 +122,7 @@ define([
                 //     uploadIt();
                 //     return;
                 // }
-                // self.confirm('TXT_MSG_REIMPORT_BEAT').then(uploadIt);
-                self.confirm('TXT_MSG_NEW_REIMPLORT_BEAR').then(uploadIt);
+                self.confirm('TXT_JIAGEPILU__REIMPORT_CONFIRM').then(uploadIt);
             },
 
             // 导入模板下载
@@ -144,6 +131,33 @@ define([
                 var path = urls.root + "/" + urls.downloadImportTemplate;
                 $.download.post(path);
             },
+
+            // 导入信息列表刷新
+            refreshImportInfoList: function () {
+                var self = this;
+                self.taskJiagepiluService.getImportInfoList({taskId:self.taskId}).then(function (resp) {
+                    if (resp.data) {
+                        self.importInfoList = resp.data;
+                    }
+                });
+            },
+
+            // 导入错误文件下载
+            downloadError: function (fileName) {
+                var urls = this.urls;
+                var path = urls.root + "/" + urls.downloadImportError;
+                $.download.post(path, {fileName: fileName});
+            },
+
+            // 弹出添加商品框
+            popAddBeat: function () {
+                popups.popNewCombinedProduct(_.extend({"carts": $scope.vm.carts},
+                                                      {"startSupplyChain": $scope.vm.config.startSupplyChain}))
+                    .then(function () {
+                        getProductList();
+                    })
+            },
+
 
             download: function () {
                 var ttt = this;

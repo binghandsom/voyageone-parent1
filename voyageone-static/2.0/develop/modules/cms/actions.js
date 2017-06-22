@@ -453,7 +453,10 @@ define(function () {
                     "getTaskModel":"getTaskModel",
                     "getProductList":"getProductList",
                     "downloadImportTemplate":"downloadImportTemplate",
-                    "import":"import"
+                    "import":"import",
+                    "getImportInfoList":"getImportInfoList",
+                    "downloadImportError":"downloadImportError",
+                    "addJiagepiluProduct":"addJiagepiluProduct"
                 }
             },
             "system": {

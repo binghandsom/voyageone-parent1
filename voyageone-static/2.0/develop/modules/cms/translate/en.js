@@ -932,6 +932,13 @@ define(function () {
         "BTN_TASK_EDIT": "编辑任务",
         "TXT_PRODUCT_LIST":"Product List",
         "TXT_IMPORT_LIST":"Import List",
-        "BTN_IMPORT_TEMPLATE_DOWNLOAD":"导入模板下载"
+        "BTN_IMPORT_TEMPLATE_DOWNLOAD":"导入模板下载",
+        "TXT_SUCCESS_COUNT":"成功件数(Code)",
+        "TXT_FAIL_COUNT":"失败(件数)",
+        "TXT_IMPORT_BEGIN_TIME":"导入开始时间",
+        "TXT_IMPORT_END_TIME":"导入结束时间",
+        "TXT_EXCEPTION_MESSAGE":"异常信息",
+        "TXT_DOWNLOAD_FAIL_FILE":"失败文件下载",
+        "TXT_JIAGEPILU__REIMPORT_CONFIRM":"重复导入会更新已存在的产品信息，确定要继续吗？"
     };
 });

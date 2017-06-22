@@ -355,123 +355,123 @@ public class CmsBtTaskJiagepiluImportInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andImportBeginIsNull() {
-            addCriterion("`import_begin` is null");
+        public Criteria andImportBeginTimeIsNull() {
+            addCriterion("`import_begin_time` is null");
             return (Criteria) this;
         }
 
-        public Criteria andImportBeginIsNotNull() {
-            addCriterion("`import_begin` is not null");
+        public Criteria andImportBeginTimeIsNotNull() {
+            addCriterion("`import_begin_time` is not null");
             return (Criteria) this;
         }
 
-        public Criteria andImportBeginEqualTo(Date value) {
-            addCriterion("`import_begin` =", value, "importBegin");
+        public Criteria andImportBeginTimeEqualTo(Date value) {
+            addCriterion("`import_begin_time` =", value, "importBeginTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportBeginNotEqualTo(Date value) {
-            addCriterion("`import_begin` <>", value, "importBegin");
+        public Criteria andImportBeginTimeNotEqualTo(Date value) {
+            addCriterion("`import_begin_time` <>", value, "importBeginTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportBeginGreaterThan(Date value) {
-            addCriterion("`import_begin` >", value, "importBegin");
+        public Criteria andImportBeginTimeGreaterThan(Date value) {
+            addCriterion("`import_begin_time` >", value, "importBeginTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportBeginGreaterThanOrEqualTo(Date value) {
-            addCriterion("`import_begin` >=", value, "importBegin");
+        public Criteria andImportBeginTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("`import_begin_time` >=", value, "importBeginTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportBeginLessThan(Date value) {
-            addCriterion("`import_begin` <", value, "importBegin");
+        public Criteria andImportBeginTimeLessThan(Date value) {
+            addCriterion("`import_begin_time` <", value, "importBeginTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportBeginLessThanOrEqualTo(Date value) {
-            addCriterion("`import_begin` <=", value, "importBegin");
+        public Criteria andImportBeginTimeLessThanOrEqualTo(Date value) {
+            addCriterion("`import_begin_time` <=", value, "importBeginTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportBeginIn(List<Date> values) {
-            addCriterion("`import_begin` in", values, "importBegin");
+        public Criteria andImportBeginTimeIn(List<Date> values) {
+            addCriterion("`import_begin_time` in", values, "importBeginTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportBeginNotIn(List<Date> values) {
-            addCriterion("`import_begin` not in", values, "importBegin");
+        public Criteria andImportBeginTimeNotIn(List<Date> values) {
+            addCriterion("`import_begin_time` not in", values, "importBeginTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportBeginBetween(Date value1, Date value2) {
-            addCriterion("`import_begin` between", value1, value2, "importBegin");
+        public Criteria andImportBeginTimeBetween(Date value1, Date value2) {
+            addCriterion("`import_begin_time` between", value1, value2, "importBeginTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportBeginNotBetween(Date value1, Date value2) {
-            addCriterion("`import_begin` not between", value1, value2, "importBegin");
+        public Criteria andImportBeginTimeNotBetween(Date value1, Date value2) {
+            addCriterion("`import_begin_time` not between", value1, value2, "importBeginTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportEndIsNull() {
-            addCriterion("`import_end` is null");
+        public Criteria andImportEndTimeIsNull() {
+            addCriterion("`import_end_time` is null");
             return (Criteria) this;
         }
 
-        public Criteria andImportEndIsNotNull() {
-            addCriterion("`import_end` is not null");
+        public Criteria andImportEndTimeIsNotNull() {
+            addCriterion("`import_end_time` is not null");
             return (Criteria) this;
         }
 
-        public Criteria andImportEndEqualTo(Date value) {
-            addCriterion("`import_end` =", value, "importEnd");
+        public Criteria andImportEndTimeEqualTo(Date value) {
+            addCriterion("`import_end_time` =", value, "importEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportEndNotEqualTo(Date value) {
-            addCriterion("`import_end` <>", value, "importEnd");
+        public Criteria andImportEndTimeNotEqualTo(Date value) {
+            addCriterion("`import_end_time` <>", value, "importEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportEndGreaterThan(Date value) {
-            addCriterion("`import_end` >", value, "importEnd");
+        public Criteria andImportEndTimeGreaterThan(Date value) {
+            addCriterion("`import_end_time` >", value, "importEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportEndGreaterThanOrEqualTo(Date value) {
-            addCriterion("`import_end` >=", value, "importEnd");
+        public Criteria andImportEndTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("`import_end_time` >=", value, "importEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportEndLessThan(Date value) {
-            addCriterion("`import_end` <", value, "importEnd");
+        public Criteria andImportEndTimeLessThan(Date value) {
+            addCriterion("`import_end_time` <", value, "importEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportEndLessThanOrEqualTo(Date value) {
-            addCriterion("`import_end` <=", value, "importEnd");
+        public Criteria andImportEndTimeLessThanOrEqualTo(Date value) {
+            addCriterion("`import_end_time` <=", value, "importEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportEndIn(List<Date> values) {
-            addCriterion("`import_end` in", values, "importEnd");
+        public Criteria andImportEndTimeIn(List<Date> values) {
+            addCriterion("`import_end_time` in", values, "importEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportEndNotIn(List<Date> values) {
-            addCriterion("`import_end` not in", values, "importEnd");
+        public Criteria andImportEndTimeNotIn(List<Date> values) {
+            addCriterion("`import_end_time` not in", values, "importEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportEndBetween(Date value1, Date value2) {
-            addCriterion("`import_end` between", value1, value2, "importEnd");
+        public Criteria andImportEndTimeBetween(Date value1, Date value2) {
+            addCriterion("`import_end_time` between", value1, value2, "importEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andImportEndNotBetween(Date value1, Date value2) {
-            addCriterion("`import_end` not between", value1, value2, "importEnd");
+        public Criteria andImportEndTimeNotBetween(Date value1, Date value2) {
+            addCriterion("`import_end_time` not between", value1, value2, "importEndTime");
             return (Criteria) this;
         }
 
@@ -612,6 +612,76 @@ public class CmsBtTaskJiagepiluImportInfoExample {
 
         public Criteria andImportFileNameNotBetween(String value1, String value2) {
             addCriterion("`import_file_name` not between", value1, value2, "importFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorFileNameIsNull() {
+            addCriterion("`error_file_name` is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorFileNameIsNotNull() {
+            addCriterion("`error_file_name` is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorFileNameEqualTo(String value) {
+            addCriterion("`error_file_name` =", value, "errorFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorFileNameNotEqualTo(String value) {
+            addCriterion("`error_file_name` <>", value, "errorFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorFileNameGreaterThan(String value) {
+            addCriterion("`error_file_name` >", value, "errorFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorFileNameGreaterThanOrEqualTo(String value) {
+            addCriterion("`error_file_name` >=", value, "errorFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorFileNameLessThan(String value) {
+            addCriterion("`error_file_name` <", value, "errorFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorFileNameLessThanOrEqualTo(String value) {
+            addCriterion("`error_file_name` <=", value, "errorFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorFileNameLike(String value) {
+            addCriterion("`error_file_name` like", value, "errorFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorFileNameNotLike(String value) {
+            addCriterion("`error_file_name` not like", value, "errorFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorFileNameIn(List<String> values) {
+            addCriterion("`error_file_name` in", values, "errorFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorFileNameNotIn(List<String> values) {
+            addCriterion("`error_file_name` not in", values, "errorFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorFileNameBetween(String value1, String value2) {
+            addCriterion("`error_file_name` between", value1, value2, "errorFileName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorFileNameNotBetween(String value1, String value2) {
+            addCriterion("`error_file_name` not between", value1, value2, "errorFileName");
             return (Criteria) this;
         }
 
