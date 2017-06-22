@@ -4,10 +4,12 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.task.JiagepiluService;
+import com.voyageone.service.model.cms.CmsBtTaskJiagepiluImportInfoModel;
 import com.voyageone.service.model.cms.CmsBtTaskJiagepiluModel;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.cms.bean.task.AddJiagepiluProductRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +92,45 @@ public class CmsJiagepiluController extends BaseController {
 
         jiagepiluService.importProduct(taskId, file, getUser().getUserName());
         return success("");
+    }
+
+
+    @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.GET_IMPORT_INFO_LIST)
+    public AjaxResponse getImportInfoList(@RequestBody Map<String, Integer> requestParams) {
+        Integer taskId = requestParams.get("taskId");
+        return success(jiagepiluService.getImportInfoList(taskId));
+    }
+
+
+    /**
+     * 下载价格披露任务导入错误文件
+     */
+    @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.DOWNLOAD_IMPORT_ERROR)
+    public ResponseEntity<byte[]> downloadImportError(@RequestParam String fileName) {
+        String exportPath = Properties.readValue(CmsProperty.Props.CMS_JIAGEPILU_IMPORT_ERROR_PATH);
+        File pathFileObj = new File(exportPath);
+        if (!pathFileObj.exists()) {
+            $info("价格披露任务导入错误文件目录不存在" + exportPath);
+            throw new BusinessException("4004");
+        }
+
+        exportPath += fileName;
+        pathFileObj = new File(exportPath);
+        if (!pathFileObj.exists()) {
+            $info("价格披露任务导入错误文件不存在" + exportPath);
+            throw new BusinessException("4004");
+        }
+        return genResponseEntityFromFile(fileName, exportPath);
+    }
+
+    /**
+     * 添加或编辑价格披露任务商品
+     * @param request 请求参数
+     * @return
+     */
+    @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.ADD_JIAGEPILU_PRODUCT)
+    public AjaxResponse addJiagepiluProduct(@RequestBody AddJiagepiluProductRequest request) {
+        return success(jiagepiluService.addJiagepiluProduct(null, request.getTaskId(), request.getNumIid(), request.getCode(), request.getPrice(), getUser().getUserName()));
     }
 
 }

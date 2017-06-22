@@ -32,12 +32,12 @@ public class CmsBtTaskJiagepiluImportInfoModel extends BaseModel {
     /**
      * 导入开始时间
      */
-    protected Date importBegin;
+    protected Date importBeginTime;
 
     /**
      * 导入结束时间
      */
-    protected Date importEnd;
+    protected Date importEndTime;
 
     /**
      * 异常信息
@@ -48,6 +48,11 @@ public class CmsBtTaskJiagepiluImportInfoModel extends BaseModel {
      * 导入文件原始文件名称
      */
     protected String importFileName;
+
+    /**
+     * 导入错误文件名
+     */
+    protected String errorFileName;
 
     public Integer getTaskId() {
         return taskId;
@@ -73,20 +78,20 @@ public class CmsBtTaskJiagepiluImportInfoModel extends BaseModel {
         this.failCount = failCount;
     }
 
-    public Date getImportBegin() {
-        return importBegin;
+    public Date getImportBeginTime() {
+        return importBeginTime;
     }
 
-    public void setImportBegin(Date importBegin) {
-        this.importBegin = importBegin;
+    public void setImportBeginTime(Date importBeginTime) {
+        this.importBeginTime = importBeginTime;
     }
 
-    public Date getImportEnd() {
-        return importEnd;
+    public Date getImportEndTime() {
+        return importEndTime;
     }
 
-    public void setImportEnd(Date importEnd) {
-        this.importEnd = importEnd;
+    public void setImportEndTime(Date importEndTime) {
+        this.importEndTime = importEndTime;
     }
 
     public String getErrorMsg() {
@@ -103,5 +108,13 @@ public class CmsBtTaskJiagepiluImportInfoModel extends BaseModel {
 
     public void setImportFileName(String importFileName) {
         this.importFileName = importFileName == null ? null : importFileName.trim();
+    }
+
+    public String getErrorFileName() {
+        return errorFileName;
+    }
+
+    public void setErrorFileName(String errorFileName) {
+        this.errorFileName = errorFileName == null ? null : errorFileName.trim();
     }
 }

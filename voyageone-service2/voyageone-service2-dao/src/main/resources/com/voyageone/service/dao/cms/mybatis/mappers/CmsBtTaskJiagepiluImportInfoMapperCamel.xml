@@ -63,8 +63,8 @@
     </sql>
 
     <sql id="Base_Column_List" >
-        `id`, `task_id`, `success_count`, `fail_count`, `import_begin`, `import_end`, `error_msg`, 
-        `import_file_name`, `created`, `creater`
+        `id`, `task_id`, `success_count`, `fail_count`, `import_begin_time`, `import_end_time`, 
+        `error_msg`, `import_file_name`, `error_file_name`, `created`, `creater`
     </sql>
 
     <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.cms.CmsBtTaskJiagepiluImportInfoExample" >
@@ -112,17 +112,20 @@
             <if test="record.failCount != null" >
                 `fail_count` = #{record.failCount,jdbcType=INTEGER},
             </if>
-            <if test="record.importBegin != null" >
-                `import_begin` = #{record.importBegin,jdbcType=TIMESTAMP},
+            <if test="record.importBeginTime != null" >
+                `import_begin_time` = #{record.importBeginTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="record.importEnd != null" >
-                `import_end` = #{record.importEnd,jdbcType=TIMESTAMP},
+            <if test="record.importEndTime != null" >
+                `import_end_time` = #{record.importEndTime,jdbcType=TIMESTAMP},
             </if>
             <if test="record.errorMsg != null" >
                 `error_msg` = #{record.errorMsg,jdbcType=VARCHAR},
             </if>
             <if test="record.importFileName != null" >
                 `import_file_name` = #{record.importFileName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.errorFileName != null" >
+                `error_file_name` = #{record.errorFileName,jdbcType=VARCHAR},
             </if>
             <if test="record.created != null" >
                 `created` = #{record.created,jdbcType=TIMESTAMP},
@@ -142,10 +145,11 @@
             `task_id` = #{record.taskId,jdbcType=INTEGER},
             `success_count` = #{record.successCount,jdbcType=INTEGER},
             `fail_count` = #{record.failCount,jdbcType=INTEGER},
-            `import_begin` = #{record.importBegin,jdbcType=TIMESTAMP},
-            `import_end` = #{record.importEnd,jdbcType=TIMESTAMP},
+            `import_begin_time` = #{record.importBeginTime,jdbcType=TIMESTAMP},
+            `import_end_time` = #{record.importEndTime,jdbcType=TIMESTAMP},
             `error_msg` = #{record.errorMsg,jdbcType=VARCHAR},
             `import_file_name` = #{record.importFileName,jdbcType=VARCHAR},
+            `error_file_name` = #{record.errorFileName,jdbcType=VARCHAR},
             `created` = #{record.created,jdbcType=TIMESTAMP},
             `creater` = #{record.creater,jdbcType=VARCHAR}
         <if test="_parameter != null" >
@@ -165,17 +169,20 @@
             <if test="failCount != null" >
                 `fail_count` = #{failCount,jdbcType=INTEGER},
             </if>
-            <if test="importBegin != null" >
-                `import_begin` = #{importBegin,jdbcType=TIMESTAMP},
+            <if test="importBeginTime != null" >
+                `import_begin_time` = #{importBeginTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="importEnd != null" >
-                `import_end` = #{importEnd,jdbcType=TIMESTAMP},
+            <if test="importEndTime != null" >
+                `import_end_time` = #{importEndTime,jdbcType=TIMESTAMP},
             </if>
             <if test="errorMsg != null" >
                 `error_msg` = #{errorMsg,jdbcType=VARCHAR},
             </if>
             <if test="importFileName != null" >
                 `import_file_name` = #{importFileName,jdbcType=VARCHAR},
+            </if>
+            <if test="errorFileName != null" >
+                `error_file_name` = #{errorFileName,jdbcType=VARCHAR},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -213,17 +220,20 @@
             <if test="failCount != null" >
                 and `fail_count` = #{failCount,jdbcType=INTEGER}
             </if>
-            <if test="importBegin != null" >
-                and `import_begin` = #{importBegin,jdbcType=TIMESTAMP}
+            <if test="importBeginTime != null" >
+                and `import_begin_time` = #{importBeginTime,jdbcType=TIMESTAMP}
             </if>
-            <if test="importEnd != null" >
-                and `import_end` = #{importEnd,jdbcType=TIMESTAMP}
+            <if test="importEndTime != null" >
+                and `import_end_time` = #{importEndTime,jdbcType=TIMESTAMP}
             </if>
             <if test="errorMsg != null" >
                 and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
             </if>
             <if test="importFileName != null" >
                 and `import_file_name` = #{importFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="errorFileName != null" >
+                and `error_file_name` = #{errorFileName,jdbcType=VARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -249,17 +259,20 @@
             <if test="failCount != null" >
                 and `fail_count` = #{failCount,jdbcType=INTEGER}
             </if>
-            <if test="importBegin != null" >
-                and `import_begin` = #{importBegin,jdbcType=TIMESTAMP}
+            <if test="importBeginTime != null" >
+                and `import_begin_time` = #{importBeginTime,jdbcType=TIMESTAMP}
             </if>
-            <if test="importEnd != null" >
-                and `import_end` = #{importEnd,jdbcType=TIMESTAMP}
+            <if test="importEndTime != null" >
+                and `import_end_time` = #{importEndTime,jdbcType=TIMESTAMP}
             </if>
             <if test="errorMsg != null" >
                 and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
             </if>
             <if test="importFileName != null" >
                 and `import_file_name` = #{importFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="errorFileName != null" >
+                and `error_file_name` = #{errorFileName,jdbcType=VARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -282,17 +295,20 @@
             <if test="failCount != null" >
                 and `fail_count` = #{failCount,jdbcType=INTEGER}
             </if>
-            <if test="importBegin != null" >
-                and `import_begin` = #{importBegin,jdbcType=TIMESTAMP}
+            <if test="importBeginTime != null" >
+                and `import_begin_time` = #{importBeginTime,jdbcType=TIMESTAMP}
             </if>
-            <if test="importEnd != null" >
-                and `import_end` = #{importEnd,jdbcType=TIMESTAMP}
+            <if test="importEndTime != null" >
+                and `import_end_time` = #{importEndTime,jdbcType=TIMESTAMP}
             </if>
             <if test="errorMsg != null" >
                 and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
             </if>
             <if test="importFileName != null" >
                 and `import_file_name` = #{importFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="errorFileName != null" >
+                and `error_file_name` = #{errorFileName,jdbcType=VARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -315,17 +331,20 @@
             <if test="failCount != null" >
                 `fail_count`,
             </if>
-            <if test="importBegin != null" >
-                `import_begin`,
+            <if test="importBeginTime != null" >
+                `import_begin_time`,
             </if>
-            <if test="importEnd != null" >
-                `import_end`,
+            <if test="importEndTime != null" >
+                `import_end_time`,
             </if>
             <if test="errorMsg != null" >
                 `error_msg`,
             </if>
             <if test="importFileName != null" >
                 `import_file_name`,
+            </if>
+            <if test="errorFileName != null" >
+                `error_file_name`,
             </if>
             `created`,
             <if test="creater != null" >
@@ -342,17 +361,20 @@
             <if test="failCount != null" >
                 #{failCount,jdbcType=INTEGER},
             </if>
-            <if test="importBegin != null" >
-                #{importBegin,jdbcType=TIMESTAMP},
+            <if test="importBeginTime != null" >
+                #{importBeginTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="importEnd != null" >
-                #{importEnd,jdbcType=TIMESTAMP},
+            <if test="importEndTime != null" >
+                #{importEndTime,jdbcType=TIMESTAMP},
             </if>
             <if test="errorMsg != null" >
                 #{errorMsg,jdbcType=VARCHAR},
             </if>
             <if test="importFileName != null" >
                 #{importFileName,jdbcType=VARCHAR},
+            </if>
+            <if test="errorFileName != null" >
+                #{errorFileName,jdbcType=VARCHAR},
             </if>
             <if test="created == null" >
                 now(),

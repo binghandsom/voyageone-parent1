@@ -361,6 +361,12 @@ public interface CmsUrlConstants {
 
             String IMPORT = "import";
 
+            String GET_IMPORT_INFO_LIST = "getImportInfoList";
+
+            String DOWNLOAD_IMPORT_ERROR = "downloadImportError";
+
+            String ADD_JIAGEPILU_PRODUCT = "addJiagepiluProduct";
+
         }
 
     }

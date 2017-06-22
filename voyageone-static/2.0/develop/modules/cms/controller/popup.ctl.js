@@ -658,6 +658,14 @@ define([
             controllerUrl: "modules/cms/views/pop/error/mqSkuCodeError.ctl",
             controller: 'mqSkuCodeErrorController as ctrl',
             size: 'md'
+        },
+        "task": {
+            "addJiagepiluProduct": {
+                "templateUrl": "views/pop/task/jiagepilu/addProduct.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/task/jiagepilu/addProduct.ctl",
+                "controller": 'AddJiagepiluProductController as ctrl',
+                "size": "md"
+            }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
@@ -1531,6 +1539,13 @@ define([
          */
         $scope.openColumnForDownLoad = function (context) {
             return openModal(popActions.custom.columnForDownLoad, context);
+        };
+
+        /**
+         * 为价格披露Task添加商品
+         */
+        $scope.popAddJiagepiluProduct = function popAddJiagepiluProduct(context) {
+            return openModal(popActions.task.addJiagepiluProduct, context);
         };
 
     }).factory('popups', function ($controller, $rootScope) {
