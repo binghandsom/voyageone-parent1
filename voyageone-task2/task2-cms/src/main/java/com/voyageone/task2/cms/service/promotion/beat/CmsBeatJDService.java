@@ -7,9 +7,6 @@ import com.jd.open.api.sdk.response.ware.ImageReadFindImagesByWareIdResponse;
 import com.jd.open.api.sdk.response.ware.ImageWriteUpdateResponse;
 import com.jd.open.api.sdk.response.ware.SkuReadFindSkuByIdResponse;
 import com.taobao.api.ApiException;
-import com.taobao.api.domain.Picture;
-import com.taobao.api.response.PictureGetResponse;
-import com.taobao.api.response.PictureUploadResponse;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Shops;
@@ -32,13 +29,11 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.model.CmsMtImageCategoryModel;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -114,11 +109,11 @@ public class CmsBeatJDService extends BaseCronTaskService {
     private void beatMain(CmsBtBeatInfoBean cmsBtBeatInfo) {
         ConfigBean configBean;
         ShopBean shopBean = Shops.getShop(cmsBtBeatInfo.getTask().getChannelId(), cmsBtBeatInfo.getTask().getCartId());
-        shopBean.setShop_name("Sneakerhead国际旗舰店");
-        shopBean.setApp_url("https://api.jd.com/routerjson");
-        shopBean.setAppKey("BFA3102EFD4B981E9EEC2BE32DF1E44E");
-        shopBean.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
-        shopBean.setSessionKey("614a5873-f72e-4efc-9208-c0c5db4e07ac");
+//        shopBean.setShop_name("Sneakerhead国际旗舰店");
+//        shopBean.setApp_url("https://api.jd.com/routerjson");
+//        shopBean.setAppKey("BFA3102EFD4B981E9EEC2BE32DF1E44E");
+//        shopBean.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
+//        shopBean.setSessionKey("614a5873-f72e-4efc-9208-c0c5db4e07ac");
 
         configBean = JacksonUtil.json2Bean(cmsBtBeatInfo.getTask().getConfig(), ConfigBean.class);
 
@@ -230,17 +225,5 @@ public class CmsBeatJDService extends BaseCronTaskService {
             return uploadResponse.getPictureUrl();
         String message = format("上传主图失败：[ %s ] [ %s ]", uploadResponse.getCode(), uploadResponse.getDesc());
         throw new BusinessException(message);
-    }
-
-    private InputStream getImageStream(String templateUrl, String imageName, Double promotionPrice) throws IOException {
-
-        String imageUrl;
-        if (promotionPrice != null)
-            imageUrl = templateUrl.replace("{key}", imageName).replace("{price}", new DecimalFormat("#.##").format(promotionPrice));
-        else
-            imageUrl = templateUrl.replace("{key}", imageName);
-
-        URL url = new URL(imageUrl);
-        return url.openStream();
     }
 }
