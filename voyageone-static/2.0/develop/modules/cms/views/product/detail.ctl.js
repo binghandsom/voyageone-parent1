@@ -18,7 +18,8 @@ define([
     './subpage/gt.sub-page.ctl',
     './subpage/dg.sub-page.ctl',
     './subpage/fx.sub-page.ctl',
-    './subpage/lg.sub-page.ctl'
+    './subpage/lg.sub-page.ctl',
+    './subpage/kl.sub-page.ctl'
 ], function (cms) {
 
     return cms.controller('productDetailController', (function () {

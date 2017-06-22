@@ -205,8 +205,9 @@ public class PlatformSchemaService extends BaseService {
         // 正式环境， 需要这段代码， release环境， 不需要这段代码 END
 
 //        if (CartEnums.Cart.JG.getValue() == cartId || CartEnums.Cart.JGJ.getValue() == cartId || CartEnums.Cart.JGY.getValue() == cartId) {
-        if (CartEnums.Cart.isJdSeries(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) {
-            // 京东的场合，产品schema是共通，写死 catId = 1
+        if (CartEnums.Cart.isJdSeries(CartEnums.Cart.getValueByID(String.valueOf(cartId)))
+                || CartEnums.Cart.KL.getValue() == cartId) {
+            // 京东或者考拉的场合，产品schema是共通，写死 catId = 1
             CmsMtPlatformCategorySchemaModel platformCatSchemaModelJD = platformCategoryService.getPlatformCatSchema("1", cartId);
             if (platformCatSchemaModelJD == null) {
                 $error("JD的产品schema未设定!");

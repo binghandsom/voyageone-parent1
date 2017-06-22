@@ -17,6 +17,10 @@
 	</properties>
 	<dependencies>
 		<dependency>
+			<groupId>com.voyageone.common</groupId>
+			<artifactId>ecerp-interfaces-koala</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.voyageone</groupId>
 			<artifactId>voyageone-config</artifactId>
 			<version>${voyageone.config.version}</version>

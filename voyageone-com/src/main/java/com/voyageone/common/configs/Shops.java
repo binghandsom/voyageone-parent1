@@ -8,6 +8,7 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.ecerp.interfaces.third.koala.beans.KoalaConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -72,6 +73,21 @@ public class Shops {
         return CacheHelper.getBean(KEY, buildKey(cart_id, order_channel_id), selfClass);
     }
 
+    public static KoalaConfig getShopKoala(String order_channel_id, String cart_id) {
+        KoalaConfig koalaConfig = new KoalaConfig();
+        ShopBean shopBean = CacheHelper.getBean(KEY, buildKey(cart_id, order_channel_id), selfClass);
+        if(shopBean != null) {
+            koalaConfig.setAppkey(shopBean.getAppKey());
+            koalaConfig.setAppsecret(shopBean.getAppSecret());
+            koalaConfig.setAppUrl(shopBean.getApp_url());
+            koalaConfig.setCartId(Integer.valueOf(shopBean.getCart_id()));
+            koalaConfig.setChannelId(shopBean.getOrder_channel_id());
+            koalaConfig.setName(shopBean.getShop_name());
+            koalaConfig.setSessionkey(shopBean.getSessionKey());
+            koalaConfig.setTokenUrl(shopBean.getToken_url());
+        }
+        return koalaConfig;
+    }
     /**
      * 获取指定渠道的店铺信息
      *

@@ -26,6 +26,7 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.JsonUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.cnn.enums.CnnConstants;
@@ -38,6 +39,8 @@ import com.voyageone.components.jumei.reponse.HtMallStatusUpdateBatchResponse;
 import com.voyageone.components.jumei.service.JumeiSaleService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbSaleService;
+import com.voyageone.ecerp.interfaces.third.koala.KoalaItemService;
+import com.voyageone.ecerp.interfaces.third.koala.beans.KoalaConfig;
 import com.voyageone.service.bean.cms.product.CmsBtCombinedProductBean;
 import com.voyageone.service.bean.cms.product.CmsBtCombinedProductPlatformStatus;
 import com.voyageone.service.bean.cms.product.CmsBtCombinedProductStatus;
@@ -91,6 +94,8 @@ public class CmsBtCombinedProductService extends BaseService {
     private CnnWareService cnnWareService;
     @Autowired
     private CmsMqSenderService cmsMqSenderService;
+    @Autowired
+    private KoalaItemService koalaItemService;
 
     /**
      * 获取平台组合套装商品数据
@@ -1023,6 +1028,41 @@ public class CmsBtCombinedProductService extends BaseService {
                         } else {
                             resultMap = "调用独立官网下架API失败";
                         }
+                    }
+                }
+            }
+        }// 考拉上下架
+        else if (PlatFormEnums.PlatForm.NTES.getId().equals(shopProp.getPlatform_id())) {
+            KoalaConfig shopConfig = Shops.getShopKoala(shopProp.getOrder_channel_id(), shopProp.getCart_id());
+            String errMsg ="";
+            if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
+                com.voyageone.ecerp.interfaces.third.koala.beans.response.ItemUpdateListingResponse response = null;
+                try {
+                    // 上架
+                    response = koalaItemService.updateListing(shopConfig, new String[]{numIId});
+                }catch (Exception e){
+                    errMsg = e.getMessage();
+                }
+                if (response == null) {
+                    resultMap = "调用考拉商品上架API失败" + errMsg;
+                } else {
+                    if (1 != response.getResult()) {
+                        resultMap = "调用考拉商品上架API失败:" + response.toString();
+                    }
+                }
+            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(status)) {
+                com.voyageone.ecerp.interfaces.third.koala.beans.response.ItemUpdateDelistingResponse response = null;
+                try {
+                    // 下架
+                    response = koalaItemService.updateDelisting(shopConfig, new String[]{numIId});
+                }catch (Exception e){
+                    errMsg = e.getMessage();
+                }
+                if (response == null) {
+                    resultMap = "调用考拉商品下架API失败" + errMsg;;
+                } else {
+                    if (1 != response.getResult()) {
+                        resultMap = "调用考拉商品下架API失败:" + response.toString();
                     }
                 }
             }

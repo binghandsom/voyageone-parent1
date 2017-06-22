@@ -78,6 +78,7 @@ public class PromotionSkuService extends BaseService {
         });
         //CmsBtPromotionCodesDaoExtCamel
         cmsBtPromotionCodesDaoExtCamel.updatePromotionPrice(parameter.getPromotionId(), parameter.getProductCode());
+
     }
 
     public void loadSkuPrice(List<CmsBtPromotionSkuBean> listSku, AddProductSaveParameter parameter) {

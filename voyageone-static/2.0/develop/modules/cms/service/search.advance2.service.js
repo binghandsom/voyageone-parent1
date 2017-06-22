@@ -22,6 +22,9 @@ define([
         var tempGroupSelect = new selectRowsFactory();
         var tempProductSelect = new selectRowsFactory();
 
+        var commonFilter=["skuCnt","priceSale","priceRetail","priceMsrp","quantitySale","quantity","brand"];
+
+        this.commonFilter = commonFilter;
         /**
          * 检索group和product
          * @param data
@@ -186,35 +189,37 @@ define([
 
         // 把取回的数据作相应转换(转换到画面对应的项目)
         function _resetProdInfo(prodInfo, commonProps, customProps, selSalesTypes, selBiDataList) {
-            var commArr = [];
+            var commArr = [],
+                self = this;
+
             _.forEach(commonProps, function (data) {
                 var itemVal = '';
+                if(commonFilter.indexOf(data.propId)<0){
+                    switch (data.propId) {
+                        case "comment":
+                            itemVal = prodInfo.common.comment;
+                            break;
+                        case "created":
+                            itemVal = prodInfo.created;
+                            break;
+                        case  "clientMsrpPrice":
+                            itemVal = data.propId;
+                            break;
+                        case "isMasterMain":
+                            // 原始主商品的转换
+                            if (itemVal == 1)
+                                itemVal = '是';
+                            else if (itemVal == 0)
+                                itemVal = '否';
+                            break;
+                        default:
+                            itemVal = prodInfo.common.fields[data.propId];
+                    }
+                    if (itemVal == undefined)
+                        itemVal = "";
 
-                switch (data.propId) {
-                    case "comment":
-                        itemVal = prodInfo.common.comment;
-                        break;
-                    case "created":
-                        itemVal = prodInfo.created;
-                        break;
-                    case  "clientMsrpPrice":
-                        itemVal = data.propId;
-                        break;
-                    case "isMasterMain":
-                        // 原始主商品的转换
-                        if (itemVal == 1)
-                            itemVal = '是';
-                        else if (itemVal == 0)
-                            itemVal = '否';
-                        break;
-                    default:
-                        itemVal = prodInfo.common.fields[data.propId];
+                    commArr.push({value: itemVal.toString()});
                 }
-
-                if (itemVal == undefined)
-                    itemVal = "";
-
-                commArr.push({value: itemVal.toString()});
             });
             prodInfo.commArr = commArr;
             var custArr = [];

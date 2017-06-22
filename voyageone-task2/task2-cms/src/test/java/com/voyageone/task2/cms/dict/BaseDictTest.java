@@ -12,6 +12,7 @@ public class BaseDictTest {
     protected String C_TEMPLATE_IMG = "<img src=\"%s\">";
     protected String C_TEMPLATE_IMG_790 = "<img width=790px src=\"%s\">";
     protected String C_TEMPLATE_IMG_990 = "<img width=990px src=\"%s\">";
+    protected String C_TEMPLATE_IMG_750 = "<img width=750px src=\"%s\">";
     protected String C_TEMPLATE_IMG_XIANGSHUI = "<a href=\"%s\"><img src=\"%s\"></a>";
     protected String C_商品图片 = "PRODUCT_IMAGE";
     protected String C_包装图片 = "PACKAGE_IMAGE";

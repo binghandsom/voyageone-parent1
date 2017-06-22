@@ -10,7 +10,7 @@ public abstract class BaseMQMessageBody implements IMQMessageBody {
     private int mqId;
 
     //延迟发送时间
-    private int delaySecond;
+    private long delaySecond;
 
     //发送者
     private String sender;
@@ -35,11 +35,11 @@ public abstract class BaseMQMessageBody implements IMQMessageBody {
     }
 
     @Override
-    public int getDelaySecond() {
+    public long getDelaySecond() {
         return delaySecond;
     }
 
-    public void setDelaySecond(int delaySecond) {
+    public void setDelaySecond(long delaySecond) {
         this.delaySecond = delaySecond;
     }
 

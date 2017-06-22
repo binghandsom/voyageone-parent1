@@ -28,6 +28,8 @@ public class ShopBean {
     
     private String cart_name;
 
+    private String token_url;
+
     public String getCart_id() {
         return cart_id;
     }
@@ -129,6 +131,12 @@ public class ShopBean {
 	public void setCart_name(String cart_name) {
 		this.cart_name = cart_name;
 	}
-    
-    
+
+    public String getToken_url() {
+        return token_url;
+    }
+
+    public void setToken_url(String token_url) {
+        this.token_url = token_url;
+    }
 }
