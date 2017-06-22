@@ -1435,9 +1435,13 @@ public class CmsProductDetailService extends BaseViewService {
 
         CmsBtProductModel_Platform_Cart platForm = cmsBtProductModel.getPlatform(parameter.getCartId());
         CmsBtProductModel_Platform_Cart newPlatForm = newCmsBtProductModel.getPlatform(parameter.getCartId());
+
         if (CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(platForm.getStatus()) && !CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(newPlatForm.getStatus())) {
             throw new BusinessException("只能设置状态为Approve的商品");
         }
+
+        // 重主商品复制属性
+        newPlatForm = productPlatformService.platformCopy(parameter.getChannelId(), newCmsBtProductModel, parameter.getCartId(),platForm, modifier);
         platForm.setpIsMain(0);// 把mainProduct的所对应的product表中对应的平台的pIsMain设0
         platForm.setMainProductCode(parameter.getProductCode());
         newPlatForm.setpIsMain(1);//把productCode的所对应的product表中对应的平台的pIsMain设1
@@ -1632,6 +1636,10 @@ public class CmsProductDetailService extends BaseViewService {
                 common.getFields().put(s, o);
             }
         });
+
+        //主商品的APP端自定义图和PC端自定义图 也需要复制过来
+        common.getFields().setImages4(mainCommon.getFields().getImages4());
+        common.getFields().setImages5(mainCommon.getFields().getImages5());
         if ("1".equalsIgnoreCase(mainCommon.getFields().getHsCodeStatus())) {
             common.getFields().setHsCodeStatus("1");
         }
@@ -1659,7 +1667,7 @@ public class CmsProductDetailService extends BaseViewService {
      * @param platform
      * @throws Exception
      */
-    public void updateSkuPrice(String channelId, Integer cartId, Long prodId, String userName, CmsBtProductModel_Platform_Cart platform) throws BusinessException {
+    public void updateSkuPrice(String channelId, Integer cartId, Long prodId, String userName, CmsBtProductModel_Platform_Cart platform) {
 
         // 根据中国最终售价来判断 中国建议售价是否需要自动提高价格
         try {
@@ -1718,7 +1726,7 @@ public class CmsProductDetailService extends BaseViewService {
 
         // 刷新平台价格
         CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
-        platformPriceService.publishPlatFormPrice(channelId, 2, newProduct, cartId, userName, true, false);
+        platformPriceService.publishPlatFormPrice(channelId, 2, newProduct, cartId, userName, true, false, true);
 
         //更新价格履历
         List<String> skus = new ArrayList<>();

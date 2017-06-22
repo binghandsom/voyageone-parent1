@@ -151,7 +151,7 @@
 					<td class="text-left">{{promotion.prePeriodStart | date:'yyyy-MM-dd'}}&nbsp;~&nbsp;{{promotion.prePeriodEnd | date:'yyyy-MM-dd'}}</td>
 					<td class="text-left">{{promotion.preSaleStart | date:'yyyy-MM-dd'}}&nbsp;~&nbsp;{{promotion.preSaleEnd | date:'yyyy-MM-dd'}}</td>
 					<td class="text-center">
-						<div ng-if="promotion.cartId != 27" class="btn-group" uib-dropdown>
+						<div ng-if="promotion.cartId != 27 && promotion.cartId != 34" class="btn-group" uib-dropdown>
 							<button type="button" class="btn btn-default" uib-dropdown-toggle>
 								<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_CREATE_TASK' | translate}}&nbsp;<span class="caret"></span>
 							</button>

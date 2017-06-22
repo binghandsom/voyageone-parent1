@@ -17,7 +17,7 @@ public class CmsProductTotalImportToDistSearchServiceTest {
 
     @Test
     public void testImportDataToSearchFromMongo() {
-        String channelId = "928";
+        String channelId = "001";
         cmsProductTotalImportToDistSearchService.importDataToSearchFromMongo(channelId, new HashMap<>());
     }
 

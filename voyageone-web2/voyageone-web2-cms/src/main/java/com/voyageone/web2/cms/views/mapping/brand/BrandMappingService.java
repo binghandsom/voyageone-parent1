@@ -10,6 +10,8 @@ import com.voyageone.components.jd.service.JdCategoryService;
 import com.voyageone.components.jumei.bean.JmBrandBean;
 import com.voyageone.components.jumei.service.JumeiBrandService;
 import com.voyageone.components.tmall.service.TbCategoryService;
+import com.voyageone.ecerp.interfaces.third.koala.KoalaVenderService;
+import com.voyageone.ecerp.interfaces.third.koala.beans.BrandInfo;
 import com.voyageone.service.bean.cms.CmsBtBrandBean;
 import com.voyageone.service.bean.cms.CmsBtBrandMappingBean;
 import com.voyageone.service.impl.cms.BrandBtMappingService;
@@ -55,6 +57,9 @@ public class BrandMappingService extends BaseViewService {
 	
 	@Autowired
 	private CmsMtPlatformBrandService cmsMtPlatformBrandService;
+
+	@Autowired
+	private KoalaVenderService koalaVenderService;
 	
 	private static final Map<String, String> synchronizedTimes = new ConcurrentHashMap<String, String>();
 
@@ -171,6 +176,9 @@ public class BrandMappingService extends BaseViewService {
 			} else if (platformId == PlatformType.JD.getPlatformId()) {
 				// 京东品牌
 				brands = jdCategoryService.getCategoryBrandInfo(shop, "");
+			} else if (platformId == PlatformType.NTES.getPlatformId()) {
+				// 京东品牌
+				brands = Arrays.asList(koalaVenderService.brandGet(Shops.getShopKoala(channelId, cartId)));
 			} else {
 				throw new BusinessException("不支持[channelId=" + channelId + ", cartId=" + cartId + "]的平台品牌同步功能");
 			}
@@ -242,6 +250,23 @@ public class BrandMappingService extends BaseViewService {
 					brandModel.setBrandId(String.valueOf(brand.getErpBrandId()));
 					brandModel.setBrandName(brand.getBrandName());
 					brandModel.setPropName(brand.getBrandName());
+					brandModel.setCreated(now);
+					brandModel.setCreater(userInfo.getUserName());
+					brandModel.setModified(now);
+					brandModel.setModifier(userInfo.getUserName());
+					brandModels.add(brandModel);
+				}
+			} else if (platformId == PlatformType.NTES.getPlatformId()) {
+				// 京东品牌
+				for (int i = 0; i < brands.size(); i++) {
+					BrandInfo brand = (BrandInfo) brands.get(i);
+					CmsMtPlatformBrandsModel brandModel = new CmsMtPlatformBrandsModel();
+					brandModel.setChannelId(channelId);
+					brandModel.setCartId(Integer.valueOf(cartId));
+					brandModel.setActive(true);
+					brandModel.setBrandId(String.valueOf(brand.getBrandId()));
+					brandModel.setBrandName(brand.getBrand_name());
+					brandModel.setPropName(brand.getBrand_name());
 					brandModel.setCreated(now);
 					brandModel.setCreater(userInfo.getUserName());
 					brandModel.setModified(now);

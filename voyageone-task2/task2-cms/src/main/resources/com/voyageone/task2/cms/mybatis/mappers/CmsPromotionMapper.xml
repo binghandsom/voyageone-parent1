@@ -6,16 +6,20 @@
         <result column="tejiabao_id" property="tejiabaoId"/>
         <result column="num_iid" property="num_iid"/>
         <result column="channel_id" property="channel_id"/>
-        <collection property="productList" javaType="ArrayList" ofType="HashMap" >
-            <result column="product_code" property="product_code" />
-            <collection property="skuList" javaType="ArrayList" ofType="HashMap" >
-                <result column="promotion_price" property="promotionPrice" />
-                <result column="product_sku" property="sku"/>
+        <result column="promotion_type" property="promotionType"/>
+        <result column="trigger_type" property="triggerType"/>
+        <result column="trigger_time" property="triggerTime"/>
+        <result column="org_channel_id" property="orgChanneld"/>
+        <collection property="productList" javaType="ArrayList" ofType="HashMap">
+            <result column="product_code" property="product_code"/>
+            <collection property="skuList" javaType="ArrayList" ofType="HashMap">
+                <result column="promotion_price" property="promotionPrice"/>
+                <result column="product_sku" property="skuCode"/>
             </collection>
         </collection>
     </resultMap>
     <select id="cms_promotion_select" resultMap="PromotionMap" parameterType="HashMap">
-      SELECT
+        SELECT
         t2.channel_id,
         t1.promotion_id,
         t1.num_iid,
@@ -23,45 +27,45 @@
         t2.product_code,
         t2.product_sku,
         IFNULL(t2.promotion_price, '') AS promotion_price
-    FROM
+        FROM
         (
-            SELECT
-                a.promotion_id,
-                b.tejiabao_id,
-                a.num_iid
-            FROM
-                voyageone_cms2.cms_bt_task_tejiabao a,
-                (
-                    SELECT
-                        id as promotion_id,
-                        tejiabao_id
-                    FROM
-                        voyageone_cms2.cms_bt_promotion
-                    WHERE
-                        channel_id = #{channelId,jdbcType=VARCHAR}
-                    AND active = 1
-                    AND promotion_status = 1
-                    AND cart_id = #{cartId,jdbcType=VARCHAR}
-                    AND tejiabao_id != 0
-                ) b
-            WHERE
-                syn_flg = 1
-            AND task_type = 0
-            AND a.promotion_id = b.promotion_id
-            AND num_iid != ''
-            GROUP BY
-                promotion_id,
-                num_iid
-            LIMIT 0,200
-        ) t1
-    LEFT JOIN (
         SELECT
-            prom.channel_id,
-            sku.promotion_id,
-            sku.product_code,
-            sku.product_sku,
-            `code`.num_iid,
-            `sku`.promotion_price
+        a.promotion_id,
+        b.tejiabao_id,
+        a.num_iid
+        FROM
+        voyageone_cms2.cms_bt_task_tejiabao a,
+        (
+        SELECT
+        id as promotion_id,
+        tejiabao_id
+        FROM
+        voyageone_cms2.cms_bt_promotion
+        WHERE
+        channel_id = #{channelId,jdbcType=VARCHAR}
+        AND active = 1
+        AND promotion_status = 1
+        AND cart_id = #{cartId,jdbcType=VARCHAR}
+        AND tejiabao_id != 0
+        ) b
+        WHERE
+        syn_flg = 1
+        AND task_type = 0
+        AND a.promotion_id = b.promotion_id
+        AND num_iid != ''
+        GROUP BY
+        promotion_id,
+        num_iid
+        LIMIT 0,200
+        ) t1
+        LEFT JOIN (
+        SELECT
+        prom.channel_id,
+        sku.promotion_id,
+        sku.product_code,
+        sku.product_sku,
+        `code`.num_iid,
+        `sku`.promotion_price
         FROM
         voyageone_cms2.cms_bt_promotion_skus sku
         LEFT JOIN voyageone_cms2.cms_bt_promotion_codes `code` ON sku.promotion_id = `code`.promotion_id
@@ -76,8 +80,8 @@
                 </foreach>
             </if>
         </where>
-    ) t2 ON t1.promotion_id = t2.promotion_id
-    AND t1.num_iid = t2.num_iid
+        ) t2 ON t1.promotion_id = t2.promotion_id
+        AND t1.num_iid = t2.num_iid
     </select>
     <select id="select_pending_promotion" resultType="int" parameterType="HashMap">
         SELECT
@@ -107,17 +111,17 @@
                 num_iid
             LIMIT 0,200
     </select>
-    <update id="update_cms_bt_promotion_task" parameterType="HashMap" >
+    <update id="update_cms_bt_promotion_task" parameterType="HashMap">
         update voyageone_cms2.cms_bt_task_tejiabao
-        <set >
-            <if test="synFlg != null" >
+        <set>
+            <if test="synFlg != null">
                 syn_flg = #{synFlg,jdbcType=INTEGER},
             </if>
-            <if test="errMsg != null" >
+            <if test="errMsg != null">
                 err_msg = #{errMsg,jdbcType=VARCHAR},
             </if>
             modified = now(),
-            <if test="modifier != null" >
+            <if test="modifier != null">
                 modifier = #{modifier,jdbcType=VARCHAR},
             </if>
         </set>
@@ -131,6 +135,73 @@
             <if test="num_iid != null">
                 and num_iid = #{num_iid,jdbcType=VARCHAR}
             </if>
+            <if test="key != null and key != ''">
+                and `key` = #{key,jdbcType=VARCHAR}
+            </if>
         </where>
     </update>
+    <select id="select_pending_product" resultMap="PromotionMap" parameterType="Integer">
+        SELECT
+        t1.channel_id,
+        t2.org_channel_id,
+        t1.promotion_id,
+        t1.num_iid,
+        t1.tejiabao_id,
+        t1.product_code,
+        t2.product_sku,
+        IFNULL(t2.promotion_price, '') AS promotion_price,
+				t1.promotion_type,
+				t1.trigger_type,
+				t1.trigger_time
+    FROM
+        (
+            SELECT
+								b.channel_id,
+                a.promotion_id,
+                a.key as product_code,
+                b.tejiabao_id,
+                a.num_iid,
+								b.promotion_type,
+								b.trigger_type,
+								b.trigger_time
+            FROM
+                voyageone_cms2.cms_bt_task_tejiabao a,
+                (
+                    SELECT
+												channel_id,
+                        id as promotion_id,
+                        tejiabao_id,
+												promotion_type,
+												trigger_type,
+												trigger_time
+                    FROM
+                        voyageone_cms2.cms_bt_promotion
+                    WHERE
+                        id = #{promotionId}
+                ) b
+            WHERE
+                syn_flg = 1
+            AND task_type = 0
+            AND a.promotion_id = b.promotion_id
+            AND num_iid != ''
+            GROUP BY
+                promotion_id,
+                num_iid
+        ) t1
+    LEFT JOIN (
+        SELECT
+            sku.promotion_id,
+            sku.product_code,
+            sku.product_sku,
+            `code`.num_iid,
+            `code`.org_channel_id,
+            `sku`.promotion_price
+        FROM
+        voyageone_cms2.cms_bt_promotion_skus sku
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_codes `code` ON sku.promotion_id = `code`.promotion_id
+        AND sku.product_code = `code`.product_code
+				where sku.promotion_id = #{promotionId}
+    ) t2 ON t1.promotion_id = t2.promotion_id
+    AND t1.num_iid = t2.num_iid
+    </select>
 </mapper>

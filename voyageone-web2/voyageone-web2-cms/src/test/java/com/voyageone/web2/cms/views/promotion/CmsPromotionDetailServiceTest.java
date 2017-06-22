@@ -122,7 +122,7 @@ public class CmsPromotionDetailServiceTest {
 
     @Test
     public void testTeJiaBaoInit() throws Exception {
-        cmsPromotionDetailService.teJiaBaoInit(15, "010","james");
+        promotionDetailService.teJiaBaoInit(15, "010","james");
     }
 
 

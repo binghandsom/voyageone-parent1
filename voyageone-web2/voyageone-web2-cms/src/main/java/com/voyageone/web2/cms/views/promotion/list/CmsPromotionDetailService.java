@@ -14,10 +14,7 @@ import com.voyageone.service.dao.cms.CmsBtPromotionCodesTagDao;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
-import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
-import com.voyageone.service.impl.cms.promotion.PromotionModelService;
-import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
+import com.voyageone.service.impl.cms.promotion.*;
 import com.voyageone.service.model.cms.CmsBtPromotionCodesTagModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
@@ -70,6 +67,8 @@ public class CmsPromotionDetailService extends BaseViewService {
     private PromotionCodeService promotionCodeService;
     @Autowired
     private PromotionSkuService promotionSkuService;
+    @Autowired
+    private PromotionService promotionService;
 
 
 //    private static final int codeCellNum = 1;
@@ -522,7 +521,10 @@ public class CmsPromotionDetailService extends BaseViewService {
     public Map<String, List<String>> uploadPromotion(InputStream xls, int promotionId, String operator) throws Exception {
 
         List<CmsBtPromotionGroupsBean> uploadPromotionList = resolvePromotionXls2(xls);
-        return insertPromotionProduct2(uploadPromotionList, promotionId, operator);
+
+        Map<String, List<String>> ret = insertPromotionProduct2(uploadPromotionList, promotionId, operator);
+        promotionService.sendPromotionMq(promotionId, false, operator);
+        return ret;
     }
 
     private CmsBtTagModel searchTag(List<CmsBtTagModel> tags, String tagName) {
@@ -543,51 +545,6 @@ public class CmsPromotionDetailService extends BaseViewService {
             }
         }
         return null;
-    }
-
-    /**
-     * 特价宝商品初期化
-     *
-     * @param promotionId 活动ID
-     * @param operator    操作者
-     */
-    public void teJiaBaoInit(Integer promotionId, String channelId, String operator) {
-        List<CmsBtTasksBean> tasks = taskService.getTasks(promotionId, null, channelId, PromotionTypeEnums.Type.TEJIABAO.getTypeId());
-
-        List<CmsBtTasksBean> addTaskList = new ArrayList<>();
-        if (tasks.size() == 0) {
-            CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionService.queryById(promotionId);
-            CmsBtTasksBean tasksBean = new CmsBtTasksBean();
-            tasksBean.setModifier(operator);
-            tasksBean.setCreater(operator);
-            tasksBean.setPromotionId(promotionId);
-            tasksBean.setTaskType(PromotionTypeEnums.Type.TEJIABAO.getTypeId());
-            tasksBean.setTaskName(cmsBtPromotionModel.getPromotionName());
-            tasksBean.setActivityStart(cmsBtPromotionModel.getActivityStart());
-            tasksBean.setActivityEnd(cmsBtPromotionModel.getActivityEnd());
-            tasksBean.setChannelId(channelId);
-            addTaskList.add(tasksBean);
-        }
-
-        Map<String, Object> param = new HashMap<>();
-        param.put("promotionId", promotionId);
-        List<CmsBtPromotionCodesBean> codeList = promotionCodeService.getPromotionCodeList(param);
-
-        List<CmsBtTaskTejiabaoModel> addPromotionTaskList = new ArrayList<>();
-        codeList.forEach(code -> {
-//            CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionId, PromotionTypeEnums.Type.TEJIABAO.getTypeId(), code.getProductCode(), code.getNumIid(), operator);
-            CmsBtTaskTejiabaoModel cmsBtPromotionTask = new CmsBtTaskTejiabaoModel();
-            cmsBtPromotionTask.setPromotionId(promotionId);
-            cmsBtPromotionTask.setTaskType(PromotionTypeEnums.Type.TEJIABAO.getTypeId());
-            cmsBtPromotionTask.setKey(code.getProductCode());
-            cmsBtPromotionTask.setNumIid(code.getNumIid());
-            cmsBtPromotionTask.setCreater(operator);
-            cmsBtPromotionTask.setModifier(operator);
-
-            addPromotionTaskList.add(cmsBtPromotionTask);
-        });
-
-        promotionDetailService.addTeJiaBaoInit(addTaskList, addPromotionTaskList);
     }
 
     /**

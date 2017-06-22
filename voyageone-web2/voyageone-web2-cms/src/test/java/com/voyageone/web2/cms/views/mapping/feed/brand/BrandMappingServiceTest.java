@@ -29,7 +29,7 @@ public class BrandMappingServiceTest {
         UserSessionBean userInfo = new UserSessionBean();
 
         brandMapping.setChannelId("001");
-        brandMapping.setCartId(26);
+        brandMapping.setCartId(34);
 
         userInfo.setSelChannelId("001");
         userInfo.setUserName("Edward");

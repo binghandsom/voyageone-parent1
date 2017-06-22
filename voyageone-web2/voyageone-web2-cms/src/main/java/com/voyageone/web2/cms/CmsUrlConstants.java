@@ -714,6 +714,8 @@ public interface CmsUrlConstants {
 
             String LOCK_PLATFORM = "lockPlatForm";
 
+            String UPDATE_GROUP_PLATFORM = "updateGroupPlatform";
+
             String UPDATE_ORIGINAL_TITLE_CN = "updateOriginalTitleCn";
         }
 

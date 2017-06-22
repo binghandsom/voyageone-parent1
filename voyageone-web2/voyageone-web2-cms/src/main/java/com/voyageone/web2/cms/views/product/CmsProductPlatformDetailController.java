@@ -133,6 +133,22 @@ public class CmsProductPlatformDetailController extends CmsController {
         return success(result);
     }
 
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_GROUP_PLATFORM)
+    public AjaxResponse doUpdateGroupPlatform(@RequestBody Map params) {
+        String code = String.valueOf(params.get("code"));
+
+        Map<String, Object> result = new HashMap<>();
+
+        Map<String, Object> platform = (Map<String, Object>) params.get("platform");
+
+        String channelId = getUser().getSelChannelId();
+        Integer cartId = (Integer) platform.get("cartId");
+
+        result.put("modified", cmsProductPlatformDetailService.updateGroupPlatform(channelId, code, cartId, platform, getUser().getUserName()));
+
+        return success(result);
+    }
+
     /**
      * type:记录是否为ready状态,temporary:暂存
      */
