@@ -104,6 +104,7 @@ public class CartEnums {
          */
         USJGT("998");
 
+
         private String id;
 
         Cart(String id) {
@@ -146,6 +147,8 @@ public class CartEnums {
                     return USJGJ;
                 case "929":
                     return USJGY;
+                case "34":
+                    return KL;
                 default:
                     return null;
             }

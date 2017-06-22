@@ -31,6 +31,8 @@ public enum CartType {
 
     TMALL_MINIMALL("Tmall MiniMall", "Tmall MiniMall(JG)", "JGY", 30, 1),
 
+    KAOLA("KAOLA", "KAOLA", "KL", 34, 8),
+
     USJOI_JGJ_928("USJOI匠心界", "USJOI匠心界", "USJGJ", 928, 0),
 
     USJOI_JGY_929("USJOI匠心界", "USJOI匠心界", "USJGY", 929, 0),

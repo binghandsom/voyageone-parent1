@@ -37,7 +37,7 @@ public class CmsMqSenderService extends BaseService {
             throw new BusinessException("处理消息发送失败, 请稍后再试! 如有问题,请联系IT处理!", ex);
         }
     }
-    public void sendMessage(BaseMQMessageBody message, int delaySecond) throws BusinessException {
+    public void sendMessage(BaseMQMessageBody message, long delaySecond) throws BusinessException {
             message.setDelaySecond(delaySecond);
             sendMessage(message);
     }

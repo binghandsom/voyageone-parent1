@@ -6,6 +6,8 @@ import com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsPromotionDetail.SaveSkuPromotionPricesParameter;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductTagParameter;
 import com.voyageone.service.impl.cms.promotion.PromotionCodesTagService;
+import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
+import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsSneakerHeadAddPromotionMQMessageBody;
@@ -42,9 +44,13 @@ public class CmsPromotionDetailController extends CmsController {
     @Autowired
     private CmsPromotionDetailService cmsPromotionDetailService;
     @Autowired
+    private PromotionDetailService promotionDetailService;
+    @Autowired
     private PromotionSkuService promotionSkuService;
     @Autowired
     private  CmsMqSenderService cmsMqSenderService;
+    @Autowired
+    private PromotionService promotionService;
 
     @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_GROUP)
     public AjaxResponse getPromotionGroup(@RequestBody Map<String, Object> params) {
@@ -69,7 +75,8 @@ public class CmsPromotionDetailController extends CmsController {
 
     @RequestMapping(PROMOTION.LIST.DETAIL.SaveSkuPromotionPrices)
     public AjaxResponse saveSkuPromotionPrices(@RequestBody SaveSkuPromotionPricesParameter parameter) {
-        promotionSkuService.saveSkuPromotionPrices(parameter);
+        promotionSkuService.saveSkuPromotionPrices(parameter,getUser().getUserName());
+        promotionService.sendPromotionMq(parameter.getPromotionId(), false, getUser().getUserName());
         return success(null);
     }
 
@@ -126,7 +133,7 @@ public class CmsPromotionDetailController extends CmsController {
     @RequestMapping(PROMOTION.LIST.DETAIL.TE_JIA_BAO_INIT)
     public AjaxResponse tejiabaoInit(@RequestBody int promotionId) throws Exception {
 
-        cmsPromotionDetailService.teJiaBaoInit(promotionId, getUser().getSelChannelId(), getUser().getUserName());
+        promotionDetailService.teJiaBaoInit(promotionId, getUser().getSelChannelId(), getUser().getUserName());
         // 返回用户信息
         return success(null);
     }

@@ -1,23 +1,25 @@
 package com.voyageone.service.impl.cms.promotion;
 
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.AddProductSaveParameter;
 import com.voyageone.service.bean.cms.businessmodel.CmsPromotionDetail.SaveSkuPromotionPricesParameter;
 import com.voyageone.service.dao.cms.CmsBtPromotionSkusDao;
+import com.voyageone.service.dao.cms.CmsBtTaskTejiabaoDao;
 import com.voyageone.service.daoext.cms.CmsBtPromotionCodesDaoExtCamel;
 import com.voyageone.service.daoext.cms.CmsBtPromotionSkusDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtPromotionSkusDaoExtCamel;
+import com.voyageone.service.daoext.cms.CmsBtTaskTejiabaoDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPromotionSkusModel;
+import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author aooer 2016/2/18.
@@ -34,6 +36,8 @@ public class PromotionSkuService extends BaseService {
     CmsBtPromotionCodesDaoExtCamel cmsBtPromotionCodesDaoExtCamel;
     @Autowired
     private CmsBtPromotionSkusDaoExt cmsPromotionSkuDao;
+    @Autowired
+    private CmsBtTaskTejiabaoDao cmsBtTaskTejiabao;
 
     public List<Map<String, Object>> getPromotionSkuList(Map<String, Object> params) {
         return cmsPromotionSkuDao.selectPromotionSkuList(params);
@@ -72,12 +76,23 @@ public class PromotionSkuService extends BaseService {
     }
 
     @VOTransactional
-    public void saveSkuPromotionPrices(SaveSkuPromotionPricesParameter parameter) {
+    public void saveSkuPromotionPrices(SaveSkuPromotionPricesParameter parameter, String user) {
         parameter.getListSkuPromotionPriceInfo().forEach((p) -> {
             cmsBtPromotionSkusDaoExtCamel.updatePromotionPrice(p);
         });
         //CmsBtPromotionCodesDaoExtCamel
         cmsBtPromotionCodesDaoExtCamel.updatePromotionPrice(parameter.getPromotionId(), parameter.getProductCode());
+
+        Map<String,Object> map = new HashMap();
+        map.put("promotionId", parameter.getPromotionId());
+        map.put("key", parameter.getProductCode());
+        CmsBtTaskTejiabaoModel cmsBtTaskTejiabaoModel = cmsBtTaskTejiabao.selectOne(map);
+        if(cmsBtTaskTejiabaoModel != null && (cmsBtTaskTejiabaoModel.getSynFlg() == 2 || cmsBtTaskTejiabaoModel.getSynFlg() == 3)){
+            cmsBtTaskTejiabaoModel.setSynFlg(1);
+            cmsBtTaskTejiabaoModel.setModifier(user);
+            cmsBtTaskTejiabaoModel.setModified(new Date());
+            cmsBtTaskTejiabao.update(cmsBtTaskTejiabaoModel);
+        }
     }
 
     public void loadSkuPrice(List<CmsBtPromotionSkuBean> listSku, AddProductSaveParameter parameter) {

@@ -62,6 +62,10 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             {"platforms.P%s.qty", "可售库存"},
             {"platforms.P%s.lock", "是否锁定"},
             {"platforms.P%s.skus.isSale", "是否销售"},
+            {"platforms.P%s.pPublishTime", "上新时间"},
+    };
+    private static final String[][] platformItemsJd = {
+            {"platforms.P%s.jdSkuId", "jdSkuId"},
     };
     private static final String[][] platformItemsJM = {
             {"platforms.P%s.MallURL", "MallURL"},
@@ -77,6 +81,9 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             {"platforms.P%s.qty", "可售库存"},
             {"platforms.P%s.lock", "是否锁定"},
             {"platforms.P%s.skus.isSale", "是否销售"},
+            {"platforms.P%s.pPublishTime", "上新时间"},
+            {"platforms.P%s.skus.jmSkuNo", "SkuNo"},
+            {"platforms.P%s.skus.jmSpuNo", "SpuNo"},
     };
     @Autowired
     private ProductService productService;
@@ -415,6 +422,12 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                     Map<String, String> keySumMap = new HashMap<>();
                     keySumMap.put("name", cartObj.getName() + platformItem[1]);
                     keySumMap.put("value", String.format(platformItem[0], cartId));
+                    dataSumList.add(keySumMap);
+                }
+                if (PlatFormEnums.PlatForm.JD.getId().equals(shopProp.getPlatform_id())) {
+                    Map<String, String> keySumMap = new HashMap<>();
+                    keySumMap.put("name", cartObj.getName() + platformItemsJd[0][1]);
+                    keySumMap.put("value", String.format(platformItemsJd[0][0], cartId));
                     dataSumList.add(keySumMap);
                 }
             }

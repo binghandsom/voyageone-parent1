@@ -5,11 +5,13 @@ import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.CmsBtPromotionExportTaskService;
+import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.promotion.CmsPromotionExportService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
@@ -30,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -96,8 +99,11 @@ public class CmsPromotionIndexController extends CmsController {
     public AjaxResponse getEditModel(@RequestBody int promotionId) {
 
         Map<String, Object> result = new HashMap<>();
-
-        result.put("editModel",promotionService.getEditModel(promotionId));
+        EditCmsBtPromotionBean data = promotionService.getEditModel(promotionId);
+        if(data.getPromotionModel().getTriggerTime() != null){
+            data.getPromotionModel().setTriggerTime(DateTimeUtilBeijing.toBeiJingDate(data.getPromotionModel().getTriggerTime()));
+        }
+        result.put("editModel",data);
         result.put("currentTimeStamp",DateTimeUtil.getDate());
 
         return success(result);
@@ -112,6 +118,9 @@ public class CmsPromotionIndexController extends CmsController {
         editModel.getPromotionModel().setChannelId(channelId);
         editModel.getPromotionModel().setCreater(getUser().getUserName());
         editModel.getPromotionModel().setModifier(getUser().getUserName());
+        if(editModel.getPromotionModel().getTriggerTime() != null){
+            editModel.getPromotionModel().setTriggerTime(DateTimeUtilBeijing.toLocalDate(editModel.getPromotionModel().getTriggerTime()));
+        }
         promotionService.saveEditModel(editModel);
         return success(null);
     }

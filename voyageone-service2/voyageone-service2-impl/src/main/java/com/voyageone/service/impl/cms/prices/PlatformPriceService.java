@@ -19,10 +19,7 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.components.jd.service.JdSkuService;
 import com.voyageone.components.jumei.JumeiHtDealService;
 import com.voyageone.components.jumei.JumeiHtMallService;
@@ -31,6 +28,8 @@ import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.components.jumei.reponse.HtDealUpdateDealPriceBatchResponse;
 import com.voyageone.components.jumei.request.HtDealUpdateDealPriceBatchRequest;
 import com.voyageone.components.tmall.service.TbItemService;
+import com.voyageone.ecerp.interfaces.third.koala.KoalaItemService;
+import com.voyageone.ecerp.interfaces.third.koala.beans.KoalaConfig;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -101,6 +100,8 @@ public class PlatformPriceService extends VOAbsLoggable {
     private CmsBtPriceLogService cmsBtPriceLogService;
     @Autowired
     private ProductGroupService productGroupService;
+    @Autowired
+    private KoalaItemService koalaItemService;
 
     /**
      * confirmPlatformsRetailPrice
@@ -252,6 +253,13 @@ public class PlatformPriceService extends VOAbsLoggable {
      * @param priceIsDown
      */
     public void publishPlatFormPrice(String channelId, Integer chg, CmsBtProductModel cmsProduct, Integer cartId, String modifier, boolean priceIsDown, boolean isSmSx){
+        try {
+            publishPlatFormPrice(channelId, chg, cmsProduct, cartId, modifier, priceIsDown, isSmSx, false);
+        } catch (BusinessException e) {
+            e.printStackTrace();
+        }
+    }
+    public void publishPlatFormPrice(String channelId, Integer chg, CmsBtProductModel cmsProduct, Integer cartId, String modifier, boolean priceIsDown, boolean isSmSx, boolean isThrow) throws BusinessException {
 
         // 如果存在销售的sku变化,则通过上新来处理
         if((chg & 1) == 1
@@ -298,6 +306,9 @@ public class PlatformPriceService extends VOAbsLoggable {
                 } catch (Exception e) {
                     $warn("updateSkuPrices失败", e.getMessage());
                     e.printStackTrace();
+                    if(isThrow){
+                        throw new BusinessException(e.getMessage());
+                    }
                 }
             } else if (CmsConstants.ProductStatus.Approved.name().equals(cmsProduct.getPlatform(cartId).getStatus())) {
                 $info("存在 isSale 变化 插入sxworkload表" );
@@ -393,6 +404,13 @@ public class PlatformPriceService extends VOAbsLoggable {
         } else if (PlatFormEnums.PlatForm.JD.getId().equals(cartObj.getPlatform_id())) {
             // votodo -- JdSkuService  京东平台 更新商品SKU的价格
             jdUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType);
+        }else if (PlatFormEnums.PlatForm.NTES.getId().equals(cartObj.getPlatform_id())) {
+            // votodo -- JdSkuService  京东平台 更新商品SKU的价格
+            try {
+                klUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType);
+            }catch (Exception e){
+                throw new BusinessException(e.getMessage());
+            }
         }
         // 其他平台价格变成通过上新程序修改价格
         else {
@@ -1040,7 +1058,7 @@ public class PlatformPriceService extends VOAbsLoggable {
      * @param pNumIId
      * @throws Exception
      */
-    private void tmUpdatePriceBatch(ShopBean shopBean, List<BaseMongoMap<String, Object>> skuList, String priceConfigValue, String updType, String pNumIId) throws Exception {
+    public void tmUpdatePriceBatch(ShopBean shopBean, List<BaseMongoMap<String, Object>> skuList, String priceConfigValue, String updType, String pNumIId) throws Exception {
         Double maxPrice = null;
         List<TmallItemPriceUpdateRequest.UpdateSkuPrice> list2 = new ArrayList<>(skuList.size());
         for (BaseMongoMap skuObj : skuList) {
@@ -1179,7 +1197,7 @@ public class PlatformPriceService extends VOAbsLoggable {
      * @param updType
      * @throws Exception
      */
-    private void jdUpdatePriceBatch(ShopBean shopBean, List<BaseMongoMap<String, Object>> skuList, String priceConfigValue, String updType) throws Exception {
+    public void jdUpdatePriceBatch(ShopBean shopBean, List<BaseMongoMap<String, Object>> skuList, String priceConfigValue, String updType) throws Exception {
         List<TmallItemPriceUpdateRequest.UpdateSkuPrice> list = new ArrayList<>(skuList.size());
         TmallItemPriceUpdateRequest.UpdateSkuPrice updateData = null;
         Double maxPrice = null;
@@ -1209,6 +1227,32 @@ public class PlatformPriceService extends VOAbsLoggable {
                 jdSkuService.updateSkuPriceByOuterId(shopBean, f.getOuterId(), f.getPrice().toString());
             }
         });
+    }
+
+    /**
+     * 考拉更新商品价格
+     * @param shopBean
+     * @param skuList
+     * @param priceConfigValue
+     * @param updType
+     * @throws Exception
+     */
+    private void klUpdatePriceBatch(ShopBean shopBean, List<BaseMongoMap<String, Object>> skuList, String priceConfigValue, String updType) throws Exception {
+        List<TmallItemPriceUpdateRequest.UpdateSkuPrice> list = new ArrayList<>(skuList.size());
+        KoalaConfig koalaConfig = Shops.getShopKoala(shopBean.getOrder_channel_id(), shopBean.getCart_id());
+        TmallItemPriceUpdateRequest.UpdateSkuPrice updateData = null;
+        Double maxPrice = null;
+        for (BaseMongoMap skuObj : skuList) {
+            Double priceSale = null;
+            if (priceConfigValue == null) {
+                priceSale = skuObj.getDoubleAttribute("priceSale");
+            } else {
+                priceSale = skuObj.getDoubleAttribute(priceConfigValue);
+            }
+            if(!StringUtil.isEmpty((String) skuObj.get("skuKey"))) {
+                koalaItemService.skuSalePriceUpdate(koalaConfig, (String) skuObj.get("skuKey"), new BigDecimal(priceSale));
+            }
+        }
     }
 
     /**

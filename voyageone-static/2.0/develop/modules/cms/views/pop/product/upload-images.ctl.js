@@ -248,6 +248,15 @@ define([
             });
         };
 
+        UploadImagesCtl.prototype.close = function(){
+            var self = this;
+
+            //删除品牌图
+            delete self.platform.images1;
+
+            self.uibModalInstance.dismiss();
+        };
+
         return UploadImagesCtl;
 
     })());

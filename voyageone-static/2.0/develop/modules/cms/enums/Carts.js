@@ -137,6 +137,11 @@ define(['underscore'], function (_) {
         JGT: new Cart('JGT', 98, 'USJOI测试', ''),
 
         /**
+         * 考拉
+         */
+        KAOLA: new Cart('KAOLA',34,'考拉海外购','http://www.kaola.com/product/'),
+
+        /**
          * Mini Mall
          */
         MM: new Cart('MM', 99, 'US Joi', ''),

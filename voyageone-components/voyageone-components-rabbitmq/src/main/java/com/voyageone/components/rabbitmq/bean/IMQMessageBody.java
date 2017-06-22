@@ -8,7 +8,7 @@ public interface IMQMessageBody {
 
     int getMqId();
 
-    int getDelaySecond();
+    long getDelaySecond();
 
     String getSender();
 

@@ -168,6 +168,7 @@ define(function () {
                     getProductIdByCode: "getProductIdByCode",
                     upperLowerFrame: "upperLowerFrame",
                     lockPlatForm: "lockPlatForm",
+                    updateGroupPlatform: "updateGroupPlatform",
                     updateOriginalTitleCn:"updateOriginalTitleCn"
                 },
                 "productHistoryLogService": {
@@ -268,7 +269,7 @@ define(function () {
                     "getPromotionSkuList": "getPromotionSkuList",
                     "saveSkuPromotionPrices": "saveSkuPromotionPrices",
                     "updatePromotionProductTag": "updatePromotionProductTag",
-                    "addPromotionByGroup":"addPromotionByGroup"
+                    "addPromotionByGroup": "addPromotionByGroup"
                 }
             },
             "jmpromotion": {
@@ -529,7 +530,7 @@ define(function () {
                     getPlatfromPopOptions: "getPlatfromPopOptions",
                     intelligentPublish: "intelligentPublish",
                     bulkLockProducts: "bulkLockProducts",
-                    bulkConfClientMsrp:"bulkConfClientMsrp"
+                    bulkConfClientMsrp: "bulkConfClientMsrp"
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",
@@ -774,7 +775,7 @@ define(function () {
             },
             "blackBrandService": {
                 root: "/cms/channel/black_brand/",
-                init:"init",
+                init: "init",
                 list: "searchBlackBrand",
                 update: "updateBlackBrand"
             },
