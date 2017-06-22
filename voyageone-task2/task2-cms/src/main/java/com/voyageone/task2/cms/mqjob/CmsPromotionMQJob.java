@@ -28,8 +28,10 @@ import com.voyageone.task2.cms.dao.PromotionDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by james on 2017/5/2.
@@ -232,7 +234,7 @@ public class CmsPromotionMQJob extends TBaseMQCmsSubService<CmsPromotionMQMessag
         String updType ="";
         if (PlatFormEnums.PlatForm.TM.getId().equals(shopBean.getPlatform_id()) || PlatFormEnums.PlatForm.JD.getId().equals(shopBean.getPlatform_id())) {
             // 先要判断更新类型
-            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(orgChannelId, cartId, prodCode);
+            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(channelId, cartId, prodCode, orgChannelId);
             if (imsBtProductModel == null) {
                 $error("PriceService 产品数据不全 未配置ims_bt_product表 channelId=%s, cartId=%d, prod=%s", channelId, cartId, prodCode);
                 throw new BusinessException("产品数据不全,未配置ims_bt_product表！");
