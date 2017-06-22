@@ -758,6 +758,32 @@ define([
         });
     };
 
+    SpJdController.prototype.popEditGroup = function () {
+        var self = this,
+            $translate = self.$translate,
+            $scope = self.$scope;
+
+        var _mainProduct = _.find(self.vm.mastData.images, function (item) {
+            return item.isMain;
+        });
+
+        if (!_mainProduct) {
+            self.alert('未找到对应主商品信息！');
+            return;
+        }
+
+        self.popups.openEditGroup({
+            mainProdId: _mainProduct.prodId,
+            cartId: $scope.cartInfo.value,
+            masterField: $scope.productInfo.masterField
+        }).then(function (resp) {
+            self.vm.platform.modified = resp.data.modified;
+            self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+
+            self.getPlatformData();
+        });
+    };
+
     cms.directive('jdSubPage', function () {
         return {
             restrict: 'E',

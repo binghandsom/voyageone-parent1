@@ -34,7 +34,6 @@ import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessa
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.task2.cms.bean.SkuInventoryForCmsBean;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -1151,8 +1150,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
             products.add(item);
         }
-//        //取得sku级别的库存
-//        Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = getSkuInventoryMap(codesMap);
 
         CellStyle unlock = FileUtils.createUnLockStyle(book);
 
@@ -1208,7 +1205,22 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSkuCode()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSize()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getSize()));
-
+                FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getQty() == null ? "0" : String.valueOf(skuItem.getQty()));
+                if (skuItem.getClientMsrpPrice() == null) {
+                    FileUtils.cell(row, index++, unlock).setCellValue("");
+                } else {
+                    FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getClientMsrpPrice());
+                }
+                if (skuItem.getClientRetailPrice() == null) {
+                    FileUtils.cell(row, index++, unlock).setCellValue("");
+                } else {
+                    FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getClientRetailPrice());
+                }
+                if (skuItem.getClientNetPrice() == null) {
+                    FileUtils.cell(row, index++, unlock).setCellValue("");
+                } else {
+                    FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getClientNetPrice());
+                }
                 // 重量
                 if (skuItem.getWeight() == null) {
                     FileUtils.cell(row, index++, unlock).setCellValue("");
@@ -1481,7 +1493,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
                 // JmURL
                 FileUtils.cell(row, index++, unlock).setCellValue(jmUrlPrefix + cart.getpPlatformMallId() + ".html");
-                SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuCode);
                 FileUtils.cell(row, index++, unlock).setCellValue(skuMap.getIntAttribute("qty"));
                 total++;
             }
