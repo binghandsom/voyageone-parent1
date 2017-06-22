@@ -84,8 +84,39 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService{
             this.value = value;
         }
 
-        public String value() {
+        String value() {
             return value;
+        }
+
+        static PlatformStatus parse(String value) {
+            switch (value) {
+                case "1":
+                case "WAITING":
+                    return WAITING;
+                case "2":
+                case "CHECKING":
+                    return CHECKING;
+                case "3":
+                case "ERROR":
+                    return ERROR;
+                case "4":
+                case "CHECKED":
+                    return CHECKED;
+                case "5":
+                case "ON_SALE":
+                    return ON_SALE;
+                case "6":
+                case "IN_STOCK":
+                    return IN_STOCK;
+                case "7":
+                case "DELETED":
+                    return DELETED;
+                case "8":
+                case "FORCE_STOCK":
+                    return FORCE_STOCK;
+                default:
+                    return null;
+            }
         }
     }
 
