@@ -167,14 +167,8 @@ public class JiagepiluService extends BaseService {
                 // 取四列数据
                 String numIid = getString(row, 0, "#");
                 String code = getString(row, 1);
-                String priceVal = getString(row, 2, "#");
+                String priceVal = getString(row, 2);
                 String imageName = getString(row, 3);
-
-                Map<String, String> rowMap = new HashMap<>();
-                rowMap.put("numIid", numIid);
-                rowMap.put("code", code);
-                rowMap.put("price", priceVal);
-                rowMap.put("imageName", imageName);
 
                 if (StringUtils.isBlank(numIid) || !StringUtils.isNumeric(numIid)) {
                     errorRowNum++;
@@ -228,7 +222,7 @@ public class JiagepiluService extends BaseService {
                 }
 
 
-                if (StringUtils.isBlank(priceVal) || !StringUtils.isNumeric(priceVal) || Double.valueOf(priceVal) <= 0d) {
+                if (StringUtils.isBlank(priceVal) || !com.voyageone.common.util.StringUtils.isNumeric(priceVal) || Double.valueOf(priceVal) <= 0d) {
                     errorRowNum++;
                     FileUtils.cell(FileUtils.row(errorSheet, errorRowNum), 0, null).setCellValue(numIid);
                     FileUtils.cell(FileUtils.row(errorSheet, errorRowNum), 1, null).setCellValue(code);
@@ -418,7 +412,7 @@ public class JiagepiluService extends BaseService {
         List<CmsBtTaskJiagepiluImportInfoModel> importInfoModelList = cmsBtTaskJiagepiluImportInfoDao.selectList(queryModel);
         if (CollectionUtils.isNotEmpty(importInfoModelList)) {
             // 默认按ID递增，倒序
-            Collections.sort(importInfoModelList,new Comparator<CmsBtTaskJiagepiluImportInfoModel>(){
+            Collections.sort(importInfoModelList, new Comparator<CmsBtTaskJiagepiluImportInfoModel>() {
                 public int compare(CmsBtTaskJiagepiluImportInfoModel arg0, CmsBtTaskJiagepiluImportInfoModel arg1) {
                     return arg1.getId().compareTo(arg0.getId());
                 }
@@ -429,11 +423,23 @@ public class JiagepiluService extends BaseService {
 
     public SearchTaskJiagepiluResult search(SearchTaskJiagepiluBean search) {
         search.parseEnum(); // 枚举处理
+        search.handlePage(); // 处理分页参数
         SearchTaskJiagepiluResult result = new SearchTaskJiagepiluResult();
-        List<CmsBtTaskJiagepiluBean> productList =  cmsBtTaskJiagepiluDaoExt.search(search);
+        List<CmsBtTaskJiagepiluBean> productList = cmsBtTaskJiagepiluDaoExt.search(search);
         result.setProducts(productList);
         int total = cmsBtTaskJiagepiluDaoExt.count(search);
         result.setTotal(total);
+
+        List<Map<String, Object>> summary = cmsBtTaskJiagepiluDaoExt.selectSummary(search.getTaskId());
+        // 数据查询出来的是整数, 转换为枚举名
+        for (Map<String, Object> elementMap : summary) {
+            Object flag = elementMap.get("flag");
+            Integer flagId = Integer.valueOf(String.valueOf(flag));
+            BeatFlag flagEnum = BeatFlag.valueOf(flagId);
+            elementMap.put("flag", flagEnum.name());
+        }
+
+        result.setSummary(summary);
         return result;
     }
 
@@ -490,4 +496,37 @@ public class JiagepiluService extends BaseService {
     }
 
 
+    /**
+     * 操作价格披露任务的商品
+     *
+     * @param id     价格披露商品项Id
+     * @param taskId 价格披露任务ID
+     * @param flag   要改成的状态
+     * @param force  是否强制将“CANT_BEAT”状态的产品更新
+     * @return 影响行数
+     */
+    @VOTransactional
+    public int operateProduct(Integer id, Integer taskId, BeatFlag flag, Boolean force, String username) {
+        if (id != null) {
+            if (flag == null) {
+                throw new BusinessException("7000002"); // 参数错误
+            }
+            CmsBtTaskJiagepiluModel targetModel = cmsBtTaskJiagepiluDao.select(id);
+            if (targetModel != null) {
+                CmsBtTaskJiagepiluModel updateModel = new CmsBtTaskJiagepiluModel();
+                updateModel.setId(id);
+                updateModel.setImageStatus(ImageStatus.None.getId());
+                updateModel.setSynFlag(flag.getFlag());
+                updateModel.setModifier(username);
+                updateModel.setModified(new Date());
+                return cmsBtTaskJiagepiluDao.update(updateModel);
+            }
+        } else if (taskId != null) {
+            if (flag == null) {
+                throw new BusinessException("7000002");
+            }
+            return cmsBtTaskJiagepiluDaoExt.updateFlags(taskId, flag.getFlag(), ImageStatus.None.getId(), force, username);
+        }
+        return 0;
+    }
 }

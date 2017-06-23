@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 扩展Dao
@@ -22,4 +23,9 @@ public interface CmsBtTaskJiagepiluDaoExt {
     List<CmsBtTaskJiagepiluBean> search(SearchTaskJiagepiluBean search);
 
     int count(SearchTaskJiagepiluBean search);
+
+    List<Map<String, Object>> selectSummary(Integer taskId);
+
+    int updateFlags(@Param("taskId") int taskId, @Param("synFlag") int flag, @Param("imageStatus") int imageStatus,
+                    @Param("force") boolean force, @Param("modifier") String userName);
 }

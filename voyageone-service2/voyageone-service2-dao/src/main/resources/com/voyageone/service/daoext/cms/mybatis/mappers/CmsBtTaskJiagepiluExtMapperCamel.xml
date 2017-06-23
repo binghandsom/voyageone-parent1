@@ -94,7 +94,9 @@
             <if test="errorMsg != null" >
                 and `message` like concat('%', #{errorMsg,jdbcType=VARCHAR}, '%')
             </if>
+
         </where>
+        order by modified desc, created desc limit #{start},#{size}
     </select>
 
     <select id="count" parameterType="com.voyageone.service.bean.cms.task.beat.SearchTaskJiagepiluBean" resultType="Integer">
@@ -182,5 +184,26 @@
             </if>
         </where>
     </select>
+
+    <select id="selectSummary" resultType="Map">
+        SELECT
+        syn_flag flag,
+        count(1) count
+        FROM cms_bt_task_jiagepilu
+        WHERE task_id = #{taskId}
+        GROUP BY syn_flag
+    </select>
+
+    <update id="updateFlags">
+        UPDATE voyageone_cms2.cms_bt_task_jiagepilu
+        SET syn_flag = #{synFlag},
+        image_status = #{imageStatus},
+        modifier = #{modifier},
+        modified = NOW()
+        WHERE task_id = #{taskId}
+        <if test="!force">
+            AND syn_flag > 0
+        </if>
+    </update>
 
 </mapper>

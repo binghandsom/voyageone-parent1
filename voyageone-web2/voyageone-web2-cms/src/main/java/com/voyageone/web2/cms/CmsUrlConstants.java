@@ -351,8 +351,6 @@ public interface CmsUrlConstants {
 
             String ROOT = "/cms/task/jiagepilu";
 
-            String LIST = "list";
-
             String GET_TASK_MODEL = "getTaskModel";
 
             String GET_IMPORT_INFO_LIST = "getImportInfoList";
@@ -366,6 +364,8 @@ public interface CmsUrlConstants {
             String DOWNLOAD_IMPORT_ERROR = "downloadImportError";
 
             String ADD_JIAGEPILU_PRODUCT = "addJiagepiluProduct";
+
+            String OPERATE_PRODUCT = "operateProduct";
 
         }
 

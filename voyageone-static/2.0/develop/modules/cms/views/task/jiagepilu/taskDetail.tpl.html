@@ -78,7 +78,7 @@
 						<div class="form-inline">
 							<button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 							<button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
-							<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_TASK_EDIT' | translate}}</button>
+							<!--<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_TASK_EDIT' | translate}}</button>-->
 						</div>
 					</div>
 
@@ -101,6 +101,7 @@
 							<button ng-click="ctrl.controlAll('BEATING')" class="btn btn-primary"><i class="glyphicon glyphicon-play"></i>&nbsp;<span translate="TXT_STARTUP_ALL"></span></button>
 							<button ng-click="ctrl.controlAll('STOP')" class="btn btn-danger"><i class="glyphicon glyphicon-pause"></i>&nbsp;<span translate="TXT_STOP_ALL"></span></button>
 							<button ng-click="ctrl.controlAll('REVERT')" class="btn btn-success"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT_ALL"></span></button>
+							<button ng-click="ctrl.controlAll('REVERT')" class="btn btn-brd"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_FAIL_STARTUP_ALL"></span></button>
 						</div>
 						<div class="col-md-7 col-lg-offset-1" ng-controller="popupCtrl">
 							<div style="display: flex;flex-direction: row-reverse;">

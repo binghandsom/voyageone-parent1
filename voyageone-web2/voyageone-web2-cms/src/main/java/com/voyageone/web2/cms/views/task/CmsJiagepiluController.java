@@ -11,7 +11,9 @@ import com.voyageone.service.model.cms.enums.jiagepilu.ImageStatus;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.cms.bean.beat.ReqParam;
 import com.voyageone.web2.cms.bean.task.AddJiagepiluProductRequest;
+import com.voyageone.web2.cms.views.promotion.task.CmsTaskPriceService;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,8 @@ public class CmsJiagepiluController extends BaseController {
 
     @Autowired
     private JiagepiluService jiagepiluService;
+    @Autowired
+    private CmsTaskPriceService cmsTaskPriceService;
 
 
     @RequestMapping(value = CmsUrlConstants.TASK.JIAGEPILU.GET_TASK_MODEL)
@@ -96,14 +100,11 @@ public class CmsJiagepiluController extends BaseController {
 
     /**
      * 搜索价格披露任务商品
-     * @param searchBean
-     * @return
      */
     @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.SEARCH)
     public AjaxResponse getImportInfoList(@RequestBody SearchTaskJiagepiluBean searchBean) {
         return success(jiagepiluService.search(searchBean));
     }
-
 
     /**
      * 下载价格披露任务导入错误文件
@@ -128,12 +129,22 @@ public class CmsJiagepiluController extends BaseController {
 
     /**
      * 添加或编辑价格披露任务商品
+     *
      * @param request 请求参数
-     * @return
      */
     @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.ADD_JIAGEPILU_PRODUCT)
     public AjaxResponse addJiagepiluProduct(@RequestBody AddJiagepiluProductRequest request) {
         return success(jiagepiluService.addJiagepiluProduct(null, request.getTaskId(), request.getNumIid(), request.getCode(), request.getPrice(), getUser().getUserName()));
+    }
+
+    /**
+     * 操作(启动/停止/还原)价格披露任务产品(单品或者全品)
+     *
+     * @param param 请求参数
+     */
+    @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.OPERATE_PRODUCT)
+    public AjaxResponse operateProduct(@RequestBody ReqParam param) {
+        return success(jiagepiluService.operateProduct(param.getBeat_id(), param.getTask_id(), param.getFlag(), param.getForce(), getUser().getUserName()));
     }
 
 }

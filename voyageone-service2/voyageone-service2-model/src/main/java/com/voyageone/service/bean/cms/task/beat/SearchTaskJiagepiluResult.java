@@ -1,6 +1,7 @@
 package com.voyageone.service.bean.cms.task.beat;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 价格披露结果Bean
@@ -10,8 +11,11 @@ import java.util.List;
  */
 public class SearchTaskJiagepiluResult {
 
-    public List<CmsBtTaskJiagepiluBean> products;
-    public int total;
+    private List<CmsBtTaskJiagepiluBean> products;
+    private int total;
+
+    // 各状态统计
+    private List<Map<String, Object>> summary;
 
     public List<CmsBtTaskJiagepiluBean> getProducts() {
         return products;
@@ -27,5 +31,13 @@ public class SearchTaskJiagepiluResult {
 
     public void setTotal(int total) {
         this.total = total;
+    }
+
+    public List<Map<String, Object>> getSummary() {
+        return summary;
+    }
+
+    public void setSummary(List<Map<String, Object>> summary) {
+        this.summary = summary;
     }
 }

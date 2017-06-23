@@ -13,8 +13,6 @@ define([
             var urls = cActions.cms.task.taskJiagepiluService;
             this.urls = urls;
             var taskId = parseInt($routeParams['taskId']);
-            taskId = 460;
-            console.log(taskId);
             if (_.isNaN(taskId)) {
                 this.init = null;
                 alert('TXT_MSG_UNVALID_URL').then(function () {
@@ -84,8 +82,7 @@ define([
                 // 获取价格披露任务Model
                 self.taskJiagepiluService.getTaskModel({taskId:self.taskId}).then(function (resp) {
                     if (resp.data && resp.data.task) {
-                        self.task = resp.data;
-
+                        self.task = resp.data.task;
                         var beatFlagArray = _.map(resp.data.beatFlags,function (element) {
                             var _obj = {key:element,value: self.$translate.instant(element)};
                             // _obj[element] = self.$translate.instant(element);
@@ -102,8 +99,14 @@ define([
                     }
                 });
 
-
                 var searchBean = angular.copy(self.searchBean);
+
+                // 处理多个code
+                if (searchBean.numIidOrCodes) {
+                    var numIidOrCodes = searchBean.numIidOrCodes.split("\n");
+                    searchBean.numIidOrCodes = numIidOrCodes;
+                }
+                // 处理勾选的单品状态和图片状态
                 if (searchBean.beatFlags && _.size(searchBean.beatFlags) > 0) {
                     var beatFlagObj = _.pick(searchBean.beatFlags, function (value, key, object) {
                         return value;
@@ -120,11 +123,15 @@ define([
                     _.extend(searchBean, {"imageStatuses":imageStatuses});
                 }
 
+                // 分页参数处理
+                _.extend(searchBean, self.pageOption);
+
                 // 获取价格披露任务产品列表
                 self.taskJiagepiluService.search(searchBean).then(function (resp) {
                     if (resp.data) {
                         self.productList = resp.data.products;
                         self.pageOption.total = resp.data.total;
+                        self.summary = resp.data.summary;
                     }
                 });
 
@@ -147,6 +154,8 @@ define([
                             return;
                         }
                         self.notify.success('TXT_MSG_UPDATE_SUCCESS');
+                        // 刷新列表
+                        self.getData();
                     };
                     uploadItem.formData = [{
                         taskId: self.taskId
@@ -208,18 +217,12 @@ define([
                 self.getData();
             },
 
-
-
-            download: function () {
-                var ttt = this;
-                $.download.post(ttt.downloadUrl, {task_id: ttt.task_id});
-            },
-
+            // 启动/停止/还原单个商品
             controlOne: function (beatInfo, flag) {
                 var ttt = this;
                 var beat_id = beatInfo.id;
                 var changeIt = function () {
-                    ttt.taskBeatService.control({
+                    ttt.taskJiagepiluService.operateProduct({
                         beat_id: beat_id,
                         flag: flag
                     }).then(function (res) {
@@ -228,14 +231,16 @@ define([
                         ttt.getData();
                     });
                 };
-                if (beatInfo.beatFlag !== 'CANT_BEAT') {
+                if (beatInfo.synFlagEnum !== 'CANT_BEAT') {
                     changeIt();
                     return;
                 }
                 ttt.confirm('TXT_MSG_ERROR_BEAT_ITEM').then(changeIt);
             },
 
+            // 启动/停止/还原所有
             controlAll: function (flag) {
+
 
                 var self = this;
 
@@ -247,7 +252,7 @@ define([
                 // 如果错误统计有数据, 说明是存在错误数据的
                 // 就需要人为来确定是否要强制处理这些任务
                 if (errorSummary && errorSummary.count) {
-                    self.confirm('是否同时处理那些 Promotion 信息不协同的任务?')
+                    self.confirm("有状态为 <" +　self.$translate.instant('CANT_BEAT')　+ "> 的商品，确定要操作所有吗?")
                         .then(function () {
                             self.$controlAll(true, flag);
                         }, function () {
@@ -263,8 +268,8 @@ define([
             $controlAll: function (force, flag) {
                 var self = this;
 
-                self.taskBeatService.control({
-                    task_id: self.task_id,
+                self.taskJiagepiluService.operateProduct({
+                    task_id: self.taskId,
                     force: force,
                     flag: flag
                 }).then(function (res) {

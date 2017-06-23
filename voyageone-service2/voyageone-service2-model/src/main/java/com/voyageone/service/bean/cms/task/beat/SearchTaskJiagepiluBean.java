@@ -24,6 +24,11 @@ public class SearchTaskJiagepiluBean extends CmsBtTaskJiagepiluModel {
     public List<String> imageStatuses;
     public List<Integer> imageStatusVals;
 
+    private int size;
+    private int curr;
+    private int start;
+
+    // 状态枚举处理
     public void parseEnum() {
         if (CollectionUtils.isNotEmpty(beatFlags)) {
             beatFlagVals = new ArrayList<>();
@@ -45,6 +50,17 @@ public class SearchTaskJiagepiluBean extends CmsBtTaskJiagepiluModel {
             }
             this.imageStatusVals = imageStatusVals;
         }
+    }
+
+    // 分页参数处理
+    public void handlePage() {
+        if (this.curr <= 0) {
+            this.curr = 1;
+        }
+        if (this.size <= 0) {
+            this.size = 10;
+        }
+        this.start = (this.curr - 1) * size;
     }
 
     public List<String> getNumIidOrCodes() {
@@ -93,5 +109,29 @@ public class SearchTaskJiagepiluBean extends CmsBtTaskJiagepiluModel {
 
     public void setImageStatusVals(List<Integer> imageStatusVals) {
         this.imageStatusVals = imageStatusVals;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public int getCurr() {
+        return curr;
+    }
+
+    public void setCurr(int curr) {
+        this.curr = curr;
+    }
+
+    public int getStart() {
+        return start;
+    }
+
+    public void setStart(int start) {
+        this.start = start;
     }
 }
