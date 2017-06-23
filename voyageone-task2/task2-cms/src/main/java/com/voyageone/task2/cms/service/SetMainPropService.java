@@ -1453,6 +1453,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     }
                     break;
                 case "007":
+                case "008":
+                case "033":
                     feedProductType = feed.getProductType();
                     productCommonField.setProductType(feed.getProductType());
                     feedSizeType = feed.getSizeType();
