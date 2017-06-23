@@ -18,7 +18,7 @@
                                     <label class="pull-left" style="margin-bottom: 0">
                                         <i ng-class="{'fa fa-plus-circle':!showDetail,'fa fa-minus-circle':showDetail}" ng-click="showDetail=!showDetail;count(showDetail)"></i>
                                     </label>
-                                    海外库存
+                                    第三方库存
                                 </th>
                             </tr>
                             <tr id="store-column-head">
@@ -26,11 +26,11 @@
                                 <th class="text-center" style="border: 1px solid #ccc;width: 117px;">SKU</th>
                                 <th class="text-center" style="border: 1px solid #ccc;width: 65px;">原始尺码</th>
                                 <th class="text-center" style="border: 1px solid #ccc;width: 88px;">销售尺码</th>
-                                <th class="text-center" style="border: 1px solid #ccc;width: 50px;">逻辑库存</th>
-                                <th class="text-center" style="border: 1px solid #ccc;width: 50px;" ng-repeat="item in store">逻辑库存</th>
+                                <th class="text-center" style="border: 1px solid #ccc;width: 50px;">总库存</th>
+                                <th class="text-center" style="border: 1px solid #ccc;width: 50px;" ng-repeat="item in store">{{item}}库存</th>
                                 <!--默认显示总库-->
                                 <th class="text-center" style="border: 1px solid #ccc;width: 50px;" ng-repeat="item in supplier" ng-show="item == 'total' || showDetail">
-                                    <div ng-if="item == 'total'">逻辑库存</div>
+                                    <div ng-if="item == 'total'">总库存</div>
                                     <div ng-if="item != 'total'">{{item}}</div>
                                 </th>
                             </tr>
