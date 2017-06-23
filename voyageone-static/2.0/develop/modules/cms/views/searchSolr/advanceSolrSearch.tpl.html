@@ -113,19 +113,20 @@
                                                 </div>
                                             </div>
                                             <div class="form-group"><!-- 查询库存状态 -->
-                                                <label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
-                                                <div class="col-sm-8" style="padding-left:0px">
-                                                    <div class="col-sm-5">
-                                                        <select class="form-control m-r-xs" style="margin-left:4px" ng-model="vm.searchInfo.compareType"
-                                                                ng-options="compareType.value as compareType.name for compareType in vm.masterData.compareTypeList">
-                                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-sm-5" style="margin-left:1px">
-                                                        <input type="number" class="form-control" ng-model="vm.searchInfo.inventory" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="9">
-                                                    </div>
+                                            <!--<label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>-->
+                                                <label class="col-sm-3 control-label" >可售总库存</label>
+                                            <div class="col-sm-8" style="padding-left:0px">
+                                                <div class="col-sm-5">
+                                                    <select class="form-control m-r-xs" style="margin-left:4px" ng-model="vm.searchInfo.compareType"
+                                                            ng-options="compareType.value as compareType.name for compareType in vm.masterData.compareTypeList">
+                                                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-5" style="margin-left:1px">
+                                                    <input type="number" class="form-control" ng-model="vm.searchInfo.inventory" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="9">
                                                 </div>
                                             </div>
+                                        </div>
                                             <div class="form-group" style="margin-bottom:0px"><!-- 产品类型 -->
                                                 <label class="col-sm-3 control-label">产品类型</label>
                                                 <div class="col-sm-8">

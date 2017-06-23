@@ -132,7 +132,7 @@ define(function () {
         "TXT_PRODUCT_CODE_WITH_COLON": "产品Code:",
         "TXT_PRODUCT_NAME_WITH_COLON": "产品名称:",
         "TXT_SKU_PLATFORM_INFO": "SKU平台信息",
-        "TXT_SKU_INVENTORY": "SKU库存",
+        "TXT_SKU_INVENTORY": "可售库存",
         "TXT_PROMOTION_AND_TAG": "活动 & 标签",
         "TXT_CHANNEL_WITH_COLON": "渠道:",
         "TXT_PROMOTION_NAME_WITH_COLON": "活动名称:",
@@ -830,7 +830,7 @@ define(function () {
         "TXT_INCOMPLETE_REJECT": "待匹配（审核驳回）",
         /**sku价格设置popup*/
         "TXT_SKU_PRICE_SETTING": "SKU价格设置",
-        "TXT_SKU_CODE": "skuCode",
+        "TXT_SKU_CODE": "SKU可售总库存",
         "TXT_SIZE": "size",
         "TXT_BARCODE": "Barcode",
         "TXT_MOVE_TO_NEW_CODE": "移动到新的Code",

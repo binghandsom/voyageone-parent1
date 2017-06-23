@@ -193,8 +193,8 @@
                                             </a>
                                             <div class="thumbInfo">
                                                 <div class="row">
-                                                    <div class="col-md-5"><strong>库存:</strong></div>
-                                                    <div class="col-md-7 text-right">{{image.qty}}</div>
+                                                    <div class="col-md-7"><strong>可售库存:</strong></div>
+                                                    <div class="col-md-5 text-right">{{image.qty}}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -590,6 +590,14 @@
                                         <uib-tab>
                                             <tab-heading>库存明细</tab-heading>
                                             <div>
+                                                <!---------xu--------->
+                                                <div class="form-group" >
+                                                    <label class="col-sm-6 control-label text-left m-l-md">SKU</label>
+                                                    <div class="col-sm-4 text-left">
+                                                        <label class="col-sm-8 control-label text-right m-l-md">可售库存</label>
+                                                    </div>
+                                                </div>
+                                                <!--------xu---------->
                                                 <div class="form-group" ng-repeat="invObj in vm.mastData.inventoryList">
                                                     <label class="col-sm-8 control-label text-left m-l-md">{{invObj.skuCode}}</label>
                                                     <div class="col-sm-2 text-left">
