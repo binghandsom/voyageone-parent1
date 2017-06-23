@@ -529,4 +529,16 @@ public class JiagepiluService extends BaseService {
         }
         return 0;
     }
+
+    /**
+     * 启动失败或者还原失败的产品重启
+     * @param taskId
+     * @param flag
+     * @param username
+     * @return
+     */
+    public int reBeating(Integer taskId, BeatFlag flag, String username) {
+
+        return 0;
+    }
 }

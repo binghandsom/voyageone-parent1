@@ -46,27 +46,29 @@
 
 							<div class="col-sm-4">
 								<div class="form-horizontal">
-									<div class="row form-group" >
-										<label class="col-sm-4  control-label"><strong translate="TXT_TASK_STATUS"></strong></label>
+									<!--<div class="form-horizontal">-->
+									<!--<div class="row form-group" >-->
+									<!--<label class="col-sm-4  control-label"><strong translate="TXT_TASK_STATUS"></strong></label>-->
+									<!--<div class="col-sm-6">-->
+									<!--<input type="text" class="form-control" value="{{ctrl.task.status}}" disabled>-->
+									<!--</div>-->
+									<!--</div>-->
+									<!--</div>-->
+									<div class="row form-group">
+										<label class="col-sm-5 control-label"><strong translate="TXT_SINGLE_CODE_STATUS"></strong></label>
 										<div class="col-sm-6">
-											<input type="text" class="form-control" value="{{ctrl.task.status}}" disabled>
+											<label class="m-t-tx" ng-repeat="flag in ctrl.beatFlags">
+												<input type="checkbox" class="v-top" ng-model="ctrl.searchBean.beatFlags[flag.key]" value="{{flag.key}}"/>&nbsp;&nbsp;<span class="v-top">{{flag.value}}</span>&emsp;
+											</label>
 										</div>
 									</div>
-								</div>
-								<div class="row form-group">
-									<label class="col-sm-4 control-label"><strong translate="TXT_SINGLE_CODE_STATUS"></strong></label>
-									<div class="col-sm-6">
-										<label class="m-t-tx" ng-repeat="flag in ctrl.beatFlags">
-											<input type="checkbox" class="v-top" ng-model="ctrl.searchBean.beatFlags[flag.key]" value="{{flag.key}}"/>&nbsp;&nbsp;<span class="v-top">{{flag.value}}</span>&emsp;
-										</label>
-									</div>
-								</div>
-								<div class="row form-group">
-									<label class="col-sm-4 control-label"><strong translate="TXT_SINGLE_CODE_STATUS"></strong></label>
-									<div class="col-sm-6">
-										<label class="m-t-tx" ng-repeat="imageStatus in ctrl.imageStatuses">
-											<input type="checkbox" class="v-top" ng-model="ctrl.searchBean.imageStatuses[imageStatus.key]" value="{{imageStatus.key}}"/>&nbsp;&nbsp;<span class="v-top">{{imageStatus.value}}</span>&emsp;
-										</label>
+									<div class="row form-group">
+										<label class="col-sm-5 control-label"><strong translate="TXT_SINGLE_CODE_STATUS"></strong></label>
+										<div class="col-sm-6">
+											<label class="m-t-tx" ng-repeat="imageStatus in ctrl.imageStatuses">
+												<input type="checkbox" class="v-top" ng-model="ctrl.searchBean.imageStatuses[imageStatus.key]" value="{{imageStatus.key}}"/>&nbsp;&nbsp;<span class="v-top">{{imageStatus.value}}</span>&emsp;
+											</label>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -101,7 +103,8 @@
 							<button ng-click="ctrl.controlAll('BEATING')" class="btn btn-primary"><i class="glyphicon glyphicon-play"></i>&nbsp;<span translate="TXT_STARTUP_ALL"></span></button>
 							<button ng-click="ctrl.controlAll('STOP')" class="btn btn-danger"><i class="glyphicon glyphicon-pause"></i>&nbsp;<span translate="TXT_STOP_ALL"></span></button>
 							<button ng-click="ctrl.controlAll('REVERT')" class="btn btn-success"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT_ALL"></span></button>
-							<button ng-click="ctrl.controlAll('REVERT')" class="btn btn-brd"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_FAIL_STARTUP_ALL"></span></button>
+							<button ng-click="ctrl.controlAll('FAIL')" class="btn btn-brd"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_FAIL_STARTUP_ALL"></span></button>
+							<button ng-click="ctrl.controlAll('RE_FAIL')" class="btn btn-brd"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT_FAIL_STARTUP_ALL"></span></button>
 						</div>
 						<div class="col-md-7 col-lg-offset-1" ng-controller="popupCtrl">
 							<div style="display: flex;flex-direction: row-reverse;">

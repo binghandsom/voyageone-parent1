@@ -147,4 +147,9 @@ public class CmsJiagepiluController extends BaseController {
         return success(jiagepiluService.operateProduct(param.getBeat_id(), param.getTask_id(), param.getFlag(), param.getForce(), getUser().getUserName()));
     }
 
+    @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.REBEATING)
+    public AjaxResponse reBeating(@RequestBody ReqParam param) {
+        return success(jiagepiluService.operateProduct(param.getBeat_id(), param.getTask_id(), param.getFlag(), param.getForce(), getUser().getUserName()));
+    }
+
 }

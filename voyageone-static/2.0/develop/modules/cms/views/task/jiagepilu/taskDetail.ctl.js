@@ -42,7 +42,7 @@ define([
             this.pageOption = {
                 curr: 1,
                 total: 0,
-                size: 20,
+                size: 10,
                 fetch: this.getData.bind(this)
             };
             this.importInfoList = [];
@@ -196,15 +196,6 @@ define([
                 $.download.post(path, {fileName: fileName});
             },
 
-            // 弹出添加商品框
-            popAddBeat: function () {
-                popups.popNewCombinedProduct(_.extend({"carts": $scope.vm.carts},
-                                                      {"startSupplyChain": $scope.vm.config.startSupplyChain}))
-                    .then(function () {
-                        getProductList();
-                    })
-            },
-
             // 清除搜索条件
             clear: function () {
                 this.searchBean = {taskId:this.taskId};
@@ -241,7 +232,6 @@ define([
             // 启动/停止/还原所有
             controlAll: function (flag) {
 
-
                 var self = this;
 
                 // 在统计信息中查找错误的统计
@@ -263,6 +253,14 @@ define([
 
                 // 否则, 直接处理即可
                 self.$controlAll(false, flag);
+            },
+
+            // 重启(启动失败/还原失败的重启)
+            restartAll: function (flag) {
+                var self = this;
+                self.confirm("确定要重启状态为 <" +　self.$translate.instant('CANT_BEAT')　+ "> 的商品吗?").then(function () {
+                    self.taskJiagepiluService
+                });
             },
 
             $controlAll: function (force, flag) {

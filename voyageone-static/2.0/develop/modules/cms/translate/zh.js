@@ -296,6 +296,7 @@ define(function () {
         "TXT_STARTUP_ALL": "启动所有",
         "TXT_STOP_ALL": "停止所有",
         "TXT_FAIL_STARTUP_ALL": "失败的重新启动",
+        "TXT_REVERT_FAIL_STARTUP_ALL":"还原失败商品重启",
         "TXT_REVERT_ALL": "还原所有",
         "TXT_SHOW_ALL": "显示所有",
         "TXT_STARTUP": "启动",

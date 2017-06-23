@@ -367,6 +367,8 @@ public interface CmsUrlConstants {
 
             String OPERATE_PRODUCT = "operateProduct";
 
+            String REBEATING = "reBeating";
+
         }
 
     }

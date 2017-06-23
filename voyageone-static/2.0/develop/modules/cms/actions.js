@@ -457,7 +457,8 @@ define(function () {
                     "getImportInfoList":"getImportInfoList",
                     "downloadImportError":"downloadImportError",
                     "addJiagepiluProduct":"addJiagepiluProduct",
-                    "operateProduct":"operateProduct"
+                    "operateProduct":"operateProduct",
+                    "reBeating":"reBeating"
                 }
             },
             "system": {
