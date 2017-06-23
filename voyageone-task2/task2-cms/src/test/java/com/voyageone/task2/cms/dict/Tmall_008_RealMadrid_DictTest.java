@@ -1,7 +1,17 @@
 package com.voyageone.task2.cms.dict;
 
+import com.voyageone.common.configs.Enums.PlatFormEnums;
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.ims.rule_expression.*;
+import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,16 +20,42 @@ import java.util.List;
  * Created by zhujiaye on 17/6/19.
  */
 
-@SuppressWarnings("ALL")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:context-cms-test.xml")
 public class Tmall_008_RealMadrid_DictTest extends BaseDictTest {
-
+	@Autowired
+	private SxProductService sxProductService;
 	@Test
 	public void startupTest() {
 
 		doCreateJson("详情页描述", false, doPC端详情页描述());
 
 	}
+	@Test
+	public void dictTest() {
 
+		SxData sxData = sxProductService.getSxProductDataByGroupId("008", 11396913L);
+		sxData.setCartId(23);
+		ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
+		ShopBean shopProp = Shops.getShop("008", 23);
+        shopProp.setApp_url("http://gw.api.taobao.com/router/rest");
+        shopProp.setAppKey("");
+        shopProp.setAppSecret("");
+        shopProp.setSessionKey("");
+        shopProp.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
+
+		try {
+			System.out.println("=====================================");
+			System.out.println("字典: 详情页描述");
+			String result = sxProductService.resolveDict("详情页描述", expressionParser, shopProp, "testhuangma", null);
+			result = "<div style=\"width:790px; margin: 0 auto;\">" + result + "</div>";
+			System.out.println(result);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 	private RuleExpression doPC端详情页描述() {
 		String strTemplate_Param_Image = "http://s7d5.scene7.com/is/image/sneakerhead/REALMADRIDzhutumuban20170615790x1157?$KITBAG20170421790x1300TEST1$&$MINGZI=%s&$PRODUCT=%s&$code=%s&$BRAND=%s&$MATERIAL=%s";
 		String strTemplate_Main_Image = "http://s7d5.scene7.com/is/image/sneakerhead/REALMADRID20170615TEST1?$KITBAG20170421790x750TEST1$&$PRODUCT=%s";
@@ -70,7 +106,7 @@ public class Tmall_008_RealMadrid_DictTest extends BaseDictTest {
 				{
 					// 英文标题
 					RuleExpression ruleExpression = new RuleExpression();
-					ruleExpression.addRuleWord(new MasterWord("originalTitleEn"));
+					ruleExpression.addRuleWord(new MasterWord("productNameEn"));
 					imageParams.add(ruleExpression);
 				}
 				{
