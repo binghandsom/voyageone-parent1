@@ -263,11 +263,12 @@
                                                                                                    ng-model="model.isChecked"><span
                             class="fa fa-check"></span></label></td>
                     <td><img image="{{model.image1}}" class="thumb-sm-search pull-left m-r"/></td>
-                    <td class="text-left yellowLink"><a href="javascript:void(0)" ng-click="openJmProductDetailWin(model)">
-                        {{model.productCode}} </a>
+                    <td class="text-left yellowLink">
+                        <a href="javascript:void(0)" ng-click="openJmProductDetailWin(model)"> {{model.productCode}} </a>
                     </td>
-                    <td class="text-left yellowLink"><a href="javascript:void(0)" ng-click="openProductDetailWin(model)">
-                        {{model.productLongName}} </a></td>
+                    <td class="text-left yellowLink">
+                        <a href="javascript:void(0)" target="_blank" ng-click="openProductDetailWin(model)"> {{model.productLongName}} </a>
+                    </td>
                     <td>
                         <select multiple chosen class="form-control" width="'100%'" ng-change="changeSelectTag(model,{{model.tagNameList}})"
                                 ng-model="model.tagNameList"
