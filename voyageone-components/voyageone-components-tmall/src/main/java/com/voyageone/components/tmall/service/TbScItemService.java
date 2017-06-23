@@ -135,7 +135,7 @@ public class TbScItemService extends TbBase {
 		ScitemMapAddRequest request = new ScitemMapAddRequest();
 
 		request.setItemId(numIId);
-		if (skuId != null) {
+		if (!StringUtils.isNullOrBlank2(skuId)) {
 			request.setSkuId(Long.parseLong(skuId));
 		}
 		request.setOuterCode(getRealScOuterCodeBySku(outerCode));
