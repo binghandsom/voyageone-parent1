@@ -28,4 +28,7 @@ public interface CmsBtTaskJiagepiluDaoExt {
 
     int updateFlags(@Param("taskId") int taskId, @Param("synFlag") int flag, @Param("imageStatus") int imageStatus,
                     @Param("force") boolean force, @Param("modifier") String userName);
+
+    int rebeatFailFlags(@Param("taskId") int taskId, @Param("synFlag") int flag, @Param("newSynFlag") int newFlag,
+                        @Param("imageStatus") int imageStatus, @Param("modifier") String userName);
 }

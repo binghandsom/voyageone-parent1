@@ -7,7 +7,7 @@ define([
         function AddJiagepiluProductController(context, $uibModalInstance, taskBeatService, taskJiagepiluService, confirm, alert) {
             this.parent = context;
             this.taskId = context.taskId;
-            console.log(this.taskId);
+            this.id = context.id; // id不为空时是编辑，为空时是新增
 
             this.$uibModalInstance = $uibModalInstance;
             this.taskBeatService = taskBeatService;
@@ -16,26 +16,31 @@ define([
             this.alert = alert;
 
             this.item = {
+                id:this.id,
+                taskId:this.taskId,
                 numIid: "",
-                code: "",
+                productCode: "",
                 price: ""
             };
         }
 
         AddJiagepiluProductController.prototype = {
             init: function () {
-                console.log('name',cart.valueOf(23).desc);
+                var self = this;
+                if (self.id) {
+                    self.taskJiagepiluService.getEditProduct({beat_id:self.id}).then(function (resp) {
+                        if (resp.data) {
+                            self.item = resp.data;
+                        } else {
+                            self.alert("未找到目标记录");
+                        }
+                    });
+                }
             },
 
             ok: function () {
                 var self = this;
-                var param = {
-                    taskId: self.taskId,
-                    numIid: self.item.numIid,
-                    code: self.item.code,
-                    price: self.item.price
-                };
-                console.log(param);
+                var param = angular.copy(self.item);
                 self.taskJiagepiluService.addJiagepiluProduct(param).then(function (resp) {
                    if (resp.data) {
                        self.$uibModalInstance.close();

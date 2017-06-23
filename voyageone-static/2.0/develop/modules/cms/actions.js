@@ -458,7 +458,8 @@ define(function () {
                     "downloadImportError":"downloadImportError",
                     "addJiagepiluProduct":"addJiagepiluProduct",
                     "operateProduct":"operateProduct",
-                    "reBeating":"reBeating"
+                    "reBeating":"reBeating",
+                    "getEditProduct":"getEditProduct"
                 }
             },
             "system": {

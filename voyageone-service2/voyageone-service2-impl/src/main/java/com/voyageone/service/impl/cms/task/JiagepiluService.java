@@ -443,10 +443,23 @@ public class JiagepiluService extends BaseService {
         return result;
     }
 
+    /**
+     * 添加/编辑商品
+     * @param id 记录ID，有则编辑，无则添加
+     * @param taskId
+     * @param numIid
+     * @param code
+     * @param price
+     * @param username
+     * @return 受影响行数
+     */
     @VOTransactional
     public int addJiagepiluProduct(Integer id, Integer taskId, String numIid, String code, Double price, String username) {
 
-        CmsBtTasksModel tasksModel = cmsBtTasksDao.select(taskId);
+        CmsBtTasksModel tasksModel = null;
+        if (taskId != null) {
+            tasksModel = cmsBtTasksDao.select(taskId);
+        }
         if (tasksModel == null) {
             throw new BusinessException(String.format("价格披露任务(taskId:%d)不存在", taskId));
         }
@@ -463,6 +476,7 @@ public class JiagepiluService extends BaseService {
 
         int affected = 0;
 
+        // 看重复记录是已存在，天猫系和京东系的条件不一致
         CmsBtTaskJiagepiluModel queryModel = new CmsBtTaskJiagepiluModel();
         queryModel.setTaskId(taskId);
         queryModel.setNumIid(Long.valueOf(numIid));
@@ -471,6 +485,20 @@ public class JiagepiluService extends BaseService {
         }
 
         CmsBtTaskJiagepiluModel targetModel = cmsBtTaskJiagepiluDao.selectOne(queryModel);
+        if (id == null && targetModel != null) {
+            String message = "";
+            if (isTmSeries) {
+                message = String.format("NumIid(%s)对应的记录存在");
+            } else {
+                message = String.format("NumIid(%s)和ProductCode(%s)对应的记录存在");
+            }
+            throw new BusinessException(message);
+        }
+
+        if (id != null && targetModel != null && targetModel.getId() != id) {
+            throw new BusinessException("7000002");
+        }
+
         if (targetModel == null) {
             CmsBtTaskJiagepiluModel newModel = new CmsBtTaskJiagepiluModel();
             newModel.setCreated(new Date());
@@ -489,6 +517,14 @@ public class JiagepiluService extends BaseService {
         } else {
             CmsBtTaskJiagepiluModel updateModel = new CmsBtTaskJiagepiluModel();
             updateModel.setId(targetModel.getId());
+            updateModel.setSynFlag(BeatFlag.STOP.getFlag());
+            updateModel.setImageStatus(ImageStatus.None.getId()); // 无图状态
+
+            updateModel.setNumIid(Long.valueOf(numIid));
+            updateModel.setProductCode(code);
+            updateModel.setPrice(price);
+            updateModel.setModifier(username);
+            updateModel.setModified(new Date());
             affected = cmsBtTaskJiagepiluDao.update(updateModel);
         }
 
@@ -537,8 +573,19 @@ public class JiagepiluService extends BaseService {
      * @param username
      * @return
      */
+    @VOTransactional
     public int reBeating(Integer taskId, BeatFlag flag, String username) {
-
+        // 刷图成功或者还原失败的商品重启
+        if (flag.getFlag() == BeatFlag.FAIL.getFlag() || flag.getFlag() == BeatFlag.RE_FAIL.getFlag()) {
+            return cmsBtTaskJiagepiluDaoExt.rebeatFailFlags(taskId, flag.getFlag(), BeatFlag.BEATING.getFlag(), ImageStatus.None.getId(), username);
+        }
         return 0;
+    }
+
+    public CmsBtTaskJiagepiluModel getProductById(Integer id) {
+        if (id != null) {
+            return cmsBtTaskJiagepiluDao.select(id);
+        }
+        return null;
     }
 }

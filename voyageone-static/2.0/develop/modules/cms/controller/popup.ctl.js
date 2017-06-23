@@ -1544,7 +1544,7 @@ define([
 
         $scope.openEditGroup = function(context){
             return openModal(popActions.group.editGroup, context);
-        }
+        };
 
         /**
          * 自定义下载选择列模态框
@@ -1556,7 +1556,8 @@ define([
         /**
          * 为价格披露Task添加商品
          */
-        $scope.popAddJiagepiluProduct = function popAddJiagepiluProduct(context) {
+        $scope.popAddJiagepiluProduct = function popAddJiagepiluProduct(context, id) {
+            _.extend(context, {id:id});
             return openModal(popActions.task.addJiagepiluProduct, context);
         };
 

@@ -15,7 +15,7 @@
 									<div class="row form-group">
 										<label class="col-sm-4  control-label"><strong translate="TXT_PLATFORM"></strong></label>
 										<div class="col-sm-6">
-											<input type="text" class="form-control" value="{{ctrl.task.cartId}}" disabled>
+											<input type="text" class="form-control" value="{{ctrl.task.cartName}}" disabled>
 										</div>
 									</div>
 									<div class="row form-group">
@@ -76,7 +76,7 @@
 						</div>
 					</div>
 
-					<div class="row text-center m-t-sm" ng-controller="popupCtrl">
+					<div class="row text-center m-t-sm">
 						<div class="form-inline">
 							<button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 							<button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
@@ -93,7 +93,7 @@
 	<div class="container-fluid m-t-xs m-b-xs">
 		<uib-tabset class="tab-container vo_nav-tabs">
 
-			<uib-tab ng-click="vm.currTab = 'product'" active="true">
+			<uib-tab active="true">
 				<tab-heading>
 					<i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}
 				</tab-heading>
@@ -103,8 +103,8 @@
 							<button ng-click="ctrl.controlAll('BEATING')" class="btn btn-primary"><i class="glyphicon glyphicon-play"></i>&nbsp;<span translate="TXT_STARTUP_ALL"></span></button>
 							<button ng-click="ctrl.controlAll('STOP')" class="btn btn-danger"><i class="glyphicon glyphicon-pause"></i>&nbsp;<span translate="TXT_STOP_ALL"></span></button>
 							<button ng-click="ctrl.controlAll('REVERT')" class="btn btn-success"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT_ALL"></span></button>
-							<button ng-click="ctrl.controlAll('FAIL')" class="btn btn-brd"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_FAIL_STARTUP_ALL"></span></button>
-							<button ng-click="ctrl.controlAll('RE_FAIL')" class="btn btn-brd"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT_FAIL_STARTUP_ALL"></span></button>
+							<button ng-click="ctrl.restartAll('FAIL')" class="btn btn-brd"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_FAIL_STARTUP_ALL"></span></button>
+							<button ng-click="ctrl.restartAll('RE_FAIL')" class="btn btn-brd"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT_FAIL_STARTUP_ALL"></span></button>
 						</div>
 						<div class="col-md-7 col-lg-offset-1" ng-controller="popupCtrl">
 							<div style="display: flex;flex-direction: row-reverse;">
@@ -112,7 +112,7 @@
 								<div style="width: 325px">
 									<button class="btn btn-vo" ng-click="ctrl.importProduct()" ng-disabled="ctrl.uploadItem"><i class="glyphicon glyphicon-check"></i>&nbsp;<span translate="TXT_IMPORT_GOOD"></span></button>
 									<button class="btn btn-default" ng-click="ctrl.downloadTemplate()"><i class="fa fa-plus"></i>&nbsp;<span translate="BTN_IMPORT_TEMPLATE_DOWNLOAD"></span></button>
-									<button class="btn btn-success" ng-click="popAddJiagepiluProduct(ctrl)"><i class="fa fa-plus"></i>&nbsp;<span translate="TXT_ADD_MOD_GOOD"></span></button>
+									<button class="btn btn-success" ng-click="popAddJiagepiluProduct(ctrl, '')"><i class="fa fa-plus"></i>&nbsp;<span translate="TXT_ADD_MOD_GOOD"></span></button>
 								</div>
 
 								<div style="width: 290px;margin-right: 17px;">
@@ -153,6 +153,8 @@
 								<td class="text-left">{{::info.modified.substring(0, 19)}}</td>
 								<td class="text-center">
 									<div class="btn-group text-center">
+										<button title="启动" ng-click="popAddJiagepiluProduct(ctrl, info.id)" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-pencil"></i>&nbsp;<span translate="TXT_EDIT"></span></button>
+										&nbsp;&nbsp;
 										<button title="启动" ng-click="ctrl.controlOne(info, 'BEATING')" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;<span translate="TXT_STARTUP"></span></button>
 										<button title="停止" ng-click="ctrl.controlOne(info, 'STOP')" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;<span translate="TXT_STOP"></span></button>
 										<button title="还原" ng-click="ctrl.controlOne(info, 'REVERT')" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT"></span></button>
@@ -169,9 +171,9 @@
 				</div>
 			</uib-tab>
 
-			<uib-tab ng-click="vm.currTab = 'product'" active="false">
+			<uib-tab active="false">
 				<tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_IMPORT_LIST' | translate}}</tab-heading>
-				<div class="table-responsive box-body">
+				<div class="table-responsive box-body" ng-controller="popupCtrl">
 					<div class="btn-group pull-left">
 						<button ng-click="ctrl.refreshImportInfoList()" class="btn btn-default"><i></i>&nbsp;<span translate="BTN_REFRESH"></span></button>
 					</div>

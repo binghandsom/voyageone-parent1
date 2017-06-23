@@ -98,7 +98,10 @@
                     <td class="mfb-xt text-left"><span ng-show="task.status==0" class="label label-success-new m-r-lg"> Open </span><span
                             ng-show="task.status==1" class="label label-yellow-new m-r-lg"> Close </span></td>
                     <td class="mfb-xt text-left">
-                        <a ng-if="task.taskType == 1" ng-href="#/promotion/task/beat/{{task.id}}" target="_blank">
+                        <!--<a ng-if="task.taskType == 1" ng-href="#/promotion/task/beat/{{task.id}}" target="_blank">
+                            {{task.taskName}}
+                        </a>-->
+                        <a ng-if="task.taskType == 1" ng-href="#/task/jiagepilu/detail/{{task.id}}" target="_blank">
                             {{task.taskName}}
                         </a>
                         <a ng-if="task.taskType == 0" ng-href="#/promotion/task/price/{{task.promotion.id}}"

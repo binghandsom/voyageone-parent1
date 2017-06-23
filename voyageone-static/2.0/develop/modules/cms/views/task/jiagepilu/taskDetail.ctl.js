@@ -4,8 +4,9 @@
 define([
     'cms',
     'underscore',
+    'modules/cms/enums/Carts',
     'modules/cms/controller/popup.ctl'
-], function (cms, _) {
+], function (cms, _, cart) {
     cms.controller("jiagepiluController", (function () {
 
         function JiagepiluController($routeParams, taskJiagepiluService, $translate, taskBeatService, cActions, FileUploader, alert, confirm, notify, $location, $timeout) {
@@ -95,6 +96,9 @@ define([
                             return _obj;
                         });
                         self.imageStatuses = imageStatusArray;
+
+                        var cartName = cart.valueOf(self.task.cartId).desc;
+                        _.extend(self.task, {cartName:cartName});
 
                     }
                 });
@@ -258,8 +262,12 @@ define([
             // 重启(启动失败/还原失败的重启)
             restartAll: function (flag) {
                 var self = this;
-                self.confirm("确定要重启状态为 <" +　self.$translate.instant('CANT_BEAT')　+ "> 的商品吗?").then(function () {
-                    self.taskJiagepiluService
+                self.confirm("确定要重启状态为 <" +　self.$translate.instant(flag)　+ "> 的商品吗?").then(function () {
+                    self.taskJiagepiluService.reBeating({task_id:self.taskId,flag:flag}).then(function (resp) {
+                        if (resp.data) {
+                            self.getData();
+                        }
+                    })
                 });
             },
 

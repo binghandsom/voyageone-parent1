@@ -134,7 +134,8 @@ public class CmsJiagepiluController extends BaseController {
      */
     @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.ADD_JIAGEPILU_PRODUCT)
     public AjaxResponse addJiagepiluProduct(@RequestBody AddJiagepiluProductRequest request) {
-        return success(jiagepiluService.addJiagepiluProduct(null, request.getTaskId(), request.getNumIid(), request.getCode(), request.getPrice(), getUser().getUserName()));
+        return success(jiagepiluService.addJiagepiluProduct(request.getId(), request.getTaskId(),
+                request.getNumIid(), request.getProductCode(), request.getPrice(), getUser().getUserName()));
     }
 
     /**
@@ -147,9 +148,24 @@ public class CmsJiagepiluController extends BaseController {
         return success(jiagepiluService.operateProduct(param.getBeat_id(), param.getTask_id(), param.getFlag(), param.getForce(), getUser().getUserName()));
     }
 
+    /**
+     * 失败或者还原的商品重启动
+     * @param param
+     * @return
+     */
     @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.REBEATING)
     public AjaxResponse reBeating(@RequestBody ReqParam param) {
-        return success(jiagepiluService.operateProduct(param.getBeat_id(), param.getTask_id(), param.getFlag(), param.getForce(), getUser().getUserName()));
+        return success(jiagepiluService.reBeating(param.getTask_id(), param.getFlag(), getUser().getUserName()));
+    }
+
+    /**
+     * 获取要编辑的商品
+     * @param param
+     * @return
+     */
+    @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.GET_EDIT_PRODUCT)
+    public AjaxResponse getEditProduct(@RequestBody ReqParam param) {
+        return success(jiagepiluService.getProductById(param.getBeat_id()));
     }
 
 }

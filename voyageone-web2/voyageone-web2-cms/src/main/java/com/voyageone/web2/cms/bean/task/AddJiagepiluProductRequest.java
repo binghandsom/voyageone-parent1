@@ -10,10 +10,19 @@ import java.io.Serializable;
  */
 public class AddJiagepiluProductRequest implements Serializable {
 
+    private Integer id;
     private Integer taskId;
     private String numIid;
-    private String code;
+    private String productCode;
     private Double price;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Integer getTaskId() {
         return taskId;
@@ -31,12 +40,12 @@ public class AddJiagepiluProductRequest implements Serializable {
         this.numIid = numIid;
     }
 
-    public String getCode() {
-        return code;
+    public String getProductCode() {
+        return productCode;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
     }
 
     public Double getPrice() {

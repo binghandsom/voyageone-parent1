@@ -195,7 +195,7 @@
     </select>
 
     <update id="updateFlags">
-        UPDATE voyageone_cms2.cms_bt_task_jiagepilu
+        UPDATE cms_bt_task_jiagepilu
         SET syn_flag = #{synFlag},
         image_status = #{imageStatus},
         modifier = #{modifier},
@@ -204,6 +204,17 @@
         <if test="!force">
             AND syn_flag > 0
         </if>
+    </update>
+
+    <update id="rebeatFailFlags">
+        UPDATE cms_bt_task_jiagepilu
+        SET syn_flag = #{newSynFlag},
+        image_status = #{imageStatus},
+        modifier = #{modifier},
+        modified = NOW()
+        WHERE
+            task_id = #{taskId}
+        AND syn_flag = #{synFlag,jdbcType=INTEGER}
     </update>
 
 </mapper>
