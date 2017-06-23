@@ -283,11 +283,14 @@ public class TaobaoScItemService extends BaseService {
 		String outerId = String.valueOf(skuMap.get("outer_id"));
 		String skuId = String.valueOf(skuMap.get("sku_id")); // 可能为null
 		String qty = String.valueOf(skuMap.get("quantity"));
-		if ((StringUtils.isEmpty(skuId) || "null".equals(skuId))) {
-			skuId = "0";
-		}
-		if (!StringUtils.isEmpty(skuIdScIdMap.get(skuId))) {
-			return skuIdScIdMap.get(skuId);
+		if (StringUtils.isNullOrBlank2(skuId)) {
+			if (!StringUtils.isEmpty(skuIdScIdMap.get("0"))) {
+				return skuIdScIdMap.get("0");
+			}
+		} else {
+			if (!StringUtils.isEmpty(skuIdScIdMap.get(skuId))) {
+				return skuIdScIdMap.get(skuId);
+			}
 		}
 
 		ScItem scItem = sxData.getScItemMap().get(outerId);
