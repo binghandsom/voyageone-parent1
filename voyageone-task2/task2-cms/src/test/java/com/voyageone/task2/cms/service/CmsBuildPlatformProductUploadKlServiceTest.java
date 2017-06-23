@@ -44,7 +44,8 @@ public class CmsBuildPlatformProductUploadKlServiceTest {
     private SxProductService sxProductService;
     @Autowired
     private KoalaItemService koalaItemService;
-
+    @Autowired
+    private CmsPlatformProductImportKlFieldsService fieldsService;
 
     @Test
     public void testInsertCmsBtKlSku() {
@@ -141,5 +142,16 @@ public class CmsBuildPlatformProductUploadKlServiceTest {
 
         cmsBuildPlatformProductUploadKlService.uploadProduct(cmsBtSxWorkloadModel, shopProp, channelConfigValueMap, categoryMappingListMap);
     }
+
+    @Test
+    public void testGetItemData() {
+        String channelId = "001";
+        String cartId = "34";
+        String status = "5";
+        String productId = null;
+        fieldsService.doMain(channelId, cartId, productId, status, "1");
+
+    }
+
 
 }
