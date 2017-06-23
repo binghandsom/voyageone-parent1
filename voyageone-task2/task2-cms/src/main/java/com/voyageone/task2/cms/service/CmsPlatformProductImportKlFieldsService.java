@@ -240,9 +240,9 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService {
         cmsBtProductGroup.setPlatformPid(platformPid);
 
         // status
-        int klPlatformStatus = itemEdit.getRawItemEdit().getItemEditStatus();
+        CmsPlatformProductImportKlFieldsService.PlatformStatus klPlatformStatus = CmsPlatformProductImportKlFieldsService.PlatformStatus.parse(itemEdit.getRawItemEdit().getItemOnlineStatus());
         CmsConstants.PlatformStatus status;
-        if (klPlatformStatus == Integer.parseInt(CmsPlatformProductImportKlFieldsService.PlatformStatus.ON_SALE.value())) {
+        if (klPlatformStatus == CmsPlatformProductImportKlFieldsService.PlatformStatus.ON_SALE) {
             status = CmsConstants.PlatformStatus.OnSale;
         } else {
             status = CmsConstants.PlatformStatus.InStock;
@@ -329,7 +329,7 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService {
             });
 
             updateMap.put("platforms.P" + cartId + ".pProductId", platformPid);
-            if (klPlatformStatus == Integer.parseInt(CmsPlatformProductImportKlFieldsService.PlatformStatus.ON_SALE.value())) {
+            if (klPlatformStatus == CmsPlatformProductImportKlFieldsService.PlatformStatus.ON_SALE) {
                 // 出售中
                 updateMap.put("platforms.P" + cartId + ".pStatus", CmsConstants.PlatformStatus.OnSale.name());
                 updateMap.put("platforms.P" + cartId + ".pReallyStatus", CmsConstants.PlatformStatus.OnSale.name());

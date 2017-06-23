@@ -43,6 +43,8 @@ public class CmsBuildPlatformProductUploadKlServiceTest {
     @Autowired
     private KoalaItemService koalaItemService;
     @Autowired
+    private CmsPlatformProductImportKlGroupService groupService;
+    @Autowired
     private CmsPlatformProductImportKlFieldsService fieldsService;
 
     @Test
@@ -145,7 +147,7 @@ public class CmsBuildPlatformProductUploadKlServiceTest {
     public void testGetItemData() {
         String channelId = "001";
         String status = "5";
-        String pid = null;
+        String pid = "205215-31007";
         String runType = null;
         Map<String, Object> messageMap = new HashMap<>();
         messageMap.put("channelId", channelId);
@@ -154,6 +156,7 @@ public class CmsBuildPlatformProductUploadKlServiceTest {
         messageMap.put("runType", runType);
 
         try {
+//            groupService.onStartup(messageMap);
             fieldsService.onStartup(messageMap);
         } catch (Exception e) {
             e.printStackTrace();
