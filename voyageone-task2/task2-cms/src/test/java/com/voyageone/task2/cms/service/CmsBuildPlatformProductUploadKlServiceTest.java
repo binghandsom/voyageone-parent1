@@ -1,8 +1,11 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.ecerp.interfaces.third.koala.KoalaItemService;
 import com.voyageone.ecerp.interfaces.third.koala.beans.ItemImgUploadResponse;
@@ -10,6 +13,7 @@ import com.voyageone.ecerp.interfaces.third.koala.beans.KoalaConfig;
 import com.voyageone.ecerp.interfaces.third.koala.beans.response.SkuOuterIdResult;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +44,8 @@ public class CmsBuildPlatformProductUploadKlServiceTest {
     private SxProductService sxProductService;
     @Autowired
     private KoalaItemService koalaItemService;
-
+    @Autowired
+    private CmsPlatformProductImportKlFieldsService fieldsService;
 
     @Test
     public void testInsertCmsBtKlSku() {
@@ -102,8 +109,49 @@ public class CmsBuildPlatformProductUploadKlServiceTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    @Test
+    public void testUploadProduct() {
+        // 清除缓存（cms.channel_config表）
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_ShopConfigs.toString());
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_ShopConfigConfigs.toString());
+
+
+        String channelId = "001";
+        int cartId = 34;
+        Long groupId = Long.parseLong("11292497");
+        // 保存渠道级别(channel)的共通配置项目(从cms_mt_channel_config表中取得的)
+        Map<String, String> channelConfigValueMap = new ConcurrentHashMap<>();
+        // 取得cms_mt_channel_config表中配置的渠道级别的配置项目值(如：颜色别名等)
+        cmsBuildPlatformProductUploadKlService.doChannelConfigInit(channelId, cartId, channelConfigValueMap);
+
+        // 从cms_mt_channel_condition_mapping_config表中取得当前渠道的取得产品主类目与天猫平台叶子类目(或者平台一级类目)，以及feed类目id和天猫平台类目之间的mapping关系数据
+        Map<String, List<Map<String, String>>> categoryMappingListMap = cmsBuildPlatformProductUploadKlService.getCategoryMapping(channelId, cartId);
+
+        CmsBtSxWorkloadModel cmsBtSxWorkloadModel = new CmsBtSxWorkloadModel();
+        cmsBtSxWorkloadModel.setGroupId(groupId);
+        cmsBtSxWorkloadModel.setChannelId(channelId);
+        cmsBtSxWorkloadModel.setCartId(cartId);
+        cmsBtSxWorkloadModel.setPublishStatus(0);
+        cmsBtSxWorkloadModel.setCreater("test");
+
+
+        ShopBean shopProp = Shops.getShop(channelId, cartId);
+
+        cmsBuildPlatformProductUploadKlService.uploadProduct(cmsBtSxWorkloadModel, shopProp, channelConfigValueMap, categoryMappingListMap);
+    }
+
+    @Test
+    public void testGetItemData() {
+        String channelId = "001";
+        String cartId = "34";
+        String status = "5";
+        String productId = null;
+        fieldsService.doMain(channelId, cartId, productId, status, "1");
 
     }
+
 
 }

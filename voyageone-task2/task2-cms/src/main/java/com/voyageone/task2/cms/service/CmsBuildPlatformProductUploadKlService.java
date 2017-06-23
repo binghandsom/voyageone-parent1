@@ -21,9 +21,6 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.jd.service.JdSaleService;
-import com.voyageone.components.jd.service.JdSkuService;
-import com.voyageone.components.jd.service.JdWareNewService;
 import com.voyageone.ecerp.interfaces.third.koala.KoalaItemService;
 import com.voyageone.ecerp.interfaces.third.koala.beans.KoalaApiError;
 import com.voyageone.ecerp.interfaces.third.koala.beans.KoalaConfig;
@@ -36,11 +33,10 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtKlSkuDao;
 import com.voyageone.service.dao.cms.CmsMtChannelConditionMappingConfigDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
-import com.voyageone.service.impl.cms.*;
-import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.CmsMtPlatformSkusService;
+import com.voyageone.service.impl.cms.DictService;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
+import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
@@ -54,7 +50,6 @@ import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
-import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,20 +77,6 @@ import java.util.stream.Stream;
 @Service
 public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService {
 
-    // 考拉平台的操作类型(在售)
-    // charis update
-//    private final static String OptioinType_onsale = "onsale";
-    private final static int OptioinType_onsale = 8;
-    // 考拉平台的操作类型(在库)
-    // charis update
-//    private final static String OptioinType_offsale = "offsale";
-    private final static int OptioinType_offsale = 2;
-    // 考拉平台商品状态（从未上架）
-    private final static int OptionType_neverSale = 1;
-    // 价格类型(市场价格)
-    //private final static String PriceType_marketprice = "retail_price";
-    // 价格类型(考拉价格)
-    //private final static String PriceType_jdprice = "sale_price";
     // 商品预定义属性值列表
     private final static String Attributes = "attributes";
     // 用户自行输入的属性值串
@@ -104,16 +85,12 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
 //    private final static String Prop_ShopCategory = "seller_cids_";
     // 考拉运费模板
     private final static String Prop_TransportId = "transportid_";
-    // 考拉关联板式
-    private final static String Prop_CommonHtmlId = "commonhtml_id_";
     // SKU属性类型(颜色)
     private final static String AttrType_Color = "c";
     // SKU属性类型(尺寸)
     private final static String AttrType_Size = "s";
     // SKU属性Active
     private final static int AttrType_Active_1 = 1;
-    // 分隔符(tab)
-//    private final static String Separtor_Xor = "^";
     // 分隔符(|)
     private final static String Separtor_Vertical = "|";
     // 分隔符(-)
@@ -126,8 +103,6 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     private final static String Separtor_Coma = ",";
     // 分隔符(^)
     private final static String Separtor_Caret = "^";
-    // 商品主图颜色值Id(0000000000)
-    private final static String ColorId_MainPic = "0000000000";
     // 销售属性_颜色和尺码都有
     private final static String SaleProp_Both_Color_Size_1 = "1";
     // 销售属性_只有颜色没有尺码属性
@@ -136,9 +111,8 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     private final static String SaleProp_Only_Size_3 = "3";
     // 销售属性_颜色和尺码都没有
     private final static String SaleProp_None_Color_Size_4 = "4";
-    // charis update
     // 特殊属性Key(七天无理由退货)
-    private final static String Is7ToReturn = "is7ToReturn";
+//    private final static String Is7ToReturn = "is7ToReturn";
 
     private static final int CART_ID = CartEnums.Cart.KL.getValue();
 
@@ -149,33 +123,13 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     @Autowired
     private PlatformCategoryService platformCategoryService;
     @Autowired
-    private ConditionPropValueRepo conditionPropValueRepo;
-    @Autowired
-    private JdWareNewService jdWareNewService;
-    @Autowired
-    private JdSaleService jdSaleService;
-    @Autowired
     private CmsMtPlatformSkusService cmcMtPlatformSkusService;
     @Autowired
     private SxProductService sxProductService;
     @Autowired
     private ProductService productService;
     @Autowired
-    private ProductGroupService productGroupService;
-    @Autowired
-    private CmsBtPlatformActiveLogDao cmsBtPlatformActiveLogDao;
-    @Autowired
-    private MongoSequenceService sequenceService;
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
-    @Autowired
-    private JdSkuService jdSkuService;
-    @Autowired
-    private CmsPlatformTitleTranslateMqService cmsTranslateMqService;
-    @Autowired
     private CmsMtChannelConditionMappingConfigDao cmsMtChannelConditionMappingConfigDao;
-    @Autowired
-    private CmsBtSxWorkloadDaoExt sxWorkloadDao;
     @Autowired
     private KoalaItemService koalaItemService;
     @Autowired
@@ -485,9 +439,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         try {
             // 上新用的商品数据信息取得 // TODO：这段翻译写得不好看， 以后再改 Tom
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
-            if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) throw new BusinessException("已经上新过,考拉不能更新商品!");
-            cmsTranslateMqService.executeSingleCode(channelId, 0, sxData.getMainProduct().getCommon().getFields().getCode(), "0");
-            sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
+            if (!StringUtils.isEmpty(sxData.getPlatform().getPlatformPid())) throw new BusinessException("已经上新过,考拉不能更新商品!");
             if (sxData == null) {
                 throw new BusinessException("取得上新用的商品数据信息失败！请向管理员确认 [sxData=null]");
             }
@@ -748,14 +700,14 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                 }
             }
 
-            String numIId = response.getKey();
+            String platformPid = response.getKey();
             SkuOuterIdResult[] skuKeys = response.getSkuKeys();
 
             // 上新成功时状态回写操作
-            sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, numIId, CmsConstants.PlatformStatus.InStock, "", getTaskName());
+            sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, "", CmsConstants.PlatformStatus.InStock, platformPid, getTaskName());
 
             // 回写cms_bt_kl_sku
-            saveCmsBtKlSku(channelId, sxData, listSxCode, numIId, skuKeys);
+            saveCmsBtKlSku(channelId, sxData, listSxCode, "", skuKeys);
 
             if (ChannelConfigEnums.Channel.SN.getId().equals(channelId)) {
                 // Sneakerhead
@@ -893,8 +845,9 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         }
         if (StringUtils.isEmpty(itemNO)) {
             // 默认使用model来设置
-            // TODO:之后可能一个group一个code,那就改成code
-            klAddBean.setItemNO(mainProduct.getCommonNotNull().getFieldsNotNull().getModel());
+            // TODO:暂时一个group一个code,改成code
+//            klAddBean.setItemNO(mainProduct.getCommonNotNull().getFieldsNotNull().getModel());
+            klAddBean.setItemNO(mainProduct.getCommonNotNull().getFieldsNotNull().getCode());
         } else {
             // 如果有填了的话, 那就用运营自己填写的来设置
             klAddBean.setItemNO(itemNO);
@@ -1359,16 +1312,24 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         // 我们设置skuCode
         StringBuffer sbOuterId = new StringBuffer();
 
-        // TODO:先随便填坑，取别名，之后试试看用对应颜色尺码去上
         // TODO:没有颜色没有尺码怎么上新，还不知道，碰到了再说
 
         // 根据product列表循环设置该商品的SKU属性
         for (CmsBtProductModel objProduct : productList) {
             // 取得颜色别名的值
             String colorAlias = getColorAlias(objProduct, StringUtils.toString(sxData.getCartId()), channelConfigValueMap);
+
+            // 20170620 优先匹配考拉给的颜色列表 charis STA
+            String attrColorValueId = cmsColorList.get(0).getAttrValue().split(Separtor_Colon)[0];
+            CmsMtPlatformSkusModel colorModel = cmsColorList.stream()
+                    .filter(c -> c.getAttrName().equals(colorAlias))
+                    .findFirst()
+                    .orElse(null);
+            // 20170620 优先匹配考拉给的颜色列表 charis END
+
             String productCode = objProduct.getCommon().getFields().getCode();
-            CmsMtPlatformSkusModel colorModel = cmsColorList.get(0);
-            cmsColorList.remove(0);
+//            CmsMtPlatformSkusModel colorModel = cmsColorList.get(0);
+//            cmsColorList.remove(0);
 
             String picUrl;
             // 属性图片
@@ -1397,35 +1358,56 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
 
                     // 上新用尺码别名
                     String sizeSx = objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
-                    CmsMtPlatformSkusModel sizeModel = skuSizeMap.get(sizeSx);
-                    if (sizeModel == null) {
-                        sizeModel = cmsSizeList.get(0);
-                        cmsSizeList.remove(0);
-                        skuSizeMap.put(sizeSx, sizeModel);
-                    }
-                    String sizeVal = sizeModel.getAttrValue();
+//                    CmsMtPlatformSkusModel sizeModel = skuSizeMap.get(sizeSx);
+
+                    // 20170620 优先匹配考拉给的尺码列表 charis STA
+                    String attrSizeValueId = cmsSizeList.get(0).getAttrValue().split(Separtor_Colon)[0];
+                    CmsMtPlatformSkusModel sizeModel = cmsSizeList.stream()
+                            .filter(c -> c.getAttrName().equals(sizeSx))
+                            .findFirst()
+                            .orElse(null);
+                    // 20170620 优先匹配考拉给的尺码列表 charis END
+
+//                    if (sizeModel == null) {
+//                        sizeModel = cmsSizeList.get(0);
+//                        cmsSizeList.remove(0);
+//                        skuSizeMap.put(sizeSx, sizeModel);
+//                    }
+//                    String sizeVal = sizeModel.getAttrValue();
 
                     // 设置SKU颜色和尺码销售属性
                     switch (salePropStatus) {
                         case SaleProp_Both_Color_Size_1:
                             // 颜色和尺码属性都有时
-//                            sbPropertyValue.append(colorModel.getAttrValue()).append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 颜色
-                            sbPropertyValue.append(colorModel.getAttrValue().split(Separtor_Colon)[0]).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 自定义颜色
+                            if (colorModel == null) {
+                                sbPropertyValue.append(attrColorValueId).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(productCode).append(Separtor_Colon).append(picUrl); // 自定义颜色
+                            } else {
+                                sbPropertyValue.append(colorModel.getAttrValue()).append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 颜色
+                            }
                             sbPropertyValue.append(Separtor_Semicolon);
-//                            sbPropertyValue.append(sizeVal).append(Separtor_Colon).append(sizeSx); // 尺码
-                            sbPropertyValue.append(sizeVal.split(Separtor_Colon)[0]).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(sizeSx); // 自定义尺码
+                            if (sizeModel == null) {
+                                sbPropertyValue.append(attrSizeValueId).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(sizeSx); // 自定义尺码
+                            } else {
+                                sbPropertyValue.append(sizeModel.getAttrValue()).append(Separtor_Colon).append(sizeSx); // 尺码
+                            }
                             sbPropertyValue.append(Separtor_Vertical);
                             break;
                         case SaleProp_Only_Color_2:
                             // 只有颜色属性时
-//                            sbPropertyValue.append(colorModel.getAttrValue()).append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 颜色
-                            sbPropertyValue.append(colorModel.getAttrValue().split(Separtor_Colon)[0]).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 自定义颜色
+                            if (colorModel == null) {
+                                sbPropertyValue.append(attrColorValueId).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(productCode).append(Separtor_Colon).append(picUrl); // 自定义颜色
+                            } else {
+                                sbPropertyValue.append(colorModel.getAttrValue()).append(Separtor_Colon).append(colorAlias).append(Separtor_Colon).append(picUrl); // 颜色
+                            }
                             sbPropertyValue.append(Separtor_Vertical);
                             break;
                         case SaleProp_Only_Size_3:
                             // 只有尺码属性时
-//                            sbPropertyValue.append(sizeVal).append(Separtor_Colon).append(colorAlias + sizeSx); // 尺码
-                            sbPropertyValue.append(sizeVal.split(Separtor_Colon)[0]).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(sizeSx); // 自定义尺码
+                            if (sizeModel == null) {
+                                sbPropertyValue.append(attrSizeValueId).append(Separtor_Colon).append("-1").append(Separtor_Colon).append(sizeSx); // 自定义尺码
+                            } else {
+                                sbPropertyValue.append(sizeModel.getAttrValue()).append(Separtor_Colon).append(sizeSx); // 尺码
+                            }
                             sbPropertyValue.append(Separtor_Vertical);
                             break;
                     }

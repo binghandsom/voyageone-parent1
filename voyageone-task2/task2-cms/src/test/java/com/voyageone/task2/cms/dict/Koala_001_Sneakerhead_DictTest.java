@@ -176,7 +176,7 @@ public class Koala_001_Sneakerhead_DictTest extends BaseDictTest {
         // 根字典
         RuleExpression ruleRoot = new RuleExpression();
 
-        String imageTemplateUrl = "http://s7d5.scene7.com/is/image/sneakerhead/sn-kaola-xq-750x1390?$kaola750x1390$&$k1=%s&$k2=%s&$k3=%s&$k4=%s&$k5=%s&$k6=%s&$k7=%s&$kaola-wz=%s";
+        String imageTemplateUrl = "http://s7d5.scene7.com/is/image/sneakerhead/sn-kaola-xq-750x2220?$750x2220$&$kl1=%s&$kl2=%s&$kl3=%s&$kl4=%s&$kl5=%s&$kl6=%s&$kaola-wz=%s";
         if (idx == 0) {
 
             // 前缀
@@ -189,7 +189,7 @@ public class Koala_001_Sneakerhead_DictTest extends BaseDictTest {
                 // 设置参数imageParams的值
                 List<RuleExpression> imageParams = new ArrayList<>();
                 // 主商品， 第1~5张商品图
-                for (int iImgIdx = 0; iImgIdx < 5; iImgIdx++) {
+                for (int iImgIdx = 0; iImgIdx < 4; iImgIdx++) {
 
                     RuleExpression ruleExpression = new RuleExpression();
                     CustomModuleUserParamGetProductFieldInfo customModuleParam = new CustomModuleUserParamGetProductFieldInfo();
@@ -297,7 +297,7 @@ public class Koala_001_Sneakerhead_DictTest extends BaseDictTest {
                 // 设置参数imageParams的值
                 List<RuleExpression> imageParams = new ArrayList<>();
                 // 非主商品， 第1~5张商品图
-                for (int iImgIdx = 0; iImgIdx < 5; iImgIdx++) {
+                for (int iImgIdx = 0; iImgIdx < 4; iImgIdx++) {
 
                     RuleExpression ruleExpression = new RuleExpression();
                     CustomModuleUserParamGetProductFieldInfo customModuleParam = new CustomModuleUserParamGetProductFieldInfo();
