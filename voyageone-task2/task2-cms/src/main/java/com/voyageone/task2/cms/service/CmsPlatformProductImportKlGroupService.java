@@ -15,7 +15,6 @@ import com.voyageone.ecerp.interfaces.third.koala.beans.request.ItemBatchStatusG
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.CmsBtPlatformNumiidDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.daoext.cms.CmsBtPlatformNumiidDaoExt;
 import com.voyageone.service.impl.cms.product.CmsProductCodeChangeGroupService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
@@ -58,8 +57,6 @@ public class CmsPlatformProductImportKlGroupService extends BaseMQCmsService {
 
     @Autowired
     private CmsBtPlatformNumiidDao cmsBtPlatformNumiidDao;
-    @Autowired
-    private CmsBtPlatformNumiidDaoExt cmsBtPlatformNumiidDaoExt;
 
     /**
      * runType=1的话，继续做取得考拉上商品属性并回写的事情  runType=2 从cms_bt_platform_numiid表里抽出numIId(商品key)去做
@@ -72,7 +69,7 @@ public class CmsPlatformProductImportKlGroupService extends BaseMQCmsService {
             channelId = String.valueOf(messageMap.get("channelId"));
         }
         String cartId = CartEnums.Cart.KL.getId();
-        String pid = null; // 产品id，对应考拉的
+        String pid = null; // 产品id，对应考拉的商品key
         if (messageMap.containsKey("pid")) {
             pid = String.valueOf(messageMap.get("pid"));
         }
@@ -121,6 +118,8 @@ public class CmsPlatformProductImportKlGroupService extends BaseMQCmsService {
                 e.printStackTrace();
             }
         }
+
+        $info("finish MqTask[CmsPlatformProductImportKlGroupService根据考拉现在商品分组情况来进行cms的产品code拆分合并]");
 
         if ("1".equals(runType) && StringUtils.isEmpty(pid) && isSuccess) {
             // 继续做
@@ -175,22 +174,12 @@ public class CmsPlatformProductImportKlGroupService extends BaseMQCmsService {
                 index++;
             }
             // 300一更新
-            updateCmsBtPlatformNumiid(channelId, cartId, listSuccessPid, listErrorPid);
+            cmsPlatformProductImportKlFieldsService.updateCmsBtPlatformNumiid(channelId, cartId, listSuccessPid, listErrorPid);
             listSuccessPid.clear();
             listErrorPid.clear();
         }
 
         return hasErrorData;
-    }
-
-    private void updateCmsBtPlatformNumiid(String channelId, int cartId, List<String> listSuccessPid, List<String> listErrorPid) {
-        if (listSuccessPid.size() > 0) {
-            cmsBtPlatformNumiidDaoExt.updateStatusByNumiids(channelId, cartId, "1", getTaskName(), listSuccessPid);
-        }
-        if (listErrorPid.size() > 0) {
-            cmsBtPlatformNumiidDaoExt.updateStatusByNumiids(channelId, cartId, "2", getTaskName(), listErrorPid);
-        }
-        $info(String.format("cms_bt_platform_numiid表里,成功%d个,失败%d个!", listSuccessPid.size(), listErrorPid.size()));
     }
 
     private void executeSingle(KoalaConfig shopBean, String channelId, String cartId, String platformPid) throws Exception {

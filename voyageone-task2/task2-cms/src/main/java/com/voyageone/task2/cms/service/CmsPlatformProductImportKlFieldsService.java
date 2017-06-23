@@ -1,29 +1,32 @@
 package com.voyageone.task2.cms.service;
 
-import com.jd.open.api.sdk.JdException;
-import com.jd.open.api.sdk.domain.ware.Ware;
-import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
-import com.voyageone.common.util.ListUtils;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.ecerp.interfaces.third.koala.KoalaItemService;
-import com.voyageone.ecerp.interfaces.third.koala.beans.ItemEdit;
-import com.voyageone.ecerp.interfaces.third.koala.beans.KoalaConfig;
-import com.voyageone.ecerp.interfaces.third.koala.beans.PagedItemEdit;
+import com.voyageone.ecerp.interfaces.third.koala.beans.*;
 import com.voyageone.ecerp.interfaces.third.koala.beans.request.ItemBatchStatusGetRequest;
 import com.voyageone.service.dao.cms.CmsBtPlatformNumiidDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.daoext.cms.CmsBtPlatformNumiidDaoExt;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPlatformNumiidModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -31,16 +34,321 @@ import java.util.stream.Collectors;
  */
 @Service
 @RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_KLFieldsImportCms2Job)
-public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService{
+public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService {
 
-    private static String cartId = CartEnums.Cart.KL.getId();
-
+    // 考拉类目属性的输入属性类型(3:下拉列表)
+    private final static String Input_Type_3_LIST = "3";
+    // 考拉类目属性的输入属性类型(4:单选框)
+    private final static String Input_Type_4_SIMPLECHECK = "RADIO";
+    // 考拉类目属性的输入属性类型(5:多选框)
+    private final static String Input_Type_5_MULTICHECK = "CHECKBOX";
     @Autowired
     private KoalaItemService koalaItemService;
     @Autowired
+    private ProductGroupService productGroupService;
+    @Autowired
+    private PlatformCategoryService platformCategoryService;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
+    @Autowired
     private CmsBtPlatformNumiidDao cmsBtPlatformNumiidDao;
     @Autowired
-    private ProductGroupService productGroupService;
+    private CmsBtPlatformNumiidDaoExt cmsBtPlatformNumiidDaoExt;
+
+    /**
+     * runType=1或者空的话，根据入参的pid或者status批量处理  runType=2 从cms_bt_platform_numiid表里抽出numIId(商品key)去做
+     */
+    @Override
+    protected void onStartup(Map<String, Object> messageMap) throws Exception {
+
+        String channelId = null;
+        if (messageMap.containsKey("channelId")) {
+            channelId = String.valueOf(messageMap.get("channelId"));
+        }
+        String cartId = CartEnums.Cart.KL.getId();
+
+        String pid = null; // 产品id，对应考拉的商品key
+        if (messageMap.containsKey("pid")) {
+            pid = String.valueOf(messageMap.get("pid"));
+        }
+
+        String runType = null; // runType=2 从cms_bt_platform_numiid表里抽出numIId去做
+        if (messageMap.containsKey("runType")) {
+            runType = String.valueOf(messageMap.get("runType"));
+        }
+
+        PlatformStatus status = null;
+        String platformStatus = null;
+        if (messageMap.containsKey("platformStatus")) {
+            platformStatus = String.valueOf(messageMap.get("platformStatus"));
+            status = PlatformStatus.parse(platformStatus);
+            if (status == null) {
+                $error("入参平台状态platformStatus输入错误!");
+                return;
+            }
+        }
+
+        if (!"2".equals(runType)) {
+            if (StringUtils.isEmpty(pid) && StringUtils.isEmpty(platformStatus)) {
+                $error("入参未指定pid,必须指定平台状态platformStatus!");
+                return;
+            }
+        }
+
+        KoalaConfig shopBean = Shops.getShopKoala(channelId, cartId);
+
+        try {
+            if ("2".equals(runType)) {
+                // 从cms_bt_platform_numiid表里抽出numIId(商品key)去做
+                executeFromTable(shopBean, channelId, Integer.parseInt(cartId));
+            } else if (StringUtils.isEmpty(pid)) {
+                // 未指定某个商品，全店处理
+                executeAll(shopBean, channelId, cartId, status);
+            } else {
+                // 只处理指定的商品
+                executeSingle(shopBean, channelId, cartId, pid);
+            }
+        } catch (Exception e) {
+            if (e instanceof BusinessException) {
+                $error(e.getMessage());
+            } else {
+                e.printStackTrace();
+            }
+        }
+
+        $info("finish MqTask[CmsPlatformProductImportKlFieldsService考拉商品信息回写]");
+
+    }
+
+    private boolean executeFromTable(KoalaConfig shopBean, String channelId, int cartId) {
+        Map<String, Object> seachParam = new HashMap<>();
+        seachParam.put("channelId", channelId);
+        seachParam.put("cartId", cartId);
+        seachParam.put("status", "0");
+        List<CmsBtPlatformNumiidModel> listModel = cmsBtPlatformNumiidDao.selectList(seachParam);
+        if (ListUtils.isNull(listModel)) {
+            $warn("cms_bt_platform_numiid表未找到符合的数据!");
+            return false;
+        }
+        List<String> listSuccessPid = new ArrayList<>();
+        List<String> listErrorPid = new ArrayList<>();
+        boolean hasErrorData = false;
+        int index = 1;
+        int pageSize = 300;
+        List<List<String>> listAllPid = CommonUtil.splitList(listModel.stream().map(CmsBtPlatformNumiidModel::getNumIid).collect(Collectors.toList()), pageSize);
+        for (List<String> listPid : listAllPid) {
+            ItemEdit[] itemEdits;
+            try {
+                itemEdits = koalaItemService.batchGet(shopBean, listPid.toArray(new String[listPid.size()]));
+            } catch (Exception e) {
+                $error(String.format("调用获取商品信息API失败!channelId:%s, cartId:%s, pid:%s!" + e.getMessage(), channelId, cartId, listPid));
+                index = index + pageSize;
+                continue;
+            }
+
+            for (ItemEdit itemEdit : itemEdits) {
+                String platformPid = itemEdit.getKey();
+                $info(String.format("%s-%s-%s考拉属性取得 %d/%d", channelId, cartId, platformPid, index, listModel.size()));
+                try {
+                    doSetProduct(channelId, cartId, itemEdit);
+                    listSuccessPid.add(platformPid);
+                } catch (Exception e) {
+                    hasErrorData = true;
+                    listErrorPid.add(platformPid);
+                    if (e instanceof BusinessException) {
+                        $error(String.format("channelId:%s, cartId:%s, pid:%s 属性取得失败!" + e.getMessage(), channelId, cartId, platformPid));
+                    } else {
+                        $error(String.format("channelId:%s, cartId:%s, pid:%s 属性取得失败!", channelId, cartId, platformPid));
+                        e.printStackTrace();
+                    }
+                }
+                index++;
+            }
+            // 300一更新
+            updateCmsBtPlatformNumiid(channelId, cartId, listSuccessPid, listErrorPid);
+            listSuccessPid.clear();
+            listErrorPid.clear();
+        }
+
+        return hasErrorData;
+    }
+
+    void updateCmsBtPlatformNumiid(String channelId, int cartId, List<String> listSuccessPid, List<String> listErrorPid) {
+        if (listSuccessPid.size() > 0) {
+            cmsBtPlatformNumiidDaoExt.updateStatusByNumiids(channelId, cartId, "1", getTaskName(), listSuccessPid);
+        }
+        if (listErrorPid.size() > 0) {
+            cmsBtPlatformNumiidDaoExt.updateStatusByNumiids(channelId, cartId, "2", getTaskName(), listErrorPid);
+        }
+        $info(String.format("cms_bt_platform_numiid表里,成功%d个,失败%d个!", listSuccessPid.size(), listErrorPid.size()));
+    }
+
+    private void executeSingle(KoalaConfig shopBean, String channelId, String cartId, String platformPid) throws Exception {
+        ItemEdit itemEdit = koalaItemService.itemGet(shopBean, platformPid);
+        if (itemEdit == null) {
+            throw new BusinessException(String.format("考拉平台未找到此商品key[%s]", platformPid));
+        }
+        doSetProduct(channelId, Integer.parseInt(cartId), itemEdit);
+    }
+
+    private boolean executeAll(KoalaConfig shopBean, String channelId, String cartId, CmsPlatformProductImportKlFieldsService.PlatformStatus status) throws Exception {
+        List<String> errorList = new ArrayList<>();
+        ItemBatchStatusGetRequest req = new ItemBatchStatusGetRequest();
+        req.setItemEditStatus(Integer.parseInt(status.value()));
+        int pageNo = 1;
+        int pageSize = 100;
+        while (true) {
+            req.setPageNo(pageNo++);
+            req.setPageSize(pageSize);
+            PagedItemEdit edit = koalaItemService.batchStatusGet(shopBean, req);
+            if (edit.getTotalCount() == 0) {
+                break;
+            }
+
+            int index = 1;
+            for (ItemEdit itemEdit : edit.getItemEditList()) {
+                $info(String.format("%s-%s-%s考拉[%s]属性取得 %d/%d", channelId, cartId, itemEdit.getKey(), status.name(), index, edit.getTotalCount()));
+                try {
+                    doSetProduct(channelId, Integer.valueOf(cartId), itemEdit);
+                } catch (Exception e) {
+                    errorList.add(itemEdit.getKey());
+                    if (e instanceof BusinessException) {
+                        $error(String.format("channelId:%s, cartId:%s, pid:%s 属性取得失败!" + e.getMessage(), channelId, cartId, itemEdit.getKey()));
+                    } else {
+                        $error(String.format("channelId:%s, cartId:%s, pid:%s 属性取得失败!", channelId, cartId, itemEdit.getKey()));
+                        e.printStackTrace();
+                    }
+                }
+                index++;
+            }
+
+            if (edit.getTotalCount() < pageSize) {
+                break;
+            }
+        }
+
+        return errorList.size() == 0;
+    }
+
+    /**
+     * 回写主逻辑
+     * 暂时不回写价格
+     */
+    private void doSetProduct(String channelId, int cartId, ItemEdit itemEdit) throws Exception {
+        String platformPid = itemEdit.getKey();
+        CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByPlatformPid(channelId, cartId, platformPid);
+        cmsBtProductGroup.setPlatformPid(platformPid);
+
+        // status
+        int klPlatformStatus = itemEdit.getRawItemEdit().getItemEditStatus();
+        CmsConstants.PlatformStatus status;
+        if (klPlatformStatus == Integer.parseInt(CmsPlatformProductImportKlFieldsService.PlatformStatus.ON_SALE.value())) {
+            status = CmsConstants.PlatformStatus.OnSale;
+        } else {
+            status = CmsConstants.PlatformStatus.InStock;
+        }
+        cmsBtProductGroup.setPlatformStatus(status);
+
+        // 共通属性
+        RawItemEdit rawItemEdit = itemEdit.getRawItemEdit();
+        Map<String, Object> mapComm = BeanUtils.toMap(rawItemEdit);
+
+        // 类目
+        ItemCategory[] itemCategories = itemEdit.getItemCategoryList();
+        String errMsgCid = String.format("类目取得失败!PlatformPid[%s]", platformPid);
+        if (itemCategories != null && itemCategories.length > 0) {
+            long cid = itemCategories[0].getCategoryId();
+            if (cid > 0) {
+                mapComm.put("cid", String.valueOf(cid));
+            } else {
+                $warn(errMsgCid);
+            }
+        } else {
+            $warn(errMsgCid);
+        }
+
+        // sku属性，暂时不回写
+
+        // 各类目预定义属性，下拉框，单选框，多选框
+        ItemProperty[] itemProperties = itemEdit.getItemPropertyList();
+        Map<String, Object> mapItemProperties = new HashMap<>(); // 下拉框，单选框: String，多选框: List
+        if (itemProperties != null && itemProperties.length > 0) {
+            for (ItemProperty itemProperty : itemProperties) {
+                String id = itemProperty.getPropertyValue().getPropertyNameId();
+                String value = itemProperty.getPropertyValue().getPropertyValueId();
+                String inputType = itemProperty.getPropertyName().getPropertyEditPolicy().getInputType();
+                if (Input_Type_3_LIST.equals(inputType) || Input_Type_4_SIMPLECHECK.equals(inputType)) {
+                    mapItemProperties.put(id, value);
+                } else if (Input_Type_5_MULTICHECK.equals(inputType)) {
+                    List<String> list = (List) mapItemProperties.get(id);
+                    if (list == null) {
+                        list = new ArrayList<>();
+                        mapItemProperties.put(id, list);
+                    }
+                    list.add(value);
+                }
+            }
+        }
+
+        // 各类目自定义属性，输入框
+        ItemTextProperty[] itemTextProperties = itemEdit.getItemTextPropertyList();
+        Map<String, Object> mapItemTextProperties = new HashMap<>();
+        if (itemTextProperties != null && itemTextProperties.length > 0) {
+            for (ItemTextProperty itemTextProperty : itemTextProperties) {
+                mapItemTextProperties.put(itemTextProperty.getPropNameId(), itemTextProperty.getTextValue());
+            }
+        }
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        cmsBtProductGroup.getProductCodes().forEach(s -> {
+            Map<String, Object> queryMap = new HashMap<>();
+            queryMap.put("common.fields.code", s);
+
+            Map<String, Object> updateMap = new HashMap<>();
+            updateMap.put("platforms.P" + cartId + ".modified", DateTimeUtil.getNowTimeStamp());
+            updateMap.put("platforms.P" + cartId + ".modifier", getTaskName());
+            mapComm.forEach((fieldName, value) -> {
+                if ("cid".equals(fieldName)) {
+                    String catId = (String) value;
+                    updateMap.put("platforms.P" + cartId + ".pCatId", catId);
+                    CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = platformCategoryService.getPlatformCatSchema(catId, cartId);
+                    if (cmsMtPlatformCategorySchemaModel != null) {
+                        updateMap.put("platforms.P" + cartId + ".pCatPath", cmsMtPlatformCategorySchemaModel.getCatFullPath());
+                    }
+                } else {
+                    updateMap.put("platforms.P" + cartId + ".fields." + fieldName, value);
+                }
+            });
+
+            mapItemProperties.forEach((fieldName, value) -> {
+                updateMap.put("platforms.P" + cartId + ".fields." + fieldName, value);
+            });
+
+            mapItemTextProperties.forEach((fieldName, value) -> {
+                updateMap.put("platforms.P" + cartId + ".fields." + fieldName, value);
+            });
+
+            updateMap.put("platforms.P" + cartId + ".pProductId", platformPid);
+            if (klPlatformStatus == Integer.parseInt(CmsPlatformProductImportKlFieldsService.PlatformStatus.ON_SALE.value())) {
+                // 出售中
+                updateMap.put("platforms.P" + cartId + ".pStatus", CmsConstants.PlatformStatus.OnSale.name());
+                updateMap.put("platforms.P" + cartId + ".pReallyStatus", CmsConstants.PlatformStatus.OnSale.name());
+            } else {
+                // 仓库中
+                updateMap.put("platforms.P" + cartId + ".pStatus", CmsConstants.PlatformStatus.InStock.name());
+                updateMap.put("platforms.P" + cartId + ".pReallyStatus", CmsConstants.PlatformStatus.InStock.name());
+            }
+
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setUpdateMap(updateMap);
+            model.setQueryMap(queryMap);
+            bulkList.add(model);
+        });
+
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
+        productGroupService.update(cmsBtProductGroup);
+
+    }
 
     /**
      * 平台状态
@@ -86,10 +394,6 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService{
             this.value = value;
         }
 
-        String value() {
-            return value;
-        }
-
         static PlatformStatus parse(String value) {
             switch (value) {
                 case "1":
@@ -120,167 +424,10 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService{
                     return null;
             }
         }
+
+        String value() {
+            return value;
+        }
     }
-
-    @Override
-    protected void onStartup(Map<String, Object> messageMap) throws Exception {
-
-        String channelId = null;
-        if (messageMap.containsKey("channelId")) {
-            channelId = String.valueOf(messageMap.get("channelId"));
-        }
-
-        String productId = null;
-        if (messageMap.containsKey("productId")) {
-            productId = String.valueOf(messageMap.get("productId"));
-        }
-        // 商品的状态(1:待提交审核, 2:审核中, 3:审核未通过, 4:待上架(审核已通过), 5:在售, 6:下架, 7:已删除, 8:强制下架)
-        String status = null;
-        if (messageMap.containsKey("status")) {
-            status = String.valueOf(messageMap.get("status"));
-            PlatformStatus platformStatus = PlatformStatus.parse(status);
-            if (platformStatus == null) {
-                $error("入参平台状态platformStatus输入错误!");
-                return;
-            }
-        }
-
-        String runType = null; // runType=2 从cms_bt_platform_numiid表里抽出numIId去做
-        if (messageMap.containsKey("runType")) {
-            runType = String.valueOf(messageMap.get("runType"));
-        }
-
-        doMain(channelId, cartId, productId, status, runType);
-
-    }
-
-    public void doMain(String channelId, String cartId, String productId, String status, String runType) {
-        KoalaConfig koalaConfig = Shops.getShopKoala(channelId, cartId);
-        koalaConfig.setSessionkey("GwtM96");
-        koalaConfig.setUseProxy(false);
-
-
-        JongoQuery queryObject = new JongoQuery();
-
-        String query = "cartId:" + cartId;
-        List<String> listAllNumiid = null;
-        List<String> listSuccessNumiid = new ArrayList<>();
-        List<String> listErrorNumiid = new ArrayList<>();
-
-        if (StringUtils.isEmpty(status)) {
-            if ("2".equals(runType)) {
-                // 从cms_bt_platform_numiid表里抽出numIId去做
-                Map<String, Object> seachParam = new HashMap<>();
-                seachParam.put("channelId", channelId);
-                seachParam.put("cartId", cartId);
-                seachParam.put("status", "0");
-                List<CmsBtPlatformNumiidModel> listModel = cmsBtPlatformNumiidDao.selectList(seachParam);
-                if (ListUtils.isNull(listModel)) {
-                    $warn("cms_bt_platform_numiid表未找到符合的数据!");
-                    return;
-                }
-                listAllNumiid = listModel.stream().map(CmsBtPlatformNumiidModel::getNumIid).collect(Collectors.toList());
-                // 表的数据都是自己临时加的，一次处理多少件自己决定，因此暂时不分批处理了，尽量别一次处理太多，不然sql可能撑不住
-                query = query + "," + "platformPid:{$in:[\"" + listModel.stream().map(CmsBtPlatformNumiidModel::getNumIid).collect(Collectors.joining("\",\"")) + "\"]}";
-            } else {
-                if (!StringUtils.isEmpty(productId)) {
-                    query = query + "," + "platformPid:\"" + productId + "\"";
-                } else {
-                    query = query + ",platformPid:{$nin:[\"\",null]}";
-                }
-
-            }
-            queryObject.setQuery("{" + query + "}");
-            List<CmsBtProductGroupModel> cmsBtProductGroupModels = productGroupService.getList(channelId, queryObject);
-
-
-            for (int i = 0; i < cmsBtProductGroupModels.size(); i++) {
-                CmsBtProductGroupModel item = cmsBtProductGroupModels.get(i);
-                if ("2".equals(runType)) {
-                    listAllNumiid.remove(item.getNumIId());
-                }
-
-                try {
-                    $info(String.format("%s-%s-%s考拉属性取得 %d/%d", channelId, cartId, item.getPlatformPid(), i + 1, cmsBtProductGroupModels.size()));
-//                    doSetProduct(koalaConfig, item, channelId, Integer.valueOf(cartId));
-                    listSuccessNumiid.add(item.getNumIId());
-                    $info(String.format("channelId:%s, cartId:%s, numIId:%s 取得成功!", channelId, cartId, item.getPlatformPid()));
-                } catch (Exception e) {
-                    listErrorNumiid.add(item.getPlatformPid());
-                    if (e instanceof BusinessException) {
-                        $error(String.format("channelId:%s, cartId:%s, numIId:%s 取得失败!" + e.getMessage(), channelId, cartId, item.getPlatformPid()));
-                    } else {
-                        $error(String.format("channelId:%s, cartId:%s, numIId:%s 取得失败!", channelId, cartId, item.getPlatformPid()));
-                        e.printStackTrace();
-                    }
-                }
-
-                if ((i + 1) % 300 == 0) {
-                    // 怕中途断掉,300一更新
-                    if ("2".equals(runType)) {
-//                        updateCmsBtPlatformNumiid(channelId, cartId, listSuccessNumiid, listErrorNumiid);
-                    }
-                    $info(String.format("考拉属性取得,成功%d个,失败%d个!", listSuccessNumiid.size(), listErrorNumiid.size()));
-                    listSuccessNumiid.clear();
-                    listErrorNumiid.clear();
-                }
-
-
-            }
-        } else {
-
-            int pageNo = 1;
-            List<ItemEdit> allItems = new ArrayList<>();
-            while(true) {
-                List<ItemEdit> itemEdits;
-                try {
-
-                    itemEdits = getItemListByStatus(status, koalaConfig, pageNo, 20);
-                    pageNo++;
-                } catch (Exception exp) {
-                    throw new BusinessException(String.format("获取考拉商品时出错! channelId=%s, cartId=%s", channelId, cartId), exp);
-                }
-                if (itemEdits != null && itemEdits.size() > 0) {
-                    allItems.addAll(itemEdits);
-                }
-                if (itemEdits == null || itemEdits.size() == 0) {
-                    break;
-                }
-            }
-
-            for (ItemEdit item : allItems) {
-                String itemKey = item.getKey();
-
-                CmsBtProductGroupModel cmsBtProductGroupModel = productGroupService.selectProductGroupByPlatformPid(channelId, Integer.parseInt(cartId), itemKey);
-
-                List<String> codeList = cmsBtProductGroupModel.getProductCodes();
-
-                for (String code : codeList) {
-
-                }
-            }
-
-        }
-
-
-
-
-    }
-
-    public List<ItemEdit> getItemListByStatus(String status, KoalaConfig koalaConfig, int pageNo, int pageSize) {
-
-        ItemBatchStatusGetRequest request = new ItemBatchStatusGetRequest();
-        request.setItemEditStatus(Integer.parseInt(status));
-        request.setPageSize(pageSize);
-        request.setPageNo(pageNo);
-
-        PagedItemEdit itemEdit = koalaItemService.batchStatusGet(koalaConfig, request);
-        if (itemEdit == null) {
-            return null;
-        }
-
-        return Arrays.asList(itemEdit.getItemEditList());
-    }
-
 
 }
