@@ -51,6 +51,11 @@ public abstract class BaseSearchService extends ComponentBase {
         return response.toString();
     }
 
+    public String saveBeans(String coreName, List<SolrUpdateBean> beans) {
+        UpdateResponse response = getSolrTemplate().saveBeans(coreName, beans);
+        return response.toString();
+    }
+
     /**
      * saveBean
      */
@@ -69,6 +74,10 @@ public abstract class BaseSearchService extends ComponentBase {
      */
     public String deleteByIds(List<String> ids) {
         UpdateResponse response = getSolrTemplate().deleteById(ids);
+        return response.toString();
+    }
+    public String deleteByIds(String coreName, List<String> ids) {
+        UpdateResponse response = getSolrTemplate().deleteById(coreName, ids);
         return response.toString();
     }
 
@@ -92,6 +101,13 @@ public abstract class BaseSearchService extends ComponentBase {
     public void optimize() {
         try {
             getSolrTemplate().getSolrClient().optimize();
+        } catch (SolrServerException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void optimize(String coreName) {
+        try {
+            getSolrTemplate().getSolrClient().optimize(coreName);
         } catch (SolrServerException | IOException e) {
             throw new RuntimeException(e);
         }

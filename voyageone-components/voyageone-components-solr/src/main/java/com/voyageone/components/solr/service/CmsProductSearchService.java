@@ -343,7 +343,13 @@ public class CmsProductSearchService extends BaseSearchService {
         //noinspection unchecked
         return new SimpleQueryCursor(queryForCursor(query, CommIdSearchModel.class));
     }
-
+    /**
+     * queryForCursorByLastVer
+     */
+    public Page<CommIdSearchModel> queryIdsForCursorNotLastVer(String coreName, Query query) {
+        //noinspection unchecked
+        return getSolrTemplate().queryForPage(coreName,query, CommIdSearchModel.class);
+    }
 
     private <T> Cursor<T> queryForCursor(Query query, final Class<T> clazz) {
         return getSolrTemplate().queryForCursor(query, clazz);
