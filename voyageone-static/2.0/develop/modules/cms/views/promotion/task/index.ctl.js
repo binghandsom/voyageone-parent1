@@ -8,10 +8,12 @@ define([
 ], function (cms, carts) {
     cms.controller("taskIndexController", (function () {
     
+        function TaskIndexController(taskService, taskStockService, taskJiagepiluService, promotionService, cActions, confirm, notify) {
         function TaskIndexController(taskService, taskStockService, promotionService, cActions, confirm, notify, popups) {
             this.taskService = taskService;
             this.taskStockService = taskStockService;
             this.promotionService = promotionService;
+            this.taskJiagepiluService = taskJiagepiluService;
             var urls = cActions.cms.task.taskStockService;
             this.tasks = [];
             this.confirm = confirm;
@@ -92,6 +94,32 @@ define([
                 var main = this;
                 $.download.post(main.downloadUrl, {
                     "taskId" : taskId
+                });
+            },
+
+            // 启动/停止/还原所有
+            controlAll: function (taskId, flag) {
+
+                var self = this;
+                self.confirm("确定要操作所有吗?")
+                    .then(function () {
+                        self.$controlAll(true, flag, taskId);
+                    });
+                return;
+            },
+            $controlAll: function (force, flag, taskId) {
+                var self = this;
+
+                self.taskJiagepiluService.operateProduct({
+                    task_id: taskId,
+                    force: force,
+                    flag: flag
+                }).then(function (res) {
+                    if (!res.data){
+                        self.notify.success('TXT_MSG_UPDATE_FAIL');
+                    }else {
+                        self.notify.success('TXT_MSG_SET_SUCCESS');
+                    }
                 });
             },
 
