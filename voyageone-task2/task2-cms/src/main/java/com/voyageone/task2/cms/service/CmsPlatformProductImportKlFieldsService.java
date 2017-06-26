@@ -239,6 +239,9 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService {
     private void doSetProduct(String channelId, int cartId, ItemEdit itemEdit) throws Exception {
         String platformPid = itemEdit.getKey();
         CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByPlatformPid(channelId, cartId, platformPid);
+        if (cmsBtProductGroup == null) {
+            throw new BusinessException(String.format("cms里没有这个PlatformPid[%s]!", platformPid));
+        }
         cmsBtProductGroup.setPlatformPid(platformPid);
 
         // status
