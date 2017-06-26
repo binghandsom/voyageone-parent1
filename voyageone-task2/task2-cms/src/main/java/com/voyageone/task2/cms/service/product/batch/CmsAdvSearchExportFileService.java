@@ -185,7 +185,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
             case 3:
                 fileName = "skuList_";
                 if(isInventoryDetails){
-                    storeNames = getStoreNames(channelId);
+                    storeNames = getStoreNames(channelId,null, null);
                 }
                 break;
             case 4:
@@ -1151,7 +1151,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         // 现有表格的列，请参照本工程目录下 /contents/cms/file_template/skuList-template.xlsx
         Sheet sheet = book.getSheetAt(0);
         for (CmsBtProductBean item : products) {
-            List<HashMap<String, HashMap<String,Integer>>> inventoryDetails = null;
+            HashMap<String, HashMap<String,Integer>> inventoryDetails = null;
             if(ListUtils.notNull(storeNames)){
                 inventoryDetails = getStores(item.getChannelId(), item.getOrgChannelId(), item.getCommonNotNull().getFieldsNotNull().getCode());
             }
@@ -1343,11 +1343,21 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     }
                 }
 
-                if(ListUtils.notNull(inventoryDetails)){
-//                    inventoryDetails.get()
-//                    for(String storeName:storeNames){
-//                        skuItem
-//                    }
+                if(inventoryDetails != null){
+                    HashMap<String,Integer> sku = inventoryDetails.get(skuItem.getSkuCode());
+                    if(sku == null){
+                        for(String storeName:storeNames){
+                            FileUtils.cell(row, index++, unlock).setCellValue("");
+                        }
+                    }else{
+                        for(String storeName:storeNames){
+                            if(sku.get(storeName)==null){
+                                FileUtils.cell(row, index++, unlock).setCellValue("");
+                            }else{
+                                FileUtils.cell(row, index++, unlock).setCellValue(sku.get(storeName));
+                            }
+                        }
+                    }
                 }
                 total++;
             }
