@@ -34,6 +34,10 @@ import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessa
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.wms.GetStoreStockDetailRequest2;
+import com.voyageone.web2.sdk.api.response.wms.GetStoreStockDetailData2;
+import com.voyageone.web2.sdk.api.response.wms.GetStoreStockDetailResponse2;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -101,6 +105,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private TagService tagService;
     @Autowired
     private SxProductService sxProductService;
+    @Autowired
+    protected VoApiDefaultClient voApiClient;
 
     public List<CmsBtOperationLogModel_Msg> export(AdvSearchExportMQMessageBody messageBody) throws Exception {
         $debug("高级检索 文件下载任务 param=" + JacksonUtil.bean2Json(messageBody));
@@ -1205,22 +1211,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSkuCode()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSize()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getSize()));
-                FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getQty() == null ? "0" : String.valueOf(skuItem.getQty()));
-                if (skuItem.getClientMsrpPrice() == null) {
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                } else {
-                    FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getClientMsrpPrice());
-                }
-                if (skuItem.getClientRetailPrice() == null) {
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                } else {
-                    FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getClientRetailPrice());
-                }
-                if (skuItem.getClientNetPrice() == null) {
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                } else {
-                    FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getClientNetPrice());
-                }
+
                 // 重量
                 if (skuItem.getWeight() == null) {
                     FileUtils.cell(row, index++, unlock).setCellValue("");
@@ -1681,6 +1672,79 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 return map.getStringAttribute("jdSkuId");
         }
         return "";
+    }
+
+    /**
+     *
+     * @param channelId
+     * @param orgChannelId
+     * @param code
+     * @return 仓库名称(包括第三方仓库)的集合
+     */
+    public List<String> getStoreNames(String channelId,String orgChannelId,String code){
+
+        GetStoreStockDetailRequest2 getStoreStockDetailRequest2 = new GetStoreStockDetailRequest2();
+        getStoreStockDetailRequest2.setChannelId(channelId);
+        getStoreStockDetailRequest2.setSubChannelId(orgChannelId);
+        getStoreStockDetailRequest2.setItemCode(code);
+        List<String> storeNames = new ArrayList<>();
+
+        GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
+        if (execute != null && execute.getData() != null && execute.getData().getHeader() != null &&CollectionUtils.isNotEmpty(execute.getData().getStocks())){
+            List<String> store = execute.getData().getHeader().getStore();
+            List<String> supplier = execute.getData().getHeader().getSupplier();
+
+            storeNames.addAll(store);
+            storeNames.addAll(supplier);
+            storeNames.remove("total");
+        }
+
+        return storeNames;
+    }
+
+    /**
+     *
+     * @param channelId
+     * @param orgChannelId
+     * @param code
+     * @return 仓库对应的库存信息(包括第三方的)
+     */
+    public List<HashMap<String, HashMap<String,Integer>>> getStores(String channelId,String orgChannelId,String code){
+
+        GetStoreStockDetailRequest2 getStoreStockDetailRequest2 = new GetStoreStockDetailRequest2();
+        getStoreStockDetailRequest2.setChannelId(channelId);
+        getStoreStockDetailRequest2.setSubChannelId(orgChannelId);
+        getStoreStockDetailRequest2.setItemCode(code);
+        List<HashMap<String, HashMap<String,Integer>>> TempStocks = new ArrayList<>();
+        GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
+        if (execute != null && execute.getData() != null && execute.getData().getHeader() != null &&CollectionUtils.isNotEmpty(execute.getData().getStocks())){
+            List<GetStoreStockDetailData2.Temp> stocks = execute.getData().getStocks();
+            for (GetStoreStockDetailData2.Temp stock:stocks) {
+                HashMap<String, HashMap<String, Integer>> outMap = new HashMap<>();
+                HashMap<String, Integer> inMap = new HashMap<>();
+
+                String sku = stock.getBase().getSku();
+
+                Map<String, List<Integer>> store = stock.getStore();
+                for (Map.Entry entry:store.entrySet()) {
+                    String key = (String) entry.getKey();
+                    List<Integer> value = (List<Integer>) entry.getValue();
+                    inMap.put(key,value.get(0));
+                }
+                Map<String, List<Integer>> supplier = stock.getSupplier();
+                for (Map.Entry entry:supplier.entrySet()) {
+                    String key = (String) entry.getKey();
+                    List<Integer> value = (List<Integer>) entry.getValue();
+                    if (key != "total"){
+                        inMap.put(key,value.get(0));
+                    }
+                }
+                outMap.put(sku,inMap);
+                TempStocks.add(outMap);
+            }
+        }
+
+        return TempStocks;
     }
 
 }
