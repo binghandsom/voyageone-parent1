@@ -1965,7 +1965,17 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 if (skuPageQtyMap.containsKey(skuCode)) {
                     skuMap.put("quantity", skuPageQtyMap.get(skuCode.toLowerCase()));
                 } else {
-                    skuMap.put("quantity", skuLogicQtyMap.get(skuCode));
+                    if (ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId().equals(shopProp.getOrder_channel_id())) {
+                        long pageQty = skuLogicQtyMap.get(skuCode);
+                        try {
+                            pageQty = tbScItemService.getInventoryByScItemId(shopProp, tbScItemService.getScItemByOuterCode(shopProp, skuCode).getItemId()).get(0).getQuantity();
+                        } catch (Exception ignored) {
+                        }
+
+                        skuMap.put("quantity", pageQty);
+                    } else {
+                        skuMap.put("quantity", skuLogicQtyMap.get(skuCode));
+                    }
                 }
 
                 // 与颜色尺寸这个销售属性关联的图片
