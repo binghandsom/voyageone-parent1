@@ -495,11 +495,11 @@ public class JiagepiluService extends BaseService {
             throw new BusinessException(message);
         }
 
-        if (id != null && targetModel != null && targetModel.getId() != id) {
+        if (id != null && targetModel != null &&  targetModel.getId().intValue() != id.intValue()) {
             throw new BusinessException("7000002");
         }
 
-        if (targetModel == null) {
+        if (id == null) {
             CmsBtTaskJiagepiluModel newModel = new CmsBtTaskJiagepiluModel();
             newModel.setCreated(new Date());
             newModel.setCreater(username);
@@ -516,7 +516,7 @@ public class JiagepiluService extends BaseService {
             affected = cmsBtTaskJiagepiluDao.insert(newModel);
         } else {
             CmsBtTaskJiagepiluModel updateModel = new CmsBtTaskJiagepiluModel();
-            updateModel.setId(targetModel.getId());
+            updateModel.setId(id);
             updateModel.setSynFlag(BeatFlag.STOP.getFlag());
             updateModel.setImageStatus(ImageStatus.None.getId()); // 无图状态
 

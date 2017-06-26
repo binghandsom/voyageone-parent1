@@ -1,24 +1,25 @@
 define([
     'cms',
-    'underscore'
-], function (cms, _) {
+    'underscore',
+    'modules/cms/enums/Carts',
+], function (cms, _, cart) {
     cms.controller('popNewBeatCtl', (function () {
 
-        function PopNewBeatCtl(context, $filter, $uibModalInstance, taskBeatService, $location) {
+        function PopNewBeatCtl(context, $filter, $uibModalInstance, taskBeatService, taskJiagepiluService, $location) {
 
             var self = this;
             var task = context.task;
-            var promotion = context.promotion;
 
-            if (!promotion && task) {
+            if (task) {
+                self.task = task;
                 self.isEdit = true;
-                promotion = task.promotion;
             }
-
-            self.promotion = promotion;
             self.$uibModalInstance = $uibModalInstance;
             self.taskBeatService = taskBeatService;
+            self.taskJiagepiluService = taskJiagepiluService;
             self.$location = $location;
+
+            self.carts = [];
 
             // 将字符串日期转换为 Date 日期。
             // 因为 input type=date 后, ng-model 只接受 Date 类型
@@ -31,24 +32,24 @@ define([
                 if (_.isString(task.config))
                     task.config = JSON.parse(task.config);
             } else {
-                self.taskBean = task || {
-                        taskName: '',
-                        promotionId: promotion.id,
-                        activityStart: new Date(promotion.activityStart),
-                        activityEnd: new Date(promotion.activityEnd),
-                        config: {
-                            need_vimage: false,
-                            beat_template: null,
-                            revert_template: null,
-                            beat_vtemplate: null,
-                            revert_vtemplate: null
-                        }
-                    };
+                // self.taskBean = task || {
+                //         taskName: '',
+                //         promotionId: promotion.id,
+                //         activityStart: new Date(promotion.activityStart),
+                //         activityEnd: new Date(promotion.activityEnd),
+                //         config: {
+                //             need_vimage: false,
+                //             beat_template: null,
+                //             revert_template: null,
+                //             beat_vtemplate: null,
+                //             revert_vtemplate: null
+                //         }
+                //     };
             }
 
-            taskBeatService.getTemplates({promotionId: promotion.id}).then(function (res) {
-                self.templates = res.data;
-            });
+            // taskBeatService.getTemplates({promotionId: promotion.id}).then(function (res) {
+            //     self.templates = res.data;
+            // });
 
             self.formatDate = function (date) {
                 return $filter('date')(date, 'yyyy-MM-dd');
@@ -57,14 +58,26 @@ define([
 
         PopNewBeatCtl.prototype = {
 
+            init:function () {
+                var self = this;
+                self.taskJiagepiluService.getJiagepiluCarts().then(function (resp) {
+                    if (resp.data) {
+                        self.carts = resp.data;
+                        _.each(self.carts, function (cartObj) {
+                            var cartId = parseInt(cartObj.cart_id);
+                            _.extend(cartObj, {cartId:cartId,desc:cart.valueOf(cartId).desc})
+                        });
+                    }
+                });
+
+            },
+
             ok: function () {
 
                 var self = this;
                 var task = angular.copy(self.taskBean);
                 var start = task.activityStart;
                 var end = task.activityEnd;
-
-                task.promotion = null;
 
                 // 确保日期格式正确
                 // 如果日期控件不选择的话, 则输出的将是 Date 格式
@@ -80,7 +93,7 @@ define([
                 self.taskBeatService.create(task).then(function (res) {
                     var newBean = res.data;
                     self.$uibModalInstance.close(newBean);
-                    self.$location.path('/promotion/task/beat/' + newBean.id);
+                    self.$location.path('/task/jiagepilu/detail/' + newBean.id);
                 });
             },
 

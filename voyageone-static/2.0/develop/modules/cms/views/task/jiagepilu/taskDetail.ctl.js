@@ -9,7 +9,7 @@ define([
 ], function (cms, _, cart) {
     cms.controller("jiagepiluController", (function () {
 
-        function JiagepiluController($routeParams, taskJiagepiluService, $translate, taskBeatService, cActions, FileUploader, alert, confirm, notify, $location, $timeout) {
+        function JiagepiluController($routeParams, taskJiagepiluService, $translate, taskBeatService, cActions, popups, FileUploader, alert, confirm, notify, $location, $timeout) {
 
             var urls = cActions.cms.task.taskJiagepiluService;
             this.urls = urls;
@@ -29,6 +29,7 @@ define([
             this.alert = alert;
             this.notify = notify;
             this.confirm = confirm;
+            this.popups = popups;
 
 
             this.taskJiagepiluService = taskJiagepiluService;
@@ -262,6 +263,14 @@ define([
             // 重启(启动失败/还原失败的重启)
             restartAll: function (flag) {
                 var self = this;
+
+                var flagSummary = self.summary.find(function (item) {
+                    return item.flag === flag;
+                });
+                if (!flagSummary) {
+                    self.alert("当前任务没有状态为 <" +　self.$translate.instant(flag)　+ "> 的商品");
+                    return;
+                }
                 self.confirm("确定要重启状态为 <" +　self.$translate.instant(flag)　+ "> 的商品吗?").then(function () {
                     self.taskJiagepiluService.reBeating({task_id:self.taskId,flag:flag}).then(function (resp) {
                         if (resp.data) {
@@ -285,9 +294,9 @@ define([
                 });
             },
 
-            updateTask: function (openNewBeatTask) {
+            updateTask: function () {
                 var self = this;
-                openNewBeatTask({task: self.task}).then(function(newTask) {
+                self.popups.openNewBeatTask({task: self.task}).then(function(newTask) {
                     self.task = newTask;
                 });
             }

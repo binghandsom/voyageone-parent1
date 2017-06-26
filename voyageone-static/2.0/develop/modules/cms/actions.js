@@ -459,7 +459,8 @@ define(function () {
                     "addJiagepiluProduct":"addJiagepiluProduct",
                     "operateProduct":"operateProduct",
                     "reBeating":"reBeating",
-                    "getEditProduct":"getEditProduct"
+                    "getEditProduct":"getEditProduct",
+                    "getJiagepiluCarts":"getJiagepiluCarts"
                 }
             },
             "system": {

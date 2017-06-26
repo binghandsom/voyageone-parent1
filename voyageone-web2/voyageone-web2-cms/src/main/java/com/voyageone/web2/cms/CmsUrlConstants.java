@@ -371,6 +371,8 @@ public interface CmsUrlConstants {
 
             String GET_EDIT_PRODUCT = "getEditProduct";
 
+            String GET_JIAGEPILU_CARTS = "getJiagepiluCarts";
+
         }
 
     }

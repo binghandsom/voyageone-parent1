@@ -1,7 +1,10 @@
 package com.voyageone.web2.cms.views.task;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Carts;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Properties;
+import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.service.bean.cms.task.beat.SearchTaskJiagepiluBean;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.task.JiagepiluService;
@@ -26,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -166,6 +170,22 @@ public class CmsJiagepiluController extends BaseController {
     @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.GET_EDIT_PRODUCT)
     public AjaxResponse getEditProduct(@RequestBody ReqParam param) {
         return success(jiagepiluService.getProductById(param.getBeat_id()));
+    }
+
+    /**
+     * 获取价格披露任务可选的平台(天猫系和京东系)
+     * @return
+     */
+    @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.GET_JIAGEPILU_CARTS)
+    public AjaxResponse getJiagepiluCarts() {
+        List<CartBean> carts = new ArrayList<>();
+        List<CartBean> cartBeans = Carts.getAllCartList();
+        for (CartBean cartBean : cartBeans) {
+            if ("1".equalsIgnoreCase(cartBean.getPlatform_id()) || "2".equalsIgnoreCase(cartBean.getPlatform_id())) {
+                carts.add(cartBean);
+            }
+        }
+        return success(carts);
     }
 
 }
