@@ -88,6 +88,15 @@
         group by product_code) as b where a.id=b.id)
     </select>
 
+    <select id="selectMaxJmHashId2" resultType="com.voyageone.service.model.util.MapModel">
+        select product_code , jm_hash_id  from cms_bt_jm_promotion_product
+        where channel_id = #{channelId} and jm_hash_id != ''
+        <if test="productCode != null and productCode != ''">
+            and product_code = #{productCode}
+        </if>
+        ORDER BY id desc LIMIT 0,1
+    </select>
+
     <select id="selectJmProductHashId" resultType="com.voyageone.service.model.util.MapModel">
         select product_code , max(origin_jm_hash_id) as jm_hash_id from cms_bt_jm_product
         where channel_id = #{channelId} and origin_jm_hash_id != ''
