@@ -56,7 +56,7 @@ public class GetStoreStockDetailRequest2 extends VoApiRequest<GetStoreStockDetai
         // return "/cms/product/getWmsProductsInfo";
 
         // EWMS 实时查询库存
-        return "/wms/stock/store/getStockDetail2.json";
+        return "/wms/stock/store/getStockDetail2";
     }
 
     @Override

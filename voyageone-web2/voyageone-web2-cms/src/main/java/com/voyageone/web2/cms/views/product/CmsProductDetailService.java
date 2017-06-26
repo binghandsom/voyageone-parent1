@@ -1336,11 +1336,11 @@ public class CmsProductDetailService extends BaseViewService {
         getStoreStockDetailRequest2.setChannelId(productInfo.getChannelId());
         getStoreStockDetailRequest2.setSubChannelId(productInfo.getOrgChannelId());
         getStoreStockDetailRequest2.setItemCode(code);
-        //String json = "{\"code\":\"0\",\"message\":null,\"data\":{\"header\":{\"supplier\":[\"total\"],\"store\":[\"LA\",\"SH\"],\"base\":[\"sku\",\"origSize\",\"saleSize\",\"total\"]},\"stocks\":[{\"supplier\":{\"total\":[0,0]},\"store\":{\"LA\":[5,5]},\"base\":{\"total\":[5,5],\"origSize\":\"5.5\",\"sku\":\"001001B07-BLK-5.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0]},\"store\":{\"LA\":[1,1]},\"base\":{\"total\":[1,1],\"origSize\":\"8.5\",\"sku\":\"001001b07-blk-8.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0]},\"store\":{\"SH\":[0,1]},\"base\":{\"total\":[0,1],\"origSize\":\"5\",\"sku\":\"001001b07-blk-5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0]},\"store\":{\"LA\":[2,2]},\"base\":{\"total\":[2,2],\"origSize\":\"5\",\"sku\":\"001001B07-BLK-5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0]},\"store\":{\"LA\":[6,6]},\"base\":{\"total\":[6,6],\"origSize\":\"6\",\"sku\":\"001001B07-BLK-6\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0]},\"store\":{\"LA\":[6,7]},\"base\":{\"total\":[6,7],\"origSize\":\"7\",\"sku\":\"001001B07-BLK-7\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0]},\"store\":{\"LA\":[13,13]},\"base\":{\"total\":[13,13],\"origSize\":\"6.5\",\"sku\":\"001001B07-BLK-6.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0]},\"store\":{\"LA\":[2084,2084]},\"base\":{\"total\":[2084,2084],\"origSize\":\"7.5\",\"sku\":\"001001B07-BLK-7.5\",\"saleSize\":\"\"}}]}}";
         String json = "{\"code\":\"0\",\"message\":null,\"data\":{\"header\":{\"supplier\":[\"total\",\"usa\"],\"store\":[\"LA\",\"SH\"],\"base\":[\"sku\",\"origSize\",\"saleSize\",\"total\"]},\"stocks\":[{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[5,5]},\"base\":{\"total\":[5,5],\"origSize\":\"5.5\",\"sku\":\"001001B07-BLK-5.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[1,1]},\"base\":{\"total\":[1,1],\"origSize\":\"8.5\",\"sku\":\"001001b07-blk-8.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"SH\":[0,1]},\"base\":{\"total\":[0,1],\"origSize\":\"5\",\"sku\":\"001001b07-blk-5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[2,2]},\"base\":{\"total\":[2,2],\"origSize\":\"5\",\"sku\":\"001001B07-BLK-5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[6,6]},\"base\":{\"total\":[6,6],\"origSize\":\"6\",\"sku\":\"001001B07-BLK-6\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[6,7]},\"base\":{\"total\":[6,7],\"origSize\":\"7\",\"sku\":\"001001B07-BLK-7\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[13,13]},\"base\":{\"total\":[13,13],\"origSize\":\"6.5\",\"sku\":\"001001B07-BLK-6.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[2084,2084]},\"base\":{\"total\":[2084,2084],\"origSize\":\"7.5\",\"sku\":\"001001B07-BLK-7.5\",\"saleSize\":\"\"}}]}}";
         GetStoreStockDetailResponse2 execute = JacksonUtil.json2Bean(json, GetStoreStockDetailResponse2.class);//voApiClient.execute(getStoreStockDetailRequest2);
         //求和
-        if (execute != null){
+        if (execute != null && execute.getData() != null && execute.getData().getHeader() != null &&CollectionUtils.isNotEmpty(execute.getData().getStocks())){
+            //获取到的参数不为空
             List<GetStoreStockDetailData2.Temp> stocks = execute.getData().getStocks();
             if (stocks != null) {
                 GetStoreStockDetailData2.Temp sumStock = new GetStoreStockDetailData2.Temp();
@@ -1403,11 +1403,15 @@ public class CmsProductDetailService extends BaseViewService {
                 execute.setData(data);
                 resultMap.put("excute", execute);
             }
+            resultMap.put("nostock",false);
+        }else {
+            //为空
+            resultMap.put("nostock",true);
         }
          /*-----------------------by xu--------------------------*/
 
 
-        $info(String.format("从WMS实时查询Code(channelId=%s, code=%s)下SKU库存, API返回结果:%s", channelId, code, JacksonUtil.bean2Json(stockDetail)));
+        $info(String.format("从WMS实时查询Code(channelId=%s, code=%s)下SKU库存, API返回结果:%s", channelId, code, JacksonUtil.bean2Json(execute)));
 
         Set<String> commonSkus = new HashSet<>();
         Set<String> stockSkus = new HashSet<>();

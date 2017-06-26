@@ -4,11 +4,12 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <div class="text-warnings" ng-if="noStock">
+                        <div class="text-warnings" ng-show="noStock">
                             <i class="icon fa fa-bell-o"></i>&nbsp;
                             从WMS未查询到SKU物理库存数据
                         </div>
-                        <table class="table table-hover-new table-hover table_main table_compare" ng-if="!noStock">
+                        {{nostock}}
+                        <table class="table table-hover-new table-hover table_main table_compare" ng-show="!noStock">
                             <thead>
                             <tr>
                                 <th class="text-center" style="border: 1px solid #ccc;" colspan="4">基础信息</th>
