@@ -248,7 +248,7 @@ public class JiagepiluService extends BaseService {
                         FileUtils.cell(FileUtils.row(errorSheet, errorRowNum), 1, null).setCellValue(code);
                         FileUtils.cell(FileUtils.row(errorSheet, errorRowNum), 2, null).setCellValue(priceVal);
                         FileUtils.cell(FileUtils.row(errorSheet, errorRowNum), 3, null).setCellValue(imageName);
-                        FileUtils.cell(FileUtils.row(errorSheet, errorRowNum), 4, null).setCellValue("根据获取不到商品主图名称");
+                        FileUtils.cell(FileUtils.row(errorSheet, errorRowNum), 4, null).setCellValue("根据code获取不到商品主图");
 
                         continue;
                     }
