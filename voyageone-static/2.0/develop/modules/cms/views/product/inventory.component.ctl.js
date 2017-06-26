@@ -34,7 +34,6 @@ define([
 
                             } else {
                                 scope.noStock = resp.data.nostock;
-                                scope.noStockSkus = resp.data.noStockSkus;
                                 scope.supplier = resp.data.excute.data.header.supplier;
                                 scope.store = resp.data.excute.data.header.store;
                                 scope.base = resp.data.excute.data.header.base;
