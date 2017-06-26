@@ -1519,14 +1519,16 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // 如果设置成"1：运营自己天猫后台管理"时,用天猫平台上取下来的运营自己后台设置的值设置schema无线端共通模块相关属性
 
                 String defaultValue = ((InputField)tbItemSchema.getFieldMap().get("wireless_desc")).getDefaultValue();
-                // 店铺活动(json)
-                valWirelessDetails = updateDefaultValue(valWirelessDetails, "shop_discount", defaultValue);
-                // 文字说明(json)
-                valWirelessDetails = updateDefaultValue(valWirelessDetails, "item_text", defaultValue);
-                // 优惠(json)
-                valWirelessDetails = updateDefaultValue(valWirelessDetails, "coupon", defaultValue);
-                // 同店推荐(json)
-                valWirelessDetails = updateDefaultValue(valWirelessDetails, "hot_recommanded", defaultValue);
+                if (defaultValue != null) {
+                    // 店铺活动(json)
+                    valWirelessDetails = updateDefaultValue(valWirelessDetails, "shop_discount", defaultValue);
+                    // 文字说明(json)
+                    valWirelessDetails = updateDefaultValue(valWirelessDetails, "item_text", defaultValue);
+                    // 优惠(json)
+                    valWirelessDetails = updateDefaultValue(valWirelessDetails, "coupon", defaultValue);
+                    // 同店推荐(json)
+                    valWirelessDetails = updateDefaultValue(valWirelessDetails, "hot_recommanded", defaultValue);
+                }
             }
             productInfoMap.put("wireless_desc", valWirelessDetails);
         }
