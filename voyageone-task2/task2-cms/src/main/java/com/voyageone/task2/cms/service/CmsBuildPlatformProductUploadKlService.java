@@ -134,6 +134,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     private KoalaItemService koalaItemService;
     @Autowired
     private CmsBtKlSkuDao cmsBtKlSkuDao;
+    private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
 
     @Override
     public SubSystem getSubSystem() {
@@ -144,8 +145,6 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     public String getTaskName() {
         return "CmsBuildPlatformProductUploadKlJob";
     }
-
-    private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
 
     /**
      * 考拉平台上新处理
@@ -833,9 +832,9 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
             }
         }
         klAddBean.setName(title); // 商品名称
-        klAddBean.setSubTitle(klCommonInfoMap.get("sub_title")); // 副标题
-        klAddBean.setShortTitle(klCommonInfoMap.get("short_title")); // 短标题
-        klAddBean.setTenWordsDesc(klCommonInfoMap.get("ten_words_desc")); // 十字描述
+        klAddBean.setSubTitle(klCommonInfoMap.get("subTitle")); // 副标题
+        klAddBean.setShortTitle(klCommonInfoMap.get("shortTitle")); // 短标题
+        klAddBean.setTenWordsDesc(klCommonInfoMap.get("tenWordsDesc")); // 十字描述
         // 商品货号
         String itemNO = null;
         if (mainProduct.getPlatform(sxData.getCartId()) != null) {
@@ -856,7 +855,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         String itemOuterId = null;
         if (mainProduct.getPlatform(sxData.getCartId()) != null) {
             if (mainProduct.getPlatform(sxData.getCartId()).getFields() != null) {
-                itemOuterId = mainProduct.getPlatform(sxData.getCartId()).getFields().getStringAttribute("Item_outer_id");
+                itemOuterId = mainProduct.getPlatform(sxData.getCartId()).getFields().getStringAttribute("ItemOuterId");
             }
         }
         if (StringUtils.isEmpty(itemOuterId)) {
@@ -867,7 +866,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
             klAddBean.setItemOuterId(itemOuterId);
         }
         klAddBean.setBrandId(Long.valueOf(sxData.getBrandCode())); // 品牌id
-        klAddBean.setOriginalCountryCodeId(klCommonInfoMap.get("original_country_code_id")); // 原产国id
+        klAddBean.setOriginalCountryCodeId(klCommonInfoMap.get("originalCountryCodeId")); // 原产国id
 
         // HsCode，暂时不需要
 //        String propValue = sxData.getMainProduct().getCommon().getFields().getHsCodePrivate(); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
@@ -898,11 +897,11 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         Map<String, Field> productSchemaFields = SchemaReader.readXmlForMap(klCommonSchema.getPropsProduct());
 
         // 重量(单位:kg)(必须)
-        String weight = klCommonInfoMap.get("gross_weight");
+        String weight = klCommonInfoMap.get("grossWeight");
         if (StringUtils.isEmpty(weight)) {
             weight = String.valueOf(mainProduct.getCommonNotNull().getFieldsNotNull().getWeightKG());
             if (StringUtils.isEmpty(weight)) {
-                InputField f = (InputField) productSchemaFields.get("gross_weight");
+                InputField f = (InputField) productSchemaFields.get("grossWeight");
                 weight = f.getDefaultValue();
             }
         }
