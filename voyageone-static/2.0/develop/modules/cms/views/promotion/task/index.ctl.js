@@ -8,8 +8,7 @@ define([
 ], function (cms, carts) {
     cms.controller("taskIndexController", (function () {
     
-        function TaskIndexController(taskService, taskStockService, taskJiagepiluService, promotionService, cActions, confirm, notify) {
-        function TaskIndexController(taskService, taskStockService, promotionService, cActions, confirm, notify, popups) {
+        function TaskIndexController(taskService, taskStockService, taskJiagepiluService, promotionService, cActions, confirm, notify, popups) {
             this.taskService = taskService;
             this.taskStockService = taskStockService;
             this.promotionService = promotionService;
@@ -28,7 +27,7 @@ define([
             this.platformTypeList = [];
             this.platformStatus = {};
         }
-    
+
         TaskIndexController.prototype = {
             init: function () {
                 var self = this;
@@ -52,10 +51,12 @@ define([
                         return '未知类型';
                 }
             },
+
             cartName: function(cartId) {
                 return carts.valueOf(cartId).desc;
 
             },
+
             search: function(){
                 var self = this;
                 var cartIds = [];
@@ -69,9 +70,11 @@ define([
                     self.tasks = res.data;
                 });
             },
+
             clear: function(){
                 this.searchInfo={};
             },
+
             delete: function(task){
                 var self = this;
                 self.confirm('TXT_MSG_DO_DELETE').then(function () {
@@ -90,6 +93,7 @@ define([
                     }
                 })
             },
+
             download: function (taskId) {
                 var main = this;
                 $.download.post(main.downloadUrl, {
@@ -130,8 +134,7 @@ define([
                 });
             }
         };
-            
+
         return TaskIndexController;
-        
     })());
 });
