@@ -44,7 +44,7 @@ define([
             this.pageOption = {
                 curr: 1,
                 total: 0,
-                size: 10,
+                size: 20,
                 fetch: this.getData.bind(this)
             };
             this.importInfoList = [];
