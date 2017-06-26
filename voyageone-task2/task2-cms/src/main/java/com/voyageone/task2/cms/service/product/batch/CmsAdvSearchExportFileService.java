@@ -1715,18 +1715,18 @@ public class CmsAdvSearchExportFileService extends BaseService {
      * @param code
      * @return 仓库对应的库存信息(包括第三方的)
      */
-    public List<HashMap<String, HashMap<String,Integer>>> getStores(String channelId,String orgChannelId,String code){
+    public HashMap<String, HashMap<String,Integer>> getStores(String channelId,String orgChannelId,String code){
 
         GetStoreStockDetailRequest2 getStoreStockDetailRequest2 = new GetStoreStockDetailRequest2();
         getStoreStockDetailRequest2.setChannelId(channelId);
         getStoreStockDetailRequest2.setSubChannelId(orgChannelId);
         getStoreStockDetailRequest2.setItemCode(code);
-        List<HashMap<String, HashMap<String,Integer>>> TempStocks = new ArrayList<>();
+        HashMap<String, HashMap<String, Integer>> outMap = new HashMap<>();
         GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
         if (execute != null && execute.getData() != null && execute.getData().getHeader() != null &&CollectionUtils.isNotEmpty(execute.getData().getStocks())){
             List<GetStoreStockDetailData2.Temp> stocks = execute.getData().getStocks();
             for (GetStoreStockDetailData2.Temp stock:stocks) {
-                HashMap<String, HashMap<String, Integer>> outMap = new HashMap<>();
+
                 HashMap<String, Integer> inMap = new HashMap<>();
 
                 String sku = stock.getBase().getSku();
@@ -1746,11 +1746,10 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     }
                 }
                 outMap.put(sku,inMap);
-                TempStocks.add(outMap);
             }
         }
 
-        return TempStocks;
+        return outMap;
     }
 
 }
