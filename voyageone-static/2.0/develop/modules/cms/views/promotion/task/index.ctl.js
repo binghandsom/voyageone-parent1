@@ -8,10 +8,11 @@ define([
 ], function (cms, carts) {
     cms.controller("taskIndexController", (function () {
     
-        function TaskIndexController(taskService, taskStockService, promotionService, cActions, confirm, notify) {
+        function TaskIndexController(taskService, taskStockService, taskJiagepiluService, promotionService, cActions, confirm, notify) {
             this.taskService = taskService;
             this.taskStockService = taskStockService;
             this.promotionService = promotionService;
+            this.taskJiagepiluService = taskJiagepiluService;
             var urls = cActions.cms.task.taskStockService;
             this.tasks = [];
             this.confirm = confirm;
@@ -95,32 +96,33 @@ define([
             },
 
             // 启动/停止/还原所有
-            controlAll: function (flag) {
+            controlAll: function (taskId, flag) {
 
                 var self = this;
-
-                // 在统计信息中查找错误的统计
-                var errorSummary = self.summary.find(function (item) {
-                    return item.flag === 'CANT_BEAT';
-                });
-
-                // 如果错误统计有数据, 说明是存在错误数据的
-                // 就需要人为来确定是否要强制处理这些任务
-                if (errorSummary && errorSummary.count) {
-                    self.confirm("有状态为 <" +　self.$translate.instant('CANT_BEAT')　+ "> 的商品，确定要操作所有吗?")
-                        .then(function () {
-                            self.$controlAll(true, flag);
-                        }, function () {
-                            self.$controlAll(false, flag);
-                        });
-                    return;
-                }
-
-                // 否则, 直接处理即可
-                self.$controlAll(false, flag);
+                self.confirm("确定要操作所有吗?")
+                    .then(function () {
+                        self.$controlAll(true, flag, taskId);
+                    });
+                return;
             },
+            $controlAll: function (force, flag, taskId) {
+                var self = this;
+
+                self.taskJiagepiluService.operateProduct({
+                    task_id: taskId,
+                    force: force,
+                    flag: flag
+                }).then(function (res) {
+                    if (!res.data){
+                        self.notify.success('TXT_MSG_UPDATE_FAIL');
+                    }else {
+                        self.notify.success('TXT_MSG_SET_SUCCESS');
+                    }
+                });
+            }
         };
-            
+
+
         return TaskIndexController;
         
     })());
