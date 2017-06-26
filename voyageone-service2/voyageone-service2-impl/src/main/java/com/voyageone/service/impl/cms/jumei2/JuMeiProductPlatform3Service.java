@@ -262,6 +262,8 @@ public class JuMeiProductPlatform3Service extends BaseService {
                     String jmHashId = null;
                     if(ListUtils.notNull(mapModels)){
                         jmHashId = (String) mapModels.get(0).get("jmHashId");
+                    }else{
+                        jmHashId = parameter.platform.getpNumIId();
                     }
                     if(StringUtil.isEmpty(jmHashId)){
                         throw new BusinessException("jmHashId为空");
