@@ -1394,7 +1394,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 取得天猫同购上新用skus列表
         try {
             Map<String, Integer> skuPageQtyMap = new HashMap<>();
-            if (updateWare) {
+            if (updateWare && tbItemSchema != null) {
                 // 获取页面sku以及对应的库存
                 String skus = ((InputField)tbItemSchema.getFieldMap().get("skus")).getDefaultValue();
                 List<Map<String, Object>> skuPageQtyMapList = JacksonUtil.jsonToMapList(skus);
