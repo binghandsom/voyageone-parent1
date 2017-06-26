@@ -197,16 +197,17 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService {
         req.setItemEditStatus(Integer.parseInt(status.value()));
         int pageNo = 1;
         int pageSize = 100;
+        int index = 1;
         while (true) {
             req.setPageNo(pageNo++);
             req.setPageSize(pageSize);
             PagedItemEdit edit = koalaItemService.batchStatusGet(shopBean, req);
-            if (edit.getTotalCount() == 0) {
+            ItemEdit[] itemEdits = edit.getItemEditList();
+            if (itemEdits == null || itemEdits.length == 0) {
                 break;
             }
 
-            int index = 1;
-            for (ItemEdit itemEdit : edit.getItemEditList()) {
+            for (ItemEdit itemEdit : itemEdits) {
                 $info(String.format("%s-%s-%s考拉[%s]属性取得 %d/%d", channelId, cartId, itemEdit.getKey(), status.name(), index, edit.getTotalCount()));
                 try {
                     doSetProduct(channelId, Integer.valueOf(cartId), itemEdit);
@@ -222,7 +223,7 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService {
                 index++;
             }
 
-            if (edit.getTotalCount() < pageSize) {
+            if (itemEdits.length < pageSize) {
                 break;
             }
         }
