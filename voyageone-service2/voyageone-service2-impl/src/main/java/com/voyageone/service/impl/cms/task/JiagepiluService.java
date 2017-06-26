@@ -148,13 +148,17 @@ public class JiagepiluService extends BaseService {
             }
 
             // 如果导入有错误，则生成错误文件
-            String filePath = Properties.readValue(CmsProperty.Props.CMS_JIAGEPILU_IMPORT_TEMPLATE_PATH);
-            File templateFile = new File(filePath);
-            if (!templateFile.exists()) {
-                throw new BusinessException(String.format("上传模板文件(%s)不存在", filePath));
-            }
-            Workbook errorBook = WorkbookFactory.create(templateFile);
+            Workbook errorBook = new HSSFWorkbook();
+            errorBook.createSheet();
             Sheet errorSheet = errorBook.getSheetAt(0);
+            Row titleRow = FileUtils.row(errorSheet, 0);
+            // 设置标题
+            FileUtils.cell(titleRow, 0, null).setCellValue("num_iid");
+            FileUtils.cell(titleRow, 1, null).setCellValue("code");
+            FileUtils.cell(titleRow, 2, null).setCellValue("price");
+            FileUtils.cell(titleRow, 3, null).setCellValue("imageName");
+            FileUtils.cell(titleRow, 4, null).setCellValue("message");
+
             int errorRowNum = 0;
 
             Set<String> numIidSet = new HashSet<>();
@@ -290,7 +294,7 @@ public class JiagepiluService extends BaseService {
             jiagepiluImportInfoModel.setCreated(new Date());
 
             String errorFileName = "jiagepilu" + taskId + "-import-error-"
-                    + DateTimeUtil.format(new Date(), DateTimeUtil.DATE_TIME_FORMAT_2) + ".xlsx";
+                    + DateTimeUtil.format(new Date(), DateTimeUtil.DATE_TIME_FORMAT_2) + ".xls";
             if (errorRowNum > 0) {
                 jiagepiluImportInfoModel.setErrorFileName(errorFileName);
             }
