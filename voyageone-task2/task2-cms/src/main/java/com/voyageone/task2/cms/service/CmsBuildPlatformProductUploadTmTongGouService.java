@@ -567,7 +567,11 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // 取得更新对象商品id
                 numIId = sxData.getPlatform().getNumIId();
                 // 获取商品页面信息
-                tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
+                try {
+                    tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
+                } catch (Exception e) {
+                    tbItemSchema = null; // 有可能商品被弄坏了
+                }
             }
 
             // 编辑天猫国际官网同购共通属性
@@ -1518,16 +1522,18 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             if (config != null && "1".equals(config.getConfigValue1()) && updateWare) {
                 // 如果设置成"1：运营自己天猫后台管理"时,用天猫平台上取下来的运营自己后台设置的值设置schema无线端共通模块相关属性
 
-                String defaultValue = ((InputField)tbItemSchema.getFieldMap().get("wireless_desc")).getDefaultValue();
-                if (defaultValue != null) {
-                    // 店铺活动(json)
-                    valWirelessDetails = updateDefaultValue(valWirelessDetails, "shop_discount", defaultValue);
-                    // 文字说明(json)
-                    valWirelessDetails = updateDefaultValue(valWirelessDetails, "item_text", defaultValue);
-                    // 优惠(json)
-                    valWirelessDetails = updateDefaultValue(valWirelessDetails, "coupon", defaultValue);
-                    // 同店推荐(json)
-                    valWirelessDetails = updateDefaultValue(valWirelessDetails, "hot_recommanded", defaultValue);
+                if (tbItemSchema != null) {
+                    String defaultValue = ((InputField) tbItemSchema.getFieldMap().get("wireless_desc")).getDefaultValue();
+                    if (defaultValue != null) {
+                        // 店铺活动(json)
+                        valWirelessDetails = updateDefaultValue(valWirelessDetails, "shop_discount", defaultValue);
+                        // 文字说明(json)
+                        valWirelessDetails = updateDefaultValue(valWirelessDetails, "item_text", defaultValue);
+                        // 优惠(json)
+                        valWirelessDetails = updateDefaultValue(valWirelessDetails, "coupon", defaultValue);
+                        // 同店推荐(json)
+                        valWirelessDetails = updateDefaultValue(valWirelessDetails, "hot_recommanded", defaultValue);
+                    }
                 }
             }
             productInfoMap.put("wireless_desc", valWirelessDetails);
