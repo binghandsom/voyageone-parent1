@@ -505,6 +505,11 @@ public class JiagepiluService extends BaseService {
             throw new BusinessException("7000002");
         }
 
+        String imageName = this.getJiagepiluProductImage(tasksModel.getChannelId(), code, tasksModel.getCartId());
+        if (StringUtils.isBlank(imageName)) {
+            throw new BusinessException("根据产品Code找不到商品主图");
+        }
+
         if (id == null) {
             CmsBtTaskJiagepiluModel newModel = new CmsBtTaskJiagepiluModel();
             newModel.setCreated(new Date());
@@ -513,7 +518,7 @@ public class JiagepiluService extends BaseService {
             newModel.setNumIid(Long.valueOf(numIid));
             newModel.setProductCode(code);
             newModel.setPrice(price);
-            newModel.setImageName("");
+            newModel.setImageName(imageName);
 
             // 初始"STOP"状态
             newModel.setSynFlag(BeatFlag.STOP.getFlag());
@@ -529,6 +534,7 @@ public class JiagepiluService extends BaseService {
             updateModel.setNumIid(Long.valueOf(numIid));
             updateModel.setProductCode(code);
             updateModel.setPrice(price);
+            updateModel.setImageName(imageName);
             updateModel.setModifier(username);
             updateModel.setModified(new Date());
             affected = cmsBtTaskJiagepiluDao.update(updateModel);

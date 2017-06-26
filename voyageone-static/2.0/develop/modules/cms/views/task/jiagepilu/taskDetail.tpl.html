@@ -131,6 +131,7 @@
 						<table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px" ng-controller="popupCtrl">
 							<thead>
 							<tr>
+								<th class="text-left" translate="TXT_IMAGE"></th>
 								<th class="text-left" translate="TXT_PRODUCT_CODE"></th>
 								<th class="text-left" translate="TXT_NUM_IID"></th>
 								<th class="text-right" translate="TXT_PROMOTION_PRICE"></th>
@@ -143,6 +144,9 @@
 							</thead>
 							<tbody>
 							<tr ng-repeat="info in ctrl.productList">
+								<td class="text-left">
+									<img ng-if="info.imageUrl" src="{{::info.imageUrl}}"  class="thumb-sm-search cur-p" ng-click="ctrl.bigImg(info.imageUrl)">
+								</td>
 								<td class="text-left">{{::info.productCode}}</td>
 								<td class="text-left">
 									<a ng-href="https://detail.tmall.hk/hk/item.htm?id={{::info.numIid}}" target="_blank">{{::info.numIid}}</a>

@@ -59,7 +59,87 @@ define([
 
             this.summary = {};
             this.$timeout = $timeout;
-            this.searchKey = null;
+
+            this.imageTemplateList = [
+                {
+                    channelId:"001",
+                    cartId:20,
+                    url:"http://s7d5.scene7.com/is/image/sneakerhead/SN20161223_1200x1200?$1200X1200$&$img=%s"
+                },
+                {
+                    channelId:"001",
+                    cartId:23,
+                    url:"http://image.sneakerhead.com/is/image/sneakerhead/1200templateblack?$1200x1200$&$img=%s"
+                },
+                {
+                    channelId:"007",
+                    cartId:23,
+                    url:"http://s7d5.scene7.com/is/image/sneakerhead/champion_zhutu_moban?$900x900$&$layer_1_src=%s"
+                },
+                {
+                    channelId:"010",
+                    cartId:23,
+                    url:"http://s7d5.scene7.com/is/image/sneakerhead/Jewelry%%5F20170425%%5Fx1200%%5F1200x?$1200x1200$&$products=%s"
+                },
+                {
+                    channelId:"012",
+                    cartId:23,
+                    url:"http://s7d5.scene7.com/is/image/sneakerhead/bcbg_1200_1200?$1200x1200$&$big=%s"
+                },
+                {
+                    channelId:"014",
+                    cartId:23,
+                    url:"http://s7d5.scene7.com/is/image/sneakerhead/zhutu-1?$1200x1200$&$layer_1_src=%s"
+                },
+                {
+                    channelId:"017",
+                    cartId:30,
+                    url:"http://s7d5.scene7.com/is/image/sneakerhead/1200-logo-zt?$VTM-TM-1200-1200$&$img=%s"
+                },
+                {
+                    channelId:"018",
+                    cartId:23,
+                    url:"http://s7d5.scene7.com/is/image/sneakerhead/Target_20161212_x1200_1200x-1?$1200x1200$&$1200x1200$&$product=%s"
+                },
+                {
+                    channelId:"024",
+                    cartId:30,
+                    url:"http://s7d5.scene7.com/is/image/sneakerhead/OSzt?$800x800$&$layer_2_src=%s"
+                },
+                {
+                    channelId:"030",
+                    cartId:20,
+                    url:"http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x1200_1200x?$1200x1200$&$product=%s"
+                },
+                {
+                    channelId:"033",
+                    cartId:30,
+                    url:"http://s7d5.scene7.com/is/image/sneakerhead/KITBAG201704241000x1000zhutu?$KITBAG-1000X10000$&$PRODUCT=%s&update=1"
+                },
+                {
+                    channelId:"034",
+                    cartId:23,
+                    url:"http://s7d5.scene7.com/is/image/sneakerhead/coty_zhutu_800?$800x800$&$layer_1_src=%s&aa="
+                },
+                {
+                    channelId:"928",
+                    cartId:31,
+                    url:"http://s7d5.scene7.com/is/image/sneakerhead/liking_414_1200X1200zhutu?$1200x1200$&$image=%s"
+                }
+                // 001 20 http://s7d5.scene7.com/is/image/sneakerhead/SN20161223_1200x1200?$1200X1200$&$img=%s
+                // 001 23 http://image.sneakerhead.com/is/image/sneakerhead/1200templateblack?$1200x1200$&$img=%s
+                // 007 23 http://s7d5.scene7.com/is/image/sneakerhead/champion_zhutu_moban?$900x900$&$layer_1_src=%s
+                // 010 23 http://s7d5.scene7.com/is/image/sneakerhead/Jewelry%%5F20170425%%5Fx1200%%5F1200x?$1200x1200$&$products=%s
+                // 012 23 http://s7d5.scene7.com/is/image/sneakerhead/bcbg_1200_1200?$1200x1200$&$big=%s
+                // 014 23 http://s7d5.scene7.com/is/image/sneakerhead/zhutu-1?$1200x1200$&$layer_1_src=%s
+                // 017 30 http://s7d5.scene7.com/is/image/sneakerhead/1200-logo-zt?$VTM-TM-1200-1200$&$img=%s
+                // 018 23 http://s7d5.scene7.com/is/image/sneakerhead/Target_20161212_x1200_1200x-1?$1200x1200$&$1200x1200$&$product=%s
+                // 024 30 http://s7d5.scene7.com/is/image/sneakerhead/OSzt?$800x800$&$layer_2_src=%s
+                // 030 20 http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x1200_1200x?$1200x1200$&$product=%s
+                // 033 30 http://s7d5.scene7.com/is/image/sneakerhead/KITBAG201704241000x1000zhutu?$KITBAG-1000X10000$&$PRODUCT=%s&update=1
+                // 034 23 http://s7d5.scene7.com/is/image/sneakerhead/coty_zhutu_800?$800x800$&$layer_1_src=%s&aa=
+                // 928 31 http://s7d5.scene7.com/is/image/sneakerhead/liking_414_1200X1200zhutu?$1200x1200$&$image=%s
+            ];
         }
 
         JiagepiluController.prototype = {
@@ -137,6 +217,22 @@ define([
                         self.productList = resp.data.products;
                         self.pageOption.total = resp.data.total;
                         self.summary = resp.data.summary;
+
+                        if (_.size(self.productList) > 0) {
+                            _.forEach(self.productList, function (product) {
+                                // 查询图片模板
+                                var imageTemplate = _.find(self.imageTemplateList, function (templdate) {
+                                    return self.task.channelId == templdate.channelId && self.task.cartId == templdate.cartId;
+                                });
+                                if (imageTemplate) {
+                                    console.log(imageTemplate);
+                                    var imageUrl = imageTemplate.url.replace(/%s/g, product.imageName);
+                                    imageUrl = imageUrl.replace(/%d/g, product.price);
+                                    console.log(imageUrl);
+                                    _.extend(product, {imageUrl:imageUrl});
+                                }
+                            });
+                        }
                     }
                 });
 
@@ -304,6 +400,10 @@ define([
                 self.popups.openNewBeatTask({task: self.task}).then(function(newTask) {
                     self.task = newTask;
                 });
+            },
+
+            bigImg:function (url) {
+                window.open(url);
             }
         };
 
