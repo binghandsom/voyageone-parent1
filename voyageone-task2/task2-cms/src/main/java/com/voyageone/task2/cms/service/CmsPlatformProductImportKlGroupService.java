@@ -236,7 +236,7 @@ public class CmsPlatformProductImportKlGroupService extends BaseMQCmsService {
     private void executeMove(KoalaConfig shopBean, String channelId, int cartId, ItemEdit itemEdit) throws Exception {
         String platformPid = itemEdit.getKey();
         CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByPlatformPid(channelId, cartId, platformPid);
-        CmsPlatformProductImportKlFieldsService.PlatformStatus klPlatformStatus = CmsPlatformProductImportKlFieldsService.PlatformStatus.parse(itemEdit.getRawItemEdit().getItemOnlineStatus());
+        CmsPlatformProductImportKlFieldsService.PlatformStatus klPlatformStatus = CmsPlatformProductImportKlFieldsService.PlatformStatus.parse(itemEdit.getRawItemEdit().getItemStatus());
         CmsConstants.PlatformStatus status;
         if (klPlatformStatus == CmsPlatformProductImportKlFieldsService.PlatformStatus.ON_SALE) {
             status = CmsConstants.PlatformStatus.OnSale;

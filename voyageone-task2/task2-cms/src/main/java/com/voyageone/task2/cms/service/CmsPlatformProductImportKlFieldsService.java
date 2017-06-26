@@ -241,7 +241,7 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService {
         cmsBtProductGroup.setPlatformPid(platformPid);
 
         // status
-        CmsPlatformProductImportKlFieldsService.PlatformStatus klPlatformStatus = CmsPlatformProductImportKlFieldsService.PlatformStatus.parse(itemEdit.getRawItemEdit().getItemOnlineStatus());
+        CmsPlatformProductImportKlFieldsService.PlatformStatus klPlatformStatus = CmsPlatformProductImportKlFieldsService.PlatformStatus.parse(itemEdit.getRawItemEdit().getItemStatus());
         CmsConstants.PlatformStatus status;
         if (klPlatformStatus == CmsPlatformProductImportKlFieldsService.PlatformStatus.ON_SALE) {
             status = CmsConstants.PlatformStatus.OnSale;
