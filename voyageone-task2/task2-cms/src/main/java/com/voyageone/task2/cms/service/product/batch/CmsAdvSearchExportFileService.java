@@ -430,6 +430,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
                 if (prop.get("name").indexOf("是否销售") > -0) continue;
+                if (prop.get("name").indexOf("sku货品编码") > -0) continue;
                 if (prop.get("name").indexOf("SkuNo") > -0) continue;
                 if (prop.get("name").indexOf("SpuNo") > -0) continue;
                 if (prop.get("name").indexOf("jdSkuId") > -0) continue;
@@ -526,6 +527,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
+                if (prop.get("name").indexOf("可售库存") > -0) continue;
+                if (prop.get("name").indexOf("是否销售") > -0) continue;
+                if (prop.get("name").indexOf("sku货品编码") > -0) continue;
                 if (prop.get("name").indexOf("SkuNo") > -0) continue;
                 if (prop.get("name").indexOf("SpuNo") > -0) continue;
                 if (prop.get("name").indexOf("jdSkuId") > -0) continue;
