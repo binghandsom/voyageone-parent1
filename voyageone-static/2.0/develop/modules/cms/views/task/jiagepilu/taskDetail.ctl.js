@@ -184,57 +184,7 @@ define([
                     }
                 });
 
-                var searchBean = angular.copy(self.searchBean);
-
-                // 处理多个code
-                if (searchBean.numIidOrCodes) {
-                    var numIidOrCodes = searchBean.numIidOrCodes.split("\n");
-                    searchBean.numIidOrCodes = numIidOrCodes;
-                }
-                // 处理勾选的单品状态和图片状态
-                if (searchBean.beatFlags && _.size(searchBean.beatFlags) > 0) {
-                    var beatFlagObj = _.pick(searchBean.beatFlags, function (value, key, object) {
-                        return value;
-                    });
-                    var beatFlags = _.keys(beatFlagObj);
-                    _.extend(searchBean, {"beatFlags":beatFlags});
-                }
-
-                if (searchBean.imageStatuses && _.size(searchBean.imageStatuses) > 0) {
-                    var imageStatusObj = _.pick(searchBean.imageStatuses, function (value, key, object) {
-                        return value;
-                    });
-                    var imageStatuses = _.keys(imageStatusObj);
-                    _.extend(searchBean, {"imageStatuses":imageStatuses});
-                }
-
-                // 分页参数处理
-                _.extend(searchBean, self.pageOption);
-
-                // 获取价格披露任务产品列表
-                self.taskJiagepiluService.search(searchBean).then(function (resp) {
-                    if (resp.data) {
-                        self.productList = resp.data.products;
-                        self.pageOption.total = resp.data.total;
-                        self.summary = resp.data.summary;
-
-                        if (_.size(self.productList) > 0) {
-                            _.forEach(self.productList, function (product) {
-                                // 查询图片模板
-                                var imageTemplate = _.find(self.imageTemplateList, function (templdate) {
-                                    return self.task.channelId == templdate.channelId && self.task.cartId == templdate.cartId;
-                                });
-                                if (imageTemplate) {
-                                    console.log(imageTemplate);
-                                    var imageUrl = imageTemplate.url.replace(/%s/g, product.imageName);
-                                    imageUrl = imageUrl.replace(/%d/g, product.price);
-                                    console.log(imageUrl);
-                                    _.extend(product, {imageUrl:imageUrl});
-                                }
-                            });
-                        }
-                    }
-                });
+                self.search();
 
                 // 获取当前任务导入信息列表
                 self.refreshImportInfoList();
@@ -311,7 +261,54 @@ define([
             search: function () {
                 var self = this;
                 // 检索
-                self.getData();
+                var searchBean = angular.copy(self.searchBean);
+
+                // 处理多个code
+                if (searchBean.numIidOrCodes) {
+                    var numIidOrCodes = searchBean.numIidOrCodes.split("\n");
+                    searchBean.numIidOrCodes = numIidOrCodes;
+                }
+                // 处理勾选的单品状态和图片状态
+                if (searchBean.beatFlags && _.size(searchBean.beatFlags) > 0) {
+                    var beatFlagObj = _.pick(searchBean.beatFlags, function (value, key, object) {
+                        return value;
+                    });
+                    var beatFlags = _.keys(beatFlagObj);
+                    _.extend(searchBean, {"beatFlags":beatFlags});
+                }
+
+                if (searchBean.imageStatuses && _.size(searchBean.imageStatuses) > 0) {
+                    var imageStatusObj = _.pick(searchBean.imageStatuses, function (value, key, object) {
+                        return value;
+                    });
+                    var imageStatuses = _.keys(imageStatusObj);
+                    _.extend(searchBean, {"imageStatuses":imageStatuses});
+                }
+
+                // 分页参数处理
+                _.extend(searchBean, self.pageOption);
+
+                // 获取价格披露任务产品列表
+                self.taskJiagepiluService.search(searchBean).then(function (resp) {
+                    if (resp.data) {
+                        self.productList = resp.data.products;
+                        self.pageOption.total = resp.data.total;
+                        self.summary = resp.data.summary;
+
+                        if (_.size(self.productList) > 0) {
+                            _.forEach(self.productList, function (product) {
+                                // 查询图片模板
+                                var imageTemplate = _.find(self.imageTemplateList, function (templdate) {
+                                    return self.task.channelId == templdate.channelId && self.task.cartId == templdate.cartId;
+                                });
+                                if (imageTemplate) {
+                                    var imageUrl = imageTemplate.url.replace(/%s/g, product.imageName);
+                                    _.extend(product, {imageUrl:imageUrl});
+                                }
+                            });
+                        }
+                    }
+                });
             },
 
             // 启动/停止/还原单个商品
@@ -325,7 +322,7 @@ define([
                     }).then(function (res) {
                         if (!res.data)
                             return ttt.alert('TXT_MSG_UPDATE_FAIL');
-                        ttt.getData();
+                        ttt.search();
                     });
                 };
                 if (beatInfo.synFlagEnum !== 'CANT_BEAT') {
@@ -375,7 +372,7 @@ define([
                 self.confirm("确定要重启状态为 <" +　self.$translate.instant(flag)　+ "> 的商品吗?").then(function () {
                     self.taskJiagepiluService.reBeating({task_id:self.taskId,flag:flag}).then(function (resp) {
                         if (resp.data) {
-                            self.getData();
+                            self.search();
                         }
                     })
                 });
@@ -391,7 +388,7 @@ define([
                 }).then(function (res) {
                     if (!res.data)
                         return self.alert('TXT_MSG_UPDATE_FAIL');
-                    self.getData();
+                    self.search();
                 });
             },
 
