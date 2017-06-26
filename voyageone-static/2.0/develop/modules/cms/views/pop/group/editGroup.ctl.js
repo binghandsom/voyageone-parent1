@@ -217,7 +217,7 @@ define([
                 cartId: self.context.cartId,
                 productId: self.context.mainProdId,
                 platform: self.vm.platform,
-                showArr: ['image1', 'image6', 'image7', 'image2', 'image3', 'image4', 'image5']
+                showArr: ['image1','image4', 'image5']
             }).then(function (platform) {
                 self.vm.platform = platform;
 

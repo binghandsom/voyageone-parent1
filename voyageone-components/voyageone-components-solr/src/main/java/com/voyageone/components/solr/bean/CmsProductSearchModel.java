@@ -17,7 +17,6 @@ public class CmsProductSearchModel {
 
     @SolrField(required = true)
     private String id;
-    private Long lastVer;
     @SolrField(type = "lowercase")
     private String productModel;
     private String nameEn;
@@ -53,14 +52,6 @@ public class CmsProductSearchModel {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public Long getLastVer() {
-        return lastVer;
-    }
-
-    public void setLastVer(Long lastVer) {
-        this.lastVer = lastVer;
     }
 
     public String getProductModel() {

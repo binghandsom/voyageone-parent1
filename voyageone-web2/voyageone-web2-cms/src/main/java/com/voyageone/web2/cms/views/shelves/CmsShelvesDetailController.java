@@ -129,7 +129,7 @@ public class CmsShelvesDetailController extends CmsController {
         cmsBtTagModel.setTagPath("0");
         cmsBtTagModel.setTagPathName("-" + cmsBtShelvesModel.getShelvesName() + "-");
         cmsBtTagModel.setParentTagId(0);
-        cmsBtTagModel.setTagType(CmsBtTagModelTagType.shelves);
+        cmsBtTagModel.setTagType(CmsBtTagModelTagType.ref_shelves);
         cmsBtTagModel.setCreater(getUser().getUserName());
         cmsBtTagModel.setModifier(getUser().getUserName());
         cmsBtTagModel.setActive(1);

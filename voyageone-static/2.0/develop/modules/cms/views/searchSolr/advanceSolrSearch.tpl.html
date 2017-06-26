@@ -30,11 +30,14 @@
                                             <div class="form-group">
                                                 <div class="col-sm-3"></div>
                                                 <div class="col-sm-8">
-                                                    <select multiple chosen width="'100%'" class="form-control"
-                                                            ng-model="vm.searchInfo.brandList" search-contains = "true"
-                                                            ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
-                                                        <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
-                                                    </select>
+                                                    <div class="input-group">
+                                                        <select multiple chosen width="'100%'" class="form-control"
+                                                                ng-model="vm.searchInfo.brandList" search-contains = "true"
+                                                                ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
+                                                            <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
+                                                        </select>
+                                                        <span class="input-group-addon cur-p" ng-click="dismiss('brandList')">重置</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="form-horizontal">
@@ -554,7 +557,7 @@
                                     <a href>加入橱窗</a>
                                     <ul class="dropdown-menu dropdown-menu-ul">
                                         <li ng-repeat="shelves in vm.masterData.shelvesMap[cartBean.value]">
-                                            <a href ng-click="$parent.addShelves(shelves.id)" >
+                                            <a href ng-click="$parent.addShelves(shelves.id)" title="{{shelves.shelvesName}}">
                                                 {{shelves.shelvesName | limitTo: 10}}{{shelves.shelvesName.length > 10 ? '...' : ''}}
                                             </a>
                                         </li>
