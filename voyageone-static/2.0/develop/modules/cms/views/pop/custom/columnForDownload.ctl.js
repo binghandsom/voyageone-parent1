@@ -10,7 +10,8 @@ define([
 
         $scope.vm = {
             customProps: [],
-            commonProps: []
+            commonProps: [],
+            inventoryDetails:false
         };
         $scope.context = context;
         $scope.chkItemStatus = chkItemStatus;

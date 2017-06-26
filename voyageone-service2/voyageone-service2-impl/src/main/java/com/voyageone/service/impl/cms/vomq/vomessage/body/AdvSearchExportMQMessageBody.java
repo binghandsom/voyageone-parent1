@@ -20,6 +20,7 @@ public class AdvSearchExportMQMessageBody extends BaseMQMessageBody {
     private Integer cmsBtExportTaskId;
     private Map<String, Object> searchValue;
     private Map<String, String> channelIdMap;
+    private Boolean inventoryDetails;
     public Integer getCmsBtExportTaskId() {
         return cmsBtExportTaskId;
     }
@@ -42,6 +43,14 @@ public class AdvSearchExportMQMessageBody extends BaseMQMessageBody {
 
     public void setChannelIdMap(Map<String, String> channelIdMap) {
         this.channelIdMap = channelIdMap;
+    }
+
+    public Boolean getInventoryDetails() {
+        return inventoryDetails;
+    }
+
+    public void setInventoryDetails(Boolean inventoryDetails) {
+        this.inventoryDetails = inventoryDetails;
     }
 
     @Override
