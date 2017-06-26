@@ -108,6 +108,11 @@ public class TbScItemService extends TbBase {
 		ScitemAddRequest request = new ScitemAddRequest();
 
 		request.setItemName(itemName);
+		// 20170626 tom 菜鸟增加了检查， 货品的名称不能超过50 START
+		if (itemName.length() > 50) {
+			request.setItemName(itemName.substring(0, 50));
+		}
+		// 20170626 tom 菜鸟增加了检查， 货品的名称不能超过50 END
 		request.setOuterCode(getRealScOuterCodeBySku(outerCode));
 		request.setWeight(1L);
 
@@ -135,7 +140,7 @@ public class TbScItemService extends TbBase {
 		ScitemMapAddRequest request = new ScitemMapAddRequest();
 
 		request.setItemId(numIId);
-		if (skuId != null) {
+		if (!StringUtils.isNullOrBlank2(skuId)) {
 			request.setSkuId(Long.parseLong(skuId));
 		}
 		request.setOuterCode(getRealScOuterCodeBySku(outerCode));

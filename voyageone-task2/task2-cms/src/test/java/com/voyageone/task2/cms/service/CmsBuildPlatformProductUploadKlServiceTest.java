@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
@@ -23,8 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
-import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,7 +42,10 @@ public class CmsBuildPlatformProductUploadKlServiceTest {
     private SxProductService sxProductService;
     @Autowired
     private KoalaItemService koalaItemService;
-
+    @Autowired
+    private CmsPlatformProductImportKlGroupService groupService;
+    @Autowired
+    private CmsPlatformProductImportKlFieldsService fieldsService;
 
     @Test
     public void testInsertCmsBtKlSku() {
@@ -141,5 +142,27 @@ public class CmsBuildPlatformProductUploadKlServiceTest {
 
         cmsBuildPlatformProductUploadKlService.uploadProduct(cmsBtSxWorkloadModel, shopProp, channelConfigValueMap, categoryMappingListMap);
     }
+
+    @Test
+    public void testGetItemData() {
+        String channelId = "001";
+        String status = "5";
+        String pid = "205215-31007";
+        String runType = null;
+        Map<String, Object> messageMap = new HashMap<>();
+        messageMap.put("channelId", channelId);
+        messageMap.put("platformStatus", status);
+        messageMap.put("pid", pid);
+        messageMap.put("runType", runType);
+
+        try {
+//            groupService.onStartup(messageMap);
+            fieldsService.onStartup(messageMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
 }
