@@ -460,7 +460,8 @@ define(function () {
                     "operateProduct":"operateProduct",
                     "reBeating":"reBeating",
                     "getEditProduct":"getEditProduct",
-                    "getJiagepiluCarts":"getJiagepiluCarts"
+                    "getJiagepiluCarts":"getJiagepiluCarts",
+                    "download": "download"
                 }
             },
             "system": {

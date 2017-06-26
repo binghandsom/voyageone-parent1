@@ -373,6 +373,8 @@ public interface CmsUrlConstants {
 
             String GET_JIAGEPILU_CARTS = "getJiagepiluCarts";
 
+            String DOWNLOAD = "download";
+
         }
 
     }

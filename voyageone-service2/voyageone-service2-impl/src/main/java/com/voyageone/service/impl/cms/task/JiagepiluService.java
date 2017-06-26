@@ -29,6 +29,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -38,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -587,5 +589,57 @@ public class JiagepiluService extends BaseService {
             return cmsBtTaskJiagepiluDao.select(id);
         }
         return null;
+    }
+
+    /**
+     * 下载价格披露任务产品列表
+     * @param taskId
+     * @return
+     */
+    public byte[] download(int taskId) {
+
+        List<CmsBtTaskJiagepiluModel> jiagepiluModels = this.getProductList(taskId);
+        Workbook workbook = new HSSFWorkbook();
+        Sheet sheet = workbook.createSheet();
+        // 标题栏
+        Row row = FileUtils.row(sheet, 0);
+        FileUtils.cell(row, 0, null).setCellValue("num_iid");
+        FileUtils.cell(row, 1, null).setCellValue("商品 Code");
+        FileUtils.cell(row, 2, null).setCellValue("价格");
+        FileUtils.cell(row, 3, null).setCellValue("图名名称");
+        FileUtils.cell(row, 4, null).setCellValue("状态");
+        FileUtils.cell(row, 5, null).setCellValue("结果信息");
+
+        int size = jiagepiluModels.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+
+                CmsBtTaskJiagepiluModel model = jiagepiluModels.get(i);
+
+                row = FileUtils.row(sheet, i + 1);
+
+                FileUtils.cell(row, 0, null).setCellValue(model.getNumIid());
+
+                FileUtils.cell(row, 1, null).setCellValue(model.getProductCode());
+
+                FileUtils.cell(row, 2, null).setCellValue(model.getPrice());
+
+                FileUtils.cell(row, 3, null).setCellValue(model.getImageName());
+
+                FileUtils.cell(row, 4, null).setCellValue(BeatFlag.valueOf(model.getSynFlag()).name());
+
+                FileUtils.cell(row, 5, null).setCellValue(model.getMessage());
+
+            }
+        }
+
+        // 打开保存
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try {
+            workbook.write(outputStream);
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            throw new BusinessException("下载出错了", e);
+        }
     }
 }

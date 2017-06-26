@@ -201,6 +201,11 @@ define([
                 $.download.post(path, {fileName: fileName});
             },
 
+            download: function () {
+                var ttt = this;
+                $.download.post(ttt.downloadUrl, {taskId: ttt.taskId});
+            },
+
             // 清除搜索条件
             clear: function () {
                 this.searchBean = {taskId:this.taskId};

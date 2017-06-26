@@ -2,13 +2,13 @@ package com.voyageone.web2.cms.views.task;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Carts;
-import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.service.bean.cms.task.beat.SearchTaskJiagepiluBean;
 import com.voyageone.service.impl.CmsProperty;
+import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.task.JiagepiluService;
-import com.voyageone.service.model.cms.CmsBtTaskJiagepiluModel;
+import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
 import com.voyageone.service.model.cms.enums.jiagepilu.ImageStatus;
 import com.voyageone.web2.base.BaseController;
@@ -16,7 +16,6 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.beat.ReqParam;
 import com.voyageone.web2.cms.bean.task.AddJiagepiluProductRequest;
-import com.voyageone.web2.cms.views.promotion.task.CmsTaskPriceService;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +46,7 @@ public class CmsJiagepiluController extends BaseController {
     @Autowired
     private JiagepiluService jiagepiluService;
     @Autowired
-    private CmsTaskPriceService cmsTaskPriceService;
-
+    private TaskService taskService;
 
     @RequestMapping(value = CmsUrlConstants.TASK.JIAGEPILU.GET_TASK_MODEL)
     public AjaxResponse getJiagepiluTaskModel(@RequestBody Map<String, Object> requestParams) {
@@ -186,6 +184,16 @@ public class CmsJiagepiluController extends BaseController {
             }
         }
         return success(carts);
+    }
+
+    @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.DOWNLOAD)
+    public ResponseEntity<byte[]> download(@RequestParam int taskId) {
+
+        CmsBtTasksModel task = taskService.getTaskById(taskId);
+
+        String filename = String.format("%s.xls", task.getTaskName());
+
+        return genResponseEntityFromBytes(filename, jiagepiluService.download(taskId));
     }
 
 }
