@@ -8,7 +8,7 @@ define([
 ], function (cms, carts) {
     cms.controller("taskIndexController", (function () {
     
-        function TaskIndexController(taskService, taskStockService, promotionService, cActions, confirm, notify) {
+        function TaskIndexController(taskService, taskStockService, promotionService, cActions, confirm, notify, popups) {
             this.taskService = taskService;
             this.taskStockService = taskStockService;
             this.promotionService = promotionService;
@@ -16,6 +16,7 @@ define([
             this.tasks = [];
             this.confirm = confirm;
             this.notify = notify;
+            this.popups = popups;
             this.searchInfo={};
 
             this.taskType=[{"name":"特价宝","value":"0"},{"name":"价格披露","value":"1"},{"name":"库存隔离","value":"2"}];
@@ -91,6 +92,13 @@ define([
                 var main = this;
                 $.download.post(main.downloadUrl, {
                     "taskId" : taskId
+                });
+            },
+
+            addTask: function () {
+                var self = this;
+                self.popups.openNewBeatTask({task: null}).then(function(newTask) {
+                    self.task = newTask;
                 });
             }
         };

@@ -1,19 +1,22 @@
 define([
-    'cms',
-    'underscore',
-    'modules/cms/enums/Carts',
-], function (cms, _, cart) {
+           'cms',
+           'underscore',
+           'modules/cms/enums/Carts',
+       ], function (cms, _, cart) {
     cms.controller('popNewBeatCtl', (function () {
 
-        function PopNewBeatCtl(context, $filter, $uibModalInstance, taskBeatService, taskJiagepiluService, $location) {
+        function PopNewBeatCtl(context, $filter, $uibModalInstance, taskBeatService,
+                               taskJiagepiluService, $location) {
 
             var self = this;
-            var task = context.task;
-
-            if (task) {
-                self.task = task;
+            var task = null;
+            var taskBean = null;
+            if (context.task) {
+                task = context.task;
+                self.task = context.task;
                 self.isEdit = true;
             }
+
             self.$uibModalInstance = $uibModalInstance;
             self.taskBeatService = taskBeatService;
             self.taskJiagepiluService = taskJiagepiluService;
@@ -29,22 +32,22 @@ define([
                 task.activityStart = new Date(task.activityStart);
                 task.activityEnd = new Date(task.activityEnd);
                 self.taskBean = task;
-                if (_.isString(task.config))
+                if (_.isString(task.config)) {
                     task.config = JSON.parse(task.config);
+                }
             } else {
-                // self.taskBean = task || {
-                //         taskName: '',
-                //         promotionId: promotion.id,
-                //         activityStart: new Date(promotion.activityStart),
-                //         activityEnd: new Date(promotion.activityEnd),
-                //         config: {
-                //             need_vimage: false,
-                //             beat_template: null,
-                //             revert_template: null,
-                //             beat_vtemplate: null,
-                //             revert_vtemplate: null
-                //         }
-                //     };
+                self.taskBean = {
+                    taskName: '',
+                    // activityStart: new Date(promotion.activityStart),
+                    // activityEnd: new Date(promotion.activityEnd),
+                    config: {
+                        need_vimage: false,
+                        beat_template: null,
+                        revert_template: null,
+                        beat_vtemplate: null,
+                        revert_vtemplate: null
+                    }
+                };
             }
 
             // taskBeatService.getTemplates({promotionId: promotion.id}).then(function (res) {
@@ -58,14 +61,14 @@ define([
 
         PopNewBeatCtl.prototype = {
 
-            init:function () {
+            init: function () {
                 var self = this;
                 self.taskJiagepiluService.getJiagepiluCarts().then(function (resp) {
                     if (resp.data) {
                         self.carts = resp.data;
                         _.each(self.carts, function (cartObj) {
                             var cartId = parseInt(cartObj.cart_id);
-                            _.extend(cartObj, {cartId:cartId,desc:cart.valueOf(cartId).desc})
+                            _.extend(cartObj, {cartId: cartId, desc: cart.valueOf(cartId).desc})
                         });
                     }
                 });
@@ -81,19 +84,24 @@ define([
 
                 // 确保日期格式正确
                 // 如果日期控件不选择的话, 则输出的将是 Date 格式
-                if (_.isDate(start))
+                if (_.isDate(start)) {
                     task.activityStart = self.formatDate(start);
+                }
 
-                if (_.isDate(end))
+                if (_.isDate(end)) {
                     task.activityEnd = self.formatDate(end);
+                }
 
-                if (self.isEdit)
+                if (self.isEdit) {
                     task.update = true;
+                }
 
                 self.taskBeatService.create(task).then(function (res) {
-                    var newBean = res.data;
-                    self.$uibModalInstance.close(newBean);
-                    self.$location.path('/task/jiagepilu/detail/' + newBean.id);
+                    if (res.data) {
+                        var newBean = res.data;
+                        self.$uibModalInstance.close(newBean);
+                        self.$location.path('/task/jiagepilu/detail/' + newBean.id);
+                    }
                 });
             },
 
