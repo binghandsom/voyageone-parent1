@@ -63,6 +63,7 @@ public class CmsPlatformProductImportKlGroupService extends BaseMQCmsService {
      */
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
+        $info("start MqTask[CmsPlatformProductImportKlGroupService根据考拉现在商品分组情况来进行cms的产品code拆分合并]!" + messageMap.toString());
 
         String channelId = null;
         if (messageMap.containsKey("channelId")) {
@@ -196,16 +197,17 @@ public class CmsPlatformProductImportKlGroupService extends BaseMQCmsService {
         req.setItemEditStatus(Integer.parseInt(status.value()));
         int pageNo = 1;
         int pageSize = 100;
+        int index = 1;
         while (true) {
             req.setPageNo(pageNo++);
             req.setPageSize(pageSize);
             PagedItemEdit edit = koalaItemService.batchStatusGet(shopBean, req);
-            if (edit.getTotalCount() == 0) {
+            ItemEdit[] itemEdits = edit.getItemEditList();
+            if (itemEdits == null || itemEdits.length == 0) {
                 break;
             }
 
-            int index = 1;
-            for (ItemEdit itemEdit : edit.getItemEditList()) {
+            for (ItemEdit itemEdit : itemEdits) {
                 $info(String.format("%s-%s-%s考拉[%s]分组 %d/%d", channelId, cartId, itemEdit.getKey(), status.name(), index, edit.getTotalCount()));
                 try {
                     executeMove(shopBean, channelId, Integer.valueOf(cartId), itemEdit);
@@ -221,7 +223,7 @@ public class CmsPlatformProductImportKlGroupService extends BaseMQCmsService {
                 index++;
             }
 
-            if (edit.getTotalCount() < pageSize) {
+            if (itemEdits.length < pageSize) {
                 break;
             }
         }
@@ -235,7 +237,7 @@ public class CmsPlatformProductImportKlGroupService extends BaseMQCmsService {
     private void executeMove(KoalaConfig shopBean, String channelId, int cartId, ItemEdit itemEdit) throws Exception {
         String platformPid = itemEdit.getKey();
         CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByPlatformPid(channelId, cartId, platformPid);
-        CmsPlatformProductImportKlFieldsService.PlatformStatus klPlatformStatus = CmsPlatformProductImportKlFieldsService.PlatformStatus.parse(itemEdit.getRawItemEdit().getItemOnlineStatus());
+        CmsPlatformProductImportKlFieldsService.PlatformStatus klPlatformStatus = CmsPlatformProductImportKlFieldsService.PlatformStatus.parse(itemEdit.getRawItemEdit().getItemStatus());
         CmsConstants.PlatformStatus status;
         if (klPlatformStatus == CmsPlatformProductImportKlFieldsService.PlatformStatus.ON_SALE) {
             status = CmsConstants.PlatformStatus.OnSale;
