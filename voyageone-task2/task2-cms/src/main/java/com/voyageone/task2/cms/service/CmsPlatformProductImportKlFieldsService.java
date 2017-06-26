@@ -60,6 +60,7 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService {
      */
     @Override
     protected void onStartup(Map<String, Object> messageMap) throws Exception {
+        $info("start MqTask[CmsPlatformProductImportKlFieldsService考拉商品信息回写]!" + messageMap.toString());
 
         String channelId = null;
         if (messageMap.containsKey("channelId")) {

@@ -63,6 +63,7 @@ public class CmsPlatformProductImportKlGroupService extends BaseMQCmsService {
      */
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
+        $info("start MqTask[CmsPlatformProductImportKlGroupService根据考拉现在商品分组情况来进行cms的产品code拆分合并]!" + messageMap.toString());
 
         String channelId = null;
         if (messageMap.containsKey("channelId")) {
