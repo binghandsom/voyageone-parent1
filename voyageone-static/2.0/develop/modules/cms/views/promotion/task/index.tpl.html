@@ -114,6 +114,13 @@
                     <td class="mfb-xt text-left">{{ctrl.typeName(task)}}</td>
                     <td class="mfb-xxt text-left">{{task.activityStart}} ~ {{task.activityEnd}}</td>
                     <td class="mfb-xxs text-left">
+                        <div class="row" ng-if="task.taskType == 1">
+                            <div >
+                                <button ng-click="ctrl.controlAll('BEATING')" class="btn btn-primary"><i class="glyphicon glyphicon-play"></i>&nbsp;<span translate="TXT_STARTUP_ALL"></span></button>
+                                <button ng-click="ctrl.controlAll('STOP')" class="btn btn-danger"><i class="glyphicon glyphicon-pause"></i>&nbsp;<span translate="TXT_STOP_ALL"></span></button>
+                                <button ng-click="ctrl.controlAll('REVERT')" class="btn btn-success"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT_ALL"></span></button>
+                            </div>
+                        </div>
                         <!--<a ng-if="task.taskType == 1" ng-href="#/promotion/task/beat/{{task.id}}" target="_blank">-->
                             <!--<button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i-->
                                     <!--class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}-->
