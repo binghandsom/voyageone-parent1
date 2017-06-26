@@ -29,11 +29,15 @@
                                             <div class="form-group">
                                                 <div class="col-sm-3"></div>
                                                 <div class="col-sm-8">
-                                                    <select multiple chosen width="'100%'" class="form-control"
-                                                            ng-model="vm.searchInfo.brandList" search-contains = "true"
-                                                            ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
-                                                        <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
-                                                    </select>
+
+                                                    <div class="input-group">
+                                                        <select multiple chosen width="'100%'" class="form-control"
+                                                                ng-model="vm.searchInfo.brandList" search-contains = "true"
+                                                                ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
+                                                            <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
+                                                        </select>
+                                                        <span class="input-group-addon cur-p" ng-click="dismiss('brandList')">重置</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="form-horizontal">
@@ -857,7 +861,7 @@
                                     <a href>加入橱窗</a>
                                     <ul class="dropdown-menu dropdown-menu-ul">
                                         <li ng-repeat="shelves in vm.masterData.shelvesMap[cartBean.value]">
-                                            <a href ng-click="$parent.addShelves(shelves.id)" >
+                                            <a href ng-click="$parent.addShelves(shelves.id)" title="{{shelves.shelvesName}}">
                                                 {{shelves.shelvesName | limitTo: 10}}{{shelves.shelvesName.length > 10 ? '...' : ''}}
                                             </a>
                                         </li>
@@ -1233,8 +1237,11 @@
                                             {{groupInfo.common.fields.brand}}
                                         </td>
                                         <td class="text-left" title="{{prop1.value}}" ng-repeat="prop1 in groupInfo.commArr" style=" overflow:hidden;">
-                                            <span ng-if="prop1.value.length > 50"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
-                                            <span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
+                                            <span ng-if = "prop1.value.length <= 50 && prop1.value != 'clientMsrpPrice'">{{prop1.value}}</span>
+                                            <span ng-if = "prop1.value.length > 50 && prop1.value != 'clientMsrpPrice'"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
+                                            <span ng-if = "prop1.value == 'clientMsrpPrice'">
+                                                <client-msrp-price data="groupInfo.common.skus"></client-msrp-price>
+                                            </span>
                                         </td>
                                         <td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in groupInfo.custArr" style="overflow:hidden;">
                                             <span ng-if="prop2.value.length > 50"><popover-text content="prop2.value" direct="left" size="50"></popover-text></span>

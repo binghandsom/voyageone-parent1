@@ -32,7 +32,10 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author tom.zhu on 2017/6/14.
@@ -42,41 +45,32 @@ import java.util.*;
 @RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_PlatformCategorySchemaKLJob)
 public class CmsBuildPaltformCategorySchemaKLMqService extends BaseMQCmsService {
 
+    // 考拉类目属性的输入属性类型(1:单行文本)
+    private final static String Input_Type_1_TEXT = "TEXT";
+    // 考拉类目属性的输入属性类型(2:多行文本)
+    private final static String Input_Type_2_MULTITEXT = "TEXTAREA";
+    // 考拉类目属性的输入属性类型(3:下拉列表)
+    private final static String Input_Type_3_LIST = "3";
+    // 考拉类目属性的输入属性类型(4:单选框)
+    private final static String Input_Type_4_SIMPLECHECK = "RADIO";
+    // 考拉类目属性的输入属性类型(5:多选框)
+    private final static String Input_Type_5_MULTICHECK = "CHECKBOX";
+    // 考拉类目属性的输入属性类型(6:文件)
+    private final static String Input_Type_6_FILE = "6";
+    // SKU属性类型(颜色)
+    private final static String AttrType_Color = "c";
+    // SKU属性类型(尺寸)
+    private final static String AttrType_Size = "s";
     @Autowired
     private KoalaItempropsService koalaItempropsService;
     @Autowired
     private KoalaCommonService koalaCommonService;
-
     @Autowired
     private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
     @Autowired
     private PlatformCategoryService platformCategoryService;
     @Autowired
     private CmsMtPlatformSkusService cmsMtPlatformSkusService;
-
-    // 考拉类目属性的输入属性类型(1:单行文本)
-    private final static String Input_Type_1_TEXT = "TEXT";
-
-    // 考拉类目属性的输入属性类型(2:多行文本)
-    private final static String Input_Type_2_MULTITEXT = "TEXTAREA";
-
-    // 考拉类目属性的输入属性类型(3:下拉列表)
-    private final static String Input_Type_3_LIST = "3";
-
-    // 考拉类目属性的输入属性类型(4:单选框)
-    private final static String Input_Type_4_SIMPLECHECK = "RADIO";
-
-    // 考拉类目属性的输入属性类型(5:多选框)
-    private final static String Input_Type_5_MULTICHECK = "CHECKBOX";
-
-    // 考拉类目属性的输入属性类型(6:文件)
-    private final static String Input_Type_6_FILE = "6";
-
-    // SKU属性类型(颜色)
-    private final static String AttrType_Color = "c";
-    // SKU属性类型(尺寸)
-    private final static String AttrType_Size = "s";
-
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
@@ -261,16 +255,16 @@ public class CmsBuildPaltformCategorySchemaKLMqService extends BaseMQCmsService 
         addInputField(productFieldsList, "name", "商品名称", "", false, "64", "默认中文长描述");
 
         // 副标题（最大200位字符）
-        addInputField(productFieldsList, "sub_title", "副标题", "", true, "200", "副标题将用于商品详情页商品名称后的卖点描述");
+        addInputField(productFieldsList, "subTitle", "副标题", "", true, "200", "副标题将用于商品详情页商品名称后的卖点描述");
 
         // 短标题（最大48位字符）
-        addInputField(productFieldsList, "short_title", "短标题", "", true, "48", "短标题将用于移动端和web端首页商品标题、web端活动页商品标题");
+        addInputField(productFieldsList, "shortTitle", "短标题", "", true, "48", "短标题将用于移动端和web端首页商品标题、web端活动页商品标题");
 
         // 十字描述（最大8-24位字符）
-        addInputField(productFieldsList, "ten_words_desc", "十字描述", "", true, "24", "最少8个字符， 最大24个字符，用于web端首页活动页商品标题后的卖点描述");
+        addInputField(productFieldsList, "tenWordsDesc", "十字描述", "", true, "24", "最少8个字符， 最大24个字符，用于web端首页活动页商品标题后的卖点描述");
 
         // 商品货号（最大50位字符）
-        addInputField(productFieldsList, "item_NO", "商品货号", "", false, "50", "默认用code");
+        addInputField(productFieldsList, "itemNO", "商品货号", "", false, "50", "默认用code");
 
         // 原产国id
         Country[] countries = koalaCommonService.countriesGet(shopBean);
@@ -281,13 +275,13 @@ public class CmsBuildPaltformCategorySchemaKLMqService extends BaseMQCmsService 
             option.setDisplayName(country.getCountryName());
             optionList.add(option);
         }
-        addSingleCheckField(productFieldsList, "original_country_code_id", "原产国id", "", true, optionList);
+        addSingleCheckField(productFieldsList, "originalCountryCodeId", "原产国id", "", true, optionList);
 
         // 商品毛重
-        addInputField(productFieldsList, "gross_weight", "商品毛重（单位kg）", "", false, null, "默认master详情的重量(kg)，如果没值，此项必填，商品的毛重不能随意填写，将会推送至海关报关，如果和实际重量差别很大，会导致清关失败");
+        addInputField(productFieldsList, "grossWeight", "商品毛重（单位kg）", "", false, null, "默认master详情的重量(kg)，如果没值，此项必填，商品的毛重不能随意填写，将会推送至海关报关，如果和实际重量差别很大，会导致清关失败");
 
         // 商品外键id
-        addInputField(productFieldsList, "Item_outer_id", "商品外键id", "", false, null, "默认用model");
+        addInputField(productFieldsList, "ItemOuterId", "商品外键id", "", false, null, "默认用model");
 
         // 根据考拉平台上新时用到一些平台相关的输入项目转换成XML文件
         String schemaCommonXmlContent = null;

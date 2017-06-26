@@ -612,7 +612,7 @@ define([
         $scope.openProductDetailWin = function (model) {
 
             $productDetailService.getProductIdByCode(model.productCode).then(function (res) {
-                window.open(window.location.href = "#/product/detail/" + res.data, "_blank");
+                window.open("#/product/detail/" + res.data);
             });
 
         };

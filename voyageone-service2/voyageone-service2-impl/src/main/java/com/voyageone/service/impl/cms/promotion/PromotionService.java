@@ -522,7 +522,7 @@ public class PromotionService extends BaseService {
     }
     public void sendPromotionMq(CmsBtPromotionModel promotion, boolean sendDelayMq, String modifier){
         // 触发机制是实时场合
-        if(1 == promotion.getTriggerType()){
+        if(1 == promotion.getTriggerType() || 0 == promotion.getTriggerType()){
             CmsPromotionMQMessageBody cmsPromotionMQMessageBody = new CmsPromotionMQMessageBody();
             cmsPromotionMQMessageBody.setChannelId(promotion.getChannelId());
             cmsPromotionMQMessageBody.setSender(modifier);
