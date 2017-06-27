@@ -133,6 +133,7 @@ public class CmsPlatformActiveLogService extends BaseService {
             if (prodObjList.size() > 0) {
                 if (cartId == 34) {
                     CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, cmsBtProductGroupModel.getMainProductCode());
+                    $info("考拉的场合");
                     numIId = cmsBtProductModel.getPlatform(cartId).getpProductId();
                 }
                 String apiResult = cmsBtCombinedProductService.getUpperAndLowerRacksApiResult(numIId, shopProp, activeStatus);
