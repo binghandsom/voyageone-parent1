@@ -24,6 +24,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -711,5 +712,18 @@ public class ProductGroupService extends BaseService {
      */
     public void deleteGroup (CmsBtProductGroupModel groupModel) {
         cmsBtProductGroupDao.delete(groupModel);
+    }
+
+    /**
+     * 根据codes找出所在cart的group
+     * @param channelId channelId
+     * @param codes codes
+     * @param cartId cartId
+     * @return group数组
+     */
+    public List<CmsBtProductGroupModel> selectGroupByCodesAndCart(String channelId, List<String> codes, Integer cartId){
+        JongoQuery query = new JongoQuery();
+        query.setQuery(new Criteria("cartId").is(cartId).and("productCodes").in(codes));
+        return cmsBtProductGroupDao.select(query, channelId);
     }
 }
