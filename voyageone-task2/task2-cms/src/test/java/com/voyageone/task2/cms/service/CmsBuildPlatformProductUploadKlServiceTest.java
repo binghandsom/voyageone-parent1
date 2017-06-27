@@ -70,7 +70,7 @@ public class CmsBuildPlatformProductUploadKlServiceTest {
         sku.setSkuKey("ab7820-m-m");
         sku.setSkuOuterId("ab7820-m");
         skuOuterIdResults[1] = sku;
-        cmsBuildPlatformProductUploadKlService.saveCmsBtKlSku(channelId, sxData, codes, numIId, skuOuterIdResults);
+        cmsBuildPlatformProductUploadKlService.saveCmsBtKlSku(sxData, numIId, skuOuterIdResults);
 
     }
 
@@ -152,8 +152,8 @@ public class CmsBuildPlatformProductUploadKlServiceTest {
         Map<String, Object> messageMap = new HashMap<>();
         messageMap.put("channelId", channelId);
         messageMap.put("platformStatus", status);
-        messageMap.put("pid", pid);
-        messageMap.put("runType", runType);
+//        messageMap.put("pid", pid);
+//        messageMap.put("runType", runType);
 
         try {
 //            groupService.onStartup(messageMap);
