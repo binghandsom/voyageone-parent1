@@ -1540,10 +1540,12 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
             if (StringUtils.isEmpty(skuKey)) {
                 cmsBtKlSkuDao.delete(cmsBtKlSkuModel.getId());
             } else {
-                cmsBtKlSkuModel.setKlSkuKey(skuKey);
-                cmsBtKlSkuModel.setModifier(getTaskName());
-                cmsBtKlSkuModel.setModified(new Date());
-                cmsBtKlSkuDao.update(cmsBtKlSkuModel);
+                if (!skuKey.equals(cmsBtKlSkuModel.getKlSkuKey())) {
+                    cmsBtKlSkuModel.setKlSkuKey(skuKey);
+                    cmsBtKlSkuModel.setModifier(getTaskName());
+                    cmsBtKlSkuModel.setModified(new Date());
+                    cmsBtKlSkuDao.update(cmsBtKlSkuModel);
+                }
             }
         }
     }
