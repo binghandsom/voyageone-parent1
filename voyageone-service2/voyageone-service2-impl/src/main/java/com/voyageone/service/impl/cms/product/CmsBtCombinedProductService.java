@@ -1033,7 +1033,7 @@ public class CmsBtCombinedProductService extends BaseService {
             }
         }// 考拉上下架
         else if (PlatFormEnums.PlatForm.NTES.getId().equals(shopProp.getPlatform_id())) {
-            $info("numIId: "+numIId);
+            $info("考拉上下架 numIId: "+numIId);
             KoalaConfig shopConfig = Shops.getShopKoala(shopProp.getOrder_channel_id(), shopProp.getCart_id());
             String errMsg ="";
             if (CmsConstants.PlatformActive.ToOnSale.name().equals(status)) {
