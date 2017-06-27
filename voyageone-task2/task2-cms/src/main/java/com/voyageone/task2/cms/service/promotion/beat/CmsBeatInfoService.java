@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.promotion.beat;
 
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
 import com.voyageone.service.daoext.cms.CmsBtBeatInfoDaoExt;
 import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
@@ -36,7 +37,8 @@ public class CmsBeatInfoService {
                 BeatFlag.BEATING.getFlag(),
                 BeatFlag.REVERT.getFlag(),
                 BeatFlag.SUCCESS.getFlag(),
-                DateTimeUtil.getDate(), cartIds);
+                DateTimeUtilBeijing.getCurrentBeiJingDate(),
+                cartIds);
     }
 
     int saveFlagAndMessage(CmsBtBeatInfoBean beatInfoModel) {
