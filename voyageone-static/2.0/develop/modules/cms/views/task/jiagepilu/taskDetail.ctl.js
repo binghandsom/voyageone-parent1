@@ -18,7 +18,7 @@ define([
             if (_.isNaN(taskId)) {
                 this.init = null;
                 alert('TXT_MSG_UNVALID_URL').then(function () {
-                    $location.path('/promotion/task');
+                    $location.path('/promotion/task_list');
                 });
             }
 
