@@ -200,7 +200,9 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
 
         //取得approved的code插入
         $debug("批量设置店铺内分类 开始记入SxWorkLoad表");
-        sxProductService.insertPlatformWorkload(channelId, cartId, PlatformWorkloadAttribute.SELLER_CIDS, approvedCodeList, userName);
+        if(ListUtils.notNull(approvedCodeList)) {
+            sxProductService.insertPlatformWorkload(channelId, cartId, PlatformWorkloadAttribute.SELLER_CIDS, approvedCodeList, userName);
+        }
 
         // 记录商品修改历史
         TypeChannelBean cartObj = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, Integer.toString(cartId), "cn");
