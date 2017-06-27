@@ -11,8 +11,10 @@ import com.taobao.top.schema.value.ComplexValue;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
@@ -20,11 +22,14 @@ import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbScItemService;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.dao.cms.CmsBtTmScItemDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtTmScItemModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +49,8 @@ public class TaobaoScItemService extends BaseService {
     @Autowired
     private TbScItemService tbScItemService;
 
-
+	@Autowired
+	private CmsBtTmScItemDao cmsBtTmScItemDao;
 	/**
 	 * 创建一个货品， 并初始化库存
 	 * @param shopBean shopBean
@@ -65,6 +71,24 @@ public class TaobaoScItemService extends BaseService {
 			// 如果没有创建成功， 不需要做库存初始化， 直接跳出
 			return null;
 		}
+
+		String scProductId = String.valueOf(scItem.getItemId());
+		// 皇马店先看scItem表有没有该货品 20170627 STA
+		if (ChannelConfigEnums.Channel.REAL_MADRID.getId().equals(shopBean.getOrder_channel_id())) {
+			Map<String, Object> searchParam = new HashMap<>();
+			searchParam.put("channelId", shopBean.getOrder_channel_id());
+			searchParam.put("cartId", shopBean.getCart_id());
+			searchParam.put("sku", sku_outerId);
+			searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
+
+			CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
+
+			if (scItemModel != null) {
+				scProductId = scItemModel.getScProductId();
+			}
+		}
+		// 皇马店先看scItem表有没有该货品 20170627 END
+
 		// 进行库存初始化
 		try {
 			String errinfo = tbScItemService.doInitialInventory(shopBean, storeCode, sku_outerId, qty);
@@ -80,7 +104,7 @@ public class TaobaoScItemService extends BaseService {
 			e.printStackTrace();
 		}
 
-		return String.valueOf(scItem.getItemId());
+		return scProductId;
 	}
 
     /**

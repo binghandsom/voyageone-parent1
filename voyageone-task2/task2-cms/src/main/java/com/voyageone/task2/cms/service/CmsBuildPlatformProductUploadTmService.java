@@ -402,6 +402,20 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 throw new BusinessException(errMsg);
             }
 
+            // 皇马没有新旧对应关系的sku 屏蔽掉 20170627 STA
+            if (ChannelConfigEnums.Channel.REAL_MADRID.getId().equals(channelId)) {
+                NotAllowApprovedUPC notAllowApprovedUPC = new NotAllowApprovedUPC();
+                for (BaseMongoMap<String, Object> sku : sxData.getSkuList()) {
+
+                    String barCode = sku.getStringAttribute("barcode");
+                    if (notAllowApprovedUPC.upcList.contains(barCode)) {
+                     throw new Exception("该商品包含没有新旧对应关系的sku，不能上新！");
+                    }
+                }
+            }
+
+            // 皇马没有新旧对应关系的sku 屏蔽掉 20170627 END
+
             // 表达式解析子
             expressionParser = new ExpressionParser(sxProductService, sxData);
 
