@@ -12,6 +12,7 @@ define([
         function JiagepiluController($routeParams, taskJiagepiluService, $translate, taskBeatService, cActions, popups, FileUploader, alert, confirm, notify, $location, $timeout) {
 
             var urls = cActions.cms.task.taskJiagepiluService;
+            this.$location = $location;
             this.urls = urls;
             var taskId = parseInt($routeParams['taskId']);
             if (_.isNaN(taskId)) {
@@ -163,7 +164,7 @@ define([
 
                 // 获取价格披露任务Model
                 self.taskJiagepiluService.getTaskModel({taskId:self.taskId}).then(function (resp) {
-                    if (resp.data && resp.data.task) {
+                    if (resp.data && resp.data.task && resp.data.task.active == 1) {
                         self.task = resp.data.task;
                         var beatFlagArray = _.map(resp.data.beatFlags,function (element) {
                             var _obj = {key:element,value: self.$translate.instant(element)};
@@ -181,6 +182,10 @@ define([
                         var cartName = cart.valueOf(self.task.cartId).desc;
                         _.extend(self.task, {cartName:cartName});
 
+                    } else {
+                        self.alert('TXT_NOT_EXISTS_TASK').then(function () {
+                            self.$location.path('/promotion/task_list');
+                        });
                     }
                 });
 
