@@ -131,7 +131,7 @@ public class CmsPlatformActiveLogService extends BaseService {
             }
             // 如果该group下有一个code不是被锁状态,则可以执行上下架操作
             if (prodObjList.size() > 0) {
-                if (PlatFormEnums.PlatForm.NTES.getId().equals(shopProp.getPlatform_id())) {
+                if (cartId == 34) {
                     CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, cmsBtProductGroupModel.getMainProductCode());
                     numIId = cmsBtProductModel.getPlatform(cartId).getpProductId();
                 }
