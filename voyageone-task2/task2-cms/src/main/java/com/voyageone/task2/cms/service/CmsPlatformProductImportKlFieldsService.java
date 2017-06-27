@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -17,16 +18,15 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPlatformNumiidModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -272,7 +272,14 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService {
             $warn(errMsgCid);
         }
 
-        // sku属性，暂时不回写
+        // sku属性
+        Map<String, Sku> mapKlSku = new HashMap<>(); // Map<skuCode, Sku>
+        Sku[] klSkus = itemEdit.getSkuList();
+        if (klSkus != null && klSkus.length > 0) {
+            mapKlSku.putAll(Arrays.stream(klSkus)
+                    .filter(sku -> !StringUtils.isEmpty(sku.getRawSku().getBarCode()))
+                    .collect(Collectors.toMap(sku -> sku.getRawSku().getBarCode().toLowerCase(), sku -> sku))); // 考拉barcode保存的是skuCode
+        }
 
         // 各类目预定义属性，下拉框，单选框，多选框
         ItemProperty[] itemProperties = itemEdit.getItemPropertyList();
@@ -332,6 +339,26 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService {
             mapItemTextProperties.forEach((fieldName, value) -> {
                 updateMap.put("platforms.P" + cartId + ".fields." + fieldName, value);
             });
+
+            if (!mapKlSku.isEmpty()) {
+                CmsBtProductModel product = cmsBtProductDao.selectByCode(s, channelId);
+                // 全小写比较skuCode
+                Map<String, BaseMongoMap<String, Object>> mapSkus = product.getPlatform(cartId).getSkus().stream()
+                        .collect(Collectors.toMap(
+                                sku -> sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()).toLowerCase(),
+                                sku -> sku)
+                        );
+
+                mapKlSku.forEach((skuCode, klSku) -> {
+                    BaseMongoMap<String, Object> skuInfo = mapSkus.get(skuCode);
+                    if (skuInfo != null) {
+                        // 这一版只回写skuKey
+                        skuInfo.setAttribute("skuKey", klSku.getKey());
+                    }
+                });
+
+                updateMap.put("platforms.P" + cartId + ".skus", product.getPlatform(cartId).getSkus());
+            }
 
             updateMap.put("platforms.P" + cartId + ".pProductId", platformPid);
             if (klPlatformStatus == CmsPlatformProductImportKlFieldsService.PlatformStatus.ON_SALE) {
