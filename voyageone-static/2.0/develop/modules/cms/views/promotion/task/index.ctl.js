@@ -8,11 +8,12 @@ define([
 ], function (cms, carts) {
     cms.controller("taskIndexController", (function () {
     
-        function TaskIndexController(taskService, taskStockService, taskJiagepiluService, promotionService, cActions, confirm, notify, popups, $translate, alert) {
+        function TaskIndexController(taskService, taskStockService, taskJiagepiluService, promotionService, cActions, confirm, notify, popups, $translate, alert,$location) {
             this.taskService = taskService;
             this.taskStockService = taskStockService;
             this.promotionService = promotionService;
             this.taskJiagepiluService = taskJiagepiluService;
+            this.$location = $location;
             var urls = cActions.cms.task.taskStockService;
             this.tasks = [];
             this.confirm = confirm;
@@ -129,10 +130,17 @@ define([
                 });
             },
 
-            addTask: function () {
+            addOrUpdateTask: function (task) {
                 var self = this;
-                self.popups.openNewBeatTask({task: null}).then(function(newTask) {
-                    self.task = newTask;
+                self.popups.openNewBeatTask({task: task}).then(function(newTask) {
+                    // self.task = newTask;
+                    if (task) {
+                        // 编辑，当task不存在也就是新增后页面直接在pop处跳转了
+                        self.search();
+                    } else {
+                        self.$location.path('/task/jiagepilu/detail/' + newTask.id);
+                    }
+
                 });
             },
 

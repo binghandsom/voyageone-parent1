@@ -225,7 +225,7 @@ define([
                 //     uploadIt();
                 //     return;
                 // }
-                self.confirm('TXT_JIAGEPILU__REIMPORT_CONFIRM').then(uploadIt);
+                self.confirm('TXT_JIAGEPILU_REIMPORT_CONFIRM').then(uploadIt);
             },
 
             // 导入模板下载
@@ -400,7 +400,8 @@ define([
             updateTask: function () {
                 var self = this;
                 self.popups.openNewBeatTask({task: self.task}).then(function(newTask) {
-                    self.task = newTask;
+                    self.notify.success("TXT_MSG_UPDATE_SUCCESS");
+                    _.extend(self.task, newTask);
                 });
             },
 

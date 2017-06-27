@@ -101,7 +101,6 @@ define([
                     if (res.data) {
                         var newBean = res.data;
                         self.$uibModalInstance.close(newBean);
-                        self.$location.path('/task/jiagepilu/detail/' + newBean.id);
                     }
                 });
             },
