@@ -281,9 +281,16 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService {
         Map<String, Sku> mapKlSku = new HashMap<>(); // Map<skuCode, Sku>
         Sku[] klSkus = itemEdit.getSkuList();
         if (klSkus != null && klSkus.length > 0) {
-            mapKlSku.putAll(Arrays.stream(klSkus)
-                    .filter(sku -> !StringUtils.isEmpty(sku.getRawSku().getBarCode()))
-                    .collect(Collectors.toMap(sku -> sku.getRawSku().getBarCode().toLowerCase(), sku -> sku))); // 考拉barcode保存的是skuCode
+//            mapKlSku.putAll(Arrays.stream(klSkus)
+//                    .filter(sku -> !StringUtils.isEmpty(sku.getRawSku().getBarCode()))
+//                    .collect(Collectors.toMap(sku -> sku.getRawSku().getBarCode().toLowerCase(), sku -> sku))); // 考拉barcode保存的是skuCode
+            // 碰到一个sku重复的，上面collect toMap就失败了，但是我也不知道该用哪个，随机拿个，看看运气
+            for (Sku sku : klSkus) {
+                String barCode = sku.getRawSku().getBarCode();
+                if (!StringUtils.isEmpty(barCode)) {
+                    mapKlSku.put(barCode.toLowerCase(), sku);
+                }
+            }
         }
 
         // 各类目预定义属性，下拉框，单选框，多选框
