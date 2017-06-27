@@ -252,7 +252,11 @@ public class CmsPlatformActiveLogService extends BaseService {
      */
     private List<CmsBtProductGroupModel> getCmsBtProductGroupModelInfo(Collection<String> codeList, Integer cartId, String channelId) {
         JongoQuery queryObj = new JongoQuery();
-        queryObj.setQuery("{'productCodes':{$in:#},'cartId':#, \"numIId\": {$nin: [\"\", null]}}");
+        if(cartId == 34){
+            queryObj.setQuery("{'productCodes':{$in:#},'cartId':#}");
+        }else{
+            queryObj.setQuery("{'productCodes':{$in:#},'cartId':#, \"numIId\": {$nin: [\"\", null]}}");
+        }
         queryObj.setParameters(codeList, cartId);
         queryObj.setProjectionExt("mainProductCode", "productCodes", "groupId", "numIId", "platformMallId");
         return cmsBtProductGroupDao.select(queryObj, channelId);
