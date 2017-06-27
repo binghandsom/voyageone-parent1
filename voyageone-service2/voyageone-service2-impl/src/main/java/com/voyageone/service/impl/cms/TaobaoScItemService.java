@@ -73,21 +73,6 @@ public class TaobaoScItemService extends BaseService {
 		}
 
 		String scProductId = String.valueOf(scItem.getItemId());
-		// 皇马店先看scItem表有没有该货品 20170627 STA
-		if (ChannelConfigEnums.Channel.REAL_MADRID.getId().equals(shopBean.getOrder_channel_id())) {
-			Map<String, Object> searchParam = new HashMap<>();
-			searchParam.put("channelId", shopBean.getOrder_channel_id());
-			searchParam.put("cartId", shopBean.getCart_id());
-			searchParam.put("sku", sku_outerId);
-			searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
-
-			CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
-
-			if (scItemModel != null) {
-				scProductId = scItemModel.getScProductId();
-			}
-		}
-		// 皇马店先看scItem表有没有该货品 20170627 END
 
 		// 进行库存初始化
 		try {

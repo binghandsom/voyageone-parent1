@@ -428,30 +428,47 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
+
             // 判断是否需要做货品绑定
             storeCode = taobaoScItemService.doCheckNeedSetScItem(shopProp, mainProduct);
             if (!StringUtils.isEmpty(storeCode)) {
                 String title = sxProductService.getProductValueByMasterMapping("title", shopProp, expressionParser, getTaskName());
                 Map<String, ScItem> scItemMap = new HashMap<>();
                 for (String sku_outerId : strSkuCodeList) {
-                    // 检查是否发布过仓储商品
-                    ScItem scItem;
-                    try {
-                        scItem = tbScItemService.getScItemByOuterCode(shopProp, sku_outerId);
-                    } catch (ApiException e) {
-                        String errMsg = String.format("自动设置天猫商品全链路库存管理:检查是否发布过仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
-                        throw new BusinessException(errMsg);
-                    }
+                    // 皇马店先看scItem表有没有该货品 20170627 STA
+                    ScItem scItem = new ScItem();
+                    if (ChannelConfigEnums.Channel.REAL_MADRID.getId().equals(channelId)) {
+                        Map<String, Object> searchParam = new HashMap<>();
+                        searchParam.put("channelId", channelId);
+                        searchParam.put("cartId", cartId);
+                        searchParam.put("sku", sku_outerId);
+                        searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
 
-                    if (scItem == null) {
-                        // 没有发布过仓储商品的场合， 发布仓储商品
+                        CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
+
+                        if (scItemModel != null) {
+                            scItem.setItemId(Long.parseLong(scItemModel.getScProductId()));
+                        }
+                    // 皇马店先看scItem表有没有该货品 20170627 END
+                    } else {
+                        // 检查是否发布过仓储商品
                         try {
-                            scItem = tbScItemService.addScItemSimple(shopProp, title, sku_outerId);
+                            scItem = tbScItemService.getScItemByOuterCode(shopProp, sku_outerId);
                         } catch (ApiException e) {
-                            String errMsg = String.format("自动设置天猫商品全链路库存管理:发布仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
+                            String errMsg = String.format("自动设置天猫商品全链路库存管理:检查是否发布过仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
                             throw new BusinessException(errMsg);
                         }
+                        if (scItem == null) {
+                            // 没有发布过仓储商品的场合， 发布仓储商品
+                            try {
+                                scItem = tbScItemService.addScItemSimple(shopProp, title, sku_outerId);
+                            } catch (ApiException e) {
+                                String errMsg = String.format("自动设置天猫商品全链路库存管理:发布仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
+                                throw new BusinessException(errMsg);
+                            }
+                        }
                     }
+
                     scItemMap.put(sku_outerId, scItem);
                 }
                 sxData.setScItemMap(scItemMap);
