@@ -17,6 +17,7 @@ define([
                 self.isEdit = true;
             }
 
+            self.$filter = $filter;
             self.$uibModalInstance = $uibModalInstance;
             self.taskBeatService = taskBeatService;
             self.taskJiagepiluService = taskJiagepiluService;
@@ -29,8 +30,8 @@ define([
             // 否则会报错
 
             if (task) {
-                task.activityStart = new Date(task.activityStart);
-                task.activityEnd = new Date(task.activityEnd);
+                task.activityStart = self.formatDate(task.activityStart);
+                task.activityEnd = self.formatDate(task.activityEnd);
                 self.taskBean = task;
                 if (_.isString(task.config)) {
                     task.config = JSON.parse(task.config);
@@ -53,13 +54,13 @@ define([
             // taskBeatService.getTemplates({promotionId: promotion.id}).then(function (res) {
             //     self.templates = res.data;
             // });
-
-            self.formatDate = function (date) {
-                return $filter('date')(date, 'yyyy-MM-dd');
-            }
         }
 
         PopNewBeatCtl.prototype = {
+
+            formatDate: function (date) {
+                return this.$filter('date')(date, 'yyyy-MM-dd HH:mm:ss');
+            },
 
             init: function () {
                 var self = this;

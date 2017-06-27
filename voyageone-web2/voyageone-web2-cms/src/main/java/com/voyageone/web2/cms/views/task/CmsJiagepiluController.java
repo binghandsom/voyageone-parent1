@@ -196,4 +196,20 @@ public class CmsJiagepiluController extends BaseController {
         return genResponseEntityFromBytes(filename, jiagepiluService.download(taskId));
     }
 
+    /**
+     * 获取价格披露商品状态分类统计数
+     */
+    @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.GET_SUMMARY)
+    public AjaxResponse getSummary(@RequestBody ReqParam param) {
+        return success(jiagepiluService.getTaskSummary(param.getTask_id()));
+    }
+
+    /**
+     * 删除价格披露任务
+     */
+    @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.DELETE_JIAGEPILU_TASK)
+    public AjaxResponse deleteJiagepiluTask(@RequestBody ReqParam param) {
+        return success(jiagepiluService.deleteJiagepiluTask(param.getTask_id(), getUser().getUserName()));
+    }
+
 }

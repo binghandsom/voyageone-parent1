@@ -37,6 +37,8 @@ public class CmsBtTasksModel extends BaseModel {
      */
     protected Integer cartId;
 
+    protected Integer active;
+
     public String getTaskName() {
         return taskName;
     }
@@ -107,5 +109,13 @@ public class CmsBtTasksModel extends BaseModel {
 
     public void setCartId(Integer cartId) {
         this.cartId = cartId;
+    }
+
+    public Integer getActive() {
+        return active;
+    }
+
+    public void setActive(Integer active) {
+        this.active = active;
     }
 }

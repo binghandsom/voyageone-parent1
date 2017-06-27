@@ -34,13 +34,12 @@
                 <div class="col-sm-7">
                     <span class="input-group">
                         <input name="activityStart" class="form-control"
-                               title="开始时间 / Start Time" type="date"
-                               readonly
+                               title="开始时间 / Start Time" type="text"
                                ng-model="ctrl.taskBean.activityStart"
-                               uib-datepicker-popup
+                               uib-datepicker-popup="yyyy-MM-dd HH:mm:ss"
                                is-open="datepicker1"
                                max-date="ctrl.taskBean.activityEnd"
-                               date-model-format="yyyy-MM-dd" required>
+                               ng-disabled="ctrl.isEdit" required>
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-disabled="ctrl.isEdit" ng-click="datepicker1=!datepicker1"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
@@ -57,13 +56,12 @@
                 <div class="col-sm-7">
                     <span class="input-group">
                         <input name="activityEnd" class="form-control"
-                               title="结束时间 / End Time" type="date"
-                               readonly
+                               title="结束时间 / End Time" type="text"
                                ng-model="ctrl.taskBean.activityEnd"
-                               uib-datepicker-popup
+                               uib-datepicker-popup="yyyy-MM-dd HH:mm:ss"
                                is-open="datepicker2"
                                min-date="ctrl.taskBean.activityStart"
-                               date-model-format="yyyy-MM-dd" required>
+                               ng-disabled="ctrl.isEdit" required>
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-disabled="ctrl.isEdit" ng-click="datepicker2=!datepicker2"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
