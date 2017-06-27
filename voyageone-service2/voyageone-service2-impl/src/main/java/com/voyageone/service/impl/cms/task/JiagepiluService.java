@@ -435,8 +435,12 @@ public class JiagepiluService extends BaseService {
         result.setProducts(productList);
         int total = cmsBtTaskJiagepiluDaoExt.count(search);
         result.setTotal(total);
+        result.setSummary(this.getTaskSummary(search.getTaskId()));
+        return result;
+    }
 
-        List<Map<String, Object>> summary = cmsBtTaskJiagepiluDaoExt.selectSummary(search.getTaskId());
+    public List<Map<String, Object>> getTaskSummary(Integer taskId) {
+        List<Map<String, Object>> summary = cmsBtTaskJiagepiluDaoExt.selectSummary(taskId);
         // 数据查询出来的是整数, 转换为枚举名
         for (Map<String, Object> elementMap : summary) {
             Object flag = elementMap.get("flag");
@@ -444,9 +448,7 @@ public class JiagepiluService extends BaseService {
             BeatFlag flagEnum = BeatFlag.valueOf(flagId);
             elementMap.put("flag", flagEnum.name());
         }
-
-        result.setSummary(summary);
-        return result;
+        return summary;
     }
 
     /**
@@ -614,11 +616,11 @@ public class JiagepiluService extends BaseService {
         // 标题栏
         Row row = FileUtils.row(sheet, 0);
         FileUtils.cell(row, 0, null).setCellValue("num_iid");
-        FileUtils.cell(row, 1, null).setCellValue("商品 Code");
-        FileUtils.cell(row, 2, null).setCellValue("价格");
-        FileUtils.cell(row, 3, null).setCellValue("图名名称");
-        FileUtils.cell(row, 4, null).setCellValue("状态");
-        FileUtils.cell(row, 5, null).setCellValue("结果信息");
+        FileUtils.cell(row, 1, null).setCellValue("code");
+        FileUtils.cell(row, 2, null).setCellValue("price");
+        FileUtils.cell(row, 3, null).setCellValue("imageName");
+        FileUtils.cell(row, 4, null).setCellValue("syn_flag");
+        FileUtils.cell(row, 5, null).setCellValue("message");
 
         int size = jiagepiluModels.size();
         if (size > 0) {
@@ -651,5 +653,33 @@ public class JiagepiluService extends BaseService {
         } catch (IOException e) {
             throw new BusinessException("下载出错了", e);
         }
+    }
+
+    @VOTransactional
+    public int deleteJiagepiluTask(Integer taskId, String username) {
+        CmsBtTasksModel tasksModel = null;
+        if (taskId != null) {
+            tasksModel = cmsBtTasksDao.select(taskId);
+        }
+        if (tasksModel == null) {
+            throw new BusinessException(String.format("价格披露任务(taskId:%d)不存在", taskId));
+        }
+
+        List<Map<String, Object>> summary = this.getTaskSummary(taskId);
+        if (summary != null) {
+            for (Map<String, Object> map : summary) {
+                String flagName = (String) map.get("flag");
+                if (BeatFlag.SUCCESS.name().equals(flagName) || BeatFlag.RE_FAIL.name().equals(flagName)) {
+                    throw new BusinessException("有单品状态不满足删除条件的商品");
+                }
+            }
+        }
+
+        CmsBtTasksModel updateModel = new CmsBtTasksModel();
+        updateModel.setId(taskId);
+        updateModel.setActive(0);
+        updateModel.setModifier(username);
+        updateModel.setModified(new Date());
+        return cmsBtTasksDao.update(updateModel);
     }
 }

@@ -461,7 +461,9 @@ define(function () {
                     "reBeating":"reBeating",
                     "getEditProduct":"getEditProduct",
                     "getJiagepiluCarts":"getJiagepiluCarts",
-                    "download": "download"
+                    "download": "download",
+                    "getSummary":"getSummary",
+                    "deleteJiagepiluTask":"deleteJiagepiluTask"
                 }
             },
             "system": {

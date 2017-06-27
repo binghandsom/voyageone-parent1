@@ -8,16 +8,19 @@ define([
 ], function (cms, carts) {
     cms.controller("taskIndexController", (function () {
     
-        function TaskIndexController(taskService, taskStockService, taskJiagepiluService, promotionService, cActions, confirm, notify, popups) {
+        function TaskIndexController(taskService, taskStockService, taskJiagepiluService, promotionService, cActions, confirm, notify, popups, $translate, alert,$location) {
             this.taskService = taskService;
             this.taskStockService = taskStockService;
             this.promotionService = promotionService;
             this.taskJiagepiluService = taskJiagepiluService;
+            this.$location = $location;
             var urls = cActions.cms.task.taskStockService;
             this.tasks = [];
             this.confirm = confirm;
             this.notify = notify;
             this.popups = popups;
+            this.$translate = $translate;
+            this.alert = alert;
             this.searchInfo={};
 
             this.taskType=[{"name":"特价宝","value":"0"},{"name":"价格披露","value":"1"},{"name":"库存隔离","value":"2"}];
@@ -127,11 +130,44 @@ define([
                 });
             },
 
-            addTask: function () {
+            addOrUpdateTask: function (task) {
                 var self = this;
-                self.popups.openNewBeatTask({task: null}).then(function(newTask) {
-                    self.task = newTask;
+                self.popups.openNewBeatTask({task: task}).then(function(newTask) {
+                    // self.task = newTask;
+                    if (task) {
+                        // 编辑，当task不存在也就是新增后页面直接在pop处跳转了
+                        self.search();
+                    } else {
+                        self.$location.path('/task/jiagepilu/detail/' + newTask.id);
+                    }
+
                 });
+            },
+
+            delTask: function (task) {
+                var self = this;
+                if (task.taskType == 1) {
+                    self.taskJiagepiluService.getSummary({task_id:task.id}).then(function (resp) {
+                        if (resp.data) {
+                            var summary = resp.data;
+                            var notDeleted = _.find(summary, function (item) {
+                                return item.flag == "SUCCESS" || item.flag == "RE_FAIL";
+                            });
+                            if (notDeleted) {
+                                var mesage = "有状态为 <" +　self.$translate.instant('SUCCESS')　+ " 或 " + self.$translate.instant('RE_FAIL') + "> 的商品，不能删除任务";
+                                self.alert(mesage);
+                            } else {
+                                self.taskJiagepiluService.deleteJiagepiluTask({task_id:task.id}).then(function (res) {
+                                   if (res.data) {
+                                       self.notify.success("Delete successfully");
+                                       self.search();
+                                   }
+                                });
+                            }
+                        }
+                    })
+
+                }
             }
         };
 

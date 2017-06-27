@@ -79,7 +79,7 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="btn-group">
-                <button  type="button" class="btn btn-success btn-pop" ng-click="ctrl.addTask()">
+                <button  type="button" class="btn btn-success btn-pop" ng-click="ctrl.addOrUpdateTask(null)">
                     <i class="fa fa-plus"></i> &nbsp;{{'BTN_CREATE_BEAT_TASK' | translate}}
                 </button>
             </div>
@@ -129,6 +129,9 @@
                                 <button ng-click="ctrl.controlAll(task.id, 'BEATING')" class="btn btn-primary"><i class="glyphicon glyphicon-play"></i>&nbsp;<span translate="TXT_STARTUP_ALL"></span></button>
                                 <button ng-click="ctrl.controlAll(task.id, 'STOP')" class="btn btn-danger"><i class="glyphicon glyphicon-pause"></i>&nbsp;<span translate="TXT_STOP_ALL"></span></button>
                                 <button ng-click="ctrl.controlAll(task.id, 'REVERT')" class="btn btn-success"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT_ALL"></span></button>
+
+                                <button title="编辑" class="btn btn-success btn-xs ng-scope" ng-click="ctrl.addOrUpdateTask(task)"><i class="fa fa-pencil"></i></button>
+                                <button title="删除" class="btn btn-danger btn-xs" ng-click="ctrl.delTask(task)"><i class="fa  fa-trash-o"></i></button>
                             </div>
                         </div>
                         <!--<a ng-if="task.taskType == 1" ng-href="#/promotion/task/beat/{{task.id}}" target="_blank">-->

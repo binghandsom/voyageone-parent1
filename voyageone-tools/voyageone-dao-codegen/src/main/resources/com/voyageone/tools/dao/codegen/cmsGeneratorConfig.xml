@@ -474,8 +474,13 @@
                <!--enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true"-->
                <!--selectByExampleQueryId="true">-->
             <!--<generatedKey column="id" sqlStatement="JDBC"/>-->
-        <!--</table>-->
+        <!--</table>
         <table tableName="cms_bt_task_jiagepilu_import_info" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>-->
+        <table tableName="cms_bt_tasks" delimitAllColumns="true" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
             <generatedKey column="id" sqlStatement="JDBC"/>

@@ -3,7 +3,7 @@
         <h5 class="modal-title">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                     aria-hidden="true"><i class="fa fa-close"></i></span></button>
-            <i class="glyphicons glyphicons-edit"></i>&nbsp;<span translate="BTN_CREATE"></span>&nbsp;<span translate="TXT_BEAT_TASK"></span>&nbsp;-&nbsp;<span translate="TXT_PROMOTION_NAME_WITH_COLON"></span>&nbsp;<span>{{ctrl.promotion.promotionName}}</span>
+            <i class="glyphicons glyphicons-edit"></i>&nbsp;<span translate="TXT_ADD_MOD_TASK"></span>&nbsp;<span translate="TXT_BEAT_TASK"></span>
         </h5>
     </div>
     <div class="modal-body wrapper">
@@ -34,13 +34,12 @@
                 <div class="col-sm-7">
                     <span class="input-group">
                         <input name="activityStart" class="form-control"
-                               title="开始时间 / Start Time" type="date"
-                               readonly
+                               title="开始时间 / Start Time" type="text"
                                ng-model="ctrl.taskBean.activityStart"
-                               uib-datepicker-popup
+                               uib-datepicker-popup="yyyy-MM-dd HH:mm:ss"
                                is-open="datepicker1"
                                max-date="ctrl.taskBean.activityEnd"
-                               date-model-format="yyyy-MM-dd" required>
+                               ng-disabled="ctrl.isEdit" required>
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-disabled="ctrl.isEdit" ng-click="datepicker1=!datepicker1"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
@@ -57,13 +56,12 @@
                 <div class="col-sm-7">
                     <span class="input-group">
                         <input name="activityEnd" class="form-control"
-                               title="结束时间 / End Time" type="date"
-                               readonly
+                               title="结束时间 / End Time" type="text"
                                ng-model="ctrl.taskBean.activityEnd"
-                               uib-datepicker-popup
+                               uib-datepicker-popup="yyyy-MM-dd HH:mm:ss"
                                is-open="datepicker2"
                                min-date="ctrl.taskBean.activityStart"
-                               date-model-format="yyyy-MM-dd" required>
+                               ng-disabled="ctrl.isEdit" required>
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-disabled="ctrl.isEdit" ng-click="datepicker2=!datepicker2"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>

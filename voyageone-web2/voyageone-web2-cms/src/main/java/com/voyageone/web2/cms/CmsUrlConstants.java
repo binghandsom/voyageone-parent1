@@ -375,6 +375,10 @@ public interface CmsUrlConstants {
 
             String DOWNLOAD = "download";
 
+            String GET_SUMMARY = "getSummary";
+
+            String DELETE_JIAGEPILU_TASK = "deleteJiagepiluTask";
+
         }
 
     }
