@@ -436,8 +436,9 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 Map<String, ScItem> scItemMap = new HashMap<>();
                 for (String sku_outerId : strSkuCodeList) {
                     // 皇马店先看scItem表有没有该货品 20170627 STA
-                    ScItem scItem = new ScItem();
+                    ScItem scItem;
                     if (ChannelConfigEnums.Channel.REAL_MADRID.getId().equals(channelId)) {
+                        scItem = new ScItem();
                         Map<String, Object> searchParam = new HashMap<>();
                         searchParam.put("channelId", channelId);
                         searchParam.put("cartId", cartId);
