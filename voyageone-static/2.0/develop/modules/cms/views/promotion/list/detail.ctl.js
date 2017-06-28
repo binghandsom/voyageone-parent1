@@ -234,6 +234,14 @@ define([
             });
             // $.download.post(cActions.cms.promotion.promotionDetailService.root + "/" + cActions.cms.promotion.promotionDetailService.tmallPromotionExport, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
         };
+        /*新增按上新模板导出*/
+        $scope.openNewDownload = function (promotion) {
+            promotionService.exportPromotion({"promotionId":promotion.id, "templateType":3}).then(function (resp) {
+                notify.success("success");
+                searchExport();
+            });
+            // $.download.post(cActions.cms.promotion.promotionDetailService.root + "/" + cActions.cms.promotion.promotionDetailService.tmallPromotionExport, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
+        };
 
         function searchExport() {
             promotionService.getPromotionExportTask({
