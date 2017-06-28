@@ -131,6 +131,10 @@ public class CmsPlatformActiveLogService extends BaseService {
             }
             // 如果该group下有一个code不是被锁状态,则可以执行上下架操作
             if (prodObjList.size() > 0) {
+                if (PlatFormEnums.PlatForm.NTES.getId().equals(shopProp.getPlatform_id())) {
+                    CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, cmsBtProductGroupModel.getMainProductCode());
+                    numIId = cmsBtProductModel.getPlatform(cartId).getpProductId();
+                }
                 String apiResult = cmsBtCombinedProductService.getUpperAndLowerRacksApiResult(numIId, shopProp, activeStatus);
                 if (apiResult != null) {
                     errorInfo = new CmsBtOperationLogModel_Msg();
@@ -248,7 +252,11 @@ public class CmsPlatformActiveLogService extends BaseService {
      */
     private List<CmsBtProductGroupModel> getCmsBtProductGroupModelInfo(Collection<String> codeList, Integer cartId, String channelId) {
         JongoQuery queryObj = new JongoQuery();
-        queryObj.setQuery("{'productCodes':{$in:#},'cartId':#, \"numIId\": {$nin: [\"\", null]}}");
+        if(cartId == 34){
+            queryObj.setQuery("{'productCodes':{$in:#},'cartId':#}");
+        }else{
+            queryObj.setQuery("{'productCodes':{$in:#},'cartId':#, \"numIId\": {$nin: [\"\", null]}}");
+        }
         queryObj.setParameters(codeList, cartId);
         queryObj.setProjectionExt("mainProductCode", "productCodes", "groupId", "numIId", "platformMallId");
         return cmsBtProductGroupDao.select(queryObj, channelId);

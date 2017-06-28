@@ -18,6 +18,7 @@ import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.impl.BaseService;
@@ -31,6 +32,7 @@ import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.util.MapModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +81,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
     WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
     @Autowired
     SxProductService sxProductService;
+
+    @Autowired
+    CmsBtJmPromotionDaoExt cmsBtJmPromotionDaoExt;
     private List<String> newJmDealSkuNoList = new ArrayList<>();
 
     public  List<OperationResult> updateJmByPromotionId(int promotionId) {
@@ -250,20 +255,32 @@ public class JuMeiProductPlatform3Service extends BaseService {
             parameter.setBegin(isBegin);//活动是否开始
             api_beforeCheck(parameter,mapMasterBrand);//api调用前check
             if (parameter.cmsBtJmPromotionProductModel.getSynchStatus() != 2) {
-                // 再售
+
                 if (StringUtil.isEmpty(parameter.cmsBtJmPromotionProductModel.getJmHashId())) {
+
+                    List<MapModel> mapModels = cmsBtJmPromotionDaoExt.selectMaxJmHashId2(cmsBtJmPromotionProductModel.getChannelId(),parameter.cmsBtJmPromotionProductModel.getProductCode());
+                    String jmHashId = null;
+                    if(ListUtils.notNull(mapModels)){
+                        jmHashId = (String) mapModels.get(0).get("jmHashId");
+                    }else{
+                        jmHashId = parameter.platform.getpNumIId();
+                    }
+                    if(StringUtil.isEmpty(jmHashId)){
+                        throw new BusinessException("jmHashId为空");
+                    }
+
                     //调用再售API之前，把所有sku的售卖状态刷成“是”
-                    updateSkuIsEnable(parameter,parameter.platform.getpNumIId(), dealSkuList);
+                    updateSkuIsEnable(parameter,jmHashId, dealSkuList);
                     //6.1.2调用再售接口  copyDeal
                     try {
-                        copyDeal(parameter, dealSkuList);
+                        copyDeal(parameter, jmHashId, dealSkuList);
                     }catch (Exception e){
                         //再售成功有新的hashID生成后，将原本为“否”的sku的售卖状态再刷回去
-                        updateSkuIsEnable(parameter,parameter.platform.getpNumIId(), saleSkus);
+                        updateSkuIsEnable(parameter,jmHashId, saleSkus);
                         throw e;
                     }
                     //再售成功有新的hashID生成后，将原本为“否”的sku的售卖状态再刷回去
-                    updateSkuIsEnable(parameter,parameter.platform.getpNumIId(), saleSkus);
+                    updateSkuIsEnable(parameter,jmHashId, saleSkus);
                 } else {
                     parameter.cmsBtJmPromotionProductModel.setStockStatus(1);//库存设置待更新
                     parameter.cmsBtJmPromotionProductModel.setSynchStatus(2);//有jmHashId 已上传
@@ -449,12 +466,12 @@ public class JuMeiProductPlatform3Service extends BaseService {
         daoCmsBtJmPromotionProduct.update(model);
     }
     //再售
-    private void copyDeal( UpdateJmParameter parameter, List<jmHtDealCopyDealSkusData> dealSkuList) throws Exception {
+    private void copyDeal(UpdateJmParameter parameter, String jmHashId, List<jmHtDealCopyDealSkusData> dealSkuList) throws Exception {
         CmsBtJmPromotionModel modelCmsBtJmPromotion = parameter.cmsBtJmPromotionModel;
         CmsBtJmPromotionProductModel model = parameter.cmsBtJmPromotionProductModel;
         ShopBean shopBean = parameter.shopBean;
        // CmsBtJmProductModel modelJmProduct = daoExtCmsBtJmProduct.selectByProductCodeChannelId(model.getProductCode(), model.getChannelId());
-        jmHtDealCopy(parameter,parameter.platform.getpNumIId(), dealSkuList);//再售
+        jmHtDealCopy(parameter,jmHashId, dealSkuList);//再售
         model.setActivityStart(modelCmsBtJmPromotion.getActivityStart());
         model.setActivityEnd(modelCmsBtJmPromotion.getActivityEnd());
         model.setSynchStatus(2);
