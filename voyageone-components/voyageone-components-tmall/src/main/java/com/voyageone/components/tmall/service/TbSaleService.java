@@ -155,6 +155,26 @@ public class TbSaleService extends TbBase {
         return response.getItems();
     }
 
+    public List<Item> getInventoryProduct(String strOrderChannelId, String strCardId, String banner, Long lPageIndex, Long pageSize, String title) throws ApiException {
+        ShopBean shopInfo = Shops.getShop(strOrderChannelId, strCardId);
+        ItemsInventoryGetRequest req = new ItemsInventoryGetRequest();
+
+        req.setPageNo(lPageIndex);
+        req.setPageSize(pageSize);
+        req.setQ(title);
+        req.setFields("num_iid,outer_id,title,delist_time");
+        req.setBanner(banner);
+
+
+        ItemsInventoryGetResponse response = reqTaobaoApi(shopInfo, req);
+        if (response == null) {
+            return null;
+        }
+        Object[] objs = { strOrderChannelId, strCardId, response.getErrorCode()==null ? "total=" + response.getTotalResults() : response.getBody() };
+        logger.info("getInventoryProduct调用结果 channelid={}, cartid={}, 结果={}", objs);
+        return response.getItems();
+    }
+
     /**
      * 获取店铺全部的numIId
      */

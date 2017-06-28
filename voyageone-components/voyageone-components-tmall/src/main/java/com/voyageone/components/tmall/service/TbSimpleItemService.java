@@ -76,6 +76,10 @@ public class TbSimpleItemService extends TbBase {
 
         TmallItemSimpleschemaAddResponse response = reqTaobaoApi(getTonggouShopBean(shopBean), request);
 
+        if (response == null) {
+            throw new ApiException("上新接口response为空");
+        }
+
         // 调用淘宝API未成功或者subCode不为空的时候(errorCode是英文错误，subCode是中文错误)
         if (!response.isSuccess() || !StringUtils.isEmpty(response.getSubCode())) {
             logger.error("addSimpleItem [SubMsg = " + response.getSubMsg() + "]");
@@ -103,6 +107,10 @@ public class TbSimpleItemService extends TbBase {
         request.setSchemaXmlFields(schemaXml);
 
         TmallItemSimpleschemaUpdateResponse response = reqTaobaoApi(getTonggouShopBean(shopBean), request);
+
+        if (response == null) {
+            throw new ApiException("更新接口response为空");
+        }
 
         // 调用淘宝API未成功或者subCode不为空的时候(errorCode是英文错误，subCode是中文错误)
         if (!response.isSuccess() || !StringUtils.isEmpty(response.getErrorCode())) {
