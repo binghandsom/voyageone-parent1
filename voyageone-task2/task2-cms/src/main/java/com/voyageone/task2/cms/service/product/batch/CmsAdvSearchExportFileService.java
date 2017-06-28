@@ -1356,7 +1356,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             searchParam.put("cartId", Integer.valueOf(_cartId));
                             searchParam.put("sku", pSku.getStringAttribute("skuCode"));
                             CmsBtTmScItemModel cmsBtTmScItemModel = cmsBtTmScItemDao.selectOne(searchParam);
-                            if(cmsBtTmScItemModel == null){
+                            if(cmsBtTmScItemModel != null){
                                 FileUtils.cell(row, index++, unlock).setCellValue( cmsBtTmScItemModel.getScCode());
                             }else{
                                 FileUtils.cell(row, index++, unlock).setCellValue("");
