@@ -921,6 +921,7 @@ define(function () {
         "TXT_TRANSLATION_DATE": "翻译时间",
 
         "TXT_TEMPLATE_TYPE":"模板类型",
+        "TXT_BATCH_UPDATE_TAG":"批量修改tag",
 
         /**bi_download_list*/
         "TXT_BI_DOWNLOAD_LIST_TITLE" : "BI报表下载",

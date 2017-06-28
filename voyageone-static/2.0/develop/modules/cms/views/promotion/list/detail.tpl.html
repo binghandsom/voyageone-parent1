@@ -168,6 +168,10 @@
         <uib-tabset class="tab-container vo_nav-tabs">
             <!--right-btn-->
             <div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
+                <label class="checkbox-inline c-checkbox" style="margin-top:12px">
+                    <input type="checkbox"  ng-model="vm._selall">
+                    <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;检索结果全量&nbsp;
+                </label>
                 <button ng-if="vm.promotion.cartId != 27" class="btn btn-default" ng-click="addPromotionByGroup()"><i
                         class="fa fa-mail-forward"></i>
                     <span>导入Group下的其它商品</span>
@@ -188,6 +192,7 @@
                     </ul>
                 </div>
                 <button class="btn btn-default" ng-click="$parent.teJiaBaoInit()"><i class="fa fa-cny"></i>&nbsp;{{'BTN_CREATE_TE_JIA_BAO_TASK' | translate}}</button>
+                <button class="btn btn-default" ng-click="openTagModifyWin()"><i class="fa fa-edit"></i>&nbsp;{{'TXT_BATCH_UPDATE_TAG' | translate}}</button>
                 <button class="btn btn-danger btn-xs" ng-click="delSelPromotion()"><i class="fa fa-trash-o"></i>&nbsp;{{'BTN_DELETE' | translate}}</button>
             </div>
             <!-- /right-btn -->
