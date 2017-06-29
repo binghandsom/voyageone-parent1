@@ -1153,7 +1153,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         for (CmsBtProductBean item : products) {
             HashMap<String, HashMap<String,Integer>> inventoryDetails = null;
             if(ListUtils.notNull(storeNames)){
-                inventoryDetails = getStores(item.getChannelId(), item.getOrgChannelId(), item.getCommonNotNull().getFieldsNotNull().getCode());
+                inventoryDetails = getStores(item.getChannelId(), item.getOrgChannelId(), item.getCommonNotNull().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
             }
 
             CmsBtProductModel_Field fields = item.getCommon().getFields();
