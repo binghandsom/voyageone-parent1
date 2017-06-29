@@ -13,9 +13,9 @@
 
     <import resource="classpath*:common-config.xml"/>
     <!--<import resource="classpath*:datasource-jumei-config.xml" />-->
-    <import resource="classpath*:datasource-cms2-config-mast.xml"/>
+    <import resource="classpath*:datasource-cms2-config-localtest.xml"/>
     <import resource="classpath*:datasource-cms2-config-new.xml"/>
-    <import resource="classpath*:datasource-config-mongo-cms2-mast.xml"/>
+    <import resource="classpath*:datasource-config-mongo-cms2-localtest.xml"/>
     <import resource="classpath*:datasource-vms-config.xml"/>
     <!-- MQ Config -->
     <import resource="classpath*:mq-config.xml"/>
