@@ -149,7 +149,8 @@
 								</td>
 								<td class="text-left">{{::info.productCode}}</td>
 								<td class="text-left">
-									<a ng-href="https://detail.tmall.hk/hk/item.htm?id={{::info.numIid}}" target="_blank">{{::info.numIid}}</a>
+									<a ng-href="{{info.productUrl}}"
+									   target="_blank">{{::info.numIid}} </a>
 								</td>
 								<td class="text-right">{{::info.price | number: 2 || '无'}}</td>
 								<td class="text-left">{{::info.synFlagEnum | translate}}</td>

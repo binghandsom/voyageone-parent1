@@ -34,6 +34,7 @@ define([
                     self.platformTypeList = [{value:task.cartId, name:carts.valueOf(task.cartId).desc}]
                 }
             }
+            console.log(self.platformTypeList);
 
             // 将字符串日期转换为 Date 日期。
             // 因为 input type=date 后, ng-model 只接受 Date 类型

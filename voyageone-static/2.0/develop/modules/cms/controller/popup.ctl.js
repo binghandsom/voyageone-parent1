@@ -317,7 +317,7 @@ define([
                 "templateUrl": "views/pop/promotion/newBeatTask.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/promotion/newBeatTask.ctl",
                 "controller": 'popNewBeatCtl as ctrl',
-                "size": "md"
+                "size": "lg"
             },
             "addBeat": {
                 "templateUrl": "views/pop/promotion/addBeat.tpl.html",
