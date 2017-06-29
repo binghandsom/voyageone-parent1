@@ -924,9 +924,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                     sxData.setErrorMessage(shopProp.getShop_name() + " 天猫同购上新时出现不可预知的错误，请跟管理员联系! "
                             + ex.getStackTrace()[0].toString());
                 } else {
-                    sxData.setErrorMessage(shopProp.getShop_name() + " " +ex.getMessage() + errorResult.toString());
+                    sxData.setErrorMessage(shopProp.getShop_name() + " " +ex.getMessage());
                 }
             }
+            sxData.setErrorMessage(sxData.getErrorMessage() + errorResult.toString());
 
             // 上新出错时状态回写操作
             sxProductService.doUploadFinalProc(shopProp, false, sxData, cmsBtSxWorkloadModel, "", null, "", getTaskName());
@@ -2367,13 +2368,19 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // 更新商品的时候
                 result = tbSimpleItemService.updateSimpleItem(shopProp, NumberUtils.toLong(numIId), productInfoXml);
             }
-        return result;
+            return result;
         } catch (Exception e) {
             if ("上新接口response为空".equals(e.getMessage())) {
                 String numId;
                 // 调用获取仓库商品的api 用标题去搜
                 String cmsTitle = productInfoMap.get("title");
-                List<Item> itemList = tbSaleService.getInventoryProduct(shopProp.getOrder_channel_id(), shopProp.getCart_id(), "for_shelved", 1L, 200L, cmsTitle);
+                List<Item> itemList;
+                if ("0".equals(productInfoMap.get("status"))) {
+                    itemList = tbSaleService.getOnsaleProduct(shopProp.getOrder_channel_id(), shopProp.getCart_id(),"num_iid", 1L, 200L, cmsTitle);
+                } else {
+                    itemList = tbSaleService.getInventoryProduct(shopProp.getOrder_channel_id(), shopProp.getCart_id(), "for_shelved", 1L, 200L, cmsTitle);
+                }
+
                 List<Item> matchedItemList = itemList.stream()
                         .filter(item -> cmsTitle.equals(item.getTitle()))
                         .collect(Collectors.toList());
@@ -2388,7 +2395,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                     errorResult.append("上新商品时, 由于天猫超时出现异常情况, 联系IT");
                 }
 
-            } else {
+            } else if ("更新接口response为空".equals(e.getMessage())){
                 List<Map<String, Object>> skuTmallList = null;
                 tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
                 if (tbItemSchema != null) {
@@ -2404,12 +2411,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 }
                 if (ListUtils.notNull(skuTmallList)) {
                     List<Map<String, Object>> skuCmsList;
-                    if (!StringUtils.isNullOrBlank2(productInfoMap.get("skus"))) {
-                        skuCmsList = JacksonUtil.jsonToMapList(productInfoMap.get("skus"));
-                    } else {
-                        skuCmsList = JacksonUtil.jsonToMapList(productInfoMap.get("skus_simple"));
-                    }
-
+                    String skuCmsJson = (String) JacksonUtil.jsonToMap(productInfoXml).get("skus");
+                    skuCmsList = JacksonUtil.jsonToMapList(skuCmsJson);
                     if (skuCmsList.size() != skuTmallList.size()) {
                         errorResult.append("[异常] 更新商品异常，检查商品时发现sku数量不一致，请及时确认！ ");
                     }

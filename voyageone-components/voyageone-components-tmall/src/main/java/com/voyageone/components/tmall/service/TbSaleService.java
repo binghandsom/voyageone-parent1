@@ -112,6 +112,24 @@ public class TbSaleService extends TbBase {
         logger.info("getOnsaleProduct调用结果 channelid={}, cartid={}, 结果={}", objs);
         return response.getItems();
     }
+
+    public List<Item> getOnsaleProduct(String strOrderChannelId, String strCardId, String fields, Long lPageIndex, Long pageSize, String title) throws ApiException {
+        ShopBean shopInfo = Shops.getShop(strOrderChannelId, strCardId);
+        ItemsOnsaleGetRequest req = new ItemsOnsaleGetRequest();
+
+        req.setQ(title);
+        req.setPageNo(lPageIndex);
+        req.setPageSize(pageSize);
+        req.setFields(fields);
+
+        ItemsOnsaleGetResponse response = reqTaobaoApi(shopInfo, req);
+        if (response == null) {
+            return null;
+        }
+        Object[] objs = { strOrderChannelId, strCardId, response.getErrorCode()==null ? "total=" + response.getTotalResults() : response.getBody() };
+        logger.info("getOnsaleProduct调用结果 channelid={}, cartid={}, 结果={}", objs);
+        return response.getItems();
+    }
     /**
      * 获取当前会话用户在库的商品列表
      * (包含所有库存分类状态：for_shelved(regular_shelved、never_on_shelf、off_shelf)、sold_out、violation_off_shelf)
