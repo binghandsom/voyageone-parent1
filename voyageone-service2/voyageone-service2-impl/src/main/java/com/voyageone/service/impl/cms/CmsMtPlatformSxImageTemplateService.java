@@ -6,12 +6,14 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformSxImageTemplateModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * Created by james on 2017/6/29.
  */
+@Service
 public class CmsMtPlatformSxImageTemplateService extends BaseService {
 
     final
@@ -27,6 +29,6 @@ public class CmsMtPlatformSxImageTemplateService extends BaseService {
     }
 
     public void add(CmsMtPlatformSxImageTemplateModel cmsMtPlatformSxImageTemplateModel){
-        cmsMtPlatformSxImageTemplateDao.insert(cmsMtPlatformSxImageTemplateModel);
+        cmsMtPlatformSxImageTemplateDao.add(cmsMtPlatformSxImageTemplateModel);
     }
 }

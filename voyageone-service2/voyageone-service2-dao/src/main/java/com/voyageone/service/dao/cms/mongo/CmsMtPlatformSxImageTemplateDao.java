@@ -27,7 +27,7 @@ public class CmsMtPlatformSxImageTemplateDao extends BaseMongoDao<CmsMtPlatformS
         return selectOneWithQuery(jongoQuery);
     }
 
-    public void insert(CmsMtPlatformSxImageTemplateModel cmsMtPlatformSxImageTemplateModel){
+    public void add(CmsMtPlatformSxImageTemplateModel cmsMtPlatformSxImageTemplateModel){
         CmsMtPlatformSxImageTemplateModel model = select(cmsMtPlatformSxImageTemplateModel.getChannelId(), cmsMtPlatformSxImageTemplateModel.getCartId(), cmsMtPlatformSxImageTemplateModel.getImageTemplate());
         if(model == null){
             super.insert(cmsMtPlatformSxImageTemplateModel);

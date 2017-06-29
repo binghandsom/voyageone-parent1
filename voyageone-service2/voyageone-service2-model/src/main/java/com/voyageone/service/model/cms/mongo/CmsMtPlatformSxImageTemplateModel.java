@@ -10,7 +10,6 @@ public class CmsMtPlatformSxImageTemplateModel extends BaseMongoModel {
     private String channelId;
     private Integer cartId;
     private String imageTemplate;
-
     public String getChannelId() {
         return channelId;
     }
