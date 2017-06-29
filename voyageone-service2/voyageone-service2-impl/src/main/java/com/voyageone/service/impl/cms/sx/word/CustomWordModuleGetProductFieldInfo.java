@@ -28,8 +28,6 @@ public class CustomWordModuleGetProductFieldInfo extends CustomWordModule {
 
     public final static String PRODUCT_IMAGE = "PRODUCT_IMAGE";
 
-    public static String firstProductImage = "";
-
     public CustomWordModuleGetProductFieldInfo() {
         super(moduleName);
     }
@@ -121,16 +119,13 @@ public class CustomWordModuleGetProductFieldInfo extends CustomWordModule {
                 return "";
             } else {
                 List<CmsBtProductModel_Field_Image> cmsBtProductModelFieldImages = sxProductService.getProductImages(cmsBtProductModel, imageType, sxData.getCartId());
-                if (StringUtils.isEmpty(firstProductImage)) {
-                    firstProductImage = sxProductService.getProductImages(cmsBtProductModel, CmsBtProductConstants.FieldImageType.valueOf(PRODUCT_IMAGE), sxData.getCartId()).get(0).getName();
-                }
 
                 if (Integer.parseInt(imageIdx) >= cmsBtProductModelFieldImages.size()) {
                     // 看看有没有设置补救措施
                     if (!StringUtils.isEmpty(paddingImageType)) {
                         // 如果以后还有其他补救措施的话， 就写在这个地方加else 。。。
                         if ("1stProductImage".equals(paddingImageType)) {
-                            return firstProductImage;
+                            return cmsBtProductModelFieldImages.get(0).getName();
                         } else {
                             return paddingImageType; //  上记以外的情况， 认为输入的值就是图片名
                         }
