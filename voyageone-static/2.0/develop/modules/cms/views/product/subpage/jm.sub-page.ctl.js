@@ -45,6 +45,7 @@ define([
         this.$fieldEditService = $fieldEditService;
         this.$document = $document;
         this.$templateRequest = $templateRequest;
+        this.flag = false;
         this.vm = {
             productDetails: null,
             productCode: "",
@@ -61,6 +62,19 @@ define([
         };
         this.panelShow = true;
     }
+    /*xu*/
+    SpJmController.prototype.change = function(){
+        var self = this;
+        if(self.vm.platform.fields.mainImageTemplate == "true"){
+            self.vm.platform.fields.mainImageTemplate='';
+            if(self.flag == false){
+                self.flag = true;
+            }else {
+                self.flag = false;
+            }
+
+        }
+    };
 
     SpJmController.prototype.init = function (element) {
         var self = this, check = self.vm.checkFlag,

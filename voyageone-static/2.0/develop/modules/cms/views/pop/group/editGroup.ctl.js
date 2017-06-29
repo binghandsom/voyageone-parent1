@@ -26,6 +26,7 @@ define([
             self.$fieldEditService = $fieldEditService;
             self.$document = $document;
             self.$templateRequest = $templateRequest;
+            self.flag = false;
             self.vm = {
                 productDetails: null,
                 productCode: "",
@@ -37,6 +38,20 @@ define([
             };
             self.panelShow = true;
         }
+
+        /*xu*/
+        EditGroupCtl.prototype.change = function(){
+            var self = this;
+            if(self.vm.platform.fields.mainImageTemplate == "true"){
+                self.vm.platform.fields.mainImageTemplate='';
+                if(self.flag == false){
+                    self.flag = true;
+                }else {
+                    self.flag = false;
+                }
+
+            }
+        };
 
         EditGroupCtl.prototype.init = function () {
             this.getPlatformData();
