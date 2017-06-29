@@ -310,8 +310,7 @@ define([
                                     var imageUrl = imageTemplate.url.replace(/%s/g, product.imageName);
                                     _.extend(product, {imageUrl:imageUrl});
                                 }
-                                var productUrl = cart.valueOf(self.task.cartId).pUrl + product.numIid + ".html";
-                                console.log(productUrl);
+                                var productUrl = cart.valueOf(self.task.cartId).pUrl + product.numIid;
                                 _.extend(product, {productUrl:productUrl});
                             });
                         }

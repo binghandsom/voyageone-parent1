@@ -379,6 +379,11 @@ public interface CmsUrlConstants {
 
             String DELETE_JIAGEPILU_TASK = "deleteJiagepiluTask";
 
+            /**
+             * 选择平台上新模板
+             */
+            String GET_PLATFORM_SX_TEMPLATE = "getPlatformSxTemplate";
+
         }
 
     }

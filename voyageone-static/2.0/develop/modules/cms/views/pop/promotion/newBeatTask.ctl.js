@@ -31,10 +31,11 @@ define([
                 });
             } else {
                 if (task) {
-                    self.platformTypeList = [{value:task.cartId, name:carts.valueOf(task.cartId).desc}]
+                    self.platformTypeList =
+                        [{value: task.cartId, name: carts.valueOf(task.cartId).desc}];
+                    self.selectCart(task.cartId);
                 }
             }
-            console.log(self.platformTypeList);
 
             // 将字符串日期转换为 Date 日期。
             // 因为 input type=date 后, ng-model 只接受 Date 类型
@@ -127,8 +128,16 @@ define([
                     beatTemplate = beatTemplate.replace("{key}", "patagonia-down-sweater-vest-kids-68220gem-1");
                     beatTemplate = beatTemplate.replace("{price}", self.taskBean.testPrice);
                     _.extend(self.taskBean, {testImageUrl:beatTemplate});
+                }
+            },
 
-                    console.log(self.taskBean.testImageUrl);
+            selectCart: function () {
+                var self = this;
+                var cartObj = carts.valueOf(parseInt(self.taskBean.cartId));
+                if (cartObj && cartObj.platformId == '2') {
+                    _.extend(self.taskBean, {isJdseries:true})
+                } else {
+                    _.extend(self.taskBean, {isJdseries:false})
                 }
             }
         };

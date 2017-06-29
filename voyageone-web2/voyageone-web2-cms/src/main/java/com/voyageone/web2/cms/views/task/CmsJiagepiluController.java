@@ -47,6 +47,8 @@ public class CmsJiagepiluController extends BaseController {
     private JiagepiluService jiagepiluService;
     @Autowired
     private TaskService taskService;
+    @Autowired
+    private CmsMtPlatformSxImageTemplateService cmsMtPlatformSxImageTemplateService;
 
     @RequestMapping(value = CmsUrlConstants.TASK.JIAGEPILU.GET_TASK_MODEL)
     public AjaxResponse getJiagepiluTaskModel(@RequestBody Map<String, Object> requestParams) {
@@ -209,6 +211,16 @@ public class CmsJiagepiluController extends BaseController {
      */
     @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.DELETE_JIAGEPILU_TASK)
     public AjaxResponse deleteJiagepiluTask(@RequestBody ReqParam param) {
+        return success(jiagepiluService.deleteJiagepiluTask(param.getTask_id(), getUser().getUserName()));
+    }
+
+    /**
+     * 删除价格披露任务
+     */
+    @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.GET_PLATFORM_SX_TEMPLATE)
+    public AjaxResponse getPlatformSxTemplate(@RequestBody Map<String, Object> param) {
+        Integer cartId = (Integer) param.get("cartId");
+        String channelId = getUser().getSelChannelId();
         return success(jiagepiluService.deleteJiagepiluTask(param.getTask_id(), getUser().getUserName()));
     }
 
