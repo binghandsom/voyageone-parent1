@@ -132,7 +132,7 @@ define([
 
             addOrUpdateTask: function (task) {
                 var self = this;
-                self.popups.openNewBeatTask({task: task}).then(function(newTask) {
+                self.popups.openNewBeatTask({task: task, platformTypeList:self.platformTypeList}).then(function(newTask) {
                     // self.task = newTask;
                     if (task) {
                         // 编辑，当task不存在也就是新增后页面直接在pop处跳转了
@@ -147,26 +147,27 @@ define([
             delTask: function (task) {
                 var self = this;
                 if (task.taskType == 1) {
-                    self.taskJiagepiluService.getSummary({task_id:task.id}).then(function (resp) {
-                        if (resp.data) {
-                            var summary = resp.data;
-                            var notDeleted = _.find(summary, function (item) {
-                                return item.flag == "SUCCESS" || item.flag == "RE_FAIL";
-                            });
-                            if (notDeleted) {
-                                var mesage = "有状态为 <" +　self.$translate.instant('SUCCESS')　+ " 或 " + self.$translate.instant('RE_FAIL') + "> 的商品，不能删除任务";
-                                self.alert(mesage);
-                            } else {
-                                self.taskJiagepiluService.deleteJiagepiluTask({task_id:task.id}).then(function (res) {
-                                   if (res.data) {
-                                       self.notify.success("Delete successfully");
-                                       self.search();
-                                   }
+                    self.confirm(self.$translate.instant('TXT_DELETE_JIAGEPILU_TASK').replace("%s", task.taskName)).then(function () {
+                        self.taskJiagepiluService.getSummary({task_id:task.id}).then(function (resp) {
+                            if (resp.data) {
+                                var summary = resp.data;
+                                var notDeleted = _.find(summary, function (item) {
+                                    return item.flag == "SUCCESS" || item.flag == "RE_FAIL";
                                 });
+                                if (notDeleted) {
+                                    var mesage = "有状态为 <" +　self.$translate.instant('SUCCESS')　+ " 或 " + self.$translate.instant('RE_FAIL') + "> 的商品，不能删除任务";
+                                    self.alert(mesage);
+                                } else {
+                                    self.taskJiagepiluService.deleteJiagepiluTask({task_id:task.id}).then(function (res) {
+                                        if (res.data) {
+                                            self.notify.success("Delete successfully");
+                                            self.search();
+                                        }
+                                    });
+                                }
                             }
-                        }
-                    })
-
+                        })
+                    });
                 }
             }
         };

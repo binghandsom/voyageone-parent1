@@ -303,7 +303,7 @@ define(function () {
         "TXT_STARTUP": "启动",
         "TXT_STOP": "停止",
         "TXT_REVERT": "还原",
-        "TXT_NUMIID_FULL": "商品的数字 ID ( num_iid )",
+        "TXT_NUMIID_FULL": "商品编码 ( num_iid )",
         "TXT_CODE_FULL": "商品的 Code",
         "TXT_CUST_QUERY_ATTR": "自定义查询条件",
         "TXT_TASK_NAME": "任务名",
@@ -930,6 +930,7 @@ define(function () {
         "TXT_CODE_OR_NUMIID":"Code / Number ID",
         "TXT_ERROR_MESSAGE":"错误信息",
         "TXT_SINGLE_CODE_STATUS":"单品状态",
+        "TXT_SINGLE_EXIST_IMAGE":"单品是否有图",
         "BTN_TASK_EDIT": "编辑任务",
         "TXT_PRODUCT_LIST":"Product List",
         "TXT_IMPORT_LIST":"Import List",
@@ -942,6 +943,7 @@ define(function () {
         "TXT_DOWNLOAD_FAIL_FILE":"失败文件下载",
         "TXT_JIAGEPILU_REIMPORT_CONFIRM":"重复导入会更新已存在的产品信息，确定要继续吗？",
         "TXT_NOT_EXISTS_TASK":"任务不存在",
-        "TXT_ADD_MOD_TASK": "添加/修改 任务"
+        "TXT_ADD_MOD_TASK": "添加/修改 任务",
+        "TXT_DELETE_JIAGEPILU_TASK":"您确定要删除价格披露任务[%s]吗?"
     };
 });

@@ -2,7 +2,7 @@ define([
            'cms',
            'underscore',
            'modules/cms/enums/Carts',
-       ], function (cms, _, cart) {
+       ], function (cms, _, carts) {
     cms.controller('popNewBeatCtl', (function () {
 
         function PopNewBeatCtl(context, $filter, $uibModalInstance, taskBeatService,
@@ -23,7 +23,17 @@ define([
             self.taskJiagepiluService = taskJiagepiluService;
             self.$location = $location;
 
-            self.carts = [];
+            if (context.platformTypeList && _.size(context.platformTypeList) > 0) {
+                self.platformTypeList = context.platformTypeList;
+                angular.forEach(self.platformTypeList, function (platform) {
+                    var cartIdVal = platform.value;
+                    platform.value = parseInt(cartIdVal);
+                });
+            } else {
+                if (task) {
+                    self.platformTypeList = [{value:task.cartId, name:carts.valueOf(task.cartId).desc}]
+                }
+            }
 
             // 将字符串日期转换为 Date 日期。
             // 因为 input type=date 后, ng-model 只接受 Date 类型
@@ -63,16 +73,16 @@ define([
             },
 
             init: function () {
-                var self = this;
-                self.taskJiagepiluService.getJiagepiluCarts().then(function (resp) {
-                    if (resp.data) {
-                        self.carts = resp.data;
-                        _.each(self.carts, function (cartObj) {
-                            var cartId = parseInt(cartObj.cart_id);
-                            _.extend(cartObj, {cartId: cartId, desc: cart.valueOf(cartId).desc})
-                        });
-                    }
-                });
+                // var self = this;
+                // self.taskJiagepiluService.getJiagepiluCarts().then(function (resp) {
+                //     if (resp.data) {
+                //         self.carts = resp.data;
+                //         _.each(self.carts, function (cartObj) {
+                //             var cartId = parseInt(cartObj.cart_id);
+                //             _.extend(cartObj, {cartId: cartId, desc: cart.valueOf(cartId).desc})
+                //         });
+                //     }
+                // });
 
             },
 
@@ -107,6 +117,18 @@ define([
 
             cancel: function () {
                 this.$uibModalInstance.dismiss();
+            },
+            
+            changeBeatTemplate: function () {
+                var self = this;
+                if (self.taskBean.config.beat_template && self.taskBean.testPrice) {
+                    var beatTemplate = angular.copy(self.taskBean.config.beat_template);
+                    beatTemplate = beatTemplate.replace("{key}", "patagonia-down-sweater-vest-kids-68220gem-1");
+                    beatTemplate = beatTemplate.replace("{price}", self.taskBean.testPrice);
+                    _.extend(self.taskBean, {testImageUrl:beatTemplate});
+
+                    console.log(self.taskBean.testImageUrl);
+                }
             }
         };
 

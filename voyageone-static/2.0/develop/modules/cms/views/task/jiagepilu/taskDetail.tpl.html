@@ -63,7 +63,7 @@
 										</div>
 									</div>
 									<div class="row form-group">
-										<label class="col-sm-5 control-label"><strong translate="TXT_SINGLE_CODE_STATUS"></strong></label>
+										<label class="col-sm-5 control-label"><strong translate="TXT_SINGLE_EXIST_IMAGE"></strong></label>
 										<div class="col-sm-6">
 											<label class="m-t-tx" ng-repeat="imageStatus in ctrl.imageStatuses">
 												<input type="checkbox" class="v-top" ng-model="ctrl.searchBean.imageStatuses[imageStatus.key]" value="{{imageStatus.key}}"/>&nbsp;&nbsp;<span class="v-top">{{imageStatus.value}}</span>&emsp;
@@ -80,7 +80,7 @@
 						<div class="form-inline">
 							<button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 							<button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
-							<button class="btn btn-vo" ng-click="ctrl.updateTask(openNewBeatTask)"><i class="fa fa-search"></i>&nbsp;{{'BTN_TASK_EDIT' | translate}}</button>
+							<button class="btn btn-success" ng-click="ctrl.updateTask(openNewBeatTask)"><i class="fa fa-edit"></i>&nbsp;{{'BTN_TASK_EDIT' | translate}}</button>
 						</div>
 					</div>
 
