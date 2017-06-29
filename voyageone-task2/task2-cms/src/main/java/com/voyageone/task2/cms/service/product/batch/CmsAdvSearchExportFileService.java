@@ -1742,6 +1742,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 HashMap<String, Integer> inMap = new HashMap<>();
 
                 String sku = stock.getBase().getSku();
+                if("001".equals(channelId)){
+                    sku = sku.toLowerCase();
+                }
 
                 Map<String, List<Integer>> store = stock.getStore();
                 store.forEach((key, value) -> {
