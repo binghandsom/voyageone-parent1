@@ -1693,16 +1693,17 @@ public class CmsAdvSearchExportFileService extends BaseService {
     /**
      *
      * @param channelId
-     * @param orgChannelId
-     * @param code
+     * @param subChannelId
+     * @param skuList
      * @return 仓库名称(包括第三方仓库)的集合
      */
-    public List<String> getStoreNames(String channelId,String orgChannelId,String code){
+    public List<String> getStoreNames(String channelId,String subChannelId,List<String> skuList){
 
         GetStoreStockDetailRequest2 getStoreStockDetailRequest2 = new GetStoreStockDetailRequest2();
         getStoreStockDetailRequest2.setChannelId(channelId);
-        getStoreStockDetailRequest2.setSubChannelId(orgChannelId);
-        getStoreStockDetailRequest2.setItemCode(code);
+        getStoreStockDetailRequest2.setSubChannelId(subChannelId);
+        getStoreStockDetailRequest2.setSkuList(skuList);
+        getStoreStockDetailRequest2.setIncludeAllStores(true);
         List<String> storeNames = new ArrayList<>();
 
         GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
@@ -1721,16 +1722,17 @@ public class CmsAdvSearchExportFileService extends BaseService {
     /**
      *
      * @param channelId
-     * @param orgChannelId
-     * @param code
+     * @param subChannelId
+     * @param skuList
      * @return 仓库对应的库存信息(包括第三方的)
      */
-    public HashMap<String, HashMap<String,Integer>> getStores(String channelId,String orgChannelId,String code){
+    public HashMap<String, HashMap<String,Integer>> getStores(String channelId,String subChannelId,List<String> skuList){
 
         GetStoreStockDetailRequest2 getStoreStockDetailRequest2 = new GetStoreStockDetailRequest2();
         getStoreStockDetailRequest2.setChannelId(channelId);
-        getStoreStockDetailRequest2.setSubChannelId(orgChannelId);
-        getStoreStockDetailRequest2.setItemCode(code);
+        getStoreStockDetailRequest2.setSubChannelId(subChannelId);
+        getStoreStockDetailRequest2.setIncludeAllStores(true);
+        getStoreStockDetailRequest2.setSkuList(skuList);
         HashMap<String, HashMap<String, Integer>> outMap = new HashMap<>();
         GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
         if (execute != null && execute.getData() != null && execute.getData().getHeader() != null &&CollectionUtils.isNotEmpty(execute.getData().getStocks())){

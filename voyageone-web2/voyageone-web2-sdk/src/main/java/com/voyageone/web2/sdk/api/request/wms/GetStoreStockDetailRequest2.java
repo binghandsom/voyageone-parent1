@@ -6,6 +6,8 @@ import com.voyageone.web2.sdk.api.response.wms.GetStoreStockDetailResponse;
 import com.voyageone.web2.sdk.api.response.wms.GetStoreStockDetailResponse2;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
+import java.util.List;
+
 /**
  * Created by james on 2017/4/13.
  */
@@ -18,6 +20,26 @@ public class GetStoreStockDetailRequest2 extends VoApiRequest<GetStoreStockDetai
     private String sku;
 
     private String itemCode;
+
+    private boolean includeAllStores;
+
+    private List<String> skuList;
+
+    public boolean isIncludeAllStores() {
+        return includeAllStores;
+    }
+
+    public void setIncludeAllStores(boolean includeAllStores) {
+        this.includeAllStores = includeAllStores;
+    }
+
+    public List<String> getSkuList() {
+        return skuList;
+    }
+
+    public void setSkuList(List<String> skuList) {
+        this.skuList = skuList;
+    }
 
     public String getChannelId() {
         return channelId;
