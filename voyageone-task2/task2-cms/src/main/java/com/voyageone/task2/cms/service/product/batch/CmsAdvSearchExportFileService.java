@@ -1731,7 +1731,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         GetStoreStockDetailRequest2 getStoreStockDetailRequest2 = new GetStoreStockDetailRequest2();
         getStoreStockDetailRequest2.setChannelId(channelId);
         getStoreStockDetailRequest2.setSubChannelId(subChannelId);
-        getStoreStockDetailRequest2.setIncludeAllStores(true);
+        //getStoreStockDetailRequest2.setIncludeAllStores(true);
         getStoreStockDetailRequest2.setSkuList(skuList);
         HashMap<String, HashMap<String, Integer>> outMap = new HashMap<>();
         GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
@@ -1756,7 +1756,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 outMap.put(sku,inMap);
             }
         }
-
         return outMap;
     }
 
