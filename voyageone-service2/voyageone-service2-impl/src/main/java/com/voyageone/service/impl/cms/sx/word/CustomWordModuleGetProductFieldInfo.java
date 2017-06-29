@@ -26,8 +26,6 @@ public class CustomWordModuleGetProductFieldInfo extends CustomWordModule {
 
     public final static String moduleName = "GetProductFieldInfo";
 
-    public final static String PRODUCT_IMAGE = "PRODUCT_IMAGE";
-
     public CustomWordModuleGetProductFieldInfo() {
         super(moduleName);
     }
@@ -125,7 +123,7 @@ public class CustomWordModuleGetProductFieldInfo extends CustomWordModule {
                     if (!StringUtils.isEmpty(paddingImageType)) {
                         // 如果以后还有其他补救措施的话， 就写在这个地方加else 。。。
                         if ("1stProductImage".equals(paddingImageType)) {
-                            return cmsBtProductModelFieldImages.get(0).getName();
+                            return sxProductService.getProductImages(cmsBtProductModel, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE, sxData.getCartId()).get(0).getName();
                         } else {
                             return paddingImageType; //  上记以外的情况， 认为输入的值就是图片名
                         }
