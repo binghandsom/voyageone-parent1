@@ -567,7 +567,11 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // 取得更新对象商品id
                 numIId = sxData.getPlatform().getNumIId();
                 // 获取商品页面信息
-                tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
+                try {
+                    tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
+                } catch (Exception e) {
+                    tbItemSchema = null; // 有可能商品被弄坏了
+                }
             }
 
             // 编辑天猫国际官网同购共通属性
@@ -1390,7 +1394,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 取得天猫同购上新用skus列表
         try {
             Map<String, Integer> skuPageQtyMap = new HashMap<>();
-            if (updateWare) {
+            if (updateWare && tbItemSchema != null) {
                 // 获取页面sku以及对应的库存
                 String skus = ((InputField)tbItemSchema.getFieldMap().get("skus")).getDefaultValue();
                 List<Map<String, Object>> skuPageQtyMapList = JacksonUtil.jsonToMapList(skus);
@@ -1518,15 +1522,19 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             if (config != null && "1".equals(config.getConfigValue1()) && updateWare) {
                 // 如果设置成"1：运营自己天猫后台管理"时,用天猫平台上取下来的运营自己后台设置的值设置schema无线端共通模块相关属性
 
-                String defaultValue = ((InputField)tbItemSchema.getFieldMap().get("wireless_desc")).getDefaultValue();
-                // 店铺活动(json)
-                valWirelessDetails = updateDefaultValue(valWirelessDetails, "shop_discount", defaultValue);
-                // 文字说明(json)
-                valWirelessDetails = updateDefaultValue(valWirelessDetails, "item_text", defaultValue);
-                // 优惠(json)
-                valWirelessDetails = updateDefaultValue(valWirelessDetails, "coupon", defaultValue);
-                // 同店推荐(json)
-                valWirelessDetails = updateDefaultValue(valWirelessDetails, "hot_recommanded", defaultValue);
+                if (tbItemSchema != null) {
+                    String defaultValue = ((InputField) tbItemSchema.getFieldMap().get("wireless_desc")).getDefaultValue();
+                    if (defaultValue != null) {
+                        // 店铺活动(json)
+                        valWirelessDetails = updateDefaultValue(valWirelessDetails, "shop_discount", defaultValue);
+                        // 文字说明(json)
+                        valWirelessDetails = updateDefaultValue(valWirelessDetails, "item_text", defaultValue);
+                        // 优惠(json)
+                        valWirelessDetails = updateDefaultValue(valWirelessDetails, "coupon", defaultValue);
+                        // 同店推荐(json)
+                        valWirelessDetails = updateDefaultValue(valWirelessDetails, "hot_recommanded", defaultValue);
+                    }
+                }
             }
             productInfoMap.put("wireless_desc", valWirelessDetails);
         }
@@ -1795,31 +1803,34 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                                                        ExpressionParser expressionParser, ShopBean shopProp,
                                                        String crossBorderRreportFlg, Map<String, Integer> skuPageQtyMap) throws BusinessException{
 
-        // 官网同购， 上新时候的价格， 统一用所有sku里的最高价
-        Double priceMax = 0d;
-        for (CmsBtProductModel product : productList) {
-            if (product.getCommon() == null
-                    || product.getCommon().getFields() == null
-                    || product.getPlatform(cartId) == null
-                    || ListUtils.isNull(product.getPlatform(cartId).getSkus())) {
-                continue;
-            }
-            for (BaseMongoMap<String, Object> sku : product.getPlatform(cartId).getSkus()) {
-                String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
-
-                // 根据skuCode从skuList中取得common.sku和PXX.sku合并之后的sku
-                BaseMongoMap<String, Object> mergedSku = skuList.stream()
-                        .filter(s -> s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()).equals(skuCode))
-                        .findFirst()
-                        .get();
-                // 价格(根据cms_mt_channel_config表中的配置有可能是从priceRetail或者priceMsrp中取得价格)
-                if (priceMax.compareTo(Double.parseDouble(mergedSku.getStringAttribute(priceConfigValue))) < 0) {
-                    priceMax = Double.parseDouble(mergedSku.getStringAttribute(priceConfigValue));
-                }
-
-            }
-
-        }
+        // delete by tom 2017/06/22 start
+        // 临时注一下看看
+//        // 官网同购， 上新时候的价格， 统一用所有sku里的最高价
+//        Double priceMax = 0d;
+//        for (CmsBtProductModel product : productList) {
+//            if (product.getCommon() == null
+//                    || product.getCommon().getFields() == null
+//                    || product.getPlatform(cartId) == null
+//                    || ListUtils.isNull(product.getPlatform(cartId).getSkus())) {
+//                continue;
+//            }
+//            for (BaseMongoMap<String, Object> sku : product.getPlatform(cartId).getSkus()) {
+//                String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+//
+//                // 根据skuCode从skuList中取得common.sku和PXX.sku合并之后的sku
+//                BaseMongoMap<String, Object> mergedSku = skuList.stream()
+//                        .filter(s -> s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()).equals(skuCode))
+//                        .findFirst()
+//                        .get();
+//                // 价格(根据cms_mt_channel_config表中的配置有可能是从priceRetail或者priceMsrp中取得价格)
+//                if (priceMax.compareTo(Double.parseDouble(mergedSku.getStringAttribute(priceConfigValue))) < 0) {
+//                    priceMax = Double.parseDouble(mergedSku.getStringAttribute(priceConfigValue));
+//                }
+//
+//            }
+//
+//        }
+        // delete by tom 2017/06/22 end
 
 
         // 具体设置属性的逻辑
@@ -1946,15 +1957,25 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 }
 
                 // 价格(根据cms_mt_channel_config表中的配置有可能是从priceRetail或者priceMsrp中取得价格)
-//                skuMap.put("price", mergedSku.getStringAttribute(priceConfigValue));
-                skuMap.put("price", String.valueOf(priceMax));
+                skuMap.put("price", mergedSku.getStringAttribute(priceConfigValue));
+//                skuMap.put("price", String.valueOf(priceMax));
                 // outer_id
                 skuMap.put("outer_id", skuCode);
                 // 库存
                 if (skuPageQtyMap.containsKey(skuCode)) {
                     skuMap.put("quantity", skuPageQtyMap.get(skuCode.toLowerCase()));
                 } else {
-                    skuMap.put("quantity", skuLogicQtyMap.get(skuCode));
+                    if (ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId().equals(shopProp.getOrder_channel_id())) {
+                        long pageQty = skuLogicQtyMap.get(skuCode);
+                        try {
+                            pageQty = tbScItemService.getInventoryByScItemId(shopProp, tbScItemService.getScItemByOuterCode(shopProp, skuCode).getItemId()).get(0).getQuantity();
+                        } catch (Exception ignored) {
+                        }
+
+                        skuMap.put("quantity", pageQty);
+                    } else {
+                        skuMap.put("quantity", skuLogicQtyMap.get(skuCode));
+                    }
                 }
 
                 // 与颜色尺寸这个销售属性关联的图片

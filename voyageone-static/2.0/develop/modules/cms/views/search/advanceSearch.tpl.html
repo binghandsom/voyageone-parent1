@@ -29,11 +29,15 @@
                                             <div class="form-group">
                                                 <div class="col-sm-3"></div>
                                                 <div class="col-sm-8">
-                                                    <select multiple chosen width="'100%'" class="form-control"
-                                                            ng-model="vm.searchInfo.brandList" search-contains = "true"
-                                                            ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
-                                                        <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
-                                                    </select>
+
+                                                    <div class="input-group">
+                                                        <select multiple chosen width="'100%'" class="form-control"
+                                                                ng-model="vm.searchInfo.brandList" search-contains = "true"
+                                                                ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
+                                                            <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
+                                                        </select>
+                                                        <span class="input-group-addon cur-p" ng-click="dismiss('brandList')">重置</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="form-horizontal">
@@ -824,23 +828,22 @@
             <div class="container-fluid m-t-xs m-b-xs">
                 <uib-tabset class="tab-container vo_nav-tabs">
                     <!--right-btn-->
-                    <div class="form-inline m-b-xs pull-right" style="margin-right:30px" ng-controller="popupCtrl">
+                    <div class="form-inline m-b-xs pull-right advance-tabs" style="margin-right: 10px" ng-controller="popupCtrl">
                         <label class="checkbox-inline c-checkbox" style="margin-top:12px">
                             <input type="checkbox" value="1" ng-model="vm._selall">
                             <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;检索结果全量&nbsp;
                         </label>
                         <div class="btn-group" style="margin-left:10px" uib-dropdown ng-repeat="cartBean in vm.masterData.cartList">
                             <button type="button" class="btn btn-pop btn-default" uib-dropdown-toggle>
-                                <i class="fa fa-arrow-circle-right"></i>&nbsp;{{cartBean.name}}&nbsp;平台级变更&nbsp;<span class="caret"></span>
+                                <i class="fa fa-arrow-circle-right"></i>&nbsp;{{cartBean.name}}&nbsp;<span class="caret"></span>
                             </button>
                             <ul uib-dropdown-menu>
-                                <li ng-if="cartBean.value != 27 && cartBean.cartType != 3">
+                                <li ng-if="cartBean.value != 27 && cartBean.cartType != 3 && cartBean.value != 34">
                                     <a ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit,cartBean.value)">{{'TXT_TAG_STORE_CLASSIFY'|translate}}</a>
                                 </li>
                                 <li ng-if="getAutoSyncPriceSale(cartBean)!=true">
                                     <a href="javascript:void(0)" ng-click="toopenSalePrice(openSalePrice,cartBean.value)">{{'TXT_FINAL_SALE_PRICE_SETTING'|translate}}</a>
                                 </li>
-
                                 <li >
                                     <a href="javascript:void(0)" ng-click="jdCategoryMapping(cartBean.value)">修改平台类目</a>
                                 </li>
@@ -857,7 +860,7 @@
                                     <a href>加入橱窗</a>
                                     <ul class="dropdown-menu dropdown-menu-ul">
                                         <li ng-repeat="shelves in vm.masterData.shelvesMap[cartBean.value]">
-                                            <a href ng-click="$parent.addShelves(shelves.id)" >
+                                            <a href ng-click="$parent.addShelves(shelves.id)" title="{{shelves.shelvesName}}">
                                                 {{shelves.shelvesName | limitTo: 10}}{{shelves.shelvesName.length > 10 ? '...' : ''}}
                                             </a>
                                         </li>
@@ -898,7 +901,7 @@
                             <table ng-controller="popupCtrl"  class="vo_table vo_models dropdown_table_bk font-bold" style="min-width:100%;" width="{{vm.tblWidth2}}" ng-style="{'border': vm.productList.length ? '1px solid #ddd': 'none'}">
                                 <thead>
                                     <tr style="background:#e67e22;color: #fff">
-                                        <th class="text-left" style="line-height:40px;padding-left:10px;width: 120px;" colspan="2">
+                                        <th class="text-left" style="line-height:40px;padding-left:10px;min-width: 120px;" colspan="2">
                                             <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
                                                 <input type="checkbox" ng-click="selectAll(vm.productSelList)"
                                                        ng-checked="isAllSelected(vm.productSelList)"
@@ -906,50 +909,50 @@
                                                 <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                             </label>
                                         </th>
-                                        <th class="text-left" style="width: 150px;">
+                                        <th class="text-left">
                                             <span translate="TXT_CODE"></span>&emsp;<button class="opacityBtn"
                                                                                              ng-if="vm.productList.length"
                                                                                              ng-click="ctrlAdvance.columnOrder('code')"><i class="fa fa-{{ctrlAdvance.getArrowName('code')}}"></i></button>
                                         </th>
-                                        <th class="text-left" style="min-width: 150px">
+                                        <th class="text-left">
                                             <span translate="TXT_NAME"></span>&emsp;<button class="opacityBtn"
                                                                                             ng-if="vm.productList.length"
                                                                                             ng-click="ctrlAdvance.columnOrder('originalTitleCn')"><i class="fa fa-{{ctrlAdvance.getArrowName('originalTitleCn')}}"></i></button>
                                         </th>
-                                        <th class="text-left" style="width: 140px;">
+                                        <th ng-if="isExistCommonProps('brand')" class="text-left" style="width: 140px;">
                                             <span translate="TXT_BRAND"></span>&emsp;<button class="opacityBtn"
                                                                                             ng-if="vm.productList.length"
                                                                                             ng-click="ctrlAdvance.columnOrder('brand')"><i class="fa fa-{{ctrlAdvance.getArrowName('brand')}}"></i></button>
                                         </th>
-                                        <th class="text-center" style="width: 80px;">
+                                        <th ng-if="isExistCommonProps('quantity')" class="text-center" style="width: 80px;">
                                             <span translate="TXT_INVENTORY"></span>&emsp;<button class="opacityBtn"
                                                                                             ng-if="vm.productList.length"
                                                                                             ng-click="ctrlAdvance.columnOrder('quantity')"><i class="fa fa-{{ctrlAdvance.getArrowName('quantity')}}"></i></button>
                                         </th>
-                                        <th class="text-center" style="width: 120px;">
+                                        <th ng-if="isExistCommonProps('quantitySale')" class="text-center" style="width: 120px;">
                                             可售库存
                                         </th>
-                                        <th class="text-center" style="width: 120px;">
+                                        <th ng-if="isExistCommonProps('priceMsrp')" class="text-center" style="width: 120px;">
                                             中国建议售价&emsp;<button class="opacityBtn"
                                                                 ng-if="vm.productList.length && vm._cartType_"
                                                                 ng-click="ctrlAdvance.columnOrder('platforms.P✓.pPriceMsrpEd',vm._cartType_.value)"><i class="fa fa-{{ctrlAdvance.getArrowName('platforms.P✓.pPriceMsrpEd',vm._cartType_.value)}}"></i></button>
                                         </th>
-                                        <th class="text-center" style="width: 120px;">
+                                        <th ng-if="isExistCommonProps('priceRetail')" class="text-center" style="width: 120px;">
                                             中国指导售价&emsp;<button class="opacityBtn"
                                                                 ng-if="vm.productList.length && vm._cartType_"
                                                                 ng-click="ctrlAdvance.columnOrder('platforms.P✓.pPriceRetailSt',vm._cartType_.value)"><i class="fa fa-{{ctrlAdvance.getArrowName('platforms.P✓.pPriceRetailSt',vm._cartType_.value)}}"></i></button>
                                         </th>
-                                        <th class="text-center" style="width: 120px;">
+                                        <th ng-if="isExistCommonProps('priceSale')" class="text-center" style="width: 120px;">
                                             中国最终售价&emsp;<button class="opacityBtn"
                                                                 ng-if="vm.productList.length && vm._cartType_"
                                                                 ng-click="ctrlAdvance.columnOrder('platforms.P✓.pPriceSaleEd',vm._cartType_.value)"><i class="fa fa-{{ctrlAdvance.getArrowName('platforms.P✓.pPriceSaleEd',vm._cartType_.value)}}"></i></button>
                                         </th>
-                                        <th class="text-center" style="width: 80px;">
+                                        <th ng-if="isExistCommonProps('skuCnt')" class="text-center" style="width: 80px;">
                                             <span translate="TXT_SKU_COUNT"></span>&emsp;<button class="opacityBtn"
                                                                                                  ng-if="vm.productList.length"
                                                                                                  ng-click="ctrlAdvance.columnOrder('skuCnt')"><i class="fa fa-{{ctrlAdvance.getArrowName('skuCnt')}}"></i></button>
                                         </th>
-                                        <th class="text-left" ng-repeat="prop1 in vm.commonProps" style="width: 170px;">
+                                        <th class="text-left" ng-repeat="prop1 in vm.commonProps | filter:commonPropsFilter"  style="width: 170px;">
                                             {{prop1.propName}}&emsp;<button class="opacityBtn"
                                                                             ng-if="vm.productList.length"
                                                                             ng-click="ctrlAdvance.columnOrder(prop1.propId)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop1.propId)}}"></i></button>
@@ -980,7 +983,7 @@
                                                 <span class="fa fa-check"></span>
                                             </label>
                                         </td>
-                                        <td rowspan="2" style="padding-left: 0;">
+                                        <td rowspan="2">
                                             <a href="javascript:void(0)" ng-click="openAdvanceImagedetail(productInfo)">
                                                 <img image="{{productInfo.common.fields.images6 && productInfo.common.fields.images6[0].image6?productInfo.common.fields.images6[0].image6:productInfo.common.fields.images1[0].image1}}" alt="{{productInfo.common.fields.code}}" class="thumb-sm-search"/>
                                             </a>
@@ -1037,13 +1040,13 @@
                                         <td class="text-left">
                                             <edit-title data="productInfo"></edit-title>
                                         </td>
-                                        <td class="text-left" style="width:110px;">
+                                        <td ng-if="isExistCommonProps('brand')" class="text-left">
                                             {{productInfo.common.fields.brand}}
                                         </td>
-                                        <td class="text-center">
+                                        <td ng-if="isExistCommonProps('quantity')" class="text-center">
                                             {{productInfo.common.fields.quantity || 0}}
                                         </td>
-                                        <td class="text-center">
+                                        <td ng-if="isExistCommonProps('quantitySale')" class="text-center">
                                             <button ng-controller="showPopoverCtrl"
                                                     popover-html="getCartQty(productInfo.saleQty)"
                                                     uib-popover-template="'qty.html'"
@@ -1052,7 +1055,7 @@
                                                 {{productInfo.saleQty[0]}}
                                             </button>
                                         </td>
-                                        <td class="text-center">
+                                        <td ng-if="isExistCommonProps('priceMsrp')" class="text-center">
                                             <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceMsrp.length>0"
                                                     popover-html="showInfo({{productInfo.priceMsrp}})"
                                                     popover-title="{{'TXT_PRICE' | translate}}" type="button"
@@ -1060,7 +1063,7 @@
                                                 {{productInfo.priceMsrp[0]}}
                                             </button>
                                         </td>
-                                        <td class="text-center">
+                                        <td ng-if="isExistCommonProps('priceRetail')" class="text-center">
                                             <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceRetail.length>0"
                                                     popover-html="showInfo({{productInfo.priceRetail}})"
                                                     popover-title="{{'TXT_PRICE' | translate}}" type="button"
@@ -1068,7 +1071,7 @@
                                                 {{productInfo._retailPriceCol.pVal}}<label ng-if="productInfo._retailPriceCol.pTxt" ng-class="productInfo._retailPriceCol.cssTxt" style="margin-bottom:0px">&nbsp;{{productInfo._retailPriceCol.pTxt}}</label>
                                             </button>
                                         </td>
-                                        <td class="text-center">
+                                        <td ng-if="isExistCommonProps('priceSale')" class="text-center">
                                             <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceSale.length>0"
                                                     popover-html="showInfo({{productInfo.priceSale}})"
                                                     popover-title="{{'TXT_PRICE' | translate}}" type="button"
@@ -1077,7 +1080,7 @@
                                             </button>
                                         </td>
                                         <!--show SKU length -->
-                                        <td class="text-center">
+                                        <td  ng-if="isExistCommonProps('skuCnt')" class="text-center">
                                             <button ng-controller="showPopoverCtrl" ng-if="productInfo.skuDetail.length>0"
                                                     popover-html="popoverAdvanceSku(productInfo.common.fields.code, productInfo.common.skus,productInfo)"
                                                     uib-popover-template="templateAction.advanceSkuPopover.templateUrl"
@@ -1126,17 +1129,17 @@
                                                                                                                    ng-if="vm.groupList.length"
                                                                                                                    ng-click="ctrlAdvance.columnOrder('code')"><i class="fa fa-{{ctrlAdvance.getArrowName('code')}}"></i></button>
                                     </th>
-                                    <th class="text-center">
+                                    <th ng-if="isExistCommonProps('priceSale')" class="text-center">
                                         中国最终售价&emsp;<button class="opacityBtn"
                                                       ng-if="vm.productList.length && vm._cartType_"
                                                       ng-click="ctrlAdvance.columnOrder('platforms.P✓.pPriceMsrpEd',vm._cartType_.value)"><i class="fa fa-{{ctrlAdvance.getArrowName('platforms.P✓.pPriceMsrpEd',vm._cartType_.value)}}"></i></button>
                                     </th>
-                                    <th class="text-left">
+                                    <th ng-if="isExistCommonProps('brand')" class="text-left">
                                         <span  translate="TXT_BRAND"></span>&emsp;<button class="opacityBtn"
                                                                                        ng-if="vm.groupList.length"
                                                                                        ng-click="ctrlAdvance.columnOrder('brand')"><i class="fa fa-{{ctrlAdvance.getArrowName('brand')}}"></i></button>
                                     </th>
-                                    <th class="text-left" ng-repeat="prop1 in vm.commonProps">
+                                    <th class="text-left" ng-repeat="prop1 in vm.commonProps  | filter:commonPropsFilter">
                                         {{prop1.propName}}&emsp;<button class="opacityBtn"
                                                                         ng-if="vm.groupList.length"
                                                                         ng-click="ctrlAdvance.columnOrder(prop1.value)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop1.value)}}"></i></button>
@@ -1174,7 +1177,7 @@
                                                 <img image="{{groupInfo.common.fields.images6 && groupInfo.common.fields.images6[0].image6?groupInfo.common.fields.images6[0].image6:groupInfo.common.fields.images1[0].image1}}" alt="{{groupInfo.common.fields.code}}" class="thumb-sm-search"/>
                                             </a>
                                         </td>
-                                        <td colspan="{{vm.commonProps.length + vm.sumCustomProps.length + vm.selSalesType.length + vm.selBiDataList.length + 3}}" class="control-label text-left form-inline" style="height:27px;">
+                                        <td colspan="{{vm.commonProps.length + vm.sumCustomProps.length + vm.selSalesType.length + vm.selBiDataList.length + 1}}" class="control-label text-left form-inline" style="height:27px;">
                                             <button ng-controller="showPopoverCtrl" popover-html="popoverPromotionDetail(groupInfo.common.fields.code, groupInfo)"
                                                     uib-popover-template="templateAction.promotionDetailPopover.templateUrl"
                                                     popover-title="{{'TXT_PROMOTION_DETAIL'|translate}}" type="button" popover-placement="right" class="btn btn-vo btn-xs">
@@ -1221,7 +1224,7 @@
                                                 </ul>
                                             </div>
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center" ng-if="isExistCommonProps('priceSale')">
                                             <button ng-controller="showPopoverCtrl" ng-if="groupInfo.groupBean.priceSale.length>0"
                                                     popover-html="showInfo({{groupInfo.groupBean.priceSale}})"
                                                     popover-title="{{'TXT_PRICE' | translate}}" type="button"
@@ -1229,12 +1232,15 @@
                                                 {{groupInfo.groupBean.priceSale[0]}}
                                             </button>
                                         </td>
-                                        <td class="text-left">
+                                        <td class="text-left" ng-if="isExistCommonProps('brand')">
                                             {{groupInfo.common.fields.brand}}
                                         </td>
                                         <td class="text-left" title="{{prop1.value}}" ng-repeat="prop1 in groupInfo.commArr" style=" overflow:hidden;">
-                                            <span ng-if="prop1.value.length > 50"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
-                                            <span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
+                                            <span ng-if = "prop1.value.length <= 50 && prop1.value != 'clientMsrpPrice'">{{prop1.value}}</span>
+                                            <span ng-if = "prop1.value.length > 50 && prop1.value != 'clientMsrpPrice'"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
+                                            <span ng-if = "prop1.value == 'clientMsrpPrice'">
+                                                <client-msrp-price data="groupInfo.common.skus"></client-msrp-price>
+                                            </span>
                                         </td>
                                         <td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in groupInfo.custArr" style="overflow:hidden;">
                                             <span ng-if="prop2.value.length > 50"><popover-text content="prop2.value" direct="left" size="50"></popover-text></span>

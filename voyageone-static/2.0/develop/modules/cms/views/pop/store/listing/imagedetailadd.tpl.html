@@ -7,31 +7,63 @@
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal" id="uploadForm">
             <div class="form-group">
-                <label class="col-sm-3 control-label">{{'TXT_ORIGIN_IMAGE' | translate}}</label>
-                <div class="col-sm-7" style="margin-left: -4px;">
-                    <label class="radio-inline c-radio pull-left"><input name="type" type="radio" value="1" ng-model="uploadType"><span class="fa fa-check"></span></label>
+                <label class="col-sm-3 control-label">
+                    <label class="radio-inline c-radio">
+                        <input name="type" type="radio" value="1" ng-model="uploadType" ng-click="choseImg()">
+                        <span class="fa fa-check"></span>
+                    </label>
+                    {{'TXT_ORIGIN_IMAGE' | translate}}
+                </label>
+                <div class="col-sm-9" style="margin-left: -4px;">
                     <div class="col-sm-8">
-                        <input type="file" file-style nv-file-select="" uploader="uploader" accept=".jpg">
+                        <input type="file" id="uploader" file-style = "{buttonText:' &nbsp;浏览文件',disabled: true}" nv-file-select="" uploader="uploader" accept=".jpg">
                     </div>
-                    <label class="radio-inline c-radio"><input name="type" type="radio" value="2" ng-model="uploadType"><span class="fa fa-check"></span> Url </label>
+
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">{{'TXT_ORIGIN_URL' | translate}}</label>
+                <div class="col-sm-9 col-sm-offset-3">
+                    <div class="text-warnings">
+                        <i class="icon fa fa-bell-o"></i>&nbsp;<code>{{'TXT_IMAGE_UPLOAD_NOTICE' | translate}}</code>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">
+                    <label class="radio-inline c-radio">
+                        <input name="type" type="radio" value="2" ng-model="uploadType" ng-click="choseImg()">
+                        <span class="fa fa-check"></span>
+                    </label>&nbsp;&nbsp;
+                    {{'TXT_ORIGIN_URL' | translate}}
+                </label>
                 <div class="col-sm-7">
-                    <textarea class="form-control no-resize" ng-model="originUrl" rows="3" placeholder="http://image.voyageone.com.cn/cms/..."></textarea>
+                    <textarea class="form-control no-resize" ng-model="originUrl" rows="3" placeholder="http://image.voyageone.com.cn/cms/..." ng-disabled="disableText"></textarea>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label"></label>
-                <br class="text-warnings col-sm-6">
-                    <i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_IMAGE_UPLOAD_NOTICE' | translate}}</br>
-                   <color style="color: red"> PS：</br>
-                    1.图片不要使用中国模特，如有代言人必须是当年的。</br>
-                    2.PC端上传图片宽660 - 790px（推荐790px），高度660 - 1000px。</br>
-                    3.APP端上传图片宽750-1200px（推荐750px），高度750-1200px。</br>
-                    4.聚美优品用图片，单张体积必须小于457KB。
-                   </color>
+                <div class="col-sm-12 m-t">
+                    <div class="row">
+                        <label class="col-sm-3 text-right">
+                            <span class="label label-warning">PS&nbsp;:</span>
+                        </label>
+                        <div class="col-sm-9">
+                            <p>
+                                <strong>1.&nbsp;图片不要使用中国模特，如有代言人必须是当年的。</strong>
+                            </p>
+                            <p>
+                                <strong>2.&nbsp;PC端上传图片宽660 - 790px（推荐790px），高度660 - 1000px。</strong>
+                            </p>
+                            <p>
+                                <strong>3.&nbsp;APP端上传图片宽750-1200px（推荐750px），高度750-1200px。</strong>
+                            </p>
+                            <p>
+                                <strong>4.&nbsp;聚美优品用图片，单张体积必须小于457KB。</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
         </form>
     </div>

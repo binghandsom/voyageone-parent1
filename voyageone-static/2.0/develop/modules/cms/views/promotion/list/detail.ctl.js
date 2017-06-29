@@ -46,9 +46,6 @@ define([
                 promotionService.getPromotionList({"promotionId": $routeParams.promotionId}).then(function (res) {
                     $scope.vm.promotion = res.data[0];
                     $scope.promotionOld = _.clone($scope.vm.promotion);
-                    if($scope.vm.promotion.tejiabaoId != "0"){
-                        $scope.vm.promotion.tejiabao=true;
-                    }
                 });
             });
             $scope.search();

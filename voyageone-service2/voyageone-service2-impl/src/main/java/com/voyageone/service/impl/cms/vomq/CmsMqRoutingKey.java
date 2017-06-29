@@ -85,6 +85,9 @@ public class CmsMqRoutingKey {
     // 天猫活动管理 - 天猫特价宝刷新
     public static final String CMS_TM_TE_JIA_BAO_DEL = "VOCmsTmTeJiaBaoDelQueue";
 
+    // 天猫活动管理 - 天猫活动刷价格
+    public static final String CMS_PROMOTION= "VOCmsPromotionQueue";
+
     // 定时任务 - 取得产品的bi信息
     public static final String CMS_BATCH_GET_PRODUCT_BI_DATA = "VOCmsBatchGetProductBIDataQueue";
 
@@ -157,12 +160,16 @@ public class CmsMqRoutingKey {
     public static final String CMS_BATCH_PlatformProductUploadJdJob = "voyageone_cms_batchjob_CmsBuildPlatformProductUploadJdJob_queue";
 
     public static final String CMS_BATCH_PlatformCategorySchemaJMJob = "voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaJMJob_queue";
+    public static final String CMS_BATCH_PlatformCategorySchemaKLJob = "voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaKLJob_queue";
 
     public static final String CMS_BATCH_TMFieldsImportCms2Job = "voyageone_cms_batchjob_TMFieldsImportCms2Job_queue";
     public static final String CMS_BATCH_TMGroupImportCms2Job = "voyageone_cms_batchjob_TMGroupImportCms2Job_queue";
 
     public static final String CMS_BATCH_JDFieldsImportCms2Job = "voyageone_cms_batchjob_JDFieldsImportCms2Job_queue";
     public static final String CMS_BATCH_JDGroupImportCms2Job = "voyageone_cms_batchjob_JDGroupImportCms2Job_queue";
+
+    public static final String CMS_BATCH_KLFieldsImportCms2Job = "voyageone_cms_batchjob_KLFieldsImportCms2Job_queue";
+    public static final String CMS_BATCH_KLGroupImportCms2Job = "voyageone_cms_batchjob_KLGroupImportCms2Job_queue";
 
     public static final String CMS_BATCH_PlatformSellercatJob = "voyageone_cms_batchjob_CmsPlatformSellercatJob_queue";
 

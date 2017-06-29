@@ -14,6 +14,8 @@ import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotion3Service;
 import com.voyageone.service.impl.cms.promotion.JMPromotionDetailService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsPromotionMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
@@ -50,6 +52,8 @@ public class CmsAddProductToPromotionService extends BaseViewService {
     private PromotionDetailService promotionDetailService;
     @Autowired
     private CmsAdvanceSearchService advanceSearchService;
+    @Autowired
+    CmsMqSenderService cmsMqSenderService;
 
     public void save(AddProductSaveParameter parameter, String channelId, String userName, CmsSessionBean cmsSession) {
 
@@ -121,6 +125,11 @@ public class CmsAddProductToPromotionService extends BaseViewService {
                 promotionDetailService.addPromotionDetail(request, true);
             }
         });
+        // 活动类型是直降 或者 特价宝的场合
+        if(promotion != null && !"0".equals(promotion.getPromotionType())){
+            promotionDetailService.teJiaBaoInit(promotionId, promotion.getChannelId(), modifier);
+            promotionService.sendPromotionMq(promotion, false, modifier);
+        }
     }
 
     @Autowired

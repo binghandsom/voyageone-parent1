@@ -162,7 +162,9 @@ public class CmsAdvSearchCustColumnService extends BaseViewService {
             custommProps = custommProps.stream().filter(item -> !StringUtil.isEmpty((String) item.get("feed_prop_translation"))).collect(Collectors.toList());
         }
         rsMap.put("customProps", custommProps);
-        rsMap.put("commonProps", commonPropService.getCustColumns(2));
+        List<Map<String, Object>> commonProps = commonPropService.getCustColumns(2);
+        commonProps.sort((o1, o2) -> o1.get("propId").toString().compareTo(o2.get("propId").toString()));
+        rsMap.put("commonProps", commonProps);
         // 取得已选择的自定义显示列
         colMap2 = commonPropService.getCustColumnsByUserId(userInfo.getUserId(), "cms_prod_cust_col");
         if (colMap2 == null || colMap2.isEmpty()) {

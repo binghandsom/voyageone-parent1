@@ -9,6 +9,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -503,10 +504,10 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
         boolean needWritePrice = false;
         if (!StringUtils.isEmpty(pricePropName)){
             // 如果以后要临时写死就扔这里， 用完后要删掉
-//            if (channelId.equals(ChannelConfigEnums.Channel.WMF.getId())) {
-//                // WMF 回写price
-//                needWritePrice = true;
-//            }
+            if (channelId.equals(ChannelConfigEnums.Channel.REAL_MADRID.getId())) {
+                // WMF 回写price
+                needWritePrice = true;
+            }
         }
 
         return needWritePrice;

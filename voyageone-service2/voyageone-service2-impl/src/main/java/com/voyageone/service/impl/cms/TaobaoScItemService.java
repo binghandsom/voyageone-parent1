@@ -11,8 +11,10 @@ import com.taobao.top.schema.value.ComplexValue;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
@@ -20,11 +22,14 @@ import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbScItemService;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.dao.cms.CmsBtTmScItemDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtTmScItemModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +49,8 @@ public class TaobaoScItemService extends BaseService {
     @Autowired
     private TbScItemService tbScItemService;
 
-
+	@Autowired
+	private CmsBtTmScItemDao cmsBtTmScItemDao;
 	/**
 	 * 创建一个货品， 并初始化库存
 	 * @param shopBean shopBean
@@ -65,6 +71,9 @@ public class TaobaoScItemService extends BaseService {
 			// 如果没有创建成功， 不需要做库存初始化， 直接跳出
 			return null;
 		}
+
+		String scProductId = String.valueOf(scItem.getItemId());
+
 		// 进行库存初始化
 		try {
 			String errinfo = tbScItemService.doInitialInventory(shopBean, storeCode, sku_outerId, qty);
@@ -80,7 +89,7 @@ public class TaobaoScItemService extends BaseService {
 			e.printStackTrace();
 		}
 
-		return String.valueOf(scItem.getItemId());
+		return scProductId;
 	}
 
     /**
@@ -283,11 +292,14 @@ public class TaobaoScItemService extends BaseService {
 		String outerId = String.valueOf(skuMap.get("outer_id"));
 		String skuId = String.valueOf(skuMap.get("sku_id")); // 可能为null
 		String qty = String.valueOf(skuMap.get("quantity"));
-		if ((StringUtils.isEmpty(skuId) || "null".equals(skuId))) {
-			skuId = "0";
-		}
-		if (!StringUtils.isEmpty(skuIdScIdMap.get(skuId))) {
-			return skuIdScIdMap.get(skuId);
+		if (StringUtils.isNullOrBlank2(skuId)) {
+			if (!StringUtils.isEmpty(skuIdScIdMap.get("0"))) {
+				return skuIdScIdMap.get("0");
+			}
+		} else {
+			if (!StringUtils.isEmpty(skuIdScIdMap.get(skuId))) {
+				return skuIdScIdMap.get(skuId);
+			}
 		}
 
 		ScItem scItem = sxData.getScItemMap().get(outerId);

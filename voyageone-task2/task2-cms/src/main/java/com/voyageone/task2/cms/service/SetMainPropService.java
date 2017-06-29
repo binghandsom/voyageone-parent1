@@ -1453,6 +1453,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     }
                     break;
                 case "007":
+                case "008":
+                case "033":
                     feedProductType = feed.getProductType();
                     productCommonField.setProductType(feed.getProductType());
                     feedSizeType = feed.getSizeType();
@@ -1473,7 +1475,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     }
             }
             productCommonField.setOrigProductType(feedProductType);
-            productCommonField.setOrigSizeType(feedProductType);
+            productCommonField.setOrigSizeType(feedSizeType);
             // jeff 2016/04 change end
 
             // add by desmond 2016/07/22 start
@@ -1717,7 +1719,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 // 如果是聚美或者独立官网的话，那么就是一个Code对应一个Group
                 CmsBtProductGroupModel group = null;
                 if (!CartEnums.Cart.JM.getId().equals(typeChannelBean.getValue())
-                        && !CartEnums.Cart.CN.getId().equals(typeChannelBean.getValue())) {
+                        && !CartEnums.Cart.CN.getId().equals(typeChannelBean.getValue())
+                        && !CartEnums.Cart.KL.getId().equals(typeChannelBean.getValue())) {
                     group = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), typeChannelBean.getValue());
                 }
                 if (group == null) {
@@ -2102,7 +2105,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         sku.setWeight(NumberUtils.toDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
                         sku.setWeightUnit(feedSku.getWeightOrgUnit());
                     }
-
                     skuList.add(sku);
                 }
             }
@@ -2455,7 +2457,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 CmsBtProductGroupModel group = null;
                 // 如果是聚美或者独立官网的时候，是一个Code对应一个Group,其他的平台都是几个Code对应一个Group
                 if (!CartEnums.Cart.JM.getId().equals(shop.getValue())
-                        && !CartEnums.Cart.CN.getId().equals(shop.getValue())) {
+                        && !CartEnums.Cart.CN.getId().equals(shop.getValue())
+                        && !CartEnums.Cart.KL.getId().equals(shop.getValue())) {
                     // 取得product.model对应的group信息
 
                     boolean isQuarter = false;
@@ -2904,6 +2907,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 // 也认为是正常
                 return true;
             }
+
             CmsBtProductModel_Field field = productModel.getCommon().getFields();
 
             for(CmsBtProductModel_Sku sku:productModel.getCommon().getSkus()){

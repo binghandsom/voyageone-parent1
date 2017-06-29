@@ -17,6 +17,8 @@ public enum PlatformType {
 
     CN_OFFICIAL(3),
 
+    NTES(8),
+
     JM(4);
 
     private Integer platformId;

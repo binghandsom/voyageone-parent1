@@ -20,10 +20,7 @@ import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
-import com.voyageone.common.util.ConvertUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.ListUtils;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.components.jumei.service.JumeiSaleService;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.*;
 import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
@@ -596,6 +593,38 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     /**
      * 产品编辑页保存包含类型判断
      */
+    public String updateGroupPlatform(String channelId, String code, Integer cartId, Map<String, Object> platform, String modifier) {
+
+        final String[] modified = new String[1];
+
+        if (platform.get("schemaFields") != null) {
+            List<Field> masterFields = buildMasterFields((Map<String, Object>) platform.get("schemaFields"));
+
+            platform.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
+            platform.remove("schemaFields");
+        }
+        CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
+
+
+        CmsBtProductGroupModel cmsBtProductGroupModel = productGroupService.selectProductGroupByCode(channelId, code, cartId);
+        if(cmsBtProductGroupModel != null && ListUtils.notNull(cmsBtProductGroupModel.getProductCodes())){
+            cmsBtProductGroupModel.getProductCodes().forEach(productCode->{
+                CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, productCode);
+                CmsBtProductModel_Platform_Cart newPlatform = productPlatformService.platformCopy(channelId, cmsBtProductModel, cartId, platformModel, modifier);
+                String ret = productPlatformService.updateProductPlatformWithSmartSx(channelId, cmsBtProductModel.getProdId(), newPlatform, modifier, "页面group信息编辑", false, 0);
+                if(code.equals(productCode)){
+                    modified[0] = ret;
+                }
+            });
+        }else {
+            throw new BusinessException("没有找到对应的group");
+        }
+        return modified[0];
+    }
+
+    /**
+     * 产品编辑页保存包含类型判断
+     */
     public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier, Boolean blnSmartSx, String saveType, List<String> platformWorkloadAttributes) {
         if (saveType != null) {
             platform.put("saveType", saveType);
@@ -785,6 +814,9 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             }
         });
 
+        platform.setImages4(mainPlatform.getImages4());
+        platform.setImages5(mainPlatform.getImages5());
+
         platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId, prodId, language, platform.getpCatPath(), platform.getpBrandId(), sxProductService.generateStyleCode(cmsBtProductModel, cartId)));
         platform.setSellerCats(mainPlatform.getSellerCats());
 
@@ -867,7 +899,10 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
 
         if (prodObjList.size() > 0) {
-
+            if (PlatFormEnums.PlatForm.NTES.getId().equals(shopProp.getPlatform_id())) {
+                CmsBtProductModel cmsBtProductModel = productService.getProductByCode(grpObj.getChannelId(), grpObj.getMainProductCode());
+                numIId = cmsBtProductModel.getPlatform(cartId).getpProductId();
+            }
             // 天猫国际上下架
             String apiResult = cmsBtCombinedProductService.getUpperAndLowerRacksApiResult(numIId, shopProp, pStatus);
             if (apiResult != null) {

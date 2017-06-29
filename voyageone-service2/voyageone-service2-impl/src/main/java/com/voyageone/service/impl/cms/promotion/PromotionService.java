@@ -11,6 +11,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
@@ -25,6 +26,8 @@ import com.voyageone.service.daoext.cms.CmsBtPromotionDaoExtCamel;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsPromotionMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
@@ -47,8 +50,6 @@ import java.util.stream.Collectors;
 public class PromotionService extends BaseService {
 
     @Autowired
-    CmsBtPromotionDao dao;
-    @Autowired
     CmsBtJmPromotionDao daoCmsBtJMPromotion;
     @Autowired
     private CmsBtPromotionDaoExt cmsBtPromotionDaoExt;
@@ -66,6 +67,8 @@ public class PromotionService extends BaseService {
     private TagService serviceTag;
     @Autowired
     private RedisTemplate<Object, Object> redisTemplate;
+    @Autowired
+    private CmsMqSenderService cmsMqSenderService;
     //分页 begin
     public List<MapModel> getPage(PageQueryParameters parameters) {
 
@@ -97,9 +100,11 @@ public class PromotionService extends BaseService {
     @VOTransactional
     public int saveEditModel(EditCmsBtPromotionBean editModel) {
         CmsBtPromotionModel cmsBtPromotionBean = editModel.getPromotionModel();
+        if(2 != cmsBtPromotionBean.getTriggerType()) cmsBtPromotionBean.setTriggerTime(null);
         int result;
         if (cmsBtPromotionBean.getId() != null && cmsBtPromotionBean.getId() != 0) {
-            result = dao.update(cmsBtPromotionBean);
+            CmsBtPromotionModel oldBtPromotion = getPromotion(cmsBtPromotionBean.getId());
+            result = promotionDao.update(cmsBtPromotionBean);
             editModel.getTagList().forEach(cmsBtTagModel -> {
                 cmsBtTagModel.setModifier(cmsBtPromotionBean.getModifier());
                 if (cmsBtTagDao.update(cmsBtTagModel) == 0) {
@@ -115,6 +120,11 @@ public class PromotionService extends BaseService {
                     cmsBtTagDao.update(cmsBtTagModel);
                 }
             });
+
+            // 判断triggerType 和 定时时间有没有变化
+            if(!Objects.equals(oldBtPromotion.getTriggerType(), cmsBtPromotionBean.getTriggerType()) || !Objects.equals(oldBtPromotion.getTriggerTime(), cmsBtPromotionBean.getTriggerTime())){
+                sendPromotionMq(editModel.getPromotionModel(),true, cmsBtPromotionBean.getModifier());
+            }
         } else {
             editModel.getPromotionModel().setPromotionStatus(1);
             Map<String, Object> param = new HashMap<>();
@@ -123,7 +133,11 @@ public class PromotionService extends BaseService {
             param.put("promotionName", cmsBtPromotionBean.getPromotionName());
             List<CmsBtPromotionBean> promotions = cmsBtPromotionDaoExt.selectByCondition(param);
             if (promotions == null || promotions.isEmpty()) {
-                result = dao.insert(insertTagsAndGetNewModel(editModel).getPromotionModel());
+                result = promotionDao.insert(insertTagsAndGetNewModel(editModel).getPromotionModel());
+                // 如果是定时刷价格的场合 发送一个延时mq
+                if(2 == editModel.getPromotionModel().getTriggerType() && editModel.getPromotionModel().getTriggerTime() != null) {
+                    sendPromotionMq(editModel.getPromotionModel(), true, cmsBtPromotionBean.getModifier());
+                }
             } else {
                 throw new BusinessException("4000093");
             }
@@ -172,7 +186,7 @@ public class PromotionService extends BaseService {
     @VOTransactional
     public CallResult deleteByPromotionId(int promotionId ) {
         CallResult result=new CallResult();
-        CmsBtPromotionModel model = dao.select(promotionId);
+        CmsBtPromotionModel model = promotionDao.select(promotionId);
         if (model.getCartId() == CartEnums.Cart.JM.getValue()) {
             CmsBtJmPromotionModel jmModel = daoCmsBtJMPromotion.select(model.getPromotionId());
             if(jmModel.getStatus()==1)
@@ -199,9 +213,9 @@ public class PromotionService extends BaseService {
     }
 
     public int setPromotionStatus(SetPromotionStatusParameter parameter) {
-        CmsBtPromotionModel model = dao.select(parameter.getPromotionId());
+        CmsBtPromotionModel model = promotionDao.select(parameter.getPromotionId());
         model.setPromotionStatus(parameter.getPromotionStatus());
-      return   dao.update(model);
+      return   promotionDao.update(model);
     }
     //分页 end
 
@@ -306,7 +320,7 @@ public class PromotionService extends BaseService {
         result.put("total", count);
         return result;
     }
-    
+
     /**
      * 取得按Cart进行分类的活动详情
      * @param params 查询参数
@@ -331,7 +345,7 @@ public class PromotionService extends BaseService {
     			}
     		}
     	}
-    	
+
     	return result;
     }
 
@@ -498,5 +512,39 @@ public class PromotionService extends BaseService {
                 .map(CmsBtPromotionBean::getId)
                 .collect(Collectors.toList());
         return promotionIds;
+    }
+
+    public void sendPromotionMq(int promotionId, boolean sendDelayMq, String modifier){
+        CmsBtPromotionModel cmsBtPromotionModel = getByPromotionId(promotionId);
+        if(cmsBtPromotionModel != null){
+            sendPromotionMq(cmsBtPromotionModel, sendDelayMq, modifier);
+        }
+    }
+    public void sendPromotionMq(CmsBtPromotionModel promotion, boolean sendDelayMq, String modifier){
+        // 触发机制是实时场合
+        if(1 == promotion.getTriggerType() || 0 == promotion.getTriggerType()){
+            CmsPromotionMQMessageBody cmsPromotionMQMessageBody = new CmsPromotionMQMessageBody();
+            cmsPromotionMQMessageBody.setChannelId(promotion.getChannelId());
+            cmsPromotionMQMessageBody.setSender(modifier);
+            cmsPromotionMQMessageBody.setPromotionId(promotion.getId());
+            cmsMqSenderService.sendMessage(cmsPromotionMQMessageBody);
+            //     触发机制是定时场合
+        }else if(2 == promotion.getTriggerType() && promotion.getTriggerTime() != null){
+            CmsPromotionMQMessageBody cmsPromotionMQMessageBody = new CmsPromotionMQMessageBody();
+            cmsPromotionMQMessageBody.setChannelId(promotion.getChannelId());
+            cmsPromotionMQMessageBody.setSender(modifier);
+            cmsPromotionMQMessageBody.setPromotionId(promotion.getId());
+            cmsPromotionMQMessageBody.setTriggerTime(promotion.getTriggerTime().getTime());
+            //当前
+//            Long delaySecond = DateTimeUtilBeijing.toLocalTime(promotion.getTriggerTime()) - DateTimeUtil.getNowTimeStampLong();
+            Long delaySecond = promotion.getTriggerTime().getTime() - DateTimeUtil.getNowTimeStampLong();
+            if(delaySecond > 0){
+                if(sendDelayMq) {
+                    cmsMqSenderService.sendMessage(cmsPromotionMQMessageBody, delaySecond / 1000);
+                }
+            }else{
+                cmsMqSenderService.sendMessage(cmsPromotionMQMessageBody);
+            }
+        }
     }
 }

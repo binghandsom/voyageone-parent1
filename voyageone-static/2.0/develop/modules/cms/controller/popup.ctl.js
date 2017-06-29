@@ -629,6 +629,14 @@ define([
                 "controller": 'loadAttributeController as ctrl'
             }
         },
+        "group":{
+            "editGroup": {
+                "templateUrl": "views/pop/group/editGroup.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/group/editGroup.ctl",
+                "controller": 'editGroupController as ctrl',
+                "size":"lg"
+            }
+        },
         "shelves": {
             "shelvesTemplateAdd": {
                 "templateUrl": "views/pop/shelves/shelves-template-add.tpl.html",
@@ -1523,8 +1531,12 @@ define([
          * 产品详情页更新部分属性
          */
         $scope.openLoadAttribute = function openLoadAttribute(context) {
-            return openModal(popActions.product.loadAttribute, context)
+            return openModal(popActions.product.loadAttribute, context);
         };
+
+        $scope.openEditGroup = function(context){
+            return openModal(popActions.group.editGroup, context);
+        }
 
         /**
          * 自定义下载选择列模态框
