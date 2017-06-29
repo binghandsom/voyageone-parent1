@@ -1742,19 +1742,15 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 String sku = stock.getBase().getSku();
 
                 Map<String, List<Integer>> store = stock.getStore();
-                for (Map.Entry entry:store.entrySet()) {
-                    String key = (String) entry.getKey();
-                    List<Integer> value = (List<Integer>) entry.getValue();
+                store.forEach((key, value) -> {
                     inMap.put(key,value.get(0));
-                }
+                });
                 Map<String, List<Integer>> supplier = stock.getSupplier();
-                for (Map.Entry entry:supplier.entrySet()) {
-                    String key = (String) entry.getKey();
-                    List<Integer> value = (List<Integer>) entry.getValue();
-                    if (key != "total"){
+                supplier.forEach((key, value) -> {
+                    if (!"total".equals(key)){
                         inMap.put(key,value.get(0));
                     }
-                }
+                });
                 outMap.put(sku,inMap);
             }
         }
