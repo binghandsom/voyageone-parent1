@@ -131,7 +131,8 @@ public class ProductStockService extends BaseService {
                                 && CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase((platform = productModel.getPlatform(cartId)).getStatus())
                                 && quantity == 0) {
                             // 从cms_mt_channel_config查询AUTO_SWITCH_MASTER_PRODUCT设置，如果config_value1为1则自动切换平台主商品
-                            CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SWITCH_MASTER_PRODUCT);
+                            CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SWITCH_MASTER_PRODUCT, String.valueOf(cartId));
+                            //CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SWITCH_MASTER_PRODUCT);
                             if(channelConfig != null && "1".equals(channelConfig.getConfigValue1())) {
                                 // 查询当前Code所在的Group下cartId库存最大值且Approved
                                 CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, stockBean.getItemCode(), cartId);
