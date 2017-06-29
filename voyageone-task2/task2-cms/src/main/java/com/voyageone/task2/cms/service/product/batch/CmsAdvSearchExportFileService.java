@@ -1707,7 +1707,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         List<String> storeNames = new ArrayList<>();
 
         GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
-        if (execute != null && execute.getData() != null && execute.getData().getHeader() != null &&CollectionUtils.isNotEmpty(execute.getData().getStocks())){
+        if (execute != null ){
             List<String> store = execute.getData().getHeader().getStore();
             List<String> supplier = execute.getData().getHeader().getSupplier();
 
@@ -1735,7 +1735,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         getStoreStockDetailRequest2.setSkuList(skuList);
         HashMap<String, HashMap<String, Integer>> outMap = new HashMap<>();
         GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
-        if (execute != null && execute.getData() != null && execute.getData().getHeader() != null &&CollectionUtils.isNotEmpty(execute.getData().getStocks())){
+        if (execute != null ){
             List<GetStoreStockDetailData2.Temp> stocks = execute.getData().getStocks();
             for (GetStoreStockDetailData2.Temp stock:stocks) {
 
