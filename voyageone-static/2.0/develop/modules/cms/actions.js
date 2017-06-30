@@ -464,7 +464,8 @@ define(function () {
                     "download": "download",
                     "getSummary":"getSummary",
                     "deleteJiagepiluTask":"deleteJiagepiluTask",
-                    "getPlatformSxTemplate":"getPlatformSxTemplate"
+                    "getPlatformSxTemplate":"getPlatformSxTemplate",
+                    "getJdSeriesSkuId":"getJdSeriesSkuId"
                 }
             },
             "system": {

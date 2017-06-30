@@ -371,7 +371,10 @@ public interface CmsUrlConstants {
 
             String GET_EDIT_PRODUCT = "getEditProduct";
 
-            String GET_JIAGEPILU_CARTS = "getJiagepiluCarts";
+            /**
+             * 根据产品code获取京东系产品skuId
+             */
+            String GET_JD_SERIES_SKU_ID = "getJdSeriesSkuId";
 
             String DOWNLOAD = "download";
 

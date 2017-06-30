@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.views.task;
 
+import com.taobao.api.domain.Product;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Properties;
@@ -8,17 +10,23 @@ import com.voyageone.service.bean.cms.task.beat.SearchTaskJiagepiluBean;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsMtPlatformSxImageTemplateService;
 import com.voyageone.service.impl.cms.TaskService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.task.JiagepiluService;
 import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
 import com.voyageone.service.model.cms.enums.jiagepilu.ImageStatus;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.beat.ReqParam;
 import com.voyageone.web2.cms.bean.task.AddJiagepiluProductRequest;
+import com.voyageone.web2.openapi.channeladvisor.constants.CAUrlConstants;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,6 +58,8 @@ public class CmsJiagepiluController extends BaseController {
     private TaskService taskService;
     @Autowired
     private CmsMtPlatformSxImageTemplateService cmsMtPlatformSxImageTemplateService;
+    @Autowired
+    private ProductService productService;
 
     @RequestMapping(value = CmsUrlConstants.TASK.JIAGEPILU.GET_TASK_MODEL)
     public AjaxResponse getJiagepiluTaskModel(@RequestBody Map<String, Object> requestParams) {
@@ -174,19 +184,27 @@ public class CmsJiagepiluController extends BaseController {
     }
 
     /**
-     * 获取价格披露任务可选的平台(天猫系和京东系)
+     * 根据产品code获取京东系产品skuId
      * @return
      */
-    @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.GET_JIAGEPILU_CARTS)
-    public AjaxResponse getJiagepiluCarts() {
-        List<CartBean> carts = new ArrayList<>();
-        List<CartBean> cartBeans = Carts.getAllCartList();
-        for (CartBean cartBean : cartBeans) {
-            if ("1".equalsIgnoreCase(cartBean.getPlatform_id()) || "2".equalsIgnoreCase(cartBean.getPlatform_id())) {
-                carts.add(cartBean);
+    @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.GET_JD_SERIES_SKU_ID)
+    public AjaxResponse getJdSeriesSkuId(@RequestBody ReqParam param) {
+        List<CmsBtProductModel> productModels = productService.getProductByNumIid(getUser().getSelChannelId(), param.getNum_iid(), param.getCartId());
+        if (CollectionUtils.isNotEmpty(productModels)) {
+            for (CmsBtProductModel product : productModels) {
+                if (product.getCommon().getFields().getCode().equals(param.getCode())) {
+                    CmsBtProductModel_Platform_Cart platformCart = product.getPlatform(param.getCartId());
+                    if (CollectionUtils.isNotEmpty(platformCart.getSkus())){
+                        for (BaseMongoMap<String, Object> skuMap: platformCart.getSkus()) {
+                           if (StringUtils.isNotBlank(skuMap.getStringAttribute("jdSkuId"))) {
+                                return success(skuMap.getStringAttribute("jdSkuId"));
+                           }
+                        }
+                    }
+                }
             }
         }
-        return success(carts);
+        return success(null);
     }
 
     @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.DOWNLOAD)

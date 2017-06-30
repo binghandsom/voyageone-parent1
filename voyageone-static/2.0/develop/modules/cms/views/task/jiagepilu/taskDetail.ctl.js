@@ -179,8 +179,8 @@ define([
                         });
                         self.imageStatuses = imageStatusArray;
 
-                        var cartName = cart.valueOf(self.task.cartId).desc;
-                        _.extend(self.task, {cartName:cartName});
+                        var cartObj = cart.valueOf(self.task.cartId);
+                        _.extend(self.task, {cartName:cartObj.desc, platformId:cartObj.platformId, pUrl:cartObj.pUrl});
 
                     } else {
                         self.alert('TXT_NOT_EXISTS_TASK').then(function () {
@@ -409,6 +409,24 @@ define([
 
             bigImg:function (url) {
                 window.open(url);
+            },
+
+            linkToDetail: function (numIid) {
+                console.log(numIid);
+                var self = this;
+                console.log(self.task);
+                if (self.task && self.task.pUrl) {
+                    var platformId = self.task.platformId;
+                    if (platformId == '2') {
+                        self.taskJiagepiluService.getJdSeriesSkuId({num_iid:numIid,cartId:self.task.cartId}).then(function (resp) {
+                            if (resp.data) {
+                                window.open(self.task.pUrl + resp.data);
+                            }
+                        });
+                    } else {
+                        window.open(self.task.pUrl + numIid);
+                    }
+                }
             }
         };
 
