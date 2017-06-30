@@ -6304,7 +6304,12 @@ public class SxProductService extends BaseService {
                 if (!StringUtils.isEmpty(sku) && ListUtils.isNull(data)) {
                     skuLogicQtyMap.put(sku, 0);
                 } else {
-                    data.stream().forEach(d -> skuLogicQtyMap.put((String)((LinkedHashMap)d).get("sku"), (Integer)((LinkedHashMap)d).get("qty")));
+
+                    data.stream().forEach(d -> {
+                        Integer saleQty = (Integer)((LinkedHashMap)d).get("qty") - (Integer)((LinkedHashMap)d).get("occupyQty");
+                        if (saleQty < 0) saleQty = 0;
+                        skuLogicQtyMap.put((String)((LinkedHashMap)d).get("sku"), saleQty);
+                    });
                 }
 
                 return skuLogicQtyMap;
