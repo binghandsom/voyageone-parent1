@@ -2,11 +2,14 @@ package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
 import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.bean.cms.task.beat.TaskBean;
+import com.voyageone.service.dao.cms.CmsBtTasksDao;
 import com.voyageone.service.impl.cms.BeatInfoService;
+import com.voyageone.service.impl.cms.CmsMtPlatformSxImageTemplateService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
@@ -15,8 +18,10 @@ import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtPromotionCodesModel;
 import com.voyageone.service.model.cms.CmsBtPromotionGroupsModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
 import com.voyageone.service.model.cms.enums.jiagepilu.ImageStatus;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformSxImageTemplateModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -62,6 +67,12 @@ class CmsTaskPictureService extends BaseViewService {
     @Autowired
     private ImageTemplateService imageTemplateService;
 
+    @Autowired
+    private CmsBtTasksDao cmsBtTasksDao;
+
+    @Autowired
+    private CmsMtPlatformSxImageTemplateService cmsMtPlatformSxImageTemplateService;
+
     /**
      * 创建一个价格披露任务
      *
@@ -71,42 +82,58 @@ class CmsTaskPictureService extends BaseViewService {
      */
     public TaskBean create(TaskBean taskBean, UserSessionBean user) {
 
-        CmsBtPromotionModel promotion = promotionService.getPromotion(taskBean.getPromotionId());
+        /*CmsBtPromotionModel promotion = promotionService.getPromotion(taskBean.getPromotionId());
 
         if (promotion == null)
             throw new BusinessException("7000001");
 
         if (!taskBean.getConfig().isValid())
-            throw new BusinessException("7000002");
+            throw new BusinessException("7000002");*/
+        Integer cartId = taskBean.getCartId();
+        if (cartId == null ||  cartId.intValue() == 0) {
+            throw new BusinessException("价格披露任务没有选择平台");
+        }
 
-        List<CmsBtTasksBean> taskModels;
+        List<CmsBtTasksModel> taskModels;
         boolean insert = (taskBean.getUpdate() == null || !taskBean.getUpdate());
 
         // 如果不是更新, 而是创建
         if (insert) {
 
             // 尝试检查任务的名称, 是否已经存在
-            taskModels = taskService.getTasks(
+            CmsBtTasksModel queryModel = new CmsBtTasksModel();
+            queryModel.setChannelId(user.getSelChannelId());
+            queryModel.setCartId(cartId);
+            queryModel.setTaskName(taskBean.getTaskName());
+            queryModel.setTaskType(PromotionTypeEnums.Type.JIAGEPILU.getTypeId());
+            int exist = cmsBtTasksDao.selectCount(queryModel);
+            if (exist > 0) {
+                // Task重名
+                throw new BusinessException("7000003");
+            }
+
+
+            /*taskModels = taskService.getTasks(
                     taskBean.getPromotionId(),
                     taskBean.getTaskName(),
                     user.getSelChannelId(),
                     PromotionTypeEnums.Type.JIAGEPILU.getTypeId());
 
             if (!taskModels.isEmpty())
-                throw new BusinessException("7000003");
+                throw new BusinessException("7000003");*/
 
             taskBean.setTaskType(PromotionTypeEnums.Type.JIAGEPILU);
             taskBean.setChannelId(user.getSelChannelId());
             taskBean.setCreater(user.getUserName());
         }
 
-        // 如果没提交刷图时间, 则使用 Promotion 的预热时间
+        /*// 如果没提交刷图时间, 则使用 Promotion 的预热时间
         if (StringUtils.isEmpty(taskBean.getActivityStart()))
             taskBean.setActivityStart(taskBean.getPromotion().getPrePeriodStart());
 
         // 如果没提交还原时间, 则使用 Promotion 的结束时间
         if (StringUtils.isEmpty(taskBean.getActivityEnd()))
-            taskBean.setActivityEnd(taskBean.getPromotion().getActivityEnd());
+            taskBean.setActivityEnd(taskBean.getPromotion().getActivityEnd());*/
 
         taskBean.setModifier(user.getUserName());
 
@@ -115,11 +142,25 @@ class CmsTaskPictureService extends BaseViewService {
         if (count < 1)
             return null;
 
-        taskModels = taskService.getTasks(
+        if (taskBean.getConfig() != null && StringUtils.isNotBlank(taskBean.getConfig().getRevert_template())) {
+            CmsMtPlatformSxImageTemplateModel imageTemplateModel = new CmsMtPlatformSxImageTemplateModel();
+            imageTemplateModel.setChannelId(user.getSelChannelId());
+            imageTemplateModel.setCartId(cartId);
+            imageTemplateModel.setImageTemplate(taskBean.getConfig().getRevert_template());
+            cmsMtPlatformSxImageTemplateService.add(imageTemplateModel);
+        }
+
+        CmsBtTasksModel queryModel = new CmsBtTasksModel();
+        queryModel.setChannelId(user.getSelChannelId());
+        queryModel.setCartId(cartId);
+        queryModel.setTaskName(taskBean.getTaskName());
+        queryModel.setTaskType(PromotionTypeEnums.Type.JIAGEPILU.getTypeId());
+        taskModels = cmsBtTasksDao.selectList(queryModel);
+        /*taskModels = taskService.getTasks(
                 taskBean.getPromotionId(),
                 taskBean.getTaskName(),
                 user.getSelChannelId(),
-                taskBean.getTaskType().getTypeId());
+                taskBean.getTaskType().getTypeId());*/
 
         return new TaskBean(taskModels.get(0));
     }
@@ -208,6 +249,17 @@ class CmsTaskPictureService extends BaseViewService {
                 Date now = DateTimeUtil.getDate();
                 model.setCreated(now);
                 model.setModified(now);
+
+                // 之前导入时Excel有两列，分别为numIid和code。现在新增两列price和imageName
+                // 有image6，无则image1
+                String priceVal = getString(row, 2);
+                String imageName = getString(row, 3);
+                if (StringUtils.isBlank(imageName)) {
+
+                }
+
+
+
 
                 models.add(model);
             }

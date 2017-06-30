@@ -483,6 +483,13 @@ define(function () {
             "hash": "/bi_report/download",
             "templateUrl": "views/bi_report/bi_report_list.tpl.html",
             "controllerUrl": "modules/cms/views/bi_report/bi_report_list.ctl"
+        },
+        "jiagepilu": {
+            "url": "/task/jiagepilu/detail",
+            "hash": "/task/jiagepilu/detail/:taskId",
+            "templateUrl": "views/task/jiagepilu/taskDetail.tpl.html",
+            "controllerUrl": "modules/cms/views/task/jiagepilu/taskDetail.ctl",
+            "controller": "jiagepiluController as ctrl"
         }
     };
 });

@@ -103,7 +103,7 @@ public class BeatJobService extends BaseCronTaskService {
         final int PRODUCT_COUNT_ON_THREAD = config[1];
         final int LIMIT = PRODUCT_COUNT_ON_THREAD * THREAD_COUNT;
 
-        List<CmsBtBeatInfoBean> beatInfoModels = beatInfoService.getNeedBeatData(LIMIT);
+        List<CmsBtBeatInfoBean> beatInfoModels = beatInfoService.getNeedBeatData(LIMIT, Arrays.asList(20,23,30,31));
 
         if (beatInfoModels.isEmpty()) {
             $info("没有需要进行处理的价格披露任务");
@@ -301,10 +301,9 @@ public class BeatJobService extends BaseCronTaskService {
 
         private Context(CmsBtBeatInfoBean beatInfoBean) {
 
-            CmsBtPromotionModel promotion = beatInfoBean.getPromotion();
 
             this.beatInfoBean = beatInfoBean;
-            this.shopBean = Shops.getShop(promotion.getChannelId(), promotion.getCartId());
+            this.shopBean = Shops.getShop(beatInfoBean.getTask().getChannelId(), beatInfoBean.getTask().getCartId());
             this.configBean = JacksonUtil.json2Bean(beatInfoBean.getTask().getConfig(), ConfigBean.class);
         }
 
@@ -359,7 +358,7 @@ public class BeatJobService extends BaseCronTaskService {
             // 此处预想逻辑是异步处理图片。此时使用同步所以, 只要不是 Error 状态。都直接请求取图
             // 所以也就是只要不是 Error 其他状态都直接取图
 
-            Double promotionPrice = beatInfoBean.getPromotion_code().getPromotionPrice();
+            Double promotionPrice = beatInfoBean.getPrice();
             try {
                 String imageUrl;
                 if (withPrice)
@@ -425,7 +424,7 @@ public class BeatJobService extends BaseCronTaskService {
             Map<Integer, String> images = new HashMap<>();
 
             // 更新第一张图片
-            images.put(1, getTaobaoImageUrl(beatInfoBean.getPromotion_code().getImage_url_1()));
+            images.put(1, getTaobaoImageUrl(beatInfoBean.getImageName()));
 
             if (configBean.isNeed_vimage()) {
                 // 如果需要更新竖图
@@ -436,10 +435,10 @@ public class BeatJobService extends BaseCronTaskService {
                 else {
                     // 木有专门的竖图字段怎么办
                     // 没事~ 就刷商品的第二张图, 貌似第二张图在手机端就是竖图。这是 IT 运营组说的
-                    String url_key2 = beatInfoBean.getPromotion_code().getImage_url_2();
+                    String url_key2 = beatInfoBean.getImageName();
                     if (!StringUtils.isEmpty(url_key2))
                         // 提供了第二张图的图片 Key。就用这个刷
-                        images.put(2, getTaobaoImageUrl(beatInfoBean.getPromotion_code().getImage_url_2()));
+                        images.put(2, getTaobaoImageUrl(beatInfoBean.getImageName()));
                     else {
                         // 如果不为空, 则还原和刷图有区别, 还原需要清空
                         // 如果第二张图为空, 那么刷披露图, 就复制第一张图就可以了, 不需要再折腾了
@@ -520,15 +519,11 @@ public class BeatJobService extends BaseCronTaskService {
             CmsMtImageCategoryModel categoryModel;
             boolean withPrice;
 
-            CmsBtPromotionCodesBean code = beatInfoBean.getPromotion_code();
 
-            String image_url_key = code.getImage_url_3();
+            String image_url_key = beatInfoBean.getImageName();
 
             // 如果没有指定竖图
             // 那么使用第一张图作为竖图
-            if (StringUtils.isEmpty(image_url_key))
-                image_url_key = code.getImage_url_1();
-
             switch (beatInfoBean.getSynFlagEnum()) {
                 case BEATING:
                     templateUrl = configBean.getBeat_vtemplate();
