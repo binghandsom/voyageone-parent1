@@ -133,11 +133,11 @@
 							<tr>
 								<th class="text-left" translate="TXT_IMAGE"></th>
 								<th class="text-left" translate="TXT_PRODUCT_CODE"></th>
-								<th class="text-left" translate="TXT_NUM_IID"></th>
+								<th class="text-left" translate="TXT_NUMIID_FULL"></th>
 								<th class="text-right" translate="TXT_PROMOTION_PRICE"></th>
-								<th class="text-left" translate="TXT_STATUS"></th>
+								<th class="text-left" translate="TXT_SINGLE_CODE_STATUS"></th>
 								<th class="text-left" translate="TXT_IMAGE_STATUS"></th>
-								<th class="text-left" translate="TXT_COMMENT"></th>
+								<th class="text-left" translate="TXT_EXCEPTION_MESSAGE"></th>
 								<th class="text-left" translate="TXT_UPDATE_TIME"></th>
 								<th class="text-center" translate="TXT_ACTION"></th>
 							</tr>
@@ -217,111 +217,4 @@
 
 		</uib-tabset>
 	</div>
-
-
-
-
-
-
-
-
-
-
-	<!--<div class="vo_accordion vo_attr">
-		<div class="panel-group">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title"><i class="fa fa-codepen"></i>&nbsp;<span translate="TXT_BEAT_TASK_DETAIL"></span></h4>
-				</div>
-				<div class="container-fluid" ng-controller="popupCtrl">
-					<div class="col-sm-6">
-						<div class="form-horizontal m-l-sm">
-							<div class="form-group form-inline">
-								<input type="file" tabindex="-1" accept=".xls,.xlsx" file-style
-									   data-button-text="Choose file" data-class-button="btn btn-default" data-classinput="form-control inline"
-									   nv-file-select uploader="ctrl.uploader"/>
-								<button class="btn btn-vo" ng-click="ctrl.importBeat()" ng-disabled="ctrl.uploadItem"><i class="glyphicon glyphicon-check"></i>&nbsp;<span translate="TXT_IMPORT_GOOD"></span></button>
-								<button class="btn btn-success" ng-click="popAddBeat(ctrl)"><i class="fa fa-plus"></i>&nbsp;<span translate="TXT_ADD_MOD_GOOD"></span></button>
-							</div>
-						</div>
-					</div>
-					<div class="pull-right m-r-xs">
-						<div class="form-horizontal form-inline">
-							<button class="btn btn-danger" ng-click="ctrl.download()"><i class="fa fa-cloud-download"></i>&nbsp;<span translate="TXT_DOWNLOAD_TASK_DETAIL"></span></button>
-							<button class="btn btn-primary" ng-click="ctrl.updateTask(openNewBeatTask)"><span translate="TXT_EDIT_TASK"></span>[&nbsp;<span>{{::ctrl.task.taskName}}</span>&nbsp;]&nbsp;</button>
-						</div>
-					</div>
-					<div class="col-sm-12 progress progress-xxs m-t-xs" style="padding-left:0; margin-bottom:0" ng-if="ctrl.uploadItem">
-						<div class="progress-bar progress-bar-warning" role="progressbar" ng-style="{ 'width': ctrl.uploadItem.progress + '%' }"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-sm-12 m-b-xs" style="padding-left:0px;padding-right:0px">
-		<div class="btn-group pull-left">
-			<button ng-click="ctrl.controlAll('BEATING')" class="btn btn-primary"><i class="glyphicon glyphicon-play"></i>&nbsp;<span translate="TXT_STARTUP_ALL"></span></button>
-			<button ng-click="ctrl.controlAll('STOP')" class="btn btn-danger"><i class="glyphicon glyphicon-pause"></i>&nbsp;<span translate="TXT_STOP_ALL"></span></button>
-			<button ng-click="ctrl.controlAll('REVERT')" class="btn btn-success"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT_ALL"></span></button>
-		</div>
-		<div class="btn-group pull-right">
-			<button class="btn btn-default-vo" ng-click="ctrl.flag = null; ctrl.getData();" translate="TXT_SHOW_ALL"></button>
-			<button class="btn btn-default-vo" ng-repeat="item in ctrl.summary" ng-click="ctrl.flag = item.flag; ctrl.getData();">
-				<span>{{item.flag | translate}}</span>&nbsp;:&nbsp;<span>{{item.count}}</span>
-			</button>
-		</div>
-		<div class="pull-right col-sm-3">
-			<div class="input-group">
-				<input type="text" class="form-control" ng-model="ctrl.searchKey" placeholder="Search numiid or code"
-					   enter-click="#promo-beat-search-btn"><span class="input-group-btn"><button
-					id="promo-beat-search-btn" class="btn btn-default" translate="TXT_SEARCH"
-					ng-click="ctrl.getData()"></button></span>
-			</div>
-		</div>
-	</div>
-	<div class="box">
-		<div class="box-body col-sm-12">
-			<div class="table-responsive">
-				<div class="dropdown_table_main">
-					<table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px" ng-controller="popupCtrl">
-						<thead>
-						<tr>
-							<th class="text-left" translate="TXT_PRODUCT_CODE"></th>
-							<th class="text-left" translate="TXT_NUM_IID"></th>
-							<th class="text-right" translate="TXT_PROMOTION_PRICE"></th>
-							<th class="text-left" translate="TXT_STATUS"></th>
-							<th class="text-left" translate="TXT_IMAGE_STATUS"></th>
-							<th class="text-left" translate="TXT_COMMENT"></th>
-							<th class="text-left" translate="TXT_UPDATE_TIME"></th>
-							<th class="text-center" translate="TXT_ACTION"></th>
-						</tr>
-						</thead>
-						<tbody>
-						<tr ng-repeat="info in ctrl.data">
-							<td class="text-left">{{::info.productCode}}</td>
-							<td class="text-left">
-								<a ng-href="https://detail.tmall.hk/hk/item.htm?id={{::info.numIid}}" target="_blank">{{::info.numIid}}</a>
-							</td>
-							<td class="text-right">{{::info.price | number: 2 || '无'}}</td>
-							<td class="text-left">{{::info.synFlagEnum | translate}}</td>
-							<td class="text-left" title="{{::info.imageTaskId}}">{{::info.imageStatusEnum | translate}}</td>
-							<td class="text-left">{{::info.message}}</td>
-							<td class="text-left">{{::info.modified.substring(0, 19)}}</td>
-							<td class="text-center">
-								<div class="btn-group text-center">
-									<button title="启动" ng-click="ctrl.controlOne(info, 'BEATING')" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;<span translate="TXT_STARTUP"></span></button>
-									<button title="停止" ng-click="ctrl.controlOne(info, 'STOP')" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;<span translate="TXT_STOP"></span></button>
-									<button title="还原" ng-click="ctrl.controlOne(info, 'REVERT')" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT"></span></button>
-								</div>
-							</td>
-						</tr>
-						</tbody>
-					</table>
-				</div>&lt;!&ndash; .table-responsive &ndash;&gt;
-			</div>
-		</div>&lt;!&ndash; /.box-body &ndash;&gt;
-		<div class="m-t-xs">
-			<vpagination config="ctrl.pageOption"></vpagination>
-		</div>
-	</div>-->
 </div><!-- end .wrapper-md -->
