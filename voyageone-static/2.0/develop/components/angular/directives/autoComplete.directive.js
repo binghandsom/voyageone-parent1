@@ -21,7 +21,6 @@ angular.module("voyageone.angular.directives").directive("autoComplete", functio
                     return {value:str};
                 }),
                 onSelect: function (suggestion) {
-                    console.log('value', suggestion.value);
                     ngModelCtl.$setViewValue(suggestion.value);
                 }
             });
