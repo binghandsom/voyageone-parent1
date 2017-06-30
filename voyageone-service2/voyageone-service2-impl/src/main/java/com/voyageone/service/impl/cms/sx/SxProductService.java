@@ -51,7 +51,6 @@ import com.voyageone.ecerp.interfaces.third.koala.beans.KoalaConfig;
 import com.voyageone.ecerp.interfaces.third.koala.support.KoalaApiException;
 import com.voyageone.ims.rule_expression.*;
 import com.voyageone.service.bean.cms.*;
-import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
 import com.voyageone.service.bean.cms.product.ProductMqqBean;
 import com.voyageone.service.bean.cms.product.SxData;
@@ -83,27 +82,22 @@ import com.voyageone.service.model.cms.mongo.channel.*;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
-import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.request.wms.AvailQuantityForCmsRequest;
 import com.voyageone.web2.sdk.api.response.wms.AvailQuantityForCmsResponse;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.http.*;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -129,16 +123,18 @@ public class SxProductService extends BaseService {
      * upd_flg=1,已经上传
      */
     private static final int UPD_FLG_UPLOADED = 1;
-//    /**
+    @Autowired
+    TbProductService tbProductService;
+    @Autowired
+    JumeiImageFileService jumeiImageFileService;
+    @Autowired
+    CmsMqSenderService cmsMqSenderService;
+    //    /**
 //     * 大码List
 //     */
 //    private static List<String> bigSizeList = Lists.newArrayList("16","17","18");
     @Autowired
     private VoApiDefaultClient voApiDefaultClient;
-    @Autowired
-    TbProductService tbProductService;
-    @Autowired
-    JumeiImageFileService jumeiImageFileService;
     @Autowired
     private TbPictureService tbPictureService;
     @Autowired
@@ -215,9 +211,6 @@ public class SxProductService extends BaseService {
     private CmsBtSizeChartImageGroupService cmsBtSizeChartImageGroupService;
     @Autowired
     private ImageGroupService imageGroupService;
-    @Autowired
-    CmsMqSenderService cmsMqSenderService;
-
     @Autowired
     private KoalaItemService koalaItemService;
     public static String encodeImageUrl(String plainValue) {
@@ -5962,51 +5955,11 @@ public class SxProductService extends BaseService {
         cmsMqSenderService.sendMessage(ewmsStockSyncPlatformMQMessageBody);
     }
 
-    private enum SkuSort {
-        DIGIT("digit", 1), // 纯数字系列
-        DIGIT_UNITS("digitUnits", 2), // 纯数字系列(cm)
-        XXX("XXX", 3), // XXX
-        XXS("XXS", 4), // XXS
-        XS("XS", 5), // XS
-        XS_S("XS/S", 6), // XS/S
-        XSS("XSS", 7), // XSS
-        S("S", 8), // S
-        S_M("S/M", 9), // S/M
-        M("M", 10), // M
-
-        M_L("M/L", 11), // M/L
-        L("L", 12), // L
-        XL("XL", 13), // XL
-        XXL("XXL", 14), // XXL
-        N_S("N/S", 15), // N/S
-        O_S("O/S", 16), // O/S
-        ONE_SIZE("OneSize", 17), // OneSize
-
-        OTHER("Other", 18), // 以外
-        ;
-
-        private final String size;
-        private final int sort;
-
-        SkuSort(String size, int sort) {
-            this.size = size;
-            this.sort = sort;
-        }
-
-        private String getSize() {
-            return this.size;
-        }
-
-        private int getSort() {
-            return this.sort;
-        }
-    }
-
     public String[] uploadImageByUrl_JD(String picUrl, ShopBean shopBean) throws Exception {
-        String imageUrl[] = {"",""};
+        String imageUrl[] = {"", ""};
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        int TIMEOUT_TIME = 10*1000;
+        int TIMEOUT_TIME = 10 * 1000;
         int waitTime = 0;
         int retry_times = 0;
         int max_retry_times = 3;
@@ -6053,7 +6006,7 @@ public class SxProductService extends BaseService {
 //        $info("read complete, begin to upload image");
         try {
             ImgzonePictureUploadResponse imgzonePictureUploadResponse = jdImgzoneService.uploadPicture("SX", picUrl, shopBean, baos.toByteArray(), "0", "image_title");
-            if(imgzonePictureUploadResponse == null) {
+            if (imgzonePictureUploadResponse == null) {
                 String failCause = "上传图片到京东时，超时, jingdong response为空";
                 failCause = String.format("%s[channelId: %s, cartId: %s, orgPicUrl: %s]", failCause, shopBean.getOrder_channel_id(), shopBean.getCart_id(), picUrl);
                 $error(failCause);
@@ -6067,7 +6020,7 @@ public class SxProductService extends BaseService {
             }
             imageUrl[0] = imgzonePictureUploadResponse.getPictureUrl();
             imageUrl[1] = imgzonePictureUploadResponse.getPictureId();
-        } catch(JdException e) {
+        } catch (JdException e) {
             String failCause = "上传图片到京东时出错！ msg:" + e.getMessage();
             failCause = String.format("%s[channelId: %s, cartId: %s, orgPicUrl: %s]", failCause, shopBean.getOrder_channel_id(), shopBean.getCart_id(), picUrl);
             $error(failCause);
@@ -6100,13 +6053,12 @@ public class SxProductService extends BaseService {
     }
 
     /**
-     *
      * @param channelId
      * @param sizeChartId
-     * @param viewType 1:PC端 2：APP端
+     * @param viewType    1:PC端 2：APP端
      * @return
      */
-    public List<Map<String,Object>> getListImageGroupBySizeChartId(String channelId, int sizeChartId, String viewType) {
+    public List<Map<String, Object>> getListImageGroupBySizeChartId(String channelId, int sizeChartId, String viewType) {
         List<CmsBtSizeChartImageGroupModel> list = cmsBtSizeChartImageGroupService.getListByCmsBtSizeChartId(channelId, sizeChartId);
         List<Map<String, Object>> listImageGroup = new ArrayList<>();
         CmsBtImageGroupModel groupModel;
@@ -6119,7 +6071,7 @@ public class SxProductService extends BaseService {
                 groupModel = imageGroupService.getImageGroupModel(String.valueOf(model.getCmsBtImageGroupIdApp()));
             }
 
-            if(groupModel != null) {
+            if (groupModel != null) {
                 List<CmsBtImageGroupModel_Image> sizeChartImageList = groupModel.getImage();
                 if (ListUtils.notNull(sizeChartImageList) && groupModel.getImageType() == 2) {  // imageType == 2 (尺码图)
                     map.put("image", sizeChartImageList);
@@ -6304,7 +6256,16 @@ public class SxProductService extends BaseService {
                 if (!StringUtils.isEmpty(sku) && ListUtils.isNull(data)) {
                     skuLogicQtyMap.put(sku, 0);
                 } else {
-                    data.stream().forEach(d -> skuLogicQtyMap.put((String)((LinkedHashMap)d).get("sku"), (Integer)((LinkedHashMap)d).get("qty")));
+
+                    data.stream().forEach(d -> {
+                        Integer qty = (Integer) ((LinkedHashMap) d).get("qty");
+                        if (qty == null || qty < 0) qty = 0;
+                        Integer occupyQty = (Integer) ((LinkedHashMap) d).get("occupyQty");
+                        if (occupyQty == null || occupyQty < 0) occupyQty = 0;
+                        Integer saleQty = qty - occupyQty;
+                        if (saleQty < 0) saleQty = 0;
+                        skuLogicQtyMap.put((String) ((LinkedHashMap) d).get("sku"), saleQty);
+                    });
                 }
 
                 return skuLogicQtyMap;
@@ -6379,6 +6340,46 @@ public class SxProductService extends BaseService {
         }
 
         return imageUrl;
+    }
+
+    private enum SkuSort {
+        DIGIT("digit", 1), // 纯数字系列
+        DIGIT_UNITS("digitUnits", 2), // 纯数字系列(cm)
+        XXX("XXX", 3), // XXX
+        XXS("XXS", 4), // XXS
+        XS("XS", 5), // XS
+        XS_S("XS/S", 6), // XS/S
+        XSS("XSS", 7), // XSS
+        S("S", 8), // S
+        S_M("S/M", 9), // S/M
+        M("M", 10), // M
+
+        M_L("M/L", 11), // M/L
+        L("L", 12), // L
+        XL("XL", 13), // XL
+        XXL("XXL", 14), // XXL
+        N_S("N/S", 15), // N/S
+        O_S("O/S", 16), // O/S
+        ONE_SIZE("OneSize", 17), // OneSize
+
+        OTHER("Other", 18), // 以外
+        ;
+
+        private final String size;
+        private final int sort;
+
+        SkuSort(String size, int sort) {
+            this.size = size;
+            this.sort = sort;
+        }
+
+        private String getSize() {
+            return this.size;
+        }
+
+        private int getSort() {
+            return this.sort;
+        }
     }
 
 }

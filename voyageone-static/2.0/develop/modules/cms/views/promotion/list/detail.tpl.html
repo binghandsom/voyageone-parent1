@@ -185,6 +185,7 @@
                         <li><a href="" ng-click="openOtherDownload(vm.promotion)">按上传模板导出</a></li>
                         <li ng-if="vm.promotion.cartId == 23"><a href="" ng-click="openJuhuasuanDownload(vm.promotion)">按聚划算模板导出</a></li>
                         <li ng-if="vm.promotion.cartId == 23"><a href="" ng-click="openTmallDownload(vm.promotion)">按官方活动(A类)模板导出</a></li>
+                        <li ><a href="" ng-click="openNewDownload(vm.promotion)">按价格披露模板导出</a></li>
                     </ul>
                 </div>
                 <button class="btn btn-default" ng-click="$parent.teJiaBaoInit()"><i class="fa fa-cny"></i>&nbsp;{{'BTN_CREATE_TE_JIA_BAO_TASK' | translate}}</button>

@@ -899,7 +899,10 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
 
         if (prodObjList.size() > 0) {
-
+            if (PlatFormEnums.PlatForm.NTES.getId().equals(shopProp.getPlatform_id())) {
+                CmsBtProductModel cmsBtProductModel = productService.getProductByCode(grpObj.getChannelId(), grpObj.getMainProductCode());
+                numIId = cmsBtProductModel.getPlatform(cartId).getpProductId();
+            }
             // 天猫国际上下架
             String apiResult = cmsBtCombinedProductService.getUpperAndLowerRacksApiResult(numIId, shopProp, pStatus);
             if (apiResult != null) {

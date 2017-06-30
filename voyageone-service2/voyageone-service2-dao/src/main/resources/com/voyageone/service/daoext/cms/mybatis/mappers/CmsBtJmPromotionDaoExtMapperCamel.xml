@@ -94,7 +94,7 @@
         <if test="productCode != null and productCode != ''">
             and product_code = #{productCode}
         </if>
-        ORDER BY id desc LIMIT 0,1
+        ORDER BY jm_hash_id desc LIMIT 0,1
     </select>
 
     <select id="selectJmProductHashId" resultType="com.voyageone.service.model.util.MapModel">

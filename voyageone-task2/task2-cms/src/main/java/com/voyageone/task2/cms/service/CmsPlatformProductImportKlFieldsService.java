@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -9,24 +10,26 @@ import com.voyageone.common.util.*;
 import com.voyageone.ecerp.interfaces.third.koala.KoalaItemService;
 import com.voyageone.ecerp.interfaces.third.koala.beans.*;
 import com.voyageone.ecerp.interfaces.third.koala.beans.request.ItemBatchStatusGetRequest;
+import com.voyageone.service.dao.cms.CmsBtKlSkuDao;
 import com.voyageone.service.dao.cms.CmsBtPlatformNumiidDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtPlatformNumiidDaoExt;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import com.voyageone.service.model.cms.CmsBtKlSkuModel;
 import com.voyageone.service.model.cms.CmsBtPlatformNumiidModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -54,6 +57,8 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService {
     private CmsBtPlatformNumiidDao cmsBtPlatformNumiidDao;
     @Autowired
     private CmsBtPlatformNumiidDaoExt cmsBtPlatformNumiidDaoExt;
+    @Autowired
+    private CmsBtKlSkuDao cmsBtKlSkuDao;
 
     /**
      * runType=1或者空的话，根据入参的pid或者status批量处理  runType=2 从cms_bt_platform_numiid表里抽出numIId(商品key)去做
@@ -272,7 +277,21 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService {
             $warn(errMsgCid);
         }
 
-        // sku属性，暂时不回写
+        // sku属性
+        Map<String, Sku> mapKlSku = new HashMap<>(); // Map<skuCode, Sku>
+        Sku[] klSkus = itemEdit.getSkuList();
+        if (klSkus != null && klSkus.length > 0) {
+//            mapKlSku.putAll(Arrays.stream(klSkus)
+//                    .filter(sku -> !StringUtils.isEmpty(sku.getRawSku().getBarCode()))
+//                    .collect(Collectors.toMap(sku -> sku.getRawSku().getBarCode().toLowerCase(), sku -> sku))); // 考拉barcode保存的是skuCode
+            // 碰到一个sku重复的，上面collect toMap就失败了，但是我也不知道该用哪个，随机拿个，看看运气
+            for (Sku sku : klSkus) {
+                String barCode = sku.getRawSku().getBarCode();
+                if (!StringUtils.isEmpty(barCode)) {
+                    mapKlSku.put(barCode.toLowerCase(), sku);
+                }
+            }
+        }
 
         // 各类目预定义属性，下拉框，单选框，多选框
         ItemProperty[] itemProperties = itemEdit.getItemPropertyList();
@@ -305,6 +324,7 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService {
         }
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
+        List<CmsBtKlSkuModel> cmsBtKlSkuModels = new ArrayList<>();
         cmsBtProductGroup.getProductCodes().forEach(s -> {
             Map<String, Object> queryMap = new HashMap<>();
             queryMap.put("common.fields.code", s);
@@ -333,6 +353,29 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService {
                 updateMap.put("platforms.P" + cartId + ".fields." + fieldName, value);
             });
 
+            if (!mapKlSku.isEmpty()) {
+                CmsBtProductModel product = cmsBtProductDao.selectByCode(s, channelId);
+                // 全小写比较skuCode
+                Map<String, BaseMongoMap<String, Object>> mapSkus = product.getPlatform(cartId).getSkus().stream()
+                        .collect(Collectors.toMap(
+                                sku -> sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()).toLowerCase(),
+                                sku -> sku)
+                        );
+
+                mapKlSku.forEach((skuCodeLower, klSku) -> {
+                    BaseMongoMap<String, Object> skuInfo = mapSkus.get(skuCodeLower);
+                    if (skuInfo != null) {
+                        // 这一版只回写skuKey
+                        skuInfo.setAttribute("skuKey", klSku.getKey());
+                        String skuCode = skuInfo.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+                        String barCode = Optional.ofNullable(product.getCommon().getSku(skuCode)).map(CmsBtProductModel_Sku::getBarcode).orElse("");
+                        cmsBtKlSkuModels.add(fillCmsBtKlSkuModel(channelId, s, skuCode, barCode, klSku.getKey(), "", product.getOrgChannelId()));
+                    }
+                });
+
+                updateMap.put("platforms.P" + cartId + ".skus", product.getPlatform(cartId).getSkus());
+            }
+
             updateMap.put("platforms.P" + cartId + ".pProductId", platformPid);
             if (klPlatformStatus == CmsPlatformProductImportKlFieldsService.PlatformStatus.ON_SALE) {
                 // 出售中
@@ -352,6 +395,49 @@ public class CmsPlatformProductImportKlFieldsService extends BaseMQCmsService {
 
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
         productGroupService.update(cmsBtProductGroup);
+        insertOrUpdateCmsBtKlSku(cmsBtKlSkuModels);
+    }
+
+    private CmsBtKlSkuModel fillCmsBtKlSkuModel(String channelId, String productCode, String skuCode, String barCode, String skuKey, String numIId, String orgChannelId) {
+        CmsBtKlSkuModel cmsBtKlSkuModel = new CmsBtKlSkuModel();
+
+        cmsBtKlSkuModel.setChannelId(channelId);
+        cmsBtKlSkuModel.setOrgChannelId(orgChannelId);
+        cmsBtKlSkuModel.setKlNumiid(numIId);
+        cmsBtKlSkuModel.setProductCode(productCode);
+        cmsBtKlSkuModel.setSku(skuCode);
+        cmsBtKlSkuModel.setKlSkuKey(skuKey);
+        cmsBtKlSkuModel.setUpc(barCode);
+
+        cmsBtKlSkuModel.setCreated(DateTimeUtil.getDate());
+        cmsBtKlSkuModel.setCreater(getTaskName());
+        cmsBtKlSkuModel.setModified(DateTimeUtil.getDate());
+        cmsBtKlSkuModel.setModifier(getTaskName());
+
+        return cmsBtKlSkuModel;
+    }
+
+    private void insertOrUpdateCmsBtKlSku(List<CmsBtKlSkuModel> cmsBtKlSkuModels) {
+        cmsBtKlSkuModels.forEach(skuModel -> {
+            String skuKey = skuModel.getKlSkuKey();
+            Map<String, Object> map = new HashMap<>();
+            map.put("channelId", skuModel.getChannelId());
+            map.put("orgChannelId", skuModel.getOrgChannelId());
+            map.put("productCode", skuModel.getProductCode());
+            map.put("sku", skuModel.getSku());
+            CmsBtKlSkuModel cmsBtKlSkuModel = cmsBtKlSkuDao.selectOne(map);
+
+            if (cmsBtKlSkuModel == null) {
+                cmsBtKlSkuDao.insert(skuModel);
+            } else {
+                if (!skuKey.equals(cmsBtKlSkuModel.getKlSkuKey())) {
+                    cmsBtKlSkuModel.setKlSkuKey(skuKey);
+                    cmsBtKlSkuModel.setModifier(getTaskName());
+                    cmsBtKlSkuModel.setModified(DateTimeUtil.getDate());
+                    cmsBtKlSkuDao.update(cmsBtKlSkuModel);
+                }
+            }
+        });
 
     }
 

@@ -10,7 +10,8 @@ define([
 
         $scope.vm = {
             customProps: [],
-            commonProps: []
+            commonProps: [],
+            inventoryDetails:false
         };
         $scope.context = context;
         $scope.chkItemStatus = chkItemStatus;
@@ -129,7 +130,7 @@ define([
                 selBiDataList: contructData($scope.vm.biDataList, 'value'),
                 platformProps: contructData($scope.vm.platformDataList, 'value')
             }).then(function () {
-                $modalInstance.close();
+                $modalInstance.close($scope.vm.inventoryDetails);
             });
         };
 

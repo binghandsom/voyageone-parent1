@@ -123,7 +123,8 @@
                                                 </div>
                                             </div>
                                             <div class="form-group"><!-- 查询库存状态 -->
-                                                <label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
+                                               <!-- <label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>-->
+                                                <label class="col-sm-3 control-label" >总库存</label>
                                                 <div class="col-sm-8" style="padding-left:0px">
                                                     <div class="col-sm-5">
                                                         <select class="form-control m-r-xs" style="margin-left:4px" ng-model="vm.searchInfo.compareType"
@@ -930,7 +931,7 @@
                                                                                             ng-click="ctrlAdvance.columnOrder('quantity')"><i class="fa fa-{{ctrlAdvance.getArrowName('quantity')}}"></i></button>
                                         </th>
                                         <th ng-if="isExistCommonProps('quantitySale')" class="text-center" style="width: 120px;">
-                                            可售库存
+                                            平台库存
                                         </th>
                                         <th ng-if="isExistCommonProps('priceMsrp')" class="text-center" style="width: 120px;">
                                             中国建议售价&emsp;<button class="opacityBtn"
