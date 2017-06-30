@@ -22,6 +22,7 @@ define([
             self.taskBeatService = taskBeatService;
             self.taskJiagepiluService = taskJiagepiluService;
             self.$location = $location;
+            self.platformSxImageTemplates = [];
 
             if (context.platformTypeList && _.size(context.platformTypeList) > 0) {
                 self.platformTypeList = context.platformTypeList;
@@ -33,13 +34,12 @@ define([
                 if (task) {
                     self.platformTypeList =
                         [{value: task.cartId, name: carts.valueOf(task.cartId).desc}];
-                    self.selectCart(task.cartId);
                 }
             }
-
             // 将字符串日期转换为 Date 日期。
             // 因为 input type=date 后, ng-model 只接受 Date 类型
             // 否则会报错
+
 
             if (task) {
                 task.activityStart = self.formatDate(task.activityStart);
@@ -48,9 +48,11 @@ define([
                 if (_.isString(task.config)) {
                     task.config = JSON.parse(task.config);
                 }
+                self.selectCart();
             } else {
                 self.taskBean = {
                     taskName: '',
+                    cartId:'',
                     // activityStart: new Date(promotion.activityStart),
                     // activityEnd: new Date(promotion.activityEnd),
                     config: {
@@ -133,13 +135,30 @@ define([
 
             selectCart: function () {
                 var self = this;
-                var cartObj = carts.valueOf(parseInt(self.taskBean.cartId));
-                if (cartObj && cartObj.platformId == '2') {
-                    _.extend(self.taskBean, {isJdseries:true})
+                if (self.taskBean && self.taskBean.cartId) {
+
+                    var cartObj = carts.valueOf(parseInt(self.taskBean.cartId));
+                    if (cartObj && cartObj.platformId == '2') {
+                        _.extend(self.taskBean, {isJdseries:true})
+                    } else {
+                        _.extend(self.taskBean, {isJdseries:false})
+                    }
+
+                    self.taskJiagepiluService.getPlatformSxTemplate({cartId:self.taskBean.cartId}).then(function (resp) {
+                        self.platformSxImageTemplates = resp.data;
+                    });
                 } else {
-                    _.extend(self.taskBean, {isJdseries:false})
+                    self.platformSxImageTemplates = [];
+                }
+            },
+
+            selectRevertTemplate: function () {
+                var self = this;
+                if (self.taskBean && self.taskBean.selectTemplate) {
+                    self.taskBean.config.revert_template = self.taskBean.selectTemplate;
                 }
             }
+            
         };
 
         return PopNewBeatCtl;

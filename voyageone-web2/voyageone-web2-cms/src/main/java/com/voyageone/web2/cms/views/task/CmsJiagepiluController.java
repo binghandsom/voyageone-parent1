@@ -6,6 +6,7 @@ import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.service.bean.cms.task.beat.SearchTaskJiagepiluBean;
 import com.voyageone.service.impl.CmsProperty;
+import com.voyageone.service.impl.cms.CmsMtPlatformSxImageTemplateService;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.task.JiagepiluService;
 import com.voyageone.service.model.cms.CmsBtTasksModel;
@@ -215,13 +216,13 @@ public class CmsJiagepiluController extends BaseController {
     }
 
     /**
-     * 删除价格披露任务
+     * 获取平台图片上新模板
      */
     @RequestMapping(CmsUrlConstants.TASK.JIAGEPILU.GET_PLATFORM_SX_TEMPLATE)
     public AjaxResponse getPlatformSxTemplate(@RequestBody Map<String, Object> param) {
         Integer cartId = (Integer) param.get("cartId");
         String channelId = getUser().getSelChannelId();
-        return success(jiagepiluService.deleteJiagepiluTask(param.getTask_id(), getUser().getUserName()));
+        return success(cmsMtPlatformSxImageTemplateService.getSxImageTemplateByChannelAndCart(channelId, cartId));
     }
 
 }

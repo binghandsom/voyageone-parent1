@@ -944,6 +944,7 @@ define(function () {
         "TXT_JIAGEPILU_REIMPORT_CONFIRM":"重复导入会更新已存在的产品信息，确定要继续吗？",
         "TXT_NOT_EXISTS_TASK":"任务不存在",
         "TXT_ADD_MOD_TASK": "添加/修改 任务",
-        "TXT_DELETE_JIAGEPILU_TASK":"您确定要删除价格披露任务[%s]吗?"
+        "TXT_DELETE_JIAGEPILU_TASK":"您确定要删除价格披露任务[%s]吗?",
+        "TXT_SELECT_REVERT_TEMPLATE":"选择还原模板"
     };
 });

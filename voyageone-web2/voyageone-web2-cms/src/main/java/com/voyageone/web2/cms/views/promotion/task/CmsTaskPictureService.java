@@ -2,12 +2,14 @@ package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
 import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.bean.cms.task.beat.TaskBean;
 import com.voyageone.service.dao.cms.CmsBtTasksDao;
 import com.voyageone.service.impl.cms.BeatInfoService;
+import com.voyageone.service.impl.cms.CmsMtPlatformSxImageTemplateService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
@@ -19,6 +21,7 @@ import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
 import com.voyageone.service.model.cms.enums.jiagepilu.ImageStatus;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformSxImageTemplateModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -66,6 +69,9 @@ class CmsTaskPictureService extends BaseViewService {
 
     @Autowired
     private CmsBtTasksDao cmsBtTasksDao;
+
+    @Autowired
+    private CmsMtPlatformSxImageTemplateService cmsMtPlatformSxImageTemplateService;
 
     /**
      * 创建一个价格披露任务
@@ -135,6 +141,14 @@ class CmsTaskPictureService extends BaseViewService {
 
         if (count < 1)
             return null;
+
+        if (taskBean.getConfig() != null && StringUtils.isNotBlank(taskBean.getConfig().getRevert_template())) {
+            CmsMtPlatformSxImageTemplateModel imageTemplateModel = new CmsMtPlatformSxImageTemplateModel();
+            imageTemplateModel.setChannelId(user.getSelChannelId());
+            imageTemplateModel.setCartId(cartId);
+            imageTemplateModel.setImageTemplate(taskBean.getConfig().getRevert_template());
+            cmsMtPlatformSxImageTemplateService.add(imageTemplateModel);
+        }
 
         CmsBtTasksModel queryModel = new CmsBtTasksModel();
         queryModel.setChannelId(user.getSelChannelId());

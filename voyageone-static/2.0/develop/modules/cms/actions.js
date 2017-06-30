@@ -463,7 +463,8 @@ define(function () {
                     "getJiagepiluCarts":"getJiagepiluCarts",
                     "download": "download",
                     "getSummary":"getSummary",
-                    "deleteJiagepiluTask":"deleteJiagepiluTask"
+                    "deleteJiagepiluTask":"deleteJiagepiluTask",
+                    "getPlatformSxTemplate":"getPlatformSxTemplate"
                 }
             },
             "system": {
