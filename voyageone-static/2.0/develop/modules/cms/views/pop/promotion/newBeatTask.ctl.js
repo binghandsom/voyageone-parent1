@@ -1,8 +1,8 @@
 define([
-           'cms',
-           'underscore',
-           'modules/cms/enums/Carts',
-       ], function (cms, _, carts) {
+    'cms',
+    'underscore',
+    'modules/cms/enums/Carts',
+], function (cms, _, carts) {
     cms.controller('popNewBeatCtl', (function () {
 
         function PopNewBeatCtl(context, $filter, $uibModalInstance, taskBeatService,
@@ -52,7 +52,7 @@ define([
             } else {
                 self.taskBean = {
                     taskName: '',
-                    cartId:'',
+                    cartId: '',
                     // activityStart: new Date(promotion.activityStart),
                     // activityEnd: new Date(promotion.activityEnd),
                     config: {
@@ -87,7 +87,6 @@ define([
                 //         });
                 //     }
                 // });
-
             },
 
             ok: function () {
@@ -122,14 +121,14 @@ define([
             cancel: function () {
                 this.$uibModalInstance.dismiss();
             },
-            
+
             changeBeatTemplate: function () {
                 var self = this;
                 if (self.taskBean.config.beat_template && self.taskBean.testPrice) {
                     var beatTemplate = angular.copy(self.taskBean.config.beat_template);
                     beatTemplate = beatTemplate.replace("{key}", "patagonia-down-sweater-vest-kids-68220gem-1");
                     beatTemplate = beatTemplate.replace("{price}", self.taskBean.testPrice);
-                    _.extend(self.taskBean, {testImageUrl:beatTemplate});
+                    _.extend(self.taskBean, {testImageUrl: beatTemplate});
                 }
             },
 
@@ -139,12 +138,12 @@ define([
 
                     var cartObj = carts.valueOf(parseInt(self.taskBean.cartId));
                     if (cartObj && cartObj.platformId == '2') {
-                        _.extend(self.taskBean, {isJdseries:true})
+                        _.extend(self.taskBean, {isJdseries: true})
                     } else {
-                        _.extend(self.taskBean, {isJdseries:false})
+                        _.extend(self.taskBean, {isJdseries: false})
                     }
 
-                    self.taskJiagepiluService.getPlatformSxTemplate({cartId:self.taskBean.cartId}).then(function (resp) {
+                    self.taskJiagepiluService.getPlatformSxTemplate({cartId: self.taskBean.cartId}).then(function (resp) {
                         self.platformSxImageTemplates = resp.data;
                     });
                 } else {
@@ -158,7 +157,7 @@ define([
                     self.taskBean.config.revert_template = self.taskBean.selectTemplate;
                 }
             }
-            
+
         };
 
         return PopNewBeatCtl;
