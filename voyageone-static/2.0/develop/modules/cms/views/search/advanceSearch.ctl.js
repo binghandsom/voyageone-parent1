@@ -383,9 +383,10 @@ define([
 
                 popups.openColumnForDownLoad({
                     fileType: fileType
-                }).then(function () {
+                }).then(function (inventoryDetails) {
                     confirm(msg).then(function () {
                         $scope.vm.searchInfo.fileType = fileType;
+                        $scope.vm.searchInfo.inventoryDetails = inventoryDetails;
                         searchAdvanceService2.exportFile($scope.vm.searchInfo).then(function (res) {
                             var ecd = res.data.ecd;
                             if (ecd == undefined || ecd == '4003') {

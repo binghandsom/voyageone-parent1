@@ -4,60 +4,51 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <div class="text-warnings" ng-if="noStock">
+                        <div class="text-warnings" ng-show="noStock">
                             <i class="icon fa fa-bell-o"></i>&nbsp;
                             从WMS未查询到SKU物理库存数据
                         </div>
-                        <table class="table table-hover-new table-hover table_main table_compare" ng-if="!noStock">
+                        {{nostock}}
+                        <table class="table table-hover-new table-hover table_main table_compare" ng-show="!noStock">
                             <thead>
                             <tr>
-                                <th class="text-center" ng-attr-colspan="{{thConfig.baseColumns}}">基础信息</th>
-                                <th class="text-center table_compare_before" ng-attr-colspan="{{thConfig.inOwnColumns}}">(国内)自营</th>
-                                <th class="text-center table_compare_before" ng-attr-colspan="{{thConfig.inNOwnColumns}}">(国内)非自营</th>
-                                <th class="text-center table_compare_after" ng-attr-colspan="{{thConfig.gbOwnColumns}}">(国际)自营</th>
-                                <th class="text-center table_compare_after" ng-attr-colspan="{{thConfig.gbNOwnColumns}}">(国际)非自营</th>
-                            </tr>
-                            <tr>
-                            	<!-- 基础信息 -->
-                                <th class="text-center" style="border: 1px solid #ccc;width: 117px;">
+                                <th class="text-center" style="border: 1px solid #ccc;" colspan="4">基础信息</th>
+                                <th class="text-center" style="border: 1px solid #ccc;" ng-repeat="item in store" ng-if="key != 'base'" colspan="1">{{item}}</th>
+                                <!--新增一个海外品牌商库存-->
+                                <th class="text-center" style="border: 1px solid #ccc;" ng-attr-colspan="{{foreign}}">
                                     <label class="pull-left" style="margin-bottom: 0">
                                         <i ng-class="{'fa fa-plus-circle':!showDetail,'fa fa-minus-circle':showDetail}" ng-click="showDetail=!showDetail;count(showDetail)"></i>
                                     </label>
-                                    SKU</th>
+                                    第三方库存
+                                </th>
+                            </tr>
+                            <tr id="store-column-head">
+                                <!-- 基础信息 -->
+                                <th class="text-center" style="border: 1px solid #ccc;width: 117px;">SKU</th>
                                 <th class="text-center" style="border: 1px solid #ccc;width: 65px;">原始尺码</th>
-                                <th ng-if="showDetail" style="border: 1px solid #ccc;width: 88px;" class="text-center">销售尺码</th>
-                                <th class="text-center" style="border: 1px solid #ccc;width: 50px;">库存（可用，占用）</th>
-                                <!-- (国内)自营 -->
-                                <th ng-repeat="attr in tblData.header.inOwn" ng-if="showDetail || attr.name == 'total'"
-                                    class="text-center table_compare_before" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}（可用，占用）</th>
-                                <!-- (国内)非自营 -->
-                                <th ng-repeat="attr in tblData.header.inNOwn" ng-if="showDetail || attr.name == 'total'"
-                                    class="text-center table_compare_before" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}（可用，占用）</th>
-                                <!-- (国际)自营 -->
-                                <th ng-repeat="attr in tblData.header.gbOwn" ng-if="showDetail || attr.name == 'total'"
-                                    class="text-center table_compare_after" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}（可用，占用）</th>
-                                <!-- (国际)非自营 -->
-                                <th ng-repeat="attr in tblData.header.gbNOwn" ng-if="showDetail || attr.name == 'total'"
-                                    class="text-center table_compare_after" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}（可用，占用）</th>
+                                <th class="text-center" style="border: 1px solid #ccc;width: 88px;">销售尺码</th>
+                                <th class="text-center" style="border: 1px solid #ccc;width: 50px;">总库存</th>
+                                <th class="text-center" style="border: 1px solid #ccc;width: 50px;" ng-repeat="item in store">{{item}}库存</th>
+                                <!--默认显示总库-->
+                                <th class="text-center" style="border: 1px solid #ccc;width: 50px;" ng-repeat="item in supplier" ng-show="item == 'total' || showDetail">
+                                    <div ng-if="item == 'total'">总库存</div>
+                                    <div ng-if="item != 'total'">{{item}}</div>
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="skuDetail in tblData.stocks">
-                            	<!-- 基础信息 -->
-                            	<td ng-if="!$last" class="text-left v-middle">{{skuDetail.base.sku}}</td>
-                            	<td ng-if="$last" class="text-center v-middle">Total</td>
+                            <tr ng-repeat="skuDetail in stocks" >
+
+                                <td ng-if="!$last" class="text-left v-middle">{{skuDetail.base.sku}}</td>
+                                <td ng-if="$last" class="text-center v-middle">Total</td>
                                 <td class="text-center v-middle">{{skuDetail.base.origSize}}</td>
-                                <td ng-if="showDetail" class="text-center v-middle">{{skuDetail.base.saleSize}}</td>
-                                <td class="text-right v-middle">{{skuDetail.base.total}}</td>
-                                <!-- (国内)自营 -->
-                                <td ng-repeat="attr in tblData.header.inOwn" ng-if="showDetail || attr.name == 'total'" class="text-right v-middle">{{skuDetail.inOwn[attr.name]}}</td>
-                                <!-- (国内)非自营 -->
-                                <td ng-repeat="attr in tblData.header.inNOwn" ng-if="showDetail || attr.name == 'total'" class="text-right v-middle">{{skuDetail.inNOwn[attr.name]}}</td>
-                                <!-- (国际)自营 -->
-                                <td ng-repeat="attr in tblData.header.gbOwn" ng-if="showDetail || attr.name == 'total'" class="text-right v-middle">{{skuDetail.gbOwn[attr.name]}}</td>
-                                <!-- (国际)非自营 -->
-                                <td ng-repeat="attr in tblData.header.gbNOwn" ng-if="showDetail || attr.name == 'total'" class="text-right v-middle">{{skuDetail.gbNOwn[attr.name]}}</td>
-                            </tr>
+                                <td class="text-center v-middle">{{skuDetail.base.saleSize}}</td>
+
+                                <!--逻辑可售库存-->
+                                <td class="text-right v-middle">{{skuDetail.base.total[0]}}</td>
+
+                                <td class="text-right v-middle" ng-repeat="column in store">{{skuDetail.store[column] ? skuDetail.store[column][0] : 0}}</td>
+                                <td class="text-right v-middle" ng-repeat="column in supplier" ng-show="column == 'total' || showDetail">{{skuDetail.supplier[column] ? skuDetail.supplier[column][0] : 0}}</td>
                             </tbody>
                         </table>
                         <div class="text-warnings" ng-if="noStockSkus.length > 0">

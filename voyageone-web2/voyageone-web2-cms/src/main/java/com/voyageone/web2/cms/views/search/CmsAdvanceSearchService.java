@@ -540,6 +540,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
             advSearchExportMQMessageBody.setSearchValue(searchValue);
             advSearchExportMQMessageBody.setChannelIdMap(channelIdMap);
             advSearchExportMQMessageBody.setSender(userInfo.getUserName());
+            advSearchExportMQMessageBody.setInventoryDetails(searchValue.get("inventoryDetails") == null?false: (Boolean) searchValue.get("inventoryDetails"));
 
             Gson gson = new Gson();
             String strAdvSearchExportMQMessageBody = gson.toJson(advSearchExportMQMessageBody);
