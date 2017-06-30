@@ -144,7 +144,13 @@ define([
                     }
 
                     self.taskJiagepiluService.getPlatformSxTemplate({cartId: self.taskBean.cartId}).then(function (resp) {
-                        self.platformSxImageTemplates = resp.data;
+                        if (resp.data) {
+                            // angular.forEach(resp.data, function (template) {
+                            //     self.platformSxImageTemplates.push(template.imageTemplate);
+                            // })
+                            self.platformSxImageTemplates = _.pluck(resp.data,'imageTemplate');
+                        }
+
                     });
                 } else {
                     self.platformSxImageTemplates = [];
