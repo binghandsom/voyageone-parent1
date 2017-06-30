@@ -157,11 +157,11 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label vo_reqfield" translate="TXT_VERTICAL_REVERT_TEMPLATE"></label>
                         <div class="col-sm-7">
-                            <input name="revertVTemplate" ng-model="ctrl.taskBean.config.revert_vtemplate" auto-complete
+                            <input name="revertVTemplate" ng-model="ctrl.testUrl" auto-complete="ctrl.arrays"
                                    class="form-control" title="竖图还原模板 / Vertical Image Revert Template" required>
                         </div>
                     </div>
-
+                    {{ctrl.arrays}}
                 </form>
             </div>
             <div class="col-md-4"
