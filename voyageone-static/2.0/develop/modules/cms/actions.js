@@ -447,6 +447,24 @@ define(function () {
                     "importStockInfo": "importStockInfo",
                     "exportStockInfo": "exportStockInfo",
                     "executeStockIncrementSeparation": "executeStockIncrementSeparation"
+                },
+                "taskJiagepiluService": {
+                    "root": "/cms/task/jiagepilu",
+                    "getTaskModel":"getTaskModel",
+                    "search":"search",
+                    "downloadImportTemplate":"downloadImportTemplate",
+                    "import":"import",
+                    "getImportInfoList":"getImportInfoList",
+                    "downloadImportError":"downloadImportError",
+                    "addJiagepiluProduct":"addJiagepiluProduct",
+                    "operateProduct":"operateProduct",
+                    "reBeating":"reBeating",
+                    "getEditProduct":"getEditProduct",
+                    "getJiagepiluCarts":"getJiagepiluCarts",
+                    "download": "download",
+                    "getSummary":"getSummary",
+                    "deleteJiagepiluTask":"deleteJiagepiluTask",
+                    "getPlatformSxTemplate":"getPlatformSxTemplate"
                 }
             },
             "system": {

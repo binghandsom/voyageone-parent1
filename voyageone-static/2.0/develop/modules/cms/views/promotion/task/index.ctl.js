@@ -3,30 +3,42 @@
  */
 define([
     'cms',
+    'modules/cms/enums/Carts',
     'modules/cms/controller/popup.ctl'
-], function (cms) {
+], function (cms, carts) {
     cms.controller("taskIndexController", (function () {
     
-        function TaskIndexController(taskService, taskStockService, cActions, confirm, notify) {
+        function TaskIndexController(taskService, taskStockService, taskJiagepiluService, promotionService, cActions, confirm, notify, popups, $translate, alert,$location) {
             this.taskService = taskService;
             this.taskStockService = taskStockService;
+            this.promotionService = promotionService;
+            this.taskJiagepiluService = taskJiagepiluService;
+            this.$location = $location;
             var urls = cActions.cms.task.taskStockService;
             this.tasks = [];
             this.confirm = confirm;
             this.notify = notify;
+            this.popups = popups;
+            this.$translate = $translate;
+            this.alert = alert;
             this.searchInfo={};
 
             this.taskType=[{"name":"特价宝","value":"0"},{"name":"价格披露","value":"1"},{"name":"库存隔离","value":"2"}];
             this.datePicker = [];
 
             this.downloadUrl = urls.root + "/" + urls.exportErrorInfo;
+            this.platformTypeList = [];
+            this.platformStatus = {};
         }
-    
+
         TaskIndexController.prototype = {
             init: function () {
                 var self = this;
-                self.taskService.page(self.searchInfo).then(function(res){
-                    self.tasks = res.data;
+                self.promotionService.init().then(function (res) {
+                    self.platformTypeList = res.data.platformTypeList;
+                    self.taskService.page(self.searchInfo).then(function(res){
+                        self.tasks = res.data;
+                    });
                 });
             },
 
@@ -42,15 +54,30 @@ define([
                         return '未知类型';
                 }
             },
+
+            cartName: function(cartId) {
+                return carts.valueOf(cartId).desc;
+
+            },
+
             search: function(){
                 var self = this;
+                var cartIds = [];
+                _.each(self.platformStatus,function (value, key) {
+                    if(value){
+                        cartIds.push(key);
+                    }
+                });
+                this.searchInfo.cartIds = cartIds;
                 this.taskService.page(this.searchInfo).then(function(res){
                     self.tasks = res.data;
                 });
             },
+
             clear: function(){
                 this.searchInfo={};
             },
+
             delete: function(task){
                 var self = this;
                 self.confirm('TXT_MSG_DO_DELETE').then(function () {
@@ -69,15 +96,82 @@ define([
                     }
                 })
             },
+
             download: function (taskId) {
                 var main = this;
                 $.download.post(main.downloadUrl, {
                     "taskId" : taskId
                 });
+            },
+
+            // 启动/停止/还原所有
+            controlAll: function (taskId, flag) {
+
+                var self = this;
+                self.confirm("确定要操作所有吗?")
+                    .then(function () {
+                        self.$controlAll(true, flag, taskId);
+                    });
+                return;
+            },
+            $controlAll: function (force, flag, taskId) {
+                var self = this;
+
+                self.taskJiagepiluService.operateProduct({
+                    task_id: taskId,
+                    force: force,
+                    flag: flag
+                }).then(function (res) {
+                    if (!res.data){
+                        self.notify.success('TXT_MSG_UPDATE_FAIL');
+                    }else {
+                        self.notify.success('TXT_MSG_SET_SUCCESS');
+                    }
+                });
+            },
+
+            addOrUpdateTask: function (task) {
+                var self = this;
+                self.popups.openNewBeatTask({task: task, platformTypeList:self.platformTypeList}).then(function(newTask) {
+                    // self.task = newTask;
+                    if (task) {
+                        // 编辑，当task不存在也就是新增后页面直接在pop处跳转了
+                        self.search();
+                    } else {
+                        self.$location.path('/task/jiagepilu/detail/' + newTask.id);
+                    }
+
+                });
+            },
+
+            delTask: function (task) {
+                var self = this;
+                if (task.taskType == 1) {
+                    self.confirm(self.$translate.instant('TXT_DELETE_JIAGEPILU_TASK').replace("%s", task.taskName)).then(function () {
+                        self.taskJiagepiluService.getSummary({task_id:task.id}).then(function (resp) {
+                            if (resp.data) {
+                                var summary = resp.data;
+                                var notDeleted = _.find(summary, function (item) {
+                                    return item.flag == "SUCCESS" || item.flag == "RE_FAIL";
+                                });
+                                if (notDeleted) {
+                                    var mesage = "有状态为 <" +　self.$translate.instant('SUCCESS')　+ " 或 " + self.$translate.instant('RE_FAIL') + "> 的商品，不能删除任务";
+                                    self.alert(mesage);
+                                } else {
+                                    self.taskJiagepiluService.deleteJiagepiluTask({task_id:task.id}).then(function (res) {
+                                        if (res.data) {
+                                            self.notify.success("Delete successfully");
+                                            self.search();
+                                        }
+                                    });
+                                }
+                            }
+                        })
+                    });
+                }
             }
         };
-            
+
         return TaskIndexController;
-        
     })());
 });

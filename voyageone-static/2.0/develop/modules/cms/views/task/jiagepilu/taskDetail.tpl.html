@@ -1,0 +1,220 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+
+	<!--搜索条件Begin-->
+	<div class="vo_accordion vo_attr">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title"><i class="fa fa-codepen"></i>&nbsp;<span translate="TXT_BEAT_TASK"></span></h4>
+				</div>
+				<div class="container-fluid m-t-sm m-b-md">
+					<div class="row">
+						<div class="col-md-10 col-md-offset-1">
+							<div class="col-sm-4">
+								<div class="form-horizontal">
+									<div class="row form-group">
+										<label class="col-sm-4  control-label"><strong translate="TXT_PLATFORM"></strong></label>
+										<div class="col-sm-6">
+											<input type="text" class="form-control" value="{{ctrl.task.cartName}}" disabled>
+										</div>
+									</div>
+									<div class="row form-group">
+										<label class="col-sm-4 control-label"><strong translate="TXT_CODE_OR_NUMIID"></strong></label>
+										<div class="col-sm-6">
+											<textarea class="form-control no-resize" rows="3" cols="3" ng-model="ctrl.searchBean.numIidOrCodes"></textarea>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-sm-4">
+								<div class="form-horizontal">
+									<div class="row form-group" >
+										<label class="col-sm-4  control-label"><strong translate="TXT_TASK_NAME"></strong></label>
+										<div class="col-sm-6">
+											<input type="text" class="form-control" value="{{ctrl.task.taskName}}" disabled>
+										</div>
+									</div>
+									<div class="row form-group">
+										<label class="col-sm-4 control-label"><strong translate="TXT_ERROR_MESSAGE"></strong></label>
+										<div class="col-sm-6">
+											<textarea class="form-control no-resize" rows="3" cols="3" ng-model="ctrl.searchBean.errorMsg"></textarea>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-sm-4">
+								<div class="form-horizontal">
+									<!--<div class="form-horizontal">-->
+									<!--<div class="row form-group" >-->
+									<!--<label class="col-sm-4  control-label"><strong translate="TXT_TASK_STATUS"></strong></label>-->
+									<!--<div class="col-sm-6">-->
+									<!--<input type="text" class="form-control" value="{{ctrl.task.status}}" disabled>-->
+									<!--</div>-->
+									<!--</div>-->
+									<!--</div>-->
+									<div class="row form-group">
+										<label class="col-sm-5 control-label"><strong translate="TXT_SINGLE_CODE_STATUS"></strong></label>
+										<div class="col-sm-6">
+											<label class="m-t-tx" ng-repeat="flag in ctrl.beatFlags">
+												<input type="checkbox" class="v-top" ng-model="ctrl.searchBean.beatFlags[flag.key]" value="{{flag.key}}"/>&nbsp;&nbsp;<span class="v-top">{{flag.value}}</span>&emsp;
+											</label>
+										</div>
+									</div>
+									<div class="row form-group">
+										<label class="col-sm-5 control-label"><strong translate="TXT_SINGLE_EXIST_IMAGE"></strong></label>
+										<div class="col-sm-6">
+											<label class="m-t-tx" ng-repeat="imageStatus in ctrl.imageStatuses">
+												<input type="checkbox" class="v-top" ng-model="ctrl.searchBean.imageStatuses[imageStatus.key]" value="{{imageStatus.key}}"/>&nbsp;&nbsp;<span class="v-top">{{imageStatus.value}}</span>&emsp;
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="row text-center m-t-sm">
+						<div class="form-inline">
+							<button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+							<button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+							<button class="btn btn-success" ng-click="ctrl.updateTask(openNewBeatTask)"><i class="fa fa-edit"></i>&nbsp;{{'BTN_TASK_EDIT' | translate}}</button>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--搜索条件End-->
+
+	<div class="container-fluid m-t-xs m-b-xs">
+		<uib-tabset class="tab-container vo_nav-tabs">
+
+			<uib-tab active="true">
+				<tab-heading>
+					<i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}
+				</tab-heading>
+				<div class="table-responsive box-body">
+					<div class="row">
+						<div class="col-md-5">
+							<button ng-click="ctrl.controlAll('BEATING')" class="btn btn-primary"><i class="glyphicon glyphicon-play"></i>&nbsp;<span translate="TXT_STARTUP_ALL"></span></button>
+							<button ng-click="ctrl.controlAll('STOP')" class="btn btn-danger"><i class="glyphicon glyphicon-pause"></i>&nbsp;<span translate="TXT_STOP_ALL"></span></button>
+							<button ng-click="ctrl.controlAll('REVERT')" class="btn btn-success"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT_ALL"></span></button>
+							<button ng-click="ctrl.restartAll('FAIL')" class="btn btn-brd"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_FAIL_STARTUP_ALL"></span></button>
+							<button ng-click="ctrl.restartAll('RE_FAIL')" class="btn btn-brd"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT_FAIL_STARTUP_ALL"></span></button>
+							<button class="btn btn-danger" ng-click="ctrl.download()"><i class="fa fa-cloud-download"></i>&nbsp;<span translate="TXT_DOWNLOAD_TASK_DETAIL"></span></button>
+						</div>
+						<div class="col-md-6 col-lg-offset-1" ng-controller="popupCtrl">
+							<div style="display: flex;flex-direction: row-reverse;">
+
+								<div style="width: 325px">
+									<button class="btn btn-vo" ng-click="ctrl.importProduct()" ng-disabled="ctrl.uploadItem"><i class="glyphicon glyphicon-check"></i>&nbsp;<span translate="TXT_IMPORT_GOOD"></span></button>
+									<button class="btn btn-default" ng-click="ctrl.downloadTemplate()"><i class="fa fa-plus"></i>&nbsp;<span translate="BTN_IMPORT_TEMPLATE_DOWNLOAD"></span></button>
+									<button class="btn btn-success" ng-click="popAddJiagepiluProduct(ctrl, '')"><i class="fa fa-plus"></i>&nbsp;<span translate="TXT_ADD_MOD_GOOD"></span></button>
+								</div>
+
+								<div style="width: 290px;margin-right: 17px;">
+									<input type="file" tabindex="-1" accept=".xls,.xlsx" file-style
+										   data-button-text="Choose file" data-class-button="btn btn-default" data-classinput="form-control inline"
+										   nv-file-select uploader="ctrl.uploader"/>
+								</div>
+
+							</div>
+
+						</div>
+					</div>
+
+					<div class="row" style="margin-top:7px">
+						<table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px" ng-controller="popupCtrl">
+							<thead>
+							<tr>
+								<th class="text-left" translate="TXT_IMAGE"></th>
+								<th class="text-left" translate="TXT_PRODUCT_CODE"></th>
+								<th class="text-left" translate="TXT_NUMIID_FULL"></th>
+								<th class="text-right" translate="TXT_PROMOTION_PRICE"></th>
+								<th class="text-left" translate="TXT_SINGLE_CODE_STATUS"></th>
+								<th class="text-left" translate="TXT_IMAGE_STATUS"></th>
+								<th class="text-left" translate="TXT_EXCEPTION_MESSAGE"></th>
+								<th class="text-left" translate="TXT_UPDATE_TIME"></th>
+								<th class="text-center" translate="TXT_ACTION"></th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr ng-repeat="info in ctrl.productList">
+								<td class="text-left">
+									<img ng-if="info.imageUrl" src="{{::info.imageUrl}}"  class="thumb-sm-search cur-p" ng-click="ctrl.bigImg(info.imageUrl)">
+								</td>
+								<td class="text-left">{{::info.productCode}}</td>
+								<td class="text-left">
+									<a ng-href="{{info.productUrl}}"
+									   target="_blank">{{::info.numIid}} </a>
+								</td>
+								<td class="text-right">{{::info.price | number: 2 || '无'}}</td>
+								<td class="text-left">{{::info.synFlagEnum | translate}}</td>
+								<td class="text-left" title="{{::info.imageTaskId}}">{{::info.imageStatusEnum | translate}}</td>
+								<td class="text-left">{{::info.message}}</td>
+								<td class="text-left">{{::info.modified.substring(0, 19)}}</td>
+								<td class="text-center">
+									<div class="btn-group text-center">
+										<button title="启动" ng-click="popAddJiagepiluProduct(ctrl, info.id)" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-pencil"></i>&nbsp;<span translate="TXT_EDIT"></span></button>
+										&nbsp;&nbsp;
+										<button title="启动" ng-click="ctrl.controlOne(info, 'BEATING')" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;<span translate="TXT_STARTUP"></span></button>
+										<button title="停止" ng-click="ctrl.controlOne(info, 'STOP')" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;<span translate="TXT_STOP"></span></button>
+										<button title="还原" ng-click="ctrl.controlOne(info, 'REVERT')" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT"></span></button>
+									</div>
+								</td>
+							</tr>
+							</tbody>
+						</table>
+
+						<vpagination config="ctrl.pageOption"></vpagination>
+					</div>
+
+
+				</div>
+			</uib-tab>
+
+			<uib-tab active="false">
+				<tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_IMPORT_LIST' | translate}}</tab-heading>
+				<div class="table-responsive box-body" ng-controller="popupCtrl">
+					<div class="btn-group pull-left">
+						<button ng-click="ctrl.refreshImportInfoList()" class="btn btn-default"><i></i>&nbsp;<span translate="BTN_REFRESH"></span></button>
+					</div>
+
+					<table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px" ng-controller="popupCtrl">
+						<thead>
+						<tr>
+							<th class="text-left" translate="TXT_FILE_IMPORT"></th>
+							<th class="text-right" translate="TXT_SUCCESS_COUNT"></th>
+							<th class="text-right" translate="TXT_FAIL_COUNT"></th>
+							<th class="text-left" translate="TXT_IMPORT_BEGIN_TIME"></th>
+							<th class="text-left" translate="TXT_IMPORT_END_TIME"></th>
+							<th class="text-left" translate="TXT_EXCEPTION_MESSAGE"></th>
+							<th class="text-center" translate="TXT_DOWNLOAD_FAIL_FILE"></th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr ng-repeat="info in ctrl.importInfoList">
+							<td class="text-left">{{::info.importFileName}}</td>
+							<td class="text-right">{{::info.successCount}}</td>
+							<td class="text-right">{{::info.failCount}}</td>
+							<td class="text-left">{{info.importBeginTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+							<td class="text-left">{{info.importEndTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+							<td class="text-left">{{::info.errorMsg}}</td>
+							<td class="text-center">
+								<div class="btn-group text-center" ng-if="info.errorFileName">
+									<button title="下载" class="btn btn-default btn-pop" ng-click="ctrl.downloadError(info.errorFileName)"><i class="glyphicon glyphicon-download-alt"></i></button>
+								</div>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+			</uib-tab>
+
+		</uib-tabset>
+	</div>
+</div><!-- end .wrapper-md -->
