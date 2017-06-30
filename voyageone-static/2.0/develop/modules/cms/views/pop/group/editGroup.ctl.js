@@ -34,7 +34,8 @@ define([
                 platform: null,
                 sellerCats: [],
                 productUrl: "",
-                noMaterMsg: null
+                noMaterMsg: null,
+                sxImageTemplates:[]
             };
             self.panelShow = true;
         }
@@ -71,6 +72,7 @@ define([
             }).then(function (resp) {
                 vm.mastData = resp.data.mastData;
                 vm.platform = resp.data.platform;
+                vm.sxImageTemplates = resp.data.sxImageTemplates;
 
                 //不显示SKU
                 if (vm.platform && vm.platform.schemaFields && vm.platform.schemaFields.item) {

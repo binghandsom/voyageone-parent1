@@ -58,7 +58,8 @@ define([
             sellerCats: [],
             productUrl: "",
             preStatus: null,
-            noMaterMsg: null
+            noMaterMsg: null,
+            sxImageTemplates:[]
         };
         this.panelShow = true;
     }
@@ -66,8 +67,8 @@ define([
     /*xu*/
     SpDgController.prototype.change = function(){
         var self = this;
-        if(self.vm.platform.mainImageTemplate == "true"){
-            self.vm.platform.mainImageTemplate='';
+        if(self.vm.platform.fields.mainImageTemplate == "true"){
+            self.vm.platform.fields.mainImageTemplate='';
             if(self.flag == false){
                 self.flag = true;
             }else {
@@ -108,6 +109,7 @@ define([
         }).then(function (resp) {
             vm.mastData = resp.data.mastData;
             vm.platform = resp.data.platform;
+            vm.sxImageTemplates = resp.data.sxImageTemplates;
             vm.publishEnabled = resp.data.channelConfig.publishEnabledChannels.length > 0;
 
             if (vm.platform) {

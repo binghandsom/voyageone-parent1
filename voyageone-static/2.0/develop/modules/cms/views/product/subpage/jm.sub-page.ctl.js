@@ -58,7 +58,8 @@ define([
             sellerCats: [],
             productUrl: "",
             preStatus: null,
-            noMaterMsg: null
+            noMaterMsg: null,
+            sxImageTemplates:[]
         };
         this.panelShow = true;
     }
@@ -108,6 +109,7 @@ define([
         }).then(function (resp) {
             vm.mastData = resp.data.mastData;
             vm.platform = resp.data.platform;
+            vm.sxImageTemplates = resp.data.sxImageTemplates;
             vm.publishEnabled = resp.data.channelConfig.publishEnabledChannels.length > 0;
 
             if (vm.platform) {

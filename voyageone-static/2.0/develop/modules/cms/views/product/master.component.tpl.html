@@ -201,34 +201,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <!--xu 增加模板路径的输入-->
-                            <div class="row form-group">
-                                <button class="col-md-2 btn btn-default" ><span>请选择模板路径</span>
-                                </button>
-                                <div class="col-md-1" style="width: 35px;">
-                                    <span></span>
-                                </div>
-                                <div class="col-md-8">
-                                    <select class="form-control" ng-model="ctrl.vm.platform.mainImageTemplate" ng-change="ctrl.change(ctrl.vm.platform.mainImageTemplate)">
-                                        <option class="form-control" value="111">111</option>
-                                        <option class="form-control" value="222">222</option>
-                                        <option class="form-control"  value="true" >手动输入模板路径</option>
-                                    </select>
-                                </div>
-
-                            </div>
-                            <div class="row form-group" ng-show="ctrl.flag">
-                                <button class="col-md-2 btn btn-default" ><span>手动输入模板路径</span>
-                                </button>
-                                <div class="col-md-1" style="width: 35px;">
-                                    <span></span>
-                                </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" ng-model="ctrl.vm.platform.mainImageTemplate">
-                                </div>
-                            </div>
-                            <!--xu-->
-
                             <div class="row form-group">
                                 <button class="col-md-2 btn btn-default" ng-disabled="vm.channelId != '928' && vm.channelId != '024'"
                                         ng-controller="popupCtrl" ng-click="masterCategoryMapping(popupCategoryNew)"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>

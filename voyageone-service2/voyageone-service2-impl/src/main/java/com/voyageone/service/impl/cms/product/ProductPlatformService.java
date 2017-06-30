@@ -23,10 +23,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_UsPlatfor
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * product Service
@@ -367,7 +364,8 @@ public class ProductPlatformService extends BaseService {
         platformModel.setpBrandId((String) platform.get("pBrandId"));
         platformModel.setpBrandName((String) platform.get("pBrandName"));
         platformModel.setpCatStatus((String) platform.get("pCatStatus"));
-        platformModel.setMainImageTemplate((String)platform.get("mainImageTemplate"));
+        BaseMongoMap<String,Object> fields = (BaseMongoMap<String, Object>) platform.get("fields");
+        platformModel.setFields(fields);
         if(platform.get("images4") != null){
             platformModel.setImages4(JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(platform.get("images4")), CmsBtProductModel_Field_Image.class));
         }

@@ -265,7 +265,10 @@
                                                         class="label label-danger">&nbsp;M&nbsp;</span></strong>
                                                 <img class="thumb-group"
                                                      src="http://image.voyageone.com.cn/is/image/sneakerhead/{{image.imageName}}"
-                                                     title="{{image.productCode}}">
+                                                     title="{{image.productCode}}" ng-if="ctrl.vm.platform.fields.mainImageTemplate == null || ctrl.vm.platform.fields.mainImageTemplate == ''">
+                                                <img class="thumb-group"
+                                                     src="{{ctrl.vm.platform.fields.mainImageTemplate}}/{{image.imageName}}"
+                                                     title="{{image.productCode}}" ng-if="ctrl.vm.platform.fields.mainImageTemplate != null && ctrl.vm.platform.fields.mainImageTemplate != ''">
                                             </a>
                                             <!--不是当前商品的话可以跳转到图片对应产品详情页-->
                                             <a ng-href="#/product/detail/{{image.prodId}}"
@@ -276,7 +279,10 @@
                                                         class="label label-danger">&nbsp;M&nbsp;</span></strong>
                                                 <img class="thumb-group"
                                                      src="http://image.voyageone.com.cn/is/image/sneakerhead/{{image.imageName}}"
-                                                     title="{{image.productCode}}">
+                                                     title="{{image.productCode}}" ng-if="ctrl.vm.platform.fields.mainImageTemplate == null || ctrl.vm.platform.fields.mainImageTemplate == ''">
+                                                <img class="thumb-group"
+                                                     src="{{ctrl.vm.platform.fields.mainImageTemplate.replace('%s',image.imageName)}}"
+                                                     title="{{image.productCode}}" ng-if="ctrl.vm.platform.fields.mainImageTemplate != null && ctrl.vm.platform.fields.mainImageTemplate != ''">
                                             </a>
 
                                             <div class="thumbInfo">
@@ -309,8 +315,7 @@
                                 </div>
                                 <div class="col-md-8">
                                     <select class="form-control" ng-model="ctrl.vm.platform.fields.mainImageTemplate" ng-change="ctrl.change(ctrl.vm.platform.fields.mainImageTemplate)">
-                                        <option class="form-control" value="111">111</option>
-                                        <option class="form-control" value="222">222</option>
+                                        <option class="form-control" value={{item.imageTemplate}} ng-repeat="item in ctrl.vm.sxImageTemplates" >{{item.imageTemplate}}</option>
                                         <option class="form-control"  value="true" >手动输入模板路径</option>
                                     </select>
                                 </div>
