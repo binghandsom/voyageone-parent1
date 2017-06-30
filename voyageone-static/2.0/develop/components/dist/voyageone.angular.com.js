@@ -238,7 +238,7 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
 /**
  * @description 基于jquery autocomplete
  *                  url：https://github.com/devbridge/jQuery-Autocomplete
- *                  传递字符串数组
+ *                  eg: 传递字符串数组,auto-complete="arrays",arrays:['','']
  * @User: piao
  * @Version: 1.0.0
  */
@@ -258,7 +258,6 @@ angular.module("voyageone.angular.directives").directive("autoComplete", functio
                     return {value:str};
                 }),
                 onSelect: function (suggestion) {
-                    console.log('value', suggestion.value);
                     ngModelCtl.$setViewValue(suggestion.value);
                 }
             });
