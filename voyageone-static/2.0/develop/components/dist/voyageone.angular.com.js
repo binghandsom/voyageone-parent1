@@ -247,19 +247,25 @@ angular.module("voyageone.angular.directives").directive("autoComplete", functio
         restrict: "A",
         require: "ngModel",
         scope: {
-            matchArrays: "=autoComplete"
+            matchArrays: "@autoComplete"
         },
         link: function (scope, element, attrs, ngModelCtl) {
 
-            var _matchArray = angular.copy(scope.matchArrays);
+            scope.$parent.$watch(scope.matchArrays,function (newValue) {
 
-            element.autocomplete({
-                lookup: _.map(_matchArray,function (str) {
-                    return {value:str};
-                }),
-                onSelect: function (suggestion) {
-                    ngModelCtl.$setViewValue(suggestion.value);
-                }
+                var _copyArray = angular.copy(newValue);
+
+                element.autocomplete({
+                    lookup: _.map(_copyArray,function (str) {
+                        return {value:str};
+                    }),
+                    onSelect: function (suggestion) {
+                        ngModelCtl.$setViewValue(suggestion.value);
+                    }
+                }).focus(function () {
+                    element.autocomplete("search");
+                });
+
             });
 
         }
