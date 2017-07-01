@@ -259,6 +259,7 @@ angular.module("voyageone.angular.directives").directive("autoComplete", functio
                     lookup: _.map(_copyArray,function (str) {
                         return {value:str};
                     }),
+                    minChars:0,
                     onSelect: function (suggestion) {
                         ngModelCtl.$setViewValue(suggestion.value);
                     }
