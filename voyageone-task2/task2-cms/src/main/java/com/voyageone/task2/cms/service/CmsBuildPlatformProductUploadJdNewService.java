@@ -616,19 +616,21 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
             // 如果skuList不为空，取得所有sku的库存信息
             // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
             // WMS2.0切换 20170526 charis STA
-            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
-            for (String code : listSxCode) {
-                try {
-                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), code, null);
-                    for (Map.Entry<String, Integer> e : map.entrySet()) {
-                        skuLogicQtyMap.put(e.getKey(), e.getValue());
-                    }
-                } catch (Exception e) {
-                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
-                            channelId, cartId, code, e.getMessage());
-                    throw new Exception(errorMsg);
-                }
-            }
+            // 库存取得逻辑变为直接用cms的库存
+            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(sxData.getSkuList());
+//            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
+//            for (String code : listSxCode) {
+//                try {
+//                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), code, null);
+//                    for (Map.Entry<String, Integer> e : map.entrySet()) {
+//                        skuLogicQtyMap.put(e.getKey(), e.getValue());
+//                    }
+//                } catch (Exception e) {
+//                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
+//                            channelId, cartId, code, e.getMessage());
+//                    throw new Exception(errorMsg);
+//                }
+//            }
             // WMS2.0切换 20170526 charis END
             // delete by desmond 2016/12/26 start 暂时先注释掉，以后有可能还是要删除库存为0的SKU
 //            // 删除主产品的common.skus中库存为0的SKU
