@@ -37,28 +37,26 @@ import java.util.stream.Collectors;
 @RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_PlatformTitleTranslateJob)
 public class CmsPlatformTitleTranslateMqService extends BaseMQCmsService {
 
+    private static final String[][] TITLE_IDS = new String[][]{
+            {"0", "common.fields.originalTitleCn", "originalTitleCn"}, // common
+            {CartEnums.Cart.TM.getId(), "platforms.P" + CartEnums.Cart.TM.getId() + ".fields.title", "title"},
+            {CartEnums.Cart.TG.getId(), "platforms.P" + CartEnums.Cart.TG.getId() + ".fields.title", "title"},
+            {CartEnums.Cart.JD.getId(), "platforms.P" + CartEnums.Cart.JD.getId() + ".fields.productTitle", "productTitle"},
+            {CartEnums.Cart.JG.getId(), "platforms.P" + CartEnums.Cart.JG.getId() + ".fields.productTitle", "productTitle"},
+            {CartEnums.Cart.JM.getId(), "platforms.P" + CartEnums.Cart.JM.getId() + ".fields.productLongName", "productLongName"},
+            {CartEnums.Cart.JGJ.getId(), "platforms.P" + CartEnums.Cart.JGJ.getId() + ".fields.productTitle", "productTitle"},
+            {CartEnums.Cart.JGY.getId(), "platforms.P" + CartEnums.Cart.JGY.getId() + ".fields.productTitle", "productTitle"}
+    }; // {cartId , title_id 全路径, title_id}
     @Autowired
     private ConditionPropValueService conditionPropValueService;
     @Autowired
     private SxProductService sxProductService;
-
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
     public String getTaskName() {
         return "CmsPlatformTitleTranslateMqService";
     }
-
-    private static final String[][] TITLE_IDS = new String[][]{
-            {"0", "common.fields.originalTitleCn", "originalTitleCn"}, // common
-            {CartEnums.Cart.TM.getId(), "platforms.P"+ CartEnums.Cart.TM.getId() + ".fields.title", "title"},
-            {CartEnums.Cart.TG.getId(), "platforms.P"+ CartEnums.Cart.TG.getId() + ".fields.title", "title"},
-            {CartEnums.Cart.JD.getId(), "platforms.P"+ CartEnums.Cart.JD.getId() + ".fields.productTitle", "productTitle"},
-            {CartEnums.Cart.JG.getId(), "platforms.P"+ CartEnums.Cart.JG.getId() + ".fields.productTitle", "productTitle"},
-            {CartEnums.Cart.JM.getId(), "platforms.P"+ CartEnums.Cart.JM.getId() + ".fields.productLongName", "productLongName"},
-            {CartEnums.Cart.JGJ.getId(), "platforms.P"+ CartEnums.Cart.JGJ.getId() + ".fields.productTitle", "productTitle"},
-            {CartEnums.Cart.JGY.getId(), "platforms.P"+ CartEnums.Cart.JGY.getId() + ".fields.productTitle", "productTitle"}
-    }; // {cartId , title_id 全路径, title_id}
 
     /**
      * 入口
@@ -226,32 +224,22 @@ public class CmsPlatformTitleTranslateMqService extends BaseMQCmsService {
     /**
      * 单个code
      */
-    public SxData executeSingleCode(SxData sxData, String runType) {
+    public void executeSingleCode(SxData sxData, String runType) {
         String channelId = "";
         int cartId = 0;
         String code = "";
         String newTitle = "";
         String titleName = "";
         try {
-            if (sxData == null) {
-                throw new BusinessException("SxData取得失败!");
-            }
-
             channelId = sxData.getChannelId();
             cartId = sxData.getCartId();
             code = sxData.getMainProduct().getCommon().getFields().getCode();
             titleName = getTitleId(String.valueOf(cartId))[2];
 
-
-            if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
-                // 有错误的时候，直接报错
-                throw new BusinessException(sxData.getErrorMessage());
-            }
-
             if (!judgeNeedUpdate(sxData ,runType)) {
                 // 不需要翻译
 //                $info("不需要翻译!code[%s]", code);
-                return null;
+                return;
             }
 
             String searchKey = "title_trans_" + String.valueOf(cartId);
@@ -317,7 +305,6 @@ public class CmsPlatformTitleTranslateMqService extends BaseMQCmsService {
             $error(errMsg);
             throw new BusinessException(errMsg);
         }
-        return sxData;
     }
 
     /**
