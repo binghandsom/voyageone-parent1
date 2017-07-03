@@ -16,8 +16,6 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.cnn.enums.CnnConstants;
 import com.voyageone.components.cnn.service.CnnWareService;
-import com.voyageone.ims.rule_expression.MasterWord;
-import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtSxCnSkuDao;
 import com.voyageone.service.daoext.cms.CmsBtSxCnSkuDaoExt;
@@ -39,8 +37,6 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -62,13 +58,14 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
     private static final int CART_ID_CNN = CartEnums.Cart.LCN.getValue();
     // 分隔符(,)
     private final static String Separtor_Coma = ",";
+    // 上新名称
+    private final static String UPLOAD_NAME = "新独立域名Liking";
+    // 保存每个渠道每个商品的上新结果(成功失败件数信息,key为"channelId_groupId")
+    Map<String, Map<String, Object>> resultMap = new ConcurrentHashMap<>();
     // 线程数(synship.tm_task_control中设置的当前job的最大线程数"thread_count", 默认为3)
     private int threadCount;
     // 抽出件数(synship.tm_task_control中设置的当前job的最大线程数"row_count", 默认为500)
     private int rowCount;
-    // 上新名称
-    private final static String UPLOAD_NAME = "新独立域名Liking";
-
     @Autowired
     private PlatformProductUploadService platformProductUploadService;
     @Autowired
@@ -93,9 +90,6 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
     public String getTaskName() {
         return "CmsBuildPlatformProductUploadCnnJob";
     }
-
-    // 保存每个渠道每个商品的上新结果(成功失败件数信息,key为"channelId_groupId")
-    Map<String, Map<String, Object>> resultMap = new ConcurrentHashMap<>();
 
     /**
      * 新独立域名平台产品上新处理
@@ -326,19 +320,21 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
             if (ListUtils.notNull(sxData.getProductList())) {
                 listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
             }
-            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
-            for (String code : listSxCode) {
-                try {
-                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), code, null);
-                    for (Map.Entry<String, Integer> e : map.entrySet()) {
-                        skuLogicQtyMap.put(e.getKey(), e.getValue());
-                    }
-                } catch (Exception e) {
-                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
-                            channelId, cartId, code, e.getMessage());
-                    throw new Exception(errorMsg);
-                }
-            }
+            // 库存取得逻辑变为直接用cms的库存
+            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(sxData.getSkuList());
+//            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
+//            for (String code : listSxCode) {
+//                try {
+//                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), code, null);
+//                    for (Map.Entry<String, Integer> e : map.entrySet()) {
+//                        skuLogicQtyMap.put(e.getKey(), e.getValue());
+//                    }
+//                } catch (Exception e) {
+//                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
+//                            channelId, cartId, code, e.getMessage());
+//                    throw new Exception(errorMsg);
+//                }
+//            }
             // WMS2.0切换 20170526 charis END
 
             // 计算该商品下所有产品所有SKU的逻辑库存之和，新增时如果所有库存为0，报出不能上新错误
