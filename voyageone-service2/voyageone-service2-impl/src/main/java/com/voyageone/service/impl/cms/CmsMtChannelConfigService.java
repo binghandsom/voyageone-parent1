@@ -263,6 +263,8 @@ public class CmsMtChannelConfigService extends BaseService {
 
         model.setConfigValue3(info.getConfigValue3());
 
+        model.setModified(new Date());
+
         cmsMtChannelConfigDao.update(model);
     }
 
