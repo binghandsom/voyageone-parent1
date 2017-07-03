@@ -1725,7 +1725,7 @@ public class SxProductService extends BaseService {
 
             // WMS2.0切换 20170526 charis STA
             // 库存取得逻辑变为直接用cms的库存
-            Map<String, Integer> skuLogicQtyMap = getSaleQuantity(sxData.getSkuList());
+            Map<String, Integer> skuLogicQtyMap = getSaleQuantity(sxData.getMainProduct().getPlatform(sxData.getCartId()).getSkus());
 
             // 上新对象code
 //            List<String> listSxCode = null;

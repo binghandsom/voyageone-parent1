@@ -321,7 +321,7 @@ public class CmsBuildPlatformProductUploadCnnService extends BaseCronTaskService
                 listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
             }
             // 库存取得逻辑变为直接用cms的库存
-            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(sxData.getSkuList());
+            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(mainProduct.getPlatform(cartId).getSkus());
 //            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
 //            for (String code : listSxCode) {
 //                try {

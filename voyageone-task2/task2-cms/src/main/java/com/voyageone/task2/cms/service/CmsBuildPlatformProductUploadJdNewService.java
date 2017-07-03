@@ -613,11 +613,21 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                 jdWareId = Long.parseLong(sxData.getPlatform().getNumIId());
             }
 
+
+
+            // 取得主产品京东平台设置信息(包含SKU等信息)
+            CmsBtProductModel_Platform_Cart mainProductPlatformCart = mainProduct.getPlatform(sxData.getCartId());
+            if (mainProductPlatformCart == null) {
+                $error(String.format("获取主产品京东平台设置信息(包含SKU，Schema属性值等信息)失败！[ProductCode:%s][CartId:%s]",
+                        mainProduct.getCommon().getFields().getCode(), sxData.getCartId()));
+                throw new BusinessException("获取主产品京东平台设置信息(包含SKU，Schema属性值等信息)失败");
+            }
+
             // 如果skuList不为空，取得所有sku的库存信息
             // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
             // WMS2.0切换 20170526 charis STA
             // 库存取得逻辑变为直接用cms的库存
-            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(sxData.getSkuList());
+            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(mainProductPlatformCart.getSkus());
 //            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
 //            for (String code : listSxCode) {
 //                try {
@@ -687,13 +697,6 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 //            }
             // delete by desmond 2016/12/26 end
 
-            // 取得主产品京东平台设置信息(包含SKU等信息)
-            CmsBtProductModel_Platform_Cart mainProductPlatformCart = mainProduct.getPlatform(sxData.getCartId());
-            if (mainProductPlatformCart == null) {
-                $error(String.format("获取主产品京东平台设置信息(包含SKU，Schema属性值等信息)失败！[ProductCode:%s][CartId:%s]",
-                        mainProduct.getCommon().getFields().getCode(), sxData.getCartId()));
-                throw new BusinessException("获取主产品京东平台设置信息(包含SKU，Schema属性值等信息)失败");
-            }
 
             // 取得京东共通Schema(用于设定京东商品标题，长宽高重量等共通属性)
             String catId = "1";          // 类目shema表中京东共通属性的catId为"1"

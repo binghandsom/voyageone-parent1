@@ -495,11 +495,50 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                 listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
             }
 
+
+
+//            StringBuffer sbFailCause = new StringBuffer("");
+            // delete by desmond 2016/12/26 start 暂时先注释掉，以后有可能还是要删除库存为0的SKU
+//            // 考拉上新的时候，以前库存为0的SKU也上，现在改为不上库存为0的SKU不要上新
+//            // 无库存的skuId列表（包含之前卖，现在改为不在考拉上售卖的SKU）,只在更新的时候用
+//            List<String> skuIdListNoStock = new ArrayList<>();
+//            Iterator<BaseMongoMap<String, Object>> skuIter = skuList.iterator();
+//            while (skuIter.hasNext()) {
+//                BaseMongoMap<String, Object> sku = skuIter.next();
+//                // 如果该skuCode对应的库存为0(或库存信息不存在)，则把该sku加到skuIdListNoStock列表中，后面会删除考拉平台上该SKU
+//                if (isSkuNoStock(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()), skuLogicQtyMap)) {
+//                    // 删除SxData.skuList里面库存为0的SKU，这样后面上新的时候，从这个列表中取得的都是有库存的SKU
+//                    skuIter.remove();
+//
+//                    // 把库存为0的SKU的jdSkuId加到skuIdListNoStock列表中，后面会一起再考拉平台上删除这些库存为0的SKU
+//                    if (!StringUtils.isEmpty(sku.getStringAttribute("jdSkuId"))) {
+//                        skuIdListNoStock.add(sku.getStringAttribute("jdSkuId"));
+//                    } else if (!StringUtils.isEmpty(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))){
+//                        sbFailCause.setLength(0);
+//                        // 如果本地数据库中没有jdSkuId,根据skuCode到考拉平台上重新取得考拉skuId
+//                        Sku currentSku = jdSkuService.getSkuByOuterId(shopProp,
+//                                sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()), sbFailCause);
+//                        if (currentSku != null) {
+//                            skuIdListNoStock.add(StringUtils.toString(currentSku.getSkuId()));
+//                        }
+//                    }
+//                }
+//            }
+            // delete by desmond 2016/12/26 end
+
+            // 取得主产品考拉平台设置信息(包含SKU等信息)
+            CmsBtProductModel_Platform_Cart mainProductPlatformCart = mainProduct.getPlatform(sxData.getCartId());
+            if (mainProductPlatformCart == null) {
+                $error(String.format("获取主产品考拉平台设置信息(包含SKU，Schema属性值等信息)失败！[ProductCode:%s][CartId:%s]",
+                        mainProduct.getCommon().getFields().getCode(), sxData.getCartId()));
+                throw new BusinessException("获取主产品考拉平台设置信息(包含SKU，Schema属性值等信息)失败");
+            }
+
             // 如果skuList不为空，取得所有sku的库存信息
             // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
             // WMS2.0切换 20170526 charis STA
             // 库存取得逻辑变为直接用cms的库存
-            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(sxData.getSkuList());
+            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(mainProductPlatformCart.getSkus());
 //            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
 //            for (String code : listSxCode) {
 //                try {
@@ -538,43 +577,6 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
             int totalSkusLogicQty = 0;
             for (String skuCode : skuLogicQtyMap.keySet()) {
                 totalSkusLogicQty += skuLogicQtyMap.get(skuCode);
-            }
-
-//            StringBuffer sbFailCause = new StringBuffer("");
-            // delete by desmond 2016/12/26 start 暂时先注释掉，以后有可能还是要删除库存为0的SKU
-//            // 考拉上新的时候，以前库存为0的SKU也上，现在改为不上库存为0的SKU不要上新
-//            // 无库存的skuId列表（包含之前卖，现在改为不在考拉上售卖的SKU）,只在更新的时候用
-//            List<String> skuIdListNoStock = new ArrayList<>();
-//            Iterator<BaseMongoMap<String, Object>> skuIter = skuList.iterator();
-//            while (skuIter.hasNext()) {
-//                BaseMongoMap<String, Object> sku = skuIter.next();
-//                // 如果该skuCode对应的库存为0(或库存信息不存在)，则把该sku加到skuIdListNoStock列表中，后面会删除考拉平台上该SKU
-//                if (isSkuNoStock(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()), skuLogicQtyMap)) {
-//                    // 删除SxData.skuList里面库存为0的SKU，这样后面上新的时候，从这个列表中取得的都是有库存的SKU
-//                    skuIter.remove();
-//
-//                    // 把库存为0的SKU的jdSkuId加到skuIdListNoStock列表中，后面会一起再考拉平台上删除这些库存为0的SKU
-//                    if (!StringUtils.isEmpty(sku.getStringAttribute("jdSkuId"))) {
-//                        skuIdListNoStock.add(sku.getStringAttribute("jdSkuId"));
-//                    } else if (!StringUtils.isEmpty(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))){
-//                        sbFailCause.setLength(0);
-//                        // 如果本地数据库中没有jdSkuId,根据skuCode到考拉平台上重新取得考拉skuId
-//                        Sku currentSku = jdSkuService.getSkuByOuterId(shopProp,
-//                                sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()), sbFailCause);
-//                        if (currentSku != null) {
-//                            skuIdListNoStock.add(StringUtils.toString(currentSku.getSkuId()));
-//                        }
-//                    }
-//                }
-//            }
-            // delete by desmond 2016/12/26 end
-
-            // 取得主产品考拉平台设置信息(包含SKU等信息)
-            CmsBtProductModel_Platform_Cart mainProductPlatformCart = mainProduct.getPlatform(sxData.getCartId());
-            if (mainProductPlatformCart == null) {
-                $error(String.format("获取主产品考拉平台设置信息(包含SKU，Schema属性值等信息)失败！[ProductCode:%s][CartId:%s]",
-                        mainProduct.getCommon().getFields().getCode(), sxData.getCartId()));
-                throw new BusinessException("获取主产品考拉平台设置信息(包含SKU，Schema属性值等信息)失败");
             }
 
             // 取得考拉共通Schema(用于设定考拉商品标题，长宽高重量等共通属性)
