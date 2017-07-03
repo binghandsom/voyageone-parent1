@@ -411,7 +411,7 @@ public class CmsBuildPlatformProductUploadJdNewServiceTest {
 
         System.out.println(sxData.getMainProduct().getPlatform(sxData.getCartId()).getFields().getStringAttribute("productTitle"));
 
-        sxData = cmsTranslateMqService.executeSingleCode(sxData, "1");
+        cmsTranslateMqService.executeSingleCode(sxData, "1");
 
         System.out.println(sxData.getMainProduct().getPlatform(sxData.getCartId()).getFields().getStringAttribute("productTitle"));
     }
