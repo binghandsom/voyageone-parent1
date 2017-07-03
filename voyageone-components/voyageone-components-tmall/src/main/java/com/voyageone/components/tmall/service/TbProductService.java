@@ -116,7 +116,7 @@ public class TbProductService extends TbBase {
     }
 
     private String addProduct(Long categoryId, Long brandId, String xmlData, ShopBean config, StringBuffer failCause,
-                                 TmallApiExecuteContext tmallApiExecuteContext)
+                              TmallApiExecuteContext tmallApiExecuteContext)
             throws ApiException {
         TmallProductSchemaAddRequest request = new TmallProductSchemaAddRequest();
         request.setCategoryId(categoryId);
