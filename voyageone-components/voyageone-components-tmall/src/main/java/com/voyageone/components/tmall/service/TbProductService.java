@@ -132,13 +132,33 @@ public class TbProductService extends TbBase {
     }
 
     //tmall.item.schema.add
-    public TmallItemSchemaAddResponse addItem(Long categoryId, String productId, String xmlData, ShopBean config) throws ApiException {
+    public TmallItemSchemaAddResponse addItem(Long categoryId, String productId, String xmlData, ShopBean config)
+            throws ApiException {
+        return tryAddItem(categoryId,
+                productId,
+                xmlData,
+                config,
+                TmallApiExecuteContext.Default);
+    }
+
+    public TmallItemSchemaAddResponse addItemUnTry(Long categoryId, String productId, String xmlData, ShopBean config)
+            throws ApiException {
+        return tryAddItem(categoryId,
+                productId,
+                xmlData,
+                config,
+                new TmallApiExecuteContext().tryCount(1));
+    }
+
+    private TmallItemSchemaAddResponse tryAddItem(Long categoryId, String productId, String xmlData, ShopBean config,
+                                                  TmallApiExecuteContext tmallApiExecuteContext)
+            throws ApiException {
         TmallItemSchemaAddRequest request = new TmallItemSchemaAddRequest();
         request.setCategoryId(categoryId);
         request.setProductId(Long.parseLong(productId));
         request.setXmlData(xmlData);
 
-        return reqTaobaoApi(config, request);
+        return reqTaobaoApi(config, request, tmallApiExecuteContext.tryCount(), tmallApiExecuteContext.tryWait(), true);
     }
 
     //tmall.item.schema.update
