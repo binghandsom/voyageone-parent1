@@ -364,8 +364,6 @@ public class ProductPlatformService extends BaseService {
         platformModel.setpBrandId((String) platform.get("pBrandId"));
         platformModel.setpBrandName((String) platform.get("pBrandName"));
         platformModel.setpCatStatus((String) platform.get("pCatStatus"));
-        BaseMongoMap<String,Object> fields = (BaseMongoMap<String, Object>) platform.get("fields");
-        platformModel.setFields(fields);
         if(platform.get("images4") != null){
             platformModel.setImages4(JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(platform.get("images4")), CmsBtProductModel_Field_Image.class));
         }
