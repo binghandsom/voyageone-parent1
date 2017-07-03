@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.product;
 
+import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -1885,6 +1886,8 @@ public class CmsProductDetailService extends BaseViewService {
             throw new BusinessException(String.format("产品(%d)不存在", prodId));
         }
 
+        String code = productModel.getCommon().getFields().getCode();
+
         JongoUpdate jongoUpdate = new JongoUpdate();
         jongoUpdate.setQuery("{\"prodId\": #}");
         jongoUpdate.setQueryParameters(productModel.getProdId());
@@ -1897,25 +1900,81 @@ public class CmsProductDetailService extends BaseViewService {
             jongoUpdate.setUpdateParameters(originalTitleCn, username, DateTimeUtil.getNowTimeStamp());
         }
 
+        HashMap<String, Object> updateMap = new HashMap<>();
+        HashMap<String, Object> queryMap = new HashMap<>();
 
+        updateMap.put("common.fields.originalTitleCn", originalTitleCn);
 
-        WriteResult writeResult = cmsBtProductDao.updateFirst(jongoUpdate, channelId);
+        if ("928".equals(channelId) || "024".equals(channelId)) {
+            updateMap.put("common.catConf", "1");
+        }
 
-        $info(String.format("(%s)更新产品(prodId=%d)originalTitleCn信息，更新结果:%s", username, prodId, JacksonUtil.bean2Json(writeResult)));
+        queryMap.put("channelId", channelId);
+        queryMap.put("prodId", prodId);
 
-        String msg = "高级检索 单商品originalTitleCn设置" ;
-        List<String> prodCodeList = new ArrayList<>();
-        prodCodeList.add(productModel.getCommon().getFields().getCode());
-        productStatusHistoryService.insertList(channelId, prodCodeList, -1, EnumProductOperationType.SingleProdSetOriginalTitleCn, msg, username);
+        // 如果是Liking(928)，Master -> originalTitleCn修改后同步修改【聚美：产品名，长标题，中标题】【匠心界：商品名称】【官网同构：标题】
+        if ("928".equals(channelId)) {
 
-        String code = productModel.getCommon().getFields().getCode();
-        for (CmsBtProductModel_Platform_Cart platformCart : productModel.getPlatforms().values()) {
-            Integer cartId = platformCart.getCartId();
-            if (cartId.intValue() > 19 && cartId.intValue() < 900 && CmsConstants.ProductStatus.Approved.name().equals(platformCart.getStatus())) {
-                //取得approved的code插入
-                $debug(String.format("商品(channel=%s, code=%s)Title修改，平台(cartId=%d)Approved需重新上新", channelId, code, cartId));
-                sxProductService.insertPlatformWorkload(channelId, cartId, PlatformWorkloadAttribute.TITLE, Arrays.asList(code), username);
+            updateMap.put("common.fields.translateStatus", "1");
+            updateMap.put("common.fields.translator", username);
+            updateMap.put("common.fields.translateTime", DateTimeUtil.getNow());
+
+            // 聚美产品名 / 聚美长标题 / 聚美中标题
+            CmsBtProductModel_Platform_Cart jmCart = productModel.getPlatform(CartEnums.Cart.JM);
+            if (jmCart != null && jmCart.getFields() != null) {
+
+                String productNameCn = jmCart.getFields().getStringAttribute("productNameCn");
+                String productLongName = jmCart.getFields().getStringAttribute("productLongName");
+                String productMediumName = jmCart.getFields().getStringAttribute("productMediumName");
+                if (!originalTitleCn.equals(productNameCn)) {
+                    updateMap.put(String.format("platforms.P%s.fields.productNameCn", CartEnums.Cart.JM.getId()), originalTitleCn);
+                }
+                if (!originalTitleCn.equals(productLongName)) {
+                    updateMap.put(String.format("platforms.P%s.fields.productLongName", CartEnums.Cart.JM.getId()), originalTitleCn);
+                }
+                if (!originalTitleCn.equals(productMediumName)) {
+                    updateMap.put(String.format("platforms.P%s.fields.productMediumName", CartEnums.Cart.JM.getId()), originalTitleCn);
+                }
+            }
+
+            // 官网同购标题
+            CmsBtProductModel_Platform_Cart usjoiCart = productModel.getPlatform(CartEnums.Cart.LTT);
+            if (usjoiCart != null && usjoiCart.getFields() != null) {
+                String usjoiCartTitle = usjoiCart.getFields().getStringAttribute("title");
+                if (!originalTitleCn.equals(usjoiCartTitle)) {
+                    updateMap.put(String.format("platforms.P%s.fields.title", CartEnums.Cart.LTT.getId()), originalTitleCn);
+                }
+            }
+
+            // 匠心界标题
+            CmsBtProductModel_Platform_Cart jgjCart = productModel.getPlatform(CartEnums.Cart.JGJ);
+            if (jgjCart != null && jgjCart.getFields() != null) {
+                String productTitle = jgjCart.getFields().getStringAttribute("productTitle");
+                if (!originalTitleCn.equals(productTitle)) {
+                    updateMap.put(String.format("platforms.P%s.fields.productTitle", CartEnums.Cart.JGJ.getId()), originalTitleCn);
+                }
             }
         }
+
+        BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
+        bulkUpdateModel.setUpdateMap(updateMap);
+        bulkUpdateModel.setQueryMap(queryMap);
+
+        // 注意修改产品标题，如果平台Approved则平台上新
+        BulkWriteResult writeResult = productService.bulkUpdateWithMap(channelId, Collections.singletonList(bulkUpdateModel), username, "$set");
+        $info(String.format("(%s)高级检索修改单商品(channelId=%s, code=%s)标题，结果：%s", username, channelId, code, JacksonUtil.bean2Json(writeResult)));
+
+        // 产品如有平台状态Approved，则重新上新
+        for (CmsBtProductModel_Platform_Cart platformCart : productModel.getPlatforms().values()) {
+            Integer cartId = platformCart.getCartId();
+            if (cartId > 19 && cartId < 900 && CmsConstants.ProductStatus.Approved.name().equals(platformCart.getStatus())) {
+                $debug(String.format("(%s)高级检索修改单商品标题(channel=%s, code=%s)，平台(cartId=%d)Approved需重新上新", username, channelId, code, cartId));
+                sxProductService.insertPlatformWorkload(channelId, cartId, PlatformWorkloadAttribute.TITLE, Collections.singletonList(code), username);
+            }
+        }
+
+
+        String msg = "高级检索 单商品originalTitleCn设置" ;
+        productStatusHistoryService.insertList(channelId, Collections.singletonList(code), -1, EnumProductOperationType.SingleProdSetOriginalTitleCn, msg, username);
     }
 }

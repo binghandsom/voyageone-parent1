@@ -1724,24 +1724,28 @@ public class SxProductService extends BaseService {
         if (!mappingTypePropsMap.isEmpty()) {
 
             // WMS2.0切换 20170526 charis STA
+            // 库存取得逻辑变为直接用cms的库存
+            Map<String, Integer> skuLogicQtyMap = getSaleQuantity(sxData.getMainProduct().getPlatform(sxData.getCartId()).getSkus());
+
             // 上新对象code
-            List<String> listSxCode = null;
-            if (ListUtils.notNull(sxData.getProductList())) {
-                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
-            }
-            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
-            for (String code : listSxCode) {
-                try {
-                    Map<String, Integer> map = getAvailQuantity(sxData.getChannelId(), String.valueOf(sxData.getCartId()), code, null);
-                    for (Map.Entry<String, Integer> e : map.entrySet()) {
-                        skuLogicQtyMap.put(e.getKey(), e.getValue());
-                    }
-                } catch (Exception e) {
-                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
-                            sxData.getChannelId(), sxData.getCartId(), code, e.getMessage());
-                    throw new Exception(errorMsg);
-                }
-            }
+//            List<String> listSxCode = null;
+//            if (ListUtils.notNull(sxData.getProductList())) {
+//                listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
+//            }
+//            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
+
+//            for (String code : listSxCode) {
+//                try {
+//                    Map<String, Integer> map = getAvailQuantity(sxData.getChannelId(), String.valueOf(sxData.getCartId()), code, null);
+//                    for (Map.Entry<String, Integer> e : map.entrySet()) {
+//                        skuLogicQtyMap.put(e.getKey(), e.getValue());
+//                    }
+//                } catch (Exception e) {
+//                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
+//                            sxData.getChannelId(), sxData.getCartId(), code, e.getMessage());
+//                    throw new Exception(errorMsg);
+//                }
+//            }
             // WMS2.0切换 20170526 charis END
 
 
@@ -6380,6 +6384,18 @@ public class SxProductService extends BaseService {
         private int getSort() {
             return this.sort;
         }
+    }
+
+    public Map<String, Integer> getSaleQuantity(List<BaseMongoMap<String, Object>> skuList) {
+        Map<String, Integer> skuSaleQty = new HashMap<>();
+
+        for (BaseMongoMap<String, Object> sku : skuList) {
+            Integer saleQty = sku.getIntAttribute(CmsBtProductConstants.Platform_SKU_COM.qty.name());
+            if (saleQty < 0) saleQty = 0;
+            skuSaleQty.put(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()), saleQty);
+        }
+
+        return skuSaleQty;
     }
 
 }
