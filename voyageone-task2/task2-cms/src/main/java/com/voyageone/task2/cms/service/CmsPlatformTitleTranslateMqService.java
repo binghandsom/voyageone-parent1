@@ -37,28 +37,26 @@ import java.util.stream.Collectors;
 @RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_PlatformTitleTranslateJob)
 public class CmsPlatformTitleTranslateMqService extends BaseMQCmsService {
 
+    private static final String[][] TITLE_IDS = new String[][]{
+            {"0", "common.fields.originalTitleCn", "originalTitleCn"}, // common
+            {CartEnums.Cart.TM.getId(), "platforms.P" + CartEnums.Cart.TM.getId() + ".fields.title", "title"},
+            {CartEnums.Cart.TG.getId(), "platforms.P" + CartEnums.Cart.TG.getId() + ".fields.title", "title"},
+            {CartEnums.Cart.JD.getId(), "platforms.P" + CartEnums.Cart.JD.getId() + ".fields.productTitle", "productTitle"},
+            {CartEnums.Cart.JG.getId(), "platforms.P" + CartEnums.Cart.JG.getId() + ".fields.productTitle", "productTitle"},
+            {CartEnums.Cart.JM.getId(), "platforms.P" + CartEnums.Cart.JM.getId() + ".fields.productLongName", "productLongName"},
+            {CartEnums.Cart.JGJ.getId(), "platforms.P" + CartEnums.Cart.JGJ.getId() + ".fields.productTitle", "productTitle"},
+            {CartEnums.Cart.JGY.getId(), "platforms.P" + CartEnums.Cart.JGY.getId() + ".fields.productTitle", "productTitle"}
+    }; // {cartId , title_id 全路径, title_id}
     @Autowired
     private ConditionPropValueService conditionPropValueService;
     @Autowired
     private SxProductService sxProductService;
-
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
     public String getTaskName() {
         return "CmsPlatformTitleTranslateMqService";
     }
-
-    private static final String[][] TITLE_IDS = new String[][]{
-            {"0", "common.fields.originalTitleCn", "originalTitleCn"}, // common
-            {CartEnums.Cart.TM.getId(), "platforms.P"+ CartEnums.Cart.TM.getId() + ".fields.title", "title"},
-            {CartEnums.Cart.TG.getId(), "platforms.P"+ CartEnums.Cart.TG.getId() + ".fields.title", "title"},
-            {CartEnums.Cart.JD.getId(), "platforms.P"+ CartEnums.Cart.JD.getId() + ".fields.productTitle", "productTitle"},
-            {CartEnums.Cart.JG.getId(), "platforms.P"+ CartEnums.Cart.JG.getId() + ".fields.productTitle", "productTitle"},
-            {CartEnums.Cart.JM.getId(), "platforms.P"+ CartEnums.Cart.JM.getId() + ".fields.productLongName", "productLongName"},
-            {CartEnums.Cart.JGJ.getId(), "platforms.P"+ CartEnums.Cart.JGJ.getId() + ".fields.productTitle", "productTitle"},
-            {CartEnums.Cart.JGY.getId(), "platforms.P"+ CartEnums.Cart.JGY.getId() + ".fields.productTitle", "productTitle"}
-    }; // {cartId , title_id 全路径, title_id}
 
     /**
      * 入口
@@ -211,6 +209,92 @@ public class CmsPlatformTitleTranslateMqService extends BaseMQCmsService {
                 }
 
             }
+        } catch (Exception e) {
+            String errMsg = String.format("商品标题设值失败[ChannelId:%s] [cartId:%s] [code:%s]!", channelId, String.valueOf(cartId), code);
+            if (StringUtils.isEmpty(e.getMessage())) {
+                e.printStackTrace();
+            } else {
+                errMsg += e.getMessage();
+            }
+            $error(errMsg);
+            throw new BusinessException(errMsg);
+        }
+    }
+
+    /**
+     * 单个code
+     */
+    public void executeSingleCode(SxData sxData, String runType) {
+        String channelId = "";
+        int cartId = 0;
+        String code = "";
+        String newTitle = "";
+        String titleName = "";
+        try {
+            channelId = sxData.getChannelId();
+            cartId = sxData.getCartId();
+            code = sxData.getMainProduct().getCommon().getFields().getCode();
+            titleName = getTitleId(String.valueOf(cartId))[2];
+
+            if (!judgeNeedUpdate(sxData ,runType)) {
+                // 不需要翻译
+//                $info("不需要翻译!code[%s]", code);
+                return;
+            }
+
+            String searchKey = "title_trans_" + String.valueOf(cartId);
+            List<CmsMtChannelConditionConfigModel> conditionPropValueModels = conditionPropValueService.get(channelId, searchKey);
+            if (ListUtils.isNull(conditionPropValueModels)) {
+                // 看看共通有没有
+                conditionPropValueModels = conditionPropValueService.get(channelId, "title_trans_0");
+            }
+
+            if (ListUtils.isNull(conditionPropValueModels)) {
+                // Condition表未设定,直接翻译
+                List<String> transBaiduOrg = new ArrayList<>();
+                // 20161109 tom 品牌不翻译
+                String brandEn = sxData.getMainProduct().getCommon().getFields().getBrand();
+                String nameEn = sxData.getMainProduct().getCommon().getFields().getProductNameEn();
+                nameEn = nameEn.replaceAll("(?i)" + brandEn, ""); // 删掉英文标题里的品牌（忽略大小写）
+                transBaiduOrg.add(nameEn);
+                List<String> transBaiduCn = sxProductService.transBaidu(transBaiduOrg);
+                if (ListUtils.isNull(transBaiduCn)) {
+                    throw new BusinessException("百度翻译失败!");
+                }
+                // 回写product表
+                newTitle = brandEn + " " + transBaiduCn.get(0);
+                updateTitle(channelId, String.valueOf(cartId), code, newTitle); // 在翻译之后的内容前， 加上品牌
+
+            } else {
+                // Condition表设定了
+                ShopBean shopBean = Shops.getShop(channelId, cartId);
+
+                // 表达式解析子
+                ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
+
+                RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+                boolean isFind = false;
+                for (CmsMtChannelConditionConfigModel conditionPropValueModel : conditionPropValueModels) {
+                    // 应该只有一条,总之取第一条就好
+                    String conditionExpressionStr = conditionPropValueModel.getConditionExpression();
+                    RuleExpression conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
+                    String propValue = expressionParser.parse(conditionExpression, shopBean, getTaskName(), null);
+                    if (!StringUtils.isEmpty(propValue)) {
+                        isFind = true;
+                        $info("翻译后标题为:" + propValue);
+                        newTitle = propValue;
+                        // 回写product表
+                        updateTitle(channelId, String.valueOf(cartId), code, newTitle);
+                        break;
+                    }
+                }
+                if (!isFind) {
+                    throw new BusinessException("未找到符合条件的设定!");
+                }
+
+            }
+            sxData.getMainProduct().getPlatform(cartId).getFields().setStringAttribute(titleName, newTitle);
+
         } catch (Exception e) {
             String errMsg = String.format("商品标题设值失败[ChannelId:%s] [cartId:%s] [code:%s]!", channelId, String.valueOf(cartId), code);
             if (StringUtils.isEmpty(e.getMessage())) {

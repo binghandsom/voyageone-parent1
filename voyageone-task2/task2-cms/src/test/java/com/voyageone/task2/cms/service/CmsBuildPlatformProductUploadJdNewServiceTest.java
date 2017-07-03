@@ -52,6 +52,8 @@ public class CmsBuildPlatformProductUploadJdNewServiceTest {
     @Autowired
     SxProductService sxProductService;
 
+    @Autowired
+    CmsPlatformTitleTranslateMqService cmsTranslateMqService;
     @Test
     public void testOnStartup() throws Exception {
         List<TaskControlBean> taskControlList = new ArrayList<>();
@@ -399,5 +401,18 @@ public class CmsBuildPlatformProductUploadJdNewServiceTest {
                     skuQtyMap.put(sku.get("outer_id").toString().toLowerCase(), sku.get("quantity").toString());
                 });
         System.out.println(skuQtyMap);
+    }
+
+    @Test
+    public void testTranslateTitle() {
+        String channelId = "928";
+        long groupId = 1323281L;
+        SxData sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
+
+        System.out.println(sxData.getMainProduct().getPlatform(sxData.getCartId()).getFields().getStringAttribute("productTitle"));
+
+        sxData = cmsTranslateMqService.executeSingleCode(sxData, "1");
+
+        System.out.println(sxData.getMainProduct().getPlatform(sxData.getCartId()).getFields().getStringAttribute("productTitle"));
     }
 }

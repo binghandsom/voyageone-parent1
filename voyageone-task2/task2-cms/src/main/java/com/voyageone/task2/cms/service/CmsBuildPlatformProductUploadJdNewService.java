@@ -1,9 +1,11 @@
 package com.voyageone.task2.cms.service;
 
 import com.google.common.base.Joiner;
-import com.jd.open.api.sdk.domain.*;
+import com.jd.open.api.sdk.domain.AdWords;
+import com.jd.open.api.sdk.domain.Feature;
+import com.jd.open.api.sdk.domain.Image;
+import com.jd.open.api.sdk.domain.Prop;
 import com.jd.open.api.sdk.domain.ware.Sku;
-import com.jd.open.api.sdk.request.ware.ImageWriteUpdateRequest;
 import com.jd.open.api.sdk.response.ware.ImageWriteUpdateResponse;
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
@@ -33,7 +35,6 @@ import com.voyageone.components.jd.bean.JdProductNewBean;
 import com.voyageone.components.jd.service.JdSaleService;
 import com.voyageone.components.jd.service.JdSkuService;
 import com.voyageone.components.jd.service.JdWareNewService;
-import com.voyageone.components.jd.service.JdWareService;
 import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
@@ -60,18 +61,13 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
-import org.apache.commons.beanutils.converters.IntegerConverter;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -183,6 +179,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
     private CmsMtChannelConditionMappingConfigDao cmsMtChannelConditionMappingConfigDao;
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
+    private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
 
     @Override
     public SubSystem getSubSystem() {
@@ -193,8 +190,6 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
     public String getTaskName() {
         return "CmsBuildPlatformProductUploadJdNewJob";
     }
-
-    private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
 
     /**
      * 京东平台上新处理
@@ -526,9 +521,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         }
 
         try {
-            // 上新用的商品数据信息取得 // TODO：这段翻译写得不好看， 以后再改
-            sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
-            cmsTranslateMqService.executeSingleCode(channelId, 0, sxData.getMainProduct().getCommon().getFields().getCode(), "0");
+            // 上新用的商品数据信息取得
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
             if (sxData == null) {
                 throw new BusinessException("取得上新用的商品数据信息失败！请向管理员确认 [sxData=null]");
@@ -599,6 +592,10 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
+
+            // 标题翻译
+            cmsTranslateMqService.executeSingleCode(sxData, "0");
+
             // 上新对象code
             List<String> listSxCode = null;
             if (ListUtils.notNull(sxData.getProductList())) {
