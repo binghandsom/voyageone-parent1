@@ -105,7 +105,9 @@ public interface CmsBtProductConstants {
 		/* size(共通) */
 		size,
 		/* sizeSx(共通) */
-		sizeSx
+		sizeSx,
+		/* qty(共通) */
+		qty
 	}
 
 //	/**
