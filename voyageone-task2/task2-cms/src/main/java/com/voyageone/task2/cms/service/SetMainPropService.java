@@ -1658,7 +1658,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 platformP0.setMainProductCode(groupP0.getMainProductCode());
 
                 // 把主商品的几个状态复制过来 james 2016/08/29
-                copyAttributeFromMainProduct(feed.getChannelId(), common, groupP0.getMainProductCode());
+                // 把主商品的自由标签复制过来 rex 2017/07/04
+                copyAttributeFromMainProduct(feed.getChannelId(), product, groupP0.getMainProductCode());
             }
             platforms.put("P0", platformP0);
             // add desmond 2016/07/04 end
@@ -1729,6 +1730,13 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 } else {
                     platform.setpIsMain(0);
                     platform.setMainProductCode(group.getMainProductCode());    // add desmond 2016/07/04
+
+                    // 复制主商品的店铺内分类
+                    CmsBtProductModel mainProductModel = productService.getProductByCode(product.getChannelId(), group.getMainProductCode());
+                    if (mainProductModel != null && mainProductModel.getPlatform(iCartId) != null) {
+                        platform.setSellerCats(mainProductModel.getPlatform(iCartId).getSellerCats());
+                    }
+
                 }
 
                 // 平台类目状态(新增时)
@@ -3009,9 +3017,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             });
         }
 
-        private void copyAttributeFromMainProduct(String channelId, CmsBtProductModel_Common common, String mainProductCode) {
+        private void copyAttributeFromMainProduct(String channelId, CmsBtProductModel productModel, String mainProductCode) {
             CmsBtProductModel mainProduct = productService.getProductByCode(channelId, mainProductCode);
             if (mainProduct != null) {
+                CmsBtProductModel_Common common = productModel.getCommon();
                 common.setCatId(mainProduct.getCommon().getCatId());
                 common.setCatPath(mainProduct.getCommon().getCatPath());
 
@@ -3035,6 +3044,20 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 common.getFields().setOriginalTitleCn(mainProduct.getCommon().getFields().getOriginalTitleCn());
                 common.getFields().setMaterialCn(mainProduct.getCommon().getFields().getMaterialCn());
                 common.getFields().setUsageCn(mainProduct.getCommon().getFields().getUsageCn());
+
+                // 复制主商品自由标签
+                List<String> mainFreeTags = mainProduct.getFreeTags();
+                if (!ListUtils.isNull(mainFreeTags)) {
+                    if (ListUtils.isNull(productModel.getFreeTags())) {
+                        productModel.setFreeTags(mainFreeTags);
+                    } else {
+                        for (String tag : mainFreeTags) {
+                            if (!productModel.getFreeTags().contains(tag)) {
+                                productModel.getFreeTags().add(tag);
+                            }
+                        }
+                    }
+                }
             }
         }
 
