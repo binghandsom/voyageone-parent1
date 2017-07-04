@@ -1144,7 +1144,7 @@ public class ProductService extends BaseService {
     public int updateProductFeedToMaster(String channelId, CmsBtProductModel cmsProduct, String modifier, String comment) {
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", cmsProduct.getProdId());
-//        queryMap.put("modified", cmsProduct.getModified());
+        queryMap.put("modified", cmsProduct.getModified());
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         HashMap<String, Object> updateMap = new HashMap<>();
 //        if (cmsProduct.getCommon().getCatId() != null) {
