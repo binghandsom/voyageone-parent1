@@ -6398,4 +6398,14 @@ public class SxProductService extends BaseService {
         return skuSaleQty;
     }
 
+    public String deleteErrorWord(String title, String errorWord) {
+
+        String[] errorWordArrs = errorWord.split(",");
+
+        for (int i = 0; i < errorWordArrs.length - 1; i += 2) {
+            title = title.replace(errorWordArrs[i], errorWordArrs[i + 1]);
+        }
+        return title;
+    }
+
 }

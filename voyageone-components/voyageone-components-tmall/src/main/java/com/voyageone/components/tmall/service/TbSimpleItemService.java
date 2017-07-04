@@ -15,6 +15,7 @@ import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.components.tmall.TbBase;
+import com.voyageone.components.tmall.bean.TmallApiExecuteContext;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -70,11 +71,21 @@ public class TbSimpleItemService extends TbBase {
      * @return numIId
      */
     public String addSimpleItem(ShopBean shopBean, String schemaXml) throws ApiException {
+        return tryAddSimpleItem(shopBean, schemaXml, TmallApiExecuteContext.Default);
+    }
+
+    public String addSimpleItemUnTry(ShopBean shopBean, String schemaXml) throws ApiException {
+        return tryAddSimpleItem(shopBean, schemaXml, new TmallApiExecuteContext().tryCount(1));
+    }
+
+    private String tryAddSimpleItem(ShopBean shopBean, String schemaXml, TmallApiExecuteContext tmallApiExecuteContext)
+            throws ApiException {
 
         TmallItemSimpleschemaAddRequest request = new TmallItemSimpleschemaAddRequest();
         request.setSchemaXmlFields(schemaXml);
 
-        TmallItemSimpleschemaAddResponse response = reqTaobaoApi(getTonggouShopBean(shopBean), request);
+        TmallItemSimpleschemaAddResponse response = reqTaobaoApi(getTonggouShopBean(shopBean), request,
+                tmallApiExecuteContext.tryCount(), tmallApiExecuteContext.tryWait(), true);
 
         // 调用淘宝API未成功或者subCode不为空的时候(errorCode是英文错误，subCode是中文错误)
         if (!response.isSuccess() || !StringUtils.isEmpty(response.getSubCode())) {

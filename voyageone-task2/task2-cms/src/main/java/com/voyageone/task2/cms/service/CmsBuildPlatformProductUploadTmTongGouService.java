@@ -480,12 +480,14 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
+            // 处理标题或描述中不合理的字符
+            String errorWord = getConditionPropValue(sxData, "updateErrorWord", shopProp);
 
             // 20170417 全链路库存改造 charis STA
             // 判断一下是否需要做货品绑定
             String storeCode = taobaoScItemService.doGetLikingStoreCode(shopProp, sxData.getMainProduct().getOrgChannelId());
             if (!StringUtils.isEmpty(storeCode) && !channelId.equals("928")) {
-                String title = getTitleForTongGou(mainProduct, sxData, shopProp);
+                String title = getTitleForTongGou(mainProduct, sxData, errorWord);
                 Map<String, ScItem> scItemMap = new HashMap<>();
                 for (String sku_outerId : strSkuCodeList) {
                     ScItem scItem;
@@ -581,7 +583,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
             // 编辑天猫国际官网同购共通属性
             BaseMongoMap<String, String> productInfoMap = getProductInfo(sxData, shopProp, priceConfigValue,
-                    skuLogicQtyMap, tmTonggouFeedAttrList, categoryMappingListMap, updateWare, tbItemSchema);
+                    skuLogicQtyMap, tmTonggouFeedAttrList, categoryMappingListMap, updateWare, tbItemSchema, errorWord);
 
             // 构造Field列表
             List<Field> itemFieldList = new ArrayList<>();
@@ -1027,7 +1029,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     private BaseMongoMap<String, String> getProductInfo(SxData sxData, ShopBean shopProp, String priceConfigValue,
                                                         Map<String, Integer> skuLogicQtyMap, List<String> tmTonggouFeedAttrList,
                                                         Map<String, List<Map<String, String>>> categoryMappingListMap,
-                                                        boolean updateWare, TbItemSchema tbItemSchema) throws BusinessException {
+                                                        boolean updateWare, TbItemSchema tbItemSchema, String errorWord) throws BusinessException {
         // 上新产品信息保存map
         BaseMongoMap<String, String> productInfoMap = new BaseMongoMap<>();
 
@@ -1040,10 +1042,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 天猫国际官网同购平台（或USJOI天猫国际官网同购平台）
         CmsBtProductModel_Platform_Cart mainProductPlatformCart = mainProduct.getPlatform(sxData.getCartId());
 
-        // 先临时这样处理
-        String notAllowList = getConditionPropValue(sxData, "notAllowTitleList", shopProp);
-
-        String valTitle = getTitleForTongGou(mainProduct, sxData, shopProp);
+        String valTitle = getTitleForTongGou(mainProduct, sxData, errorWord);
         // 店铺级标题禁用词 20161216 tom END
         // 官网同购是会自动把超长的字符截掉的， 为了提示运营， 报个错吧 20170509 tom START
         if (!StringUtils.isEmpty(valTitle)
@@ -1349,13 +1348,14 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // modified by morse.lu 2016/12/23 end
         // 店铺级标题禁用词 20161216 tom START
         // 先临时这样处理
-        if (!StringUtils.isEmpty(notAllowList)) {
+        if (!StringUtils.isEmpty(errorWord)) {
             if (!StringUtils.isEmpty(valDescription)) {
-                String[] splitWord = notAllowList.split(",");
-                for (String notAllow : splitWord) {
-                    // 直接删掉违禁词
-                    valDescription = valDescription.replaceAll(notAllow, "");
-                }
+//                String[] splitWord = notAllowList.split(",");
+//                for (String notAllow : splitWord) {
+//                    // 直接删掉违禁词
+//                    valDescription = valDescription.replaceAll(notAllow, "");
+//                }
+                sxProductService.deleteErrorWord(valTitle, errorWord);
             }
         }
         // 店铺级标题禁用词 20161216 tom END
@@ -2334,7 +2334,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         return null;
     }
 
-    public String getTitleForTongGou(CmsBtProductModel mainProduct, SxData sxData, ShopBean shopProp) {
+    public String getTitleForTongGou(CmsBtProductModel mainProduct, SxData sxData, String errorWord) {
         // 天猫国际官网同购平台（或USJOI天猫国际官网同购平台）
         CmsBtProductModel_Platform_Cart mainProductPlatformCart = mainProduct.getPlatform(sxData.getCartId());
         // 标题(必填)
@@ -2355,15 +2355,16 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 //        productInfoMap.put("title", "测试请不要拍 " + valTitle);
 
         // 店铺级标题禁用词 20161216 tom START
-        // 先临时这样处理
-        String notAllowList = getConditionPropValue(sxData, "notAllowTitleList", shopProp);
-        if (!StringUtils.isEmpty(notAllowList)) {
+//        // 先临时这样处理
+//        String notAllowList = getConditionPropValue(sxData, "notAllowTitleList", shopProp);
+        if (!StringUtils.isEmpty(errorWord)) {
             if (!StringUtils.isEmpty(valTitle)) {
-                String[] splitWord = notAllowList.split(",");
-                for (String notAllow : splitWord) {
-                    // 直接删掉违禁词
-                    valTitle = valTitle.replaceAll(notAllow, "");
-                }
+//                String[] splitWord = notAllowList.split(",");
+//                for (String notAllow : splitWord) {
+//                    // 直接删掉违禁词
+//                    valTitle = valTitle.replaceAll(notAllow, "");
+//                }
+                valTitle = sxProductService.deleteErrorWord(valTitle, errorWord);
             }
         }
         return valTitle;
