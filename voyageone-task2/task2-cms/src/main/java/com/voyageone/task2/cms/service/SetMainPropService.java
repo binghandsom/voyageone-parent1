@@ -1040,7 +1040,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                     // productService.updateProduct(channelId, requestModel);
                     // 更新产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
-                    $info( " id:" + cmsProduct.getProdId() + "  "+cmsProduct.getModified());
                     int updCnt = productService.updateProductFeedToMaster(usjoi ? "928" : channelId, cmsProduct, getTaskName(), "feed->master导入");
                     if (updCnt == 0) {
                         // 有出错, 跳过
