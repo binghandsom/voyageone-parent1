@@ -1040,10 +1040,11 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                     // productService.updateProduct(channelId, requestModel);
                     // 更新产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
+                    $info( " id:" + cmsProduct.getProdId() + "  "+cmsProduct.getModified());
                     int updCnt = productService.updateProductFeedToMaster(usjoi ? "928" : channelId, cmsProduct, getTaskName(), "feed->master导入");
                     if (updCnt == 0) {
                         // 有出错, 跳过
-                        String errMsg = "feed->master导入:更新:编辑商品的时候排他错误:" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
+                        String errMsg = "feed->master导入:更新:编辑商品的时候排他错误:" + originalFeed.getChannelId() + ":" + originalFeed.getCode() + " id:" + cmsProduct.getProdId() + "  "+cmsProduct.getModified();
                         $error(errMsg);
                         throw new BusinessException(errMsg);
                     }
