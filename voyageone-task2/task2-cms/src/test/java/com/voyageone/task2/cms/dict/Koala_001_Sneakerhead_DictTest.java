@@ -165,7 +165,7 @@ public class Koala_001_Sneakerhead_DictTest extends BaseDictTest {
 
         // 固定图（购物须知）
         ruleRoot.addRuleWord(new TextWord(String.format(strPlatformTemplate,
-                "http://pop.nosdn.127.net/9b2d82dc-9652-4190-821d-02f3786a4383")));
+                "http://pop.nosdn.127.net/70507819-e9a8-4d11-90eb-aa9c90d23ec8")));
 
         return ruleRoot;
 
