@@ -144,6 +144,15 @@ public class ProductGroupService extends BaseService {
     }
 
     /**
+     * 根据channelId和platformPid检索
+     */
+    public CmsBtProductGroupModel selectProductGroupByPlatformPid(String channelId, Integer cartId, String platformPid) {
+        JongoQuery query = new JongoQuery();
+        query.setQuery(String.format("{\"platformPid\": \"%s\", \"cartId\": %d}", platformPid, cartId));
+        return getProductGroupByQuery(channelId, query);
+    }
+
+    /**
      * 更新group数据
      */
     public WriteResult update(CmsBtProductGroupModel model) {

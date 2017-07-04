@@ -34,6 +34,10 @@ import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessa
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.wms.GetStoreStockDetailRequest2;
+import com.voyageone.web2.sdk.api.response.wms.GetStoreStockDetailData2;
+import com.voyageone.web2.sdk.api.response.wms.GetStoreStockDetailResponse2;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -101,12 +105,15 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private TagService tagService;
     @Autowired
     private SxProductService sxProductService;
+    @Autowired
+    protected VoApiDefaultClient voApiClient;
 
     public List<CmsBtOperationLogModel_Msg> export(AdvSearchExportMQMessageBody messageBody) throws Exception {
         $debug("高级检索 文件下载任务 param=" + JacksonUtil.bean2Json(messageBody));
         CmsBtExportTaskModel taskModel = cmsBtExportTaskService.getExportById(messageBody.getCmsBtExportTaskId());
         Map<String, Object> messageMap = messageBody.getSearchValue();
         Map<String, String> channelIdMap = messageBody.getChannelIdMap();
+        Boolean isInventoryDetails = messageBody.getInventoryDetails();
         CmsSearchInfoBean2 searchValue;
         try {
             searchValue = JacksonUtil.json2Bean(JacksonUtil.bean2Json(messageMap), CmsSearchInfoBean2.class);
@@ -142,7 +149,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
          * */
         List<CmsBtOperationLogModel_Msg> failList = new ArrayList<>();
         try {
-            String fileName = createExcelFile(searchValue, (List<String>) messageMap.get("_selCodeList"), channleId, sessionBean, userName, language, failList, channelIdMap);
+            String fileName = createExcelFile(searchValue, (List<String>) messageMap.get("_selCodeList"), channleId, sessionBean, userName, language, failList, channelIdMap, isInventoryDetails);
             taskModel.setFileName(fileName);
             taskModel.setStatus(1); // 成功
         } catch (Throwable exp) {
@@ -164,10 +171,10 @@ public class CmsAdvSearchExportFileService extends BaseService {
      */
     private String createExcelFile(CmsSearchInfoBean2 searchValue, List<String> codeList, String channelId, Map<String
             , Object> cmsSessionBean, String userName, String language, List<CmsBtOperationLogModel_Msg> failList
-            , Map<String, String> channelIdMap)
+            , Map<String, String> channelIdMap, Boolean isInventoryDetails)
             throws IOException, InvalidFormatException {
         String fileName = null;
-
+        List<String> storeNames = null;
         switch (searchValue.getFileType()) {
             case 1:
                 fileName = "productList_";
@@ -177,6 +184,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 break;
             case 3:
                 fileName = "skuList_";
+                if(isInventoryDetails){
+                    storeNames = getStoreNames(channelId,null, null);
+                }
                 break;
             case 4:
                 fileName = "publishJMSkuList_";
@@ -244,29 +254,6 @@ public class CmsAdvSearchExportFileService extends BaseService {
         JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{'common.fields.code':{$in:#}}");
         queryObject.setParameters(prodCodeList);
-//        String searchItemStr = CmsAdvSearchQueryService.searchItems;
-//        if (cmsSessionBean.get("_adv_search_props_searchItems") != null) {
-//            searchItemStr += (String) cmsSessionBean.get("_adv_search_props_searchItems");
-//        }
-//        if (!searchItemStr.endsWith(";"))
-//            searchItemStr += ";";
-//        if (searchValue.getFileType() == 3) {
-//            // 要输出sku级信息
-//            searchItemStr += "common.skus;common.fields.model;common.fields.color;feed.catPath;common.fields.origSizeType;common.fields.originalCode;";
-//        } else if (searchValue.getFileType() == 2) {
-//            // 要输出group级信息
-//            searchItemStr += "common.fields.model;feed.catPath;common.fields.origSizeType;";
-//        } else if (searchValue.getFileType() == 1) {
-//            //code
-//            searchItemStr += "common.fields.model;common.fields.color;feed.catPath;common.fields.origSizeType;";
-//        } else if (searchValue.getFileType() == 4) {
-//            searchItemStr += "common.skus.clientNetPrice;common.fields.color;common.fields.originalCode;platforms";
-//        } else if (searchValue.getFileType() == 5) {
-//            searchItemStr += "common.skus;common.fields.model;common.fields.isFiled;common.fields.hsCodeCross;common.fields.origin;common.fields.color;" +
-//                    "common.fields.weightKG;common.fields.shortDesEn;common.fields.shortDesCn;common.fields.materialCn;common.fields.materialEn";
-//        }
-//
-//        queryObject.setProjectionExt(searchItemStr.split(";"));
 
         // 店铺(cart/平台)列表
         List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
@@ -287,7 +274,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     writeGroupHead(book, cartList, cmsSessionBean);
                     break;
                 case 3:
-                    writeSkuHead(book, cartList, cmsSessionBean);
+                    writeSkuHead(book, cartList, cmsSessionBean, storeNames);
                     break;
                 case 4:
                     writePublishJMSkuHead(book);
@@ -339,7 +326,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                         break;
                     case 3:
                         /**isContinueOutput暂时无用*/
-                        offset += writeRecordToSkuFile(book, items, cartList, startRowIndex + offset, channelIdMap, cmsSessionBean);
+                        offset += writeRecordToSkuFile(book, items, cartList, startRowIndex + offset, channelIdMap, cmsSessionBean, storeNames);
                         break;
                     case 4:
                         /**isContinueOutput暂时无用*/
@@ -570,7 +557,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
     /**
      * sku级数据下载，设置每列标题(包含动态列)
      */
-    private void writeSkuHead(Workbook book, List<TypeChannelBean> cartList, Map cmsSession) {
+    private void writeSkuHead(Workbook book, List<TypeChannelBean> cartList, Map cmsSession, List<String> storeNames) {
         book.createSheet("sku");
         Sheet sheet = book.getSheetAt(0);
         Row row1 = FileUtils.row(sheet, 0); // 第一行，英文标题
@@ -651,6 +638,12 @@ public class CmsAdvSearchExportFileService extends BaseService {
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
                 FileUtils.cell(row2, index++, style2).setCellValue(prop.get("name"));
+            }
+        }
+
+        if(ListUtils.notNull(storeNames)){
+            for (String storeName : storeNames) {
+                FileUtils.cell(row2, index++, style2).setCellValue(storeName);
             }
         }
     }
@@ -1118,9 +1111,10 @@ public class CmsAdvSearchExportFileService extends BaseService {
      * @param cartList      cartId列表
      * @param startRowIndex 开始
      * @param channelIdMap
+     * @param storeNames
      * @return 行数偏移量
      */
-    private int writeRecordToSkuFile(Workbook book, List<CmsBtProductBean> items, List<TypeChannelBean> cartList, int startRowIndex, Map<String, String> channelIdMap, Map cmsSession) {
+    private int writeRecordToSkuFile(Workbook book, List<CmsBtProductBean> items, List<TypeChannelBean> cartList, int startRowIndex, Map<String, String> channelIdMap, Map cmsSession, List<String> storeNames) {
         Map<String, CmsBtTagBean> cachTag = new HashMap<>();
         List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.get("_adv_search_customProps");
         List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.get("_adv_search_commonProps");
@@ -1131,6 +1125,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         List<CmsBtProductBean> products = new ArrayList<>();
         Map<String, Set<String>> codesMap = new HashMap<>();
         for (CmsBtProductBean item : items) {
+
             if (item.getCommon() == null) {
                 continue;
             }
@@ -1156,6 +1151,11 @@ public class CmsAdvSearchExportFileService extends BaseService {
         // 现有表格的列，请参照本工程目录下 /contents/cms/file_template/skuList-template.xlsx
         Sheet sheet = book.getSheetAt(0);
         for (CmsBtProductBean item : products) {
+            HashMap<String, HashMap<String,Integer>> inventoryDetails = null;
+            if(ListUtils.notNull(storeNames)){
+                inventoryDetails = getStores(item.getChannelId(), item.getOrgChannelId(), item.getCommonNotNull().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
+            }
+
             CmsBtProductModel_Field fields = item.getCommon().getFields();
             List<CmsBtProductModel_Sku> skuList = item.getCommon().getSkus();
             Map<String, String> sizeMap = null;
@@ -1204,7 +1204,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSkuCode()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSize()));
-                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getSize()));
+                String platformSize = sizeMap.get(skuItem.getSize());
+                if (platformSize == null) platformSize = "";
+                FileUtils.cell(row, index++, unlock).setCellValue(platformSize);
 
                 // 重量
                 if (skuItem.getWeight() == null) {
@@ -1341,6 +1343,22 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     }
                 }
 
+                if(inventoryDetails != null){
+                    HashMap<String,Integer> sku = inventoryDetails.get(skuItem.getSkuCode());
+                    if(sku == null){
+                        for(String storeName:storeNames){
+                            FileUtils.cell(row, index++, unlock).setCellValue("");
+                        }
+                    }else{
+                        for(String storeName:storeNames){
+                            if(sku.get(storeName)==null){
+                                FileUtils.cell(row, index++, unlock).setCellValue("");
+                            }else{
+                                FileUtils.cell(row, index++, unlock).setCellValue(sku.get(storeName));
+                            }
+                        }
+                    }
+                }
                 total++;
             }
         }
@@ -1514,13 +1532,17 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 continue; // 已经报备过，直接跳过
             }
             boolean skip = true;
-            Map<String, CmsBtProductModel_Platform_Cart> platforms = item.getPlatforms();
-            if (platforms != null && platforms.size() > 0) {
-                for (CmsBtProductModel_Platform_Cart platform : platforms.values()) {
-                    if (platform.getCartId() > 10 && platform.getCartId() < 900) {
-                        if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())) {
-                            skip = false;
-                            break;
+            if("001".equals(item.getChannelId())){
+                skip = false;
+            }else{
+                Map<String, CmsBtProductModel_Platform_Cart> platforms = item.getPlatforms();
+                if (platforms != null && platforms.size() > 0) {
+                    for (CmsBtProductModel_Platform_Cart platform : platforms.values()) {
+                        if (platform.getCartId() > 10 && platform.getCartId() < 900) {
+                            if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())) {
+                                skip = false;
+                                break;
+                            }
                         }
                     }
                 }
@@ -1666,6 +1688,78 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 return map.getStringAttribute("jdSkuId");
         }
         return "";
+    }
+
+    /**
+     *
+     * @param channelId
+     * @param subChannelId
+     * @param skuList
+     * @return 仓库名称(包括第三方仓库)的集合
+     */
+    public List<String> getStoreNames(String channelId,String subChannelId,List<String> skuList){
+
+        GetStoreStockDetailRequest2 getStoreStockDetailRequest2 = new GetStoreStockDetailRequest2();
+        getStoreStockDetailRequest2.setChannelId(channelId);
+        getStoreStockDetailRequest2.setSubChannelId(subChannelId);
+        getStoreStockDetailRequest2.setSkuList(skuList);
+        getStoreStockDetailRequest2.setIncludeAllStores(true);
+        List<String> storeNames = new ArrayList<>();
+
+        GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
+        if (execute != null ){
+            List<String> store = execute.getData().getHeader().getStore();
+            List<String> supplier = execute.getData().getHeader().getSupplier();
+
+            storeNames.addAll(store);
+            storeNames.addAll(supplier);
+            storeNames.remove("total");
+        }
+
+        return storeNames;
+    }
+
+    /**
+     *
+     * @param channelId
+     * @param subChannelId
+     * @param skuList
+     * @return 仓库对应的库存信息(包括第三方的)
+     */
+    public HashMap<String, HashMap<String,Integer>> getStores(String channelId,String subChannelId,List<String> skuList){
+
+        GetStoreStockDetailRequest2 getStoreStockDetailRequest2 = new GetStoreStockDetailRequest2();
+        getStoreStockDetailRequest2.setChannelId(channelId);
+        getStoreStockDetailRequest2.setSubChannelId(subChannelId);
+        //getStoreStockDetailRequest2.setIncludeAllStores(true);
+        getStoreStockDetailRequest2.setSkuList(skuList);
+        HashMap<String, HashMap<String, Integer>> outMap = new HashMap<>();
+        GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
+        if (execute != null ){
+            List<GetStoreStockDetailData2.Temp> stocks = execute.getData().getStocks();
+            for (GetStoreStockDetailData2.Temp stock:stocks) {
+
+                HashMap<String, Integer> inMap = new HashMap<>();
+
+                String sku = stock.getBase().getSku();
+                if("001".equals(channelId)){
+                    sku = sku.toLowerCase();
+                }
+
+                Map<String, List<Integer>> store = stock.getStore();
+                store.forEach((key, value) -> {
+                    inMap.put(key,value.get(0));
+                });
+                Map<String, List<Integer>> supplier = stock.getSupplier();
+                supplier.forEach((key, value) -> {
+                    if (!"total".equals(key)){
+                        inMap.put(key,value.get(0));
+                    }
+                });
+                outMap.put(sku,inMap);
+            }
+        }
+        return outMap;
     }
 
 }

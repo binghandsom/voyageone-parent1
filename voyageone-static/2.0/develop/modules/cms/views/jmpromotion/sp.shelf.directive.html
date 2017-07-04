@@ -3,7 +3,7 @@
         <div id="{{::'jm-tag' + $index}}" class="panel panel-vo" ng-repeat="tagModule in ctrl.modules">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    布局标签：<span>{{::tagModule.tag.tagName}}</span>（有库存商品数：<span>{{::tagModule.productCountInStock}}</span>；商品总库存：<span>{{::tagModule.totalStock}}</span>）
+                    布局标签：<span>{{::tagModule.tag.tagName}}</span>（有库存商品数：<span>{{::tagModule.productCountInStock}}</span>；平台库存：<span>{{::tagModule.totalStock}}</span>）
                 </h4>
             </div>
             <div class="panel-body">

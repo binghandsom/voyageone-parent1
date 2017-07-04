@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -135,6 +136,8 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     @Autowired
     private CmsBtKlSkuDao cmsBtKlSkuDao;
 
+    private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -144,8 +147,6 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
     public String getTaskName() {
         return "CmsBuildPlatformProductUploadKlJob";
     }
-
-    private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
 
     /**
      * 考拉平台上新处理
@@ -229,7 +230,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                         for (String channelId : channelIdList) {
                             t.execute(() -> {
                                 try {
-                                    doProductUpload(channelId, CartEnums.Cart.KL.getValue(), threadCount);
+                                    doProductUpload(channelId, CART_ID, threadCount);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -494,48 +495,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                 listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
             }
 
-            // 如果skuList不为空，取得所有sku的库存信息
-            // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
-            // WMS2.0切换 20170526 charis STA
-            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
-            for (String code : listSxCode) {
-                try {
-                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), code, null);
-                    for (Map.Entry<String, Integer> e : map.entrySet()) {
-                        skuLogicQtyMap.put(e.getKey(), e.getValue());
-                    }
-                } catch (Exception e) {
-                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
-                            channelId, cartId, code, e.getMessage());
-                    throw new Exception(errorMsg);
-                }
-            }
-            // WMS2.0切换 20170526 charis END
-            // delete by desmond 2016/12/26 start 暂时先注释掉，以后有可能还是要删除库存为0的SKU
-//            // 删除主产品的common.skus中库存为0的SKU
-//            if (ListUtils.notNull(sxData.getMainProduct().getCommonNotNull().getSkus())) {
-//                deleteNoStockCommonSku(sxData.getMainProduct().getCommonNotNull().getSkus(), skuLogicQtyMap);
-//            }
-//            // 删除主产品的PXX.skus中库存为0的SKU
-//            if (ListUtils.notNull(sxData.getMainProduct().getPlatformNotNull(cartId).getSkus())) {
-//                deleteNoStockPlatformSku(sxData.getMainProduct().getPlatformNotNull(cartId).getSkus(), skuLogicQtyMap);
-//            }
-//            // 删除每个产品库存为0的sku
-//            for (CmsBtProductModel cmsBtProduct : sxData.getProductList()) {
-//                if (ListUtils.notNull(cmsBtProduct.getCommonNotNull().getSkus())) {
-//                    deleteNoStockCommonSku(cmsBtProduct.getCommonNotNull().getSkus(), skuLogicQtyMap);
-//                }
-//                if (ListUtils.notNull(cmsBtProduct.getPlatformNotNull(cartId).getSkus())) {
-//                    deleteNoStockPlatformSku(cmsBtProduct.getPlatformNotNull(cartId).getSkus(), skuLogicQtyMap);
-//                }
-//            }
-            // delete by desmond 2016/12/26 end
 
-            // 计算该商品下所有产品所有SKU的逻辑库存之和，新增时如果所有库存为0，报出不能上新错误
-            int totalSkusLogicQty = 0;
-            for (String skuCode : skuLogicQtyMap.keySet()) {
-                totalSkusLogicQty += skuLogicQtyMap.get(skuCode);
-            }
 
 //            StringBuffer sbFailCause = new StringBuffer("");
             // delete by desmond 2016/12/26 start 暂时先注释掉，以后有可能还是要删除库存为0的SKU
@@ -572,6 +532,51 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                 $error(String.format("获取主产品考拉平台设置信息(包含SKU，Schema属性值等信息)失败！[ProductCode:%s][CartId:%s]",
                         mainProduct.getCommon().getFields().getCode(), sxData.getCartId()));
                 throw new BusinessException("获取主产品考拉平台设置信息(包含SKU，Schema属性值等信息)失败");
+            }
+
+            // 如果skuList不为空，取得所有sku的库存信息
+            // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
+            // WMS2.0切换 20170526 charis STA
+            // 库存取得逻辑变为直接用cms的库存
+            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(mainProductPlatformCart.getSkus());
+//            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
+//            for (String code : listSxCode) {
+//                try {
+//                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), code, null);
+//                    for (Map.Entry<String, Integer> e : map.entrySet()) {
+//                        skuLogicQtyMap.put(e.getKey(), e.getValue());
+//                    }
+//                } catch (Exception e) {
+//                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
+//                            channelId, cartId, code, e.getMessage());
+//                    throw new Exception(errorMsg);
+//                }
+//            }
+            // WMS2.0切换 20170526 charis END
+            // delete by desmond 2016/12/26 start 暂时先注释掉，以后有可能还是要删除库存为0的SKU
+//            // 删除主产品的common.skus中库存为0的SKU
+//            if (ListUtils.notNull(sxData.getMainProduct().getCommonNotNull().getSkus())) {
+//                deleteNoStockCommonSku(sxData.getMainProduct().getCommonNotNull().getSkus(), skuLogicQtyMap);
+//            }
+//            // 删除主产品的PXX.skus中库存为0的SKU
+//            if (ListUtils.notNull(sxData.getMainProduct().getPlatformNotNull(cartId).getSkus())) {
+//                deleteNoStockPlatformSku(sxData.getMainProduct().getPlatformNotNull(cartId).getSkus(), skuLogicQtyMap);
+//            }
+//            // 删除每个产品库存为0的sku
+//            for (CmsBtProductModel cmsBtProduct : sxData.getProductList()) {
+//                if (ListUtils.notNull(cmsBtProduct.getCommonNotNull().getSkus())) {
+//                    deleteNoStockCommonSku(cmsBtProduct.getCommonNotNull().getSkus(), skuLogicQtyMap);
+//                }
+//                if (ListUtils.notNull(cmsBtProduct.getPlatformNotNull(cartId).getSkus())) {
+//                    deleteNoStockPlatformSku(cmsBtProduct.getPlatformNotNull(cartId).getSkus(), skuLogicQtyMap);
+//                }
+//            }
+            // delete by desmond 2016/12/26 end
+
+            // 计算该商品下所有产品所有SKU的逻辑库存之和，新增时如果所有库存为0，报出不能上新错误
+            int totalSkusLogicQty = 0;
+            for (String skuCode : skuLogicQtyMap.keySet()) {
+                totalSkusLogicQty += skuLogicQtyMap.get(skuCode);
             }
 
             // 取得考拉共通Schema(用于设定考拉商品标题，长宽高重量等共通属性)
@@ -705,9 +710,10 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
 
             // 上新成功时状态回写操作
             sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, "", CmsConstants.PlatformStatus.InStock, platformPid, getTaskName());
-
+            // 回写product表的skuKey
+            saveProductPlatformSku(sxData, skuKeys);
             // 回写cms_bt_kl_sku
-            saveCmsBtKlSku(channelId, sxData, listSxCode, "", skuKeys);
+            saveCmsBtKlSku(sxData, "", skuKeys);
 
             if (ChannelConfigEnums.Channel.SN.getId().equals(channelId)) {
                 // Sneakerhead
@@ -833,9 +839,9 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
             }
         }
         klAddBean.setName(title); // 商品名称
-        klAddBean.setSubTitle(klCommonInfoMap.get("sub_title")); // 副标题
-        klAddBean.setShortTitle(klCommonInfoMap.get("short_title")); // 短标题
-        klAddBean.setTenWordsDesc(klCommonInfoMap.get("ten_words_desc")); // 十字描述
+        klAddBean.setSubTitle(klCommonInfoMap.get("subTitle")); // 副标题
+        klAddBean.setShortTitle(klCommonInfoMap.get("shortTitle")); // 短标题
+        klAddBean.setTenWordsDesc(klCommonInfoMap.get("tenWordsDesc")); // 十字描述
         // 商品货号
         String itemNO = null;
         if (mainProduct.getPlatform(sxData.getCartId()) != null) {
@@ -856,7 +862,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         String itemOuterId = null;
         if (mainProduct.getPlatform(sxData.getCartId()) != null) {
             if (mainProduct.getPlatform(sxData.getCartId()).getFields() != null) {
-                itemOuterId = mainProduct.getPlatform(sxData.getCartId()).getFields().getStringAttribute("Item_outer_id");
+                itemOuterId = mainProduct.getPlatform(sxData.getCartId()).getFields().getStringAttribute("ItemOuterId");
             }
         }
         if (StringUtils.isEmpty(itemOuterId)) {
@@ -867,7 +873,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
             klAddBean.setItemOuterId(itemOuterId);
         }
         klAddBean.setBrandId(Long.valueOf(sxData.getBrandCode())); // 品牌id
-        klAddBean.setOriginalCountryCodeId(klCommonInfoMap.get("original_country_code_id")); // 原产国id
+        klAddBean.setOriginalCountryCodeId(klCommonInfoMap.get("originalCountryCodeId")); // 原产国id
 
         // HsCode，暂时不需要
 //        String propValue = sxData.getMainProduct().getCommon().getFields().getHsCodePrivate(); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
@@ -898,11 +904,11 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         Map<String, Field> productSchemaFields = SchemaReader.readXmlForMap(klCommonSchema.getPropsProduct());
 
         // 重量(单位:kg)(必须)
-        String weight = klCommonInfoMap.get("gross_weight");
+        String weight = klCommonInfoMap.get("grossWeight");
         if (StringUtils.isEmpty(weight)) {
             weight = String.valueOf(mainProduct.getCommonNotNull().getFieldsNotNull().getWeightKG());
             if (StringUtils.isEmpty(weight)) {
-                InputField f = (InputField) productSchemaFields.get("gross_weight");
+                InputField f = (InputField) productSchemaFields.get("grossWeight");
                 weight = f.getDefaultValue();
             }
         }
@@ -1474,34 +1480,34 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         return colorAlias;
     }
 
-    protected void saveCmsBtKlSku(String channelId, SxData sxData, List<String> codes, String numIId, SkuOuterIdResult[] skuKeys) {
-        if (StringUtils.isEmpty(channelId) || ListUtils.isNull(codes) || sxData == null) return;
+    protected void saveCmsBtKlSku(SxData sxData, String numIId, SkuOuterIdResult[] skuKeys) {
+        String channelId = sxData.getChannelId();
+        int cartId = sxData.getCartId();
         String skuKey;
         List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
-        for (String code : codes) {
+        for (CmsBtProductModel productModel : sxData.getProductList()) {
             // 取得产品信息
-            CmsBtProductModel productModel = productService.getProductByCode(channelId, code);
             if (productModel == null
-                    || productModel.getPlatform(CART_ID) == null
-                    || ListUtils.isNull(productModel.getPlatform(CART_ID).getSkus())) continue;
+                    || productModel.getPlatform(cartId) == null
+                    || ListUtils.isNull(productModel.getPlatform(cartId).getSkus())) continue;
 
-            List<BaseMongoMap<String, Object>> pSkus = productModel.getPlatform(CART_ID).getSkus();
+            // 只处理这次上新的，之前上过这次不上的，不会清除skuKey的记录，因为暂时考拉也不支持更新，等以后有了再看怎么处理
+            List<BaseMongoMap<String, Object>> pSkus = productModel.getPlatform(cartId).getSkus();
             for (BaseMongoMap<String, Object> pSku : pSkus) {
                 String pSkuCode = pSku.getStringAttribute("skuCode");
                 SkuOuterIdResult result = Stream.of(skuKeys).filter(sku -> pSkuCode.equals(sku.getSkuOuterId())).findFirst().orElse(null);
                 if (result == null) {
-                    skuKey = "";
+                    skuKey = ""; // 理论上不会
                 } else {
                     skuKey = result.getSkuKey();
                 }
                 BaseMongoMap<String, Object> sku = skuList.stream().filter(s -> pSkuCode.equals(s.getStringAttribute("skuCode"))).findFirst().orElse(null);
                 if (MapUtils.isEmpty(sku)) continue;
 
-                CmsBtKlSkuModel cmsBtKlSkuModel = fillCmsBtKlSkuModel(channelId, code, sku, skuKey, numIId, productModel.getOrgChannelId());
-
+                CmsBtKlSkuModel cmsBtKlSkuModel = fillCmsBtKlSkuModel(channelId, productModel.getCommonNotNull().getFields().getCode(), sku, skuKey, numIId, productModel.getOrgChannelId());
 
                 // 回写mysql的cms_bt_jm_sku表中(存在时更新，不存在时新增)
-                insertCmsBtKlSku(cmsBtKlSkuModel);
+                insertOrUpdateOrDeleteCmsBtKlSku(cmsBtKlSkuModel);
             }
         }
 
@@ -1527,12 +1533,24 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         return cmsBtKlSkuModel;
     }
 
-    protected void insertCmsBtKlSku(CmsBtKlSkuModel skuModel) {
-
+    protected void insertOrUpdateOrDeleteCmsBtKlSku(CmsBtKlSkuModel skuModel) {
+        String skuKey = skuModel.getKlSkuKey();
         CmsBtKlSkuModel cmsBtKlSkuModel = getCmsBtKlSkuModel(skuModel.getChannelId(), skuModel.getOrgChannelId(), skuModel.getProductCode(), skuModel.getSku());
         if (cmsBtKlSkuModel == null) {
-
-            cmsBtKlSkuDao.insert(skuModel);
+            if (!StringUtils.isEmpty(skuKey)) {
+                cmsBtKlSkuDao.insert(skuModel);
+            }
+        } else {
+            if (StringUtils.isEmpty(skuKey)) {
+                cmsBtKlSkuDao.delete(cmsBtKlSkuModel.getId());
+            } else {
+                if (!skuKey.equals(cmsBtKlSkuModel.getKlSkuKey())) {
+                    cmsBtKlSkuModel.setKlSkuKey(skuKey);
+                    cmsBtKlSkuModel.setModifier(getTaskName());
+                    cmsBtKlSkuModel.setModified(new Date());
+                    cmsBtKlSkuDao.update(cmsBtKlSkuModel);
+                }
+            }
         }
     }
 
@@ -1546,6 +1564,40 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         CmsBtKlSkuModel skuModel = cmsBtKlSkuDao.selectOne(map);
 
         return skuModel;
+    }
+
+    protected void saveProductPlatformSku(SxData sxData, SkuOuterIdResult[] skuKeys) {
+        String channelId = sxData.getChannelId();
+        int cartId = sxData.getCartId();
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        for (CmsBtProductModel productModel : sxData.getProductList()) {
+            // 只处理这次上新的，之前上过这次不上的，不会清除skuKey的记录，因为暂时考拉也不支持更新，等以后有了再看怎么处理
+            List<BaseMongoMap<String, Object>> klSkus = productModel.getPlatform(cartId).getSkus();
+
+            for (BaseMongoMap<String, Object> sku : klSkus) {
+                String skuCode = sku.getStringAttribute("skuCode");
+                SkuOuterIdResult result = Stream.of(skuKeys).filter(skuKey -> skuCode.equals(skuKey.getSkuOuterId())).findFirst().orElse(null);
+                if (result != null) {
+                    // 更新条件
+                    HashMap<String, Object> queryMap = new HashMap<>();
+                    queryMap.put("platforms.P" + cartId + ".skus.skuCode", skuCode);
+                    // 更新内容
+                    HashMap<String, Object> updateMap = new HashMap<>();
+                    updateMap.put("platforms.P" + cartId + ".skus.$.skuKey", result.getSkuKey());
+
+                    BulkUpdateModel model = new BulkUpdateModel();
+                    model.setUpdateMap(updateMap);
+                    model.setQueryMap(queryMap);
+                    bulkList.add(model);
+                }
+            }
+            if (ListUtils.notNull(bulkList)) {
+                // 批量更新P34.skus里面的属性
+                productService.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
+                bulkList.clear();
+                $info("保存product的考拉skuKey成功！[ProductId:%s], [ChannelId:%s], [CartId:%s]", productModel.getProdId(), channelId, cartId);
+            }
+        }
     }
 
 }

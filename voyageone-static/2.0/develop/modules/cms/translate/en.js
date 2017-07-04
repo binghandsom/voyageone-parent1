@@ -109,7 +109,7 @@ define(function () {
         "TXT_MSRP_PRICE": "建议售价",
         "TXT_CREATE_TIME": "创建时间",
         "TXT_PUBLISH_TIME": "发布时间",
-        "TXT_INVENTORY": "库存",
+        "TXT_INVENTORY": "总库存",
         "TXT_SELECT_NO_VALUE": "请选择...",
         "TXT_SELECT_VALUE_1": "Category",
         "TXT_SELECT_VALUE_2": "Brand",

@@ -61,7 +61,10 @@ import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.request.wms.GetStoreStockDetailRequest;
+import com.voyageone.web2.sdk.api.request.wms.GetStoreStockDetailRequest2;
+import com.voyageone.web2.sdk.api.response.wms.GetStoreStockDetailData2;
 import com.voyageone.web2.sdk.api.response.wms.GetStoreStockDetailResponse;
+import com.voyageone.web2.sdk.api.response.wms.GetStoreStockDetailResponse2;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections4.MapUtils;
@@ -739,6 +742,10 @@ public class CmsProductDetailService extends BaseViewService {
             skuInfo.put("qty", skuModel.getIntAttribute("qty"));
             skuInfo.put("size", skuModel.getSize());
             skuInfo.put("barcode", skuModel.getBarcode());
+            ///////////////////////////////////////////update by xu//////////////////////////////////////////////
+            //页面返回数据增加总库存字段
+            /*skuInfo.put("OnHandQty",skuModel.getOnHandQty() == null ? 0 : skuModel.getOnHandQty());*/
+            ///////////////////////////////////////////update by xu//////////////////////////////////////////////
             // 取得FeedInfo中的原始图片
             String imageUrl = "";
             if (feedInfoModel != null) {
@@ -1314,31 +1321,112 @@ public class CmsProductDetailService extends BaseViewService {
             throw new BusinessException("找不到商品信息, channelId=" + channelId + ", productId=" + productId);
         }
         // 查询商品的库存信息
+        List<String> skuList = new ArrayList<>();
+        List<CmsBtProductModel_Sku> skus1 = productInfo.getCommon().getSkus();
+        if (skus1 != null){
+            for ( CmsBtProductModel_Sku item:skus1) {
+                skuList.add(item.getSkuCode());
+            }
+        }
         String code = productInfo.getCommon().getFields().getCode();
         //调用wms openapi 取得code的详细库存
         GetStoreStockDetailRequest storeStockDetailRequest = new GetStoreStockDetailRequest();
         storeStockDetailRequest.setChannelId(productInfo.getChannelId());
         storeStockDetailRequest.setSubChannelId(productInfo.getOrgChannelId());
         storeStockDetailRequest.setItemCode(code);
+        /*调用wms接口,获取库存详情*/
         GetStoreStockDetailResponse stockDetail = voApiClient.execute(storeStockDetailRequest);
-        $info(String.format("从WMS实时查询Code(channelId=%s, code=%s)下SKU库存, API返回结果:%s", channelId, code, JacksonUtil.bean2Json(stockDetail)));
+
+        Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, productInfo.getCommon().getFields().getBrand(),
+                productInfo.getCommon().getFields().getProductType(), productInfo.getCommon().getFields().getSizeType());
+        /*----------------------by xu 调用新的获取库存信息的接口---------------------------*/
+        GetStoreStockDetailRequest2 getStoreStockDetailRequest2 = new GetStoreStockDetailRequest2();
+        getStoreStockDetailRequest2.setChannelId(productInfo.getChannelId());
+        getStoreStockDetailRequest2.setSubChannelId(productInfo.getOrgChannelId());
+       // getStoreStockDetailRequest2.setItemCode(code);
+        //getStoreStockDetailRequest2.setIncludeAllStores(true);
+        getStoreStockDetailRequest2.setSkuList(skuList);
+        //String json = "{\"code\":\"0\",\"message\":null,\"data\":{\"header\":{\"supplier\":[\"total\",\"usa\"],\"store\":[\"LA\",\"SH\"],\"base\":[\"sku\",\"origSize\",\"saleSize\",\"total\"]},\"stocks\":[{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[5,5]},\"base\":{\"total\":[5,5],\"origSize\":\"5.5\",\"sku\":\"001001B07-BLK-5.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[1,1]},\"base\":{\"total\":[1,1],\"origSize\":\"8.5\",\"sku\":\"001001b07-blk-8.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"SH\":[0,1]},\"base\":{\"total\":[0,1],\"origSize\":\"5\",\"sku\":\"001001b07-blk-5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[2,2]},\"base\":{\"total\":[2,2],\"origSize\":\"5\",\"sku\":\"001001B07-BLK-5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[6,6]},\"base\":{\"total\":[6,6],\"origSize\":\"6\",\"sku\":\"001001B07-BLK-6\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[6,7]},\"base\":{\"total\":[6,7],\"origSize\":\"7\",\"sku\":\"001001B07-BLK-7\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[13,13]},\"base\":{\"total\":[13,13],\"origSize\":\"6.5\",\"sku\":\"001001B07-BLK-6.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[2084,2084]},\"base\":{\"total\":[2084,2084],\"origSize\":\"7.5\",\"sku\":\"001001B07-BLK-7.5\",\"saleSize\":\"\"}}]}}";
+        GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
+        //求和
+        if (execute != null && execute.getData() != null && execute.getData().getHeader() != null &&CollectionUtils.isNotEmpty(execute.getData().getStocks())){
+            //获取到的参数不为空
+            List<GetStoreStockDetailData2.Temp> stocks = execute.getData().getStocks();
+            if (stocks != null) {
+                GetStoreStockDetailData2.Temp sumStock = new GetStoreStockDetailData2.Temp();
+                HashMap<String, List<Integer>> sumSupplier = new HashMap<>();
+                HashMap<String, List<Integer>> sumStore = new HashMap<>();
+                GetStoreStockDetailData2.Temp.Base sumBase = new GetStoreStockDetailData2.Temp.Base();
+                Integer sumTotle = 0;
+                List<Integer> integers = new ArrayList<>();
+                for (GetStoreStockDetailData2.Temp stock : stocks) {
+                    Map<String, List<Integer>> supplier = stock.getSupplier();
+                    Map<String, List<Integer>> store = stock.getStore();
+
+                    for (Map.Entry<String, List<Integer>> entry : store.entrySet()) {
+                        String key = entry.getKey();
+                        if (sumStore.containsKey(key)) {
+                            //存在
+                            Integer sum = sumStore.get(key).get(0) + entry.getValue().get(0);
+                            sumStore.get(key).set(0, sum);
+
+                        } else {
+                            //不存在
+                            Integer integer = entry.getValue().get(0);
+                            ArrayList<Integer> temp = new ArrayList<>();
+                            temp.add(integer);
+                            sumStore.put(key, temp);
+                        }
+                    }
+
+                    for (Map.Entry<String, List<Integer>> entry : supplier.entrySet()
+                            ) {
+                        String key = entry.getKey();
+                        if (sumSupplier.containsKey(key)) {
+                            //存在
+                            Integer sum = sumSupplier.get(key).get(0) + entry.getValue().get(0);
+                            sumSupplier.get(key).set(0, sum);
+                        } else {
+                            //不存在
+                            Integer integer = entry.getValue().get(0);
+                            ArrayList<Integer> temp = new ArrayList<>();
+                            temp.add(integer);
+
+                            sumSupplier.put(key, temp);
+                        }
+
+                    }
+
+                    GetStoreStockDetailData2.Temp.Base base = stock.getBase();
+                    base.setSaleSize(sizeMap.get(base.getOrigSize()));
+                    sumTotle += base.getTotal().get(0);
+
+                }
+                integers.add(sumTotle);
+                sumBase.setTotal(integers);
+                sumStock.setBase(sumBase);
+                sumStock.setStore(sumStore);
+                sumStock.setSupplier(sumSupplier);
+                stocks.add(sumStock);
+                GetStoreStockDetailData2 data = execute.getData();
+                data.setStocks(stocks);
+                execute.setData(data);
+                resultMap.put("excute", execute);
+            }
+            resultMap.put("nostock",false);
+        }else {
+            //为空
+            resultMap.put("nostock",true);
+        }
+         /*-----------------------by xu--------------------------*/
+
+
+        $info(String.format("从WMS实时查询Code(channelId=%s, code=%s)下SKU库存, API返回结果:%s", channelId, code, JacksonUtil.bean2Json(execute)));
 
         Set<String> commonSkus = new HashSet<>();
         Set<String> stockSkus = new HashSet<>();
         // 取得SKU的平台尺寸信息
         List<CmsBtProductModel_Sku> skus = productInfo.getCommon().getSkus();
-        Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, productInfo.getCommon().getFields().getBrand(),
-                productInfo.getCommon().getFields().getProductType(), productInfo.getCommon().getFields().getSizeType());
-        if (MapUtils.isNotEmpty(sizeMap)) {
-            skus.forEach(sku -> {
-                sku.setAttribute("platformSize", sizeMap.get(sku.getSize()));
-                commonSkus.add(sku.getSkuCode());
-            });
-        } else {
-            skus.forEach(sku -> {
-                commonSkus.add(sku.getSkuCode());
-            });
-        }
 
         // 更新商品库存中的SKU尺寸信息
         if (stockDetail != null && stockDetail.getData() != null && CollectionUtils.isNotEmpty(stockDetail.getData().getStocks())) {
@@ -1435,13 +1523,9 @@ public class CmsProductDetailService extends BaseViewService {
 
         CmsBtProductModel_Platform_Cart platForm = cmsBtProductModel.getPlatform(parameter.getCartId());
         CmsBtProductModel_Platform_Cart newPlatForm = newCmsBtProductModel.getPlatform(parameter.getCartId());
-
         if (CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(platForm.getStatus()) && !CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(newPlatForm.getStatus())) {
             throw new BusinessException("只能设置状态为Approve的商品");
         }
-
-        // 重主商品复制属性
-        newPlatForm = productPlatformService.platformCopy(parameter.getChannelId(), newCmsBtProductModel, parameter.getCartId(),platForm, modifier);
         platForm.setpIsMain(0);// 把mainProduct的所对应的product表中对应的平台的pIsMain设0
         platForm.setMainProductCode(parameter.getProductCode());
         newPlatForm.setpIsMain(1);//把productCode的所对应的product表中对应的平台的pIsMain设1
@@ -1636,10 +1720,6 @@ public class CmsProductDetailService extends BaseViewService {
                 common.getFields().put(s, o);
             }
         });
-
-        //主商品的APP端自定义图和PC端自定义图 也需要复制过来
-        common.getFields().setImages4(mainCommon.getFields().getImages4());
-        common.getFields().setImages5(mainCommon.getFields().getImages5());
         if ("1".equalsIgnoreCase(mainCommon.getFields().getHsCodeStatus())) {
             common.getFields().setHsCodeStatus("1");
         }
@@ -1667,7 +1747,7 @@ public class CmsProductDetailService extends BaseViewService {
      * @param platform
      * @throws Exception
      */
-    public void updateSkuPrice(String channelId, Integer cartId, Long prodId, String userName, CmsBtProductModel_Platform_Cart platform) {
+    public void updateSkuPrice(String channelId, Integer cartId, Long prodId, String userName, CmsBtProductModel_Platform_Cart platform) throws BusinessException {
 
         // 根据中国最终售价来判断 中国建议售价是否需要自动提高价格
         try {
@@ -1726,7 +1806,7 @@ public class CmsProductDetailService extends BaseViewService {
 
         // 刷新平台价格
         CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
-        platformPriceService.publishPlatFormPrice(channelId, 2, newProduct, cartId, userName, true, false, true);
+        platformPriceService.publishPlatFormPrice(channelId, 2, newProduct, cartId, userName, true, false);
 
         //更新价格履历
         List<String> skus = new ArrayList<>();
@@ -1896,6 +1976,5 @@ public class CmsProductDetailService extends BaseViewService {
 
         String msg = "高级检索 单商品originalTitleCn设置" ;
         productStatusHistoryService.insertList(channelId, Collections.singletonList(code), -1, EnumProductOperationType.SingleProdSetOriginalTitleCn, msg, username);
-
     }
 }

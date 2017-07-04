@@ -94,6 +94,13 @@ define([
         PopAddChannelCategoryCtrl.prototype.save = function () {
             var self = this;
 
+            //过滤之后，之前选择的不会在结果集内
+            if(self.searchName){
+                self.searchName = null;
+                self.searchByName();
+            }
+
+
             if (!self._context.isQuery && !self.needSave) {
                 self.alert("店铺内分类没有改变，不需要保存");
                 return;

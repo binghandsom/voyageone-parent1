@@ -526,21 +526,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             }
             // 如果skuList不为空，取得所有sku的库存信息
             // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
-            // WMS2.0切换 20170526 charis STA
-            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
-            for (String sku : strSkuCodeList) {
-                try {
-                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), null, sku);
-                    for (Map.Entry<String, Integer> e : map.entrySet()) {
-                        skuLogicQtyMap.put(e.getKey(), e.getValue());
-                    }
-                } catch (Exception e) {
-                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
-                            channelId, cartId, sku, e.getMessage());
-                    throw new Exception(errorMsg);
-                }
-            }
-            // WMS2.0切换 20170526 charis END
+
 
             // 取得主产品天猫同购平台设置信息(包含SKU等信息)
             CmsBtProductModel_Platform_Cart mainProductPlatformCart = mainProduct.getPlatform(cartId);
@@ -549,6 +535,25 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                         mainProduct.getCommon().getFields().getCode(), cartId));
                 throw new BusinessException("获取主产品天猫同购平台设置信息(包含SKU，Schema属性值等信息)失败");
             }
+
+            // WMS2.0切换 20170526 charis STA
+            // 库存取得逻辑变为直接用cms的库存
+            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(mainProductPlatformCart.getSkus());
+
+
+//            for (String sku : strSkuCodeList) {
+//                try {
+//                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), null, sku);
+//                    for (Map.Entry<String, Integer> e : map.entrySet()) {
+//                        skuLogicQtyMap.put(e.getKey(), e.getValue());
+//                    }
+//                } catch (Exception e) {
+//                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
+//                            channelId, cartId, sku, e.getMessage());
+//                    throw new Exception(errorMsg);
+//                }
+//            }
+            // WMS2.0切换 20170526 charis END
 
             // 获取字典表cms_mt_platform_dict(根据channel_id)上传图片的规格等信息
             List<CmsMtPlatformDictModel> cmsMtPlatformDictModelList = dictService.getModesByChannelCartId(channelId, cartId);
@@ -566,7 +571,11 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // 取得更新对象商品id
                 numIId = sxData.getPlatform().getNumIId();
                 // 获取商品页面信息
-                tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
+                try {
+                    tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
+                } catch (Exception e) {
+                    tbItemSchema = null; // 有可能商品被弄坏了
+                }
             }
 
             // 编辑天猫国际官网同购共通属性
@@ -1381,7 +1390,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 取得天猫同购上新用skus列表
         try {
             Map<String, Integer> skuPageQtyMap = new HashMap<>();
-            if (updateWare) {
+            if (updateWare && tbItemSchema != null) {
                 // 获取页面sku以及对应的库存
                 String skus = ((InputField)tbItemSchema.getFieldMap().get("skus")).getDefaultValue();
                 List<Map<String, Object>> skuPageQtyMapList = JacksonUtil.jsonToMapList(skus);
@@ -1509,15 +1518,19 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             if (config != null && "1".equals(config.getConfigValue1()) && updateWare) {
                 // 如果设置成"1：运营自己天猫后台管理"时,用天猫平台上取下来的运营自己后台设置的值设置schema无线端共通模块相关属性
 
-                String defaultValue = ((InputField)tbItemSchema.getFieldMap().get("wireless_desc")).getDefaultValue();
-                // 店铺活动(json)
-                valWirelessDetails = updateDefaultValue(valWirelessDetails, "shop_discount", defaultValue);
-                // 文字说明(json)
-                valWirelessDetails = updateDefaultValue(valWirelessDetails, "item_text", defaultValue);
-                // 优惠(json)
-                valWirelessDetails = updateDefaultValue(valWirelessDetails, "coupon", defaultValue);
-                // 同店推荐(json)
-                valWirelessDetails = updateDefaultValue(valWirelessDetails, "hot_recommanded", defaultValue);
+                if (tbItemSchema != null) {
+                    String defaultValue = ((InputField) tbItemSchema.getFieldMap().get("wireless_desc")).getDefaultValue();
+                    if (defaultValue != null) {
+                        // 店铺活动(json)
+                        valWirelessDetails = updateDefaultValue(valWirelessDetails, "shop_discount", defaultValue);
+                        // 文字说明(json)
+                        valWirelessDetails = updateDefaultValue(valWirelessDetails, "item_text", defaultValue);
+                        // 优惠(json)
+                        valWirelessDetails = updateDefaultValue(valWirelessDetails, "coupon", defaultValue);
+                        // 同店推荐(json)
+                        valWirelessDetails = updateDefaultValue(valWirelessDetails, "hot_recommanded", defaultValue);
+                    }
+                }
             }
             productInfoMap.put("wireless_desc", valWirelessDetails);
         }
@@ -1948,7 +1961,17 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 if (skuPageQtyMap.containsKey(skuCode)) {
                     skuMap.put("quantity", skuPageQtyMap.get(skuCode.toLowerCase()));
                 } else {
-                    skuMap.put("quantity", skuLogicQtyMap.get(skuCode));
+                    if (ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId().equals(shopProp.getOrder_channel_id())) {
+                        long pageQty = skuLogicQtyMap.get(skuCode);
+                        try {
+                            pageQty = tbScItemService.getInventoryByScItemId(shopProp, tbScItemService.getScItemByOuterCode(shopProp, skuCode).getItemId()).get(0).getQuantity();
+                        } catch (Exception ignored) {
+                        }
+
+                        skuMap.put("quantity", pageQty);
+                    } else {
+                        skuMap.put("quantity", skuLogicQtyMap.get(skuCode));
+                    }
                 }
 
                 // 与颜色尺寸这个销售属性关联的图片

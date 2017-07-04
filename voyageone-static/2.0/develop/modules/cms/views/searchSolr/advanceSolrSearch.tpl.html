@@ -30,11 +30,14 @@
                                             <div class="form-group">
                                                 <div class="col-sm-3"></div>
                                                 <div class="col-sm-8">
-                                                    <select multiple chosen width="'100%'" class="form-control"
-                                                            ng-model="vm.searchInfo.brandList" search-contains = "true"
-                                                            ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
-                                                        <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
-                                                    </select>
+                                                    <div class="input-group">
+                                                        <select multiple chosen width="'100%'" class="form-control"
+                                                                ng-model="vm.searchInfo.brandList" search-contains = "true"
+                                                                ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
+                                                            <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
+                                                        </select>
+                                                        <span class="input-group-addon cur-p" ng-click="dismiss('brandList')">重置</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="form-horizontal">
@@ -110,19 +113,20 @@
                                                 </div>
                                             </div>
                                             <div class="form-group"><!-- 查询库存状态 -->
-                                                <label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
-                                                <div class="col-sm-8" style="padding-left:0px">
-                                                    <div class="col-sm-5">
-                                                        <select class="form-control m-r-xs" style="margin-left:4px" ng-model="vm.searchInfo.compareType"
-                                                                ng-options="compareType.value as compareType.name for compareType in vm.masterData.compareTypeList">
-                                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-sm-5" style="margin-left:1px">
-                                                        <input type="number" class="form-control" ng-model="vm.searchInfo.inventory" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="9">
-                                                    </div>
+                                            <!--<label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>-->
+                                                <label class="col-sm-3 control-label" >总库存</label>
+                                            <div class="col-sm-8" style="padding-left:0px">
+                                                <div class="col-sm-5">
+                                                    <select class="form-control m-r-xs" style="margin-left:4px" ng-model="vm.searchInfo.compareType"
+                                                            ng-options="compareType.value as compareType.name for compareType in vm.masterData.compareTypeList">
+                                                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-5" style="margin-left:1px">
+                                                    <input type="number" class="form-control" ng-model="vm.searchInfo.inventory" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="9">
                                                 </div>
                                             </div>
+                                        </div>
                                             <div class="form-group" style="margin-bottom:0px"><!-- 产品类型 -->
                                                 <label class="col-sm-3 control-label">产品类型</label>
                                                 <div class="col-sm-8">
@@ -553,7 +557,7 @@
                                     <a href>加入橱窗</a>
                                     <ul class="dropdown-menu dropdown-menu-ul">
                                         <li ng-repeat="shelves in vm.masterData.shelvesMap[cartBean.value]">
-                                            <a href ng-click="$parent.addShelves(shelves.id)" >
+                                            <a href ng-click="$parent.addShelves(shelves.id)" title="{{shelves.shelvesName}}">
                                                 {{shelves.shelvesName | limitTo: 10}}{{shelves.shelvesName.length > 10 ? '...' : ''}}
                                             </a>
                                         </li>
@@ -617,7 +621,7 @@
                                                                                             ng-click="columnOrder('quantity')"><i class="fa fa-{{getArrowName('quantity')}}"></i></button>
                                         </th>
                                         <th ng-if="isExistCommonProps('quantitySale')" class="text-center" style="min-width: 80px">
-                                            可售库存
+                                            平台库存
                                         </th>
                                         <th ng-if="isExistCommonProps('priceMsrp')" class="text-center">
                                             中国建议售价&emsp;<button class="opacityBtn"
