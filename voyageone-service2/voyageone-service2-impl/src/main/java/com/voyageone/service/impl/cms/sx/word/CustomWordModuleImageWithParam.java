@@ -136,6 +136,7 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())
                 || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())
                 || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())
+                || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.NTES.getId())
                 ) {
             Set<String> url = new HashSet<>();
             url.add(parseResult);

@@ -943,7 +943,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         // 图片信息（图片尺寸为800*800，单张大小不超过 2048K）(必须)
         // 商品5张图片名称列表
         // TODO:先这边写着，回头做到schema里，custom表里追加IMAGE属性，这样可以用共通代码解析处理
-        Set<String> listPicNameUrl = new HashSet<>();
+        List<String> listPicNameUrl = new ArrayList<>();
         // 获取url
         for (int i = 1; i <= 5; i++) {
             try {
@@ -963,17 +963,37 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         // 上传
         Map<String, String> mapUrls;
         try {
-            mapUrls = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), Long.toString(sxData.getGroupId()), shopProp, listPicNameUrl, getTaskName());
+            mapUrls = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), Long.toString(sxData.getGroupId()), shopProp, new HashSet<>(listPicNameUrl), getTaskName());
         } catch (Exception ex) {
             String errMsg = String.format("考拉上传图片失败![ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     channelId, cartId, sxData.getGroupId(), platformCategoryId);
             $error(errMsg, ex);
             throw new BusinessException("考拉上传图片失败!" + ex.getMessage());
         }
-        String strUrls = mapUrls.values().stream().map(url -> url + Separtor_Caret + "1").collect(Collectors.joining(Separtor_Vertical)) // 商品图片
-                + Separtor_Vertical
-                + mapUrls.values().stream().map(url -> url + Separtor_Caret + "2").collect(Collectors.joining(Separtor_Vertical)); // App图片
-        klAddBean.setImageUrls(strUrls);
+//        String strUrls = mapUrls.values().stream().map(url -> url + Separtor_Caret + "1").collect(Collectors.joining(Separtor_Vertical)) // 商品图片
+//                + Separtor_Vertical
+//                + mapUrls.values().stream().map(url -> url + Separtor_Caret + "2").collect(Collectors.joining(Separtor_Vertical)); // App图片
+//        klAddBean.setImageUrls(strUrls);
+        StringBuilder sb = new StringBuilder("");
+        // PC
+        listPicNameUrl.forEach(picUrl -> {
+            String platformUrl = mapUrls.get(picUrl);
+            if (!StringUtils.isEmpty(platformUrl)) {
+                sb.append(platformUrl + Separtor_Caret + "1" + Separtor_Vertical);
+            }
+        });
+        // APP
+        listPicNameUrl.forEach(picUrl -> {
+            String platformUrl = mapUrls.get(picUrl);
+            if (!StringUtils.isEmpty(platformUrl)) {
+                sb.append(platformUrl + Separtor_Caret + "2" + Separtor_Vertical);
+            }
+        });
+        // 移除最后的"|"
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        klAddBean.setImageUrls(sb.toString());
 
         // 调用共通函数取得商品属性列表，用户自行输入的类目属性ID和用户自行输入的属性值Map
         Map<String, String> klProductAttrMap = getKlProductAttributes(platformSchemaData, shopProp, expressionParser, blnIsSmartSx);
