@@ -15,8 +15,12 @@ public class CustomWordValueImageWithParam extends CustomWordValue{
     public CustomWordValueImageWithParam() {
     }
 
+    public CustomWordValueImageWithParam(RuleExpression imageTemplate, List<RuleExpression> imageParams, RuleExpression useCmsBtImageTemplate, RuleExpression viewType, RuleExpression htmlTemplate) {
+        this.userParam = new CustomModuleUserParamImageWithParam(imageTemplate, imageParams, useCmsBtImageTemplate, viewType, htmlTemplate);
+    }
+
     public CustomWordValueImageWithParam(RuleExpression imageTemplate, List<RuleExpression> imageParams, RuleExpression useCmsBtImageTemplate, RuleExpression viewType) {
-        this.userParam = new CustomModuleUserParamImageWithParam(imageTemplate, imageParams, useCmsBtImageTemplate, viewType);
+        this.userParam = new CustomModuleUserParamImageWithParam(imageTemplate, imageParams, useCmsBtImageTemplate, viewType, null);
     }
 
     public CustomModuleUserParamImageWithParam getUserParam() {

@@ -32,7 +32,7 @@ public class Koala_001_Sneakerhead_DictTest extends BaseDictTest {
     public void startUpTest() {
 
         // 天猫国际
-        doCreateJson("详情页描述", false, doDict_详情页描述(34));
+//        doCreateJson("考拉详情页描述", false, doDict_详情页描述(34));
         for (int i = 0; i < 10; i++) {
             doCreateJson("商品标题与图片-" + i, false, doDict_商品标题与图片(34, i));
         }
@@ -43,7 +43,7 @@ public class Koala_001_Sneakerhead_DictTest extends BaseDictTest {
     @Test
     public void dictTest() {
 
-        SxData sxData = sxProductService.getSxProductDataByGroupId("001", 11292497L);
+        SxData sxData = sxProductService.getSxProductDataByGroupId("001", 11292511L);
         sxData.setCartId(34);
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
         ShopBean shopProp = Shops.getShop("001", 34);
@@ -56,7 +56,7 @@ public class Koala_001_Sneakerhead_DictTest extends BaseDictTest {
         try {
             System.out.println("=====================================");
             System.out.println("字典: 详情页描述");
-            String result = sxProductService.resolveDict("详情页描述", expressionParser, shopProp, "testkoala", null);
+            String result = sxProductService.resolveDict("考拉详情页描述", expressionParser, shopProp, "testkoala", null);
             result = "<div style=\"width:750px; margin: 0 auto;\">" + result + "</div>";
             System.out.println(result);
 
@@ -161,7 +161,7 @@ public class Koala_001_Sneakerhead_DictTest extends BaseDictTest {
 
         // 固定图（物流须知）
         ruleRoot.addRuleWord(new TextWord(String.format(strPlatformTemplate,
-                "http://pop.nosdn.127.net/1cddb124-2dc0-442f-b958-78fdf5a633a4")));
+                "http://pop.nosdn.127.net/e2733de5-5490-45cc-bfca-a7683ed0a2d9")));
 
         // 固定图（购物须知）
         ruleRoot.addRuleWord(new TextWord(String.format(strPlatformTemplate,
@@ -180,7 +180,8 @@ public class Koala_001_Sneakerhead_DictTest extends BaseDictTest {
         if (idx == 0) {
 
             // 前缀
-            ruleRoot.addRuleWord(new TextWord("<img src=\""));
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord("<img width=750px src=\"%s\" >"));
 
             {
                 RuleExpression imageTemplate = new RuleExpression();
@@ -221,7 +222,7 @@ public class Koala_001_Sneakerhead_DictTest extends BaseDictTest {
                     imageParams.add(ruleExpression);
                 }
                 // 包装图
-                for (int iImgIdx = 21; iImgIdx < 23; iImgIdx++) {
+                for (int iImgIdx = 0; iImgIdx < 2; iImgIdx++) {
 
                     RuleExpression ruleExpression = new RuleExpression();
                     CustomModuleUserParamGetProductFieldInfo customModuleParam = new CustomModuleUserParamGetProductFieldInfo();
@@ -276,19 +277,20 @@ public class Koala_001_Sneakerhead_DictTest extends BaseDictTest {
                     imageParams.add(ruleExpression);
                 }
 
-                CustomWordValueImageWithParam imagesWithParamWord = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
+                CustomWordValueImageWithParam imagesWithParamWord = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null, htmlTemplate);
                 ruleRoot.addRuleWord(new CustomWord(imagesWithParamWord));
             }
 
             // 后缀
-            ruleRoot.addRuleWord(new TextWord("\">"));
+//            ruleRoot.addRuleWord(new TextWord("\">"));
 
         } else {
             // 非主商品
 //            ruleRoot.addRuleWord(new SubCodeWord(idx - 1 , "code"));
 
             // 前缀
-            ruleRoot.addRuleWord(new TextWord("<img src=\""));
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord("<img width=750px src=\"%s\" >"));
 
             {
                 RuleExpression imageTemplate = new RuleExpression();
@@ -397,12 +399,12 @@ public class Koala_001_Sneakerhead_DictTest extends BaseDictTest {
 
 
 
-                CustomWordValueImageWithParam imagesWithParamWord = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
+                CustomWordValueImageWithParam imagesWithParamWord = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null, htmlTemplate);
                 ruleRoot.addRuleWord(new CustomWord(imagesWithParamWord));
             }
 
             // 后缀
-            ruleRoot.addRuleWord(new TextWord("\">"));
+//            ruleRoot.addRuleWord(new TextWord("\">"));
 
         }
         return ruleRoot;
