@@ -593,8 +593,8 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                 throw new BusinessException(errMsg);
             }
 
-            // 标题翻译
-            cmsTranslateMqService.executeSingleCode(sxData, "0");
+            // 标题翻译 （先去掉试试看 后面设置标题的地方已经有逻辑判断的）
+//            cmsTranslateMqService.executeSingleCode(sxData, "0");
 
             // 上新对象code
             List<String> listSxCode = null;
