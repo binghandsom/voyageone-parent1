@@ -155,7 +155,7 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
 //        if (imageSet != null) {
 //            imageSet.add(parseResult);
 //        }
-        if (!StringUtils.isNullOrBlank2(parseResult)) {
+        if (!StringUtils.isNullOrBlank2(parseResult) && !StringUtils.isNullOrBlank2(htmlTemplate)) {
             parseResult = String.format(htmlTemplate, parseResult);
         }
 
