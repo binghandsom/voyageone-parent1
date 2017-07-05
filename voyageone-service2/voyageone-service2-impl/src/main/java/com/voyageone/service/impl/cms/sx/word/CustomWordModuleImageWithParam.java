@@ -44,6 +44,8 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
         // added by morse.lu 2016/07/13 end
 
         String imageTemplate = expressionParser.parse(imageTemplateExpression, shopBean, user, extParameter);
+        RuleExpression htmlTemplateExpression = customModuleUserParamImageWithParam.getHtmlTemplate();
+        String htmlTemplate = expressionParser.parse(htmlTemplateExpression, shopBean, user, extParameter);
         List<String> imageParams = new ArrayList<>();
         for (RuleExpression imageParamExpression : imageParamExpressions) {
             String imageParam = expressionParser.parse(imageParamExpression, shopBean, user, extParameter);
@@ -153,6 +155,9 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
 //        if (imageSet != null) {
 //            imageSet.add(parseResult);
 //        }
+        if (!StringUtils.isNullOrBlank2(parseResult)) {
+            parseResult = String.format(htmlTemplate, parseResult);
+        }
 
         return parseResult;
     }
