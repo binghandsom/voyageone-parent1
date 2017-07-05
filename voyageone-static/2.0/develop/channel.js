@@ -44,7 +44,7 @@ define([
                 $localStorage.user.channel = channel.channelId;
                 $localStorage.user.channelName = channel.channelName;
                 // 之后跳转相应的应用
-                location.href = 'modules/' + app.application + '/app.html#/home';
+                location.href = 'modules/cms-us/app.html#/home';
             }, function (res) {
                 alert(res.message || res.code);
             })
