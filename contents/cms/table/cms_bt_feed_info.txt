@@ -51,5 +51,6 @@
     "created" : String,
     "creater" : String,
     "modified" : String,
-    "modifier" : String
+    "modifier" : String,
+    "status": String [New Pending Ready Approved]
 }
