@@ -6,7 +6,8 @@
     "pkg-ng": "node node_scripts/npm/package-ng.js",
     "build-css-pkg": "node node_scripts/npm-build-css-package.js",
     "i-server": "npm i morgan http-proxy-middleware browser-sync",
-    "start": "browser-sync start -c bs-config.js"
+    "start": "browser-sync start -c bs-config.js",
+    "server-es6":"gulp server"
   },
   "author": "VoyageOne",
   "license": "ISC",
@@ -36,6 +37,7 @@
     "morgan": "",
     "http-proxy-middleware": "",
     "url": "",
-    "browser-sync": ""
+    "browser-sync": "",
+    "moment":""
   }
 }

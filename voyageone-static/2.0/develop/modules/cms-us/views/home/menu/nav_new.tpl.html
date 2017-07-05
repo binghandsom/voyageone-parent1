@@ -1,0 +1,728 @@
+<!-- list -->
+<ul class="nav">
+    <!-- 类目管理 -->
+    <!--<li ng-class="{active:$state.includes('ims.inventory''ims.new_inventory')}"> TODO 暂时做不了-->
+    <!-- Feed管理 -->
+    <li ng-if="!$root.isTranslator">
+        <div>
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="glyphicon glyphicon-star icon text-vo"></i>
+            <span class="" translate="TXT_FEED_MANAGER"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a>
+                    <span translate="TXT_FEED_MANAGER"></span>
+                </a>
+            </li>
+            <!-- Feed商品一览 -->
+            <li ui-sref-active="active">
+                <a href="#/feed/product_list">
+                    <i class="fa fa-reorder icon text-vo"></i>
+                    <span TRANSLATE="TXT_FEED_PRODUCT_LIST"></span>
+                </a>
+            </li>
+            <!-- feed分类 -->
+            <li ui-sref-active="active">
+                <a class="auto">
+                    <span class="pull-right text-muted">
+                      <i class="fa fa-fw fa-angle-right text"></i>
+                      <i class="fa fa-fw fa-angle-down text-active"></i>
+                    </span>
+                    <i class="fa fa-plus icon-small text-vo"></i>
+                    <span >feed分类</span>
+                </a>
+                <ul class="nav nav-sub dk">
+                    <li class="nav-sub-header">
+                        <a href>
+                            <span>feed分类</span>
+                        </a>
+                    </li>
+                    <li ng-repeat="item in feedCategoryTreeList" ng-init="_catPath=item.catPath">
+                        <a class="auto" ng-if="item.isParent == 1" ng-click="goAdvanceSearchByFeedCat(item.catPath, item.catId)">
+                    <span class="pull-right text-muted">
+                      <i class="fa fa-fw fa-angle-right text"></i>
+                      <i class="fa fa-fw fa-angle-down text-active"></i>
+                    </span>
+                            <i class="fa fa-plus icon-small text-vo"></i>
+                            <span ng-bind="item.catName"></span>
+                        </a>
+                        <a ng-if="item.isParent == 0" ng-click="goAdvanceSearchByFeedCat(item.catPath, item.catId)">
+                            <i class="fa fa-minus icon text-vo"></i>
+                            <span ng-bind="item.catName"></span>
+                        </a>
+                        <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'feedCategoryMenu'" ng-init="categoryMenu = item.children"></ul>
+                    </li>
+                </ul>
+            </li>
+            <!--feedCategoryTreeList-->
+            <!-- 第三方类目一览 todo:页面未实现 -->
+            <!--<li ui-sref-active="active">-->
+                <!--<a href="#/feed/category_list">-->
+                    <!--<i class="glyphicon glyphicon-minus icon text-vo"></i>-->
+                    <!--<span TRANSLATE="TXT_FEED_CATEGORY_LIST"></span>-->
+                <!--</a>-->
+            <!--</li>-->
+            <!-- Feed品牌一览 todo:页面未实现-->
+            <!--<li ui-sref-active="active">-->
+                <!--<a href="#/feed/brand_list">-->
+                    <!--<i class="glyphicon glyphicon-minus icon text-vo"></i>-->
+                    <!--<span TRANSLATE="TXT_FEED_BRAND_LIST"></span>-->
+                <!--</a>-->
+            <!--</li>-->
+        </ul>
+        </div>
+    </li>
+
+    <!-- 商品管理 -->
+    <li ng-if="!$root.isTranslator">
+        <div>
+        <a class="auto" ui-sref="cms.category">
+      <span class="pull-right text-muted">
+        <i class="fa fa-fw fa-angle-right text"></i>
+        <i class="fa fa-fw fa-angle-down text-active"></i>
+      </span>
+            <i class="glyphicon glyphicon-th-list icon text-vo"></i>
+            <span class="" translate="TXT_CATEGORY_MANAGER"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a href>
+                    <span translate="TXT_CATEGORY_MANAGER"></span>
+                </a>
+            </li>
+            <li ng-repeat="item in menuInfo.categoryTreeList" ng-init="_catPath=item.catPath">
+                <a class="auto" ng-if="item.isParent == 1" ng-click="goSearchPage(item.catPath, item.catId)">
+                    <span class="pull-right text-muted">
+                      <i class="fa fa-fw fa-angle-right text"></i>
+                      <i class="fa fa-fw fa-angle-down text-active"></i>
+                    </span>
+                    <i class="fa fa-plus icon-small text-vo"></i>
+                    <span ng-bind="item.catName"></span>
+                </a>
+                <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catPath, item.catId)">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span ng-bind="item.catName"></span>
+                </a>
+                <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'categoryMenu'" ng-init="categoryMenu = item.children"></ul>
+            </li>
+        </ul>
+            </div>
+    </li>
+
+    <!-- 活动管理 -->
+    <li ng-if="!$root.isTranslator">
+        <div>
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="glyphicon glyphicon-star icon text-vo"></i>
+            <span class="" translate="TXT_PROMOTION_MANAGER"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a>
+                    <span translate="TXT_PROMOTION_MANAGER"></span>
+                </a>
+            </li>
+            <!-- 活动一览 -->
+            <li ui-sref-active="active">
+                <a class="auto">
+                    <span class="pull-right text-muted">
+                      <i class="fa fa-fw fa-angle-right text"></i>
+                      <i class="fa fa-fw fa-angle-down text-active"></i>
+                    </span>
+                    <i class="fa fa-plus icon-small text-vo"></i>
+                    <span TRANSLATE="TXT_PROMOTION_LIST"></span>
+                </a>
+                <ul class="nav nav-sub dk" style="padding-left:10px" >
+                    <!-- 总活动一览 当该渠道只有一个聚美平台销售时此项不显示 -->
+                    <li ng-if="menuInfo.only4jumei==0||menuInfo.only4jumei==2" ui-sref-active="active">
+                        <a ng-href="#/promotion/list">
+                            <i class="fa fa-minus icon text-vo"></i>
+                            <span TRANSLATE="TXT_PROMOTION_LIST_ALL"></span>
+                        </a>
+                    </li>
+                    <!-- 当该渠道在聚美平台销售时此项显示 -->
+                    <li ng-if="menuInfo.only4jumei>0" ui-sref-active="active">
+                        <a ng-href="#/jmpromotion/list">
+                            <i class="fa fa-minus icon text-vo"></i>
+                            <span>聚美国际活动</span>
+                        </a>
+                    </li>
+                    <!-- 平台活动一览 todo:暂时不支持 -->
+                    <!--<li ui-sref-active="active" ng-repeat="platformType in menuInfo.platformTypeList" ng-if="platformType.value > 1">-->
+                        <!--<a ng-href="#/promotion/list/{{platformType.value}}">-->
+                            <!--<i class="glyphicon glyphicon-minus icon text-vo"></i>-->
+                            <!--<span>{{platformType.name}}{{'TXT_PROMOTION_LIST'| translate}}</span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                </ul>
+            </li>
+            <!-- 任务一览 -->
+            <li ui-sref-active="active">
+                <a href="#/promotion/task_list">
+                    <i class="glyphicon glyphicon-minus icon text-vo"></i>
+                    <span translate="TXT_PROMOTION_TASK_LIST"></span>
+                </a>
+            </li>
+        </ul>
+            </div>
+    </li>
+
+    <!-- 素材管理 -->
+    <li ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-database icon text-vo"></i>
+            <span translate="TXT_IMAGE_MANAGER"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a href>
+                    <span translate="TXT_IMAGE_MANAGER"></span>
+                </a>
+            </li>
+            <!--详情页模板一览-->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/image/dictionary_list">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_IMAGE_DICTIONARY_LIST"></span>
+                </a>
+            </li>
+            <!--商品图片模板一览-->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/image/template_list">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_IMAGE_TEMPLATE_LIST"></span>
+                </a>
+            </li>
+            <!--共通图片一览-->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/image/common_list">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_IMAGE_COMMON_LIST"></span>
+                </a>
+            </li>
+            <!--尺码对照表一览-->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/image/size_chart_list">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_IMAGE_SIZE_CHART_LIST"></span>
+                </a>
+            </li>
+            <!--自定义标签一览-->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/image/product_label_list">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_IMAGE_PRODUCT_LABEL_LIST"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <!-- 店铺管理 -->
+    <li ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-bank icon text-vo"></i>
+            <span translate="TXT_CHANNEL_MANAGER"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a href>
+                    <span translate="TXT_CHANNEL_MANAGER"></span>
+                </a>
+            </li>
+            <!-- 店铺内类目一览 -->
+            <li ui-sref-active="active">
+                <a href="#/channel/cart_category_list">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_CHANNEL_CART_CATEGORY_LIST"></span>
+                </a>
+            </li>
+            <!-- 平台品牌设置一览 -->
+            <li ui-sref-active="active">
+                <a href="#/channel/brand_mapping_list">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_BRAND_MAPPING_LIST"></span>
+                </a>
+            </li>
+
+            <!-- 平台默认属性设置一览 -->
+            <li ui-sref-active="active">
+                <a href="#/channel/default_attribute_list">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_DEFAULT_MAPPING_LIST"></span>
+                </a>
+            </li>
+
+            <!-- 店铺配置 -->
+            <!--<li ui-sref-active="active">-->
+                <!--<a href="#/channel/channel_config_list">-->
+                    <!--<i class="fa fa-minus icon text-vo"></i>-->
+                    <!--<span translate="TXT_CHANNEL_CONFIG"></span>-->
+                <!--</a>-->
+            <!--</li>-->
+
+            <!-- 货架一览 -->
+            <li ui-sref-active="active">
+                <a href="#/shelves/management">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span>货架一览</span>
+                </a>
+            </li>
+
+            <!-- 货架一览 -->
+            <li ui-sref-active="active">
+                <a href="#/combined/product">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span>组合套装商品一览</span>
+                </a>
+            </li>
+
+        </ul>
+    </li>
+
+    <!-- 高级检索 -->
+    <li ng-if="!$root.isTranslator">
+        <a class="auto">
+        <span class="pull-right text-muted">
+        <i class="fa fa-fw fa-angle-right text"></i>
+        <i class="fa fa-fw fa-angle-down text-active"></i>
+        </span>
+            <i class="glyphicon glyphicon-search icon text-vo"></i>
+            <span class="" translate="TXT_ADVANCE_SEARCH"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a>
+                    <span translate="TXT_ADVANCE_SEARCH"></span>
+                </a>
+            </li>
+            <!-- 新高级检索 -->
+            <li ui-sref-active="active">
+                <a href="#/search/advanceSearch">
+                    <i class="glyphicon glyphicon-minus icon text-vo"></i>
+                    <span translate="TXT_ADVANCE_SEARCH"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <!-- 运营错误管理 -->
+    <li ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-cogs icon text-vo"></i>
+            <span class="" translate="TXT_MARKETING_ERROR_MANAGER"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a href>
+                    <span translate="TXT_MARKETING_ERROR_MANAGER"></span>
+                </a>
+            </li>
+            <!-- 上新错误总览 -->
+            <li ui-sref-active="active">
+                <a href="#/marketing_error/upload_error_list/1">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_MARKETING_ERROR_LIST_ALL"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <!-- 维护错误管理 -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-cogs icon text-vo"></i>
+            <span class="" translate="TXT_MAINTAIN_ERROR_MANAGER"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a href>
+                    <span translate="TXT_MAINTAIN_ERROR_MANAGER"></span>
+                </a>
+            </li>
+            <!-- 导入错误总览 -->
+            <li ui-sref-active="active">
+                <a href="#/maintain_error/import_error_list/2">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_MAINTAIN_ERROR_LIST_ALL"></span>
+                </a>
+            </li>
+            <!-- 导入错误一览 todo:暂时不支持 -->
+            <!--<li ui-sref-active="active" ng-repeat="platformType in menuInfo.platformTypeList" ng-if="platformType.value <= 1">-->
+                <!--<a ng-href="#/maintain_error/import_error_list/2/{{platformType.value}}">-->
+                    <!--<i class="glyphicon glyphicon-minus icon text-vo"></i>-->
+                    <!--<span>{{platformType.name}}{{'TXT_MAINTAIN_ERROR_LIST'| translate}}</span>-->
+                <!--</a>-->
+            <!--</li>-->
+        </ul>
+    </li>
+
+    <!-- 运营设置管理 -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-gear icon text-vo"></i>
+            <span class="" translate="TXT_MARKETING_SETTING_MANAGER"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a href>
+                    <span translate="TXT_MARKETING_SETTING_MANAGER"></span>
+                </a>
+            </li>
+            <!-- 共通设置 -->
+            <li ui-sref-active="active">
+                <a class="auto">
+                    <span class="pull-right text-muted">
+                      <i class="fa fa-fw fa-angle-right text"></i>
+                      <i class="fa fa-fw fa-angle-down text-active"></i>
+                    </span>
+                    <i class="fa fa-plus icon-small text-vo"></i>
+                    <span translate="TXT_MARKETING_SETTING_COMMON"></span>
+                </a>
+                <ul class="nav nav-sub dk" style="padding-left:10px" >
+                    <!-- 黑名单一览 todo:暂时不支持 -->
+                    <li ui-sref-active="active">
+                        <a ng-href="#/marketing/black-brand">
+                            <i class="fa fa-minus icon text-vo"></i>
+                            <span TRANSLATE="TXT_MARKETING_SETTING_COMMON_BLACK_LIST"></span>
+                        </a>
+                    </li>
+                    <!-- 使用人群一览 todo:暂时不支持 -->
+                    <!--<li ui-sref-active="active">-->
+                        <!--<a ng-href="#/marketing_setting/common_size_type_list">-->
+                            <!--<i class="fa fa-minus icon text-vo"></i>-->
+                            <!--<span TRANSLATE="TXT_MARKETING_SETTING_COMMON_SIZE_TYPE_LIST"></span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                    <!-- 禁用词一览 todo:暂时不支持 -->
+                    <!--<li ui-sref-active="active">-->
+                        <!--<a ng-href="#/marketing_setting/common_stop_words_list">-->
+                            <!--<i class="fa fa-minus icon text-vo"></i>-->
+                            <!--<span TRANSLATE="TXT_MARKETING_SETTING_COMMON_STOP_WORDS_LIST"></span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                    <!-- 自定义属性一览 -->
+                    <li ui-sref-active="active">
+                        <a ng-href="#/marketing_setting/common_custom_attribute_list/0">
+                            <i class="fa fa-minus icon text-vo"></i>
+                            <span TRANSLATE="TXT_MARKETING_SETTING_COMMON_CUSTOM_ATTRIBUTE_LIST"></span>
+                        </a>
+                    </li>
+                    <!-- 子店权限一览 todo:暂时不支持 -->
+                    <!--<li ui-sref-active="active">-->
+                        <!--<a ng-href="#/marketing_setting/common_branch_right_list">-->
+                            <!--<i class="fa fa-minus icon text-vo"></i>-->
+                            <!--<span TRANSLATE="TXT_MARKETING_SETTING_COMMON_BRANCH_RIGHT_LIST"></span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                </ul>
+            </li>
+            <!-- 平台设置 todo:暂时不支持 -->
+            <!--<li ui-sref-active="active">-->
+                <!--<a class="auto">-->
+                    <!--<span class="pull-right text-muted">-->
+                      <!--<i class="fa fa-fw fa-angle-right text"></i>-->
+                      <!--<i class="fa fa-fw fa-angle-down text-active"></i>-->
+                    <!--</span>-->
+                    <!--<i class="fa fa-plus icon-small text-vo"></i>-->
+                    <!--<span translate="TXT_MARKETING_SETTING_PLATFORM"></span>-->
+                <!--</a>-->
+                <!--<ul class="nav nav-sub dk" style="padding-left:10px" >-->
+                    <!--&lt;!&ndash; 平台类目一览 &ndash;&gt;-->
+                    <!--<li ui-sref-active="active">-->
+                        <!--<a ng-href="#/marketing_setting/platform_category_list">-->
+                            <!--<i class="fa fa-minus icon text-vo"></i>-->
+                            <!--<span TRANSLATE="TXT_MARKETING_SETTING_PLATFORM_CATEGORY_LIST"></span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                    <!--&lt;!&ndash; 平台品牌一览 &ndash;&gt;-->
+                    <!--<li ui-sref-active="active">-->
+                        <!--<a ng-href="#/marketing_setting/platform_brand_list">-->
+                            <!--<i class="fa fa-minus icon text-vo"></i>-->
+                            <!--<span TRANSLATE="TXT_MARKETING_SETTING_PLATFORM_BRAND_LIST"></span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                    <!--&lt;!&ndash; 平台默认属性一览 &ndash;&gt;-->
+                    <!--<li ui-sref-active="active">-->
+                        <!--<a ng-href="#/marketing_setting/platform_default_list">-->
+                            <!--<i class="fa fa-minus icon text-vo"></i>-->
+                            <!--<span TRANSLATE="TXT_MARKETING_SETTING_PLATFORM_DEFAULT_LIST"></span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                <!--</ul>-->
+            <!--</li>-->
+        </ul>
+    </li>
+
+    <!-- 维护设置管理 -->
+    <li ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-gear icon text-vo"></i>
+            <span class="" translate="TXT_MAINTAIN_SETTING_MANAGER"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a href>
+                    <span translate="TXT_MAINTAIN_SETTING_MANAGER"></span>
+                </a>
+            </li>
+            <!-- 共通设置 -->
+            <!--<li ui-sref-active="active">-->
+                <!--<a class="auto">-->
+                    <!--<span class="pull-right text-muted">-->
+                      <!--<i class="fa fa-fw fa-angle-right text"></i>-->
+                      <!--<i class="fa fa-fw fa-angle-down text-active"></i>-->
+                    <!--</span>-->
+                    <!--<i class="fa fa-plus icon-small text-vo"></i>-->
+                    <!--<span translate="TXT_MAINTAIN_SETTING_COMMON"></span>-->
+                <!--</a>-->
+                <!--<ul class="nav nav-sub dk" style="padding-left:10px" >-->
+                    <!--&lt;!&ndash; 主品牌设置&ndash;&gt;-->
+                    <!--<li ui-sref-active="active">-->
+                        <!--<a ng-href="#/maintain/common/masterBrandApplication/">-->
+                            <!--<i class="fa fa-minus icon text-vo"></i>-->
+                            <!--<span TRANSLATE="TXT_MASTER_BRAND_SETTING"></span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                <!--</ul>-->
+            <!--</li>-->
+            <!-- 当前店铺设置-->
+            <li ui-sref-active="active">
+                <a class="auto">
+                    <span class="pull-right text-muted">
+                      <i class="fa fa-fw fa-angle-right text"></i>
+                      <i class="fa fa-fw fa-angle-down text-active"></i>
+                    </span>
+                    <i class="fa fa-plus icon-small text-vo"></i>
+                    <span translate="TXT_CURRENT_CHANNEL_SETTING"></span>
+                </a>
+                <ul class="nav nav-sub dk" style="padding-left:10px" >
+                    <!-- 主品牌设置-->
+                    <li ui-sref-active="active">
+                        <a ng-href="#/shelves/template/management/">
+                            <i class="fa fa-minus icon text-vo"></i>
+                            <span TRANSLATE="TXT_SHELVES_TEMPLATE_MANAGEMENT"></span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+
+    <!-- 工具管理 -->
+    <li>
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-briefcase icon text-vo"></i>
+            <span class="" translate="TOOLS_MANAGER"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a href>
+                    <span translate="TOOLS_MANAGER"></span>
+                </a>
+            </li>
+            <!-- 共通处理 todo:暂时不支持 -->
+            <!--<li ui-sref-active="active" ng-if="!$root.isTranslator">-->
+                <!--<a class="auto">-->
+                    <!--<span class="pull-right text-muted">-->
+                      <!--<i class="fa fa-fw fa-angle-right text"></i>-->
+                      <!--<i class="fa fa-fw fa-angle-down text-active"></i>-->
+                    <!--</span>-->
+                    <!--<i class="fa fa-plus icon-small text-vo"></i>-->
+                    <!--<span translate="TOOLS_COMMON"></span>-->
+                <!--</a>-->
+                <!--<ul class="nav nav-sub dk" style="padding-left:10px" >-->
+                    <!--&lt;!&ndash; 主商品品牌匹配 &ndash;&gt;-->
+                    <!--<li ui-sref-active="active">-->
+                        <!--<a ng-href="#/tools/common/masterBrandMapping">-->
+                            <!--<i class="fa fa-minus icon text-vo"></i>-->
+                            <!--<span TRANSLATE="TOOLS_COMMON_MASTER_BRAND_MAPPING"></span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                    <!--&lt;!&ndash; 平台品牌匹配 &ndash;&gt;-->
+                    <!--<li ui-sref-active="active">-->
+                        <!--<a ng-href="#/tools_common/platform_brand_mapping">-->
+                            <!--<i class="fa fa-minus icon text-vo"></i>-->
+                            <!--<span TRANSLATE="TOOLS_COMMON_PLATFORM_BRAND_MAPPING"></span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                    <!--&lt;!&ndash; 使用人群匹配 &ndash;&gt;-->
+                    <!--<li ui-sref-active="active">-->
+                        <!--<a ng-href="#/tools_common/size_type_mapping">-->
+                            <!--<i class="fa fa-minus icon text-vo"></i>-->
+                            <!--<span TRANSLATE="TOOLS_COMMON_SIZE_TYPE_MAPPING"></span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                <!--</ul>-->
+            <!--</li>-->
+            <!-- 商品处理 -->
+            <li ui-sref-active="active">
+                <a class="auto">
+                    <span class="pull-right text-muted">
+                      <i class="fa fa-fw fa-angle-right text"></i>
+                      <i class="fa fa-fw fa-angle-down text-active"></i>
+                    </span>
+                    <i class="fa fa-plus icon-small text-vo"></i>
+                    <span translate="TOOLS_PRODUCT"></span>
+                </a>
+                <ul class="nav nav-sub dk" style="padding-left:10px" >
+                    <!-- 商品类目设置 todo:暂时不支持 -->
+                    <!--<li ui-sref-active="active" ng-if="!$root.isTranslator">-->
+                        <!--<a ng-href="#/tools_product/master_category_setting">-->
+                            <!--<i class="fa fa-minus icon text-vo"></i>-->
+                            <!--<span TRANSLATE="TOOLS_PRODUCT_MASTER_CATEGORY_SETTING"></span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                    <!-- 商品属性翻译 -->
+                    <li ui-sref-active="active">
+                        <a ng-href="#/tools/product/translation_setting">
+                            <i class="fa fa-minus icon text-vo"></i>
+                            <span TRANSLATE="TOOLS_PRODUCT_TRANSLATION_SETTING"></span>
+                        </a>
+                    </li>
+                    <!-- 商品税号设置 todo:暂时不支持 -->
+                    <!--<li ui-sref-active="active" ng-if="!$root.isTranslator">-->
+                        <!--<a ng-href="#/tools/product/hscode_setting">-->
+                            <!--<i class="fa fa-minus icon text-vo"></i>-->
+                            <!--<span TRANSLATE="TOOLS_PRODUCT_HSCODE_SETTING"></span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                    <!-- 商品自定义图片任务 todo:暂时不支持 -->
+                    <!--<li ui-sref-active="active" ng-if="!$root.isTranslator">-->
+                        <!--<a ng-href="#/tools_product/custom_images_setting">-->
+                            <!--<i class="fa fa-minus icon text-vo"></i>-->
+                            <!--<span TRANSLATE="TOOLS_PRODUCT_CUSTOM_IMAGES_SETTING"></span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                    <!-- 平台属性设置 todo:暂时不支持 -->
+                    <!--<li ui-sref-active="active" ng-if="!$root.isTranslator">-->
+                        <!--<a ng-href="#/tools_product/platform_attribute_setting">-->
+                            <!--<i class="fa fa-minus icon text-vo"></i>-->
+                            <!--<span TRANSLATE="TOOLS_PRODUCT_PLATFORM_ATTRIBUTE_SETTING"></span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                </ul>
+            </li>
+            <!-- 共同处理 -->
+            <!--<li ui-sref-active="active">-->
+                <!--<a class="auto">-->
+                    <!--<span class="pull-right text-muted">-->
+                      <!--<i class="fa fa-fw fa-angle-right text"></i>-->
+                      <!--<i class="fa fa-fw fa-angle-down text-active"></i>-->
+                    <!--</span>-->
+                    <!--<i class="fa fa-plus icon-small text-vo"></i>-->
+                    <!--<span translate="TOOLS_COMMON"></span>-->
+                <!--</a>-->
+                <!--<ul class="nav nav-sub dk" style="padding-left:10px" >-->
+                    <!--&lt;!&ndash; 主品牌匹配 &ndash;&gt;-->
+                    <!--<li ui-sref-active="active">-->
+                        <!--<a ng-href="#/tools/common/masterBrandMapping">-->
+                            <!--<i class="fa fa-minus icon text-vo"></i>-->
+                            <!--<span TRANSLATE="TXT_MAIN_BRAND_MAPPING"></span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                <!--</ul>-->
+            <!--</li>-->
+            <!-- 类目处理 -->
+            <!--<li ui-sref-active="active" ng-if="!$root.isTranslator">-->
+                <!--<a class="auto">-->
+                    <!--<span class="pull-right text-muted">-->
+                      <!--<i class="fa fa-fw fa-angle-right text"></i>-->
+                      <!--<i class="fa fa-fw fa-angle-down text-active"></i>-->
+                    <!--</span>-->
+                    <!--<i class="fa fa-plus icon-small text-vo"></i>-->
+                    <!--<span translate="TOOLS_CATEGORY"></span>-->
+                <!--</a>-->
+                <!--<ul class="nav nav-sub dk" style="padding-left:10px" >-->
+                    <!--&lt;!&ndash; 第三方类目匹配主数据类目 &ndash;&gt;-->
+                    <!--<li ui-sref-active="active">-->
+                        <!--<a ng-href="#/tools_category/feed_to_master_mapping">-->
+                            <!--<i class="fa fa-minus icon text-vo"></i>-->
+                            <!--<span TRANSLATE="TOOLS_CATEGORY_FEED_TO_MASTER_MAPPING"></span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                    <!--&lt;!&ndash; 主数据属性匹配平台属性 &ndash;&gt;-->
+                    <!--<li ui-sref-active="active">-->
+                        <!--<a ng-href="#/tools_category/master_to_platform_mapping">-->
+                            <!--<i class="fa fa-minus icon text-vo"></i>-->
+                            <!--<span TRANSLATE="TOOLS_CATEGORY_MASTER_TO_PLATFORM_MAPPING"></span>-->
+                        <!--</a>-->
+                    <!--</li>-->
+                <!--</ul>-->
+            <!--</li>-->
+        </ul>
+    </li>
+</ul>
+
+
+<script id="categoryMenu" type="text/ng-template">
+    <li ng-repeat="item in categoryMenu">
+        <a class="auto" ng-if="item.isParent == 1" ng-click="goSearchPage(item.catPath, item.catId)">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-plus icon-small text-vo"></i>
+            <span ng-bind="item.catName"></span>
+        </a>
+        <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catPath,item.catId)">
+            <i class="fa fa-minus icon text-vo"></i>
+            <span ng-bind="item.catName"></span>
+        </a>
+        <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'categoryMenu'" ng-init="categoryMenu = item.children"></ul>
+    </li>
+</script>
+
+<script id="feedCategoryMenu" type="text/ng-template">
+    <li ng-repeat="item in categoryMenu">
+        <a class="auto" ng-if="item.isParent == 1" ng-click="goAdvanceSearchByFeedCat(item.catPath, item.catId)">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-plus icon-small text-vo"></i>
+            <span ng-bind="item.catName"></span>
+        </a>
+        <a ng-if="item.isParent == 0" ng-click="goAdvanceSearchByFeedCat(item.catPath,item.catId)">
+            <i class="fa fa-minus icon text-vo"></i>
+            <span ng-bind="item.catName"></span>
+        </a>
+        <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'feedCategoryMenu'" ng-init="categoryMenu = item.children"></ul>
+    </li>
+</script>
