@@ -26,7 +26,6 @@ import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.channel.CmsFeedCustPropService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -148,7 +147,6 @@ public class CmsFeedSearchService extends BaseViewService {
         String channelId = searchValue.get("orgChaId") == null ? userInfo.getSelChannelId() : searchValue.get("orgChaId").toString();
         JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery(feedInfoService.getSearchQuery(channelId, searchValue));
-        String s = setSortValue(searchValue);
         queryObject.setSort(setSortValue(searchValue));
         int pageNum = (Integer) searchValue.get("pageNum");
         int pageSize = (Integer) searchValue.get("pageSize");

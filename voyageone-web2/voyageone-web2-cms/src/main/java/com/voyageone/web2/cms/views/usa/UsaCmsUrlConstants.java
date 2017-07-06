@@ -15,7 +15,5 @@ public class UsaCmsUrlConstants {
         String ROOT = "/cms-usa/feed";
 
         String DETAIL = "detail";
-
-        String LIST = "list";
     }
 }
