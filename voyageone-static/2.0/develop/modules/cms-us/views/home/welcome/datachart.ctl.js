@@ -8,9 +8,10 @@ define([
 
     cms.controller('datachartController', class DatachartController {
 
-        constructor($menuService) {
+        constructor($menuService,alert) {
             this.vm = {};
             this.$menuService = $menuService;
+            this.alert = alert;
         }
 
         init() {
@@ -21,10 +22,10 @@ define([
             });
         }
 
-        testClick() {
+        goLink() {
             let self = this;
 
-            console.log('self',self.vm);
+            self.alert('去哪呀？');
         }
     });
 
