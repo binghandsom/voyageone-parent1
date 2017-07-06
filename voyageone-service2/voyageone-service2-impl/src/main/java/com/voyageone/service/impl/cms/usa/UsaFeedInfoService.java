@@ -188,7 +188,7 @@ public class UsaFeedInfoService extends BaseService {
         }
 
         // 选中同Model的某个Code,则执行覆盖操作,覆盖内容: 除了code, name, color, colorMap, 图片，urlKey以外的code级别属性
-        // 覆盖内容: Brand,ProductType,SizeType,Material,Made In,Amazon Category,Usage,Short Description,Long Description,Order Limit Count,Accessory
+        // 覆盖内容: Brand,ProductType,SizeType,Material,Made In,Amazon Category,Usage,Short Description,Long Description,Order Limit Count,Abstract,Accessory
         if (!resultProductList.isEmpty()) {
             return this.tempConvertToFeedInfo(resultProductList);
         }
@@ -229,6 +229,8 @@ public class UsaFeedInfoService extends BaseService {
                 // Long Description
                 feed.setLongDescription(fields.getLongDesEn());
                 // Order Limit Count
+                // TODO: 2017/7/6 rex.wu
+                // Abstract
                 // TODO: 2017/7/6 rex.wu
                 // Accessory
                 // TODO: 2017/7/6 rex.wu
@@ -272,7 +274,7 @@ public class UsaFeedInfoService extends BaseService {
                     && StringUtils.isNotBlank(feedInfoModel.getAttribute().get("urlKey").get(0))) {
                 // New状态Save时校验urlKey是否唯一
                 if (this.isUrlKeyDuplicated(channelId, code, feedInfoModel.getAttribute().get("urlKey").get(0))) {
-                    throw new BusinessException("URL Key(%s) already exists.");
+                    throw new BusinessException(String.format("URL Key(%s) already exists.", feedInfoModel.getAttribute().get("urlKey").get(0)));
                 }
             }
         } else {
@@ -299,7 +301,7 @@ public class UsaFeedInfoService extends BaseService {
         feedInfoModel.setModifier(username);
         feedInfoModel.setModified(DateTimeUtil.getNow());
         WriteResult writeResult = cmsBtFeedInfoDao.update(feedInfoModel);
-        $info(String.format("(%s)%s Feed(channelId=%s,code=%s)结果: %s", username, isSave ? "Save" : channelId, code, JacksonUtil.bean2Json(writeResult)));
+        $info(String.format("(%s)%s Feed(channelId=%s,code=%s)结果: %s", username, isSave ? "Save" : feedStatus.name(), channelId, code, JacksonUtil.bean2Json(writeResult)));
 
     }
 
