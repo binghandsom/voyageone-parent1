@@ -17,6 +17,8 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +43,88 @@ public class UsaFeedInfoService extends BaseService {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
+    /**
+     * 条件查询feed商品列表
+     * @param searchValue
+     * @param channel
+     */
+    public List<CmsBtFeedInfoModel> getFeedList(Map<String, Object> searchValue, String channel) {
+        //封装查询条件
+        JongoQuery queryObject = getQuery(searchValue);
+        //设置排序条件,排序字段后面拼接排序方式,下划线分割(1,正序,-1倒叙),默认不排序,点击那个按照哪个排序
+        String  sortFild = (String) searchValue.get("sort");
+        if (sortFild != null){
+            String[] split = sortFild.split("_");
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("{'");
+            buffer.append(split[0]);
+            buffer.append("':");
+            buffer.append(split[1]);
+            buffer.append("}");
+            queryObject.setSort(buffer.toString());
+        }
+        //封装分页条件
+        int pageNum = (Integer) searchValue.get("pageNum");
+        int pageSize = (Integer) searchValue.get("pageSize");
+        queryObject.setSkip((pageNum - 1) * pageSize);
+        queryObject.setLimit(pageSize);
 
+        return  feedInfoService.getList(channel,queryObject);
+    }
+
+    /**
+     * 查询feed商品总数
+     * @param searchValue
+     * @param channel
+     * @return
+     */
+    public Long getFeedCount(Map<String, Object> searchValue, String channel) {
+        //封装查询条件
+        JongoQuery query = getQuery(searchValue);
+        return cmsBtFeedInfoDao.countByQuery(query.getQuery(), channel);
+    }
+
+    //组装查询条件
+    public JongoQuery getQuery(Map<String, Object> searchValue){
+        //封装查询条件
+        Criteria criteria = new Criteria();
+        //状态
+        if (searchValue.get("status") != null){
+            criteria = criteria.and("status").is((String)searchValue.get("status"));
+        }
+        //设置开始和截止的时间
+        if (searchValue.get("lastReceivedOnStart") != null && searchValue.get("lastReceivedOnEnd") == null){
+            criteria = criteria.and("lastReceivedOn").gte((String)searchValue.get("lastReceivedOnStart"));
+        }
+        if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") == null){
+            criteria = criteria.and("lastReceivedOn").lte((String)searchValue.get("lastReceivedOnEnd"));
+        }
+        if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") != null){
+            criteria = criteria.and("lastReceivedOn").gte((String)searchValue.get("lastReceivedOnStart")).lte((String)searchValue.get("lastReceivedOnEnd"));
+        }
+        //name模糊查询
+        if (searchValue.get("name") != null){
+            String name = (String) searchValue.get("name");
+            StringBuffer buffer = new StringBuffer("/");
+            buffer.append(name);
+            buffer.append("/");
+            criteria = criteria.and("name").is(buffer.toString());
+        }
+        //多条件精确查询,SKU/ Barcode/ Code / Model
+        if (searchValue.get("searchContent") != null){
+            String searchContent = (String) searchValue.get("searchContent");
+            String[] split = searchContent.split("/n");
+            List<String> searchContents = Arrays.asList(split);
+            criteria.orOperator(new Criteria("code").in(searchContents),new Criteria("model").in(searchContents),new Criteria("skus.sku").in(searchContent),new Criteria("skus.barcode").in(searchContent));
+        }
+        if (searchValue.get("isApprove") != null){
+            criteria = criteria.and("isApprove").is((String)searchValue.get("isApprove"));
+        }
+        return new JongoQuery(criteria);
+    }
+
+
+/*xu*/
     //---------------------^^^^-------------------------------
 
     /**
