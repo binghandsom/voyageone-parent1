@@ -1,0 +1,167 @@
+<div class="wrapper-md">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                        <h4 class="panel-title"><i class="fa fa-search"></i>&nbsp;Query Terms</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title">status</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox">&nbsp;&nbsp;new
+                                            </label>&emsp;
+                                            <label>
+                                                <input type="checkbox">&nbsp;&nbsp;pending
+                                            </label>&emsp;
+                                            <label>
+                                                <input type="checkbox">&nbsp;&nbsp;ready
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label query-title">sku/barcode/code/model</label>
+                                    <div class="col-md-6">
+                                        <textarea class="form-control no-resize"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title">Last Recevied Time</label>
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <p class="input-group">
+                                                        <input type="text" class="form-control" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="dt" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" required="required">
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-1 text-center">~</div>
+                                                <div class="col-md-5">
+                                                    <p class="input-group">
+                                                        <input type="text" class="form-control" uib-datepicker-popup="" ng-model="dt" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" required="required">
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title">name</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title">Approve Pricing</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox">&nbsp;&nbsp;yes
+                                            </label>&emsp;
+                                            <label>
+                                                <input type="checkbox">&nbsp;&nbsp;no
+                                            </label>&emsp;
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-md-offset-4 text-center">
+                            <button type="button" class="btn btn-default"><i class="fa fa-trash"></i>&nbsp;&nbsp;clear</button>&emsp;
+                            <button type="button" class="btn btn-vo"><i class="fa fa-search"></i>&nbsp;&nbsp;search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="container-fluid">
+
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive box box-body">
+                    <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox">
+                                </th>
+                                <th>IMG</th>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Model</th>
+                                <th>Status</th>
+                                <th>Inventory</th>
+                                <th>Approve price</th>
+                                <th>Msrp($)</th>
+                                <th>price($)</th>
+                                <th>Last Received</th>
+                                <th>Modifier</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input type="checkbox">
+                                </td>
+                                <td>
+                                    <a href="javascript:void(0)">
+                                        <img alt="1280750-480." class="thumb-sm-search" src="http://image.voyageone.com.cn/is/image/sneakerhead/under-armour-storm-armour-fleece-twist-hoodie-1280750480.-1">
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#/items/itemDetail" target="_blank">619705-064</a>
+                                </td>
+                                <td>Jordan Varsity Sweatpants</td>
+                                <td>619705</td>
+                                <td>Ready</td>
+                                <td>3</td>
+                                <td>No</td>
+                                <td>100</td>
+                                <td>100</td>
+                                <td>2017-02-16 15:24:15</td>
+                                <td>ann.huang</td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-vo"><i class="fa fa-arrow-right"></i>&nbsp;Approve</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!--</div>-->
+                    <div class="col-sm-12 m-t-lg m-b-lg">
+                        <!--<vpagination config="vm.feedPageOption"></vpagination>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,9 +1,7 @@
-<!-- navbar header -->
 <div class="navbar-header {{app.settings.navbarHeaderColor}}">
     <a href="#/" class="navbar-brand text-lt"><span translate="TXT_VOYAGE_ONE"></span></a>
 </div>
-<!-- / navbar header -->
-<!-- navbar collapse -->
+
 <div class="collapse pos-rlt navbar-collapse box-shadow bg-black" ng-controller="headerCtrl as header" ng-init="initialize()">
 
     <ul class="nav navbar-nav hidden-xs">
@@ -13,44 +11,13 @@
         </li>
     </ul>
 
-    <ul class="nav navbar-nav hidden-xs">
-        <li class="dropdown vo_h_system" uib-dropdown>
-            <a href class="dropdown-toggle" uib-dropdown-toggle>
-                <span class="m-n font thin" ng-bind="header.userInfo.application.toUpperCase()"></span><span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu arrow_box left" role="menu" ng-if="header.applicationList.length > 1">
-                <li ng-repeat="menu in header.applicationList" ng-if="menu.menuTitle !== header.userInfo.application.toUpperCase()">
-                    <a href="" ng-click="selectMenu(menu)" ng-bind="menu.menuTitle"></a>
-                </li>
-            </ul>
-        </li>
-    </ul>
-
-    <div class="vo_h_searchbar">
-        <form class="navbar-form navbar-form-sm navbar-left shift" ui-shift="prependTo" target=".navbar-collapse" role="search">
-            <div class="form-group">
-                <div class="input-group">
-                    <!--<input type="text" ng-model="header.searchValue" class="form-control input-sm bg-light no-border rounded padder" style="padding-left:12px" enter-click="#search" placeholder="{{'TXT_MSG_SEARCH' | translate}}">-->
-
-                    <input type="text" ng-model="header.searchValue" placeholder="{{'TXT_MSG_SEARCH' | translate}}"
-                           uib-typeahead="address for address in loadSearchAutoCompletes($viewValue)"
-                           class="form-control input-sm bg-light no-border rounded padder" style="padding-left:12px" enter-click="#search">
-
-                    <span class="input-group-btn">
-                        <button type="submit" id="search" class="btn btn-sm bg-light rounded" ng-click="goSearchPage(header.searchValue)"><i class="fa fa-search"></i></button>
-                    </span>
-                </div>
-            </div>
-        </form>
-    </div>
-
     <ul class="nav navbar-nav navbar-right hidden-sm">
-        <!-- language uib-dropdown -->
+
         <li class="dropdown vo_h_locale" uib-dropdown>
             <a href class="dropdown-toggle clear" uib-dropdown-toggle>
                 <span class="" ng-bind="header.userInfo.language"></span><b class="caret"></b>
             </a>
-            <!-- uib-dropdown -->
+
             <ul class="dropdown-menu arrow_box">
                 <li ng-repeat="language in header.languageList" ng-if="language.add_name1 !== header.userInfo.language">
                     <a href="" ng-click="selectLanguage(language)">
@@ -58,14 +25,14 @@
                     </a>
                 </li>
             </ul>
-            <!-- / uib-dropdown -->
+
         </li>
-        <!-- user uib-dropdown -->
+
         <li class="dropdown" uib-dropdown>
             <a href class="dropdown-toggle clear" uib-dropdown-toggle>
                 <span class="" ng-bind="header.userInfo.userName"></span> <b class="caret"></b>
             </a>
-            <!-- uib-dropdown -->
+
             <ul class="dropdown-menu arrow_box">
                 <li>
                     <a href="" translate="TXT_CHANGE_PASS" ng-controller="popupCtrl" ng-click="openModifyPass(header.userInfo.userName)"></a>
@@ -74,9 +41,9 @@
                     <a href="" translate="TXT_LOGOUT" ng-click="logout()"></a>
                 </li>
             </ul>
-            <!-- / uib-dropdown -->
+
         </li>
     </ul>
 
 </div>
-<!-- / navbar collapse -->
+

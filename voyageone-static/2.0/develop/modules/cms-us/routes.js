@@ -11,7 +11,12 @@ define(function () {
             templateUrl: "views/items/newItems/index.tpl.html",
             controllerUrl: "modules/cms-us/views/items/newItems/index.ctl",
             controller: 'newItemController as ctrl'
+        },
+        itemDetail:{
+            hash: "/items/itemDetail",
+            templateUrl: "views/items/itemDetail/index.tpl.html",
+            controllerUrl: "modules/cms-us/views/items/itemDetail/index.ctl",
+            controller: 'itemDetailController as ctrl'
         }
-
     };
 });
