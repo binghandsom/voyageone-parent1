@@ -112,6 +112,24 @@ public class TbSaleService extends TbBase {
         logger.info("getOnsaleProduct调用结果 channelid={}, cartid={}, 结果={}", objs);
         return response.getItems();
     }
+
+    public List<Item> getOnsaleProduct(String strOrderChannelId, String strCardId, String fields, Long lPageIndex, Long pageSize, String title) throws ApiException {
+        ShopBean shopInfo = Shops.getShop(strOrderChannelId, strCardId);
+        ItemsOnsaleGetRequest req = new ItemsOnsaleGetRequest();
+
+        req.setQ(title);
+        req.setPageNo(lPageIndex);
+        req.setPageSize(pageSize);
+        req.setFields(fields);
+
+        ItemsOnsaleGetResponse response = reqTaobaoApi(shopInfo, req);
+        if (response == null) {
+            return null;
+        }
+        Object[] objs = { strOrderChannelId, strCardId, response.getErrorCode()==null ? "total=" + response.getTotalResults() : response.getBody() };
+        logger.info("getOnsaleProduct调用结果 channelid={}, cartid={}, 结果={}", objs);
+        return response.getItems();
+    }
     /**
      * 获取当前会话用户在库的商品列表
      * (包含所有库存分类状态：for_shelved(regular_shelved、never_on_shelf、off_shelf)、sold_out、violation_off_shelf)
@@ -145,6 +163,26 @@ public class TbSaleService extends TbBase {
 //        String staDate = DateTimeUtil.format(DateUtils.addDays(DateTimeUtilBeijing.getCurrentBeiJingDate(), -1), DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00";
 //        req.setStartModified(DateTimeUtil.parse(staDate));
 //        req.setEndModified(DateTimeUtilBeijing.getCurrentBeiJingDate());
+
+        ItemsInventoryGetResponse response = reqTaobaoApi(shopInfo, req);
+        if (response == null) {
+            return null;
+        }
+        Object[] objs = { strOrderChannelId, strCardId, response.getErrorCode()==null ? "total=" + response.getTotalResults() : response.getBody() };
+        logger.info("getInventoryProduct调用结果 channelid={}, cartid={}, 结果={}", objs);
+        return response.getItems();
+    }
+
+    public List<Item> getInventoryProduct(String strOrderChannelId, String strCardId, String banner, Long lPageIndex, Long pageSize, String title) throws ApiException {
+        ShopBean shopInfo = Shops.getShop(strOrderChannelId, strCardId);
+        ItemsInventoryGetRequest req = new ItemsInventoryGetRequest();
+
+        req.setPageNo(lPageIndex);
+        req.setPageSize(pageSize);
+        req.setQ(title);
+        req.setFields("num_iid,outer_id,title,delist_time");
+        req.setBanner(banner);
+
 
         ItemsInventoryGetResponse response = reqTaobaoApi(shopInfo, req);
         if (response == null) {
