@@ -19,13 +19,16 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -45,15 +48,13 @@ public class UsaFeedInfoService extends BaseService {
 
     /**
      * 条件查询feed商品列表
-     * @param searchValue
-     * @param channel
      */
     public List<CmsBtFeedInfoModel> getFeedList(Map<String, Object> searchValue, String channel) {
         //封装查询条件
         JongoQuery queryObject = getQuery(searchValue);
         //设置排序条件,排序字段后面拼接排序方式,下划线分割(1,正序,-1倒叙),默认不排序,点击那个按照哪个排序
-        String  sortFild = (String) searchValue.get("sort");
-        if (sortFild != null){
+        String sortFild = (String) searchValue.get("sort");
+        if (sortFild != null) {
             String[] split = sortFild.split("_");
             StringBuffer buffer = new StringBuffer();
             buffer.append("{'");
@@ -69,14 +70,11 @@ public class UsaFeedInfoService extends BaseService {
         queryObject.setSkip((pageNum - 1) * pageSize);
         queryObject.setLimit(pageSize);
 
-        return  feedInfoService.getList(channel,queryObject);
+        return feedInfoService.getList(channel, queryObject);
     }
 
     /**
      * 查询feed商品总数
-     * @param searchValue
-     * @param channel
-     * @return
      */
     public Long getFeedCount(Map<String, Object> searchValue, String channel) {
         //封装查询条件
@@ -85,25 +83,25 @@ public class UsaFeedInfoService extends BaseService {
     }
 
     //组装查询条件
-    public JongoQuery getQuery(Map<String, Object> searchValue){
+    public JongoQuery getQuery(Map<String, Object> searchValue) {
         //封装查询条件
         Criteria criteria = new Criteria();
         //状态
-        if (searchValue.get("status") != null){
-            criteria = criteria.and("status").is((String)searchValue.get("status"));
+        if (searchValue.get("status") != null) {
+            criteria = criteria.and("status").is((String) searchValue.get("status"));
         }
         //设置开始和截止的时间
-        if (searchValue.get("lastReceivedOnStart") != null && searchValue.get("lastReceivedOnEnd") == null){
-            criteria = criteria.and("lastReceivedOn").gte((String)searchValue.get("lastReceivedOnStart"));
+        if (searchValue.get("lastReceivedOnStart") != null && searchValue.get("lastReceivedOnEnd") == null) {
+            criteria = criteria.and("lastReceivedOn").gte((String) searchValue.get("lastReceivedOnStart"));
         }
-        if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") == null){
-            criteria = criteria.and("lastReceivedOn").lte((String)searchValue.get("lastReceivedOnEnd"));
+        if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") == null) {
+            criteria = criteria.and("lastReceivedOn").lte((String) searchValue.get("lastReceivedOnEnd"));
         }
-        if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") != null){
-            criteria = criteria.and("lastReceivedOn").gte((String)searchValue.get("lastReceivedOnStart")).lte((String)searchValue.get("lastReceivedOnEnd"));
+        if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") != null) {
+            criteria = criteria.and("lastReceivedOn").gte((String) searchValue.get("lastReceivedOnStart")).lte((String) searchValue.get("lastReceivedOnEnd"));
         }
         //name模糊查询
-        if (searchValue.get("name") != null){
+        if (searchValue.get("name") != null) {
             String name = (String) searchValue.get("name");
             StringBuffer buffer = new StringBuffer("/");
             buffer.append(name);
@@ -111,21 +109,22 @@ public class UsaFeedInfoService extends BaseService {
             criteria = criteria.and("name").is(buffer.toString());
         }
         //多条件精确查询,SKU/ Barcode/ Code / Model
-        if (searchValue.get("searchContent") != null){
+        if (searchValue.get("searchContent") != null) {
             String searchContent = (String) searchValue.get("searchContent");
             String[] split = searchContent.split("/n");
             List<String> searchContents = Arrays.asList(split);
-            criteria.orOperator(new Criteria("code").in(searchContents),new Criteria("model").in(searchContents),new Criteria("skus.sku").in(searchContent),new Criteria("skus.barcode").in(searchContent));
+            criteria.orOperator(new Criteria("code").in(searchContents), new Criteria("model").in(searchContents), new Criteria("skus.sku").in(searchContent), new Criteria("skus.barcode").in(searchContent));
         }
-        if (searchValue.get("isApprove") != null){
-            criteria = criteria.and("isApprove").is((String)searchValue.get("isApprove"));
+        if (searchValue.get("isApprove") != null) {
+            criteria = criteria.and("isApprove").is((String) searchValue.get("isApprove"));
         }
         return new JongoQuery(criteria);
     }
 
 
-/*xu*/
-    //---------------------^^^^-------------------------------
+    //==============================================================================================
+    //===========================================任务分割线===========================================
+    //==============================================================================================
 
     /**
      * 根据model查询符合特定条件的特定个数(暂定5)的code
@@ -297,7 +296,7 @@ public class UsaFeedInfoService extends BaseService {
         feedInfoModel.setModifier(username);
         feedInfoModel.setModified(DateTimeUtil.getNow());
         WriteResult writeResult = cmsBtFeedInfoDao.update(feedInfoModel);
-        $info(String.format("(%s)%s Feed(channelId=%s,code=%s)结果: %s", username, isSave?"Save": channelId, code, JacksonUtil.bean2Json(writeResult)));
+        $info(String.format("(%s)%s Feed(channelId=%s,code=%s)结果: %s", username, isSave ? "Save" : channelId, code, JacksonUtil.bean2Json(writeResult)));
 
     }
 
