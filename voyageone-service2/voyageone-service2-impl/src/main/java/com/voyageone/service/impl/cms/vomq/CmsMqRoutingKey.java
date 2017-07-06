@@ -154,6 +154,7 @@ public class CmsMqRoutingKey {
      * jd mq task
      */
     public static final String CMS_BATCH_PlatformCategoryTreeJdJob = "voyageone_cms_batchjob_CmsBuildPlatformCategoryTreeJdJob_queue";
+    public static final String CMS_BATCH_PlatformCategoryTreeKlJob = "voyageone_cms_batchjob_CmsBuildPlatformCategoryTreeKlJob_queue";
 
     public static final String CMS_BATCH_PlatformCategorySchemaJdJob = "voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaJdJob_queue";
 
