@@ -1,8 +1,11 @@
 package com.voyageone.service.impl.cms.usa;
 
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
@@ -10,10 +13,15 @@ import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
+
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -151,35 +159,80 @@ public class UsaFeedInfoService extends BaseService {
     /**
      * 保存或者提交Feed
      *
+     * @param channelId     渠道ID
      * @param feedInfoModel Feed信息
      * @param feedStatus    Submit后Feed状态，如果传入值为null或者和feedInfoModel值一直则视为Save操作
+     * @param username      更新人
      */
-    public void saveOrSubmitFeed(CmsBtFeedInfoModel feedInfoModel, CmsConstants.UsaFeedStatus feedStatus) {
-        if (feedInfoModel == null) return;
+    public void saveOrSubmitFeed(String channelId, CmsBtFeedInfoModel feedInfoModel, CmsConstants.UsaFeedStatus feedStatus, String username) {
+        CmsBtFeedInfoModel feed = null;
+        String code = null;
+        if (feedInfoModel == null
+                || StringUtils.isBlank(code = feedInfoModel.getCode())
+                || (feed = cmsBtFeedInfoDao.selectProductByCode(channelId, code)) == null) {
+            throw new BusinessException(String.format("Feed(Code:%s) not exists.", code));
+        }
+
+        // 如果MongoDb中Feed状态和本次提交的Feed状态不一致，报警
+        if (!Objects.equals(feed.getStatus(), feedInfoModel.getStatus())) {
+            throw new BusinessException(String.format("Feed(Code:%s) status is already %s.", code, feed.getStatus()));
+        }
+
+        // 保存 or 提交至下一步
         boolean isSave = feedStatus == null || Objects.equals(feedInfoModel.getStatus(), feedStatus.name());
-        if (isSave) {
-            // TODO: 2017/7/6 rex.wu Save FeedInfo
-        } else {
-            // FeedInfoModel->status状态流[New->Pending->Ready->Approved]
-            String nextFeedStatus = null;
-            if (CmsConstants.UsaFeedStatus.New.name().equals(feedInfoModel.getStatus())) {
-                nextFeedStatus = CmsConstants.UsaFeedStatus.Pending.name();
-            } else if (CmsConstants.UsaFeedStatus.Pending.name().equals(feedInfoModel.getStatus())) {
-                nextFeedStatus = CmsConstants.UsaFeedStatus.Ready.name();
-            } else if (CmsConstants.UsaFeedStatus.Ready.name().equals(feedInfoModel.getStatus())) {
-                nextFeedStatus = CmsConstants.UsaFeedStatus.Approved.name();
-            }
-            if (nextFeedStatus == null) {
-                throw new BusinessException(String.format("Invalid Status, Current Status(%s) -> Next Status(%s)", feedInfoModel.getStatus(), nextFeedStatus));
-            }
-            // TODO: 2017/7/6 rex.wu Submit FeedInfo
-
-
-            if (CmsConstants.UsaFeedStatus.Approved.name().equals(nextFeedStatus)) {
-
+        if (isSave && CmsConstants.UsaFeedStatus.New.name().equals(feed.getStatus())
+                && MapUtils.isNotEmpty(feedInfoModel.getAttribute())
+                && CollectionUtils.isNotEmpty(feedInfoModel.getAttribute().get("urlKey"))
+                && StringUtils.isNotBlank(feedInfoModel.getAttribute().get("urlKey").get(0))) {
+            // New状态Save时校验urlKey是否唯一
+            if (this.isUrlKeyDuplicated(channelId, code, feedInfoModel.getAttribute().get("urlKey").get(0))) {
+                throw new BusinessException("URL Key(%s) already exists.");
             }
         }
 
+        if (!isSave) {
+            // FeedInfoModel->status状态流[New->Pending->Ready->Approved]
+            String nextFeedStatus = null;
+            if (CmsConstants.UsaFeedStatus.New.name().equals(feed.getStatus())) {
+                nextFeedStatus = CmsConstants.UsaFeedStatus.Pending.name();
+            } else if (CmsConstants.UsaFeedStatus.Pending.name().equals(feed.getStatus())) {
+                nextFeedStatus = CmsConstants.UsaFeedStatus.Ready.name();
+            } else if (CmsConstants.UsaFeedStatus.Ready.name().equals(feed.getStatus())) {
+                nextFeedStatus = CmsConstants.UsaFeedStatus.Approved.name();
+            }
+            if (!feedStatus.name().equals(nextFeedStatus)) {
+                throw new BusinessException(String.format("Invalid Status, current status is (%s), next status must be (%s)", feedInfoModel.getStatus(), nextFeedStatus));
+            }
+            feedInfoModel.setStatus(nextFeedStatus);
+
+            if (CmsConstants.UsaFeedStatus.Approved.name().equals(nextFeedStatus)) {
+                // 如果是Submit下一步是Approved,更新updFlg=0
+                feedInfoModel.setUpdFlg(0);
+            }
+        }
+
+        feedInfoModel.setModifier(username);
+        feedInfoModel.setModified(DateTimeUtil.getNow());
+        WriteResult writeResult = cmsBtFeedInfoDao.update(feedInfoModel);
+        $info(String.format("(%s)%s Feed(channelId=%s,code=%s)结果: %s", username, isSave?"Save": channelId, code, JacksonUtil.bean2Json(writeResult)));
+
+    }
+
+    /**
+     * 判断urlKey在Feed中是否存在
+     *
+     * @param channelId 渠道ID
+     * @param urlKey    urlKey
+     * @return urlKey是否已存在
+     */
+    public boolean isUrlKeyDuplicated(String channelId, String code, String urlKey) {
+        String query = "{\"channelId\":#,\"code\":{$ne:#},\"attribute.urlkey\":#}";
+        return cmsBtFeedInfoDao.countByQuery(query, new Object[]{channelId, code, urlKey}, channelId) > 0;
+    }
+
+    public static void main(String[] args) {
+        String hello = "a   b c &^^^^7r8~1";
+        System.out.println(hello.replaceAll("[^a-zA-Z0-9]+", " ").replaceAll("\\s+", "-"));
     }
 
 }
