@@ -27,7 +27,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_PlatformCategorySchemaJMJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_PlatformCategorySchemaKLJob)
 public class CmsBuildPaltformCategoryTreeKLMqService extends BaseMQCmsService {
 
     @Autowired
