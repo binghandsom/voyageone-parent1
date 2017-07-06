@@ -1,10 +1,15 @@
 package com.voyageone.service.impl.cms.usa;
 
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -21,7 +26,16 @@ public class UsaFeedInfoServiceTest {
     @Test
     public void getTopModelsByModel() throws Exception {
 
-        usaFeedInfoService.getTopModelsByModel("001", "patagoniadownsweatervestkids");
+        List<CmsBtFeedInfoModel> resultFeedList = usaFeedInfoService.getTopModelsByModel("001", "patagoniadownsweatervestkids");
+        if (CollectionUtils.isNotEmpty(resultFeedList)) {
+            for (CmsBtFeedInfoModel feed : resultFeedList) {
+                System.out.println("_id=" + feed.get_id());
+                System.out.println("Model=" + feed.getModel());
+                System.out.println("Code=" + feed.getCode());
+                System.out.println("Brand=" + feed.getBrand());
+
+            }
+        }
 
     }
 

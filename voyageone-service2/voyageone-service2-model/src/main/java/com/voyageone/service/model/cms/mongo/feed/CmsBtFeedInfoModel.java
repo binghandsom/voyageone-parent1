@@ -46,7 +46,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private Map<String, List<String>> attributeVms = new HashMap<>();
     private Map<String, Object> fullAttribute = new HashMap<>();
     private Integer updFlg;
-    private String updMessage="";
+    private String updMessage = "";
     private String clientProductURL = "";
     private Integer qty = 0;
     private String usageEn = "";
@@ -55,7 +55,14 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private String material;
     private String lastReceivedOn = "";
     private String mpn = "";
-    private String catConf="";
+    private String catConf = "";
+
+    /**
+     * 美国CMS2新增状态.@see CmsConstants.UsaFeedStatus
+     * <p>Add by rex.wu at 2017-07-06</p>
+     */
+    private String status;
+
 
     public String getSizeChartType() {
         return sizeChartType;
@@ -98,7 +105,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     }
 
     public String getName() {
-        if(name == null) name = "";
+        if (name == null) name = "";
         return name;
     }
 
@@ -131,7 +138,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     }
 
     public String getSizeType() {
-        if(sizeType == null) sizeType = "";
+        if (sizeType == null) sizeType = "";
         return sizeType;
     }
 
@@ -139,9 +146,13 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         this.sizeType = sizeType;
     }
 
-    public String getMaterial() { return material;  }
+    public String getMaterial() {
+        return material;
+    }
 
-    public void setMaterial(String material) { this.material = material; }
+    public void setMaterial(String material) {
+        this.material = material;
+    }
 
     public List<String> getImage() {
         return image;
@@ -152,7 +163,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     }
 
     public String getBrand() {
-        if(brand == null) brand = "";
+        if (brand == null) brand = "";
         return brand;
     }
 
@@ -334,7 +345,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     }
 
     public String getProductType() {
-        if(productType == null) productType = "";
+        if (productType == null) productType = "";
         return productType;
     }
 
@@ -358,9 +369,13 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         this.qty = qty;
     }
 
-    public String getIsFeedReImport() { return isFeedReImport; }
+    public String getIsFeedReImport() {
+        return isFeedReImport;
+    }
 
-    public void setIsFeedReImport(String isFeedReImport) { this.isFeedReImport = isFeedReImport; }
+    public void setIsFeedReImport(String isFeedReImport) {
+        this.isFeedReImport = isFeedReImport;
+    }
 
     public String getUpdMessage() {
         return updMessage;
@@ -401,5 +416,13 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setCatConf(String catConf) {
         this.catConf = catConf;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
