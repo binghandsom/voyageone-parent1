@@ -26,17 +26,15 @@ public class UsaFeedInfoServiceTest {
     @Test
     public void getTopModelsByModel() throws Exception {
 
-        List<CmsBtFeedInfoModel> resultFeedList = usaFeedInfoService.getTopModelsByModel("001", "patagoniadownsweatervestkids");
+        List<CmsBtFeedInfoModel> resultFeedList = usaFeedInfoService.getTopModelsByModel("001", "patagoniadownsweatervestkids", -1);
         if (CollectionUtils.isNotEmpty(resultFeedList)) {
             for (CmsBtFeedInfoModel feed : resultFeedList) {
                 System.out.println("_id=" + feed.get_id());
                 System.out.println("Model=" + feed.getModel());
                 System.out.println("Code=" + feed.getCode());
                 System.out.println("Brand=" + feed.getBrand());
-
             }
         }
-
     }
 
     @Test

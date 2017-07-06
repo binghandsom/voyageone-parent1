@@ -130,28 +130,29 @@ public class UsaFeedInfoService extends BaseService {
      * 根据model查询符合特定条件的特定个数(暂定5)的code
      * <p>先查询product.platforms.Pxx.status in[Approved->Ready->Pending]</p>
      * <p>  其中xx为U.S.Official对应的cartId, 平台状态有优先级</p>
-     * <p>---------------------------分割线------------------------------</p>
      * <p>如果product查不到满足条件的model信息，则从feed中查询model且status in[Approved->Ready->Pending->New]</p>
      * <p>  feed状态有优先级</p>
      *
      * @param channelId 渠道ID
-     * @param model     feed->model
+     * @param model     Feed->model
+     * @param top       查询个数
      */
-    public List<CmsBtFeedInfoModel> getTopModelsByModel(String channelId, String model) {
-        // TODO: 2017/7/6 rex.wu cartId=23待定.......
+    public List<CmsBtFeedInfoModel> getTopModelsByModel(String channelId, String model, int top) {
+        if (top <= 0) top = 5;
+        int usOfficialCartId = 23; // TODO: 2017/7/6 rex.wu U.S.Official平台ID待定
+
+        // 先从Product中查询top个满足状态Product
         List<CmsConstants.ProductStatus> queryProductStatus = new ArrayList<>();
         queryProductStatus.add(CmsConstants.ProductStatus.Approved);
         queryProductStatus.add(CmsConstants.ProductStatus.Ready);
         queryProductStatus.add(CmsConstants.ProductStatus.Pending);
-        int top = 5;
-        // 先从Product查询
+
         List<CmsBtProductModel> resultProductList = new ArrayList<>(top);
-        String projection = "{_id:1,code:1,model:1}";
         String query = String.format("{\"channelId\":#,\"common.fields.model\":#,\"platforms.P#\":{$exists:true},\"platforms.P#.status\":#}");
         int count = 0;
         for (CmsConstants.ProductStatus productStatus : queryProductStatus) {
             JongoQuery jongoQuery = new JongoQuery(null, query, null, top - resultProductList.size(), 0);
-            jongoQuery.setParameters(channelId, model, 23, 23, productStatus.name());
+            jongoQuery.setParameters(channelId, model, usOfficialCartId, usOfficialCartId, productStatus.name());
             List<CmsBtProductModel> tempResultProductList = cmsBtProductDao.select(jongoQuery, channelId);
             count = tempResultProductList.size();
             if (count > 0) {
@@ -168,13 +169,12 @@ public class UsaFeedInfoService extends BaseService {
             queryFeedStatus.add(CmsConstants.UsaFeedStatus.Approved);
             queryFeedStatus.add(CmsConstants.UsaFeedStatus.Ready);
             queryFeedStatus.add(CmsConstants.UsaFeedStatus.Pending);
-            // 再从Feed中查询
+
             List<CmsBtFeedInfoModel> resultFeedList = new ArrayList<>(top);
-            projection = "{_id:1,code:1,model:1}";
             query = String.format("{\"channelId\":#,\"model\":#,\"status\":{$exists:true},\"status\":#}");
             for (CmsConstants.UsaFeedStatus feedStatus : queryFeedStatus) {
-                JongoQuery jongoQuery = new JongoQuery(projection, query, null, top - resultFeedList.size(), 0);
-                jongoQuery.setParameters(channelId, model, 23, 23, feedStatus.name());
+                JongoQuery jongoQuery = new JongoQuery(null, query, null, top - resultFeedList.size(), 0);
+                jongoQuery.setParameters(channelId, model, usOfficialCartId, usOfficialCartId, feedStatus.name());
                 List<CmsBtFeedInfoModel> tempResultFeedList = cmsBtFeedInfoDao.select(jongoQuery, channelId);
                 count = tempResultFeedList.size();
                 if (count > 0) {
@@ -243,7 +243,7 @@ public class UsaFeedInfoService extends BaseService {
      *
      * @param channelId     渠道ID
      * @param feedInfoModel Feed信息
-     * @param feedStatus    Submit后Feed状态，如果传入值为null或者和feedInfoModel值一直则视为Save操作
+     * @param feedStatus    Submit后Feed状态，如果传入值为null或者和feedInfoModel值一致则视为Save操作
      * @param username      更新人
      */
     public void saveOrSubmitFeed(String channelId, CmsBtFeedInfoModel feedInfoModel, CmsConstants.UsaFeedStatus feedStatus, String username) {
@@ -255,25 +255,28 @@ public class UsaFeedInfoService extends BaseService {
             throw new BusinessException(String.format("Feed(Code:%s) not exists.", code));
         }
 
-        // 如果MongoDb中Feed状态和本次提交的Feed状态不一致，报警
-        if (!Objects.equals(feed.getStatus(), feedInfoModel.getStatus())) {
-            throw new BusinessException(String.format("Feed(Code:%s) status is already %s.", code, feed.getStatus()));
+        // 1、如果页面提交过来的Feed状态和DB中的Feed状态不一致则说明DB中Feed信息已经被修改过了
+        // 2、如果DB中的Feed状态已经是Approved,则无论是Save还是Submit操作都禁止,因为美国CMS2看不到Approved过的Feed
+        // 以上两种Feed报警,无须操作了
+        if (!Objects.equals(feed.getStatus(), feedInfoModel.getStatus()) || CmsConstants.UsaFeedStatus.Approved.name().equals(feed.getStatus())) {
+            throw new BusinessException(String.format("Feed(Code:%s) status is already %s in DB.", code, feed.getStatus()));
         }
 
         // 保存 or 提交至下一步
-        boolean isSave = feedStatus == null || Objects.equals(feedInfoModel.getStatus(), feedStatus.name());
-        if (isSave && CmsConstants.UsaFeedStatus.New.name().equals(feed.getStatus())
-                && MapUtils.isNotEmpty(feedInfoModel.getAttribute())
-                && CollectionUtils.isNotEmpty(feedInfoModel.getAttribute().get("urlKey"))
-                && StringUtils.isNotBlank(feedInfoModel.getAttribute().get("urlKey").get(0))) {
-            // New状态Save时校验urlKey是否唯一
-            if (this.isUrlKeyDuplicated(channelId, code, feedInfoModel.getAttribute().get("urlKey").get(0))) {
-                throw new BusinessException("URL Key(%s) already exists.");
+        boolean isSave = feedStatus == null || feedStatus.name().equals(feedInfoModel.getStatus());
+        if (isSave) {
+            // New状态Save时如果urlKey不空则校验其唯一性
+            if (CmsConstants.UsaFeedStatus.New.name().equals(feed.getStatus())
+                    && MapUtils.isNotEmpty(feedInfoModel.getAttribute())
+                    && CollectionUtils.isNotEmpty(feedInfoModel.getAttribute().get("urlKey"))
+                    && StringUtils.isNotBlank(feedInfoModel.getAttribute().get("urlKey").get(0))) {
+                // New状态Save时校验urlKey是否唯一
+                if (this.isUrlKeyDuplicated(channelId, code, feedInfoModel.getAttribute().get("urlKey").get(0))) {
+                    throw new BusinessException("URL Key(%s) already exists.");
+                }
             }
-        }
-
-        if (!isSave) {
-            // FeedInfoModel->status状态流[New->Pending->Ready->Approved]
+        } else {
+            // 美国CMS2 Feed状态流[New->Pending->Ready->Approved],校验其是否跨节点提交了
             String nextFeedStatus = null;
             if (CmsConstants.UsaFeedStatus.New.name().equals(feed.getStatus())) {
                 nextFeedStatus = CmsConstants.UsaFeedStatus.Pending.name();
