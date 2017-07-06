@@ -1,0 +1,49 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="ctrl.$dismiss()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h5 class="modal-title"><i class="fa fa-gear"></i>&nbsp;Batch Approve</h5>
+    </div>
+
+    <div class="modal-body wrapper">
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <strong>USA</strong>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <label class="col-md-3"><strong>MSRP</strong></label>
+                    <label class="col-md-3">$120</label>
+                    <label class="col-md-3"><strong>Price</strong></label>
+                    <label class="col-md-3">$120</label>
+                </div>
+
+                <div class="row">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox">
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="v-middle">Amazon</td>
+                            <td class="v-middle">xxxxxxxxxxxxx</td>
+                            <td class="v-middle">
+                                <input type="text" class="form-control">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-success" ng-click="ctrl.complete()"><i class="fa fa-check "></i>&nbsp;confirm</button>
+    </div>
+</div>
