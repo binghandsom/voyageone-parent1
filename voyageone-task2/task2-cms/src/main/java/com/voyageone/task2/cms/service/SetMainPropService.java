@@ -1651,7 +1651,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             // 追加P0(主数据)平台属性
             CmsBtProductModel_Platform_Cart platformP0 = new CmsBtProductModel_Platform_Cart();
             platformP0.setCartId(0);
-            CmsBtProductGroupModel groupP0 = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), "0");
+            CmsBtProductGroupModel groupP0 = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), "0",usjoi ? feed.getChannelId():null);
             if (groupP0 == null) {
                 platformP0.setMainProductCode(common.getFields().getCode());
             } else {
@@ -1659,7 +1659,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                 // 把主商品的几个状态复制过来 james 2016/08/29
                 // 把主商品的自由标签复制过来 rex 2017/07/04
-                copyAttributeFromMainProduct(feed.getChannelId(), product, groupP0.getMainProductCode());
+                copyAttributeFromMainProduct(product.getChannelId(), product, groupP0.getMainProductCode());
             }
             platforms.put("P0", platformP0);
             // add desmond 2016/07/04 end
@@ -1722,7 +1722,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 if (!CartEnums.Cart.JM.getId().equals(typeChannelBean.getValue())
                         && !CartEnums.Cart.CN.getId().equals(typeChannelBean.getValue())
                         && !CartEnums.Cart.KL.getId().equals(typeChannelBean.getValue())) {
-                    group = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), typeChannelBean.getValue());
+                    group = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), typeChannelBean.getValue(),usjoi ? feed.getChannelId():null);
                 }
                 if (group == null) {
                     platform.setpIsMain(1);
@@ -2484,7 +2484,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         //取得当前code的创建的时间
                         LocalDate feedDate = formatter.parseLocalDate(feed.getCreated());
                         //取得当前group的创建的时间
-                        CmsBtProductGroupModel groupCode = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), shop.getValue());
+                        CmsBtProductGroupModel groupCode = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), shop.getValue(),usjoi ? feed.getChannelId():null);
                         if (groupCode != null) {
                             LocalDate groupDate = formatter.parseLocalDate(groupCode.getCreated());
                             //feed和group的创建时间作比较
@@ -2497,7 +2497,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                             }
                         }
                     } else {
-                        group = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), shop.getValue());
+                        group = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), shop.getValue(),usjoi ? feed.getChannelId():null);
                     }
                 }
 
@@ -2544,9 +2544,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
          * @return group对象
          */
         // private long getGroupIdByFeedModel(String channelId, String modelCode, String cartId) {
-        private CmsBtProductGroupModel getGroupIdByFeedModel(String channelId, String modelCode, String cartId) {
+        private CmsBtProductGroupModel getGroupIdByFeedModel(String channelId, String modelCode, String cartId, String orgChannelId ) {
             // 先去看看是否有存在的了
-            return productGroupService.selectProductGroupByModelCodeAndCartId(channelId, modelCode, cartId);
+            return productGroupService.selectProductGroupByModelCodeAndCartId(channelId, modelCode, cartId, orgChannelId);
         }
         /**
          * 根据code, 到group表中去查找所有的group信息
