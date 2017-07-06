@@ -20,13 +20,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by james on 2017/7/5.
