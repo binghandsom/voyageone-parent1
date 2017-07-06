@@ -49,8 +49,8 @@ public class UsaFeedInfoService extends BaseService {
         //封装查询条件
         JongoQuery queryObject = getQuery(searchValue);
         //设置排序条件,排序字段后面拼接排序方式,下划线分割(1,正序,-1倒叙),默认不排序,点击那个按照哪个排序
-        String  sortFild = (String) searchValue.get("sort");
-        if (sortFild != null){
+        String sortFild = (String) searchValue.get("sort");
+        if (sortFild != null) {
             String[] split = sortFild.split("_");
             StringBuffer buffer = new StringBuffer();
             buffer.append("{'");
@@ -121,8 +121,9 @@ public class UsaFeedInfoService extends BaseService {
     }
 
 
-/*xu*/
-    //---------------------^^^^-------------------------------
+    //==============================================================================================
+    //===========================================任务分割线===========================================
+    //==============================================================================================
 
     /**
      * 根据model查询符合特定条件的特定个数(暂定5)的code
@@ -294,7 +295,7 @@ public class UsaFeedInfoService extends BaseService {
         feedInfoModel.setModifier(username);
         feedInfoModel.setModified(DateTimeUtil.getNow());
         WriteResult writeResult = cmsBtFeedInfoDao.update(feedInfoModel);
-        $info(String.format("(%s)%s Feed(channelId=%s,code=%s)结果: %s", username, isSave?"Save": channelId, code, JacksonUtil.bean2Json(writeResult)));
+        $info(String.format("(%s)%s Feed(channelId=%s,code=%s)结果: %s", username, isSave ? "Save" : channelId, code, JacksonUtil.bean2Json(writeResult)));
 
     }
 
