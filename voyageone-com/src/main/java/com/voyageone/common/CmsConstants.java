@@ -288,4 +288,14 @@ public class CmsConstants {
         int VMS_FEED = 80; //VMS feed 导入
         int VMS_PRICE_INVENTORY = 81; //VMS price inventory 导入
     }
+
+
+
+    //----------------------------------下为美国CMS2常量定义-------------------------------------------
+    public enum UsaFeedStatus {
+        New,
+        Pending, 			// 等待中
+        Ready, 				// 准备中
+        Approved
+    }
 }

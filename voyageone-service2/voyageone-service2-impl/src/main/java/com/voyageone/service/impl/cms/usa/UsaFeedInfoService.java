@@ -1,13 +1,15 @@
 package com.voyageone.service.impl.cms.usa;
 
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * Created by james on 2017/7/5.
@@ -37,8 +39,18 @@ public class UsaFeedInfoService extends BaseService {
      * @param model     feed->model
      */
     public void getTopModelsByModel(String channelId, String model) {
-        // TODO: 2017/7/5 rex.wu 
+        // TODO: 2017/7/5 rex.wu
+
+
+        String columnResult="{_id:1,code:1,model:1}";
+        String query = String.format("{\"channelId\":#,\"model\":#}");
+        JongoQuery jongoQuery = new JongoQuery(columnResult, query, null, 5, 0);
+        jongoQuery.setParameters(channelId, model);
+        List<CmsBtFeedInfoModel> feedInfoModelList = cmsBtFeedInfoDao.select(jongoQuery, channelId);
+        if (!feedInfoModelList.isEmpty()) {
+            for (CmsBtFeedInfoModel feed : feedInfoModelList) {
+                System.out.println(feed.getModel());
+            }
+        }
     }
-
-
 }
