@@ -1,8 +1,6 @@
 package com.voyageone.service.impl.cms.usa;
 
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.web2.core.bean.UserSessionBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +30,7 @@ public class UsaFeedInfoServiceTest {
         map.put("pageNum",1);
         map.put("pageSize",10);
         map.put("name","Patagonia Down Sweater Vest (Kids)");
-        UserSessionBean userSessionBean = new UserSessionBean();
-        userSessionBean.setSelChannel( ChannelConfigEnums.Channel.SN);
-        List<CmsBtFeedInfoModel> feedList = usaFeedInfoService.getFeedList(map, userSessionBean);
+        List<CmsBtFeedInfoModel> feedList = usaFeedInfoService.getFeedList(map,"001");
 
     }
 

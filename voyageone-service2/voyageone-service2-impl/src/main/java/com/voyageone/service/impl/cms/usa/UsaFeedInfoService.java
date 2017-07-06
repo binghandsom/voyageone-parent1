@@ -3,8 +3,6 @@ package com.voyageone.service.impl.cms.usa;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
@@ -47,12 +45,11 @@ public class UsaFeedInfoService extends BaseService {
     /**
      * 条件查询feed商品列表
      * @param searchValue
-     * @param userInfo
+     * @param channel
      */
-    public List<CmsBtFeedInfoModel> getFeedList(Map<String, Object> searchValue, UserSessionBean userInfo) {
-        String channel = userInfo.getSelChannel().toString();
+    public List<CmsBtFeedInfoModel> getFeedList(Map<String, Object> searchValue, String channel) {
         //封装查询条件
-        JongoQuery queryObject = getQuery(searchValue, userInfo);
+        JongoQuery queryObject = getQuery(searchValue);
         //设置排序条件,排序字段后面拼接排序方式,下划线分割(1,正序,-1倒叙),默认不排序,点击那个按照哪个排序
         String  sortFild = (String) searchValue.get("sort");
         if (sortFild != null){
@@ -77,18 +74,17 @@ public class UsaFeedInfoService extends BaseService {
     /**
      * 查询feed商品总数
      * @param searchValue
-     * @param userInfo
+     * @param channel
      * @return
      */
-    public Long getFeedCount(Map<String, Object> searchValue, UserSessionBean userInfo) {
-        String channel = userInfo.getSelChannel().toString();
+    public Long getFeedCount(Map<String, Object> searchValue, String channel) {
         //封装查询条件
-        JongoQuery query = getQuery(searchValue, userInfo);
+        JongoQuery query = getQuery(searchValue);
         return cmsBtFeedInfoDao.countByQuery(query.getQuery(), channel);
     }
 
     //组装查询条件
-    public JongoQuery getQuery(Map<String, Object> searchValue, UserSessionBean userInfo){
+    public JongoQuery getQuery(Map<String, Object> searchValue){
         //封装查询条件
         Criteria criteria = new Criteria();
         //状态
@@ -118,9 +114,7 @@ public class UsaFeedInfoService extends BaseService {
             String searchContent = (String) searchValue.get("searchContent");
             String[] split = searchContent.split("/n");
             List<String> searchContents = Arrays.asList(split);
-            Criteria criteria2 = new Criteria("code").in(searchContents).orOperator(new Criteria("model").in(searchContents)).
-                    orOperator(new Criteria("skus.sku").in(searchContent)).orOperator(new Criteria("skus.barcode").in(searchContent));
-            criteria.orOperator(criteria2);
+            criteria.orOperator(new Criteria("code").in(searchContents),new Criteria("model").in(searchContents),new Criteria("skus.sku").in(searchContent),new Criteria("skus.barcode").in(searchContent));
         }
         if (searchValue.get("isApprove") != null){
             criteria = criteria.and("isApprove").is((String)searchValue.get("isApprove"));
